@@ -35,18 +35,16 @@ namespace htl {
 	};
 
 	template <I2CChannel channel_>
-	class I2CInfo {
-		static const uint32_t addr;
-		static const uint32_t rccen;
+	class I2CTrait {
 	};
 
 	template <I2CChannel channel_>
 	class I2C_x {
 		private:
-			using Info = I2CInfo<channel_>;
+			using Trait = I2CTrait<channel_>;
 			constexpr static const unsigned _defaultBlockTime = 1000;
-			constexpr static const uint32_t _addr = Info::addr;
-			constexpr static const uint32_t _rccen = Info::rccen;
+			constexpr static const uint32_t _addr = Trait::addr;
+			constexpr static const uint32_t _rccen = Trait::rccen;
 
 			static halI2CHandler _handler;
 			static halI2CData _data;
@@ -183,30 +181,30 @@ namespace htl {
 
 	#ifdef SPI1
 		template <>
-		struct I2CInfo<I2CChannel::channel1> {
-			constexpr static const uint32_t addr = I2C1_BASE;
-			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C1EN;
+		struct I2CTrait<I2CChannel::channel1> {
+			static const uint32_t addr = I2C1_BASE;
+			static const uint32_t rccen = RCC_APB1ENR_I2C1EN;
 		};
 	#endif
 	#ifdef SPI1
 		template <>
-		struct I2CInfo<I2CChannel::channel2> {
-			constexpr static const uint32_t addr = I2C2_BASE;
-			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C2EN;
+		struct I2CTrait<I2CChannel::channel2> {
+			static const uint32_t addr = I2C2_BASE;
+			static const uint32_t rccen = RCC_APB1ENR_I2C2EN;
 		};
 	#endif
 	#ifdef SPI1
 		template <>
-		struct I2CInfo<I2CChannel::channel3> {
-			constexpr static const uint32_t addr = I2C3_BASE;
-			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C3EN;
+		struct I2CTrait<I2CChannel::channel3> {
+			static const uint32_t addr = I2C3_BASE;
+			static const uint32_t rccen = RCC_APB1ENR_I2C3EN;
 		};
 	#endif
 	#ifdef SPI1
 		template <>
-		struct I2CInfo<I2CChannel::channel4> {
-			constexpr static const uint32_t addr = I2C4_BASE;
-			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C4EN;
+		struct I2CTrait<I2CChannel::channel4> {
+			static const uint32_t addr = I2C4_BASE;
+			static const uint32_t rccen = RCC_APB1ENR_I2C4EN;
 		};
 	#endif
 }

@@ -43,6 +43,7 @@ namespace htl {
     };
 
     enum class CNPull {
+        noChange,
         none,
         up
     };
@@ -75,49 +76,67 @@ namespace htl {
             /// \param trigger: Les opcions de trigger.
             /// \param pull: Les opcions pull up/down
             ///
-            inline static void initLine(CNLine line, CNTrigger trigger = CNTrigger::none, CNPull pull = CNPull::none) {
+            inline static void initLine(
+                CNLine line,
+                CNTrigger trigger = CNTrigger::none,
+                CNPull pull = CNPull::none) {
+
                 CNCONbits.ON = 1;
-                if (pull == CNPull::up)
-                    CNPUESET = 1 << static_cast<uint32_t>(line);
-                else
-                    CNPUECLR = 1 << static_cast<uint32_t>(line);
+                if (pull != CNPull::noChange) {
+                    if (pull == CNPull::up)
+                        CNPUESET = 1 << static_cast<uint32_t>(line);
+                    else
+                        CNPUECLR = 1 << static_cast<uint32_t>(line);
+                }
             }
 
             /// \brief  Activa una linia.
             /// \praram line: La linia.
             ///
-            inline static void enableLine(CNLine line) {
+            inline static void enableLine(
+                CNLine line) {
+
                 CNENSET = 1 << static_cast<uint32_t>(line);
             }
 
             /// \brief  Desactiva una linia.
             /// \praram line: La linia.
             ///
-            inline static void disableLine(CNLine line) {
+            inline static void disableLine(
+                CNLine line) {
+
                 CNENCLR = 1 << static_cast<uint32_t>(line);
             }
 
             /// \brief  Habilita les interrupcions pel event especificat.
             /// \param  event: EL event.
             ///
-            inline static void enableInterrupt(CNEvent event) {
+            inline static void enableInterrupt(
+                CNEvent event) {
+
                 IEC1bits.CNIE = 1;
             }
 
             /// \brief  Deshabilita les interrupcions pel event especificat.
             /// \param  event: EL event.
             ///
-            inline static bool disableInterrupt(CNEvent event) {
+            inline static bool disableInterrupt(
+                CNEvent event) {
+
                 bool state = IEC1bits.CNIE == 1;
                 IEC1bits.CNIE = 0;
                 return state;
             }
 
-            inline static bool getInterruptFlag(CNEvent event) {
+            inline static bool getInterruptFlag(
+                CNEvent event) {
+
                 return IFS1bits.CNIF != 0;
             }
 
-            inline static void clearInterruptFlags(CNEvent event) {
+            inline static void clearInterruptFlag(
+                CNEvent event) {
+
                 IFS1bits.CNIF = 0;
             }
 
@@ -125,7 +144,10 @@ namespace htl {
             /// \param function: La funcio.
             /// \param param: El parametre.
             ///
-            inline static void setInterruptFunction(CNInterruptFunction function, CNInterruptParam param = nullptr) {
+            inline static void setInterruptFunction(
+                CNInterruptFunction function,
+                CNInterruptParam param = nullptr) {
+
                 _isrFunction = function;
                 _isrParam = param;
             }
@@ -133,7 +155,9 @@ namespace htl {
             /// \brief Invoca la funcio d'interrupcio.
             /// \param event: El event.
             ///
-            inline static void interruptHandler(CNEvent event) {
+            inline static void interruptHandler(
+                CNEvent event) {
+
                 if (_isrFunction != nullptr)
                     _isrFunction(event, _isrParam);
             }

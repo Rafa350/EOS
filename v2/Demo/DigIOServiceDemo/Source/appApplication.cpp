@@ -41,11 +41,9 @@ void MyApplication::onInitialize() {
 
     // Configura la entrada corresponent al switch SW1
     //
-    #ifdef EXIST_SW1
-        GPIO_SW1::initInput(htl::GPIOPull::up);
-        sw1 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW1>());
-        sw1->setCallback(sw1EventCallback, nullptr);
-    #endif
+    GPIO_SW1::initInput(htl::GPIOPull::up);
+    sw1 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW1>());
+    sw1->setCallback(sw1EventCallback, nullptr);
 
     // COnfigura la entrada corresponent al switch SW2
     //
@@ -86,11 +84,9 @@ void MyApplication::onInitialize() {
 
     // Configura la sortida corresponent al led LED1
     //
-    #ifdef EXIST_LED1
-        GPIO_LED1::initOutput();
-        GPIO_LED1::clear();
-        led1 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED1>());
-    #endif
+    GPIO_LED1::initOutput();
+    GPIO_LED1::clear();
+    led1 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED1>());
 
     // COnfigura la sortida corresponent al led LED2
     //
@@ -140,7 +136,6 @@ void MyApplication::onInitialize() {
 /// \brief    Procesa els events del switch 1.
 /// \param    args: Parametres del event.
 ///
-#ifdef EXIST_SW1
 void MyApplication::sw1EventHandler(
     const DigInput::EventArgs &args) {
 
@@ -152,7 +147,6 @@ void MyApplication::sw1EventHandler(
         #endif
     }
 }
-#endif
 
 
 /// --------------------------------------------------------------------

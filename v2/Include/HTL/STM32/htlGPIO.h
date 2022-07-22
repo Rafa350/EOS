@@ -78,50 +78,39 @@ namespace htl {
 
     /// \brief GPIO Pull up/down mode identifier.
     enum class GPIOPull {
-        none = 0,
-        up   = 1,
-        down = 2
+    	noChange,
+        none,
+        up,
+        down
     };
 
     /// \brief GPIO Driver type identifiers.
     enum class GPIODriver {
-        pushPull  = 0,
-        openDrain = 1
+    	noChange,
+        pushPull,
+        openDrain
     };
 
     /// \brief GPIO Speed identifier.
     enum class GPIOSpeed {
-        low    = 0,
-        medium = 1,
-        high   = 2,
-        fast   = 3
+    	noChange,
+        low,
+        medium,
+        high,
+        fast
     };
-
-    /*typedef uint32_t GPIOOptions;
-    constexpr const uint32_t GPIOPull_pos = 0;
-    constexpr const uint32_t GPIOPull_bits = 0b11;
-    constexpr const uint32_t GPIOPull_mask = GPIOPull_bits << GPIOPull_pos;
-    constexpr const uint32_t GPIODriver_pos = 2;
-    constexpr const uint32_t GPIODriver_bits = 0b1;
-    constexpr const uint32_t GPIODriver_mask = GPIODriver_bits << GPIODriver_pos;
-    constexpr const uint32_t GPIOSpeed_pos = 3;
-    constexpr const uint32_t GPIOSpeed_bits = 0b11;
-    constexpr const uint32_t GPIOSpeed_mask = GPIOSpeed_bits << GPIOSpeed_pos;
-    constexpr const uint32_t GPIOAlt_pos = 5;
-    constexpr const uint32_t GPIOAlt_bits = 0b1111;
-    constexpr const uint32_t GPIOAlt_mask = GPIOAlt_bits << GPIOAlt_pos;*/
 
     void GPIO_initInput(GPIO_TypeDef*, uint32_t, GPIOPull);
     void GPIO_initOutput(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed);
     void GPIO_initAlt(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed, unsigned);
     void GPIO_deInit(GPIO_TypeDef*, uint32_t);
 
+    template <GPIOPort>
+    struct GPIOPortTrait {
+    };
+
     template <GPIOPort port_, GPIOPin pin_>
-    struct GPIOInfo {
-        enum class GPIOAlt {
-        };
-        static const uint32_t addr;
-        static const uint32_t pn;
+    struct GPIOPinTrait {
     };
 
     /// \class GPIO_x
@@ -130,12 +119,13 @@ namespace htl {
     template <GPIOPort port_, GPIOPin pin_>
     class GPIO_x {
         public:
-            using GPIOAlt = typename GPIOInfo<port_, pin_>::GPIOAlt;
+            using GPIOAlt = typename GPIOPinTrait<port_, pin_>::GPIOAlt;
 
         private:
-            using Info = GPIOInfo<port_, pin_>;
-            constexpr static const uint32_t _addr = Info::addr;
-            constexpr static const uint32_t _pn = Info::pn;
+            using PortTrait = GPIOPortTrait<port_>;
+            using PinTrait = GPIOPinTrait<port_, pin_>;
+            constexpr static const uint32_t _addr = PortTrait::addr;
+            constexpr static const uint32_t _pn = PinTrait::pn;
 
         public:
             constexpr static const GPIOPort port = port_;
@@ -151,10 +141,8 @@ namespace htl {
             GPIO_x & operator = (const GPIO_x &&) = delete;
 
         public:
-            static void initInput(GPIOPull pull = GPIOPull::none) {
-
-            	/*GPIOOptions options =
-            		uint32_t(pull) << GPIOPull_pos;*/
+            static void initInput(
+            	GPIOPull pull = GPIOPull::none) {
 
                 GPIO_initInput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr), 
@@ -162,11 +150,9 @@ namespace htl {
                     pull);
             }
 
-            static void initOutput(GPIODriver driver, GPIOSpeed speed = GPIOSpeed::medium) {
-
-            	/*GPIOOptions options =
-            		(uint32_t(driver) << GPIODriver_pos) |
-					(uint32_t(speed) << GPIOSpeed_pos);*/
+            static void initOutput(
+            	GPIODriver driver,
+				GPIOSpeed speed = GPIOSpeed::medium) {
 
             	GPIO_initOutput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
@@ -175,13 +161,11 @@ namespace htl {
                     speed);
             }
 
-            static void initAlt(GPIODriver driver, GPIOSpeed speed, GPIOAlt alt) {
+            static void initAlt(
+            	GPIODriver driver,
+				GPIOSpeed speed,
+				GPIOAlt alt) {
                 
-            	/*GPIOOptions options =
-            		(uint32_t(driver) << GPIODriver_pos) |
-					(uint32_t(speed) << GPIOSpeed_pos) |
-					(uint32_t(alt) << GPIOAlt_pos);*/
-
             	GPIO_initAlt(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     _pn,
@@ -191,7 +175,6 @@ namespace htl {
             }
 
             inline static void deInit() {
-
             	GPIO_deInit(
             		reinterpret_cast<GPIO_TypeDef*>(_addr),
 					_pn);
@@ -447,8 +430,13 @@ namespace htl {
 
 
     #ifdef GPIOA_BASE
+        template<>
+        struct GPIOPortTrait<GPIOPort::portA> {
+            static const uint32_t addr = GPIOA_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin0> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin0> {
             enum class GPIOAlt {
                 eth_MII_CRS = 11,
                 #ifdef EOS_STM32F7
@@ -461,12 +449,11 @@ namespace htl {
                 usart2_CTS = 7,
                 uart4_TX = 8,
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 0;
+            static const uint32_t pn = 0;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin1> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin1> {
             enum class GPIOAlt {
                 eth_MII_RX_CLK = 11,
                 #ifdef EOS_STM32F7
@@ -477,715 +464,690 @@ namespace htl {
                 usart2_RTS = 7,
                 uart4_RX = 8
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 1;
+            static const uint32_t pn = 1;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin3> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin3> {
             enum class GPIOAlt {
             	ltdc_B5 = 14
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 3;
+            static const uint32_t pn = 3;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin4> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin4> {
             enum class GPIOAlt {
                 dcmi_HSYNC = 13,
                 ltdc_VSYNC = 14,
                 usart2_CK = 7,
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 4;
+            static const uint32_t pn = 4;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin5> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin5> {
             enum class GPIOAlt {
                 i2s1_CL = 5,
                 spi1_SCK = 5
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 5;
+            static const uint32_t pn = 5;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin6> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin6> {
             enum class GPIOAlt {
                 dcmi_PIXCK = 13,
    				ltdc_G2 = 14,
                 spi1_MISO = 5
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 6;
+            static const uint32_t pn = 6;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin7> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin7> {
             enum class GPIOAlt {
                 i2s1_SD = 5,
                 spi1_MOSI = 5
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 7;
+            static const uint32_t pn = 7;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin11> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin11> {
             enum class GPIOAlt {
             	ltdc_R4 = 14
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 11;
+            static const uint32_t pn = 11;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portA, GPIOPin::pin12> {
+        struct GPIOPinTrait<GPIOPort::portA, GPIOPin::pin12> {
             enum class GPIOAlt {
             	ltdc_R5 = 14
             };
-            constexpr static const uint32_t addr = GPIOA_BASE;
-            constexpr static const uint32_t pn = 12;
+            static const uint32_t pn = 12;
         };
     #endif
 
     #ifdef GPIOB_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portB> {
+            static const uint32_t addr = GPIOB_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin0> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin0> {
             enum class GPIOAlt {
                 ltdc_R3 = 9
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 0;
+            static const uint32_t pn = 0;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin1> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin1> {
             enum class GPIOAlt {
                 ltdc_R6 = 9
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 1;
+            static const uint32_t pn = 1;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin8> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin8> {
             enum class GPIOAlt {
                 i2c1_SCL = 4,
                 ltdc_B6 = 14
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 8;
+            static const uint32_t pn = 8;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin9> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin9> {
             enum class GPIOAlt {
                 i2c1_SDA = 4,
                 ltdc_B7 = 14,
                 spi2_NSS = 5
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 9;
+            static const uint32_t pn = 9;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin10> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin10> {
             enum class GPIOAlt {
                 i2c2_SCL = 4,
                 ltdc_G4 = 14,
                 spi2_SCK = 5
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 10;
+            static const uint32_t pn = 10;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin11> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin11> {
             enum class GPIOAlt {
             	ltdc_G5 = 14
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 11;
+            static const uint32_t pn = 11;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin14> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin14> {
             enum class GPIOAlt {
                 spi2_MISO = 5
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 14;
+            static const uint32_t pn = 14;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin15> {
+        struct GPIOPinTrait<GPIOPort::portB, GPIOPin::pin15> {
             enum class GPIOAlt {
                 spi2_MOSI = 5
             };
-            constexpr static const uint32_t addr = GPIOB_BASE;
-            constexpr static const uint32_t pn = 15;
+            static const uint32_t pn = 15;
         };
     #endif
 
     #ifdef GPIOC_BASE
-        template <>
-        struct GPIOInfo<GPIOPort::portC, GPIOPin::pin2> {
-            enum class GPIOAlt {
-            };
-            constexpr static const uint32_t addr = GPIOC_BASE;
-            constexpr static const uint32_t pn = 2;
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portC> {
+            static const uint32_t addr = GPIOC_BASE;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portC, GPIOPin::pin6> {
+        struct GPIOPinTrait<GPIOPort::portC, GPIOPin::pin2> {
+            enum class GPIOAlt {
+            };
+            static const uint32_t pn = 2;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::portC, GPIOPin::pin6> {
             enum class GPIOAlt {
                 ltdc_HSYNC = 14,
                 uart6_TX = 8
             };
-            constexpr static const uint32_t addr = GPIOC_BASE;
-            constexpr static const uint32_t pn = 6;
+            static const uint32_t pn = 6;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portC, GPIOPin::pin7> {
+        struct GPIOPinTrait<GPIOPort::portC, GPIOPin::pin7> {
             enum class GPIOAlt {
                 ltdc_G6 = 14,
                 uart6_RX = 8
             };
-            constexpr static const uint32_t addr = GPIOC_BASE;
-            constexpr static const uint32_t pn = 7;
+            static const uint32_t pn = 7;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portC, GPIOPin::pin10> {
+        struct GPIOPinTrait<GPIOPort::portC, GPIOPin::pin10> {
             enum class GPIOAlt {
                 ltdc_R2 = 14,
             };
-            constexpr static const uint32_t addr = GPIOC_BASE;
-            constexpr static const uint32_t pn = 10;
+            static const uint32_t pn = 10;
         };
     #endif
 
     #ifdef GPIOD_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portD> {
+            static const uint32_t addr = GPIOD_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portD, GPIOPin::pin3> {
+        struct GPIOPinTrait<GPIOPort::portD, GPIOPin::pin3> {
             enum class GPIOAlt {
                 dcmi_D5 = 13,
                 ltdc_G7 = 14
             };
-            constexpr static const uint32_t addr = GPIOD_BASE;
-            constexpr static const uint32_t pn = 3;
+            static const uint32_t pn = 3;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portD, GPIOPin::pin6> {
+        struct GPIOPinTrait<GPIOPort::portD, GPIOPin::pin6> {
             enum class GPIOAlt {
             	ltdc_B2 = 14,
                 spi3_SCK = 5,
                 i2s3_SD = 5
             };
-            constexpr static const uint32_t addr = GPIOD_BASE;
-            constexpr static const uint32_t pn = 6;
+            static const uint32_t pn = 6;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portD, GPIOPin::pin7> {
+        struct GPIOPinTrait<GPIOPort::portD, GPIOPin::pin7> {
             enum class GPIOAlt {
                 fmc_NE1 = 12,
                 usart2_CK = 7,
                 spdifrx_IN0 = 8
             };
-            constexpr static const uint32_t addr = GPIOD_BASE;
-            constexpr static const uint32_t pn = 7;
+            static const uint32_t pn = 7;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portD, GPIOPin::pin13> {
+        struct GPIOPinTrait<GPIOPort::portD, GPIOPin::pin13> {
             enum class GPIOAlt {
             };
-            constexpr static const uint32_t addr = GPIOD_BASE;
-            constexpr static const uint32_t pn = 13;
+            static const uint32_t pn = 13;
         };
     #endif
 
     #ifdef GPIOE_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portE> {
+            static const uint32_t addr = GPIOE_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portE, GPIOPin::pin4> {
+        struct GPIOPinTrait<GPIOPort::portE, GPIOPin::pin4> {
             enum class GPIOAlt {
                 ltdc_B0 = 14
             };
-            constexpr static const uint32_t addr = GPIOE_BASE;
-            constexpr static const uint32_t pn = 4;
+            static const uint32_t pn = 4;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portE, GPIOPin::pin5> {
+        struct GPIOPinTrait<GPIOPort::portE, GPIOPin::pin5> {
             enum class GPIOAlt {
                 dcmi_D6 = 13
             };
-            constexpr static const uint32_t addr = GPIOE_BASE;
-            constexpr static const uint32_t pn = 5;
+            static const uint32_t pn = 5;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portE, GPIOPin::pin6> {
+        struct GPIOPinTrait<GPIOPort::portE, GPIOPin::pin6> {
             enum class GPIOAlt {
                 dcmi_D7 = 13
             };
-            constexpr static const uint32_t addr = GPIOE_BASE;
-            constexpr static const uint32_t pn = 6;
+            static const uint32_t pn = 6;
         };
     #endif
 
     #ifdef GPIOF_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portF> {
+            static const uint32_t addr = GPIOF_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portF, GPIOPin::pin7> {
+        struct GPIOPinTrait<GPIOPort::portF, GPIOPin::pin7> {
             enum class GPIOAlt {
                 spi5_SCK = 5,
                 uart7_TX = 8
             };
-            constexpr static const uint32_t addr = GPIOF_BASE;
-            constexpr static const uint32_t pn = 7;
+            static const uint32_t pn = 7;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portF, GPIOPin::pin9> {
+        struct GPIOPinTrait<GPIOPort::portF, GPIOPin::pin9> {
             enum class GPIOAlt {
                 spi5_MOSI = 5,
                 #ifdef EOS_STM32F7
                     uart7_TX = 8
                 #endif
             };
-            constexpr static const uint32_t addr = GPIOF_BASE;
-            constexpr static const uint32_t pn = 9;
+            static const uint32_t pn = 9;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portF, GPIOPin::pin10> {
+        struct GPIOPinTrait<GPIOPort::portF, GPIOPin::pin10> {
             enum class GPIOAlt {
             	ltdc_DE = 14
             };
-            constexpr static const uint32_t addr = GPIOF_BASE;
-            constexpr static const uint32_t pn = 10;
+            static const uint32_t pn = 10;
         };
     #endif
 
     #ifdef GPIOG_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portG> {
+            static const uint32_t addr = GPIOG_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin6> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin6> {
             enum class GPIOAlt {
             	ltdc_R7 = 14
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 6;
+            static const uint32_t pn = 6;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin7> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin7> {
             enum class GPIOAlt {
             	ltdc_DOTCLK = 14
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 7;
+            static const uint32_t pn = 7;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin9> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin9> {
             enum class GPIOAlt {
                 dcmi_VSYNC = 13,
                 uart6_RX = 8
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 9;
+            static const uint32_t pn = 9;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin10> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin10> {
             enum class GPIOAlt {
             	ltdc_G3 = 9
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 10;
+            static const uint32_t pn = 10;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin11> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin11> {
             enum class GPIOAlt {
             	ltdc_B3 = 14
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 11;
+            static const uint32_t pn = 11;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin12> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin12> {
             enum class GPIOAlt {
                 ltdc_B1 = 14,
                 ltdc_B4 = 9,
                 spi6_MISO = 5,
                 usart6_RTS = 8
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 12;
+            static const uint32_t pn = 12;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin13> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin13> {
             enum class GPIOAlt {
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 13;
+            static const uint32_t pn = 13;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portG, GPIOPin::pin14> {
+        struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin14> {
             enum class GPIOAlt {
             };
-            constexpr static const uint32_t addr = GPIOG_BASE;
-            constexpr static const uint32_t pn = 14;
+            static const uint32_t pn = 14;
         };
     #endif
 
     #ifdef GPIOH_BASE
-        template <>
-        struct GPIOInfo<GPIOPort::portH, GPIOPin::pin7> {
-            enum class GPIOAlt {
-                i2c3_SCL = 4
-            };
-            constexpr static const uint32_t addr = GPIOH_BASE;
-            constexpr static const uint32_t pn = 7;
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portH> {
+            static const uint32_t addr = GPIOH_BASE;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portH, GPIOPin::pin8> {
+        struct GPIOPinTrait<GPIOPort::portH, GPIOPin::pin7> {
+            enum class GPIOAlt {
+                i2c3_SCL = 4
+            };
+            static const uint32_t pn = 7;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::portH, GPIOPin::pin8> {
             enum class GPIOAlt {
                 i2c3_SDA = 4,
                 ltdc_R2 = 14
             };
-            constexpr static const uint32_t addr = GPIOH_BASE;
-            constexpr static const uint32_t pn = 8;
+            static const uint32_t pn = 8;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portH, GPIOPin::pin9> {
+        struct GPIOPinTrait<GPIOPort::portH, GPIOPin::pin9> {
             enum class GPIOAlt {
                 dcmi_D0 = 13
             };
-            constexpr static const uint32_t addr = GPIOH_BASE;
-            constexpr static const uint32_t pn = 9;
+            static const uint32_t pn = 9;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portH, GPIOPin::pin10> {
+        struct GPIOPinTrait<GPIOPort::portH, GPIOPin::pin10> {
             enum class GPIOAlt {
                 dcmi_D1 = 13
             };
-            constexpr static const uint32_t addr = GPIOH_BASE;
-            constexpr static const uint32_t pn = 10;
+            static const uint32_t pn = 10;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portH, GPIOPin::pin11> {
+        struct GPIOPinTrait<GPIOPort::portH, GPIOPin::pin11> {
             enum class GPIOAlt {
                 dcmi_D2 = 13
             };
-            constexpr static const uint32_t addr = GPIOH_BASE;
-            constexpr static const uint32_t pn = 11;
+            static const uint32_t pn = 11;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portH, GPIOPin::pin12> {
+        struct GPIOPinTrait<GPIOPort::portH, GPIOPin::pin12> {
             enum class GPIOAlt {
                 dcmi_D3 = 13
             };
-            constexpr static const uint32_t addr = GPIOH_BASE;
-            constexpr static const uint32_t pn = 12;
+            static const uint32_t pn = 12;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portH, GPIOPin::pin14> {
+        struct GPIOPinTrait<GPIOPort::portH, GPIOPin::pin14> {
             enum class GPIOAlt {
                 dcmi_D4 = 13
             };
-            constexpr static const uint32_t addr = GPIOH_BASE;
-            constexpr static const uint32_t pn = 14;
+            static const uint32_t pn = 14;
         };
     #endif
 
     #ifdef GPIOI_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portI> {
+            static const uint32_t addr = GPIOI_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin1> {
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin1> {
             enum class GPIOAlt {
                 spi2_SCK = 5
             };
-            constexpr static const uint32_t addr = GPIOI_BASE;
-            constexpr static const uint32_t pn = 1;
+            static const uint32_t pn = 1;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin9> {
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin9> {
             enum class GPIOAlt {
                 ltdc_VSYNC = 14
             };
-            constexpr static const uint32_t addr = GPIOI_BASE;
-            constexpr static const uint32_t pn = 9;
+            static const uint32_t pn = 9;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin10> {
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin10> {
             enum class GPIOAlt {
                 ltdc_HSYNC = 14
             };
-            constexpr static const uint32_t addr = GPIOI_BASE;
-            constexpr static const uint32_t pn = 10;
+            static const uint32_t pn = 10;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin12> {
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin12> {
             enum class GPIOAlt {
             	ltdc_LCDE = 14
             };
-            constexpr static const uint32_t addr = GPIOI_BASE;
-            constexpr static const uint32_t pn = 12;
+            static const uint32_t pn = 12;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin13> {
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin13> {
             enum class GPIOAlt {
             };
-            constexpr static const uint32_t addr = GPIOI_BASE;
-            constexpr static const uint32_t pn = 13;
+            static const uint32_t pn = 13;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin14> {
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin14> {
             enum class GPIOAlt {
                 ltdc_DOTCLK = 14
             };
-            constexpr static const uint32_t addr = GPIOI_BASE;
-            constexpr static const uint32_t pn = 14;
+            static const uint32_t pn = 14;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin15> {
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin15> {
             enum class GPIOAlt {
                 ltdc_R0 = 14
             };
-            constexpr static const uint32_t addr = GPIOI_BASE;
-            constexpr static const uint32_t pn = 15;
+            static const uint32_t pn = 15;
         };
     #endif
 
     #ifdef GPIOJ_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portJ> {
+            static const uint32_t addr = GPIOJ_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin0> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin0> {
             enum class GPIOAlt {
                 ltdc_R1 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 0;
+            static const uint32_t pn = 0;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin1> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin1> {
             enum class GPIOAlt {
                 ltdc_R2 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 1;
+            static const uint32_t pn = 1;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin2> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin2> {
             enum class GPIOAlt {
                 ltdc_R3 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 2;
+            static const uint32_t pn = 2;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin3> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin3> {
             enum class GPIOAlt {
                 ltdc_R4 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 3;
+            static const uint32_t pn = 3;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin4> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin4> {
             enum class GPIOAlt {
                 ltdc_R5 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 4;
+            static const uint32_t pn = 4;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin5> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin5> {
             enum class GPIOAlt {
                 ltdc_R6 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 5;
+            static const uint32_t pn = 5;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin6> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin6> {
             enum class GPIOAlt {
                 ltdc_R7 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 6;
+            static const uint32_t pn = 6;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin7> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin7> {
             enum class GPIOAlt {
                 ltdc_G0 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 7;
+            static const uint32_t pn = 7;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin8> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin8> {
             enum class GPIOAlt {
                 ltdc_G1 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 8;
+            static const uint32_t pn = 8;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin9> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin9> {
             enum class GPIOAlt {
                 ltdc_G2 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 9;
+            static const uint32_t pn = 9;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin10> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin10> {
             enum class GPIOAlt {
                 ltdc_G3 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 10;
+            static const uint32_t pn = 10;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin11> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin11> {
             enum class GPIOAlt {
                 ltdc_G4 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 11;
+            static const uint32_t pn = 11;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin13> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin13> {
             enum class GPIOAlt {
                 ltdc_B1 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 13;
+            static const uint32_t pn = 13;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin14> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin14> {
             enum class GPIOAlt {
                 ltdc_B2 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 14;
+            static const uint32_t pn = 14;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portJ, GPIOPin::pin15> {
+        struct GPIOPinTrait<GPIOPort::portJ, GPIOPin::pin15> {
             enum class GPIOAlt {
                 ltdc_B3 = 14
             };
-            constexpr static const uint32_t addr = GPIOJ_BASE;
-            constexpr static const uint32_t pn = 15;
+            static const uint32_t pn = 15;
         };
     #endif
 
     #ifdef GPIOK_BASE
+        template  <>
+        struct GPIOPortTrait<GPIOPort::portK> {
+            static const uint32_t addr = GPIOK_BASE;
+        };
+
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin0> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin0> {
             enum class GPIOAlt {
                 ltdc_G5 = 14
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 0;
+            static const uint32_t pn = 0;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin1> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin1> {
             enum class GPIOAlt {
                 ltdc_G6 = 14
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 1;
+            static const uint32_t pn = 1;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin2> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin2> {
             enum class GPIOAlt {
                 ltdc_G7 = 14
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 2;
+            static const uint32_t pn = 2;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin3> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin3> {
             enum class GPIOAlt {
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 3;
+            static const uint32_t pn = 3;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin4> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin4> {
             enum class GPIOAlt {
                 ltdc_B5 = 14
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 4;
+            static const uint32_t pn = 4;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin5> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin5> {
             enum class GPIOAlt {
                 ltdc_B6 = 14
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 5;
+            static const uint32_t pn = 5;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin6> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin6> {
             enum class GPIOAlt {
                 ltdc_B7 = 14
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 6;
+            static const uint32_t pn = 6;
         };
 
         template <>
-        struct GPIOInfo<GPIOPort::portK, GPIOPin::pin7> {
+        struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin7> {
             enum class GPIOAlt {
                 ltdc_DE = 14
             };
-            constexpr static const uint32_t addr = GPIOK_BASE;
-            constexpr static const uint32_t pn = 7;
+            static const uint32_t pn = 7;
         };
     #endif
 

@@ -54,16 +54,19 @@ namespace htl {
     };
 
     enum class GPIOPull {
+        noChange,
         none,
         up
     };
 
     enum class GPIODriver {
+        noChange,
         pushPull,
         openDrain
     };
 
     enum class GPIOSpeed {
+        noChange,
         low,
         medium,
         hight,
@@ -167,13 +170,18 @@ namespace htl {
                 GPIOPull pull = GPIOPull::none) {
 
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
+
                 regs->TRISxSET = 1 << _pn;
+
                 if constexpr (_cn != -1) {
-                    if (pull == GPIOPull::up)
-                        CNPUESET = 1 << _cn;
-                    else
-                        CNPUECLR = 1 << _cn;
+                    if (pull != GPIOPull::noChange) {
+                        if (pull == GPIOPull::up)
+                            CNPUESET = 1 << _cn;
+                        else
+                            CNPUECLR = 1 << _cn;
+                    }
                 }
+
                 if constexpr (_an != -1)
                     AD1PCFGSET = 1 <<_an;
             }
@@ -187,11 +195,15 @@ namespace htl {
                 GPIOSpeed speed = GPIOSpeed::medium) {
 
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
+
                 regs->TRISxCLR = 1 << _pn;
-                if (driver == GPIODriver::openDrain)
-                    regs->ODCxSET = 1 << _pn;
-                else
-                    regs->ODCxCLR = 1 << _pn;
+
+                if (driver != GPIODriver::noChange) {
+                    if (driver == GPIODriver::openDrain)
+                        regs->ODCxSET = 1 << _pn;
+                    else
+                        regs->ODCxCLR = 1 << _pn;
+                }
             }
 
             /// \bried Desinicialitza el pin.
@@ -229,7 +241,7 @@ namespace htl {
                 return (regs->PORTx & (1 << _pn)) != 0;
             }
 
-            /// \brief Escriu l'estat delñ pin.
+            /// \brief Escriu l'estat del pin.
             /// \param state: EL nou estat.
             ///
             inline static void write(bool value) {

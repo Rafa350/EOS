@@ -5,19 +5,24 @@
 using namespace htl;
 
 
-static uint32_t __enableA = 0;
-static uint32_t __enableB = 0;
-static uint32_t __enableC = 0;
-static uint32_t __enableD = 0;
-static uint32_t __enableE = 0;
-static uint32_t __enableF = 0;
-static uint32_t __enableG = 0;
-static uint32_t __enableH = 0;
-static uint32_t __enableI = 0;
-static uint32_t __enableJ = 0;
-static uint32_t __enableK = 0;
+static uint16_t __enableA = 0;
+static uint16_t __enableB = 0;
+static uint16_t __enableC = 0;
+static uint16_t __enableD = 0;
+static uint16_t __enableE = 0;
+static uint16_t __enableF = 0;
+static uint16_t __enableG = 0;
+static uint16_t __enableH = 0;
+static uint16_t __enableI = 0;
+static uint16_t __enableJ = 0;
+static uint16_t __enableK = 0;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Activa el rellotge del modul GPIO
+/// \param    regs: El bloc de registres.
+/// \param    pn: El numero de pin.
+///
 static void enableClock(
 	GPIO_TypeDef *regs,
 	uint32_t pn) {
@@ -94,6 +99,11 @@ static void enableClock(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el rellotge del modul GPIO.
+/// \param    regs: El bloc de registres.
+/// \param    pn: El numero de pin.
+///
 static void disableClock(
 	GPIO_TypeDef *reg,
 	uint32_t pn) {
@@ -104,6 +114,170 @@ static void disableClock(
 			if (!__enableA)
 				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN;
 			break;
+
+		case GPIOB_BASE:
+			__enableB &= ~(1 << pn);
+			if (!__enableB)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN;
+			break;
+
+		case GPIOC_BASE:
+			__enableC &= ~(1 << pn);
+			if (!__enableC)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN;
+			break;
+
+		case GPIOD_BASE:
+			__enableD &= ~(1 << pn);
+			if (!__enableD)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN;
+			break;
+
+		case GPIOE_BASE:
+			__enableE &= ~(1 << pn);
+			if (!__enableE)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN;
+			break;
+
+		case GPIOF_BASE:
+			__enableF &= ~(1 << pn);
+			if (!__enableF)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN;
+			break;
+
+		case GPIOG_BASE:
+			__enableG &= ~(1 << pn);
+			if (!__enableG)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN;
+			break;
+
+		case GPIOH_BASE:
+			__enableH &= ~(1 << pn);
+			if (!__enableH)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN;
+			break;
+
+		case GPIOI_BASE:
+			__enableI &= ~(1 << pn);
+			if (!__enableI)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN;
+			break;
+
+		case GPIOJ_BASE:
+			__enableJ &= ~(1 << pn);
+			if (!__enableJ)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN;
+			break;
+
+		case GPIOK_BASE:
+			__enableK &= ~(1 << pn);
+			if (!__enableK)
+				RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN;
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el driver de sortida.
+/// \param    regs: El bloc de registres.
+/// \param    pn: El numero de pin.
+/// \param    driver: El driver a seleccionar.
+///
+static void setDriver(
+	GPIO_TypeDef *regs,
+	uint32_t pn,
+	GPIODriver driver) {
+
+    // Configura el registre OTYPER (Output Type Register)
+    //
+	if (driver != GPIODriver::noChange) {
+
+		uint32_t temp = regs->OTYPER;
+		temp &= ~(1 << pn);
+		if (driver == GPIODriver::openDrain)
+			temp |= 1 << pn;
+		regs->OTYPER = temp;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona la velocitat de sortida.
+/// \param    regs: El bloc de registres.
+/// \param    pn: El numero de pin.
+/// \param    speed: La velocitat a seleccionar.
+///
+static void setSpeed(
+	GPIO_TypeDef *regs,
+	uint32_t pn,
+	GPIOSpeed speed) {
+
+	if (speed != GPIOSpeed::noChange) {
+
+		uint32_t value = 1; // Per defecte medium
+
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wswitch"
+		switch (speed) {
+			case GPIOSpeed::low:
+				value = 0;
+				break;
+
+			case GPIOSpeed::high:
+				value = 2;
+				break;
+
+			case GPIOSpeed::fast:
+				value = 3;
+				break;
+		}
+		#pragma GCC diagnostic pop
+
+		// Configura el registre OSPEEDR (Output Speed Register)
+		//
+		uint32_t temp = regs->OSPEEDR;
+		temp &= ~(0b11 << (pn * 2));
+		temp |= value << (pn * 2);
+		regs->OSPEEDR = temp;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona la opcio pull.
+/// \param    regs: El bloc de registres.
+/// \param    pn: El numero de pin.
+/// \param    pull: El pull a seleccionar.
+///
+static void setPull(
+	GPIO_TypeDef *regs,
+	uint32_t pn,
+	GPIOPull pull) {
+
+	if (pull != GPIOPull::noChange) {
+
+		uint32_t value = 0; // Per defecte sense PU/PD
+
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wswitch"
+		switch (pull) {
+			case GPIOPull::down:
+				value = 2;
+				break;
+
+			case GPIOPull::up:
+				value = 1;
+				break;
+		}
+		#pragma GCC diagnostic pop
+
+		// Configura el registre PUPDR (Pull Up/Down Register)
+		//
+		uint32_t temp = regs->PUPDR;
+		temp &= ~(0b11 << (pn * 2));
+		temp |= value << (pn * 2);
+		regs->PUPDR = temp;
 	}
 }
 
@@ -131,12 +305,7 @@ void htl::GPIO_initInput(
     temp &= ~(0b11 << (pn * 2));
     regs->MODER = temp;
 
-    // Configura el registre PUPDR (Pull Up/Down Register)
-    //
-    temp = regs->PUPDR;
-    temp &= ~(0b11 << (pn * 2));
-    temp |= (uint32_t(pull) & 0x11) << (pn * 2);
-    regs->PUPDR = temp;
+    setPull(regs, pn, pull);
 }
 
 
@@ -166,19 +335,8 @@ void htl::GPIO_initOutput(
     temp |= 0b01 << (pn * 2);
     regs->MODER = temp;
 
-    // Configura el registre OTYPER (Output Type Register)
-    //
-    temp = regs->OTYPER;
-    temp &= ~(0b1 << pn);
-    temp |= (uint32_t(driver) & 0b1) << pn;
-    regs->OTYPER = temp;
-
-    // Configura el registre OSPEEDR (Output Speed Register)
-    //
-    temp = regs->OSPEEDR;
-    temp &= ~(0b11 << (pn * 2));
-    temp |= (uint32_t(speed) & 0b11) << (pn * 2);
-    regs->OSPEEDR = temp;
+    setDriver(regs, pn, driver);
+    setSpeed(regs, pn, speed);
 }
 
 
@@ -212,17 +370,8 @@ void htl::GPIO_initAlt(
 
     // Configura el registre OTYPER (Output Type Register)
     //
-    temp = regs->OTYPER;
-    temp &= ~(0b1 << pn);
-    temp |= (uint32_t(driver) & 0b1) << pn;
-    regs->OTYPER = temp;
-
-    // Configura el registre OSPEEDR (Output Speed Register)
-    //
-    temp = regs->OSPEEDR;
-    temp &= ~(0b11 << (pn * 2));
-    temp |= (uint32_t(speed) & 0b11) << (pn * 2);
-    regs->OSPEEDR = temp;
+    setDriver(regs, pn, driver);
+    setSpeed(regs, pn, speed);
 
     // Configura el registre AFR (Alternate Funcion Register)
     //

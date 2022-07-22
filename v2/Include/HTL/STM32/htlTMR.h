@@ -45,26 +45,32 @@ namespace htl {
 	};
 
 	enum class TMREvent {
-		update
+		update,
+		trigger,
+		com
 	};
 
 	using TMRInterruptParam = void*;
 	using TMRInterruptFunction = void (*)(TMREvent, TMRInterruptParam);
 
+	void TMR_init(TIM_TypeDef *regs);
+	void TMR_deInit(TIM_TypeDef *regs);
+
 	template <TMRTimer timer_>
-	struct TMRInfo {
-		static const uint32_t addr;
+	struct TMRTrait {
 	};
 
 	template <TMRTimer timer_>
 	class TMR_x {
 		private:
-			using Info = TMRInfo<timer_>;
-			constexpr static const uint32_t _addr = Info::addr;
+			using Trait = TMRTrait<timer_>;
+			constexpr static const uint32_t _addr = Trait::addr;
 
 		private:
 			static halTMRData _data;
 			static halTMRHandler _handler;
+			static TMRInterruptFunction _isrFunction;
+			static TMRInterruptParam _isrParam;
 
 		private:
 			TMR_x() = delete;
@@ -81,7 +87,8 @@ namespace htl {
 			}
 
 			inline static void deInit() {
-				halTMRDeinitialize(_handler);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TMR_deInit(regs);
 			}
 
 			inline static void start() {
@@ -93,7 +100,100 @@ namespace htl {
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 				regs->CR1 &= ~TIM_CR1_CEN;
 			}
+
+			static void setInterruptFunction(
+				TMRInterruptFunction function,
+				TMRInterruptParam param) {
+
+				_isrFunction = function;
+				_isrParam = param;
+			}
+
+			static void enableInterrupt(
+				TMREvent event) {
+
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				switch (event) {
+					case TMREvent::update:
+						regs->DIER |= TIM_DIER_UIE;
+						break;
+
+					case TMREvent::trigger:
+						regs->DIER |= TIM_DIER_TIE;
+						break;
+
+					case TMREvent::com:
+						regs->DIER |= TIM_DIER_COMIE;
+						break;
+				}
+			}
+
+			static bool disableInterrupt(
+				TMREvent event) {
+
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				switch (event) {
+					case TMREvent::update:
+						regs->DIER &= ~TIM_DIER_UIE;
+						break;
+
+					case TMREvent::trigger:
+						regs->DIER &= ~TIM_DIER_TIE;
+						break;
+
+					case TMREvent::com:
+						regs->DIER &= ~TIM_DIER_COMIE;
+						break;
+				}
+			}
+
+            static bool getInterruptFlag(
+            	TMREvent event) {
+
+            	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				switch (event) {
+					case TMREvent::update:
+						return (regs->SR & TIM_SR_UIF) != 0;
+
+					case TMREvent::trigger:
+						return (regs->SR & TIM_SR_TIF) != 0;
+
+					case TMREvent::com:
+						return (regs->SR & TIM_SR_COMIF) != 0;
+				}
+            }
+
+            static void clearInterruptFlag(
+            	TMREvent event) {
+
+            	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				switch (event) {
+					case TMREvent::update:
+						regs->SR &= ~TIM_SR_UIF;
+						break;
+
+					case TMREvent::trigger:
+						regs->SR &= ~TIM_SR_TIF;
+						break;
+
+					case TMREvent::com:
+						regs->SR &= ~TIM_SR_COMIF;
+						break;
+				}
+            }
+
+
+			inline static void interruptHandler(
+				TMREvent event) {
+
+				if (_isrFunction != nullptr)
+                    _isrFunction(event, _isrParam);
+            }
+
 	};
+
+	template <TMRTimer timer_> TMRInterruptFunction TMR_x<timer_>::_isrFunction = nullptr;
+	template <TMRTimer timer_> TMRInterruptParam TMR_x<timer_>::_isrParam = nullptr;
 
 	using TMR_1 = TMR_x<TMRTimer::timer1>;
 	using TMR_2 = TMR_x<TMRTimer::timer2>;
@@ -111,72 +211,72 @@ namespace htl {
 	using TMR_14 = TMR_x<TMRTimer::timer14>;
 
 	template <>
-	struct TMRInfo<TMRTimer::timer1> {
+	struct TMRTrait<TMRTimer::timer1> {
 		static const uint32_t addr = TIM1_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer2> {
+	struct TMRTrait<TMRTimer::timer2> {
 		static const uint32_t addr = TIM2_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer3> {
+	struct TMRTrait<TMRTimer::timer3> {
 		static const uint32_t addr = TIM3_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer4> {
+	struct TMRTrait<TMRTimer::timer4> {
 		static const uint32_t addr = TIM4_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer5> {
+	struct TMRTrait<TMRTimer::timer5> {
 		static const uint32_t addr = TIM5_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer6> {
+	struct TMRTrait<TMRTimer::timer6> {
 		static const uint32_t addr = TIM6_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer7> {
+	struct TMRTrait<TMRTimer::timer7> {
 		static const uint32_t addr = TIM7_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer8> {
+	struct TMRTrait<TMRTimer::timer8> {
 		static const uint32_t addr = TIM8_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer9> {
+	struct TMRTrait<TMRTimer::timer9> {
 		static const uint32_t addr = TIM9_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer10> {
+	struct TMRTrait<TMRTimer::timer10> {
 		static const uint32_t addr = TIM10_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer11> {
+	struct TMRTrait<TMRTimer::timer11> {
 		static const uint32_t addr = TIM11_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer12> {
+	struct TMRTrait<TMRTimer::timer12> {
 		static const uint32_t addr = TIM12_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer13> {
+	struct TMRTrait<TMRTimer::timer13> {
 		static const uint32_t addr = TIM13_BASE;
 	};
 
 	template <>
-	struct TMRInfo<TMRTimer::timer14> {
+	struct TMRTrait<TMRTimer::timer14> {
 		static const uint32_t addr = TIM14_BASE;
 	};
 }

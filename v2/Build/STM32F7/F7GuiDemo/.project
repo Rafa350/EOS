@@ -759,6 +759,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlRegisters.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlRegisters.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlTMR.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
@@ -1002,6 +1007,11 @@
 			<name>src/Framework/EOS/HTL/STM32/htlGPIO_Init.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_Init.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlTMR_Init.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR_Init.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

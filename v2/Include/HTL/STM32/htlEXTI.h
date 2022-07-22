@@ -182,7 +182,7 @@ namespace htl {
                 regs->PR &= ~(1 << _ln);
             }
 
-			static void interruptHandler(
+			inline static void interruptHandler(
 				EXTIEvent event) {
 
 				if (_isrFunction != nullptr)

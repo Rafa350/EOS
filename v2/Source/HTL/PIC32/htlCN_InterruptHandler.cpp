@@ -14,8 +14,8 @@ extern void __ISR(_CHANGE_NOTICE_VECTOR, IPL2SOFT) CN_1_InterruptVector(void);
 ///
 extern "C" void CN_1_InterruptHandler() {
 
-    if (IFS1bits.CNIF) {
+    if (CN_1::getInterruptFlag(CNEvent::change)) {
         CN_1::interruptHandler(CNEvent::change);
-        IFS1bits.CNIF = 0;
+        CN_1::clearInterruptFlag(CNEvent::change);
     }
 }
