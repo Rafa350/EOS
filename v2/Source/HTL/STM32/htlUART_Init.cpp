@@ -12,6 +12,7 @@ void htm::UART_init(
 }
 
 
-void htm::UART_deInit() {
+void htm::UART_deInit(
+	UART_TypeDef* reg) {
 
 }
