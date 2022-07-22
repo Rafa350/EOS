@@ -2,8 +2,9 @@
 #define __eosConfig__
 
 
-#define USE_LEDS_LED1
-#define USE_SWITCHES_SW1
+#define USE_LED1
+#define USE_SW1
+#define USE_ARDUINO
 
 
 #include "Board/eosBoard.h"
@@ -48,7 +49,10 @@
 
 // Configuracio del servei USART
 //
-#define USARTService_Enabled                          1    // Servei activat
+#define UARTService_Enabled                           1    // Servei activat
+#define UARTService_UART                              board::arduino::UART
+#define UARTService_GPIO_TX                           board::arduino::GPIO_TX;
+#define UARTService_GPIO_RX                           board::arduino::GPIO_RX;
 
 
 

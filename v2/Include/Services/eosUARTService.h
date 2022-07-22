@@ -14,6 +14,10 @@
 namespace eos {
 
 	class UARTService: public Service {
+		private:
+			using UART = UARTService_UART;
+			using GPIO_TX = UARTService_GPIO_TX;
+			using GPIO_RX = UARTService_GPIO_RX;
 		public:
 			enum class Event {
 				transmissionFinished,
@@ -32,7 +36,6 @@ namespace eos {
 			};
 
 		private:
-			htl::UARTAttachedAdapter _uart;
 			uint8_t *_txBuffer;
 			unsigned _txLength;
 			unsigned _txCount;

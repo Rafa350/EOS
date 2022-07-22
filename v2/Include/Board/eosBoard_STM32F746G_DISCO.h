@@ -7,6 +7,7 @@
 #include "HTL/htlGPIO.h"
 #include "HTL/htlI2C.h"
 #include "HTL/htlSPI.h"
+#include "HTL/htlUART.h"
 #include "HTL/STM32/htlEXTI.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "System/Graphics/eosColor.h"
@@ -188,13 +189,17 @@ namespace board {
 			using GPIO_D14 = htl::GPIO_B9;
 			using GPIO_D15 = htl::GPIO_B8;
 
-			using SCL = htl::GPIO_B8;
-			using SDA = htl::GPIO_B9;
+			using GPIO_TX = htl::GPIO_C6;
+			using GPIO_RX = htl::GPIO_C7;
+			using UART = htl::UART_6;
+
+			using GPIO_SCL = htl::GPIO_B8;
+			using GPIO_SDA = htl::GPIO_B9;
 			using I2C = htl::I2C_1;
 
-			using SCK = htl::GPIO_I1;
-			using MISO = htl::GPIO_B14;
-			using MOSI = htl::GPIO_B15;
+			using GPIO_SCK = htl::GPIO_I1;
+			using GPIO_MISO = htl::GPIO_B14;
+			using GPIO_MOSI = htl::GPIO_B15;
 			using SPI = htl::SPI_2;
 		}
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __STM32_htlUART__
 #define __STM32_htlUART__
 
@@ -9,7 +10,7 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-namespace eos {
+namespace htl {
 
 	enum class UARTChannel {
         #ifdef USART1
@@ -38,14 +39,41 @@ namespace eos {
         #endif
 	};
 
+	enum class UARTEvent {
+		cts,
+		brk,
+		txEmpty,
+		txComplete,
+		rxFull,
+		idle,
+		parity,
+		framming,
+		overrun,
+		noise,
+		error
+	};
+
+	using UARTInterruptParam = void*;
+	using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
+
+	template <UARTChannel>
+	struct UARTTrait {
+	};
+
 	template <UARTChannel channel_>
 	class UART_x {
 		private:
+			using Trait = UARTTrait<channel_>;
 			static halUARTData _data;
 			static halUARTHandler _handler;
 
 		public:
 			constexpr static const UARTChannel channel = channel_;
+
+		private:
+			constexpr static const uint32_t _addr = Trait::addr;
+			static UARTInterruptFunction _isrFunction;
+			static UARTInterruptParam _isrParam;
 
 		private:
 			UART_x() = delete;
@@ -55,16 +83,16 @@ namespace eos {
 			UART_x & operator = (const UART_x &&) = delete;
 
 		public:
-			inline static void init(const halUARTSettings &settings) {
+			static void init(const halUARTSettings &settings) {
 				_handler = halUARTInitialize(&_data, &settings);
 			}
 
-			inline static void deInit() {
+			static void deInit() {
 				halUARTDeinitialize(_handler);
 			}
 
 			template <typename gpio_>
-			inline static void initTXPin() {
+			static void initTXPin() {
                 #ifdef USART1
                     if constexpr (channel_ == UARTChannel::channel1)
                         gpio_::initAlt(
@@ -72,10 +100,17 @@ namespace eos {
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::uart1_TX);
                 #endif                        
+				#ifdef USART6
+					if constexpr (channel_ == UARTChannel::channel6)
+						gpio_::initAlt(
+							GPIOSpeed::fast,
+							GPIODriver::pushPull,
+							gpio_::GPIOAlt::uart6_TX);
+				#endif
 			}
 
 			template <typename gpio_>
-			inline static void initRXPin() {
+			static void initRXPin() {
                 #ifdef USART1
                     if constexpr (channel_ == UARTChannel::channel1)
                         gpio_::initAlt(
@@ -83,19 +118,75 @@ namespace eos {
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::uart1_RX);
                 #endif                        
+				#ifdef USART6
+					if constexpr (channel_ == UARTChannel::channel6)
+						gpio_::initAlt(
+							GPIOSpeed::fast,
+							GPIODriver::pushPull,
+							gpio_::GPIOAlt::uart6_RX);
+				#endif
 			}
 
-			inline static void send(uint8_t data) const {
-				halUARTSend(_handler, data);
+			static void send(
+				uint8_t data) {
 			}
 
-			inline static halUARTHandler getHandler() const {
-				return _handler;
+			static void enableInterrupt(
+				UARTEvent event) {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+
+			}
+
+			static void disableInterrupt(
+				UARTEvent event) {
+
+			}
+
+			static bool getInterruptFlag(
+				UARTEvent event) {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				switch (event) {
+					case UARTEvent::rxFull:
+						return (regs->ISR & ~USART_ISR_RXNE) != 0;
+
+					case UARTEvent::txEmpty:
+						return (regs->ISR & ~USART_ISR_TXE) != 0;
+
+					case UARTEvent::txComplete:
+						return (regs->ISR & ~USART_ISR_TC) != 0;
+
+					case UARTEvent::parity:
+						return (regs->ISR & ~USART_ISR_PE) != 0;
+
+					case UARTEvent::overrun:
+						return (regs->ISR & ~USART_ISR_ORE) != 0;
+
+					case UARTEvent::framming:
+						return (regs->ISR & USART_ISR_FE) != 0;
+
+					case UARTEvent::noise:
+						return (regs->ISR & USART_ISR_NE) != 0;
+				}
+			}
+
+			static void clearInterruptFlag(
+				UARTEvent event) {
+
+			}
+
+			static void setInterruptFunction(
+				UARTInterruptFunction function,
+				UARTInterruptParam param) {
+
+				_isrFunction = function;
+				_isrParam = param;
 			}
 	};
     
-    template <typename UARTChannel> halUARTData UART_x::_data;
-    template <typename UARTChannel> halUARTHandler UART_x::_handler;
+    template <UARTChannel channel_> UARTInterruptFunction UART_x<channel_>::_isrFunction = nullptr;
+    template <UARTChannel channel_> UARTInterruptParam UART_x<channel_>::_isrParam = nullptr;
 
 
     #ifdef USART1
@@ -122,6 +213,39 @@ namespace eos {
     #ifdef UART8
         using UART_8 = UART_x<UARTChannel::channel8>;
     #endif
+
+    template <>
+    struct UARTTrait<UARTChannel::channel1> {
+    	static const uint32_t addr = USART1_BASE;
+    };
+    template <>
+    struct UARTTrait<UARTChannel::channel2> {
+    	static const uint32_t addr = USART2_BASE;
+    };
+    template <>
+    struct UARTTrait<UARTChannel::channel3> {
+    	static const uint32_t addr = USART3_BASE;
+    };
+    template <>
+    struct UARTTrait<UARTChannel::channel4> {
+    	static const uint32_t addr = UART4_BASE;
+    };
+    template <>
+    struct UARTTrait<UARTChannel::channel5> {
+    	static const uint32_t addr = UART5_BASE;
+    };
+    template <>
+    struct UARTTrait<UARTChannel::channel6> {
+    	static const uint32_t addr = USART6_BASE;
+    };
+    template <>
+    struct UARTTrait<UARTChannel::channel7> {
+    	static const uint32_t addr = UART7_BASE;
+    };
+    template <>
+    struct UARTTrait<UARTChannel::channel8> {
+    	static const uint32_t addr = UART8_BASE;
+    };
 
 }
 

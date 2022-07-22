@@ -126,6 +126,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HTL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -172,6 +177,11 @@
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -241,11 +251,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halGPIO_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO_ex.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/HAL/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT.h</locationURI>
@@ -261,14 +266,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halUART.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halUART.h</locationURI>
+			<name>Inc/Framework/EOS/HTL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halUART_ex.h</name>
+			<name>Inc/Framework/EOS/HTL/htlGPIO.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halUART_ex.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/htlUART.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlUART.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/OSAL/osalHeap.h</name>
@@ -347,6 +357,11 @@
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -526,11 +541,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halGPIO_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO_ex.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
@@ -546,14 +556,24 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halUART.h</name>
+			<name>Inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUART.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halUART_ex.h</name>
+			<name>Inc/Framework/EOS/HTL/STM32/htlI2C.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUART_ex.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlI2C.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/htlUART.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/htlUART_InterruptHandler.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART_InterruptHandler.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/System/Collections/eosFIFOContainer.h</name>
@@ -604,6 +624,11 @@
 			<name>Src/Framework/EOS/HAL/STM32/halUART.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halUART.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32/htlUART_Init.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlUART_Init.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

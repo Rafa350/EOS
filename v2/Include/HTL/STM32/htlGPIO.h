@@ -113,6 +113,37 @@ namespace htl {
     struct GPIOPinTrait {
     };
 
+    template <GPIOPort port_, GPIOPin pin_>
+    class GPIOAdapter {
+    private:
+         uint32_t _addr;
+         uint32_t _pn;
+
+     public:
+         GPIOAdapter(uint32_t addr, uint32_t pn):
+             _addr(addr),
+             _pn(pn) {
+         }
+
+         GPIOAdapter(const GPIOAdapter &other) :
+             _addr(other._addr),
+             _pn(other._pn) {
+         }
+
+         inline void set() const {
+         }
+
+         inline void clear() const {
+         }
+
+         inline void toggle() const {
+         }
+
+         inline bool read() const {
+        	 return false;
+         }
+    };
+
     /// \class GPIO_x
     /// \brief Adapter class for gpio pins
     ///
