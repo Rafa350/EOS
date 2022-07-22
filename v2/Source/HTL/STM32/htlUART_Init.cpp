@@ -6,7 +6,8 @@ using namespace htl;
 
 
 
-void htm::UART_init() {
+void htm::UART_init(
+	UART_TypeDef* reg) {
 
 }
 
