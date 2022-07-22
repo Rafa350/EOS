@@ -5,6 +5,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -66,7 +67,7 @@ unsigned UARTService::send(
 		//
 		UART::disableInterrupt(UARTEvent::txEmpty);
 		UART::disableInterrupt(UARTEvent::txComplete);
-		UART::clearInterruptFlags(HAL_UART_EVENT_ALL);
+		UART::clearInterruptFlags();
 	}
 
 	return _txCount;
@@ -100,9 +101,9 @@ unsigned UARTService::receive(
 
 	if (!_rxPending.wait(blockTime)) {
 		UART::disableInterrupt(UARTEvent::rxFull);
-		UART::disableInterrupt(UARTEvent::pariry);
+		UART::disableInterrupt(UARTEvent::parity);
 		UART::disableInterrupt(UARTEvent::error);
-		UART::clearInterruptFlags(HAL_UART_EVENT_ALL);
+		UART::clearInterruptFlags();
     	_rxPending.release();
 	}
 
@@ -118,7 +119,7 @@ void UARTService::onInitialize() {
 	Service::onInitialize();
 
 	UART::setInterruptFunction(uartInterruptFunction, this);
-	UART::clearInterruptFlag(HAL_UART_EVENT_ALL);
+	UART::clearInterruptFlags();
 }
 
 
@@ -149,28 +150,28 @@ void UARTService::onTask(
 /// \param    event: L'event que ha generat la interrupcio.
 ///
 void UARTService::uartInterruptFunction(
-	uint32_t event) {
+	UARTEvent event) {
 
 	switch (event) {
 
 		// RXNE (Reception data register not empty)
 		//
-		case HAL_UART_EVENT_RXFULL:
+		case UARTEvent::rxFull:
 			_rxBuffer[_rxCount++] = UART::receive();
 			if (_rxCount == _rxSize) {
-				UART::disableInterrupt(HAL_UART_EVENT_RXFULL);
-				UART::disableInterrupt(HAL_UART_EVENT_PARITY);
-				UART::disableInterrupt(HAL_UART_EVENT_ERROR);
+				UART::disableInterrupt(UARTEvent::rxFull);
+				UART::disableInterrupt(UARTEvent::parity);
+				UART::disableInterrupt(UARTEvent::error);
 				_rxPending.releaseISR();
 			}
 			break;
 
 		// TXE (Transmit data register empty)
 		//
-		case HAL_UART_EVENT_TXEMPTY: {
+		case UARTEvent::txEmpty: {
 			if (_txCount == _txLength) {
-				UART::disableInterrupt(HAL_UART_EVENT_TXEMPTY);
-				UART::enableInterrupt(HAL_UART_EVENT_TXCOMPLETE);
+				UART::disableInterrupt(UARTEvent::txEmpty);
+				UART::enableInterrupt(UARTEvent::txComplete);
 			}
 			else
 				UART::send(_txBuffer[_txCount++]);
@@ -179,9 +180,9 @@ void UARTService::uartInterruptFunction(
 
 		// Comprova un event TC (Transmit complete).
 		//
-		case HAL_UART_EVENT_TXCOMPLETE:
-			UART::disableInterrupt(HAL_UART_EVENT_TXEMPTY);
-			UART::disableInterrupt(HAL_UART_EVENT_TXCOMPLETE);
+		case UARTEvent::txComplete:
+			UART::disableInterrupt(UARTEvent::txEmpty);
+			UART::disableInterrupt(UARTEvent::txComplete);
 			_txPending.releaseISR();
 			break;
 	}
@@ -195,13 +196,9 @@ void UARTService::uartInterruptFunction(
 /// \param    event: L'event que ha generat la interrupcio.
 ///
 void UARTService::uartInterruptFunction(
-	halUARTHandler handler,
-	void* params,
-	uint32_t event) {
+	UARTEvent event,
+	UARTInterruptParam param) {
 
-	eosAssert(handler != nullptr);
-	eosAssert(params != nullptr);
-
-	UARTService *service = static_cast<UARTService*>(params);
+	UARTService *service = static_cast<UARTService*>(param);
 	service->uartInterruptFunction(event);
 }

@@ -6,7 +6,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/STM32/halUART.h"
 #include "HTL/STM32/htlGPIO.h"
 
 
@@ -14,29 +13,47 @@ namespace htl {
 
 	enum class UARTChannel {
         #ifdef USART1
-            channel1 = HAL_UART_CHANNEL_1,
+            channel1,
         #endif
         #ifdef USART2
-            channel2 = HAL_UART_CHANNEL_2,
+            channel2,
         #endif
         #ifdef USART3
-            channel3 = HAL_UART_CHANNEL_3,
+            channel3,
         #endif
         #ifdef UART4
-            channel4 = HAL_UART_CHANNEL_4,
+            channel4,
         #endif
         #ifdef UART5
-            channel5 = HAL_UART_CHANNEL_5,
+            channel5,
         #endif
         #ifdef USART6
-            channel6 = HAL_UART_CHANNEL_6,
+            channel6,
         #endif
         #ifdef UART7
-            channel7 = HAL_UART_CHANNEL_7,
+            channel7,
         #endif
         #ifdef UART8
-            channel8 = HAL_UART_CHANNEL_8,
+            channel8,
         #endif
+	};
+
+	enum class UARTParity {
+		none,
+		even,
+		odd
+	};
+
+	enum class UARTWord {
+		word7,
+		word8
+	};
+
+	enum class UARTStop {
+		stop0_5,
+		stop1,
+		stop1_5,
+		stop2
 	};
 
 	enum class UARTEvent {
@@ -56,6 +73,8 @@ namespace htl {
 	using UARTInterruptParam = void*;
 	using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
 
+	void UART_init(USART_TypeDef*, UARTWord, UARTParity, UARTStop);
+
 	template <UARTChannel>
 	struct UARTTrait {
 	};
@@ -64,8 +83,6 @@ namespace htl {
 	class UART_x {
 		private:
 			using Trait = UARTTrait<channel_>;
-			static halUARTData _data;
-			static halUARTHandler _handler;
 
 		public:
 			constexpr static const UARTChannel channel = channel_;
@@ -82,13 +99,65 @@ namespace htl {
 			UART_x & operator = (const UART_x &) = delete;
 			UART_x & operator = (const UART_x &&) = delete;
 
+			static void enableCLock() {
+
+				if constexpr (channel_ == UARTChannel::channel1)
+					RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+				if constexpr (channel_ == UARTChannel::channel2)
+					RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+				if constexpr (channel_ == UARTChannel::channel3)
+					RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+				if constexpr (channel_ == UARTChannel::channel4)
+					RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+				if constexpr (channel_ == UARTChannel::channel5)
+					RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+				if constexpr (channel_ == UARTChannel::channel6)
+					RCC->APB2ENR |= RCC_APB2ENR_USART6EN;
+				if constexpr (channel_ == UARTChannel::channel7)
+					RCC->APB1ENR |= RCC_APB1ENR_UART7EN;
+				if constexpr (channel_ == UARTChannel::channel8)
+					RCC->APB1ENR |= RCC_APB1ENR_UART8EN;
+
+				__DSB();
+
+			}
+
+			static void disableCLock() {
+
+				if constexpr (channel_ == UARTChannel::channel1)
+					RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+				if constexpr (channel_ == UARTChannel::channel2)
+					RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+				if constexpr (channel_ == UARTChannel::channel3)
+					RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+				if constexpr (channel_ == UARTChannel::channel4)
+					RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
+				if constexpr (channel_ == UARTChannel::channel5)
+					RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
+				if constexpr (channel_ == UARTChannel::channel6)
+					RCC->APB2ENR &= ~RCC_APB2ENR_USART6EN;
+				if constexpr (channel_ == UARTChannel::channel7)
+					RCC->APB1ENR &= ~RCC_APB1ENR_UART7EN;
+				if constexpr (channel_ == UARTChannel::channel8)
+					RCC->APB1ENR &= ~RCC_APB1ENR_UART8EN;
+			}
+
 		public:
-			static void init(const halUARTSettings &settings) {
-				_handler = halUARTInitialize(&_data, &settings);
+			static void init() {
+
+				enableCLock();
+				UART_init(
+					reinterpret_cast<USART_TypeDef*>(_addr),
+					UARTWord::word8,
+					UARTParity::none,
+					UARTStop::stop1);
 			}
 
 			static void deInit() {
-				halUARTDeinitialize(_handler);
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				regs->CR1 &= ~USART_CR1_UE;
+				disableCLock();
 			}
 
 			template <typename gpio_>
@@ -129,17 +198,66 @@ namespace htl {
 
 			static void send(
 				uint8_t data) {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				regs->TDR = data;
+			}
+
+			static uint8_t receive() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				return regs->RDR;
 			}
 
 			static void enableInterrupt(
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				switch (event) {
+					case UARTEvent::cts:
+						regs->CR3 |= USART_CR3_CTSIE;
+						break;
 
+					case UARTEvent::brk:
+						regs->CR2 |= USART_CR2_LBDIE;
+						break;
+
+					case UARTEvent::idle:
+						regs->CR1 |= USART_CR1_IDLEIE;
+						break;
+
+					case UARTEvent::txEmpty:
+						regs->CR1 |= USART_CR1_TXEIE;
+						break;
+
+					case UARTEvent::txComplete:
+						regs->CR1 |= USART_CR1_TCIE;
+						break;
+
+					case UARTEvent::rxFull:
+						regs->CR1 |= USART_CR1_RXNEIE;
+						break;
+
+					case UARTEvent::parity:
+						regs->CR1 |= USART_CR1_PEIE;
+						break;
+
+					case UARTEvent::framming:
+						break;
+
+					case UARTEvent::error:
+						regs->CR3 |= USART_CR3_EIE;
+						break;
+				}
 			}
 
-			static void disableInterrupt(
+			static bool disableInterrupt(
 				UARTEvent event) {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				switch (event) {
+
+				}
 
 			}
 
@@ -174,6 +292,15 @@ namespace htl {
 			static void clearInterruptFlag(
 				UARTEvent event) {
 
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+
+			}
+
+			static void clearInterruptFlags() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				regs->ISR &= ~(USART_ISR_RXNE | USART_ISR_TXE | USART_ISR_TC |
+					USART_ISR_PE | USART_ISR_ORE | USART_ISR_FE | USART_ISR_NE);
 			}
 
 			static void setInterruptFunction(

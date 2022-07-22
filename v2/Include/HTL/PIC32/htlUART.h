@@ -45,13 +45,13 @@ namespace htl {
     };
 
     enum class UARTStop {
-        s1,
-        s2
+        stop1,
+        stop2
     };
 
-    enum class UARTLength {
-        l8,
-        l9
+    enum class UARTWord {
+        word8,
+        word9
     };
 
     enum class UARTBaud {
@@ -96,7 +96,6 @@ namespace htl {
 
     template <UARTChannel channel_>
     struct UARTInfo {
-        static const uint32_t addr;
     };
 
 	template <UARTChannel channel_>
@@ -125,13 +124,13 @@ namespace htl {
 		public:
 			static void init(
                 UARTBaud baud,
-                UARTLength length,
+                UARTWord word,
                 UARTParity parity,
                 UARTStop stop,
                 UARTMode mode = UARTMode::bidirectional) {
 
                 UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
-                UART_init(regs, baud, length, parity, stop, mode);
+                UART_init(regs, baud, word, parity, stop, mode);
 			}
 
 			static void deInit() {
@@ -556,5 +555,5 @@ namespace htl {
 }
 
 
-#endif // __PIC32_halUARTTpl__
+#endif // __PIC32_htmUART__
 

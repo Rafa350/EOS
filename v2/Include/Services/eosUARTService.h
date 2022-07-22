@@ -53,11 +53,11 @@ namespace eos {
 			void onTerminate() override;
 			void onTask(Task *task) override;
 
-			unsigned send(uint8_t* data, unsigned length, unsigned blockTime);
-			unsigned receive(uint8_t* data, unsigned size, unsigned blockTime);
+			unsigned send(uint8_t *data, unsigned length, unsigned blockTime);
+			unsigned receive(uint8_t *data, unsigned size, unsigned blockTime);
 
-			void uartInterruptFunction(uint32_t event);
-            static void uartInterruptFunction(halUARTHandler handler, void* params, uint32_t event);
+			void uartInterruptFunction(htl::UARTEvent event);
+			static void uartInterruptFunction(htl::UARTEvent event, htl::UARTInterruptParam param);
 	};
 }
 
