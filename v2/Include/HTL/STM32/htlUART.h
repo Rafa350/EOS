@@ -56,6 +56,32 @@ namespace htl {
 		stop2
 	};
 
+	enum class UARTBaudMode {
+		b1200,
+		b2400,
+		b4800,
+		b9600,
+		b19200,
+		b38400,
+		b57600,
+		b115200,
+		div,
+		rate,
+		automatic
+	};
+
+	enum class UARTClockMode {
+		pclk,
+		sysclk,
+		hsi,
+		lse
+	};
+
+	enum class UARTOverSampling {
+		os8,
+		os16
+	};
+
 	enum class UARTEvent {
 		cts,
 		brk,
@@ -73,7 +99,11 @@ namespace htl {
 	using UARTInterruptParam = void*;
 	using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
 
-	void UART_init(USART_TypeDef*, UARTWord, UARTParity, UARTStop);
+	void UART_init();
+	void UART_setProtocol(USART_TypeDef*, UARTWord, UARTParity, UARTStop);
+	void UART_setTimming(USART_TypeDef*, UARTBaudMode, UARTClockMode, unsigned rate, UARTOverSampling);
+	void UART_enableInterrupt(USART_TypeDef*, UARTEvent);
+	bool UART_disableInterrupt(USART_TypeDef*, UARTEvent);
 
 	template <UARTChannel>
 	struct UARTTrait {
@@ -99,7 +129,7 @@ namespace htl {
 			UART_x & operator = (const UART_x &) = delete;
 			UART_x & operator = (const UART_x &&) = delete;
 
-			static void enableCLock() {
+			static void enableClock() {
 
 				if constexpr (channel_ == UARTChannel::channel1)
 					RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
@@ -122,7 +152,7 @@ namespace htl {
 
 			}
 
-			static void disableCLock() {
+			static void disableClock() {
 
 				if constexpr (channel_ == UARTChannel::channel1)
 					RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
@@ -143,21 +173,63 @@ namespace htl {
 			}
 
 		public:
+			/// \bried Inicialitza el modul.
+			///
 			static void init() {
 
-				enableCLock();
-				UART_init(
-					reinterpret_cast<USART_TypeDef*>(_addr),
-					UARTWord::word8,
-					UARTParity::none,
-					UARTStop::stop1);
+				enableClock();
 			}
 
+			/// \bried Desinicialitza el modul.
+			///
 			static void deInit() {
+
+				disable();
+				disableClock();
+			}
+
+			/// \brief Habilita el modul per comunicar
+			///
+			static void enable() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				regs->CR1 |= USART_CR1_UE;
+			}
+
+			/// \brief Deshabilita el modul per comunicar
+			///
+			static void disable() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->CR1 &= ~USART_CR1_UE;
-				disableCLock();
+			}
+
+			/// \brief Configuracio del timing.
+			/// \param baudMode: Opcions de baud.
+			/// \param clockMode: Opcions del clock.
+			/// \param baud: El valor de velocitat.
+			/// \param overSampling: Valor del sobre mostrejat
+			///
+			static void setTimming(
+				UARTBaudMode baudMode,
+				UARTClockMode clockMode,
+				unsigned rate = 0,
+				UARTOverSampling overSampling = UARTOverSampling::os16) {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				UART_setTimming(regs, baudMode, clockMode, rate, overSampling);
+			}
+
+			static void setProtocol(
+				UARTWord word,
+				UARTParity parity,
+				UARTStop stop) {
+
+				UART_setProtocol(
+					reinterpret_cast<USART_TypeDef*>(_addr),
+					word,
+					parity,
+					stop);
 			}
 
 			template <typename gpio_>
@@ -165,15 +237,15 @@ namespace htl {
                 #ifdef USART1
                     if constexpr (channel_ == UARTChannel::channel1)
                         gpio_::initAlt(
-                            GPIOSpeed::fast,
                             GPIODriver::pushPull,
+                            GPIOSpeed::fast,
                             gpio_::GPIOAlt::uart1_TX);
                 #endif                        
 				#ifdef USART6
 					if constexpr (channel_ == UARTChannel::channel6)
 						gpio_::initAlt(
-							GPIOSpeed::fast,
 							GPIODriver::pushPull,
+							GPIOSpeed::fast,
 							gpio_::GPIOAlt::uart6_TX);
 				#endif
 			}
@@ -183,15 +255,15 @@ namespace htl {
                 #ifdef USART1
                     if constexpr (channel_ == UARTChannel::channel1)
                         gpio_::initAlt(
-                            GPIOSpeed::fast,
                             GPIODriver::pushPull,
+                            GPIOSpeed::fast,
                             gpio_::GPIOAlt::uart1_RX);
                 #endif                        
 				#ifdef USART6
 					if constexpr (channel_ == UARTChannel::channel6)
 						gpio_::initAlt(
-							GPIOSpeed::fast,
 							GPIODriver::pushPull,
+							GPIOSpeed::fast,
 							gpio_::GPIOAlt::uart6_RX);
 				#endif
 			}
@@ -213,52 +285,14 @@ namespace htl {
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				switch (event) {
-					case UARTEvent::cts:
-						regs->CR3 |= USART_CR3_CTSIE;
-						break;
-
-					case UARTEvent::brk:
-						regs->CR2 |= USART_CR2_LBDIE;
-						break;
-
-					case UARTEvent::idle:
-						regs->CR1 |= USART_CR1_IDLEIE;
-						break;
-
-					case UARTEvent::txEmpty:
-						regs->CR1 |= USART_CR1_TXEIE;
-						break;
-
-					case UARTEvent::txComplete:
-						regs->CR1 |= USART_CR1_TCIE;
-						break;
-
-					case UARTEvent::rxFull:
-						regs->CR1 |= USART_CR1_RXNEIE;
-						break;
-
-					case UARTEvent::parity:
-						regs->CR1 |= USART_CR1_PEIE;
-						break;
-
-					case UARTEvent::framming:
-						break;
-
-					case UARTEvent::error:
-						regs->CR3 |= USART_CR3_EIE;
-						break;
-				}
+				UART_enableInterrupt(regs, event);
 			}
 
 			static bool disableInterrupt(
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				switch (event) {
-
-				}
-
+				return UART_disableInterrupt(regs, event);
 			}
 
 			static bool getInterruptFlag(
@@ -293,7 +327,35 @@ namespace htl {
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				switch (event) {
+					case UARTEvent::rxFull:
+						regs->ISR &= ~USART_ISR_RXNE;
+						break;
 
+					case UARTEvent::txEmpty:
+						regs->ISR &= ~USART_ISR_TXE;
+						break;
+
+					case UARTEvent::txComplete:
+						regs->ISR &= ~USART_ISR_TC;
+						break;
+
+					case UARTEvent::parity:
+						regs->ISR &= ~USART_ISR_PE;
+						break;
+
+					case UARTEvent::overrun:
+						regs->ISR &= ~USART_ISR_ORE;
+						break;
+
+					case UARTEvent::framming:
+						regs->ISR &= USART_ISR_FE;
+						break;
+
+					case UARTEvent::noise:
+						regs->ISR &= USART_ISR_NE;
+						break;
+				}
 			}
 
 			static void clearInterruptFlags() {
@@ -310,6 +372,17 @@ namespace htl {
 				_isrFunction = function;
 				_isrParam = param;
 			}
+
+			/// \brief Invoca la funcio d'interrupcio.
+			/// \param event: L'event.
+			//
+			static void interruptHandler(
+				UARTEvent event) {
+
+				if (_isrFunction != nullptr)
+                    _isrFunction(event, _isrParam);
+            }
+
 	};
     
     template <UARTChannel channel_> UARTInterruptFunction UART_x<channel_>::_isrFunction = nullptr;
@@ -341,38 +414,54 @@ namespace htl {
         using UART_8 = UART_x<UARTChannel::channel8>;
     #endif
 
-    template <>
-    struct UARTTrait<UARTChannel::channel1> {
-    	static const uint32_t addr = USART1_BASE;
-    };
-    template <>
-    struct UARTTrait<UARTChannel::channel2> {
-    	static const uint32_t addr = USART2_BASE;
-    };
-    template <>
-    struct UARTTrait<UARTChannel::channel3> {
-    	static const uint32_t addr = USART3_BASE;
-    };
-    template <>
-    struct UARTTrait<UARTChannel::channel4> {
-    	static const uint32_t addr = UART4_BASE;
-    };
-    template <>
-    struct UARTTrait<UARTChannel::channel5> {
-    	static const uint32_t addr = UART5_BASE;
-    };
-    template <>
-    struct UARTTrait<UARTChannel::channel6> {
-    	static const uint32_t addr = USART6_BASE;
-    };
-    template <>
-    struct UARTTrait<UARTChannel::channel7> {
-    	static const uint32_t addr = UART7_BASE;
-    };
-    template <>
-    struct UARTTrait<UARTChannel::channel8> {
-    	static const uint32_t addr = UART8_BASE;
-    };
+	#ifdef USART1
+		template <>
+		struct UARTTrait<UARTChannel::channel1> {
+			static const uint32_t addr = USART1_BASE;
+		};
+	#endif
+	#ifdef USART2
+		template <>
+		struct UARTTrait<UARTChannel::channel2> {
+			static const uint32_t addr = USART2_BASE;
+		};
+	#endif
+	#ifdef USART3
+		template <>
+		struct UARTTrait<UARTChannel::channel3> {
+			static const uint32_t addr = USART3_BASE;
+		};
+	#endif
+	#ifdef UART4
+		template <>
+		struct UARTTrait<UARTChannel::channel4> {
+			static const uint32_t addr = UART4_BASE;
+		};
+	#endif
+	#ifdef UART5
+		template <>
+		struct UARTTrait<UARTChannel::channel5> {
+			static const uint32_t addr = UART5_BASE;
+		};
+	#endif
+	#ifdef USART6
+		template <>
+		struct UARTTrait<UARTChannel::channel6> {
+			static const uint32_t addr = USART6_BASE;
+		};
+	#endif
+	#ifdef UART7
+		template <>
+		struct UARTTrait<UARTChannel::channel7> {
+			static const uint32_t addr = UART7_BASE;
+		};
+	#endif
+	#ifdef UART8
+		template <>
+		struct UARTTrait<UARTChannel::channel8> {
+			static const uint32_t addr = UART8_BASE;
+		};
+	#endif
 
 }
 

@@ -27,7 +27,6 @@ namespace htl {
         #ifdef _TMR5
             timer5,
         #endif
-        timerNone
     };
 
     enum class TMRResolution {
@@ -116,15 +115,24 @@ namespace htl {
             TMR_x & operator = (const TMR_x &&) = delete;
 
         public:
+            /// \brief Inicialitza i activa el modul
+            ///
             static void init() {
                 stop();
             }
 
+            /// \brief Desinicialitza i desactiva el modul
+            ///
             static void deInit() {
                 stop();
             }
 
-            static void setClockDivider(TMRClockDivider divider) {
+            /// \brief Asigna el divisor de la base de temps.
+            /// \param divider: Opcions del divisor
+            ///
+            static void setClockDivider(
+                TMRClockDivider divider) {
+
                 if constexpr (_isT1) {
                     TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     switch (divider) {
@@ -183,7 +191,12 @@ namespace htl {
                 }
             }
 
-            static void setClockSource(TMRClockSource source) {
+            /// \brief Asigna l'origen de la base de temps.
+            /// \param source: L'origen la base de temps.
+            ///
+            static void setClockSource(
+                TMRClockSource source) {
+
                 if constexpr (_isT1) {
                     TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->T1xCON.TCS = 0;
@@ -194,14 +207,24 @@ namespace htl {
                 }
             }
 
-            static void setResolution(TMRResolution resolution) {
+            /// \brief Asigna la resolucio.
+            /// \param resolution: Les opcions de resolucio.
+            ///
+            static void setResolution(
+                TMRResolution resolution) {
+
                 if constexpr (_isT2) {
                     TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
                     regs->T2xCON.T32 = resolution == TMRResolution::res32;
                 }
             }
 
-            static void setCounter(uint32_t counter) {
+            /// \brief Asigna el valor del contador.
+            /// \param counter: El valor del contador.
+            ///
+            static void setCounter(
+                uint32_t counter) {
+
                 if constexpr (_isT1) {
                     TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->TMRx = counter & 0xFFFF;
@@ -216,7 +239,12 @@ namespace htl {
                 }
             }
 
-            static void setPeriod(uint32_t period) {
+            /// \brief Asigna el valor del periode.
+            /// \param period: El valor del periode.
+            ///
+            static void setPeriod(
+                uint32_t period) {
+
                 if constexpr (_isT1) {
                     TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->PRx = period & 0xFFFF;
@@ -231,7 +259,10 @@ namespace htl {
                 }
             }
 
+            /// \brief Activa el contador.
+            ///
             static void start() {
+
                 if constexpr (_isT1) {
                     TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->T1xCON.ON = 1;
@@ -242,7 +273,10 @@ namespace htl {
                 }
             }
 
+            /// \brief Desactiva el contador.
+            ///
             static void stop() {
+
                 if constexpr (_isT1) {
                     TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->T1xCON.ON = 0;
@@ -253,30 +287,46 @@ namespace htl {
                 }
             }
 
-            static void enableInterrupt(TMREvent event) {
+            static void enableInterrupt(
+                TMREvent event) {
+
                 IE::set();
             }
 
-            static bool disableInterrupt(TMREvent event) {
+            static bool disableInterrupt(
+                TMREvent event) {
+
                 bool state = IE::value();
                 IE::clr();
                 return state;
             }
 
-            inline static bool getInterruptFlag(TMREvent event) {
+            inline static bool getInterruptFlag(
+                TMREvent event) {
+
                 return IF::value();
             }
 
-            inline static void clearInterruptFlag(TMREvent event) {
+            inline static void clearInterruptFlag(
+                TMREvent event) {
+
                 IF::clr();
             }
 
-            static void setInterruptFunction(TMRInterruptFunction function, TMRInterruptParam param = nullptr) {
+            static void setInterruptFunction(
+                TMRInterruptFunction function,
+                TMRInterruptParam param = nullptr) {
+
                 _isrFunction = function;
                 _isrParam = param;
             }
 
-            static void interruptHandler(TMREvent event) {
+            /// \brief Invoca la funcio d'interrupcio
+            /// \param event: L'event.
+            ///
+            static void interruptHandler(
+                TMREvent event) {
+
                 if (_isrFunction != nullptr)
                     _isrFunction(event, _isrParam);
             }

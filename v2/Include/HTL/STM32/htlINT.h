@@ -93,7 +93,8 @@ namespace htl {
 		vectorUART8 = HAL_INT_VECTOR_UART8,
 	};
 
-	class INTAdapter {
+	template <int dummy>
+	class INT_x {
 		public:
 			inline static void setInterruptVectorPriority(INTVector vector, INTPriority priority, INTSubPriority subPriority) {
 				halINTSetInterruptVectorPriority((uint32_t)vector, (uint32_t) priority, (uint32_t) subPriority);
@@ -116,7 +117,7 @@ namespace htl {
 			}
 	};
 
-	typedef INTAdapter INT;
+	using INT_1 = INT_x<1>;
 
 }
 

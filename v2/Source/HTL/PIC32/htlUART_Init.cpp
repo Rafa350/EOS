@@ -8,7 +8,7 @@ using namespace htl;
 void htl::UART_init(
     UARTRegisters *regs,
     UARTBaud baud,
-    UARTLength length,
+    UARTWord word,
     UARTParity parity,
     UARTStop stop,
     UARTMode mode) {
@@ -21,7 +21,7 @@ void htl::UART_init(
     //
     regs->UxMODE.PDSEL = 0;
 
-    // Selecciona els bits de parada
+    // Selecciona els bits de stop
     //
     regs->UxMODE.STSEL = 0;
 
@@ -29,6 +29,7 @@ void htl::UART_init(
     //
     regs->UxMODE.ON = 1;
 }
+
 
 void htl::UART_deInit(
     UARTRegisters *regs) {

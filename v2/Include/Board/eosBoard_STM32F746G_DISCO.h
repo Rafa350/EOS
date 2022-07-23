@@ -45,7 +45,7 @@ namespace board {
 		namespace sw1 {
 
 			// Asignacio de pins
-			using GPIO_SW1 = htl::GPIO_I11;
+			using GPIO_SW = htl::GPIO_I11;
 
 			constexpr bool onState = true;
 			constexpr bool offState = !onState;

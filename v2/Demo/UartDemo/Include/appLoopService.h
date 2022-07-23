@@ -11,10 +11,10 @@ namespace app {
 
 	class MyAppLoopService: public eos::AppLoopService {
 		private:
-			UARTService* uartService;
+			UARTService *_uartService;
 
 		public:
-			MyAppLoopService(eos::Application* application);
+			MyAppLoopService(eos::Application* application, UARTService *uartService);
 
 		protected:
 			void onSetup() override;

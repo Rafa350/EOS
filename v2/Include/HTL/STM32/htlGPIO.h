@@ -113,34 +113,36 @@ namespace htl {
     struct GPIOPinTrait {
     };
 
-    template <GPIOPort port_, GPIOPin pin_>
     class GPIOAdapter {
     private:
-         uint32_t _addr;
+         GPIO_TypeDef *_regs;
          uint32_t _pn;
 
      public:
-         GPIOAdapter(uint32_t addr, uint32_t pn):
-             _addr(addr),
-             _pn(pn) {
+         GPIOAdapter(uint32_t addr, uint32_t pn) :
+        	 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
+        	 _pn(pn) {
          }
 
          GPIOAdapter(const GPIOAdapter &other) :
-             _addr(other._addr),
+             _regs(other._regs),
              _pn(other._pn) {
          }
 
          inline void set() const {
+             _regs->BSRR = 1 << _pn;
          }
 
          inline void clear() const {
+             _regs->BSRR = 1 << (_pn + 16);
          }
 
          inline void toggle() const {
+             _regs->ODR ^= 1 << _pn;
          }
 
          inline bool read() const {
-        	 return false;
+             return _regs->IDR & (1 << _pn);
          }
     };
 
@@ -249,6 +251,13 @@ namespace htl {
             }
     };
 
+    template <typename gpio_>
+    const GPIOAdapter& getAdapter() {
+        using PortTrait = GPIOPortTrait<gpio_::port>;
+        using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
+        static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
+        return adapter;
+    }
 
     #ifdef GPIOA_BASE
         typedef GPIO_x<GPIOPort::portA, GPIOPin::pin0> GPIO_A0;
@@ -951,6 +960,13 @@ namespace htl {
                 ltdc_HSYNC = 14
             };
             static const uint32_t pn = 10;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin11> {
+            enum class GPIOAlt {
+            };
+            static const uint32_t pn = 11;
         };
 
         template <>

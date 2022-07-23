@@ -14,8 +14,7 @@ using namespace htl;
 /// \param    initParams: Parametres d'inicialitzacio.
 ///
 UARTService::UARTService(
-	Application *application,
-	const Settings &settings):
+	Application *application):
 
 	Service(application) {
 

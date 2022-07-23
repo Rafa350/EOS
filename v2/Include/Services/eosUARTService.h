@@ -18,6 +18,7 @@ namespace eos {
 			using UART = UARTService_UART;
 			using GPIO_TX = UARTService_GPIO_TX;
 			using GPIO_RX = UARTService_GPIO_RX;
+
 		public:
 			enum class Event {
 				transmissionFinished,
@@ -29,11 +30,6 @@ namespace eos {
 				unsigned count;
 			};
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
-			struct Settings {
-				halUARTHandler hUART;
-				IEventCallback *eventCallback;
-				void *eventParams;
-			};
 
 		private:
 			uint8_t *_txBuffer;
@@ -46,7 +42,7 @@ namespace eos {
 			Semaphore _rxPending;
 
 		public:
-			UARTService(Application *application, const Settings &settings);
+			UARTService(Application *application);
 			virtual ~UARTService();
 
 			void onInitialize() override;

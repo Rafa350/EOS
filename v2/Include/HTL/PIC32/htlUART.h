@@ -91,7 +91,7 @@ namespace htl {
     using UARTInterruptParam = void*;
     using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
 
-    void UART_init(UARTRegisters*, UARTBaud, UARTLength, UARTParity, UARTStop, UARTMode);
+    void UART_init(UARTRegisters*, UARTBaud, UARTWord, UARTParity, UARTStop, UARTMode);
     void UART_deInit(UARTRegisters*);
 
     template <UARTChannel channel_>

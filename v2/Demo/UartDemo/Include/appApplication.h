@@ -3,6 +3,8 @@
 
 
 #include "eos.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlUART.h"
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosUARTService.h"
@@ -18,48 +20,30 @@ namespace app {
 
     class MyApplication: public Application {
         private:
+    	    using GPIO_TX = board::arduino::GPIO_TX;
+    	    using GPIO_RX = board::arduino::GPIO_RX;
+    		using UART = board::arduino::UART;
+
+    		using GPIO_LED = board::led1::GPIO_LED;
+    		using GPIO_SW = board::sw1::GPIO_SW;
+
+    		using TMR_INPSRV = config::digInputService::TMR;
+    		using TMR_OUTSRV = config::digOutputService::TMR;
+
             typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
 
         private:
-            DigOutputService* digOutputService;
-            DigInputService* digInputService;
-            UARTService* uartService;
-            MyAppLoopService* loopService;
+            DigOutputService *_digOutputService;
+            DigInputService *_digInputService;
+            UARTService *_uartService;
+            MyAppLoopService *_loopService;
 
-    #ifdef EXIST_LEDS_LED1
-            DigOutput* led1;
-    #endif
-    #ifdef EXIST_LEDS_LED2
-            DigOutput* led2;
-    #endif
-    #ifdef EXIST_LEDS_LED3
-            DigOutput* led3;
-    #endif
-    #ifdef EXIST_SWITCHES_SW1
-            DigInput* sw1;
-            DigInputEventCallback sw1EventCallback;
-    #endif
-    #ifdef EXIST_SWITCHES_SW2
-            DigInput* sw2;
-            DigInputEventCallback sw2EventCallback;
-    #endif
-    #ifdef EXIST_SWITCHES_SW3
-            DigInput* sw3;
-            DigInputEventCallback sw3EventCallback;
-    #endif
+            DigOutput *_led;
+            DigInput *_sw;
+            DigInputEventCallback _swEventCallback;
 
         public:
             MyApplication();
-    #ifdef EXIST_SWITCHES_SW1
-            void sw1EventHandler(const DigInput::EventArgs &args);
-    #endif
-    #ifdef EXIST_SWITCHES_SW2
-            void sw2EventHandler(const DigInput::EventArgs &args);
-    #endif
-    #ifdef EXIST_SWITCHES_SW3
-            void sw3EventHandler(const DigInput::EventArgs &args);
-    #endif
-            inline UARTService* getUARTService() const { return uartService; }
 
         protected:
             void onInitialize();
@@ -67,6 +51,7 @@ namespace app {
         private:
             void initializeHardware();
             void initializeServices();
+            void swEventHandler(const DigInput::EventArgs &args);
     };
 
 }

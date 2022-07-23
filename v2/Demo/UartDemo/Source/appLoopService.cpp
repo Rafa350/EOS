@@ -8,12 +8,12 @@ using namespace app;
 
 
 MyAppLoopService::MyAppLoopService(
-	Application* application):
+	Application* application,
+	UARTService *uartService):
 
-	AppLoopService(application) {
+	AppLoopService(application),
+	_uartService(uartService) {
 
-	MyApplication* app = static_cast<MyApplication*>(application);
-	uartService = app->getUARTService();
 }
 
 
@@ -35,7 +35,7 @@ void MyAppLoopService::onLoop() {
 char MyAppLoopService::getChar() {
 
 	char ch;
-	if (uartService->receive((uint8_t*) &ch, sizeof(ch), unsigned(-1)))
+	if (_uartService->receive((uint8_t*) &ch, sizeof(ch), unsigned(-1)))
 		return ch;
 	else
 		return 0;
@@ -45,11 +45,11 @@ char MyAppLoopService::getChar() {
 void MyAppLoopService::putChar(
 	char ch) {
 
-	uartService->send((uint8_t*) &ch, sizeof(ch), unsigned(-1));
+	_uartService->send((uint8_t*) &ch, sizeof(ch), unsigned(-1));
 }
 
 
 void MyAppLoopService::putString(char *s) {
 
-	uartService->send((uint8_t*) s, strlen(s), unsigned(-1));
+	_uartService->send((uint8_t*) s, strlen(s), unsigned(-1));
 }

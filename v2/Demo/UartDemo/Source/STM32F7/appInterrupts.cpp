@@ -1,6 +1,9 @@
 #include "eos.h"
-#include "HAL/halTMR.h"
-#include "HAL/halUART.h"
+#include "HTL/STM32/htlTMR_InterruptHandler.h"
+#include "HTL/STM32/htlUART_InterruptHandler.h"
+
+
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -8,9 +11,10 @@
 ///
 extern "C" void USART6_IRQHandler() {
 
-	extern halUARTData uartData;
-
-	halUARTInterruptHandler(&uartData);
+	if (UART_6::getInterruptFlag(UARTEvent::rxFull)) {
+		UART_6::interruptHandler(UARTEvent::rxFull);
+		UART_6::clearInterruptFlag(UARTEvent::rxFull);
+	}
 }
 
 
@@ -19,9 +23,10 @@ extern "C" void USART6_IRQHandler() {
 ///
 extern "C" void TIM2_IRQHandler() {
 
-	extern halTMRData digInputTimerData;
-
-	halTMRInterruptHandler(&digInputTimerData);
+	if (TMR_2::getInterruptFlag(TMREvent::update)) {
+		TMR_2::interruptHandler(TMREvent::update);
+		TMR_2::clearInterruptFlag(TMREvent::update);
+	}
 }
 
 
@@ -30,7 +35,8 @@ extern "C" void TIM2_IRQHandler() {
 ///
 extern "C" void TIM3_IRQHandler() {
 
-	extern halTMRData digOutputTimerData;
-
-	halTMRInterruptHandler(&digOutputTimerData);
+	if (TMR_3::getInterruptFlag(TMREvent::update)) {
+		TMR_3::interruptHandler(TMREvent::update);
+		TMR_3::clearInterruptFlag(TMREvent::update);
+	}
 }

@@ -9,6 +9,27 @@
 
 #include "Board/eosBoard.h"
 
+#ifdef __cplusplus
+
+#include "HTL/htlTMR.h"
+
+namespace config {
+
+	namespace digInputService {
+
+		using TMR = htl::TMR_2;
+
+		constexpr unsigned period = 5;
+	};
+
+	namespace digOutputService {
+
+		using TMR = htl::TMR_3;
+
+		constexpr unsigned period = 1;
+	};
+}
+#endif
 
 // Configuracio del servei DigInputs
 //
@@ -22,7 +43,7 @@
 #define DigInputService_TimerInterruptPriority        HAL_INT_PRIORITY_2
 #define DigInputService_TimerInterruptSubPriority     HAL_INT_SUBPRIORITY_0
 #elif defined(HARDWARE_STM32F429I_DISC1) || defined(HARDWARE_STM32F746G_DISCO)
-#define DigInputService_Timer					      HAL_TMR_TIMER_2
+#define DigInputService_Timer					      htl::TMR_2
 #define DigInputService_TimerInterruptVector          HAL_INT_VECTOR_TMR2
 #define DigInputService_TimerInterruptPriority        HAL_INT_PRIORITY_5
 #define DigInputService_TimerInterruptSubPriority     HAL_INT_SUBPRIORITY_0
@@ -41,7 +62,7 @@
 #define DigOutputService_TimerInterruptPriority       HAL_INT_PRIORITY_2
 #define DigOutputService_TimerInterruptSubPriority    HAL_INT_SUBPRIORITY_0
 #elif defined(HARDWARE_STM32F429I_DISC1) || defined(HARDWARE_STM32F746G_DISCO)
-#define DigOutputService_Timer                        HAL_TMR_TIMER_3
+#define DigOutputService_Timer                        htl::TMR_3
 #define DigOutputService_TimerInterruptVector         HAL_INT_VECTOR_TMR3
 #define DigOutputService_TimerInterruptPriority       HAL_INT_PRIORITY_5
 #define DigOutputService_TimerInterruptSubPriority    HAL_INT_SUBPRIORITY_0
