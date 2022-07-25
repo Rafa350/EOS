@@ -52,11 +52,11 @@ namespace htl {
 	};
 
 	template <TMRTimer timer_>
-	class TMR_x {
+	class TMR_x final {
 		private:
 			using Trait = TMRTrait<timer_>;
-			constexpr static const uint32_t _addr = Trait::addr;
-			constexpr static const bool _suportsClockDivider = Trait::suportsClockDivider;
+			static constexpr uint32_t _addr = Trait::addr;
+			static constexpr bool _suportsClockDivider = Trait::suportsClockDivider;
 
 		private:
 			static TMRInterruptFunction _isrFunction;
@@ -155,7 +155,7 @@ namespace htl {
 				disableClock();
 			}
 
-			static void setDirection(
+			static constexpr void setDirection(
 				TMRDirection direction) {
 
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
@@ -179,7 +179,7 @@ namespace htl {
 				regs->PSC = prescaler;
 			}
 
-			static void setClockDivider(
+			static constexpr void setClockDivider(
 				TMRClockDivider clockDivider) {
 
 				if constexpr (_suportsClockDivider) {
@@ -204,11 +204,13 @@ namespace htl {
 			}
 
 			static void start() {
+
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 				regs->CR1 |= TIM_CR1_CEN;
 			}
 
 			static void stop() {
+
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 				regs->CR1 &= ~TIM_CR1_CEN;
 			}
@@ -221,7 +223,7 @@ namespace htl {
 				_isrParam = param;
 			}
 
-			static void enableInterrupt(
+			static constexpr void enableInterrupt(
 				TMREvent event) {
 
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
@@ -279,10 +281,13 @@ namespace htl {
 
 					case TMREvent::com:
 						return (regs->SR & TIM_SR_COMIF) != 0;
+
+					default:
+						return false;
 				}
             }
 
-            static void clearInterruptFlag(
+            static constexpr void clearInterruptFlag(
             	TMREvent event) {
 
             	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);

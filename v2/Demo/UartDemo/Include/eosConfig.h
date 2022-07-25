@@ -12,6 +12,7 @@
 #ifdef __cplusplus
 
 #include "HTL/htlTMR.h"
+#include "HTL/htlINT.h"
 
 namespace config {
 
@@ -19,17 +20,35 @@ namespace config {
 
 		using TMR = htl::TMR_2;
 
-		constexpr unsigned period = 5;
-	};
+		constexpr unsigned tmrPeriod = 5;
+		constexpr htl::INTVector tmrVector = htl::INTVector::vTMR2;
+		constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
+    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+	}
 
 	namespace digOutputService {
 
 		using TMR = htl::TMR_3;
 
-		constexpr unsigned period = 1;
-	};
+		constexpr unsigned tmrPeriod = 1;
+		constexpr htl::INTVector tmrVector = htl::INTVector::vTMR3;
+		constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
+    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+	}
+
+	namespace uartService {
+
+		using UART = board::arduino::UART;
+		using GPIO_TX = board::arduino::GPIO_TX;
+		using GPIO_RX = board::arduino::GPIO_RX;
+
+		constexpr htl::INTVector uartVector = htl::INTVector::vUART6;
+		constexpr htl::INTPriority uartVectorPriority = htl::INTPriority::p10;
+    	constexpr htl::INTSubPriority uartVectorSubPriority = htl::INTSubPriority::s0;
+	}
 }
-#endif
+
+#endif // __cplusplus
 
 // Configuracio del servei DigInputs
 //

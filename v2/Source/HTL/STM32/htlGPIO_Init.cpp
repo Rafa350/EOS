@@ -192,7 +192,6 @@ static void setDriver(
     // Configura el registre OTYPER (Output Type Register)
     //
 	if (driver != GPIODriver::noChange) {
-
 		uint32_t temp = regs->OTYPER;
 		temp &= ~(1 << pn);
 		if (driver == GPIODriver::openDrain)
@@ -322,15 +321,13 @@ void htl::GPIO_initOutput(
     GPIODriver driver,
     GPIOSpeed speed) {
 
-    uint32_t temp;
-
     // Activa el rellotge del port
     //
     enableClock(regs, pn);
 
     // Configura el registre MODER (Mode Register)
     //
-    temp = regs->MODER;
+    uint32_t temp = regs->MODER;
     temp &= ~(0b11 << (pn * 2));
     temp |= 0b01 << (pn * 2);
     regs->MODER = temp;

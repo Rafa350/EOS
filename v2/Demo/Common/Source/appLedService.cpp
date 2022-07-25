@@ -4,6 +4,7 @@
 
 
 using namespace eos;
+using namespace htl;
 using namespace app;
 
 
@@ -23,11 +24,11 @@ LedService::LedService(
 void LedService::onSetup() {
 
 	#ifdef EXIST_LED1
-		GPIO_LED1::initOutput(htl::GPIODriver::pushPull);
+		GPIO_LED1::initOutput(GPIODriver::pushPull);
 		GPIO_LED1::set();
 	#endif
 	#ifdef EXIST_LED2
-		GPIO_LED2::initOutput(htl::GPIODriver::pushPull);
+		GPIO_LED2::initOutput(GPIODriver::pushPull);
 		GPIO_LED2::clear();
 	#endif
 }

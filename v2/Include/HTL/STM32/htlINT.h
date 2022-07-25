@@ -5,115 +5,134 @@
 // HAL includes
 //
 #include "eos.h"
-#include "HAL/STM32/halINT.h"
 
 
 namespace htl {
 
 	enum class INTPriority {
-		priority0 = HAL_INT_PRIORITY_0,
-		priority1 = HAL_INT_PRIORITY_1,
-		priority2 = HAL_INT_PRIORITY_2,
-		priority3 = HAL_INT_PRIORITY_3,
-		priority4 = HAL_INT_PRIORITY_4,
-		priority5 = HAL_INT_PRIORITY_5,
-		priority6 = HAL_INT_PRIORITY_6,
-		priority7 = HAL_INT_PRIORITY_7,
-		priority8 = HAL_INT_PRIORITY_8,
-		priority9 = HAL_INT_PRIORITY_9,
-		priority10 = HAL_INT_PRIORITY_10,
-		priority11 = HAL_INT_PRIORITY_11,
-		priority12 = HAL_INT_PRIORITY_12,
-		priority13 = HAL_INT_PRIORITY_13,
-		priority14 = HAL_INT_PRIORITY_14,
-		priority15 = HAL_INT_PRIORITY_15
+		p0,
+		p1,
+		p2,
+		p3,
+		p4,
+		p5,
+		p6,
+		p7,
+		p8,
+		p9,
+		p10,
+		p11,
+		p12,
+		p13,
+		p14,
+		p15
 	};
 
 	enum class INTSubPriority {
-		subPriority0 = HAL_INT_SUBPRIORITY_0,
-		subPriority1 = HAL_INT_SUBPRIORITY_1,
-		subPriority2 = HAL_INT_SUBPRIORITY_2,
-		subPriority3 = HAL_INT_SUBPRIORITY_3,
+		s0,
+		s1,
+		s2,
+		s3,
 	};
 
 	enum class INTVector {
-		vectorDAC = HAL_INT_VECTOR_DAC,
-		vectorDAM2D = HAL_INT_VECTOR_DMA2D,
-		vectorEXTI0 = HAL_INT_VECTOR_EXTI0,
-		vectorEXTI1 = HAL_INT_VECTOR_EXTI1,
-		vectorEXTI2 = HAL_INT_VECTOR_EXTI2,
-		vectorEXTI3 = HAL_INT_VECTOR_EXTI3,
-		vectorEXTI4 = HAL_INT_VECTOR_EXTI4,
-		vectorEXTI5 = HAL_INT_VECTOR_EXTI5,
-		vectorEXTI6 = HAL_INT_VECTOR_EXTI6,
-		vectorEXTI7 = HAL_INT_VECTOR_EXTI7,
-		vectorEXTI8 = HAL_INT_VECTOR_EXTI8,
-		vectorEXTI9 = HAL_INT_VECTOR_EXTI9,
-		vectorEXTI10 = HAL_INT_VECTOR_EXTI10,
-		vectorEXTI11 = HAL_INT_VECTOR_EXTI11,
-		vectorEXTI12 = HAL_INT_VECTOR_EXTI12,
-		vectorEXTI13 = HAL_INT_VECTOR_EXTI13,
-		vectorEXTI14 = HAL_INT_VECTOR_EXTI14,
-		vectorEXTI15 = HAL_INT_VECTOR_EXTI15,
-		vectorLTDC = HAL_INT_VECTOR_LTDC,
-		vectorLTDC_ER = HAL_INT_VECTOR_LTDC_ER,
-		vectorSPI1 = HAL_INT_VECTOR_SPI1,
-		vectorSPI2 = HAL_INT_VECTOR_SPI2,
-		vectorSPI3 = HAL_INT_VECTOR_SPI3,
-		vectorSPI4 = HAL_INT_VECTOR_SPI4,
-		vectorSPI5 = HAL_INT_VECTOR_SPI5,
-		vectorSPI6 = HAL_INT_VECTOR_SPI6,
-		vectorTMR1_BRK = HAL_INT_VECTOR_TMR1_BRK,
-		vectorTMR1_CC = HAL_INT_VECTOR_TMR1_CC,
-		vectorTMR1_TRG = HAL_INT_VECTOR_TMR1_TRG,
-		vectorTMR1_UP = HAL_INT_VECTOR_TMR1_UP,
-		vectorTMR2 = HAL_INT_VECTOR_TMR2,
-		vectorTMR3 = HAL_INT_VECTOR_TMR3,
-		vectorTMR4 = HAL_INT_VECTOR_TMR4,
-		vectorTMR5 = HAL_INT_VECTOR_TMR5,
-		vectorTMR6 = HAL_INT_VECTOR_TMR6,
-		vectorTMR7 = HAL_INT_VECTOR_TMR7,
-		vectorTMR8_BRK = HAL_INT_VECTOR_TMR8_BRK,
-		vectorTMR8_CC = HAL_INT_VECTOR_TMR8_CC,
-		vectorTMR8_TRG = HAL_INT_VECTOR_TMR8_TRG,
-		vectorTMR8_UP = HAL_INT_VECTOR_TMR8_UP,
-		vectorTMR9 = HAL_INT_VECTOR_TMR9,
-		vectorTMR10 = HAL_INT_VECTOR_TMR10,
-		vectorTMR11 = HAL_INT_VECTOR_TMR11,
-		vectorTMR12 = HAL_INT_VECTOR_TMR12,
-		vectorTMR13 = HAL_INT_VECTOR_TMR13,
-		vectorTMR14 = HAL_INT_VECTOR_TIM14,
-		vectorUART1 = HAL_INT_VECTOR_UART1,
-		vectorUART2 = HAL_INT_VECTOR_UART2,
-		vectorUART3 = HAL_INT_VECTOR_UART3,
-		vectorUART4 = HAL_INT_VECTOR_UART4,
-		vectorUART5 = HAL_INT_VECTOR_UART5,
-		vectorUART6 = HAL_INT_VECTOR_UART6,
-		vectorUART7 = HAL_INT_VECTOR_UART7,
-		vectorUART8 = HAL_INT_VECTOR_UART8,
+		vDAC =  TIM6_DAC_IRQn,
+		vDAM2D =  DMA2D_IRQn,
+		vEXTI0 = EXTI0_IRQn,
+		vEXTI1 = EXTI1_IRQn,
+		vEXTI2 = EXTI2_IRQn,
+		vEXTI3 = EXTI3_IRQn,
+		vEXTI4 = EXTI4_IRQn,
+		vEXTI5 = EXTI9_5_IRQn,
+		vEXTI6 = EXTI9_5_IRQn,
+		vEXTI7 = EXTI9_5_IRQn,
+		vEXTI8 = EXTI9_5_IRQn,
+		vEXTI9 = EXTI9_5_IRQn,
+		vEXTI10 = EXTI15_10_IRQn,
+		vEXTI11 = EXTI15_10_IRQn,
+		vEXTI12 = EXTI15_10_IRQn,
+		vEXTI13 = EXTI15_10_IRQn,
+		vEXTI14 = EXTI15_10_IRQn,
+		vEXTI15 = EXTI15_10_IRQn,
+		vLTDC = LTDC_IRQn,
+		vLTDC_ER = LTDC_ER_IRQn,
+		vSPI1 = SPI1_IRQn,
+		vSPI2 = SPI2_IRQn,
+		vSPI3 = SPI3_IRQn,
+		vSPI4 = SPI4_IRQn,
+		vSPI5 = SPI5_IRQn,
+		vSPI6 = SPI6_IRQn,
+		vTMR1_BRK = TIM1_BRK_TIM9_IRQn,
+		vTMR1_CC = TIM1_CC_IRQn,
+		vTMR1_TRG = TIM1_TRG_COM_TIM11_IRQn,
+		vTMR1_UP = TIM1_UP_TIM10_IRQn,
+		vTMR2 = TIM2_IRQn,
+		vTMR3 = TIM3_IRQn,
+		vTMR4 = TIM4_IRQn,
+		vTMR5 = TIM5_IRQn,
+		vTMR6 = TIM6_DAC_IRQn,
+		vTMR7 = TIM7_IRQn,
+		vTMR8_BRK = TIM8_BRK_TIM12_IRQn,
+		vTMR8_CC = TIM8_CC_IRQn,
+		vTMR8_TRG = TIM8_TRG_COM_TIM14_IRQn,
+		vTMR8_UP = TIM8_UP_TIM13_IRQn,
+		vTMR9 = TIM1_BRK_TIM9_IRQn,
+		vTMR10 = TIM1_UP_TIM10_IRQn,
+		vTMR11 = TIM1_TRG_COM_TIM11_IRQn,
+		vTMR12 = TIM8_BRK_TIM12_IRQn,
+		vTMR13 = TIM8_UP_TIM13_IRQn,
+		vTMR14 = TIM8_TRG_COM_TIM14_IRQn,
+		vUART1 = USART1_IRQn,
+		vUART2 = USART2_IRQn,
+		vUART3 = USART3_IRQn,
+		vUART4 = UART4_IRQn,
+		vUART5 = UART5_IRQn,
+		vUART6 = USART6_IRQn,
+		vUART7 = UART7_IRQn,
+		vUART8 = UART8_IRQn,
 	};
 
 	template <int dummy>
 	class INT_x {
 		public:
-			inline static void setInterruptVectorPriority(INTVector vector, INTPriority priority, INTSubPriority subPriority) {
-				halINTSetInterruptVectorPriority((uint32_t)vector, (uint32_t) priority, (uint32_t) subPriority);
+			static void setInterruptVectorPriority(
+				INTVector vector,
+				INTPriority priority,
+				INTSubPriority subPriority) {
+
+				uint32_t priorityGroup = NVIC_GetPriorityGrouping();
+			    NVIC_SetPriority((IRQn_Type)vector, NVIC_EncodePriority(priorityGroup, (uint32_t)priority, (uint32_t)subPriority));
 			}
 
-			inline static void enableInterruptVector(INTVector vector) {
-				halINTEnableInterruptVector((uint32_t)vector);
+			inline static void enableInterrupts() {
+
+				__enable_irq();
 			}
 
-			inline static void enableInterruptSource(uint32_t source) {
-				halINTEnableInterruptSource(source);
+			inline static bool disableInterrupts() {
+
+				bool state = __get_PRIMASK() == 0;
+				__disable_irq();
+				return state;
 			}
 
-			inline static bool disableInterruptSource(uint32_t source) {
-				return halINTDisableInterruptSource(source);
+			inline static void restoreInterrupts(
+				bool state) {
+
+				if (state)
+					enableInterrupts();
 			}
 
-			inline static void restoreInterruptSource(uint32_t source, bool state) {
-				halINTRestoreInterruptSource(source, state);
+			inline static void enableInterruptVector(
+				INTVector vector) {
+
+				NVIC_EnableIRQ((IRQn_Type) vector);
+			}
+
+			inline static void disableInterruptVector(
+				INTVector vector) {
+
+				NVIC_DisableIRQ((IRQn_Type) vector);
 			}
 	};
 

@@ -99,9 +99,9 @@ namespace htl {
             using IE = typename TimerTrait::IE;
 
         private:
-            constexpr static const uint32_t _addr = TimerTrait::addr;
-            constexpr static const bool _isT1 = TimerTrait::isT1;
-            constexpr static const bool _isT2 = !TimerTrait::isT1;
+            static constexpr uint32_t _addr = TimerTrait::addr;
+            static constexpr bool _isT1 = TimerTrait::isT1;
+            static constexpr bool _isT2 = !TimerTrait::isT1;
             static TMRInterruptFunction _isrFunction;
             static TMRInterruptParam _isrParam;
 

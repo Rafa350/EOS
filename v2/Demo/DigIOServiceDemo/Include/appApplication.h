@@ -23,8 +23,8 @@ namespace app {
             using GPIO_SW1 = board::sw1::GPIO_SW;
             using GPIO_SW2 = board::sw2::GPIO_SW;
             using GPIO_SW3 = board::sw3::GPIO_SW;
-            using TMR_INP = DigInputService_Timer;
-            using TMR_OUT = DigOutputService_Timer;
+            using TMR_INP = config::digInputService::TMR;
+            using TMR_OUT = config::digOutputService::TMR;
 
             using DigInputEventCallback = eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&>;
 

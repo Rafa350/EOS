@@ -36,14 +36,15 @@ namespace htl {
     using LTDCInterruptFunction = void (*)(LTDCEvent, LTDCInterruptParam);
 
     template <int dummy_>
-    class LTDC_x {
+    class LTDC_x final {
     	private:
     		static LTDCInterruptFunction _isrFunction;
     		static LTDCInterruptParam _isrParam;
 
 			LTDC_x() = delete;
-			LTDC_x(const LTDC_x &);
-			LTDC_x(const LTDC_x &&);
+			LTDC_x(const LTDC_x &) = delete;
+			LTDC_x(const LTDC_x &&) = delete;
+			~LTDC_x() = delete;
 
 			LTDC_x & operator = (const LTDC_x &) = delete;
 			LTDC_x & operator = (const LTDC_x &&) = delete;
@@ -123,12 +124,12 @@ namespace htl {
 		    	disableClock();
 		    }
 
-		    inline static void enable() {
+		    static void enable() {
 
 		    	LTDC->GCR |= LTDC_GCR_LTDCEN;
 		    }
 
-		    inline static void disable() {
+		    static void disable() {
 
 		    	LTDC->GCR &= ~LTDC_GCR_LTDCEN;
 		    }
@@ -307,37 +308,42 @@ namespace htl {
 			    }
 			}
 
-			inline static void enableInterrrupt(
+			static void enableInterrrupt(
 				LTDCEvent event) {
 
 				LTDC->IER |= 1 << uint32_t(event);
 			}
 
-			inline static void disableInterrupt(
+			static void disableInterrupt(
 				LTDCEvent event) {
 
 				LTDC->IER &= ~(1 << uint32_t(event));
 			}
 
-			inline static bool getInterruptFlag(
+			static bool getInterruptFlag(
 				LTDCEvent event) {
 
 				return (LTDC->ISR & (1 << uint32_t(event))) != 0;
 			}
 
-			inline static void clearInterruptFlag(
+			static void clearInterruptFlag(
 				LTDCEvent event) {
 
 				LTDC->ICR |= 1 << uint32_t(event);
 			}
 
-			inline static void setInterruptFunction(LTDCInterruptFunction function, LTDCInterruptParam param = nullptr) {
-                _isrFunction = function;
+			static void setInterruptFunction(
+				LTDCInterruptFunction function,
+				LTDCInterruptParam param = nullptr) {
+
+				_isrFunction = function;
                 _isrParam = param;
             }
 
-            inline static void interruptHandler(LTDCEvent event) {
-                if (_isrFunction != nullptr)
+            inline static void interruptHandler(
+            	LTDCEvent event) {
+
+            	if (_isrFunction != nullptr)
                     _isrFunction(event, _isrParam);
             }
 	};
@@ -354,16 +360,15 @@ namespace htl {
 	};
 
 	template <LTDCLayerNum>
-	struct LTDCLayerInfo {
-		static const uint32_t addr;
+	struct LTDCLayerTrait {
 	};
 
     template <LTDCLayerNum layerNum_>
-    class LTDCLayer_x {
+    class LTDCLayer_x final {
     	private:
-    		using Info = LTDCLayerInfo<layerNum_>;
+    		using Trait = LTDCLayerTrait<layerNum_>;
 
-    		constexpr static const uint32_t _addr = Info::addr;
+    		static constexpr uint32_t _addr = Trait::addr;
 
     		LTDCLayer_x() = delete;
     		LTDCLayer_x(const LTDCLayer_x &) = delete;
@@ -511,13 +516,13 @@ namespace htl {
     using LTDCLayer_2 = LTDCLayer_x<LTDCLayerNum::layer2>;
 
     template <>
-	struct LTDCLayerInfo<LTDCLayerNum::layer1> {
-		constexpr static const uint32_t addr = LTDC_Layer1_BASE;
+	struct LTDCLayerTrait<LTDCLayerNum::layer1> {
+		static const uint32_t addr = LTDC_Layer1_BASE;
 	};
 
     template <>
-	struct LTDCLayerInfo<LTDCLayerNum::layer2> {
-		constexpr static const uint32_t addr = LTDC_Layer2_BASE;
+	struct LTDCLayerTrait<LTDCLayerNum::layer2> {
+		static const uint32_t addr = LTDC_Layer2_BASE;
 	};
 
 
@@ -528,19 +533,19 @@ namespace htl {
 	};
 	template<>
 	struct LTDCPixelFormatFor<eos::ColorFormat::rgb888> {
-		constexpr static const LTDCPixelFormat value = LTDCPixelFormat::rgb8888;
+		static const LTDCPixelFormat value = LTDCPixelFormat::rgb8888;
 	};
 	template<>
 	struct LTDCPixelFormatFor<eos::ColorFormat::argb8888> {
-		constexpr static const LTDCPixelFormat value = LTDCPixelFormat::rgb888;
+		static const LTDCPixelFormat value = LTDCPixelFormat::rgb888;
 	};
 	template<>
 	struct LTDCPixelFormatFor<eos::ColorFormat::rgb565> {
-		constexpr static const LTDCPixelFormat value = LTDCPixelFormat::rgb565;
+		static const LTDCPixelFormat value = LTDCPixelFormat::rgb565;
 	};
 	template<>
 	struct LTDCPixelFormatFor<eos::ColorFormat::l8> {
-		constexpr static const LTDCPixelFormat value = LTDCPixelFormat::l8;
+		static const LTDCPixelFormat value = LTDCPixelFormat::l8;
 	};
 
 }

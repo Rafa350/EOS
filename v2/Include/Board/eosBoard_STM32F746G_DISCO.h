@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __board_SMT32F746G_DISCO__
 #define __board_SMT32F746G_DISCO__
 
@@ -6,6 +7,7 @@
 
 #include "HTL/htlGPIO.h"
 #include "HTL/htlI2C.h"
+#include "HTL/htlINT.h"
 #include "HTL/htlSPI.h"
 #include "HTL/htlUART.h"
 #include "HTL/STM32/htlEXTI.h"
@@ -157,6 +159,12 @@ namespace board {
 			constexpr uint16_t height = 272;     // Alçada del touchpad
 
 			constexpr uint8_t i2cAddr = 0x70;
+
+			constexpr htl::EXTIPort extiPort = htl::EXTIPort::portI;
+
+			constexpr htl::INTVector intVector = htl::INTVector::vEXTI13;
+			constexpr htl::INTPriority intVectorPriority = htl::INTPriority::p15;
+			constexpr htl::INTSubPriority intVectorSubPriority = htl::INTSubPriority::s0;
 		}
 
 	#endif
@@ -670,9 +678,9 @@ namespace board {
 #define TOUCHPAD_INT_EXTI_LINE      HAL_EXTI_LINE_13
 #define TOUCHPAD_INT_EXTI_PORT      HAL_EXTI_PORT_I
 #define TOUCHPAD_INT_EXTI_TYPE      htl::EXTI_13
-#define TOUCHPAD_INT_IRQ            HAL_INT_VECTOR_EXTI13
-#define TOUCHPAD_INT_PRIORITY       HAL_INT_PRIORITY_15
-#define TOUCHPAD_INT_SUBPRIORITY    HAL_INT_SUBPRIORITY_0
+#define TOUCHPAD_INT_IRQ            htl::INTVector::vEXTI13
+#define TOUCHPAD_INT_PRIORITY       htl::INTPriority::p15
+#define TOUCHPAD_INT_SUBPRIORITY    htl::INTSubPriority::s0
 
 // Modul I2C de comunicacions
 #define TOUCHPAD_I2C_CHANNEL        HAL_I2C_CHANNEL_3

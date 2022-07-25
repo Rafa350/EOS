@@ -110,15 +110,15 @@ namespace htl {
 	};
 
 	template <UARTChannel channel_>
-	class UART_x {
+	class UART_x final {
 		private:
 			using Trait = UARTTrait<channel_>;
 
 		public:
-			constexpr static const UARTChannel channel = channel_;
+			static constexpr UARTChannel channel = channel_;
 
 		private:
-			constexpr static const uint32_t _addr = Trait::addr;
+			static constexpr uint32_t _addr = Trait::addr;
 			static UARTInterruptFunction _isrFunction;
 			static UARTInterruptParam _isrParam;
 
@@ -126,6 +126,8 @@ namespace htl {
 			UART_x() = delete;
 			UART_x(const UART_x &) = delete;
 			UART_x(const UART_x &&) = delete;
+			~UART_x() = delete;
+
 			UART_x & operator = (const UART_x &) = delete;
 			UART_x & operator = (const UART_x &&) = delete;
 
@@ -320,6 +322,9 @@ namespace htl {
 
 					case UARTEvent::noise:
 						return (regs->ISR & USART_ISR_NE) != 0;
+
+					default:
+						return false;
 				}
 			}
 
@@ -358,13 +363,19 @@ namespace htl {
 				}
 			}
 
-			static void clearInterruptFlags() {
+			/// \brief Borre tots els flags d'interrupcio.
+			///
+			inline static void clearInterruptFlags() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->ISR &= ~(USART_ISR_RXNE | USART_ISR_TXE | USART_ISR_TC |
 					USART_ISR_PE | USART_ISR_ORE | USART_ISR_FE | USART_ISR_NE);
 			}
 
+			/// \brief Asigna la funcio d'interrupcio.
+			/// \param function: La funcio.
+			/// \param param: El parametre.
+			///
 			static void setInterruptFunction(
 				UARTInterruptFunction function,
 				UARTInterruptParam param) {

@@ -113,35 +113,40 @@ namespace htl {
     struct GPIOPinTrait {
     };
 
-    class GPIOAdapter {
-    private:
-         GPIO_TypeDef *_regs;
-         uint32_t _pn;
+    class GPIOAdapter final {
+    	private:
+          GPIO_TypeDef *_regs;
+          uint32_t _pn;
 
      public:
-         GPIOAdapter(uint32_t addr, uint32_t pn) :
+         GPIOAdapter(
+        	uint32_t addr,
+			uint32_t pn) :
+
         	 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
         	 _pn(pn) {
          }
 
-         GPIOAdapter(const GPIOAdapter &other) :
-             _regs(other._regs),
-             _pn(other._pn) {
-         }
+         GPIOAdapter(const GPIOAdapter &) = default;
+         GPIOAdapter(GPIOAdapter &&) = default;
 
          inline void set() const {
+
              _regs->BSRR = 1 << _pn;
          }
 
          inline void clear() const {
+
              _regs->BSRR = 1 << (_pn + 16);
          }
 
          inline void toggle() const {
+
              _regs->ODR ^= 1 << _pn;
          }
 
          inline bool read() const {
+
              return _regs->IDR & (1 << _pn);
          }
     };
@@ -150,19 +155,19 @@ namespace htl {
     /// \brief Adapter class for gpio pins
     ///
     template <GPIOPort port_, GPIOPin pin_>
-    class GPIO_x {
+    class GPIO_x final {
         public:
             using GPIOAlt = typename GPIOPinTrait<port_, pin_>::GPIOAlt;
 
         private:
             using PortTrait = GPIOPortTrait<port_>;
             using PinTrait = GPIOPinTrait<port_, pin_>;
-            constexpr static const uint32_t _addr = PortTrait::addr;
-            constexpr static const uint32_t _pn = PinTrait::pn;
+            static constexpr uint32_t _addr = PortTrait::addr;
+            static constexpr uint32_t _pn = PinTrait::pn;
 
         public:
-            constexpr static const GPIOPort port = port_;
-            constexpr static const GPIOPin pin = pin_;
+            static constexpr GPIOPort port = port_;
+            static constexpr GPIOPin pin = pin_;
 
         private:
             GPIO_x() = delete;
@@ -207,7 +212,8 @@ namespace htl {
                     unsigned(alt));
             }
 
-            inline static void deInit() {
+            static void deInit() {
+
             	GPIO_deInit(
             		reinterpret_cast<GPIO_TypeDef*>(_addr),
 					_pn);
@@ -216,6 +222,7 @@ namespace htl {
             /// \brief Set pin to ON state.
             ///
             inline static void set() {
+
                 GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
                 regs->BSRR = 1 << _pn;
             }
@@ -223,6 +230,7 @@ namespace htl {
             /// \brief Set pin to OFF state.
             ///
             inline static void clear() {
+
                 GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
                 regs->BSRR = 1 << (_pn + 16);
             }
@@ -230,6 +238,7 @@ namespace htl {
             /// \brief Toggle pin state.
             ///
             inline static void toggle() {
+
                 GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
                 regs->ODR ^= 1 << _pn;
             }
@@ -238,6 +247,7 @@ namespace htl {
             /// \return Pin state.
             ///
             inline static bool read() {
+
                 GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
                 return regs->IDR & (1 << _pn);
             }
@@ -246,6 +256,7 @@ namespace htl {
             /// \param b: State to write.
             ///
             inline static void write(bool s) {
+
                 GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
                 regs->BSRR = 1 << (_pn + (s ? 0 : 16));
             }
@@ -253,9 +264,12 @@ namespace htl {
 
     template <typename gpio_>
     const GPIOAdapter& getAdapter() {
+
         using PortTrait = GPIOPortTrait<gpio_::port>;
         using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
+
         static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
+
         return adapter;
     }
 

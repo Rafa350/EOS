@@ -6,54 +6,54 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/STM32/halEXTI.h"
 
 
 namespace htl {
 
-	enum class EXTILine: halEXTILine {
-		line0 = HAL_EXTI_LINE_0,
-		line1 = HAL_EXTI_LINE_1,
-		line2 = HAL_EXTI_LINE_2,
-		line3 = HAL_EXTI_LINE_3,
-		line4 = HAL_EXTI_LINE_4,
-		line5 = HAL_EXTI_LINE_5,
-		line6 = HAL_EXTI_LINE_6,
-		line7 = HAL_EXTI_LINE_7,
-		line8 = HAL_EXTI_LINE_8,
-		line9 = HAL_EXTI_LINE_9,
-		line10 = HAL_EXTI_LINE_10,
-		line11 = HAL_EXTI_LINE_11,
-		line12 = HAL_EXTI_LINE_12,
-		line13 = HAL_EXTI_LINE_13,
-		line14 = HAL_EXTI_LINE_14,
-		line15 = HAL_EXTI_LINE_15
+	enum class EXTILine {
+		line0,
+		line1,
+		line2,
+		line3,
+		line4,
+		line5,
+		line6,
+		line7,
+		line8,
+		line9,
+		line10,
+		line11,
+		line12,
+		line13,
+		line14,
+		line15
 	};
 
-	enum class EXTIPort: halEXTIOptions {
-		portA = HAL_EXTI_PORT_A,
-		portB = HAL_EXTI_PORT_B,
-		portC = HAL_EXTI_PORT_C,
-		portD = HAL_EXTI_PORT_D,
-		portE = HAL_EXTI_PORT_E,
-		portF = HAL_EXTI_PORT_F,
-		portG = HAL_EXTI_PORT_G,
-		portH = HAL_EXTI_PORT_H,
-		portI = HAL_EXTI_PORT_I,
-		portJ = HAL_EXTI_PORT_J,
-		portK = HAL_EXTI_PORT_K
+	enum class EXTIPort {
+		portA,
+		portB,
+		portC,
+		portD,
+		portE,
+		portF,
+		portG,
+		portH,
+		portI,
+		portJ,
+		portK
 	};
 
-	enum class EXTIMode: halEXTIOptions {
-		none      = HAL_EXTI_MODE_NONE,
-		interrupt = HAL_EXTI_MODE_INT,
-		event     = HAL_EXTI_MODE_EVENT
+	enum class EXTIMode {
+		none,
+		interrupt,
+		event,
+		all
 	};
 
-	enum class EXTITrigger: halEXTIOptions {
-		rissing  = HAL_EXTI_TRIGGER_RISING,
-		falling  = HAL_EXTI_TRIGGER_FALLING,
-		changing = HAL_EXTI_TRIGGER_CHANGING
+	enum class EXTITrigger {
+		rissing,
+		falling,
+		all
 	};
 
 	enum class EXTIEvent {
@@ -61,22 +61,13 @@ namespace htl {
 		change
 	};
 
-    typedef void *EXTIInterruptParam ;
-    typedef void (*EXTIInterruptFunction)(EXTIEvent event, EXTIInterruptParam);
+    using EXTIInterruptParam = void*;
+    using EXTIInterruptFunction =  void (*)(EXTIEvent event, EXTIInterruptParam);
 
-
-	template <EXTILine line_>
-	struct EXTIInfo {
-		static const uint32_t addr;
-		static const uint32_t ln;
-	};
+    void EXTI_init(EXTILine, EXTIPort, EXTIMode, EXTITrigger);
 
 	template <EXTILine line_>
-	class EXTI_x {
-		private:
-			using Info = EXTIInfo<line_>;
-			constexpr static const uint32_t _addr = Info::addr;
-			constexpr static const uint32_t _ln = Info::ln;
+	class EXTI_x final {
 
         private:
             static EXTIInterruptFunction _isrFunction;
@@ -85,17 +76,20 @@ namespace htl {
 			EXTI_x() = default;
 			EXTI_x(const EXTI_x &) = delete;
 			EXTI_x(const EXTI_x &&) = delete;
-			~EXTI_x();
+			~EXTI_x() = delete;
 
 			EXTI_x & operator = (const EXTI_x &) = delete;
 			EXTI_x & operator = (const EXTI_x &&) = delete;
 
-			inline static void enableClock() {
+			static void enableClock() {
 
+				RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+			    __DSB();
 			}
 
-			inline static void disableClock() {
+			static void disableClock() {
 
+				RCC->APB2ENR &= ~RCC_APB2ENR_SYSCFGEN;
 			}
 
 		public:
@@ -104,46 +98,48 @@ namespace htl {
 				EXTIMode mode,
 				EXTITrigger trigger) {
 
-				halEXTIInitializeLine(halEXTILine(line_), halEXTIOptions(port) | halEXTIOptions(mode) | halEXTIOptions(trigger));
+				enableClock();
+				//EXTI_init(line_, port, mode, trigger);
 
-				/*EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
+				// Configura el port a explorar
+				//
+				uint32_t temp = SYSCFG->EXTICR[uint32_t(line_) >> 2];
+				temp &= ~(0xF << (4 * (uint32_t(line_) & 0x03)));
+				temp |= (uint32_t(port) & 0xF) << (4 * (uint32_t(line_) & 0x03));
+				SYSCFG->EXTICR[uint32_t(line_) >> 2] = temp;
 
 				// Configura el registre IMR (Interrupt Mask Register);
 				//
-			    if (mode == EXTIMode::interrupt)
-			    	regs->IMR |= 1 << _ln;
+			    if ((mode == EXTIMode::interrupt) || (mode == EXTIMode::all))
+			    	EXTI->IMR |= 1 << uint32_t(line_);
 			    else
-			    	regs->IMR &= ~(1 << _ln);
+			    	EXTI->IMR &= ~(1 << uint32_t(line_));
 
 				// Configura el registre EMR (Event Mask Register);
 				//
-			    if (mode == EXTIMode::event)
-			    	regs->EMR |= 1 << _ln;
+			    if ((mode == EXTIMode::event) || (mode == EXTIMode::all))
+			    	EXTI->EMR |= 1 << uint32_t(line_);
 			    else
-			    	regs->EMR &= ~(1 << _ln);
+			    	EXTI->EMR &= ~(1 << uint32_t(line_));
 
 				// Configura el registre RTSR (Rising Trigger Selection Register)
 				//
-				if ((trigger == EXTITrigger::rissing) || (trigger == EXTITrigger::changing))
-					regs->RTSR |= 1 << _ln;
+				if ((trigger == EXTITrigger::rissing) || (trigger == EXTITrigger::all))
+					EXTI->RTSR |= 1 << uint32_t(line_);
 				else
-					regs->RTSR &= ~(1 << _ln);
+					EXTI->RTSR &= ~(1 << uint32_t(line_));
 
 				// Configura el registre FTSR (Falling Trigger Selection Register)
 				//
-				if ((trigger == EXTITrigger::falling) || (trigger == EXTITrigger::changing))
-					regs->FTSR |= 1 << _ln;
+				if ((trigger == EXTITrigger::falling) || (trigger == EXTITrigger::all))
+					EXTI->FTSR |= 1 << uint32_t(line_);
 				else
-					regs->FTSR &= ~(1 << _ln);
-
-				//XXXXXXXXXXXXXXXXXXXX*/
+					EXTI->FTSR &= ~(1 << uint32_t(line_));
 			}
 
-			static void setInterruptFunction(
-				halEXTIInterruptFunction function,
-				void *params) {
+			static void deInit() {
 
-				halEXTISetInterruptFunction(halEXTILine(line_), function, params);
+				disableClock();
 			}
 
 			static void setInterruptFunction(
@@ -156,30 +152,24 @@ namespace htl {
 
 			static void enableInterrupt() {
 
-				EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
-
-				regs->IMR |= 1 << _ln;
+				EXTI->IMR |= 1 << uint32_t(line_);
 			}
 
 			static bool disableInterrupt() {
 
-				EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
-
-				bool state = (regs->IMR & (1 << _ln)) != 0;
-				regs->IMR &= ~(1 << _ln);
+				bool state = (EXTI->IMR & (1 << uint32_t(line_))) != 0;
+				EXTI->IMR &= ~(1 << uint32_t(line_));
 				return state;
 			}
 
             inline static bool getInterruptFlag() {
 
-            	EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
-                return (regs->PR & (1 << _ln)) != 0;
+                return (EXTI->PR & (1 << uint32_t(line_))) != 0;
             }
 
             inline static void clearInterruptFlag() {
 
-            	EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
-                regs->PR &= ~(1 << _ln);
+                EXTI->PR &= ~(1 << uint32_t(line_));
             }
 
 			inline static void interruptHandler(
@@ -192,103 +182,6 @@ namespace htl {
 
     template <EXTILine line_> EXTIInterruptFunction EXTI_x<line_>::_isrFunction = nullptr;
     template <EXTILine line_> EXTIInterruptParam EXTI_x<line_>::_isrParam = nullptr;
-
-
-	template <>
-	struct EXTIInfo<EXTILine::line0> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 0;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line1> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 1;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line2> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 2;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line3> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 3;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line4> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 4;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line5> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 5;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line6> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 6;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line7> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 7;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line8> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 8;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line9> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 9;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line10> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 10;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line11> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 11;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line12> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 12;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line13> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 13;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line14> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 14;
-	};
-
-	template <>
-	struct EXTIInfo<EXTILine::line15> {
-		constexpr static const uint32_t addr = EXTI_BASE;
-		constexpr static const uint32_t ln = 15;
-	};
 
 	using EXTI_0 = EXTI_x<EXTILine::line0>;
 	using EXTI_1 = EXTI_x<EXTILine::line1>;

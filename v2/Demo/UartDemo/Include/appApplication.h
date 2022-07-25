@@ -20,9 +20,9 @@ namespace app {
 
     class MyApplication: public Application {
         private:
-    	    using GPIO_TX = board::arduino::GPIO_TX;
-    	    using GPIO_RX = board::arduino::GPIO_RX;
-    		using UART = board::arduino::UART;
+    	    using GPIO_TX = config::uartService::GPIO_TX;
+    	    using GPIO_RX = config::uartService::GPIO_RX;
+    		using UART = config::uartService::UART;
 
     		using GPIO_LED = board::led1::GPIO_LED;
     		using GPIO_SW = board::sw1::GPIO_SW;

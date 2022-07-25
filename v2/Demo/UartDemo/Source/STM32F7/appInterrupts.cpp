@@ -11,9 +11,25 @@ using namespace htl;
 ///
 extern "C" void USART6_IRQHandler() {
 
+	if (UART_6::getInterruptFlag(UARTEvent::txEmpty)) {
+		UART_6::interruptHandler(UARTEvent::txEmpty);
+		UART_6::clearInterruptFlag(UARTEvent::txEmpty);
+	}
+	if (UART_6::getInterruptFlag(UARTEvent::txComplete)) {
+		UART_6::interruptHandler(UARTEvent::txComplete);
+		UART_6::clearInterruptFlag(UARTEvent::txComplete);
+	}
 	if (UART_6::getInterruptFlag(UARTEvent::rxFull)) {
 		UART_6::interruptHandler(UARTEvent::rxFull);
 		UART_6::clearInterruptFlag(UARTEvent::rxFull);
+	}
+	if (UART_6::getInterruptFlag(UARTEvent::parity)) {
+		UART_6::interruptHandler(UARTEvent::parity);
+		UART_6::clearInterruptFlag(UARTEvent::parity);
+	}
+	if (UART_6::getInterruptFlag(UARTEvent::error)) {
+		UART_6::interruptHandler(UARTEvent::error);
+		UART_6::clearInterruptFlag(UARTEvent::error);
 	}
 }
 

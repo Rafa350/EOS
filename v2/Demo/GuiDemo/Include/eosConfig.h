@@ -51,8 +51,4 @@
 
 //#define OPT_GUI_Selector
 
-
-#include "board/eosBoard.h"
-
-
 #endif // __eosConfig__

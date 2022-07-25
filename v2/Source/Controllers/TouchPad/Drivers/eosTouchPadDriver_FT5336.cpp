@@ -45,7 +45,7 @@ void TouchPadDriver_FT5336::initialize() {
 	// Wait at least 200ms after power up before accessing registers
 	// Trsi timing (Time of starting to report point after resetting) from FT5336GQQ datasheet
 	//
-	halTMRDelay(200);
+	//halTMRDelay(200);
     initializeInterface();
 
 	#ifdef TOUCHPAD_INT_PORT
@@ -278,10 +278,10 @@ void TouchPadDriver_FT5336::initializeInterface() {
 	//
 	#ifdef TOUCHPAD_INT_PORT
 		GPIO_INT::initInput(GPIOPull::up);
-		EXTI_INT::init(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
+		EXTI_INT::init(board::touchpad::extiPort, EXTIMode::interrupt, EXTITrigger::rissing);
 
-		INT::setInterruptVectorPriority(INTVector(TOUCHPAD_INT_IRQ), INTPriority(TOUCHPAD_INT_PRIORITY), INTSubPriority(TOUCHPAD_INT_SUBPRIORITY));
-		INT::enableInterruptVector(INTVector(TOUCHPAD_INT_IRQ));
+		INT_1::setInterruptVectorPriority(board::touchpad::intVector, board::touchpad::intVectorPriority, board::touchpad::intVectorSubPriority);
+		INT_1::enableInterruptVector(board::touchpad::intVector);
 	#endif
 
 	// Inicialitza el canal I2C

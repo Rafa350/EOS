@@ -39,7 +39,7 @@ namespace htl {
 	};
 
 	template <I2CChannel channel_>
-	class I2C_x {
+	class I2C_x final {
 		private:
 			using Trait = I2CTrait<channel_>;
 			constexpr static const unsigned _defaultBlockTime = 1000;

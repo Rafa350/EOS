@@ -69,9 +69,9 @@
     #error "No se especifico el producto"
 #endif
 
-#define USE_LEDS_LED1
-#define USE_LEDS_LED2
-#define USE_SWITCHES_SW1
+#define USE_LED1
+#define USE_LED2
+#define USE_SW1
 
 
 #endif // __eosConfig__

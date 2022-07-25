@@ -1,7 +1,6 @@
 #include "eos.h"
-#include "HTL/htlGPIO.h"
-#include "HAL/halINT.h"
 #include "HAL/halSYS.h"
+#include "HTL/htlINT.h"
 #include "HTL/htlTMR.h"
 #include "HTL/htlUART.h"
 #include "Services/eosDigOutputService.h"
@@ -50,39 +49,33 @@ void MyApplication::initializeHardware() {
 	GPIO_LED::initOutput(GPIODriver::pushPull);
 	GPIO_LED::clear();
 
-    // Inicialitza la UART i els pins TX/RX de la UART
+    // Inicialitza la UART
 	//
 	UART::init();
 	UART::initTXPin<GPIO_TX>();
 	UART::initRXPin<GPIO_RX>();
 	UART::setProtocol(UARTWord::word8, UARTParity::none, UARTStop::stop1);
 	UART::setTimming(UARTBaudMode::b9600, UARTClockMode::pclk, 0, UARTOverSampling::os16);
-
-	halINTEnableInterruptVector(HAL_INT_VECTOR_UART6);
-	halINTSetInterruptVectorPriority(HAL_INT_VECTOR_UART6, HAL_INT_PRIORITY_10, HAL_INT_SUBPRIORITY_0);
+	INT_1::setInterruptVectorPriority(config::uartService::uartVector, config::uartService::uartVectorPriority, config::uartService::uartVectorSubPriority);
+	INT_1::enableInterruptVector(INTVector::vUART6);
 
 	// Inicialitza el temporitzador per les entrades digitals
 	//
 	TMR_INPSRV::init();
 	TMR_INPSRV::setClockDivider(TMRClockDivider::div1);
 	TMR_INPSRV::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
-	TMR_INPSRV::setPeriod((1000 * config::digInputService::period) - 1);
-
-    halINTSetInterruptVectorPriority(DigInputService_TimerInterruptVector, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
-    halINTEnableInterruptVector(DigInputService_TimerInterruptVector);
+	TMR_INPSRV::setPeriod((1000 * config::digInputService::tmrPeriod) - 1);
+    INT_1::setInterruptVectorPriority(config::digInputService::tmrVector, config::digInputService::tmrVectorPriority, config::digInputService::tmrVectorSubPriority);
+    INT_1::enableInterruptVector(config::digInputService::tmrVector);
 
 	// Inicialitza el temporitzador per les sortides digitals
 	//
 	TMR_OUTSRV::init();
 	TMR_OUTSRV::setClockDivider(TMRClockDivider::div1);
 	TMR_OUTSRV::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
-	TMR_OUTSRV::setPeriod((1000 * config::digOutputService::period) - 1);
-
-	// Inicialitza les interrupcions
-	//
-
-    halINTSetInterruptVectorPriority(DigOutputService_TimerInterruptVector, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);
-    halINTEnableInterruptVector(DigOutputService_TimerInterruptVector);
+	TMR_OUTSRV::setPeriod((1000 * config::digOutputService::tmrPeriod) - 1);
+    INT_1::setInterruptVectorPriority(config::digOutputService::tmrVector, config::digOutputService::tmrVectorPriority, config::digOutputService::tmrVectorSubPriority);
+    INT_1::enableInterruptVector(config::digOutputService::tmrVector);
 }
 
 

@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "HAL/halGPIO.h"
 #include "appApplication.h"
 
 
@@ -12,7 +11,7 @@ using namespace app;
 ///
 void appMain() {
 
-    MyApplication* application = new MyApplication();
+    MyApplication  *application = new MyApplication();
     application->run();
     delete application;
 }

@@ -246,16 +246,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/Framework/EOS/HAL/halINT.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/HAL/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
@@ -274,6 +264,11 @@
 			<name>Inc/Framework/EOS/HTL/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/htlINT.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlINT.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/htlTMR.h</name>
@@ -541,16 +536,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halINT.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSYS.h</locationURI>
@@ -569,6 +554,11 @@
 			<name>Inc/Framework/EOS/HTL/STM32/htlI2C.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlI2C.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/htlINT.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlINT.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/htlTMR.h</name>
@@ -616,16 +606,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HAL/STM32/halGPIO.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HAL/STM32/halINT.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halINT.c</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
@@ -639,6 +619,11 @@
 			<name>Src/Framework/EOS/HAL/STM32/halUART.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halUART.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32/htlGPIO_Init.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_Init.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htlUART_Init.cpp</name>

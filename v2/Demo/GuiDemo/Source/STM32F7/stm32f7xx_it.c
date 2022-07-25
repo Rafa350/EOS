@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "HAL/halGPIO.h"
 
 
 void NMI_Handler(void) {

@@ -1,11 +1,12 @@
 #include "eos.h"
-#include "HAL/STM32/halEXTI.h"
+#include "HTL/STM32/htlEXTI.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h"
 #include "Services/eosTouchPadService.h"
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -36,7 +37,7 @@ void TouchpadService::onInitialize() {
     _touchDriver->initialize();
     _touchDriver->setOrientation(TouchPadOrientation::rotate90);
 
-    halEXTISetInterruptFunction(TOUCHPAD_INT_EXTI_LINE, interruptHandler, this);
+    EXTI_INT::setInterruptFunction(interruptHandler, this);
 }
 
 
@@ -124,8 +125,8 @@ void TouchpadService::interruptHandler() {
 /// \brief    Despatxa la interrupcio a la funcio membre.
 ///
 void TouchpadService::interruptHandler(
-	halEXTILine line,
-	void *param) {
+	EXTIEvent event,
+	EXTIInterruptParam param) {
 
 	TouchpadService *service = static_cast<TouchpadService*>(param);
 	service->interruptHandler();

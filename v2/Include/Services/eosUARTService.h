@@ -15,9 +15,7 @@ namespace eos {
 
 	class UARTService: public Service {
 		private:
-			using UART = UARTService_UART;
-			using GPIO_TX = UARTService_GPIO_TX;
-			using GPIO_RX = UARTService_GPIO_RX;
+			using UART = config::uartService::UART;
 
 		public:
 			enum class Event {

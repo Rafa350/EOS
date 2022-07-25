@@ -11,6 +11,7 @@
 
 
 using namespace eos;
+using namespace htl;
 using namespace app;
 
 
@@ -41,33 +42,33 @@ void MyApplication::onInitialize() {
 
     // Configura la entrada corresponent al switch SW1
     //
-    GPIO_SW1::initInput(htl::GPIOPull::up);
-    sw1 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW1>());
+    GPIO_SW1::initInput(GPIOPull::up);
+    sw1 = new DigInput(_digInputService, getAdapter<GPIO_SW1>());
     sw1->setCallback(sw1EventCallback, nullptr);
 
     // COnfigura la entrada corresponent al switch SW2
     //
     #ifdef EXIST_SW2
-        GPIO_SW2::initInput(htl::GPIOPull::up);
-        sw2 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW2>());
+        GPIO_SW2::initInput(GPIOPull::up);
+        sw2 = new DigInput(_digInputService, getAdapter<GPIO_SW2>());
         sw2->setCallback(sw2EventCallback, nullptr);
     #endif
 
     // Configure la entrada corresponent al switch SW3
     //
     #ifdef EXIST_SW3
-        GPIO_SW3::initInput(htl::GPIOPull::up);
-        sw3 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW3>());
+        GPIO_SW3::initInput(GPIOPull::up);
+        sw3 = new DigInput(_digInputService, getAdapter<GPIO_SW3>());
         sw3->setCallback(sw3EventCallback, nullptr);
     #endif
 
     // Configura el temporitzador pel servei d'entrades digitals
     //
     TMR_INP::init();
-    TMR_INP::setClockSource(htl::TMRClockSource::pclk);
-    TMR_INP::setResolution(htl::TMRResolution::res16);
-    TMR_INP::setClockDivider(htl::TMRClockDivider::div64);
-    TMR_INP::setPeriod(((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1);
+    TMR_INP::setClockSource(TMRClockSource::pclk);
+    TMR_INP::setResolution(TMRResolution::res16);
+    TMR_INP::setClockDivider(TMRClockDivider::div64);
+    TMR_INP::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digInputService::timerPeriod) / 64000) - 1);
     TMR_INP::setInterruptFunction(tmrInpInterruptFunction, _digInputService);
 
     // Configura les interrupcions pel servei d'entrades digitals
@@ -107,27 +108,27 @@ void MyApplication::onInitialize() {
     // Configura el temporitzador pel servei de sortides digitals
     //
     TMR_OUT::init();
-    TMR_OUT::setClockSource(htl::TMRClockSource::pclk);
-    TMR_OUT::setResolution(htl::TMRResolution::res16);
-    TMR_OUT::setClockDivider(htl::TMRClockDivider::div64);
-    TMR_OUT::setPeriod(((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1);
+    TMR_OUT::setClockSource(TMRClockSource::pclk);
+    TMR_OUT::setResolution(TMRResolution::res16);
+    TMR_OUT::setClockDivider(TMRClockDivider::div64);
+    TMR_OUT::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digOutputService::timerPeriod) / 64000) - 1);
     TMR_OUT::setInterruptFunction(tmrOutInterruptFunction, _digOutputService);
 
     // Configura les interrupcions
     //
-    htl::INT_1::setInterruptVectorPriority(
+    INT_1::setInterruptVectorPriority(
         DigOutputService_TimerInterruptVector,
         DigOutputService_TimerInterruptPriority,
         DigOutputService_TimerInterruptSubPriority);
 
     // Inicia el temporitzador del servei d'entrades digitals
     //
-    TMR_INP::enableInterrupt(htl::TMREvent::update);
+    TMR_INP::enableInterrupt(TMREvent::update);
     TMR_INP::start();
 
     // Inicia el temporitzador del servei de sortides digitals
     //
-    TMR_OUT::enableInterrupt(htl::TMREvent::update);
+    TMR_OUT::enableInterrupt(TMREvent::update);
     TMR_OUT::start();
 }
 

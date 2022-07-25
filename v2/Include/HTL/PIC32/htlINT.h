@@ -29,34 +29,34 @@ namespace htl {
     };
 
     enum class INTVector {
-        I2C1 = _I2C_1_VECTOR,
-        I2C2 = _I2C_2_VECTOR,
-        SPI1 = _SPI_1_VECTOR,
-        SPI2 = _SPI_2_VECTOR,
+        vI2C1 = _I2C_1_VECTOR,
+        vI2C2 = _I2C_2_VECTOR,
+        vSPI1 = _SPI_1_VECTOR,
+        vSPI2 = _SPI_2_VECTOR,
         #ifdef _SPI3
-        SPI3 = _SPI_3_VECTOR,
+        vSPI3 = _SPI_3_VECTOR,
         #endif
         #ifdef _SPI4
-        SPI4 = _SPI_4_VECTOR,
+        vSPI4 = _SPI_4_VECTOR,
         #endif
-        TMR1 = _TIMER_1_VECTOR,
-        TMR2 = _TIMER_2_VECTOR,
-        TMR3 = _TIMER_3_VECTOR,
-        TMR4 = _TIMER_4_VECTOR,
-        TMR5 = _TIMER_5_VECTOR,
-        UART1 = _UART_1_VECTOR,
-        UART2 = _UART_2_VECTOR,
+        vTMR1 = _TIMER_1_VECTOR,
+        vTMR2 = _TIMER_2_VECTOR,
+        vTMR3 = _TIMER_3_VECTOR,
+        vTMR4 = _TIMER_4_VECTOR,
+        vTMR5 = _TIMER_5_VECTOR,
+        vUART1 = _UART_1_VECTOR,
+        vUART2 = _UART_2_VECTOR,
         #ifdef _UART3
-            UART3 = _UART_3_VECTOR,
+            vUART3 = _UART_3_VECTOR,
         #endif
         #ifdef _UART4
-            UART4 = _UART_4_VECTOR,
+            vUART4 = _UART_4_VECTOR,
         #endif
         #ifdef _UART5
-            UART5 = _UART_5_VECTOR,
+            vUART5 = _UART_5_VECTOR,
         #endif
         #ifdef _UART6
-            UART6 = _UART_6_VECTOR,
+            vUART6 = _UART_6_VECTOR,
         #endif
     };
 
@@ -80,7 +80,9 @@ namespace htl {
             /// \brief Restaura les interrupcions.
             /// \param state: True si cal activar les interrupcions.
             ///
-            inline static void restoreInterrupts(bool state) {
+            inline static void restoreInterrupts(
+                bool state) {
+                
                 if (state)
                     enableInterrupts();
             }

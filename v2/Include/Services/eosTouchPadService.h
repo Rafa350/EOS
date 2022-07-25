@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
-#include "HAL/STM32/halEXTI.h"
+#include "HTL/STM32/htlEXTI.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
@@ -42,6 +42,7 @@ namespace eos {
 			};
 
 		private:
+			using EXTI_INT = board::touchpad::EXTI_INT;
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
     		ITouchPadDriver *_touchDriver;
@@ -52,7 +53,7 @@ namespace eos {
         	int _oldPressed;
 
         	void interruptHandler();
-			static void interruptHandler(halEXTILine line, void *param);
+			static void interruptHandler(htl::EXTIEvent event, htl::EXTIInterruptParam param);
 
 		protected:
 			void onInitialize() override;
