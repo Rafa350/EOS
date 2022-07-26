@@ -96,12 +96,14 @@ unsigned UARTService::receive(
 	// cada cop que el registre de recepcio no estigui buit,
 	// es genera una interrupcio.
 	//
-	UART::enableInterrupt(UARTEvent::rxFull);
+	UART::enableInterrupt(UARTEvent::rxNotEmpty);
 
 	if (!_rxPending.wait(blockTime)) {
-		UART::disableInterrupt(UARTEvent::rxFull);
+		UART::disableInterrupt(UARTEvent::rxNotEmpty);
 		UART::disableInterrupt(UARTEvent::parity);
-		UART::disableInterrupt(UARTEvent::error);
+		UART::disableInterrupt(UARTEvent::framming);
+		UART::disableInterrupt(UARTEvent::overrun);
+		UART::disableInterrupt(UARTEvent::noise);
 		UART::clearInterruptFlags();
     	_rxPending.release();
 	}
@@ -155,12 +157,14 @@ void UARTService::uartInterruptFunction(
 
 		// RXNE (Reception data register not empty)
 		//
-		case UARTEvent::rxFull:
+		case UARTEvent::rxNotEmpty:
 			_rxBuffer[_rxCount++] = UART::receive();
 			if (_rxCount == _rxSize) {
-				UART::disableInterrupt(UARTEvent::rxFull);
+				UART::disableInterrupt(UARTEvent::rxNotEmpty);
 				UART::disableInterrupt(UARTEvent::parity);
-				UART::disableInterrupt(UARTEvent::error);
+				UART::disableInterrupt(UARTEvent::framming);
+				UART::disableInterrupt(UARTEvent::overrun);
+				UART::disableInterrupt(UARTEvent::noise);
 				_rxPending.releaseISR();
 			}
 			break;

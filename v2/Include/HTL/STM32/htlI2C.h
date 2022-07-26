@@ -61,11 +61,13 @@ namespace htl {
 			I2C_x & operator = (const I2C_x &) = delete;
 			I2C_x & operator = (const I2C_x &&) = delete;
 
-			inline static void enableClock() {
+			inline static void activate() {
+
                 RCC->APB1ENR |= _rccen;
             }
 
-            inline static void disableClock() {
+            inline static void deactivate() {
+
             	RCC->APB1ENR &= ~_rccen;
             }
 
@@ -79,22 +81,34 @@ namespace htl {
             
             inline static void deInit() {
                 
-            	disableClock();
+            	deactivate();
             }
 
 			inline static I2CResult enable() {
+
 				return I2CResult(halI2CEnable(_handler));
 			}
 
 			inline static I2CResult disable() {
+
 				return I2CResult(halI2CDisable(_handler));
 			}
 
-			inline static I2CResult send(uint8_t addr, const void *data, int size, unsigned blockTime = _defaultBlockTime) {
+			inline static I2CResult send(
+				uint8_t addr,
+				const void *data,
+				int size,
+				unsigned blockTime = _defaultBlockTime) {
+
 				return I2CResult(halI2CMasterSend(_handler, addr, data, size, blockTime));
 			}
 
-			inline static I2CResult receive(uint8_t addr, void *data, int size, unsigned blockTime = _defaultBlockTime) {
+			inline static I2CResult receive(
+				uint8_t addr,
+				void *data,
+				int size,
+				unsigned blockTime = _defaultBlockTime) {
+
 				return I2CResult(halI2CMasterReceive(_handler, addr, data, size, blockTime));
 			}
 

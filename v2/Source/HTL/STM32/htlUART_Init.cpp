@@ -228,7 +228,7 @@ void htl::UART_enableInterrupt(
 			regs->CR1 |= USART_CR1_TCIE;
 			break;
 
-		case UARTEvent::rxFull:
+		case UARTEvent::rxNotEmpty:
 			regs->CR1 |= USART_CR1_RXNEIE;
 			break;
 
@@ -236,10 +236,9 @@ void htl::UART_enableInterrupt(
 			regs->CR1 |= USART_CR1_PEIE;
 			break;
 
+		case UARTEvent::noise:
+		case UARTEvent::overrun:
 		case UARTEvent::framming:
-			break;
-
-		case UARTEvent::error:
 			regs->CR3 |= USART_CR3_EIE;
 			break;
 	}
@@ -278,7 +277,7 @@ bool htl::UART_disableInterrupt(
 			regs->CR1 &= ~USART_CR1_TCIE;
 			break;
 
-		case UARTEvent::rxFull:
+		case UARTEvent::rxNotEmpty:
 			state = regs->CR1 & USART_CR1_RXNEIE;
 			regs->CR1 &= ~USART_CR1_RXNEIE;
 			break;
@@ -289,11 +288,6 @@ bool htl::UART_disableInterrupt(
 			break;
 
 		case UARTEvent::framming:
-			break;
-
-		case UARTEvent::error:
-			state = regs->CR3 & USART_CR3_EIE;
-			regs->CR3 &= ~USART_CR3_EIE;
 			break;
 	}
 

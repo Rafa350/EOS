@@ -86,8 +86,8 @@ namespace htl {
 
     /// \brief GPIO Driver type identifiers.
     enum class GPIODriver {
-    	noChange,
         pushPull,
+    	noChange,
         openDrain
     };
 
@@ -103,7 +103,6 @@ namespace htl {
     void GPIO_initInput(GPIO_TypeDef*, uint32_t, GPIOPull);
     void GPIO_initOutput(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed);
     void GPIO_initAlt(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed, unsigned);
-    void GPIO_deInit(GPIO_TypeDef*, uint32_t);
 
     template <GPIOPort>
     struct GPIOPortTrait {
@@ -151,6 +150,77 @@ namespace htl {
          }
     };
 
+    template <GPIOPort port_>
+    class GPIOPortActivator final {
+    	private:
+    		static uint16_t _activated;
+
+    	public:
+    		static void activate(
+    			uint16_t mask) {
+
+    			if (!_activated) {
+    				if constexpr (port_ == GPIOPort::portA)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+    				else if constexpr (port_ == GPIOPort::portB)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+    				else if constexpr (port_ == GPIOPort::portC)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+    				else if constexpr (port_ == GPIOPort::portD)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+    				else if constexpr (port_ == GPIOPort::portE)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
+    				else if constexpr (port_ == GPIOPort::portF)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
+    				else if constexpr (port_ == GPIOPort::portG)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
+    				else if constexpr (port_ == GPIOPort::portH)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
+    				else if constexpr (port_ == GPIOPort::portI)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
+    				else if constexpr (port_ == GPIOPort::portJ)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
+    				else if constexpr (port_ == GPIOPort::portK)
+    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
+    				__DSB();
+    			}
+    			_activated |= mask;
+    		}
+
+    		static void deactivate(
+    			uint16_t mask) {
+
+    			_activated &= ~mask;
+    			if (!_activated) {
+    				if constexpr (port_ == GPIOPort::portA)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN;
+    				else if constexpr (port_ == GPIOPort::portB)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN;
+    				else if constexpr (port_ == GPIOPort::portC)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN;
+    				else if constexpr (port_ == GPIOPort::portD)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN;
+    				else if constexpr (port_ == GPIOPort::portE)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN;
+    				else if constexpr (port_ == GPIOPort::portF)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN;
+    				else if constexpr (port_ == GPIOPort::portG)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN;
+    				else if constexpr (port_ == GPIOPort::portH)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN;
+    				else if constexpr (port_ == GPIOPort::portI)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN;
+    				else if constexpr (port_ == GPIOPort::portJ)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN;
+    				else if constexpr (port_ == GPIOPort::portK)
+    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN;
+    			}
+    		}
+    };
+
+    template <GPIOPort port_> uint16_t GPIOPortActivator<port_>::_activated = 0;
+
+
     /// \class GPIO_x
     /// \brief Adapter class for gpio pins
     ///
@@ -162,6 +232,7 @@ namespace htl {
         private:
             using PortTrait = GPIOPortTrait<port_>;
             using PinTrait = GPIOPinTrait<port_, pin_>;
+            using Activator = GPIOPortActivator<port_>;
             static constexpr uint32_t _addr = PortTrait::addr;
             static constexpr uint32_t _pn = PinTrait::pn;
 
@@ -182,6 +253,7 @@ namespace htl {
             static void initInput(
             	GPIOPull pull = GPIOPull::none) {
 
+            	Activator::activate(1 << _pn);
                 GPIO_initInput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr), 
                     _pn,
@@ -192,6 +264,7 @@ namespace htl {
             	GPIODriver driver,
 				GPIOSpeed speed = GPIOSpeed::medium) {
 
+            	Activator::activate(1 << _pn);
             	GPIO_initOutput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     _pn,
@@ -204,6 +277,7 @@ namespace htl {
 				GPIOSpeed speed,
 				GPIOAlt alt) {
                 
+            	Activator::activate(1 << _pn);
             	GPIO_initAlt(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     _pn,
@@ -214,9 +288,7 @@ namespace htl {
 
             static void deInit() {
 
-            	GPIO_deInit(
-            		reinterpret_cast<GPIO_TypeDef*>(_addr),
-					_pn);
+            	Activator::deactivate(1 << _pn);
             }
 
             /// \brief Set pin to ON state.
@@ -486,7 +558,7 @@ namespace htl {
     #ifdef GPIOA_BASE
         template<>
         struct GPIOPortTrait<GPIOPort::portA> {
-            static const uint32_t addr = GPIOA_BASE;
+            static constexpr uint32_t addr = GPIOA_BASE;
         };
 
         template <>
@@ -503,7 +575,7 @@ namespace htl {
                 usart2_CTS = 7,
                 uart4_TX = 8,
             };
-            static const uint32_t pn = 0;
+            static constexpr uint32_t pn = 0;
         };
 
         template <>
@@ -518,7 +590,7 @@ namespace htl {
                 usart2_RTS = 7,
                 uart4_RX = 8
             };
-            static const uint32_t pn = 1;
+            static constexpr uint32_t pn = 1;
         };
 
         template <>
@@ -526,7 +598,7 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_B5 = 14
             };
-            static const uint32_t pn = 3;
+            static constexpr uint32_t pn = 3;
         };
 
         template <>
@@ -536,7 +608,7 @@ namespace htl {
                 ltdc_VSYNC = 14,
                 usart2_CK = 7,
             };
-            static const uint32_t pn = 4;
+            static constexpr uint32_t pn = 4;
         };
 
         template <>
@@ -545,7 +617,7 @@ namespace htl {
                 i2s1_CL = 5,
                 spi1_SCK = 5
             };
-            static const uint32_t pn = 5;
+            static constexpr uint32_t pn = 5;
         };
 
         template <>
@@ -555,7 +627,7 @@ namespace htl {
    				ltdc_G2 = 14,
                 spi1_MISO = 5
             };
-            static const uint32_t pn = 6;
+            static constexpr uint32_t pn = 6;
         };
 
         template <>
@@ -564,7 +636,7 @@ namespace htl {
                 i2s1_SD = 5,
                 spi1_MOSI = 5
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
@@ -572,7 +644,7 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_R4 = 14
             };
-            static const uint32_t pn = 11;
+            static constexpr uint32_t pn = 11;
         };
 
         template <>
@@ -580,14 +652,14 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_R5 = 14
             };
-            static const uint32_t pn = 12;
+            static constexpr uint32_t pn = 12;
         };
     #endif
 
     #ifdef GPIOB_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portB> {
-            static const uint32_t addr = GPIOB_BASE;
+            static constexpr uint32_t addr = GPIOB_BASE;
         };
 
         template <>
@@ -595,7 +667,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R3 = 9
             };
-            static const uint32_t pn = 0;
+            static constexpr uint32_t pn = 0;
         };
 
         template <>
@@ -603,7 +675,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R6 = 9
             };
-            static const uint32_t pn = 1;
+            static constexpr uint32_t pn = 1;
         };
 
         template <>
@@ -612,7 +684,7 @@ namespace htl {
                 i2c1_SCL = 4,
                 ltdc_B6 = 14
             };
-            static const uint32_t pn = 8;
+            static constexpr uint32_t pn = 8;
         };
 
         template <>
@@ -622,7 +694,7 @@ namespace htl {
                 ltdc_B7 = 14,
                 spi2_NSS = 5
             };
-            static const uint32_t pn = 9;
+            static constexpr uint32_t pn = 9;
         };
 
         template <>
@@ -632,7 +704,7 @@ namespace htl {
                 ltdc_G4 = 14,
                 spi2_SCK = 5
             };
-            static const uint32_t pn = 10;
+            static constexpr uint32_t pn = 10;
         };
 
         template <>
@@ -640,7 +712,7 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_G5 = 14
             };
-            static const uint32_t pn = 11;
+            static constexpr uint32_t pn = 11;
         };
 
         template <>
@@ -648,7 +720,7 @@ namespace htl {
             enum class GPIOAlt {
                 spi2_MISO = 5
             };
-            static const uint32_t pn = 14;
+            static constexpr uint32_t pn = 14;
         };
 
         template <>
@@ -656,21 +728,21 @@ namespace htl {
             enum class GPIOAlt {
                 spi2_MOSI = 5
             };
-            static const uint32_t pn = 15;
+            static constexpr uint32_t pn = 15;
         };
     #endif
 
     #ifdef GPIOC_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portC> {
-            static const uint32_t addr = GPIOC_BASE;
+            static constexpr uint32_t addr = GPIOC_BASE;
         };
 
         template <>
         struct GPIOPinTrait<GPIOPort::portC, GPIOPin::pin2> {
             enum class GPIOAlt {
             };
-            static const uint32_t pn = 2;
+            static constexpr uint32_t pn = 2;
         };
 
         template <>
@@ -679,7 +751,7 @@ namespace htl {
                 ltdc_HSYNC = 14,
                 uart6_TX = 8
             };
-            static const uint32_t pn = 6;
+            static constexpr uint32_t pn = 6;
         };
 
         template <>
@@ -688,7 +760,7 @@ namespace htl {
                 ltdc_G6 = 14,
                 uart6_RX = 8
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
@@ -696,14 +768,14 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R2 = 14,
             };
-            static const uint32_t pn = 10;
+            static constexpr uint32_t pn = 10;
         };
     #endif
 
     #ifdef GPIOD_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portD> {
-            static const uint32_t addr = GPIOD_BASE;
+            static constexpr uint32_t addr = GPIOD_BASE;
         };
 
         template <>
@@ -712,7 +784,7 @@ namespace htl {
                 dcmi_D5 = 13,
                 ltdc_G7 = 14
             };
-            static const uint32_t pn = 3;
+            static constexpr uint32_t pn = 3;
         };
 
         template <>
@@ -722,7 +794,7 @@ namespace htl {
                 spi3_SCK = 5,
                 i2s3_SD = 5
             };
-            static const uint32_t pn = 6;
+            static constexpr uint32_t pn = 6;
         };
 
         template <>
@@ -732,21 +804,21 @@ namespace htl {
                 usart2_CK = 7,
                 spdifrx_IN0 = 8
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
         struct GPIOPinTrait<GPIOPort::portD, GPIOPin::pin13> {
             enum class GPIOAlt {
             };
-            static const uint32_t pn = 13;
+            static constexpr uint32_t pn = 13;
         };
     #endif
 
     #ifdef GPIOE_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portE> {
-            static const uint32_t addr = GPIOE_BASE;
+            static constexpr uint32_t addr = GPIOE_BASE;
         };
 
         template <>
@@ -754,7 +826,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_B0 = 14
             };
-            static const uint32_t pn = 4;
+            static constexpr uint32_t pn = 4;
         };
 
         template <>
@@ -762,7 +834,7 @@ namespace htl {
             enum class GPIOAlt {
                 dcmi_D6 = 13
             };
-            static const uint32_t pn = 5;
+            static constexpr uint32_t pn = 5;
         };
 
         template <>
@@ -770,14 +842,14 @@ namespace htl {
             enum class GPIOAlt {
                 dcmi_D7 = 13
             };
-            static const uint32_t pn = 6;
+            static constexpr uint32_t pn = 6;
         };
     #endif
 
     #ifdef GPIOF_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portF> {
-            static const uint32_t addr = GPIOF_BASE;
+            static constexpr uint32_t addr = GPIOF_BASE;
         };
 
         template <>
@@ -786,7 +858,7 @@ namespace htl {
                 spi5_SCK = 5,
                 uart7_TX = 8
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
@@ -797,7 +869,7 @@ namespace htl {
                     uart7_TX = 8
                 #endif
             };
-            static const uint32_t pn = 9;
+            static constexpr uint32_t pn = 9;
         };
 
         template <>
@@ -805,14 +877,14 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_DE = 14
             };
-            static const uint32_t pn = 10;
+            static constexpr uint32_t pn = 10;
         };
     #endif
 
     #ifdef GPIOG_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portG> {
-            static const uint32_t addr = GPIOG_BASE;
+            static constexpr uint32_t addr = GPIOG_BASE;
         };
 
         template <>
@@ -820,7 +892,7 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_R7 = 14
             };
-            static const uint32_t pn = 6;
+            static constexpr uint32_t pn = 6;
         };
 
         template <>
@@ -828,7 +900,7 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_DOTCLK = 14
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
@@ -837,7 +909,7 @@ namespace htl {
                 dcmi_VSYNC = 13,
                 uart6_RX = 8
             };
-            static const uint32_t pn = 9;
+            static constexpr uint32_t pn = 9;
         };
 
         template <>
@@ -845,7 +917,7 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_G3 = 9
             };
-            static const uint32_t pn = 10;
+            static constexpr uint32_t pn = 10;
         };
 
         template <>
@@ -853,7 +925,7 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_B3 = 14
             };
-            static const uint32_t pn = 11;
+            static constexpr uint32_t pn = 11;
         };
 
         template <>
@@ -864,28 +936,28 @@ namespace htl {
                 spi6_MISO = 5,
                 usart6_RTS = 8
             };
-            static const uint32_t pn = 12;
+            static constexpr uint32_t pn = 12;
         };
 
         template <>
         struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin13> {
             enum class GPIOAlt {
             };
-            static const uint32_t pn = 13;
+            static constexpr uint32_t pn = 13;
         };
 
         template <>
         struct GPIOPinTrait<GPIOPort::portG, GPIOPin::pin14> {
             enum class GPIOAlt {
             };
-            static const uint32_t pn = 14;
+            static constexpr uint32_t pn = 14;
         };
     #endif
 
     #ifdef GPIOH_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portH> {
-            static const uint32_t addr = GPIOH_BASE;
+            static constexpr uint32_t addr = GPIOH_BASE;
         };
 
         template <>
@@ -893,7 +965,7 @@ namespace htl {
             enum class GPIOAlt {
                 i2c3_SCL = 4
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
@@ -902,7 +974,7 @@ namespace htl {
                 i2c3_SDA = 4,
                 ltdc_R2 = 14
             };
-            static const uint32_t pn = 8;
+            static constexpr uint32_t pn = 8;
         };
 
         template <>
@@ -910,7 +982,7 @@ namespace htl {
             enum class GPIOAlt {
                 dcmi_D0 = 13
             };
-            static const uint32_t pn = 9;
+            static constexpr uint32_t pn = 9;
         };
 
         template <>
@@ -918,7 +990,7 @@ namespace htl {
             enum class GPIOAlt {
                 dcmi_D1 = 13
             };
-            static const uint32_t pn = 10;
+            static constexpr uint32_t pn = 10;
         };
 
         template <>
@@ -926,7 +998,7 @@ namespace htl {
             enum class GPIOAlt {
                 dcmi_D2 = 13
             };
-            static const uint32_t pn = 11;
+            static constexpr uint32_t pn = 11;
         };
 
         template <>
@@ -934,7 +1006,7 @@ namespace htl {
             enum class GPIOAlt {
                 dcmi_D3 = 13
             };
-            static const uint32_t pn = 12;
+            static constexpr uint32_t pn = 12;
         };
 
         template <>
@@ -942,14 +1014,14 @@ namespace htl {
             enum class GPIOAlt {
                 dcmi_D4 = 13
             };
-            static const uint32_t pn = 14;
+            static constexpr uint32_t pn = 14;
         };
     #endif
 
     #ifdef GPIOI_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portI> {
-            static const uint32_t addr = GPIOI_BASE;
+            static constexpr uint32_t addr = GPIOI_BASE;
         };
 
         template <>
@@ -957,7 +1029,7 @@ namespace htl {
             enum class GPIOAlt {
                 spi2_SCK = 5
             };
-            static const uint32_t pn = 1;
+            static constexpr uint32_t pn = 1;
         };
 
         template <>
@@ -965,7 +1037,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_VSYNC = 14
             };
-            static const uint32_t pn = 9;
+            static constexpr uint32_t pn = 9;
         };
 
         template <>
@@ -973,14 +1045,14 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_HSYNC = 14
             };
-            static const uint32_t pn = 10;
+            static constexpr uint32_t pn = 10;
         };
 
         template <>
         struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin11> {
             enum class GPIOAlt {
             };
-            static const uint32_t pn = 11;
+            static constexpr uint32_t pn = 11;
         };
 
         template <>
@@ -988,14 +1060,14 @@ namespace htl {
             enum class GPIOAlt {
             	ltdc_LCDE = 14
             };
-            static const uint32_t pn = 12;
+            static constexpr uint32_t pn = 12;
         };
 
         template <>
         struct GPIOPinTrait<GPIOPort::portI, GPIOPin::pin13> {
             enum class GPIOAlt {
             };
-            static const uint32_t pn = 13;
+            static constexpr uint32_t pn = 13;
         };
 
         template <>
@@ -1003,7 +1075,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_DOTCLK = 14
             };
-            static const uint32_t pn = 14;
+            static constexpr uint32_t pn = 14;
         };
 
         template <>
@@ -1011,14 +1083,14 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R0 = 14
             };
-            static const uint32_t pn = 15;
+            static constexpr uint32_t pn = 15;
         };
     #endif
 
     #ifdef GPIOJ_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portJ> {
-            static const uint32_t addr = GPIOJ_BASE;
+            static constexpr uint32_t addr = GPIOJ_BASE;
         };
 
         template <>
@@ -1026,7 +1098,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R1 = 14
             };
-            static const uint32_t pn = 0;
+            static constexpr uint32_t pn = 0;
         };
 
         template <>
@@ -1034,7 +1106,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R2 = 14
             };
-            static const uint32_t pn = 1;
+            static constexpr uint32_t pn = 1;
         };
 
         template <>
@@ -1042,7 +1114,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R3 = 14
             };
-            static const uint32_t pn = 2;
+            static constexpr uint32_t pn = 2;
         };
 
         template <>
@@ -1050,7 +1122,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R4 = 14
             };
-            static const uint32_t pn = 3;
+            static constexpr uint32_t pn = 3;
         };
 
         template <>
@@ -1058,7 +1130,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R5 = 14
             };
-            static const uint32_t pn = 4;
+            static constexpr uint32_t pn = 4;
         };
 
         template <>
@@ -1066,7 +1138,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R6 = 14
             };
-            static const uint32_t pn = 5;
+            static constexpr uint32_t pn = 5;
         };
 
         template <>
@@ -1074,7 +1146,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_R7 = 14
             };
-            static const uint32_t pn = 6;
+            static constexpr uint32_t pn = 6;
         };
 
         template <>
@@ -1082,7 +1154,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G0 = 14
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
@@ -1090,7 +1162,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G1 = 14
             };
-            static const uint32_t pn = 8;
+            static constexpr uint32_t pn = 8;
         };
 
         template <>
@@ -1098,7 +1170,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G2 = 14
             };
-            static const uint32_t pn = 9;
+            static constexpr uint32_t pn = 9;
         };
 
         template <>
@@ -1106,7 +1178,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G3 = 14
             };
-            static const uint32_t pn = 10;
+            static constexpr uint32_t pn = 10;
         };
 
         template <>
@@ -1114,7 +1186,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G4 = 14
             };
-            static const uint32_t pn = 11;
+            static constexpr uint32_t pn = 11;
         };
 
         template <>
@@ -1122,7 +1194,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_B1 = 14
             };
-            static const uint32_t pn = 13;
+            static constexpr uint32_t pn = 13;
         };
 
         template <>
@@ -1130,7 +1202,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_B2 = 14
             };
-            static const uint32_t pn = 14;
+            static constexpr uint32_t pn = 14;
         };
 
         template <>
@@ -1138,14 +1210,14 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_B3 = 14
             };
-            static const uint32_t pn = 15;
+            static constexpr uint32_t pn = 15;
         };
     #endif
 
     #ifdef GPIOK_BASE
         template  <>
         struct GPIOPortTrait<GPIOPort::portK> {
-            static const uint32_t addr = GPIOK_BASE;
+            static constexpr uint32_t addr = GPIOK_BASE;
         };
 
         template <>
@@ -1153,7 +1225,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G5 = 14
             };
-            static const uint32_t pn = 0;
+            static constexpr uint32_t pn = 0;
         };
 
         template <>
@@ -1161,7 +1233,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G6 = 14
             };
-            static const uint32_t pn = 1;
+            static constexpr uint32_t pn = 1;
         };
 
         template <>
@@ -1169,14 +1241,14 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_G7 = 14
             };
-            static const uint32_t pn = 2;
+            static constexpr uint32_t pn = 2;
         };
 
         template <>
         struct GPIOPinTrait<GPIOPort::portK, GPIOPin::pin3> {
             enum class GPIOAlt {
             };
-            static const uint32_t pn = 3;
+            static constexpr uint32_t pn = 3;
         };
 
         template <>
@@ -1184,7 +1256,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_B5 = 14
             };
-            static const uint32_t pn = 4;
+            static constexpr uint32_t pn = 4;
         };
 
         template <>
@@ -1192,7 +1264,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_B6 = 14
             };
-            static const uint32_t pn = 5;
+            static constexpr uint32_t pn = 5;
         };
 
         template <>
@@ -1200,7 +1272,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_B7 = 14
             };
-            static const uint32_t pn = 6;
+            static constexpr uint32_t pn = 6;
         };
 
         template <>
@@ -1208,7 +1280,7 @@ namespace htl {
             enum class GPIOAlt {
                 ltdc_DE = 14
             };
-            static const uint32_t pn = 7;
+            static constexpr uint32_t pn = 7;
         };
     #endif
 

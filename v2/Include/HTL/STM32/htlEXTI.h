@@ -81,13 +81,13 @@ namespace htl {
 			EXTI_x & operator = (const EXTI_x &) = delete;
 			EXTI_x & operator = (const EXTI_x &&) = delete;
 
-			static void enableClock() {
+			inline static void activate() {
 
 				RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 			    __DSB();
 			}
 
-			static void disableClock() {
+			inline static void deactivate() {
 
 				RCC->APB2ENR &= ~RCC_APB2ENR_SYSCFGEN;
 			}
@@ -98,7 +98,7 @@ namespace htl {
 				EXTIMode mode,
 				EXTITrigger trigger) {
 
-				enableClock();
+				activate();
 				//EXTI_init(line_, port, mode, trigger);
 
 				// Configura el port a explorar
@@ -139,7 +139,7 @@ namespace htl {
 
 			static void deInit() {
 
-				disableClock();
+				deactivate();
 			}
 
 			static void setInterruptFunction(
@@ -150,7 +150,7 @@ namespace htl {
                 _isrParam = param;
             }
 
-			static void enableInterrupt() {
+			inline static void enableInterrupt() {
 
 				EXTI->IMR |= 1 << uint32_t(line_);
 			}

@@ -71,68 +71,68 @@ namespace htl {
 			TMR_x & operator = (const TMR_x &) = delete;
 			TMR_x & operator = (const TMR_x &&) = delete;
 
-			static void enableClock() {
+			inline static void activate() {
 
 				if constexpr(timer_ == TMRTimer::timer1)
 		            RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-				if constexpr(timer_ == TMRTimer::timer2)
+				else if constexpr(timer_ == TMRTimer::timer2)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-				if constexpr(timer_ == TMRTimer::timer3)
+				else if constexpr(timer_ == TMRTimer::timer3)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-				if constexpr(timer_ == TMRTimer::timer4)
+				else if constexpr(timer_ == TMRTimer::timer4)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-				if constexpr(timer_ == TMRTimer::timer5)
+				else if constexpr(timer_ == TMRTimer::timer5)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-				if constexpr(timer_ == TMRTimer::timer6)
+				else if constexpr(timer_ == TMRTimer::timer6)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-				if constexpr(timer_ == TMRTimer::timer7)
+				else if constexpr(timer_ == TMRTimer::timer7)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
-				if constexpr(timer_ == TMRTimer::timer8)
+				else if constexpr(timer_ == TMRTimer::timer8)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-				if constexpr(timer_ == TMRTimer::timer9)
+				else if constexpr(timer_ == TMRTimer::timer9)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
-				if constexpr(timer_ == TMRTimer::timer10)
+				else if constexpr(timer_ == TMRTimer::timer10)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
-				if constexpr(timer_ == TMRTimer::timer11)
+				else if constexpr(timer_ == TMRTimer::timer11)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
-				if constexpr(timer_ == TMRTimer::timer12)
+				else if constexpr(timer_ == TMRTimer::timer12)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
-				if constexpr(timer_ == TMRTimer::timer13)
+				else if constexpr(timer_ == TMRTimer::timer13)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
-				if constexpr(timer_ == TMRTimer::timer14)
+				else if constexpr(timer_ == TMRTimer::timer14)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
 				__DSB();
 			}
 
-			static void disableClock() {
+			inline static void deactivate() {
 
 				if constexpr(timer_ == TMRTimer::timer1)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
-				if constexpr(timer_ == TMRTimer::timer2)
+				else if constexpr(timer_ == TMRTimer::timer2)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
-				if constexpr(timer_ == TMRTimer::timer3)
+				else if constexpr(timer_ == TMRTimer::timer3)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
-				if constexpr(timer_ == TMRTimer::timer4)
+				else if constexpr(timer_ == TMRTimer::timer4)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
-				if constexpr(timer_ == TMRTimer::timer5)
+				else if constexpr(timer_ == TMRTimer::timer5)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
-				if constexpr(timer_ == TMRTimer::timer6)
+				else if constexpr(timer_ == TMRTimer::timer6)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM6EN;
-				if constexpr(timer_ == TMRTimer::timer7)
+				else if constexpr(timer_ == TMRTimer::timer7)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM7EN;
-				if constexpr(timer_ == TMRTimer::timer8)
+				else if constexpr(timer_ == TMRTimer::timer8)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
-				if constexpr(timer_ == TMRTimer::timer9)
+				else if constexpr(timer_ == TMRTimer::timer9)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM9EN;
-				if constexpr(timer_ == TMRTimer::timer10)
+				else if constexpr(timer_ == TMRTimer::timer10)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM10EN;
-				if constexpr(timer_ == TMRTimer::timer11)
+				else if constexpr(timer_ == TMRTimer::timer11)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM11EN;
-				if constexpr(timer_ == TMRTimer::timer12)
+				else if constexpr(timer_ == TMRTimer::timer12)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM12EN;
-				if constexpr(timer_ == TMRTimer::timer13)
+				else if constexpr(timer_ == TMRTimer::timer13)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM13EN;
-				if constexpr(timer_ == TMRTimer::timer14)
+				else if constexpr(timer_ == TMRTimer::timer14)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM14EN;
 			}
 
@@ -141,7 +141,7 @@ namespace htl {
 			///
 			static void init() {
 
-				enableClock();
+				activate();
 			}
 
 			/// \brief Desactiva el modul
@@ -152,7 +152,7 @@ namespace htl {
 				regs->CR1 &= ~TIM_CR1_CEN;
 				regs->DIER &= ~(TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
 
-				disableClock();
+				deactivate();
 			}
 
 			static constexpr void setDirection(
@@ -203,13 +203,13 @@ namespace htl {
 				}
 			}
 
-			static void start() {
+			inline static void start() {
 
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 				regs->CR1 |= TIM_CR1_CEN;
 			}
 
-			static void stop() {
+			inline static void stop() {
 
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 				regs->CR1 &= ~TIM_CR1_CEN;
@@ -334,86 +334,86 @@ namespace htl {
 
 	template <>
 	struct TMRTrait<TMRTimer::timer1> {
-		static const uint32_t addr = TIM1_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM1_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer2> {
-		static const uint32_t addr = TIM2_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM2_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer3> {
-		static const uint32_t addr = TIM3_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM3_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer4> {
-		static const uint32_t addr = TIM4_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM4_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer5> {
-		static const uint32_t addr = TIM5_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM5_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer6> {
-		static const uint32_t addr = TIM6_BASE;
-		static const bool suportsClockDivider = false;
+		static constexpr uint32_t addr = TIM6_BASE;
+		static constexpr bool suportsClockDivider = false;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer7> {
-		static const uint32_t addr = TIM7_BASE;
-		static const bool suportsClockDivider = false;
+		static constexpr uint32_t addr = TIM7_BASE;
+		static constexpr bool suportsClockDivider = false;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer8> {
-		static const uint32_t addr = TIM8_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM8_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer9> {
-		static const uint32_t addr = TIM9_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM9_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer10> {
-		static const uint32_t addr = TIM10_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM10_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer11> {
-		static const uint32_t addr = TIM11_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM11_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer12> {
-		static const uint32_t addr = TIM12_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM12_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer13> {
-		static const uint32_t addr = TIM13_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM13_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 
 	template <>
 	struct TMRTrait<TMRTimer::timer14> {
-		static const uint32_t addr = TIM14_BASE;
-		static const bool suportsClockDivider = true;
+		static constexpr uint32_t addr = TIM14_BASE;
+		static constexpr bool suportsClockDivider = true;
 	};
 }
 

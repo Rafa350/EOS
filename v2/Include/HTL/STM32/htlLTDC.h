@@ -49,13 +49,13 @@ namespace htl {
 			LTDC_x & operator = (const LTDC_x &) = delete;
 			LTDC_x & operator = (const LTDC_x &&) = delete;
 
-			inline static void enableClock() {
+			inline static void activate() {
 
 				RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
 			    __DSB();
 			}
 
-			inline static void disableClock() {
+			inline static void deactivate() {
 
 				RCC->APB2ENR &= ~RCC_APB2ENR_LTDCEN;
 			}
@@ -75,7 +75,7 @@ namespace htl {
 
 		    	// Activa el rellotge del dispositiu
 		    	//
-		    	enableClock();
+		    	activate();
 
 		    	// Desactiva el dispositiu
 		    	//
@@ -121,7 +121,7 @@ namespace htl {
 		    static void deInit() {
 
 		    	disable();
-		    	disableClock();
+		    	deactivate();
 		    }
 
 		    static void enable() {

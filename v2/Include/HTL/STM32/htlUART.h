@@ -85,15 +85,16 @@ namespace htl {
 	enum class UARTEvent {
 		cts,
 		brk,
+		endOfBlock,
 		txEmpty,
 		txComplete,
-		rxFull,
+		rxNotEmpty,
+		rxTimeout,
 		idle,
 		parity,
 		framming,
 		overrun,
-		noise,
-		error
+		noise
 	};
 
 	using UARTInterruptParam = void*;
@@ -302,26 +303,26 @@ namespace htl {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				switch (event) {
-					case UARTEvent::rxFull:
-						return (regs->ISR & ~USART_ISR_RXNE) != 0;
-
-					case UARTEvent::txEmpty:
-						return (regs->ISR & ~USART_ISR_TXE) != 0;
-
-					case UARTEvent::txComplete:
-						return (regs->ISR & ~USART_ISR_TC) != 0;
-
-					case UARTEvent::parity:
-						return (regs->ISR & ~USART_ISR_PE) != 0;
-
-					case UARTEvent::overrun:
-						return (regs->ISR & ~USART_ISR_ORE) != 0;
-
 					case UARTEvent::framming:
 						return (regs->ISR & USART_ISR_FE) != 0;
 
 					case UARTEvent::noise:
 						return (regs->ISR & USART_ISR_NE) != 0;
+
+					case UARTEvent::overrun:
+						return (regs->ISR & ~USART_ISR_ORE) != 0;
+
+					case UARTEvent::parity:
+						return (regs->ISR & ~USART_ISR_PE) != 0;
+
+					case UARTEvent::txComplete:
+						return (regs->ISR & ~USART_ISR_TC) != 0;
+
+					case UARTEvent::txEmpty:
+						return (regs->ISR & ~USART_ISR_TXE) != 0;
+
+					case UARTEvent::rxNotEmpty:
+						return (regs->ISR & ~USART_ISR_RXNE) != 0;
 
 					default:
 						return false;
@@ -333,32 +334,32 @@ namespace htl {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				switch (event) {
-					case UARTEvent::rxFull:
-						regs->ISR &= ~USART_ISR_RXNE;
-						break;
-
-					case UARTEvent::txEmpty:
-						regs->ISR &= ~USART_ISR_TXE;
-						break;
-
-					case UARTEvent::txComplete:
-						regs->ISR &= ~USART_ISR_TC;
-						break;
-
-					case UARTEvent::parity:
-						regs->ISR &= ~USART_ISR_PE;
-						break;
-
-					case UARTEvent::overrun:
-						regs->ISR &= ~USART_ISR_ORE;
-						break;
-
 					case UARTEvent::framming:
 						regs->ISR &= USART_ISR_FE;
 						break;
 
 					case UARTEvent::noise:
 						regs->ISR &= USART_ISR_NE;
+						break;
+
+					case UARTEvent::overrun:
+						regs->ISR &= ~USART_ISR_ORE;
+						break;
+
+					case UARTEvent::parity:
+						regs->ISR &= ~USART_ISR_PE;
+						break;
+
+					case UARTEvent::txComplete:
+						regs->ISR &= ~USART_ISR_TC;
+						break;
+
+					case UARTEvent::txEmpty:
+						regs->ISR &= ~USART_ISR_TXE;
+						break;
+
+					case UARTEvent::rxNotEmpty:
+						regs->ISR &= ~USART_ISR_RXNE;
 						break;
 				}
 			}

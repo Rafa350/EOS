@@ -19,17 +19,21 @@ extern "C" void USART6_IRQHandler() {
 		UART_6::interruptHandler(UARTEvent::txComplete);
 		UART_6::clearInterruptFlag(UARTEvent::txComplete);
 	}
-	if (UART_6::getInterruptFlag(UARTEvent::rxFull)) {
-		UART_6::interruptHandler(UARTEvent::rxFull);
-		UART_6::clearInterruptFlag(UARTEvent::rxFull);
+	if (UART_6::getInterruptFlag(UARTEvent::rxNotEmpty)) {
+		UART_6::interruptHandler(UARTEvent::rxNotEmpty);
+		UART_6::clearInterruptFlag(UARTEvent::rxNotEmpty);
 	}
 	if (UART_6::getInterruptFlag(UARTEvent::parity)) {
 		UART_6::interruptHandler(UARTEvent::parity);
 		UART_6::clearInterruptFlag(UARTEvent::parity);
 	}
-	if (UART_6::getInterruptFlag(UARTEvent::error)) {
-		UART_6::interruptHandler(UARTEvent::error);
-		UART_6::clearInterruptFlag(UARTEvent::error);
+	if (UART_6::getInterruptFlag(UARTEvent::overrun)) {
+		UART_6::interruptHandler(UARTEvent::overrun);
+		UART_6::clearInterruptFlag(UARTEvent::overrun);
+	}
+	if (UART_6::getInterruptFlag(UARTEvent::framming)) {
+		UART_6::interruptHandler(UARTEvent::framming);
+		UART_6::clearInterruptFlag(UARTEvent::framming);
 	}
 }
 
