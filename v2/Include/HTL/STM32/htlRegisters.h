@@ -10,9 +10,9 @@ namespace htl {
 
     template <typename type_, volatile type_ *reg_, unsigned pos_>
     struct FLAG {
-        constexpr static volatile type_ *addr = reg_;
-        constexpr static unsigned pos = pos_;
-        constexpr static type_ mask = (type_)1 << pos_;
+        static constexpr volatile type_ *addr = reg_;
+        static constexpr unsigned pos = pos_;
+        static constexpr type_ mask = (type_)1 << pos_;
 
         inline static void clr() {
             *addr &= ~mask;

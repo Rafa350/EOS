@@ -12,7 +12,7 @@ using namespace htl;
 void EXTI_0_InterruptHandler() {
 
 	if (EXTI_0::getInterruptFlag()) {
-		EXTI_0::interruptHandler(EXTIEvent::unknown);
+		EXTI_0::interruptHandler(EXTIEvent::change);
 		EXTI_0::clearInterruptFlag();
 	}
 }
@@ -24,7 +24,7 @@ void EXTI_0_InterruptHandler() {
 void EXTI_1_InterruptHandler() {
 
 	if (EXTI_1::getInterruptFlag()) {
-		EXTI_1::interruptHandler(EXTIEvent::unknown);
+		EXTI_1::interruptHandler(EXTIEvent::change);
 		EXTI_1::clearInterruptFlag();
 	}
 }
@@ -36,7 +36,7 @@ void EXTI_1_InterruptHandler() {
 void EXTI_2_InterruptHandler() {
 
 	if (EXTI_2::getInterruptFlag()) {
-		EXTI_2::interruptHandler(EXTIEvent::unknown);
+		EXTI_2::interruptHandler(EXTIEvent::change);
 		EXTI_2::clearInterruptFlag();
 	}
 }
@@ -48,7 +48,7 @@ void EXTI_2_InterruptHandler() {
 void EXTI_3_InterruptHandler() {
 
 	if (EXTI_3::getInterruptFlag()) {
-		EXTI_3::interruptHandler(EXTIEvent::unknown);
+		EXTI_3::interruptHandler(EXTIEvent::change);
 		EXTI_3::clearInterruptFlag();
 	}
 }
@@ -60,7 +60,7 @@ void EXTI_3_InterruptHandler() {
 void EXTI_4_InterruptHandler() {
 
 	if (EXTI_4::getInterruptFlag()) {
-		EXTI_4::interruptHandler(EXTIEvent::unknown);
+		EXTI_4::interruptHandler(EXTIEvent::change);
 		EXTI_4::clearInterruptFlag();
 	}
 }
@@ -77,19 +77,19 @@ void EXTI_5_6_7_8_9_InterruptHandler() {
     if (pending != 0) {
 
 		if (EXTI_5::getInterruptFlag())
-			EXTI_5::interruptHandler(EXTIEvent::unknown);
+			EXTI_5::interruptHandler(EXTIEvent::change);
 
 		if (EXTI_6::getInterruptFlag())
-			EXTI_6::interruptHandler(EXTIEvent::unknown);
+			EXTI_6::interruptHandler(EXTIEvent::change);
 
 		if (EXTI_7::getInterruptFlag())
-			EXTI_7::interruptHandler(EXTIEvent::unknown);
+			EXTI_7::interruptHandler(EXTIEvent::change);
 
 		if (EXTI_8::getInterruptFlag())
-			EXTI_8::interruptHandler(EXTIEvent::unknown);
+			EXTI_8::interruptHandler(EXTIEvent::change);
 
 		if (EXTI_9::getInterruptFlag())
-			EXTI_9::interruptHandler(EXTIEvent::unknown);
+			EXTI_9::interruptHandler(EXTIEvent::change);
 
 		// Borra les interrupcions pendents
 		//
@@ -109,22 +109,22 @@ void EXTI_10_11_12_13_14_15_InterruptHandler() {
     if (pending != 0) {
 
     	if (EXTI_10::getInterruptFlag())
-    		EXTI_10::interruptHandler(EXTIEvent::unknown);
+    		EXTI_10::interruptHandler(EXTIEvent::change);
 
     	if (EXTI_11::getInterruptFlag())
-    		EXTI_11::interruptHandler(EXTIEvent::unknown);
+    		EXTI_11::interruptHandler(EXTIEvent::change);
 
     	if (EXTI_12::getInterruptFlag())
-    		EXTI_12::interruptHandler(EXTIEvent::unknown);
+    		EXTI_12::interruptHandler(EXTIEvent::change);
 
     	if (EXTI_13::getInterruptFlag())
-    		EXTI_13::interruptHandler(EXTIEvent::unknown);
+    		EXTI_13::interruptHandler(EXTIEvent::change);
 
     	if (EXTI_14::getInterruptFlag())
-    		EXTI_14::interruptHandler(EXTIEvent::unknown);
+    		EXTI_14::interruptHandler(EXTIEvent::change);
 
     	if (EXTI_15::getInterruptFlag())
-    		EXTI_15::interruptHandler(EXTIEvent::unknown);
+    		EXTI_15::interruptHandler(EXTIEvent::change);
 
 		// Borra les interrupcions pendents
 		//

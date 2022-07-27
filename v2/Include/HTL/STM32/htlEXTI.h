@@ -6,41 +6,27 @@
 // EOS includes
 //
 #include "eos.h"
-
+#include "HTL/STM32/htlGPIO.h"
 
 namespace htl {
 
 	enum class EXTILine {
-		line0,
-		line1,
-		line2,
-		line3,
-		line4,
-		line5,
-		line6,
-		line7,
-		line8,
-		line9,
-		line10,
-		line11,
-		line12,
-		line13,
-		line14,
-		line15
-	};
-
-	enum class EXTIPort {
-		portA,
-		portB,
-		portC,
-		portD,
-		portE,
-		portF,
-		portG,
-		portH,
-		portI,
-		portJ,
-		portK
+		line0,   // Px0
+		line1,   // Px1
+		line2,   // P2x
+		line3,   // P3x
+		line4,   // P4x
+		line5,   // P5x
+		line6,   // P6x
+		line7,   // P7x
+		line8,   // P8x
+		line9,   // P9x
+		line10,  // Px10
+		line11,  // Px11
+		line12,  // Px12
+		line13,  // Px13
+		line14,  // Px14
+		line15,  // Px15
 	};
 
 	enum class EXTIMode {
@@ -57,14 +43,11 @@ namespace htl {
 	};
 
 	enum class EXTIEvent {
-		unknown,
 		change
 	};
 
     using EXTIInterruptParam = void*;
     using EXTIInterruptFunction =  void (*)(EXTIEvent event, EXTIInterruptParam);
-
-    void EXTI_init(EXTILine, EXTIPort, EXTIMode, EXTITrigger);
 
 	template <EXTILine line_>
 	class EXTI_x final {
@@ -92,21 +75,17 @@ namespace htl {
 				RCC->APB2ENR &= ~RCC_APB2ENR_SYSCFGEN;
 			}
 
-		public:
-			static void init(
-				EXTIPort port,
-				EXTIMode mode,
-				EXTITrigger trigger) {
+			static void setPort(
+				GPIOPort port) {
 
-				activate();
-				//EXTI_init(line_, port, mode, trigger);
-
-				// Configura el port a explorar
-				//
 				uint32_t temp = SYSCFG->EXTICR[uint32_t(line_) >> 2];
 				temp &= ~(0xF << (4 * (uint32_t(line_) & 0x03)));
 				temp |= (uint32_t(port) & 0xF) << (4 * (uint32_t(line_) & 0x03));
 				SYSCFG->EXTICR[uint32_t(line_) >> 2] = temp;
+			}
+
+			static void setMode(
+				EXTIMode mode) {
 
 				// Configura el registre IMR (Interrupt Mask Register);
 				//
@@ -121,6 +100,10 @@ namespace htl {
 			    	EXTI->EMR |= 1 << uint32_t(line_);
 			    else
 			    	EXTI->EMR &= ~(1 << uint32_t(line_));
+			}
+
+			static void setTrigger(
+				EXTITrigger trigger) {
 
 				// Configura el registre RTSR (Rising Trigger Selection Register)
 				//
@@ -135,6 +118,18 @@ namespace htl {
 					EXTI->FTSR |= 1 << uint32_t(line_);
 				else
 					EXTI->FTSR &= ~(1 << uint32_t(line_));
+			}
+
+		public:
+			static void init(
+				GPIOPort port,
+				EXTIMode mode,
+				EXTITrigger trigger) {
+
+				activate();
+				setPort(port);
+				setMode(mode);
+				setTrigger(trigger);
 			}
 
 			static void deInit() {
@@ -169,10 +164,10 @@ namespace htl {
 
             inline static void clearInterruptFlag() {
 
-                EXTI->PR &= ~(1 << uint32_t(line_));
+                EXTI->PR |= 1 << uint32_t(line_);
             }
 
-			inline static void interruptHandler(
+			static void interruptHandler(
 				EXTIEvent event) {
 
 				if (_isrFunction != nullptr)

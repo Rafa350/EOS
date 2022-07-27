@@ -160,7 +160,7 @@ namespace board {
 
 			constexpr uint8_t i2cAddr = 0x70;
 
-			constexpr htl::EXTIPort extiPort = htl::EXTIPort::portI;
+			constexpr htl::GPIOPort extiPort = htl::GPIOPort::portI;
 
 			constexpr htl::INTVector intVector = htl::INTVector::vEXTI13;
 			constexpr htl::INTPriority intVectorPriority = htl::INTPriority::p15;

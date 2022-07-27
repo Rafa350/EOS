@@ -75,31 +75,31 @@ namespace htl {
 
 				if constexpr(timer_ == TMRTimer::timer1)
 		            RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-				else if constexpr(timer_ == TMRTimer::timer2)
+				if constexpr(timer_ == TMRTimer::timer2)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-				else if constexpr(timer_ == TMRTimer::timer3)
+				if constexpr(timer_ == TMRTimer::timer3)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-				else if constexpr(timer_ == TMRTimer::timer4)
+				if constexpr(timer_ == TMRTimer::timer4)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-				else if constexpr(timer_ == TMRTimer::timer5)
+				if constexpr(timer_ == TMRTimer::timer5)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-				else if constexpr(timer_ == TMRTimer::timer6)
+				if constexpr(timer_ == TMRTimer::timer6)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-				else if constexpr(timer_ == TMRTimer::timer7)
+				if constexpr(timer_ == TMRTimer::timer7)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
-				else if constexpr(timer_ == TMRTimer::timer8)
+				if constexpr(timer_ == TMRTimer::timer8)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-				else if constexpr(timer_ == TMRTimer::timer9)
+				if constexpr(timer_ == TMRTimer::timer9)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
-				else if constexpr(timer_ == TMRTimer::timer10)
+				if constexpr(timer_ == TMRTimer::timer10)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
-				else if constexpr(timer_ == TMRTimer::timer11)
+				if constexpr(timer_ == TMRTimer::timer11)
 					RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
-				else if constexpr(timer_ == TMRTimer::timer12)
+				if constexpr(timer_ == TMRTimer::timer12)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
-				else if constexpr(timer_ == TMRTimer::timer13)
+				if constexpr(timer_ == TMRTimer::timer13)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
-				else if constexpr(timer_ == TMRTimer::timer14)
+				if constexpr(timer_ == TMRTimer::timer14)
 					RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
 				__DSB();
 			}
@@ -108,31 +108,31 @@ namespace htl {
 
 				if constexpr(timer_ == TMRTimer::timer1)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
-				else if constexpr(timer_ == TMRTimer::timer2)
+				if constexpr(timer_ == TMRTimer::timer2)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
-				else if constexpr(timer_ == TMRTimer::timer3)
+				if constexpr(timer_ == TMRTimer::timer3)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
-				else if constexpr(timer_ == TMRTimer::timer4)
+				if constexpr(timer_ == TMRTimer::timer4)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
-				else if constexpr(timer_ == TMRTimer::timer5)
+				if constexpr(timer_ == TMRTimer::timer5)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
-				else if constexpr(timer_ == TMRTimer::timer6)
+				if constexpr(timer_ == TMRTimer::timer6)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM6EN;
-				else if constexpr(timer_ == TMRTimer::timer7)
+				if constexpr(timer_ == TMRTimer::timer7)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM7EN;
-				else if constexpr(timer_ == TMRTimer::timer8)
+				if constexpr(timer_ == TMRTimer::timer8)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
-				else if constexpr(timer_ == TMRTimer::timer9)
+				if constexpr(timer_ == TMRTimer::timer9)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM9EN;
-				else if constexpr(timer_ == TMRTimer::timer10)
+				if constexpr(timer_ == TMRTimer::timer10)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM10EN;
-				else if constexpr(timer_ == TMRTimer::timer11)
+				if constexpr(timer_ == TMRTimer::timer11)
 					RCC->APB2ENR &= ~RCC_APB2ENR_TIM11EN;
-				else if constexpr(timer_ == TMRTimer::timer12)
+				if constexpr(timer_ == TMRTimer::timer12)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM12EN;
-				else if constexpr(timer_ == TMRTimer::timer13)
+				if constexpr(timer_ == TMRTimer::timer13)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM13EN;
-				else if constexpr(timer_ == TMRTimer::timer14)
+				if constexpr(timer_ == TMRTimer::timer14)
 					RCC->APB1ENR &= ~RCC_APB1ENR_TIM14EN;
 			}
 
@@ -242,7 +242,7 @@ namespace htl {
 				}
 			}
 
-			static bool disableInterrupt(
+			static constexpr bool disableInterrupt(
 				TMREvent event) {
 
 				bool status = false;
