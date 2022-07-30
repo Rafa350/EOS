@@ -19,10 +19,14 @@ namespace htl {
     };
 
     enum class LTDCPixelFormat {
-    	rgb8888,
+    	argb8888,
 		rgb888,
 		rgb565,
-		l8
+		argb1555,
+		argb4444,
+		l8,
+		al44,
+		al88
     };
 
     enum class LTDCEvent {
@@ -421,12 +425,12 @@ namespace htl {
 				tmp = regs->PFCR;
 			    tmp &= ~(LTDC_LxPFCR_PF);
 			    switch (format) {
-			    	case LTDCPixelFormat::rgb565:
-			    		tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
-			    		break;
+					case LTDCPixelFormat::rgb888:
+						tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
+						break;
 
-			    	case LTDCPixelFormat::rgb888:
-			    		tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
+					case LTDCPixelFormat::rgb565:
+			    		tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
 			    		break;
 
 			    	case LTDCPixelFormat::l8:
@@ -517,12 +521,12 @@ namespace htl {
 
     template <>
 	struct LTDCLayerTrait<LTDCLayerNum::layer1> {
-		static const uint32_t addr = LTDC_Layer1_BASE;
+		static constexpr uint32_t addr = LTDC_Layer1_BASE;
 	};
 
     template <>
 	struct LTDCLayerTrait<LTDCLayerNum::layer2> {
-		static const uint32_t addr = LTDC_Layer2_BASE;
+		static constexpr uint32_t addr = LTDC_Layer2_BASE;
 	};
 
 
@@ -533,11 +537,11 @@ namespace htl {
 	};
 	template<>
 	struct LTDCPixelFormatFor<eos::ColorFormat::rgb888> {
-		static const LTDCPixelFormat value = LTDCPixelFormat::rgb8888;
+		static const LTDCPixelFormat value = LTDCPixelFormat::rgb888;
 	};
 	template<>
 	struct LTDCPixelFormatFor<eos::ColorFormat::argb8888> {
-		static const LTDCPixelFormat value = LTDCPixelFormat::rgb888;
+		static const LTDCPixelFormat value = LTDCPixelFormat::argb8888;
 	};
 	template<>
 	struct LTDCPixelFormatFor<eos::ColorFormat::rgb565> {

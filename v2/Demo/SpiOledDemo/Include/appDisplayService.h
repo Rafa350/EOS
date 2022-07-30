@@ -4,6 +4,7 @@
 
 // EOS includes
 //
+#pragma once
 #include "eos.h"
 #include "Services/eosAppLoopService.h"
 
@@ -19,7 +20,7 @@ namespace app {
 
 	class DisplayService: public eos::AppLoopService {
 		private:
-			eos::IDisplayDriver* _driver;
+			eos::IDisplayDriver *_driver;
 			eos::Graphics *_graphics;
 
 		protected:
@@ -27,7 +28,7 @@ namespace app {
 			void onLoop();
 
 		public:
-			DisplayService(eos::Application* application);
+			DisplayService(eos::Application *application);
 	};
 }
 

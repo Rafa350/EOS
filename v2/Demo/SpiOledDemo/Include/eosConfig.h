@@ -1,12 +1,10 @@
 #ifndef __eosConfig__
 #define __eosConfig__
 
+
 #if defined(BUILD_SSD1306)
 	#define HARDWARE_CUSTOM
-	#if defined(EOS_STM32F4)
-		#define HARDWARE_CUSTOM_STM32F429I_DISC1
-		#define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
-	#elif defined(EOS_STM32F7)
+	#if defined(EOS_STM32F7)
 		#define HARDWARE_CUSTOM_STM32F746G_DISCO
 		#define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
 	#elif defined(EOS_PIC32)

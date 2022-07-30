@@ -1,5 +1,7 @@
 #include "eos.h"
-#include "HTL/STM32/htlEXTI_InterruptHandler.h"
+#include "HTL/STM32/htlEXTI_IRQ.h"
+#include "HTL/STM32/htlLTDC_IRQ.h"
+#include "HTL/STM32/htlDMA2D_IRQ.h"
 
 
 using namespace eos;

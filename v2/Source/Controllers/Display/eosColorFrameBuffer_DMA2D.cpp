@@ -6,6 +6,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -27,7 +28,7 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	_buffer((pixel_t*)buffer),
 	_bufferPitch(bufferPitch) {
 
-    halDMA2DInitialize();
+    DMA2D_1::init();
 }
 
 
@@ -89,22 +90,28 @@ void ColorFrameBuffer_DMA2D::fill(
 
 	uint8_t opacity = color.getOpacity();
 
-	// Cas quie sigui un color solid
+	// Cas que sigui un color solid
 	//
 	if (opacity == 0xFF) {
 
 		pixel_t vPixel = toPixel(color);
 		pixel_t* pPixel = getPixelPtr(x, y);
 
-		halDMA2DOptions options = htl::DMA2DOptionsFor<CI::format>::DFMT;
+		DMA2DColorMode colorMode;
+		if constexpr (CI::format == ColorFormat::rgb565)
+			colorMode = DMA2DColorMode::rgb565;
+		else if constexpr (CI::format == ColorFormat::argb8888)
+			colorMode = DMA2DColorMode::argb8888;
+		else
+			colorMode = DMA2DColorMode::rgb888;
 
 		// Rellena la regio amb el valor de color del pixel. Hi ha que
 		// suministrar el color en format adecuat, ja que no es fa cap
 		// tipus de converssio. La funcio 'toPixel()' realitza la
 		// converssio al format adequat.
 		//
-		halDMA2DStartFill(pPixel, width, height, _bufferPitch - width, options, vPixel);
-		halDMA2DWaitForFinish();
+		DMA2D_1::startFill(pPixel, width, height, _bufferPitch - width, colorMode, vPixel);
+		DMA2D_1::waitForFinish();
 	}
 
 	// Cas que no sigui transparent
@@ -138,21 +145,33 @@ void ColorFrameBuffer_DMA2D::copy(
 	int y,
 	int width,
 	int height,
-	const Color* colors,
+	const Color *colors,
 	int offset) {
 
-	pixel_t* pPixel = getPixelPtr(x, y);
+	pixel_t *pPixel = getPixelPtr(x, y);
 
-	halDMA2DOptions options =
-		htl::DMA2DOptionsFor<CI::format>::DFMT |           // Format desti
-		htl::DMA2DOptionsFor<Color::CI::format>::SFMT;     // Format origen
+	DMA2DColorMode colorMode;
+	if constexpr (CI::format == ColorFormat::rgb565)
+		colorMode = DMA2DColorMode::rgb565;
+	else if constexpr (CI::format == ColorFormat::argb8888)
+		colorMode = DMA2DColorMode::argb8888;
+	else
+		colorMode = DMA2DColorMode::rgb888;
+
+	DMA2DColorMode srcColorMode;
+	if constexpr (Color::CI::format == ColorFormat::rgb565)
+		srcColorMode = DMA2DColorMode::rgb565;
+	else if constexpr (Color::CI::format == ColorFormat::argb8888)
+		srcColorMode = DMA2DColorMode::argb8888;
+	else
+		srcColorMode = DMA2DColorMode::rgb888;
 
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 	// les opcions.
 	//
-	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, colors, offset);
-	halDMA2DWaitForFinish();
+	DMA2D_1::startCopy(pPixel, width, height, _bufferPitch - width, colorMode, colors, offset, srcColorMode);
+	DMA2D_1::waitForFinish();
 }
 
 
@@ -171,30 +190,34 @@ void ColorFrameBuffer_DMA2D::write(
 	int y,
 	int width,
 	int height,
-	const void* pixels,
+	const void *pixels,
 	ColorFormat format,
 	int offset) {
 
 	pixel_t* pPixel = getPixelPtr(x, y);
 
-	halDMA2DOptions options = htl::DMA2DOptionsFor<CI::format>::DFMT; // Format desti
-	switch (format) {
-		default:
-		case ColorFormat::argb8888:
-			options |= htl::DMA2DOptionsFor<ColorFormat::argb8888>::SFMT; // Format origen
-			break;
+	DMA2DColorMode colorMode;
+	if constexpr (CI::format == ColorFormat::rgb565)
+		colorMode = DMA2DColorMode::rgb565;
+	else if constexpr (CI::format == ColorFormat::argb8888)
+		colorMode = DMA2DColorMode::argb8888;
+	else
+		colorMode = DMA2DColorMode::rgb888;
 
-		case ColorFormat::rgb565:
-			options |= htl::DMA2DOptionsFor<ColorFormat::rgb565>::SFMT; // Format origen
-			break;
-	}
+	DMA2DColorMode srcColorMode;
+	if constexpr (Color::CI::format == ColorFormat::rgb565)
+		srcColorMode = DMA2DColorMode::rgb565;
+	else if constexpr (Color::CI::format == ColorFormat::argb8888)
+		srcColorMode = DMA2DColorMode::argb8888;
+	else
+		srcColorMode = DMA2DColorMode::rgb888;
 
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 	// les opcions. No cal cridar a 'toPixel()'
 	//
-	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, pixels, offset);
-	halDMA2DWaitForFinish();
+	DMA2D_1::startCopy(pPixel, width, height, _bufferPitch - width, colorMode, pixels, offset, colorMode);
+	DMA2D_1::waitForFinish();
 }
 
 

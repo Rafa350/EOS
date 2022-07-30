@@ -689,11 +689,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halDMA2D.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halI2C.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C.h</locationURI>
@@ -714,14 +709,24 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D_IRQ.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D_IRQ.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlEXTI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlEXTI.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlEXTI_InterruptHandler.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/htlEXTI_IRQ.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlEXTI_InterruptHandler.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlEXTI_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
@@ -744,9 +749,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlLTDC_InterruptHandler.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/htlLTDC_IRQ.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC_InterruptHandler.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlRegisters.h</name>
@@ -757,6 +762,11 @@
 			<name>inc/Framework/EOS/HTL/STM32/htlTMR.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlTMR_IRQ.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals</name>
@@ -944,11 +954,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halDMA2D.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
@@ -979,19 +984,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlEXTI_InterruptHandler.cpp</name>
+			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlEXTI_InterruptHandler.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlGPIO_Init.cpp</name>
+			<name>src/Framework/EOS/HTL/STM32/htlDMA2D_IRQ.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_Init.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D_IRQ.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlLTDC_InterruptHandler.cpp</name>
+			<name>src/Framework/EOS/HTL/STM32/htlEXTI_IRQ.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC_InterruptHandler.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlEXTI_IRQ.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlLTDC_IRQ.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

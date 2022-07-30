@@ -237,6 +237,7 @@ halI2CResult halI2CMasterSend(
 /// \param    blockTime: Temps maxim de bloqueig.
 /// \result   El resultat de l'operacio
 ///
+/*
 halI2CResult __halI2CMasterSend(
 	halI2CHandler handler,
 	uint8_t addr,
@@ -282,7 +283,7 @@ halI2CResult __halI2CMasterSend(
 		}
 	}
 }
-
+*/
 
 
 /// ----------------------------------------------------------------------

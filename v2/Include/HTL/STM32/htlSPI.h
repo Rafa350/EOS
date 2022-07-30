@@ -72,7 +72,11 @@ namespace htl {
 			SPI_x & operator = (const SPI_x &&) = delete;
 
 		public:
-			inline static void initMaster(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
+			static void initMaster(
+				SPIMode mode,
+				SPISize size = _defaultSize,
+				SPIFirstBit firstBit = _defaultFirstBit) {
+
 				halSPIOptions options =
 					HAL_SPI_MS_MASTER |
 					halSPIOptions(size) |
@@ -81,7 +85,11 @@ namespace htl {
 				init(options);
 			}
 
-			inline static void initSlave(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
+			static void initSlave(
+				SPIMode mode,
+				SPISize size = _defaultSize,
+				SPIFirstBit firstBit = _defaultFirstBit) {
+
 				halSPIOptions options =
 					HAL_SPI_MS_SLAVE |
 					halSPIOptions(size) |
@@ -90,7 +98,7 @@ namespace htl {
 				init(options);
 			}
 
-			inline static void init(halSPIOptions options) {
+			static void init(halSPIOptions options) {
 				halSPISettings settings;
 				settings.channel = halSPIChannel(channel_);
 				settings.options = options;
@@ -99,31 +107,42 @@ namespace htl {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
 
-			inline static void init(const halSPISettings &settings) {
+			inline static void init(
+				const halSPISettings &settings) {
+
 				_handler = halSPIInitialize(&_data, &settings);
 			}
             
             inline static void deInit() {
             }
 
-			inline static void setClock(SPIClockDivider clkdiv) {
+			inline static void setClock(
+				SPIClockDivider clkdiv) {
 
 			}
 
-			inline static void setInterruptFunction(halSPIInterruptFunction function, void *params) {
+			inline static void setInterruptFunction(
+				halSPIInterruptFunction function,
+				void *params) {
+
 				halSPISetInterruptFunction(_handler, function, params);
 			}
 
-			inline static void enableInterrupts(uint32_t events) {
+			inline static void enableInterrupts(
+				uint32_t events) {
+
 				halSPIEnableInterrupts(_handler, events);
 			}
 
-			inline static uint32_t disableInterrupts(uint32_t events) {
+			inline static uint32_t disableInterrupts(
+				uint32_t events) {
+
 				return halSPIDisableInterrupts(_handler, events);
 			}
 
 			template <typename gpio_>
 			inline static void initSCKPin() {
+
 				if constexpr (channel_ == SPIChannel::channel1)
 					gpio_::initAlt(
 						GPIODriver::pushPull,
@@ -163,6 +182,7 @@ namespace htl {
 
 			template <typename gpio_>
 			inline static void initMOSIPin() {
+
 				if constexpr (channel_ == SPIChannel::channel1)
 					gpio_::initAlt(
 						GPIODriver::pushPull,
@@ -203,6 +223,7 @@ namespace htl {
 
 			template <typename gpio_>
 			inline static void initMISOPin() {
+
 				if constexpr (channel_ == SPIChannel::channel1)
 					gpio_::initAlt(
 						GPIODriver::pushPull,
@@ -240,11 +261,18 @@ namespace htl {
 						gpio_::GPIOAlt::spi6_MISO);
 			}
 
-			inline static void send(const uint8_t data, unsigned blockTime = _defaultBlockTime) {
+			inline static void send(
+				const uint8_t data,
+				unsigned blockTime = _defaultBlockTime) {
+
 				halSPISend(_handler, &data, sizeof(data), blockTime);
 			}
 
-			inline static void send(const void *data, int size, unsigned blockTime = _defaultBlockTime) {
+			inline static void send(
+				const void *data,
+				int size,
+				unsigned blockTime = _defaultBlockTime) {
+
 				halSPISend(_handler, data, size, blockTime);
 			}
 	};

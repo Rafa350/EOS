@@ -44,7 +44,7 @@
 #include "System/Graphics/eosColor.h"
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
 #include "HTL/htlSPI.h"
-#include "HTL/hhlGPIO.h"
+#include "HTL/htlGPIO.h"
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 #include "HTL/htlI2C.h"
 #endif
@@ -54,29 +54,24 @@ namespace eos {
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
-			constexpr static const int _displayWidth = DISPLAY_IMAGE_WIDTH;
-			constexpr static const int _displayHeight = DISPLAY_IMAGE_HEIGHT;
-			constexpr static const int _imageBuffer   = DISPLAY_IMAGE_BUFFER;
+			static constexpr int _displayWidth = DISPLAY_IMAGE_WIDTH;
+			static constexpr int _displayHeight = DISPLAY_IMAGE_HEIGHT;
+			static constexpr int _imageBuffer   = DISPLAY_IMAGE_BUFFER;
 
     	private:
-#ifdef DISPLAY_RST_PORT
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_RST_PORT), GPIOPin(DISPLAY_RST_PIN)> PinRST;
-#endif
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_CS_PORT), GPIOPin(DISPLAY_CS_PIN)> PinCS;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_DC_PORT), GPIOPin(DISPLAY_DC_PIN)> PinDC;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_SCK_PORT), GPIOPin(DISPLAY_SCK_PIN)> PinSCK;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_MOSI_PORT), GPIOPin(DISPLAY_MOSI_PIN)> PinMOSI;
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-			typedef SPIModule<SPIChannel(DISPLAY_SPI_CHANNEL)> SPI;
-#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
-#endif
+			#ifdef DISPLAY_RST_PORT
+				using GPIO_RST = board::display::GPIO_RST;
+			#endif
+			#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+				using GPIO_CS = board::display::GPIO_CS;
+				using GPIO_DC = board::display::GPIO_DC;
+				using GPIO_SCK = board::display::GPIO_SCK;
+				using GPIO_MOSI = board::display::GPIO_MOSI;
+				using SPI = board::display::SPI;
+			#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
+			#endif
 
     	private:
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-			SPI &_spi;
-#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
-#endif
-
     		static IDisplayDriver *_instance;
     		FrameBuffer *_frameBuffer;
 

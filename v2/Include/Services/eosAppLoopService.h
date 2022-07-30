@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosAppLoopService__
 #define	__eosAppLoopService__
 

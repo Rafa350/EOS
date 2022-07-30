@@ -11,7 +11,7 @@
 #include "eosAssert.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
-#include "HAL/STM32/halDMA2D.h"
+#include "HTL/STM32/htlDMA2D.h"
 #include "HTL/STM32/htlGPIO.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "System/eosMath.h"
@@ -19,6 +19,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -69,7 +70,7 @@ void DisplayDriver_RGBLTDC::initialize() {
 
     // Inicialitza el dispositiu DMA2D
     //
-	halDMA2DInitialize();
+	DMA2D_1::init();
 
 	// Inicialitza els buffers a color negre
 	//

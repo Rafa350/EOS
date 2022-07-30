@@ -358,8 +358,8 @@ namespace htl {
         struct TMRTimerTrait<TMRTimer::timer1> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T1IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T1IE_POSITION>;
-            static const uint32_t addr = _TMR1_BASE_ADDRESS;
-            static const bool isT1 = true;
+            static constexpr uint32_t addr = _TMR1_BASE_ADDRESS;
+            static constexpr bool isT1 = true;
         };
     #endif
 
@@ -368,8 +368,8 @@ namespace htl {
         struct TMRTimerTrait<TMRTimer::timer2> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T2IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T2IE_POSITION>;
-            static const uint32_t addr = _TMR2_BASE_ADDRESS;
-            static const bool isT1 = false;
+            static constexpr uint32_t addr = _TMR2_BASE_ADDRESS;
+            static constexpr bool isT1 = false;
         };
     #endif
 
@@ -378,8 +378,8 @@ namespace htl {
         struct TMRTimerTrait<TMRTimer::timer3> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T3IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T3IE_POSITION>;
-            static const uint32_t addr = _TMR3_BASE_ADDRESS;
-            static const bool isT1 = false;
+            static constexpr uint32_t addr = _TMR3_BASE_ADDRESS;
+            static constexpr bool isT1 = false;
         };
     #endif
 
@@ -388,8 +388,8 @@ namespace htl {
         struct TMRTimerTrait<TMRTimer::timer4> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T4IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T4IE_POSITION>;
-            static const uint32_t addr = _TMR4_BASE_ADDRESS;
-            static const bool isT1 = false;
+            static constexpr uint32_t addr = _TMR4_BASE_ADDRESS;
+            static constexpr bool isT1 = false;
         };
     #endif
 
@@ -398,8 +398,8 @@ namespace htl {
         struct TMRTimerTrait<TMRTimer::timer5> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T5IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T5IE_POSITION>;
-            static const uint32_t addr = _TMR5_BASE_ADDRESS;
-            static const bool isT1 = false;
+            static constexpr uint32_t addr = _TMR5_BASE_ADDRESS;
+            static constexpr bool isT1 = false;
         };
     #endif
 }

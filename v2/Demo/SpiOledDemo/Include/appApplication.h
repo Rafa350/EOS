@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __appApplication__
 #define __appApplication__
 
@@ -15,8 +16,8 @@ namespace app {
 
 	class MyApplication: public eos::Application {
 		private:
-			LedService* _ledService;
-			DisplayService* _displayService;
+			LedService *_ledService;
+			DisplayService *_displayService;
 
 		public :
 			MyApplication();
@@ -24,4 +25,5 @@ namespace app {
 
 }
 
-#endif
+
+#endif // __appApplication__

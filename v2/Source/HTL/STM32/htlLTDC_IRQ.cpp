@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "HTL/STM32/htlLTDC.h"
-#include "HTL/STM32/htlLTDC_InterruptHandler.h"
+#include "HTL/STM32/htlLTDC_IRQ.h"
 
 
 using namespace htl;

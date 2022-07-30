@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_htlTMR_InterruptHandler__
-#define __STM32_htlTMR_InterruptHandler__
+#ifndef __STM32_htlTMR_IRQ__
+#define __STM32_htlTMR_IEQ__
 
 
 // EOS includes
@@ -30,4 +30,4 @@ extern "C" {
 #endif
 
 
-#endif // __STM32_htlTMR_IntrerruptHandler__
+#endif // __STM32_htlTMR_IRQ__

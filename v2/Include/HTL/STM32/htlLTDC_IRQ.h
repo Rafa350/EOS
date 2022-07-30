@@ -1,5 +1,5 @@
-#ifndef __STM32_htlLTDC_INterruptHandler__
-#define __STM32_htlLTDC_InterruptHandler__
+#ifndef __STM32_htlLTDC_IRQ__
+#define __STM32_htlLTDC_IRQ__
 
 
 // EOS includes
@@ -16,4 +16,4 @@ extern "C" {
 #endif
 
 
-#endif // __STM32_htlLTDC_IntrerruptHandler__
+#endif // __STM32_htlLTDC_IRQ__
