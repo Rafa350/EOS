@@ -31,6 +31,11 @@ namespace htl {
 
 	};
 
+	enum class I2CPin {
+		pinSCL,
+		pinSDA
+	};
+
 	enum class I2CResult: halI2CResult {
 		ok = HAL_I2C_OK,
 	    error = HAL_I2C_ERR,
@@ -43,6 +48,10 @@ namespace htl {
 
 	template <I2CChannel channel_>
 	class I2CTrait {
+	};
+
+	template <I2CChannel channel_, typename gpio_, I2CPin>
+	struct I2CPinTrait {
 	};
 
 	template <I2CChannel channel_>
@@ -152,70 +161,22 @@ namespace htl {
 				return I2CResult(halI2CMasterReceive(_handler, addr, data, size, blockTime));
 			}
 
+			/// \brief Inicialitza el pin SCL
+			///
             template <typename gpio_>
 			static void initSCLPin() {
-				#ifdef I2C1
-					if constexpr (channel_ == I2CChannel::channel1)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c1_SCL);
-				#endif
-				#ifdef I2C2
-					if constexpr (channel_ == I2CChannel::channel2)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c2_SCL);
-				#endif
-				#ifdef I2C3
-					if constexpr (channel_ == I2CChannel::channel3)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c3_SCL);
-				#endif
-				#ifdef I2C4
-					if constexpr (channel_ == I2CChannel::channel4)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c4_SCL);
-				#endif
+				gpio_::initAlt(htl::GPIODriver::openDrain, htl::GPIOSpeed::fast, I2CPinTrait<channel_, gpio_, I2CPin::pinSCL>::alt);
 			}
 
+            /// \brief Inicialitza el pin SDA
+            ///
             template <typename gpio_>
 			static void initSDAPin() {
-				#ifdef I2C1
-					if constexpr (channel_ == I2CChannel::channel1)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c1_SDA);
-				#endif
-				#ifdef I2C2
-					if constexpr (channel_ == I2CChannel::channel2)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c2_SDA);
-				#endif
-				#ifdef I2C3
-					if constexpr (channel_ == I2CChannel::channel3)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c3_SDA);
-				#endif
-				#ifdef I2C4
-					if constexpr (channel_ == I2CChannel::channel4)
-						gpio_::initAlt(
-							htl::GPIODriver::openDrain,
-							htl::GPIOSpeed::fast,
-							gpio_::GPIOAlt::i2c4_SDA);
-				#endif
+				gpio_::initAlt(htl::GPIODriver::openDrain, htl::GPIOSpeed::fast, I2CPinTrait<channel_, gpio_, I2CPin::pinSDA>::alt);
 			}
 
+            /// \brief Asigna la funcio d'interrupcio.
+            ///
             static void setInterruptFunction(
             	I2CInterruptFunction function,
 				I2CInterruptParam param) {
@@ -233,12 +194,15 @@ namespace htl {
 	#ifdef I2C1
 		using I2C_1 = I2C_x<I2CChannel::channel1>;
 	#endif
+
 	#ifdef I2C2
 		using I2C_2 = I2C_x<I2CChannel::channel2>;
 	#endif
+
 	#ifdef I2C3
 		using I2C_3 = I2C_x<I2CChannel::channel3>;
 	#endif
+
 	#ifdef I2C4
 		using I2C_4 = I2C_x<I2CChannel::channel4>;
 	#endif
@@ -246,25 +210,46 @@ namespace htl {
 	#ifdef I2C1
 		template <>
 		struct I2CTrait<I2CChannel::channel1> {
-			static const uint32_t addr = I2C1_BASE;
+			static constexpr uint32_t addr = I2C1_BASE;
+		};
+
+		template<>
+		struct I2CPinTrait<I2CChannel::channel1, GPIO_B6, I2CPin::pinSCL> {
+			static constexpr GPIOAlt alt = GPIOAlt::alt4;
+		};
+		template<>
+		struct I2CPinTrait<I2CChannel::channel1, GPIO_B7, I2CPin::pinSDA> {
+			static constexpr GPIOAlt alt = GPIOAlt::alt4;
 		};
 	#endif
+
 	#ifdef I2C2
 		template <>
 		struct I2CTrait<I2CChannel::channel2> {
-			static const uint32_t addr = I2C2_BASE;
+			static constexpr uint32_t addr = I2C2_BASE;
 		};
 	#endif
+
 	#ifdef I2C3
 		template <>
 		struct I2CTrait<I2CChannel::channel3> {
-			static const uint32_t addr = I2C3_BASE;
+			static constexpr uint32_t addr = I2C3_BASE;
+		};
+
+		template <>
+		struct I2CPinTrait<I2CChannel::channel3, GPIO_H7, I2CPin::pinSCL> {
+			static constexpr GPIOAlt alt = GPIOAlt::alt4;
+		};
+		template <>
+		struct I2CPinTrait<I2CChannel::channel3, GPIO_H8, I2CPin::pinSDA> {
+			static constexpr GPIOAlt alt = GPIOAlt::alt4;
 		};
 	#endif
+
 	#ifdef I2C4
 		template <>
 		struct I2CTrait<I2CChannel::channel4> {
-			static const uint32_t addr = I2C4_BASE;
+			static constexpr uint32_t addr = I2C4_BASE;
 		};
 	#endif
 }

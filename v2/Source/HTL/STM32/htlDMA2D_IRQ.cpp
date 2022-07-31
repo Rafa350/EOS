@@ -6,6 +6,6 @@
 using namespace htl;
 
 
-void DMA2D_IRQHandler() {
+void DMA2D_InterruptHandler() {
 
 }

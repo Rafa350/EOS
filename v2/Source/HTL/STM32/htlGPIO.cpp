@@ -108,6 +108,20 @@ static void setPull(
 }
 
 
+static void setAlt(
+	GPIO_TypeDef *regs,
+	uint32_t pn,
+	GPIOAlt alt) {
+
+    // Configura el registre AFR (Alternate Funcion Register)
+    //
+    uint32_t temp = regs->AFR[pn >> 3];
+    temp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
+    temp |= (uint32_t(alt) & 0b1111) << ((pn & 0x07) * 4);
+    regs->AFR[pn >> 3] = temp;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza un pin com a entrada.
 /// \param    regs: Bloc de registres.
@@ -169,7 +183,7 @@ void htl::GPIO_initAlt(
     uint32_t pn,
     GPIODriver driver,
     GPIOSpeed speed,
-    unsigned alt) {
+    GPIOAlt alt) {
         
     uint32_t temp;
 
@@ -184,11 +198,5 @@ void htl::GPIO_initAlt(
     //
     setDriver(regs, pn, driver);
     setSpeed(regs, pn, speed);
-
-    // Configura el registre AFR (Alternate Funcion Register)
-    //
-    temp = regs->AFR[pn >> 3];
-    temp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
-    temp |= (alt & 0b1111) << ((pn & 0x07) * 4);
-    regs->AFR[pn >> 3] = temp;
+    setAlt(regs, pn, alt);
 }

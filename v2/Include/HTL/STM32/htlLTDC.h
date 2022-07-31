@@ -36,8 +36,22 @@ namespace htl {
 		transferError = 2
     };
 
+    enum class LTDCPin {
+    	pinHSYNC,
+		pinVSYNC,
+		pinDE,
+		pinPC,
+		pinR0, pinR1, pinR2, pinR3, pinR4, pinR5, pinR6, pinR7,
+		pinG0, pinG1, pinG2, pinG3, pinG4, pinG5, pinG6, pinG7,
+		pinB0, pinB1, pinB2, pinB3, pinB4, pinB5, pinB6, pinB7
+    };
+
     using LTDCInterruptParam = void*;
     using LTDCInterruptFunction = void (*)(LTDCEvent, LTDCInterruptParam);
+
+    template <typename gpio_, LTDCPin pin_>
+    struct LTDCPinTrait {
+    };
 
     template <int dummy_>
     class LTDC_x final {
@@ -142,7 +156,7 @@ namespace htl {
 			static void initHSYNCPin(
 				LTDCPolarity polarity = LTDCPolarity::noChange) {
 
-		    	gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_HSYNC);
+		    	gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpio_, LTDCPin::pinHSYNC>::alt);
      			setHSYNCPolarity(polarity);
 			}
 
@@ -150,7 +164,7 @@ namespace htl {
 			static void initVSYNCPin(
 				LTDCPolarity polarity = LTDCPolarity::noChange) {
 
-				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_VSYNC);
+				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpio_, LTDCPin::pinVSYNC>::alt);
      			setVSYNCPolarity(polarity);
 			}
 
@@ -158,7 +172,7 @@ namespace htl {
 			static void initPCPin(
 				LTDCPolarity polarity = LTDCPolarity::noChange) {
 
-				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_DOTCLK);
+				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpio_, LTDCPin::pinPC>::alt);
 				setPCPolarity(polarity);
 			}
 
@@ -166,7 +180,7 @@ namespace htl {
 			static void initDEPin(
 				LTDCPolarity polarity = LTDCPolarity::noChange) {
 
-				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_DE);
+				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpio_, LTDCPin::pinDE>::alt);
 				setDEPolarity(polarity);
 			}
 
@@ -174,78 +188,78 @@ namespace htl {
 					  typename gpioR4_, typename gpioR5_, typename gpioR6_, typename gpioR7_>
 			static void initRPins() {
 
-				gpioR0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR0_::GPIOAlt::ltdc_R0);
-				gpioR1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR1_::GPIOAlt::ltdc_R1);
-				gpioR2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR2_::GPIOAlt::ltdc_R2);
-				gpioR3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR3_::GPIOAlt::ltdc_R3);
-				gpioR4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR4_::GPIOAlt::ltdc_R4);
-				gpioR5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR5_::GPIOAlt::ltdc_R5);
-				gpioR6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR6_::GPIOAlt::ltdc_R6);
-				gpioR7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR7_::GPIOAlt::ltdc_R7);
+				gpioR0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR0_, LTDCPin::pinR0>::alt);
+				gpioR1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR1_, LTDCPin::pinR1>::alt);
+				gpioR2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR2_, LTDCPin::pinR2>::alt);
+				gpioR3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR3_, LTDCPin::pinR3>::alt);
+				gpioR4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR4_, LTDCPin::pinR4>::alt);
+				gpioR5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR5_, LTDCPin::pinR5>::alt);
+				gpioR6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR6_, LTDCPin::pinR6>::alt);
+				gpioR7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR7_, LTDCPin::pinR7>::alt);
 			}
 
 			template <typename gpioR2_, typename gpioR3_,
 					  typename gpioR4_, typename gpioR5_, typename gpioR6_, typename gpioR7_>
 			static void initRPins() {
 
-				gpioR2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR2_::GPIOAlt::ltdc_R2);
-				gpioR3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR3_::GPIOAlt::ltdc_R3);
-				gpioR4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR4_::GPIOAlt::ltdc_R4);
-				gpioR5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR5_::GPIOAlt::ltdc_R5);
-				gpioR6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR6_::GPIOAlt::ltdc_R6);
-				gpioR7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR7_::GPIOAlt::ltdc_R7);
+				gpioR2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR2_, LTDCPin::pinR2>::alt);
+				gpioR3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR3_, LTDCPin::pinR3>::alt);
+				gpioR4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR4_, LTDCPin::pinR4>::alt);
+				gpioR5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR5_, LTDCPin::pinR5>::alt);
+				gpioR6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR6_, LTDCPin::pinR6>::alt);
+				gpioR7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioR7_, LTDCPin::pinR7>::alt);
 			}
 
 			template <typename gpioG0_, typename gpioG1_, typename gpioG2_, typename gpioG3_,
 					  typename gpioG4_, typename gpioG5_, typename gpioG6_, typename gpioG7_>
 			static void initGPins() {
 
-				gpioG0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG0_::GPIOAlt::ltdc_G0);
-				gpioG1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG1_::GPIOAlt::ltdc_G1);
-				gpioG2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG2_::GPIOAlt::ltdc_G2);
-				gpioG3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG3_::GPIOAlt::ltdc_G3);
-				gpioG4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG4_::GPIOAlt::ltdc_G4);
-				gpioG5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG5_::GPIOAlt::ltdc_G5);
-				gpioG6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG6_::GPIOAlt::ltdc_G6);
-				gpioG7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG7_::GPIOAlt::ltdc_G7);
+				gpioG0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG0_, LTDCPin::pinG0>::alt);
+				gpioG1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG1_, LTDCPin::pinG1>::alt);
+				gpioG2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG2_, LTDCPin::pinG2>::alt);
+				gpioG3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG3_, LTDCPin::pinG3>::alt);
+				gpioG4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG4_, LTDCPin::pinG4>::alt);
+				gpioG5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG5_, LTDCPin::pinG5>::alt);
+				gpioG6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG6_, LTDCPin::pinG6>::alt);
+				gpioG7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG7_, LTDCPin::pinG7>::alt);
 			}
 
 			template <typename gpioG2_, typename gpioG3_,
 					  typename gpioG4_, typename gpioG5_, typename gpioG6_, typename gpioG7_>
 			static void initGPins() {
 
-				gpioG2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG2_::GPIOAlt::ltdc_G2);
-				gpioG3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG3_::GPIOAlt::ltdc_G3);
-				gpioG4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG4_::GPIOAlt::ltdc_G4);
-				gpioG5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG5_::GPIOAlt::ltdc_G5);
-				gpioG6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG6_::GPIOAlt::ltdc_G6);
-				gpioG7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG7_::GPIOAlt::ltdc_G7);
+				gpioG2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG2_, LTDCPin::pinG2>::alt);
+				gpioG3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG3_, LTDCPin::pinG3>::alt);
+				gpioG4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG4_, LTDCPin::pinG4>::alt);
+				gpioG5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG5_, LTDCPin::pinG5>::alt);
+				gpioG6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG6_, LTDCPin::pinG6>::alt);
+				gpioG7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioG7_, LTDCPin::pinG7>::alt);
 			}
 
 			template <typename gpioB0_, typename gpioB1_, typename gpioB2_, typename gpioB3_,
 					  typename gpioB4_, typename gpioB5_, typename gpioB6_, typename gpioB7_>
 			static void initBPins() {
 
-				gpioB0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB0_::GPIOAlt::ltdc_B0);
-				gpioB1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB1_::GPIOAlt::ltdc_B1);
-				gpioB2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB2_::GPIOAlt::ltdc_B2);
-				gpioB3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB3_::GPIOAlt::ltdc_B3);
-				gpioB4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB4_::GPIOAlt::ltdc_B4);
-				gpioB5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB5_::GPIOAlt::ltdc_B5);
-				gpioB6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB6_::GPIOAlt::ltdc_B6);
-				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB7_::GPIOAlt::ltdc_B7);
+				gpioB0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB0_, LTDCPin::pinB0>::alt);
+				gpioB1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB1_, LTDCPin::pinB1>::alt);
+				gpioB2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB2_, LTDCPin::pinB2>::alt);
+				gpioB3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB3_, LTDCPin::pinB3>::alt);
+				gpioB4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB4_, LTDCPin::pinB4>::alt);
+				gpioB5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB5_, LTDCPin::pinB5>::alt);
+				gpioB6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB6_, LTDCPin::pinB6>::alt);
+				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB7_, LTDCPin::pinB7>::alt);
 			}
 
 			template <typename gpioB2_, typename gpioB3_,
 					  typename gpioB4_, typename gpioB5_, typename gpioB6_, typename gpioB7_>
 			static void initBPins() {
 
-				gpioB2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB2_::GPIOAlt::ltdc_B2);
-				gpioB3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB3_::GPIOAlt::ltdc_B3);
-				gpioB4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB4_::GPIOAlt::ltdc_B4);
-				gpioB5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB5_::GPIOAlt::ltdc_B5);
-				gpioB6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB6_::GPIOAlt::ltdc_B6);
-				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB7_::GPIOAlt::ltdc_B7);
+				gpioB2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB2_, LTDCPin::pinB2>::alt);
+				gpioB3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB3_, LTDCPin::pinB3>::alt);
+				gpioB4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB4_, LTDCPin::pinB4>::alt);
+				gpioB5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB5_, LTDCPin::pinB5>::alt);
+				gpioB6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB6_, LTDCPin::pinB6>::alt);
+				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB7_, LTDCPin::pinB7>::alt);
 			}
 
 			static void setHSYNCPolarity(
@@ -308,6 +322,8 @@ namespace htl {
 			    else {
 			    	LTDC->SRCR |= LTDC_SRCR_VBR;
 					while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
+						continue;
+					while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 1)
 						continue;
 			    }
 			}
@@ -529,6 +545,401 @@ namespace htl {
 		static constexpr uint32_t addr = LTDC_Layer2_BASE;
 	};
 
+
+    template <>
+    struct LTDCPinTrait<GPIO_A3, LTDCPin::pinB5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_A4, LTDCPin::pinVSYNC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_A6, LTDCPin::pinG2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_A8, LTDCPin::pinR6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_A11, LTDCPin::pinR4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_A12, LTDCPin::pinR5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_B8, LTDCPin::pinR6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_B9, LTDCPin::pinB7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_B10, LTDCPin::pinG4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_B11, LTDCPin::pinG5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_C6, LTDCPin::pinHSYNC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_C7, LTDCPin::pinG6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_C10, LTDCPin::pinR2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_D3, LTDCPin::pinG7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_D6, LTDCPin::pinB2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_D10, LTDCPin::pinB3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E4, LTDCPin::pinB0> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E5, LTDCPin::pinG0> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E6, LTDCPin::pinG1> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E11, LTDCPin::pinG3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E12, LTDCPin::pinB4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E13, LTDCPin::pinDE> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E14, LTDCPin::pinPC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_E15, LTDCPin::pinR7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_F10, LTDCPin::pinDE> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_G6, LTDCPin::pinR7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_G7, LTDCPin::pinPC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_G10, LTDCPin::pinB2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_G10, LTDCPin::pinG3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt9;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_G11, LTDCPin::pinB3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_G12, LTDCPin::pinB1> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_G12, LTDCPin::pinB4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt9;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H2, LTDCPin::pinR0> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H3, LTDCPin::pinR1> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H8, LTDCPin::pinR2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H9, LTDCPin::pinR3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H10, LTDCPin::pinR4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H11, LTDCPin::pinR5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H12, LTDCPin::pinR6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H13, LTDCPin::pinG2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H14, LTDCPin::pinG3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_H15, LTDCPin::pinG4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I0, LTDCPin::pinG5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I1, LTDCPin::pinG6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I2, LTDCPin::pinG7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I4, LTDCPin::pinB4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I5, LTDCPin::pinB5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I6, LTDCPin::pinB6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I7, LTDCPin::pinB7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I9, LTDCPin::pinVSYNC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I10, LTDCPin::pinHSYNC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I12, LTDCPin::pinHSYNC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I13, LTDCPin::pinVSYNC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I14, LTDCPin::pinPC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_I15, LTDCPin::pinR0> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J0, LTDCPin::pinR1> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J1, LTDCPin::pinR2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J2, LTDCPin::pinR3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J3, LTDCPin::pinR4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J4, LTDCPin::pinR5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J5, LTDCPin::pinR6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J6, LTDCPin::pinR7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J7, LTDCPin::pinG0> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J8, LTDCPin::pinG1> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J9, LTDCPin::pinG2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J10, LTDCPin::pinG3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J11, LTDCPin::pinG4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J12, LTDCPin::pinB0> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J13, LTDCPin::pinB1> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J14, LTDCPin::pinB2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_J15, LTDCPin::pinB3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K0, LTDCPin::pinG5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K1, LTDCPin::pinG6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K2, LTDCPin::pinG7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K3, LTDCPin::pinB4> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K4, LTDCPin::pinB5> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K5, LTDCPin::pinB6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K6, LTDCPin::pinB7> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_K7, LTDCPin::pinDE> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
 
     // Valors que depenen del format de color
     //
