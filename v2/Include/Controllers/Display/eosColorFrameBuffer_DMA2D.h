@@ -12,7 +12,7 @@ namespace eos {
 	///
 	class ColorFrameBuffer_DMA2D: public FrameBuffer {
 		private:
-			using CI = ColorInfo<board::display::colorFormat>;
+			using CI = ColorTrait<board::display::colorFormat>;
 			using pixel_t = CI::color_t;
 
 		private:
@@ -21,7 +21,7 @@ namespace eos {
 
 		private:
 			inline pixel_t* getPixelPtr(int x, int y) const { return &_buffer[(y * _bufferPitch) + x]; }
-            inline static pixel_t toPixel(Color color) { return color.convertTo<CI::format>(); }
+            inline static pixel_t toPixel(Color color) { return color.convert<CI::format>(); }
 			static pixel_t combinePixels(pixel_t b, pixel_t f, uint8_t opacity);
 
 

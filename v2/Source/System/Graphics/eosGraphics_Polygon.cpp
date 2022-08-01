@@ -39,7 +39,7 @@ static void fillPolygonAlgorithm(Graphics* g, const Point* points, int numPoints
 /// \param    color: El color per dibuixar.
 ///
 void Graphics::drawPolygon(
-	const Point* points,
+	const Point *points,
 	int numPoints,
 	Color color) {
 

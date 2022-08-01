@@ -71,20 +71,20 @@ Bitmap::Bitmap(
 	int pixelSize = 0;
 	switch (format) {
 		case ColorFormat::rgb565:
-			pixelSize = ColorInfo<ColorFormat::rgb565>::bytes;
+			pixelSize = ColorTrait<ColorFormat::rgb565>::bytes;
 			break;
 
 		case ColorFormat::rgb888:
-			pixelSize = ColorInfo<ColorFormat::rgb888>::bytes;
+			pixelSize = ColorTrait<ColorFormat::rgb888>::bytes;
 			break;
 
 		default:
 		case ColorFormat::argb8888:
-			pixelSize = ColorInfo<ColorFormat::argb8888>::bytes;
+			pixelSize = ColorTrait<ColorFormat::argb8888>::bytes;
 			break;
 
 		case ColorFormat::l8:
-			pixelSize = ColorInfo<ColorFormat::l8>::bytes;
+			pixelSize = ColorTrait<ColorFormat::l8>::bytes;
 			break;
 	}
 	eosAssert(pixelSize != 0);
@@ -96,7 +96,7 @@ Bitmap::Bitmap(
 
 	// Crea el contingut del bitmap
 	//
-	switch (format) {
+/*	switch (format) {
 		case ColorFormat::rgb888: {
 			ColorInfo<ColorFormat::rgb888>::color_t c = color.convertTo<ColorFormat::rgb888>();
 			for (int i = 0; i < numPixels; i++)
@@ -126,7 +126,7 @@ Bitmap::Bitmap(
 		}
 		break;
 
-	}
+	}*/
 }
 
 
@@ -260,19 +260,19 @@ int Bitmap::getBytesPerPixel() const {
 	switch (_impl->format) {
 		default:
 		case ColorFormat::rgb888:
-			return ColorInfo<ColorFormat::rgb888>::bytes;
+			return ColorTrait<ColorFormat::rgb888>::bytes;
 
 		case ColorFormat::argb8888:
-			return ColorInfo<ColorFormat::argb8888>::bytes;
+			return ColorTrait<ColorFormat::argb8888>::bytes;
 
 		case ColorFormat::rgb565:
-			return ColorInfo<ColorFormat::rgb565>::bytes;
+			return ColorTrait<ColorFormat::rgb565>::bytes;
 
 		case ColorFormat::al44:
-			return ColorInfo<ColorFormat::al44>::bytes;
+			return ColorTrait<ColorFormat::al44>::bytes;
 
 		case ColorFormat::l8:
-			return ColorInfo<ColorFormat::l8>::bytes;
+			return ColorTrait<ColorFormat::l8>::bytes;
 	}
 }
 

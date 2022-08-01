@@ -16,10 +16,11 @@ using namespace eos;
 /// \param    ry: Radi y.
 ///
 void Graphics::paintRoundedRectangle(
-	const Pen& pen,
-	const Brush& brush,
-	const Rect& box,
-	int rx, int ry) const {
+	const Pen &pen,
+	const Brush &brush,
+	const Rect &box,
+	int rx,
+	int ry) const {
 
 	bool penVisible = !pen.isNull();
 	bool brushVisible = !brush.isNull();

@@ -12,12 +12,16 @@
 
 namespace htl {
 
+	/// \brief Control signals pin polarity
+	//
     enum class LTDCPolarity {
     	noChange,
     	activeLow,
 		activeHigh
     };
 
+    /// \brief Image format
+    ///
     enum class LTDCPixelFormat {
     	argb8888,
 		rgb888,
@@ -36,6 +40,8 @@ namespace htl {
 		transferError = 2
     };
 
+    /// \brief GPIO alternative pin identifiers
+    ///
     enum class LTDCPin {
     	pinHSYNC,
 		pinVSYNC,

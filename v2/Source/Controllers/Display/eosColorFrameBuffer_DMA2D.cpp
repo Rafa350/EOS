@@ -46,7 +46,7 @@ void ColorFrameBuffer_DMA2D::put(
 
 	// Color amb opacitat (Canal alpha)
 	//
-	if constexpr (Color::CI::hasAlpha) {
+	if constexpr (Color::hasAlpha) {
 
 		// Nomes el pinta si no es transparent
 		//
@@ -159,9 +159,9 @@ void ColorFrameBuffer_DMA2D::copy(
 		colorMode = DMA2DColorMode::rgb888;
 
 	DMA2DColorMode srcColorMode;
-	if constexpr (Color::CI::format == ColorFormat::rgb565)
+	if constexpr (Color::format == ColorFormat::rgb565)
 		srcColorMode = DMA2DColorMode::rgb565;
-	else if constexpr (Color::CI::format == ColorFormat::argb8888)
+	else if constexpr (Color::format == ColorFormat::argb8888)
 		srcColorMode = DMA2DColorMode::argb8888;
 	else
 		srcColorMode = DMA2DColorMode::rgb888;
@@ -205,9 +205,9 @@ void ColorFrameBuffer_DMA2D::write(
 		colorMode = DMA2DColorMode::rgb888;
 
 	DMA2DColorMode srcColorMode;
-	if constexpr (Color::CI::format == ColorFormat::rgb565)
+	if constexpr (Color::format == ColorFormat::rgb565)
 		srcColorMode = DMA2DColorMode::rgb565;
-	else if constexpr (Color::CI::format == ColorFormat::argb8888)
+	else if constexpr (Color::format == ColorFormat::argb8888)
 		srcColorMode = DMA2DColorMode::argb8888;
 	else
 		srcColorMode = DMA2DColorMode::rgb888;

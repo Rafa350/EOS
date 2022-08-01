@@ -16,7 +16,7 @@ namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
 		private:
-			using CI = ColorInfo<board::display::colorFormat>;
+			using CI = ColorTrait<board::display::colorFormat>;
 
 			using GPIO_BKE = board::display::GPIO_BKE;
 			using GPIO_LCDE = board::display::GPIO_LCDE;

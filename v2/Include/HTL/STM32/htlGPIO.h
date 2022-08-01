@@ -19,7 +19,7 @@
 
 namespace htl {
 
-    /// \brief GPIO port identifiers.
+    /// \brief Port identifiers.
     enum class GPIOPort {
         #ifdef GPIOA_BASE
             portA,
@@ -56,7 +56,7 @@ namespace htl {
         #endif
     };
 
-    /// \brief GPIO Pin identifiers.
+    /// \brief Pin identifiers.
     enum class GPIOPin {
         pin0,
         pin1,
@@ -76,6 +76,7 @@ namespace htl {
         pin15
     };
 
+    /// \brief Alternate function identifiers
     enum class GPIOAlt {
     	alt0,
     	alt1,
@@ -95,7 +96,7 @@ namespace htl {
     	alt15
     };
 
-    /// \brief GPIO Pull up/down mode identifier.
+    /// \brief Pull up/down mode identifier.
     enum class GPIOPull {
     	noChange,
         none,
@@ -103,14 +104,14 @@ namespace htl {
         down
     };
 
-    /// \brief GPIO Driver type identifiers.
+    /// \brief Driver type identifiers.
     enum class GPIODriver {
         pushPull,
     	noChange,
         openDrain
     };
 
-    /// \brief GPIO Speed identifier.
+    /// \brief Speed identifier.
     enum class GPIOSpeed {
     	noChange,
         low,

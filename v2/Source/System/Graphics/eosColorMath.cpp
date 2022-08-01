@@ -18,7 +18,7 @@ uint16_t ColorMath::combineColor_RGB565(
 	uint16_t f,
 	uint8_t o) {
 
-	typedef ColorInfo<ColorFormat::rgb565> CI;
+	typedef ColorTrait<ColorFormat::rgb565> CI;
 
 	uint8_t br = (b & CI::maskR) >> CI::shiftR;
 	uint8_t bg = (b & CI::maskG) >> CI::shiftG;

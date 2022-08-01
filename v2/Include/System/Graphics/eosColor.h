@@ -14,7 +14,6 @@
 #define EOS_COLOR_FORMAT ColorFormat::argb8888
 #endif
 
-
 #define ARGB(a, r, g, b)          makeColor<EOS_COLOR_FORMAT>(a, r, g, b)
 #define RGB(r, g, b)              makeColor<EOS_COLOR_FORMAT>(r, g, b)
 #define PAL(l)                    makeColor<EOS_COLOR_FORMAT>(l);
@@ -39,696 +38,407 @@ namespace eos {
 	/// \brief Informacio sobre els formats de color
 	///
 	template <ColorFormat FORMAT>
-	struct ColorInfo {
+	struct ColorTrait {
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::argb8888> {
-		typedef uint32_t color_t;
-		constexpr static ColorFormat format = ColorFormat::argb8888;
-		constexpr static const int bits = 32;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = true;
-		constexpr static const bool isIndex = false;
-		constexpr static const bool hasAlpha = true;
-		constexpr static const unsigned maskA = 0xFF000000;
-		constexpr static const unsigned maskR = 0x00FF0000;
-		constexpr static const unsigned maskG = 0x0000FF00;
-		constexpr static const unsigned maskB = 0x000000FF;
-		constexpr static const unsigned shiftA = 24;
-		constexpr static const unsigned shiftR = 16;
-		constexpr static const unsigned shiftG = 8;
-		constexpr static const unsigned shiftB = 0;
-		constexpr static const unsigned adjA = 0;
-		constexpr static const unsigned adjR = 0;
-		constexpr static const unsigned adjG = 0;
-		constexpr static const unsigned adjB = 0;
+	struct ColorTrait<ColorFormat::argb8888> {
+		using color_t = uint32_t;
+		static constexpr ColorFormat format = ColorFormat::argb8888;
+		static constexpr int bits = 32;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = true;
+		static constexpr bool hasAlpha = true;
+		static constexpr unsigned maskA = 0xFF000000;
+		static constexpr unsigned maskR = 0x00FF0000;
+		static constexpr unsigned maskG = 0x0000FF00;
+		static constexpr unsigned maskB = 0x000000FF;
+		static constexpr unsigned shiftA = 24;
+		static constexpr unsigned shiftR = 16;
+		static constexpr unsigned shiftG = 8;
+		static constexpr unsigned shiftB = 0;
+		static constexpr unsigned adjA = 0;
+		static constexpr unsigned adjR = 0;
+		static constexpr unsigned adjG = 0;
+		static constexpr unsigned adjB = 0;
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::argb4444> {
-		typedef uint32_t color_t;
-		constexpr static ColorFormat format = ColorFormat::argb4444;
-		constexpr static const int bits = 16;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = true;
-		constexpr static const bool isIndex = false;
-		constexpr static const bool hasAlpha = true;
-		constexpr static const unsigned maskA = 0xF000;
-		constexpr static const unsigned maskR = 0x0F00;
-		constexpr static const unsigned maskG = 0x00F0;
-		constexpr static const unsigned maskB = 0x000F;
-		constexpr static const unsigned shiftA = 12;
-		constexpr static const unsigned shiftR = 8;
-		constexpr static const unsigned shiftG = 4;
-		constexpr static const unsigned shiftB = 0;
-		constexpr static const unsigned adjA = 0;
-		constexpr static const unsigned adjR = 0;
-		constexpr static const unsigned adjG = 0;
-		constexpr static const unsigned adjB = 0;
+	struct ColorTrait<ColorFormat::argb4444> {
+		using color_t = uint32_t;
+		static constexpr ColorFormat format = ColorFormat::argb4444;
+		static constexpr int bits = 16;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = true;
+		static constexpr bool hasAlpha = true;
+		static constexpr unsigned maskA = 0xF000;
+		static constexpr unsigned maskR = 0x0F00;
+		static constexpr unsigned maskG = 0x00F0;
+		static constexpr unsigned maskB = 0x000F;
+		static constexpr unsigned shiftA = 12;
+		static constexpr unsigned shiftR = 8;
+		static constexpr unsigned shiftG = 4;
+		static constexpr unsigned shiftB = 0;
+		static constexpr unsigned adjA = 0;
+		static constexpr unsigned adjR = 0;
+		static constexpr unsigned adjG = 0;
+		static constexpr unsigned adjB = 0;
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::rgb888> {
-		typedef uint32_t color_t;
-		constexpr static ColorFormat format = ColorFormat::rgb888;
-		constexpr static const int bits = 24;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = true;
-		constexpr static const bool isIndex = false;
-		constexpr static const bool hasAlpha = false;
-		constexpr static const unsigned maskR = 0xFF0000;
-		constexpr static const unsigned maskG = 0x00FF00;
-		constexpr static const unsigned maskB = 0x0000FF;
-		constexpr static const unsigned shiftR = 16;
-		constexpr static const unsigned shiftG = 8;
-		constexpr static const unsigned shiftB = 0;
-		constexpr static const unsigned adjR = 0;
-		constexpr static const unsigned adjG = 0;
-		constexpr static const unsigned adjB = 0;
+	struct ColorTrait<ColorFormat::rgb888> {
+		using color_t = uint32_t;
+		static constexpr ColorFormat format = ColorFormat::rgb888;
+		static constexpr int bits = 24;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = true;
+		static constexpr bool hasAlpha = false;
+		static constexpr unsigned maskA = 0x000000;
+		static constexpr unsigned maskR = 0xFF0000;
+		static constexpr unsigned maskG = 0x00FF00;
+		static constexpr unsigned maskB = 0x0000FF;
+		static constexpr unsigned shiftA = 0;
+		static constexpr unsigned shiftR = 16;
+		static constexpr unsigned shiftG = 8;
+		static constexpr unsigned shiftB = 0;
+		static constexpr unsigned adjA = 0;
+		static constexpr unsigned adjR = 0;
+		static constexpr unsigned adjG = 0;
+		static constexpr unsigned adjB = 0;
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::rgb565> {
-		typedef uint16_t color_t;
-		constexpr static ColorFormat format = ColorFormat::rgb565;
-		constexpr static const int bits = 16;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = true;
-		constexpr static const bool isIndex = false;
-		constexpr static const bool hasAlpha = false;
-		constexpr static const unsigned maskR = 0xF800;
-		constexpr static const unsigned maskG = 0x07E0;
-		constexpr static const unsigned maskB = 0x001F;
-		constexpr static const unsigned shiftR = 11;
-		constexpr static const unsigned shiftG = 5;
-		constexpr static const unsigned shiftB = 0;
-		constexpr static const unsigned adjR = 3;
-		constexpr static const unsigned adjG = 2;
-		constexpr static const unsigned adjB = 3;
+	struct ColorTrait<ColorFormat::rgb565> {
+		using color_t = uint16_t;
+		static constexpr ColorFormat format = ColorFormat::rgb565;
+		static constexpr int bits = 16;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = true;
+		static constexpr bool hasAlpha = false;
+		static constexpr unsigned maskA = 0x0000;
+		static constexpr unsigned maskR = 0xF800;
+		static constexpr unsigned maskG = 0x07E0;
+		static constexpr unsigned maskB = 0x001F;
+		static constexpr unsigned shiftA = 0;
+		static constexpr unsigned shiftR = 11;
+		static constexpr unsigned shiftG = 5;
+		static constexpr unsigned shiftB = 0;
+		static constexpr unsigned adjA = 0;
+		static constexpr unsigned adjR = 3;
+		static constexpr unsigned adjG = 2;
+		static constexpr unsigned adjB = 3;
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::al88> {
-		typedef uint16_t color_t;
-		constexpr static ColorFormat format = ColorFormat::al88;
-		constexpr static const int bits = 16;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = false;
-		constexpr static const bool isIndex = true;
-		constexpr static const bool hasAlpha = true;
-		constexpr static const unsigned maskA = 0xFF00;
-		constexpr static const unsigned maskL = 0x00FF;
-		constexpr static const unsigned shiftA = 8;
-		constexpr static const unsigned shiftL = 0;
-		constexpr static const unsigned adjA = 0;
-		constexpr static const unsigned adjL = 0;
+	struct ColorTrait<ColorFormat::al88> {
+		using color_t = uint16_t;
+		static constexpr ColorFormat format = ColorFormat::al88;
+		static constexpr int bits = 16;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = false;
+		static constexpr bool hasAlpha = true;
+		static constexpr unsigned maskA = 0xFF00;
+		static constexpr unsigned maskL = 0x00FF;
+		static constexpr unsigned shiftA = 8;
+		static constexpr unsigned shiftL = 0;
+		static constexpr unsigned adjA = 0;
+		static constexpr unsigned adjL = 0;
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::al44> {
-		typedef uint16_t color_t;
-		constexpr static ColorFormat format = ColorFormat::al44;
-		constexpr static const int bits = 8;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = false;
-		constexpr static const bool isIndex = true;
-		constexpr static const bool hasAlpha = true;
-		constexpr static const unsigned maskA = 0xF0;
-		constexpr static const unsigned maskL = 0x0F;
-		constexpr static const unsigned shiftA = 4;
-		constexpr static const unsigned shiftL = 0;
-		constexpr static const unsigned adjA = 0;
-		constexpr static const unsigned adjL = 0;
+	struct ColorTrait<ColorFormat::al44> {
+		using color_t = uint16_t;
+		static constexpr ColorFormat format = ColorFormat::al44;
+		static constexpr int bits = 8;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = false;
+		static constexpr bool hasAlpha = true;
+		static constexpr unsigned maskA = 0xF0;
+		static constexpr unsigned maskL = 0x0F;
+		static constexpr unsigned shiftA = 4;
+		static constexpr unsigned shiftL = 0;
+		static constexpr unsigned adjA = 0;
+		static constexpr unsigned adjL = 0;
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::l8> {
-		typedef uint8_t color_t;
-		constexpr static ColorFormat format = ColorFormat::l8;
-		constexpr static const int bits = 8;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = false;
-		constexpr static const bool isIndex = true;
-		constexpr static const bool hasAlpha = false;
-		constexpr static const unsigned maskL = 0;
-		constexpr static const unsigned shiftL = 0;
-		constexpr static const unsigned adjL = 0;
+	struct ColorTrait<ColorFormat::l8> {
+		using color_t = uint8_t;
+		static constexpr ColorFormat format = ColorFormat::l8;
+		static constexpr int bits = 8;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = false;
+		static constexpr bool hasAlpha = false;
+		static constexpr unsigned maskL = 0;
+		static constexpr unsigned shiftL = 0;
+		static constexpr unsigned adjL = 0;
 	};
 
 	template <>
-	struct ColorInfo<ColorFormat::l1> {
-		typedef uint8_t color_t;
-		constexpr static ColorFormat format = ColorFormat::l1;
-		constexpr static const int bits = 1;
-		constexpr static const int bytes = (bits + 7) / 8;
-		constexpr static const bool isColor = false;
-		constexpr static const bool isIndex = true;
-		constexpr static const bool hasAlpha = false;
-		constexpr static const unsigned maskL = 0;
-		constexpr static const unsigned shiftL = 0;
-		constexpr static const unsigned adjL = 0;
+	struct ColorTrait<ColorFormat::l1> {
+		using color_t = uint8_t;
+		static constexpr ColorFormat format = ColorFormat::l1;
+		static constexpr int bits = 1;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = false;
+		static constexpr bool hasAlpha = false;
+		static constexpr unsigned maskL = 0;
+		static constexpr unsigned shiftL = 0;
+		static constexpr unsigned adjL = 0;
 	};
 
-	/// \brief Clase que representa un color en format ARGB8888
-	///
-	class ColorARGB8888 {
+	template <ColorFormat format_>
+	class Color_x {
+		private:
+			using Trait = ColorTrait<format_>;
+			using color_t = typename Trait::color_t;
+
+			static constexpr unsigned _maskA = Trait::maskA;
+			static constexpr unsigned _maskR = Trait::maskR;
+			static constexpr unsigned _maskG = Trait::maskG;
+			static constexpr unsigned _maskB = Trait::maskB;
+			static constexpr unsigned _maskL = Trait::maskL;
+			static constexpr unsigned _shiftA = Trait::shiftA;
+			static constexpr unsigned _shiftR = Trait::shiftR;
+			static constexpr unsigned _shiftG = Trait::shiftG;
+			static constexpr unsigned _shiftB = Trait::shiftB;
+			static constexpr unsigned _shiftL = Trait::shiftL;
+			static constexpr unsigned _adjA = Trait::adjA;
+			static constexpr unsigned _adjR = Trait::adjR;
+			static constexpr unsigned _adjG = Trait::adjG;
+			static constexpr unsigned _adjB = Trait::adjB;
+			static constexpr unsigned _adjL = Trait::adjL;
+
 		public:
-			typedef ColorInfo<ColorFormat::argb8888> CI;
-			typedef CI::color_t color_t;
+			static constexpr ColorFormat format = format_;
+			static constexpr int bits = Trait::bits;
+			static constexpr int bytes = Trait::bytes;
+			static constexpr bool hasAlpha = Trait::hasAlpha;
+			static constexpr bool isColor = Trait::isColor;
+			static constexpr bool isIndex = !Trait::isColor;
 
 		private:
 			color_t _c;
 
-		public:
-			/// \brief Constructor per defecte
-			///
-			inline ColorARGB8888() :
-				_c(0) {
-			}
-
-			/// \brief Constructor per components RGB
-			/// \param R: Component r
-			/// \param G: Component g
-			/// \param B: Component b
-			///
-			inline ColorARGB8888(uint8_t r, uint8_t g, uint8_t b):
-				_c(((color_t)0xFF >> CI::adjA << CI::shiftA) |
-				   ((color_t)r >> CI::adjR << CI::shiftR) |
-				   ((color_t)g >> CI::adjG << CI::shiftG) |
-				   ((color_t)b >> CI::adjB << CI::shiftB)) {
-			}
-
-			/// \brief Constructor per components ARGB
-			/// \param R: Component a
-			/// \param R: Component r
-			/// \param G: Component g
-			/// \param B: Component b
-			///
-			inline ColorARGB8888(uint8_t a, uint8_t r, uint8_t g, uint8_t b):
-				_c(((color_t)a >> CI::adjA << CI::shiftA) |
-				   ((color_t)r >> CI::adjR << CI::shiftR) |
-				   ((color_t)g >> CI::adjG << CI::shiftG) |
-				   ((color_t)b >> CI::adjB << CI::shiftB)) {
-			}
-
-			inline ColorARGB8888(const ColorARGB8888& color) {
-				_c = color._c;
-			}
-
-			inline ColorARGB8888 &operator = (const ColorARGB8888 &color) {
-            	_c = color._c;
-            	return *this;
-            }
-
-            inline bool operator == (const ColorARGB8888 color) const {
-            	return _c == color._c;
-            }
-
-            inline bool operator != (const ColorARGB8888 color) const {
-            	return _c != color._c;
-            }
-
-            inline operator color_t() const {
-            	return _c;
-            }
-
-			inline uint8_t getA() const  {
-				return (_c & CI::maskA) >> CI::shiftA << CI::adjA;
-			}
-
-			inline uint8_t getR() const  {
-				return (_c & CI::maskR) >> CI::shiftR << CI::adjR;
-			}
-
-			inline uint8_t getG() const  {
-				return (_c & CI::maskG) >> CI::shiftG << CI::adjG;
-			}
-
-			inline uint8_t getB() const  {
-				return (_c & CI::maskB) >> CI::shiftB << CI::adjB;
-			}
-
-			inline uint8_t getOpacity() const {
-				return getA();
-			}
-
-			inline bool isTransparent() const {
-				return getA() == 0;
-			}
-
-			inline bool isOpaque() const {
-				return getA() == 0xFF;
-			}
-	};
-
-	/// \brief Clase que representa un color en format RGB888
-	///
-	class ColorRGB888 {
-		public:
-			typedef ColorInfo<ColorFormat::rgb888> CI;
-			typedef CI::color_t color_t;
-
 		private:
-			color_t _c;
+			/// \brief Constructor
+			/// \param c: Color en format nadiu.
+			///
+			inline Color_x(
+				color_t c) :
+
+				_c(c) {
+			}
 
 		public:
-			/// \brief Constructor per defecte
+
+			/// \brief Constructor copia.
+			/// \param color: L'objecte a copiar
 			///
-			inline ColorRGB888() :
-				_c(0) {
+			inline Color_x(
+				const Color_x &color):
+
+				_c(color._c) {
 			}
 
-			/// \brief Constructor per compopnents RGB
-			/// \param R: Component r
-			/// \param G: Component g
-			/// \param B: Component b
-			///
-			inline ColorRGB888(uint8_t r, uint8_t g, uint8_t b):
-				_c(((color_t)r >> CI::adjR << CI::shiftR) |
-				   ((color_t)g >> CI::adjG << CI::shiftG) |
-				   ((color_t)b >> CI::adjB << CI::shiftB)) {
+			static Color_x fromARGB(
+				uint8_t a,
+				uint8_t r,
+				uint8_t g,
+				uint8_t b) {
+
+				if constexpr (isColor) {
+					if constexpr (hasAlpha)
+						return Color_x(
+							((color_t)a >> _adjA << _shiftA) |
+							((color_t)r >> _adjR << _shiftR) |
+							((color_t)g >> _adjG << _shiftG) |
+							((color_t)b >> _adjB << _shiftB));
+					else
+						return Color_x(
+							((color_t)r >> _adjR << _shiftR) |
+							((color_t)g >> _adjG << _shiftG) |
+							((color_t)b >> _adjB << _shiftB));
+				}
+				else {
+					uint32_t l = (r + g + b) / 3;
+					if constexpr (hasAlpha)
+						return Color_x(
+							((color_t)a >> _adjA << _shiftA) |
+							((color_t)l >> _adjL << _shiftL));
+
+					else
+						return Color_x(
+							(color_t)l >> _adjL << _shiftL);
+				}
 			}
 
-			inline ColorRGB888(const ColorRGB888& color) {
-				_c = color._c;
+			inline static Color_x fromRGB(
+				uint8_t r,
+				uint8_t g,
+				uint8_t b) {
+
+				return fromARGB(0xFF, r, g, b);
 			}
 
-			inline ColorRGB888 &operator = (const ColorRGB888 &color) {
+			static Color_x fromAL(
+				uint8_t a,
+				uint8_t l) {
+
+				if constexpr (isColor) {
+					if constexpr (hasAlpha)
+						return Color_x(
+							((color_t)a >> _adjA << _shiftA) |
+							((color_t)l >> _adjR << _shiftR) |
+							((color_t)l >> _adjG << _shiftG) |
+							((color_t)l >> _adjB << _shiftB));
+					else
+						return Color_x(
+							((color_t)l >> _adjR << _shiftR) |
+							((color_t)l >> _adjG << _shiftG) |
+							((color_t)l >> _adjB << _shiftB));
+				}
+				else {
+					if constexpr (hasAlpha)
+						return Color_x(
+							((color_t)a >> _adjA << _shiftA) |
+							((color_t)l >> _adjL << _shiftL));
+					else
+						return Color_x(
+							(color_t)l >> _adjL << _shiftL);
+				}
+			}
+
+			inline static Color_x fromL(
+				uint8_t l) {
+
+				return fromAL(0xFF, l);
+			}
+
+			inline Color_x &operator = (
+				const Color_x &color) {
+
             	_c = color._c;
             	return *this;
             }
 
-            inline bool operator == (const ColorRGB888 color) const {
+            inline bool operator == (
+            	const Color_x color) const {
+
             	return _c == color._c;
             }
 
-            inline bool operator != (const ColorRGB888 color) const {
+            inline bool operator != (
+            	const Color_x color) const {
+
             	return _c != color._c;
             }
 
             inline operator color_t() const {
+
             	return _c;
             }
 
-			inline uint8_t getA() const  {
-				return 0xFF;
-			}
+            inline uint8_t getL() const {
 
-			inline uint8_t getR() const  {
-				return (_c & CI::maskR) >> CI::shiftR << CI::adjR;
-			}
-
-			inline uint8_t getG() const  {
-				return (_c & CI::maskG) >> CI::shiftG << CI::adjG;
-			}
-
-			inline uint8_t getB() const  {
-				return (_c & CI::maskB) >> CI::shiftB << CI::adjB;
-			}
-
-			inline uint8_t getOpacity() const {
-				return 0xFF;
-			}
-
-			inline bool isTransparent() const {
-				return false;
-			}
-
-			inline bool isOpaque() const {
-				return true;
-			}
-	};
-
-	/// \brief Clase que representa un color en format RGB565
-	///
-	class ColorRGB565 {
-		public:
-			typedef ColorInfo<ColorFormat::rgb565> CI;
-			typedef CI::color_t color_t;
-
-		private:
-			color_t _c;
-
-		public:
-			/// \brief Constructor per defecte
-			///
-			inline ColorRGB565() :
-				_c(0) {
-			}
-
-			/// \brief Constructor per compopnents RGB
-			/// \param R: Component r
-			/// \param G: Component g
-			/// \param B: Component b
-			///
-			inline ColorRGB565(uint8_t r, uint8_t g, uint8_t b):
-				_c(((color_t)r >> CI::adjR << CI::shiftR) |
-				   ((color_t)g >> CI::adjG << CI::shiftG) |
-				   ((color_t)b >> CI::adjB << CI::shiftB)) {
-			}
-
-			inline ColorRGB565(const ColorRGB565& color) {
-				_c = color._c;
-			}
-
-			inline ColorRGB565 &operator = (const ColorRGB565& color) {
-            	_c = color._c;
-            	return *this;
-            }
-
-            inline bool operator == (const ColorRGB565 color) const {
-            	return _c == color._c;
-            }
-
-            inline bool operator != (const ColorRGB565 color) const {
-            	return _c != color._c;
-            }
-
-            inline operator color_t() const {
-            	return _c;
+            	if constexpr (isIndex)
+        			return (_c & _maskL) >> _shiftL << _adjL;
+            	else
+            		return 0;
             }
 
             inline uint8_t getA() const {
-            	return 0xFF;
+
+            	if constexpr (hasAlpha)
+            		return (_c & _maskA) >> _shiftA << _adjA;
+            	else
+            		return 0xFF;
+
             }
 
-			inline uint8_t getR() const  {
-				return (_c & CI::maskR) >> CI::shiftR << CI::adjR;
-			}
+            inline uint8_t getR() const {
 
-			inline uint8_t getG() const  {
-				return (_c & CI::maskG) >> CI::shiftG << CI::adjG;
-			}
+            	if constexpr (isColor)
+            		return (_c & _maskR) >> _shiftR << _adjR;
+            	else
+            		return getL();
+            }
 
-			inline uint8_t getB() const  {
-				return (_c & CI::maskB) >> CI::shiftB << CI::adjB;
-			}
+            inline uint8_t getG() const {
 
-			inline uint8_t getOpacity() const {
-				return 0xFF;
-			}
+            	if constexpr (isColor)
+            		return (_c & _maskG) >> _shiftG << _adjG;
+            	else
+            		return getL();
+            }
 
-			inline bool isTransparent() const {
-				return false;
-			}
+            inline uint8_t getB() const {
 
-			inline bool isOpaque() const {
-				return true;
-			}
+            	if constexpr (isColor)
+            		return (_c & _maskB) >> _shiftB << _adjB;
+            	else
+            		return getL();
+            }
+
+            inline uint8_t getOpacity() const {
+
+            	return getA();
+            }
+
+            inline bool isTransparent() const {
+
+            	return getA() == 0;
+            }
+
+            inline bool isOpaque() const {
+
+            	return getA() == 0xFF;
+            }
+
+            template <ColorFormat newFormat_>
+            Color_x<newFormat_> convert() {
+
+            	using NewTrait = ColorTrait<newFormat_>;
+            	using NewColor = Color_x<newFormat_>;
+
+            	if constexpr (NewTrait::isColor) {
+            		if constexpr (NewTrait::hasAlpha)
+            			return NewColor::fromARGB(getA(), getR(), getG(), getB());
+            		else
+            			return NewColor::fromRGB(getR(), getG(), getB());
+            	}
+            	else {
+            		if constexpr (NewTrait::hasAlpha)
+            			return NewColor::fromAL(getA(), getL());
+            		else
+            			return NewColor::fromL(getL());
+            	}
+            }
 	};
 
-	/// \brief Clase que representa un color en format L8
-	///
-	class ColorL8 {
-		public:
-			typedef ColorInfo<ColorFormat::l8> CI;
-			typedef CI::color_t color_t;
-
-		private:
-			color_t _c;
-
-		public:
-			/// \brief Constructor per defecte
-			///
-			inline ColorL8() :
-				_c(0) {
-			}
-
-			/// \brief Constructor per compopnents L
-			/// \param L: Component L
-			///
-			inline ColorL8(uint8_t l):
-				_c((color_t)l >> CI::adjL << CI::shiftL) {
-			}
-
-			inline ColorL8(const ColorL8& color) {
-				_c = color._c;
-			}
-
-			inline ColorL8 &operator = (const ColorL8& color) {
-            	_c = color._c;
-            	return *this;
-            }
-
-            inline bool operator == (const ColorL8 color) const {
-            	return _c == color._c;
-            }
-
-            inline bool operator != (const ColorL8 color) const {
-            	return _c != color._c;
-            }
-
-            inline operator color_t() const {
-            	return _c;
-            }
-
-            inline uint8_t getA() const {
-            	return 0xFF;
-            }
-
-			inline uint8_t getL() const  {
-				return (_c & CI::maskL) >> CI::shiftL << CI::adjL;
-			}
-
-			inline uint8_t getOpacity() const {
-				return 0xFF;
-			}
-
-			inline bool isTransparent() const {
-				return false;
-			}
-
-			inline bool isOpaque() const {
-				return true;
-			}
-	};
-
-	/// \brief Clase que representa un color en format L1
-	///
-	class ColorL1 {
-		public:
-			typedef ColorInfo<ColorFormat::l1> CI;
-			typedef CI::color_t color_t;
-
-		private:
-			color_t _c;
-
-		public:
-			/// \brief Constructor per defecte
-			///
-			inline ColorL1() :
-				_c(0) {
-			}
-
-			/// \brief Constructor per compopnents L
-			/// \param L: Component L
-			///
-			inline ColorL1(uint8_t l):
-				_c((color_t)l >> CI::adjL << CI::shiftL) {
-			}
-
-			inline ColorL1(const ColorL1& color) {
-				_c = color._c;
-			}
-
-			inline ColorL1 &operator = (const ColorL1& color) {
-            	_c = color._c;
-            	return *this;
-            }
-
-            inline bool operator == (const ColorL1 color) const {
-            	return _c == color._c;
-            }
-
-            inline bool operator != (const ColorL1 color) const {
-            	return _c != color._c;
-            }
-
-            inline operator color_t() const {
-            	return _c;
-            }
-
-            inline uint8_t getA() const {
-            	return 0xFF;
-            }
-
-			inline uint8_t getL() const  {
-				return (_c & CI::maskL) >> CI::shiftL << CI::adjL;
-			}
-
-			inline uint8_t getOpacity() const {
-				return 0xFF;
-			}
-
-			inline bool isTransparent() const {
-				return false;
-			}
-
-			inline bool isOpaque() const {
-				return true;
-			}
-	};
+	using ColorARGB8888 = Color_x<ColorFormat::argb8888>;
+	using ColorRGB888 = Color_x<ColorFormat::rgb888>;
+	using ColorRGB565 = Color_x<ColorFormat::rgb565>;
+	using ColorL8 = Color_x<ColorFormat::l8>;
+	using Color = Color_x<EOS_COLOR_FORMAT>;
 
 
-	/// \brief Clase generica que representa un color.
-	///
-	template <ColorFormat FORMAT>
-	class ColorBase {
-	};
+	template <ColorFormat format_>
+	Color_x<format_> makeColor(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
 
-	template <ColorFormat FORMAT>
-	ColorBase<FORMAT> makeColor(uint8_t a, uint8_t r, uint8_t g, uint8_t b);
-
-	template <ColorFormat FORMAT>
-	ColorBase<FORMAT> makeColor(uint8_t r, uint8_t g, uint8_t b);
-
-	template <>
-	class ColorBase<ColorFormat::argb8888> : public ColorARGB8888 {
-		public:
-			inline ColorBase<ColorFormat::argb8888>():
-				ColorARGB8888() {
-			}
-
-			inline ColorBase<ColorFormat::argb8888>(uint8_t r, uint8_t g, uint8_t b):
-				ColorARGB8888(r, g, b) {
-			}
-
-			inline ColorBase<ColorFormat::argb8888>(uint8_t a, uint8_t r, uint8_t g, uint8_t b):
-				ColorARGB8888(a, r, g, b) {
-			}
-
-			inline ColorBase<ColorFormat::argb8888>(const ColorBase<ColorFormat::argb8888>& color):
-				ColorARGB8888(color) {
-			}
-
-			template <ColorFormat FORMAT>
-			inline ColorBase<FORMAT> convertTo() {
-				return makeColor<FORMAT>(getA(), getR(), getG(), getB());
-			}
-	};
-
-	template <>
-	class ColorBase<ColorFormat::rgb888> : public ColorRGB888 {
-	public:
-		inline ColorBase<ColorFormat::rgb888>():
-			ColorRGB888() {
-		}
-
-		inline ColorBase<ColorFormat::rgb888>(uint8_t r, uint8_t g, uint8_t b):
-			ColorRGB888(r, g, b) {
-		}
-
-		inline ColorBase<ColorFormat::rgb888>(const ColorBase<ColorFormat::rgb888>& color):
-			ColorRGB888(color) {
-		}
-
-		template <ColorFormat FORMAT>
-		inline ColorBase<FORMAT> convertTo() const {
-			return makeColor<FORMAT>(getR(), getG(), getB());
-		}
-	};
-
-	template <>
-	class ColorBase<ColorFormat::rgb565> : public ColorRGB565 {
-		public:
-			inline ColorBase<ColorFormat::rgb565>():
-				ColorRGB565() {
-			}
-
-			inline ColorBase<ColorFormat::rgb565>(uint8_t r, uint8_t g, uint8_t b):
-				ColorRGB565(r, g, b) {
-			}
-
-			inline ColorBase<ColorFormat::rgb565>(const ColorBase<ColorFormat::rgb565>& color):
-				ColorRGB565(color) {
-			}
-
-			template <ColorFormat FORMAT>
-			inline ColorBase<FORMAT> convertTo() const {
-				return makeColor<FORMAT>(getR(), getG(), getB());
-			}
-	};
-
-	template <>
-	class ColorBase<ColorFormat::l8> : public ColorL8 {
-		public:
-			inline ColorBase<ColorFormat::l8>():
-				ColorL8() {
-			}
-
-			inline ColorBase<ColorFormat::l8>(uint8_t l):
-				ColorL8(l) {
-			}
-
-			inline ColorBase<ColorFormat::l8>(const ColorBase<ColorFormat::l8>& color):
-				ColorL8(color) {
-			}
-
-			template <ColorFormat FORMAT>
-			inline ColorBase<FORMAT> convertTo() const {
-				return makeColor<FORMAT>(getL());
-			}
-	};
-
-	template <>
-	class ColorBase<ColorFormat::l1> : public ColorL1 {
-		public:
-			inline ColorBase<ColorFormat::l1>():
-				ColorL1() {
-			}
-
-			inline ColorBase<ColorFormat::l1>(uint8_t l):
-				ColorL1(l) {
-			}
-
-			inline ColorBase<ColorFormat::l1>(const ColorBase<ColorFormat::l1>& color):
-				ColorL1(color) {
-			}
-
-			template <ColorFormat FORMAT>
-			inline ColorBase<FORMAT> convertTo() const {
-				return makeColor<FORMAT>(getL());
-			}
-	};
-
-
-	/// \brief Color base del sistema
-	///
-	typedef ColorBase<EOS_COLOR_FORMAT> Color;
-
-
-	/// \brief Funcions de construccio de colors
-	///
-	template <ColorFormat FORMAT>
-	inline ColorBase<FORMAT> makeColor(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
-		typedef ColorInfo<FORMAT> CI;
-		if constexpr (CI::hasAlpha) {
-			if constexpr (CI::isColor)
-				return ColorBase<FORMAT>(a, r, g, b);
-			else
-				return ColorBase<FORMAT>(a, ColorMath::grayWeight(r, g, b));
-		}
-		else {
-			if constexpr (CI::isColor)
-				return ColorBase<FORMAT>(r, g, b);
-			else
-				return ColorBase<FORMAT>(ColorMath::grayWeight(r, g, b));
-		}
+		return Color_x<format_>::fromARGB(a, r, g, b);
 	}
 
-	template <ColorFormat FORMAT>
-	inline ColorBase<FORMAT> makeColor(uint8_t r, uint8_t g, uint8_t b) {
-		return makeColor<FORMAT>(0xFF, r, g, b);
+	template <ColorFormat format_>
+	Color_x<format_> makeColor(uint8_t r, uint8_t g, uint8_t b) {
+
+		return Color_x<format_>::fromRGB(r, g, b);
 	}
 
-	template <ColorFormat FORMAT>
-	inline ColorBase<FORMAT> makeColor(uint8_t l) {
-		typedef ColorInfo<FORMAT> CI;
-		if constexpr (CI::isColor)
-			return makeColor<FORMAT>(0xFF, l, l, l);
-		else
-			return ColorBase<FORMAT>(l);
+	template <ColorFormat format_>
+	Color_x<format_> makeColor(uint8_t l) {
+
+		return Color_x<format_>::fromL(l);
 	}
 
 

@@ -34,7 +34,7 @@ Text::Text():
 /// \param    align: L'aliniacio del text.
 ///
 Text::Text(
-	const Font& font,
+	const Font &font,
 	TextAlign align):
 
 	_text(""),
@@ -57,7 +57,7 @@ Text::Text(
 Text::Text(
 	const Font& font,
 	TextAlign align,
-	const String& text):
+	const String &text):
 
 	_text(text),
 	_font(font),
@@ -74,7 +74,7 @@ Text::Text(
 /// \param    text: El text.
 ///
 void Text::setText(
-	const String& text) {
+	const String &text) {
 
 	if (_text != text) {
 		_text = text;
@@ -102,7 +102,7 @@ void Text::setAlign(
 /// \param    brush: La brotxa.
 ///
 void Text::setBackground(
-	const Brush& brush) {
+	const Brush &brush) {
 
 	_background = brush;
 }
@@ -113,7 +113,7 @@ void Text::setBackground(
 /// \param    brush: La brotxa.
 ///
 void Text::setForeground(
-	const Brush& brush) {
+	const Brush &brush) {
 
 	_foreground = brush;
 }
@@ -151,8 +151,8 @@ void Text::recalcBounds() {
 /// \param    position: La Posicio.
 ///
 void Text::draw(
-	const Graphics* graphics,
-	const Point& position) const {
+	const Graphics *graphics,
+	const Point &position) const {
 
 	int l = _text.getLength();
 	const char* p = _text;
@@ -182,7 +182,7 @@ void Text::draw(
 
 
 void Text::drawChar(
-	const Graphics* graphics,
+	const Graphics *graphics,
 	int x,
 	int y,
 	Color color,

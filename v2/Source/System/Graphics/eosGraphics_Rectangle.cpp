@@ -16,9 +16,9 @@ using namespace eos;
 /// \param    rect: El rectangle.
 ///
 void Graphics::paintRectangle(
-	const Pen& pen,
-	const Brush& brush,
-	const Rect& box) const {
+	const Pen &pen,
+	const Brush &brush,
+	const Rect &box) const {
 
 	bool penVisible = !pen.isNull();
 	bool brushVisible = !brush.isNull();
