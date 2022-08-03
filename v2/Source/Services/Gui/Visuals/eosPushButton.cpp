@@ -55,16 +55,16 @@ void PushButton::onRender(
 	switch (_state) {
 		case State::normal:
 			g.paintRoundedRectangle(
-				Pen(PenStyle::solid, COLOR_LightSeaGreen, 1),
-				Brush(BrushStyle::solid, COLOR_Teal),
+				Pen(PenStyle::solid, Colors::lightSeaGreen, 1),
+				Brush(BrushStyle::solid, Colors::teal),
 				r,
 				radius, radius);
 			break;
 
 		case State::pushed:
 			g.paintRoundedRectangle(
-				Pen(PenStyle::solid, COLOR_LightCyan, 1),
-				Brush(BrushStyle::solid, COLOR_CadetBlue),
+				Pen(PenStyle::solid, Colors::lightCyan, 1),
+				Brush(BrushStyle::solid, Colors::cadetBlue),
 				r,
 				radius, radius);
 			break;

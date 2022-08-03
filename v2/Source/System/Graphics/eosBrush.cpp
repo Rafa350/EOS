@@ -81,7 +81,7 @@ class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 /// \brief    Constructor.
 ///
 Brush::Brush():
-	_impl(makeImpl(BrushStyle::solid, COLOR_Transparent)) {
+	_impl(makeImpl(BrushStyle::solid, Colors::transparent)) {
 
 #ifdef EOS_DEBUG
 	__allocatedBrushCount++;

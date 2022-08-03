@@ -10,6 +10,60 @@ using namespace htl;
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte el indicador de format de color pel DMA2d.
+/// \param    colorFormat: Format de colcor.
+/// \return   El rtesultat.
+///
+static constexpr htl::DMA2DColorMode getColorMode(
+	ColorFormat colorFormat) {
+
+	switch (colorFormat) {
+		default:
+		case ColorFormat::argb8888: return DMA2DColorMode::argb8888;
+		case ColorFormat::argb4444: return DMA2DColorMode::argb4444;
+		case ColorFormat::rgb888: return DMA2DColorMode::rgb888;
+		case ColorFormat::rgb565: return DMA2DColorMode::rgb565;
+	}
+}
+
+static constexpr DMA2DColorMode colorMode = getColorMode(Color::format);
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Combina dos pixels amb opacitat
+/// \param    fg: El pixel a combinar.
+/// \param    bg: El pixel de fons.
+/// \param    opascity: Opacitat del pixel fg.
+/// \return   El pixel combinat.
+///
+static Color::Pixel combinePixels(
+	Color::Pixel fg,
+	Color::Pixel bg,
+	uint8_t opacity) {
+
+	using CT = ColorTrait<Color::format>;
+
+	uint32_t fgR = (fg & CT::maskR) >> CT::shiftR;
+	uint32_t fgG = (fg & CT::maskG) >> CT::shiftG;
+	uint32_t fgB = (fg & CT::maskB) >> CT::shiftB;
+
+	uint32_t bgR = (bg & CT::maskR) >> CT::shiftR;
+	uint32_t bgG = (bg & CT::maskG) >> CT::shiftG;
+	uint32_t bgB = (bg & CT::maskB) >> CT::shiftB;
+
+	Color::Pixel c =
+		((((fgR * opacity) + (bgR * (255 - opacity))) >> 8) << CT::shiftR) |
+		((((fgG * opacity) + (bgG * (255 - opacity))) >> 8) << CT::shiftG) |
+		((((fgB * opacity) + (bgB * (255 - opacity))) >> 8) << CT::shiftB);
+
+	if constexpr (CT::hasAlpha)
+		c |= 0xFF << CT::shiftA;
+
+	return c;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 /// \param    frameWidth: Amplada fisica en pixels.
 /// \param    frameHeight: Alçada fisica en pixels.
@@ -25,7 +79,7 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	int bufferPitch):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer((pixel_t*)buffer),
+	_buffer((Color::Pixel*)buffer),
 	_bufferPitch(bufferPitch) {
 
     DMA2D_1::init();
@@ -53,10 +107,10 @@ void ColorFrameBuffer_DMA2D::put(
 		uint8_t opacity = color.getOpacity();
 		if (opacity != 0) {
 
-			pixel_t vPixel = toPixel(color);
-			pixel_t* pPixel = getPixelPtr(x, y);
+			Color::Pixel c = color;
+			Color::Pixel *ptr = getPixelPtr(x, y);
 
-			*pPixel = opacity == 0xFF ? vPixel : combinePixels(*pPixel, vPixel, opacity);
+			*ptr = opacity == 0xFF ? c : combinePixels(c, *ptr, opacity);
 		}
 	}
 
@@ -64,10 +118,10 @@ void ColorFrameBuffer_DMA2D::put(
 	//
 	else {
 
-		pixel_t vPixel = toPixel(color);
-		pixel_t* pPixel = getPixelPtr(x, y);
+		Color::Pixel c = color;
+		Color::Pixel *ptr = getPixelPtr(x, y);
 
-		*pPixel = vPixel;
+		*ptr = c;
 	}
 }
 
@@ -88,45 +142,51 @@ void ColorFrameBuffer_DMA2D::fill(
 	int height,
 	Color color) {
 
-	uint8_t opacity = color.getOpacity();
+	if constexpr (Color::hasAlpha) {
 
-	// Cas que sigui un color solid
-	//
-	if (opacity == 0xFF) {
+		uint8_t opacity = color.getOpacity();
 
-		pixel_t vPixel = toPixel(color);
-		pixel_t* pPixel = getPixelPtr(x, y);
+		// Cas que sigui un color solid
+		//
+		if (opacity == 0xFF) {
 
-		DMA2DColorMode colorMode;
-		if constexpr (CI::format == ColorFormat::rgb565)
-			colorMode = DMA2DColorMode::rgb565;
-		else if constexpr (CI::format == ColorFormat::argb8888)
-			colorMode = DMA2DColorMode::argb8888;
-		else
-			colorMode = DMA2DColorMode::rgb888;
+			Color::Pixel c = color;
+			Color::Pixel *ptr = getPixelPtr(x, y);
+
+			// Rellena la regio amb el valor de color del pixel. Hi ha que
+			// suministrar el color en format adecuat, ja que no es fa cap
+			// tipus de converssio.
+			//
+			DMA2D_1::startFill(ptr, width, height, _bufferPitch - width, colorMode, c);
+			DMA2D_1::waitForFinish();
+		}
+
+		// Cas que no sigui transparent
+		//
+		else if (opacity != 0) {
+
+			Color::Pixel c = color;
+
+			for (int yy = y; yy < height + y; yy++) {
+				Color::Pixel *ptr = getPixelPtr(x, yy);
+				for (int xx = x; xx < width + x; xx++) {
+					*ptr = combinePixels(c, *ptr, opacity);
+					ptr++;
+				}
+			}
+		}
+	}
+
+	else {
+		Color::Pixel c = color;
+		Color::Pixel *ptr = getPixelPtr(x, y);
 
 		// Rellena la regio amb el valor de color del pixel. Hi ha que
 		// suministrar el color en format adecuat, ja que no es fa cap
-		// tipus de converssio. La funcio 'toPixel()' realitza la
-		// converssio al format adequat.
+		// tipus de converssio.
 		//
-		DMA2D_1::startFill(pPixel, width, height, _bufferPitch - width, colorMode, vPixel);
+		DMA2D_1::startFill(ptr, width, height, _bufferPitch - width, colorMode, c);
 		DMA2D_1::waitForFinish();
-	}
-
-	// Cas que no sigui transparent
-	//
-	else if (opacity != 0) {
-
-		pixel_t vPixel = toPixel(color);
-
-		for (int yy = y; yy < height + y; yy++)
-			for (int xx = x; xx < width + x; xx++) {
-
-				pixel_t* pPixel = getPixelPtr(xx, yy);
-
-				*pPixel = combinePixels(*pPixel, vPixel, opacity);
-			}
 	}
 }
 
@@ -148,29 +208,13 @@ void ColorFrameBuffer_DMA2D::copy(
 	const Color *colors,
 	int offset) {
 
-	pixel_t *pPixel = getPixelPtr(x, y);
-
-	DMA2DColorMode colorMode;
-	if constexpr (CI::format == ColorFormat::rgb565)
-		colorMode = DMA2DColorMode::rgb565;
-	else if constexpr (CI::format == ColorFormat::argb8888)
-		colorMode = DMA2DColorMode::argb8888;
-	else
-		colorMode = DMA2DColorMode::rgb888;
-
-	DMA2DColorMode srcColorMode;
-	if constexpr (Color::format == ColorFormat::rgb565)
-		srcColorMode = DMA2DColorMode::rgb565;
-	else if constexpr (Color::format == ColorFormat::argb8888)
-		srcColorMode = DMA2DColorMode::argb8888;
-	else
-		srcColorMode = DMA2DColorMode::rgb888;
+	Color::Pixel *ptr = getPixelPtr(x, y);
 
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 	// les opcions.
 	//
-	DMA2D_1::startCopy(pPixel, width, height, _bufferPitch - width, colorMode, colors, offset, srcColorMode);
+	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, colorMode, colors, offset, colorMode);
 	DMA2D_1::waitForFinish();
 }
 
@@ -194,56 +238,13 @@ void ColorFrameBuffer_DMA2D::write(
 	ColorFormat format,
 	int offset) {
 
-	pixel_t* pPixel = getPixelPtr(x, y);
+	Color::Pixel *ptr = getPixelPtr(x, y);
 
-	DMA2DColorMode colorMode;
-	if constexpr (CI::format == ColorFormat::rgb565)
-		colorMode = DMA2DColorMode::rgb565;
-	else if constexpr (CI::format == ColorFormat::argb8888)
-		colorMode = DMA2DColorMode::argb8888;
-	else
-		colorMode = DMA2DColorMode::rgb888;
-
-	DMA2DColorMode srcColorMode;
-	if constexpr (Color::format == ColorFormat::rgb565)
-		srcColorMode = DMA2DColorMode::rgb565;
-	else if constexpr (Color::format == ColorFormat::argb8888)
-		srcColorMode = DMA2DColorMode::argb8888;
-	else
-		srcColorMode = DMA2DColorMode::rgb888;
 
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 	// les opcions. No cal cridar a 'toPixel()'
 	//
-	DMA2D_1::startCopy(pPixel, width, height, _bufferPitch - width, colorMode, pixels, offset, colorMode);
+	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, colorMode, pixels, offset, getColorMode(format));
 	DMA2D_1::waitForFinish();
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Combina dos pixels amb opacitat
-/// \param    b: Pixel de fons
-/// \param    f: Pixel a combinar.
-/// \param    opascity: Opacitat.
-/// \return   El pixel combinat.
-///
-ColorFrameBuffer_DMA2D::pixel_t ColorFrameBuffer_DMA2D::combinePixels(
-	pixel_t b,
-	pixel_t f,
-	uint8_t opacity) {
-
-	uint8_t br = (b & CI::maskR) >> CI::shiftR;
-	uint8_t bg = (b & CI::maskG) >> CI::shiftG;
-	uint8_t bb = (b & CI::maskB) >> CI::shiftB;
-
-	uint8_t fr = (f & CI::maskR) >> CI::shiftR;
-	uint8_t fg = (f & CI::maskG) >> CI::shiftG;
-	uint8_t fb = (f & CI::maskB) >> CI::shiftB;
-
-	return
-		((((fr * opacity) + (br * (255u - opacity))) >> 8) << CI::shiftR) |
-		((((fg * opacity) + (bg * (255u - opacity))) >> 8) << CI::shiftG) |
-		((((fb * opacity) + (bb * (255u - opacity))) >> 8) << CI::shiftB);
-}
-

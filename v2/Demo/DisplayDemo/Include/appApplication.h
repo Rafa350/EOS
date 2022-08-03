@@ -15,8 +15,8 @@ namespace app {
 
 	class MyApplication: public eos::Application {
 		private:
-			LedService *ledService;
-			DisplayService *displayService;
+			LedService *_ledService;
+			DisplayService *_displayService;
 
 		public :
 			MyApplication();

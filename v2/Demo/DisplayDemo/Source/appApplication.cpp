@@ -13,6 +13,6 @@ using namespace app;
 MyApplication::MyApplication():
 	eos::Application() {
 
-	ledService = new LedService(this);
-	displayService = new DisplayService(this);
+	_ledService = new LedService(this);
+	_displayService = new DisplayService(this);
 }

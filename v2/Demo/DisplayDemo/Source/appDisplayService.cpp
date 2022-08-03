@@ -79,7 +79,7 @@ DisplayService::DisplayService(
 	_text(Font("Consolas", 14, FontStyle::regular), TextAlign::left),
 	_orientation(0) {
 
-	_text.setForeground(Brush(BrushStyle::solid, COLOR_Yellow));
+	_text.setForeground(Brush(BrushStyle::solid, Colors::yellow));
 }
 
 
@@ -216,14 +216,14 @@ void DisplayService::drawBackground(
     const char* title) {
 
 	_graphics->resetClip();
-    _graphics->clear(COLOR_Black);
-    _graphics->drawRectangle(0, 0, _screenWidth - 1, _screenHeight - 1, COLOR_Red);
-    _graphics->drawLine(_screenWidth - 1, 20, 0, 20, COLOR_Red);
+    _graphics->clear(Colors::black);
+    _graphics->drawRectangle(0, 0, _screenWidth - 1, _screenHeight - 1, Colors::red);
+    _graphics->drawLine(_screenWidth - 1, 20, 0, 20, Colors::red);
 
     _text.setText(title);
     _graphics->paintText(Point(4, 0), _text);
 
-    _graphics->drawRectangle(7, 27, _screenWidth - 10, _screenHeight - 10, COLOR_Red);
+    _graphics->drawRectangle(7, 27, _screenWidth - 10, _screenHeight - 10, Colors::red);
 }
 
 
@@ -276,15 +276,31 @@ void DisplayService::testColors() {
 ///
 void DisplayService::testOpacity() {
 
-	const int w = 75;
+	constexpr int w = 74;
+	constexpr int dd = w / 2;
 
 	drawBackground("Opacity");
 	Task::delay(250);
 
+	uint8_t opacity = 128;
+
+	Color colors[3];
+	colors[0] = ARGB(opacity, 255, 0, 0);
+	colors[1] = ARGB(opacity, 0, 255, 0);
+	colors[2] = ARGB(opacity, 0, 0, 255);
+
 	_graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
-	_graphics->fillRectangle(Point(40, 40), Size(w, w), ARGB(128, 255, 0, 0));
-	_graphics->fillRectangle(Point(80, 80), Size(w, w), ARGB(128, 0, 255, 0));
-	_graphics->fillRectangle(Point(120, 120), Size(w, w), ARGB(128, 0, 0, 255));
+
+	int x = 40;
+	int y = 40;
+
+	_graphics->fillRectangle(Point(x, y), Size(w + (dd * 2), w + (dd * 2)), Colors::white);
+
+	for (int i = 0; i < 3; i++) {
+		_graphics->fillRectangle(Point(x, y), Size(w, w), colors[i]);
+		x += dd;
+		y += dd;
+	}
 
 	Task::delay(2500);
 }
@@ -321,7 +337,7 @@ void DisplayService::testPoints() {
 
         __rand(); // Mantre la sequencia de 3 rand's per cicle
 
-        _graphics->drawPoint(x, y, COLOR_Black);
+        _graphics->drawPoint(x, y, Colors::black);
     }
 
     Task::delay(250);
@@ -407,7 +423,7 @@ void DisplayService::testThickLines() {
 
     _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
 
-    _graphics->drawLine(10, 10, 200, 376, 5, COLOR_White);
+    _graphics->drawLine(10, 10, 200, 376, 5, Colors::white);
 
     Task::delay(1000);
 }

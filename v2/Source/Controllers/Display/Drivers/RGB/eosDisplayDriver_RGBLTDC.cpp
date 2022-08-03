@@ -27,9 +27,9 @@ using namespace htl;
 ///
 DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 
-	constexpr const int frameBufferPitchBytes = (_width * CI::bytes + 63) & 0xFFFFFFC0;
-	constexpr const int frameBufferPitch = frameBufferPitchBytes / CI::bytes;
-	constexpr const int frameSize = frameBufferPitchBytes * _height;
+	constexpr int frameBufferPitchBytes = (_width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
+	constexpr int frameSize = frameBufferPitchBytes * _height;
 
 	_frontImageBuffer = reinterpret_cast<void*>(_buffer);
 	_frontFrameBuffer = new ColorFrameBuffer_DMA2D(
@@ -60,23 +60,15 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 ///
 void DisplayDriver_RGBLTDC::initialize() {
 
-	// Inicialitza els pins
-	//
 	initializeGPIO();
-
-	// Inicialitza el dispositiu LTDC
-	//
 	initializeLTDC();
-
-    // Inicialitza el dispositiu DMA2D
-    //
-	DMA2D_1::init();
+	initializeDMA2D();
 
 	// Inicialitza els buffers a color negre
 	//
-	_frontFrameBuffer->clear(COLOR_Black);
+	_frontFrameBuffer->clear(Colors::black);
 	if (_useDoubleBuffer)
-		_backFrameBuffer->clear(COLOR_Black);
+		_backFrameBuffer->clear(Colors::black);
 }
 
 
@@ -310,18 +302,37 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	LCD::initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
 	LCD::initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
 	LCD::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	LCD::setBackgroundColor(COLOR_Blue);
+	LCD::setBackgroundColor(Colors::blue);
 	LCD::setInterruptFunction(nullptr, nullptr);
 
 	// Inicialitza la capa 1
 	//
+	constexpr LTDCPixelFormat pixelFormat =
+		Color::format == ColorFormat::argb8888 ? LTDCPixelFormat::argb8888 :
+		Color::format == ColorFormat::argb4444 ? LTDCPixelFormat::argb4444 :
+		Color::format == ColorFormat::argb1555 ? LTDCPixelFormat::argb1555 :
+		Color::format == ColorFormat::rgb888 ? LTDCPixelFormat::rgb888 :
+		Color::format == ColorFormat::al88 ? LTDCPixelFormat::al88 :
+		Color::format == ColorFormat::al44 ? LTDCPixelFormat::al44 :
+		Color::format == ColorFormat::l8 ? LTDCPixelFormat::l8 :
+		LTDCPixelFormat::rgb565;
+
 	LCDLayer::setWindow(0, 0, _width, _height);
 	LCDLayer::setFrameFormat(
-		htl::LTDCPixelFormatFor<CI::format>::value,
-		_width * CI::bytes,
-		((_width * CI::bytes) + 63) & 0xFFFFFFC0,
+		pixelFormat,
+		_width * Color::bytes,
+		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
 		_height);
 
 	LCDLayer::setFrameBuffer((void*)_frontImageBuffer);
 	LCD::update();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el modul DAM2D
+///
+void DisplayDriver_RGBLTDC::initializeDMA2D() {
+
+	DMA2D_1::init();
 }

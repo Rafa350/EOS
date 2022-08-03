@@ -327,11 +327,16 @@ namespace htl {
 			    //
 			    else {
 			    	LTDC->SRCR |= LTDC_SRCR_VBR;
-					while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
-						continue;
-					while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 1)
-						continue;
+			    	waitSync();
 			    }
+			}
+
+			static void waitSync() {
+
+				while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 1)
+					continue;
+				while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
+					continue;
 			}
 
 			static void enableInterrrupt(
@@ -445,9 +450,13 @@ namespace htl {
 				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
 
 				tmp = regs->PFCR;
-			    tmp &= ~(LTDC_LxPFCR_PF);
+			    tmp &= ~(0b111 << LTDC_LxPFCR_PF_Pos);
 			    switch (format) {
-					case LTDCPixelFormat::rgb888:
+			    	case LTDCPixelFormat::argb8888:
+						tmp |= 0b000 << LTDC_LxPFCR_PF_Pos;
+			    		break;
+
+			    	case LTDCPixelFormat::rgb888:
 						tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
 						break;
 
@@ -946,29 +955,6 @@ namespace htl {
     struct LTDCPinTrait<GPIO_K7, LTDCPin::pinDE> {
     	static constexpr GPIOAlt alt = GPIOAlt::alt14;
     };
-
-    // Valors que depenen del format de color
-    //
-	template <eos::ColorFormat format_>
-	struct LTDCPixelFormatFor {
-	};
-	template<>
-	struct LTDCPixelFormatFor<eos::ColorFormat::rgb888> {
-		static const LTDCPixelFormat value = LTDCPixelFormat::rgb888;
-	};
-	template<>
-	struct LTDCPixelFormatFor<eos::ColorFormat::argb8888> {
-		static const LTDCPixelFormat value = LTDCPixelFormat::argb8888;
-	};
-	template<>
-	struct LTDCPixelFormatFor<eos::ColorFormat::rgb565> {
-		static const LTDCPixelFormat value = LTDCPixelFormat::rgb565;
-	};
-	template<>
-	struct LTDCPixelFormatFor<eos::ColorFormat::l8> {
-		static const LTDCPixelFormat value = LTDCPixelFormat::l8;
-	};
-
 }
 
 

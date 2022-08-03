@@ -36,10 +36,10 @@ void MonoFrameBuffer::put(
 	int y,
 	Color color) {
 
-	ColorBase<ColorFormat::l1> c = color.convertTo<ColorFormat::l1>();
+	Color::Pixel pixel = color;
 
 	uint8_t* page = (uint8_t*)((int)_buffer + ((y >> 3) * getImageWidth()));
-	if (c)
+	if (pixel != 0)
 		page[x] = page[x] | (1 << (y & 7));
 	else
 		page[x] = page[x] & ~(1 << (y & 7));

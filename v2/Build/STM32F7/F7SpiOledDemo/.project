@@ -572,24 +572,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosMonoFrameBuffer.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halGPIO_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO_ex.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPI.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halSPI_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPI_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halSYS.h</name>
@@ -647,9 +632,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosMonoFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HLT/STM32/htlGPIO_Init.cpp</name>
+			<name>src/Framework/EOS/HLT/STM32/htlGPIO.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_Init.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>

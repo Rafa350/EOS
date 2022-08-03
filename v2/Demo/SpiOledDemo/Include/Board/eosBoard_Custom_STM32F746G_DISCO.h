@@ -34,7 +34,6 @@ namespace board {
 		constexpr uint16_t width = DISPLAY_IMAGE_WIDTH;
 		constexpr uint16_t height = DISPLAY_IMAGE_HEIGHT;
 		constexpr uint32_t buffer = DISPLAY_IMAGE_BUFFER;
-		constexpr eos::ColorFormat colorFormat = eos::ColorFormat::l1;
 	}
 }
 

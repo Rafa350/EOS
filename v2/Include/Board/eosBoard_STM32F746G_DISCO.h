@@ -132,7 +132,6 @@ namespace board {
 		// Configuracio del buffer d'imatge
 		constexpr uint32_t buffer              = DISPLAY_BUFFER;
 		constexpr bool useDoubleBuffer         = DISPLAY_DOUBLEBUFFER;
-		constexpr eos::ColorFormat colorFormat = DISPLAY_COLOR_FORMAT;
 	}
 }
 

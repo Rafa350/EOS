@@ -9,8 +9,8 @@
 using namespace eos;
 
 
-#define COLOR_DefaultBackground COLOR_Transparent
-#define COLOR_DefaultForeground COLOR_Black
+static constexpr Color defaultBackground = Colors::transparent;
+static constexpr Color defaultForeground = Colors::black;
 
 
 /// ----------------------------------------------------------------------
@@ -20,8 +20,8 @@ Text::Text():
 
 	_text(""),
 	_font(Font()),
-	_background(Brush(BrushStyle::solid, COLOR_DefaultBackground)),
-	_foreground(Brush(BrushStyle::solid, COLOR_DefaultForeground)),
+	_background(Brush(BrushStyle::solid, defaultBackground)),
+	_foreground(Brush(BrushStyle::solid, defaultForeground)),
 	_align(TextAlign::center),
 	_width(0),
 	_height(0) {
@@ -39,8 +39,8 @@ Text::Text(
 
 	_text(""),
 	_font(font),
-	_background(Brush(BrushStyle::solid, COLOR_DefaultBackground)),
-	_foreground(Brush(BrushStyle::solid, COLOR_DefaultForeground)),
+	_background(Brush(BrushStyle::solid, defaultBackground)),
+	_foreground(Brush(BrushStyle::solid, defaultForeground)),
 	_align(align),
 	_width(0),
 	_height(0) {
@@ -61,8 +61,8 @@ Text::Text(
 
 	_text(text),
 	_font(font),
-	_background(Brush(BrushStyle::solid, COLOR_DefaultBackground)),
-	_foreground(Brush(BrushStyle::solid, COLOR_DefaultForeground)),
+	_background(Brush(BrushStyle::solid, defaultBackground)),
+	_foreground(Brush(BrushStyle::solid, defaultForeground)),
 	_align(align) {
 
 	recalcBounds();

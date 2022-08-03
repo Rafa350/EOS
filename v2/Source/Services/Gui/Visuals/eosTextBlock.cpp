@@ -23,8 +23,8 @@ struct TextBlockStyle {
 };
 
 static const TextBlockStyle style = {
-	.foregroundColor = COLOR_Black,
-	.backgroundColor = COLOR_Yellow,
+	.foregroundColor = Colors::black,
+	.backgroundColor = Colors::yellow,
 	.fontName = "Consolas",
 	.fontHeight = 18,
 	.fontStyle = FontStyle::regular

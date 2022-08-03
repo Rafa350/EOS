@@ -184,6 +184,16 @@ namespace htl {
             	_isrFunction = function;
             	_isrParam = param;
             }
+
+            /// \brief Invoca la funcio d'interrupcio.
+            /// \param event: L'event.
+            /// \param param: El parametre.
+            ///
+            static void interruptHandler(I2CEvent event) {
+
+            	if (_isrFunction != nullptr)
+            		_isrFunction(event, _isrParam);
+            }
 	};
 
 	template <I2CChannel channel_> halI2CHandler I2C_x<channel_>::_handler;

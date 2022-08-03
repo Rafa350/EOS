@@ -16,8 +16,6 @@ namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
 		private:
-			using CI = ColorTrait<board::display::colorFormat>;
-
 			using GPIO_BKE = board::display::GPIO_BKE;
 			using GPIO_LCDE = board::display::GPIO_LCDE;
 
@@ -54,20 +52,20 @@ namespace eos {
 			using LCDLayer = htl::LTDCLayer_1;
 
 		private:
-			constexpr static const uint16_t _hSync       = board::display::hSync;
-			constexpr static const uint16_t _vSync       = board::display::vSync;
-			constexpr static const uint16_t _hBP         = board::display::hBP;
-			constexpr static const uint16_t _vBP         = board::display::vBP;
-			constexpr static const uint16_t _hFP         = board::display::hFP;
-			constexpr static const uint16_t _vFP         = board::display::vFP;
-			constexpr static const htl::LTDCPolarity _hSyncPol = board::display::hSyncPol;
-			constexpr static const htl::LTDCPolarity _vSyncPol = board::display::vSyncPol;
-			constexpr static const htl::LTDCPolarity _dePol    = board::display::dePol;
-			constexpr static const htl::LTDCPolarity _pcPol    = board::display::pcPol;
-			constexpr static const uint16_t _width       = board::display::width;
-			constexpr static const uint16_t _height      = board::display::height;
-			constexpr static const uint32_t _buffer      = board::display::buffer;
-			constexpr static const bool _useDoubleBuffer = board::display::useDoubleBuffer;
+			static constexpr uint16_t _hSync       = board::display::hSync;
+			static constexpr uint16_t _vSync       = board::display::vSync;
+			static constexpr uint16_t _hBP         = board::display::hBP;
+			static constexpr uint16_t _vBP         = board::display::vBP;
+			static constexpr uint16_t _hFP         = board::display::hFP;
+			static constexpr uint16_t _vFP         = board::display::vFP;
+			static constexpr htl::LTDCPolarity _hSyncPol = board::display::hSyncPol;
+			static constexpr htl::LTDCPolarity _vSyncPol = board::display::vSyncPol;
+			static constexpr htl::LTDCPolarity _dePol    = board::display::dePol;
+			static constexpr htl::LTDCPolarity _pcPol    = board::display::pcPol;
+			static constexpr uint16_t _width       = board::display::width;
+			static constexpr uint16_t _height      = board::display::height;
+			static constexpr uint32_t _buffer      = board::display::buffer;
+			static constexpr bool _useDoubleBuffer = board::display::useDoubleBuffer;
 
 		private:
     		FrameBuffer *_frontFrameBuffer;
@@ -101,6 +99,7 @@ namespace eos {
         private:
             void initializeGPIO();
             void initializeLTDC();
+            void initializeDMA2D();
     };
 }
 

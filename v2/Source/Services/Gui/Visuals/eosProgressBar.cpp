@@ -17,9 +17,9 @@ struct ProgressBarStyle {
 };
 
 static const ProgressBarStyle style = {
-	.backgroundColor = COLOR_Black,
-	.borderColor = COLOR_Red,
-	.barColor = COLOR_Green
+	.backgroundColor = Colors::black,
+	.borderColor = Colors::red,
+	.barColor = Colors::green
 };
 
 static const ProgressBarStyle *pStyle = &style;

@@ -36,6 +36,7 @@ void DisplayService::onSetup() {
 	_graphics->clear(COLOR_Black);
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio del servei.
 ///

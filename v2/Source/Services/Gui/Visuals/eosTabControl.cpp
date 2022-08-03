@@ -113,7 +113,7 @@ Panel* TabControl::createHeaderPanel() {
 	StackPanel* panel = new StackPanel();
 	panel->setVerticalAlignment(VerticalAlignment::top);
 
-	panel->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
+	panel->setBackground(Brush(BrushStyle::solid, Colors::transparent));
 
 	panel->setOrientation(Orientation::horizontal);
 

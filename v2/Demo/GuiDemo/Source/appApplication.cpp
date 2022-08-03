@@ -46,6 +46,8 @@ void MyApplication::onInitialize() {
 	//
 	createMainPanel();
 	Application::onInitialize();
+
+	ColorARGB8888 c = fromARGB<ColorFormat::argb8888>(0,0,0,0);
 }
 
 
@@ -55,7 +57,7 @@ eos::Visual* MyApplication::createKeyboardPanel() {
 	border->setHorizontalAlignment(HorizontalAlignment::center);
 	border->setVerticalAlignment(VerticalAlignment::center);
 	border->setBackground(Brush(BrushStyle::solid, RGB(50, 0, 0)));
-	border->setBorderBrush(Brush(BrushStyle::solid, COLOR_White));
+	border->setBorderBrush(Brush(BrushStyle::solid, Colors::white));
 	border->setBorderThickness(1);
 
 	StackPanel* sp = new StackPanel();
@@ -76,7 +78,7 @@ eos::Visual* MyApplication::createKeyboardPanel() {
 	sp->addChild(tb);
 
 	VirtualKeyboard* kb = new VirtualKeyboard();
-	kb->setBackground(Brush(BrushStyle::solid, COLOR_Blue));
+	kb->setBackground(Brush(BrushStyle::solid, Colors::blue));
 	kb->setMargin(Thickness(5, 0, 5, 5));
 	kb->setHorizontalAlignment(HorizontalAlignment::center);
 	kb->setVerticalAlignment(VerticalAlignment::center);
@@ -97,7 +99,7 @@ void MyApplication::createMainPanel() {
 	tab1->setText("TAB1");
 	tab1->setMargin(Thickness(10, 5));
 	Panel* panel1 = new Panel();
-	panel1->setBackground(Brush(BrushStyle::solid, COLOR_Red));
+	panel1->setBackground(Brush(BrushStyle::solid, Colors::red));
 	panel1->setMinSize(Size(100, 30));
 	TabControlItem* tabItem1 = new TabControlItem(tab1, panel1);
 
@@ -106,7 +108,7 @@ void MyApplication::createMainPanel() {
 	tab2->setMargin(Thickness(10, 5));
 	Panel* panel2 = new Panel();
 	panel2->setMinSize(Size(100, 30));
-	panel2->setBackground(Brush(BrushStyle::solid, COLOR_Green));
+	panel2->setBackground(Brush(BrushStyle::solid, Colors::green));
 	TabControlItem* tabItem2 = new TabControlItem(tab2, panel2);
 
 	TextBlock* tab3 = new TextBlock();
@@ -114,7 +116,7 @@ void MyApplication::createMainPanel() {
 	tab3->setMargin(Thickness(10, 5));
 	Panel* panel3 = new Panel();
 	panel3->setMinSize(Size(100, 30));
-	panel3->setBackground(Brush(BrushStyle::solid, COLOR_Blue));
+	panel3->setBackground(Brush(BrushStyle::solid, Colors::blue));
 	TabControlItem* tabItem3 = new TabControlItem(tab3, panel3);
 
 	tabControl->addItem(tabItem1);

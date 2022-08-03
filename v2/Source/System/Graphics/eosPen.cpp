@@ -92,7 +92,7 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 /// \brief    Constructor.
 ///
 Pen::Pen() :
-	_impl(makeImpl(PenStyle::solid, COLOR_Transparent, 0)) {
+	_impl(makeImpl(PenStyle::solid, Colors::transparent, 0)) {
 
 #ifdef EOS_DEBUG
 	__allocatedPenCount++;

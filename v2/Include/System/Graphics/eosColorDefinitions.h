@@ -10,131 +10,132 @@
 
 // Basic colors
 //
-#define COLOR_Transparent         ARGB(0, 0, 0, 0)
-#define COLOR_Black               RGB(0, 0, 0)
-#define COLOR_White               RGB(255, 255, 255)
-#define COLOR_Blue                RGB(0, 0, 255)
-#define COLOR_Cyan                RGB(0, 255, 255)
-#define COLOR_Magenta             RGB(255, 0, 255)
-#define COLOR_Silver              RGB(192, 192, 192)
-#define COLOR_Gray                RGB(128, 128, 128)
-#define COLOR_Maroon              RGB(128, 0, 0)
-#define COLOR_Purple              RGB(128, 0, 128)
-#define COLOR_Teal                RGB(0, 128, 128)
-#define COLOR_Navy                RGB(0, 0, 128)
+namespace eos {
 
-// HTML red colors
-//
-#define COLOR_LightSalmon         RGB(255, 160, 122)
-#define COLOR_Salmon              RGB(250, 128, 114)
-#define COLOR_DarkSalmon          RGB(233, 150, 122)
-#define COLOR_LightCoral          RGB(240, 128, 128)
-#define COLOR_IndianRed           RGB(205, 92, 92)
-#define COLOR_Crimson             RGB(220, 20, 60)
-#define COLOR_FireBrick           RGB(178, 34, 34)
-#define COLOR_Red                 RGB(255, 0, 0)
-#define COLOR_DarkRed             RGB(139, 0, 0)
+	struct Colors {
+		static constexpr Color transparent         = ARGB(0, 0, 0, 0);
+		static constexpr Color black               = RGB(0, 0, 0);
+		static constexpr Color white               = RGB(255, 255, 255);
+		static constexpr Color blue                = RGB(0, 0, 255);
+		static constexpr Color cyan                = RGB(0, 255, 255);
+		static constexpr Color magenta             = RGB(255, 0, 255);
+		static constexpr Color silver              = RGB(192, 192, 192);
+		static constexpr Color gray                = RGB(128, 128, 128);
+		static constexpr Color maroon              = RGB(128, 0, 0);
+		static constexpr Color purple              = RGB(128, 0, 128);
+		static constexpr Color teal                = RGB(0, 128, 128);
+		static constexpr Color navy                = RGB(0, 0, 128);
 
-// HTML orange colors
-//
-#define COLOR_Coral               RGB(255, 127, 80)
-#define COLOR_Tomato              RGB(255, 99, 71)
-#define COLOR_OrangeRed           RGB(255, 69, 0)
-#define COLOR_Gold                RGB(255, 215, 0)
-#define COLOR_Orange              RGB(255, 165, 0)
-#define COLOR_DarkOrange          RGB(255, 140, 0)
+		// HTML red colors
+		//
+		static constexpr Color lightSalmon         = RGB(255, 160, 122);
+		static constexpr Color salmon              = RGB(250, 128, 114);
+		static constexpr Color darkSalmon          = RGB(233, 150, 122);
+		static constexpr Color lightCoral          = RGB(240, 128, 128);
+		static constexpr Color indianRed           = RGB(205, 92, 92);
+		static constexpr Color crimson             = RGB(220, 20, 60);
+		static constexpr Color fireBrick           = RGB(178, 34, 34);
+		static constexpr Color red                 = RGB(255, 0, 0);
+		static constexpr Color darkRed             = RGB(139, 0, 0);
 
-// HTML yellow colors
-//
-#define COLOR_LightYellow         RGB(255, 255, 224)
-#define COLOR_LemonChiffon        RGB(255, 250, 205)
-#define COLOR_LightGoldenrodYellow     RGB(250, 250, 210)
-#define COLOR_PapayaWhip          RGB(255, 239, 213)
-#define COLOR_Moccasin            RGB(225, 228, 181)
-#define COLOR_PeachPuff           RGB(255, 218, 185)
-#define COLOR_PaleGoldenrod       RGB(238, 232, 170)
-#define COLOR_Khaki               RGB(240, 230, 140)
-#define COLOR_DarkKhaki           RGB(189, 183, 107)
-#define COLOR_Yellow              RGB(255, 255, 0)
+		// HTML orange colors
+		//
+		static constexpr Color coral               = RGB(255, 127, 80);
+		static constexpr Color tomato              = RGB(255, 99, 71);
+		static constexpr Color orangeRed           = RGB(255, 69, 0);
+		static constexpr Color gold                = RGB(255, 215, 0);
+		static constexpr Color orange              = RGB(255, 165, 0);
+		static constexpr Color darkOrange          = RGB(255, 140, 0);
 
-// HTML green colors
-//
-#define COLOR_LawnGreen           RGB(124, 252, 0)
-#define COLOR_Chartreuse          RGB(127, 255, 0)
-#define COLOR_LimeGreen           RGB(50, 205, 50)
-#define COLOR_Lime                RGB(0, 255, 0)
-#define COLOR_ForestGreen         RGB(34, 139, 34)
-#define COLOR_Green               RGB(0, 128, 0)
-#define COLOR_DarkGreen           RGB(0, 100, 0)
-#define COLOR_GreenYellow         RGB(173, 255, 47)
-#define COLOR_YellowGreen         RGB(154, 205, 50)
-#define COLOR_SpringGreen         RGB(0, 255, 127)
-#define COLOR_MediumSpreingGreen  RGB(0, 250, 154)
-#define COLOR_LightGreen          RGB(144, 238, 144)
-#define COLOR_PaleGreen           RGB(152, 251, 152)
-#define COLOR_DarkSeaGreen        RGB(143, 188, 143)
-#define COLOR_MediumSeaGreen      RGB(60, 179, 113)
-#define COLOR_SeaGreen            RGB(46, 139, 87)
-#define COLOR_Olive               RGB(128, 128, 0)
-#define COLOR_DarkOliveGreen      RGB(85, 107, 47)
-#define COLOR_OliveDrab           RGB(107, 142, 35)
+		// HTML yellow colors
+		//
+		static constexpr Color lightYellow         = RGB(255, 255, 224);
+		static constexpr Color lemonChiffon        = RGB(255, 250, 205);
+		static constexpr Color lightGoldenrodYellow     = RGB(250, 250, 210);
+		static constexpr Color papayaWhip          = RGB(255, 239, 213);
+		static constexpr Color moccasin            = RGB(225, 228, 181);
+		static constexpr Color peachPuff           = RGB(255, 218, 185);
+		static constexpr Color paleGoldenrod       = RGB(238, 232, 170);
+		static constexpr Color khaki               = RGB(240, 230, 140);
+		static constexpr Color darkKhaki           = RGB(189, 183, 107);
+		static constexpr Color yellow              = RGB(255, 255, 0);
 
-// HTML cyan colors
-//
-#define COLOR_LightCyan           RGB(224, 255, 255)
-#define COLOR_Aqua                RGB(0, 255, 255)
-#define COLOR_Aquamarine          RGB(127, 255, 212)
-#define COLOR_MediumAquamarine    RGB(102, 205, 170)
-#define COLOR_PaleTurquoise       RGB(175, 238, 238)
-#define COLOR_Turquoise           RGB(64, 224, 208)
-#define COLOR_MediumTurquoise     RGB(72, 209, 204)
-#define COLOR_DarkTurquoise       RGB(0, 206, 209)
-#define COLOR_LightSeaGreen       RGB(32, 178, 170)
-#define COLOR_CadetBlue           RGB(95, 158, 160)
-#define COLOR_DarkCyan			  RGB(0, 139, 139)
-#define COLOR_Teal                RGB(0, 128, 128)
+		// HTML green colors
+		//
+		static constexpr Color lawnGreen           = RGB(124, 252, 0);
+		static constexpr Color chartreuse          = RGB(127, 255, 0);
+		static constexpr Color limeGreen           = RGB(50, 205, 50);
+		static constexpr Color lime                = RGB(0, 255, 0);
+		static constexpr Color forestGreen         = RGB(34, 139, 34);
+		static constexpr Color green               = RGB(0, 128, 0);
+		static constexpr Color darkGreen           = RGB(0, 100, 0);
+		static constexpr Color greenYellow         = RGB(173, 255, 47);
+		static constexpr Color yellowGreen         = RGB(154, 205, 50);
+		static constexpr Color springGreen         = RGB(0, 255, 127);
+		static constexpr Color mediumSpreingGreen  = RGB(0, 250, 154);
+		static constexpr Color lightGreen          = RGB(144, 238, 144);
+		static constexpr Color paleGreen           = RGB(152, 251, 152);
+		static constexpr Color darkSeaGreen        = RGB(143, 188, 143);
+		static constexpr Color mediumSeaGreen      = RGB(60, 179, 113);
+		static constexpr Color seaGreen            = RGB(46, 139, 87);
+		static constexpr Color olive               = RGB(128, 128, 0);
+		static constexpr Color darkOliveGreen      = RGB(85, 107, 47);
+		static constexpr Color oliveDrab           = RGB(107, 142, 35);
 
-// HTML blue colors
-//
-#define COLOR_PowderBlue          RGB(176, 224, 230)
-#define COLOR_LightBlue           RGB(173, 216, 230)
-#define COLOR_LightSkyBlue        RGB(135, 206, 250)
-#define COLOR_SkyBlue             RGB(135, 206, 235)
-#define COLOR_DeepSkyBlue         RGB(0, 191, 255)
-#define COLOR_LightSteelBlue      RGB(176, 196, 222)
-#define COLOR_DodgerBlue          RGB(30, 144, 255)
-#define COLOR_CornflowerBlue      RGB(100, 149, 237)
-#define COLOR_SteelBlue           RGB(70, 130, 180)
-#define COLOR_RoyalBlue           RGB(65, 105, 225)
-#define COLOR_Blue                RGB(0, 0, 255)
-#define COLOR_MediumBlue          RGB(0, 0, 205)
-#define COLOR_DarkBlue            RGB(0, 0, 139)
-#define COLOR_Navy                RGB(0, 0, 128)
-#define COLOR_MidnightBlue        RGB(25, 25, 112)
-#define COLOR_MediumSlateBlue     RGB(123, 104, 238)
-#define COLOR_SlateBlue           RGB(106, 90, 205)
-#define COLOR_DarkSlateBlue       RGB(72, 61, 139)
+		// HTML cyan colors
+		//
+		static constexpr Color lightCyan           = RGB(224, 255, 255);
+		static constexpr Color aqua                = RGB(0, 255, 255);
+		static constexpr Color Aquamarine          = RGB(127, 255, 212);
+		static constexpr Color mediumAquamarine    = RGB(102, 205, 170);
+		static constexpr Color paleTurquoise       = RGB(175, 238, 238);
+		static constexpr Color turquoise           = RGB(64, 224, 208);
+		static constexpr Color mediumTurquoise     = RGB(72, 209, 204);
+		static constexpr Color darkTurquoise       = RGB(0, 206, 209);
+		static constexpr Color lightSeaGreen       = RGB(32, 178, 170);
+		static constexpr Color cadetBlue           = RGB(95, 158, 160);
+		static constexpr Color darkCyan			   = RGB(0, 139, 139);
 
-// HTML gray colors
-//
-#define COLOR_DarkGray            RGB(169, 169, 169)
-#define COLOR_LightSlateGray      RGB(119, 136, 153)
-#define COLOR_SlateGray           RGB(112, 128, 144)
-#define COLOR_DarkSlateGray       RGB(47, 79, 79)
+		// HTML blue colors
+		//
+		static constexpr Color powderBlue          = RGB(176, 224, 230);
+		static constexpr Color lightBlue           = RGB(173, 216, 230);
+		static constexpr Color lightSkyBlue        = RGB(135, 206, 250);
+		static constexpr Color skyBlue             = RGB(135, 206, 235);
+		static constexpr Color deepSkyBlue         = RGB(0, 191, 255);
+		static constexpr Color lightSteelBlue      = RGB(176, 196, 222);
+		static constexpr Color dodgerBlue          = RGB(30, 144, 255);
+		static constexpr Color cornflowerBlue      = RGB(100, 149, 237);
+		static constexpr Color steelBlue           = RGB(70, 130, 180);
+		static constexpr Color royalBlue           = RGB(65, 105, 225);
+		static constexpr Color mediumBlue          = RGB(0, 0, 205);
+		static constexpr Color darkBlue            = RGB(0, 0, 139);
+		static constexpr Color midnightBlue        = RGB(25, 25, 112);
+		static constexpr Color mediumSlateBlue     = RGB(123, 104, 238);
+		static constexpr Color slateBlue           = RGB(106, 90, 205);
+		static constexpr Color darkSlateBlue       = RGB(72, 61, 139);
 
-// Basic palete colors
-//
-#define COLOR_PAL_Black           PAL(0)
-#define COLOR_PAL_White           PAL(255)
-#define COLOR_PAL_Blue            PAL(2)
-#define COLOR_PAL_Cyan            PAL(3)
-#define COLOR_PAL_Magenta         PAL(4)
-#define COLOR_PAL_Silver          PAL(5)
-#define COLOR_PAL_Gray            PAL(6)
-#define COLOR_PAL_Maroon          PAL(7)
-#define COLOR_PAL_Purple          PAL(8)
-#define COLOR_PAL_Teal            PAL(9)
-#define COLOR_PAL_Navy            PAL(10)
+		// HTML gray colors
+		//
+		static constexpr Color darkGray            = RGB(169, 169, 169);
+		static constexpr Color lightSlateGray      = RGB(119, 136, 153);
+		static constexpr Color slateGray           = RGB(112, 128, 144);
+		static constexpr Color darkSlateGray       = RGB(47, 79, 79);
 
+		// Basic palete colors
+		//
+		static constexpr Color palBlack            = PAL(0);
+		static constexpr Color palWhite            = PAL(255);
+		static constexpr Color palBlue             = PAL(2);
+		static constexpr Color palCyan             = PAL(3);
+		static constexpr Color palMagenta          = PAL(4);
+		static constexpr Color palSilver           = PAL(5);
+		static constexpr Color palGray             = PAL(6);
+		static constexpr Color palMaroon           = PAL(7);
+		static constexpr Color palPurple           = PAL(8);
+		static constexpr Color palTeal             = PAL(9);
+		static constexpr Color palNavy             = PAL(10);
+	};
+}
 
 #endif // __eosColorDefinitions__

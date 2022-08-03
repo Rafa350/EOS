@@ -25,8 +25,8 @@ Console::Console(
 	_y(y),
 	_width(width),
 	_height(height),
-	_bkColor(COLOR_Black),
-	_fgColor(COLOR_Yellow),
+	_bkColor(Colors::black),
+	_fgColor(Colors::yellow),
 	_cx(0),
 	_cy(0),
 	_state(0) {

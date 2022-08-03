@@ -14,7 +14,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Border::Border():
-	_borderBrush(Brush(BrushStyle::solid, COLOR_Black)),
+	_borderBrush(Brush(BrushStyle::solid, Colors::black)),
 	_borderThickness(1),
 	_cornerRadius(0) {
 
