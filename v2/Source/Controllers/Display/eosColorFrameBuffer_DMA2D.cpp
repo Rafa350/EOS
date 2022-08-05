@@ -10,26 +10,6 @@ using namespace htl;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el indicador de format de color pel DMA2d.
-/// \param    colorFormat: Format de colcor.
-/// \return   El rtesultat.
-///
-static constexpr htl::DMA2DColorMode getColorMode(
-	ColorFormat colorFormat) {
-
-	switch (colorFormat) {
-		default:
-		case ColorFormat::argb8888: return DMA2DColorMode::argb8888;
-		case ColorFormat::argb4444: return DMA2DColorMode::argb4444;
-		case ColorFormat::rgb888: return DMA2DColorMode::rgb888;
-		case ColorFormat::rgb565: return DMA2DColorMode::rgb565;
-	}
-}
-
-static constexpr DMA2DColorMode colorMode = getColorMode(Color::format);
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Combina dos pixels amb opacitat
 /// \param    fg: El pixel a combinar.
 /// \param    bg: El pixel de fons.
@@ -60,6 +40,56 @@ static Color::Pixel combinePixels(
 		c |= 0xFF << CT::shiftA;
 
 	return c;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el format de color es suportat pel DMA2D
+/// \param    format: El format de color.
+/// \return   True si esta suportat.
+///
+static constexpr bool isDstColorSuported(
+	ColorFormat format) {
+
+	return
+		(format == ColorFormat::argb8888) ||
+		(format == ColorFormat::argb4444) ||
+		(format == ColorFormat::argb1555) ||
+		(format == ColorFormat::rgb888) ||
+		(format == ColorFormat::rgb565);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l modus de color de sortida pel DMA2D.
+/// \param    format: El format de color.
+/// \return   El modus de color.
+///
+static constexpr DMA2DDstColorMode getDstColorMode(
+	ColorFormat format) {
+
+	switch (format) {
+		case ColorFormat::argb8888:
+			return DMA2DDstColorMode::argb8888;
+
+		case ColorFormat::argb4444:
+			return DMA2DDstColorMode::argb4444;
+
+		case ColorFormat::argb1555:
+			return DMA2DDstColorMode::argb1555;
+
+		case ColorFormat::rgb888:
+			return DMA2DDstColorMode::rgb888;
+
+		case ColorFormat::rgb565:
+			return DMA2DDstColorMode::rgb565;
+	}
+}
+
+
+static constexpr DMA2DSrcColorMode getSrcColorMode(
+	ColorFormat format) {
+
 }
 
 
@@ -142,51 +172,33 @@ void ColorFrameBuffer_DMA2D::fill(
 	int height,
 	Color color) {
 
-	if constexpr (Color::hasAlpha) {
+	uint8_t opacity = color.getOpacity();
 
-		uint8_t opacity = color.getOpacity();
+	// Cas que sigui un color solid per utilitzar DAM2D R2M
+	//
+	if ((opacity == 0xFF) &&
+		isDstColorSuported(Color::format)) {
 
-		// Cas que sigui un color solid
-		//
-		if (opacity == 0xFF) {
-
-			Color::Pixel c = color;
-			Color::Pixel *ptr = getPixelPtr(x, y);
-
-			// Rellena la regio amb el valor de color del pixel. Hi ha que
-			// suministrar el color en format adecuat, ja que no es fa cap
-			// tipus de converssio.
-			//
-			DMA2D_1::startFill(ptr, width, height, _bufferPitch - width, colorMode, c);
-			DMA2D_1::waitForFinish();
-		}
-
-		// Cas que no sigui transparent
-		//
-		else if (opacity != 0) {
-
-			Color::Pixel c = color;
-
-			for (int yy = y; yy < height + y; yy++) {
-				Color::Pixel *ptr = getPixelPtr(x, yy);
-				for (int xx = x; xx < width + x; xx++) {
-					*ptr = combinePixels(c, *ptr, opacity);
-					ptr++;
-				}
-			}
-		}
+		Color::Pixel *ptr = getPixelPtr(x, y);
+		DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
+		Color::Pixel c = color;
+		DMA2D_1::startFill(ptr, width, height, _bufferPitch - width, dstColorMode, c);
+		DMA2D_1::waitForFinish();
 	}
 
-	else {
-		Color::Pixel c = color;
-		Color::Pixel *ptr = getPixelPtr(x, y);
+	// Cas que no sigui transparent, relitza una transferencia per soft
+	//
+	else if (opacity != 0) {
 
-		// Rellena la regio amb el valor de color del pixel. Hi ha que
-		// suministrar el color en format adecuat, ja que no es fa cap
-		// tipus de converssio.
-		//
-		DMA2D_1::startFill(ptr, width, height, _bufferPitch - width, colorMode, c);
-		DMA2D_1::waitForFinish();
+		Color::Pixel c = color;
+
+		for (int yy = y; yy < height + y; yy++) {
+			Color::Pixel *ptr = getPixelPtr(x, yy);
+			for (int xx = x; xx < width + x; xx++) {
+				*ptr = combinePixels(c, *ptr, opacity);
+				ptr++;
+			}
+		}
 	}
 }
 
@@ -214,7 +226,9 @@ void ColorFrameBuffer_DMA2D::copy(
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 	// les opcions.
 	//
-	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, colorMode, colors, offset, colorMode);
+	DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
+	DMA2DSrcColorMode srcColorMode = getSrcColorMode(Color::format);
+	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, colors, offset, srcColorMode);
 	DMA2D_1::waitForFinish();
 }
 
@@ -240,11 +254,12 @@ void ColorFrameBuffer_DMA2D::write(
 
 	Color::Pixel *ptr = getPixelPtr(x, y);
 
-
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 	// les opcions. No cal cridar a 'toPixel()'
 	//
-	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, colorMode, pixels, offset, getColorMode(format));
+	DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
+	DMA2DSrcColorMode srcColorMode = getSrcColorMode(format);
+	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, pixels, offset, srcColorMode);
 	DMA2D_1::waitForFinish();
 }

@@ -467,9 +467,6 @@ namespace htl {
 			    	case LTDCPixelFormat::l8:
 			    		tmp |= 0b101 << LTDC_LxPFCR_PF_Pos;
 			    		break;
-
-			    	default:
-			    		break;
 			    }
 			    regs->PFCR = tmp;
 

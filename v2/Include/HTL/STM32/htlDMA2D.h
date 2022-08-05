@@ -11,7 +11,7 @@
 
 namespace htl {
 
-	enum class DMA2DColorMode {
+	enum class DMA2DSrcColorMode {
 		argb8888,
 		rgb888,
 		rgb565,
@@ -25,6 +25,14 @@ namespace htl {
 		a4
 	};
 
+	enum class DMA2DDstColorMode {
+		argb8888,
+		rgb888,
+		rgb565,
+		argb1555,
+		argb4444
+	};
+
 	enum class DMA2DEvent {
 
 	};
@@ -32,8 +40,8 @@ namespace htl {
 	using DMA2DInterruptParam = void*;
 	using DMA2DInterruptFunction = void (*)(DMA2DEvent, DMA2DInterruptParam);
 
-	void DMA2D_startFill(void*,	int, int, int, DMA2DColorMode, uint32_t);
-	void DMA2D_startCopy(void*, int, int, int, DMA2DColorMode, const void*, int, DMA2DColorMode);
+	void DMA2D_startFill(void*,	int, int, int, DMA2DDstColorMode, uint32_t);
+	void DMA2D_startCopy(void*, int, int, int, DMA2DDstColorMode, const void*, int, DMA2DSrcColorMode);
 	bool DMA2D_waitForFinish();
 
 	template <int dummy>
@@ -63,40 +71,42 @@ namespace htl {
 			}
 
 		public:
-			static void init() {
+			inline static void init() {
 
 				activate();
 			}
 
-			static void deInit() {
+			inline static void deInit() {
 
 				deactivate();
 			}
 
-			static void startFill(
+			inline static void startFill(
 				void *dst,
 				int width,
 				int height,
 				int offset,
-				DMA2DColorMode colorMode,
-				uint32_t color) {
+				DMA2DDstColorMode dstColorMode,
+				uint32_t dstColor) {
 
-				DMA2D_startFill(dst, width, height, offset, colorMode, color);
+				DMA2D_startFill(dst, width, height, offset, dstColorMode, dstColor);
 			}
 
-			static void startCopy(
+			inline static void startCopy(
 				void *dst,
 				int width,
 				int height,
 				int offset,
-				DMA2DColorMode colorMode,
+				DMA2DDstColorMode dstColorMode,
 				const void *src,
 				int srcOffset,
-				DMA2DColorMode srcColorMode) {
+				DMA2DSrcColorMode srcColorMode) {
 
-				DMA2D_startCopy(dst, width, height, offset, colorMode, src, srcOffset, srcColorMode);
+				DMA2D_startCopy(dst, width, height, offset, dstColorMode, src, srcOffset, srcColorMode);
 			}
 
+			/// \brief Espera que finalitzi l'operacio de transferencia.
+			///
 			inline static bool waitForFinish() {
 
 				return DMA2D_waitForFinish();

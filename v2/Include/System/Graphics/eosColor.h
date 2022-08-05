@@ -471,8 +471,15 @@ namespace eos {
 					((Pixel)g >> CT::adjG << CT::shiftG) |
 					((Pixel)b >> CT::adjB << CT::shiftB));
 		}
-		else
-			fromAL<format_>(a, 0);
+		else {
+			unsigned rr = (unsigned)r * 612;   // 0.299 * 2048
+			unsigned gg = (unsigned)g * 1202;  // 0.587 * 2048
+			unsigned bb = (unsigned)b * 294;   // 0.144 * 2048
+
+			uint8_t g = (rr + gg + bb) >> 11;  // Divideix per 2048
+
+			return fromAL<format_>(a, g);
+		}
 	}
 
 	/// \brief Construeix un color a partir dels components RGB
@@ -504,7 +511,7 @@ namespace eos {
 		using Pixel = typename CT::Pixel;
 
 		if constexpr (CT::isColor)
-			return fromARGB<format_>(a, l, l, l);
+			return fromARGB<format_>(a, l / 3, l / 3, l / 3);
 		else {
 			if constexpr (CT::hasAlpha)
 				return Color_x<format_>(

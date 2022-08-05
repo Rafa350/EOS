@@ -7,20 +7,20 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Ompla una regio amb un pixel solid.
-/// \param    dst: Punter al primer pixel regio.
+/// \param    dst: Punter al primer pixel regio de destinacio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
 /// \param    offset: Offset per avançar a la seguent linia de la regio.
-/// \param    colorMode: El format de color
-/// \param    color: El color per omplir.
+/// \param    dstColorMode: El format de color de desti
+/// \param    dstColor: El color de desti.
 ///
 void htl::DMA2D_startFill(
 	void* dst,
 	int width,
 	int height,
 	int offset,
-	DMA2DColorMode colorMode,
-	uint32_t color) {
+	DMA2DDstColorMode dstColorMode,
+	uint32_t dstColor) {
 
 	// Selecciona el tipus de transferencia com a R2M
 	//
@@ -30,25 +30,27 @@ void htl::DMA2D_startFill(
 	//
 	uint32_t temp = DMA2D->OPFCCR;
 	temp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-	switch (colorMode) {
+	switch (dstColorMode) {
 		default:
-		case DMA2DColorMode::argb8888:
+		case DMA2DDstColorMode::argb8888:
 			temp |= 0b000 << DMA2D_OPFCCR_CM_Pos;
 			break;
 
-		case DMA2DColorMode::rgb888:
+		case DMA2DDstColorMode::rgb888:
 			temp |= 0b001 << DMA2D_OPFCCR_CM_Pos;
 			break;
 
-		case DMA2DColorMode::rgb565:
+		case DMA2DDstColorMode::rgb565:
 			temp |= 0b010 << DMA2D_OPFCCR_CM_Pos;
 			break;
 	}
+	// Aqui tambe Swap Blue/Red
+	// Aqui tambe Invert Alpha
 	DMA2D->OPFCCR = temp;
 
 	// Asigna el color
 	//
-	DMA2D->OCOLR = color;
+	DMA2D->OCOLR = dstColor;
 
 	// Selecciona l'adressa i el offset del desti
 	//
@@ -69,11 +71,11 @@ void htl::DMA2D_startFill(
 
 /// ----------------------------------------------------------------------
 /// \brief    Copia un mapa de bits a una regio
-/// \param    dst: Punter al primer pixel de la regio.
+/// \param    dst: Punter al primer pixel de la regio de destinacio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
 /// \param    offset: Offset per avançar a la seguent linia de la regio.
-/// \param    colorMode: Format de color de la regio.
+/// \param    dstColorMode: Format de color de la regio de destinacio.
 /// \param    src: Punter al primer pixel del mapa de bits.
 /// \param    srcOffset: Offset per avançar a la seguent linia del mapa de bits.
 /// \param    srcColorMode: Format de color del mapa de bits.
@@ -83,10 +85,10 @@ void htl::DMA2D_startCopy(
 	int width,
 	int height,
 	int offset,
-	DMA2DColorMode colorMode,
+	DMA2DDstColorMode dstColorMode,
 	const void* src,
 	int srcOffset,
-	DMA2DColorMode srcColorMode) {
+	DMA2DSrcColorMode srcColorMode) {
 
 	uint32_t temp;
 
@@ -99,17 +101,20 @@ void htl::DMA2D_startCopy(
 	temp = DMA2D->FGPFCCR;
 	temp &= ~(0b1111 << DMA2D_FGPFCCR_CM_Pos);
 	switch (srcColorMode) {
-		default:
-		case DMA2DColorMode::argb8888:
+		case DMA2DSrcColorMode::argb8888:
 			temp |= 0b0000 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 
-		case DMA2DColorMode::rgb888:
+		case DMA2DSrcColorMode::rgb888:
 			temp |= 0b0001 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 
-		case DMA2DColorMode::rgb565:
+		case DMA2DSrcColorMode::rgb565:
 			temp |= 0b0010 << DMA2D_FGPFCCR_CM_Pos;
+			break;
+
+		case DMA2DSrcColorMode::l8:
+			temp |= 0b0101 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 	}
 	DMA2D->FGPFCCR = temp;
@@ -118,17 +123,16 @@ void htl::DMA2D_startCopy(
 	//
     temp = DMA2D->OPFCCR;
     temp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-	switch (colorMode) {
-		default:
-		case DMA2DColorMode::argb8888:
+	switch (dstColorMode) {
+		case DMA2DDstColorMode::argb8888:
 			temp &= 0b000 << DMA2D_OPFCCR_CM_Pos;
 			break;
 
-		case DMA2DColorMode::rgb888:
+		case DMA2DDstColorMode::rgb888:
 			temp &= 0b001 << DMA2D_OPFCCR_CM_Pos;
 			break;
 
-		case DMA2DColorMode::rgb565:
+		case DMA2DDstColorMode::rgb565:
 			temp &= 0b010 << DMA2D_OPFCCR_CM_Pos;
 			break;
 	}

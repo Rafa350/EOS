@@ -22,11 +22,11 @@ namespace eos {
 		protected:
 			void put(int x, int y, Color color) override;
             void fill(int x, int y, int width, int height, Color color) override;
-            void copy(int x, int y, int width, int height, const Color* colors, int offset) override;
-            void write(int x, int y, int width, int height, const void* pixels, ColorFormat format, int offset) override;
+            void copy(int x, int y, int width, int height, const Color *colors, int offset) override;
+            void write(int x, int y, int width, int height, const void *pixels, ColorFormat format, int offset) override;
 
 		public:
-			ColorFrameBuffer_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void* buffer, int bufferPitch);
+			ColorFrameBuffer_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void *buffer, int bufferPitch);
 	};
 }
 
