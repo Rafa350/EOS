@@ -28,25 +28,12 @@ void htl::DMA2D_startFill(
 
 	// Asigna el format de color
 	//
-	uint32_t temp = DMA2D->OPFCCR;
-	temp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-	switch (dstColorMode) {
-		default:
-		case DMA2DDstColorMode::argb8888:
-			temp |= 0b000 << DMA2D_OPFCCR_CM_Pos;
-			break;
-
-		case DMA2DDstColorMode::rgb888:
-			temp |= 0b001 << DMA2D_OPFCCR_CM_Pos;
-			break;
-
-		case DMA2DDstColorMode::rgb565:
-			temp |= 0b010 << DMA2D_OPFCCR_CM_Pos;
-			break;
-	}
+	uint32_t tmp = DMA2D->OPFCCR;
+	tmp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
+	tmp |= (uint32_t(dstColorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
 	// Aqui tambe Swap Blue/Red
 	// Aqui tambe Invert Alpha
-	DMA2D->OPFCCR = temp;
+	DMA2D->OPFCCR = tmp;
 
 	// Asigna el color
 	//
@@ -90,7 +77,7 @@ void htl::DMA2D_startCopy(
 	int srcOffset,
 	DMA2DSrcColorMode srcColorMode) {
 
-	uint32_t temp;
+	uint32_t tmp;
 
 	// Selecciona el tipus de transferencia com a M2M/PFC
 	//
@@ -98,45 +85,19 @@ void htl::DMA2D_startCopy(
 
 	// Selecciona el format del color del origen
 	//
-	temp = DMA2D->FGPFCCR;
-	temp &= ~(0b1111 << DMA2D_FGPFCCR_CM_Pos);
-	switch (srcColorMode) {
-		case DMA2DSrcColorMode::argb8888:
-			temp |= 0b0000 << DMA2D_FGPFCCR_CM_Pos;
-			break;
-
-		case DMA2DSrcColorMode::rgb888:
-			temp |= 0b0001 << DMA2D_FGPFCCR_CM_Pos;
-			break;
-
-		case DMA2DSrcColorMode::rgb565:
-			temp |= 0b0010 << DMA2D_FGPFCCR_CM_Pos;
-			break;
-
-		case DMA2DSrcColorMode::l8:
-			temp |= 0b0101 << DMA2D_FGPFCCR_CM_Pos;
-			break;
-	}
-	DMA2D->FGPFCCR = temp;
+	tmp = DMA2D->FGPFCCR;
+	tmp &= ~(0b1111 << DMA2D_FGPFCCR_CM_Pos);
+	tmp |= (uint32_t(srcColorMode) & 0b1111) << DMA2D_FGPFCCR_CM_Pos;
+	DMA2D->FGPFCCR = tmp;
 
 	// Selecciona el format de color del desti
 	//
-    temp = DMA2D->OPFCCR;
-    temp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-	switch (dstColorMode) {
-		case DMA2DDstColorMode::argb8888:
-			temp &= 0b000 << DMA2D_OPFCCR_CM_Pos;
-			break;
-
-		case DMA2DDstColorMode::rgb888:
-			temp &= 0b001 << DMA2D_OPFCCR_CM_Pos;
-			break;
-
-		case DMA2DDstColorMode::rgb565:
-			temp &= 0b010 << DMA2D_OPFCCR_CM_Pos;
-			break;
-	}
-	DMA2D->OPFCCR = temp;
+    tmp = DMA2D->OPFCCR;
+    tmp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
+    tmp |= (uint32_t(dstColorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
+	// Aqui tambe Swap Blue/Red
+	// Aqui tambe Invert Alpha
+	DMA2D->OPFCCR = tmp;
 
 	// Selecciona l'adressa i el offset del origen
 	//

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosFrameBuffer__
 #define __eosFrameBuffer__
 
@@ -38,14 +39,15 @@ namespace eos {
 
             inline int getImageWidth() const { return _imageWidth; }
             inline int getImageHeight() const { return _imageHeight; }
+            virtual void *getImageBuffer() const = 0;
 
             void clear(Color color);
             void setPixel(int x, int y, Color color);
             inline void setHPixels(int x, int y, int size, Color color) { setPixels(x, y, size, 1, color); }
             inline void setVPixels(int x, int y, int size, Color color) { setPixels(x, y, 1, size, color); }
             void setPixels(int x, int y, int width, int height, Color color);
-            void setPixels(int x, int y, int width, int height, const Color* colors, int pitch);
-            void setPixels(int x, int y, int width, int height, const void* pixels, ColorFormat format, int pitch);
+            void setPixels(int x, int y, int width, int height, const Color *colors, int pitch);
+            void setPixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch);
 	};
 }
 

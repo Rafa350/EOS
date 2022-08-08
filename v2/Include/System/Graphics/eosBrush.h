@@ -18,7 +18,7 @@
 
 namespace eos {
 
-	enum class BrushStyle: uint8_t {
+	enum class BrushStyle {
 		solid,
 		linearGradient,
 		radialGradient

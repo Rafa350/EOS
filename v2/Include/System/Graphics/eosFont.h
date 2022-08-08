@@ -28,7 +28,7 @@
 
 namespace eos {
 
-    enum class FontStyle: uint8_t {
+    enum class FontStyle {
         regular,
         bold,
         italic,

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __STM32_htlDMA2D__
 #define __STM32_htlDMA2D__
 
@@ -11,30 +12,41 @@
 
 namespace htl {
 
+	/// \brief Format de color d'entrada
+	/// \remarks Els valors corresponen al registre hardware. No modificar
+	///
 	enum class DMA2DSrcColorMode {
-		argb8888,
-		rgb888,
-		rgb565,
-		argb1555,
-		argb4444,
-		l8,
-		al44,
-		al88,
-		l4,
-		a8,
-		a4
+		argb8888 = 0,
+		rgb888 = 1,
+		rgb565 = 2,
+		argb1555 = 3,
+		argb4444 = 4,
+		l8 = 5,
+		al44 = 6,
+		al88 = 7,
+		l4 = 8,
+		a8 = 9,
+		a4 = 10
 	};
 
+	/// \brief Format de color de sortida
+    /// \remarks Els valors corresponen al registre hardware. No modificar
+	///
 	enum class DMA2DDstColorMode {
-		argb8888,
-		rgb888,
-		rgb565,
-		argb1555,
-		argb4444
+		argb8888 = 0,
+		rgb888 = 1,
+		rgb565 = 2,
+		argb1555 = 3,
+		argb4444 = 4
 	};
 
 	enum class DMA2DEvent {
-
+		configurationError,
+		clutTransferComplete,
+		clutAccessError,
+		transferWatermark,
+		transferComplete,
+		transferError
 	};
 
 	using DMA2DInterruptParam = void*;
@@ -71,16 +83,28 @@ namespace htl {
 			}
 
 		public:
+			/// \brief Inicialitza el modul.
+			///
 			inline static void init() {
 
 				activate();
 			}
 
+			/// \brief Desinicialitza el modul
+			///
 			inline static void deInit() {
 
 				deactivate();
 			}
 
+			/// \brief Inicia el proces de omprit una regio
+			/// \param dst: Adressa del primer pixel de la regio.
+			/// \param width: Amplada de la regio.
+			/// \param height: Alçada de la regio.
+			/// \param offset: Offset per avançar a la seguent linia.
+			/// \param dstColorMode: Format de color.
+			/// \param color: El color en el format especificat.
+			///
 			inline static void startFill(
 				void *dst,
 				int width,
@@ -112,6 +136,9 @@ namespace htl {
 				return DMA2D_waitForFinish();
 			}
 
+			/// \brief Invoca la funcio d'interruipcio.
+			/// \param event: El event.
+			///
 			static void InterruptHandler(
 				DMA2DEvent event) {
 

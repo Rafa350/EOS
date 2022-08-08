@@ -11,7 +11,6 @@
 #include "eosAssert.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
-#include "HTL/STM32/htlDMA2D.h"
 #include "HTL/STM32/htlGPIO.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "System/eosMath.h"
@@ -31,27 +30,38 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
 	constexpr int frameSize = frameBufferPitchBytes * _height;
 
-	_frontImageBuffer = reinterpret_cast<void*>(_buffer);
-	_frontFrameBuffer = new ColorFrameBuffer_DMA2D(
+	_displayFrameBuffer = new ColorFrameBuffer_DMA2D(
 		_width,
 		_height,
 		DisplayOrientation::normal,
-		_frontImageBuffer,
+		reinterpret_cast<void*>(_buffer),
 		frameBufferPitch);
 
-	if constexpr (_useDoubleBuffer) {
-		_backImageBuffer = reinterpret_cast<void*>(_buffer + frameSize);
-		_backFrameBuffer = new ColorFrameBuffer_DMA2D(
+	if constexpr (_useDoubleBuffer)
+		_workFrameBuffer = new ColorFrameBuffer_DMA2D(
 			_width,
 			_height,
 			DisplayOrientation::normal,
-			_backImageBuffer,
+			reinterpret_cast<void*>(_buffer + frameSize),
 			frameBufferPitch);
-	}
-	else {
-		_backImageBuffer = _frontImageBuffer;
-		_backFrameBuffer = _frontFrameBuffer;
-	}
+	else
+		_workFrameBuffer = _displayFrameBuffer;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Contructor.
+/// \param    displayFrameBuffer: Buffer d'imatge de visualitzacio
+/// \param    workFrameBuffer: Buffer d'imatge de treball (Pot ser nullptr en
+///           cas de buffer simple)
+///
+DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC(
+	FrameBuffer *displayFrameBuffer,
+	FrameBuffer *workFrameBuffer):
+
+	_displayFrameBuffer(displayFrameBuffer),
+	_workFrameBuffer(workFrameBuffer == nullptr? displayFrameBuffer : workFrameBuffer) {
+
 }
 
 
@@ -60,15 +70,14 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 ///
 void DisplayDriver_RGBLTDC::initialize() {
 
-	initializeGPIO();
-	initializeLTDC();
-	initializeDMA2D();
-
 	// Inicialitza els buffers a color negre
 	//
-	_frontFrameBuffer->clear(Colors::black);
-	if (_useDoubleBuffer)
-		_backFrameBuffer->clear(Colors::black);
+	_workFrameBuffer->clear(Colors::black);
+	if (_workFrameBuffer != _displayFrameBuffer)
+		_displayFrameBuffer->clear(Colors::black);
+
+	initializeGPIO();
+	initializeLTDC();
 }
 
 
@@ -88,7 +97,7 @@ void DisplayDriver_RGBLTDC::displayOn() {
 
     // Activa el modul LDTC
     //
-	LCD::enable();
+	LTDC_1::enable();
 
     // Activa el display
 	//
@@ -115,7 +124,7 @@ void DisplayDriver_RGBLTDC::displayOff() {
 
 	// Desactiva el modul LDTC
     //
-	LCD::disable();
+	LTDC_1::disable();
 }
 
 
@@ -126,7 +135,7 @@ void DisplayDriver_RGBLTDC::displayOff() {
 void DisplayDriver_RGBLTDC::setOrientation(
 	DisplayOrientation orientation) {
 
-	_backFrameBuffer->setOrientation(orientation);
+	_workFrameBuffer->setOrientation(orientation);
 }
 
 
@@ -137,7 +146,7 @@ void DisplayDriver_RGBLTDC::setOrientation(
 void DisplayDriver_RGBLTDC::clear(
 	Color color) {
 
-	_backFrameBuffer->clear(color);
+	_workFrameBuffer->clear(color);
 }
 
 
@@ -152,7 +161,7 @@ void DisplayDriver_RGBLTDC::setPixel(
 	int y,
 	Color color) {
 
-	_backFrameBuffer->setPixel(x, y, color);
+	_workFrameBuffer->setPixel(x, y, color);
 }
 
 
@@ -169,7 +178,7 @@ void DisplayDriver_RGBLTDC::setHPixels(
 	int size,
 	Color color) {
 
-	_backFrameBuffer->setPixels(x, y, size, 1, color);
+	_workFrameBuffer->setPixels(x, y, size, 1, color);
 }
 
 
@@ -186,7 +195,7 @@ void DisplayDriver_RGBLTDC::setVPixels(
 	int size,
 	Color color) {
 
-	_backFrameBuffer->setPixels(x, y, 1, size, color);
+	_workFrameBuffer->setPixels(x, y, 1, size, color);
 }
 
 
@@ -205,7 +214,7 @@ void DisplayDriver_RGBLTDC::setPixels(
 	int height,
 	Color color) {
 
-	_backFrameBuffer->setPixels(x, y, width, height, color);
+	_workFrameBuffer->setPixels(x, y, width, height, color);
 }
 
 
@@ -227,7 +236,7 @@ void DisplayDriver_RGBLTDC::setPixels(
 	const Color *colors,
 	int pitch) {
 
-	_backFrameBuffer->setPixels(x, y, width, height, colors, pitch);
+	_workFrameBuffer->setPixels(x, y, width, height, colors, pitch);
 }
 
 
@@ -250,7 +259,7 @@ void DisplayDriver_RGBLTDC::setPixels(
 	ColorFormat format,
 	int pitch) {
 
-	_backFrameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
+	_workFrameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
 }
 
 
@@ -260,17 +269,16 @@ void DisplayDriver_RGBLTDC::setPixels(
 ///
 void DisplayDriver_RGBLTDC::refresh() {
 
-	if constexpr (_useDoubleBuffer) {
+	if (_workFrameBuffer != _displayFrameBuffer) {
 
 		// Intercanvia els buffers
 		//
-		Math::swap(_frontFrameBuffer, _backFrameBuffer);
-		Math::swap(_frontImageBuffer, _backImageBuffer);
+		Math::swap(_displayFrameBuffer, _workFrameBuffer);
 
 		// Asigna l'adresa de la capa
 		//
-		LCDLayer::setFrameBuffer((void*)_frontImageBuffer);
-		LCD::update();
+		LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getImageBuffer());
+		LTDC_1::update();
 	}
 }
 
@@ -294,18 +302,19 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	LCD::initPCPin<GPIO_PC>(_pcPol);
-	LCD::initHSYNCPin<GPIO_HSYNC>(_hSyncPol);
-	LCD::initVSYNCPin<GPIO_VSYNC>(_vSyncPol);
-	LCD::initDEPin<GPIO_DE>(_dePol);
-	LCD::initRPins<GPIO_R0, GPIO_R1, GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
-	LCD::initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
-	LCD::initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
-	LCD::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	LCD::setBackgroundColor(Colors::blue);
-	LCD::setInterruptFunction(nullptr, nullptr);
+	LTDC_1::initPCPin<GPIO_PC>(_pcPol);
+	LTDC_1::initHSYNCPin<GPIO_HSYNC>(_hSyncPol);
+	LTDC_1::initVSYNCPin<GPIO_VSYNC>(_vSyncPol);
+	LTDC_1::initDEPin<GPIO_DE>(_dePol);
+	LTDC_1::initRPins<GPIO_R0, GPIO_R1, GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
+	LTDC_1::initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
+	LTDC_1::initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
+	LTDC_1::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	LTDC_1::setBackgroundColor(Colors::blue);
+	LTDC_1::setInterruptFunction(nullptr, nullptr);
 
 	// Inicialitza la capa 1
+	// La capa ocupa tota la superficie de la pantalla
 	//
 	constexpr LTDCPixelFormat pixelFormat =
 		Color::format == ColorFormat::argb8888 ? LTDCPixelFormat::argb8888 :
@@ -317,22 +326,13 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 		Color::format == ColorFormat::l8 ? LTDCPixelFormat::l8 :
 		LTDCPixelFormat::rgb565;
 
-	LCDLayer::setWindow(0, 0, _width, _height);
-	LCDLayer::setFrameFormat(
+	LTDCLayer_1::setWindow(0, 0, _width, _height);
+	LTDCLayer_1::setFrameFormat(
 		pixelFormat,
 		_width * Color::bytes,
 		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
 		_height);
 
-	LCDLayer::setFrameBuffer((void*)_frontImageBuffer);
-	LCD::update();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el modul DAM2D
-///
-void DisplayDriver_RGBLTDC::initializeDMA2D() {
-
-	DMA2D_1::init();
+	LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getImageBuffer());
+	LTDC_1::update();
 }

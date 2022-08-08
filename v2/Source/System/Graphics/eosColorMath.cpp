@@ -40,9 +40,9 @@ uint8_t ColorMath::grayAverage(
 	uint8_t g,
 	uint8_t b) {
 
-	unsigned rr = r;
-	unsigned gg = g;
-	unsigned bb = b;
+	uint32_t rr = r;
+	uint32_t gg = g;
+	uint32_t bb = b;
 
 	return (rr + gg + bb) / 3;
 }
@@ -53,10 +53,44 @@ uint8_t ColorMath::grayWeight(
 	uint8_t g,
 	uint8_t b) {
 
-	unsigned rr = (unsigned)r * 612;   // 0.299 * 2048
-	unsigned gg = (unsigned)g * 1202;  // 0.587 * 2048
-	unsigned bb = (unsigned)b * 294;   // 0.144 * 2048
+	uint32_t rr = (unsigned)r * 612;   // 0.299 * 2048
+	uint32_t gg = (unsigned)g * 1202;  // 0.587 * 2048
+	uint32_t bb = (unsigned)b * 294;   // 0.144 * 2048
 
 	return (rr + gg + bb) >> 11;       // Divideix per 2048
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Combina dos pixels amb opacitat.
+/// \param    fg: El pixel a combinar.
+/// \param    bg: El pixel de fons.
+/// \param    opascity: Opacitat del pixel fg.
+/// \return   El pixel combinat.
+///
+Color::Pixel combinePixels(
+	Color::Pixel fg,
+	Color::Pixel bg,
+	uint8_t opacity) {
+
+	using CT = ColorTrait<Color::format>;
+
+	uint32_t fgR = (fg & CT::maskR) >> CT::shiftR;
+	uint32_t fgG = (fg & CT::maskG) >> CT::shiftG;
+	uint32_t fgB = (fg & CT::maskB) >> CT::shiftB;
+
+	uint32_t bgR = (bg & CT::maskR) >> CT::shiftR;
+	uint32_t bgG = (bg & CT::maskG) >> CT::shiftG;
+	uint32_t bgB = (bg & CT::maskB) >> CT::shiftB;
+
+	Color::Pixel c =
+		((((fgR * opacity) + (bgR * (255 - opacity))) >> 8) << CT::shiftR) |
+		((((fgG * opacity) + (bgG * (255 - opacity))) >> 8) << CT::shiftG) |
+		((((fgB * opacity) + (bgB * (255 - opacity))) >> 8) << CT::shiftB);
+
+	if constexpr (CT::hasAlpha)
+		c |= 0xFF << CT::shiftA;
+
+	return c;
 }

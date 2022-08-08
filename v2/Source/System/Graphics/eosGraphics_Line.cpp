@@ -193,8 +193,13 @@ void Graphics::drawLine(
 		wd = (wd + 1) / 2;
 		while (true) {
 
-			uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(err - dx + dy) / ed - wd + 1.0f));
-			Color c(fromARGB<Color::format>(alpha, color.getR(), color.getG(), color.getB()));
+			Color c;
+			if constexpr (Color::type == ColorType::rgb) {
+				uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(err - dx + dy) / ed - wd + 1.0f));
+				c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
+			}
+			else
+				c = color;
 
 			_driver->setPixel(x0, y0, c);
 			e2 = err;
@@ -205,8 +210,13 @@ void Graphics::drawLine(
 			if (2 * e2 >= -dx) {
 				for (e2 += dy, y2 = y0; e2 < ed*wd && (y1 != y2 || dx > dy); e2 += dx) {
 
-					uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
-					Color c(fromARGB<Color::format>(alpha, color.getR(), color.getG(), color.getB()));
+					Color c;
+					if constexpr (Color::type == ColorType::rgb) {
+						uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
+						c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
+					}
+					else
+						c = color;
 
 					_driver->setPixel(x0, y2 += sy, c);
 				}
@@ -222,8 +232,13 @@ void Graphics::drawLine(
 			if (2 * e2 <= dy) {
 				for (e2 = dx-e2; e2 < ed*wd && (x1 != x2 || dx < dy); e2 += dy) {
 
-					uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
-					Color c(fromARGB<Color::format>(alpha, color.getR(), color.getG(), color.getB()));
+					Color c;
+					if constexpr (Color::type == ColorType::rgb) {
+						uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
+						c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
+					}
+					else
+						c = color;
 
 					_driver->setPixel(x2 += sx, y0, c);
 				}

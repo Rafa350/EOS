@@ -10,7 +10,7 @@ using namespace htl;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Combina dos pixels amb opacitat
+/// \brief    Combina dos pixels amb opacitat.
 /// \param    fg: El pixel a combinar.
 /// \param    bg: El pixel de fons.
 /// \param    opascity: Opacitat del pixel fg.
@@ -48,7 +48,7 @@ static Color::Pixel combinePixels(
 /// \param    format: El format de color.
 /// \return   True si esta suportat.
 ///
-static constexpr bool isDstColorSuported(
+static constexpr bool isDstColorSupported(
 	ColorFormat format) {
 
 	return
@@ -69,6 +69,7 @@ static constexpr DMA2DDstColorMode getDstColorMode(
 	ColorFormat format) {
 
 	switch (format) {
+		default:
 		case ColorFormat::argb8888:
 			return DMA2DDstColorMode::argb8888;
 
@@ -90,6 +91,32 @@ static constexpr DMA2DDstColorMode getDstColorMode(
 static constexpr DMA2DSrcColorMode getSrcColorMode(
 	ColorFormat format) {
 
+	switch (format) {
+		default:
+		case ColorFormat::argb8888:
+			return DMA2DSrcColorMode::argb8888;
+
+		case ColorFormat::argb4444:
+			return DMA2DSrcColorMode::argb4444;
+
+		case ColorFormat::argb1555:
+			return DMA2DSrcColorMode::argb1555;
+
+		case ColorFormat::rgb888:
+			return DMA2DSrcColorMode::rgb888;
+
+		case ColorFormat::rgb565:
+			return DMA2DSrcColorMode::rgb565;
+
+		case ColorFormat::al88:
+			return DMA2DSrcColorMode::al88;
+
+		case ColorFormat::al44:
+			return DMA2DSrcColorMode::al44;
+
+		case ColorFormat::l8:
+			return DMA2DSrcColorMode::l8;
+	}
 }
 
 
@@ -113,6 +140,16 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	_bufferPitch(bufferPitch) {
 
     DMA2D_1::init();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obter l'adresa del buffer d'imatge.
+/// \return   L'adressa.
+///
+void *ColorFrameBuffer_DMA2D::getImageBuffer() const {
+
+	return _buffer;
 }
 
 
@@ -174,10 +211,11 @@ void ColorFrameBuffer_DMA2D::fill(
 
 	uint8_t opacity = color.getOpacity();
 
-	// Cas que sigui un color solid per utilitzar DAM2D R2M
+	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
+	// per hardware.
 	//
 	if ((opacity == 0xFF) &&
-		isDstColorSuported(Color::format)) {
+		isDstColorSupported(Color::format)) {
 
 		Color::Pixel *ptr = getPixelPtr(x, y);
 		DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
@@ -186,7 +224,7 @@ void ColorFrameBuffer_DMA2D::fill(
 		DMA2D_1::waitForFinish();
 	}
 
-	// Cas que no sigui transparent, relitza una transferencia per soft
+	// En cas contrari, relitza una transferencia per software.
 	//
 	else if (opacity != 0) {
 
@@ -220,16 +258,27 @@ void ColorFrameBuffer_DMA2D::copy(
 	const Color *colors,
 	int offset) {
 
-	Color::Pixel *ptr = getPixelPtr(x, y);
-
-	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
-	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
-	// les opcions.
+	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
+	// per hardware.
 	//
-	DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
-	DMA2DSrcColorMode srcColorMode = getSrcColorMode(Color::format);
-	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, colors, offset, srcColorMode);
-	DMA2D_1::waitForFinish();
+	if (isDstColorSupported(Color::format)) {
+
+		Color::Pixel *ptr = getPixelPtr(x, y);
+
+		// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
+		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
+		// les opcions.
+		//
+		DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
+		DMA2DSrcColorMode srcColorMode = getSrcColorMode(Color::format);
+		DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, colors, offset, srcColorMode);
+		DMA2D_1::waitForFinish();
+	}
+
+	// En cas contrari realitza la transferencia per software.
+	//
+	else {
+	}
 }
 
 
@@ -252,14 +301,20 @@ void ColorFrameBuffer_DMA2D::write(
 	ColorFormat format,
 	int offset) {
 
-	Color::Pixel *ptr = getPixelPtr(x, y);
-
-	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
-	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
-	// les opcions. No cal cridar a 'toPixel()'
+	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
+	// per hardware.
 	//
-	DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
-	DMA2DSrcColorMode srcColorMode = getSrcColorMode(format);
-	DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, pixels, offset, srcColorMode);
-	DMA2D_1::waitForFinish();
+	if (isDstColorSupported(Color::format)) {
+
+		Color::Pixel *ptr = getPixelPtr(x, y);
+
+		// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
+		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
+		// les opcions. No cal cridar a 'toPixel()'
+		//
+		DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
+		DMA2DSrcColorMode srcColorMode = getSrcColorMode(format);
+		DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, pixels, offset, srcColorMode);
+		DMA2D_1::waitForFinish();
+	}
 }

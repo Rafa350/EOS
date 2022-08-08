@@ -48,9 +48,6 @@ namespace eos {
 			using GPIO_B6 = board::display::GPIO_B6;
 			using GPIO_B7 = board::display::GPIO_B7;
 
-			using LCD = htl::LTDC_1;
-			using LCDLayer = htl::LTDCLayer_1;
-
 		private:
 			static constexpr uint16_t _hSync       = board::display::hSync;
 			static constexpr uint16_t _vSync       = board::display::vSync;
@@ -68,13 +65,12 @@ namespace eos {
 			static constexpr bool _useDoubleBuffer = board::display::useDoubleBuffer;
 
 		private:
-    		FrameBuffer *_frontFrameBuffer;
-    		FrameBuffer *_backFrameBuffer;
-    		void *_frontImageBuffer;
-    		void *_backImageBuffer;
+    		FrameBuffer *_displayFrameBuffer;
+    		FrameBuffer *_workFrameBuffer;
 
         public:
     		DisplayDriver_RGBLTDC();
+    		DisplayDriver_RGBLTDC(FrameBuffer *displayFrameBuffer, FrameBuffer *workFrameBuffer = nullptr);
 
             void initialize() override;
             void shutdown() override;
@@ -83,8 +79,8 @@ namespace eos {
             void displayOff() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getImageWidth() const override { return _frontFrameBuffer->getImageWidth(); }
-            inline int getImageHeight() const override { return _frontFrameBuffer->getImageHeight(); }
+            inline int getImageWidth() const override { return _displayFrameBuffer->getImageWidth(); }
+            inline int getImageHeight() const override { return _displayFrameBuffer->getImageHeight(); }
 
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;
@@ -99,7 +95,6 @@ namespace eos {
         private:
             void initializeGPIO();
             void initializeLTDC();
-            void initializeDMA2D();
     };
 }
 

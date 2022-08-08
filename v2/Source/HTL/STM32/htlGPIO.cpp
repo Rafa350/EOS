@@ -19,11 +19,11 @@ static void setDriver(
     // Configura el registre OTYPER (Output Type Register)
     //
 	if (driver != GPIODriver::noChange) {
-		uint32_t temp = regs->OTYPER;
-		temp &= ~(1 << pn);
+		uint32_t tmp = regs->OTYPER;
+		tmp &= ~(1 << pn);
 		if (driver == GPIODriver::openDrain)
-			temp |= 1 << pn;
-		regs->OTYPER = temp;
+			tmp |= 1 << pn;
+		regs->OTYPER = tmp;
 	}
 }
 
@@ -62,10 +62,10 @@ static void setSpeed(
 
 		// Configura el registre OSPEEDR (Output Speed Register)
 		//
-		uint32_t temp = regs->OSPEEDR;
-		temp &= ~(0b11 << (pn * 2));
-		temp |= value << (pn * 2);
-		regs->OSPEEDR = temp;
+		uint32_t tmp = regs->OSPEEDR;
+		tmp &= ~(0b11 << (pn * 2));
+		tmp |= value << (pn * 2);
+		regs->OSPEEDR = tmp;
 	}
 }
 
@@ -100,10 +100,10 @@ static void setPull(
 
 		// Configura el registre PUPDR (Pull Up/Down Register)
 		//
-		uint32_t temp = regs->PUPDR;
-		temp &= ~(0b11 << (pn * 2));
-		temp |= value << (pn * 2);
-		regs->PUPDR = temp;
+		uint32_t tmp = regs->PUPDR;
+		tmp &= ~(0b11 << (pn * 2));
+		tmp |= value << (pn * 2);
+		regs->PUPDR = tmp;
 	}
 }
 
@@ -115,10 +115,10 @@ static void setAlt(
 
     // Configura el registre AFR (Alternate Funcion Register)
     //
-    uint32_t temp = regs->AFR[pn >> 3];
-    temp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
-    temp |= (uint32_t(alt) & 0b1111) << ((pn & 0x07) * 4);
-    regs->AFR[pn >> 3] = temp;
+    uint32_t tmp = regs->AFR[pn >> 3];
+    tmp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
+    tmp |= (uint32_t(alt) & 0b1111) << ((pn & 0x07) * 4);
+    regs->AFR[pn >> 3] = tmp;
 }
 
 
@@ -133,13 +133,13 @@ void htl::GPIO_initInput(
     uint32_t pn,
     GPIOPull pull) {
 
-    uint32_t temp;
+    uint32_t tmp;
 
     // Configura el registre MODER (Mode Register)
     //
-    temp = regs->MODER;
-    temp &= ~(0b11 << (pn * 2));
-    regs->MODER = temp;
+    tmp = regs->MODER;
+    tmp &= ~(0b11 << (pn * 2));
+    regs->MODER = tmp;
 
     setPull(regs, pn, pull);
 }
@@ -160,10 +160,10 @@ void htl::GPIO_initOutput(
 
     // Configura el registre MODER (Mode Register)
     //
-    uint32_t temp = regs->MODER;
-    temp &= ~(0b11 << (pn * 2));
-    temp |= 0b01 << (pn * 2);
-    regs->MODER = temp;
+    uint32_t tmp = regs->MODER;
+    tmp &= ~(0b11 << (pn * 2));
+    tmp |= 0b01 << (pn * 2);
+    regs->MODER = tmp;
 
     setDriver(regs, pn, driver);
     setSpeed(regs, pn, speed);

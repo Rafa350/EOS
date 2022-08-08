@@ -58,8 +58,8 @@ void FrameBuffer::setOrientation(
 /// \param    y: Coordinada y.
 ///
 void FrameBuffer::transform(
-	int& x,
-	int& y) const {
+	int &x,
+	int &y) const {
 
 	int xx;
 	int yy;
@@ -105,10 +105,10 @@ void FrameBuffer::transform(
 /// \remarks  Les coordinades son retornades en forma normalitzada.
 ///
 void FrameBuffer::transform(
-	int& x1,
-	int& y1,
-	int& x2,
-	int& y2) const {
+	int &x1,
+	int &y1,
+	int &x2,
+	int &y2) const {
 
 	int xx1;
 	int yy1;
@@ -244,7 +244,7 @@ void FrameBuffer::setPixels(
 	int y,
 	int width,
 	int height,
-	const Color* colors,
+	const Color *colors,
 	int pitch) {
 
 	// TODO: Girs i retall
@@ -268,7 +268,7 @@ void FrameBuffer::setPixels(
 	int y,
 	int width,
 	int height,
-	const void* pixels,
+	const void *pixels,
 	ColorFormat format,
 	int pitch)  {
 

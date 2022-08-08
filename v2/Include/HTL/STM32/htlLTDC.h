@@ -15,29 +15,30 @@ namespace htl {
 	/// \brief Control signals pin polarity
 	//
     enum class LTDCPolarity {
-    	noChange,
     	activeLow,
-		activeHigh
+		activeHigh,
+    	noChange
     };
 
     /// \brief Image format
+    /// \remarks Els valors corresponen al registre hardware. No modificar
     ///
     enum class LTDCPixelFormat {
-    	argb8888,
-		rgb888,
-		rgb565,
-		argb1555,
-		argb4444,
-		l8,
-		al44,
-		al88
+    	argb8888 = 0,
+		rgb888 = 1,
+		rgb565 = 2,
+		argb1555 = 3,
+		argb4444 = 4,
+		l8 = 5,
+		al44 = 6,
+		al88 = 7
     };
 
     enum class LTDCEvent {
-    	line = 0,
-		reload = 3,
-		fifoError = 1,
-		transferError = 2
+    	line,
+		reload,
+		fifoError,
+		transferError
     };
 
     /// \brief GPIO alternative pin identifiers
@@ -268,7 +269,7 @@ namespace htl {
 				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB7_, LTDCPin::pinB7>::alt);
 			}
 
-			static void setHSYNCPolarity(
+			static constexpr void setHSYNCPolarity(
 				LTDCPolarity polarity) {
 
 				if (polarity == LTDCPolarity::activeHigh)
@@ -277,7 +278,7 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_HSPOL;
 			}
 
-			static void setVSYNCPolarity(
+			static constexpr void setVSYNCPolarity(
 				LTDCPolarity polarity) {
 
 				if (polarity == LTDCPolarity::activeHigh)
@@ -286,7 +287,7 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_VSPOL;
 			}
 
-			static void setDEPolarity(
+			static constexpr void setDEPolarity(
 				LTDCPolarity polarity) {
 
 				if (polarity == LTDCPolarity::activeHigh)
@@ -295,7 +296,7 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_DEPOL;
 			}
 
-			static void setPCPolarity(
+			static constexpr void setPCPolarity(
 				LTDCPolarity polarity) {
 
 				if (polarity == LTDCPolarity::activeHigh)
@@ -304,7 +305,7 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_PCPOL;
 			}
 
-			static void setBackgroundColor(
+			static constexpr void setBackgroundColor(
 				uint32_t rgb) {
 
 				// Configura el registre BCCR (Back Color Configuration Register)
@@ -449,25 +450,12 @@ namespace htl {
 				uint32_t tmp;
 				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
 
+				// Configura Lx_PFCR (Pixel Format Configuration Register)
+				// -Format de color del buffer d'imatge.
+				//
 				tmp = regs->PFCR;
 			    tmp &= ~(0b111 << LTDC_LxPFCR_PF_Pos);
-			    switch (format) {
-			    	case LTDCPixelFormat::argb8888:
-						tmp |= 0b000 << LTDC_LxPFCR_PF_Pos;
-			    		break;
-
-			    	case LTDCPixelFormat::rgb888:
-						tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
-						break;
-
-					case LTDCPixelFormat::rgb565:
-			    		tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
-			    		break;
-
-			    	case LTDCPixelFormat::l8:
-			    		tmp |= 0b101 << LTDC_LxPFCR_PF_Pos;
-			    		break;
-			    }
+			    tmp |= (uint32_t(format) & 0b111) << LTDC_LxPFCR_PF_Pos;
 			    regs->PFCR = tmp;
 
 			    // Configura Lx_CFBLR (Color Frame Buffer Length Register)

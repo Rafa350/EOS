@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosColorFrameBuffer_DMA2D__
 #define __eosColorFrameBuffer_DMA2D__
 
@@ -27,8 +28,9 @@ namespace eos {
 
 		public:
 			ColorFrameBuffer_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void *buffer, int bufferPitch);
-	};
+            void *getImageBuffer() const override;
+};
 }
 
 
-#endif // __eosFrameBuffer_RGB565_DMA2D__
+#endif // __eosFrameBuffer_DMA2D__

@@ -46,8 +46,6 @@ void MyApplication::onInitialize() {
 	//
 	createMainPanel();
 	Application::onInitialize();
-
-	ColorARGB8888 c = fromARGB<ColorFormat::argb8888>(0,0,0,0);
 }
 
 

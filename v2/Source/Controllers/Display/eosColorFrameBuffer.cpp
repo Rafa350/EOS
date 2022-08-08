@@ -8,17 +8,26 @@ using namespace eos;
 static uint16_t combinePixel(uint16_t b, uint16_t f, uint8_t o);
 
 
+static inline Color::Pixel *getPixelPtr(
+	Color::Pixel *buffer,
+	int bufferPitch,
+	int x,
+	int y) {
+
+	return &buffer[(y * bufferPitch) + x];
+}
+
 
 ColorFrameBuffer::ColorFrameBuffer(
 	int screenWidth,
 	int screenHeight,
 	DisplayOrientation orientation,
-	void* buffer,
+	void *buffer,
 	int bufferPitch):
 
 	FrameBuffer(screenWidth, screenHeight, orientation),
-	_buffer(buffer),
-	_bufferPitch(bufferPitsh) {
+	_buffer((Color::Pixel*)buffer),
+	_bufferPitch(bufferPitch) {
 
 }
 
@@ -33,13 +42,15 @@ ColorFrameBuffer::ColorFrameBuffer(
 void ColorFrameBuffer::put(
 	int x,
 	int y,
-	const Color& color) {
+	const Color color) {
 
 	uint8_t opacity = color.getOpacity();
 	if (opacity != 0) {
-		uint16_t c = color.toRGB565();
-		uint16_t* p = (uint16_t*)(_buffer + (y * lineBytes) + (x * sizeof(uint16_t)));
-	    *p = opacity == 0xFF ? c : combinePixel(*p, c, opacity);
+
+		Color::Pixel c = color;
+		Color::Pixel *ptr = getPixelPtr(_buffer, _bufferPitch, x, y);
+
+		*ptr = c; // opacity == 0xFF ? c : combinePixels(c, *ptr, opacity);
 	}
 }
 
@@ -59,9 +70,23 @@ void ColorFrameBuffer::fill(
 	int height,
 	Color color) {
 
-	for (int yy = 0; yy < height; yy++)
-		for (int xx = 0; xx < width; xx++)
-			put(x + xx, y + yy, color);
+	Color::Pixel c = color;
+	uint8_t opacity = color.getOpacity();
+
+	if (opacity != 0) {
+
+		if (opacity == 0xFF) {
+			for (int yy = y; yy < height + y; yy++) {
+				Color::Pixel *ptr = getPixelPtr(_buffer, _bufferPitch, x, yy);
+				for (int xx = x; xx < width + x; xx++) {
+					*ptr = c; // opacity == 0xFF ? c : combinePixels(c, *ptr, opacity);
+					ptr++;
+				}
+			}
+		}
+		else {
+		}
+	}
 }
 
 
@@ -72,6 +97,7 @@ void ColorFrameBuffer::fill(
 /// \param o: Opacitat.
 /// \return El valor del pixel combinat.
 ///
+/*
 static uint16_t combinePixel(
 	uint16_t b,
 	uint16_t f,
@@ -90,3 +116,4 @@ static uint16_t combinePixel(
 		((((fg * o) + (bg * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_G) |
 		((((fb * o) + (bb * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_B);
 }
+*/
