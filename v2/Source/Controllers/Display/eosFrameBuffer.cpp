@@ -12,7 +12,6 @@ using namespace eos;
 /// \param    frameWidth: Amplada.
 /// \param    frameHeight: Alçada.
 /// \param    orientation: Orientacio inicial.
-/// \param    color: Color inicial
 ///
 FrameBuffer::FrameBuffer(
 	int frameWidth,
@@ -21,8 +20,8 @@ FrameBuffer::FrameBuffer(
 
 	_frameWidth(frameWidth),
 	_frameHeight(frameHeight),
-	_imageWidth(frameWidth),
-	_imageHeight(frameHeight),
+	_maxX(frameWidth - 1),
+	_maxY(frameHeight - 1),
 	_orientation(DisplayOrientation::normal) {
 }
 
@@ -38,14 +37,14 @@ void FrameBuffer::setOrientation(
 	switch (orientation) {
 		case DisplayOrientation::normal:
 		case DisplayOrientation::rotate180:
-			_imageWidth = _frameWidth;
-			_imageHeight = _frameHeight;
+			_maxX = _frameWidth - 1;
+			_maxY = _frameHeight - 1;
 			break;
 
 		case DisplayOrientation::rotate90:
 		case DisplayOrientation::rotate270:
-			_imageWidth = _frameHeight;
-			_imageHeight = _frameWidth;
+			_maxX = _frameHeight - 1;
+			_maxY = _frameWidth - 1;
 			break;
 	}
 }
@@ -68,8 +67,7 @@ void FrameBuffer::transform(
 	// fer dues multiplicacione fent servir la formula.
 	//
 	switch (_orientation) {
-		default:
-		case DisplayOrientation::normal:
+		case DisplayOrientation::rotate0:
             xx = x;
             yy = y;
 			break;
@@ -171,16 +169,16 @@ void FrameBuffer::clear(
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa un pixel.
-/// \param    x: Coordinada X.
-/// \param    y: Coordinada Y.
-/// \param    color: Color del pixel.
+/// \param    x: Coordinada X del pxel.
+/// \param    y: Coordinada Y del pìxel.
+/// \param    color: Color.
 ///
 void FrameBuffer::setPixel(
 	int x,
 	int y,
 	Color color) {
 
-	if ((x >= 0) && (x < _imageWidth) && (y >= 0) && (y < _imageHeight)) {
+	if ((x >= 0) && (x <= _maxX) && (y >= 0) && (y <= _maxY)) {
 		transform(x, y);
 		put(x, y, color);
 	}
@@ -189,10 +187,10 @@ void FrameBuffer::setPixel(
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa una regio rectangular de pixels.
-/// \param    x: Posicio X.
-/// \param    y: Posicio Y.
-/// \param    width: Amplada.
-/// \param    height: Alçada.
+/// \param    x: Posicio X de la regio.
+/// \param    y: Posicio Y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
 /// \param    color: Color.
 ///
 void FrameBuffer::setPixels(
@@ -211,8 +209,8 @@ void FrameBuffer::setPixels(
 	//
 	x1 = Math::max(x1, 0);
 	y1 = Math::max(y1, 0);
-	x2 = Math::min(x2, _imageWidth - 1);
-	y2 = Math::min(y2, _imageHeight - 1);
+	x2 = Math::min(x2, _maxX);
+	y2 = Math::min(y2, _maxY);
 
 	// Cas que nomes sigui un pixel
 	//
@@ -245,32 +243,32 @@ void FrameBuffer::setPixels(
 	int width,
 	int height,
 	const Color *colors,
-	int pitch) {
+	int colorPitch) {
 
 	// TODO: Girs i retall
 
-	copy(x, y, width, height, colors, /* Offset */ pitch - width);
+	copy(x, y, width, height, colors, colorPitch);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un bitmap en una regio rectangular
+/// \brief    Escriu una llista de colors en una regio rectangular
 /// \param    x: Posicio x de la regio.
 /// \param    y: Posicio y de la regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
-/// \param    pixels: Array de pixels.
-/// \param    format: Format dels pixels.
-/// \param    pitch: Pitch dels pixels.
+/// \param    colors: Llista de colors.
+/// \param    colorFormat: Format de la llista de colors.
+/// \param    colorPpitch: Pitch de la llista de colors.
 ///
 void FrameBuffer::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
-	const void *pixels,
-	ColorFormat format,
-	int pitch)  {
+	const void *colors,
+	ColorFormat colorFormat,
+	int colorPitch)  {
 
 	int x1 = x;
 	int y1 = y;
@@ -281,8 +279,8 @@ void FrameBuffer::setPixels(
 	//
 	x1 = Math::max(x1, 0);
 	y1 = Math::max(y1, 0);
-	x2 = Math::min(x2, _imageWidth - 1);
-	y2 = Math::min(y2, _imageHeight - 1);
+	x2 = Math::min(x2, _maxX);
+	y2 = Math::min(y2, _maxY);
 
 	if ((x1 <= x2) && (y1 <= y2)) {
 		transform(x1, y1, x2, y2);
@@ -291,31 +289,31 @@ void FrameBuffer::setPixels(
 
 		switch (_orientation) {
 			case DisplayOrientation::rotate0:
-				write(x1, y1, width, height, pixels, format, /* Offset */ pitch - width);
+				copy(x1, y1, width, height, colors, colorFormat, colorPitch);
 				break;
 
 			case DisplayOrientation::rotate90:
 				for (int yy = 0; yy < height; yy++) {
-					write(
+					copy(
 						x1 + height - yy, y1,
 						1, width,
-						(const void*)((int)pixels + (pitch * bytesPerPixel * yy)),
-						format,
-						/* Offset */ pitch - width);
+						(const void*)((int)colors + (colorPitch * bytesPerPixel * yy)),
+						colorFormat,
+						colorPitch);
 				}
 				break;
 
 			case DisplayOrientation::rotate180:
 				for (int yy = 0; yy < height; yy++)
 					for (int xx = 0; xx < width; xx++) {
-						int p = (int)pixels + ((yy * pitch) + xx) * bytesPerPixel;
+						int p = (int)colors + ((yy * colorPitch) + xx) * bytesPerPixel;
 				}
 				break;
 
 			case DisplayOrientation::rotate270:
 				for (int yy = 0; yy < height; yy++)
 					for (int xx = 0; xx < width; xx++) {
-						int p = (int)pixels + ((yy * pitch) + xx) * bytesPerPixel;
+						int p = (int)colors + ((yy * colorPitch) + xx) * bytesPerPixel;
 				}
 				break;
 		}

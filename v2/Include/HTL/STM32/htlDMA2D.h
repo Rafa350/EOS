@@ -15,7 +15,7 @@ namespace htl {
 	/// \brief Format de color d'entrada
 	/// \remarks Els valors corresponen al registre hardware. No modificar
 	///
-	enum class DMA2DSrcColorMode {
+	enum class DMA2DInputColorMode {
 		argb8888 = 0,
 		rgb888 = 1,
 		rgb565 = 2,
@@ -32,7 +32,7 @@ namespace htl {
 	/// \brief Format de color de sortida
     /// \remarks Els valors corresponen al registre hardware. No modificar
 	///
-	enum class DMA2DDstColorMode {
+	enum class DMA2DOutputColorMode {
 		argb8888 = 0,
 		rgb888 = 1,
 		rgb565 = 2,
@@ -52,8 +52,8 @@ namespace htl {
 	using DMA2DInterruptParam = void*;
 	using DMA2DInterruptFunction = void (*)(DMA2DEvent, DMA2DInterruptParam);
 
-	void DMA2D_startFill(void*,	int, int, int, DMA2DDstColorMode, uint32_t);
-	void DMA2D_startCopy(void*, int, int, int, DMA2DDstColorMode, const void*, int, DMA2DSrcColorMode);
+	void DMA2D_startFill(void*,	int, int, int, DMA2DOutputColorMode, uint32_t);
+	void DMA2D_startCopy(void*, int, int, int, DMA2DOutputColorMode, const void*, int, DMA2DInputColorMode);
 	bool DMA2D_waitForFinish();
 
 	template <int dummy>
@@ -99,34 +99,34 @@ namespace htl {
 
 			/// \brief Inicia el proces de omprit una regio
 			/// \param dst: Adressa del primer pixel de la regio.
-			/// \param width: Amplada de la regio.
-			/// \param height: Alçada de la regio.
-			/// \param offset: Offset per avançar a la seguent linia.
-			/// \param dstColorMode: Format de color.
+			/// \param width: Amplada.
+			/// \param height: Alçada.
+			/// \param pitch: Amplada fins a la seguent linia.
+			/// \param colorMode: Format de color.
 			/// \param color: El color en el format especificat.
 			///
 			inline static void startFill(
-				void *dst,
+				void *ptr,
 				int width,
 				int height,
-				int offset,
-				DMA2DDstColorMode dstColorMode,
-				uint32_t dstColor) {
+				int pitch,
+				DMA2DOutputColorMode colorMode,
+				uint32_t color) {
 
-				DMA2D_startFill(dst, width, height, offset, dstColorMode, dstColor);
+				DMA2D_startFill(ptr, width, height, pitch, colorMode, color);
 			}
 
 			inline static void startCopy(
-				void *dst,
+				void *ptr,
 				int width,
 				int height,
-				int offset,
-				DMA2DDstColorMode dstColorMode,
+				int pitch,
+				DMA2DOutputColorMode colorMode,
 				const void *src,
-				int srcOffset,
-				DMA2DSrcColorMode srcColorMode) {
+				int srcPitch,
+				DMA2DInputColorMode srcColorMode) {
 
-				DMA2D_startCopy(dst, width, height, offset, dstColorMode, src, srcOffset, srcColorMode);
+				DMA2D_startCopy(ptr, width, height, pitch, colorMode, src, srcPitch, srcColorMode);
 			}
 
 			/// \brief Espera que finalitzi l'operacio de transferencia.

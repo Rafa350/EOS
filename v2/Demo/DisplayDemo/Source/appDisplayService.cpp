@@ -6,6 +6,7 @@
 #include "System/Graphics/eosBitmap.h"
 #include "System/Graphics/eosText.h"
 #include "System/Graphics/eosGraphics.h"
+#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #elif defined(DISPLAY_DRV_ILI9341)
@@ -100,8 +101,21 @@ void DisplayService::onSetup() {
 	_driver = new DisplayDriver_ILI9341LTDC();
 #elif defined(DISPLAY_DRV_ILI9341)
 	_driver = new DisplayDriver_ILI9341();
+
 #elif defined(DISPLAY_DRV_RGBLTDC)
-	_driver = new DisplayDriver_RGBLTDC();
+
+	constexpr int frameBufferPitchBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
+
+	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
+		board::display::width,
+		board::display::height,
+		frameBufferPitch,
+		DisplayOrientation::normal,
+		reinterpret_cast<void*>(board::display::buffer));
+
+	_driver = new DisplayDriver_RGBLTDC(frameBuffer);
+
 #elif defined(DISPLAY_DRV_SSD1306)
 	_driver = new  DisplayDriver_SSD1306();
 #else

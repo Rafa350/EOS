@@ -48,7 +48,7 @@ static Color::Pixel combinePixels(
 /// \param    format: El format de color.
 /// \return   True si esta suportat.
 ///
-static constexpr bool isDstColorSupported(
+static constexpr bool isOutputColorSupported(
 	ColorFormat format) {
 
 	return
@@ -65,79 +65,80 @@ static constexpr bool isDstColorSupported(
 /// \param    format: El format de color.
 /// \return   El modus de color.
 ///
-static constexpr DMA2DDstColorMode getDstColorMode(
+static constexpr DMA2DOutputColorMode getOutputColorMode(
 	ColorFormat format) {
 
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
-			return DMA2DDstColorMode::argb8888;
+			return DMA2DOutputColorMode::argb8888;
 
 		case ColorFormat::argb4444:
-			return DMA2DDstColorMode::argb4444;
+			return DMA2DOutputColorMode::argb4444;
 
 		case ColorFormat::argb1555:
-			return DMA2DDstColorMode::argb1555;
+			return DMA2DOutputColorMode::argb1555;
 
 		case ColorFormat::rgb888:
-			return DMA2DDstColorMode::rgb888;
+			return DMA2DOutputColorMode::rgb888;
 
 		case ColorFormat::rgb565:
-			return DMA2DDstColorMode::rgb565;
+			return DMA2DOutputColorMode::rgb565;
 	}
 }
 
 
-static constexpr DMA2DSrcColorMode getSrcColorMode(
+static constexpr DMA2DInputColorMode getInputColorMode(
 	ColorFormat format) {
 
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
-			return DMA2DSrcColorMode::argb8888;
+			return DMA2DInputColorMode::argb8888;
 
 		case ColorFormat::argb4444:
-			return DMA2DSrcColorMode::argb4444;
+			return DMA2DInputColorMode::argb4444;
 
 		case ColorFormat::argb1555:
-			return DMA2DSrcColorMode::argb1555;
+			return DMA2DInputColorMode::argb1555;
 
 		case ColorFormat::rgb888:
-			return DMA2DSrcColorMode::rgb888;
+			return DMA2DInputColorMode::rgb888;
 
 		case ColorFormat::rgb565:
-			return DMA2DSrcColorMode::rgb565;
+			return DMA2DInputColorMode::rgb565;
 
 		case ColorFormat::al88:
-			return DMA2DSrcColorMode::al88;
+			return DMA2DInputColorMode::al88;
 
 		case ColorFormat::al44:
-			return DMA2DSrcColorMode::al44;
+			return DMA2DInputColorMode::al44;
 
 		case ColorFormat::l8:
-			return DMA2DSrcColorMode::l8;
+			return DMA2DInputColorMode::l8;
 	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
-/// \param    frameWidth: Amplada fisica en pixels.
-/// \param    frameHeight: Alçada fisica en pixels.
-/// \param    orientation: Orientacio inicial.
-/// \param    buffer: Buffer d'imatge.
-/// \param    bufferPitch: Pitch del buffer d'imatge.
+/// \param    frameWidth: Amplada.
+/// \param    frameHeight: Alçada.
+/// \param    framePitch: Pitch.
+/// \param    orientation: Orientacio.
+/// \param    color: Color inicial.
+/// \param    buffer: Buffer.
 ///
 ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	int frameWidth,
 	int frameHeight,
+	int framePitch,
 	DisplayOrientation orientation,
-	void* buffer,
-	int bufferPitch):
+	void* buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer((Color::Pixel*)buffer),
-	_bufferPitch(bufferPitch) {
+	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
+	_framePitch(framePitch) {
 
     DMA2D_1::init();
 }
@@ -147,16 +148,16 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 /// \brief    Obter l'adresa del buffer d'imatge.
 /// \return   L'adressa.
 ///
-void *ColorFrameBuffer_DMA2D::getImageBuffer() const {
+void *ColorFrameBuffer_DMA2D::getBuffer() const {
 
 	return _buffer;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna un color a un pixel.
-/// \param    x: Coordinada x.
-/// \param    y: Coordinada y.
+/// \brief    Asigna un color a un pixel de la pantalla.
+/// \param    x: Coordinada x del pixel.
+/// \param    y: Coordinada y del pixel.
 /// \param    color: Color.
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
@@ -195,12 +196,11 @@ void ColorFrameBuffer_DMA2D::put(
 
 /// ----------------------------------------------------------------------
 /// \brief    Ompla amb un color, una regio de la pantalla.
-/// \param    x: Coordinada x.
-/// \param    y: Coordinada y.
-/// \param    width: Amplada.
-/// \param    height: Alçada.
+/// \param    x: Coordinada x de la regio.
+/// \param    y: Coordinada y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
 /// \param    color: Color.
-/// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
 void ColorFrameBuffer_DMA2D::fill(
 	int x,
@@ -215,12 +215,12 @@ void ColorFrameBuffer_DMA2D::fill(
 	// per hardware.
 	//
 	if ((opacity == 0xFF) &&
-		isDstColorSupported(Color::format)) {
+		isOutputColorSupported(Color::format)) {
 
 		Color::Pixel *ptr = getPixelPtr(x, y);
-		DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
+		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
 		Color::Pixel c = color;
-		DMA2D_1::startFill(ptr, width, height, _bufferPitch - width, dstColorMode, c);
+		DMA2D_1::startFill(ptr, width, height, _framePitch, dstColorMode, c);
 		DMA2D_1::waitForFinish();
 	}
 
@@ -242,13 +242,13 @@ void ColorFrameBuffer_DMA2D::fill(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Copia un bitmap a una regio de la pantalla.
-/// \param    x: Coordinada x.
-/// \param    y: Coordinada y.
-/// \param    width: Amplada.
-/// \param    height: Alçada.
-/// \param    colors: Llista de pixels del bitmap
-/// \param    offset: Offset entre linies del bitmap.
+/// \brief    Copia una llista de colors a una regio de la pantalla.
+/// \param    x: Coordinada x de la regio.
+/// \param    y: Coordinada y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    colors: Llista de colors.
+/// \param    colorPitch: Pitch de la llista de colors.
 ///
 void ColorFrameBuffer_DMA2D::copy(
 	int x,
@@ -256,12 +256,12 @@ void ColorFrameBuffer_DMA2D::copy(
 	int width,
 	int height,
 	const Color *colors,
-	int offset) {
+	int colorPitch) {
 
 	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
 	// per hardware.
 	//
-	if (isDstColorSupported(Color::format)) {
+	if (isOutputColorSupported(Color::format)) {
 
 		Color::Pixel *ptr = getPixelPtr(x, y);
 
@@ -269,9 +269,9 @@ void ColorFrameBuffer_DMA2D::copy(
 		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 		// les opcions.
 		//
-		DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
-		DMA2DSrcColorMode srcColorMode = getSrcColorMode(Color::format);
-		DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, colors, offset, srcColorMode);
+		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
+		DMA2DInputColorMode srcColorMode = getInputColorMode(Color::format);
+		DMA2D_1::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
 		DMA2D_1::waitForFinish();
 	}
 
@@ -283,28 +283,28 @@ void ColorFrameBuffer_DMA2D::copy(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Copia un bitmap a una regio de la pantalla.
+/// \brief    Copia una llista de colors a una regio de la pantalla.
 /// \param    x: Coordinada x de la regio.
 /// \param    y: Coordinada y de la regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
-/// \param    pixels: Llista de pixels del bitmap
-/// \param    format: Format de color
-/// \param    offset: Offset entre linies del bitmap.
+/// \param    colors: Llista de colors.
+/// \param    colorFormat: Format de la llista de colors.
+/// \param    colorPitch: Pitch de la llista de colors.
 ///
-void ColorFrameBuffer_DMA2D::write(
+void ColorFrameBuffer_DMA2D::copy(
 	int x,
 	int y,
 	int width,
 	int height,
-	const void *pixels,
-	ColorFormat format,
-	int offset) {
+	const void *colors,
+	ColorFormat colorFormat,
+	int colorPitch) {
 
 	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
 	// per hardware.
 	//
-	if (isDstColorSupported(Color::format)) {
+	if (isOutputColorSupported(Color::format)) {
 
 		Color::Pixel *ptr = getPixelPtr(x, y);
 
@@ -312,9 +312,9 @@ void ColorFrameBuffer_DMA2D::write(
 		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 		// les opcions. No cal cridar a 'toPixel()'
 		//
-		DMA2DDstColorMode dstColorMode = getDstColorMode(Color::format);
-		DMA2DSrcColorMode srcColorMode = getSrcColorMode(format);
-		DMA2D_1::startCopy(ptr, width, height, _bufferPitch - width, dstColorMode, pixels, offset, srcColorMode);
+		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
+		DMA2DInputColorMode srcColorMode = getInputColorMode(colorFormat);
+		DMA2D_1::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
 		DMA2D_1::waitForFinish();
 	}
 }

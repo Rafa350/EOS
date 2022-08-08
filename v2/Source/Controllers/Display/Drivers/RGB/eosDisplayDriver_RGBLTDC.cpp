@@ -22,46 +22,16 @@ using namespace htl;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor
-///
-DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
-
-	constexpr int frameBufferPitchBytes = (_width * Color::bytes + 63) & 0xFFFFFFC0;
-	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
-	constexpr int frameSize = frameBufferPitchBytes * _height;
-
-	_displayFrameBuffer = new ColorFrameBuffer_DMA2D(
-		_width,
-		_height,
-		DisplayOrientation::normal,
-		reinterpret_cast<void*>(_buffer),
-		frameBufferPitch);
-
-	if constexpr (_useDoubleBuffer)
-		_workFrameBuffer = new ColorFrameBuffer_DMA2D(
-			_width,
-			_height,
-			DisplayOrientation::normal,
-			reinterpret_cast<void*>(_buffer + frameSize),
-			frameBufferPitch);
-	else
-		_workFrameBuffer = _displayFrameBuffer;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Contructor.
-/// \param    displayFrameBuffer: Buffer d'imatge de visualitzacio
-/// \param    workFrameBuffer: Buffer d'imatge de treball (Pot ser nullptr en
-///           cas de buffer simple)
+/// \param    frameBuffer1: Buffer d'imatge
+/// \param    frameBuffer2: Buffer d'imatge (Si es vol doble buffer)
 ///
 DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC(
-	FrameBuffer *displayFrameBuffer,
-	FrameBuffer *workFrameBuffer):
+	FrameBuffer *frameBuffer1,
+	FrameBuffer *frameBuffer2):
 
-	_displayFrameBuffer(displayFrameBuffer),
-	_workFrameBuffer(workFrameBuffer == nullptr? displayFrameBuffer : workFrameBuffer) {
-
+	_displayFrameBuffer(frameBuffer1),
+	_workFrameBuffer(frameBuffer2 == nullptr? frameBuffer1 : frameBuffer2) {
 }
 
 
@@ -70,11 +40,9 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC(
 ///
 void DisplayDriver_RGBLTDC::initialize() {
 
-	// Inicialitza els buffers a color negre
-	//
-	_workFrameBuffer->clear(Colors::black);
-	if (_workFrameBuffer != _displayFrameBuffer)
-		_displayFrameBuffer->clear(Colors::black);
+	_displayFrameBuffer->clear(Colors::black);
+	if (_displayFrameBuffer != _workFrameBuffer)
+		_workFrameBuffer->clear(Colors::black);
 
 	initializeGPIO();
 	initializeLTDC();
@@ -95,16 +63,8 @@ void DisplayDriver_RGBLTDC::shutdown() {
 ///
 void DisplayDriver_RGBLTDC::displayOn() {
 
-    // Activa el modul LDTC
-    //
 	LTDC_1::enable();
-
-    // Activa el display
-	//
 	GPIO_LCDE::set();
-
-	// Activa el backlight
-	//
 	GPIO_BKE::set();
 }
 
@@ -114,16 +74,8 @@ void DisplayDriver_RGBLTDC::displayOn() {
 ///
 void DisplayDriver_RGBLTDC::displayOff() {
 
-	// Desactiva el display
-	//
 	GPIO_LCDE::clear();
-
-	// Desactiva el backlight
-	//
 	GPIO_BKE::clear();
-
-	// Desactiva el modul LDTC
-    //
 	LTDC_1::disable();
 }
 
@@ -219,14 +171,13 @@ void DisplayDriver_RGBLTDC::setPixels(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna una llista colors a una regio rectangular. El format
-///           de color es el meteix que el del buffer
+/// \brief    Copia una regio rectangular.
 /// \param    x: Posicio x.
 /// \param    y: Posicio y.
 /// \param    width: Amplada.
 /// \param    height: Alçada.
-/// \param    colors: Punter als colors.
-/// \param    pitch: Pitch dels colors.
+/// \param    colors: Regio a copiar
+/// \param    pitch: Pitch de la regio a copiar.
 ///
 void DisplayDriver_RGBLTDC::setPixels(
 	int x,
@@ -241,31 +192,30 @@ void DisplayDriver_RGBLTDC::setPixels(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu una regio rectangular de pixels.
+/// \brief    Copia una lliosta de pixels una regio rectangular.
 /// \param    x: Posicio x de la regio.
-/// \param    y: Posicio y de la regio..
-/// \param    width: Amplada de la regio
-/// \param    height: Alçada de la regio
-/// \param    pixels: Els pixels a copiar.
-/// \param    format: Format dels pixels.
-/// \param    pitch: Amplada de linia del bitmap.
+/// \param    y: Posicio y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    colors: La llista de colors.
+/// \param    colorFormat: Format de la llista de colors.
+/// \param    colorPitch: Pitch de la llista de colors.
 ///
 void DisplayDriver_RGBLTDC::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
-	const void *pixels,
-	ColorFormat format,
-	int pitch) {
+	const void *colors,
+	ColorFormat colorFormat,
+	int colorPitch) {
 
-	_workFrameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
+	_workFrameBuffer->setPixels(x, y, width, height, colors, colorFormat, colorPitch);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Refresca la pantalla.
-/// \remarks Si es treballa en doble buffer, intercanvia els frames.
 ///
 void DisplayDriver_RGBLTDC::refresh() {
 
@@ -277,7 +227,7 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Asigna l'adresa de la capa
 		//
-		LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getImageBuffer());
+		LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getBuffer());
 		LTDC_1::update();
 	}
 }
@@ -333,6 +283,6 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
 		_height);
 
-	LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getImageBuffer());
+	LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getBuffer());
 	LTDC_1::update();
 }

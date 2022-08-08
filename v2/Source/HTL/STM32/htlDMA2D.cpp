@@ -6,21 +6,21 @@ using namespace htl;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Ompla una regio amb un pixel solid.
-/// \param    dst: Punter al primer pixel regio de destinacio.
+/// \brief    Ompla una regio amb un color solid.
+/// \param    ptr: Punter al primer pixel regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
-/// \param    offset: Offset per avançar a la seguent linia de la regio.
-/// \param    dstColorMode: El format de color de desti
-/// \param    dstColor: El color de desti.
+/// \param    pitch: Pitch de la regio.
+/// \param    colorMode: El format de color de la regio.
+/// \param    color: El color.
 ///
 void htl::DMA2D_startFill(
-	void* dst,
+	void *ptr,
 	int width,
 	int height,
-	int offset,
-	DMA2DDstColorMode dstColorMode,
-	uint32_t dstColor) {
+	int pitch,
+	DMA2DOutputColorMode colorMode,
+	uint32_t color) {
 
 	// Selecciona el tipus de transferencia com a R2M
 	//
@@ -30,19 +30,19 @@ void htl::DMA2D_startFill(
 	//
 	uint32_t tmp = DMA2D->OPFCCR;
 	tmp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-	tmp |= (uint32_t(dstColorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
+	tmp |= (uint32_t(colorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
 	// Aqui tambe Swap Blue/Red
 	// Aqui tambe Invert Alpha
 	DMA2D->OPFCCR = tmp;
 
 	// Asigna el color
 	//
-	DMA2D->OCOLR = dstColor;
+	DMA2D->OCOLR = color;
 
 	// Selecciona l'adressa i el offset del desti
 	//
-	DMA2D->OMAR = (uint32_t) dst;
-	DMA2D->OOR = offset & 0x3FFF;
+	DMA2D->OMAR = (uint32_t) ptr;
+	DMA2D->OOR = (pitch - width) & 0x3FFF;
 
 	// Selecciona el tamany de la finestra
 	//
@@ -58,24 +58,24 @@ void htl::DMA2D_startFill(
 
 /// ----------------------------------------------------------------------
 /// \brief    Copia un mapa de bits a una regio
-/// \param    dst: Punter al primer pixel de la regio de destinacio.
+/// \param    ptr: Punter al primer pixel de la regio de destinacio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
-/// \param    offset: Offset per avançar a la seguent linia de la regio.
-/// \param    dstColorMode: Format de color de la regio de destinacio.
+/// \param    pitch: Pitch de la regio.
+/// \param    colorMode: Format de color de la regio de destinacio.
 /// \param    src: Punter al primer pixel del mapa de bits.
-/// \param    srcOffset: Offset per avançar a la seguent linia del mapa de bits.
+/// \param    srcPitch: Pitch avançar a la seguent linia del mapa de bits.
 /// \param    srcColorMode: Format de color del mapa de bits.
 ///
 void htl::DMA2D_startCopy(
-	void* dst,
+	void *ptr,
 	int width,
 	int height,
-	int offset,
-	DMA2DDstColorMode dstColorMode,
+	int pitch,
+	DMA2DOutputColorMode colorMode,
 	const void* src,
-	int srcOffset,
-	DMA2DSrcColorMode srcColorMode) {
+	int srcPitch,
+	DMA2DInputColorMode srcColorMode) {
 
 	uint32_t tmp;
 
@@ -94,7 +94,7 @@ void htl::DMA2D_startCopy(
 	//
     tmp = DMA2D->OPFCCR;
     tmp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-    tmp |= (uint32_t(dstColorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
+    tmp |= (uint32_t(colorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
 	// Aqui tambe Swap Blue/Red
 	// Aqui tambe Invert Alpha
 	DMA2D->OPFCCR = tmp;
@@ -102,12 +102,12 @@ void htl::DMA2D_startCopy(
 	// Selecciona l'adressa i el offset del origen
 	//
 	DMA2D->FGMAR = (uint32_t) src;
-	DMA2D->FGOR = srcOffset & 0x3FFF;
+	DMA2D->FGOR = (srcPitch - width) & 0x3FFF;
 
 	// Selecciona l'adressa i el offset del desti.
 	//
-	DMA2D->OMAR = (uint32_t) dst;
-	DMA2D->OOR = offset & 0x3FFF;
+	DMA2D->OMAR = (uint32_t) ptr;
+	DMA2D->OOR = (pitch - width) & 0x3FFF;
 
 	// Selecciona el tamany de la finestra
 	//

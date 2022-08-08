@@ -19,16 +19,15 @@ static inline Color::Pixel *getPixelPtr(
 
 
 ColorFrameBuffer::ColorFrameBuffer(
-	int screenWidth,
-	int screenHeight,
+	int frameWidth,
+	int frameHeight,
+	int framePitch,
 	DisplayOrientation orientation,
-	void *buffer,
-	int bufferPitch):
+	void *buffer):
 
-	FrameBuffer(screenWidth, screenHeight, orientation),
-	_buffer((Color::Pixel*)buffer),
-	_bufferPitch(bufferPitch) {
-
+	FrameBuffer(frameWidth, frameHeight, orientation),
+	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
+	_bufferPitch(framePitch) {
 }
 
 

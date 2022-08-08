@@ -18,7 +18,6 @@ namespace eos {
 		private:
 			using GPIO_BKE = board::display::GPIO_BKE;
 			using GPIO_LCDE = board::display::GPIO_LCDE;
-
 			using GPIO_DE = board::display::GPIO_DE;
 			using GPIO_HSYNC = board::display::GPIO_HSYNC;
 			using GPIO_VSYNC = board::display::GPIO_VSYNC;
@@ -48,7 +47,6 @@ namespace eos {
 			using GPIO_B6 = board::display::GPIO_B6;
 			using GPIO_B7 = board::display::GPIO_B7;
 
-		private:
 			static constexpr uint16_t _hSync       = board::display::hSync;
 			static constexpr uint16_t _vSync       = board::display::vSync;
 			static constexpr uint16_t _hBP         = board::display::hBP;
@@ -62,15 +60,15 @@ namespace eos {
 			static constexpr uint16_t _width       = board::display::width;
 			static constexpr uint16_t _height      = board::display::height;
 			static constexpr uint32_t _buffer      = board::display::buffer;
-			static constexpr bool _useDoubleBuffer = board::display::useDoubleBuffer;
 
-		private:
     		FrameBuffer *_displayFrameBuffer;
     		FrameBuffer *_workFrameBuffer;
 
-        public:
-    		DisplayDriver_RGBLTDC();
-    		DisplayDriver_RGBLTDC(FrameBuffer *displayFrameBuffer, FrameBuffer *workFrameBuffer = nullptr);
+            void initializeGPIO();
+            void initializeLTDC();
+
+		public:
+    		DisplayDriver_RGBLTDC(FrameBuffer *frameBuffer1, FrameBuffer *frameBuffer2 = nullptr);
 
             void initialize() override;
             void shutdown() override;
@@ -87,14 +85,10 @@ namespace eos {
             void setHPixels(int x, int y, int size, Color color) override;
             void setVPixels(int x, int y, int size, Color color) override;
             void setPixels(int x, int y, int width, int height, Color color) override;
-            void setPixels(int x, int y, int width, int height, const Color* colors, int pitch) override;
-            void setPixels(int x, int y, int width, int height, const void* pixels, ColorFormat format, int pitch) override;
+            void setPixels(int x, int y, int width, int height, const Color *colors, int colorPitch) override;
+            void setPixels(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) override;
 
             void refresh() override;
-
-        private:
-            void initializeGPIO();
-            void initializeLTDC();
     };
 }
 

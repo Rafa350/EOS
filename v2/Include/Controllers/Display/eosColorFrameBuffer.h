@@ -18,10 +18,10 @@ namespace eos {
             void put(int x, int y, Color color) override;
             void fill(int x, int y, int width, int height, Color color) override;
             void copy(int x, int y, int width, int height, const Color *colors, int offset) override;
-            void write(int x, int y, int width, int height, const void *pixels, ColorFormat format, int offset) override;
+            void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) override;
 
 		public:
-			ColorFrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation, void *buffer, int bufferPitch);
+			ColorFrameBuffer(int frameWidth, int frameHeight, int framePitch, DisplayOrientation orientation, void *buffer);
 	};
 }
 

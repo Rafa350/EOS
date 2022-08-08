@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Display/eosDisplayDriver.h"
+#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "Services/eosGuiService.h"
 #if eosGuiService_TouchpadEnabled
@@ -18,6 +19,7 @@
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "System/eosString.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPoint.h"
 
@@ -114,7 +116,29 @@ void GuiService::onInitialize() {
 #elif defined(DISPLAY_DRV_ILI9341)
 	displayDriver = new ILI9341Driver();
 #elif defined(DISPLAY_DRV_RGBLTDC)
-	displayDriver = new DisplayDriver_RGBLTDC();
+
+	constexpr int frameBufferPitchBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
+	constexpr int frameSize = frameBufferPitchBytes * board::display::height;
+
+	FrameBuffer *frameBuffer1 = new ColorFrameBuffer_DMA2D(
+		board::display::width,
+		board::display::height,
+		frameBufferPitch,
+		DisplayOrientation::normal,
+		reinterpret_cast<void*>(board::display::buffer));
+
+	FrameBuffer *frameBuffer2 = new ColorFrameBuffer_DMA2D(
+		board::display::width,
+		board::display::height,
+		frameBufferPitch,
+		DisplayOrientation::normal,
+		reinterpret_cast<void*>(board::display::buffer + frameSize));
+
+	frameBuffer1->clear(Colors::black);
+	frameBuffer2->clear(Colors::black);
+	displayDriver = new DisplayDriver_RGBLTDC(frameBuffer1, frameBuffer2);
+
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif
