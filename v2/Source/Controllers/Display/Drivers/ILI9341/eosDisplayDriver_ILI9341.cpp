@@ -201,7 +201,7 @@ void DisplayDriver_ILI9341::setPixels(
 	int y,
 	int width,
 	int height,
-	const Color* colors,
+	const Color *colors,
 	int pitch) {
 }
 
@@ -316,12 +316,12 @@ void DisplayDriver_ILI9341::selectRegion(
 void DisplayDriver_ILI9341::writeRegion(
 	Color color) {
 
-	pixel_t c = toPixel(color);
+	Color::Pixel c = color;
 
 	open();
 	writeCommand(CMD_MEMORY_WRITE);
 
-	if constexpr (CI::format == ColorFormat::rgb565) {
+	if constexpr (Color::format == ColorFormat::rgb565) {
 
 		uint8_t data[2];
 		data[0] = c >> 8;
@@ -353,9 +353,9 @@ void DisplayDriver_ILI9341::writeRegion(
     Color color,
     int count) {
 
-	pixel_t c = toPixel(color);
+	Color::Pixel c = color;
 
-	if constexpr (CI::format == ColorFormat::rgb565) {
+	if constexpr (Color::format == ColorFormat::rgb565) {
 
 		uint8_t data[2];
 		data[0] = c >> 8;

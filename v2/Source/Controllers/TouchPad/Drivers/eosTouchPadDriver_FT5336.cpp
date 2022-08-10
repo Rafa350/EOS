@@ -3,30 +3,13 @@
 #include "HTL/htlTMR.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlI2C.h"
-#ifdef TOUCHPAD_INT_PORT
 #include "HTL/STM32/htlEXTI.h"
 #include "HTL/STM32/htlINT.h"
-#endif
 #include "System/eosMath.h"
 
 
 using namespace eos;
 using namespace htl;
-
-
-ITouchPadDriver *TouchPadDriver_FT5336::_instance = nullptr;
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte una instancia unica del driver.
-/// \return   La instancia del driver.
-///
-ITouchPadDriver* TouchPadDriver_FT5336::getInstance() {
-
-	if (_instance == nullptr)
-		_instance = new TouchPadDriver_FT5336();
-	return _instance;
-}
 
 
 /// ----------------------------------------------------------------------
@@ -48,9 +31,8 @@ void TouchPadDriver_FT5336::initialize() {
 	//halTMRDelay(200);
     initializeInterface();
 
-	#ifdef TOUCHPAD_INT_PORT
+	if constexpr (board::touchpad::useInterruption)
     	enableInt();
-	#endif
 }
 
 
@@ -59,9 +41,8 @@ void TouchPadDriver_FT5336::initialize() {
 ///
 void TouchPadDriver_FT5336::shutdown() {
 
-	#ifdef TOUCHPAD_INT_PORT
+	if constexpr (board::touchpad::useInterruption)
 		disableInt();
-	#endif
 }
 
 
@@ -276,19 +257,19 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el pin d'interrupcio
 	//
-	#ifdef TOUCHPAD_INT_PORT
+	if constexpr (board::touchpad::useInterruption) {
 		GPIO_INT::initInput(GPIOPull::up);
 		EXTI_INT::init(board::touchpad::extiPort, EXTIMode::interrupt, EXTITrigger::rissing);
 
 		INT_1::setInterruptVectorPriority(board::touchpad::intVector, board::touchpad::intVectorPriority, board::touchpad::intVectorSubPriority);
 		INT_1::enableInterruptVector(board::touchpad::intVector);
-	#endif
+	}
 
 	// Inicialitza el canal I2C
 	//
 	I2C::initSCLPin<GPIO_SCL>();
 	I2C::initSDAPin<GPIO_SDA>();
-	I2C::initMaster();
+	I2C::init();
 }
 
 

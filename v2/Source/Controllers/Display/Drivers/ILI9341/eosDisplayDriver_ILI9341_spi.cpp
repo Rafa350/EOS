@@ -7,6 +7,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -29,8 +30,7 @@ void DisplayDriver_ILI9341::initializeInterface() {
     //
 	SPI::initSCKPin<GPIO_SCK>();
 	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::init(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
-			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
+	SPI::initMaster(SPIMode::mode0, SPISize::size8, SPIFirstBit::msb, SPIClockDivider::clkdiv_16);
 }
 
 
@@ -99,7 +99,7 @@ void DisplayDriver_ILI9341::initializeController() {
 
 #ifdef DISPLAY_RST_PORT
     halTMRDelay(10);
-    _pinRST = 1;
+    CPIO_RST::set();
     halTMRDelay(120);
 #endif
 
@@ -121,7 +121,7 @@ void DisplayDriver_ILI9341::initializeController() {
         }
     }
 
-    if constexpr (CI::format == ColorFormat::rgb565) {
+    if constexpr (Color::format == ColorFormat::rgb565) {
     	writeCommand(CMD_PIXEL_FORMAT_SET);
     	writeData(0x55);
     }

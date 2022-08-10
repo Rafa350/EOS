@@ -5,30 +5,6 @@
 #include "eos.h"
 
 
-// Amplada d'imatge
-//
-#ifndef DISPLAY_IMAGE_WIDTH
-#define DISPLAY_IMAGE_WIDTH       240
-#endif
-#if (DISPLAY_IMAGE_WIDTH != 240)
-#error "DISPLAY_IMAGE_WIDTH"
-#endif
-
-// Alçada d'imatge
-//
-#ifndef DISPLAY_IMAGE_HEIGHT
-#define DISPLAY_IMAGE_HEIGHT      320
-#endif
-#if (DISPLAY_IMAGE_HEIGHT != 320)
-#error "DISPLAY_IMAGE_HEIGHT"
-#endif
-
-// Format de color
-//
-#ifndef DISPLAY_COLOR_FORMAT
-#define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565
-#endif
-
 // Interficie amb el controlador
 //
 #define DISPLAY_ILI9341_INTERRFACE_SPI      0
@@ -56,22 +32,20 @@ namespace eos {
 
     class DisplayDriver_ILI9341: public IDisplayDriver {
     	private:
-    		typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
-    		typedef CI::color_t pixel_t;
 #ifdef DISPLAY_RST_PIN
-    		typedef DISLAY_RST_TYPE GPIO_RST;
+    		using GPIO_RST = board::display::GPIO_RST;
 #endif
-    		typedef DISPLAY_CS_TYPE GPIO_CS;
-    		typedef DISPLAY_RS_TYPE GPIO_RS;
+    		using GPIO_CS = board::display::GPIO_CS;
+    		using GPIO_RS = board::display::GPIO_RS;
 #if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-    		typedef DISPLAY_SCK_TYPE GPIO_SCK;
-    		typedef DISPLAY_MOSI_TYPE GPIO_MOSI;
-    		typedef DISPLAY_SPI_TYPE SPI;
+    		using GPIO_SCK = board::display::GPIO_SCK;
+    		using GPIO_MOSI = board::display::GPIO_MOSI;
+    		using SPI = board::display::SPI;
 #endif
 
     	private:
-    		constexpr static int _displayWidth = DISPLAY_IMAGE_WIDTH;
-    		constexpr static int _displayHeight = DISPLAY_IMAGE_HEIGHT;
+    		constexpr static int _displayWidth = board::display::width;
+    		constexpr static int _displayHeight =board::display::height;
 
     	private:
     		int _imageWidth;
@@ -107,8 +81,6 @@ namespace eos {
             void writeRegion(const Color *colors, int count);
             void readRegion(Color *colors, int count);
             void selectRegion(int x, int y, int width, int height);
-
-            inline static pixel_t toPixel(Color color) { return color.convertTo<CI::format>(); }
 
             void initializeInterface();
             void initializeController();

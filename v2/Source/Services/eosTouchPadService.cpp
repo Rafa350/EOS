@@ -33,7 +33,7 @@ void TouchpadService::onInitialize() {
 
     // Inicialitzacio del touch pad
     //
-    _touchDriver = TouchPadDriver_FT5336::getInstance();
+    _touchDriver = new TouchPadDriver_FT5336();
     _touchDriver->initialize();
     _touchDriver->setOrientation(TouchPadOrientation::rotate90);
 

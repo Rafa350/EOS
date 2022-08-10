@@ -15,6 +15,7 @@
     #endif
     #define USE_DISPLAY
     #define DISPLAY_DRV_ILI9341
+    #define EOS_COLOR_FORMAT ColorFormat::rgb565
 
 #elif defined(BUILD_ILI9341_LTDC)
     #if defined(EOS_STM32F4)

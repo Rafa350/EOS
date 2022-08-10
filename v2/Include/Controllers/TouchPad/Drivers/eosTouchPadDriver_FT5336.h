@@ -8,10 +8,8 @@
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "HTL/htlI2C.h"
 #include "HTL/htlGPIO.h"
-#ifdef TOUCHPAD_INT_PORT
 #ifdef EOS_STM32
 #include "HTL/STM32/htlEXTI.h"
-#endif
 #endif
 
 
@@ -244,28 +242,28 @@ namespace eos {
 
 	class TouchPadDriver_FT5336: public ITouchPadDriver {
 		private:
-			#ifdef TOUCHPAD_INT_PORT
-		    	using GPIO_INT = board::touchpad::GPIO_INT;
-		    	using EXTI_INT = board::touchpad::EXTI_INT;
-			#endif
+	    	using GPIO_INT = board::touchpad::GPIO_INT;
+	    	using EXTI_INT = board::touchpad::EXTI_INT;
 			using GPIO_SCL = board::touchpad::GPIO_SCL;
 			using GPIO_SDA = board::touchpad::GPIO_SDA;
 			using I2C = board::touchpad::I2C;
 
-			constexpr static const uint16_t _width = board::touchpad::width;
-     		constexpr static const uint16_t _height = board::touchpad::height;
-     		constexpr static const uint8_t _i2cAddr = board::touchpad::i2cAddr;
+			static constexpr uint16_t _width = board::touchpad::width;
+     		static constexpr uint16_t _height = board::touchpad::height;
+     		static constexpr uint8_t _i2cAddr = board::touchpad::i2cAddr;
 
-		private:
 			static ITouchPadDriver *_instance;
 			TouchPadOrientation _orientation;
 
-		private:
-			TouchPadDriver_FT5336();
 			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &) = delete;
+			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &&) = delete;
+
+			void initializeInterface();
+			uint8_t readRegister(uint8_t reg);
+			void writeRegister(uint8_t reg, uint8_t value);
 
 		public:
-			static ITouchPadDriver* getInstance();
+			TouchPadDriver_FT5336();
 
 			void initialize();
 			void shutdown();
@@ -278,11 +276,6 @@ namespace eos {
 			void enableInt();
 			void disableInt();
 			void clearInt();
-
-		private:
-			void initializeInterface();
-			uint8_t readRegister(uint8_t reg);
-			void writeRegister(uint8_t reg, uint8_t value);
 	};
 }
 

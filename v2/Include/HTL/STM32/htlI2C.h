@@ -55,7 +55,7 @@ namespace htl {
 	};
 
 	template <I2CChannel channel_>
-	class I2C_x final {
+	class I2C_x {
 		private:
 			using Trait = I2CTrait<channel_>;
 			static constexpr unsigned _defaultBlockTime = 1000;
@@ -78,6 +78,10 @@ namespace htl {
 			I2C_x & operator = (const I2C_x &) = delete;
 			I2C_x & operator = (const I2C_x &&) = delete;
 
+		private:
+
+			/// \brief Activa el modul
+			///
 			inline static void activate() {
 
 				#ifdef I2C1
@@ -98,6 +102,8 @@ namespace htl {
 				#endif
             }
 
+			/// \brief Desactiva el modul
+			///
             inline static void deactivate() {
 
 				#ifdef I2C1
@@ -118,25 +124,32 @@ namespace htl {
 				#endif
             }
 
-		public:
+		protected:
 			static I2CResult initMaster() {
+
+				//activate();
 
 				halI2CMasterInitializeInfo initInfo;
 				initInfo.channel = halI2CChannel(channel_);
 				return I2CResult(halI2CMasterInitialize(&_data, &initInfo, &_handler));
 			}
             
+		public:
             inline static void deInit() {
                 
             	deactivate();
             }
 
+            /// \brief Activa la comunicacio
+            //
 			inline static void enable() {
 
 				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
 				regs->CR1 |= I2C_CR1_PE;
 			}
 
+			/// \brief Desactiva la comunicacio
+			///
 			inline static void disable() {
 
 				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
@@ -165,14 +178,22 @@ namespace htl {
 			///
             template <typename gpio_>
 			static void initSCLPin() {
-				gpio_::initAlt(htl::GPIODriver::openDrain, htl::GPIOSpeed::fast, I2CPinTrait<channel_, gpio_, I2CPin::pinSCL>::alt);
+
+            	gpio_::initAlt(
+            		GPIODriver::openDrain,
+					GPIOSpeed::fast,
+					I2CPinTrait<channel_, gpio_, I2CPin::pinSCL>::alt);
 			}
 
             /// \brief Inicialitza el pin SDA
             ///
             template <typename gpio_>
 			static void initSDAPin() {
-				gpio_::initAlt(htl::GPIODriver::openDrain, htl::GPIOSpeed::fast, I2CPinTrait<channel_, gpio_, I2CPin::pinSDA>::alt);
+
+            	gpio_::initAlt(
+            		GPIODriver::openDrain,
+					GPIOSpeed::fast,
+					I2CPinTrait<channel_, gpio_, I2CPin::pinSDA>::alt);
 			}
 
             /// \brief Asigna la funcio d'interrupcio.
@@ -189,7 +210,8 @@ namespace htl {
             /// \param event: L'event.
             /// \param param: El parametre.
             ///
-            static void interruptHandler(I2CEvent event) {
+            static void interruptHandler(
+            	I2CEvent event) {
 
             	if (_isrFunction != nullptr)
             		_isrFunction(event, _isrParam);
@@ -201,20 +223,42 @@ namespace htl {
 	template <I2CChannel channel_> I2CInterruptFunction I2C_x<channel_>::_isrFunction;
 	template <I2CChannel channel_> I2CInterruptParam I2C_x<channel_>::_isrParam;
 
+	template <I2CChannel channel_>
+	class I2CMaster_x final: public I2C_x<channel_> {
+		public:
+			static void init() {
+
+				I2C_x<channel_>::initMaster();
+			}
+	};
+
+	template <I2CChannel channel_>
+	class I2CSlave_x final: public I2C_x<channel_> {
+
+	};
+
 	#ifdef I2C1
 		using I2C_1 = I2C_x<I2CChannel::channel1>;
+		using I2CMaster_1 = I2CMaster_x<I2CChannel::channel1>;
+		using I2CSlave_1 = I2CSlave_x<I2CChannel::channel1>;
 	#endif
 
 	#ifdef I2C2
 		using I2C_2 = I2C_x<I2CChannel::channel2>;
+		using I2CMaster_2 = I2CMaster_x<I2CChannel::channel2>;
+		using I2CSlave_2 = I2CSlave_x<I2CChannel::channel2>;
 	#endif
 
 	#ifdef I2C3
 		using I2C_3 = I2C_x<I2CChannel::channel3>;
+		using I2CMaster_3 = I2CMaster_x<I2CChannel::channel3>;
+		using I2CSlave_3 = I2CSlave_x<I2CChannel::channel3>;
 	#endif
 
 	#ifdef I2C4
 		using I2C_4 = I2C_x<I2CChannel::channel4>;
+		using I2CMaster_4 = I2CMaster_x<I2CChannel::channel4>;
+		using I2CSlave_4 = I2CSlave_x<I2CChannel::channel4>;
 	#endif
 
 	#ifdef I2C1

@@ -71,7 +71,7 @@
 		<link>
 			<name>inc/App/appLedService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appLedService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Include/appLedService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/eosConfig.h</name>
@@ -106,7 +106,7 @@
 		<link>
 			<name>src/App/appLedService.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appLedService.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Source/appLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appMain.cpp</name>
@@ -224,6 +224,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HTL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -292,16 +297,6 @@
 			<name>inc/Framework/EOS/HAL/hal.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/hal.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halSPI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSPI.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -410,6 +405,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -614,24 +614,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosMonoFrameBuffer.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halDMA2D.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPI.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
@@ -749,21 +734,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosMonoFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halDMA2D.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halSPI.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSPI.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
@@ -772,6 +742,21 @@
 			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlSPI.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlSPI.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

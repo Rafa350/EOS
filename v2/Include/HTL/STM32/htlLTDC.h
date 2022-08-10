@@ -98,13 +98,8 @@ namespace htl {
 
 		    	uint32_t tmp;
 
-		    	// Activa el rellotge del dispositiu
-		    	//
 		    	activate();
-
-		    	// Desactiva el dispositiu
-		    	//
-		    	LTDC->GCR &= ~LTDC_GCR_LTDCEN;
+		    	disable();
 
 		    	// Configura el registre SSCR (Sinchronization Size Configuration Register)
 		        //
@@ -143,17 +138,23 @@ namespace htl {
 		        LTDC->TWCR = tmp;
 		    }
 
+		    /// \brief Desinicialitza el modul
+		    ///
 		    static void deInit() {
 
 		    	disable();
 		    	deactivate();
 		    }
 
+		    /// \brief Habilita el modul.
+		    ///
 		    static void enable() {
 
 		    	LTDC->GCR |= LTDC_GCR_LTDCEN;
 		    }
 
+		    /// \brief Desabilita el modul.
+		    ///
 		    static void disable() {
 
 		    	LTDC->GCR &= ~LTDC_GCR_LTDCEN;
@@ -334,7 +335,7 @@ namespace htl {
 
 			static void waitSync() {
 
-				while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 1)
+				while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) != 0)
 					continue;
 				while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
 					continue;
@@ -346,10 +347,11 @@ namespace htl {
 				LTDC->IER |= 1 << uint32_t(event);
 			}
 
-			static void disableInterrupt(
+			static bool disableInterrupt(
 				LTDCEvent event) {
 
 				LTDC->IER &= ~(1 << uint32_t(event));
+				return true;
 			}
 
 			static bool getInterruptFlag(
@@ -547,12 +549,27 @@ namespace htl {
 
 
     template <>
+    struct LTDCPinTrait<GPIO_A1, LTDCPin::pinR2> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_A2, LTDCPin::pinR1> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
     struct LTDCPinTrait<GPIO_A3, LTDCPin::pinB5> {
     	static constexpr GPIOAlt alt = GPIOAlt::alt14;
     };
 
     template <>
     struct LTDCPinTrait<GPIO_A4, LTDCPin::pinVSYNC> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt14;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_A5, LTDCPin::pinR4> {
     	static constexpr GPIOAlt alt = GPIOAlt::alt14;
     };
 
@@ -577,7 +594,17 @@ namespace htl {
     };
 
     template <>
-    struct LTDCPinTrait<GPIO_B8, LTDCPin::pinR6> {
+    struct LTDCPinTrait<GPIO_B0, LTDCPin::pinR3> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt9;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_B1, LTDCPin::pinR6> {
+    	static constexpr GPIOAlt alt = GPIOAlt::alt9;
+    };
+
+    template <>
+    struct LTDCPinTrait<GPIO_B8, LTDCPin::pinB6> {
     	static constexpr GPIOAlt alt = GPIOAlt::alt14;
     };
 

@@ -15,11 +15,11 @@ namespace eos {
 
 	/// \brief Orientacio del touchpad.
 	enum class TouchPadOrientation: uint8_t {
-		normal = 0,
-		rotate0 = normal,
+		rotate0,
 		rotate90,
 		rotate180,
 		rotate270,
+		normal = rotate0
 	};
 
 	/// \brief Accio detectada.

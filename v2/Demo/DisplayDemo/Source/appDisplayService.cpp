@@ -98,8 +98,21 @@ void DisplayService::onSetup() {
 	// Crea el driver de pantalla
 	//
 #if defined(DISPLAY_DRV_ILI9341LTDC)
-	_driver = new DisplayDriver_ILI9341LTDC();
+
+	constexpr int frameBufferPitchBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
+
+	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
+		board::display::width,
+		board::display::height,
+		frameBufferPitch,
+		DisplayOrientation::normal,
+		reinterpret_cast<void*>(board::display::buffer));
+
+	_driver = new DisplayDriver_ILI9341LTDC(frameBuffer);
+
 #elif defined(DISPLAY_DRV_ILI9341)
+
 	_driver = new DisplayDriver_ILI9341();
 
 #elif defined(DISPLAY_DRV_RGBLTDC)

@@ -6,7 +6,6 @@
 #include "HAL/halTMR.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
 
 
@@ -17,21 +16,15 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-DisplayDriver_ILI9341LTDC::DisplayDriver_ILI9341LTDC() {
-
-	int displayPitch = (((_displayWidth * CI::bytes) + 63) & 0xFFFFFFC0) / CI::bytes;
-
-	_frameBuffer = new ColorFrameBuffer_DMA2D(
-		_displayWidth,
-		_displayHeight,
-		DisplayOrientation::normal,
-		(void*) _displayBuffer,
-		displayPitch);
+DisplayDriver_ILI9341LTDC::DisplayDriver_ILI9341LTDC(
+	FrameBuffer *frameBuffer):
+	_frameBuffer(frameBuffer) {
 }
 
 
@@ -59,7 +52,7 @@ void DisplayDriver_ILI9341LTDC::shutdown() {
 ///
 void DisplayDriver_ILI9341LTDC::displayOn() {
 
-	htl::LTDC_1::enable();
+	LTDC_1::enable();
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
@@ -80,7 +73,7 @@ void DisplayDriver_ILI9341LTDC::displayOff() {
 	halTMRDelay(120);
 	close();
 
-	htl::LTDC_1::disable();
+	LTDC_1::disable();
 }
 
 
@@ -242,34 +235,41 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	//
 	SPI::initSCKPin<GPIO_SCK>();
 	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::init(HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
+	SPI::initMaster(SPIMode::mode0, SPISize::size8, SPIFirstBit::msb, SPIClockDivider::clkdiv_16);
 
 	// Inicialitza el modul LTDC
 	//
-	htl::LTDC_1::init(_displayWidth, _displayHeight, DISPLAY_HSYNC, DISPLAY_VSYNC,
-		DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
-	htl::LTDC_1::initDEPin<GPIO_DE>(htl::LTDCPolarity::activeLow);
-	htl::LTDC_1::initHSYNCPin<GPIO_HSYNC>(htl::LTDCPolarity::activeLow);
-	htl::LTDC_1::initVSYNCPin<GPIO_VSYNC>(htl::LTDCPolarity::activeLow);
-	htl::LTDC_1::initDOTCLKPin<GPIO_DOTCLK>(htl::LTDCPolarity::activeLow);
-	htl::LTDC_1::initRPins<GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
-	htl::LTDC_1::initGPins<GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
-	htl::LTDC_1::initBPins<GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
-	htl::LTDC_1::setBackgroundColor(RGB(0, 0, 255));
+	LTDC_1::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	LTDC_1::initDEPin<GPIO_DE>(_dePol);
+	LTDC_1::initHSYNCPin<GPIO_HSYNC>(_hSyncPol);
+	LTDC_1::initVSYNCPin<GPIO_VSYNC>(_vSyncPol);
+	LTDC_1::initPCPin<GPIO_PC>(_pcPol);
+	LTDC_1::initRPins<GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
+	LTDC_1::initGPins<GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
+	LTDC_1::initBPins<GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
+	LTDC_1::setBackgroundColor(RGB(0, 0, 255));
 
 	// Inicialitza la capa 1 del modul LTDC
 	//
-	htl::LTDCLayer_1::setWindow(0, 0, _displayWidth, _displayHeight);
-	htl::LTDCLayer_1::setFrameFormat(
-		htl::LTDCPixelFormatFor<CI::format>::value,
-		_displayWidth * CI::bytes,
-		((_displayWidth * CI::bytes) + 63) & 0xFFFFFFC0,
-		_displayHeight);
-	htl::LTDCLayer_1::setFrameBuffer(reinterpret_cast<void*>(_displayBuffer));
+	constexpr LTDCPixelFormat pixelFormat =
+		Color::format == ColorFormat::argb8888 ? LTDCPixelFormat::argb8888 :
+		Color::format == ColorFormat::argb4444 ? LTDCPixelFormat::argb4444 :
+		Color::format == ColorFormat::argb1555 ? LTDCPixelFormat::argb1555 :
+		Color::format == ColorFormat::rgb888 ? LTDCPixelFormat::rgb888 :
+		Color::format == ColorFormat::al88 ? LTDCPixelFormat::al88 :
+		Color::format == ColorFormat::al44 ? LTDCPixelFormat::al44 :
+		Color::format == ColorFormat::l8 ? LTDCPixelFormat::l8 :
+		LTDCPixelFormat::rgb565;
 
-	// Actualitza despres de la reconfiguracio de les capes
-	//
-	htl::LTDC_1::update();
+	LTDCLayer_1::setWindow(0, 0, _width, _height);
+	LTDCLayer_1::setFrameFormat(
+		pixelFormat,
+		_width * Color::bytes,
+		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
+		_height);
+	LTDCLayer_1::setFrameBuffer(reinterpret_cast<void*>(_buffer));
+
+	LTDC_1::update();
 }
 
 

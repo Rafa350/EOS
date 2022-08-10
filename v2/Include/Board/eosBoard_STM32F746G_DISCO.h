@@ -36,7 +36,6 @@ namespace board {
 #endif // USE_LED1
 
 
-
 // -----------------------------------------------------------------------
 // SW1
 // -----------------------------------------------------------------------
@@ -64,18 +63,6 @@ namespace board {
 //
 #ifdef USE_DISPLAY
 #define EXIST_DISPLAY
-
-#ifndef DISPLAY_COLOR_FORMAT
-	#define DISPLAY_COLOR_FORMAT eos::ColorFormat::rgb565
-#endif
-
-#ifndef DISPLAY_BUFFER
-	#define DISPLAY_BUFFER 0xC0000000
-#endif
-
-#ifndef DISPLAY_DOUBLEBUFFER
-	#define DISPLAY_DOUBLEBUFFER true
-#endif
 
 namespace board {
 	namespace display {
@@ -130,8 +117,7 @@ namespace board {
 		constexpr uint32_t fdiv = 5;         // Divisor de frequencia
 
 		// Configuracio del buffer d'imatge
-		constexpr uint32_t buffer              = DISPLAY_BUFFER;
-		constexpr bool useDoubleBuffer         = DISPLAY_DOUBLEBUFFER;
+		constexpr uint32_t buffer = 0xC0000000;
 	}
 }
 
@@ -157,7 +143,7 @@ namespace board {
 		using EXTI_INT = htl::EXTI_13;
 
 		// Asignacio del dispositiu I2C
-		using I2C = htl::I2C_3;
+		using I2C = htl::I2CMaster_3;
 
 		constexpr uint16_t width = 470;      // Amplada del touchpad
 		constexpr uint16_t height = 272;     // Alçada del touchpad
@@ -169,6 +155,8 @@ namespace board {
 		constexpr htl::INTVector intVector = htl::INTVector::vEXTI13;
 		constexpr htl::INTPriority intVectorPriority = htl::INTPriority::p15;
 		constexpr htl::INTSubPriority intVectorSubPriority = htl::INTSubPriority::s0;
+
+		constexpr bool useInterruption = true;
 	}
 }
 
@@ -220,257 +208,6 @@ namespace board {
 
 #endif // USE_ARDUINO
 
-
-// -----------------------------------------------------------------------
-// Display
-// -----------------------------------------------------------------------
-/*
-#ifdef USE_DISPLAY
-#define EXIST_DISPLAY
-
-// Parametres del display
-//
-#define DISPLAY_IMAGE_WIDTH       480            // Amplada de la pantalla
-#define DISPLAY_IMAGE_HEIGHT      272            // Alçada de la pantalla
-#define DISPLAY_IMAGE_BUFFER      0xC0000000     // Adressa de la ram de video
-#define DISPLAY_DRV_RGBLTDC                      // Driver
-
-
-// Parametres de temporitzacio i sincronitzacio
-//
-#define DISPLAY_HSYNC             41   // Horizontal synchronization
-#define DISPLAY_HBP               13   // Horizontal back porch
-#define DISPLAY_HFP               32   // Horizontal front porch
-#define DISPLAY_VSYNC             10   // Vertical synchronization
-#define DISPLAY_VBP               2    // Vertical back porch
-#define DISPLAY_VFP               2    // Vertical front porch
-#define DISPLAY_HSPOL             0    // HSync active (0=LOW, 1=HIGHT)
-#define DISPLAY_VSPOL             0    // VSync active (0=LOW, 1=HIGHT)
-#define DISPLAY_DEPOL             0    // DE active (0=LOW, 1=HIGHT)
-#define DISPLAY_PCPOL             0    // PC active (0=LOW, 1=HIGHT)
-#define DISPLAY_FDIV              5    // Divisor de frequencia
-
-// Tipus de lletra disponibles
-//
-#define FONT_USE_Consolas8pt
-#define FONT_USE_Consolas10pt
-#define FONT_USE_Consolas12pt
-#define FONT_USE_Consolas14pt
-#define FONT_USE_Consolas18pt
-#define FONT_USE_Consolas24pt
-#define FONT_USE_Tahoma10pt
-#define FONT_USE_Tahoma12pt
-
-// Control del pin DISPLAY_ENABLE
-//
-#define DISPLAY_LCDE_PORT         HAL_GPIO_PORT_I
-#define DISPLAY_LCDE_PIN	      HAL_GPIO_PIN_12
-#define GPIO_LCDE_TYPE            htl::GPIO_I12
-
-// Control del pin BACKLIGHT_ENABLE
-//
-#define DISPLAY_BKE_PORT          HAL_GPIO_PORT_K
-#define DISPLAY_BKE_PIN           HAL_GPIO_PIN_3
-#define GPIO_BKE_TYPE             htl::GPIO_K3
-
-// Control del pin HSYNC (Horizontal sync)
-//
-#define DISPLAY_HSYNC_PORT        HAL_GPIO_PORT_I
-#define DISPLAY_HSYNC_PIN         HAL_GPIO_PIN_10
-#define DISPLAY_HSYNC_AF          HAL_GPIO_AF_14
-#define GPIO_HSYNC_TYPE           htl::GPIO_I10
-
-// Control del pin VSYNC (Vertical sync)
-//
-#define DISPLAY_VSYNC_PORT        HAL_GPIO_PORT_I
-#define DISPLAY_VSYNC_PIN         HAL_GPIO_PIN_9
-#define DISPLAY_VSYNC_AF          HAL_GPIO_AF_14
-#define GPIO_VSYNC_TYPE           htl::GPIO_I9
-
-// Control del pin DE (Display enable)
-//
-#define DISPLAY_DE_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_DE_PIN            HAL_GPIO_PIN_7
-#define DISPLAY_DE_AF             HAL_GPIO_AF_14
-#define GPIO_DE_TYPE              htl::GPIO_K7
-
-// Control del pin DOTCLK (Dot clock)
-//
-#define DISPLAY_DOTCLK_PORT       HAL_GPIO_PORT_I
-#define DISPLAY_DOTCLK_PIN        HAL_GPIO_PIN_14
-#define DISPLAY_DOTCLK_AF         HAL_GPIO_AF_14
-#define GPIO_DOTCLK_TYPE          htl::GPIO_I14
-
-// Control del pin R0
-//
-#define DISPLAY_R0_PORT           HAL_GPIO_PORT_I
-#define DISPLAY_R0_PIN            HAL_GPIO_PIN_15
-#define DISPLAY_R0_AF             HAL_GPIO_AF_14
-#define GPIO_R0_TYPE              htl::GPIO_I15
-
-// Control del pin R1
-//
-#define DISPLAY_R1_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_R1_PIN            HAL_GPIO_PIN_0
-#define DISPLAY_R1_AF             HAL_GPIO_AF_14
-#define GPIO_R1_TYPE              htl::GPIO_J0
-
-// Control del pin R2
-//
-#define DISPLAY_R2_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_R2_PIN            HAL_GPIO_PIN_1
-#define DISPLAY_R2_AF             HAL_GPIO_AF_14
-#define GPIO_R2_TYPE              htl::GPIO_J1
-
-// Control del pin R3
-//
-#define DISPLAY_R3_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_R3_PIN            HAL_GPIO_PIN_2
-#define DISPLAY_R3_AF             HAL_GPIO_AF_14
-#define GPIO_R3_TYPE              htl::GPIO_J2
-
-// Control del pin R4
-//
-#define DISPLAY_R4_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_R4_PIN            HAL_GPIO_PIN_3
-#define DISPLAY_R4_AF             HAL_GPIO_AF_14
-#define GPIO_R4_TYPE              htl::GPIO_J3
-
-// Control del pin R5
-//
-#define DISPLAY_R5_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_R5_PIN            HAL_GPIO_PIN_4
-#define DISPLAY_R5_AF             HAL_GPIO_AF_14
-#define GPIO_R5_TYPE              htl::GPIO_J4
-
-// Control del pin R6
-//
-#define DISPLAY_R6_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_R6_PIN            HAL_GPIO_PIN_5
-#define DISPLAY_R6_AF             HAL_GPIO_AF_14
-#define GPIO_R6_TYPE              htl::GPIO_J5
-
-// Control del pin R7
-//
-#define DISPLAY_R7_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_R7_PIN            HAL_GPIO_PIN_6
-#define DISPLAY_R7_AF             HAL_GPIO_AF_14
-#define GPIO_R7_TYPE              htl::GPIO_J6
-
-// Control del pin G0
-//
-#define DISPLAY_G0_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_G0_PIN            HAL_GPIO_PIN_7
-#define DISPLAY_G0_AF             HAL_GPIO_AF_14
-#define GPIO_G0_TYPE              htl::GPIO_J7
-
-// Control del pin G1
-//
-#define DISPLAY_G1_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_G1_PIN            HAL_GPIO_PIN_8
-#define DISPLAY_G1_AF             HAL_GPIO_AF_14
-#define GPIO_G1_TYPE              htl::GPIO_J8
-
-// Control del pin G2
-//
-#define DISPLAY_G2_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_G2_PIN            HAL_GPIO_PIN_9
-#define DISPLAY_G2_AF             HAL_GPIO_AF_14
-#define GPIO_G2_TYPE              htl::GPIO_J9
-
-// Control del pin G3
-//
-#define DISPLAY_G3_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_G3_PIN            HAL_GPIO_PIN_10
-#define DISPLAY_G3_AF             HAL_GPIO_AF_14
-#define GPIO_G3_TYPE              htl::GPIO_J10
-
-// Control del pin G4
-//
-#define DISPLAY_G4_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_G4_PIN            HAL_GPIO_PIN_11
-#define DISPLAY_G4_AF             HAL_GPIO_AF_14
-#define GPIO_G4_TYPE              htl::GPIO_J11
-
-// Control del pin G5
-//
-#define DISPLAY_G5_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_G5_PIN            HAL_GPIO_PIN_0
-#define DISPLAY_G5_AF             HAL_GPIO_AF_14
-#define GPIO_G5_TYPE              htl::GPIO_K0
-
-// Control del pin G6
-//
-#define DISPLAY_G6_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_G6_PIN            HAL_GPIO_PIN_1
-#define DISPLAY_G6_AF             HAL_GPIO_AF_14
-#define GPIO_G6_TYPE              htl::GPIO_K1
-
-// Control del pin G7
-//
-#define DISPLAY_G7_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_G7_PIN            HAL_GPIO_PIN_2
-#define DISPLAY_G7_AF             HAL_GPIO_AF_14
-#define GPIO_G7_TYPE              htl::GPIO_K2
-
-// Control del pin B0
-//
-#define DISPLAY_B0_PORT           HAL_GPIO_PORT_E
-#define DISPLAY_B0_PIN            HAL_GPIO_PIN_4
-#define DISPLAY_B0_AF             HAL_GPIO_AF_14
-#define GPIO_B0_TYPE              htl::GPIO_E4
-
-// Control del pin B1
-//
-#define DISPLAY_B1_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_B1_PIN            HAL_GPIO_PIN_13
-#define DISPLAY_B1_AF             HAL_GPIO_AF_14
-#define GPIO_B1_TYPE              htl::GPIO_J13
-
-// Control del pin B2
-//
-#define DISPLAY_B2_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_B2_PIN            HAL_GPIO_PIN_14
-#define DISPLAY_B2_AF             HAL_GPIO_AF_14
-#define GPIO_B2_TYPE              htl::GPIO_J14
-
-// Control del pin B3
-//
-#define DISPLAY_B3_PORT           HAL_GPIO_PORT_J
-#define DISPLAY_B3_PIN            HAL_GPIO_PIN_15
-#define DISPLAY_B3_AF             HAL_GPIO_AF_14
-#define GPIO_B3_TYPE              htl::GPIO_J15
-
-// Control del pin B4
-//
-#define DISPLAY_B4_PORT           HAL_GPIO_PORT_G
-#define DISPLAY_B4_PIN            HAL_GPIO_PIN_12
-#define DISPLAY_B4_AF             HAL_GPIO_AF_9
-#define GPIO_B4_TYPE              htl::GPIO_G12
-
-// Control del pin B5
-//
-#define DISPLAY_B5_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_B5_PIN            HAL_GPIO_PIN_4
-#define DISPLAY_B5_AF             HAL_GPIO_AF_14
-#define GPIO_B5_TYPE              htl::GPIO_K4
-
-// Control del pin B6
-//
-#define DISPLAY_B6_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_B6_PIN            HAL_GPIO_PIN_5
-#define DISPLAY_B6_AF             HAL_GPIO_AF_14
-#define GPIO_B6_TYPE              htl::GPIO_K5
-
-// Control del pin B7
-//
-#define DISPLAY_B7_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_B7_PIN            HAL_GPIO_PIN_6
-#define DISPLAY_B7_AF             HAL_GPIO_AF_14
-#define GPIO_B7_TYPE              htl::GPIO_K6
-
-#endif // USE_DISPLAY
-*/
 
 // -----------------------------------------------------------------------
 // Camara DCIM OV9655
@@ -566,31 +303,12 @@ namespace board {
 // Touchpad
 // -----------------------------------------------------------------------
 
-#ifdef USE_TOUCHPAD
+#ifdef USE_TOUCHPADxx
 #define EXIST_TOUCHPAD
 
 #define TOUCHPAD_DRV_FT5336
 
 #define TOUCHPAD_MAX_POINTS         5
-
-//#define TOUCHPAD_I2C_ADDR           0x70
-
-//#define TOUCHPAD_PAD_WIDTH          480
-//#define TOUCHPAD_PAD_HEIGHT         272
-
-// Control del pin SCL
-//
-#define TOUCHPAD_SCL_PORT           HAL_GPIO_PORT_H
-#define TOUCHPAD_SCL_PIN            HAL_GPIO_PIN_7
-#define TOUCHPAD_SCL_AF		        HAL_GPIO_AF_4
-#define TOUCHPAD_SCL_TYPE           htl::GPIO_H7
-
-// Control del pin SDA
-//
-#define TOUCHPAD_SDA_PORT           HAL_GPIO_PORT_H
-#define TOUCHPAD_SDA_PIN            HAL_GPIO_PIN_8
-#define TOUCHPAD_SDA_AF             HAL_GPIO_AF_4
-#define TOUCHPAD_SDA_TYPE           htl::GPIO_H8
 
 // Control del pin INT
 //
@@ -604,9 +322,6 @@ namespace board {
 #define TOUCHPAD_INT_PRIORITY       htl::INTPriority::p15
 #define TOUCHPAD_INT_SUBPRIORITY    htl::INTSubPriority::s0
 
-// Modul I2C de comunicacions
-#define TOUCHPAD_I2C_CHANNEL        HAL_I2C_CHANNEL_3
-#define TOUCHPAD_I2C_TYPE           htl::I2C_3
 
 #endif // USE_TOUCHPAD
 

@@ -40,48 +40,55 @@ namespace eos {
 
     class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
     	private:
-    		typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
-    		typedef DISPLAY_CS_TYPE GPIO_CS;
-    		typedef DISPLAY_RS_TYPE GPIO_RS;
-#ifdef DISPLAY_RTS_PIN
-    		typedef DISPLAY_RST_TYPE GPIO_RST;
-#endif
-    		typedef DISPLAY_SCK_TYPE GPIO_SCK;
-    		typedef DISPLAY_MOSI_TYPE GPIO_MOSI;
-    		typedef DISPLAY_SPI_TYPE SPI;
-    		typedef DISPLAY_DE_TYPE GPIO_DE;
-    		typedef DISPLAY_HSYNC_TYPE GPIO_HSYNC;
-    		typedef DISPLAY_VSYNC_TYPE GPIO_VSYNC;
-    		typedef DISPLAY_DOTCLK_TYPE GPIO_DOTCLK;
-    		typedef DISPLAY_R2_TYPE GPIO_R2;
-    		typedef DISPLAY_R3_TYPE GPIO_R3;
-    		typedef DISPLAY_R4_TYPE GPIO_R4;
-    		typedef DISPLAY_R5_TYPE GPIO_R5;
-    		typedef DISPLAY_R6_TYPE GPIO_R6;
-    		typedef DISPLAY_R7_TYPE GPIO_R7;
-    		typedef DISPLAY_G2_TYPE GPIO_G2;
-    		typedef DISPLAY_G3_TYPE GPIO_G3;
-    		typedef DISPLAY_G4_TYPE GPIO_G4;
-    		typedef DISPLAY_G5_TYPE GPIO_G5;
-    		typedef DISPLAY_G6_TYPE GPIO_G6;
-    		typedef DISPLAY_G7_TYPE GPIO_G7;
-    		typedef DISPLAY_B2_TYPE GPIO_B2;
-    		typedef DISPLAY_B3_TYPE GPIO_B3;
-    		typedef DISPLAY_B4_TYPE GPIO_B4;
-    		typedef DISPLAY_B5_TYPE GPIO_B5;
-    		typedef DISPLAY_B6_TYPE GPIO_B6;
-    		typedef DISPLAY_B7_TYPE GPIO_B7;
+    		using GPIO_CS = board::display::GPIO_CS;
+    		using GPIO_RS = board::display::GPIO_RS;
+    		using GPIO_SCK = board::display::GPIO_SCK;
+    		using GPIO_MOSI = board::display::GPIO_MOSI;
 
-    	private:
-    		constexpr static int _displayWidth = DISPLAY_IMAGE_WIDTH;
-    		constexpr static int _displayHeight = DISPLAY_IMAGE_HEIGHT;
-    		constexpr static int _displayBuffer = DISPLAY_IMAGE_BUFFER;
+			using GPIO_DE = board::display::GPIO_DE;
+			using GPIO_HSYNC = board::display::GPIO_HSYNC;
+			using GPIO_VSYNC = board::display::GPIO_VSYNC;
+			using GPIO_PC = board::display::GPIO_PC;
+			using GPIO_R2 = board::display::GPIO_R2;
+			using GPIO_R3 = board::display::GPIO_R3;
+			using GPIO_R4 = board::display::GPIO_R4;
+			using GPIO_R5 = board::display::GPIO_R5;
+			using GPIO_R6 = board::display::GPIO_R6;
+			using GPIO_R7 = board::display::GPIO_R7;
+			using GPIO_G2 = board::display::GPIO_G2;
+			using GPIO_G3 = board::display::GPIO_G3;
+			using GPIO_G4 = board::display::GPIO_G4;
+			using GPIO_G5 = board::display::GPIO_G5;
+			using GPIO_G6 = board::display::GPIO_G6;
+			using GPIO_G7 = board::display::GPIO_G7;
+			using GPIO_B2 = board::display::GPIO_B2;
+			using GPIO_B3 = board::display::GPIO_B3;
+			using GPIO_B4 = board::display::GPIO_B4;
+			using GPIO_B5 = board::display::GPIO_B5;
+			using GPIO_B6 = board::display::GPIO_B6;
+			using GPIO_B7 = board::display::GPIO_B7;
+
+			using SPI = board::display::SPI;
+
+			static constexpr uint16_t _hSync       = board::display::hSync;
+			static constexpr uint16_t _vSync       = board::display::vSync;
+			static constexpr uint16_t _hBP         = board::display::hBP;
+			static constexpr uint16_t _vBP         = board::display::vBP;
+			static constexpr uint16_t _hFP         = board::display::hFP;
+			static constexpr uint16_t _vFP         = board::display::vFP;
+			static constexpr htl::LTDCPolarity _hSyncPol = board::display::hSyncPol;
+			static constexpr htl::LTDCPolarity _vSyncPol = board::display::vSyncPol;
+			static constexpr htl::LTDCPolarity _dePol    = board::display::dePol;
+			static constexpr htl::LTDCPolarity _pcPol    = board::display::pcPol;
+			static constexpr uint16_t _width       = board::display::width;
+			static constexpr uint16_t _height      = board::display::height;
+			static constexpr uint32_t _buffer      = board::display::buffer;
 
         private:
             FrameBuffer *_frameBuffer;
 
         public:
-            DisplayDriver_ILI9341LTDC();
+            DisplayDriver_ILI9341LTDC(FrameBuffer *frameBuffer);
 
             void initialize() override;
             void shutdown() override;
