@@ -5,7 +5,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HTL/htl.h"
 #include "HTL/STM32/htlGPIO.h"
 
 namespace htl {

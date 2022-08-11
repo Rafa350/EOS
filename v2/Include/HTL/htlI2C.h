@@ -1,10 +1,11 @@
+#pragma once
 #ifndef __htlI2C__
 #define	__htlI2C__
 
 
 // EOS includes
 //
-#include "eos.h"
+#include "HTL/htl.h"
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)

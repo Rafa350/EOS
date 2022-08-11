@@ -5,7 +5,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HTL/htl.h"
 #include "HAL/STM32/halI2C.h"
 #include "HTL/STM32/htlGPIO.h"
 

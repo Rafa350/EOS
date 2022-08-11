@@ -3,7 +3,7 @@
 #define __STM32_htlRegisters__
 
 
-#include "eos.h"
+#include "HTL/htl.h"
 
 
 namespace htl {

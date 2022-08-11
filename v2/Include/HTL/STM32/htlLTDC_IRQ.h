@@ -5,7 +5,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HTL/htl.h"
 
 
 #ifdef __cplusplus
