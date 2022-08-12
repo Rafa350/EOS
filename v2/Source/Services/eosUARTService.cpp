@@ -53,7 +53,8 @@ unsigned UARTService::send(
 	_txLength = length;
 	_txCount = 0;
 
-	// Activa la interrupcio TXE, i comença la transmissio.
+	// Activa la interrupcio TXE, i comença la transmissio. Cada cop
+	// que el registre de transmissio estigui buit, es genera una interrupcio.
 	//
 	UART::enableInterrupt(UARTEvent::txEmpty);
 

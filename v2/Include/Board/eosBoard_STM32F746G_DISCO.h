@@ -150,7 +150,7 @@ namespace board {
 
 		constexpr uint8_t i2cAddr = 0x70;
 
-		constexpr htl::GPIOPort extiPort = htl::GPIOPort::portI;
+		constexpr htl::GPIOPort extiPort = htl::GPIOPort::I;
 
 		constexpr htl::INTVector intVector = htl::INTVector::vEXTI13;
 		constexpr htl::INTPriority intVectorPriority = htl::INTPriority::p15;
@@ -174,8 +174,8 @@ namespace board {
 	namespace arduino {
 
 		// Asignacio de pins
-		using GPIO_D0 = htl::GPIO_C7;
-		using GPIO_D1 = htl::GPIO_C6;
+		using GPIO_D0 = htl::GPIO_C7;     // UART6 RX
+		using GPIO_D1 = htl::GPIO_C6;     // UART6 TX
 		using GPIO_D2 = htl::GPIO_G6;
 		using GPIO_D3 = htl::GPIO_B4;
 		using GPIO_D4 = htl::GPIO_G7;
@@ -185,14 +185,14 @@ namespace board {
 		using GPIO_D8 = htl::GPIO_I2;
 		using GPIO_D9 = htl::GPIO_A15;
 		using GPIO_D10 = htl::GPIO_A8;
-		using GPIO_D11 = htl::GPIO_B15;
-		using GPIO_D12 = htl::GPIO_B14;
-		using GPIO_D13 = htl::GPIO_I1;
-		using GPIO_D14 = htl::GPIO_B9;
-		using GPIO_D15 = htl::GPIO_B8;
+		using GPIO_D11 = htl::GPIO_B15;   // SPI2 MOSI
+		using GPIO_D12 = htl::GPIO_B14;   // SPI2 MISO
+		using GPIO_D13 = htl::GPIO_I1;    // SPI2 SCK
+		using GPIO_D14 = htl::GPIO_B9;    // I2C1 SDA
+		using GPIO_D15 = htl::GPIO_B8;    // I2C1 SCL
 
-		using GPIO_TX = htl::GPIO_C6;
 		using GPIO_RX = htl::GPIO_C7;
+		using GPIO_TX = htl::GPIO_C6;
 		using UART = htl::UART_6;
 
 		using GPIO_SCL = htl::GPIO_B8;

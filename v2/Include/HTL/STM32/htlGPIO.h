@@ -128,7 +128,7 @@ namespace htl {
     struct GPIOPortTrait {
     };
 
-    template <GPIOPort port_, GPIOPin pin_>
+    template <GPIOPort, GPIOPin>
     struct GPIOPinTrait {
     };
 

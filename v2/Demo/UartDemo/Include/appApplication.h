@@ -5,6 +5,7 @@
 #include "eos.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlUART.h"
+#include "HTL/htlTMR.h"
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosUARTService.h"
@@ -15,20 +16,21 @@
 namespace app {
 
     using namespace eos;
+    using namespace htl;
 
     class MyAppLoopService;
 
     class MyApplication: public Application {
         private:
-    	    using GPIO_TX = config::uartService::GPIO_TX;
-    	    using GPIO_RX = config::uartService::GPIO_RX;
-    		using UART = config::uartService::UART;
+    	    using PinTX = config::uartService::GPIO_TX;
+    	    using PinRX = config::uartService::GPIO_RX;
+    		using Uart = config::uartService::UART;
 
-    		using GPIO_LED = board::led1::GPIO_LED;
-    		using GPIO_SW = board::sw1::GPIO_SW;
+    		using PinLED = board::led1::GPIO_LED;
+    		using PinSW = board::sw1::GPIO_SW;
 
-    		using TMR_INPSRV = config::digInputService::TMR;
-    		using TMR_OUTSRV = config::digOutputService::TMR;
+    		using Tmr1 = config::digInputService::TMR;
+    		using Tmr2 = config::digOutputService::TMR;
 
             typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
 
@@ -51,6 +53,10 @@ namespace app {
         private:
             void initializeHardware();
             void initializeServices();
+
+            static void isrTmr1(TMREvent, TMRInterruptParam);
+            static void isrTmr2(TMREvent, TMRInterruptParam);
+
             void swEventHandler(const DigInput::EventArgs &args);
     };
 

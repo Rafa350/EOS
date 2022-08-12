@@ -566,9 +566,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HTL/STM32/htlTMR_InterruptHandler.h</name>
+			<name>Inc/Framework/EOS/HTL/STM32/htlTMR_IRQ.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR_InterruptHandler.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/htlUART.h</name>
@@ -576,9 +576,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HTL/STM32/htlUART_InterruptHandler.h</name>
+			<name>Inc/Framework/EOS/HTL/STM32/htlUART_IRQ.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART_InterruptHandler.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/System/Collections/eosFIFOContainer.h</name>
@@ -621,14 +621,24 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halUART.c</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlGPIO_Init.cpp</name>
+			<name>Src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_Init.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlUART_Init.cpp</name>
+			<name>Src/Framework/EOS/HTL/STM32/htlTMR_IRQ.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlUART_Init.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR_IRQ.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32/htlUART.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlUART.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32/htlUART_IRQ.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlUART_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

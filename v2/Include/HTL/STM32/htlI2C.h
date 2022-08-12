@@ -14,16 +14,16 @@ namespace htl {
 
 	enum class I2CChannel: halI2CChannel {
 		#ifdef I2C1
-			channel1 = HAL_I2C_CHANNEL_1,
+			_1 = HAL_I2C_CHANNEL_1,
 		#endif
 		#ifdef I2C2
-			channel2 = HAL_I2C_CHANNEL_2,
+			_2 = HAL_I2C_CHANNEL_2,
 		#endif
 		#ifdef I2C3
-			channel3 = HAL_I2C_CHANNEL_3,
+			_3 = HAL_I2C_CHANNEL_3,
 		#endif
 		#ifdef I2C4
-			channel4 = HAL_I2C_CHANNEL_4
+			_4 = HAL_I2C_CHANNEL_4
 		#endif
 	};
 
@@ -32,8 +32,8 @@ namespace htl {
 	};
 
 	enum class I2CPin {
-		pinSCL,
-		pinSDA
+		SCL,
+		SDA
 	};
 
 	enum class I2CResult: halI2CResult {
@@ -46,11 +46,11 @@ namespace htl {
 	using I2CInterruptParam = void*;
 	using I2CInterruptFunction = void (*)(I2CEvent, I2CInterruptParam);
 
-	template <I2CChannel channel_>
+	template <I2CChannel>
 	class I2CTrait {
 	};
 
-	template <I2CChannel channel_, typename gpio_, I2CPin>
+	template <I2CChannel, typename, I2CPin>
 	struct I2CPinTrait {
 	};
 
@@ -85,19 +85,19 @@ namespace htl {
 			inline static void activate() {
 
 				#ifdef I2C1
-					if constexpr (channel_ == I2CChannel::channel1)
+					if constexpr (channel_ == I2CChannel::_1)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
 				#endif
 				#ifdef I2C2
-					if constexpr (channel_ == I2CChannel::channel2)
+					if constexpr (channel_ == I2CChannel::_2)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
 				#endif
 				#ifdef I2C3
-					if constexpr (channel_ == I2CChannel::channel3)
+					if constexpr (channel_ == I2CChannel::_3)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C3EN;
 				#endif
 				#ifdef I2C4
-					if constexpr (channel_ == I2CChannel::channel4)
+					if constexpr (channel_ == I2CChannel::_4)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C4EN;
 				#endif
             }
@@ -107,19 +107,19 @@ namespace htl {
             inline static void deactivate() {
 
 				#ifdef I2C1
-					if constexpr (channel_ == I2CChannel::channel1)
+					if constexpr (channel_ == I2CChannel::_1)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
 				#endif
 				#ifdef I2C2
-					if constexpr (channel_ == I2CChannel::channel2)
+					if constexpr (channel_ == I2CChannel::_2)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
 				#endif
 				#ifdef I2C3
-					if constexpr (channel_ == I2CChannel::channel3)
+					if constexpr (channel_ == I2CChannel::_3)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C3EN;
 				#endif
 				#ifdef I2C4
-					if constexpr (channel_ == I2CChannel::channel4)
+					if constexpr (channel_ == I2CChannel::_4)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C4EN;
 				#endif
             }
@@ -137,6 +137,7 @@ namespace htl {
 		public:
             inline static void deInit() {
                 
+            	disable();
             	deactivate();
             }
 
@@ -182,7 +183,7 @@ namespace htl {
             	gpio_::initAlt(
             		GPIODriver::openDrain,
 					GPIOSpeed::fast,
-					I2CPinTrait<channel_, gpio_, I2CPin::pinSCL>::alt);
+					I2CPinTrait<channel_, gpio_, I2CPin::SCL>::alt);
 			}
 
             /// \brief Inicialitza el pin SDA
@@ -193,7 +194,7 @@ namespace htl {
             	gpio_::initAlt(
             		GPIODriver::openDrain,
 					GPIOSpeed::fast,
-					I2CPinTrait<channel_, gpio_, I2CPin::pinSDA>::alt);
+					I2CPinTrait<channel_, gpio_, I2CPin::SDA>::alt);
 			}
 
             /// \brief Asigna la funcio d'interrupcio.
@@ -238,71 +239,71 @@ namespace htl {
 	};
 
 	#ifdef I2C1
-		using I2C_1 = I2C_x<I2CChannel::channel1>;
-		using I2CMaster_1 = I2CMaster_x<I2CChannel::channel1>;
-		using I2CSlave_1 = I2CSlave_x<I2CChannel::channel1>;
+		using I2C_1 = I2C_x<I2CChannel::_1>;
+		using I2CMaster_1 = I2CMaster_x<I2CChannel::_1>;
+		using I2CSlave_1 = I2CSlave_x<I2CChannel::_1>;
 	#endif
 
 	#ifdef I2C2
-		using I2C_2 = I2C_x<I2CChannel::channel2>;
-		using I2CMaster_2 = I2CMaster_x<I2CChannel::channel2>;
-		using I2CSlave_2 = I2CSlave_x<I2CChannel::channel2>;
+		using I2C_2 = I2C_x<I2CChannel::_2>;
+		using I2CMaster_2 = I2CMaster_x<I2CChannel::_2>;
+		using I2CSlave_2 = I2CSlave_x<I2CChannel::_2>;
 	#endif
 
 	#ifdef I2C3
-		using I2C_3 = I2C_x<I2CChannel::channel3>;
-		using I2CMaster_3 = I2CMaster_x<I2CChannel::channel3>;
-		using I2CSlave_3 = I2CSlave_x<I2CChannel::channel3>;
+		using I2C_3 = I2C_x<I2CChannel::_3>;
+		using I2CMaster_3 = I2CMaster_x<I2CChannel::_3>;
+		using I2CSlave_3 = I2CSlave_x<I2CChannel::_3>;
 	#endif
 
 	#ifdef I2C4
-		using I2C_4 = I2C_x<I2CChannel::channel4>;
-		using I2CMaster_4 = I2CMaster_x<I2CChannel::channel4>;
-		using I2CSlave_4 = I2CSlave_x<I2CChannel::channel4>;
+		using I2C_4 = I2C_x<I2CChannel::_4>;
+		using I2CMaster_4 = I2CMaster_x<I2CChannel::_4>;
+		using I2CSlave_4 = I2CSlave_x<I2CChannel::_4>;
 	#endif
 
 	#ifdef I2C1
 		template <>
-		struct I2CTrait<I2CChannel::channel1> {
+		struct I2CTrait<I2CChannel::_1> {
 			static constexpr uint32_t addr = I2C1_BASE;
 		};
 
 		template<>
-		struct I2CPinTrait<I2CChannel::channel1, GPIO_B6, I2CPin::pinSCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::alt4;
+		struct I2CPinTrait<I2CChannel::_1, GPIO_B6, I2CPin::SCL> {
+			static constexpr GPIOAlt alt = GPIOAlt::_4;
 		};
 		template<>
-		struct I2CPinTrait<I2CChannel::channel1, GPIO_B7, I2CPin::pinSDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::alt4;
+		struct I2CPinTrait<I2CChannel::_1, GPIO_B7, I2CPin::SDA> {
+			static constexpr GPIOAlt alt = GPIOAlt::_4;
 		};
 	#endif
 
 	#ifdef I2C2
 		template <>
-		struct I2CTrait<I2CChannel::channel2> {
+		struct I2CTrait<I2CChannel::_2> {
 			static constexpr uint32_t addr = I2C2_BASE;
 		};
 	#endif
 
 	#ifdef I2C3
 		template <>
-		struct I2CTrait<I2CChannel::channel3> {
+		struct I2CTrait<I2CChannel::_3> {
 			static constexpr uint32_t addr = I2C3_BASE;
 		};
 
 		template <>
-		struct I2CPinTrait<I2CChannel::channel3, GPIO_H7, I2CPin::pinSCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::alt4;
+		struct I2CPinTrait<I2CChannel::_3, GPIO_H7, I2CPin::SCL> {
+			static constexpr GPIOAlt alt = GPIOAlt::_4;
 		};
 		template <>
-		struct I2CPinTrait<I2CChannel::channel3, GPIO_H8, I2CPin::pinSDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::alt4;
+		struct I2CPinTrait<I2CChannel::_3, GPIO_H8, I2CPin::SDA> {
+			static constexpr GPIOAlt alt = GPIOAlt::_4;
 		};
 	#endif
 
 	#ifdef I2C4
 		template <>
-		struct I2CTrait<I2CChannel::channel4> {
+		struct I2CTrait<I2CChannel::_4> {
 			static constexpr uint32_t addr = I2C4_BASE;
 		};
 	#endif

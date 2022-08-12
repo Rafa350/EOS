@@ -40,40 +40,44 @@ void MyApplication::onInitialize() {
 ///
 void MyApplication::initializeHardware() {
 
-	// Inicialitza els pins SW del pulsador
+	// Inicialitza els pin del pulsador
 	//
-	GPIO_SW::initInput(GPIOPull::up);
+	PinSW::initInput(GPIOPull::up);
 
-    // Inicialitza els pins LED del leds
+    // Inicialitza els pin del led
     //
-	GPIO_LED::initOutput(GPIODriver::pushPull);
-	GPIO_LED::clear();
+	PinLED::initOutput(GPIODriver::pushPull);
+	PinLED::clear();
 
     // Inicialitza la UART
 	//
-	UART::init();
-	UART::initTXPin<GPIO_TX>();
-	UART::initRXPin<GPIO_RX>();
-	UART::setProtocol(UARTWord::word8, UARTParity::none, UARTStop::stop1);
-	UART::setTimming(UARTBaudMode::b9600, UARTClockMode::pclk, 0, UARTOverSampling::os16);
-	INT_1::setInterruptVectorPriority(config::uartService::uartVector, config::uartService::uartVectorPriority, config::uartService::uartVectorSubPriority);
+	Uart::init();
+	Uart::initTXPin<PinTX>();
+	Uart::initRXPin<PinRX>();
+	Uart::setProtocol(UARTWord::_8, UARTParity::none, UARTStop::_1);
+	Uart::setTimming(UARTBaudMode::_9600, UARTClockSource::automatic, 0, UARTOverSampling::_16);
+	Uart::enable();
+	INT_1::setInterruptVectorPriority(config::uartService::uartVector,	config::uartService::uartVectorPriority, config::uartService::uartVectorSubPriority);
 	INT_1::enableInterruptVector(INTVector::vUART6);
 
 	// Inicialitza el temporitzador per les entrades digitals
 	//
-	TMR_INPSRV::init();
-	TMR_INPSRV::setClockDivider(TMRClockDivider::div1);
-	TMR_INPSRV::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
-	TMR_INPSRV::setPeriod((1000 * config::digInputService::tmrPeriod) - 1);
+	Tmr1::init();
+	Tmr1::setClockDivider(TMRClockDivider::_1);
+	Tmr1::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
+	Tmr1::setPeriod((1000 * config::digInputService::tmrPeriod) - 1);
+	Tmr1::setInterruptFunction(isrTmr1, this);
     INT_1::setInterruptVectorPriority(config::digInputService::tmrVector, config::digInputService::tmrVectorPriority, config::digInputService::tmrVectorSubPriority);
     INT_1::enableInterruptVector(config::digInputService::tmrVector);
 
 	// Inicialitza el temporitzador per les sortides digitals
 	//
-	TMR_OUTSRV::init();
-	TMR_OUTSRV::setClockDivider(TMRClockDivider::div1);
-	TMR_OUTSRV::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
-	TMR_OUTSRV::setPeriod((1000 * config::digOutputService::tmrPeriod) - 1);
+	Tmr2::init();
+	Tmr2::setClockDivider(TMRClockDivider::_1);
+	Tmr2::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
+	Tmr2::setPeriod((1000 * config::digOutputService::tmrPeriod) - 1);
+	Tmr2::enableInterrupt(TMREvent::update);
+	Tmr2::setInterruptFunction(isrTmr2, this);
     INT_1::setInterruptVectorPriority(config::digOutputService::tmrVector, config::digOutputService::tmrVectorPriority, config::digOutputService::tmrVectorSubPriority);
     INT_1::enableInterruptVector(config::digOutputService::tmrVector);
 }
@@ -89,13 +93,13 @@ void MyApplication::initializeServices() {
     _digInputService = new DigInputService(this);
     _digInputService->setPriority(Task::Priority::high);
 
-    _sw = new DigInput(_digInputService, getAdapter<GPIO_SW>());
+    _sw = new DigInput(_digInputService, getAdapter<PinSW>());
     _sw->setCallback(_swEventCallback, nullptr);
 
     // Inicialitza el servei de sortides digitals
     //
     _digOutputService = new DigOutputService(this);
-    _led = new DigOutput(_digOutputService, getAdapter<GPIO_LED>());
+    _led = new DigOutput(_digOutputService, getAdapter<PinLED>());
 
 	// Inicialitza el servei UART
 	//
@@ -104,6 +108,44 @@ void MyApplication::initializeServices() {
 	// Inicialitza el servei AppLoop
 	//
 	_loopService = new MyAppLoopService(this, _uartService);
+
+	// Arranca el temporitzador de gestio de les entrades digitals
+	//
+	Tmr1::enableInterrupt(TMREvent::update);
+	Tmr1::start();
+
+	// Arranca el temporitzador de les sortides digitals
+	//
+	Tmr2::enableInterrupt(TMREvent::update);
+	Tmr2::start();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Funcio d'interrupcio del temporitzador Tmr1
+/// \param    event: El event.
+/// \param    param: El parametre.
+///
+void MyApplication::isrTmr1(
+	TMREvent event,
+	TMRInterruptParam param) {
+
+	MyApplication *app = reinterpret_cast<MyApplication*>(param);
+	app->_digInputService->tmrInterruptFunction();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Funcio d'interrupcio del temporitzador Tmr2
+/// \param    event: El event.
+/// \param    param: El parametre.
+///
+void MyApplication::isrTmr2(
+	TMREvent event,
+	TMRInterruptParam param) {
+
+	MyApplication *app = reinterpret_cast<MyApplication*>(param);
+	app->_digOutputService->tmrInterruptFunction();
 }
 
 

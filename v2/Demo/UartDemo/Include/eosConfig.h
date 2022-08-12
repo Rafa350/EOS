@@ -22,8 +22,13 @@ namespace config {
 
 		constexpr unsigned tmrPeriod = 5;
 		constexpr htl::INTVector tmrVector = htl::INTVector::vTMR2;
-		constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
-    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+		#if defined(EOS_PIC32)
+			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
+	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+		#elif defined(EOS_STM32)
+			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p5;
+	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+		#endif
 	}
 
 	namespace digOutputService {
@@ -32,8 +37,13 @@ namespace config {
 
 		constexpr unsigned tmrPeriod = 1;
 		constexpr htl::INTVector tmrVector = htl::INTVector::vTMR3;
-		constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
-    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+		#if defined(EOS_PIC32)
+			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
+	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+		#elif defined(EOS_STM32)
+			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p5;
+	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+		#endif
 	}
 
 	namespace uartService {

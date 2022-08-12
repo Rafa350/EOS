@@ -142,13 +142,11 @@ void TextBlock::onRender(
 	// Dibuixa el text
 	//
 	int x = 0;
-	int y;
+	int y = 0;
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wswitch"
+	#pragma GCC diagnostic ignored "-Wswitch-default"
 	switch (getVerticalAlignment()) {
-		case VerticalAlignment::top:
-		case VerticalAlignment::stretch:
-			y = 0;
-			break;
-
 		case VerticalAlignment::center:
 			y = (getBounds().getHeight() - _ft.getBounds().getHeight()) / 2;
 			break;
@@ -157,6 +155,7 @@ void TextBlock::onRender(
 			y = getBounds().getHeight() - _ft.getBounds().getHeight();
 			break;
 	}
+	#pragma diagnostic pop
 	g.paintText(Point(x, y), _ft);
 
 	// Finalitza el renderitzat.

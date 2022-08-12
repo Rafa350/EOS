@@ -45,6 +45,7 @@ static void setSpeed(
 
 		#pragma GCC diagnostic push
 		#pragma GCC diagnostic ignored "-Wswitch"
+		#pragma GCC diagnostic ignored "-Wswitch-default"
 		switch (speed) {
 			case GPIOSpeed::low:
 				value = 0;
@@ -87,6 +88,7 @@ static void setPull(
 
 		#pragma GCC diagnostic push
 		#pragma GCC diagnostic ignored "-Wswitch"
+		#pragma GCC diagnostic ignored "-Wswitch-default"
 		switch (pull) {
 			case GPIOPull::down:
 				value = 2;
@@ -108,6 +110,11 @@ static void setPull(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona la funcio alternariva del pin.
+/// \param    regs: El bloc de registres.
+/// \param    pn: El numero de pin.
+/// \param    alt: Identificador de la funcio alternativa.
 static void setAlt(
 	GPIO_TypeDef *regs,
 	uint32_t pn,
@@ -133,11 +140,9 @@ void htl::GPIO_initInput(
     uint32_t pn,
     GPIOPull pull) {
 
-    uint32_t tmp;
-
     // Configura el registre MODER (Mode Register)
     //
-    tmp = regs->MODER;
+    uint32_t tmp = regs->MODER;
     tmp &= ~(0b11 << (pn * 2));
     regs->MODER = tmp;
 
@@ -185,17 +190,13 @@ void htl::GPIO_initAlt(
     GPIOSpeed speed,
     GPIOAlt alt) {
         
-    uint32_t temp;
-
     // Configura el registre MODER (Mode Register)
     //
-    temp = regs->MODER;
-    temp &= ~(0b11 << (pn * 2));
-    temp |= 0b10 << (pn * 2);
-    regs->MODER = temp;
+    uint32_t tmp = regs->MODER;
+    tmp &= ~(0b11 << (pn * 2));
+    tmp |= 0b10 << (pn * 2);
+    regs->MODER = tmp;
 
-    // Configura el registre OTYPER (Output Type Register)
-    //
     setDriver(regs, pn, driver);
     setSpeed(regs, pn, speed);
     setAlt(regs, pn, alt);

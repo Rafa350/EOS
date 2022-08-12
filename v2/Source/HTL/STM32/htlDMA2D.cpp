@@ -11,8 +11,10 @@ using namespace htl;
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
 /// \param    pitch: Pitch de la regio.
-/// \param    colorMode: El format de color de la regio.
+/// \param    colorMode: El format de color.
 /// \param    color: El color.
+/// \remarks  En aquest casa no hi ha conversio. El color d'entrada es
+///           el mateix que el de sortida.
 ///
 void htl::DMA2D_startFill(
 	void *ptr,
@@ -58,13 +60,13 @@ void htl::DMA2D_startFill(
 
 /// ----------------------------------------------------------------------
 /// \brief    Copia un mapa de bits a una regio
-/// \param    ptr: Punter al primer pixel de la regio de destinacio.
+/// \param    ptr: Punter al primer pixel de la regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
 /// \param    pitch: Pitch de la regio.
-/// \param    colorMode: Format de color de la regio de destinacio.
+/// \param    colorMode: Format de color de la regio.
 /// \param    src: Punter al primer pixel del mapa de bits.
-/// \param    srcPitch: Pitch avançar a la seguent linia del mapa de bits.
+/// \param    srcPitch: Pitch del mapa de bits.
 /// \param    srcColorMode: Format de color del mapa de bits.
 ///
 void htl::DMA2D_startCopy(

@@ -67,6 +67,11 @@ static void setMode(
 };
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la polaritat del senyal CLK
+/// \param    regs: El bloc de registres.
+/// \param    polarity: La polaritat.
+///
 static void setClkPolarity(
 	SPI_TypeDef *regs,
 	SPIClkPolarity polarity) {
@@ -78,6 +83,11 @@ static void setClkPolarity(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la fase del senyal CLK
+/// \param    regs: El bloc de registres.
+/// \param    polarity: La fase.
+///
 static void setClkPhase(
 	SPI_TypeDef *regs,
 	SPIClkPhase phase) {
@@ -108,11 +118,11 @@ static void setSize(
 		uint32_t tmp = regs->CR2;
 		tmp &= ~(SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
 		switch (size) {
-			case SPISize::size8:
+			case SPISize::_8:
 				tmp |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
 				break;
 
-			case SPISize::size16:
+			case SPISize::_16:
 				tmp |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
 				break;
 		}
@@ -122,7 +132,7 @@ static void setSize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Indica quin es el primer bit a tranasmetre en cada trama.
+/// \brief    Indica quin es el primer bit a transmetre en cada trama.
 /// \param    regs: El bloc de registres.
 /// \param    firstBit: Quin bit es el primer.
 ///
@@ -163,16 +173,11 @@ static void waitBusy(
 ///
 #ifdef EOS_STM32F7
 static void waitTxFifoEmpty(
-	halSPIHandler handler,
+	SPI_TypeDef *regs,
 	unsigned startTime,
 	unsigned blockTime) {
 
-	__VERIFY_HANDLER(handler);
-	__VERIFY_DEVICE(handler->device);
-
-	SPI_TypeDef* device = handler->device;
-
-	while ((device->SR & SPI_SR_FTLVL) != SPI_FTLVL_EMPTY) {
+	while ((regs->SR & SPI_SR_FTLVL) != SPI_FTLVL_EMPTY) {
 		if (halSYSCheckTimeout(startTime, blockTime)) {
 
 		}
@@ -189,21 +194,16 @@ static void waitTxFifoEmpty(
 ///
 #ifdef EOS_STM32F7
 static void waitRxFifoEmpty(
-	halSPIHandler handler,
+	SPI_TypeDef *regs,
 	unsigned startTime,
 	unsigned blockTime) {
 
-	__VERIFY_HANDLER(handler);
-	__VERIFY_DEVICE(handler->device);
-
-	SPI_TypeDef* device = handler->device;
-
-	while ((device->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
+	while ((resg->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
 		if (halSYSCheckTimeout(startTime, blockTime)) {
 
 		}
 
-		uint8_t dummy = *((__IO uint8_t *)&device->DR);
+		uint8_t dummy = *((__IO uint8_t *)&regs->DR);
 	}
 }
 #endif
@@ -262,13 +262,13 @@ void htl::SPI_send(
 #elif defined(EOS_STM32F7)
 		if (count > 1) {
 			// Acces com a 16 bits (Packing mode)
-			device->DR = *((uint16_t*)p);
+			regs->DR = *((uint16_t*)p);
 			p += sizeof(uint16_t);
 			count -= sizeof(uint16_t);
 		}
 		else {
 			// Access com a 8 bits
-			*((volatile uint8_t*)&device->DR) = *((uint8_t*)p);
+			*((volatile uint8_t*)&regs->DR) = *((uint8_t*)p);
 			p += sizeof(uint8_t);
 			count -= sizeof(uint8_t);
 		}
@@ -284,10 +284,10 @@ void htl::SPI_send(
 	}
 
 #ifdef EOS_STM32F7
-	waitTxFifoEmpty(handler, startTime, blockTime);
+	waitTxFifoEmpty(regs, startTime, blockTime);
 #endif
 	waitBusy(regs, startTime, blockTime);
 #ifdef EOS_STM32F7
-	waitRxFifoEmpty(handler, startTime, blockTime);
+	waitRxFifoEmpty(regs, startTime, blockTime);
 #endif
 }
