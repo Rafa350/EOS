@@ -1,4 +1,4 @@
-#include "eos.h"
+#include "HTL/htl.h"
 #include "HTL/STM32/htlTMR.h"
 #include "HTL/STM32/htlTMR_IRQ.h"
 

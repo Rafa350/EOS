@@ -71,11 +71,11 @@ namespace htl {
 	void SPI_init(SPI_TypeDef*, SPIMode, SPIClkPolarity, SPIClkPhase, SPISize, SPIFirstBit, SPIClockDivider);
 	void SPI_send(SPI_TypeDef*, const void*, int, unsigned);
 
-	template <SPIChannel channel_>
+	template <SPIChannel>
 	struct SPITrait {
 	};
 
-	template <SPIChannel channel_, typename gpio_, SPIPin pin_>
+	template <SPIChannel, typename, SPIPin>
 	struct SPIPinTrait {
 	};
 

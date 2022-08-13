@@ -154,6 +154,9 @@ void UARTService::onTask(
 void UARTService::uartInterruptFunction(
 	UARTEvent event) {
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wswitch"
+	#pragma GCC diagnostic ignored "-Wswitch-default"
 	switch (event) {
 
 		// RXNE (Reception data register not empty)
@@ -190,6 +193,7 @@ void UARTService::uartInterruptFunction(
 			_txPending.releaseISR();
 			break;
 	}
+	#pragma GCC diagnostic pop
 }
 
 

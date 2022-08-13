@@ -142,7 +142,9 @@ namespace htl {
 			UART_x & operator = (const UART_x &) = delete;
 			UART_x & operator = (const UART_x &&) = delete;
 
-			static void enableClock() {
+			/// \brief Activa el modul.
+			///
+			static void activate() {
 
 				if constexpr (channel_ == UARTChannel::_1)
 					RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
@@ -162,10 +164,11 @@ namespace htl {
 					RCC->APB1ENR |= RCC_APB1ENR_UART8EN;
 
 				__DSB();
-
 			}
 
-			static void disableClock() {
+			/// \brief Desactiva el modul.
+			///
+			static void deactivate() {
 
 				if constexpr (channel_ == UARTChannel::_1)
 					RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
@@ -190,7 +193,7 @@ namespace htl {
 			///
 			static void init() {
 
-				enableClock();
+				activate();
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->CR1 &= ~USART_CR1_UE;
@@ -201,7 +204,7 @@ namespace htl {
 			///
 			static void deInit() {
 
-				disable();
+				deactivate();
 				disableClock();
 			}
 
@@ -210,7 +213,7 @@ namespace htl {
 			static void enable() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 |= USART_CR1_UE;
+				regs->CR1 |= (USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
 			}
 
 			/// \brief Deshabilita el modul per comunicar
@@ -218,18 +221,18 @@ namespace htl {
 			static void disable() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 &= ~USART_CR1_UE;
+				regs->CR1 &= ~(USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
 			}
 
 			/// \brief Configuracio del timing.
 			/// \param baudMode: Opcions de baud.
-			/// \param clockMode: Opcions del clock.
+			/// \param clocCource: Opcions del clock.
 			/// \param baud: El valor de velocitat.
 			/// \param overSampling: Valor del sobre mostrejat
 			///
 			static void setTimming(
-				UARTBaudMode baudMode,
-				UARTClockSource clockSource,
+				UARTBaudMode baudMode = UARTBaudMode::_9600,
+				UARTClockSource clockSource = UARTClockSource::automatic,
 				unsigned rate = 0,
 				UARTOverSampling overSampling = UARTOverSampling::_16) {
 
@@ -237,6 +240,11 @@ namespace htl {
 				UART_setTimming(regs, baudMode, clockSource, rate, overSampling);
 			}
 
+			/// \brief Configura el protocol de comunicacio.
+			/// \param work: Numero de bits de dades.
+			/// \param parity: Opcionsd e paritat.
+			/// \param stop: Numero dels bits de parada.
+			///
 			static void setProtocol(
 				UARTWord word,
 				UARTParity parity,
@@ -249,6 +257,8 @@ namespace htl {
 					stop);
 			}
 
+			/// \brief Inicialitza el pin TX
+			///
 			template <typename gpio_>
 			static void initTXPin() {
 				gpio_::initAlt(
@@ -257,6 +267,8 @@ namespace htl {
 					UARTPinTrait<channel_, gpio_, UARTPin::TX>::alt);
 			}
 
+			/// \brief Inicialitza el pin RX
+			///
 			template <typename gpio_>
 			static void initRXPin() {
 				gpio_::initAlt(
@@ -278,21 +290,27 @@ namespace htl {
 				return regs->RDR;
 			}
 
-			static constexpr void enableInterrupt(
+			/// \brief Habilita les interrupcions
+			/// \param event: El event.
+			///
+			static void enableInterrupt(
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				UART_enableInterrupt(regs, event);
 			}
 
-			static constexpr bool disableInterrupt(
+			/// \brief Deshabilita les interrupcions
+			/// \param event: El event.
+			///
+			static bool disableInterrupt(
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				return UART_disableInterrupt(regs, event);
 			}
 
-			static constexpr bool getInterruptFlag(
+			static bool getInterruptFlag(
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
@@ -300,40 +318,59 @@ namespace htl {
 					case UARTEvent::framming:
 						return (regs->ISR & USART_ISR_FE) != 0;
 
+					case UARTEvent::idle:
+						return (regs->ISR & USART_ISR_IDLE) != 0;
+
 					case UARTEvent::noise:
 						return (regs->ISR & USART_ISR_NE) != 0;
 
 					case UARTEvent::overrun:
-						return (regs->ISR & ~USART_ISR_ORE) != 0;
+						return (regs->ISR & USART_ISR_ORE) != 0;
 
 					case UARTEvent::parity:
-						return (regs->ISR & ~USART_ISR_PE) != 0;
+						return (regs->ISR & USART_ISR_PE) != 0;
 
 					case UARTEvent::txComplete:
-						return (regs->ISR & ~USART_ISR_TC) != 0;
+						return (regs->ISR & USART_ISR_TC) != 0;
 
 					case UARTEvent::txEmpty:
-						return (regs->ISR & ~USART_ISR_TXE) != 0;
+						return (regs->ISR & USART_ISR_TXE) != 0;
 
 					case UARTEvent::rxNotEmpty:
-						return (regs->ISR & ~USART_ISR_RXNE) != 0;
+						return (regs->ISR & USART_ISR_RXNE) != 0;
 
 					default:
 						return false;
 				}
 			}
 
-			static constexpr void clearInterruptFlag(
+			static void clearInterruptFlag(
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				switch (event) {
+					case UARTEvent::brk:
+						regs->ISR &= ~USART_ISR_SBKF;
+						break;
+
+					case UARTEvent::cts:
+						regs->ISR &= ~USART_ISR_CTS;
+						break;
+
+					case UARTEvent::endOfBlock:
+						regs->ISR &= ~USART_ISR_EOBF;
+						break;
+
 					case UARTEvent::framming:
-						regs->ISR &= USART_ISR_FE;
+						regs->ISR &= ~USART_ISR_FE;
+						break;
+
+					case UARTEvent::idle:
+						regs->ISR &= ~USART_ISR_IDLE;
 						break;
 
 					case UARTEvent::noise:
-						regs->ISR &= USART_ISR_NE;
+						regs->ISR &= ~USART_ISR_NE;
 						break;
 
 					case UARTEvent::overrun:
@@ -342,6 +379,10 @@ namespace htl {
 
 					case UARTEvent::parity:
 						regs->ISR &= ~USART_ISR_PE;
+						break;
+
+					case UARTEvent::rxTimeout:
+						regs->ISR &= ~USART_ISR_RTOF;
 						break;
 
 					case UARTEvent::txComplete:
@@ -358,7 +399,7 @@ namespace htl {
 				}
 			}
 
-			/// \brief Borre tots els flags d'interrupcio.
+			/// \brief Borra tots els flags d'interrupcio.
 			///
 			inline static void clearInterruptFlags() {
 

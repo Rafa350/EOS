@@ -1,10 +1,9 @@
-#include "eos.h"
+#include "HTL/htl.h"
 #include "HAL/halSYS.h"
 #include "HTL/STM32/htlUART.h"
 
 
 using namespace htl;
-
 
 
 /// ----------------------------------------------------------------------
@@ -292,6 +291,11 @@ void htl::UART_enableInterrupt(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desabilita les interrupcions
+/// \param    regs: El bloc de registres.
+/// \param    event: El event.
+///
 bool htl::UART_disableInterrupt(
 	USART_TypeDef *regs,
 	UARTEvent event) {
