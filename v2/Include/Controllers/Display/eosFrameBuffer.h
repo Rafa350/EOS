@@ -35,8 +35,10 @@ namespace eos {
 
             void setOrientation(DisplayOrientation orientation);
 
-            inline int getImageWidth() const { return _maxX + 1; }
-            inline int getImageHeight() const { return _maxY + 1; }
+            inline int getFrameWidth() const { return _frameWidth; }
+            inline int getFrameHeight() const { return _frameHeight; }
+            inline int getWidth() const { return _maxX + 1; }
+            inline int getHeight() const { return _maxY + 1; }
             virtual void *getBuffer() const = 0;
 
             void clear(Color color);

@@ -12,8 +12,8 @@
 
 namespace htl {
 
-	/// \brief Format de color d'entrada
-	/// \remarks Els valors corresponen al registre hardware. No modificar
+	/// \brief Format de color d'entrada.
+	/// \remarks Els valors corresponen al registre hardware. No modificar.
 	///
 	enum class DMA2DInputColorMode {
 		argb8888 = 0,
@@ -29,8 +29,8 @@ namespace htl {
 		a4 = 10
 	};
 
-	/// \brief Format de color de sortida
-    /// \remarks Els valors corresponen al registre hardware. No modificar
+	/// \brief Format de color de sortida.
+    /// \remarks Els valors corresponen al registre hardware. No modificar.
 	///
 	enum class DMA2DOutputColorMode {
 		argb8888 = 0,
@@ -40,6 +40,8 @@ namespace htl {
 		argb4444 = 4
 	};
 
+	/// \brief Events d'interrupcio.
+	///
 	enum class DMA2DEvent {
 		configurationError,
 		clutTransferComplete,
@@ -71,12 +73,16 @@ namespace htl {
 			DMA2D_x & operator = (const DMA2D_x &) = delete;
 			DMA2D_x & operator = (const DMA2D_x &&) = delete;
 
+			/// \brief Activa el modul
+			///
 			static void activate() {
 
 				RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
 				__DSB();
 			}
 
+			/// \brief Desactiva el modul.
+			///
 			static void deactivate() {
 
 				RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2DEN;
@@ -134,6 +140,88 @@ namespace htl {
 			inline static bool waitForFinish() {
 
 				return DMA2D_waitForFinish();
+			}
+
+			/// \brief Habilita la interrupcio.
+			/// \param event: El event.
+			///
+			static void enableInterrupt(
+				DMA2DEvent event) {
+
+				switch (event) {
+					case DMA2DEvent::transferComplete:
+						DMA2D->CR |= DMA2D_CR_TCIE;
+						break;
+
+					case DMA2DEvent::transferWatermark:
+						DMA2D->CR |= DMA2D_CR_TWIE;
+						break;
+
+					case DMA2DEvent::clutAccessError:
+						DMA2D->CR |= DMA2D_CR_CAEIE;
+						break;
+
+					case DMA2DEvent::clutTransferComplete:
+						DMA2D->CR |= DMA2D_CR_CTCIE;
+						break;
+
+					case DMA2DEvent::configurationError:
+						DMA2D->CR |= DMA2D_CR_CEIE;
+						break;
+
+					case DMA2DEvent::transferError:
+						DMA2D->CR |= DMA2D_CR_TEIE;
+						break;
+				}
+			}
+
+			/// \brief Desabilita la interrupcio.
+			/// \return L'estat previ.
+			///
+			static bool disableInterrupt(
+				DMA2DEvent event) {
+
+				bool state = false;
+				switch (event) {
+					case DMA2DEvent::transferComplete:
+						state = (DMA2D->CR & DMA2D_CR_TCIE) != 0;
+						DMA2D->CR &= ~DMA2D_CR_TCIE;
+						break;
+
+					case DMA2DEvent::transferWatermark:
+						state = (DMA2D->CR & DMA2D_CR_TWIE) != 0;
+						DMA2D->CR &= ~DMA2D_CR_TWIE;
+						break;
+
+					case DMA2DEvent::clutAccessError:
+						state = (DMA2D->CR & DMA2D_CR_CAEIE) != 0;
+						DMA2D->CR &= ~DMA2D_CR_CAEIE;
+						break;
+
+					case DMA2DEvent::clutTransferComplete:
+						state = (DMA2D->CR & DMA2D_CR_CTCIE) != 0;
+						DMA2D->CR &= ~DMA2D_CR_CTCIE;
+						break;
+
+					case DMA2DEvent::configurationError:
+						state = (DMA2D->CR & DMA2D_CR_CEIE) != 0;
+						DMA2D->CR &= ~DMA2D_CR_CEIE;
+						break;
+
+					case DMA2DEvent::transferError:
+						state = (DMA2D->CR & DMA2D_CR_TEIE) != 0;
+						DMA2D->CR &= ~DMA2D_CR_TEIE;
+						break;
+				}
+				return state;
+			}
+
+			static void setInterruptFuncxtion(
+				DMA2DInterruptFunction function,
+				DMA2DInterruptParam param) {
+
+				_isrFunction = function;
+				_isrParam = param;
 			}
 
 			/// \brief Invoca la funcio d'interruipcio.

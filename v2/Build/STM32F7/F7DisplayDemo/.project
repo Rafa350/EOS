@@ -79,16 +79,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/eos.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/eos.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/eosAssert.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
-		</link>
-		<link>
 			<name>src/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -182,6 +172,31 @@
 			<name>inc/Framework/EOS/System</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eos.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eos.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosAssert.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosPlatform.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosPlatform.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosToolchain.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosToolchain.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosVersion.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosVersion.h</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/appInitialize.cpp</name>

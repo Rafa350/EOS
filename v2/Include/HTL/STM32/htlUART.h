@@ -38,6 +38,11 @@ namespace htl {
         #endif
 	};
 
+	enum class UARTFirstBit {
+		lsb,
+		msb
+	};
+
 	enum class UARTParity {
 		none,
 		even,
@@ -95,12 +100,16 @@ namespace htl {
 		parity,
 		framming,
 		overrun,
-		noise
+		noise,
+		match
 	};
 
 	enum class UARTPin {
 		TX,
-		RX
+		RX,
+		CTS,
+		RTS,
+		DE
 	};
 
 	using UARTInterruptParam = void*;
@@ -109,8 +118,6 @@ namespace htl {
 	void UART_init();
 	void UART_setProtocol(USART_TypeDef*, UARTWord, UARTParity, UARTStop);
 	void UART_setTimming(USART_TypeDef*, UARTBaudMode, UARTClockSource, unsigned, UARTOverSampling);
-	void UART_enableInterrupt(USART_TypeDef*, UARTEvent);
-	bool UART_disableInterrupt(USART_TypeDef*, UARTEvent);
 
 	template <UARTChannel>
 	struct UARTTrait {
@@ -142,9 +149,9 @@ namespace htl {
 			UART_x & operator = (const UART_x &) = delete;
 			UART_x & operator = (const UART_x &&) = delete;
 
-			/// \brief Activa el modul.
+			/// \brief Habilita el rellotge el modul.
 			///
-			static void activate() {
+			static void enableClock() {
 
 				if constexpr (channel_ == UARTChannel::_1)
 					RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
@@ -166,9 +173,9 @@ namespace htl {
 				__DSB();
 			}
 
-			/// \brief Desactiva el modul.
+			/// \brief Desabilita el rellotge del modul
 			///
-			static void deactivate() {
+			static void disableClock() {
 
 				if constexpr (channel_ == UARTChannel::_1)
 					RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
@@ -193,7 +200,7 @@ namespace htl {
 			///
 			static void init() {
 
-				activate();
+				enableClock();
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->CR1 &= ~USART_CR1_UE;
@@ -204,7 +211,7 @@ namespace htl {
 			///
 			static void deInit() {
 
-				deactivate();
+				disable();
 				disableClock();
 			}
 
@@ -297,7 +304,57 @@ namespace htl {
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				UART_enableInterrupt(regs, event);
+				switch (event) {
+					case UARTEvent::cts:
+						regs->CR3 |= USART_CR3_CTSIE;
+						break;
+
+					case UARTEvent::brk:
+						regs->CR2 |= USART_CR2_LBDIE;
+						break;
+
+					case UARTEvent::idle:
+						regs->CR1 |= USART_CR1_IDLEIE;
+						break;
+
+					case UARTEvent::txEmpty:
+						regs->CR1 |= USART_CR1_TXEIE;
+						break;
+
+					case UARTEvent::txComplete:
+						regs->CR1 |= USART_CR1_TCIE;
+						break;
+
+					case UARTEvent::rxNotEmpty:
+						regs->CR1 |= USART_CR1_RXNEIE;
+						break;
+
+					case UARTEvent::parity:
+						regs->CR1 |= USART_CR1_PEIE;
+						break;
+
+					case UARTEvent::rxTimeout:
+						regs->CR1 |= USART_CR1_RTOIE;
+						break;
+
+					case UARTEvent::endOfBlock:
+						regs->CR1 |= USART_CR1_EOBIE;
+						break;
+
+					case UARTEvent::match:
+						regs->CR1 |= USART_CR1_CMIE;
+						break;
+
+					case UARTEvent::overrun:
+						regs->CR3 |= USART_CR3_EIE;
+						regs->CR1 |= USART_CR1_RXNEIE;
+						break;
+
+					case UARTEvent::noise:
+					case UARTEvent::framming:
+						regs->CR3 |= USART_CR3_EIE;
+						break;
+				}
 			}
 
 			/// \brief Deshabilita les interrupcions
@@ -307,7 +364,73 @@ namespace htl {
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				return UART_disableInterrupt(regs, event);
+
+				bool state = false;
+				switch (event) {
+					case UARTEvent::cts:
+						state = regs->CR3 & USART_CR3_CTSIE;
+						regs->CR3 &= ~USART_CR3_CTSIE;
+						break;
+
+					case UARTEvent::brk:
+						state = regs->CR2 & USART_CR2_LBDIE;
+						regs->CR2 &= ~USART_CR2_LBDIE;
+						break;
+
+					case UARTEvent::idle:
+						state = regs->CR1 & USART_CR1_IDLEIE;
+						regs->CR1 &= ~USART_CR1_IDLEIE;
+						break;
+
+					case UARTEvent::txEmpty:
+						state = regs->CR1 & USART_CR1_TXEIE;
+						regs->CR1 &= ~USART_CR1_TXEIE;
+						break;
+
+					case UARTEvent::txComplete:
+						state = regs->CR1 & USART_CR1_TCIE;
+						regs->CR1 &= ~USART_CR1_TCIE;
+						break;
+
+					case UARTEvent::rxNotEmpty:
+						state = regs->CR1 & USART_CR1_RXNEIE;
+						regs->CR1 &= ~USART_CR1_RXNEIE;
+						break;
+
+					case UARTEvent::parity:
+						state = regs->CR1 & USART_CR1_PEIE;
+						regs->CR1 &= ~USART_CR1_PEIE;
+						break;
+
+					case UARTEvent::rxTimeout:
+						state = regs->CR1 & USART_CR1_RTOIE;
+						regs->CR1 &= ~USART_CR1_RTOIE;
+						break;
+
+					case UARTEvent::endOfBlock:
+						state = regs->CR1 & USART_CR1_EOBIE;
+						regs->CR1 &= ~USART_CR1_EOBIE;
+						break;
+
+					case UARTEvent::match:
+						state = regs->CR1 & USART_CR1_CMIE;
+						regs->CR1 &= ~USART_CR1_CMIE;
+						break;
+
+					case UARTEvent::overrun:
+						state =
+							(regs->CR1 & USART_CR1_RXNEIE) |
+						    (regs->CR3 & USART_CR3_EIE);
+						regs->CR3 &= ~USART_CR3_EIE;
+						regs->CR1 &= ~USART_CR1_RXNEIE;
+						break;
+
+					case UARTEvent::noise:
+					case UARTEvent::framming:
+						regs->CR3 |= USART_CR3_EIE;
+						break;
+				}
+				return state;
 			}
 
 			static bool getInterruptFlag(

@@ -26,6 +26,7 @@ using namespace eos;
 using namespace app;
 
 
+#define TEST_ORIENTATION
 #define TEST_OPACITY
 #define TEST_COLORS
 #define TEST_POINTS
@@ -39,7 +40,7 @@ using namespace app;
 
 static int seed = 537;
 
-#if defined(EOS_STM32F7) || defined(EOS_STM32F4)
+#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32F4)
 static uint64_t rnd = 0L;
 
 static void __srand(uint32_t r) {
@@ -56,7 +57,7 @@ static uint32_t __rand(void) {
 	return (uint32_t) rnd;
 
 }
-#elif defined(EOS_PIC32)
+#elif defined(EOS_PLATFORM_PIC32)
 #define __srand(a)  srand(a)
 #define __rand()    rand()
 #endif
@@ -91,7 +92,7 @@ void DisplayService::onSetup() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
-#if defined(EOS_STM32F7)
+#if defined(EOS_PLATFORM_STM32F7)
 	//halRNGInitialize();
 #endif
 
@@ -99,8 +100,8 @@ void DisplayService::onSetup() {
 	//
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 
-	constexpr int frameBufferPitchBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
-	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
+	constexpr int frameBufferLineBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
 	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
 		board::display::width,
@@ -117,8 +118,8 @@ void DisplayService::onSetup() {
 
 #elif defined(DISPLAY_DRV_RGBLTDC)
 
-	constexpr int frameBufferPitchBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
-	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
+	constexpr int frameBufferLineBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
 	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
 		board::display::width,
@@ -131,6 +132,7 @@ void DisplayService::onSetup() {
 
 #elif defined(DISPLAY_DRV_SSD1306)
 	_driver = new  DisplayDriver_SSD1306();
+
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif
@@ -157,82 +159,84 @@ void DisplayService::onLoop() {
     _ellipsesTicks = 0;
     _filledEllipsesTicks = 0;
 
-    _driver->setOrientation(DisplayOrientation((_orientation++) & 0b11));
+	#ifdef TEST_ORIENTATION
+    	_driver->setOrientation(DisplayOrientation((_orientation++) & 0b11));
+	#endif
 
     _screenWidth = _graphics->getWidth();
     _screenHeight = _graphics->getHeight();
 
-#ifdef TEST_COLORS
-    testColors();
-#endif
-#ifdef TEST_OPACITY
-    testOpacity();
-#endif
-#ifdef TEST_POINTS
-    testPoints();
-#endif
-#ifdef TEST_LINES
-    testLines();
-#endif
-#ifdef TEST_THICKLINES
-    testThickLines();
-#endif
-#ifdef TEST_RECTANGLES
-    testRectangles();
-#endif
-#ifdef TEST_ELLIPSES
-    testEllipses();
-#endif
-#ifdef TEST_POLYGONS
-    testPolygons();
-#endif
-#ifdef TEST_BITMAPS
-    testBitmaps();
-#endif
+	#ifdef TEST_COLORS
+		testColors();
+	#endif
+	#ifdef TEST_OPACITY
+		testOpacity();
+	#endif
+	#ifdef TEST_POINTS
+		testPoints();
+	#endif
+	#ifdef TEST_LINES
+		testLines();
+	#endif
+	#ifdef TEST_THICKLINES
+		testThickLines();
+	#endif
+	#ifdef TEST_RECTANGLES
+		testRectangles();
+	#endif
+	#ifdef TEST_ELLIPSES
+		testEllipses();
+	#endif
+	#ifdef TEST_POLYGONS
+		testPolygons();
+	#endif
+	#ifdef TEST_BITMAPS
+		testBitmaps();
+	#endif
 
-#ifdef SHOW_RESULTS
-    // Show results
-    //
-    drawBackground("Results");
-    Task::delay(250);
+	#ifdef SHOW_RESULTS
+		// Show results
+		//
+		drawBackground("Results");
+		Task::delay(250);
 
-    char lineBuffer[30];
-    int y = 35;
+		char lineBuffer[30];
+		int y = 35;
 
-    sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    Task::delay(5000);
-#endif
+		Task::delay(5000);
+	#endif
 }
 
 

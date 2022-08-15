@@ -60,36 +60,31 @@ void FrameBuffer::transform(
 	int &x,
 	int &y) const {
 
-	int xx;
-	int yy;
+	int xx = x;
+	int yy = y;
 
 	// Realitza la rotacio. D'aquesta manera es mes rapida que
 	// fer dues multiplicacione fent servir la formula.
 	//
 	switch (_orientation) {
 		case DisplayOrientation::rotate0:
-            xx = x;
-            yy = y;
 			break;
 
 		case DisplayOrientation::rotate90:
-			xx = (_frameWidth - 1) - y;
-			yy = x;
+			x = (_frameWidth - 1) - yy;
+			y = xx;
 			break;
 
 		case DisplayOrientation::rotate180:
-			xx = (_frameWidth - 1) - x;
-			yy = (_frameHeight - 1) - y;
+			x = (_frameWidth - 1) - xx;
+			y = (_frameHeight - 1) - yy;
 			break;
 
 		case DisplayOrientation::rotate270:
-			xx = y;
-			yy = (_frameHeight - 1) - x;
+			x = yy;
+			y = (_frameHeight - 1) - xx;
 			break;
 	}
-
-	x = xx;
-	y = yy;
 }
 
 

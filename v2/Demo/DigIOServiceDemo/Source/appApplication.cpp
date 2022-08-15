@@ -66,8 +66,8 @@ void MyApplication::onInitialize() {
     //
     TMR_INP::init();
     TMR_INP::setClockSource(TMRClockSource::pclk);
-    TMR_INP::setResolution(TMRResolution::res16);
-    TMR_INP::setClockDivider(TMRClockDivider::div64);
+    TMR_INP::setResolution(TMRResolution::_16);
+    TMR_INP::setClockDivider(TMRClockDivider::_64);
     TMR_INP::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digInputService::timerPeriod) / 64000) - 1);
     TMR_INP::setInterruptFunction(tmrInpInterruptFunction, _digInputService);
 
@@ -109,8 +109,8 @@ void MyApplication::onInitialize() {
     //
     TMR_OUT::init();
     TMR_OUT::setClockSource(TMRClockSource::pclk);
-    TMR_OUT::setResolution(TMRResolution::res16);
-    TMR_OUT::setClockDivider(TMRClockDivider::div64);
+    TMR_OUT::setResolution(TMRResolution::_16);
+    TMR_OUT::setClockDivider(TMRClockDivider::_64);
     TMR_OUT::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digOutputService::timerPeriod) / 64000) - 1);
     TMR_OUT::setInterruptFunction(tmrOutInterruptFunction, _digOutputService);
 

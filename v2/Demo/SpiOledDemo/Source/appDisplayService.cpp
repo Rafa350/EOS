@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
+#include "Controllers/Display/eosMonoFrameBuffer.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halSPI.h"
 #include "System/Graphics/eosColorDefinitions.h"
@@ -19,7 +20,6 @@ DisplayService::DisplayService(
 	Application* application) :
 
 	AppLoopService(application) {
-
 }
 
 
@@ -28,12 +28,18 @@ DisplayService::DisplayService(
 ///
 void DisplayService::onSetup() {
 
-	_driver = new DisplayDriver_SSD1306();
+	FrameBuffer *frameBuffer = new MonoFrameBuffer(
+		board::display::width,
+		board::display::height,
+		DisplayOrientation::normal,
+		(void*)board::display::buffer,
+		board::display::width);
+	_driver = new DisplayDriver_SSD1306(frameBuffer);
 	_driver->initialize();
 	_driver->displayOn();
 
 	_graphics = new Graphics(_driver);
-	_graphics->clear(COLOR_Black);
+	_graphics->clear(Colors::black);
 }
 
 
@@ -46,22 +52,22 @@ void DisplayService::onLoop() {
 
 	Task::delay(500);
 
-	_graphics->clear(COLOR_Black);
+	_graphics->clear(Colors::black);
 
 	switch (count & 0x3) {
 		case 0:
-			_graphics->drawRectangle(0, 0, 127, 63, COLOR_White);
-			_graphics->fillEllipse(10, 10, 20, 20, COLOR_White);
-			_graphics->fillEllipse(107, 43, 117, 53, COLOR_White);
+			_graphics->drawRectangle(0, 0, 127, 63, Colors::white);
+			_graphics->fillEllipse(10, 10, 20, 20, Colors::white);
+			_graphics->fillEllipse(107, 43, 117, 53, Colors::white);
 			break;
 		case 1:
-			_graphics->drawEllipse(20, 20, 118, 54, COLOR_White);
+			_graphics->drawEllipse(20, 20, 118, 54, Colors::white);
 			break;
 		case 2:
-			_graphics->drawEllipse(30, 30, 118, 54, COLOR_White);
+			_graphics->drawEllipse(30, 30, 118, 54, Colors::white);
 			break;
 		case 3:
-			_graphics->drawEllipse(40, 40, 118, 54, COLOR_White);
+			_graphics->drawEllipse(40, 40, 118, 54, Colors::white);
 			break;
 	}
 

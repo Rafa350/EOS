@@ -360,12 +360,12 @@ void halSPISend(
 
 	while (count > 0) {
 
-#if defined(EOS_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4)
 		*((volatile uint8_t*)&device->DR) = *((uint8_t*)p);
 		p += sizeof(uint8_t);
 		count -= sizeof(uint8_t);
 
-#elif defined(EOS_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F7)
 		if (count > 1) {
 			// Acces com a 16 bits (Packing mode)
 			device->DR = *((uint16_t*)p);

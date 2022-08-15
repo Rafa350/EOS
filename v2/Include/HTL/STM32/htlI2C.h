@@ -128,6 +128,7 @@ namespace htl {
 			static I2CResult initMaster() {
 
 				//activate();
+				//disable();
 
 				halI2CMasterInitializeInfo initInfo;
 				initInfo.channel = halI2CChannel(channel_);

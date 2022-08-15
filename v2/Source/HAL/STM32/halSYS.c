@@ -1,8 +1,8 @@
 #include "HAL/hal.h"
 #include "HAL/STM32/halSYS.h"
-#if defined(EOS_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4)
 #include "stm32f4xx_hal.h"
-#elif defined(EOS_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F7)
 #include "stm32f7xx_hal.h"
 #else
 #error Hardware no soportado

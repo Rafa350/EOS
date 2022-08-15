@@ -153,8 +153,8 @@ namespace board {
 		constexpr htl::GPIOPort extiPort = htl::GPIOPort::I;
 
 		constexpr htl::INTVector intVector = htl::INTVector::vEXTI13;
-		constexpr htl::INTPriority intVectorPriority = htl::INTPriority::p15;
-		constexpr htl::INTSubPriority intVectorSubPriority = htl::INTSubPriority::s0;
+		constexpr htl::INTPriority intVectorPriority = htl::INTPriority::_15;
+		constexpr htl::INTSubPriority intVectorSubPriority = htl::INTSubPriority::_0;
 
 		constexpr bool useInterruption = true;
 	}
@@ -191,17 +191,17 @@ namespace board {
 		using GPIO_D14 = htl::GPIO_B9;    // I2C1 SDA
 		using GPIO_D15 = htl::GPIO_B8;    // I2C1 SCL
 
-		using GPIO_RX = htl::GPIO_C7;
-		using GPIO_TX = htl::GPIO_C6;
+		using GPIO_RX = htl::GPIO_C7;     // D0
+		using GPIO_TX = htl::GPIO_C6;     // D1
 		using UART = htl::UART_6;
 
-		using GPIO_SCL = htl::GPIO_B8;
-		using GPIO_SDA = htl::GPIO_B9;
+		using GPIO_SCL = htl::GPIO_B8;    // D15
+		using GPIO_SDA = htl::GPIO_B9;    // D14
 		using I2C = htl::I2C_1;
 
-		using GPIO_SCK = htl::GPIO_I1;
-		using GPIO_MISO = htl::GPIO_B14;
-		using GPIO_MOSI = htl::GPIO_B15;
+		using GPIO_SCK = htl::GPIO_I1;    // D13
+		using GPIO_MISO = htl::GPIO_B14;  // D12
+		using GPIO_MOSI = htl::GPIO_B15;  // D11
 		using SPI = htl::SPI_2;
 	}
 }

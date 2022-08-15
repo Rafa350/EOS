@@ -88,8 +88,8 @@ void Graphics::clear(
 
 	int x1 = 0;
 	int y1 = 0;
-	int x2 = _driver->getImageWidth() - 1;
-	int y2 = _driver->getImageHeight() - 1;
+	int x2 = _driver->getWidth() - 1;
+	int y2 = _driver->getHeight() - 1;
 
     if (clipRectangle(x1, y1, x2, y2))
         _driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);

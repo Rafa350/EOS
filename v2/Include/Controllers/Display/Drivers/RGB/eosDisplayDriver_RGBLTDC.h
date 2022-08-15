@@ -16,36 +16,38 @@ namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
 		private:
-			using GPIO_BKE = board::display::GPIO_BKE;
-			using GPIO_LCDE = board::display::GPIO_LCDE;
-			using GPIO_DE = board::display::GPIO_DE;
-			using GPIO_HSYNC = board::display::GPIO_HSYNC;
-			using GPIO_VSYNC = board::display::GPIO_VSYNC;
-			using GPIO_PC = board::display::GPIO_PC;
-			using GPIO_R0 = board::display::GPIO_R0;
-			using GPIO_R1 = board::display::GPIO_R1;
-			using GPIO_R2 = board::display::GPIO_R2;
-			using GPIO_R3 = board::display::GPIO_R3;
-			using GPIO_R4 = board::display::GPIO_R4;
-			using GPIO_R5 = board::display::GPIO_R5;
-			using GPIO_R6 = board::display::GPIO_R6;
-			using GPIO_R7 = board::display::GPIO_R7;
-			using GPIO_G0 = board::display::GPIO_G0;
-			using GPIO_G1 = board::display::GPIO_G1;
-			using GPIO_G2 = board::display::GPIO_G2;
-			using GPIO_G3 = board::display::GPIO_G3;
-			using GPIO_G4 = board::display::GPIO_G4;
-			using GPIO_G5 = board::display::GPIO_G5;
-			using GPIO_G6 = board::display::GPIO_G6;
-			using GPIO_G7 = board::display::GPIO_G7;
-			using GPIO_B0 = board::display::GPIO_B0;
-			using GPIO_B1 = board::display::GPIO_B1;
-			using GPIO_B2 = board::display::GPIO_B2;
-			using GPIO_B3 = board::display::GPIO_B3;
-			using GPIO_B4 = board::display::GPIO_B4;
-			using GPIO_B5 = board::display::GPIO_B5;
-			using GPIO_B6 = board::display::GPIO_B6;
-			using GPIO_B7 = board::display::GPIO_B7;
+			using PinBKE = board::display::GPIO_BKE;
+			using PinLCDE = board::display::GPIO_LCDE;
+			using PinDE = board::display::GPIO_DE;
+			using PinHSYNC = board::display::GPIO_HSYNC;
+			using PinVSYNC = board::display::GPIO_VSYNC;
+			using PinPC = board::display::GPIO_PC;
+			using PinR0 = board::display::GPIO_R0;
+			using PinR1 = board::display::GPIO_R1;
+			using PinR2 = board::display::GPIO_R2;
+			using PinR3 = board::display::GPIO_R3;
+			using PinR4 = board::display::GPIO_R4;
+			using PinR5 = board::display::GPIO_R5;
+			using PinR6 = board::display::GPIO_R6;
+			using PinR7 = board::display::GPIO_R7;
+			using PinG0 = board::display::GPIO_G0;
+			using PinG1 = board::display::GPIO_G1;
+			using PinG2 = board::display::GPIO_G2;
+			using PinG3 = board::display::GPIO_G3;
+			using PinG4 = board::display::GPIO_G4;
+			using PinG5 = board::display::GPIO_G5;
+			using PinG6 = board::display::GPIO_G6;
+			using PinG7 = board::display::GPIO_G7;
+			using PinB0 = board::display::GPIO_B0;
+			using PinB1 = board::display::GPIO_B1;
+			using PinB2 = board::display::GPIO_B2;
+			using PinB3 = board::display::GPIO_B3;
+			using PinB4 = board::display::GPIO_B4;
+			using PinB5 = board::display::GPIO_B5;
+			using PinB6 = board::display::GPIO_B6;
+			using PinB7 = board::display::GPIO_B7;
+			using Ltdc = htl::LTDC_1;
+			using LtdcLayer = htl::LTDCLayer_1;
 
 			static constexpr uint16_t _hSync       = board::display::hSync;
 			static constexpr uint16_t _vSync       = board::display::vSync;
@@ -57,8 +59,8 @@ namespace eos {
 			static constexpr htl::LTDCPolarity _vSyncPol = board::display::vSyncPol;
 			static constexpr htl::LTDCPolarity _dePol    = board::display::dePol;
 			static constexpr htl::LTDCPolarity _pcPol    = board::display::pcPol;
-			static constexpr uint16_t _width       = board::display::width;
-			static constexpr uint16_t _height      = board::display::height;
+			static constexpr uint16_t _displayWidth      = board::display::width;
+			static constexpr uint16_t _displayHeight     = board::display::height;
 			static constexpr uint32_t _buffer      = board::display::buffer;
 
     		FrameBuffer *_displayFrameBuffer;
@@ -77,8 +79,8 @@ namespace eos {
             void displayOff() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getImageWidth() const override { return _displayFrameBuffer->getImageWidth(); }
-            inline int getImageHeight() const override { return _displayFrameBuffer->getImageHeight(); }
+            inline int getWidth() const override { return _displayFrameBuffer->getWidth(); }
+            inline int getHeight() const override { return _displayFrameBuffer->getHeight(); }
 
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;

@@ -54,29 +54,25 @@ namespace eos {
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
-			static constexpr int _displayWidth = DISPLAY_IMAGE_WIDTH;
-			static constexpr int _displayHeight = DISPLAY_IMAGE_HEIGHT;
-			static constexpr int _imageBuffer   = DISPLAY_IMAGE_BUFFER;
-
-    	private:
-			#ifdef DISPLAY_RST_PORT
-				using GPIO_RST = board::display::GPIO_RST;
-			#endif
+			using PinRST = board::display::GPIO_RST;
 			#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-				using GPIO_CS = board::display::GPIO_CS;
-				using GPIO_DC = board::display::GPIO_DC;
-				using GPIO_SCK = board::display::GPIO_SCK;
-				using GPIO_MOSI = board::display::GPIO_MOSI;
-				using SPI = board::display::SPI;
+				using PinCS = board::display::GPIO_CS;
+				using PinDC = board::display::GPIO_DC;
+				using PinSCK = board::display::GPIO_SCK;
+				using PinMOSI = board::display::GPIO_MOSI;
+				using Spi = board::display::SPI;
 			#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 			#endif
 
-    	private:
-    		static IDisplayDriver *_instance;
     		FrameBuffer *_frameBuffer;
 
-        public:
-            DisplayDriver_SSD1306();
+            void initializeInterface();
+            void initializeController();
+            void writeCommand(uint8_t cmd);
+            void writeData(const uint8_t* data, int length);
+
+    	public:
+            DisplayDriver_SSD1306(FrameBuffer *frameBuffer);
 
             void initialize() override;
             void shutdown() override;
@@ -93,14 +89,7 @@ namespace eos {
             void setPixels(int x, int y, int width, int height, Color color) override;
             void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
             void setPixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
-
             void refresh() override;
-
-        private:
-            void initializeInterface();
-            void initializeController();
-            void writeCommand(uint8_t cmd);
-            void writeData(const uint8_t* data, int length);
     };
 }
 

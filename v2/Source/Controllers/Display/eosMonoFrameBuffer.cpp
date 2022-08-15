@@ -20,7 +20,7 @@ MonoFrameBuffer::MonoFrameBuffer(
 	int bufferPitch):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer(buffer),
+	_buffer(reinterpret_cast<uint8_t*>(buffer)),
 	_bufferPitch(bufferPitch) {
 }
 
@@ -29,20 +29,18 @@ MonoFrameBuffer::MonoFrameBuffer(
 /// \brief    Escriu un pixel en la posicio indicada.
 /// \param    x: Coordinada x de la posicio
 /// \param    y: Coordinada y de la posicio
-/// \param    color: Colord el pixel.
+/// \param    color: Color del pixel.
 ///
 void MonoFrameBuffer::put(
 	int x,
 	int y,
 	Color color) {
 
-	Color::Pixel pixel = color;
-
-	uint8_t* page = (uint8_t*)((int)_buffer + ((y >> 3) * getImageWidth()));
-	if (pixel != 0)
-		page[x] = page[x] | (1 << (y & 7));
+	uint8_t *page = &_buffer[(y >> 3) * getImageWidth()];
+	if (color.getL() > 127)
+		page[x] |= 1 << (y & 7);
 	else
-		page[x] = page[x] & ~(1 << (y & 7));
+		page[x] &= ~(1 << (y & 7));
 }
 
 
@@ -53,9 +51,6 @@ void MonoFrameBuffer::fill(
 	int height,
 	Color color) {
 
-	//memset(_buffer, 0x00, 128 * 8);
-
-	// Pendent d'optimitzar
 	for (int yy = y; yy < y + height; yy++)
 		for (int xx = x; xx < x + width; xx++)
 			put(xx, yy, color);
@@ -68,18 +63,18 @@ void MonoFrameBuffer::copy(
 	int y,
 	int width,
 	int height,
-	const Color* colors,
-	int offset) {
+	const Color *colors,
+	int colorPitch) {
 
 }
 
-void MonoFrameBuffer::write(
+void MonoFrameBuffer::copy(
 	int x,
 	int y,
 	int width,
 	int height,
-	const void* pixels,
-	ColorFormat format,
-	int offset) {
+	const void *color,
+	ColorFormat colorFormat,
+	int colorPitch) {
 
 }

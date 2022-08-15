@@ -704,11 +704,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSYS.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D.h</locationURI>
@@ -959,34 +954,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halI2C.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halI2C.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32/halINT.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halINT.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halSPI.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSPI.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>

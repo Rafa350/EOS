@@ -11,29 +11,29 @@
 namespace htl {
 
 	enum class INTPriority {
-		p0,
-		p1,
-		p2,
-		p3,
-		p4,
-		p5,
-		p6,
-		p7,
-		p8,
-		p9,
-		p10,
-		p11,
-		p12,
-		p13,
-		p14,
-		p15
+		_0,
+		_1,
+		_2,
+		_3,
+		_4,
+		_5,
+		_6,
+		_7,
+		_8,
+		_9,
+		_10,
+		_11,
+		_12,
+		_13,
+		_14,
+		_15
 	};
 
 	enum class INTSubPriority {
-		s0,
-		s1,
-		s2,
-		s3,
+		_0,
+		_1,
+		_2,
+		_3,
 	};
 
 	enum class INTVector {

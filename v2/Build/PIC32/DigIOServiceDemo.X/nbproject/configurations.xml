@@ -35,6 +35,7 @@
             <itemPath>../../../Include/HTL/htlGPIO.h</itemPath>
             <itemPath>../../../Include/HTL/htlTMR.h</itemPath>
             <itemPath>../../../Include/HTL/htlINT.h</itemPath>
+            <itemPath>../../../Include/HTL/htl.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
@@ -70,6 +71,8 @@
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
           <itemPath>../../../Include/eosAssert.h</itemPath>
+          <itemPath>../../../Include/eosPlatform.h</itemPath>
+          <itemPath>../../../Include/eosToolchain.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -185,7 +188,7 @@
         <targetDevice>PIC32MX460F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.10</languageToolchainVersion>
         <platform>3</platform>
@@ -368,12 +371,6 @@
         <property key="lastid" value=""/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
-      <Tool>
-        <property key="debugoptions.debug-startup" value="Use system settings"/>
-        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
-        <property key="lastid" value=""/>
-        <property key="whatToProgram" value="all"/>
-      </Tool>
     </conf>
     <conf name="PIC32_ETH_STARTER_KIT" type="2">
       <toolsSet>

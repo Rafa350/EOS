@@ -36,8 +36,8 @@ void Graphics::setClip(
     //
 	_state.clipX1 = Math::max(0, x1);
 	_state.clipY1 = Math::max(0, y1);
-	_state.clipX2 = Math::min(x2, _driver->getImageWidth() - 1);
-	_state.clipY2 = Math::min(y2, _driver->getImageHeight() - 1);
+	_state.clipX2 = Math::min(x2, _driver->getWidth() - 1);
+	_state.clipY2 = Math::min(y2, _driver->getHeight() - 1);
 }
 
 
@@ -48,8 +48,8 @@ void Graphics::resetClip() {
 
 	_state.clipX1 = 0;
 	_state.clipY1 = 0;
-	_state.clipX2 = _driver->getImageWidth() - 1;
-	_state.clipY2 = _driver->getImageHeight() - 1;
+	_state.clipX2 = _driver->getWidth() - 1;
+	_state.clipY2 = _driver->getHeight() - 1;
 }
 
 

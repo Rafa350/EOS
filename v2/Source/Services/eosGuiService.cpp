@@ -27,9 +27,9 @@
 using namespace eos;
 
 
-static IDisplayDriver* displayDriver;
-static Graphics* graphics;
-static RenderContext* context;
+static IDisplayDriver *displayDriver;
+static Graphics *graphics;
+static RenderContext *context;
 
 
 /// ----------------------------------------------------------------------
@@ -113,8 +113,10 @@ void GuiService::onInitialize() {
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 	displayDriver = new ILI9341LTDCDriver();
+
 #elif defined(DISPLAY_DRV_ILI9341)
 	displayDriver = new ILI9341Driver();
+
 #elif defined(DISPLAY_DRV_RGBLTDC)
 
 	constexpr int frameBufferPitchBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
@@ -137,11 +139,13 @@ void GuiService::onInitialize() {
 
 	frameBuffer1->clear(Colors::black);
 	frameBuffer2->clear(Colors::black);
+
 	displayDriver = new DisplayDriver_RGBLTDC(frameBuffer1, frameBuffer2);
 
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif
+
 	displayDriver->initialize();
 	displayDriver->displayOn();
 
@@ -150,7 +154,7 @@ void GuiService::onInitialize() {
 
 	setActive(_screen);
 
-	_screen->measure(Size(displayDriver->getImageWidth(), displayDriver->getImageHeight()));
+	_screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
 	_screen->arrange(_screen->getDesiredSize());
 }
 

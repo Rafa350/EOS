@@ -309,6 +309,8 @@ namespace eos {
 					uint32_t gg = (uint32_t)g * 1202;  // 0.587 * 2048
 					uint32_t bb = (uint32_t)b * 294;   // 0.144 * 2048
 					uint32_t l = (rr + gg + bb) >> 11;  // Divideix per 2048
+					if (l > 0x00FF)
+						l = 255;
 					if constexpr (hasAlpha)
 						return Color_x<format_>(
 							((Pixel)a >> CT::adjA << CT::shiftA) |

@@ -33,29 +33,29 @@ void UART_5_InterruptHandler() {
 
 void UART_6_InterruptHandler() {
 
-	if (UART_6::getInterruptFlag(UARTEvent::txEmpty)) {
-		UART_6::interruptHandler(UARTEvent::txEmpty);
-		UART_6::clearInterruptFlag(UARTEvent::txEmpty);
-	}
-	if (UART_6::getInterruptFlag(UARTEvent::txComplete)) {
-		UART_6::interruptHandler(UARTEvent::txComplete);
-		UART_6::clearInterruptFlag(UARTEvent::txComplete);
-	}
-	if (UART_6::getInterruptFlag(UARTEvent::rxNotEmpty)) {
-		UART_6::interruptHandler(UARTEvent::rxNotEmpty);
-		UART_6::clearInterruptFlag(UARTEvent::rxNotEmpty);
-	}
-	if (UART_6::getInterruptFlag(UARTEvent::parity)) {
-		UART_6::interruptHandler(UARTEvent::parity);
-		UART_6::clearInterruptFlag(UARTEvent::parity);
-	}
-	if (UART_6::getInterruptFlag(UARTEvent::overrun)) {
-		UART_6::interruptHandler(UARTEvent::overrun);
-		UART_6::clearInterruptFlag(UARTEvent::overrun);
-	}
-	if (UART_6::getInterruptFlag(UARTEvent::framming)) {
-		UART_6::interruptHandler(UARTEvent::framming);
-		UART_6::clearInterruptFlag(UARTEvent::framming);
+	uint32_t isr = USART6->ISR;
+
+	if (isr != 0) {
+
+		if (isr & USART_ISR_TXE)
+			UART_6::interruptHandler(UARTEvent::txEmpty);
+
+		if (isr & USART_ISR_TC)
+			UART_6::interruptHandler(UARTEvent::txComplete);
+
+		if (isr & USART_ISR_RXNE)
+			UART_6::interruptHandler(UARTEvent::rxNotEmpty);
+
+		if (isr & USART_ISR_PE)
+			UART_6::interruptHandler(UARTEvent::parity);
+
+		if (isr & USART_ISR_ORE)
+			UART_6::interruptHandler(UARTEvent::overrun);
+
+		if (isr & USART_ISR_FE)
+			UART_6::interruptHandler(UARTEvent::framming);
+
+		USART6->ICR = isr;
 	}
 }
 

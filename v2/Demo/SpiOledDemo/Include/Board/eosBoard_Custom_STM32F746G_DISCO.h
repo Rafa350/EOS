@@ -9,19 +9,17 @@
 #if defined(DISPLAY_ADAFRUIT_SSD1306_128x64_D098)
 
 
-// Opcions generals del display
-#define DISPLAY_IMAGE_WIDTH       128                 // Amplada en pixels
-#define DISPLAY_IMAGE_HEIGHT      64                  // Alçada en pixels
-#define DISPLAY_IMAGE_BUFFER      0xC0000000          // Buffer d'imatge
-
 // Opcions especifiques del controlador
 #define DISPLAY_SSD1306_INTERFACE  DISPLAY_SSD1306_INTERFACE_SPI
 
 
 #ifdef __cplusplus
 
-namespace board {
 
+#ifdef USE_CUSTOM_DISPLAY
+#define EXIST_CUSTOM_DISPLAY
+
+namespace board {
 	namespace display {
 
 		using GPIO_RST = board::arduino::GPIO_D0;
@@ -31,11 +29,14 @@ namespace board {
 		using GPIO_MOSI = board::arduino::GPIO_MOSI;
 		using SPI = board::arduino::SPI;
 
-		constexpr uint16_t width = DISPLAY_IMAGE_WIDTH;
-		constexpr uint16_t height = DISPLAY_IMAGE_HEIGHT;
-		constexpr uint32_t buffer = DISPLAY_IMAGE_BUFFER;
+		constexpr uint16_t width = 128;
+		constexpr uint16_t height = 64;
+		constexpr uint32_t buffer = 0xC0000000;
 	}
 }
+
+#endif // USE_CUSTOM_DISPLAY
+
 
 #endif // __cplusplus
 

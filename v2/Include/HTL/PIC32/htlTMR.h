@@ -13,36 +13,36 @@ namespace htl {
 
     enum class TMRTimer {
         #ifdef _TMR1
-            timer1,
+            _1,
         #endif
         #ifdef _TMR2
-            timer2,
+            _2,
         #endif
         #ifdef _TMR3
-            timer3,
+            _3,
         #endif
         #ifdef _TMR4
-            timer4,
+            _4,
         #endif
         #ifdef _TMR5
-            timer5,
+            _5,
         #endif
     };
 
     enum class TMRResolution {
-        res16,
-        res32
+        _16,
+        _32
     };
 
     enum class TMRClockDivider {
-        div1,
-        div2,
-        div4,
-        div8,
-        div16,
-        div32,
-        div64,
-        div256
+        _1,
+        _2,
+        _4,
+        _8,
+        _16,
+        _32,
+        _64,
+        _256
     };
 
     enum class TMRClockSource {
@@ -136,15 +136,15 @@ namespace htl {
                 if constexpr (_isT1) {
                     TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     switch (divider) {
-                        case TMRClockDivider::div8:
+                        case TMRClockDivider::_8:
                             regs->T1xCON.TCKPS = 1;
                             break;
 
-                        case TMRClockDivider::div64:
+                        case TMRClockDivider::_64:
                             regs->T1xCON.TCKPS = 2;
                             break;
 
-                        case TMRClockDivider::div256:
+                        case TMRClockDivider::_256:
                             regs->T1xCON.TCKPS = 3;
                             break;
 
@@ -156,31 +156,31 @@ namespace htl {
                 else {
                     TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
                     switch (divider) {
-                        case TMRClockDivider::div2:
+                        case TMRClockDivider::_2:
                             regs->T2xCON.TCKPS = 1;
                             break;
 
-                        case TMRClockDivider::div4:
+                        case TMRClockDivider::_4:
                             regs->T2xCON.TCKPS = 2;
                             break;
 
-                        case TMRClockDivider::div8:
+                        case TMRClockDivider::_8:
                             regs->T2xCON.TCKPS = 3;
                             break;
 
-                        case TMRClockDivider::div16:
+                        case TMRClockDivider::_16:
                             regs->T2xCON.TCKPS = 4;
                             break;
 
-                        case TMRClockDivider::div32:
+                        case TMRClockDivider::_32:
                             regs->T2xCON.TCKPS = 5;
                             break;
 
-                        case TMRClockDivider::div64:
+                        case TMRClockDivider::_64:
                             regs->T2xCON.TCKPS = 6;
                             break;
 
-                        case TMRClockDivider::div256:
+                        case TMRClockDivider::_256:
                             regs->T2xCON.TCKPS = 7;
                             break;
 
@@ -215,7 +215,7 @@ namespace htl {
 
                 if constexpr (_isT2) {
                     TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
-                    regs->T2xCON.T32 = resolution == TMRResolution::res32;
+                    regs->T2xCON.T32 = resolution == TMRResolution::_32;
                 }
             }
 
@@ -337,25 +337,25 @@ namespace htl {
 
 
     #ifdef _TMR1
-        using TMR_1 = TMR_x<TMRTimer::timer1>;
+        using TMR_1 = TMR_x<TMRTimer::_1>;
     #endif
     #ifdef _TMR2
-        using TMR_2 = TMR_x<TMRTimer::timer2>;
+        using TMR_2 = TMR_x<TMRTimer::_2>;
     #endif
     #ifdef _TMR3
-        using TMR_3 = TMR_x<TMRTimer::timer3>;
+        using TMR_3 = TMR_x<TMRTimer::_3>;
     #endif
     #ifdef _TMR4
-        using TMR_4 = TMR_x<TMRTimer::timer4>;
+        using TMR_4 = TMR_x<TMRTimer::_4>;
     #endif
     #ifdef _TMR5
-        using TMR_5 = TMR_x<TMRTimer::timer5>;
+        using TMR_5 = TMR_x<TMRTimer::_5>;
     #endif
 
 
     #ifdef _TMR1
         template <>
-        struct TMRTimerTrait<TMRTimer::timer1> {
+        struct TMRTimerTrait<TMRTimer::_1> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T1IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T1IE_POSITION>;
             static constexpr uint32_t addr = _TMR1_BASE_ADDRESS;
@@ -365,7 +365,7 @@ namespace htl {
 
     #ifdef _TMR2
         template <>
-        struct TMRTimerTrait<TMRTimer::timer2> {
+        struct TMRTimerTrait<TMRTimer::_2> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T2IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T2IE_POSITION>;
             static constexpr uint32_t addr = _TMR2_BASE_ADDRESS;
@@ -375,7 +375,7 @@ namespace htl {
 
     #ifdef _TMR3
         template <>
-        struct TMRTimerTrait<TMRTimer::timer3> {
+        struct TMRTimerTrait<TMRTimer::_3> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T3IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T3IE_POSITION>;
             static constexpr uint32_t addr = _TMR3_BASE_ADDRESS;
@@ -385,7 +385,7 @@ namespace htl {
 
     #ifdef _TMR4
         template <>
-        struct TMRTimerTrait<TMRTimer::timer4> {
+        struct TMRTimerTrait<TMRTimer::_4> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T4IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T4IE_POSITION>;
             static constexpr uint32_t addr = _TMR4_BASE_ADDRESS;
@@ -395,7 +395,7 @@ namespace htl {
 
     #ifdef _TMR5
         template <>
-        struct TMRTimerTrait<TMRTimer::timer5> {
+        struct TMRTimerTrait<TMRTimer::_5> {
             using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T5IF_POSITION>;
             using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T5IE_POSITION>;
             static constexpr uint32_t addr = _TMR5_BASE_ADDRESS;

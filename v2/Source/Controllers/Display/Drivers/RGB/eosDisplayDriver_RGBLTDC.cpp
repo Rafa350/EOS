@@ -1,6 +1,6 @@
 #include "eos.h"
 
-#if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
+#if !((defined(LTDC) && (defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7))))
 #error "LTDC hardware unavailable"
 #endif
 
@@ -63,9 +63,9 @@ void DisplayDriver_RGBLTDC::shutdown() {
 ///
 void DisplayDriver_RGBLTDC::displayOn() {
 
-	LTDC_1::enable();
-	GPIO_LCDE::set();
-	GPIO_BKE::set();
+	Ltdc::enable();
+	PinLCDE::set();
+	PinBKE::set();
 }
 
 
@@ -74,9 +74,9 @@ void DisplayDriver_RGBLTDC::displayOn() {
 ///
 void DisplayDriver_RGBLTDC::displayOff() {
 
-	GPIO_LCDE::clear();
-	GPIO_BKE::clear();
-	LTDC_1::disable();
+	PinLCDE::clear();
+	PinBKE::clear();
+	Ltdc::disable();
 }
 
 
@@ -227,8 +227,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Asigna l'adresa de la capa
 		//
-		LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getBuffer());
-		LTDC_1::update();
+		LtdcLayer::setFrameBuffer(_displayFrameBuffer->getBuffer());
+		Ltdc::update();
 	}
 }
 
@@ -238,8 +238,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	GPIO_BKE::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::low);
-	GPIO_LCDE::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::low);
+	PinBKE::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::low);
+	PinLCDE::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::low);
 }
 
 
@@ -252,16 +252,16 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	LTDC_1::initPCPin<GPIO_PC>(_pcPol);
-	LTDC_1::initHSYNCPin<GPIO_HSYNC>(_hSyncPol);
-	LTDC_1::initVSYNCPin<GPIO_VSYNC>(_vSyncPol);
-	LTDC_1::initDEPin<GPIO_DE>(_dePol);
-	LTDC_1::initRPins<GPIO_R0, GPIO_R1, GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
-	LTDC_1::initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
-	LTDC_1::initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
-	LTDC_1::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	LTDC_1::setBackgroundColor(Colors::blue);
-	LTDC_1::setInterruptFunction(nullptr, nullptr);
+	Ltdc::initPCPin<PinPC>(_pcPol);
+	Ltdc::initHSYNCPin<PinHSYNC>(_hSyncPol);
+	Ltdc::initVSYNCPin<PinVSYNC>(_vSyncPol);
+	Ltdc::initDEPin<PinDE>(_dePol);
+	Ltdc::initRPins<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	Ltdc::initGPins<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	Ltdc::initBPins<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	Ltdc::init(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	Ltdc::setBackgroundColor(0x0000FF);
+	Ltdc::setInterruptFunction(nullptr, nullptr);
 
 	// Inicialitza la capa 1
 	// La capa ocupa tota la superficie de la pantalla
@@ -276,13 +276,13 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 		Color::format == ColorFormat::l8 ? LTDCPixelFormat::l8 :
 		LTDCPixelFormat::rgb565;
 
-	LTDCLayer_1::setWindow(0, 0, _width, _height);
-	LTDCLayer_1::setFrameFormat(
+	LtdcLayer::setWindow(0, 0, _displayWidth, _displayHeight);
+	LtdcLayer::setFrameFormat(
 		pixelFormat,
-		_width * Color::bytes,
-		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
-		_height);
+		_displayWidth * Color::bytes,
+		((_displayWidth * Color::bytes) + 63) & 0xFFFFFFC0,
+		_displayHeight);
 
-	LTDCLayer_1::setFrameBuffer(_displayFrameBuffer->getBuffer());
-	LTDC_1::update();
+	LtdcLayer::setFrameBuffer(_displayFrameBuffer->getBuffer());
+	Ltdc::update();
 }

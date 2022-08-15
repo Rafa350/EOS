@@ -10,9 +10,9 @@ namespace htl {
 
     template <typename type_, volatile type_ *reg_, unsigned pos_>
     struct FLAG_STD {
-        constexpr static volatile type_ *addr = reg_;
-        constexpr static unsigned pos = pos_;
-        constexpr static type_ mask = (type_)1 << pos_;
+        static constexpr volatile type_ *addr = reg_;
+        static constexpr unsigned pos = pos_;
+        static constexpr type_ mask = (type_)1 << pos_;
 
         inline static void clr() {
             *addr &= ~mask;
@@ -33,12 +33,12 @@ namespace htl {
 
     template <typename type_, volatile type_ *reg_, unsigned pos_>
     struct FLAG_CSI {
-        constexpr static volatile type_ *addr = &reg_[0];
-        constexpr static volatile type_ *addrCLR = &reg_[1];
-        constexpr static volatile type_ *addrSET = &reg_[2];
-        constexpr static volatile type_ *addrINV = &reg_[3];
-        constexpr static unsigned pos = pos_;
-        constexpr static type_ mask = (type_)1 << pos_;
+        static constexpr volatile type_ *addr = &reg_[0];
+        static constexpr volatile type_ *addrCLR = &reg_[1];
+        static constexpr volatile type_ *addrSET = &reg_[2];
+        static constexpr volatile type_ *addrINV = &reg_[3];
+        static constexpr unsigned pos = pos_;
+        static constexpr type_ mask = (type_)1 << pos_;
 
         inline static void clr() {
             *addrCLR = mask;

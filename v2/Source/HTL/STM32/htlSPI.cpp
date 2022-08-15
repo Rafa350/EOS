@@ -1,4 +1,4 @@
-#include "eos.h"
+#include "HTL/htl.h"
 #include "HAL/STM32/halSYS.h"
 #include "HTL/STM32/htlSPI.h"
 
@@ -198,7 +198,7 @@ static void waitRxFifoEmpty(
 	unsigned startTime,
 	unsigned blockTime) {
 
-	while ((resg->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
+	while ((regs->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
 		if (halSYSCheckTimeout(startTime, blockTime)) {
 
 		}

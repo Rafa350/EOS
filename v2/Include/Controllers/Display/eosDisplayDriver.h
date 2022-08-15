@@ -37,12 +37,12 @@ namespace eos {
             /// \brief Obte l'amplada de la imatge
             /// \return El valor de l'amplada en pixels.
             ///
-            virtual int getImageWidth() const = 0;
+            virtual int getWidth() const = 0;
 
             /// \brief Obte l'alçada de la imatge
             /// \return El valor de l'alçada en pixels.
             ///
-            virtual int getImageHeight() const = 0;
+            virtual int getHeight() const = 0;
 
             virtual void clear(Color color) = 0;
             virtual void setPixel(int x, int y, Color color) = 0;

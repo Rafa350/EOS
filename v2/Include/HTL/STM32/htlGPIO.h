@@ -137,6 +137,12 @@ namespace htl {
           GPIO_TypeDef *_regs;
           uint32_t _pn;
 
+          GPIOAdapter(const GPIOAdapter &) = delete;
+          GPIOAdapter(GPIOAdapter &&) = delete;
+
+          GPIOAdapter operator = (const GPIOAdapter&) = delete;
+          GPIOAdapter operator = (const GPIOAdapter&&) = delete;
+
      public:
          GPIOAdapter(
         	uint32_t addr,
@@ -145,9 +151,6 @@ namespace htl {
         	 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
         	 _pn(pn) {
          }
-
-         GPIOAdapter(const GPIOAdapter &) = default;
-         GPIOAdapter(GPIOAdapter &&) = default;
 
          inline void set() const {
 
@@ -162,6 +165,14 @@ namespace htl {
          inline void toggle() const {
 
              _regs->ODR ^= 1 << _pn;
+         }
+
+         inline void write(bool state) const {
+
+        	 if (state)
+        		 set();
+        	 else
+        		 clear();
          }
 
          inline bool read() const {
@@ -614,6 +625,21 @@ namespace htl {
         };
 
         template <>
+        struct GPIOPinTrait<GPIOPort::A, GPIOPin::_8> {
+            static constexpr uint32_t pn = 8;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::A, GPIOPin::_9> {
+            static constexpr uint32_t pn = 9;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::A, GPIOPin::_10> {
+            static constexpr uint32_t pn = 10;
+        };
+
+        template <>
         struct GPIOPinTrait<GPIOPort::A, GPIOPin::_11> {
             static constexpr uint32_t pn = 11;
         };
@@ -621,6 +647,21 @@ namespace htl {
         template <>
         struct GPIOPinTrait<GPIOPort::A, GPIOPin::_12> {
             static constexpr uint32_t pn = 12;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::A, GPIOPin::_13> {
+            static constexpr uint32_t pn = 13;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::A, GPIOPin::_14> {
+            static constexpr uint32_t pn = 14;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::A, GPIOPin::_15> {
+            static constexpr uint32_t pn = 15;
         };
     #endif
 
@@ -638,6 +679,36 @@ namespace htl {
         template <>
         struct GPIOPinTrait<GPIOPort::B, GPIOPin::_1> {
             static constexpr uint32_t pn = 1;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_2> {
+            static constexpr uint32_t pn = 2;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_3> {
+            static constexpr uint32_t pn = 3;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_4> {
+            static constexpr uint32_t pn = 4;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_5> {
+            static constexpr uint32_t pn = 5;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_6> {
+            static constexpr uint32_t pn = 6;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_7> {
+            static constexpr uint32_t pn = 7;
         };
 
         template <>
@@ -823,6 +894,41 @@ namespace htl {
         };
 
         template <>
+        struct GPIOPinTrait<GPIOPort::H, GPIOPin::_0> {
+            static constexpr uint32_t pn = 0;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::H, GPIOPin::_1> {
+            static constexpr uint32_t pn = 1;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::H, GPIOPin::_2> {
+            static constexpr uint32_t pn = 2;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::H, GPIOPin::_3> {
+            static constexpr uint32_t pn = 3;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::H, GPIOPin::_4> {
+            static constexpr uint32_t pn = 4;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::H, GPIOPin::_5> {
+            static constexpr uint32_t pn = 5;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::H, GPIOPin::_6> {
+            static constexpr uint32_t pn = 6;
+        };
+
+        template <>
         struct GPIOPinTrait<GPIOPort::H, GPIOPin::_7> {
             static constexpr uint32_t pn = 7;
         };
@@ -865,8 +971,38 @@ namespace htl {
         };
 
         template <>
+        struct GPIOPinTrait<GPIOPort::I, GPIOPin::_0> {
+            static constexpr uint32_t pn = 0;
+        };
+
+        template <>
         struct GPIOPinTrait<GPIOPort::I, GPIOPin::_1> {
             static constexpr uint32_t pn = 1;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::I, GPIOPin::_2> {
+            static constexpr uint32_t pn = 2;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::I, GPIOPin::_3> {
+            static constexpr uint32_t pn = 3;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::I, GPIOPin::_4> {
+            static constexpr uint32_t pn = 4;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::I, GPIOPin::_5> {
+            static constexpr uint32_t pn = 5;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::I, GPIOPin::_6> {
+            static constexpr uint32_t pn = 6;
         };
 
         template <>

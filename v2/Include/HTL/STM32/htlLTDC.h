@@ -7,12 +7,11 @@
 //
 #include "HTL/htl.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "System/Graphics/eosColor.h"
 
 
 namespace htl {
 
-	/// \brief Control signals pin polarity
+	/// \brief Control signals pin polarity.
 	//
     enum class LTDCPolarity {
     	activeLow,
@@ -20,8 +19,7 @@ namespace htl {
     	noChange
     };
 
-    /// \brief Image format
-    /// \remarks Els valors corresponen al registre hardware. No modificar
+    /// \brief Image format.
     ///
     enum class LTDCPixelFormat {
     	argb8888 = 0,
@@ -34,11 +32,22 @@ namespace htl {
 		al88 = 7
     };
 
+    /// \brief Events d'interrupcio.
+    ///
     enum class LTDCEvent {
-    	line,
-		reload,
-		fifoError,
-		transferError
+    	line = 0,
+		reload = 3,
+		fifoError = 1,
+		transferError = 2
+    };
+
+    /// \brief Factor de divissio de rellotge.
+    ///
+    enum class LTDCClockDivider {
+    	_2 = 0,
+		_4 = 1,
+		_8 = 2,
+		_16 = 3
     };
 
     /// \brief GPIO alternative pin identifiers
@@ -74,13 +83,17 @@ namespace htl {
 			LTDC_x & operator = (const LTDC_x &) = delete;
 			LTDC_x & operator = (const LTDC_x &&) = delete;
 
-			inline static void activate() {
+			/// \brief Habilita el rellotje del modul LTDC.
+			///
+			inline static void enableClock() {
 
 				RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
 			    __DSB();
 			}
 
-			inline static void deactivate() {
+			/// \brief Desabilita el rellotge del modul LTDC.
+			///
+			inline static void disableClock() {
 
 				RCC->APB2ENR &= ~RCC_APB2ENR_LTDCEN;
 			}
@@ -98,7 +111,7 @@ namespace htl {
 
 		    	uint32_t tmp;
 
-		    	activate();
+		    	enableClock();
 		    	disable();
 
 		    	// Configura el registre SSCR (Sinchronization Size Configuration Register)
@@ -143,10 +156,17 @@ namespace htl {
 		    static void deInit() {
 
 		    	disable();
-		    	deactivate();
+		    	disableClock();
 		    }
 
-		    /// \brief Habilita el modul.
+		    /// \brief Reseteja el modul.
+		    ///
+			static void reset() {
+
+				RCC->APB2RSTR |= RCC_APB2RSTR_LTDCRST;
+			}
+
+			/// \brief Habilita el modul.
 		    ///
 		    static void enable() {
 
@@ -158,6 +178,58 @@ namespace htl {
 		    static void disable() {
 
 		    	LTDC->GCR &= ~LTDC_GCR_LTDCEN;
+		    }
+
+		    /// ----------------------------------------------------------
+		    /// \brief Inicialitza el rellotge del modul LTDC
+		    /// \param pllMul: Multiplicador d'entrada del PLL
+		    /// \param pllDiv: Divisor de sortida del PLL.
+		    /// \param clkDiv: Divisor de la senyal LTDC_PC.
+		    /// \remarks: El PLL SAI es compartit amb altres periferics,
+		    ///           pllMUL i pllDiv poden entrar amb conflicte amb SAI2
+		    ///
+		    static void initClock(
+		    	uint32_t pllMul,
+				uint32_t pllDiv,
+				LTDCClockDivider clkDiv) {
+
+		    	eosAssert((pllMul >= 50) && (pllMul <= 432));
+		    	eosAssert((pllDiv >= 2) && (pllDiv <= 7));
+
+		    	uint32_t tmp;
+
+		    	RCC->CR &= ~RCC_CR_PLLSAION;
+		    	while ((RCC->CR & RCC_CR_PLLSAIRDY) != 0)
+		    		continue;
+
+		    	tmp = RCC->DCKCFGR1;
+		    	tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    	tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    	RCC->DCKCFGR1 = tmp;
+
+		    	tmp = RCC->PLLSAICFGR;
+		    	tmp &= ~RCC_PLLSAICFGR_PLLSAIN_Msk;
+		    	tmp |= (pllMul << RCC_PLLSAICFGR_PLLSAIN_Pos) & RCC_PLLSAICFGR_PLLSAIN_Msk;
+		    	tmp &= ~RCC_PLLSAICFGR_PLLSAIR_Msk;
+		    	tmp |= (pllDiv << RCC_PLLSAICFGR_PLLSAIR_Pos) & RCC_PLLSAICFGR_PLLSAIR_Msk;
+		    	RCC->PLLSAICFGR = tmp;
+
+		    	RCC->CR |= RCC_CR_PLLSAION;
+		    	while ((RCC->CR & RCC_CR_PLLSAIRDY) == 0)
+		    		continue;
+		    }
+
+		    /// ----------------------------------------------------------
+		    /// \brief Inicialitza el rellotge del modul LTDC
+		    /// \param clkDiv: Divisor de la senyal LTDC_PC.
+		    ///
+		    static void initClock(
+				LTDCClockDivider clkDiv) {
+
+		    	uint32_t tmp = RCC->DCKCFGR1;
+		    	tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    	tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    	RCC->DCKCFGR1 = tmp;
 		    }
 
 		    template <typename gpio_>
@@ -270,6 +342,9 @@ namespace htl {
 				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, LTDCPinTrait<gpioB7_, LTDCPin::B7>::alt);
 			}
 
+			/// \brief Asigna la polaritat del pin HSYNC.
+			/// \param polarity: Opcions de polaritat.
+			///
 			static constexpr void setHSYNCPolarity(
 				LTDCPolarity polarity) {
 
@@ -279,6 +354,9 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_HSPOL;
 			}
 
+			/// \brief Asigna la polaritat del pin VSYNC.
+			/// \param polarity: Opcions de polaritat.
+			///
 			static constexpr void setVSYNCPolarity(
 				LTDCPolarity polarity) {
 
@@ -288,6 +366,9 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_VSPOL;
 			}
 
+			/// \brief Asigna la polaritat del pin DE.
+			/// \param polarity: Opcions de polaritat.
+			///
 			static constexpr void setDEPolarity(
 				LTDCPolarity polarity) {
 
@@ -297,6 +378,9 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_DEPOL;
 			}
 
+			/// \brief Asigna la polaritat del pin PC.
+			/// \param polarity: Opcions de polaritat.
+			///
 			static constexpr void setPCPolarity(
 				LTDCPolarity polarity) {
 
@@ -306,6 +390,9 @@ namespace htl {
 				    LTDC->GCR &= ~LTDC_GCR_PCPOL;
 			}
 
+			/// \brief Asigna el color de fons de la pantalla.
+			/// \param rgb: El color en formar RGB888.
+			///
 			static constexpr void setBackgroundColor(
 				uint32_t rgb) {
 
@@ -341,17 +428,24 @@ namespace htl {
 					continue;
 			}
 
+			/// \brief Habilita les interrupcions.
+			/// \param event: El event.
+			///
 			static void enableInterrrupt(
 				LTDCEvent event) {
 
 				LTDC->IER |= 1 << uint32_t(event);
 			}
 
+			/// \brief Desabilita les interrupcions.
+			/// \param event: El event.
+			///
 			static bool disableInterrupt(
 				LTDCEvent event) {
 
+				bool state = (LTDC->IER & (1 << uint32_t(event))) != 0;
 				LTDC->IER &= ~(1 << uint32_t(event));
-				return true;
+				return state;
 			}
 
 			static bool getInterruptFlag(
@@ -507,7 +601,7 @@ namespace htl {
 			    regs->DCCR = tmp;
 			}
 
-			static void setChroma(
+			static void setKeyColor(
 				uint32_t rgb) {
 
 				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
@@ -527,7 +621,7 @@ namespace htl {
 			    regs->CR |= LTDC_LxCR_COLKEN;
 			}
 
-			static void disableChroma() {
+			static void disableKeyColor() {
 
 				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
 			    regs->CR &= ~LTDC_LxCR_COLKEN;

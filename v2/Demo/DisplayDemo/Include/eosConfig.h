@@ -2,14 +2,15 @@
 #define __eosConfig__
 
 #if defined(BUILD_ILI9341_SPI)
-    #if defined(EOS_STM32F4)
+    #if defined(EOS_PLATFORM_STM32F4)
         #define HARDWARE_STM32F429I_DISC1
-    #elif defined(EOS_STM32F7)
+    #elif defined(EOS_PLATFORM_STM32F7)
         #define HARDWARE_STM32F746G_DISCO
-    #elif defined(EOS_PIC32)
+    #elif defined(EOS_PLATFORM_PIC32)
         #define HARDWARE_CUSTOM
         #define HARDWARE_CUSTOM_PIC32_USB_STARTER_KIT_I
         #define DISPLAY_ER_TFT028_4
+		#define USE_CUSTOM_DISPLAY
     #else
         #error "Hardware no soportado para ILI9341-SPI "
     #endif
@@ -18,9 +19,9 @@
     #define EOS_COLOR_FORMAT ColorFormat::rgb565
 
 #elif defined(BUILD_ILI9341_LTDC)
-    #if defined(EOS_STM32F4)
+    #if defined(EOS_PLATFORM_STM32F4)
         #define HARDWARE_STM32F429I_DISC1
-    #elif defined(EOS_STM32F7)
+    #elif defined(EOS_PLATFORM_STM32F7)
         #define HARDWARE_STM32F746G_DISCO
     #else
         #error "Hardware no soportado para ILI9341-LTDC "
@@ -31,9 +32,9 @@
     #define EOS_COLOR_FORMAT ColorFormat::rgb565
 
 #elif defined(BUILD_RGBLTDC)
-    #if defined(EOS_STM32F4)
+    #if defined(EOS_PLATFORM_STM32F4)
         #define HARDWARE_STM32F429I_DISC1
-    #elif defined(EOS_STM32F7)
+    #elif defined(EOS_PLATFORM_STM32F7)
         #define HARDWARE_STM32F746G_DISCO
     #else
         #error "Hardware no soportado para RGBLTDC "
@@ -55,12 +56,12 @@
 
 #elif defined(BUILD_SSD1306)
     #define HARDWARE_CUSTOM
-    #if defined(EOS_STM32F4)
+    #if defined(EOS_PLATFORM_STM32F4)
         #define HARDWARE_CUSTOM_STM32F429I_DISC1
         #define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
-    #elif defined(EOS_STM32F7)
+    #elif defined(EOS_PLATFORM_STM32F7)
         #define HARDWARE_CUSTOM_STM32F746G_DISCO
-    #elif defined(EOS_PIC32)
+    #elif defined(EOS_PLATFORM_PIC32)
         #define HARDWARE_CUSTOM_PIC32_USB_STARTER_KIT_I
         #define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
     #else

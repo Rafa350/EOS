@@ -43,8 +43,8 @@ namespace eos {
             ~Graphics();
 
             inline IDisplayDriver* getDriver() const { return _driver; }
-            inline int getWidth() const { return _driver->getImageWidth(); }
-            inline int getHeight() const { return _driver->getImageHeight(); }
+            inline int getWidth() const { return _driver->getWidth(); }
+            inline int getHeight() const { return _driver->getHeight(); }
             void clear(Color color) const;
 
             void setClip(int x1, int y1, int x2, int y2);

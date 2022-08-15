@@ -73,8 +73,8 @@ void EXTI_5_6_7_8_9_InterruptHandler() {
 
 	// Obte les interrupcions pendents
 	//
-	uint32_t pending = EXTI->PR & (EXTI_PR_PR5 | EXTI_PR_PR6 | EXTI_PR_PR7 | EXTI_PR_PR8 | EXTI_PR_PR9);
-    if (pending != 0) {
+	uint32_t pr = EXTI->PR & (EXTI_PR_PR5 | EXTI_PR_PR6 | EXTI_PR_PR7 | EXTI_PR_PR8 | EXTI_PR_PR9);
+    if (pr != 0) {
 
 		if (EXTI_5::getInterruptFlag())
 			EXTI_5::interruptHandler(EXTIEvent::change);
@@ -93,7 +93,7 @@ void EXTI_5_6_7_8_9_InterruptHandler() {
 
 		// Borra les interrupcions pendents
 		//
-		EXTI->PR = pending;
+		EXTI->PR = pr;
     }
 }
 
@@ -105,8 +105,8 @@ void EXTI_10_11_12_13_14_15_InterruptHandler() {
 
 	// Obte les interrupcions pendents
 	//
-	uint32_t pending = EXTI->PR & (EXTI_PR_PR10 | EXTI_PR_PR11 | EXTI_PR_PR12 | EXTI_PR_PR13 | EXTI_PR_PR14 | EXTI_PR_PR15);
-    if (pending != 0) {
+	uint32_t pr = EXTI->PR & (EXTI_PR_PR10 | EXTI_PR_PR11 | EXTI_PR_PR12 | EXTI_PR_PR13 | EXTI_PR_PR14 | EXTI_PR_PR15);
+    if (pr != 0) {
 
     	if (EXTI_10::getInterruptFlag())
     		EXTI_10::interruptHandler(EXTIEvent::change);
@@ -128,7 +128,7 @@ void EXTI_10_11_12_13_14_15_InterruptHandler() {
 
 		// Borra les interrupcions pendents
 		//
-    	EXTI->PR = pending;
+    	EXTI->PR = pr;
     }
 }
 
