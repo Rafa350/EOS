@@ -4,6 +4,7 @@
 
 
 #include "eos.h"
+#include "eosAssert.h"
 
 
 namespace htl {

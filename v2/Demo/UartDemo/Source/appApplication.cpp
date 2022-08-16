@@ -57,7 +57,7 @@ void MyApplication::initializeHardware() {
 	Uart::setProtocol(UARTWord::_8, UARTParity::none, UARTStop::_1);
 	Uart::setTimming(UARTBaudMode::_9600, UARTClockSource::automatic, 0, UARTOverSampling::_16);
 	Uart::enable();
-	INT_1::setInterruptVectorPriority(config::uartService::uartVector,	config::uartService::uartVectorPriority, config::uartService::uartVectorSubPriority);
+	INT_1::setInterruptVectorPriority(config::uartService::uartVector,	config::uartService::uartIntPriority, config::uartService::uartIntSubPriority);
 	INT_1::enableInterruptVector(INTVector::vUART6);
 
 	// Inicialitza el temporitzador per les entrades digitals
@@ -67,7 +67,7 @@ void MyApplication::initializeHardware() {
 	Tmr1::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
 	Tmr1::setPeriod((1000 * config::digInputService::tmrPeriod) - 1);
 	Tmr1::setInterruptFunction(isrTmr1, this);
-    INT_1::setInterruptVectorPriority(config::digInputService::tmrVector, config::digInputService::tmrVectorPriority, config::digInputService::tmrVectorSubPriority);
+    INT_1::setInterruptVectorPriority(config::digInputService::tmrVector, config::digInputService::tmrIntPriority, config::digInputService::tmrIntSubPriority);
     INT_1::enableInterruptVector(config::digInputService::tmrVector);
 
 	// Inicialitza el temporitzador per les sortides digitals
@@ -78,7 +78,7 @@ void MyApplication::initializeHardware() {
 	Tmr2::setPeriod((1000 * config::digOutputService::tmrPeriod) - 1);
 	Tmr2::enableInterrupt(TMREvent::update);
 	Tmr2::setInterruptFunction(isrTmr2, this);
-    INT_1::setInterruptVectorPriority(config::digOutputService::tmrVector, config::digOutputService::tmrVectorPriority, config::digOutputService::tmrVectorSubPriority);
+    INT_1::setInterruptVectorPriority(config::digOutputService::tmrVector, config::digOutputService::tmrIntPriority, config::digOutputService::tmrIntSubPriority);
     INT_1::enableInterruptVector(config::digOutputService::tmrVector);
 }
 

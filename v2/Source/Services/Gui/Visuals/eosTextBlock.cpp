@@ -155,7 +155,7 @@ void TextBlock::onRender(
 			y = getBounds().getHeight() - _ft.getBounds().getHeight();
 			break;
 	}
-	#pragma diagnostic pop
+	#pragma GCC diagnostic pop
 	g.paintText(Point(x, y), _ft);
 
 	// Finalitza el renderitzat.

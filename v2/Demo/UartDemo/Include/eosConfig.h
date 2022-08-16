@@ -11,8 +11,11 @@
 
 #ifdef __cplusplus
 
-#include "HTL/htlTMR.h"
+
 #include "HTL/htlINT.h"
+#include "HTL/htlTMR.h"
+#include "HTL/htlUART.h"
+
 
 namespace config {
 
@@ -23,11 +26,11 @@ namespace config {
 		constexpr unsigned tmrPeriod = 5;
 		constexpr htl::INTVector tmrVector = htl::INTVector::vTMR2;
 		#if defined(EOS_PLATFORM_PIC32)
-			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
-	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+			constexpr htl::INTPriority tmrIntPriority = htl::INTPriority::_2;
+	    	constexpr htl::INTSubPriority tmrIntSubPriority = htl::INTSubPriority::_0;
 		#elif defined(EOS_PLATFORM_STM32)
-			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p5;
-	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+			constexpr htl::INTPriority tmrIntPriority = htl::INTPriority::_5;
+	    	constexpr htl::INTSubPriority tmrIntSubPriority = htl::INTSubPriority::_0;
 		#endif
 	}
 
@@ -38,11 +41,11 @@ namespace config {
 		constexpr unsigned tmrPeriod = 1;
 		constexpr htl::INTVector tmrVector = htl::INTVector::vTMR3;
 		#if defined(EOS_PLATFORM_PIC32)
-			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p2;
-	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+			constexpr htl::INTPriority tmrIntPriority = htl::INTPriority::_2;
+	    	constexpr htl::INTSubPriority tmrIntSubPriority = htl::INTSubPriority::_0;
 		#elif defined(EOS_PLATFORM_STM32)
-			constexpr htl::INTPriority tmrVectorPriority = htl::INTPriority::p5;
-	    	constexpr htl::INTSubPriority tmrVectorSubPriority = htl::INTSubPriority::s0;
+			constexpr htl::INTPriority tmrIntPriority = htl::INTPriority::_5;
+	    	constexpr htl::INTSubPriority tmrIntSubPriority = htl::INTSubPriority::_0;
 		#endif
 	}
 
@@ -53,8 +56,8 @@ namespace config {
 		using GPIO_RX = board::arduino::GPIO_RX;
 
 		constexpr htl::INTVector uartVector = htl::INTVector::vUART6;
-		constexpr htl::INTPriority uartVectorPriority = htl::INTPriority::p10;
-    	constexpr htl::INTSubPriority uartVectorSubPriority = htl::INTSubPriority::s0;
+		constexpr htl::INTPriority uartIntPriority = htl::INTPriority::_10;
+    	constexpr htl::INTSubPriority uartIntSubPriority = htl::INTSubPriority::_0;
 	}
 }
 

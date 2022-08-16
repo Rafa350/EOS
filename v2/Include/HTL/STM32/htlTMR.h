@@ -32,6 +32,11 @@ namespace htl {
 		down
 	};
 
+	enum class TMRResolution {
+        _16,
+        _32
+    };
+
 	enum class TMRClockDivider {
 		_1,
 		_2,
@@ -163,6 +168,10 @@ namespace htl {
 					regs->CR1 |= TIM_CR1_DIR;
 				else
 					regs->CR1 &= ~TIM_CR1_DIR;
+			}
+
+			static void setResolution(TMRResolution) {
+
 			}
 
 			static void setPeriod(

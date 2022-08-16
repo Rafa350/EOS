@@ -127,6 +127,17 @@ namespace htl {
 	struct UARTPinTrait {
 	};
 
+	class UARTAdapter {
+		private:
+			USART_TypeDef *_regs;
+
+		public:
+			UARTAdapter(
+				uint32_t addr):
+				_regs(reinterpret_cast<USART_TypeDef*>(addr)) {
+			}
+	};
+
 	template <UARTChannel channel_>
 	class UART_x final {
 		private:
@@ -556,6 +567,16 @@ namespace htl {
     
     template <UARTChannel channel_> UARTInterruptFunction UART_x<channel_>::_isrFunction = nullptr;
     template <UARTChannel channel_> UARTInterruptParam UART_x<channel_>::_isrParam = nullptr;
+
+    template <typename uart_>
+    const UARTAdapter& getAdapter() {
+
+        using UARTTrait = UARTTrait<uart_::channel>;
+
+        static UARTAdapter adapter(UARTTrait::addr);
+
+        return adapter;
+    }
 
 
     #ifdef USART1

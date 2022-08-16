@@ -134,51 +134,51 @@ namespace htl {
 
     class GPIOAdapter final {
     	private:
-          GPIO_TypeDef *_regs;
-          uint32_t _pn;
+    		GPIO_TypeDef *_regs;
+    		uint32_t _pn;
 
-          GPIOAdapter(const GPIOAdapter &) = delete;
-          GPIOAdapter(GPIOAdapter &&) = delete;
+    		GPIOAdapter(const GPIOAdapter &) = delete;
+    		GPIOAdapter(GPIOAdapter &&) = delete;
 
-          GPIOAdapter operator = (const GPIOAdapter&) = delete;
-          GPIOAdapter operator = (const GPIOAdapter&&) = delete;
+    		GPIOAdapter operator = (const GPIOAdapter&) = delete;
+    		GPIOAdapter operator = (const GPIOAdapter&&) = delete;
 
-     public:
-         GPIOAdapter(
-        	uint32_t addr,
-			uint32_t pn) :
+    	public:
+    		GPIOAdapter(
+				uint32_t addr,
+				uint32_t pn) :
 
-        	 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
-        	 _pn(pn) {
-         }
+				 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
+				 _pn(pn) {
+			 }
 
-         inline void set() const {
+			 inline void set() const {
 
-             _regs->BSRR = 1 << _pn;
-         }
+				 _regs->BSRR = 1 << _pn;
+			 }
 
-         inline void clear() const {
+			 inline void clear() const {
 
-             _regs->BSRR = 1 << (_pn + 16);
-         }
+				 _regs->BSRR = 1 << (_pn + 16);
+			 }
 
-         inline void toggle() const {
+			 inline void toggle() const {
 
-             _regs->ODR ^= 1 << _pn;
-         }
+				 _regs->ODR ^= 1 << _pn;
+			 }
 
-         inline void write(bool state) const {
+			 inline void write(bool state) const {
 
-        	 if (state)
-        		 set();
-        	 else
-        		 clear();
-         }
+				 if (state)
+					 set();
+				 else
+					 clear();
+			 }
 
-         inline bool read() const {
+			 inline bool read() const {
 
-             return _regs->IDR & (1 << _pn);
-         }
+				 return _regs->IDR & (1 << _pn);
+			 }
     };
 
     template <GPIOPort port_>
