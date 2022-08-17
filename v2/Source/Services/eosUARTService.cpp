@@ -16,7 +16,8 @@ using namespace htl;
 UARTService::UARTService(
 	Application *application):
 
-	Service(application) {
+	Service(application),
+	_uart(htl::getUARTAdapter<config::uartService::UART>()) {
 
 	_rxPending.release();
 }
@@ -56,7 +57,7 @@ unsigned UARTService::send(
 	// Activa la interrupcio TXE, i comença la transmissio. Cada cop
 	// que el registre de transmissio estigui buit, es genera una interrupcio.
 	//
-	UART::enableInterrupt(UARTEvent::txEmpty);
+	_uart.enableInterrupt(UARTEvent::txEmpty);
 
 	// Espera el final de la transmissio.
 	//
@@ -65,9 +66,9 @@ unsigned UARTService::send(
 		// Si ha pasat el temps de bloqueig i no ha acabat, aborta
 		// la transmissio de dades
 		//
-		UART::disableInterrupt(UARTEvent::txEmpty);
-		UART::disableInterrupt(UARTEvent::txComplete);
-		UART::clearInterruptFlags();
+		_uart.disableInterrupt(UARTEvent::txEmpty);
+		_uart.disableInterrupt(UARTEvent::txComplete);
+		_uart.clearInterruptFlags();
 	}
 
 	return _txCount;
@@ -97,15 +98,15 @@ unsigned UARTService::receive(
 	// cada cop que el registre de recepcio no estigui buit,
 	// es genera una interrupcio.
 	//
-	UART::enableInterrupt(UARTEvent::rxNotEmpty);
+	_uart.enableInterrupt(UARTEvent::rxNotEmpty);
 
 	if (!_rxPending.wait(blockTime)) {
-		UART::disableInterrupt(UARTEvent::rxNotEmpty);
-		UART::disableInterrupt(UARTEvent::parity);
-		UART::disableInterrupt(UARTEvent::framming);
-		UART::disableInterrupt(UARTEvent::overrun);
-		UART::disableInterrupt(UARTEvent::noise);
-		UART::clearInterruptFlags();
+		_uart.disableInterrupt(UARTEvent::rxNotEmpty);
+		_uart.disableInterrupt(UARTEvent::parity);
+		_uart.disableInterrupt(UARTEvent::framming);
+		_uart.disableInterrupt(UARTEvent::overrun);
+		_uart.disableInterrupt(UARTEvent::noise);
+		_uart.clearInterruptFlags();
     	_rxPending.release();
 	}
 
@@ -120,8 +121,8 @@ void UARTService::onInitialize() {
 
 	Service::onInitialize();
 
-	UART::setInterruptFunction(uartInterruptFunction, this);
-	UART::clearInterruptFlags();
+	_uart.setInterruptFunction(uartInterruptFunction, this);
+	_uart.clearInterruptFlags();
 }
 
 
@@ -130,7 +131,7 @@ void UARTService::onInitialize() {
 ///
 void UARTService::onTerminate() {
 
-	UART::setInterruptFunction(nullptr, nullptr);
+	_uart.setInterruptFunction(nullptr, nullptr);
 
 	Service::onTerminate();
 }
@@ -162,13 +163,13 @@ void UARTService::uartInterruptFunction(
 		// RXNE (Reception data register not empty)
 		//
 		case UARTEvent::rxNotEmpty:
-			_rxBuffer[_rxCount++] = UART::receive();
+			_rxBuffer[_rxCount++] = _uart.receive();
 			if (_rxCount == _rxSize) {
-				UART::disableInterrupt(UARTEvent::rxNotEmpty);
-				UART::disableInterrupt(UARTEvent::parity);
-				UART::disableInterrupt(UARTEvent::framming);
-				UART::disableInterrupt(UARTEvent::overrun);
-				UART::disableInterrupt(UARTEvent::noise);
+				_uart.disableInterrupt(UARTEvent::rxNotEmpty);
+				_uart.disableInterrupt(UARTEvent::parity);
+				_uart.disableInterrupt(UARTEvent::framming);
+				_uart.disableInterrupt(UARTEvent::overrun);
+				_uart.disableInterrupt(UARTEvent::noise);
 				_rxPending.releaseISR();
 			}
 			break;
@@ -177,19 +178,19 @@ void UARTService::uartInterruptFunction(
 		//
 		case UARTEvent::txEmpty: {
 			if (_txCount == _txLength) {
-				UART::disableInterrupt(UARTEvent::txEmpty);
-				UART::enableInterrupt(UARTEvent::txComplete);
+				_uart.disableInterrupt(UARTEvent::txEmpty);
+				_uart.enableInterrupt(UARTEvent::txComplete);
 			}
 			else
-				UART::send(_txBuffer[_txCount++]);
+				_uart.send(_txBuffer[_txCount++]);
 			break;
 		}
 
 		// Comprova un event TC (Transmit complete).
 		//
 		case UARTEvent::txComplete:
-			UART::disableInterrupt(UARTEvent::txEmpty);
-			UART::disableInterrupt(UARTEvent::txComplete);
+			_uart.disableInterrupt(UARTEvent::txEmpty);
+			_uart.disableInterrupt(UARTEvent::txComplete);
 			_txPending.releaseISR();
 			break;
 	}

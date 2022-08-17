@@ -14,9 +14,6 @@
 namespace eos {
 
 	class UARTService: public Service {
-		private:
-			using UART = config::uartService::UART;
-
 		public:
 			enum class Event {
 				transmissionFinished,
@@ -30,6 +27,7 @@ namespace eos {
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
 		private:
+			htl::UARTAdapterBase &_uart;
 			uint8_t *_txBuffer;
 			unsigned _txLength;
 			unsigned _txCount;

@@ -85,7 +85,7 @@ namespace htl {
 
 			/// \brief Habilita el rellotje del modul LTDC.
 			///
-			inline static void enableClock() {
+			inline static void activate() {
 
 				RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
 			    __DSB();
@@ -93,7 +93,7 @@ namespace htl {
 
 			/// \brief Desabilita el rellotge del modul LTDC.
 			///
-			inline static void disableClock() {
+			inline static void deactivate() {
 
 				RCC->APB2ENR &= ~RCC_APB2ENR_LTDCEN;
 			}
@@ -111,7 +111,7 @@ namespace htl {
 
 		    	uint32_t tmp;
 
-		    	enableClock();
+		    	activate();
 		    	disable();
 
 		    	// Configura el registre SSCR (Sinchronization Size Configuration Register)
@@ -156,7 +156,7 @@ namespace htl {
 		    static void deInit() {
 
 		    	disable();
-		    	disableClock();
+		    	deactivate();
 		    }
 
 		    /// \brief Reseteja el modul.

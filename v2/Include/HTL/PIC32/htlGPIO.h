@@ -100,48 +100,6 @@ namespace htl {
         volatile uint32_t ODCxINV;
     };
 
-    class GPIOAdapter {
-        private:
-            GPIORegisters *_regs;
-            uint32_t _mask;
-
-        public:
-            GPIOAdapter(
-                uint32_t
-                addr, uint32_t pn):
-
-                _regs(reinterpret_cast<GPIORegisters*>(addr)),
-                _mask(1 << pn) {
-            }
-
-            GPIOAdapter(
-                const GPIOAdapter &other):
-
-                _regs(other._regs),
-                _mask(other._mask) {
-            }
-
-            inline void set() const {
-
-                _regs->LATxSET = _mask;
-            }
-
-            inline void clear() const {
-
-                _regs->LATxCLR = _mask;
-            }
-
-            inline void toggle() const {
-
-                _regs->LATxINV = _mask;
-            }
-
-            inline bool read() const {
-
-                return (_regs->PORTx & _mask) != 0;
-            }
-    };
-
     template <GPIOPort port_, GPIOPin pin_>
     class GPIO_x {
         private:
@@ -265,16 +223,6 @@ namespace htl {
             }
     };
 
-    template <typename gpio_>
-    const GPIOAdapter& getAdapter() {
-
-        using PortTrait = GPIOPortTrait<gpio_::port>;
-        using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
-
-        static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
-
-        return adapter;
-    }
 
     #ifdef _PORTA
         typedef GPIO_x<GPIOPort::A, GPIOPin::_0> GPIO_A0;
@@ -1011,6 +959,60 @@ namespace htl {
             static constexpr uint32_t an = -1;
         };
     #endif
+
+
+    class GPIOAdapter {
+        private:
+            GPIORegisters *_regs;
+            uint32_t _mask;
+
+        public:
+            GPIOAdapter(
+                uint32_t
+                addr, uint32_t pn):
+
+                _regs(reinterpret_cast<GPIORegisters*>(addr)),
+                _mask(1 << pn) {
+            }
+
+            GPIOAdapter(
+                const GPIOAdapter &other):
+
+                _regs(other._regs),
+                _mask(other._mask) {
+            }
+
+            inline void set() const {
+
+                _regs->LATxSET = _mask;
+            }
+
+            inline void clear() const {
+
+                _regs->LATxCLR = _mask;
+            }
+
+            inline void toggle() const {
+
+                _regs->LATxINV = _mask;
+            }
+
+            inline bool read() const {
+
+                return (_regs->PORTx & _mask) != 0;
+            }
+    };
+    
+    template <typename gpio_>
+    const GPIOAdapter& getAdapter() {
+
+        using PortTrait = GPIOPortTrait<gpio_::port>;
+        using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
+
+        static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
+
+        return adapter;
+    }
 }
 
 

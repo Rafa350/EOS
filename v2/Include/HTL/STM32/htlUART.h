@@ -127,17 +127,6 @@ namespace htl {
 	struct UARTPinTrait {
 	};
 
-	class UARTAdapter {
-		private:
-			USART_TypeDef *_regs;
-
-		public:
-			UARTAdapter(
-				uint32_t addr):
-				_regs(reinterpret_cast<USART_TypeDef*>(addr)) {
-			}
-	};
-
 	template <UARTChannel channel_>
 	class UART_x final {
 		private:
@@ -162,7 +151,7 @@ namespace htl {
 
 			/// \brief Habilita el rellotge el modul.
 			///
-			static void enableClock() {
+			static void activate() {
 
 				if constexpr (channel_ == UARTChannel::_1)
 					RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
@@ -186,7 +175,7 @@ namespace htl {
 
 			/// \brief Desabilita el rellotge del modul
 			///
-			static void disableClock() {
+			static void deactivate() {
 
 				if constexpr (channel_ == UARTChannel::_1)
 					RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
@@ -211,7 +200,7 @@ namespace htl {
 			///
 			static void init() {
 
-				enableClock();
+				activate();
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->CR1 &= ~USART_CR1_UE;
@@ -223,7 +212,7 @@ namespace htl {
 			static void deInit() {
 
 				disable();
-				disableClock();
+				deactivate();
 			}
 
 			/// \brief Habilita el modul per comunicar
@@ -239,7 +228,14 @@ namespace htl {
 			static void disable() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 &= ~(USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
+				regs->CR1 &= ~(USART_CR1_UE | USART_CR1_RE | USART_CR1_TE |
+					USART_CR1_IDLEIE | USART_CR1_TXEIE | USART_CR1_TCIE |
+					USART_CR1_RXNEIE | USART_CR1_PEIE | USART_CR1_RTOIE |
+					USART_CR1_EOBIE | USART_CR1_CMIE | USART_CR1_RXNEIE);
+				regs->CR2 &= ~USART_CR2_LBDIE;
+				regs->CR3 &= ~(USART_CR3_CTSIE | USART_CR3_EIE);
+
+				clearInterruptFlags();
 			}
 
 			/// \brief Configuracio del timing.
@@ -473,6 +469,9 @@ namespace htl {
 					case UARTEvent::rxNotEmpty:
 						return (regs->ISR & USART_ISR_RXNE) != 0;
 
+					case UARTEvent::cts:
+						return (regs->ISR & USART_ISR_CTSIF) != 0;
+
 					default:
 						return false;
 				}
@@ -488,7 +487,7 @@ namespace htl {
 						break;
 
 					case UARTEvent::cts:
-						regs->ISR &= ~USART_ISR_CTS;
+						regs->ISR &= ~USART_ISR_CTSIF;
 						break;
 
 					case UARTEvent::endOfBlock:
@@ -530,6 +529,10 @@ namespace htl {
 					case UARTEvent::rxNotEmpty:
 						regs->ISR &= ~USART_ISR_RXNE;
 						break;
+
+					case UARTEvent::match:
+						regs->ISR &= ~USART_ISR_CMF;
+						break;
 				}
 			}
 
@@ -539,7 +542,9 @@ namespace htl {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->ISR &= ~(USART_ISR_RXNE | USART_ISR_TXE | USART_ISR_TC |
-					USART_ISR_PE | USART_ISR_ORE | USART_ISR_FE | USART_ISR_NE);
+					USART_ISR_PE | USART_ISR_ORE | USART_ISR_NE | USART_ISR_IDLE |
+					USART_ISR_FE | USART_ISR_EOBF | USART_ISR_CTSIF | USART_ISR_SBKF |
+					USART_ISR_CMF);
 			}
 
 			/// \brief Asigna la funcio d'interrupcio.
@@ -567,17 +572,6 @@ namespace htl {
     
     template <UARTChannel channel_> UARTInterruptFunction UART_x<channel_>::_isrFunction = nullptr;
     template <UARTChannel channel_> UARTInterruptParam UART_x<channel_>::_isrParam = nullptr;
-
-    template <typename uart_>
-    const UARTAdapter& getAdapter() {
-
-        using UARTTrait = UARTTrait<uart_::channel>;
-
-        static UARTAdapter adapter(UARTTrait::addr);
-
-        return adapter;
-    }
-
 
     #ifdef USART1
         using UART_1 = UART_x<UARTChannel::_1>;
@@ -670,6 +664,69 @@ namespace htl {
 		};
 	#endif
 
+
+	class UARTAdapterBase {
+		public:
+			virtual void send(uint8_t data) const = 0;
+			virtual uint8_t receive() const = 0;
+			virtual void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const = 0;
+			virtual void enableInterrupt(UARTEvent event) const = 0;
+			virtual bool disableInterrupt(UARTEvent event) const = 0;
+			virtual bool getInterruptFlag(UARTEvent event) const = 0;
+			virtual void clearInterruptFlag(UARTEvent event) const = 0;
+			virtual void clearInterruptFlags() const = 0;
+	};
+
+	template <typename uart_>
+	class UARTAdapter final: public UARTAdapterBase {
+		private:
+			UARTAdapter(const UARTAdapter&) = delete;
+			UARTAdapter(const UARTAdapter&&) = delete;
+
+			UARTAdapter & operator = (const UARTAdapter &) = delete;
+			UARTAdapter & operator = (const UARTAdapter &&) = delete;
+
+		public:
+			UARTAdapter() = default;
+
+			void send(uint8_t data) const override {
+				uart_::send(data);
+			}
+
+			uint8_t receive() const override {
+				return uart_::receive();
+			}
+
+			void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const {
+				uart_::setInterruptFunction(function, param);
+			}
+
+			void enableInterrupt(UARTEvent event) const override {
+				uart_::enableInterrupt(event);
+			}
+
+			bool disableInterrupt(UARTEvent event) const override {
+				return uart_::disableInterrupt(event);
+			}
+
+			bool getInterruptFlag(UARTEvent event) const override {
+				return uart_::getInterruptFlag(event);
+			}
+
+			void clearInterruptFlag(UARTEvent event) const override {
+				uart_::clearInterruptFlag(event);
+			}
+
+			void clearInterruptFlags() const override {
+				uart_::clearInterruptFlags();
+			}
+	};
+
+	template <typename uart_>
+	UARTAdapterBase& getUARTAdapter() {
+		static UARTAdapter<uart_> adapter;
+		return adapter;
+	}
 }
 
 

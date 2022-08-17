@@ -93,13 +93,13 @@ void MyApplication::initializeServices() {
     _digInputService = new DigInputService(this);
     _digInputService->setPriority(Task::Priority::high);
 
-    _sw = new DigInput(_digInputService, getAdapter<PinSW>());
+    _sw = new DigInput(_digInputService, getGPIOAdapter<PinSW>());
     _sw->setCallback(_swEventCallback, nullptr);
 
     // Inicialitza el servei de sortides digitals
     //
     _digOutputService = new DigOutputService(this);
-    _led = new DigOutput(_digOutputService, getAdapter<PinLED>());
+    _led = new DigOutput(_digOutputService, getGPIOAdapter<PinLED>());
 
 	// Inicialitza el servei UART
 	//

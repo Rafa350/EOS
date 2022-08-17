@@ -132,55 +132,6 @@ namespace htl {
     struct GPIOPinTrait {
     };
 
-    class GPIOAdapter final {
-    	private:
-    		GPIO_TypeDef *_regs;
-    		uint32_t _pn;
-
-    		GPIOAdapter(const GPIOAdapter &) = delete;
-    		GPIOAdapter(GPIOAdapter &&) = delete;
-
-    		GPIOAdapter operator = (const GPIOAdapter&) = delete;
-    		GPIOAdapter operator = (const GPIOAdapter&&) = delete;
-
-    	public:
-    		GPIOAdapter(
-				uint32_t addr,
-				uint32_t pn) :
-
-				 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
-				 _pn(pn) {
-			 }
-
-			 inline void set() const {
-
-				 _regs->BSRR = 1 << _pn;
-			 }
-
-			 inline void clear() const {
-
-				 _regs->BSRR = 1 << (_pn + 16);
-			 }
-
-			 inline void toggle() const {
-
-				 _regs->ODR ^= 1 << _pn;
-			 }
-
-			 inline void write(bool state) const {
-
-				 if (state)
-					 set();
-				 else
-					 clear();
-			 }
-
-			 inline bool read() const {
-
-				 return _regs->IDR & (1 << _pn);
-			 }
-    };
-
     template <GPIOPort port_>
     class GPIOPortActivator final {
     	private:
@@ -361,17 +312,6 @@ namespace htl {
                 regs->BSRR = 1 << (_pn + (s ? 0 : 16));
             }
     };
-
-    template <typename gpio_>
-    const GPIOAdapter& getAdapter() {
-
-        using PortTrait = GPIOPortTrait<gpio_::port>;
-        using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
-
-        static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
-
-        return adapter;
-    }
 
     #ifdef GPIOA_BASE
         typedef GPIO_x<GPIOPort::A, GPIOPin::_0> GPIO_A0;
@@ -1170,6 +1110,66 @@ namespace htl {
         };
     #endif
 
+
+	class GPIOAdapter final {
+		private:
+			GPIO_TypeDef *_regs;
+			uint32_t _pn;
+
+			GPIOAdapter(const GPIOAdapter &) = delete;
+			GPIOAdapter(GPIOAdapter &&) = delete;
+
+			GPIOAdapter operator = (const GPIOAdapter&) = delete;
+			GPIOAdapter operator = (const GPIOAdapter&&) = delete;
+
+		public:
+			GPIOAdapter(
+				uint32_t addr,
+				uint32_t pn) :
+
+				 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
+				 _pn(pn) {
+			 }
+
+			 inline void set() const {
+
+				 _regs->BSRR = 1 << _pn;
+			 }
+
+			 inline void clear() const {
+
+				 _regs->BSRR = 1 << (_pn + 16);
+			 }
+
+			 inline void toggle() const {
+
+				 _regs->ODR ^= 1 << _pn;
+			 }
+
+			 inline void write(bool state) const {
+
+				 if (state)
+					 set();
+				 else
+					 clear();
+			 }
+
+			 inline bool read() const {
+
+				 return _regs->IDR & (1 << _pn);
+			 }
+	};
+
+	template <typename gpio_>
+    const GPIOAdapter& getGPIOAdapter() {
+
+        using PortTrait = GPIOPortTrait<gpio_::port>;
+        using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
+
+        static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
+
+        return adapter;
+    }
 }
 
 

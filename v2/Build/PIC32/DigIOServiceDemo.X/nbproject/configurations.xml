@@ -371,6 +371,12 @@
         <property key="lastid" value=""/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
+      <Tool>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="lastid" value=""/>
+        <property key="whatToProgram" value="all"/>
+      </Tool>
     </conf>
     <conf name="PIC32_ETH_STARTER_KIT" type="2">
       <toolsSet>
