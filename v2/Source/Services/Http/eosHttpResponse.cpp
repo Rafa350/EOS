@@ -10,8 +10,8 @@ using namespace eos;
 ///
 HttpResponse::HttpResponse():
 
-	statusCode(500),
-	statusMessage("Internal Server Error.") {
+	_statusCode(500),
+	_statusMessage("Internal Server Error.") {
 
 }
 
@@ -24,12 +24,12 @@ HttpResponse::HttpResponse():
 ///
 HttpResponse::HttpResponse(
 	unsigned statusCode,
-	const String& statusMessage,
-	const String& body):
+	const String &statusMessage,
+	const String &body):
 
-	statusCode(statusCode),
-	statusMessage(statusMessage),
-	body(body) {
+	_statusCode(statusCode),
+	_statusMessage(statusMessage),
+	_body(body) {
 
 }
 
@@ -39,11 +39,11 @@ HttpResponse::HttpResponse(
 /// \param    other: L'altre objecte a copiar.
 ///
 HttpResponse::HttpResponse(
-	const HttpResponse& other):
+	const HttpResponse &other):
 
-	statusCode(other.statusCode),
-	statusMessage(other.statusMessage),
-	body(other.body) {
+	_statusCode(other._statusCode),
+	_statusMessage(other._statusMessage),
+	_body(other._body) {
 
 }
 
@@ -53,18 +53,18 @@ String HttpResponse::printText() const {
 	StringBuilder sb;
 
 	sb.append("HTTP/1.1 ");
-	sb.append(statusCode);
+	sb.append(_statusCode);
 	sb.append(' ');
-	sb.append(statusMessage);
+	sb.append(_statusMessage);
 	sb.append("\r\n");
 
 	sb.append("Content-Length: ");
-	sb.append(body.getLength());
+	sb.append(_body.getLength());
 	sb.append("\r\n");
 	sb.append("Content-Type: text/plain;charset=utf-8\r\n");
 	sb.append("\r\n");
 
-	sb.append(body);
+	sb.append(_body);
 
 	return sb;
 }

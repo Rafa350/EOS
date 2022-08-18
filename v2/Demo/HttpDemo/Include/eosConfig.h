@@ -2,9 +2,10 @@
 #define __eosConfig__
 
 
-#define USE_LEDS_LED1
-#define USE_LEDS_LED2
+#define USE_LED1
+#define USE_LED2
 #define USE_DISPLAY
+#define USE_TOUCHPAD
 #define EOS_USE_STD_STRING
 
 

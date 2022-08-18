@@ -36,12 +36,11 @@ HttpRequest::HttpRequest(
 /// \param    text: El text a analitzar.
 ///
 void HttpRequest::parseText(
-	const String& text) {
+	const String &text) {
 
 	uint8_t state = 0;
 
-	const char* p;
-	unsigned l;
+	unsigned p, l;
 
 	for (int i = 0; i < text.getLength(); i++) {
 		char ch = text[i];
@@ -52,7 +51,7 @@ void HttpRequest::parseText(
 			//
 			case 0:
 				if (!isspace(ch)) {
-					p =  it;
+					p =  i;
 					l = 1;
 					state = 1;
 				}
@@ -62,7 +61,7 @@ void HttpRequest::parseText(
 			//
 			case 1:
 				if (isspace(ch)) {
-					_method = String(p, 0, l);
+					_method = String(text, p, l);
 					state = 2;
 				}
 				else
@@ -73,7 +72,7 @@ void HttpRequest::parseText(
 			//
 			case 2:
 				if (!isspace(ch)) {
-					p = it;
+					p = i;
 					l = 1;
 					state = 3;
 				}
@@ -83,7 +82,7 @@ void HttpRequest::parseText(
 			//
 			case 3:
 				if (isspace(ch)) {
-					_uri = String(p, 0, l);
+					_uri = String(text, p, l);
 					state = 4;
 				}
 				else
@@ -94,7 +93,7 @@ void HttpRequest::parseText(
 			//
 			case 4:
 				if (!isspace(ch)) {
-					_pHeaders = it;
+					//_pHeaders = &text[i];
 					_headersLength = 1;
 					state = 5;
 				}

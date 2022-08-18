@@ -193,8 +193,8 @@ namespace htl {
 				uint32_t pllDiv,
 				LTDCClockDivider clkDiv) {
 
-		    	eosAssert((pllMul >= 50) && (pllMul <= 432));
-		    	eosAssert((pllDiv >= 2) && (pllDiv <= 7));
+		    	//eosAssert((pllMul >= 50) && (pllMul <= 432));
+		    	//eosAssert((pllDiv >= 2) && (pllDiv <= 7));
 
 		    	uint32_t tmp;
 

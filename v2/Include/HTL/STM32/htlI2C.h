@@ -6,41 +6,37 @@
 // EOS includes
 //
 #include "HTL/htl.h"
-#include "HAL/STM32/halI2C.h"
 #include "HTL/STM32/htlGPIO.h"
+
+
+#ifndef DISCOVERY_I2Cx_TIMING
+#define DISCOVERY_I2Cx_TIMING     ((uint32_t)0x40912732)
+#endif
 
 
 namespace htl {
 
-	enum class I2CChannel: halI2CChannel {
+	enum class I2CChannel {
 		#ifdef I2C1
-			_1 = HAL_I2C_CHANNEL_1,
+			_1,
 		#endif
 		#ifdef I2C2
-			_2 = HAL_I2C_CHANNEL_2,
+			_2,
 		#endif
 		#ifdef I2C3
-			_3 = HAL_I2C_CHANNEL_3,
+			_3,
 		#endif
 		#ifdef I2C4
-			_4 = HAL_I2C_CHANNEL_4
+			_4
 		#endif
 	};
 
 	enum class I2CEvent {
-
 	};
 
 	enum class I2CPin {
 		SCL,
 		SDA
-	};
-
-	enum class I2CResult: halI2CResult {
-		ok = HAL_I2C_OK,
-	    error = HAL_I2C_ERR,
-		timeout = HAL_I2C_ERR_TIMEOUT,
-		busy = HAL_I2C_ERR_BUSY
 	};
 
 	using I2CInterruptParam = void*;
@@ -58,11 +54,11 @@ namespace htl {
 	class I2C_x {
 		private:
 			using Trait = I2CTrait<channel_>;
+
 			static constexpr unsigned _defaultBlockTime = 1000;
 			static constexpr uint32_t _addr = Trait::addr;
 
-			static halI2CHandler _handler;
-			static halI2CData _data;
+			static I2C_HandleTypeDef _handle;
 			static I2CInterruptParam _isrParam;
 			static I2CInterruptFunction _isrFunction;
 
@@ -125,20 +121,36 @@ namespace htl {
             }
 
 		protected:
-			static I2CResult initMaster() {
+			static bool initMaster() {
 
-				//activate();
-				//disable();
+				activate();
+				disable();
 
-				halI2CMasterInitializeInfo initInfo;
-				initInfo.channel = halI2CChannel(channel_);
-				return I2CResult(halI2CMasterInitialize(&_data, &initInfo, &_handler));
+				I2C_TypeDef *regs= reinterpret_cast<I2C_TypeDef*>(_addr);
+
+				_handle.Instance = regs;
+				_handle.Init.Timing           = DISCOVERY_I2Cx_TIMING;
+			    _handle.Init.OwnAddress1      = 0;
+			    _handle.Init.AddressingMode   = I2C_ADDRESSINGMODE_7BIT;
+			    _handle.Init.DualAddressMode  = I2C_DUALADDRESS_DISABLE;
+			    _handle.Init.OwnAddress2      = 0;
+			    _handle.Init.GeneralCallMode  = I2C_GENERALCALL_DISABLE;
+			    _handle.Init.NoStretchMode    = I2C_NOSTRETCH_DISABLE;
+				if (HAL_I2C_Init(&_handle) != HAL_OK)
+					return false;
+
+				enable();
+
+				return true;
 			}
             
 		public:
             inline static void deInit() {
                 
             	disable();
+
+            	HAL_I2C_DeInit(&_handle);
+
             	deactivate();
             }
 
@@ -158,22 +170,38 @@ namespace htl {
 				regs->CR1 &= ~I2C_CR1_PE;
 			}
 
-			inline static I2CResult send(
+			/// \brief Envia un bloc de dades al esclau
+			/// \param addr: Adressa I2C.
+			/// \param data: Les dades a transmetre.
+			/// \param size: Numero de bytes a transmetre.
+			/// \param blockTime: Temps maxim de bloqueig.
+			///
+			inline static bool send(
 				uint8_t addr,
 				const void *data,
 				int size,
 				unsigned blockTime = _defaultBlockTime) {
 
-				return I2CResult(halI2CMasterSend(_handler, addr, data, size, blockTime));
+				return HAL_I2C_Master_Transmit(
+					&_handle,
+					addr,
+					(uint8_t*)data,
+					size,
+					blockTime) == HAL_OK;
 			}
 
-			inline static I2CResult receive(
+			inline static bool receive(
 				uint8_t addr,
 				void *data,
 				int size,
 				unsigned blockTime = _defaultBlockTime) {
 
-				return I2CResult(halI2CMasterReceive(_handler, addr, data, size, blockTime));
+				return HAL_I2C_Master_Receive(
+					&_handle,
+					addr,
+					(uint8_t*) data,
+					size,
+					blockTime) == HAL_OK;
 			}
 
 			/// \brief Inicialitza el pin SCL
@@ -220,8 +248,7 @@ namespace htl {
             }
 	};
 
-	template <I2CChannel channel_> halI2CHandler I2C_x<channel_>::_handler;
-	template <I2CChannel channel_> halI2CData I2C_x<channel_>::_data;
+	template <I2CChannel channel_> I2C_HandleTypeDef I2C_x<channel_>::_handle;
 	template <I2CChannel channel_> I2CInterruptFunction I2C_x<channel_>::_isrFunction;
 	template <I2CChannel channel_> I2CInterruptParam I2C_x<channel_>::_isrParam;
 

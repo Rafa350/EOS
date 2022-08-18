@@ -20,11 +20,11 @@ namespace app {
 
 	class DisplayService: public eos::AppLoopService {
 		private:
-			eos::IDisplayDriver* driver;
-			eos::Graphics* graphics;
+			eos::IDisplayDriver *_driver;
+			eos::Graphics *_graphics;
 
 		public:
-			DisplayService(eos::Application* application);
+			DisplayService(eos::Application *application);
 
 		protected:
 			void onSetup();

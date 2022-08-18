@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "System/eosString.h"
-#include "System/Collections/eosContainer.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -13,9 +12,9 @@ using namespace eos;
 /// \brief    Constructor
 //
 StringBuilder::StringBuilder():
-	container(nullptr),
-	size(0),
-	capacity(0) {
+	_container(nullptr),
+	_size(0),
+	_capacity(0) {
 
 }
 
@@ -25,8 +24,8 @@ StringBuilder::StringBuilder():
 ///
 StringBuilder::~StringBuilder() {
 
-	if (container != nullptr)
-		Container::free(container);
+	if (_container != nullptr)
+		Container::free(_container);
 }
 
 

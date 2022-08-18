@@ -16,9 +16,9 @@ using namespace app;
 ///
 MyApplication::MyApplication() {
 
-	ledService = new LedService(this);
-#ifdef USE_DISPLAY    
-	displayService = new DisplayService(this);
-#endif    
-	httpService = new HTTPService(this);
+	_ledService = new LedService(this);
+	#ifdef USE_DISPLAY
+		_displayService = new DisplayService(this);
+	#endif
+	_httpService = new HTTPService(this);
 }

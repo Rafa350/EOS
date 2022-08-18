@@ -27,7 +27,7 @@ namespace eos {
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
 		private:
-			htl::UARTAdapterBase &_uart;
+			htl::UARTAdapter &_uart;
 			uint8_t *_txBuffer;
 			unsigned _txLength;
 			unsigned _txCount;

@@ -171,22 +171,22 @@
 		<link>
 			<name>inc/Framework/FreeRTOS/FreeRTOS.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/include/FreeRTOS.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/include/FreeRTOS.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/list.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/include/list.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/include/list.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/queue.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/include/queue.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/include/queue.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/task.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/include/task.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/include/task.h</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/appInitialize.cpp</name>
@@ -297,11 +297,6 @@
 			<name>inc/Framework/EOS/HAL/hal.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/hal.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halI2C.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2C.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -551,32 +546,32 @@
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/list.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/list.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/queue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/queue.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/tasks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/timers.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/timers.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal.c</name>
@@ -692,11 +687,6 @@
 			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPadDriver.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halI2C.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halSYS.h</name>
@@ -952,11 +942,6 @@
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halI2C.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halI2C.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>

@@ -665,7 +665,7 @@ namespace htl {
 	#endif
 
 
-	class UARTAdapterBase {
+	class UARTAdapter {
 		public:
 			virtual void send(uint8_t data) const = 0;
 			virtual uint8_t receive() const = 0;
@@ -678,16 +678,16 @@ namespace htl {
 	};
 
 	template <typename uart_>
-	class UARTAdapter final: public UARTAdapterBase {
+	class UARTAdapter_x final: public UARTAdapter {
 		private:
-			UARTAdapter(const UARTAdapter&) = delete;
-			UARTAdapter(const UARTAdapter&&) = delete;
+			UARTAdapter_x(const UARTAdapter_x &) = delete;
+			UARTAdapter_x(const UARTAdapter_x &&) = delete;
 
-			UARTAdapter & operator = (const UARTAdapter &) = delete;
-			UARTAdapter & operator = (const UARTAdapter &&) = delete;
+			UARTAdapter & operator = (const UARTAdapter_x &) = delete;
+			UARTAdapter & operator = (const UARTAdapter_x &&) = delete;
 
 		public:
-			UARTAdapter() = default;
+			UARTAdapter_x() = default;
 
 			void send(uint8_t data) const override {
 				uart_::send(data);
@@ -723,8 +723,8 @@ namespace htl {
 	};
 
 	template <typename uart_>
-	UARTAdapterBase& getUARTAdapter() {
-		static UARTAdapter<uart_> adapter;
+	UARTAdapter& getUARTAdapter() {
+		static UARTAdapter_x<uart_> adapter;
 		return adapter;
 	}
 }

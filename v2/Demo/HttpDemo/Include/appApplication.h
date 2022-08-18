@@ -21,11 +21,11 @@ namespace app {
 
 	class MyApplication: public eos::Application {
 		private:
-			LedService* ledService;
-#ifdef USE_DISPLAY            
-			DisplayService* displayService;
-#endif            
-			eos::HTTPService* httpService;
+			LedService *_ledService;
+			#ifdef USE_DISPLAY
+				DisplayService *_displayService;
+			#endif
+			eos::HTTPService *_httpService;
 
 		public :
 			MyApplication();

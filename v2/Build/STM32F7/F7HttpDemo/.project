@@ -66,7 +66,7 @@
 		<link>
 			<name>inc/App/appLedService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Include/appLedService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Include/appLedService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/eosConfig.h</name>
@@ -101,7 +101,7 @@
 		<link>
 			<name>src/App/appLedService.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/appLedService.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Source/appLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appMain.cpp</name>
@@ -122,6 +122,11 @@
 			<name>inc/App/STM32F7/FreeRTOSConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Include/STM32F7/FreeRTOSConfig.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F7/ethernetif.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Include/STM32F7/ethernetif.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F7/lwipopts.h</name>
@@ -145,6 +150,11 @@
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -179,9 +189,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/appInitialize.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F7/stm32f7xx_ethernetif.c</name>
+			<name>src/App/STM32F7/ethernetif.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/stm32f7xx_ethernetif.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/ethernetif.c</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
@@ -200,6 +210,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -279,24 +294,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halI2C.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2C.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halSPI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSPI.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -307,6 +307,26 @@
 			<name>inc/Framework/EOS/HAL/halTMR.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htl.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htlGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htlI2C.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlI2C.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
@@ -404,6 +424,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HTL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -454,6 +479,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosStringBuilder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosStringBuilder.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/STM32/BSP/stm32746g_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery.c</locationURI>
@@ -466,37 +501,37 @@
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/CMSIS_RTOS/cmsis_os.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/list.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/queue.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/timers.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal.c</name>
@@ -516,7 +551,7 @@
 		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal_eth.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_eth.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_eth.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal_gpio.c</name>
@@ -629,34 +664,34 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halI2C.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPI.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlI2C.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlI2C.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Http/eosHttpServer.h</name>
@@ -769,26 +804,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halDMA2D.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halI2C.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halI2C.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halLTDC.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halLTDC.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
@@ -797,6 +812,16 @@
 			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
@@ -924,11 +949,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFont.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/Graphics/eosFontCache.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFontCache.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/System/Graphics/eosGraphics.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics.cpp</locationURI>
@@ -942,6 +962,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosGraphics_Circle.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Circle.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosGraphics_Clipping.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Clipping.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosGraphics_Ellipse.cpp</name>
@@ -1149,9 +1174,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.cpp</name>
+			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosFT5336.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>

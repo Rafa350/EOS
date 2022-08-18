@@ -16,10 +16,10 @@ using namespace eos;
 HttpServer::HttpServer(
 	uint8_t port):
 
-	getCallback(this, &HttpServer::getHandler),
-	headCallback(this, &HttpServer::headHandler),
-	postCallback(this, &HttpServer::postHandler),
-	port(port) {
+	_getCallback(this, &HttpServer::getHandler),
+	_headCallback(this, &HttpServer::headHandler),
+	_postCallback(this, &HttpServer::postHandler),
+	_port(port) {
 
 }
 
@@ -29,11 +29,11 @@ HttpServer::HttpServer(
 /// \param    controller: El controlador.
 ///
 void HttpServer::addController(
-	HttpController* controller) {
+	HttpController *controller) {
 
 	eosAssert(controller != nullptr);
 
-	controllers.pushBack(controller);
+	_controllers.pushBack(controller);
 }
 
 
@@ -76,9 +76,9 @@ void HttpServer::initialize() {
 ///
 void HttpServer::run() {
 
-	addController(new HttpController("GET", &getCallback));
-	addController(new HttpController("HEAD", &headCallback));
-	addController(new HttpController("POST", &postCallback));
+	addController(new HttpController("GET", &_getCallback));
+	addController(new HttpController("HEAD", &_headCallback));
+	addController(new HttpController("POST", &_postCallback));
 
 	// Create a new TCP connection handle
 	//
@@ -87,7 +87,7 @@ void HttpServer::run() {
 
 		// Bind to port (HTTP) with default IP address
 		//
-		if (netconn_bind(hListenConnection, NULL, port) == ERR_OK) {
+		if (netconn_bind(hListenConnection, NULL, _port) == ERR_OK) {
 
 			// Put the connection into LISTEN state
 			//
@@ -113,7 +113,7 @@ void HttpServer::run() {
 
 				    		HttpRequest request(String(data, 0, dataLength));
 
-				    		for (auto it = controllers.begin(); it != controllers.end(); it++) {
+				    		for (auto it = _controllers.begin(); it != _controllers.end(); it++) {
 				    			HttpController* controller = *it;
 
 				    			if (controller->canProcess(request)) {
