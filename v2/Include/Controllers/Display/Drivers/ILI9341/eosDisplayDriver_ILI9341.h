@@ -55,14 +55,14 @@ namespace eos {
             DisplayDriver_ILI9341();
 
             void initialize() override;
-            void shutdown() override;
+            void deinitialize() override;
 
             void displayOn() override;
             void displayOff() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getImageWidth() const { return _imageWidth; }
-            inline int getImageHeight() const { return _imageHeight; }
+            inline int getWidth() const { return _imageWidth; }
+            inline int getHeight() const { return _imageHeight; }
 
             void clear(Color color) override;
 

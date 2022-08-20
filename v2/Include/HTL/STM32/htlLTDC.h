@@ -99,7 +99,11 @@ namespace htl {
 			}
 
 		public:
-		    static void init(
+			/// \brief Inicialitza el modul.
+			/// \param width: Amplada de la pantalla en pixels.
+			/// \param height: Alçada de la pantalla en pixels.
+			///
+		    static void initialize(
 		    	uint16_t width,
 				uint16_t height,
 		    	uint16_t hSync,
@@ -153,7 +157,7 @@ namespace htl {
 
 		    /// \brief Desinicialitza el modul
 		    ///
-		    static void deInit() {
+		    static void deinitialize() {
 
 		    	disable();
 		    	deactivate();
@@ -202,10 +206,12 @@ namespace htl {
 		    	while ((RCC->CR & RCC_CR_PLLSAIRDY) != 0)
 		    		continue;
 
-		    	tmp = RCC->DCKCFGR1;
-		    	tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
-		    	tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
-		    	RCC->DCKCFGR1 = tmp;
+				#ifdef EOS_PLATFORM_STM32F7
+		    		tmp = RCC->DCKCFGR1;
+		    		tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    		tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    		RCC->DCKCFGR1 = tmp;
+				#endif
 
 		    	tmp = RCC->PLLSAICFGR;
 		    	tmp &= ~RCC_PLLSAICFGR_PLLSAIN_Msk;
@@ -226,10 +232,12 @@ namespace htl {
 		    static void initClock(
 				LTDCClockDivider clkDiv) {
 
-		    	uint32_t tmp = RCC->DCKCFGR1;
-		    	tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
-		    	tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
-		    	RCC->DCKCFGR1 = tmp;
+				#ifdef EOS_PLATFORM_STM32F7
+		    		uint32_t tmp = RCC->DCKCFGR1;
+		    		tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    		tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+		    		RCC->DCKCFGR1 = tmp;
+				#endif
 		    }
 
 		    template <typename gpio_>

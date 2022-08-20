@@ -36,7 +36,7 @@ void MonoFrameBuffer::put(
 	int y,
 	Color color) {
 
-	uint8_t *page = &_buffer[(y >> 3) * getImageWidth()];
+	uint8_t *page = &_buffer[(y >> 3) * getWidth()];
 	if (color.getL() > 127)
 		page[x] |= 1 << (y & 7);
 	else

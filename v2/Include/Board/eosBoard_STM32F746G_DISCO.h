@@ -197,7 +197,7 @@ namespace board {
 
 		using GPIO_SCL = htl::GPIO_B8;    // D15
 		using GPIO_SDA = htl::GPIO_B9;    // D14
-		using I2C = htl::I2C_1;
+		using I2C = htl::I2CMaster_1;
 
 		using GPIO_SCK = htl::GPIO_I1;    // D13
 		using GPIO_MISO = htl::GPIO_B14;  // D12

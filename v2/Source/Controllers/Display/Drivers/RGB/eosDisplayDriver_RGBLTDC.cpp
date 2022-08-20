@@ -52,7 +52,7 @@ void DisplayDriver_RGBLTDC::initialize() {
 /// ---------------------------------------------------------------------
 /// \brief    Finalitza el driver.
 ///
-void DisplayDriver_RGBLTDC::shutdown() {
+void DisplayDriver_RGBLTDC::deinitialize() {
 
 	displayOff();
 }
@@ -259,7 +259,7 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	Ltdc::initRPins<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
 	Ltdc::initGPins<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
 	Ltdc::initBPins<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	Ltdc::init(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	Ltdc::initialize(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	Ltdc::setBackgroundColor(0x0000FF);
 	Ltdc::setInterruptFunction(nullptr, nullptr);
 

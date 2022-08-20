@@ -8,6 +8,30 @@ using namespace htl;
 
 void UART_1_InterruptHandler() {
 
+	uint32_t isr = USART1->ISR;
+
+	if (isr != 0) {
+
+		if (isr & USART_ISR_TXE)
+			UART_1::interruptHandler(UARTEvent::txEmpty);
+
+		if (isr & USART_ISR_TC)
+			UART_1::interruptHandler(UARTEvent::txComplete);
+
+		if (isr & USART_ISR_RXNE)
+			UART_1::interruptHandler(UARTEvent::rxNotEmpty);
+
+		if (isr & USART_ISR_PE)
+			UART_1::interruptHandler(UARTEvent::parity);
+
+		if (isr & USART_ISR_ORE)
+			UART_1::interruptHandler(UARTEvent::overrun);
+
+		if (isr & USART_ISR_FE)
+			UART_1::interruptHandler(UARTEvent::framming);
+
+		USART1->ICR = isr;
+	}
 }
 
 

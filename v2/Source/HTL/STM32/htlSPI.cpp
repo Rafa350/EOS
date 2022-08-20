@@ -108,13 +108,13 @@ static void setSize(
 	SPI_TypeDef *regs,
 	SPISize size) {
 
-	#if defined(EOS_STM32F4)
+	#if defined(EOS_PLATAFORM_STM32F4)
 		if (size == SPISize::_16)
 			regs->CR1 |= SPI_CR1_DFF;
 		else
 			regs->CR1 &= ~SPI_CR1_DFF;
 
-	#elif defined(EOS_STM32F7)
+	#elif defined(EOS_PLATFORM_STM32F7)
 		uint32_t tmp = regs->CR2;
 		tmp &= ~(SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
 		switch (size) {
@@ -151,15 +151,15 @@ static void setFirstBit(
 /// \brief    Espera que el dispositiu estigui lliure
 /// \param    regs: El bloc de registres.
 /// \param    startTime: Temps del inici de les operacions
-/// \param    blockTime: Temps maxim de bloqueig.
+/// \param    timeout: Temps maxim de bloqueig.
 ///
 static void waitBusy(
 	SPI_TypeDef *regs,
 	unsigned startTime,
-	unsigned blockTime) {
+	unsigned timeout) {
 
 	while ((regs->SR & SPI_SR_BSY) != 0) {
-		if (halSYSCheckTimeout(startTime, blockTime)) {
+		if (halSYSCheckTimeout(startTime, timeout)) {
 		}
 	}
 }
@@ -169,16 +169,16 @@ static void waitBusy(
 /// \brief    Espera que el fifo de transmissio estigui buit.
 /// \param    regs: El bloc de registres.
 /// \param    startTime: Temps del inici de les operacions
-/// \param    blockTime: Temps maxim de bloqueig.
+/// \param    timeout: Temps maxim de bloqueig.
 ///
-#ifdef EOS_STM32F7
+#ifdef EOS_PLATFORM_STM32F7
 static void waitTxFifoEmpty(
 	SPI_TypeDef *regs,
 	unsigned startTime,
-	unsigned blockTime) {
+	unsigned timeout) {
 
 	while ((regs->SR & SPI_SR_FTLVL) != SPI_FTLVL_EMPTY) {
-		if (halSYSCheckTimeout(startTime, blockTime)) {
+		if (halSYSCheckTimeout(startTime, timeout)) {
 
 		}
 	}
@@ -190,16 +190,16 @@ static void waitTxFifoEmpty(
 /// \brief    Espera que el fifo de recepcio estigui buit.
 /// \param    regs: El bloc de registres.
 /// \param    startTime: Temps del inici de les operacions
-/// \param    blockTime: Temps maxim de bloqueig.
+/// \param    timeout: Temps maxim de bloqueig.
 ///
-#ifdef EOS_STM32F7
+#ifdef EOS_PLATFORM_STM32F7
 static void waitRxFifoEmpty(
 	SPI_TypeDef *regs,
 	unsigned startTime,
-	unsigned blockTime) {
+	unsigned timeout) {
 
 	while ((regs->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
-		if (halSYSCheckTimeout(startTime, blockTime)) {
+		if (halSYSCheckTimeout(startTime, timeout)) {
 
 		}
 
@@ -217,7 +217,7 @@ static void waitRxFifoEmpty(
 /// \param    firstBite: El primer bit de la trama.
 /// \param    clkDivider: Divisor de frequencia.
 ///
-void htl::SPI_init(
+void htl::SPI_initialize(
 	SPI_TypeDef *regs,
 	SPIMode mode,
 	SPIClkPolarity clkPolarity,
@@ -239,27 +239,27 @@ void htl::SPI_init(
 /// \brief    Transfereix un bloc de dades.
 /// \param    regs: El bloc de registres.
 /// \param    data: El bloc de dades.
-/// \param    size: El tamany del bloc de dades en bytes.
-/// \param    blockTime: El temps maxim de bloqueig.
+/// \param    dataLength: Longitut del blñoc de dades.
+/// \param    timeout: El temps maxim de bloqueig.
 ///
 void htl::SPI_send(
 	SPI_TypeDef *regs,
-	const void *data,
-	int size,
-	unsigned blockTime) {
+	const uint8_t *data,
+	unsigned dataLength,
+	unsigned timeout) {
 
-	int count = size;
-	const uint8_t *p = (const uint8_t*) data;
+	unsigned count = dataLength;
+	const uint8_t *p = data;
 	unsigned startTime = halSYSGetTick();
 
 	while (count > 0) {
 
-#if defined(EOS_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4)
 		*((volatile uint8_t*)&regs->DR) = *((uint8_t*)p);
 		p += sizeof(uint8_t);
 		count -= sizeof(uint8_t);
 
-#elif defined(EOS_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F7)
 		if (count > 1) {
 			// Acces com a 16 bits (Packing mode)
 			regs->DR = *((uint16_t*)p);
@@ -277,17 +277,17 @@ void htl::SPI_send(
 #endif
 
 		while ((regs->SR & SPI_SR_TXE) == 0) {
-			if (halSYSCheckTimeout(startTime, blockTime)) {
+			if (halSYSCheckTimeout(startTime, timeout)) {
 
 			}
 		}
 	}
 
-#ifdef EOS_STM32F7
-	waitTxFifoEmpty(regs, startTime, blockTime);
+#ifdef EOS_PLATFORM_STM32F7
+	waitTxFifoEmpty(regs, startTime, timeout);
 #endif
-	waitBusy(regs, startTime, blockTime);
-#ifdef EOS_STM32F7
-	waitRxFifoEmpty(regs, startTime, blockTime);
+	waitBusy(regs, startTime, timeout);
+#ifdef EOS_PLATFORM_STM32F7
+	waitRxFifoEmpty(regs, startTime, timeout);
 #endif
 }

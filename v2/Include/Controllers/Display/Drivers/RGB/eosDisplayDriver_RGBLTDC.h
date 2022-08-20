@@ -73,7 +73,7 @@ namespace eos {
     		DisplayDriver_RGBLTDC(FrameBuffer *frameBuffer1, FrameBuffer *frameBuffer2 = nullptr);
 
             void initialize() override;
-            void shutdown() override;
+            void deinitialize() override;
 
             void displayOn() override;
             void displayOff() override;

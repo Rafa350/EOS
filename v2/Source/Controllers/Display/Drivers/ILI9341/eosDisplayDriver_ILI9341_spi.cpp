@@ -30,7 +30,7 @@ void DisplayDriver_ILI9341::initializeInterface() {
     //
 	SPI::initSCKPin<GPIO_SCK>();
 	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::init(
+	SPI::initialize(
 		SPIMode::master,
 		SPIClkPolarity::low,
 		SPIClkPhase::edge1,

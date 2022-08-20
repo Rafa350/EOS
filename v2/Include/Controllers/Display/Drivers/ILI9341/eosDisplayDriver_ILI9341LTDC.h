@@ -91,14 +91,14 @@ namespace eos {
             DisplayDriver_ILI9341LTDC(FrameBuffer *frameBuffer);
 
             void initialize() override;
-            void shutdown() override;
+            void deinitialize() override;
 
             void displayOn() override;
             void displayOff() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            int getImageWidth() const override { return _frameBuffer->getImageWidth(); }
-            int getImageHeight() const override { return _frameBuffer->getImageHeight(); }
+            int getWidth() const override { return _frameBuffer->getWidth(); }
+            int getHeight() const override { return _frameBuffer->getHeight(); }
 
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;

@@ -40,7 +40,7 @@ void DisplayDriver_ILI9341::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva la pantalla
 ///
-void DisplayDriver_ILI9341::shutdown() {
+void DisplayDriver_ILI9341::deinitialize() {
 
     displayOff();
 }

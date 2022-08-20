@@ -39,7 +39,7 @@ void TouchPadDriver_FT5336::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza el driver.
 ///
-void TouchPadDriver_FT5336::shutdown() {
+void TouchPadDriver_FT5336::deinitialize() {
 
 	if constexpr (board::touchpad::useInterruption)
 		disableInt();

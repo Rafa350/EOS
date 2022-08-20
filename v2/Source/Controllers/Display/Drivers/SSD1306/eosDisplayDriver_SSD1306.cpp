@@ -32,7 +32,7 @@ void DisplayDriver_SSD1306::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el driver.
 ///
-void DisplayDriver_SSD1306::shutdown() {
+void DisplayDriver_SSD1306::deinitialize() {
 
 	displayOff();
 }
@@ -198,8 +198,8 @@ void DisplayDriver_SSD1306::setPixels(
 ///
 void DisplayDriver_SSD1306::refresh() {
 
-	int width = _frameBuffer->getImageWidth();
-	int height = _frameBuffer->getImageHeight();
+	int width = _frameBuffer->getWidth();
+	int height = _frameBuffer->getHeight();
 	const uint8_t *buffer = reinterpret_cast<const uint8_t*>(_frameBuffer->getBuffer());
 
     for (int page = 0; page < height / 8; page++) {
@@ -231,7 +231,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	//
 	Spi::initSCKPin<PinSCK>();
 	Spi::initMOSIPin<PinMOSI>();
-	Spi::init(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
+	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
 }
 #else
 #error "DISPLAY_SSD1306_INTERFACE"

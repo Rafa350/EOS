@@ -3,6 +3,8 @@
 #include "HTL/htlINT.h"
 #include "HTL/htlTMR.h"
 #include "HTL/htlUART.h"
+#include "Controllers/Serial/eosSerialDriver.h"
+#include "Controllers/Serial/eosSerialDriver_IT.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
@@ -20,8 +22,8 @@ using namespace app;
 /// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication():
-    _swEventCallback(this, &MyApplication::swEventHandler) {
-
+    _swCallback(this, &MyApplication::swEventHandler),
+	_serialCallback(this, &MyApplication::serialEventHandler) {
 }
 
 
@@ -51,7 +53,7 @@ void MyApplication::initializeHardware() {
 
     // Inicialitza la UART
 	//
-	Uart::init();
+	Uart::initialize();
 	Uart::initTXPin<PinTX>();
 	Uart::initRXPin<PinRX>();
 	Uart::setProtocol(UARTWord::_8, UARTParity::none, UARTStop::_1);
@@ -62,7 +64,7 @@ void MyApplication::initializeHardware() {
 
 	// Inicialitza el temporitzador per les entrades digitals
 	//
-	Tmr1::init();
+	Tmr1::initialize();
 	Tmr1::setClockDivider(TMRClockDivider::_1);
 	Tmr1::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
 	Tmr1::setPeriod((1000 * config::digInputService::tmrPeriod) - 1);
@@ -72,7 +74,7 @@ void MyApplication::initializeHardware() {
 
 	// Inicialitza el temporitzador per les sortides digitals
 	//
-	Tmr2::init();
+	Tmr2::initialize();
 	Tmr2::setClockDivider(TMRClockDivider::_1);
 	Tmr2::setPrescaler((halSYSGetTimerClock1Frequency() / 1000000L) - 1);
 	Tmr2::setPeriod((1000 * config::digOutputService::tmrPeriod) - 1);
@@ -94,20 +96,20 @@ void MyApplication::initializeServices() {
     _digInputService->setPriority(Task::Priority::high);
 
     _sw = new DigInput(_digInputService, getGPIOAdapter<PinSW>());
-    _sw->setCallback(_swEventCallback, nullptr);
+    _sw->setCallback(_swCallback, nullptr);
 
     // Inicialitza el servei de sortides digitals
     //
     _digOutputService = new DigOutputService(this);
     _led = new DigOutput(_digOutputService, getGPIOAdapter<PinLED>());
 
-	// Inicialitza el servei UART
-	//
-	_uartService = new UARTService(this);
+	_serial = new SerialDriver(getUARTAdapter<Uart>());
+	_serial->initialize();
+	//_serial->setCallback(_serialCallback, nullptr);
 
 	// Inicialitza el servei AppLoop
 	//
-	_loopService = new MyAppLoopService(this, _uartService);
+	//_loopService = new MyAppLoopService(this, _uartService);
 
 	// Arranca el temporitzador de gestio de les entrades digitals
 	//
@@ -156,8 +158,15 @@ void MyApplication::isrTmr2(
 void MyApplication::swEventHandler(
     const DigInput::EventArgs &args) {
 
+	unsigned count;
+
     if (_sw->read()) {
         _led->pulse(1000);
-        _uartService->send((uint8_t*) "hola\r\n", 6, unsigned(-1));
+    	_serial->send((const uint8_t*)"Adios\r\n", 7, count, 1000);
     }
+}
+
+void MyApplication::serialEventHandler(
+	const SerialDriver_IT::EventArgs &args) {
+
 }

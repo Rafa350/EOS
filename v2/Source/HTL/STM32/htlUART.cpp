@@ -242,3 +242,4 @@ void htl::UART_setTimming(
     else
     	regs->BRR = div;
 }
+

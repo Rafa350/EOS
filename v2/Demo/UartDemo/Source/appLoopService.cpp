@@ -24,11 +24,11 @@ void MyAppLoopService::onSetup() {
 
 void MyAppLoopService::onLoop() {
 
-	char ch;
+	/*char ch;
 
 	if ((ch = getChar()) != 0) {
 		putChar(ch);
-	}
+	}*/
 }
 
 

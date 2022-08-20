@@ -12,28 +12,28 @@
 namespace htl {
 
 	enum class UARTChannel {
-        #ifdef USART1
+        #ifdef USART1_BASE
             _1,
         #endif
-        #ifdef USART2
+        #ifdef USART2_BASE
             _2,
         #endif
-        #ifdef USART3
+        #ifdef USART3_BASE
             _3,
         #endif
-        #ifdef UART4
+        #ifdef UART4_BASE
             _4,
         #endif
-        #ifdef UART5
+        #ifdef UART5_BASE
             _5,
         #endif
-        #ifdef USART6
+        #ifdef USART6_BASE
             _6,
         #endif
-        #ifdef UART7
+        #ifdef UART7_BASE
             _7,
         #endif
-        #ifdef UART8
+        #ifdef UART8_BASE
             _8,
         #endif
 	};
@@ -115,7 +115,7 @@ namespace htl {
 	using UARTInterruptParam = void*;
 	using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
 
-	void UART_init();
+	void UART_initialize();
 	void UART_setProtocol(USART_TypeDef*, UARTWord, UARTParity, UARTStop);
 	void UART_setTimming(USART_TypeDef*, UARTBaudMode, UARTClockSource, unsigned, UARTOverSampling);
 
@@ -137,6 +137,7 @@ namespace htl {
 
 		private:
 			static constexpr uint32_t _addr = Trait::addr;
+			static constexpr unsigned _defaultTimeout = 1000;
 			static UARTInterruptFunction _isrFunction;
 			static UARTInterruptParam _isrParam;
 
@@ -198,21 +199,62 @@ namespace htl {
 		public:
 			/// \bried Inicialitza el modul.
 			///
-			static void init() {
+			static void initialize() {
 
 				activate();
+				disable();
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->CR1 &= ~USART_CR1_UE;
 			    regs->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
+
+			    enable();
 			}
 
 			/// \bried Desinicialitza el modul.
 			///
-			static void deInit() {
+			static void deinitialize() {
 
 				disable();
 				deactivate();
+			}
+
+			/// \brief Reseteja el modul
+			///
+			static void reset() {
+
+				if constexpr (channel_ == UARTChannel::_1) {
+					RCC->APB2RSTR |= RCC_APB2RSTR_USART1RST;
+					RCC->APB2RSTR &= ~RCC_APB2RSTR_USART1RST;
+				}
+				if constexpr (channel_ == UARTChannel::_2) {
+					RCC->APB1RSTR |= RCC_APB1RSTR_USART2RST;
+					RCC->APB1RSTR &= ~RCC_APB1RSTR_USART2RST;
+				}
+				if constexpr (channel_ == UARTChannel::_3) {
+					RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
+					RCC->APB1RSTR &= ~RCC_APB1RSTR_USART3RST;
+				}
+				if constexpr (channel_ == UARTChannel::_4) {
+					RCC->APB1RSTR |= RCC_APB1RSTR_UART4RST;
+					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART4RST;
+				}
+				if constexpr (channel_ == UARTChannel::_5) {
+					RCC->APB1RSTR |= RCC_APB1RSTR_UART5RST;
+					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART5RST;
+				}
+				if constexpr (channel_ == UARTChannel::_6) {
+					RCC->APB2RSTR |= RCC_APB2RSTR_USART6RST;
+					RCC->APB2RSTR &= ~RCC_APB2RSTR_USART6RST;
+				}
+				if constexpr (channel_ == UARTChannel::_7) {
+					RCC->APB1RSTR |= RCC_APB1RSTR_UART7RST;
+					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART7RST;
+				}
+				if constexpr (channel_ == UARTChannel::_8) {
+					RCC->APB1RSTR |= RCC_APB1RSTR_UART8RST;
+					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART8RST;
+				}
 			}
 
 			/// \brief Habilita el modul per comunicar
@@ -291,14 +333,20 @@ namespace htl {
 					UARTPinTrait<channel_, gpio_, UARTPin::RX>::alt);
 			}
 
-			static void send(
+			/// \brief Escriu un byte en el buffer de transmissio.
+			/// \param data: El byte.
+			///
+			static void write(
 				uint8_t data) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->TDR = data;
 			}
 
-			static uint8_t receive() {
+			/// \brief Llegeix un byte del buffer de recepcio.
+			/// \return El byte.
+			///
+			static uint8_t read() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				return regs->RDR;
@@ -440,6 +488,17 @@ namespace htl {
 				return state;
 			}
 
+			/// \brief Desabilita les interrrupcions
+			///
+			static void disableInterrupts() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				regs->CR1 &= ~(USART_CR1_TXEIE | USART_CR1_TCIE);
+			}
+
+			/// \brief Obte el flag d'interrupcio.
+			/// \param event: El event.
+			///
 			static bool getInterruptFlag(
 				UARTEvent event) {
 
@@ -477,61 +536,60 @@ namespace htl {
 				}
 			}
 
+			/// \brief Borra el flag d'interrupcio.
+			/// \param event: El event.
+			///
 			static void clearInterruptFlag(
 				UARTEvent event) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				switch (event) {
-					case UARTEvent::brk:
-						regs->ISR &= ~USART_ISR_SBKF;
-						break;
-
 					case UARTEvent::cts:
-						regs->ISR &= ~USART_ISR_CTSIF;
+						regs->ICR = USART_ICR_CTSCF;
 						break;
 
 					case UARTEvent::endOfBlock:
-						regs->ISR &= ~USART_ISR_EOBF;
+						regs->ICR = USART_ICR_EOBCF;
 						break;
 
 					case UARTEvent::framming:
-						regs->ISR &= ~USART_ISR_FE;
+						regs->ICR = USART_ICR_FECF;
 						break;
 
 					case UARTEvent::idle:
-						regs->ISR &= ~USART_ISR_IDLE;
+						regs->ICR = USART_ICR_IDLECF;
 						break;
 
 					case UARTEvent::noise:
-						regs->ISR &= ~USART_ISR_NE;
+						regs->ICR = USART_ICR_NCF;
 						break;
 
 					case UARTEvent::overrun:
-						regs->ISR &= ~USART_ISR_ORE;
+						regs->ICR = USART_ICR_ORECF;
 						break;
 
 					case UARTEvent::parity:
-						regs->ISR &= ~USART_ISR_PE;
+						regs->ICR = USART_ICR_PECF;
 						break;
 
 					case UARTEvent::rxTimeout:
-						regs->ISR &= ~USART_ISR_RTOF;
+						regs->ICR = USART_ICR_RTOCF;
 						break;
 
 					case UARTEvent::txComplete:
-						regs->ISR &= ~USART_ISR_TC;
+						regs->ICR = USART_ICR_TCCF;
 						break;
 
-					case UARTEvent::txEmpty:
-						regs->ISR &= ~USART_ISR_TXE;
-						break;
-
-					case UARTEvent::rxNotEmpty:
-						regs->ISR &= ~USART_ISR_RXNE;
+					case UARTEvent::brk:
+						regs->ICR = USART_ICR_LBDCF;
 						break;
 
 					case UARTEvent::match:
-						regs->ISR &= ~USART_ISR_CMF;
+						regs->ICR = USART_ICR_CMCF;
+						break;
+
+					case UARTEvent::txEmpty:
+					case UARTEvent::rxNotEmpty:
 						break;
 				}
 			}
@@ -541,10 +599,10 @@ namespace htl {
 			inline static void clearInterruptFlags() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->ISR &= ~(USART_ISR_RXNE | USART_ISR_TXE | USART_ISR_TC |
-					USART_ISR_PE | USART_ISR_ORE | USART_ISR_NE | USART_ISR_IDLE |
-					USART_ISR_FE | USART_ISR_EOBF | USART_ISR_CTSIF | USART_ISR_SBKF |
-					USART_ISR_CMF);
+				regs->ICR = USART_ICR_CTSCF | USART_ICR_EOBCF | USART_ICR_FECF |
+					USART_ICR_IDLECF | USART_ICR_NCF | USART_ICR_ORECF |
+					USART_ICR_PECF | USART_ICR_RTOCF | USART_ICR_TCCF |
+					USART_ICR_LBDCF | USART_ICR_CMCF;
 			}
 
 			/// \brief Asigna la funcio d'interrupcio.
@@ -573,67 +631,77 @@ namespace htl {
     template <UARTChannel channel_> UARTInterruptFunction UART_x<channel_>::_isrFunction = nullptr;
     template <UARTChannel channel_> UARTInterruptParam UART_x<channel_>::_isrParam = nullptr;
 
-    #ifdef USART1
+    #ifdef USART1_BASE
         using UART_1 = UART_x<UARTChannel::_1>;
     #endif
-    #ifdef USART2
+    #ifdef USART2_BASE
         using UART_2 = UART_x<UARTChannel::_2>;
     #endif
-    #ifdef USART3
+    #ifdef USART3_BASE
         using UART_3 = UART_x<UARTChannel::_3>;
     #endif
-    #ifdef UART4
+    #ifdef UART4_BASE
         using UART_4 = UART_x<UARTChannel::_4>;
     #endif
-    #ifdef UART5
+    #ifdef UART5_BASE
         using UART_5 = UART_x<UARTChannel::_5>;
     #endif
-    #ifdef USART6
+    #ifdef USART6_BASE
         using UART_6 = UART_x<UARTChannel::_6>;
     #endif
-    #ifdef UART7
+    #ifdef UART7_BASE
         using UART_7 = UART_x<UARTChannel::_7>;
     #endif
-    #ifdef UART8
+    #ifdef UART8_BASE
         using UART_8 = UART_x<UARTChannel::_8>;
     #endif
 
-	#ifdef USART1
+	#ifdef USART1_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_1> {
 			static constexpr uint32_t addr = USART1_BASE;
 		};
+
+		template <>
+		struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
+			static constexpr GPIOAlt alt = GPIOAlt::_8;
+		};
+
+		template <>
+		struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
+			static constexpr GPIOAlt alt = GPIOAlt::_8;
+		};
 	#endif
 
-	#ifdef USART2
+	#ifdef USART2_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_2> {
 			static constexpr uint32_t addr = USART2_BASE;
 		};
 	#endif
 
-	#ifdef USART3
+	#ifdef USART3_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_3> {
 			static constexpr uint32_t addr = USART3_BASE;
 		};
 	#endif
 
-	#ifdef UART4
+	#ifdef UART4_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_4> {
 			static constexpr uint32_t addr = UART4_BASE;
 		};
 	#endif
 
-	#ifdef UART5
+	#ifdef UART5_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_5> {
 			static constexpr uint32_t addr = UART5_BASE;
 		};
 	#endif
 
-	#ifdef USART6
+	#ifdef USART6_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_6> {
 			static constexpr uint32_t addr = USART6_BASE;
@@ -650,14 +718,14 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef UART7
+	#ifdef UART7_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_7> {
 			static constexpr uint32_t addr = UART7_BASE;
 		};
 	#endif
 
-	#ifdef UART8
+	#ifdef UART8_BASE
 		template <>
 		struct UARTTrait<UARTChannel::_8> {
 			static constexpr uint32_t addr = UART8_BASE;
@@ -667,11 +735,12 @@ namespace htl {
 
 	class UARTAdapter {
 		public:
-			virtual void send(uint8_t data) const = 0;
-			virtual uint8_t receive() const = 0;
+			virtual void write(uint8_t data) const = 0;
+			virtual uint8_t read() const = 0;
 			virtual void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const = 0;
 			virtual void enableInterrupt(UARTEvent event) const = 0;
 			virtual bool disableInterrupt(UARTEvent event) const = 0;
+			virtual void disableInterrupts() const = 0;
 			virtual bool getInterruptFlag(UARTEvent event) const = 0;
 			virtual void clearInterruptFlag(UARTEvent event) const = 0;
 			virtual void clearInterruptFlags() const = 0;
@@ -689,12 +758,12 @@ namespace htl {
 		public:
 			UARTAdapter_x() = default;
 
-			void send(uint8_t data) const override {
-				uart_::send(data);
+			void write(uint8_t data) const override {
+				uart_::write(data);
 			}
 
-			uint8_t receive() const override {
-				return uart_::receive();
+			uint8_t read() const override {
+				return uart_::read();
 			}
 
 			void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const {
@@ -707,6 +776,10 @@ namespace htl {
 
 			bool disableInterrupt(UARTEvent event) const override {
 				return uart_::disableInterrupt(event);
+			}
+
+			void disableInterrupts() const override {
+				uart_::disableInterrupts();
 			}
 
 			bool getInterruptFlag(UARTEvent event) const override {

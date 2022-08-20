@@ -57,6 +57,13 @@ namespace htl {
 	};
 
 	enum class SPIEvent {
+		txEmpty,
+		rxNotEmpty,
+		error
+	};
+
+	enum class SPIError {
+		none
 	};
 
 	enum class SPIPin {
@@ -68,8 +75,8 @@ namespace htl {
 	using SPIInterruptParam = void*;
 	using SPIInterruptFunction = void (*)(SPIEvent, SPIInterruptParam);
 
-	void SPI_init(SPI_TypeDef*, SPIMode, SPIClkPolarity, SPIClkPhase, SPISize, SPIFirstBit, SPIClockDivider);
-	void SPI_send(SPI_TypeDef*, const void*, int, unsigned);
+	void SPI_initialize(SPI_TypeDef*, SPIMode, SPIClkPolarity, SPIClkPhase, SPISize, SPIFirstBit, SPIClockDivider);
+	void SPI_send(SPI_TypeDef*, const uint8_t*, unsigned, unsigned);
 
 	template <SPIChannel>
 	struct SPITrait {
@@ -84,7 +91,7 @@ namespace htl {
 		private:
 			using Trait = SPITrait<channel_>;
             static constexpr uint32_t _addr = Trait::addr;
-			static constexpr unsigned _defaultBlockTime = 1000;
+			static constexpr unsigned _defaultTimeout = 1000;
 
 		private:
 			static SPIInterruptFunction _isrFunction;
@@ -139,7 +146,7 @@ namespace htl {
 			}
 
 		public:
-			static void init(
+			static void initialize(
 				SPIMode mode,
 				SPIClkPolarity clkPolarity,
 				SPIClkPhase clkPhase,
@@ -151,14 +158,14 @@ namespace htl {
 				disable();
 
 				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
-				SPI_init(regs, mode, clkPolarity, clkPhase, size, firstBit, clkDivider);
+				SPI_initialize(regs, mode, clkPolarity, clkPhase, size, firstBit, clkDivider);
 
 				enable();
 			}
             
 			/// \brief Desinicialitza el modul.
 			///
-            static void deInit() {
+            static void deinitialize() {
 
             	disable();
             	deactivate();
@@ -166,7 +173,7 @@ namespace htl {
 
             /// \brief Habilita el modul
             //
-            inline static void enable() {
+            static void enable() {
 
             	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
             	regs->CR1 |= SPI_CR1_SPE;
@@ -174,12 +181,24 @@ namespace htl {
 
             /// \brief Desabilita el modul.
             ///
-            inline static void disable() {
+            static void disable() {
 
             	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
             	regs->CR1 &= ~SPI_CR1_SPE;
             }
 
+            /// \brief Obte el codi d'error i el reseteja.
+            /// \return El codi d'error.
+            ///
+            static SPIError getError() {
+
+            	return SPIError::none;
+            }
+
+            /// \brief Asigna la funcio d'interrupcio.
+            /// \param function: La funcio.
+            /// \param param: EL parametre.
+            ///
 			static void setInterruptFunction(
 				SPIInterruptFunction function,
 				SPIInterruptParam param) {
@@ -188,15 +207,45 @@ namespace htl {
 				_isrParam = param;
 			}
 
+			/// \brief Habilita la generacio d'interrupcions.
+			/// \param event: L'event a habilitar.
+			///
 			static void enableInterrupt(
-				SPIEvent events) {
+				SPIEvent event) {
+
+				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+			}
+
+			/// \brief Desabilita la generacio d'interrupcions.
+			/// \param event: L'event a desabilitar.
+			///
+			static bool disableInterrupt(
+				SPIEvent event) {
+
+				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+
+				return true;
+			}
+
+			static bool getInterruptFlag(
+				SPIEvent event) {
+
+            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				switch (event) {
+					case SPIEvent::txEmpty:
+						return (regs->SR & SPI_SR_TXE) != 0;
+				}
+
+				return false;
+			}
+
+			static void clearInterruptFlag(
+				SPIEvent event) {
 
 			}
 
-			static bool disableInterrupt(
-				SPIEvent events) {
+			static void clearInterrupts() {
 
-				return true;
 			}
 
 			static void InterruptHandler(
@@ -207,7 +256,7 @@ namespace htl {
 			}
 
 			template <typename gpio_>
-			inline static void initSCKPin() {
+			static void initSCKPin() {
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
@@ -215,7 +264,7 @@ namespace htl {
 			}
 
 			template <typename gpio_>
-			inline static void initMOSIPin() {
+			static void initMOSIPin() {
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
@@ -223,33 +272,45 @@ namespace htl {
 			}
 
 			template <typename gpio_>
-			inline static void initMISOPin() {
+			static void initMISOPin() {
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
 					SPIPinTrait<channel_, gpio_, SPIPin::MISO>::alt);
 			}
 
-			inline static void send(
-				const uint8_t data,
-				unsigned blockTime = _defaultBlockTime) {
+			static void write8(uint8_t data) {
 
-				send(&data, sizeof(data), blockTime);
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	*((volatile uint8_t*)&regs->DR) = data;
 			}
 
-			inline static void send(
-				const void *data,
-				int size,
-				unsigned blockTime = _defaultBlockTime) {
+			static void write16(uint16_t data) {
+
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	*((volatile uint16_t*)&regs->DR) = data;
+			}
+
+			static void send(
+				const uint8_t data,
+				unsigned timeout = _defaultTimeout) {
+
+				send(&data, sizeof(data), timeout);
+			}
+
+			static void send(
+				const uint8_t *data,
+				unsigned dataLength,
+				unsigned timeout = _defaultTimeout) {
 
 				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
-				SPI_send(regs, data, size, blockTime);
+				SPI_send(regs, data, dataLength, timeout);
 			}
 
-			inline static void receive(
-				void *data,
-				int size,
-				unsigned blockTime = _defaultBlockTime) {
+			static void receive(
+				uint8_t *data,
+				unsigned dataSize,
+				unsigned timeout = _defaultTimeout) {
 
 				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
 			}

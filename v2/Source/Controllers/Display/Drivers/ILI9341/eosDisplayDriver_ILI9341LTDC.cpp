@@ -41,7 +41,7 @@ void DisplayDriver_ILI9341LTDC::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el modul.
 ///
-void DisplayDriver_ILI9341LTDC::shutdown() {
+void DisplayDriver_ILI9341LTDC::deinitialize() {
 
 	displayOff();
 }
@@ -235,11 +235,11 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	//
 	SPI::initSCKPin<GPIO_SCK>();
 	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::initMaster(SPIMode::mode0, SPISize::size8, SPIFirstBit::msb, SPIClockDivider::clkdiv_16);
+	SPI::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_16);
 
 	// Inicialitza el modul LTDC
 	//
-	LTDC_1::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	LTDC_1::initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	LTDC_1::initDEPin<GPIO_DE>(_dePol);
 	LTDC_1::initHSYNCPin<GPIO_HSYNC>(_hSyncPol);
 	LTDC_1::initVSYNCPin<GPIO_VSYNC>(_vSyncPol);

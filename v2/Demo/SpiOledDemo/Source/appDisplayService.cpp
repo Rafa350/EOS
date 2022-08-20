@@ -1,8 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 #include "Controllers/Display/eosMonoFrameBuffer.h"
-#include "HAL/halGPIO.h"
-#include "HAL/halSPI.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "appDisplayService.h"
@@ -34,12 +32,13 @@ void DisplayService::onSetup() {
 		DisplayOrientation::normal,
 		(void*)board::display::buffer,
 		board::display::width);
+
 	_driver = new DisplayDriver_SSD1306(frameBuffer);
 	_driver->initialize();
+	_driver->clear(Colors::black);
 	_driver->displayOn();
 
 	_graphics = new Graphics(_driver);
-	_graphics->clear(Colors::black);
 }
 
 

@@ -144,14 +144,14 @@ namespace htl {
 		public:
 			/// \brief Activa el modul
 			///
-			static void init() {
+			static void initialize() {
 
 				activate();
 			}
 
 			/// \brief Desactiva el modul
 			///
-			static void deInit() {
+			static void deinitialize() {
 
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 				regs->CR1 &= ~TIM_CR1_CEN;

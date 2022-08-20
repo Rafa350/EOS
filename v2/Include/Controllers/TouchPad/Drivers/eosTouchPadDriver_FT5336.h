@@ -266,7 +266,7 @@ namespace eos {
 			TouchPadDriver_FT5336();
 
 			void initialize();
-			void shutdown();
+			void deinitialize();
 
 			int getPadWidth() const override { return _width; }
 			int getPadHeight() const override { return _height; }

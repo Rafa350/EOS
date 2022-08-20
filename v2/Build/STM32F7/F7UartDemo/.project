@@ -121,6 +121,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -174,6 +179,11 @@
 			<name>Src/App/STM32F7/stm32f7xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL</name>
@@ -239,6 +249,11 @@
 			<name>Inc/Framework/EOS/Board/eosBoard_STM32F746G_DISCO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard_STM32F746G_DISCO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Controllers/Serial</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32</name>
@@ -356,6 +371,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosDebug.h</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/Controllers/Serial</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/HAL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -438,32 +458,32 @@
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/list.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/list.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/queue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/queue.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/tasks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/timers.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/HAL/stm32f7xx_hal.c</name>
@@ -536,6 +556,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/Controllers/Serial/eosSerialDriver.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Serial/eosSerialDriver.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Controllers/Serial/eosSerialDriver_IT.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Serial/eosSerialDriver_IT.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSYS.h</locationURI>
@@ -604,6 +634,16 @@
 			<name>Inc/Framework/EOS/System/Core/eosTask.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Controllers/Serial/eosSerialDriver.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Serial/eosSerialDriver.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Controllers/Serial/eosSerialDriver_IT.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Serial/eosSerialDriver_IT.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL/STM32/halSYS.c</name>

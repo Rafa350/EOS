@@ -229,6 +229,9 @@ namespace htl {
             GPIO_x & operator = (const GPIO_x &&) = delete;
 
         public:
+            /// \brief Inicialkitza el pin com entrada.
+            /// \param pull: Opcions de pull up/down
+            ///
             static void initInput(
             	GPIOPull pull = GPIOPull::none) {
 
@@ -239,6 +242,10 @@ namespace htl {
                     pull);
             }
 
+            /// \brief Inicialitza el pin com a sortida.
+            /// \param driver: Opcions de driver
+            /// \param speed: Opcions de velocitat.
+            ///
             static void initOutput(
             	GPIODriver driver,
 				GPIOSpeed speed = GPIOSpeed::medium) {
@@ -265,7 +272,9 @@ namespace htl {
 					alt);
             }
 
-            static void deInit() {
+            /// \brief Desinicialitza el pin.
+            ///
+            static void deinitialize() {
 
             	Activator::deactivate(1 << _pn);
             }
@@ -686,6 +695,16 @@ namespace htl {
         template  <>
         struct GPIOPortTrait<GPIOPort::C> {
             static constexpr uint32_t addr = GPIOC_BASE;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::C, GPIOPin::_0> {
+            static constexpr uint32_t pn = 0;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::C, GPIOPin::_1> {
+            static constexpr uint32_t pn = 1;
         };
 
         template <>

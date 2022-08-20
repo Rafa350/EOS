@@ -17,21 +17,25 @@
 namespace htl {
 
 	enum class I2CChannel {
-		#ifdef I2C1
+		#ifdef I2C1_BASE
 			_1,
 		#endif
-		#ifdef I2C2
+		#ifdef I2C2_BASE
 			_2,
 		#endif
-		#ifdef I2C3
+		#ifdef I2C3_BASE
 			_3,
 		#endif
-		#ifdef I2C4
+		#ifdef I2C4_BASE
 			_4
 		#endif
 	};
 
 	enum class I2CEvent {
+	};
+
+	enum class I2CError {
+		none
 	};
 
 	enum class I2CPin {
@@ -55,12 +59,13 @@ namespace htl {
 		private:
 			using Trait = I2CTrait<channel_>;
 
-			static constexpr unsigned _defaultBlockTime = 1000;
 			static constexpr uint32_t _addr = Trait::addr;
 
-			static I2C_HandleTypeDef _handle;
 			static I2CInterruptParam _isrParam;
 			static I2CInterruptFunction _isrFunction;
+
+		protected:
+			static I2C_HandleTypeDef _handle;
 
 		public:
 			static constexpr I2CChannel channel = channel_;
@@ -78,21 +83,21 @@ namespace htl {
 
 			/// \brief Activa el modul
 			///
-			inline static void activate() {
+			static void activate() {
 
-				#ifdef I2C1
+				#ifdef I2C1_BASE
 					if constexpr (channel_ == I2CChannel::_1)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
 				#endif
-				#ifdef I2C2
+				#ifdef I2C2_BASE
 					if constexpr (channel_ == I2CChannel::_2)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
 				#endif
-				#ifdef I2C3
+				#ifdef I2C3_BASE
 					if constexpr (channel_ == I2CChannel::_3)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C3EN;
 				#endif
-				#ifdef I2C4
+				#ifdef I2C4_BASE
 					if constexpr (channel_ == I2CChannel::_4)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C4EN;
 				#endif
@@ -100,27 +105,29 @@ namespace htl {
 
 			/// \brief Desactiva el modul
 			///
-            inline static void deactivate() {
+            static void deactivate() {
 
-				#ifdef I2C1
+				#ifdef I2C1_BASE
 					if constexpr (channel_ == I2CChannel::_1)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
 				#endif
-				#ifdef I2C2
+				#ifdef I2C2_BASE
 					if constexpr (channel_ == I2CChannel::_2)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
 				#endif
-				#ifdef I2C3
+				#ifdef I2C3_BASE
 					if constexpr (channel_ == I2CChannel::_3)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C3EN;
 				#endif
-				#ifdef I2C4
+				#ifdef I2C4_BASE
 					if constexpr (channel_ == I2CChannel::_4)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C4EN;
 				#endif
             }
 
 		protected:
+            /// \brief Inicialitza edl modul en modus master
+            ///
 			static bool initMaster() {
 
 				activate();
@@ -145,7 +152,9 @@ namespace htl {
 			}
             
 		public:
-            inline static void deInit() {
+			/// \brief Desinicialitza el modul.
+			///
+            static void deinitialize() {
                 
             	disable();
 
@@ -154,9 +163,17 @@ namespace htl {
             	deactivate();
             }
 
+            /// \brief Obte el codi de l'ultime error i el reseteja
+            /// \return El codi d'error.
+            ///
+            static I2CError getError() {
+
+            	return I2CError::none;
+            }
+
             /// \brief Activa la comunicacio
             //
-			inline static void enable() {
+			static void enable() {
 
 				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
 				regs->CR1 |= I2C_CR1_PE;
@@ -164,44 +181,10 @@ namespace htl {
 
 			/// \brief Desactiva la comunicacio
 			///
-			inline static void disable() {
+			static void disable() {
 
 				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
 				regs->CR1 &= ~I2C_CR1_PE;
-			}
-
-			/// \brief Envia un bloc de dades al esclau
-			/// \param addr: Adressa I2C.
-			/// \param data: Les dades a transmetre.
-			/// \param size: Numero de bytes a transmetre.
-			/// \param blockTime: Temps maxim de bloqueig.
-			///
-			inline static bool send(
-				uint8_t addr,
-				const void *data,
-				int size,
-				unsigned blockTime = _defaultBlockTime) {
-
-				return HAL_I2C_Master_Transmit(
-					&_handle,
-					addr,
-					(uint8_t*)data,
-					size,
-					blockTime) == HAL_OK;
-			}
-
-			inline static bool receive(
-				uint8_t addr,
-				void *data,
-				int size,
-				unsigned blockTime = _defaultBlockTime) {
-
-				return HAL_I2C_Master_Receive(
-					&_handle,
-					addr,
-					(uint8_t*) data,
-					size,
-					blockTime) == HAL_OK;
 			}
 
 			/// \brief Inicialitza el pin SCL
@@ -259,38 +242,89 @@ namespace htl {
 
 				I2C_x<channel_>::initMaster();
 			}
+
+			/// \brief Envia un bloc de dades al esclau
+			/// \param addr: Adressa I2C.
+			/// \param data: Buffer de dades.
+			/// \param dataLength: Numero de bytes en el buffer.
+			/// \param timeout: Temps maxim de bloqueig.
+			///
+			static bool send(
+				uint8_t addr,
+				const uint8_t *data,
+				unsigned dataLength,
+				unsigned timeout = 1000) {
+
+				if (HAL_I2C_Master_Transmit(
+					&I2C_x<channel_>::_handle,
+					addr,
+					(uint8_t*) data,
+					dataLength,
+					timeout) != HAL_OK)
+					return false;
+
+				return true;
+			}
+
+			/// \brief Reb un bloc de dades del esclau.
+			/// \param addr: Adressa I2C.
+			/// \param data: Buffer de dades.
+			/// \param dataSize: Tamany del buffer de dades.
+			/// \param timeout: Temps maxim de bloqueig.
+			///
+			static bool receive(
+				uint8_t addr,
+				uint8_t *data,
+				unsigned dataSize,
+				unsigned timeout = 1000) {
+
+				if (HAL_I2C_Master_Receive(
+					&I2C_x<channel_>::_handle,
+					addr,
+					data,
+					dataSize,
+					timeout) != HAL_OK)
+					return false;
+
+				return true;
+			}
 	};
 
 	template <I2CChannel channel_>
 	class I2CSlave_x final: public I2C_x<channel_> {
+		public:
+			static bool send() {
 
+				return false;
+			}
+
+			static bool reveive() {
+
+				return false;
+			}
 	};
 
-	#ifdef I2C1
-		using I2C_1 = I2C_x<I2CChannel::_1>;
+	#ifdef I2C1_BASE
 		using I2CMaster_1 = I2CMaster_x<I2CChannel::_1>;
 		using I2CSlave_1 = I2CSlave_x<I2CChannel::_1>;
 	#endif
 
-	#ifdef I2C2
-		using I2C_2 = I2C_x<I2CChannel::_2>;
+	#ifdef I2C2_BASE
 		using I2CMaster_2 = I2CMaster_x<I2CChannel::_2>;
 		using I2CSlave_2 = I2CSlave_x<I2CChannel::_2>;
 	#endif
 
-	#ifdef I2C3
-		using I2C_3 = I2C_x<I2CChannel::_3>;
+	#ifdef I2C3_BASE
 		using I2CMaster_3 = I2CMaster_x<I2CChannel::_3>;
 		using I2CSlave_3 = I2CSlave_x<I2CChannel::_3>;
 	#endif
 
-	#ifdef I2C4
-		using I2C_4 = I2C_x<I2CChannel::_4>;
+	#ifdef I2C4_BASE
 		using I2CMaster_4 = I2CMaster_x<I2CChannel::_4>;
 		using I2CSlave_4 = I2CSlave_x<I2CChannel::_4>;
 	#endif
 
-	#ifdef I2C1
+	#ifdef I2C1_BASE
 		template <>
 		struct I2CTrait<I2CChannel::_1> {
 			static constexpr uint32_t addr = I2C1_BASE;
@@ -306,14 +340,14 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef I2C2
+	#ifdef I2C2_BASE
 		template <>
 		struct I2CTrait<I2CChannel::_2> {
 			static constexpr uint32_t addr = I2C2_BASE;
 		};
 	#endif
 
-	#ifdef I2C3
+	#ifdef I2C3_BASE
 		template <>
 		struct I2CTrait<I2CChannel::_3> {
 			static constexpr uint32_t addr = I2C3_BASE;
@@ -329,7 +363,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef I2C4
+	#ifdef I2C4_BASE
 		template <>
 		struct I2CTrait<I2CChannel::_4> {
 			static constexpr uint32_t addr = I2C4_BASE;

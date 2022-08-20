@@ -163,7 +163,7 @@ void UARTService::uartInterruptFunction(
 		// RXNE (Reception data register not empty)
 		//
 		case UARTEvent::rxNotEmpty:
-			_rxBuffer[_rxCount++] = _uart.receive();
+			_rxBuffer[_rxCount++] = _uart.read();
 			if (_rxCount == _rxSize) {
 				_uart.disableInterrupt(UARTEvent::rxNotEmpty);
 				_uart.disableInterrupt(UARTEvent::parity);
@@ -182,7 +182,7 @@ void UARTService::uartInterruptFunction(
 				_uart.enableInterrupt(UARTEvent::txComplete);
 			}
 			else
-				_uart.send(_txBuffer[_txCount++]);
+				_uart.write(_txBuffer[_txCount++]);
 			break;
 		}
 

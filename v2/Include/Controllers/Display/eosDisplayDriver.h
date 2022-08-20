@@ -25,7 +25,7 @@ namespace eos {
 
             /// \brief Deiniciaialitza el driver.
             ///
-            virtual void shutdown() = 0;
+            virtual void deinitialize() = 0;
 
             virtual void displayOn() = 0;
             virtual void displayOff() = 0;
