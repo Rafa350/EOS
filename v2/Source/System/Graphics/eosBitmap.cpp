@@ -25,11 +25,11 @@ class Bitmap::Impl: public PoolAllocatable<Bitmap::Impl, eosGraphics_MaxBitmaps>
 /// \param    bitmapResource: El recurs.
 ///
 Bitmap::Bitmap(
-	const void* bitmapResource):
+	const void *bitmapResource):
 
 	_impl(makeImpl()) {
 
-	uint8_t* r = (uint8_t*) bitmapResource;
+	uint8_t *r = (uint8_t*) bitmapResource;
 
 	_impl->allocated = false;
 	_impl->readonly = true;
@@ -141,7 +141,7 @@ Bitmap::Bitmap(
 	int width,
 	int height,
 	ColorFormat format,
-	void* pixels):
+	void *pixels):
 
 	_impl(makeImpl()) {
 
@@ -165,7 +165,7 @@ Bitmap::Bitmap(
 	int width,
 	int height,
 	ColorFormat format,
-	const void* pixels):
+	const void *pixels):
 
 	_impl(makeImpl()) {
 
@@ -183,7 +183,7 @@ Bitmap::Bitmap(
 /// \param    bitmap: L'altre objecte per copiar.
 ///
 Bitmap::Bitmap(
-	const Bitmap& bitmap):
+	const Bitmap &bitmap):
 
 	_impl(bitmap._impl) {
 }
@@ -215,7 +215,7 @@ Bitmap::ImplPtr Bitmap::makeImpl() {
 /// \return   El propi objecte.
 ///
 Bitmap& Bitmap::operator = (
-	const Bitmap& bitmap) {
+	const Bitmap &bitmap) {
 
 	_impl = bitmap._impl;
 
@@ -293,8 +293,8 @@ int Bitmap::getBytesPerLine() const {
 /// \param    position: La posicio.
 ///
 void Bitmap::draw(
-	const Graphics* graphics,
-	const Point& position) const {
+	const Graphics *graphics,
+	const Point &position) const {
 
 }
 

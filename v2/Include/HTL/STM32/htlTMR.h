@@ -424,6 +424,75 @@ namespace htl {
 		static constexpr uint32_t addr = TIM14_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+
+
+	class TMRAdapter {
+		public:
+			virtual void start() const = 0;
+			virtual void stop() const = 0;
+			virtual void setInterruptFunction(TMRInterruptFunction function, TMRInterruptParam param) const = 0;
+			virtual void enableInterrupt(TMREvent event) const = 0;
+			virtual bool disableInterrupt(TMREvent event) const = 0;
+			virtual void disableInterrupts() const = 0;
+			virtual bool getInterruptFlag(TMREvent event) const = 0;
+			virtual void clearInterruptFlag(TMREvent event) const = 0;
+			virtual void clearInterruptFlags() const = 0;
+	};
+
+	template <typename timer_>
+	class TMRAdapter_x final : public TMRAdapter {
+		private:
+			TMRAdapter_x(const TMRAdapter_x &) = delete;
+			TMRAdapter_x(const TMRAdapter_x &&) = delete;
+
+			TMRAdapter & operator = (const TMRAdapter_x &) = delete;
+			TMRAdapter & operator = (const TMRAdapter_x &&) = delete;
+
+		public:
+			TMRAdapter_x() = default;
+
+			void start() const override {
+				timer_::start();
+			}
+
+			void stop() const override {
+				timer_::stop();
+			}
+
+			void setInterruptFunction(TMRInterruptFunction function, TMRInterruptParam param) const {
+				timer_::setInterruptFunction(function, param);
+			}
+
+			void enableInterrupt(TMREvent event) const override {
+				timer_::enableInterrupt(event);
+			}
+
+			bool disableInterrupt(TMREvent event) const override {
+				return timer_::disableInterrupt(event);
+			}
+
+			void disableInterrupts() const override {
+				//TODO:: timer_::disableInterrupts();
+			}
+
+			bool getInterruptFlag(TMREvent event) const override {
+				return timer_::getInterruptFlag(event);
+			}
+
+			void clearInterruptFlag(TMREvent event) const override {
+				timer_::clearInterruptFlag(event);
+			}
+
+			void clearInterruptFlags() const override {
+				// TODO: timer_::clearInterruptFlags();
+			}
+	};
+
+	template <typename timer_>
+	TMRAdapter& getTMRAdapter() {
+		static TMRAdapter_x<timer_> adapter;
+		return adapter;
+	}
 }
 
 

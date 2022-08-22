@@ -100,8 +100,8 @@ namespace board {
 		using GPIO_B7 = htl::GPIO_K6;
 
 		// Configuracio del LTDC
-		constexpr uint16_t width = 480;      // Amplada de la imatge
-		constexpr uint16_t height = 272;     // Alçada de la imatge
+		constexpr int width = 480;           // Amplada de la imatge
+		constexpr int height = 272;          // Alçada de la imatge
 		constexpr uint16_t hSync = 41;       // Horizontal synchronization
 		constexpr uint16_t vSync = 10;       // Vertical synchronization
 		constexpr uint16_t hBP = 13;         // Horizontal back porch

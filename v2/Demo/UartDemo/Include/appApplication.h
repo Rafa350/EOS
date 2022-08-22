@@ -3,8 +3,6 @@
 
 
 #include "eos.h"
-#include "Controllers/Serial/eosSerialDriver.h"
-#include "Controllers/Serial/eosSerialDriver_IT.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlUART.h"
 #include "HTL/htlTMR.h"
@@ -39,18 +37,15 @@ namespace app {
     		using Tmr2 = config::digOutputService::TMR;
 
             using DigInputEventCallback = CallbackP1<MyApplication, const DigInput::EventArgs&>;
-            using SerialEventCallback = CallbackP1<MyApplication, const SerialDriver_IT::EventArgs&>;
 
         private:
             DigOutputService *_digOutputService;
             DigInputService *_digInputService;
             MyAppLoopService *_loopService;
-            SerialDriver *_serial;
 
             DigOutput *_led;
             DigInput *_sw;
             DigInputEventCallback _swCallback;
-            SerialEventCallback _serialCallback;
 
         public:
             MyApplication();
@@ -66,7 +61,6 @@ namespace app {
             static void isrTmr2(TMREvent, TMRInterruptParam);
 
             void swEventHandler(const DigInput::EventArgs &args);
-            void serialEventHandler(const SerialDriver_IT::EventArgs &args);
     };
 
 }

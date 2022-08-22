@@ -27,7 +27,7 @@ namespace eos {
 		public:
 			using M = typename CallbackP1<C_, const ButtonEventArgs&>::Method;
 		public:
-			inline ButtonEventCallback(C_* instance, M handler):
+			inline ButtonEventCallback(C_ &instance, M handler):
 				CallbackP1<C_, const ButtonEventArgs&>(instance, handler) {
 			}
 	};

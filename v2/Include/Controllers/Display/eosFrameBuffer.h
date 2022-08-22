@@ -30,15 +30,15 @@ namespace eos {
             virtual void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) = 0;
 
 		public:
-			FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation);
+			FrameBuffer(int width, int height, DisplayOrientation orientation);
 			virtual ~FrameBuffer() = default;
 
             void setOrientation(DisplayOrientation orientation);
 
-            inline int getFrameWidth() const { return _frameWidth; }
-            inline int getFrameHeight() const { return _frameHeight; }
-            inline int getWidth() const { return _maxX + 1; }
-            inline int getHeight() const { return _maxY + 1; }
+            inline int getMaxX() const { return _maxX; }
+            inline int getMaxY() const { return _maxY; }
+            inline int getWidth() const { return _frameWidth; }
+            inline int getHeight() const { return _frameHeight; }
             virtual void *getBuffer() const = 0;
 
             void clear(Color color);

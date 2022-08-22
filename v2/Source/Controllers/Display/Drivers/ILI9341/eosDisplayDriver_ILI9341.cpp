@@ -20,8 +20,8 @@ using namespace eos;
 ///
 DisplayDriver_ILI9341::DisplayDriver_ILI9341():
 
-	_imageWidth(_displayWidth),
-	_imageHeight(_displayHeight) {
+	_maxX(_displayWidth - 1),
+	_maxY(_displayHeight - 1) {
 }
 
 
@@ -70,26 +70,26 @@ void DisplayDriver_ILI9341::setOrientation(
     switch (orientation) {
     	default:
         case DisplayOrientation::normal:
-            _imageWidth = _displayWidth;
-            _imageHeight = _displayHeight;
+            _maxX = _displayWidth - 1;
+            _maxY = _displayHeight - 1;
             data = data0;
             break;
 
         case DisplayOrientation::rotate90:
-            _imageWidth = _displayHeight;
-            _imageHeight = _displayWidth;
+            _maxX = _displayHeight - 1;
+            _maxY = _displayWidth - 1;
             data = data90;
             break;
 
         case DisplayOrientation::rotate180:
-            _imageWidth = _displayWidth;
-            _imageHeight = _displayHeight;
+            _maxX = _displayWidth - 1;
+            _maxY = _displayHeight - 1;
             data = data180;
             break;
 
         case DisplayOrientation::rotate270:
-            _imageWidth = _displayHeight;
-            _imageHeight = _displayWidth;
+            _maxX = _displayHeight - 1;
+            _maxY = _displayWidth - 1;
             data = data270;
             break;
     }
@@ -110,8 +110,8 @@ void DisplayDriver_ILI9341::setOrientation(
 void DisplayDriver_ILI9341::clear(
     Color color) {
 
-    selectRegion(0, 0, _imageWidth, _imageHeight);
-    writeRegion(color, _imageWidth * _imageHeight);
+    selectRegion(0, 0, _maxX, _maxY);
+    writeRegion(color, _displayWidth * _displayHeight);
 }
 
 
@@ -126,7 +126,7 @@ void DisplayDriver_ILI9341::setPixel(
     int y,
     Color color) {
 
-    selectRegion(x, y, 1, 1);
+    selectRegion(x, y, x, y);
     writeRegion(color);
 }
 
@@ -144,7 +144,7 @@ void DisplayDriver_ILI9341::setHPixels(
     int length,
     Color color) {
 
-    selectRegion(x, y, length, 1);
+    selectRegion(x, y, x + length - 1, y);
     writeRegion(color, length);
 }
 
@@ -162,7 +162,7 @@ void DisplayDriver_ILI9341::setVPixels(
     int length,
     Color color) {
 
-    selectRegion(x, y, 1, length);
+    selectRegion(x, y, x, y + length - 1);
     writeRegion(color, length);
 }
 
@@ -182,7 +182,7 @@ void DisplayDriver_ILI9341::setPixels(
     int height,
     Color color) {
 
-    selectRegion(x, y, width, height);
+    selectRegion(x, y, x + width - 1, y + height - 1);
     writeRegion(color, width * height);
 }
 
@@ -211,7 +211,7 @@ void DisplayDriver_ILI9341::setPixels(
 /// \param    x: Posicio X.
 /// \param    y: Posicio Y.
 /// \param    width: Amplada de la regio.
-/// \param    height: Al�ada de la regio.
+/// \param    height: Alçada de la regio.
 /// \param    colors: Color dels pixels.
 ///
 void DisplayDriver_ILI9341::setPixels(
@@ -223,7 +223,7 @@ void DisplayDriver_ILI9341::setPixels(
 	ColorFormat format,
 	int pitch) {
 
-    //selectRegion(x, y, width, width);
+    //selectRegion(x, y, x + width - 1, y + height - 1);
     //writeRegion(colors, width * height);
 }
 
@@ -270,36 +270,33 @@ void DisplayDriver_ILI9341::displayOff() {
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona la regio de treball per les transferencies de
 ///           pixels.
-/// \param    x: Coordinada X origen.
-/// \param    y: Coordinada Y oriden.
-/// \param    width: Amplada de la regio.
-/// \param    height: Al�ada de la regio.
+/// \param    x1: Coordinada X origen.
+/// \param    y1: Coordinada Y oriden.
+/// \param    x2: Coordinada X final.
+/// \param    y2: Coordinada Y final.
 ///
 void DisplayDriver_ILI9341::selectRegion(
-    int x,
-    int y,
-    int width,
-    int height) {
+    int x1,
+    int y1,
+    int x2,
+    int y2) {
 
 	uint8_t buffer[4];
-
-    int x2 = x + width - 1;
-    int y2 = y + height - 1;
 
     open();
 
     writeCommand(CMD_COLUMN_ADDRESS_SET);
 
-    buffer[0] = x >> 8;
-    buffer[1] = x;
+    buffer[0] = x1 >> 8;
+    buffer[1] = x1;
     buffer[2] = x2 >> 8;
     buffer[3] = x2;
 	writeData(buffer, sizeof(buffer));
 
 	writeCommand(CMD_PAGE_ADDRESS_SET);
 
-	buffer[0] = y >> 8;
-    buffer[1] = y;
+	buffer[0] = y1 >> 8;
+    buffer[1] = y1;
     buffer[2] = y2 >> 8;
     buffer[3] = y2;
 	writeData(buffer, sizeof(buffer));

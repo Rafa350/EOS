@@ -9,64 +9,64 @@
 
 namespace eos {
 
-    template <typename P1_>
+    template <typename param1_>
     class ICallbackP1 {
         public:
             virtual ~ICallbackP1() {
             }
 
-            virtual void execute(P1_ p1) const = 0;
+            virtual void execute(param1_ p1) const = 0;
     };
 
-    template <typename C_, typename P1_>
-    class CallbackP1: public ICallbackP1<P1_> {
+    template <typename instance_, typename param1_>
+    class CallbackP1: public ICallbackP1<param1_> {
         public:
-            typedef void (C_::*Method)(P1_);
+            using Method = void (instance_::*)(param1_);
 
         private:
-            C_* instance;
-            Method method;
+            instance_ &_instance;
+            Method _method;
 
         public:
-            inline CallbackP1(C_* instance, Method method):
-            	instance(instance),
-				method(method) {
+            inline CallbackP1(instance_ &instance, Method method):
+            	_instance(instance),
+				_method(method) {
             }
 
-            void execute(P1_ p1) const override {
-                if ((instance != nullptr) && (method != nullptr))
-                    (instance->*method)(p1);
+            void execute(param1_ p1) const override {
+                if (_method != nullptr)
+                    (_instance.*_method)(p1);
             }
     };
 
 
-    template <typename P1_, typename P2_>
+    template <typename param1_, typename param2_>
     class ICallbackP2 {
         public:
             virtual ~ICallbackP2() {
             }
 
-            virtual void execute(P1_ p1, P2_ p2) const = 0;
+            virtual void execute(param1_ p1, param2_ p2) const = 0;
     };
 
-    template <typename C_, typename P1_, typename P2_>
-    class CallbackP2: public ICallbackP2<P1_, P2_> {
+    template <typename instance_, typename param1_, typename param2_>
+    class CallbackP2: public ICallbackP2<param1_, param2_> {
         public:
-    	    typedef void (C_::*Method)(P1_, P2_);
+    	    using Method = void (instance_::*)(param1_, param2_);
 
         private:
-            C_* instance;
-            Method method;
+            instance_ &_instance;
+            Method _method;
 
         public:
-            inline CallbackP2(C_* instance, Method method):
-            	instance(instance),
-				method(method) {
+            inline CallbackP2(instance_ &instance, Method method):
+            	_instance(instance),
+				_method(method) {
             }
 
-            void execute(P1_ p1, P2_ p2) const override {
-                if ((instance != nullptr) && (method != nullptr))
-                    (instance->*method)(p1, p2);
+            void execute(param1_ p1, param2_ p2) const override {
+                if (_method != nullptr)
+                    (_instance.*_method)(p1, p2);
             }
     };
 
@@ -83,21 +83,21 @@ namespace eos {
     template <typename C_, typename R_, typename P1_>
     class CallbackP1R: public ICallbackP1R<R_, P1_> {
         public:
-            typedef R_ (C_::*Method)(P1_);
+            using Method = R_ (C_::*)(P1_);
 
         private:
-            C_* instance;
-            Method method;
+            C_ &_instance;
+            Method _method;
 
         public:
-            inline CallbackP1R(C_* instance, Method method):
-            	instance(instance),
-				method(method) {
+            inline CallbackP1R(C_ &instance, Method method):
+            	_instance(instance),
+				_method(method) {
             }
 
             R_ execute(P1_ p1) const override {
-                if ((instance != nullptr) && (method != nullptr))
-                    return (instance->*method)(p1);
+                if (_method != nullptr)
+                    return (_instance.*_method)(p1);
                 else
                     return R_();
             }
@@ -115,21 +115,21 @@ namespace eos {
     template <typename C_, typename R_, typename P1_, typename P2_>
     class CallbackP2R: public ICallbackP2R<R_, P1_, P2_> {
         public:
-            typedef R_ (C_::*Method)(P1_, P2_);
+            using Method = R_ (C_::*)(P1_, P2_);
 
         private:
-            C_* instance;
-            Method method;
+            C_ &_instance;
+            Method _method;
 
         public:
-            inline CallbackP2R(C_* instance, Method method):
-            	instance(instance),
-				method(method) {
+            inline CallbackP2R(C_ &instance, Method method):
+            	_instance(instance),
+				_method(method) {
             }
 
             R_ execute(P1_ p1, P2_ p2) const override {
-                if ((instance != nullptr) && (method != nullptr))
-                    return (instance->*method)(p1, p2);
+                if (_method != nullptr)
+                    return (_instance.*_method)(p1, p2);
                 else
                 	return R_();
             }

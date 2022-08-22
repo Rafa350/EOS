@@ -366,6 +366,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/System/eosCallbacks.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosCallbacks.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/System/eosDebug.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosDebug.h</locationURI>
@@ -534,6 +539,11 @@
 			<name>Src/Framework/STM32/HAL/stm32f7xx_hal_tim_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_tim_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/HAL/stm32f7xx_hal_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_uart.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/HAL/stm32f7xx_ll_fmc.c</name>

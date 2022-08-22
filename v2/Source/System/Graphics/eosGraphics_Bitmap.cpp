@@ -32,7 +32,7 @@ void Graphics::paintBitmap(
 void Graphics::drawBitmap(
     int x,
     int y,
-    const Bitmap& bitmap) const {
+    const Bitmap &bitmap) const {
 
 	int x1 = x;
 	int y1 = y;

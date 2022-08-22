@@ -62,15 +62,16 @@ static UARTClockSource getClockSource(
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el protocol de comunicacio.
 /// \param    regs: El bloc de registres.
-/// \param    word: Lers opcions de paraula.
+/// \param    wordBits: Lers opcions de paraula.
 /// \param    parity: Les opcions de paritat.
-/// \param    stop: Les opcions de parada.
+/// \param    stopBits: Les opcions de parada.
 ///
 void htl::UART_setProtocol(
 	USART_TypeDef *regs,
-	UARTWord word,
+	UARTWordBits wordBits,
 	UARTParity parity,
-	UARTStop stop) {
+	UARTStopBits stopBits,
+	UARTHandsake handsake) {
 
 	uint32_t tmp;
 
@@ -80,10 +81,7 @@ void htl::UART_setProtocol(
 	//
 	tmp = regs->CR1;
 
-	unsigned ws = 7 + unsigned(word);
-	if (parity != UARTParity::none)
-		ws++;
-	switch (ws) {
+	switch (7 + uint32_t(wordBits) + (parity == UARTParity::none ? 0 : 1)) {
 		case 7:
 			tmp |= USART_CR1_M1;
 			tmp &= ~USART_CR1_M0;
@@ -119,30 +117,52 @@ void htl::UART_setProtocol(
 
 	// Configura el registre CR2 (Control Register 2)
 	// -Bits de parada
+	// -Habilita del timeout en recepcio
 	//
 	tmp = regs->CR2;
-    switch (stop) {
-    	case UARTStop::_0p5:
+    switch (stopBits) {
+    	case UARTStopBits::_0p5:
     		tmp &= ~USART_CR2_STOP_1;
     		tmp |= USART_CR2_STOP_0;
     		break;
 
-    	case UARTStop::_1:
+    	case UARTStopBits::_1:
     		tmp &= ~USART_CR2_STOP_1;
     		tmp &= ~USART_CR2_STOP_0;
     		break;
 
-    	case UARTStop::_1p5:
+    	case UARTStopBits::_1p5:
     		tmp |= USART_CR2_STOP_1;
     		tmp |= USART_CR2_STOP_0;
     		break;
 
-    	case UARTStop::_2:
+    	case UARTStopBits::_2:
     		tmp |= USART_CR2_STOP_1;
     		tmp &= ~USART_CR2_STOP_0;
     		break;
     }
+	tmp |= USART_CR2_RTOEN;
     regs->CR2 = tmp;
+
+    // Configura el registre CR3
+    // -Opcions CTS
+    // -Opcions RST
+    //
+    tmp = regs->CR3;
+    switch (handsake) {
+		case UARTHandsake::none:
+			tmp &= ~(USART_CR3_RTSE | USART_CR3_CTSE);
+			break;
+
+		case UARTHandsake::ctsrts:
+			tmp |= (USART_CR3_RTSE | USART_CR3_CTSE);
+			break;
+	}
+    regs->CR3 = tmp;
+
+    // El timeout en recepcio
+    //
+    regs->RTOR = 11 * 100;
 }
 
 

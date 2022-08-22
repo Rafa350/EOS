@@ -163,8 +163,8 @@ void DisplayService::onLoop() {
     	_driver->setOrientation(DisplayOrientation((_orientation++) & 0b11));
 	#endif
 
-    _screenWidth = _graphics->getWidth();
-    _screenHeight = _graphics->getHeight();
+    _maxX = _graphics->getMaxX();
+    _maxY = _graphics->getMaxY();
 
 	#ifdef TEST_COLORS
 		testColors();
@@ -248,13 +248,13 @@ void DisplayService::drawBackground(
 
 	_graphics->resetClip();
     _graphics->clear(Colors::black);
-    _graphics->drawRectangle(0, 0, _screenWidth - 1, _screenHeight - 1, Colors::red);
-    _graphics->drawLine(_screenWidth - 1, 20, 0, 20, Colors::red);
+    _graphics->drawRectangle(0, 0, _maxX, _maxY, Colors::red);
+    _graphics->drawLine(_maxX, 20, 0, 20, Colors::red);
 
     _text.setText(title);
     _graphics->paintText(Point(4, 0), _text);
 
-    _graphics->drawRectangle(7, 27, _screenWidth - 10, _screenHeight - 10, Colors::red);
+    _graphics->drawRectangle(7, 27, _maxX - 10, _maxY - 10, Colors::red);
 }
 
 
@@ -263,12 +263,12 @@ void DisplayService::testColors() {
 	drawBackground("Colors");
 	Task::delay(250);
 
-	_graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+	_graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
-	int barWidth = _screenWidth - 45;
+	int barWidth = _maxX - 45;
 	int barHeight = 45;
 
-	int x = (_screenWidth - barWidth) / 2;
+	int x = ((_maxX + 1) - barWidth) / 2;
 	int y = 40;
 	int w = barWidth;
 	int h = barHeight;
@@ -320,7 +320,7 @@ void DisplayService::testOpacity() {
 	colors[1] = ARGB(opacity, 0, 255, 0);
 	colors[2] = ARGB(opacity, 0, 0, 255);
 
-	_graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+	_graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
 	int x = 40;
 	int y = 40;
@@ -347,13 +347,13 @@ void DisplayService::testPoints() {
 	drawBackground("Random points");
 	Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
     __srand(seed);
     ticks = Task::getTickCount();
     for (int i = 0; i < 50000; i++) {
-        int x = __rand() % _screenWidth;
-        int y = __rand() % _screenHeight;
+        int x = __rand() % _maxX;
+        int y = __rand() % _maxY;
 
         Color c = __getRandomColor();
         _graphics->drawPoint(x, y, c);
@@ -363,8 +363,8 @@ void DisplayService::testPoints() {
 
     __srand(seed);
     for (int i = 0; i < 50000; i++) {
-        int x = __rand() % _screenWidth;
-        int y = __rand() % _screenHeight;
+        int x = __rand() % _maxX;
+        int y = __rand() % _maxY;
 
         __rand(); // Mantre la sequencia de 3 rand's per cicle
 
@@ -373,7 +373,6 @@ void DisplayService::testPoints() {
 
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
     ticks = Task::getTickCount();
 }
 
@@ -390,12 +389,12 @@ void DisplayService::testLines() {
     drawBackground("Vertical lines");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 5000; i++) {
-        int x = __rand() % _screenWidth;
-        int y1 = __rand() % _screenHeight;
-        int y2 = __rand() % _screenHeight;
+        int x = __rand() % _maxX;
+        int y1 = __rand() % _maxY;
+        int y2 = __rand() % _maxY;
 
         Color c = __getRandomColor();
         _graphics->drawVLine(x, y1, y2, c);
@@ -408,12 +407,12 @@ void DisplayService::testLines() {
     drawBackground("Horizontal lines");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 5000; i++) {
-        int x1 = __rand() % _screenWidth;
-        int x2 = __rand() % _screenWidth;
-        int y = __rand() % _screenHeight;
+        int x1 = __rand() % _maxX;
+        int x2 = __rand() % _maxY;
+        int y = __rand() % _maxY;
 
         Color c = __getRandomColor();
         _graphics->drawHLine(x1, x2, y, c);
@@ -426,13 +425,13 @@ void DisplayService::testLines() {
     drawBackground("Random lines");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 5000; i++) {
-        int x1 = __rand() % _screenWidth;
-        int y1 = __rand() % _screenHeight;
-        int x2 = __rand() % _screenWidth;
-        int y2 = __rand() % _screenHeight;
+        int x1 = __rand() % _maxX;
+        int y1 = __rand() % _maxY;
+        int x2 = __rand() % _maxX;
+        int y2 = __rand() % _maxY;
 
         Color c = __getRandomColor();
         _graphics->drawLine(x1, y1, x2, y2, c);
@@ -452,7 +451,7 @@ void DisplayService::testThickLines() {
     drawBackground("Thick lines");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
     _graphics->drawLine(10, 10, 200, 376, 5, Colors::white);
 
@@ -472,11 +471,11 @@ void DisplayService::testRectangles() {
 	drawBackground("Rectangles");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 1000; i++) {
-        int x1 = __rand() % _screenWidth;
-        int y1 = __rand() % _screenHeight;
+        int x1 = __rand() % _maxX;
+        int y1 = __rand() % _maxY;
         int x2 = x1 + __rand() % 150;
         int y2 = y1 + __rand() % 150;
 
@@ -491,11 +490,11 @@ void DisplayService::testRectangles() {
     drawBackground("Filled rectangles");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 1000; i++) {
-        int x1 = __rand() % _screenWidth;
-        int y1 = __rand() % _screenHeight;
+        int x1 = __rand() % _maxX;
+        int y1 = __rand() % _maxY;
         int x2 = x1 + __rand() % 150;
         int y2 = y1 + __rand() % 150;
 
@@ -519,11 +518,11 @@ void DisplayService::testEllipses() {
     drawBackground("Ellipses");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 1000; i++) {
-        int cx = __rand() % _screenWidth;
-        int cy = __rand() % _screenHeight;
+        int cx = __rand() % _maxX;
+        int cy = __rand() % _maxY;
         int rx = (__rand() % 60) + 3;
         int ry = (__rand() % 60) + 3;
 
@@ -538,11 +537,11 @@ void DisplayService::testEllipses() {
     drawBackground("Filled ellipses");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 1000; i++) {
-        int cx = __rand() % _screenWidth;
-        int cy = __rand() % _screenHeight;
+        int cx = __rand() % _maxX;
+        int cy = __rand() % _maxY;
         int rx = (__rand() % 60) + 3;
         int ry = (__rand() % 60) + 3;
 
@@ -574,7 +573,7 @@ void DisplayService::testPolygons() {
     drawBackground("Polygons");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 1; i++) {
 
@@ -589,7 +588,7 @@ void DisplayService::testPolygons() {
     drawBackground("Filled polygons");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 1; i++) {
 
@@ -621,12 +620,12 @@ void DisplayService::testBitmaps() {
 	drawBackground("Bitmaps");
     Task::delay(250);
 
-    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
     ticks = Task::getTickCount();
 
-    int x = _screenWidth / 2;
-    int y = _screenHeight / 2;
+    int x = (_maxX + 1) / 2;
+    int y = (_maxY + 1) / 2;
 	_graphics->drawBitmap(
 		x - bitmap.getWidth() / 2,
 		y - bitmap.getHeight() / 2,

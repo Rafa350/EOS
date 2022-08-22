@@ -24,8 +24,8 @@ namespace app {
 			eos::IDisplayDriver *_driver;
 	        eos::Graphics *_graphics;
 	        eos::Text _text;
-	        int _screenWidth;
-	        int _screenHeight;
+	        int _maxX;
+	        int _maxY;
 	        int _orientation;
 	        int _loopCount;
 

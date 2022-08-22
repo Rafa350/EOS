@@ -29,8 +29,8 @@ using namespace app;
 MyApplication::MyApplication():
 
 	Application(),
-	_buttonEventCallback(this, &MyApplication::buttonEventHandler),
-	_virtualKeyboardEventCallback(this, &MyApplication::virtualKeyboardEventHandler) {
+	_buttonEventCallback(*this, &MyApplication::buttonEventHandler),
+	_virtualKeyboardEventCallback(*this, &MyApplication::virtualKeyboardEventHandler) {
 
 	_ledService = new LedService(this);
 	_guiService = new GuiService(this);

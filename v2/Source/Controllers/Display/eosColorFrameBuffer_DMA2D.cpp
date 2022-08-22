@@ -122,25 +122,25 @@ static constexpr DMA2DInputColorMode getInputColorMode(
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
-/// \param    frameWidth: Amplada.
-/// \param    frameHeight: Alçada.
-/// \param    framePitch: Pitch.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    pitch: Pitch.
 /// \param    orientation: Orientacio.
 /// \param    color: Color inicial.
 /// \param    buffer: Buffer.
 ///
 ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
-	int frameWidth,
-	int frameHeight,
-	int framePitch,
+	int width,
+	int height,
+	int pitch,
 	DisplayOrientation orientation,
-	void* buffer):
+	void *buffer):
 
-	FrameBuffer(frameWidth, frameHeight, orientation),
+	FrameBuffer(width, height, orientation),
 	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
-	_framePitch(framePitch) {
+	_framePitch(pitch) {
 
-    DMA2D_1::init();
+    DMA2D_1::initialize();
 }
 
 

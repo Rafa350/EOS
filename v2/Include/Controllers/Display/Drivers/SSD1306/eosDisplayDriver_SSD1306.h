@@ -64,7 +64,12 @@ namespace eos {
 			#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 			#endif
 
-    		FrameBuffer *_frameBuffer;
+			static constexpr int _displayWidth  = board::display::width;
+			static constexpr int _displayHeight = board::display::height;
+
+			FrameBuffer *_frameBuffer;
+    		int _pages;
+    		int _columns;
 
             void initializeInterface();
             void initializeController();
@@ -79,8 +84,8 @@ namespace eos {
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const override { return _frameBuffer->getWidth(); }
-            int getHeight() const override { return _frameBuffer->getHeight(); }
+            int getMaxX() const override { return _frameBuffer->getMaxX(); }
+            int getMaxY() const override { return _frameBuffer->getMaxY(); }
 
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;

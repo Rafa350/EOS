@@ -59,8 +59,8 @@ namespace eos {
 			static constexpr htl::LTDCPolarity _vSyncPol = board::display::vSyncPol;
 			static constexpr htl::LTDCPolarity _dePol    = board::display::dePol;
 			static constexpr htl::LTDCPolarity _pcPol    = board::display::pcPol;
-			static constexpr uint16_t _displayWidth      = board::display::width;
-			static constexpr uint16_t _displayHeight     = board::display::height;
+			static constexpr int _displayWidth      = board::display::width;
+			static constexpr int _displayHeight     = board::display::height;
 			static constexpr uint32_t _buffer      = board::display::buffer;
 
     		FrameBuffer *_displayFrameBuffer;
@@ -79,8 +79,10 @@ namespace eos {
             void displayOff() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getWidth() const override { return _displayFrameBuffer->getWidth(); }
-            inline int getHeight() const override { return _displayFrameBuffer->getHeight(); }
+            inline int getWidth() const override { return _displayWidth; }
+            inline int getHeight() const override { return _displayHeight; }
+            inline int getMaxX() const override { return _displayFrameBuffer->getMaxX(); }
+            inline int getMaxY() const override { return _displayFrameBuffer->getMaxY(); }
 
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;

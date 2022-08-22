@@ -91,14 +91,14 @@ namespace htl {
 		public:
 			/// \brief Inicialitza el modul.
 			///
-			inline static void init() {
+			inline static void initialize() {
 
 				activate();
 			}
 
 			/// \brief Desinicialitza el modul
 			///
-			inline static void deInit() {
+			inline static void deinitialize() {
 
 				deactivate();
 			}

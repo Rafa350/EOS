@@ -14,7 +14,7 @@ using namespace eos;
 Application::Application():
 
 	_initialized(false),
-    _taskEventCallback(this, &Application::taskEventHandler)
+    _taskEventCallback(*this, &Application::taskEventHandler)
 #if Eos_ApplicationTickEnabled
     ,timerEventCallback(this, &Application::timerEventHandler),
     timer(true, &timerEventCallback, this)

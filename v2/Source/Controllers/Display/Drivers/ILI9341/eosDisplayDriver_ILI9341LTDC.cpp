@@ -235,7 +235,7 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	//
 	SPI::initSCKPin<GPIO_SCK>();
 	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_16);
+	SPI::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
 
 	// Inicialitza el modul LTDC
 	//

@@ -1,55 +1,62 @@
 #include "eos.h"
+#include "htl/htlUART.h"
 #include "appApplication.h"
 #include "appLoopService.h"
 
 
 using namespace eos;
+using namespace htl;
 using namespace app;
 
 
 MyAppLoopService::MyAppLoopService(
-	Application* application,
-	UARTService *uartService):
+	Application* application):
 
 	AppLoopService(application),
-	_uartService(uartService) {
+	_serial(nullptr),
+	_txCompletedCallback(*this, &MyAppLoopService::txCompletedEventHandler),
+	_rxCompletedCallback(*this, &MyAppLoopService::rxCompletedEventHandler) {
 
 }
 
 
 void MyAppLoopService::onSetup() {
 
+	_serial = new SerialDriver_IT(getUARTAdapter<config::uartService::UART>());
+	_serial->initialize();
+	_serial->setTxCompletedCallback(_txCompletedCallback);
+	_serial->setRxCompletedCallback(_rxCompletedCallback);
 }
 
 
 void MyAppLoopService::onLoop() {
 
-	/*char ch;
+	uint8_t buffer[10];
 
-	if ((ch = getChar()) != 0) {
-		putChar(ch);
-	}*/
+	while (true) {
+
+		if (_serial->receive(buffer, sizeof(buffer))) {
+			if (_rxCompleted.wait(unsigned(-1))) {
+				if (_rxDataCount > 0) {
+					if (_serial->transmit(buffer, _rxDataCount))
+						_txCompleted.wait(unsigned(-1));
+				}
+			}
+		}
+	}
+}
+
+void MyAppLoopService::txCompletedEventHandler(
+	const SerialDriver_IT::TxCompletedEventArgs &args) {
+
+	_txCompleted.releaseISR();
 }
 
 
-char MyAppLoopService::getChar() {
+void MyAppLoopService::rxCompletedEventHandler(
+	const SerialDriver_IT::RxCompletedEventArgs &args) {
 
-	char ch;
-	if (_uartService->receive((uint8_t*) &ch, sizeof(ch), unsigned(-1)))
-		return ch;
-	else
-		return 0;
+	_rxDataCount = args.count;
+	_rxCompleted.releaseISR();
 }
 
-
-void MyAppLoopService::putChar(
-	char ch) {
-
-	_uartService->send((uint8_t*) &ch, sizeof(ch), unsigned(-1));
-}
-
-
-void MyAppLoopService::putString(char *s) {
-
-	_uartService->send((uint8_t*) s, strlen(s), unsigned(-1));
-}

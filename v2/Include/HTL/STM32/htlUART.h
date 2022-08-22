@@ -49,12 +49,12 @@ namespace htl {
 		odd
 	};
 
-	enum class UARTWord {
+	enum class UARTWordBits {
 		_7,
 		_8
 	};
 
-	enum class UARTStop {
+	enum class UARTStopBits {
 		_0p5,
 		_1,
 		_1p5,
@@ -73,6 +73,11 @@ namespace htl {
 		div,
 		rate,
 		automatic
+	};
+
+	enum class UARTHandsake {
+		none,
+		ctsrts
 	};
 
 	enum class UARTClockSource {
@@ -116,7 +121,7 @@ namespace htl {
 	using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
 
 	void UART_initialize();
-	void UART_setProtocol(USART_TypeDef*, UARTWord, UARTParity, UARTStop);
+	void UART_setProtocol(USART_TypeDef*, UARTWordBits, UARTParity, UARTStopBits, UARTHandsake);
 	void UART_setTimming(USART_TypeDef*, UARTBaudMode, UARTClockSource, unsigned, UARTOverSampling);
 
 	template <UARTChannel>
@@ -154,22 +159,38 @@ namespace htl {
 			///
 			static void activate() {
 
-				if constexpr (channel_ == UARTChannel::_1)
-					RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-				if constexpr (channel_ == UARTChannel::_2)
-					RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-				if constexpr (channel_ == UARTChannel::_3)
-					RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
-				if constexpr (channel_ == UARTChannel::_4)
-					RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
-				if constexpr (channel_ == UARTChannel::_5)
-					RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
-				if constexpr (channel_ == UARTChannel::_6)
-					RCC->APB2ENR |= RCC_APB2ENR_USART6EN;
-				if constexpr (channel_ == UARTChannel::_7)
-					RCC->APB1ENR |= RCC_APB1ENR_UART7EN;
-				if constexpr (channel_ == UARTChannel::_8)
-					RCC->APB1ENR |= RCC_APB1ENR_UART8EN;
+				#ifdef USART1_BASE
+					if constexpr (channel_ == UARTChannel::_1)
+						RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+				#endif
+				#ifdef USART2_BASE
+					if constexpr (channel_ == UARTChannel::_2)
+						RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+				#endif
+				#ifdef USART3_BASE
+					if constexpr (channel_ == UARTChannel::_3)
+						RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+				#endif
+				#ifdef UART4_BASE
+					if constexpr (channel_ == UARTChannel::_4)
+						RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+				#endif
+				#ifdef UART5_BASE
+					if constexpr (channel_ == UARTChannel::_5)
+						RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+				#endif
+				#ifdef USART6_BASE
+					if constexpr (channel_ == UARTChannel::_6)
+						RCC->APB2ENR |= RCC_APB2ENR_USART6EN;
+				#endif
+				#ifdef UART7_BASE
+					if constexpr (channel_ == UARTChannel::_7)
+						RCC->APB1ENR |= RCC_APB1ENR_UART7EN;
+				#endif
+				#ifdef UART8_BASE
+					if constexpr (channel_ == UARTChannel::_8)
+						RCC->APB1ENR |= RCC_APB1ENR_UART8EN;
+				#endif
 
 				__DSB();
 			}
@@ -178,22 +199,38 @@ namespace htl {
 			///
 			static void deactivate() {
 
-				if constexpr (channel_ == UARTChannel::_1)
-					RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
-				if constexpr (channel_ == UARTChannel::_2)
-					RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
-				if constexpr (channel_ == UARTChannel::_3)
-					RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
-				if constexpr (channel_ == UARTChannel::_4)
-					RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
-				if constexpr (channel_ == UARTChannel::_5)
-					RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
-				if constexpr (channel_ == UARTChannel::_6)
-					RCC->APB2ENR &= ~RCC_APB2ENR_USART6EN;
-				if constexpr (channel_ == UARTChannel::_7)
-					RCC->APB1ENR &= ~RCC_APB1ENR_UART7EN;
-				if constexpr (channel_ == UARTChannel::_8)
-					RCC->APB1ENR &= ~RCC_APB1ENR_UART8EN;
+				#ifdef USART1_BASE
+					if constexpr (channel_ == UARTChannel::_1)
+						RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+				#endif
+				#ifdef USART2_BASE
+					if constexpr (channel_ == UARTChannel::_2)
+						RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+				#endif
+				#ifdef USART3_BASE
+					if constexpr (channel_ == UARTChannel::_3)
+						RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+				#endif
+				#ifdef UART4_BASE
+					if constexpr (channel_ == UARTChannel::_4)
+						RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
+				#endif
+				#ifdef UART5_BASE
+					if constexpr (channel_ == UARTChannel::_5)
+						RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
+				#endif
+				#ifdef USART6_BASE
+					if constexpr (channel_ == UARTChannel::_6)
+						RCC->APB2ENR &= ~RCC_APB2ENR_USART6EN;
+				#endif
+				#ifdef UART7_BASE
+					if constexpr (channel_ == UARTChannel::_7)
+						RCC->APB1ENR &= ~RCC_APB1ENR_UART7EN;
+				#endif
+				#ifdef UART8_BASE
+					if constexpr (channel_ == UARTChannel::_8)
+						RCC->APB1ENR &= ~RCC_APB1ENR_UART8EN;
+				#endif
 			}
 
 		public:
@@ -223,38 +260,54 @@ namespace htl {
 			///
 			static void reset() {
 
-				if constexpr (channel_ == UARTChannel::_1) {
-					RCC->APB2RSTR |= RCC_APB2RSTR_USART1RST;
-					RCC->APB2RSTR &= ~RCC_APB2RSTR_USART1RST;
-				}
-				if constexpr (channel_ == UARTChannel::_2) {
-					RCC->APB1RSTR |= RCC_APB1RSTR_USART2RST;
-					RCC->APB1RSTR &= ~RCC_APB1RSTR_USART2RST;
-				}
-				if constexpr (channel_ == UARTChannel::_3) {
-					RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
-					RCC->APB1RSTR &= ~RCC_APB1RSTR_USART3RST;
-				}
-				if constexpr (channel_ == UARTChannel::_4) {
-					RCC->APB1RSTR |= RCC_APB1RSTR_UART4RST;
-					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART4RST;
-				}
-				if constexpr (channel_ == UARTChannel::_5) {
-					RCC->APB1RSTR |= RCC_APB1RSTR_UART5RST;
-					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART5RST;
-				}
-				if constexpr (channel_ == UARTChannel::_6) {
-					RCC->APB2RSTR |= RCC_APB2RSTR_USART6RST;
-					RCC->APB2RSTR &= ~RCC_APB2RSTR_USART6RST;
-				}
-				if constexpr (channel_ == UARTChannel::_7) {
-					RCC->APB1RSTR |= RCC_APB1RSTR_UART7RST;
-					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART7RST;
-				}
-				if constexpr (channel_ == UARTChannel::_8) {
-					RCC->APB1RSTR |= RCC_APB1RSTR_UART8RST;
-					RCC->APB1RSTR &= ~RCC_APB1RSTR_UART8RST;
-				}
+				#ifdef USART1_BASE
+					if constexpr (channel_ == UARTChannel::_1) {
+						RCC->APB2RSTR |= RCC_APB2RSTR_USART1RST;
+						RCC->APB2RSTR &= ~RCC_APB2RSTR_USART1RST;
+					}
+				#endif
+				#ifdef USART2_BASE
+					if constexpr (channel_ == UARTChannel::_2) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_USART2RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_USART2RST;
+					}
+				#endif
+				#ifdef USART3_BASE
+					if constexpr (channel_ == UARTChannel::_3) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_USART3RST;
+					}
+				#endif
+				#ifdef UART4_BASE
+					if constexpr (channel_ == UARTChannel::_4) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_UART4RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART4RST;
+					}
+				#endif
+				#ifdef UART5_BASE
+					if constexpr (channel_ == UARTChannel::_5) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_UART5RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART5RST;
+					}
+				#endif
+				#ifdef USART6_BASE
+					if constexpr (channel_ == UARTChannel::_6) {
+						RCC->APB2RSTR |= RCC_APB2RSTR_USART6RST;
+						RCC->APB2RSTR &= ~RCC_APB2RSTR_USART6RST;
+					}
+				#endif
+				#ifdef UART7_BASE
+					if constexpr (channel_ == UARTChannel::_7) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_UART7RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART7RST;
+					}
+				#endif
+				#ifdef UART8_BASE
+					if constexpr (channel_ == UARTChannel::_8) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_UART8RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART8RST;
+					}
+				#endif
 			}
 
 			/// \brief Habilita el modul per comunicar
@@ -265,18 +318,30 @@ namespace htl {
 				regs->CR1 |= (USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
 			}
 
+			/// \brief Habilita el modul per comunicar per transmisio
+			///
+			static void enableTX() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				regs->CR1 |= (USART_CR1_UE | USART_CR1_TE);
+			}
+
+			/// \brief Habilita el modul per comunicar per recepcio
+			///
+			static void enableRX() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				regs->CR1 |= (USART_CR1_UE | USART_CR1_RE);
+			}
+
 			/// \brief Deshabilita el modul per comunicar
 			///
 			static void disable() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 &= ~(USART_CR1_UE | USART_CR1_RE | USART_CR1_TE |
-					USART_CR1_IDLEIE | USART_CR1_TXEIE | USART_CR1_TCIE |
-					USART_CR1_RXNEIE | USART_CR1_PEIE | USART_CR1_RTOIE |
-					USART_CR1_EOBIE | USART_CR1_CMIE | USART_CR1_RXNEIE);
-				regs->CR2 &= ~USART_CR2_LBDIE;
-				regs->CR3 &= ~(USART_CR3_CTSIE | USART_CR3_EIE);
+				regs->CR1 &= ~(USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
 
+				disableInterrupts();
 				clearInterruptFlags();
 			}
 
@@ -300,17 +365,20 @@ namespace htl {
 			/// \param work: Numero de bits de dades.
 			/// \param parity: Opcionsd e paritat.
 			/// \param stop: Numero dels bits de parada.
+			/// \param handsake: El protocol hardware.
 			///
 			static void setProtocol(
-				UARTWord word,
+				UARTWordBits wordBits,
 				UARTParity parity,
-				UARTStop stop) {
+				UARTStopBits stopBits,
+				UARTHandsake handsake = UARTHandsake::none) {
 
 				UART_setProtocol(
 					reinterpret_cast<USART_TypeDef*>(_addr),
-					word,
+					wordBits,
 					parity,
-					stop);
+					stopBits,
+					handsake);
 			}
 
 			/// \brief Inicialitza el pin TX
@@ -331,6 +399,26 @@ namespace htl {
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
 					UARTPinTrait<channel_, gpio_, UARTPin::RX>::alt);
+			}
+
+			/// \brief Inicialitza el pin CTS
+			///
+			template <typename gpio_>
+			static void initCTSPin() {
+				gpio_::initAlt(
+					GPIODriver::pushPull,
+					GPIOSpeed::fast,
+					UARTPinTrait<channel_, gpio_, UARTPin::CTS>::alt);
+			}
+
+			/// \brief Inicialitza el pin RTS
+			///
+			template <typename gpio_>
+			static void initRTSPin() {
+				gpio_::initAlt(
+					GPIODriver::pushPull,
+					GPIOSpeed::fast,
+					UARTPinTrait<channel_, gpio_, UARTPin::RTS>::alt);
 			}
 
 			/// \brief Escriu un byte en el buffer de transmissio.
@@ -493,7 +581,11 @@ namespace htl {
 			static void disableInterrupts() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 &= ~(USART_CR1_TXEIE | USART_CR1_TCIE);
+				regs->CR1 &= ~(USART_CR1_IDLEIE | USART_CR1_TXEIE | USART_CR1_TCIE |
+					USART_CR1_RXNEIE | USART_CR1_PEIE | USART_CR1_RTOIE |
+					USART_CR1_EOBIE | USART_CR1_CMIE | USART_CR1_RXNEIE);
+				regs->CR2 &= ~USART_CR2_LBDIE;
+				regs->CR3 &= ~(USART_CR3_CTSIE | USART_CR3_EIE);
 			}
 
 			/// \brief Obte el flag d'interrupcio.
@@ -527,6 +619,9 @@ namespace htl {
 
 					case UARTEvent::rxNotEmpty:
 						return (regs->ISR & USART_ISR_RXNE) != 0;
+
+					case UARTEvent::rxTimeout:
+						return (regs->ISR & USART_ISR_RTOF) != 0;
 
 					case UARTEvent::cts:
 						return (regs->ISR & USART_ISR_CTSIF) != 0;

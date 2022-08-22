@@ -15,7 +15,7 @@ namespace eos {
 	class ColorFrameBuffer_DMA2D: public FrameBuffer {
 		private:
 			Color::Pixel *_buffer;
-			int _framePitch;
+			const int _framePitch;
 
 			inline Color::Pixel *getPixelPtr(int x, int y) const { return &_buffer[(y * _framePitch) + x]; }
 
@@ -26,7 +26,7 @@ namespace eos {
             void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) override;
 
 		public:
-			ColorFrameBuffer_DMA2D(int frameWidth, int frameHeight, int framePitch, DisplayOrientation orientation, void *buffer);
+			ColorFrameBuffer_DMA2D(int width, int height, int pitch, DisplayOrientation orientation, void *buffer);
             void *getBuffer() const override;
 	};
 }

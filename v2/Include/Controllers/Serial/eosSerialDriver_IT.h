@@ -14,29 +14,40 @@ namespace eos {
 			enum class State {
 				reset,
 				ready,
-				sending,
+				transmiting,
 				receiving
 			};
-			enum class Event {
-				completed,
-				aborted
-			};
-			struct EventArgs {
+			struct TxCompletedEventArgs {
 				SerialDriver_IT *driver;
-				Event event;
-				void *param;
+				unsigned count;
 			};
-    		using ICallback = ICallbackP1<const EventArgs&>;
+			struct RxCompletedEventArgs {
+				SerialDriver_IT *driver;
+				unsigned count;
+			};
+			struct AbortedEventArgs {
+				SerialDriver_IT *driver;
+			};
+    		using ITxCompletedCallback = ICallbackP1<const TxCompletedEventArgs&>;
+    		using IRxCompletedCallback = ICallbackP1<const RxCompletedEventArgs&>;
+    		using IAbortedCallback = ICallbackP1<const AbortedEventArgs&>;
 
 		private:
 			htl::UARTAdapter &_uart;
 			State _state;
-			const uint8_t *_data;
-			unsigned _dataLength;
-            ICallback *_callback;
-            void *_callbackParam;
+			const uint8_t *_txData;
+			unsigned _txLength;
+			unsigned _txCount;
+			uint8_t *_rxData;
+			unsigned _rxSize;
+			unsigned _rxCount;
+            ITxCompletedCallback *_txCompletedCallback;
+            IRxCompletedCallback *_rxCompletedCallback;
+            IAbortedCallback *_abortedCallback;
 
-            void invokeCallback(Event event);
+            void notifyTxCompleted();
+            void notifyRxCompleted();
+            void notifyAborted();
 			void interruptHandler(htl::UARTEvent event);
 			static void interruptHandler(htl::UARTEvent event, htl::UARTInterruptParam param);
 
@@ -47,12 +58,15 @@ namespace eos {
 			void initialize();
 			void deinitialize();
 
-			inline bool isBusy() const { return _state != State::ready; }
+			State getState() const;
+			inline bool isBusy() const { return getState() != State::ready; }
 
-			void setCallback(ICallback &callback, void *callbackParam);
+			void setTxCompletedCallback(ITxCompletedCallback &callback);
+			void setRxCompletedCallback(IRxCompletedCallback &callback);
+			void setAbortedCallback(IAbortedCallback &callback);
 
-			bool send(const uint8_t *data, unsigned dataLength);
-			unsigned receive(uint8_t *data, unsigned dataSize);
+			bool transmit(const uint8_t *data, unsigned dataLength);
+			bool receive(uint8_t *data, unsigned dataSize);
 	};
 }
 

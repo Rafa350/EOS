@@ -74,7 +74,7 @@ namespace eos {
 		public:
 			using M = typename CallbackP1<C_, const TouchpadPressEventArgs&>::Method;
 		public:
-			inline TouchpadPressEventCallback(C_* instance, M handler):
+			inline TouchpadPressEventCallback(C_ &instance, M handler):
 				CallbackP1<C_, const TouchpadPressEventArgs&>(instance, handler) {
 			}
 	};

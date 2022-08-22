@@ -14,7 +14,8 @@ using namespace htl;
 ///
 DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 	FrameBuffer *frameBuffer):
-
+    _pages(_displayHeight / 8),
+	_columns(_displayWidth),
 	_frameBuffer(frameBuffer) {
 }
 
@@ -198,17 +199,15 @@ void DisplayDriver_SSD1306::setPixels(
 ///
 void DisplayDriver_SSD1306::refresh() {
 
-	int width = _frameBuffer->getWidth();
-	int height = _frameBuffer->getHeight();
 	const uint8_t *buffer = reinterpret_cast<const uint8_t*>(_frameBuffer->getBuffer());
 
-    for (int page = 0; page < height / 8; page++) {
+    for (int page = 0; page < _pages; page++) {
 
     	writeCommand(0xB0 + page); // Set the current page.
         writeCommand(0x00);        // Set first column (LO nibble)
         writeCommand(0x10);        // Set first column (HI nibble)
 
-        writeData(&buffer[page * width], width);
+        writeData(&buffer[page * _columns], _columns);
     }
 }
 

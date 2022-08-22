@@ -21,7 +21,7 @@ mklink /J "CMSIS_DEVICE"  "C:\Library\STMicroelectronics\STM32Cube\STM32Cube_FW_
 mklink /J "HAL"           "C:\Library\STMicroelectronics\STM32Cube\STM32Cube_FW_F4_V1.27.1\Drivers\STM32F4xx_HAL_Driver"
 mklink /J "BSP"           "C:\Library\STMicroelectronics\STM32Cube\STM32Cube_FW_F4_V1.27.1\Drivers\BSP"
 
-mklink /J "FreeRTOS"      "C:\Library\FreeRTOS-LTS\FreeRTOS\"
+mklink /J "FreeRTOS"      "C:\Library\STMicroelectronics\STM32Cube\STM32Cube_FW_F4_V1.27.1\Middlewares\Third_Party\FreeRTOS\Source"
 
 mklink /J "FatFs"         "C:\Library\STMicroelectronics\STM32Cube\STM32Cube_FW_F4_V1.27.1\Middlewares\Third_Party\FatFs"
 mklink /J "LwIP"          "C:\Library\STMicroelectronics\STM32Cube\STM32Cube_FW_F4_V1.27.1\Middlewares\Third_Party\LwIP"

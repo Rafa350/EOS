@@ -15,7 +15,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 TabControl::TabControl():
-    _touchpadPressEventCallback(this, &TabControl::touchpadPressEventHandler),
+    _touchpadPressEventCallback(*this, &TabControl::touchpadPressEventHandler),
 	_panel(nullptr),
 	_header(nullptr),
 	_content(nullptr) {

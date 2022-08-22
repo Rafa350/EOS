@@ -104,7 +104,7 @@ namespace htl {
         down
     };
 
-    /// \brief Driver type identifiers.
+    /// \brief Driver type identifier.
     enum class GPIODriver {
     	noChange,
         pushPull,
@@ -144,25 +144,25 @@ namespace htl {
     			if (!_activated) {
     				if constexpr (port_ == GPIOPort::A)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-    				else if constexpr (port_ == GPIOPort::B)
+    				if constexpr (port_ == GPIOPort::B)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
-    				else if constexpr (port_ == GPIOPort::C)
+    				if constexpr (port_ == GPIOPort::C)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
-    				else if constexpr (port_ == GPIOPort::D)
+    				if constexpr (port_ == GPIOPort::D)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-    				else if constexpr (port_ == GPIOPort::E)
+    				if constexpr (port_ == GPIOPort::E)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
-    				else if constexpr (port_ == GPIOPort::F)
+    				if constexpr (port_ == GPIOPort::F)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
-    				else if constexpr (port_ == GPIOPort::G)
+    				if constexpr (port_ == GPIOPort::G)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
-    				else if constexpr (port_ == GPIOPort::H)
+    				if constexpr (port_ == GPIOPort::H)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
-    				else if constexpr (port_ == GPIOPort::I)
+    				if constexpr (port_ == GPIOPort::I)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
-    				else if constexpr (port_ == GPIOPort::J)
+    				if constexpr (port_ == GPIOPort::J)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
-    				else if constexpr (port_ == GPIOPort::K)
+    				if constexpr (port_ == GPIOPort::K)
     					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
     				__DSB();
     			}
@@ -176,25 +176,25 @@ namespace htl {
     			if (!_activated) {
     				if constexpr (port_ == GPIOPort::A)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN;
-    				else if constexpr (port_ == GPIOPort::B)
+    				if constexpr (port_ == GPIOPort::B)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN;
-    				else if constexpr (port_ == GPIOPort::C)
+    				if constexpr (port_ == GPIOPort::C)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN;
-    				else if constexpr (port_ == GPIOPort::D)
+    				if constexpr (port_ == GPIOPort::D)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN;
-    				else if constexpr (port_ == GPIOPort::E)
+    				if constexpr (port_ == GPIOPort::E)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN;
-    				else if constexpr (port_ == GPIOPort::F)
+    				if constexpr (port_ == GPIOPort::F)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN;
-    				else if constexpr (port_ == GPIOPort::G)
+    				if constexpr (port_ == GPIOPort::G)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN;
-    				else if constexpr (port_ == GPIOPort::H)
+    				if constexpr (port_ == GPIOPort::H)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN;
-    				else if constexpr (port_ == GPIOPort::I)
+    				if constexpr (port_ == GPIOPort::I)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN;
-    				else if constexpr (port_ == GPIOPort::J)
+    				if constexpr (port_ == GPIOPort::J)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN;
-    				else if constexpr (port_ == GPIOPort::K)
+    				if constexpr (port_ == GPIOPort::K)
     					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN;
     			}
     		}

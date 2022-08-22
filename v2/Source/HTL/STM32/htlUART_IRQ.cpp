@@ -21,6 +21,9 @@ void UART_1_InterruptHandler() {
 		if (isr & USART_ISR_RXNE)
 			UART_1::interruptHandler(UARTEvent::rxNotEmpty);
 
+		if (isr & USART_ISR_RTOF)
+			UART_1::interruptHandler(UARTEvent::rxTimeout);
+
 		if (isr & USART_ISR_PE)
 			UART_1::interruptHandler(UARTEvent::parity);
 
@@ -69,6 +72,9 @@ void UART_6_InterruptHandler() {
 
 		if (isr & USART_ISR_RXNE)
 			UART_6::interruptHandler(UARTEvent::rxNotEmpty);
+
+		if (isr & USART_ISR_RTOF)
+			UART_6::interruptHandler(UARTEvent::rxTimeout);
 
 		if (isr & USART_ISR_PE)
 			UART_6::interruptHandler(UARTEvent::parity);

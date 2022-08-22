@@ -11,7 +11,7 @@ namespace eos {
     class MonoFrameBuffer: public FrameBuffer {
         private:
             uint8_t *_buffer;
-            const int _bufferPitch;
+            const int _framePitch;
 
 		protected:
             void put(int x, int y, Color color) override;
@@ -20,7 +20,7 @@ namespace eos {
             void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) override;
 
         public:
-            MonoFrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation, void *buffer, int bufferPitch);
+            MonoFrameBuffer(int width, int height, DisplayOrientation orientation, void *buffer, int pitch);
 
             inline void *getBuffer() const override { return _buffer; }
     };

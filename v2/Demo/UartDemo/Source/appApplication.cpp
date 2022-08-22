@@ -3,8 +3,6 @@
 #include "HTL/htlINT.h"
 #include "HTL/htlTMR.h"
 #include "HTL/htlUART.h"
-#include "Controllers/Serial/eosSerialDriver.h"
-#include "Controllers/Serial/eosSerialDriver_IT.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
@@ -22,8 +20,7 @@ using namespace app;
 /// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication():
-    _swCallback(this, &MyApplication::swEventHandler),
-	_serialCallback(this, &MyApplication::serialEventHandler) {
+    _swCallback(*this, &MyApplication::swEventHandler) {
 }
 
 
@@ -56,7 +53,7 @@ void MyApplication::initializeHardware() {
 	Uart::initialize();
 	Uart::initTXPin<PinTX>();
 	Uart::initRXPin<PinRX>();
-	Uart::setProtocol(UARTWord::_8, UARTParity::none, UARTStop::_1);
+	Uart::setProtocol(UARTWordBits::_8, UARTParity::none, UARTStopBits::_1);
 	Uart::setTimming(UARTBaudMode::_9600, UARTClockSource::automatic, 0, UARTOverSampling::_16);
 	Uart::enable();
 	INT_1::setInterruptVectorPriority(config::uartService::uartVector,	config::uartService::uartIntPriority, config::uartService::uartIntSubPriority);
@@ -103,13 +100,9 @@ void MyApplication::initializeServices() {
     _digOutputService = new DigOutputService(this);
     _led = new DigOutput(_digOutputService, getGPIOAdapter<PinLED>());
 
-	_serial = new SerialDriver(getUARTAdapter<Uart>());
-	_serial->initialize();
-	//_serial->setCallback(_serialCallback, nullptr);
-
 	// Inicialitza el servei AppLoop
 	//
-	//_loopService = new MyAppLoopService(this, _uartService);
+	_loopService = new MyAppLoopService(this);
 
 	// Arranca el temporitzador de gestio de les entrades digitals
 	//
@@ -158,15 +151,6 @@ void MyApplication::isrTmr2(
 void MyApplication::swEventHandler(
     const DigInput::EventArgs &args) {
 
-	unsigned count;
-
-    if (_sw->read()) {
+    if (_sw->read())
         _led->pulse(1000);
-    	_serial->send((const uint8_t*)"Adios\r\n", 7, count, 1000);
-    }
-}
-
-void MyApplication::serialEventHandler(
-	const SerialDriver_IT::EventArgs &args) {
-
 }

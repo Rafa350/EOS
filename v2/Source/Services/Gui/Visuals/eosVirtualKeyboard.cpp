@@ -12,7 +12,7 @@ using namespace eos;
 ///
 VirtualKeyboard::VirtualKeyboard():
 	_virtualKeyboardEventCallback(nullptr),
-	_buttonClickEventCallback(this, &VirtualKeyboard::buttonClickEventHandler) {
+	_buttonClickEventCallback(*this, &VirtualKeyboard::buttonClickEventHandler) {
 
 	VirtualKeyboardTemplate t(this);
 	t.applyTemplate();

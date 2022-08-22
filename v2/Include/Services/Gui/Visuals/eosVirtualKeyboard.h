@@ -31,7 +31,7 @@ namespace eos {
 		public:
 			using M = typename CallbackP1<C_, const VirtualKeyboardEventArgs&>::Method;
 		public:
-			inline VirtualKeyboardEventCallback(C_* instance, M handler):
+			inline VirtualKeyboardEventCallback(C_ & instance, M handler):
 				CallbackP1<C_, const VirtualKeyboardEventArgs&>(instance, handler) {
 			}
 	};

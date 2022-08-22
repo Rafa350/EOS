@@ -23,7 +23,7 @@ namespace eos {
     		///
             virtual void initialize() = 0;
 
-            /// \brief Deiniciaialitza el driver.
+            /// \brief Desinicialitza el driver.
             ///
             virtual void deinitialize() = 0;
 
@@ -34,13 +34,25 @@ namespace eos {
             ///
             virtual void setOrientation(DisplayOrientation orientation) = 0;
 
-            /// \brief Obte l'amplada de la imatge
-            /// \return El valor de l'amplada en pixels.
+            /// \brief Obte el valor maxim de la coordinada X.
+            /// \return El valor.
+            /// \remarks El valor depen de l'orientacio del display.
+            ///
+            virtual int getMaxX() const = 0;
+
+            /// \brief Obte el valor maxim de la coordinada Y.
+            /// \remarks El valor depen de l'orientacio del display.
+            /// \return El valor.
+            ///
+            virtual int getMaxY() const = 0;
+
+            /// \brief Obte l'amplada del display.
+            /// \return El valor.
             ///
             virtual int getWidth() const = 0;
 
-            /// \brief Obte l'alçada de la imatge
-            /// \return El valor de l'alçada en pixels.
+            /// \brief Obte l'alçada del display.
+            /// \return El valor.
             ///
             virtual int getHeight() const = 0;
 

@@ -32,7 +32,7 @@ namespace htl {
 		al88 = 7
     };
 
-    /// \brief Events d'interrupcio.
+    /// \brief Interrupt events.
     ///
     enum class LTDCEvent {
     	line = 0,
@@ -41,7 +41,7 @@ namespace htl {
 		transferError = 2
     };
 
-    /// \brief Factor de divissio de rellotge.
+    /// \brief Clock divider factor.
     ///
     enum class LTDCClockDivider {
     	_2 = 0,
@@ -168,6 +168,7 @@ namespace htl {
 			static void reset() {
 
 				RCC->APB2RSTR |= RCC_APB2RSTR_LTDCRST;
+				RCC->APB2RSTR &= ~RCC_APB2RSTR_LTDCRST;
 			}
 
 			/// \brief Habilita el modul.
@@ -192,6 +193,7 @@ namespace htl {
 		    /// \remarks: El PLL SAI es compartit amb altres periferics,
 		    ///           pllMUL i pllDiv poden entrar amb conflicte amb SAI2
 		    ///
+		    /// TODO: Revisar aixo
 		    static void initClock(
 		    	uint32_t pllMul,
 				uint32_t pllDiv,
@@ -207,10 +209,10 @@ namespace htl {
 		    		continue;
 
 				#ifdef EOS_PLATFORM_STM32F7
-		    		tmp = RCC->DCKCFGR1;
-		    		tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
-		    		tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
-		    		RCC->DCKCFGR1 = tmp;
+					tmp = RCC->DCKCFGR1;
+					tmp &= ~RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+					tmp |= (uint32_t(clkDiv) << RCC_DCKCFGR1_PLLSAIDIVR_Pos) & RCC_DCKCFGR1_PLLSAIDIVR_Msk;
+					RCC->DCKCFGR1 = tmp;
 				#endif
 
 		    	tmp = RCC->PLLSAICFGR;

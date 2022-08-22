@@ -48,8 +48,8 @@ namespace eos {
     		constexpr static int _displayHeight =board::display::height;
 
     	private:
-    		int _imageWidth;
-    		int _imageHeight;
+    		int _maxX;
+    		int _maxY;
 
         public:
             DisplayDriver_ILI9341();
@@ -61,8 +61,8 @@ namespace eos {
             void displayOff() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getWidth() const { return _imageWidth; }
-            inline int getHeight() const { return _imageHeight; }
+            inline int getMaxX() const { return _maxX; }
+            inline int getMaxY() const { return _maxY; }
 
             void clear(Color color) override;
 
@@ -80,7 +80,7 @@ namespace eos {
             void writeRegion(Color color, int count);
             void writeRegion(const Color *colors, int count);
             void readRegion(Color *colors, int count);
-            void selectRegion(int x, int y, int width, int height);
+            void selectRegion(int x1, int y1, int x2, int y2);
 
             void initializeInterface();
             void initializeController();
