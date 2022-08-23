@@ -42,8 +42,8 @@
     #define USE_DISPLAY
 	#define DISPLAY_DRV_RGBLTDC
     #define DISPLAY_DOUBLEBUFFER false
-    #define EOS_COLOR_FORMAT ColorFormat::argb8888
-    //#define EOS_COLOR_FORMAT ColorFormat::rgb565
+    //#define EOS_COLOR_FORMAT ColorFormat::argb8888
+    #define EOS_COLOR_FORMAT ColorFormat::rgb565
     //#define EOS_COLOR_FORMAT ColorFormat::l8
 	#define FONT_USE_Consolas8pt
 	#define FONT_USE_Consolas10pt

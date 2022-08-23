@@ -54,14 +54,14 @@ void DisplayDriver_RGBLTDC::initialize() {
 ///
 void DisplayDriver_RGBLTDC::deinitialize() {
 
-	displayOff();
+	disable();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el display.
 ///
-void DisplayDriver_RGBLTDC::displayOn() {
+void DisplayDriver_RGBLTDC::enable() {
 
 	Ltdc::enable();
 	PinLCDE::set();
@@ -72,7 +72,7 @@ void DisplayDriver_RGBLTDC::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el display.
 ///
-void DisplayDriver_RGBLTDC::displayOff() {
+void DisplayDriver_RGBLTDC::disable() {
 
 	PinLCDE::clear();
 	PinBKE::clear();
@@ -228,7 +228,6 @@ void DisplayDriver_RGBLTDC::refresh() {
 		// Asigna l'adresa de la capa
 		//
 		LtdcLayer::setFrameBuffer(_displayFrameBuffer->getBuffer());
-		Ltdc::update();
 	}
 }
 
@@ -282,7 +281,16 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 		_displayWidth * Color::bytes,
 		((_displayWidth * Color::bytes) + 63) & 0xFFFFFFC0,
 		_displayHeight);
+	LtdcLayer::setConstantAlpha(255);
+	LtdcLayer::setDefaultColor(0x000000);
+
+	if (Color::format == ColorFormat::l8) {
+		static uint32_t clut[256];
+		for (unsigned i = 0; i < (sizeof(clut) / sizeof(clut[0])); i++)
+			clut[i] = i << 8;
+		LtdcLayer::setCLUTTable(clut);
+	}
 
 	LtdcLayer::setFrameBuffer(_displayFrameBuffer->getBuffer());
-	Ltdc::update();
+	LtdcLayer::enable();
 }

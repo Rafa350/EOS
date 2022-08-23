@@ -75,8 +75,8 @@ namespace eos {
             void initialize() override;
             void deinitialize() override;
 
-            void displayOn() override;
-            void displayOff() override;
+            void enable() override;
+            void disable() override;
 
             void setOrientation(DisplayOrientation orientation) override;
             inline int getWidth() const override { return _displayWidth; }

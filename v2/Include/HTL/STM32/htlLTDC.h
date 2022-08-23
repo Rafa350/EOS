@@ -416,8 +416,12 @@ namespace htl {
 			    LTDC->BCCR = tmp;
 			}
 
-			static void update() {
+			/// \brief Carrega els registres de les capes
+			///
+			static void reload() {
 
+				// Si el LTDC no esta actiu, fa una actualitzacio immediata
+				//
 				if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
 			    	LTDC->SRCR |= LTDC_SRCR_IMR;
 
@@ -516,7 +520,44 @@ namespace htl {
 			LTDCLayer_x & operator = (const LTDCLayer_x &) = delete;
 			LTDCLayer_x & operator = (const LTDCLayer_x &&) = delete;
 
+			/// \brief Carrega els registres modificats
+			///
+			static void reload() {
+
+				// Si el LTDC no esta actiu, fa una actualitzacio immediata
+				//
+				if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
+			    	LTDC->SRCR |= LTDC_SRCR_IMR;
+
+			    // En cas contrari, fa l'actualitzacio durant la sincronitzacio
+			    // vertical, i espera que finalitzi.
+			    //
+			    else {
+			    	LTDC->SRCR |= LTDC_SRCR_VBR;
+					while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) != 0)
+						continue;
+					while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
+						continue;
+			    }
+			}
+
     	public:
+			static void enable() {
+
+				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
+			    regs->CR |= LTDC_LxCR_LEN;
+
+			    reload();
+			}
+
+			static void disable() {
+
+				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
+			    regs->CR &= ~LTDC_LxCR_LEN;
+
+			    reload();
+			}
+
 			static void setWindow(
 				int x,
 				int y,
@@ -545,6 +586,8 @@ namespace htl {
 			    tmp |= ((avbp + y + 1) << LTDC_LxWVPCR_WVSTPOS_Pos) & LTDC_LxWVPCR_WVSTPOS;
 			    tmp |= ((avbp + height - y) << LTDC_LxWVPCR_WVSPPOS_Pos) & LTDC_LxWVPCR_WVSPPOS;
 			    regs->WVPCR = tmp;
+
+			    reload();
 			}
 
 			static void setFrameFormat(
@@ -579,19 +622,54 @@ namespace htl {
 			    tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
 			    tmp |= lines & LTDC_LxCFBLNR_CFBLNBR;
 			    regs->CFBLNR = tmp;
+
+			    reload();
 			}
 
+			/// \brief Asigna el buffer de la capa.
+			/// \param buffer: El buffer. Si es null, es desactiva la capa.
+			///
 			static void setFrameBuffer(
 				void *buffer) {
 
 				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
-
-				if (buffer== nullptr)
+				if (buffer == nullptr)
 				    regs->CR &= ~LTDC_LxCR_LEN;
-				else {
+				else
 					regs->CFBAR = (uint32_t)buffer;
-					regs->CR |= LTDC_LxCR_LEN;
+
+				reload();
+			}
+
+			/// \brief Asigna i activa la taula de colors (Valid per L8, AL44 i AL88)
+			/// \param table: La taula de colors en format RGB888. Si es null,
+			///               es desactiva.
+			///
+			static void setCLUTTable(
+				uint32_t *rgb) {
+
+				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
+				if ((regs->CR & LTDC_LxCR_LEN) == 0) {
+					if (rgb == nullptr)
+						regs->CR &= ~LTDC_LxCR_CLUTEN;
+					else {
+						for (uint32_t i = 0; i < 256; i++)
+							regs->CLUTWR = (i << LTDC_LxCLUTWR_CLUTADD_Pos) | (*rgb++ & 0x00FFFFFF);
+						regs->CR |= LTDC_LxCR_CLUTEN;
+					}
+
+					LTDC->SRCR |= LTDC_SRCR_IMR;
 				}
+			}
+
+			/// \brief Desactiva la taula de colors.
+			///
+			static void disableCLUTTable() {
+
+				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
+				regs->CR &= ~LTDC_LxCR_CLUTEN;
+
+				reload();
 			}
 
 			static void setDefaultColor(
@@ -609,6 +687,17 @@ namespace htl {
 			    tmp |= ((argb & 0x0000FF00) >> 8) << LTDC_LxDCCR_DCGREEN_Pos;
 			    tmp |= (argb & 0x000000FF) << LTDC_LxDCCR_DCBLUE_Pos;
 			    regs->DCCR = tmp;
+
+			    reload();
+			}
+
+			static void setConstantAlpha(
+				uint8_t a) {
+
+				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
+				regs->CACR = a;
+
+			    reload();
 			}
 
 			static void setKeyColor(
@@ -629,12 +718,16 @@ namespace htl {
 			    // Activa el color croma
 			    //
 			    regs->CR |= LTDC_LxCR_COLKEN;
+
+			    reload();
 			}
 
 			static void disableKeyColor() {
 
 				LTDC_Layer_TypeDef *regs = reinterpret_cast<LTDC_Layer_TypeDef*>(_addr);
 			    regs->CR &= ~LTDC_LxCR_COLKEN;
+
+			    reload();
 			}
     };
 

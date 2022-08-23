@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "HTL/STM32/htlLTDC.h"
 #include "System/eosString.h"
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosColorDefinitions.h"
@@ -137,7 +138,7 @@ void DisplayService::onSetup() {
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif
     _driver->initialize();
-    _driver->displayOn();
+	_driver->enable();
 
     // Crea el controlador de grafics
     //

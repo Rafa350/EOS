@@ -27,8 +27,8 @@ namespace eos {
             ///
             virtual void deinitialize() = 0;
 
-            virtual void displayOn() = 0;
-            virtual void displayOff() = 0;
+            virtual void enable() = 0;
+            virtual void disable() = 0;
 
             /// \brief Selecciona l'orientacio de la imatge
             ///

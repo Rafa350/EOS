@@ -211,17 +211,30 @@ void ColorFrameBuffer_DMA2D::fill(
 
 	uint8_t opacity = color.getOpacity();
 
-	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
-	// per hardware.
+	// Comprova si es un color solid
 	//
-	if ((opacity == 0xFF) &&
-		isOutputColorSupported(Color::format)) {
+	if (opacity == 0xFF) {
 
-		Color::Pixel *ptr = getPixelPtr(x, y);
-		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
-		Color::Pixel c = color;
-		DMA2D_1::startFill(ptr, width, height, _framePitch, dstColorMode, c);
-		DMA2D_1::waitForFinish();
+		// Si esta suportat, utilitza el DMA2D
+		//
+		if constexpr (isOutputColorSupported(Color::format)) {
+			Color::Pixel *ptr = getPixelPtr(x, y);
+			DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
+			Color::Pixel c = color;
+			DMA2D_1::startFill(ptr, width, height, _framePitch, dstColorMode, c);
+			DMA2D_1::waitForFinish();
+		}
+
+		// En cas contrari realitza una transferencia per software
+		//
+		else {
+			Color::Pixel c = color;
+			for (int yy = y; yy < height + y; yy++) {
+				Color::Pixel *ptr = getPixelPtr(x, yy);
+				for (int xx = x; xx < width + x; xx++)
+					*ptr++ = c;
+			}
+		}
 	}
 
 	// En cas contrari, relitza una transferencia per software.

@@ -147,7 +147,7 @@ void GuiService::onInitialize() {
 #endif
 
 	displayDriver->initialize();
-	displayDriver->displayOn();
+	displayDriver->enable();
 
 	graphics = new Graphics(displayDriver);
 	context = new RenderContext(graphics);
