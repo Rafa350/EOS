@@ -115,6 +115,7 @@ static void setPull(
 /// \param    regs: El bloc de registres.
 /// \param    pn: El numero de pin.
 /// \param    alt: Identificador de la funcio alternativa.
+///
 static void setAlt(
 	GPIO_TypeDef *regs,
 	uint32_t pn,

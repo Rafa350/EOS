@@ -22,10 +22,10 @@ MyAppLoopService::MyAppLoopService(
 
 void MyAppLoopService::onSetup() {
 
-	_serial = new SerialDriver_IT(getUARTAdapter<config::uartService::UART>());
+	_serial = new AsyncSerialDriver_UART(getUARTAdapter<config::uartService::UART>());
 	_serial->initialize();
-	_serial->setTxCompletedCallback(_txCompletedCallback);
-	_serial->setRxCompletedCallback(_rxCompletedCallback);
+	_serial->enableTxCompletedCallback(_txCompletedCallback);
+	_serial->enableRxCompletedCallback(_rxCompletedCallback);
 }
 
 
@@ -47,14 +47,14 @@ void MyAppLoopService::onLoop() {
 }
 
 void MyAppLoopService::txCompletedEventHandler(
-	const SerialDriver_IT::TxCompletedEventArgs &args) {
+	const AsyncSerialDriver::TxCompletedEventArgs &args) {
 
 	_txCompleted.releaseISR();
 }
 
 
 void MyAppLoopService::rxCompletedEventHandler(
-	const SerialDriver_IT::RxCompletedEventArgs &args) {
+	const AsyncSerialDriver::RxCompletedEventArgs &args) {
 
 	_rxDataCount = args.count;
 	_rxCompleted.releaseISR();

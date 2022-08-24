@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosMath__
 #define __eosMath__
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosDisplayOrientation__
 #define __eosDisplayOrientation__
 

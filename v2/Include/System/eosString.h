@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosString__
 #define	__eosString__
 

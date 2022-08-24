@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosDisplayDriver__
 #define __eosDisplayDriver__
 
@@ -27,7 +28,12 @@ namespace eos {
             ///
             virtual void deinitialize() = 0;
 
+            /// \brief Activa el display
+            ///
             virtual void enable() = 0;
+
+            /// \brief Desactiva el display
+            ///
             virtual void disable() = 0;
 
             /// \brief Selecciona l'orientacio de la imatge
@@ -41,17 +47,17 @@ namespace eos {
             virtual int getMaxX() const = 0;
 
             /// \brief Obte el valor maxim de la coordinada Y.
-            /// \remarks El valor depen de l'orientacio del display.
             /// \return El valor.
+            /// \remarks El valor depen de l'orientacio del display.
             ///
             virtual int getMaxY() const = 0;
 
-            /// \brief Obte l'amplada del display.
+            /// \brief Obte l'amplada fisica del display.
             /// \return El valor.
             ///
             virtual int getWidth() const = 0;
 
-            /// \brief Obte l'alçada del display.
+            /// \brief Obte l'alçada fisica del display.
             /// \return El valor.
             ///
             virtual int getHeight() const = 0;

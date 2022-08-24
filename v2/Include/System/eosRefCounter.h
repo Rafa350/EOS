@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosRefCounter__
 #define __eosRefCounter__
 

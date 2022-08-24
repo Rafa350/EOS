@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosAssert__
 #define	__eosAssert__
 

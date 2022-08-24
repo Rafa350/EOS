@@ -93,7 +93,7 @@ void MyApplication::initializeServices() {
     _digInputService->setPriority(Task::Priority::high);
 
     _sw = new DigInput(_digInputService, getGPIOAdapter<PinSW>());
-    _sw->setCallback(_swCallback, nullptr);
+    _sw->setCallback(&_swCallback, nullptr);
 
     // Inicialitza el servei de sortides digitals
     //

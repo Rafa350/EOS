@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosPointers__
 #define __eosPointers__
 

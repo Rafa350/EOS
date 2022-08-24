@@ -14,6 +14,8 @@ namespace eos {
 	///
 	class ColorFrameBuffer_DMA2D: public FrameBuffer {
 		private:
+			using Dma2d = htl::DMA2D_1;
+
 			Color::Pixel *_buffer;
 			const int _framePitch;
 

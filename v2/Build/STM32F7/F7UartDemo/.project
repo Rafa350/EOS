@@ -346,11 +346,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/Services/eosUARTService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosUARTService.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/System/Collections</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -414,11 +409,6 @@
 			<name>Src/Framework/EOS/Services/eosService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosService.cpp</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/Services/eosUARTService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosUARTService.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Startup/main.cpp</name>
@@ -566,14 +556,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/Controllers/Serial/eosSerialDriver.h</name>
+			<name>Inc/Framework/EOS/Controllers/Serial/eosAsyncSerialDriver.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Serial/eosSerialDriver.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Serial/eosAsyncSerialDriver.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/Controllers/Serial/eosSerialDriver_IT.h</name>
+			<name>Inc/Framework/EOS/Controllers/Serial/eosAsyncSerialDriver_UART.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Serial/eosSerialDriver_IT.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Serial/eosAsyncSerialDriver_UART.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halSYS.h</name>
@@ -646,14 +636,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/Controllers/Serial/eosSerialDriver.cpp</name>
+			<name>Src/Framework/EOS/Controllers/Serial/eosAsyncSerialDriver.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Serial/eosSerialDriver.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Serial/eosAsyncSerialDriver.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/Controllers/Serial/eosSerialDriver_IT.cpp</name>
+			<name>Src/Framework/EOS/Controllers/Serial/eosAsyncSerialDriver_UART.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Serial/eosSerialDriver_IT.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Serial/eosAsyncSerialDriver_UART.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL/STM32/halSYS.c</name>

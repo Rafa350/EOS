@@ -416,24 +416,6 @@ namespace htl {
 			    LTDC->BCCR = tmp;
 			}
 
-			/// \brief Carrega els registres de les capes
-			///
-			static void reload() {
-
-				// Si el LTDC no esta actiu, fa una actualitzacio immediata
-				//
-				if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
-			    	LTDC->SRCR |= LTDC_SRCR_IMR;
-
-			    // En cas contrari, fa l'actualitzacio durant la sincronitzacio
-			    // vertical, i espera que finalitzi.
-			    //
-			    else {
-			    	LTDC->SRCR |= LTDC_SRCR_VBR;
-			    	waitSync();
-			    }
-			}
-
 			static void waitSync() {
 
 				while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) != 0)

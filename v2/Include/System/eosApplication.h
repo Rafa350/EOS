@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosApplication__
 #define	__eosApplication__
 

@@ -221,8 +221,8 @@ void ColorFrameBuffer_DMA2D::fill(
 			Color::Pixel *ptr = getPixelPtr(x, y);
 			DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
 			Color::Pixel c = color;
-			DMA2D_1::startFill(ptr, width, height, _framePitch, dstColorMode, c);
-			DMA2D_1::waitForFinish();
+			Dma2d::startFill(ptr, width, height, _framePitch, dstColorMode, c);
+			Dma2d::waitForFinish();
 		}
 
 		// En cas contrari realitza una transferencia per software
@@ -284,8 +284,8 @@ void ColorFrameBuffer_DMA2D::copy(
 		//
 		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
 		DMA2DInputColorMode srcColorMode = getInputColorMode(Color::format);
-		DMA2D_1::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
-		DMA2D_1::waitForFinish();
+		Dma2d::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
+		Dma2d::waitForFinish();
 	}
 
 	// En cas contrari realitza la transferencia per software.
@@ -327,7 +327,7 @@ void ColorFrameBuffer_DMA2D::copy(
 		//
 		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
 		DMA2DInputColorMode srcColorMode = getInputColorMode(colorFormat);
-		DMA2D_1::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
-		DMA2D_1::waitForFinish();
+		Dma2d::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
+		Dma2d::waitForFinish();
 	}
 }

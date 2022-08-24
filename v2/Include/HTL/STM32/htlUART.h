@@ -844,6 +844,7 @@ namespace htl {
 	template <typename uart_>
 	class UARTAdapter_x final: public UARTAdapter {
 		private:
+			UARTAdapter_x() = default;
 			UARTAdapter_x(const UARTAdapter_x &) = delete;
 			UARTAdapter_x(const UARTAdapter_x &&) = delete;
 
@@ -851,7 +852,10 @@ namespace htl {
 			UARTAdapter & operator = (const UARTAdapter_x &&) = delete;
 
 		public:
-			UARTAdapter_x() = default;
+			static UARTAdapter_x& instance() {
+				static UARTAdapter_x adapter;
+				return adapter;
+			}
 
 			void write(uint8_t data) const override {
 				uart_::write(data);
@@ -892,8 +896,7 @@ namespace htl {
 
 	template <typename uart_>
 	UARTAdapter& getUARTAdapter() {
-		static UARTAdapter_x<uart_> adapter;
-		return adapter;
+		return UARTAdapter_x<uart_>::instance();
 	}
 }
 

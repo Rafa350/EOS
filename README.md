@@ -8,7 +8,8 @@
   * Independent HTL (HAL Template Library) with zero overload. C++17
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
-  * ARGB8888, RGB888, RGB565 color scheme.
+  * Color displays: ARGB8888, RGB888, RGB565, L8 (Optional CLUT) color scheme.
+  * Monochrome displays: L1.
   * Basic primitives line, circle, rectangle, ellipse, etc.
   * Single and double buffer.
   * Use hardware acceleration where available (STM32/DMA2D)

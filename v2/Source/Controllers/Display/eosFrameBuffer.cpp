@@ -35,7 +35,7 @@ void FrameBuffer::setOrientation(
 
 	_orientation = orientation;
 	switch (orientation) {
-		case DisplayOrientation::normal:
+		case DisplayOrientation::rotate0:
 		case DisplayOrientation::rotate180:
 			_maxX = _frameWidth - 1;
 			_maxY = _frameHeight - 1;
