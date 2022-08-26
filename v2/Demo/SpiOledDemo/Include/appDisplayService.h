@@ -1,10 +1,10 @@
+#pragma once
 #ifndef __appDisplayService__
 #define __appDisplayService__
 
 
 // EOS includes
 //
-#pragma once
 #include "eos.h"
 #include "Services/eosAppLoopService.h"
 
@@ -20,6 +20,10 @@ namespace app {
 
 	class DisplayService: public eos::AppLoopService {
 		private:
+			static constexpr uint16_t _displayWidth = DISPLAY_WIDTH;
+			static constexpr uint16_t _displayHeight = DISPLAY_HEIGHT;
+			static constexpr uint32_t _displayBuffer = DISPLAY_BUFFER;
+
 			eos::IDisplayDriver *_driver;
 			eos::Graphics *_graphics;
 

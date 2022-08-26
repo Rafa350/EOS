@@ -54,18 +54,18 @@ namespace eos {
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
-			using PinRST = board::display::GPIO_RST;
+			using PinRST = DISPLAY_RST_GPIO;
 			#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-				using PinCS = board::display::GPIO_CS;
-				using PinDC = board::display::GPIO_DC;
-				using PinSCK = board::display::GPIO_SCK;
-				using PinMOSI = board::display::GPIO_MOSI;
-				using Spi = board::display::SPI;
+				using PinCS = DISPLAY_CS_GPIO;
+				using PinDC = DISPLAY_DC_GPIO;
+				using PinSCK = DISPLAY_SCK_GPIO;
+				using PinMOSI = DISPLAY_MOSI_GPIO;
+				using Spi = DISPLAY_SPI;
 			#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 			#endif
 
-			static constexpr int _displayWidth  = board::display::width;
-			static constexpr int _displayHeight = board::display::height;
+			static constexpr int _displayWidth  = DISPLAY_WIDTH;
+			static constexpr int _displayHeight = DISPLAY_HEIGHT;
 
 			FrameBuffer *_frameBuffer;
     		int _pages;
@@ -81,11 +81,13 @@ namespace eos {
 
             void initialize() override;
             void deinitialize() override;
-            void displayOn() override;
-            void displayOff() override;
+            void enable() override;
+            void disable() override;
             void setOrientation(DisplayOrientation orientation) override;
             int getMaxX() const override { return _frameBuffer->getMaxX(); }
             int getMaxY() const override { return _frameBuffer->getMaxY(); }
+            int getWidth() const override { return _displayWidth; }
+            int getHeight() const override { return _displayHeight; };
 
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;
@@ -94,6 +96,7 @@ namespace eos {
             void setPixels(int x, int y, int width, int height, Color color) override;
             void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
             void setPixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
+
             void refresh() override;
     };
 }

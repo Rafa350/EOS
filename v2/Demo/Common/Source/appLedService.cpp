@@ -25,11 +25,11 @@ void LedService::onSetup() {
 
 	#ifdef EXIST_LED1
 		GPIO_LED1::initOutput(GPIODriver::pushPull);
-		GPIO_LED1::set();
+		GPIO_LED1::write(_ledON);
 	#endif
 	#ifdef EXIST_LED2
 		GPIO_LED2::initOutput(GPIODriver::pushPull);
-		GPIO_LED2::clear();
+		GPIO_LED2::write(_ledOFF);
 	#endif
 }
 

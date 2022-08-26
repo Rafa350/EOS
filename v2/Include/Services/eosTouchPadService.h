@@ -42,7 +42,7 @@ namespace eos {
 			};
 
 		private:
-			using EXTI_INT = board::touchpad::EXTI_INT;
+			using EXTI_INT = TOUCHPAD_INT_EXTI;
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
     		ITouchPadDriver *_touchDriver;

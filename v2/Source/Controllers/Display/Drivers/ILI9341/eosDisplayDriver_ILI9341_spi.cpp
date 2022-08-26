@@ -17,20 +17,20 @@ void DisplayDriver_ILI9341::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-#ifdef DISPLAY_RST_PIN
-	GPIO_RST.initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	GPIO_RST::clear();
+#ifdef DISPLAY_RST_GPIO
+	PinRST.initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	PinRST::clear();
 #endif
-	GPIO_CS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	GPIO_CS::set();
-	GPIO_RS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	GPIO_RS::clear();
+	PinCS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	PinCS::set();
+	PinRS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	PinRS::clear();
 
 	// Inicialitza el modul SPI
     //
-	SPI::initSCKPin<GPIO_SCK>();
-	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1,	SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
+	Spi::initSCKPin<PinSCK>();
+	Spi::initMOSIPin<PinMOSI>();
+	Spi::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1,	SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
 }
 
 
@@ -139,7 +139,7 @@ void DisplayDriver_ILI9341::initializeController() {
 ///
 void DisplayDriver_ILI9341::open() {
 
-	GPIO_CS::clear();
+	PinCS::clear();
 }
 
 
@@ -148,7 +148,7 @@ void DisplayDriver_ILI9341::open() {
 ///
 void DisplayDriver_ILI9341::close() {
 
-	GPIO_CS::set();
+	PinCS::set();
 }
 
 
@@ -159,8 +159,8 @@ void DisplayDriver_ILI9341::close() {
 void DisplayDriver_ILI9341::writeCommand(
     uint8_t cmd) {
 
-	GPIO_RS::clear();
-    SPI::send(&cmd, sizeof(cmd));
+	PinRS::clear();
+    Spi::send(&cmd, sizeof(cmd));
 }
 
 
@@ -171,8 +171,8 @@ void DisplayDriver_ILI9341::writeCommand(
 void DisplayDriver_ILI9341::writeData(
     uint8_t data) {
 
-	GPIO_RS::set();
-    SPI::send(&data, sizeof(data));
+	PinRS::set();
+    Spi::send(&data, sizeof(data));
 }
 
 
@@ -185,7 +185,7 @@ void DisplayDriver_ILI9341::writeData(
 	const uint8_t* data,
 	int length) {
 
-	GPIO_RS::set();
-    SPI::send(data, length);
+	PinRS::set();
+    Spi::send(data, length);
 }
 

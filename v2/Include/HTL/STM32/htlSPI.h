@@ -7,6 +7,7 @@
 //
 #include "HTL/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "HTL/STM32/htlINT.h"
 
 
 namespace htl {
@@ -342,6 +343,7 @@ namespace htl {
 		template<>
 		struct SPITrait<SPIChannel::_1> {
 			static constexpr uint32_t addr = SPI1_BASE;
+			static constexpr INTVector vector = INTVector::spi1;
 		};
 
 		template <>
@@ -379,6 +381,7 @@ namespace htl {
 		template<>
 		struct SPITrait<SPIChannel::_2> {
 			static constexpr uint32_t addr = SPI2_BASE;
+			static constexpr INTVector vector = INTVector::spi2;
 		};
 
 		template <>
@@ -436,6 +439,7 @@ namespace htl {
 		template<>
 		struct SPITrait<SPIChannel::_3> {
 			static constexpr uint32_t addr = SPI3_BASE;
+			static constexpr INTVector vector = INTVector::spi3;
 		};
 
 		template <>
@@ -478,6 +482,7 @@ namespace htl {
 		template<>
 		struct SPITrait<SPIChannel::_4> {
 			static constexpr uint32_t addr = SPI4_BASE;
+			static constexpr INTVector vector = INTVector::spi4;
 		};
 	#endif
 
@@ -485,6 +490,7 @@ namespace htl {
 		template<>
 		struct SPITrait<SPIChannel::_5> {
 			static constexpr uint32_t addr = SPI5_BASE;
+			static constexpr INTVector vector = INTVector::spi5;
 		};
 
 		template <>

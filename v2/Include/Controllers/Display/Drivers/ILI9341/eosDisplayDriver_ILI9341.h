@@ -32,20 +32,20 @@ namespace eos {
 
     class DisplayDriver_ILI9341: public IDisplayDriver {
     	private:
-#ifdef DISPLAY_RST_PIN
-    		using GPIO_RST = board::display::GPIO_RST;
+#ifdef DISPLAY_RST_GPIO
+    		using PinRST = DISPLAY_RST_GPIO;
 #endif
-    		using GPIO_CS = board::display::GPIO_CS;
-    		using GPIO_RS = board::display::GPIO_RS;
+    		using PinCS = DISPLAY_CS_GPIO;
+    		using PinRS = DISPLAY_RS_GPIO;
 #if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-    		using GPIO_SCK = board::display::GPIO_SCK;
-    		using GPIO_MOSI = board::display::GPIO_MOSI;
-    		using SPI = board::display::SPI;
+    		using PinSCK = DISPLAY_SCK_GPIO;
+    		using PinMOSI = DISPLAY_MOSI_GPIO;
+    		using Spi = DISPLAY_SPI;
 #endif
 
     	private:
-    		constexpr static int _displayWidth = board::display::width;
-    		constexpr static int _displayHeight =board::display::height;
+    		constexpr static int _displayWidth = DISPLAY_WIDTH;
+    		constexpr static int _displayHeight = DISPLAY_HEIGHT;
 
     	private:
     		int _maxX;
@@ -57,12 +57,14 @@ namespace eos {
             void initialize() override;
             void deinitialize() override;
 
-            void displayOn() override;
-            void displayOff() override;
+            void enable() override;
+            void disable() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getMaxX() const { return _maxX; }
-            inline int getMaxY() const { return _maxY; }
+            inline int getMaxX() const override { return _maxX; }
+            inline int getMaxY() const override { return _maxY; }
+            inline int getWidth() const override { return _displayWidth; }
+            inline int getHeight() const override { return _displayHeight; }
 
             void clear(Color color) override;
 

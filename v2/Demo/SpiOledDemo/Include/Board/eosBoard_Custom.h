@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosBoard_Custom__
 #define __eosBoard_Custom__
 

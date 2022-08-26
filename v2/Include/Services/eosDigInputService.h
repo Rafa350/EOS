@@ -37,6 +37,7 @@ namespace eos {
         public:
             DigInputService(Application *application);
             ~DigInputService();
+
             void addInput(DigInput *input);
             void removeInput(DigInput *input);
             void removeInputs();
@@ -50,11 +51,12 @@ namespace eos {
     ///
     class DigInput final {
         public:
-            struct EventArgs {
+            struct ChangedEventArgs {
                 DigInput *input;
-                void *param;
+                bool value;
             };
-        	typedef ICallbackP1<const EventArgs&> IEventCallback;
+        	using IChangedEventCallback = ICallbackP1<const ChangedEventArgs&>;
+
             enum class ScanMode {    // Modus d'exploracio de la entrada
                 polling,             // -Polling
                 interrupt            // -Interrupcio
@@ -64,8 +66,7 @@ namespace eos {
             DigInputService *_service;
             const htl::GPIOAdapter &_gpio;
             ScanMode _scanMode;
-            IEventCallback *_eventCallback;
-            void *_eventParam;
+            IChangedEventCallback *_changedEventCallback;
             uint32_t _pattern;
             bool _value;
             bool _edge;
@@ -86,9 +87,12 @@ namespace eos {
                 _scanMode = scanMode;
             }
 
-            inline void setCallback(IEventCallback *callback, void *param) {
-                _eventCallback = callback;
-                _eventParam = param;
+            inline void enableChangedEventCallback(IChangedEventCallback &callback) {
+                _changedEventCallback = &callback;
+            }
+
+            inline void disableChangeEcentCallback() {
+                _changedEventCallback = nullptr;
             }
 
         friend DigInputService;

@@ -34,55 +34,58 @@
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
+#include "HTL/STM32/htlLTDC.h"
 
 
 namespace eos {
 
     class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
     	private:
-    		using GPIO_CS = board::display::GPIO_CS;
-    		using GPIO_RS = board::display::GPIO_RS;
-    		using GPIO_SCK = board::display::GPIO_SCK;
-    		using GPIO_MOSI = board::display::GPIO_MOSI;
+    		using PinCS = DISPLAY_CS_GPIO;
+    		using PinRS = DISPLAY_RS_GPIO;
+    		using PinSCK = DISPLAY_SCK_GPIO;
+    		using PinMOSI = DISPLAY_MOSI_GPIO;
 
-			using GPIO_DE = board::display::GPIO_DE;
-			using GPIO_HSYNC = board::display::GPIO_HSYNC;
-			using GPIO_VSYNC = board::display::GPIO_VSYNC;
-			using GPIO_PC = board::display::GPIO_PC;
-			using GPIO_R2 = board::display::GPIO_R2;
-			using GPIO_R3 = board::display::GPIO_R3;
-			using GPIO_R4 = board::display::GPIO_R4;
-			using GPIO_R5 = board::display::GPIO_R5;
-			using GPIO_R6 = board::display::GPIO_R6;
-			using GPIO_R7 = board::display::GPIO_R7;
-			using GPIO_G2 = board::display::GPIO_G2;
-			using GPIO_G3 = board::display::GPIO_G3;
-			using GPIO_G4 = board::display::GPIO_G4;
-			using GPIO_G5 = board::display::GPIO_G5;
-			using GPIO_G6 = board::display::GPIO_G6;
-			using GPIO_G7 = board::display::GPIO_G7;
-			using GPIO_B2 = board::display::GPIO_B2;
-			using GPIO_B3 = board::display::GPIO_B3;
-			using GPIO_B4 = board::display::GPIO_B4;
-			using GPIO_B5 = board::display::GPIO_B5;
-			using GPIO_B6 = board::display::GPIO_B6;
-			using GPIO_B7 = board::display::GPIO_B7;
+			using PinDE = DISPLAY_DE_GPIO;
+			using PinHSYNC = DISPLAY_HSYNC_GPIO;
+			using PinVSYNC = DISPLAY_VSYNC_GPIO;
+			using PinPC = DISPLAY_PC_GPIO;
+			using PinR2 = DISPLAY_R2_GPIO;
+			using PinR3 = DISPLAY_R3_GPIO;
+			using PinR4 = DISPLAY_R4_GPIO;
+			using PinR5 = DISPLAY_R5_GPIO;
+			using PinR6 = DISPLAY_R6_GPIO;
+			using PinR7 = DISPLAY_R7_GPIO;
+			using PinG2 = DISPLAY_G2_GPIO;
+			using PinG3 = DISPLAY_G3_GPIO;
+			using PinG4 = DISPLAY_G4_GPIO;
+			using PinG5 = DISPLAY_G5_GPIO;
+			using PinG6 = DISPLAY_G6_GPIO;
+			using PinG7 = DISPLAY_G7_GPIO;
+			using PinB2 = DISPLAY_B2_GPIO;
+			using PinB3 = DISPLAY_B3_GPIO;
+			using PinB4 = DISPLAY_B4_GPIO;
+			using PinB5 = DISPLAY_B5_GPIO;
+			using PinB6 = DISPLAY_B6_GPIO;
+			using PinB7 = DISPLAY_B7_GPIO;
 
-			using SPI = board::display::SPI;
+			using Spi = DISPLAY_SPI;
+			using Ltdc = htl::LTDC_1;
+			using LtdcLayer = htl::LTDCLayer_1;
 
-			static constexpr uint16_t _hSync       = board::display::hSync;
-			static constexpr uint16_t _vSync       = board::display::vSync;
-			static constexpr uint16_t _hBP         = board::display::hBP;
-			static constexpr uint16_t _vBP         = board::display::vBP;
-			static constexpr uint16_t _hFP         = board::display::hFP;
-			static constexpr uint16_t _vFP         = board::display::vFP;
-			static constexpr htl::LTDCPolarity _hSyncPol = board::display::hSyncPol;
-			static constexpr htl::LTDCPolarity _vSyncPol = board::display::vSyncPol;
-			static constexpr htl::LTDCPolarity _dePol    = board::display::dePol;
-			static constexpr htl::LTDCPolarity _pcPol    = board::display::pcPol;
-			static constexpr uint16_t _width       = board::display::width;
-			static constexpr uint16_t _height      = board::display::height;
-			static constexpr uint32_t _buffer      = board::display::buffer;
+			static constexpr uint16_t _hSync       = DISPLAY_HSYNC;
+			static constexpr uint16_t _vSync       = DISPLAY_VSYNC;
+			static constexpr uint16_t _hBP         = DISPLAY_HBP;
+			static constexpr uint16_t _vBP         = DISPLAY_VBP;
+			static constexpr uint16_t _hFP         = DISPLAY_HFP;
+			static constexpr uint16_t _vFP         = DISPLAY_VFP;
+			static constexpr htl::LTDCPolarity _hSyncPol = DISPLAY_HSYNC_POL;
+			static constexpr htl::LTDCPolarity _vSyncPol = DISPLAY_VSYNC_POL;
+			static constexpr htl::LTDCPolarity _dePol    = DISPLAY_DE_POL;
+			static constexpr htl::LTDCPolarity _pcPol    = DISPLAY_PC_POL;
+			static constexpr uint16_t _width       = DISPLAY_WIDTH;
+			static constexpr uint16_t _height      = DISPLAY_HEIGHT;
+			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;
 
         private:
             FrameBuffer *_frameBuffer;
@@ -93,12 +96,14 @@ namespace eos {
             void initialize() override;
             void deinitialize() override;
 
-            void displayOn() override;
-            void displayOff() override;
+            void enable() override;
+            void disable() override;
 
             void setOrientation(DisplayOrientation orientation) override;
             int getMaxX() const override { return _frameBuffer->getMaxX(); }
             int getMaxY() const override { return _frameBuffer->getMaxY(); }
+            int getWidth() const override { return _width; }
+            int getHeight() const override { return _height; }
 
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;

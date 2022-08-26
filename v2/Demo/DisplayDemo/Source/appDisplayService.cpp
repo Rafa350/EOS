@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "HTL/STM32/htlLTDC.h"
 #include "System/eosString.h"
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosColorDefinitions.h"
@@ -7,7 +6,6 @@
 #include "System/Graphics/eosBitmap.h"
 #include "System/Graphics/eosText.h"
 #include "System/Graphics/eosGraphics.h"
-#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #elif defined(DISPLAY_DRV_ILI9341)
@@ -101,15 +99,15 @@ void DisplayService::onSetup() {
 	//
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 
-	constexpr int frameBufferLineBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
 	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
-		board::display::width,
-		board::display::height,
+		_displayWidth,
+		_displayHeight,
 		frameBufferPitch,
 		DisplayOrientation::normal,
-		reinterpret_cast<void*>(board::display::buffer));
+		reinterpret_cast<void*>(_displayBuffer));
 
 	_driver = new DisplayDriver_ILI9341LTDC(frameBuffer);
 
@@ -119,15 +117,15 @@ void DisplayService::onSetup() {
 
 #elif defined(DISPLAY_DRV_RGBLTDC)
 
-	constexpr int frameBufferLineBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
 	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
-		board::display::width,
-		board::display::height,
+		_displayWidth,
+		_displayHeight,
 		frameBufferPitch,
 		DisplayOrientation::normal,
-		reinterpret_cast<void*>(board::display::buffer));
+		reinterpret_cast<void*>(_displayBuffer));
 
 	_driver = new DisplayDriver_RGBLTDC(frameBuffer);
 

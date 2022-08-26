@@ -331,16 +331,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/Services/eosDigInputService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigInputService.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/Framework/EOS/Services/eosDigOutputService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigOutputService.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
@@ -394,16 +384,6 @@
 			<name>Src/Framework/EOS/Services/eosAppLoopService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/Services/eosDigInputService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosDigInputService.cpp</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/Services/eosDigOutputService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosDigOutputService.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Services/eosService.cpp</name>
@@ -654,11 +634,6 @@
 			<name>Src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HAL/STM32/halUART.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halUART.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>

@@ -87,8 +87,8 @@ namespace board {
 			// Asignacio de pins
 			using GPIO_SW = htl::GPIO_D6;
 
-			constexpr bool onState = true;
-			constexpr bool offState = false;
+			constexpr bool onState = false;
+			constexpr bool offState = true;
 		}
 
 	#endif // USE_SW1
@@ -106,8 +106,8 @@ namespace board {
 			// Asignacio de pins
 			using GPIO_SW = htl::GPIO_D7;
 
-			constexpr bool onState = true;
-			constexpr bool offState = false;
+			constexpr bool onState = false;
+			constexpr bool offState = true;
 		}
 
 	#endif // USE_SW2
@@ -125,8 +125,8 @@ namespace board {
 			// Asignacio de pins
 			using GPIO_SW = htl::GPIO_D13;
 
-			constexpr bool onState = true;
-			constexpr bool offState = false;
+			constexpr bool onState = false;
+			constexpr bool offState = true;
 		}
 
 	#endif // USE_SW3

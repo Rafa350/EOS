@@ -56,7 +56,7 @@ bool AsyncSerialDriver_UART::transmit(
 	if ((data == nullptr) || (dataLength == 0))
 		return false;
 
-	else if (isReady())
+	else if (isBusy())
 		return false;
 
 	else {
@@ -69,7 +69,7 @@ bool AsyncSerialDriver_UART::transmit(
 		_uart.clearInterruptFlags();
 		_uart.enableInterrupt(UARTEvent::txEmpty);
 
-		// En aquest moment es genera una interrupocio txEmpty
+		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
 
 		return true;
@@ -90,7 +90,7 @@ bool AsyncSerialDriver_UART::receive(
 	if ((data == nullptr) || (dataSize == 0))
 		return false;
 
-	else if (isReady())
+	else if (isBusy())
 		return false;
 
 	else {
@@ -103,6 +103,9 @@ bool AsyncSerialDriver_UART::receive(
 		_uart.clearInterruptFlags();
 		_uart.enableInterrupt(UARTEvent::rxNotEmpty);
 		_uart.enableInterrupt(UARTEvent::rxTimeout);
+
+		// En aquest moment, es generen interrupcions
+		// cada cop que hi han dades disposibles en la UART.
 
 		return true;
 	}

@@ -14,9 +14,10 @@ using namespace htl;
 ///
 DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 	FrameBuffer *frameBuffer):
+
+	_frameBuffer(frameBuffer),
     _pages(_displayHeight / 8),
-	_columns(_displayWidth),
-	_frameBuffer(frameBuffer) {
+	_columns(_displayWidth) {
 }
 
 
@@ -35,14 +36,14 @@ void DisplayDriver_SSD1306::initialize() {
 ///
 void DisplayDriver_SSD1306::deinitialize() {
 
-	displayOff();
+	disable();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Encen el display
 ///
-void DisplayDriver_SSD1306::displayOn() {
+void DisplayDriver_SSD1306::enable() {
 
 	writeCommand(0xAF);
 }
@@ -51,7 +52,7 @@ void DisplayDriver_SSD1306::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief    Apaga el display
 ///
-void DisplayDriver_SSD1306::displayOff() {
+void DisplayDriver_SSD1306::disable() {
 
 	writeCommand(0xAE);
 }

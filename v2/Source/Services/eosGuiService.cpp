@@ -119,23 +119,23 @@ void GuiService::onInitialize() {
 
 #elif defined(DISPLAY_DRV_RGBLTDC)
 
-	constexpr int frameBufferPitchBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferPitchBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferPitchBytes / Color::bytes;
-	constexpr int frameSize = frameBufferPitchBytes * board::display::height;
+	constexpr int frameSize = frameBufferPitchBytes * _displayHeight;
 
 	FrameBuffer *frameBuffer1 = new ColorFrameBuffer_DMA2D(
-		board::display::width,
-		board::display::height,
+		_displayWidth,
+		_displayHeight,
 		frameBufferPitch,
 		DisplayOrientation::normal,
-		reinterpret_cast<void*>(board::display::buffer));
+		reinterpret_cast<void*>(_displayBuffer));
 
 	FrameBuffer *frameBuffer2 = new ColorFrameBuffer_DMA2D(
-		board::display::width,
-		board::display::height,
+		_displayWidth,
+		_displayHeight,
 		frameBufferPitch,
 		DisplayOrientation::normal,
-		reinterpret_cast<void*>(board::display::buffer + frameSize));
+		reinterpret_cast<void*>(_displayBuffer + frameSize));
 
 	frameBuffer1->clear(Colors::black);
 	frameBuffer2->clear(Colors::black);

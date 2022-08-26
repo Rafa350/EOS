@@ -19,12 +19,12 @@ using namespace app;
 /// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication():
-    sw1EventCallback(this, &MyApplication::sw1EventHandler)
+    _sw1ChangedEventCallback(*this, &MyApplication::sw1ChangedEventHandler)
     #ifdef EXIST_SW2
-        , sw2EventCallback(this, &MyApplication::sw2EventHandler)
+        , _sw2ChangedEventCallback(*this, &MyApplication::sw2ChangedEventHandler)
     #endif
     #ifdef EXIST_SW3
-        , sw3EventCallback(this, &MyApplication::sw3EventHandler)
+        , _sw3ChangedEventCallback(*this, &MyApplication::sw3ChangedEventHandler)
     #endif
 {
 }
@@ -43,23 +43,23 @@ void MyApplication::onInitialize() {
     // Configura la entrada corresponent al switch SW1
     //
     GPIO_SW1::initInput(GPIOPull::up);
-    sw1 = new DigInput(_digInputService, getAdapter<GPIO_SW1>());
-    sw1->setCallback(sw1EventCallback, nullptr);
+    _sw1 = new DigInput(_digInputService, getAdapter<GPIO_SW1>());
+    _sw1->enableChangedEventCallback(_sw1ChangedEventCallback);
 
     // COnfigura la entrada corresponent al switch SW2
     //
     #ifdef EXIST_SW2
         GPIO_SW2::initInput(GPIOPull::up);
-        sw2 = new DigInput(_digInputService, getAdapter<GPIO_SW2>());
-        sw2->setCallback(sw2EventCallback, nullptr);
+        _sw2 = new DigInput(_digInputService, getAdapter<GPIO_SW2>());
+        _sw2->enableChangedEventCallback(_sw2ChangedEventCallback);
     #endif
 
     // Configure la entrada corresponent al switch SW3
     //
     #ifdef EXIST_SW3
         GPIO_SW3::initInput(GPIOPull::up);
-        sw3 = new DigInput(_digInputService, getAdapter<GPIO_SW3>());
-        sw3->setCallback(sw3EventCallback, nullptr);
+        _sw3 = new DigInput(_digInputService, getAdapter<GPIO_SW3>());
+        _sw3->enableChangedEventCallback(_sw3ChangedEventCallback);
     #endif
 
     // Configura el temporitzador pel servei d'entrades digitals
@@ -87,14 +87,14 @@ void MyApplication::onInitialize() {
     //
     GPIO_LED1::initOutput();
     GPIO_LED1::clear();
-    led1 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED1>());
+    _led1 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED1>());
 
     // COnfigura la sortida corresponent al led LED2
     //
     #ifdef EXIST_LED2
         GPIO_LED2::initOutput();
         GPIO_LED2::clear();
-        led2 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED2>());
+        _led2 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED2>());
     #endif
 
     // COnfigura la sortida corresponent al led LED3
@@ -102,7 +102,7 @@ void MyApplication::onInitialize() {
     #ifdef EXIST_LED3
         GPIO_LED3::initOutput();
         GPIO_LED3::clear();
-        led3 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED3>());
+        _led3 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED3>());
     #endif
 
     // Configura el temporitzador pel servei de sortides digitals
@@ -137,14 +137,14 @@ void MyApplication::onInitialize() {
 /// \brief    Procesa els events del switch 1.
 /// \param    args: Parametres del event.
 ///
-void MyApplication::sw1EventHandler(
-    const DigInput::EventArgs &args) {
+void MyApplication::sw1ChangedEventHandler(
+    const DigInput::ChangedEventArgs &args) {
 
-    if (sw1->read()) {
-        led1->pulse(500);
-        led2->delayedPulse(250, 500);
+    if (args.value == board::sw1::onState) {
+        _led1->pulse(500);
+        _led2->delayedPulse(250, 500);
         #ifdef EXIST_LED3
-            led3->delayedPulse(500, 500);
+            _led3->delayedPulse(500, 500);
         #endif
     }
 }
@@ -155,17 +155,17 @@ void MyApplication::sw1EventHandler(
 /// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SW2
-void MyApplication::sw2EventHandler(
-    const DigInput::EventArgs &args) {
+void MyApplication::sw2ChangedEventHandler(
+    const DigInput::ChangedEventArgs &args) {
 
-    if (sw2->read()) {
+    if (args.value == board::sw2::onState) {
         #ifdef EXIST_LED3
-            led3->pulse(500);
+            _led3->pulse(500);
         #endif
         #ifdef EXIST_LED2
-            led2->delayedPulse(250, 500);
+            _led2->delayedPulse(250, 500);
         #endif
-            led1->delayedPulse(500, 500);
+            _led1->delayedPulse(500, 500);
     }
 }
 #endif
@@ -176,16 +176,16 @@ void MyApplication::sw2EventHandler(
 /// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SW3
-void MyApplication::sw3EventHandler(
-    const DigInput::EventArgs &args) {
+void MyApplication::sw3ChangedEventHandler(
+    const DigInput::ChangedEventArgs &args) {
 
-    if (sw3->read()) {
-        led1->pulse(1000);
+    if (args.value == board::sw3::onState) {
+        _led1->pulse(1000);
         #ifdef EXIST_LED2
-            led2->pulse(2000);
+            _led2->pulse(2000);
         #endif
         #ifdef EXIST_LED3
-            led3->pulse(3000);
+            _led3->pulse(3000);
         #endif
     }
 }

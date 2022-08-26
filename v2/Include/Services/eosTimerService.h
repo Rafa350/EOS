@@ -38,8 +38,8 @@ namespace eos {
                     unsigned period;
                 };
             };
-            typedef CallbackP1<TimerService, const Timer::EventArgs&> TimerEventCallback;
-            typedef Queue<Command> CommandQueue;
+            using TimerEventCallback = CallbackP1<TimerService, const Timer::EventArgs&>;
+            using CommandQueue = Queue<Command>;
             typedef Vector<TimerCounter*> TimerList;
             typedef TimerList::Iterator TimerIterator;
             typedef PriorityQueue<TimerCounter*, QueueComparator> TimerQueue;
@@ -59,16 +59,16 @@ namespace eos {
             TimerEventCallback _osTimerEventCallback;
 
         public:
-            TimerService(Application* application);
+            TimerService(Application *application);
             ~TimerService();
 
-            void addTimer(TimerCounter* timer);
-            void removeTimer(TimerCounter* timer);
+            void addTimer(TimerCounter *timer);
+            void removeTimer(TimerCounter *timer);
             void removeTimers();
 
-            void start(TimerCounter* timer, unsigned period, unsigned blockTime);
-            void stop(TimerCounter* timer, unsigned blockTime);
-            void pause(TimerCounter* timer, unsigned blockTime);
+            void start(TimerCounter *timer, unsigned period, unsigned blockTime);
+            void stop(TimerCounter *timer, unsigned blockTime);
+            void pause(TimerCounter *timer, unsigned blockTime);
             void resume(TimerCounter *timer, unsigned blockTime);
 
         protected:
@@ -109,11 +109,11 @@ namespace eos {
             unsigned _expireTime;
 
         public:
-            TimerCounter(TimerService* service, IEventCallback* callback = nullptr);
+            TimerCounter(TimerService* service);
             ~TimerCounter();
 
-            inline void setEventCallback(IEventCallback* callback) {
-                _eventCallback = callback;
+            inline void setEventCallback(IEventCallback &callback) {
+                _eventCallback = &callback;
             }
 
             void start(unsigned period, unsigned blockTime = ((unsigned)-1)) {

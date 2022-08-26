@@ -144,7 +144,7 @@ void DigInputService::onTask(
 		for (auto it = _inputs.begin(); it != _inputs.end(); it++) {
 			DigInput *input = *it;
 
-			if (input->_eventCallback != nullptr) {
+			if (input->_changedEventCallback != nullptr) {
 
                 bool state = INT_1::disableInterrupts();
 
@@ -155,11 +155,11 @@ void DigInputService::onTask(
 
 				if (edge) {
 
-					DigInput::EventArgs args;
+					DigInput::ChangedEventArgs args;
 					args.input = input;
-					args.param = input->_eventParam;
+                    args.value = input->_value;
 
-					input->_eventCallback->execute(args);
+					input->_changedEventCallback->execute(args);
 				}
 			}
 		}
@@ -256,8 +256,7 @@ DigInput::DigInput(
 	_service(nullptr),
     _gpio(gpio),
     _scanMode(ScanMode::polling),
-    _eventCallback(nullptr),
-    _eventParam(nullptr) {
+    _changedEventCallback(nullptr) {
 
     if (service != nullptr)
         service->addInput(this);

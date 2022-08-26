@@ -7,6 +7,8 @@
 //
 #include "HTL/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "HTL/STM32/htlINT.h"
+
 
 namespace htl {
 
@@ -49,14 +51,23 @@ namespace htl {
     using EXTIInterruptParam = void*;
     using EXTIInterruptFunction =  void (*)(EXTIEvent event, EXTIInterruptParam);
 
+	template <EXTILine>
+	struct EXTITrait {
+	};
+
 	template <EXTILine line_>
 	class EXTI_x final {
+		private:
+			using ExtiTrait = EXTITrait<line_>;
+
+		public:
+			static constexpr EXTILine line = line_;
 
         private:
             static EXTIInterruptFunction _isrFunction;
             static EXTIInterruptParam _isrParam;
 
-			EXTI_x() = default;
+            EXTI_x() = default;
 			EXTI_x(const EXTI_x &) = delete;
 			EXTI_x(const EXTI_x &&) = delete;
 			~EXTI_x() = delete;
@@ -194,6 +205,12 @@ namespace htl {
 	using EXTI_13 = EXTI_x<EXTILine::line13>;
 	using EXTI_14 = EXTI_x<EXTILine::line14>;
 	using EXTI_15 = EXTI_x<EXTILine::line15>;
+
+
+	template <>
+	struct EXTITrait<EXTILine::line13> {
+		static constexpr INTVector vector = INTVector::exti13;
+	};
 }
 
 

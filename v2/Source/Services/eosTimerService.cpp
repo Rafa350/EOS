@@ -16,7 +16,7 @@ TimerService::TimerService(
     Service(application),
     _commandQueue(10),
     _activeQueue(),
-    _osTimerEventCallback(this, &TimerService::osTimerEventHandler) {
+    _osTimerEventCallback(*this, &TimerService::osTimerEventHandler) {
     //_osTimer(false, &osTimerEventCallback, nullptr) {
 }
 
@@ -399,11 +399,10 @@ void TimerService::cmdTimeOut() {
 /// \param    callback: El callback dels events.
 ///
 TimerCounter::TimerCounter(
-    TimerService *service,
-    IEventCallback *callback):
+    TimerService *service) :
 
     _service(nullptr),
-    _eventCallback(callback),
+    _eventCallback(nullptr),
     _period(0) {
 
     if (service != nullptr)

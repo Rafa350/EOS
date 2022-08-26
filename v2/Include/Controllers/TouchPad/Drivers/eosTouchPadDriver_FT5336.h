@@ -8,7 +8,8 @@
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "HTL/htlI2C.h"
 #include "HTL/htlGPIO.h"
-#ifdef EOS_STM32
+#include "HTL/htlINT.h"
+#ifdef EOS_PLATFORM_STM32
 #include "HTL/STM32/htlEXTI.h"
 #endif
 
@@ -242,15 +243,19 @@ namespace eos {
 
 	class TouchPadDriver_FT5336: public ITouchPadDriver {
 		private:
-	    	using GPIO_INT = board::touchpad::GPIO_INT;
-	    	using EXTI_INT = board::touchpad::EXTI_INT;
-			using GPIO_SCL = board::touchpad::GPIO_SCL;
-			using GPIO_SDA = board::touchpad::GPIO_SDA;
-			using I2C = board::touchpad::I2C;
+	    	using PinINT = TOUCHPAD_INT_GPIO;
+			using PinSCL = TOUCHPAD_SCL_GPIO;
+			using PinSDA = TOUCHPAD_SDA_GPIO;
+			using I2C = TOUCHPAD_I2C;
+	    	using ExtiINT = TOUCHPAD_INT_EXTI;
 
-			static constexpr uint16_t _width = board::touchpad::width;
-     		static constexpr uint16_t _height = board::touchpad::height;
-     		static constexpr uint8_t _i2cAddr = board::touchpad::i2cAddr;
+			static constexpr uint16_t _width = TOUCHPAD_WIDTH;
+     		static constexpr uint16_t _height = TOUCHPAD_HEIGHT;
+     		static constexpr uint8_t _i2cAddr = TOUCHPAD_I2C_ADDR;
+
+     		static constexpr htl::INTVector _vector = htl::EXTITrait<ExtiINT::line>::vector;
+        	static constexpr htl::INTPriority _priority = htl::INTPriority::_15;
+        	static constexpr htl::INTSubPriority _subPriority = htl::INTSubPriority::_0;
 
 			static ITouchPadDriver *_instance;
 			TouchPadOrientation _orientation;

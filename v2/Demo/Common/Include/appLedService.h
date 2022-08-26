@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __appLedService__
 #define __appLedService__
 
@@ -20,11 +21,14 @@ namespace app {
 	class LedService: public eos::AppLoopService {
 		private:
 			#ifdef EXIST_LED1
-				using GPIO_LED1 = board::led1::GPIO_LED;
+				using GPIO_LED1 = LED1_GPIO;
 			#endif
 			#ifdef EXIST_LED2
-				using GPIO_LED2 = board::led2::GPIO_LED;
+				using GPIO_LED2 = LED2_GPIO;
 			#endif
+
+			static constexpr bool _ledON = LED1_ON;
+			static constexpr bool _ledOFF = LED1_OFF;
 
 		public:
 			LedService(eos::Application *application);

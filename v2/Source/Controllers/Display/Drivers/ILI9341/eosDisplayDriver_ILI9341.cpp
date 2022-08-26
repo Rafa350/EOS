@@ -42,7 +42,7 @@ void DisplayDriver_ILI9341::initialize() {
 ///
 void DisplayDriver_ILI9341::deinitialize() {
 
-    displayOff();
+    disable();
 }
 
 
@@ -239,7 +239,7 @@ void DisplayDriver_ILI9341::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el display
 ///
-void DisplayDriver_ILI9341::displayOn() {
+void DisplayDriver_ILI9341::enable() {
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
@@ -256,7 +256,7 @@ void DisplayDriver_ILI9341::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el display.
 ///
-void DisplayDriver_ILI9341::displayOff() {
+void DisplayDriver_ILI9341::disable() {
 
 	open();
 	writeCommand(CMD_DISPLAY_OFF);

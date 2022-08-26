@@ -3,162 +3,111 @@
 #define __board_SMT32F746G_DISCO__
 
 
-#ifdef __cplusplus
-
-#include "HTL/htlGPIO.h"
-#include "HTL/htlI2C.h"
-#include "HTL/htlINT.h"
-#include "HTL/htlSPI.h"
-#include "HTL/htlUART.h"
-#include "HTL/STM32/htlEXTI.h"
-#include "HTL/STM32/htlLTDC.h"
-#include "System/Graphics/eosColor.h"
-
-
 // -----------------------------------------------------------------------
-// LED1
+// Green led 1
 // -----------------------------------------------------------------------
 //
 #ifdef USE_LED1
 #define EXIST_LED1
 
-namespace board {
-	namespace led1 {
-
-		// Asignacio de pins
-		using GPIO_LED = htl::GPIO_I1;
-
-		constexpr bool onState = true;
-		constexpr bool offState = !onState;
-	}
-}
+#define LED1_GPIO            htl::GPIO_I1
+#define LED1_ON              true
+#define LED1_OFF             false
 
 #endif // USE_LED1
 
 
 // -----------------------------------------------------------------------
-// SW1
+// Blue switch 1
 // -----------------------------------------------------------------------
 //
 #ifdef USE_SW1
 #define EXIST_SW1
 
-namespace board {
-	namespace sw1 {
-
-		// Asignacio de pins
-		using GPIO_SW = htl::GPIO_I11;
-
-		constexpr bool onState = true;
-		constexpr bool offState = !onState;
-	}
-}
+#define SW1_GPIO             htl::GPIO_I11
+#define SW1_ON               true
+#define SW1_OFF              false
 
 #endif // SW1
 
 
 // -----------------------------------------------------------------------
-// DISPLAY
+// Integrated board display
 // -----------------------------------------------------------------------
 //
 #ifdef USE_DISPLAY
 #define EXIST_DISPLAY
 
-namespace board {
-	namespace display {
+#define DISPLAY_BKE_GPIO     htl::GPIO_K3
+#define DISPLAY_LCDE_GPIO    htl::GPIO_I12
+#define DISPLAY_PC_GPIO      htl::GPIO_I14
+#define DISPLAY_HSYNC_GPIO   htl::GPIO_I10
+#define DISPLAY_VSYNC_GPIO   htl::GPIO_I9
+#define DISPLAY_DE_GPIO      htl::GPIO_K7
+#define DISPLAY_R0_GPIO      htl::GPIO_I15
+#define DISPLAY_R1_GPIO      htl::GPIO_J0
+#define DISPLAY_R2_GPIO      htl::GPIO_J1
+#define DISPLAY_R3_GPIO      htl::GPIO_J2
+#define DISPLAY_R4_GPIO      htl::GPIO_J3
+#define DISPLAY_R5_GPIO      htl::GPIO_J4
+#define DISPLAY_R6_GPIO      htl::GPIO_J5
+#define DISPLAY_R7_GPIO      htl::GPIO_J6
+#define DISPLAY_G0_GPIO      htl::GPIO_J7
+#define DISPLAY_G1_GPIO      htl::GPIO_J8
+#define DISPLAY_G2_GPIO      htl::GPIO_J9
+#define DISPLAY_G3_GPIO      htl::GPIO_J10
+#define DISPLAY_G4_GPIO      htl::GPIO_J11
+#define DISPLAY_G5_GPIO      htl::GPIO_K0
+#define DISPLAY_G6_GPIO      htl::GPIO_K1
+#define DISPLAY_G7_GPIO      htl::GPIO_K2
+#define DISPLAY_B0_GPIO      htl::GPIO_E4
+#define DISPLAY_B1_GPIO      htl::GPIO_J13
+#define DISPLAY_B2_GPIO      htl::GPIO_J14
+#define DISPLAY_B3_GPIO      htl::GPIO_J15
+#define DISPLAY_B4_GPIO      htl::GPIO_G12
+#define DISPLAY_B5_GPIO      htl::GPIO_K4
+#define DISPLAY_B6_GPIO      htl::GPIO_K5
+#define DISPLAY_B7_GPIO      htl::GPIO_K6
 
-		// Asignacio de pins
-		using GPIO_BKE = htl::GPIO_K3;
-		using GPIO_LCDE = htl::GPIO_I12;
-		using GPIO_PC = htl::GPIO_I14;
-		using GPIO_HSYNC = htl::GPIO_I10;
-		using GPIO_VSYNC = htl::GPIO_I9;
-		using GPIO_DE = htl::GPIO_K7;
-		using GPIO_R0 = htl::GPIO_I15;
-		using GPIO_R1 = htl::GPIO_J0;
-		using GPIO_R2 = htl::GPIO_J1;
-		using GPIO_R3 = htl::GPIO_J2;
-		using GPIO_R4 = htl::GPIO_J3;
-		using GPIO_R5 = htl::GPIO_J4;
-		using GPIO_R6 = htl::GPIO_J5;
-		using GPIO_R7 = htl::GPIO_J6;
-		using GPIO_G0 = htl::GPIO_J7;
-		using GPIO_G1 = htl::GPIO_J8;
-		using GPIO_G2 = htl::GPIO_J9;
-		using GPIO_G3 = htl::GPIO_J10;
-		using GPIO_G4 = htl::GPIO_J11;
-		using GPIO_G5 = htl::GPIO_K0;
-		using GPIO_G6 = htl::GPIO_K1;
-		using GPIO_G7 = htl::GPIO_K2;
-		using GPIO_B0 = htl::GPIO_E4;
-		using GPIO_B1 = htl::GPIO_J13;
-		using GPIO_B2 = htl::GPIO_J14;
-		using GPIO_B3 = htl::GPIO_J15;
-		using GPIO_B4 = htl::GPIO_G12;
-		using GPIO_B5 = htl::GPIO_K4;
-		using GPIO_B6 = htl::GPIO_K5;
-		using GPIO_B7 = htl::GPIO_K6;
+#define DISPLAY_WIDTH 		 480            // Amplada de la imatge
+#define DISPLAY_HEIGHT		 272            // Alçada de la imatge
+#define DISPLAY_HSYNC        41             // Horizontal synchronization
+#define DISPLAY_VSYNC        10             // Vertical synchronization
+#define DISPLAY_HBP          13             // Horizontal back porch
+#define DISPLAY_VBP          2              // Vertical back porch
+#define DISPLAY_HFP          32             // Horizontal front porch
+#define DISPLAY_VFP          2              // Vertical front porch
+#define DISPLAY_HSYNC_POL    htl::LTDCPolarity::activeLow
+#define DISPLAY_VSYNC_POL    htl::LTDCPolarity::activeLow
+#define DISPLAY_DE_POL       htl::LTDCPolarity::activeLow
+#define DISPLAY_PC_POL       htl::LTDCPolarity::activeLow
 
-		// Configuracio del LTDC
-		constexpr int width = 480;           // Amplada de la imatge
-		constexpr int height = 272;          // Alçada de la imatge
-		constexpr uint16_t hSync = 41;       // Horizontal synchronization
-		constexpr uint16_t vSync = 10;       // Vertical synchronization
-		constexpr uint16_t hBP = 13;         // Horizontal back porch
-		constexpr uint16_t vBP = 2;          // Vertical back porch
-		constexpr uint16_t hFP = 32;         // Horizontal front porch
-		constexpr uint16_t vFP = 2;          // Vertical front porch
-		constexpr htl::LTDCPolarity hSyncPol  = htl::LTDCPolarity::activeLow;
-		constexpr htl::LTDCPolarity vSyncPol  = htl::LTDCPolarity::activeLow;
-		constexpr htl::LTDCPolarity dePol     = htl::LTDCPolarity::activeLow;
-		constexpr htl::LTDCPolarity pcPol     = htl::LTDCPolarity::activeLow;
+#define DISPLAY_BUFFER       0xC0000000
 
-		// Configuracio del rellotge del LTDC
-		constexpr uint32_t fdiv = 5;         // Divisor de frequencia
+#define DISPLAY_CLK_FDIV     5
 
-		// Configuracio del buffer d'imatge
-		constexpr uint32_t buffer = 0xC0000000;
-	}
-}
 
 #endif // USE_DISPLAY
 
 
 // -----------------------------------------------------------------------
-// TOUCHPAD
+// Integrated display capacitative touchpad
 // -----------------------------------------------------------------------
 //
-#ifdef USE_TOUCHPAD
+#if defined(USE_TOUCHPAD) & defined(USE_DISPLAY)
 #define EXIST_TOUCHPAD
 
-namespace board {
-	namespace touchpad {
+#define TOUCHPAD_SCL_GPIO    htl::GPIO_H7
+#define TOUCHPAD_SDA_GPIO    htl::GPIO_H8
+#define TOUCHPAD_INT_GPIO    htl::GPIO_I13
+#define TOUCHPAD_INT_EXTI    htl::EXTI_13
 
-		// Asignacio de pins
-		using GPIO_SCL = htl::GPIO_H7;
-		using GPIO_SDA = htl::GPIO_H8;
-		using GPIO_INT = htl::GPIO_I13;
+#define TOUCHPAD_I2C         htl::I2CMaster_3
+#define TOUCHPAD_I2C_ADDR    0x70
 
-		// Asignacio de interrupcions externes
-		using EXTI_INT = htl::EXTI_13;
+#define TOUCHPAD_WIDTH       DISPLAY_WIDTH
+#define TOUCHPAD_HEIGHT      DISPLAY_HEIGHT
 
-		// Asignacio del dispositiu I2C
-		using I2C = htl::I2CMaster_3;
-
-		constexpr uint16_t width = 470;      // Amplada del touchpad
-		constexpr uint16_t height = 272;     // Alçada del touchpad
-
-		constexpr uint8_t i2cAddr = 0x70;
-
-		constexpr htl::GPIOPort extiPort = htl::GPIOPort::I;
-
-		constexpr htl::INTVector intVector = htl::INTVector::vEXTI13;
-		constexpr htl::INTPriority intVectorPriority = htl::INTPriority::_15;
-		constexpr htl::INTSubPriority intVectorSubPriority = htl::INTSubPriority::_0;
-
-		constexpr bool useInterruption = true;
-	}
-}
 
 #endif // USE_TOUCHPAD
 
@@ -170,41 +119,35 @@ namespace board {
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-namespace board {
-	namespace arduino {
+#define ARDUINO_D0           htl::GPIO_C7
+#define ARDUINO_D1           htl::GPIO_C6
+#define ARDUINO_D2           htl::GPIO_G6
+#define ARDUINO_D3           htl::GPIO_B4
+#define ARDUINO_D4           htl::GPIO_G7
+#define ARDUINO_D5           htl::GPIO_I0
+#define ARDUINO_D6           htl::GPIO_H6
+#define ARDUINO_D7           htl::GPIO_I3
+#define ARDUINO_D8           htl::GPIO_I2
+#define ARDUINO_D9           htl::GPIO_A15
+#define ARDUINO_D10          htl::GPIO_A8
+#define ARDUINO_D11          htl::GPIO_B15
+#define ARDUINO_D12          htl::GPIO_B14
+#define ARDUINO_D13          htl::GPIO_I1
+#define ARDUINO_D14          htl::GPIO_B9
+#define ARDUINO_D15          htl::GPIO_B8
 
-		// Asignacio de pins
-		using GPIO_D0 = htl::GPIO_C7;     // UART6 RX
-		using GPIO_D1 = htl::GPIO_C6;     // UART6 TX
-		using GPIO_D2 = htl::GPIO_G6;
-		using GPIO_D3 = htl::GPIO_B4;
-		using GPIO_D4 = htl::GPIO_G7;
-		using GPIO_D5 = htl::GPIO_I0;
-		using GPIO_D6 = htl::GPIO_H6;
-		using GPIO_D7 = htl::GPIO_I3;
-		using GPIO_D8 = htl::GPIO_I2;
-		using GPIO_D9 = htl::GPIO_A15;
-		using GPIO_D10 = htl::GPIO_A8;
-		using GPIO_D11 = htl::GPIO_B15;   // SPI2 MOSI
-		using GPIO_D12 = htl::GPIO_B14;   // SPI2 MISO
-		using GPIO_D13 = htl::GPIO_I1;    // SPI2 SCK
-		using GPIO_D14 = htl::GPIO_B9;    // I2C1 SDA
-		using GPIO_D15 = htl::GPIO_B8;    // I2C1 SCL
+#define ARDUINO_UART         htl::UART_6
+#define ARDUINO_RX           htl::GPIO_C7
+#define ARDUINO_TX           htl::GPIO_C6
 
-		using GPIO_RX = htl::GPIO_C7;     // D0
-		using GPIO_TX = htl::GPIO_C6;     // D1
-		using UART = htl::UART_6;
+#define ARDUINO_I2C          htl::I2CMaster_1
+#define ARDUINO_SCL          htl::GPIO_B8
+#define ARDUINO_SDA          htl::GPIO_B9
 
-		using GPIO_SCL = htl::GPIO_B8;    // D15
-		using GPIO_SDA = htl::GPIO_B9;    // D14
-		using I2C = htl::I2CMaster_1;
-
-		using GPIO_SCK = htl::GPIO_I1;    // D13
-		using GPIO_MISO = htl::GPIO_B14;  // D12
-		using GPIO_MOSI = htl::GPIO_B15;  // D11
-		using SPI = htl::SPI_2;
-	}
-}
+#define ARDUINO_SPI          htl::SPI_2
+#define ARDUINO_SCK          htl::GPIO_I1
+#define ARDUINO_MISO         htl::GPIO_B14
+#define ARDUINO_MOSI         htl::GPIO_B15
 
 #endif // USE_ARDUINO
 
@@ -298,34 +241,6 @@ namespace board {
 
 #endif // USE_SD
 
-
-// -----------------------------------------------------------------------
-// Touchpad
-// -----------------------------------------------------------------------
-
-#ifdef USE_TOUCHPADxx
-#define EXIST_TOUCHPAD
-
-#define TOUCHPAD_DRV_FT5336
-
-#define TOUCHPAD_MAX_POINTS         5
-
-// Control del pin INT
-//
-#define TOUCHPAD_INT_PORT           HAL_GPIO_PORT_I
-#define TOUCHPAD_INT_PIN            HAL_GPIO_PIN_13
-#define TOUCHPAD_INT_TYPE           htl::GPIO_I13
-#define TOUCHPAD_INT_EXTI_LINE      HAL_EXTI_LINE_13
-#define TOUCHPAD_INT_EXTI_PORT      HAL_EXTI_PORT_I
-#define TOUCHPAD_INT_EXTI_TYPE      htl::EXTI_13
-#define TOUCHPAD_INT_IRQ            htl::INTVector::vEXTI13
-#define TOUCHPAD_INT_PRIORITY       htl::INTPriority::p15
-#define TOUCHPAD_INT_SUBPRIORITY    htl::INTSubPriority::s0
-
-
-#endif // USE_TOUCHPAD
-
-#endif // __cplusplus
 
 
 #endif // __board_SMT32F746G_DISCO__

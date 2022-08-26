@@ -238,7 +238,7 @@ namespace htl {
 	template <I2CChannel channel_>
 	class I2CMaster_x final: public I2C_x<channel_> {
 		public:
-			static void init() {
+			static void initialize() {
 
 				I2C_x<channel_>::initMaster();
 			}

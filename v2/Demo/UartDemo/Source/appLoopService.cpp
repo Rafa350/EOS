@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "htl/htlUART.h"
+#include "Controllers/Serial/eosAsyncSerialDriver_UART.h"
 #include "appApplication.h"
 #include "appLoopService.h"
 
@@ -9,6 +9,9 @@ using namespace htl;
 using namespace app;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+///
 MyAppLoopService::MyAppLoopService(
 	Application* application):
 
@@ -20,15 +23,39 @@ MyAppLoopService::MyAppLoopService(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio.
+///
 void MyAppLoopService::onSetup() {
 
-	_serial = new AsyncSerialDriver_UART(getUARTAdapter<config::uartService::UART>());
+	// Inicialitza el LED
+	//
+	Led::initOutput(GPIODriver::pushPull);
+	Led::clear();
+
+    // Inicialitza la UART
+	//
+	Uart::initialize();
+	Uart::initTXPin<PinTX>();
+	Uart::initRXPin<PinRX>();
+	Uart::setProtocol(_wordBits, _parity, _stopBits);
+	Uart::setTimming(_baudMode, UARTClockSource::automatic, 0, UARTOverSampling::_16);
+	INT_1::setInterruptVectorPriority(_vector,	_priority, _subPriority);
+	INT_1::enableInterruptVector(_vector);
+	Uart::enable();
+
+	// Configura el driver de comunicacio serie
+	//
+	_serial = new AsyncSerialDriver_UART(getUARTAdapter<Uart>());
 	_serial->initialize();
 	_serial->enableTxCompletedCallback(_txCompletedCallback);
 	_serial->enableRxCompletedCallback(_rxCompletedCallback);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Bucle d'execucio.
+///
 void MyAppLoopService::onLoop() {
 
 	uint8_t buffer[10];
@@ -36,6 +63,7 @@ void MyAppLoopService::onLoop() {
 	while (true) {
 
 		if (_serial->receive(buffer, sizeof(buffer))) {
+			Led::toggle();
 			if (_rxCompleted.wait(unsigned(-1))) {
 				if (_rxDataCount > 0) {
 					if (_serial->transmit(buffer, _rxDataCount))
@@ -46,6 +74,11 @@ void MyAppLoopService::onLoop() {
 	}
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    : Procesa l'event del UART txCompleted
+/// \params   : args : Parametres del event.
+///
 void MyAppLoopService::txCompletedEventHandler(
 	const AsyncSerialDriver::TxCompletedEventArgs &args) {
 
@@ -53,6 +86,10 @@ void MyAppLoopService::txCompletedEventHandler(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    : Procesa l'event del UART rxCompleted
+/// \params   : args : Parametres del event.
+///
 void MyAppLoopService::rxCompletedEventHandler(
 	const AsyncSerialDriver::RxCompletedEventArgs &args) {
 

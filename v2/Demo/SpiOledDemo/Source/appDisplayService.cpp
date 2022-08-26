@@ -27,16 +27,16 @@ DisplayService::DisplayService(
 void DisplayService::onSetup() {
 
 	FrameBuffer *frameBuffer = new MonoFrameBuffer(
-		board::display::width,
-		board::display::height,
+		_displayWidth,
+		_displayHeight,
 		DisplayOrientation::normal,
-		(void*)board::display::buffer,
-		board::display::width);
+		(void*) _displayBuffer,
+		_displayWidth);
 
 	_driver = new DisplayDriver_SSD1306(frameBuffer);
 	_driver->initialize();
 	_driver->clear(Colors::black);
-	_driver->displayOn();
+	_driver->enable();
 
 	_graphics = new Graphics(_driver);
 }

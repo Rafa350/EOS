@@ -13,32 +13,22 @@
 #define DISPLAY_SSD1306_INTERFACE  DISPLAY_SSD1306_INTERFACE_SPI
 
 
-#ifdef __cplusplus
-
-
 #ifdef USE_CUSTOM_DISPLAY
 #define EXIST_CUSTOM_DISPLAY
 
-namespace board {
-	namespace display {
+#define DISPLAY_RST_GPIO     ARDUINO_D0
+#define DISPLAY_DC_GPIO      ARDUINO_D1
+#define DISPLAY_CS_GPIO      ARDUINO_D2
+#define DISPLAY_SCK_GPIO     ARDUINO_SCK
+#define DISPLAY_MOSI_GPIO    ARDUINO_MOSI
+#define DISPLAY_SPI          ARDUINO_SPI
 
-		using GPIO_RST = board::arduino::GPIO_D0;
-		using GPIO_DC = board::arduino::GPIO_D1;
-		using GPIO_CS = board::arduino::GPIO_D2;
-		using GPIO_SCK = board::arduino::GPIO_SCK;
-		using GPIO_MOSI = board::arduino::GPIO_MOSI;
-		using SPI = board::arduino::SPI;
-
-		constexpr uint16_t width = 128;
-		constexpr uint16_t height = 64;
-		constexpr uint32_t buffer = 0xC0000000;
-	}
-}
+#define DISPLAY_WIDTH        128
+#define DISPLAY_HEIGHT       64
+#define DISPLAY_BUFFER       0xC0000000
 
 #endif // USE_CUSTOM_DISPLAY
 
-
-#endif // __cplusplus
 
 #endif // DISPLAY_ADAFRUIT_SSD1306_128x64_D098
 

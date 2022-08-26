@@ -43,16 +43,16 @@ void DisplayDriver_ILI9341LTDC::initialize() {
 ///
 void DisplayDriver_ILI9341LTDC::deinitialize() {
 
-	displayOff();
+	disable();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el display
 ///
-void DisplayDriver_ILI9341LTDC::displayOn() {
+void DisplayDriver_ILI9341LTDC::enable() {
 
-	LTDC_1::enable();
+	Ltdc::enable();
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
@@ -65,7 +65,7 @@ void DisplayDriver_ILI9341LTDC::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el display.
 ///
-void DisplayDriver_ILI9341LTDC::displayOff() {
+void DisplayDriver_ILI9341LTDC::disable() {
 
 	open();
 	writeCommand(CMD_DISPLAY_OFF);
@@ -73,7 +73,7 @@ void DisplayDriver_ILI9341LTDC::displayOff() {
 	halTMRDelay(120);
 	close();
 
-	LTDC_1::disable();
+	Ltdc::disable();
 }
 
 
@@ -222,32 +222,32 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-	GPIO_CS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	GPIO_CS::set();
-	GPIO_RS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	GPIO_RS::clear();
-#ifdef DISPLAY_RTS_PIN
-	GPIO_RST::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	GPIO_RST::clear();
+	PinCS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	PinCS::set();
+	PinRS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	PinRS::clear();
+#ifdef DISPLAY_RTS_GPIO
+	PinRST::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	PinRST::clear();
 #endif
 
 	// Inicialitza el modul SPI
 	//
-	SPI::initSCKPin<GPIO_SCK>();
-	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
+	Spi::initSCKPin<PinSCK>();
+	Spi::initMOSIPin<PinMOSI>();
+	Spi::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1,	SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
 
 	// Inicialitza el modul LTDC
 	//
-	LTDC_1::initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	LTDC_1::initDEPin<GPIO_DE>(_dePol);
-	LTDC_1::initHSYNCPin<GPIO_HSYNC>(_hSyncPol);
-	LTDC_1::initVSYNCPin<GPIO_VSYNC>(_vSyncPol);
-	LTDC_1::initPCPin<GPIO_PC>(_pcPol);
-	LTDC_1::initRPins<GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
-	LTDC_1::initGPins<GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
-	LTDC_1::initBPins<GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
-	LTDC_1::setBackgroundColor(RGB(0, 0, 255));
+	Ltdc::initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	Ltdc::initDEPin<PinDE>(_dePol);
+	Ltdc::initHSYNCPin<PinHSYNC>(_hSyncPol);
+	Ltdc::initVSYNCPin<PinVSYNC>(_vSyncPol);
+	Ltdc::initPCPin<PinPC>(_pcPol);
+	Ltdc::initRPins<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	Ltdc::initGPins<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	Ltdc::initBPins<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	Ltdc::setBackgroundColor(RGB(0, 0, 255));
 
 	// Inicialitza la capa 1 del modul LTDC
 	//
@@ -261,15 +261,14 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 		Color::format == ColorFormat::l8 ? LTDCPixelFormat::l8 :
 		LTDCPixelFormat::rgb565;
 
-	LTDCLayer_1::setWindow(0, 0, _width, _height);
-	LTDCLayer_1::setFrameFormat(
+	LtdcLayer::setWindow(0, 0, _width, _height);
+	LtdcLayer::setFrameFormat(
 		pixelFormat,
 		_width * Color::bytes,
 		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
 		_height);
-	LTDCLayer_1::setFrameBuffer(reinterpret_cast<void*>(_buffer));
-
-	LTDC_1::update();
+	LtdcLayer::setFrameBuffer(reinterpret_cast<void*>(_buffer));
+	LtdcLayer::enable();
 }
 
 
@@ -314,9 +313,9 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 #error "Display no soportado"
 #endif
 
-#ifdef DISPLAY_RST_PORT
+#ifdef DISPLAY_RST_GPIO
     halTMRDelay(10);
-    GPIO_RST::set();
+    PinRST::set();
     halTMRDelay(120);
 #endif
 
@@ -346,7 +345,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 ///
 void DisplayDriver_ILI9341LTDC::open() {
 
-	GPIO_CS::clear();
+	PinCS::clear();
 }
 
 
@@ -355,7 +354,7 @@ void DisplayDriver_ILI9341LTDC::open() {
 ///
 void DisplayDriver_ILI9341LTDC::close() {
 
-	GPIO_CS::set();
+	PinCS::set();
 }
 
 
@@ -366,8 +365,8 @@ void DisplayDriver_ILI9341LTDC::close() {
 void DisplayDriver_ILI9341LTDC::writeCommand(
 	uint8_t cmd) {
 
-	GPIO_RS::clear();
-	SPI::send(&cmd, sizeof(cmd));
+	PinRS::clear();
+	Spi::send(&cmd, sizeof(cmd));
 }
 
 
@@ -378,6 +377,6 @@ void DisplayDriver_ILI9341LTDC::writeCommand(
 void DisplayDriver_ILI9341LTDC::writeData(
 	uint8_t data) {
 
-	GPIO_RS::set();
-	SPI::send(&data, sizeof(data));
+	PinRS::set();
+	Spi::send(&data, sizeof(data));
 }

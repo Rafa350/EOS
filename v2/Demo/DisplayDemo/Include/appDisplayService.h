@@ -21,6 +21,10 @@ namespace app {
 
 	class DisplayService: public eos::AppLoopService {
 	    private:
+			static constexpr uint32_t _displayWidth = DISPLAY_WIDTH;
+			static constexpr uint32_t _displayHeight = DISPLAY_HEIGHT;
+			static constexpr uint32_t _displayBuffer = DISPLAY_BUFFER;
+
 			eos::IDisplayDriver *_driver;
 	        eos::Graphics *_graphics;
 	        eos::Text _text;

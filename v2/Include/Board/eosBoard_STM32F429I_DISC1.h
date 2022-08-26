@@ -3,13 +3,6 @@
 #define __board_SMT32F429I_DISC1__
 
 
-#ifdef __cplusplus
-
-#include "HTL/htlGPIO.h"
-#include "HTL/htlSPI.h"
-#include "HTL/STM32/htlLTDC.h"
-
-
 // -----------------------------------------------------------------------
 // LED1
 // -----------------------------------------------------------------------
@@ -17,16 +10,11 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-namespace board {
-	namespace led1 {
+#define LED1_GPIO            htl::GPIO_G13
+#define LED1_ON              true
+#define LED1_OFF             false
 
-		using GPIO_LED = htl::GPIO_G13;
-
-		constexpr bool onState = true;
-		constexpr bool offState = !onState;
-	}
-}
-#endif
+#endif // USE_LED1
 
 
 // -----------------------------------------------------------------------
@@ -36,17 +24,11 @@ namespace board {
 #ifdef USE_LED2
 #define EXIST_LED2
 
-namespace board {
-	namespace led2 {
+#define LED2_GPIO            htl::GPIO_G14
+#define LED2_ON              true
+#define LED2_OFF             false
 
-		using GPIO_LED = htl::GPIO_G14;
-
-		constexpr bool onState = true;
-		constexpr bool offState = !onState;
-	}
-}
-
-#endif
+#endif // USE_LED2
 
 
 // -----------------------------------------------------------------------
@@ -56,15 +38,9 @@ namespace board {
 #ifdef USE_SW1
 #define EXIST_SW1
 
-namespace board {
-	namespace sw1 {
-
-		using GPIO_SW1 = htl::GPIO_A0;
-
-		constexpr bool onState = true;
-		constexpr bool offState = !onState;
-	}
-}
+#define SW1_GPIO             htl::GPIO_A0
+#define SW1_ON               true
+#define SW1_OFF              false
 
 #endif // USE_SW1
 
@@ -139,59 +115,52 @@ namespace board {
 #define FONT_USE_Tahoma12pt
 #define FONT_USE_Tahoma14pt
 
-namespace board {
-	namespace display {
+#define DISPLAY_CS_GPIO      htl::GPIO_C2
+#define DISPLAY_RS_GPIO      htl::GPIO_D13
+#define DISPLAY_SCK_GPIO     htl::GPIO_F7
+#define DISPLAY_MOSI_GPIO    htl::GPIO_F9
+#define DISPLAY_SPI          htl::SPI_5
 
-		using GPIO_CS = htl::GPIO_C2;
-		using GPIO_RS = htl::GPIO_D13;
-		using GPIO_SCK = htl::GPIO_F7;
-		using GPIO_MOSI = htl::GPIO_F9;
-		using SPI = htl::SPI_5;
+#define DISPLAY_HSYNC_GPIO   htl::GPIO_C6
+#define DISPLAY_VSYNC_GPIO   htl::GPIO_A4
+#define DISPLAY_DE_GPIO      htl::GPIO_F10
+#define DISPLAY_PC_GPIO      htl::GPIO_G7
+#define DISPLAY_R2_GPIO      htl::GPIO_C10
+#define DISPLAY_R3_GPIO      htl::GPIO_B0
+#define DISPLAY_R4_GPIO      htl::GPIO_A11
+#define DISPLAY_R5_GPIO      htl::GPIO_A12
+#define DISPLAY_R6_GPIO      htl::GPIO_B1
+#define DISPLAY_R7_GPIO      htl::GPIO_G6
+#define DISPLAY_G2_GPIO      htl::GPIO_A6
+#define DISPLAY_G3_GPIO      htl::GPIO_G10
+#define DISPLAY_G4_GPIO      htl::GPIO_B10
+#define DISPLAY_G5_GPIO      htl::GPIO_B11
+#define DISPLAY_G6_GPIO      htl::GPIO_C7
+#define DISPLAY_G7_GPIO      htl::GPIO_D3
+#define DISPLAY_B2_GPIO      htl::GPIO_D6
+#define DISPLAY_B3_GPIO      htl::GPIO_G11
+#define DISPLAY_B4_GPIO      htl::GPIO_G12
+#define DISPLAY_B5_GPIO      htl::GPIO_A3
+#define DISPLAY_B6_GPIO      htl::GPIO_B8
+#define DISPLAY_B7_GPIO      htl::GPIO_B9
 
-		using GPIO_HSYNC = htl::GPIO_C6;
-		using GPIO_VSYNC = htl::GPIO_A4;
-		using GPIO_DE = htl::GPIO_F10;
-		using GPIO_PC = htl::GPIO_G7;
-		using GPIO_R2 = htl::GPIO_C10;
-		using GPIO_R3 = htl::GPIO_B0;
-		using GPIO_R4 = htl::GPIO_A11;
-		using GPIO_R5 = htl::GPIO_A12;
-		using GPIO_R6 = htl::GPIO_B1;
-		using GPIO_R7 = htl::GPIO_G6;
-		using GPIO_G2 = htl::GPIO_A6;
-		using GPIO_G3 = htl::GPIO_G10;
-		using GPIO_G4 = htl::GPIO_B10;
-		using GPIO_G5 = htl::GPIO_B11;
-		using GPIO_G6 = htl::GPIO_C7;
-		using GPIO_G7 = htl::GPIO_D3;
-		using GPIO_B2 = htl::GPIO_D6;
-		using GPIO_B3 = htl::GPIO_G11;
-		using GPIO_B4 = htl::GPIO_G12;
-		using GPIO_B5 = htl::GPIO_A3;
-		using GPIO_B6 = htl::GPIO_B8;
-		using GPIO_B7 = htl::GPIO_B9;
+#define DISPLAY_WIDTH  		 240            // Amplada fisica de la pantalla
+#define DISPLAY_HEIGHT       320            // Alçada fisica de la pantall
+#define DISPLAY_HSYNC        9              // Horizontal sync
+#define DISPLAY_VSYNC        1              // Vertical sync
+#define DISPLAY_HBP          29             // Horizontal back Porch
+#define DISPLAY_VBP          3              // Vertical back Porch
+#define DISPLAY_HFP          2              // Horizontal front Porch
+#define DISPLAY_VFP          2              // Vertical front Porch
+#define DISPLAY_HSYNC_POL    htl::LTDCPolarity::activeLow;   // HSync polarity
+#define DISPLAY_VSYNC_POL    htl::LTDCPolarity::activeLow;   // VSync polarity
+#define DISPLAY_DE_POL       htl::LTDCPolarity::activeLow;   // DE polarity
+#define DISPLAY_PC_POL       htl::LTDCPolarity::activeLow;   // PC polarity
 
-		constexpr uint16_t width = 240;     // Amplada fisica de la pantalla
-		constexpr uint16_t height = 320;    // Alçada fisica de la pantalla
-		constexpr uint16_t hSync= 9;        // Horizontal sync
-		constexpr uint16_t vSync = 1;       // Vertical sync
-		constexpr uint16_t hBP = 29;        // Horizontal back Porch
-		constexpr uint16_t vBP = 3;         // Vertical back Porch
-		constexpr uint16_t hFP = 2;         // Horizontal front Porch
-		constexpr uint16_t vFP = 2;         // Vertical front Porch
-		constexpr htl::LTDCPolarity hSyncPol = htl::LTDCPolarity::activeLow;   // HSync polarity
-		constexpr htl::LTDCPolarity vSyncPol = htl::LTDCPolarity::activeLow;   // VSync polarity
-		constexpr htl::LTDCPolarity dePol    = htl::LTDCPolarity::activeLow;   // DE polarity
-		constexpr htl::LTDCPolarity pcPol    = htl::LTDCPolarity::activeLow;   // PC polarity
-
-		constexpr uint32_t buffer = 0xD0000000;
-	}
-}
+#define DISPLAY_BUFFER       0xD0000000;
 
 #endif // USE_DISPLAY
 
-
-#endif // __cplusplus
 
 #endif // __board_SMT32F429I_DISC1__
 

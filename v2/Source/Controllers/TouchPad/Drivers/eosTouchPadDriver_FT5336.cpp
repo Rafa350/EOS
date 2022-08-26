@@ -3,6 +3,7 @@
 #include "HTL/htlTMR.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlI2C.h"
+#include "HTL/htlINT.h"
 #include "HTL/STM32/htlEXTI.h"
 #include "HTL/STM32/htlINT.h"
 #include "System/eosMath.h"
@@ -31,8 +32,7 @@ void TouchPadDriver_FT5336::initialize() {
 	//halTMRDelay(200);
     initializeInterface();
 
-	if constexpr (board::touchpad::useInterruption)
-    	enableInt();
+   	enableInt();
 }
 
 
@@ -41,8 +41,7 @@ void TouchPadDriver_FT5336::initialize() {
 ///
 void TouchPadDriver_FT5336::deinitialize() {
 
-	if constexpr (board::touchpad::useInterruption)
-		disableInt();
+	disableInt();
 }
 
 
@@ -257,19 +256,17 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el pin d'interrupcio
 	//
-	if constexpr (board::touchpad::useInterruption) {
-		GPIO_INT::initInput(GPIOPull::up);
-		EXTI_INT::init(board::touchpad::extiPort, EXTIMode::interrupt, EXTITrigger::rissing);
+	PinINT::initInput(GPIOPull::up);
+	ExtiINT::init(PinINT::port, EXTIMode::interrupt, EXTITrigger::rissing);
 
-		INT_1::setInterruptVectorPriority(board::touchpad::intVector, board::touchpad::intVectorPriority, board::touchpad::intVectorSubPriority);
-		INT_1::enableInterruptVector(board::touchpad::intVector);
-	}
+	INT_1::setInterruptVectorPriority(_vector, _priority, _subPriority);
+	INT_1::enableInterruptVector(_vector);
 
 	// Inicialitza el canal I2C
 	//
-	I2C::initSCLPin<GPIO_SCL>();
-	I2C::initSDAPin<GPIO_SDA>();
-	I2C::init();
+	I2C::initialize();
+	I2C::initSCLPin<PinSCL>();
+	I2C::initSDAPin<PinSDA>();
 }
 
 

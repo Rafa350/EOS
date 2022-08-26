@@ -7,6 +7,7 @@
 //
 #include "HTL/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "HTL/STM32/htlINT.h"
 
 
 namespace htl {
@@ -755,6 +756,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_1> {
 			static constexpr uint32_t addr = USART1_BASE;
+			static constexpr INTVector vector = INTVector::uart1;
 		};
 
 		template <>
@@ -772,6 +774,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_2> {
 			static constexpr uint32_t addr = USART2_BASE;
+			static constexpr INTVector vector = INTVector::uart2;
 		};
 	#endif
 
@@ -779,6 +782,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_3> {
 			static constexpr uint32_t addr = USART3_BASE;
+			static constexpr INTVector vector = INTVector::uart3;
 		};
 	#endif
 
@@ -786,6 +790,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_4> {
 			static constexpr uint32_t addr = UART4_BASE;
+			static constexpr INTVector vector = INTVector::uart4;
 		};
 	#endif
 
@@ -793,6 +798,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_5> {
 			static constexpr uint32_t addr = UART5_BASE;
+			static constexpr INTVector vector = INTVector::uart5;
 		};
 	#endif
 
@@ -800,6 +806,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_6> {
 			static constexpr uint32_t addr = USART6_BASE;
+			static constexpr INTVector vector = INTVector::uart6;
 		};
 
 		template <>
@@ -817,6 +824,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_7> {
 			static constexpr uint32_t addr = UART7_BASE;
+			static constexpr INTVector vector = INTVector::uart7;
 		};
 	#endif
 
@@ -824,6 +832,7 @@ namespace htl {
 		template <>
 		struct UARTTrait<UARTChannel::_8> {
 			static constexpr uint32_t addr = UART8_BASE;
+			static constexpr INTVector vector = INTVector::uart8;
 		};
 	#endif
 
