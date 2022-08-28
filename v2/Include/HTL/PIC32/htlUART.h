@@ -5,7 +5,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HTL/htl.h"
 #include "HTL/PIC32/htlGPIO.h"
 
 
@@ -44,32 +44,37 @@ namespace htl {
         odd
     };
 
-    enum class UARTStop {
-        stop1,
-        stop2
+    enum class UARTStopBits {
+        _1,
+        _2
     };
 
-    enum class UARTWord {
-        word8,
-        word9
+    enum class UARTWordBits {
+        _8,
+        _9
     };
 
-    enum class UARTBaud {
-        b110,
-        b300,
-        b1200,
-        b2400,
-        b4800,
-        b9600,
-        b19200,
-        b38400,
-        b56800,
+    enum class UARTHandsake {
+        none,
+        ctsrts
+    };
+
+    enum class UARTBaudMode {
+        _1200,
+        _2400,
+        _4800,
+        _9600,
+        _19200,
+        _38400,
+        _56800,
+        _115200
     };
 
     enum class UARTEvent {
-        error,
-        transmit,
-        receive
+        txEmpty,
+        txCompleted,
+        rxNotEmpty,
+        rxTimeout
     };
 
     struct __attribute__((packed , aligned(4))) UARTRegisters {
@@ -91,17 +96,18 @@ namespace htl {
     using UARTInterruptParam = void*;
     using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
 
-    void UART_init(UARTRegisters*, UARTBaud, UARTWord, UARTParity, UARTStop, UARTMode);
-    void UART_deInit(UARTRegisters*);
+    void UART_initialize(UARTRegisters*);
+    void UART_deinitialize(UARTRegisters*);
+    void UART_setProtocol(UARTRegisters*, UARTWordBits, UARTParity, UARTStopBits);
 
-    template <UARTChannel channel_>
-    struct UARTInfo {
+    template <UARTChannel>
+    struct UARTTrait {
     };
 
 	template <UARTChannel channel_>
 	class UART_x {
         private:
-            using Info = UARTInfo<channel_>;
+            using Info = UARTTrait<channel_>;
 
 		public:
 			constexpr static const UARTChannel channel = channel_;
@@ -122,22 +128,34 @@ namespace htl {
             UART_x & operator = (const UART_x &&) = delete;
 
 		public:
-			static void init(
-                UARTBaud baud,
-                UARTWord word,
+			static void initialize() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                UART_initialize(regs);
+			}
+
+			static void deinitialize() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                UART_deinitialize(regs);
+			}
+
+            static void enable() {
+
+            }
+
+            static void disable() {
+
+            }
+
+            static void setProtocol(
+                UARTWordBits wordBits,
                 UARTParity parity,
-                UARTStop stop,
-                UARTMode mode = UARTMode::bidirectional) {
+                UARTStopBits stopBits) {
 
                 UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
-                UART_init(regs, baud, word, parity, stop, mode);
-			}
-
-			static void deInit() {
-
-                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
-                UART_deInit(regs);
-			}
+                UART_setProtocol(regs, wordBits, parity, stopBits);
+            }
 
 			template <typename gpio_>
 			inline static void setTXPin() {
@@ -498,37 +516,37 @@ namespace htl {
 
     #ifdef _UART1
         template <>
-        struct UARTInfo<UARTChannel::channel1> {
+        struct UARTTrait<UARTChannel::channel1> {
             constexpr static const uint32_t addr = _UART1_BASE_ADDRESS;
         };
     #endif
     #ifdef _UART2
         template <>
-        struct UARTInfo<UARTChannel::channel2> {
+        struct UARTTrait<UARTChannel::channel2> {
             constexpr static const uint32_t addr = _UART2_BASE_ADDRESS;
         };
     #endif
     #ifdef _UART3
         template <>
-        struct UARTInfo<UARTChannel::channel3> {
+        struct UARTTrait<UARTChannel::channel3> {
             constexpr static const uint32_t addr = _UART3_BASE_ADDRESS;
         };
     #endif
     #ifdef _UART4
         template <>
-        struct UARTInfo<UARTChannel::channel4> {
+        struct UARTTrait<UARTChannel::channel4> {
             constexpr static const uint32_t addr = _UART4_BASE_ADDRESS;
         };
     #endif
     #ifdef _UART5
         template <>
-        struct UARTInfo<UARTChannel::channel5> {
+        struct UARTTrait<UARTChannel::channel5> {
             constexpr static const uint32_t addr = _UART5_BASE_ADDRESS;
         };
     #endif
     #ifdef _UART6
         template <>
-        struct UARTInfo<UARTChannel::channel6> {
+        struct UARTTrait<UARTChannel::channel6> {
             constexpr static const uint32_t addr = _UART6_BASE_ADDRESS;
         };
     #endif
@@ -552,6 +570,45 @@ namespace htl {
     #ifdef _UART6
         using UART_6 = UART_x<UARTChannel::channel6>;
     #endif
+
+    class UARTAdapter {
+        public:
+            virtual ~UARTAdapter();
+            virtual void enableInterrupt(UARTEvent event) = 0;
+            virtual void disableInterrupt(UARTEvent event) = 0;
+            virtual void disableInterrupts() = 0;
+    };
+
+    template <typename uart_>
+    class UARTAdapter_x {
+        public:
+            static UARTAdapter_x& instance() {
+                static UARTAdapter_x adapter;
+                return adapter;
+            }
+
+            void enableInterrupt(UARTEvent event) override {
+                uart_::enableInterrupt(event);
+            }
+
+            void disableInterrupt(UARTEvent event) override {
+                uart_::disableInterrupt(event);
+            }
+
+            void disableInterrupts() override {
+                uart_::enableInterrupts();
+            }
+
+            void clearInterruptFlags() override {
+                uart_::clearInterruptFlags();
+            }
+    };
+
+
+	template <typename uart_>
+	UARTAdapter& getUARTAdapter() {
+		return UARTAdapter_x<uart_>::instance();
+	}
 }
 
 

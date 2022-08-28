@@ -5,7 +5,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HTL/htl.h"
 
 
 namespace htl {
@@ -173,7 +173,7 @@ namespace htl {
 
             /// \bried Desinicialitza el pin.
             ///
-            inline static void deInit() {
+            inline static void deinitialize() {
 
             }
 
@@ -1002,9 +1002,9 @@ namespace htl {
                 return (_regs->PORTx & _mask) != 0;
             }
     };
-    
+
     template <typename gpio_>
-    const GPIOAdapter& getAdapter() {
+    const GPIOAdapter& getGPIOAdapter() {
 
         using PortTrait = GPIOPortTrait<gpio_::port>;
         using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;

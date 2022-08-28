@@ -1,17 +1,11 @@
-#include "eos.h"
 #include "HTL/PIC32/htlUART.h"
 
 
 using namespace htl;
 
 
-void htl::UART_init(
-    UARTRegisters *regs,
-    UARTBaud baud,
-    UARTWord word,
-    UARTParity parity,
-    UARTStop stop,
-    UARTMode mode) {
+void htl::UART_initialize(
+    UARTRegisters *regs) {
 
     // Selecciona la velocitat
     //
@@ -31,8 +25,18 @@ void htl::UART_init(
 }
 
 
-void htl::UART_deInit(
+void htl::UART_deinitialize(
     UARTRegisters *regs) {
 
     regs->UxMODE.ON = 0;
+}
+
+
+void htl::UART_setProtocol(
+    UARTRegisters *regs,
+    UARTWordBits wordBits,
+    UARTParity parity,
+    UARTStopBits stopBits) {
+
+
 }

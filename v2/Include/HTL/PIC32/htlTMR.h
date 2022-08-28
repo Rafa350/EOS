@@ -5,8 +5,8 @@
 
 // EOS includes
 //
-#include "eos.h"
-#include "htlRegisters.h"
+#include "HTL/htl.h"
+#include "HTL/PIC32/htlRegisters.h"
 
 
 namespace htl {
@@ -402,6 +402,19 @@ namespace htl {
             static constexpr bool isT1 = false;
         };
     #endif
+
+
+    class TMRAdapter {
+        public:
+            TMRAdapter();
+    };
+
+
+    template <typename timer_>
+    TMRAdapter& getTMRAdapter() {
+        static TMRAdapter adapter;
+        return adapter;
+    }
 }
 
 

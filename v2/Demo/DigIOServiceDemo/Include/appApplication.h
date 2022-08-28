@@ -17,12 +17,12 @@ namespace app {
 
     class MyApplication: public eos::Application {
         private:
-            using GPIO_LED1 = board::led1::GPIO_LED;
-            using GPIO_LED2 = board::led2::GPIO_LED;
-            using GPIO_LED3 = board::led3::GPIO_LED;
-            using GPIO_SW1 = board::sw1::GPIO_SW;
-            using GPIO_SW2 = board::sw2::GPIO_SW;
-            using GPIO_SW3 = board::sw3::GPIO_SW;
+            using PinLED1 = LED1_GPIO;
+            using PinLED2 = LED2_GPIO;
+            using PinLED3 = LED3_GPIO;
+            using PinSW1 = SW1_GPIO;
+            using PinSW2 = SW2_GPIO;
+            using PinSW3 = SW3_GPIO;
             using TMR_INP = config::digInputService::TMR;
             using TMR_OUT = config::digOutputService::TMR;
 

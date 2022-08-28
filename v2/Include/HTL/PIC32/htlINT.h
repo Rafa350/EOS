@@ -5,7 +5,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HTL/htl.h"
 
 
 namespace htl {
@@ -82,7 +82,7 @@ namespace htl {
             ///
             inline static void restoreInterrupts(
                 bool state) {
-                
+
                 if (state)
                     enableInterrupts();
             }

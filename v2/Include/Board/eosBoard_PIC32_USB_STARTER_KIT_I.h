@@ -9,132 +9,90 @@
 #define CLOCK_PERIPHERICAL_HZ      (CLOCK_SYSTEM_HZ / 1)
 
 
-#ifdef __cplusplus
+
+// -----------------------------------------------------------------------
+// LED1
+// -----------------------------------------------------------------------
+//
+#ifdef USE_LED1
+#define EXIST_LED1
+
+#define LED1_GPIO            htl::GPIO_D0
+#define LED1_ON              true
+#define LED1_OFF             false
+
+#endif // USE_LED1
 
 
-#include "HTL/htlGPIO.h"
+// -----------------------------------------------------------------------
+// LED2
+// -----------------------------------------------------------------------
+//
+#ifdef USE_LED2
+#define EXIST_LED2
+
+#define LED2_GPIO            htl::GPIO_D1
+#define LED2_ON              true
+#define LED2_OFF             false
+
+#endif // USE_LED2
 
 
-namespace board {
+// -----------------------------------------------------------------------
+// LED3
+// -----------------------------------------------------------------------
+//
+#ifdef USE_LED3
+#define EXIST_LED3
 
-	// -----------------------------------------------------------------------
-	// LED1
-	// -----------------------------------------------------------------------
-	//
-	#ifdef USE_LED1
+#define LED3_GPIO            htl::GPIO_D2
+#define LED3_ON              true
+#define LED3_OFF             false
 
-		#define EXIST_LED1
-
-		namespace led1 {
-
-			// Asignacio de pins
-			using GPIO_LED = htl::GPIO_D0;
-
-			constexpr bool onState = true;
-			constexpr bool offState = false;
-		};
-
-	#endif // USE_LED1
-
-    // -----------------------------------------------------------------------
-	// LED2
-	// -----------------------------------------------------------------------
-	//
-	#ifdef USE_LED2
-
-		#define EXIST_LED2
-
-		namespace led2 {
-
-			// Asignacio de pins
-			using GPIO_LED = htl::GPIO_D1;
-
-			constexpr bool onState = true;
-			constexpr bool offState = false;
-		};
-
-	#endif // USE_LED2
-
-	// -----------------------------------------------------------------------
-	// LED3
-	// -----------------------------------------------------------------------
-	//
-	#ifdef USE_LED3
-
-		#define EXIST_LED3
-
-		namespace led3 {
-
-			// Asignacio de pins
-			using GPIO_LED = htl::GPIO_D2;
-
-			constexpr bool onState = true;
-			constexpr bool offState = false;
-		};
-
-	#endif // USE_LED3
-
-	// -----------------------------------------------------------------------
-	// SW1
-	// -----------------------------------------------------------------------
-	//
-	#ifdef USE_SW1
-
-		#define EXIST_SW1
-
-		namespace sw1 {
-
-			// Asignacio de pins
-			using GPIO_SW = htl::GPIO_D6;
-
-			constexpr bool onState = false;
-			constexpr bool offState = true;
-		}
-
-	#endif // USE_SW1
-
-	// -----------------------------------------------------------------------
-	// SW2
-	// -----------------------------------------------------------------------
-	//
-	#ifdef USE_SW2
-
-		#define EXIST_SW2
-
-		namespace sw2 {
-
-			// Asignacio de pins
-			using GPIO_SW = htl::GPIO_D7;
-
-			constexpr bool onState = false;
-			constexpr bool offState = true;
-		}
-
-	#endif // USE_SW2
-
-    // -----------------------------------------------------------------------
-	// SW3
-	// -----------------------------------------------------------------------
-	//
-	#ifdef USE_SW3
-
-		#define EXIST_SW3
-
-		namespace sw3 {
-
-			// Asignacio de pins
-			using GPIO_SW = htl::GPIO_D13;
-
-			constexpr bool onState = false;
-			constexpr bool offState = true;
-		}
-
-	#endif // USE_SW3
-
-}
+#endif // USE_LED1
 
 
-#endif // __cplusplus
+
+// -----------------------------------------------------------------------
+// SW1
+// -----------------------------------------------------------------------
+//
+#ifdef USE_SW1
+#define EXIST_SW1
+
+#define SW1_GPIO             htl::GPIO_D6
+#define SW1_ON               false
+#define SW1_OFF              true
+
+#endif // USE_SW1
+
+
+// -----------------------------------------------------------------------
+// SW2
+// -----------------------------------------------------------------------
+//
+#ifdef USE_SW2
+#define EXIST_SW2
+
+#define SW2_GPIO             htl::GPIO_D7
+#define SW2_ON               false
+#define SW2_OFF              true
+
+#endif // USE_SW2
+
+
+// -----------------------------------------------------------------------
+// SW3
+// -----------------------------------------------------------------------
+//
+#ifdef USE_SW3
+#define EXIST_SW3
+
+#define SW3_GPIO             htl::GPIO_D13
+#define SW3_ON               false
+#define SW3_OFF              true
+
+#endif // USE_SW3
 
 
 #endif // __eosBoard_PIC32_USB_STARTER_KIT_I__

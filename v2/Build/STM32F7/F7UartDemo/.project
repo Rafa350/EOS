@@ -111,6 +111,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/STM32F7/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/App/STM32F7/eosConfig.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/STM32F7/eosConfig.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/App/STM32F7/stm32f7xx_hal_conf.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/STM32F7/stm32f7xx_hal_conf.h</locationURI>

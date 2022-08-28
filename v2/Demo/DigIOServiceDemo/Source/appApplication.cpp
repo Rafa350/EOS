@@ -42,23 +42,23 @@ void MyApplication::onInitialize() {
 
     // Configura la entrada corresponent al switch SW1
     //
-    GPIO_SW1::initInput(GPIOPull::up);
-    _sw1 = new DigInput(_digInputService, getAdapter<GPIO_SW1>());
+    PinSW1::initInput(GPIOPull::up);
+    _sw1 = new DigInput(_digInputService, getGPIOAdapter<PinSW1>());
     _sw1->enableChangedEventCallback(_sw1ChangedEventCallback);
 
     // COnfigura la entrada corresponent al switch SW2
     //
     #ifdef EXIST_SW2
-        GPIO_SW2::initInput(GPIOPull::up);
-        _sw2 = new DigInput(_digInputService, getAdapter<GPIO_SW2>());
+        PinSW2::initInput(GPIOPull::up);
+        _sw2 = new DigInput(_digInputService, getGPIOAdapter<PinSW2>());
         _sw2->enableChangedEventCallback(_sw2ChangedEventCallback);
     #endif
 
     // Configure la entrada corresponent al switch SW3
     //
     #ifdef EXIST_SW3
-        GPIO_SW3::initInput(GPIOPull::up);
-        _sw3 = new DigInput(_digInputService, getAdapter<GPIO_SW3>());
+        PinSW3::initInput(GPIOPull::up);
+        _sw3 = new DigInput(_digInputService, getGPIOAdapter<PinSW3>());
         _sw3->enableChangedEventCallback(_sw3ChangedEventCallback);
     #endif
 
@@ -85,24 +85,24 @@ void MyApplication::onInitialize() {
 
     // Configura la sortida corresponent al led LED1
     //
-    GPIO_LED1::initOutput();
-    GPIO_LED1::clear();
-    _led1 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED1>());
+    PinLED1::initOutput();
+    PinLED1::clear();
+    _led1 = new DigOutput(_digOutputService, htl::getGPIOAdapter<PinLED1>());
 
     // COnfigura la sortida corresponent al led LED2
     //
     #ifdef EXIST_LED2
-        GPIO_LED2::initOutput();
-        GPIO_LED2::clear();
-        _led2 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED2>());
+        PinLED2::initOutput();
+        PinLED2::clear();
+        _led2 = new DigOutput(_digOutputService, htl::getGPIOAdapter<PinLED2>());
     #endif
 
     // COnfigura la sortida corresponent al led LED3
     //
     #ifdef EXIST_LED3
-        GPIO_LED3::initOutput();
-        GPIO_LED3::clear();
-        _led3 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED3>());
+        PinLED3::initOutput();
+        PinLED3::clear();
+        _led3 = new DigOutput(_digOutputService, htl::getGPIOAdapter<PinLED3>());
     #endif
 
     // Configura el temporitzador pel servei de sortides digitals
@@ -140,7 +140,7 @@ void MyApplication::onInitialize() {
 void MyApplication::sw1ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == board::sw1::onState) {
+    if (args.value == SW1_ON) {
         _led1->pulse(500);
         _led2->delayedPulse(250, 500);
         #ifdef EXIST_LED3
@@ -158,7 +158,7 @@ void MyApplication::sw1ChangedEventHandler(
 void MyApplication::sw2ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == board::sw2::onState) {
+    if (args.value == SW2_ON) {
         #ifdef EXIST_LED3
             _led3->pulse(500);
         #endif
@@ -179,7 +179,7 @@ void MyApplication::sw2ChangedEventHandler(
 void MyApplication::sw3ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == board::sw3::onState) {
+    if (args.value == SW3_ON) {
         _led1->pulse(1000);
         #ifdef EXIST_LED2
             _led2->pulse(2000);
