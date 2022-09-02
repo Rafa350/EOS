@@ -9,8 +9,8 @@ using namespace htl;
 void DMA2D_InterruptHandler() {
 
 	uint32_t isr = DMA2D->ISR;
-
 	if (isr != 0) {
+		DMA2D->IFCR = isr;
 
 		if (isr & DMA2D_ISR_CEIF)
 			DMA2D_1::InterruptHandler(DMA2DEvent::configurationError);
@@ -29,7 +29,5 @@ void DMA2D_InterruptHandler() {
 
 		if (isr & DMA2D_ISR_TEIF)
 			DMA2D_1::InterruptHandler(DMA2DEvent::transferError);
-
-		DMA2D->IFCR = isr;
 	}
 }

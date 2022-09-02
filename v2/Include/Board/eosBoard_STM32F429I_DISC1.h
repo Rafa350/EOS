@@ -115,12 +115,25 @@
 #define FONT_USE_Tahoma12pt
 #define FONT_USE_Tahoma14pt
 
+// SPI interface
+#if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
 #define DISPLAY_CS_GPIO      htl::GPIO_C2
 #define DISPLAY_RS_GPIO      htl::GPIO_D13
 #define DISPLAY_SCK_GPIO     htl::GPIO_F7
 #define DISPLAY_MOSI_GPIO    htl::GPIO_F9
+#define DISPLAY_TE_GPIO      htl::GPIO_D11
 #define DISPLAY_SPI          htl::SPI_5
+#endif
 
+// 8080/6800 interface
+#if defined(DISPLAY_INTERFACE_8080) || defined(DISPLAY_INTERFACE_6800)
+#define DISPLAY_TE_GPIO      htl::GPIO_D11
+#define DISPLAY_RDX_GPIO	 htl::GPIO_D12
+#define DISPLAY_WRX_GPIO     htl::GPIO_D13
+#endif
+
+// RGB interface
+#ifdef DISPLAY_INTERFACE_RGB
 #define DISPLAY_HSYNC_GPIO   htl::GPIO_C6
 #define DISPLAY_VSYNC_GPIO   htl::GPIO_A4
 #define DISPLAY_DE_GPIO      htl::GPIO_F10
@@ -144,6 +157,12 @@
 #define DISPLAY_B6_GPIO      htl::GPIO_B8
 #define DISPLAY_B7_GPIO      htl::GPIO_B9
 
+#define DISPLAY_HSYNC_POL    htl::LTDCPolarity::activeLow;   // HSync polarity
+#define DISPLAY_VSYNC_POL    htl::LTDCPolarity::activeLow;   // VSync polarity
+#define DISPLAY_DE_POL       htl::LTDCPolarity::activeLow;   // DE polarity
+#define DISPLAY_PC_POL       htl::LTDCPolarity::activeLow;   // PC polarity
+#endif
+
 #define DISPLAY_WIDTH  		 240            // Amplada fisica de la pantalla
 #define DISPLAY_HEIGHT       320            // Alçada fisica de la pantall
 #define DISPLAY_HSYNC        9              // Horizontal sync
@@ -152,10 +171,6 @@
 #define DISPLAY_VBP          3              // Vertical back Porch
 #define DISPLAY_HFP          2              // Horizontal front Porch
 #define DISPLAY_VFP          2              // Vertical front Porch
-#define DISPLAY_HSYNC_POL    htl::LTDCPolarity::activeLow;   // HSync polarity
-#define DISPLAY_VSYNC_POL    htl::LTDCPolarity::activeLow;   // VSync polarity
-#define DISPLAY_DE_POL       htl::LTDCPolarity::activeLow;   // DE polarity
-#define DISPLAY_PC_POL       htl::LTDCPolarity::activeLow;   // PC polarity
 
 #define DISPLAY_BUFFER       0xD0000000;
 

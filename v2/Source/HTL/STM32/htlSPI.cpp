@@ -177,7 +177,7 @@ static void waitTxFifoEmpty(
 	unsigned startTime,
 	unsigned timeout) {
 
-	while ((regs->SR & SPI_SR_FTLVL) != SPI_FTLVL_EMPTY) {
+	while ((regs->SR & SPI_SR_FTLVL) != 0) {
 		if (halSYSCheckTimeout(startTime, timeout)) {
 
 		}
@@ -198,7 +198,7 @@ static void waitRxFifoEmpty(
 	unsigned startTime,
 	unsigned timeout) {
 
-	while ((regs->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
+	while ((regs->SR & SPI_SR_FRLVL) != 0) {
 		if (halSYSCheckTimeout(startTime, timeout)) {
 
 		}
@@ -273,7 +273,7 @@ void htl::SPI_send(
 			count -= sizeof(uint8_t);
 		}
 #else
-#error "CPU no soportada."
+#error "Undefined EOS_PLATFORM_XXXX"
 #endif
 
 		while ((regs->SR & SPI_SR_TXE) == 0) {

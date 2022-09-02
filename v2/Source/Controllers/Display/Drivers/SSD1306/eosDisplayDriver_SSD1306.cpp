@@ -216,7 +216,7 @@ void DisplayDriver_SSD1306::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief     Inicialitza l'interficie amb el controlador.
 ///
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+#if defined(DISPLAY_INTERFACE_SPI)
 void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
@@ -234,7 +234,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
 }
 #else
-#error "DISPLAY_SSD1306_INTERFACE"
+#error "DISPLAY_INTERFACE_XXXX"
 #endif
 
 

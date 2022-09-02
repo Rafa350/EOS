@@ -7,6 +7,7 @@
 //
 #include "HTL/htl.h"
 #include "HTL/PIC32/htlGPIO.h"
+#include "htlINT.h"
 
 
 namespace htl {
@@ -72,9 +73,8 @@ namespace htl {
 
     enum class UARTEvent {
         txEmpty,
-        txCompleted,
         rxNotEmpty,
-        rxTimeout
+        error
     };
 
     struct __attribute__((packed , aligned(4))) UARTRegisters {
@@ -98,7 +98,8 @@ namespace htl {
 
     void UART_initialize(UARTRegisters*);
     void UART_deinitialize(UARTRegisters*);
-    void UART_setProtocol(UARTRegisters*, UARTWordBits, UARTParity, UARTStopBits);
+    void UART_setTimming(UARTRegisters*, UARTBaudMode);
+    void UART_setProtocol(UARTRegisters*, UARTWordBits, UARTParity, UARTStopBits, UARTHandsake);
 
     template <UARTChannel>
     struct UARTTrait {
@@ -107,13 +108,13 @@ namespace htl {
 	template <UARTChannel channel_>
 	class UART_x {
         private:
-            using Info = UARTTrait<channel_>;
+            using Trait = UARTTrait<channel_>;
 
 		public:
 			constexpr static const UARTChannel channel = channel_;
 
         private:
-            constexpr static const uint32_t _addr = Info::addr;
+            constexpr static const uint32_t _addr = Trait::addr;
 
             static UARTInterruptFunction _isrFunction;
             static UARTInterruptParam _isrParam;
@@ -142,41 +143,84 @@ namespace htl {
 
             static void enable() {
 
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                regs->UxMODE.ON = 1;
+            }
+
+            static void enableTX() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                regs->UxSTA.UTXEN = 1;
+            }
+
+            static void enableRX() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                regs->UxSTA.URXEN = 1;
             }
 
             static void disable() {
 
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                regs->UxMODE.ON = 0;
+            }
+
+            static void disableTX() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                regs->UxSTA.UTXEN = 0;
+            }
+
+            static void disableRX() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                regs->UxSTA.URXEN = 0;
+            }
+
+            static void setTimming(
+                UARTBaudMode baudMode)  {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                UART_setTimming(regs, baudMode);
             }
 
             static void setProtocol(
                 UARTWordBits wordBits,
                 UARTParity parity,
-                UARTStopBits stopBits) {
+                UARTStopBits stopBits,
+                UARTHandsake handsake = UARTHandsake::none) {
 
                 UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
-                UART_setProtocol(regs, wordBits, parity, stopBits);
+                UART_setProtocol(regs, wordBits, parity, stopBits, handsake);
             }
 
 			template <typename gpio_>
-			inline static void setTXPin() {
-				if constexpr (channel_ == UARTChannel::channel1)
-					gpio_::initOutput(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull);
+			static void initTXPin() {
+
+                gpio_::initOutput(GPIODriver::pushPull,	GPIOSpeed::fast);
 			}
 
 			template <typename gpio_>
-			inline static void setRXPin() {
-				if constexpr (channel_ == UARTChannel::channel1)
-					gpio_::initInput();
+			static void initRXPin() {
+
+				gpio_::initInput();
 			}
 
-			inline static void send(uint8_t data) {
+			static void write(uint8_t data) {
+
                 UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
                 regs->UxTXREG = data;
 			}
 
-            static void enableInterrupt(UARTEvent event) {
+            static uint8_t read() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                return regs->UxRXREG;
+            }
+
+            static void enableInterrupt(
+                UARTEvent event) {
+
                 #ifdef _UART1
                     if constexpr (channel_ == UARTChannel::channel1)
                         switch (event) {
@@ -184,11 +228,11 @@ namespace htl {
                                 IEC0bits.U1EIE = 1;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IEC0bits.U1TXIE = 1;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IEC0bits.U1RXIE = 1;
                                 break;
                         }
@@ -200,11 +244,11 @@ namespace htl {
                                 IEC1bits.U2EIE = 1;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IEC1bits.U2TXIE = 1;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IEC1bits.U2RXIE = 1;
                                 break;
                         }
@@ -216,11 +260,11 @@ namespace htl {
                                 IEC1bits.U3EIE = 1;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IEC1bits.U3TXIE = 1;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IEC1bits.U3RXIE = 1;
                                 break;
                         }
@@ -232,11 +276,11 @@ namespace htl {
                                 IEC2bits.U4EIE = 1;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IEC2bits.U4TXIE = 1;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IEC2bits.U4RXIE = 1;
                                 break;
                         }
@@ -248,18 +292,19 @@ namespace htl {
                                 IEC2bits.U5EIE = 1;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IEC2bits.U5TXIE = 1;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IEC2bits.U5RXIE = 1;
                                 break;
                         }
                 #endif
             }
 
-            static bool disableInterrupt(UARTEvent event) {
+            static bool disableInterrupt(
+                UARTEvent event) {
 
                 bool state = false;
 
@@ -268,17 +313,17 @@ namespace htl {
                         switch (event) {
                             case UARTEvent::error:
                                 state = IEC0bits.U1EIE;
-                                IEC0bits.U1EIE = 1;
+                                IEC0bits.U1EIE = 0;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 state = IEC0bits.U1TXIE;
-                                IEC0bits.U1TXIE = 1;
+                                IEC0bits.U1TXIE = 0;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 state = IEC0bits.U1RXIE;
-                                IEC0bits.U1RXIE = 1;
+                                IEC0bits.U1RXIE = 0;
                                 break;
                         }
                     }
@@ -288,17 +333,17 @@ namespace htl {
                         switch (event) {
                             case UARTEvent::error:
                                 state = IEC1bits.U2EIE;
-                                IEC1bits.U2EIE = 1;
+                                IEC1bits.U2EIE = 0;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 state = IEC1bits.U2TXIE;
-                                IEC1bits.U2TXIE = 1;
+                                IEC1bits.U2TXIE = 0;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 state = IEC1bits.U2RXIE;
-                                IEC1bits.U2RXIE = 1;
+                                IEC1bits.U2RXIE = 0;
                                 break;
                         }
                     }
@@ -308,17 +353,17 @@ namespace htl {
                         switch (event) {
                             case UARTEvent::error:
                                 state = IEC1bits.U3EIE;
-                                IEC1bits.U3EIE = 1;
+                                IEC1bits.U3EIE = 0;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 state = IEC1bits.U3TXIE;
-                                IEC1bits.U3TXIE = 1;
+                                IEC1bits.U3TXIE = 0;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 state = IEC1bits.U3RXIE;
-                                IEC1bits.U3RXIE = 1;
+                                IEC1bits.U3RXIE = 0;
                                 break;
                         }
                     }
@@ -328,17 +373,17 @@ namespace htl {
                         switch (event) {
                             case UARTEvent::error:
                                 state = IEC2bits.U4EIE;
-                                IEC2bits.U4EIE = 1;
+                                IEC2bits.U4EIE = 0;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 state = IEC2bits.U4TXIE;
-                                IEC2bits.U4TXIE = 1;
+                                IEC2bits.U4TXIE = 0;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 state = IEC2bits.U4RXIE;
-                                IEC2bits.U4RXIE = 1;
+                                IEC2bits.U4RXIE = 0;
                                 break;
                         }
                     }
@@ -348,17 +393,17 @@ namespace htl {
                         switch (event) {
                             case UARTEvent::error:
                                 state = IEC2bits.U5EIE;
-                                IEC2bits.U5EIE = 1;
+                                IEC2bits.U5EIE = 0;
                                 break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 state = IEC2bits.U5TXIE;
-                                IEC2bits.U5TXIE = 1;
+                                IEC2bits.U5TXIE = 0;
                                 break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 state = IEC2bits.U5RXIE;
-                                IEC2bits.U5RXIE = 1;
+                                IEC2bits.U5RXIE = 0;
                                 break;
                         }
                     }
@@ -367,17 +412,28 @@ namespace htl {
                 return state;
             }
 
-            inline static bool getInterruptFlag(UARTEvent event) {
+            /// \brief Deshabilita les interrupcions.
+            ///
+            static void disableInterrupts() {
+
+                disableInterrupt(UARTEvent::txEmpty);
+                disableInterrupt(UARTEvent::rxNotEmpty);
+                disableInterrupt(UARTEvent::error);
+            }
+
+            static bool getInterruptFlag(
+                UARTEvent event) {
+
                 #ifdef _UART1
                     if constexpr (channel_ == UARTChannel::channel1)
                         switch(event) {
                             case UARTEvent::error:
                                 return IFS0bits.U1EIF;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 return IFS0bits.U1TXIF;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 return IFS0bits.U1RXIF;
                         }
                 #endif
@@ -387,10 +443,10 @@ namespace htl {
                             case UARTEvent::error:
                                 return IFS1bits.U2EIF;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 return IFS1bits.U2TXIF;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 return IFS1bits.U2RXIF;
                         }
                 #endif
@@ -400,10 +456,10 @@ namespace htl {
                             case UARTEvent::error:
                                 return IFS1bits.U3EIF;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 return IFS1bits.U3TXIF;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 return IFS1bits.U3RXIF;
                         }
                 #endif
@@ -413,10 +469,10 @@ namespace htl {
                             case UARTEvent::error:
                                 return IFS2bits.U4EIF;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 return IFS2bits.U4TXIF;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 return IFS2bits.U4RXIF;
                         }
                 #endif
@@ -426,27 +482,34 @@ namespace htl {
                             case UARTEvent::error:
                                 return IFS2bits.U5EIF;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 return IFS2bits.U5TXIF;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 return IFS2bits.U5RXIF;
                         }
                 #endif
+
+                return false;
             }
 
-            inline static void clearInterruptFlag(UARTEvent event) {
+            static void clearInterruptFlag(
+                UARTEvent event) {
+
                 #ifdef _UART1
                     if constexpr (channel_ == UARTChannel::channel1)
                         switch(event) {
                             case UARTEvent::error:
                                 IFS0bits.U1EIF = 0;
+                                break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IFS0bits.U1TXIF = 0;
+                                break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IFS0bits.U1RXIF = 0;
+                                break;
                         }
                 #endif
                 #ifdef _UART2
@@ -454,12 +517,15 @@ namespace htl {
                         switch(event) {
                             case UARTEvent::error:
                                 IFS1bits.U2EIF = 0;
+                                break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IFS1bits.U2TXIF = 0;
+                                break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IFS1bits.U2RXIF = 0;
+                                break;
                         }
                 #endif
                 #ifdef _UART3
@@ -467,12 +533,15 @@ namespace htl {
                         switch(event) {
                             case UARTEvent::error:
                                 IFS1bits.U3EIF = 0;
+                                break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IFS1bits.U3TXIF = 0;
+                                break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IFS1bits.U3RXIF = 0;
+                                break;
                         }
                 #endif
                 #ifdef _UART4
@@ -480,12 +549,15 @@ namespace htl {
                         switch(event) {
                             case UARTEvent::error:
                                 IFS2bits.U4EIF = 0;
+                                break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IFS2bits.U4TXIF = 0;
+                                break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IFS2bits.U4RXIF = 0;
+                                break;
                         }
                 #endif
                 #ifdef _UART5
@@ -493,61 +565,84 @@ namespace htl {
                         switch(event) {
                             case UARTEvent::error:
                                 IFS2bits.U5EIF = 0;
+                                break;
 
-                            case UARTEvent::transmit:
+                            case UARTEvent::txEmpty:
                                 IFS2bits.U5TXIF = 0;
+                                break;
 
-                            case UARTEvent::receive:
+                            case UARTEvent::rxNotEmpty:
                                 IFS2bits.U5RXIF = 0;
+                                break;
                         }
                 #endif
             }
 
-            static void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param = nullptr) {
+            static void clearInterruptFlags() {
+
+                clearInterruptFlag(UARTEvent::txEmpty);
+                clearInterruptFlag(UARTEvent::rxNotEmpty);
+                clearInterruptFlag(UARTEvent::error);
+            }
+
+            static void setInterruptFunction(
+                UARTInterruptFunction function,
+                UARTInterruptParam param = nullptr) {
+
                 _isrFunction = function;
                 _isrParam = param;
             }
 
             static void interruptHandler(UARTEvent event) {
+
                 if (_isrFunction != nullptr)
                     _isrFunction(event, _isrParam);
             }
 	};
 
+    template <UARTChannel channel_> UARTInterruptFunction UART_x<channel_>::_isrFunction = nullptr;
+    template <UARTChannel channel_> UARTInterruptParam UART_x<channel_>::_isrParam = nullptr;
+
     #ifdef _UART1
         template <>
         struct UARTTrait<UARTChannel::channel1> {
             constexpr static const uint32_t addr = _UART1_BASE_ADDRESS;
+            constexpr static const INTVector vector = INTVector::uart1;
         };
     #endif
     #ifdef _UART2
         template <>
         struct UARTTrait<UARTChannel::channel2> {
             constexpr static const uint32_t addr = _UART2_BASE_ADDRESS;
+            constexpr static const INTVector vector = INTVector::uart2;
         };
     #endif
     #ifdef _UART3
         template <>
         struct UARTTrait<UARTChannel::channel3> {
             constexpr static const uint32_t addr = _UART3_BASE_ADDRESS;
+            constexpr static const INTVector vector = INTVector::uart3;
         };
     #endif
     #ifdef _UART4
         template <>
         struct UARTTrait<UARTChannel::channel4> {
             constexpr static const uint32_t addr = _UART4_BASE_ADDRESS;
+            constexpr static const INTVector vector = INTVector::uart3;
         };
     #endif
     #ifdef _UART5
         template <>
         struct UARTTrait<UARTChannel::channel5> {
             constexpr static const uint32_t addr = _UART5_BASE_ADDRESS;
+            constexpr static const INTVector vector = INTVector::uart5;
         };
     #endif
     #ifdef _UART6
         template <>
         struct UARTTrait<UARTChannel::channel6> {
             constexpr static const uint32_t addr = _UART6_BASE_ADDRESS;
+            constexpr static const INTVector vector = INTVector::uart6;
         };
     #endif
 
@@ -571,35 +666,89 @@ namespace htl {
         using UART_6 = UART_x<UARTChannel::channel6>;
     #endif
 
+
     class UARTAdapter {
         public:
-            virtual ~UARTAdapter();
-            virtual void enableInterrupt(UARTEvent event) = 0;
-            virtual void disableInterrupt(UARTEvent event) = 0;
-            virtual void disableInterrupts() = 0;
+			virtual void write(uint8_t data) const = 0;
+			virtual uint8_t read() const = 0;
+            virtual void enableTX() const = 0;
+            virtual void enableRX() const = 0;
+            virtual void disableTX() const = 0;
+            virtual void disableRX() const = 0;
+			virtual void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const = 0;
+            virtual void enableInterrupt(UARTEvent event) const = 0;
+            virtual bool disableInterrupt(UARTEvent event) const = 0;
+            virtual void disableInterrupts() const = 0;
+			virtual bool getInterruptFlag(UARTEvent event) const = 0;
+			virtual void clearInterruptFlag(UARTEvent event) const = 0;
+			virtual void clearInterruptFlags() const = 0;
     };
 
     template <typename uart_>
-    class UARTAdapter_x {
+    class UARTAdapter_x : public UARTAdapter {
+		private:
+			UARTAdapter_x() = default;
+			UARTAdapter_x(const UARTAdapter_x &) = delete;
+			UARTAdapter_x(const UARTAdapter_x &&) = delete;
+
+			UARTAdapter & operator = (const UARTAdapter_x &) = delete;
+			UARTAdapter & operator = (const UARTAdapter_x &&) = delete;
+
         public:
             static UARTAdapter_x& instance() {
                 static UARTAdapter_x adapter;
                 return adapter;
             }
 
-            void enableInterrupt(UARTEvent event) override {
+			void write(uint8_t data) const override {
+                uart_::write(data);
+            }
+
+			uint8_t read() const override {
+                return uart_::read();
+            }
+
+            void enableTX() const override {
+                uart_::enableTX();
+            }
+
+            void enableRX() const override {
+                uart_::enableRX();
+            }
+
+            void disableTX() const override {
+                uart_::disableTX();
+            }
+
+            void disableRX() const override {
+                uart_::disableRX();
+            }
+
+			void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const override {
+                uart_::setInterruptFunction(function, param);
+            }
+
+            void enableInterrupt(UARTEvent event) const override {
                 uart_::enableInterrupt(event);
             }
 
-            void disableInterrupt(UARTEvent event) override {
-                uart_::disableInterrupt(event);
+            bool disableInterrupt(UARTEvent event) const override {
+                return uart_::disableInterrupt(event);
             }
 
-            void disableInterrupts() override {
-                uart_::enableInterrupts();
+            void disableInterrupts() const override {
+                uart_::disableInterrupts();
             }
 
-            void clearInterruptFlags() override {
+			bool getInterruptFlag(UARTEvent event) const override {
+				return uart_::getInterruptFlag(event);
+			}
+
+			void clearInterruptFlag(UARTEvent event) const override {
+				uart_::clearInterruptFlag(event);
+			}
+
+            void clearInterruptFlags() const override {
                 uart_::clearInterruptFlags();
             }
     };

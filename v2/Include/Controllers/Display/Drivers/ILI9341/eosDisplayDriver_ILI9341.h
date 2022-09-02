@@ -1,26 +1,10 @@
+#pragma once
 #ifndef __eosDisplayDriver_ILI9341__
 #define	__eosDisplayDriver_ILI9341__
 
 
 #include "eos.h"
-
-
-// Interficie amb el controlador
-//
-#define DISPLAY_ILI9341_INTERRFACE_SPI      0
-#define DISPLAY_ILI9341_INTERRFACE_SIO      1
-#define DISPLAY_ILI9341_INTERRFACE_PIO8     2
-#ifndef DISPLAY_ILI9341_INTERFACE
-#define DISPLAY_ILI9341_INTERFACE           DISPLAY_INTERFACE_SPI
-#endif
-#if (DISPLAY_ILI9341_INTERFACE != DISPLAY_ILI9341_INTERFACE_SPI) && \
-    (DISPLAY_ILI9341_INTERFACE != DISPLAY_ILI9341_INTERFACE_SIO) && \
-    (DISPLAY_ILI9341_INTERFACE != DISPLAY_ILI9341_INTERFACE_PIO)
-#error "DISPLAY_ILI9341_INTERFACE"
-#endif
-
-
-#if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
+#if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
 #include "HTL/htlSPI.h"
 #endif
 #include "HTL/htlGPIO.h"
@@ -32,16 +16,25 @@ namespace eos {
 
     class DisplayDriver_ILI9341: public IDisplayDriver {
     	private:
-#ifdef DISPLAY_RST_GPIO
-    		using PinRST = DISPLAY_RST_GPIO;
-#endif
+			#if defined(DISPLAY_INTERFACE_8080)
+				using PinRDX = DISPLAY_RDX_GPIO;
+				using PinWRX = DISPLAY_WRX_GPIO;
+    			using PinTE = DISPLAY_TE_GPIO;
+			#endif
+			#if defined(DISPLAY_INTERFACE_6800)
+				using PinTE = DISPLAY_TE_GPIO;
+			#endif
+			#if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
+    			using PinTE = DISPLAY_TE_GPIO;
+				using PinSCK = DISPLAY_SCK_GPIO;
+				using PinMOSI = DISPLAY_MOSI_GPIO;
+				using Spi = DISPLAY_SPI;
+			#endif
+			#ifdef DISPLAY_RST_GPIO
+    			using PinRST = DISPLAY_RST_GPIO;
+			#endif
     		using PinCS = DISPLAY_CS_GPIO;
     		using PinRS = DISPLAY_RS_GPIO;
-#if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-    		using PinSCK = DISPLAY_SCK_GPIO;
-    		using PinMOSI = DISPLAY_MOSI_GPIO;
-    		using Spi = DISPLAY_SPI;
-#endif
 
     	private:
     		constexpr static int _displayWidth = DISPLAY_WIDTH;

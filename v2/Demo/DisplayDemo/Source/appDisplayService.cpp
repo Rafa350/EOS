@@ -6,6 +6,7 @@
 #include "System/Graphics/eosBitmap.h"
 #include "System/Graphics/eosText.h"
 #include "System/Graphics/eosGraphics.h"
+#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #elif defined(DISPLAY_DRV_ILI9341)

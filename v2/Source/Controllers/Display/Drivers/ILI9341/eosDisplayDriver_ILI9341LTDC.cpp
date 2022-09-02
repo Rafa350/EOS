@@ -313,11 +313,11 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 #error "Display no soportado"
 #endif
 
-#ifdef DISPLAY_RST_GPIO
-    halTMRDelay(10);
-    PinRST::set();
-    halTMRDelay(120);
-#endif
+	#ifdef DISPLAY_RST_GPIO
+    	halTMRDelay(10);
+    	PinRST::set();
+    	halTMRDelay(120);
+	#endif
 
     uint8_t c;
     const uint8_t *p = initCommands;

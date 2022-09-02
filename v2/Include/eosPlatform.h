@@ -14,7 +14,6 @@
 
 	// Platform definitions
 	#if defined(__PIC32MX)
-        #define EOS_PLATFORM_PIC32
         #define EOS_PLATFORM_PIC32MX
         #if defined(__32MX460F512L__)
             #define EOS_PLATFORM_PIC32MX4xx
@@ -24,11 +23,11 @@
             #error  "Unknown processor PIC32MX"
         #endif
     #elif defined(__PIC32MZ)
-        #define EOS_PLATFORM_PIC32
 		#define EOS_PLATFORM_PIC32MZ
 	#else
 		#error "Unknown processor"
 	#endif
+    #define EOS_PLATFORM_PIC32
 	#define EOS_PLATFORM_DETECTED 1
 
 

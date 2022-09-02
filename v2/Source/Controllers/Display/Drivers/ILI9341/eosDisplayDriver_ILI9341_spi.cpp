@@ -2,8 +2,13 @@
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
 #include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
-#include "System/Graphics/eosColor.h"
 #include "HAL/halTMR.h"
+#include "System/Graphics/eosColor.h"
+
+
+#ifndef DISPLAY_INTERFACE_SPI
+#error "Undefined DISPLAY_INTERFACE_SPI"
+#endif
 
 
 using namespace eos;
@@ -17,10 +22,11 @@ void DisplayDriver_ILI9341::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-#ifdef DISPLAY_RST_GPIO
-	PinRST.initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	PinRST::clear();
-#endif
+	PinTE::initInput(GPIOPull::up);
+	#ifdef DISPLAY_RST_GPIO
+		PinRST.initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+		PinRST::clear();
+	#endif
 	PinCS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
 	PinCS::set();
 	PinRS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
@@ -87,6 +93,7 @@ void DisplayDriver_ILI9341::initializeController() {
     	__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF),
 		__FRAME_RATE_CONTROL_1(0x00, 0x18),
 		__DISPLAY_FUNCTION_CONTROL(0x08, 0x82, 0x27, 0x00),
+		__TEARING_EFFECT_LINE_ON(0),
 		__ENABLE_3G(0x00),
 		__GAMMA_SET(0x01),
     	__POSITIVE_GAMMA_CORRECTION( 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
@@ -97,11 +104,11 @@ void DisplayDriver_ILI9341::initializeController() {
     };
 #endif
 
-#ifdef DISPLAY_RST_PORT
-    halTMRDelay(10);
-    CPIO_RST::set();
-    halTMRDelay(120);
-#endif
+	#ifdef DISPLAY_RST_PORT
+    	halTMRDelay(10);
+    	CPIO_RST::set();
+    	halTMRDelay(120);
+	#endif
 
     uint8_t c;
     const uint8_t *p = initCommands;

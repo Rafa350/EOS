@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "hal/halSYS.h"
+#include "HTL/htlGPIO.h"
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_rcc.h"
 #include "stm32746g_discovery.h"
@@ -50,6 +51,16 @@ static void enableCache() {
 }
 
 
+static void initializeGPIO() {
+
+#if defined(HARDWARE_STM32F746G_DISCO) && !defined(USE_DISPLAY)
+	using PinBKE = htl::GPIO_K3;
+    PinBKE::initOutput(htl::GPIODriver::pushPull);
+	PinBKE::clear();
+#endif
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
@@ -61,6 +72,7 @@ void appInitialize() {
 
 	initializeCLK();
 	initializeSDRAM();
+	initializeGPIO();
 
 #ifdef EOS_DEBUG
 	__HAL_FREEZE_TIM6_DBGMCU();

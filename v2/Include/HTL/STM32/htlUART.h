@@ -143,7 +143,6 @@ namespace htl {
 
 		private:
 			static constexpr uint32_t _addr = Trait::addr;
-			static constexpr unsigned _defaultTimeout = 1000;
 			static UARTInterruptFunction _isrFunction;
 			static UARTInterruptParam _isrParam;
 
@@ -241,12 +240,6 @@ namespace htl {
 
 				activate();
 				disable();
-
-				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 &= ~USART_CR1_UE;
-			    regs->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
-
-			    enable();
 			}
 
 			/// \bried Desinicialitza el modul.
@@ -311,39 +304,52 @@ namespace htl {
 				#endif
 			}
 
-			/// \brief Habilita el modul per comunicar
+			/// \brief Habilita el modul.
 			///
 			static void enable() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 |= (USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
+				regs->CR1 |= USART_CR1_UE;
 			}
 
-			/// \brief Habilita el modul per comunicar per transmisio
+			/// \brief Habilita la transmisio
 			///
 			static void enableTX() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 |= (USART_CR1_UE | USART_CR1_TE);
+				ATOMIC_SET_BIT(regs->CR1, USART_CR1_TE);
 			}
 
-			/// \brief Habilita el modul per comunicar per recepcio
+			/// \brief Habilita la recepcio.
 			///
 			static void enableRX() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 |= (USART_CR1_UE | USART_CR1_RE);
+				ATOMIC_SET_BIT(regs->CR1, USART_CR1_RE);
 			}
 
-			/// \brief Deshabilita el modul per comunicar
+			/// \brief Deshabilita el modul.
 			///
 			static void disable() {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				regs->CR1 &= ~(USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
+			}
 
-				disableInterrupts();
-				clearInterruptFlags();
+			/// \brief Deshabilita la transmisio.
+			///
+			static void disableTX() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TE);
+			}
+
+			/// \brief Deshabilita la recepcio.
+			///
+			static void disableRX() {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+				ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RE);
 			}
 
 			/// \brief Configuracio del timing.
@@ -364,7 +370,7 @@ namespace htl {
 
 			/// \brief Configura el protocol de comunicacio.
 			/// \param work: Numero de bits de dades.
-			/// \param parity: Opcionsd e paritat.
+			/// \param parity: Opcions de paritat.
 			/// \param stop: Numero dels bits de parada.
 			/// \param handsake: El protocol hardware.
 			///
@@ -386,6 +392,7 @@ namespace htl {
 			///
 			template <typename gpio_>
 			static void initTXPin() {
+
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
@@ -396,6 +403,7 @@ namespace htl {
 			///
 			template <typename gpio_>
 			static void initRXPin() {
+
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
@@ -406,6 +414,7 @@ namespace htl {
 			///
 			template <typename gpio_>
 			static void initCTSPin() {
+
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
@@ -416,6 +425,7 @@ namespace htl {
 			///
 			template <typename gpio_>
 			static void initRTSPin() {
+
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
@@ -450,53 +460,53 @@ namespace htl {
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 				switch (event) {
 					case UARTEvent::cts:
-						regs->CR3 |= USART_CR3_CTSIE;
+						ATOMIC_SET_BIT(regs->CR3, USART_CR3_CTSIE);
 						break;
 
 					case UARTEvent::brk:
-						regs->CR2 |= USART_CR2_LBDIE;
+						ATOMIC_SET_BIT(regs->CR2, USART_CR2_LBDIE);
 						break;
 
 					case UARTEvent::idle:
-						regs->CR1 |= USART_CR1_IDLEIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_IDLEIE);
 						break;
 
 					case UARTEvent::txEmpty:
-						regs->CR1 |= USART_CR1_TXEIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_TXEIE);
 						break;
 
 					case UARTEvent::txComplete:
-						regs->CR1 |= USART_CR1_TCIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_TCIE);
 						break;
 
 					case UARTEvent::rxNotEmpty:
-						regs->CR1 |= USART_CR1_RXNEIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_RXNEIE);
 						break;
 
 					case UARTEvent::parity:
-						regs->CR1 |= USART_CR1_PEIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_PEIE);
 						break;
 
 					case UARTEvent::rxTimeout:
-						regs->CR1 |= USART_CR1_RTOIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_RTOIE);
 						break;
 
 					case UARTEvent::endOfBlock:
-						regs->CR1 |= USART_CR1_EOBIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_EOBIE);
 						break;
 
 					case UARTEvent::match:
-						regs->CR1 |= USART_CR1_CMIE;
+						ATOMIC_SET_BIT(regs->CR1, USART_CR1_CMIE);
 						break;
 
 					case UARTEvent::overrun:
-						regs->CR3 |= USART_CR3_EIE;
+						ATOMIC_SET_BIT(regs->CR3, USART_CR3_EIE);
 						regs->CR1 |= USART_CR1_RXNEIE;
 						break;
 
 					case UARTEvent::noise:
 					case UARTEvent::framming:
-						regs->CR3 |= USART_CR3_EIE;
+						ATOMIC_SET_BIT(regs->CR3, USART_CR3_EIE);
 						break;
 				}
 			}
@@ -513,80 +523,68 @@ namespace htl {
 				switch (event) {
 					case UARTEvent::cts:
 						state = regs->CR3 & USART_CR3_CTSIE;
-						regs->CR3 &= ~USART_CR3_CTSIE;
+						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_CTSIE);
 						break;
 
 					case UARTEvent::brk:
 						state = regs->CR2 & USART_CR2_LBDIE;
-						regs->CR2 &= ~USART_CR2_LBDIE;
+						ATOMIC_CLEAR_BIT(regs->CR2, USART_CR2_LBDIE);
 						break;
 
 					case UARTEvent::idle:
 						state = regs->CR1 & USART_CR1_IDLEIE;
-						regs->CR1 &= ~USART_CR1_IDLEIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_IDLEIE);
 						break;
 
 					case UARTEvent::txEmpty:
 						state = regs->CR1 & USART_CR1_TXEIE;
-						regs->CR1 &= ~USART_CR1_TXEIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TXEIE);
 						break;
 
 					case UARTEvent::txComplete:
 						state = regs->CR1 & USART_CR1_TCIE;
-						regs->CR1 &= ~USART_CR1_TCIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TCIE);
 						break;
 
 					case UARTEvent::rxNotEmpty:
 						state = regs->CR1 & USART_CR1_RXNEIE;
-						regs->CR1 &= ~USART_CR1_RXNEIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RXNEIE);
 						break;
 
 					case UARTEvent::parity:
 						state = regs->CR1 & USART_CR1_PEIE;
-						regs->CR1 &= ~USART_CR1_PEIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_PEIE);
 						break;
 
 					case UARTEvent::rxTimeout:
 						state = regs->CR1 & USART_CR1_RTOIE;
-						regs->CR1 &= ~USART_CR1_RTOIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RTOIE);
 						break;
 
 					case UARTEvent::endOfBlock:
 						state = regs->CR1 & USART_CR1_EOBIE;
-						regs->CR1 &= ~USART_CR1_EOBIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_EOBIE);
 						break;
 
 					case UARTEvent::match:
 						state = regs->CR1 & USART_CR1_CMIE;
-						regs->CR1 &= ~USART_CR1_CMIE;
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_CMIE);
 						break;
 
 					case UARTEvent::overrun:
 						state =
 							(regs->CR1 & USART_CR1_RXNEIE) |
 						    (regs->CR3 & USART_CR3_EIE);
-						regs->CR3 &= ~USART_CR3_EIE;
-						regs->CR1 &= ~USART_CR1_RXNEIE;
+						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_EIE);
+						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RXNEIE);
 						break;
 
 					case UARTEvent::noise:
 					case UARTEvent::framming:
-						regs->CR3 |= USART_CR3_EIE;
+						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_EIE);
 						break;
 				}
 				return state;
-			}
-
-			/// \brief Desabilita les interrrupcions
-			///
-			static void disableInterrupts() {
-
-				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->CR1 &= ~(USART_CR1_IDLEIE | USART_CR1_TXEIE | USART_CR1_TCIE |
-					USART_CR1_RXNEIE | USART_CR1_PEIE | USART_CR1_RTOIE |
-					USART_CR1_EOBIE | USART_CR1_CMIE | USART_CR1_RXNEIE);
-				regs->CR2 &= ~USART_CR2_LBDIE;
-				regs->CR3 &= ~(USART_CR3_CTSIE | USART_CR3_EIE);
 			}
 
 			/// \brief Obte el flag d'interrupcio.
@@ -688,17 +686,6 @@ namespace htl {
 					case UARTEvent::rxNotEmpty:
 						break;
 				}
-			}
-
-			/// \brief Borra tots els flags d'interrupcio.
-			///
-			inline static void clearInterruptFlags() {
-
-				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				regs->ICR = USART_ICR_CTSCF | USART_ICR_EOBCF | USART_ICR_FECF |
-					USART_ICR_IDLECF | USART_ICR_NCF | USART_ICR_ORECF |
-					USART_ICR_PECF | USART_ICR_RTOCF | USART_ICR_TCCF |
-					USART_ICR_LBDCF | USART_ICR_CMCF;
 			}
 
 			/// \brief Asigna la funcio d'interrupcio.
@@ -841,13 +828,15 @@ namespace htl {
 		public:
 			virtual void write(uint8_t data) const = 0;
 			virtual uint8_t read() const = 0;
+			virtual void enableTX() const = 0;
+			virtual void enableRX() const = 0;
+			virtual void disableTX() const = 0;
+			virtual void disableRX() const = 0;
 			virtual void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const = 0;
 			virtual void enableInterrupt(UARTEvent event) const = 0;
 			virtual bool disableInterrupt(UARTEvent event) const = 0;
-			virtual void disableInterrupts() const = 0;
 			virtual bool getInterruptFlag(UARTEvent event) const = 0;
 			virtual void clearInterruptFlag(UARTEvent event) const = 0;
-			virtual void clearInterruptFlags() const = 0;
 	};
 
 	template <typename uart_>
@@ -874,6 +863,22 @@ namespace htl {
 				return uart_::read();
 			}
 
+			void enableTX() const override {
+				uart_::enableTX();
+			}
+
+			void enableRX() const override {
+				uart_::enableRX();
+			}
+
+			void disableTX() const override {
+				uart_::disableTX();
+			}
+
+			void disableRX() const override {
+				uart_::disableRX();
+			}
+
 			void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const {
 				uart_::setInterruptFunction(function, param);
 			}
@@ -886,20 +891,12 @@ namespace htl {
 				return uart_::disableInterrupt(event);
 			}
 
-			void disableInterrupts() const override {
-				uart_::disableInterrupts();
-			}
-
 			bool getInterruptFlag(UARTEvent event) const override {
 				return uart_::getInterruptFlag(event);
 			}
 
 			void clearInterruptFlag(UARTEvent event) const override {
 				uart_::clearInterruptFlag(event);
-			}
-
-			void clearInterruptFlags() const override {
-				uart_::clearInterruptFlags();
 			}
 	};
 

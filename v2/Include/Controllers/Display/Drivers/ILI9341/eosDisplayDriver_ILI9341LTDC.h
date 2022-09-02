@@ -1,35 +1,9 @@
+#pragma once
 #ifndef __eosDisplayDriver_ILI9341LTDC__
 #define	__eosDisplayDriver_ILI9341LTDC__
 
 
 #include "eos.h"
-
-
-// Amplada d'imatge
-//
-#ifndef DISPLAY_IMAGE_WIDTH
-#define DISPLAY_IMAGE_WIDTH       240  // Tamany fix del controlador
-#endif
-#if (DISPLAY_IMAGE_WIDTH != 240)
-#error ""DISPLAY_IMAGE_WIDTH
-#endif
-
-// Alçada d'imatge
-//
-#ifndef DISPLAY_IMAGE_HEIGHT
-#define DISPLAY_IMAGE_HEIGHT      320  // Tamany fix del controlador
-#endif
-#if (DISPLAY_IMAGE_HEIGHT != 320)
-#error ""DISPLAY_IMAGE_HEIGHT
-#endif
-
-// Format de color
-//
-#ifndef DISPLAY_COLOR_FORMAT
-#define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565
-#endif
-
-
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HTL/htlGPIO.h"
@@ -127,4 +101,4 @@ namespace eos {
 }
 
 
-#endif // __eos_DisplayDriver_ILI9341LTDC__
+#endif // __eosDisplayDriver_ILI9341LTDC__

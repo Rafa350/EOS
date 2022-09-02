@@ -35,8 +35,6 @@ void AsyncSerialDriver_UART::initialize() {
 ///
 void AsyncSerialDriver_UART::deinitialize() {
 
-	_uart.disableInterrupts();
-	_uart.clearInterruptFlags();
 	_uart.setInterruptFunction(nullptr, nullptr);
 
     AsyncSerialDriver::deinitialize();
@@ -66,7 +64,7 @@ bool AsyncSerialDriver_UART::transmit(
 		_txLength = dataLength;
 		_txCount = 0;
 
-		_uart.clearInterruptFlags();
+		_uart.enableTX();
 		_uart.enableInterrupt(UARTEvent::txEmpty);
 
 		// En aquest moment es genera una interrupcio txEmpty
@@ -100,9 +98,11 @@ bool AsyncSerialDriver_UART::receive(
 		_rxSize = dataSize;
 		_rxCount = 0;
 
-		_uart.clearInterruptFlags();
+		_uart.enableRX();
 		_uart.enableInterrupt(UARTEvent::rxNotEmpty);
-		_uart.enableInterrupt(UARTEvent::rxTimeout);
+        #ifdef EOS_PLATFORM_STM32
+            _uart.enableInterrupt(UARTEvent::rxTimeout);
+        #endif
 
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles en la UART.
@@ -116,6 +116,7 @@ bool AsyncSerialDriver_UART::receive(
 /// \brief    Gestiona les interrupcions.
 /// \param    event: El event.
 ///
+#if defined(EOS_PLATFORM_STM32)
 void AsyncSerialDriver_UART::interruptHandler(
 	UARTEvent event) {
 
@@ -137,6 +138,7 @@ void AsyncSerialDriver_UART::interruptHandler(
 		case UARTEvent::txComplete:
 			_uart.disableInterrupt(UARTEvent::txEmpty);
 			_uart.disableInterrupt(UARTEvent::txComplete);
+			_uart.disableTX();
 			notifyTxCompleted(_txCount);
 			break;
 
@@ -160,6 +162,33 @@ void AsyncSerialDriver_UART::interruptHandler(
 	}
 	#pragma GCC diagnostic pop
 }
+
+
+#elif defined (EOS_PLATFORM_PIC32)
+void AsyncSerialDriver_UART::interruptHandler(
+	UARTEvent event) {
+
+    switch (event) {
+        case UARTEvent::txEmpty:
+            if (_txCount < _txLength) {
+                _txCount++;
+                _uart.write(*_txData++);
+            }
+            else {
+                _uart.disableInterrupt(UARTEvent::txEmpty);
+                notifyTxCompleted(_txCount);
+            }
+            break;
+
+        case UARTEvent::rxNotEmpty:
+            break;
+    }
+}
+
+
+#else
+#error "Undefined EOS_PLATFORM_XXXX"
+#endif
 
 
 /// ----------------------------------------------------------------------

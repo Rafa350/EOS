@@ -6,31 +6,58 @@
 #include "Board/eosBoard_STM32F746G_DISCO.h"
 
 
-#if defined(DISPLAY_ADAFRUIT_SSD1306_128x64_D098)
+// -----------------------------------------------------------------------
+// Led 1
+// -----------------------------------------------------------------------
+//
+#ifdef USE_CUSTOM_LED1
+#define EXIST_LED1
+
+#define LED1_GPIO            ARDUINO_D3
+#define LED1_ON              true
+#define LED1_OFF             false
+
+#endif // USE_CUSTOM_LED1
 
 
-// Opcions especifiques del controlador
-#define DISPLAY_SSD1306_INTERFACE  DISPLAY_SSD1306_INTERFACE_SPI
+// -----------------------------------------------------------------------
+// Led 2
+// -----------------------------------------------------------------------
+//
+#ifdef USE_CUSTOM_LED2
+#define EXIST_LED2
+
+#define LED2_GPIO            ARDUINO_D2
+#define LED2_ON              true
+#define LED2_OFF             false
+
+#endif // USE_CUSTOM_LED2
 
 
+// -----------------------------------------------------------------------
+// OLED Display
+// -----------------------------------------------------------------------
+//
 #ifdef USE_CUSTOM_DISPLAY
-#define EXIST_CUSTOM_DISPLAY
+#define EXIST_DISPLAY
 
-#define DISPLAY_RST_GPIO     ARDUINO_D0
-#define DISPLAY_DC_GPIO      ARDUINO_D1
-#define DISPLAY_CS_GPIO      ARDUINO_D2
+#if defined(DISPLAY_ADAFRUIT_SSD1306_128x64_D098)
+#define DISPLAY_INTERFACE_SPI
+
+#define DISPLAY_RST_GPIO     ARDUINO_D6
+#define DISPLAY_DC_GPIO      ARDUINO_D5
+#define DISPLAY_CS_GPIO      ARDUINO_D7
 #define DISPLAY_SCK_GPIO     ARDUINO_SCK
 #define DISPLAY_MOSI_GPIO    ARDUINO_MOSI
 #define DISPLAY_SPI          ARDUINO_SPI
+
+#endif
 
 #define DISPLAY_WIDTH        128
 #define DISPLAY_HEIGHT       64
 #define DISPLAY_BUFFER       0xC0000000
 
 #endif // USE_CUSTOM_DISPLAY
-
-
-#endif // DISPLAY_ADAFRUIT_SSD1306_128x64_D098
 
 
 #endif // __board_Custom_STM32F746G_DISCO__

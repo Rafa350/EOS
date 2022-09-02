@@ -245,10 +245,6 @@ namespace htl {
 
 			}
 
-			static void clearInterrupts() {
-
-			}
-
 			static void InterruptHandler(
 				SPIEvent event) {
 
@@ -258,6 +254,7 @@ namespace htl {
 
 			template <typename gpio_>
 			static void initSCKPin() {
+
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
@@ -274,19 +271,22 @@ namespace htl {
 
 			template <typename gpio_>
 			static void initMISOPin() {
+
 				gpio_::initAlt(
 					GPIODriver::pushPull,
 					GPIOSpeed::fast,
 					SPIPinTrait<channel_, gpio_, SPIPin::MISO>::alt);
 			}
 
-			static void write8(uint8_t data) {
+			static void write8(
+				uint8_t data) {
 
 	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
 	           	*((volatile uint8_t*)&regs->DR) = data;
 			}
 
-			static void write16(uint16_t data) {
+			static void write16(
+				uint16_t data) {
 
 	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
 	           	*((volatile uint16_t*)&regs->DR) = data;

@@ -39,7 +39,13 @@ void MyAppLoopService::onSetup() {
 	Uart::initTXPin<PinTX>();
 	Uart::initRXPin<PinRX>();
 	Uart::setProtocol(_wordBits, _parity, _stopBits);
+#if defined( EOS_PLATFORM_STM32)
 	Uart::setTimming(_baudMode, UARTClockSource::automatic, 0, UARTOverSampling::_16);
+#elif defined(EOS_PLATFORM_PIC32)
+	Uart::setTimming(_baudMode);
+#else
+#error "Undefined EOS_PLATFORM_XXX"
+#endif
 	INT_1::setInterruptVectorPriority(_vector,	_priority, _subPriority);
 	INT_1::enableInterruptVector(_vector);
 	Uart::enable();

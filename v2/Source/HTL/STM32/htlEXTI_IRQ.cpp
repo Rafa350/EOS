@@ -6,15 +6,22 @@
 using namespace htl;
 
 
+template <typename exti_>
+inline void processInterrupt(EXTIEvent event) {
+
+	if (exti_::getInterruptFlag()) {
+		exti_::clearInterruptFlag();
+		exti_::interruptHandler(event);
+	}
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Procesa la interrupcio EXTI0
 ///
 void EXTI_0_InterruptHandler() {
 
-	if (EXTI_0::getInterruptFlag()) {
-		EXTI_0::interruptHandler(EXTIEvent::change);
-		EXTI_0::clearInterruptFlag();
-	}
+	processInterrupt<EXTI_0>(EXTIEvent::change);
 }
 
 
@@ -23,10 +30,7 @@ void EXTI_0_InterruptHandler() {
 ///
 void EXTI_1_InterruptHandler() {
 
-	if (EXTI_1::getInterruptFlag()) {
-		EXTI_1::interruptHandler(EXTIEvent::change);
-		EXTI_1::clearInterruptFlag();
-	}
+	processInterrupt<EXTI_1>(EXTIEvent::change);
 }
 
 
@@ -35,10 +39,7 @@ void EXTI_1_InterruptHandler() {
 ///
 void EXTI_2_InterruptHandler() {
 
-	if (EXTI_2::getInterruptFlag()) {
-		EXTI_2::interruptHandler(EXTIEvent::change);
-		EXTI_2::clearInterruptFlag();
-	}
+	processInterrupt<EXTI_2>(EXTIEvent::change);
 }
 
 
@@ -47,10 +48,7 @@ void EXTI_2_InterruptHandler() {
 ///
 void EXTI_3_InterruptHandler() {
 
-	if (EXTI_3::getInterruptFlag()) {
-		EXTI_3::interruptHandler(EXTIEvent::change);
-		EXTI_3::clearInterruptFlag();
-	}
+	processInterrupt<EXTI_3>(EXTIEvent::change);
 }
 
 
@@ -59,10 +57,7 @@ void EXTI_3_InterruptHandler() {
 ///
 void EXTI_4_InterruptHandler() {
 
-	if (EXTI_4::getInterruptFlag()) {
-		EXTI_4::interruptHandler(EXTIEvent::change);
-		EXTI_4::clearInterruptFlag();
-	}
+	processInterrupt<EXTI_4>(EXTIEvent::change);
 }
 
 
@@ -71,30 +66,11 @@ void EXTI_4_InterruptHandler() {
 ///
 void EXTI_5_6_7_8_9_InterruptHandler() {
 
-	// Obte les interrupcions pendents
-	//
-	uint32_t pr = EXTI->PR & (EXTI_PR_PR5 | EXTI_PR_PR6 | EXTI_PR_PR7 | EXTI_PR_PR8 | EXTI_PR_PR9);
-    if (pr != 0) {
-
-		if (EXTI_5::getInterruptFlag())
-			EXTI_5::interruptHandler(EXTIEvent::change);
-
-		if (EXTI_6::getInterruptFlag())
-			EXTI_6::interruptHandler(EXTIEvent::change);
-
-		if (EXTI_7::getInterruptFlag())
-			EXTI_7::interruptHandler(EXTIEvent::change);
-
-		if (EXTI_8::getInterruptFlag())
-			EXTI_8::interruptHandler(EXTIEvent::change);
-
-		if (EXTI_9::getInterruptFlag())
-			EXTI_9::interruptHandler(EXTIEvent::change);
-
-		// Borra les interrupcions pendents
-		//
-		EXTI->PR = pr;
-    }
+	processInterrupt<EXTI_5>(EXTIEvent::change);
+	processInterrupt<EXTI_6>(EXTIEvent::change);
+	processInterrupt<EXTI_7>(EXTIEvent::change);
+	processInterrupt<EXTI_8>(EXTIEvent::change);
+	processInterrupt<EXTI_9>(EXTIEvent::change);
 }
 
 
@@ -103,33 +79,12 @@ void EXTI_5_6_7_8_9_InterruptHandler() {
 ///
 void EXTI_10_11_12_13_14_15_InterruptHandler() {
 
-	// Obte les interrupcions pendents
-	//
-	uint32_t pr = EXTI->PR & (EXTI_PR_PR10 | EXTI_PR_PR11 | EXTI_PR_PR12 | EXTI_PR_PR13 | EXTI_PR_PR14 | EXTI_PR_PR15);
-    if (pr != 0) {
-
-    	if (EXTI_10::getInterruptFlag())
-    		EXTI_10::interruptHandler(EXTIEvent::change);
-
-    	if (EXTI_11::getInterruptFlag())
-    		EXTI_11::interruptHandler(EXTIEvent::change);
-
-    	if (EXTI_12::getInterruptFlag())
-    		EXTI_12::interruptHandler(EXTIEvent::change);
-
-    	if (EXTI_13::getInterruptFlag())
-    		EXTI_13::interruptHandler(EXTIEvent::change);
-
-    	if (EXTI_14::getInterruptFlag())
-    		EXTI_14::interruptHandler(EXTIEvent::change);
-
-    	if (EXTI_15::getInterruptFlag())
-    		EXTI_15::interruptHandler(EXTIEvent::change);
-
-		// Borra les interrupcions pendents
-		//
-    	EXTI->PR = pr;
-    }
+	processInterrupt<EXTI_10>(EXTIEvent::change);
+	processInterrupt<EXTI_11>(EXTIEvent::change);
+	processInterrupt<EXTI_12>(EXTIEvent::change);
+	processInterrupt<EXTI_13>(EXTIEvent::change);
+	processInterrupt<EXTI_14>(EXTIEvent::change);
+	processInterrupt<EXTI_15>(EXTIEvent::change);
 }
 
 

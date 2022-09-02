@@ -29,19 +29,19 @@ extern "C" void __ISR(_UART_5_VECTOR, IPL2SOFT) UART_5_InterruptVector(void);
 #ifdef _UART1
 extern "C" void UART_1_InterruptHandler(void) {
 
-    if (IFS0bits.U1EIF) {
+    if (UART_1::getInterruptFlag(UARTEvent::error)) {
+        UART_1::clearInterruptFlag(UARTEvent::error);
         UART_1::interruptHandler(UARTEvent::error);
-        IFS0bits.U1EIF = 0;
     }
 
-    if (IFS0bits.U1RXIF) {
-        UART_1::interruptHandler(UARTEvent::receive);
-        IFS0bits.U1RXIF = 0;
+    if (UART_1::getInterruptFlag(UARTEvent::rxNotEmpty)) {
+        UART_1::clearInterruptFlag(UARTEvent::rxNotEmpty);
+        UART_1::interruptHandler(UARTEvent::rxNotEmpty);
     }
 
-    if (IFS0bits.U1TXIF) {
-        UART_1::interruptHandler(UARTEvent::transmit);
-        IFS0bits.U1TXIF = 0;
+    if (UART_1::getInterruptFlag(UARTEvent::txEmpty)) {
+        UART_1::clearInterruptFlag(UARTEvent::txEmpty);
+        UART_1::interruptHandler(UARTEvent::txEmpty);
     }
 }
 #endif
@@ -53,19 +53,19 @@ extern "C" void UART_1_InterruptHandler(void) {
 #ifdef _UART2
 extern "C" void UART_2_InterruptHandler(void) {
 
-    if (IFS1bits.U2EIF) {
+    if (UART_2::getInterruptFlag(UARTEvent::error)) {
+        UART_2::clearInterruptFlag(UARTEvent::error);
         UART_2::interruptHandler(UARTEvent::error);
-        IFS1bits.U2EIF = 0;
     }
 
-    if (IFS1bits.U2RXIF) {
-        UART_2::interruptHandler(UARTEvent::receive);
-        IFS1bits.U2RXIF = 0;
+    if (UART_2::getInterruptFlag(UARTEvent::rxNotEmpty)) {
+        UART_2::clearInterruptFlag(UARTEvent::rxNotEmpty);
+        UART_2::interruptHandler(UARTEvent::rxNotEmpty);
     }
 
-    if (IFS1bits.U2TXIF) {
-        UART_2::interruptHandler(UARTEvent::transmit);
-        IFS1bits.U2TXIF = 0;
+    if (UART_2::getInterruptFlag(UARTEvent::txEmpty)) {
+        UART_2::clearInterruptFlag(UARTEvent::txEmpty);
+        UART_2::interruptHandler(UARTEvent::txEmpty);
     }
 }
 #endif
@@ -77,6 +77,20 @@ extern "C" void UART_2_InterruptHandler(void) {
 #ifdef _UART3
 extern "C" void UART_3_InterruptHandler(void) {
 
+    if (UART_3::getInterruptFlag(UARTEvent::error)) {
+        UART_3::clearInterruptFlag(UARTEvent::error);
+        UART_3::interruptHandler(UARTEvent::error);
+    }
+
+    if (UART_3::getInterruptFlag(UARTEvent::rxNotEmpty)) {
+        UART_3::clearInterruptFlag(UARTEvent::rxNotEmpty);
+        UART_3::interruptHandler(UARTEvent::rxNotEmpty);
+    }
+
+    if (UART_3::getInterruptFlag(UARTEvent::txEmpty)) {
+        UART_3::clearInterruptFlag(UARTEvent::txEmpty);
+        UART_3::interruptHandler(UARTEvent::txEmpty);
+    }
 }
 #endif
 
@@ -87,6 +101,20 @@ extern "C" void UART_3_InterruptHandler(void) {
 #ifdef _UART4
 extern "C" void UART_4_InterruptHandler(void) {
 
+    if (UART_4::getInterruptFlag(UARTEvent::error)) {
+        UART_4::clearInterruptFlag(UARTEvent::error);
+        UART_4::interruptHandler(UARTEvent::error);
+    }
+
+    if (UART_4::getInterruptFlag(UARTEvent::rxNotEmpty)) {
+        UART_4::clearInterruptFlag(UARTEvent::rxNotEmpty);
+        UART_4::interruptHandler(UARTEvent::rxNotEmpty);
+    }
+
+    if (UART_4::getInterruptFlag(UARTEvent::txEmpty)) {
+        UART_4::clearInterruptFlag(UARTEvent::txEmpty);
+        UART_4::interruptHandler(UARTEvent::txEmpty);
+    }
 }
 #endif
 
@@ -97,5 +125,19 @@ extern "C" void UART_4_InterruptHandler(void) {
 #ifdef _UART5
 extern "C" void UART_5_InterruptHandler(void) {
 
+    if (UART_5::getInterruptFlag(UARTEvent::error)) {
+        UART_5::clearInterruptFlag(UARTEvent::error);
+        UART_5::interruptHandler(UARTEvent::error);
+    }
+
+    if (UART_5::getInterruptFlag(UARTEvent::rxNotEmpty)) {
+        UART_5::clearInterruptFlag(UARTEvent::rxNotEmpty);
+        UART_5::interruptHandler(UARTEvent::rxNotEmpty);
+    }
+
+    if (UART_5::getInterruptFlag(UARTEvent::txEmpty)) {
+        UART_5::clearInterruptFlag(UARTEvent::txEmpty);
+        UART_5::interruptHandler(UARTEvent::txEmpty);
+    }
 }
 #endif

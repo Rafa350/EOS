@@ -129,7 +129,7 @@ namespace htl {
             /// \brief Inicialitza un pin com entrada.
             /// \param pull: Les opcions pull.
             ///
-            inline static void initInput(
+            static void initInput(
                 GPIOPull pull = GPIOPull::none) {
 
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
@@ -155,7 +155,7 @@ namespace htl {
             /// \param driver: Les opcions del driver.
             /// \param speed: Les opcions de velocitat.
             ///
-            inline static void initOutput(
+            static void initOutput(
                 GPIODriver driver = GPIODriver::pushPull,
                 GPIOSpeed speed = GPIOSpeed::medium) {
 

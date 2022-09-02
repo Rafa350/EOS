@@ -3,13 +3,13 @@
 
 
 #include "eos.h"
+#include "Controllers/Serial/eosAsyncSerialDriver.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlUART.h"
 #include "HTL/htlINT.h"
 #include "Services/eosAppLoopService.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
-#include "Controllers/Serial/eosAsyncSerialDriver.h"
 
 
 namespace app {
@@ -29,7 +29,7 @@ namespace app {
         	static constexpr htl::UARTBaudMode _baudMode = htl::UARTBaudMode::_9600;
 
         	static constexpr htl::INTVector _vector = htl::UARTTrait<Uart::channel>::vector;
-        	static constexpr htl::INTPriority _priority = htl::INTPriority::_10;
+        	static constexpr htl::INTPriority _priority = htl::INTPriority::_5;
         	static constexpr htl::INTSubPriority _subPriority = htl::INTSubPriority::_0;
 
 		private:

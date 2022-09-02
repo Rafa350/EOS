@@ -11,52 +11,52 @@
 namespace htl {
 
     enum class INTPriority {
-        p0 = 0,
-        p1,
-        p2,
-        p3,
-        p4,
-        p5,
-        p6,
-        p7
+        _0,
+        _1,
+        _2,
+        _3,
+        _4,
+        _5,
+        _6,
+        _7
     };
 
     enum class INTSubPriority {
-        s0 = 0,
-        s1,
-        s2,
-        s3
+        _0,
+        _1,
+        _2,
+        _3
     };
 
     enum class INTVector {
-        vI2C1 = _I2C_1_VECTOR,
-        vI2C2 = _I2C_2_VECTOR,
-        vSPI1 = _SPI_1_VECTOR,
-        vSPI2 = _SPI_2_VECTOR,
+        i2c1 = _I2C_1_VECTOR,
+        i2c2 = _I2C_2_VECTOR,
+        spi1 = _SPI_1_VECTOR,
+        spi2 = _SPI_2_VECTOR,
         #ifdef _SPI3
-        vSPI3 = _SPI_3_VECTOR,
+        spi3 = _SPI_3_VECTOR,
         #endif
         #ifdef _SPI4
-        vSPI4 = _SPI_4_VECTOR,
+        spi4 = _SPI_4_VECTOR,
         #endif
-        vTMR1 = _TIMER_1_VECTOR,
-        vTMR2 = _TIMER_2_VECTOR,
-        vTMR3 = _TIMER_3_VECTOR,
-        vTMR4 = _TIMER_4_VECTOR,
-        vTMR5 = _TIMER_5_VECTOR,
-        vUART1 = _UART_1_VECTOR,
-        vUART2 = _UART_2_VECTOR,
+        tmr1 = _TIMER_1_VECTOR,
+        tmr2 = _TIMER_2_VECTOR,
+        tmr3 = _TIMER_3_VECTOR,
+        tmr4 = _TIMER_4_VECTOR,
+        tmr5 = _TIMER_5_VECTOR,
+        uart1 = _UART_1_VECTOR,
+        uart2 = _UART_2_VECTOR,
         #ifdef _UART3
-            vUART3 = _UART_3_VECTOR,
+            uart3 = _UART_3_VECTOR,
         #endif
         #ifdef _UART4
-            vUART4 = _UART_4_VECTOR,
+            uart4 = _UART_4_VECTOR,
         #endif
         #ifdef _UART5
-            vUART5 = _UART_5_VECTOR,
+            uart5 = _UART_5_VECTOR,
         #endif
         #ifdef _UART6
-            vUART6 = _UART_6_VECTOR,
+            uart6 = _UART_6_VECTOR,
         #endif
     };
 
@@ -111,6 +111,11 @@ namespace htl {
                 position = (uint32_t(vector) & 0x03) * 8;
                 *IPCx &= ~mask;
                 *IPCx |= (uint32_t(subPriority) << position) & mask;
+            }
+
+
+            static void enableInterruptVector(INTVector vector) {
+
             }
     };
 

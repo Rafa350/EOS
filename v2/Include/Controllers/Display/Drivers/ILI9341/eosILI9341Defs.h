@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosILI9341Defs__
 #define __eosILI9341Defs__
 
@@ -146,8 +147,6 @@
 #define __MEMORY_READ
 #define __PARTIAL_AREA
 #define __VERTICAL_SCROLLING_DEFINITION
-#define __TEARING_EFFECT_LINE_OFF
-#define __TEARING_EFFECT_LINE_ON
 
 #define __MEMORY_ACCESS_CONTROL(p1) \
 	2, CMD_MEMORY_ACCESS_CONTROL, p1
@@ -209,6 +208,12 @@
 
 #define __VCOM_CONTROL_2(p1) \
 	2, CMD_VCOM_CONTROL_2, p1
+
+#define __TEARING_EFFECT_LINE_ON(p1) \
+	2, CMD_TEARING_EFFECT_LINE_ON, p1
+
+#define __TEADING_EFFECT_LINE_OFF() \
+	1, CMD_TEARING_EFFECT_LINE_OFF
 
 #define __NV_MEMORY_WRITE
 #define __NV_MEMORY_PROTECTION_KEY
