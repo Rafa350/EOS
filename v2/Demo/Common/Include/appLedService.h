@@ -21,10 +21,10 @@ namespace app {
 	class LedService: public eos::AppLoopService {
 		private:
 			#ifdef EXIST_LED1
-				using GPIO_LED1 = LED1_GPIO;
+				using PinLED1 = LED1_GPIO;
 			#endif
 			#ifdef EXIST_LED2
-				using GPIO_LED2 = LED2_GPIO;
+				using PinLED2 = LED2_GPIO;
 			#endif
 
 			static constexpr bool _ledON = LED1_ON;

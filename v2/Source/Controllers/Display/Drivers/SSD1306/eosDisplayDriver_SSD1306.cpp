@@ -311,17 +311,25 @@ void DisplayDriver_SSD1306::initializeController() {
 /// \brief    Escriu un byte de comanda en el display.
 /// \param    cmd: La comanda.
 ///
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+#if defined (DISPLAY_INTERFACE_SPI)
 void DisplayDriver_SSD1306::writeCommand(
     uint8_t cmd) {
 
 	PinCS::clear();
 	PinDC::clear();
+
+#if 1
 	Spi::send(&cmd, sizeof(cmd));
+#else
+	Spi::write8(cmd);
+	while (!Spi::getInterruptFlag(SPIEvent::txEmpty))
+		continue;
+#endif
+
 	PinCS::set();
 }
 #else
-#error "DISPLAY_SSD1306_INTERFACE"
+#error "Undefined DISPLAY_INTERFACE_XXXX"
 #endif
 
 
@@ -330,17 +338,23 @@ void DisplayDriver_SSD1306::writeCommand(
 /// \param    data: Buffer de dades.
 /// \param    length: Longitut de les dades en bytes.
 ///
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+#if defined(DISPLAY_INTERFACE_SPI)
 void DisplayDriver_SSD1306::writeData(
     const uint8_t* data,
 	int length) {
 
 	PinCS::clear();
 	PinDC::set();
+#if 1
 	Spi::send(data, length);
+#else
+	Spi::write8(cmd);
+	while (!Spi::getInterruptFlag(SPIEvent::txEmpty))
+		continue;
+#endif
 	PinCS::clear();
 }
 #else
-#error "DISPLAY_SSD1306_INTERFACE"
+#error "Undefined DISPLAY_INTERFACE_XXXX"
 #endif
 

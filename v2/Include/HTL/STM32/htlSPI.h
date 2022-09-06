@@ -57,14 +57,18 @@ namespace htl {
 		_256
 	};
 
-	enum class SPIEvent {
+	enum class SPIInterrupt {
 		txEmpty,
 		rxNotEmpty,
+		overrun,
 		error
 	};
 
-	enum class SPIError {
-		none
+	enum class SPIFlag {
+		txEmpty,
+		rxNotEmpty,
+		overrun,
+		error
 	};
 
 	enum class SPIPin {
@@ -74,7 +78,7 @@ namespace htl {
 	};
 
 	using SPIInterruptParam = void*;
-	using SPIInterruptFunction = void (*)(SPIEvent, SPIInterruptParam);
+	using SPIInterruptFunction = void (*)(SPIInterruptParam);
 
 	void SPI_initialize(SPI_TypeDef*, SPIMode, SPIClkPolarity, SPIClkPhase, SPISize, SPIFirstBit, SPIClockDivider);
 	void SPI_send(SPI_TypeDef*, const uint8_t*, unsigned, unsigned);
@@ -188,14 +192,6 @@ namespace htl {
             	regs->CR1 &= ~SPI_CR1_SPE;
             }
 
-            /// \brief Obte el codi d'error i el reseteja.
-            /// \return El codi d'error.
-            ///
-            static SPIError getError() {
-
-            	return SPIError::none;
-            }
-
             /// \brief Asigna la funcio d'interrupcio.
             /// \param function: La funcio.
             /// \param param: EL parametre.
@@ -209,47 +205,71 @@ namespace htl {
 			}
 
 			/// \brief Habilita la generacio d'interrupcions.
-			/// \param event: L'event a habilitar.
+			/// \param interrupt: La interrupcio a habilitar.
 			///
 			static void enableInterrupt(
-				SPIEvent event) {
+				SPIInterrupt interrupt) {
 
 				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				switch (interrupt) {
+					case SPIInterrupt::txEmpty:
+						regs->CR2 |= SPI_CR2_TXEIE;
+						break;
+
+					case SPIInterrupt::rxNotEmpty:
+						regs->CR2 |= SPI_CR2_RXNEIE;
+						break;
+				}
 			}
 
 			/// \brief Desabilita la generacio d'interrupcions.
-			/// \param event: L'event a desabilitar.
+			/// \param interrupt: La interrupcio a deshabilitar.
 			///
 			static bool disableInterrupt(
-				SPIEvent event) {
+				SPIInterrupt interrupt) {
+
+				bool state = false;
 
 				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				switch (interrupt) {
+					case SPIInterrupt::txEmpty:
+						state = (regs->CR2 & SPI_CR2_TXEIE) != 0;
+						regs->CR2 |= SPI_CR2_TXEIE;
+						break;
 
-				return true;
+					case SPIInterrupt::rxNotEmpty:
+						state = (regs->CR2 & SPI_CR2_RXNEIE) != 0;
+						regs->CR2 |= SPI_CR2_RXNEIE;
+						break;
+				}
+
+				return state;
 			}
 
-			static bool getInterruptFlag(
-				SPIEvent event) {
+			static bool getFlag(
+				SPIFlag flag) {
 
             	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
-				switch (event) {
-					case SPIEvent::txEmpty:
+				switch (flag) {
+					case SPIFlag::txEmpty:
 						return (regs->SR & SPI_SR_TXE) != 0;
+
+					case SPIFlag::rxNotEmpty:
+						return (regs->SR & SPI_SR_RXNE) != 0;
 				}
 
 				return false;
 			}
 
-			static void clearInterruptFlag(
-				SPIEvent event) {
+			static void clearFlag(
+				SPIFlag flag) {
 
 			}
 
-			static void InterruptHandler(
-				SPIEvent event) {
+			static void InterruptHandler() {
 
 				if (_isrFunction != nullptr)
-					_isrFunction(event, _isrParam);
+					_isrFunction(_isrParam);
 			}
 
 			template <typename gpio_>

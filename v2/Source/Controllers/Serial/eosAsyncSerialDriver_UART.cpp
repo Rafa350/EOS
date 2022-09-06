@@ -13,7 +13,7 @@ using namespace htl;
 /// \param    uart: El modul uart a utilitzar.
 ///
 AsyncSerialDriver_UART::AsyncSerialDriver_UART(
-	UARTAdapter &uart):
+	UARTWrapper &uart):
 
 	_uart(uart) {
 }
@@ -65,7 +65,7 @@ bool AsyncSerialDriver_UART::transmit(
 		_txCount = 0;
 
 		_uart.enableTX();
-		_uart.enableInterrupt(UARTEvent::txEmpty);
+		_uart.enableInterrupt(UARTInterrupt::txEmpty);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
@@ -99,9 +99,9 @@ bool AsyncSerialDriver_UART::receive(
 		_rxCount = 0;
 
 		_uart.enableRX();
-		_uart.enableInterrupt(UARTEvent::rxNotEmpty);
+		_uart.enableInterrupt(UARTInterrupt::rxNotEmpty);
         #ifdef EOS_PLATFORM_STM32
-            _uart.enableInterrupt(UARTEvent::rxTimeout);
+            _uart.enableInterrupt(UARTInterrupt::rxTimeout);
         #endif
 
 		// En aquest moment, es generen interrupcions
@@ -117,50 +117,47 @@ bool AsyncSerialDriver_UART::receive(
 /// \param    event: El event.
 ///
 #if defined(EOS_PLATFORM_STM32)
-void AsyncSerialDriver_UART::interruptHandler(
-	UARTEvent event) {
+void AsyncSerialDriver_UART::interruptHandler() {
 
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wswitch"
-	#pragma GCC diagnostic ignored "-Wswitch-default"
-	switch (event) {
-		case UARTEvent::txEmpty:
-			if (_txCount < _txLength) {
-				_txCount++;
-				_uart.write(*_txData++);
-				if (_txCount == _txLength) {
-					_uart.disableInterrupt(UARTEvent::txEmpty);
-					_uart.enableInterrupt(UARTEvent::txComplete);
-				}
+	if (_uart.getFlag(UARTFlag::txEmpty)) {
+		if (_txCount < _txLength) {
+			_txCount++;
+			_uart.write(*_txData++);
+			if (_txCount == _txLength) {
+				_uart.disableInterrupt(UARTInterrupt::txEmpty);
+				_uart.enableInterrupt(UARTInterrupt::txComplete);
 			}
-			break;
-
-		case UARTEvent::txComplete:
-			_uart.disableInterrupt(UARTEvent::txEmpty);
-			_uart.disableInterrupt(UARTEvent::txComplete);
-			_uart.disableTX();
-			notifyTxCompleted(_txCount);
-			break;
-
-		case UARTEvent::rxNotEmpty:
-			if (_rxCount < _rxSize) {
-				_rxCount++;
-				*_rxData++ = _uart.read();
-				if (_rxCount == _rxSize) {
-					_uart.disableInterrupt(UARTEvent::rxNotEmpty);
-					_uart.disableInterrupt(UARTEvent::rxTimeout);
-					notifyRxCompleted(_rxCount);
-				}
-			}
-			break;
-
-		case UARTEvent::rxTimeout:
-			_uart.disableInterrupt(UARTEvent::rxNotEmpty);
-			_uart.disableInterrupt(UARTEvent::rxTimeout);
-			notifyRxCompleted(_rxCount);
-			break;
+		}
 	}
-	#pragma GCC diagnostic pop
+
+	if (_uart.getFlag(UARTFlag::txComplete)) {
+		_uart.clearFlag(UARTFlag::txComplete);
+		_uart.disableInterrupt(UARTInterrupt::txEmpty);
+		_uart.disableInterrupt(UARTInterrupt::txComplete);
+		_uart.disableTX();
+		notifyTxCompleted(_txCount);
+	}
+
+	if (_uart.getFlag(UARTFlag::rxNotEmpty)) {
+		if (_rxCount < _rxSize) {
+			_rxCount++;
+			*_rxData++ = _uart.read();
+			if (_rxCount == _rxSize) {
+				_uart.disableInterrupt(UARTInterrupt::rxNotEmpty);
+				_uart.disableInterrupt(UARTInterrupt::rxTimeout);
+				_uart.disableRX();
+				notifyRxCompleted(_rxCount);
+			}
+		}
+	}
+
+	if (_uart.getFlag(UARTFlag::rxTimeout)) {
+		_uart.clearFlag(UARTFlag::rxTimeout);
+		_uart.disableInterrupt(UARTInterrupt::rxNotEmpty);
+		_uart.disableInterrupt(UARTInterrupt::rxTimeout);
+		_uart.disableRX();
+		notifyRxCompleted(_rxCount);
+	}
 }
 
 
@@ -197,9 +194,8 @@ void AsyncSerialDriver_UART::interruptHandler(
 /// \param    param: EL parametre.
 ///
 void AsyncSerialDriver_UART::interruptHandler(
-	UARTEvent event,
 	UARTInterruptParam param) {
 
 	AsyncSerialDriver_UART *driver = reinterpret_cast<AsyncSerialDriver_UART*>(param);
-	driver->interruptHandler(event);
+	driver->interruptHandler();
 }

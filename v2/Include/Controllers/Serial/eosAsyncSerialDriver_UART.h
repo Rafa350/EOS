@@ -11,7 +11,7 @@ namespace eos {
 
 	class AsyncSerialDriver_UART: public AsyncSerialDriver {
 		private:
-			htl::UARTAdapter &_uart;
+			htl::UARTWrapper &_uart;
 			const uint8_t *_txData;
 			unsigned _txLength;
 			unsigned _txCount;
@@ -19,11 +19,11 @@ namespace eos {
 			unsigned _rxSize;
 			unsigned _rxCount;
 
-			void interruptHandler(htl::UARTEvent event);
-			static void interruptHandler(htl::UARTEvent event, htl::UARTInterruptParam param);
+			void interruptHandler();
+			static void interruptHandler(htl::UARTInterruptParam param);
 
 		public:
-			AsyncSerialDriver_UART(htl::UARTAdapter &uart);
+			AsyncSerialDriver_UART(htl::UARTWrapper &uart);
 
 			void initialize() override;
 			void deinitialize() override;

@@ -24,12 +24,12 @@ LedService::LedService(
 void LedService::onSetup() {
 
 	#ifdef EXIST_LED1
-		GPIO_LED1::initOutput(GPIODriver::pushPull);
-		GPIO_LED1::write(_ledON);
+		PinLED1::initOutput(GPIODriver::pushPull);
+		PinLED1::write(_ledON);
 	#endif
 	#ifdef EXIST_LED2
-		GPIO_LED2::initOutput(GPIODriver::pushPull);
-		GPIO_LED2::write(_ledOFF);
+		PinLED2::initOutput(GPIODriver::pushPull);
+		PinLED2::write(_ledOFF);
 	#endif
 }
 
@@ -44,10 +44,10 @@ void LedService::onLoop() {
 		Task::delay(500);
 
 		#ifdef EXIST_LED1
-			GPIO_LED1::toggle();
+			PinLED1::toggle();
 		#endif
 		#ifdef EXIST_LED2
-			GPIO_LED2::toggle();
+			PinLED2::toggle();
 		#endif
 	}
 }

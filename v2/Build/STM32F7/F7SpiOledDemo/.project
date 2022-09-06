@@ -597,6 +597,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlSPI.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlSPI_IRQ.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlSPI_IRQ.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
@@ -640,6 +645,11 @@
 			<name>src/Framework/EOS/HLT/STM32/htlSPI.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlSPI.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HLT/STM32/htlSPI_IRQ.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlSPI_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>

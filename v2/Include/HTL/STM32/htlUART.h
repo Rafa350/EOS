@@ -94,18 +94,32 @@ namespace htl {
 		_16
 	};
 
-	enum class UARTEvent {
-		cts,
-		brk,
-		endOfBlock,
+	enum class UARTInterrupt {
 		txEmpty,
+		cts,
 		txComplete,
 		rxNotEmpty,
-		rxTimeout,
 		idle,
 		parity,
-		framming,
+		brk,
+		endOfBlock,
+		rxTimeout,
+		match,
+		error
+	};
+
+	enum class UARTFlag {
+		txEmpty,
+		cts,
+		txComplete,
+		rxNotEmpty,
 		overrun,
+		idle,
+		parity,
+		brk,
+		endOfBlock,
+		rxTimeout,
+		framming,
 		noise,
 		match
 	};
@@ -119,7 +133,7 @@ namespace htl {
 	};
 
 	using UARTInterruptParam = void*;
-	using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
+	using UARTInterruptFunction = void (*)(UARTInterruptParam);
 
 	void UART_initialize();
 	void UART_setProtocol(USART_TypeDef*, UARTWordBits, UARTParity, UARTStopBits, UARTHandsake);
@@ -452,60 +466,54 @@ namespace htl {
 			}
 
 			/// \brief Habilita les interrupcions
-			/// \param event: El event.
+			/// \param interrupt: La interrupcio.
 			///
 			static void enableInterrupt(
-				UARTEvent event) {
+				UARTInterrupt interrupt) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				switch (event) {
-					case UARTEvent::cts:
+				switch (interrupt) {
+					case UARTInterrupt::cts:
 						ATOMIC_SET_BIT(regs->CR3, USART_CR3_CTSIE);
 						break;
 
-					case UARTEvent::brk:
+					case UARTInterrupt::brk:
 						ATOMIC_SET_BIT(regs->CR2, USART_CR2_LBDIE);
 						break;
 
-					case UARTEvent::idle:
+					case UARTInterrupt::idle:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_IDLEIE);
 						break;
 
-					case UARTEvent::txEmpty:
+					case UARTInterrupt::txEmpty:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_TXEIE);
 						break;
 
-					case UARTEvent::txComplete:
+					case UARTInterrupt::txComplete:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_TCIE);
 						break;
 
-					case UARTEvent::rxNotEmpty:
+					case UARTInterrupt::rxNotEmpty:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_RXNEIE);
 						break;
 
-					case UARTEvent::parity:
+					case UARTInterrupt::parity:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_PEIE);
 						break;
 
-					case UARTEvent::rxTimeout:
+					case UARTInterrupt::rxTimeout:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_RTOIE);
 						break;
 
-					case UARTEvent::endOfBlock:
+					case UARTInterrupt::endOfBlock:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_EOBIE);
 						break;
 
-					case UARTEvent::match:
+					case UARTInterrupt::match:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_CMIE);
 						break;
 
-					case UARTEvent::overrun:
-						ATOMIC_SET_BIT(regs->CR3, USART_CR3_EIE);
-						regs->CR1 |= USART_CR1_RXNEIE;
-						break;
-
-					case UARTEvent::noise:
-					case UARTEvent::framming:
+					case UARTInterrupt::error:
 						ATOMIC_SET_BIT(regs->CR3, USART_CR3_EIE);
 						break;
 				}
@@ -515,114 +523,107 @@ namespace htl {
 			/// \param event: El event.
 			///
 			static bool disableInterrupt(
-				UARTEvent event) {
+				UARTInterrupt interrupt) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
 
 				bool state = false;
-				switch (event) {
-					case UARTEvent::cts:
-						state = regs->CR3 & USART_CR3_CTSIE;
+				switch (interrupt) {
+					case UARTInterrupt::cts:
+						state = (regs->CR3 & USART_CR3_CTSIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_CTSIE);
 						break;
 
-					case UARTEvent::brk:
-						state = regs->CR2 & USART_CR2_LBDIE;
+					case UARTInterrupt::brk:
+						state = (regs->CR2 & USART_CR2_LBDIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR2, USART_CR2_LBDIE);
 						break;
 
-					case UARTEvent::idle:
-						state = regs->CR1 & USART_CR1_IDLEIE;
+					case UARTInterrupt::idle:
+						state = (regs->CR1 & USART_CR1_IDLEIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_IDLEIE);
 						break;
 
-					case UARTEvent::txEmpty:
-						state = regs->CR1 & USART_CR1_TXEIE;
+					case UARTInterrupt::txEmpty:
+						state = (regs->CR1 & USART_CR1_TXEIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TXEIE);
 						break;
 
-					case UARTEvent::txComplete:
-						state = regs->CR1 & USART_CR1_TCIE;
+					case UARTInterrupt::txComplete:
+						state = (regs->CR1 & USART_CR1_TCIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TCIE);
 						break;
 
-					case UARTEvent::rxNotEmpty:
+					case UARTInterrupt::rxNotEmpty:
 						state = regs->CR1 & USART_CR1_RXNEIE;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RXNEIE);
 						break;
 
-					case UARTEvent::parity:
-						state = regs->CR1 & USART_CR1_PEIE;
+					case UARTInterrupt::parity:
+						state = (regs->CR1 & USART_CR1_PEIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_PEIE);
 						break;
 
-					case UARTEvent::rxTimeout:
-						state = regs->CR1 & USART_CR1_RTOIE;
+					case UARTInterrupt::rxTimeout:
+						state = (regs->CR1 & USART_CR1_RTOIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RTOIE);
 						break;
 
-					case UARTEvent::endOfBlock:
-						state = regs->CR1 & USART_CR1_EOBIE;
+					case UARTInterrupt::endOfBlock:
+						state = (regs->CR1 & USART_CR1_EOBIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_EOBIE);
 						break;
 
-					case UARTEvent::match:
-						state = regs->CR1 & USART_CR1_CMIE;
+					case UARTInterrupt::match:
+						state = (regs->CR1 & USART_CR1_CMIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_CMIE);
 						break;
 
-					case UARTEvent::overrun:
-						state =
-							(regs->CR1 & USART_CR1_RXNEIE) |
-						    (regs->CR3 & USART_CR3_EIE);
-						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_EIE);
-						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RXNEIE);
-						break;
-
-					case UARTEvent::noise:
-					case UARTEvent::framming:
+					case UARTInterrupt::error:
+						state = (regs->CR3 & USART_CR3_EIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_EIE);
 						break;
 				}
+
 				return state;
 			}
 
-			/// \brief Obte el flag d'interrupcio.
-			/// \param event: El event.
+			/// \brief Obte un flag.
+			/// \param flag: El flag.
 			///
-			static bool getInterruptFlag(
-				UARTEvent event) {
+			static bool getFlag(
+				UARTFlag flag) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				switch (event) {
-					case UARTEvent::framming:
+				switch (flag) {
+					case UARTFlag::framming:
 						return (regs->ISR & USART_ISR_FE) != 0;
 
-					case UARTEvent::idle:
+					case UARTFlag::idle:
 						return (regs->ISR & USART_ISR_IDLE) != 0;
 
-					case UARTEvent::noise:
+					case UARTFlag::noise:
 						return (regs->ISR & USART_ISR_NE) != 0;
 
-					case UARTEvent::overrun:
+					case UARTFlag::overrun:
 						return (regs->ISR & USART_ISR_ORE) != 0;
 
-					case UARTEvent::parity:
+					case UARTFlag::parity:
 						return (regs->ISR & USART_ISR_PE) != 0;
 
-					case UARTEvent::txComplete:
+					case UARTFlag::txComplete:
 						return (regs->ISR & USART_ISR_TC) != 0;
 
-					case UARTEvent::txEmpty:
+					case UARTFlag::txEmpty:
 						return (regs->ISR & USART_ISR_TXE) != 0;
 
-					case UARTEvent::rxNotEmpty:
+					case UARTFlag::rxNotEmpty:
 						return (regs->ISR & USART_ISR_RXNE) != 0;
 
-					case UARTEvent::rxTimeout:
+					case UARTFlag::rxTimeout:
 						return (regs->ISR & USART_ISR_RTOF) != 0;
 
-					case UARTEvent::cts:
+					case UARTFlag::cts:
 						return (regs->ISR & USART_ISR_CTSIF) != 0;
 
 					default:
@@ -630,60 +631,56 @@ namespace htl {
 				}
 			}
 
-			/// \brief Borra el flag d'interrupcio.
-			/// \param event: El event.
+			/// \brief Borra el flag.
+			/// \param flag: El flag.
 			///
-			static void clearInterruptFlag(
-				UARTEvent event) {
+			static void clearFlag(
+				UARTFlag flag) {
 
 				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				switch (event) {
-					case UARTEvent::cts:
+				switch (flag) {
+					case UARTFlag::cts:
 						regs->ICR = USART_ICR_CTSCF;
 						break;
 
-					case UARTEvent::endOfBlock:
+					case UARTFlag::endOfBlock:
 						regs->ICR = USART_ICR_EOBCF;
 						break;
 
-					case UARTEvent::framming:
+					case UARTFlag::framming:
 						regs->ICR = USART_ICR_FECF;
 						break;
 
-					case UARTEvent::idle:
+					case UARTFlag::idle:
 						regs->ICR = USART_ICR_IDLECF;
 						break;
 
-					case UARTEvent::noise:
+					case UARTFlag::noise:
 						regs->ICR = USART_ICR_NCF;
 						break;
 
-					case UARTEvent::overrun:
+					case UARTFlag::overrun:
 						regs->ICR = USART_ICR_ORECF;
 						break;
 
-					case UARTEvent::parity:
+					case UARTFlag::parity:
 						regs->ICR = USART_ICR_PECF;
 						break;
 
-					case UARTEvent::rxTimeout:
+					case UARTFlag::rxTimeout:
 						regs->ICR = USART_ICR_RTOCF;
 						break;
 
-					case UARTEvent::txComplete:
+					case UARTFlag::txComplete:
 						regs->ICR = USART_ICR_TCCF;
 						break;
 
-					case UARTEvent::brk:
+					case UARTFlag::brk:
 						regs->ICR = USART_ICR_LBDCF;
 						break;
 
-					case UARTEvent::match:
+					case UARTFlag::match:
 						regs->ICR = USART_ICR_CMCF;
-						break;
-
-					case UARTEvent::txEmpty:
-					case UARTEvent::rxNotEmpty:
 						break;
 				}
 			}
@@ -703,11 +700,10 @@ namespace htl {
 			/// \brief Invoca la funcio d'interrupcio.
 			/// \param event: L'event.
 			//
-			static void interruptHandler(
-				UARTEvent event) {
+			static void interruptHandler() {
 
 				if (_isrFunction != nullptr)
-                    _isrFunction(event, _isrParam);
+                    _isrFunction(_isrParam);
             }
 	};
     
@@ -824,7 +820,11 @@ namespace htl {
 	#endif
 
 
-	class UARTAdapter {
+	class UARTWrapper {
+		protected:
+			UARTWrapper() = default;
+			virtual ~UARTWrapper() = default;
+
 		public:
 			virtual void write(uint8_t data) const = 0;
 			virtual uint8_t read() const = 0;
@@ -833,25 +833,25 @@ namespace htl {
 			virtual void disableTX() const = 0;
 			virtual void disableRX() const = 0;
 			virtual void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const = 0;
-			virtual void enableInterrupt(UARTEvent event) const = 0;
-			virtual bool disableInterrupt(UARTEvent event) const = 0;
-			virtual bool getInterruptFlag(UARTEvent event) const = 0;
-			virtual void clearInterruptFlag(UARTEvent event) const = 0;
+			virtual void enableInterrupt(UARTInterrupt interrupt) const = 0;
+			virtual bool disableInterrupt(UARTInterrupt interrupt) const = 0;
+			virtual bool getFlag(UARTFlag flag) const = 0;
+			virtual void clearFlag(UARTFlag flag) const = 0;
 	};
 
 	template <typename uart_>
-	class UARTAdapter_x final: public UARTAdapter {
+	class UARTWrapper_x final: public UARTWrapper {
 		private:
-			UARTAdapter_x() = default;
-			UARTAdapter_x(const UARTAdapter_x &) = delete;
-			UARTAdapter_x(const UARTAdapter_x &&) = delete;
+			UARTWrapper_x() = default;
+			UARTWrapper_x(const UARTWrapper_x &) = delete;
+			UARTWrapper_x(const UARTWrapper_x &&) = delete;
 
-			UARTAdapter & operator = (const UARTAdapter_x &) = delete;
-			UARTAdapter & operator = (const UARTAdapter_x &&) = delete;
+			UARTWrapper & operator = (const UARTWrapper_x &) = delete;
+			UARTWrapper & operator = (const UARTWrapper_x &&) = delete;
 
 		public:
-			static UARTAdapter_x& instance() {
-				static UARTAdapter_x adapter;
+			static UARTWrapper_x& instance() {
+				static UARTWrapper_x adapter;
 				return adapter;
 			}
 
@@ -883,26 +883,26 @@ namespace htl {
 				uart_::setInterruptFunction(function, param);
 			}
 
-			void enableInterrupt(UARTEvent event) const override {
-				uart_::enableInterrupt(event);
+			void enableInterrupt(UARTInterrupt interrupt) const override {
+				uart_::enableInterrupt(interrupt);
 			}
 
-			bool disableInterrupt(UARTEvent event) const override {
-				return uart_::disableInterrupt(event);
+			bool disableInterrupt(UARTInterrupt interrupt) const override {
+				return uart_::disableInterrupt(interrupt);
 			}
 
-			bool getInterruptFlag(UARTEvent event) const override {
-				return uart_::getInterruptFlag(event);
+			bool getFlag(UARTFlag flag) const override {
+				return uart_::getFlag(flag);
 			}
 
-			void clearInterruptFlag(UARTEvent event) const override {
-				uart_::clearInterruptFlag(event);
+			void clearFlag(UARTFlag flag) const override {
+				uart_::clearFlag(flag);
 			}
 	};
 
 	template <typename uart_>
-	UARTAdapter& getUARTAdapter() {
-		return UARTAdapter_x<uart_>::instance();
+	UARTWrapper& getUARTWrapper() {
+		return UARTWrapper_x<uart_>::instance();
 	}
 }
 

@@ -1165,19 +1165,19 @@ namespace htl {
     #endif
 
 
-	class GPIOAdapter final {
+	class GPIOWrapper final {
 		private:
 			GPIO_TypeDef *_regs;
 			uint32_t _pn;
 
-			GPIOAdapter(const GPIOAdapter &) = delete;
-			GPIOAdapter(GPIOAdapter &&) = delete;
+			GPIOWrapper(const GPIOWrapper &) = delete;
+			GPIOWrapper(GPIOWrapper &&) = delete;
 
-			GPIOAdapter operator = (const GPIOAdapter&) = delete;
-			GPIOAdapter operator = (const GPIOAdapter&&) = delete;
+			GPIOWrapper operator = (const GPIOWrapper&) = delete;
+			GPIOWrapper operator = (const GPIOWrapper&&) = delete;
 
 		public:
-			GPIOAdapter(
+			GPIOWrapper(
 				uint32_t addr,
 				uint32_t pn) :
 
@@ -1215,12 +1215,12 @@ namespace htl {
 	};
 
 	template <typename gpio_>
-    const GPIOAdapter& getGPIOAdapter() {
+    const GPIOWrapper& getGPIOAdapter() {
 
         using PortTrait = GPIOPortTrait<gpio_::port>;
         using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
 
-        static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
+        static GPIOWrapper adapter(PortTrait::addr, PinTrait::pn);
 
         return adapter;
     }

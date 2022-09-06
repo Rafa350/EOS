@@ -115,6 +115,11 @@
 #define FONT_USE_Tahoma12pt
 #define FONT_USE_Tahoma14pt
 
+#define DISPLAY_IM0_GPIO    htl::GPIO_D2
+#define DISPLAY_IM1_GPIO    htl::GPIO_D4
+#define DISPLAY_IM2_GPIO    htl::GPIO_D5
+#define DISPLAY_IM3_GPIO    htl::GPIO_D7
+
 // SPI interface
 #if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
 #define DISPLAY_CS_GPIO      htl::GPIO_C2
@@ -125,8 +130,8 @@
 #define DISPLAY_SPI          htl::SPI_5
 #endif
 
-// 8080/6800 interface
-#if defined(DISPLAY_INTERFACE_8080) || defined(DISPLAY_INTERFACE_6800)
+// 8080 interface
+#if defined(DISPLAY_INTERFACE_8080)
 #define DISPLAY_TE_GPIO      htl::GPIO_D11
 #define DISPLAY_RDX_GPIO	 htl::GPIO_D12
 #define DISPLAY_WRX_GPIO     htl::GPIO_D13
