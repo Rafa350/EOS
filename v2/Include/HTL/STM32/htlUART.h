@@ -682,6 +682,9 @@ namespace htl {
 					case UARTFlag::match:
 						regs->ICR = USART_ICR_CMCF;
 						break;
+
+					default:
+						break;
 				}
 			}
 

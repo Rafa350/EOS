@@ -232,6 +232,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	Spi::initSCKPin<PinSCK>();
 	Spi::initMOSIPin<PinMOSI>();
 	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
+	Spi::enable();
 }
 #else
 #error "DISPLAY_INTERFACE_XXXX"
@@ -318,13 +319,11 @@ void DisplayDriver_SSD1306::writeCommand(
 	PinCS::clear();
 	PinDC::clear();
 
-#if 1
-	Spi::send(&cmd, sizeof(cmd));
-#else
 	Spi::write8(cmd);
-	while (!Spi::getInterruptFlag(SPIEvent::txEmpty))
+	while (!Spi::getFlag(SPIFlag::txEmpty))
 		continue;
-#endif
+	while (Spi::getFlag(SPIFlag::busy))
+		continue;
 
 	PinCS::set();
 }
@@ -345,13 +344,15 @@ void DisplayDriver_SSD1306::writeData(
 
 	PinCS::clear();
 	PinDC::set();
-#if 1
-	Spi::send(data, length);
-#else
-	Spi::write8(cmd);
-	while (!Spi::getInterruptFlag(SPIEvent::txEmpty))
+
+	while (length--) {
+		Spi::write8(*data++);
+		while (!Spi::getFlag(SPIFlag::txEmpty))
+			continue;
+	}
+	while (Spi::getFlag(SPIFlag::busy))
 		continue;
-#endif
+
 	PinCS::clear();
 }
 #else

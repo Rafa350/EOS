@@ -60,15 +60,16 @@ namespace htl {
 	enum class SPIInterrupt {
 		txEmpty,
 		rxNotEmpty,
-		overrun,
 		error
 	};
 
 	enum class SPIFlag {
 		txEmpty,
 		rxNotEmpty,
-		overrun,
-		error
+		busy,
+		fault,
+		crc,
+		overrun
 	};
 
 	enum class SPIPin {
@@ -219,6 +220,10 @@ namespace htl {
 					case SPIInterrupt::rxNotEmpty:
 						regs->CR2 |= SPI_CR2_RXNEIE;
 						break;
+
+					case SPIInterrupt::error:
+						regs->CR2 |= SPI_CR2_ERRIE;
+						break;
 				}
 			}
 
@@ -241,6 +246,11 @@ namespace htl {
 						state = (regs->CR2 & SPI_CR2_RXNEIE) != 0;
 						regs->CR2 |= SPI_CR2_RXNEIE;
 						break;
+
+					case SPIInterrupt::error:
+						state = (regs->CR2 & SPI_CR2_ERRIE) != 0;
+						regs->CR2 |= SPI_CR2_ERRIE;
+						break;
 				}
 
 				return state;
@@ -256,6 +266,9 @@ namespace htl {
 
 					case SPIFlag::rxNotEmpty:
 						return (regs->SR & SPI_SR_RXNE) != 0;
+
+					case SPIFlag::busy:
+						return (regs->SR & SPI_SR_BSY) != 0;
 				}
 
 				return false;
@@ -264,6 +277,9 @@ namespace htl {
 			static void clearFlag(
 				SPIFlag flag) {
 
+            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				switch (flag) {
+				}
 			}
 
 			static void InterruptHandler() {
