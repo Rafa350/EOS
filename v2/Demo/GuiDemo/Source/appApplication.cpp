@@ -17,6 +17,7 @@
 #include "System/Graphics/eosColorDefinitions.h"
 #include "appApplication.h"
 #include "appLedService.h"
+#include "appDROForm.h"
 
 
 using namespace eos;
@@ -87,6 +88,17 @@ eos::Visual* MyApplication::createKeyboardPanel() {
 }
 
 
+Visual* MyApplication::createDROPanel() {
+
+	DROPanel *panel = new DROPanel();
+	panel->setMinSize(Size(100, 100));
+	panel->setHorizontalAlignment(HorizontalAlignment::center);
+	panel->setVerticalAlignment(VerticalAlignment::center);
+
+	return panel;
+}
+
+
 void MyApplication::createMainPanel() {
 
 	TabControl* tabControl = new TabControl();
@@ -122,9 +134,11 @@ void MyApplication::createMainPanel() {
 	tabControl->addItem(tabItem3);
 
 	eos::Visual* keyboardPanel = createKeyboardPanel();
+	eos::Visual* droPanel = createDROPanel();
 
 	eos::Screen* screen = _guiService->getScreen();
-	screen->addChild(keyboardPanel);
+	//screen->addChild(keyboardPanel);
+	screen->addChild(droPanel);
 	//screen->addChild(tabControl);
 
 	eos::Visual* tb = VisualUtils::getVisual(screen,  1000);

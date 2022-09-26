@@ -251,7 +251,7 @@ void DigInputService::tmrInterruptFunction() {
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const GPIOAdapter &gpio):
+    const GPIOWrapper &gpio):
 
 	_service(nullptr),
     _gpio(gpio),

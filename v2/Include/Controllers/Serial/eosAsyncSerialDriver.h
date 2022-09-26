@@ -36,9 +36,9 @@ namespace eos {
 
 		private:
 			State _state;
-            ITxCompletedCallback *_txCompletedCallback;
-            IRxCompletedCallback *_rxCompletedCallback;
-            IAbortedCallback *_abortedCallback;
+            const ITxCompletedCallback *_txCompletedCallback;
+            const IRxCompletedCallback *_rxCompletedCallback;
+            const IAbortedCallback *_abortedCallback;
 
 		protected:
             void notifyTxStart();
@@ -47,31 +47,36 @@ namespace eos {
             void notifyRxCompleted(unsigned count);
             void notifyAborted();
 
-		public:
-            /// \brief Constructor.
+			virtual void initializeImpl();
+			virtual void deinitializeImpl();
+			virtual bool transmitImpl(const uint8_t *data, unsigned dataLength) = 0;
+			virtual bool receiveImpl(uint8_t *data, unsigned dataSize) = 0;
+
+			/// \brief Constructor.
             ///
 			AsyncSerialDriver();
 
+		public:
 			/// \brief Destructor
 			///
-			virtual ~AsyncSerialDriver();
+			virtual ~AsyncSerialDriver() = default;
 
-			virtual void initialize();
-			virtual void deinitialize();
+			void initialize();
+			void deinitialize();
 
 			State getState() const;
 			inline bool isBusy() const { return getState() != State::ready; }
 			inline bool isReady() const { return getState() == State::ready; }
 
-			void enableTxCompletedCallback(ITxCompletedCallback &callback);
+			void enableTxCompletedCallback(const ITxCompletedCallback &callback);
 			void disableTxCompletedCallback() { _txCompletedCallback = nullptr; }
-			void enableRxCompletedCallback(IRxCompletedCallback &callback);
+			void enableRxCompletedCallback(const IRxCompletedCallback &callback);
 			void disableRxCompletedCallback() { _rxCompletedCallback = nullptr; }
-			void enableAbortedCallback(IAbortedCallback &callback);
+			void enableAbortedCallback(const IAbortedCallback &callback);
 			void disableAbortedCallback() { _abortedCallback = nullptr; }
 
-			virtual bool transmit(const uint8_t *data, unsigned dataLength) = 0;
-			virtual bool receive(uint8_t *data, unsigned dataSize) = 0;
+			bool transmit(const uint8_t *data, unsigned dataLength);
+			bool receive(uint8_t *data, unsigned dataSize);
 	};
 }
 

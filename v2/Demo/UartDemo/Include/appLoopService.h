@@ -17,8 +17,8 @@ namespace app {
 	class MyAppLoopService: public eos::AppLoopService {
 		private:
 			using Led = LED1_GPIO;
-    	    using PinTX = ARDUINO_TX;
-    	    using PinRX = ARDUINO_RX;
+    	    using PinTX = ARDUINO_TX_GPIO;
+    	    using PinRX = ARDUINO_RX_GPIO;
     		using Uart = ARDUINO_UART;
         	using TxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::TxCompletedEventArgs&>;
         	using RxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::RxCompletedEventArgs&>;

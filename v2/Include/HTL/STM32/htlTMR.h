@@ -43,14 +43,20 @@ namespace htl {
 		_4
 	};
 
-	enum class TMREvent {
+	enum class TMRInterrupt {
+		update,
+		trigger,
+		com
+	};
+
+	enum class TMRFlag {
 		update,
 		trigger,
 		com
 	};
 
 	using TMRInterruptParam = void*;
-	using TMRInterruptFunction = void (*)(TMREvent, TMRInterruptParam);
+	using TMRInterruptFunction = void (*)(TMRInterruptParam);
 
 	template <TMRTimer>
 	struct TMRTrait {
@@ -233,42 +239,42 @@ namespace htl {
 			}
 
 			static constexpr void enableInterrupt(
-				TMREvent event) {
+				TMRInterrupt interrupt) {
 
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
-				switch (event) {
-					case TMREvent::update:
+				switch (interrupt) {
+					case TMRInterrupt::update:
 						regs->DIER |= TIM_DIER_UIE;
 						break;
 
-					case TMREvent::trigger:
+					case TMRInterrupt::trigger:
 						regs->DIER |= TIM_DIER_TIE;
 						break;
 
-					case TMREvent::com:
+					case TMRInterrupt::com:
 						regs->DIER |= TIM_DIER_COMIE;
 						break;
 				}
 			}
 
 			static constexpr bool disableInterrupt(
-				TMREvent event) {
+				TMRInterrupt interrupt) {
 
 				bool status = false;
 
 				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
-				switch (event) {
-					case TMREvent::update:
+				switch (interrupt) {
+					case TMRInterrupt::update:
 						status = (regs->DIER & TIM_DIER_UIE) != 0;
 						regs->DIER &= ~TIM_DIER_UIE;
 						break;
 
-					case TMREvent::trigger:
+					case TMRInterrupt::trigger:
 						status = (regs->DIER & TIM_DIER_TIE) != 0;
 						regs->DIER &= ~TIM_DIER_TIE;
 						break;
 
-					case TMREvent::com:
+					case TMRInterrupt::com:
 						status = (regs->DIER & TIM_DIER_COMIE) != 0;
 						regs->DIER &= ~TIM_DIER_COMIE;
 						break;
@@ -277,18 +283,18 @@ namespace htl {
 				return status;
 			}
 
-            static bool getInterruptFlag(
-            	TMREvent event) {
+            static bool getFlag(
+            	TMRFlag flag) {
 
             	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
-				switch (event) {
-					case TMREvent::update:
+				switch (flag) {
+					case TMRFlag::update:
 						return (regs->SR & TIM_SR_UIF) != 0;
 
-					case TMREvent::trigger:
+					case TMRFlag::trigger:
 						return (regs->SR & TIM_SR_TIF) != 0;
 
-					case TMREvent::com:
+					case TMRFlag::com:
 						return (regs->SR & TIM_SR_COMIF) != 0;
 
 					default:
@@ -296,30 +302,29 @@ namespace htl {
 				}
             }
 
-            static constexpr void clearInterruptFlag(
-            	TMREvent event) {
+            static constexpr void clearFlag(
+            	TMRFlag flag) {
 
             	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
-				switch (event) {
-					case TMREvent::update:
+				switch (flag) {
+					case TMRFlag::update:
 						regs->SR &= ~TIM_SR_UIF;
 						break;
 
-					case TMREvent::trigger:
+					case TMRFlag::trigger:
 						regs->SR &= ~TIM_SR_TIF;
 						break;
 
-					case TMREvent::com:
+					case TMRFlag::com:
 						regs->SR &= ~TIM_SR_COMIF;
 						break;
 				}
             }
 
-			static void interruptHandler(
-				TMREvent event) {
+			static void interruptHandler() {
 
 				if (_isrFunction != nullptr)
-                    _isrFunction(event, _isrParam);
+                    _isrFunction(_isrParam);
             }
 	};
 
@@ -426,30 +431,30 @@ namespace htl {
 	};
 
 
-	class TMRAdapter {
+	class TMRWrapper {
 		public:
 			virtual void start() const = 0;
 			virtual void stop() const = 0;
 			virtual void setInterruptFunction(TMRInterruptFunction function, TMRInterruptParam param) const = 0;
-			virtual void enableInterrupt(TMREvent event) const = 0;
-			virtual bool disableInterrupt(TMREvent event) const = 0;
+			virtual void enableInterrupt(TMRInterrupt interrupt) const = 0;
+			virtual bool disableInterrupt(TMRInterrupt interrupt) const = 0;
 			virtual void disableInterrupts() const = 0;
-			virtual bool getInterruptFlag(TMREvent event) const = 0;
-			virtual void clearInterruptFlag(TMREvent event) const = 0;
-			virtual void clearInterruptFlags() const = 0;
+			virtual bool getFlag(TMRFlag flag) const = 0;
+			virtual void clearFlag(TMRFlag flag) const = 0;
+			virtual void clearFlags() const = 0;
 	};
 
 	template <typename timer_>
-	class TMRAdapter_x final : public TMRAdapter {
+	class TMRWrapper_x final : public TMRWrapper {
 		private:
-			TMRAdapter_x(const TMRAdapter_x &) = delete;
-			TMRAdapter_x(const TMRAdapter_x &&) = delete;
+			TMRWrapper_x(const TMRWrapper_x &) = delete;
+			TMRWrapper_x(const TMRWrapper_x &&) = delete;
 
-			TMRAdapter & operator = (const TMRAdapter_x &) = delete;
-			TMRAdapter & operator = (const TMRAdapter_x &&) = delete;
+			TMRWrapper & operator = (const TMRWrapper_x &) = delete;
+			TMRWrapper & operator = (const TMRWrapper_x &&) = delete;
 
 		public:
-			TMRAdapter_x() = default;
+			TMRWrapper_x() = default;
 
 			void start() const override {
 				timer_::start();
@@ -463,35 +468,41 @@ namespace htl {
 				timer_::setInterruptFunction(function, param);
 			}
 
-			void enableInterrupt(TMREvent event) const override {
-				timer_::enableInterrupt(event);
+			void enableInterrupt(TMRInterrupt interrupt) const override {
+
+				timer_::enableInterrupt(interrupt);
 			}
 
-			bool disableInterrupt(TMREvent event) const override {
-				return timer_::disableInterrupt(event);
+			bool disableInterrupt(TMRInterrupt interrupt) const override {
+
+				return timer_::disableInterrupt(interrupt);
 			}
 
 			void disableInterrupts() const override {
 				//TODO:: timer_::disableInterrupts();
 			}
 
-			bool getInterruptFlag(TMREvent event) const override {
-				return timer_::getInterruptFlag(event);
+			bool getFlag(TMRFlag flag) const override {
+
+				return timer_::getFlag(flag);
 			}
 
-			void clearInterruptFlag(TMREvent event) const override {
-				timer_::clearInterruptFlag(event);
+			void clearFlag(TMRFlag flag) const override {
+
+				timer_::clearFlag(flag);
 			}
 
-			void clearInterruptFlags() const override {
+			void clearFlags() const override {
 				// TODO: timer_::clearInterruptFlags();
 			}
 	};
 
 	template <typename timer_>
-	TMRAdapter& getTMRAdapter() {
-		static TMRAdapter_x<timer_> adapter;
-		return adapter;
+	TMRWrapper& getTMRWrapper() {
+
+		static TMRWrapper_x<timer_> wrapper;
+
+		return wrapper;
 	}
 }
 

@@ -120,9 +120,10 @@ namespace htl {
         fast
     };
 
-    void GPIO_initInput(GPIO_TypeDef*, uint32_t, GPIOPull);
-    void GPIO_initOutput(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed);
-    void GPIO_initAlt(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed, GPIOAlt);
+    enum class GPIOState {
+		clear,
+    	set
+    };
 
     template <GPIOPort>
     struct GPIOPortTrait {
@@ -203,11 +204,21 @@ namespace htl {
     template <GPIOPort port_> uint16_t GPIOPortActivator<port_>::_activated = 0;
 
 
+    /// \class GPIOBase_x
+    /// \brief Base class for gpio pins
+    ///
+    class GPIOBase_x {
+    	protected:
+			static void initInput(GPIO_TypeDef *regs, uint32_t pn, GPIOPull pullMode);
+			static void initOutput(GPIO_TypeDef *regs, uint32_t pn, GPIODriver driver, GPIOSpeed speed);
+			static void initAlt(GPIO_TypeDef *regs, uint32_t pn, GPIODriver driver, GPIOSpeed speed, GPIOAlt alt);
+    };
+
     /// \class GPIO_x
-    /// \brief Adapter class for gpio pins
+    /// \brief Class for gpio pins
     ///
     template <GPIOPort port_, GPIOPin pin_>
-    class GPIO_x final {
+    class GPIO_x final: GPIOBase_x {
         private:
             using PortTrait = GPIOPortTrait<port_>;
             using PinTrait = GPIOPinTrait<port_, pin_>;
@@ -236,7 +247,7 @@ namespace htl {
             	GPIOPull pull = GPIOPull::none) {
 
             	Activator::activate(1 << _pn);
-                GPIO_initInput(
+            	GPIOBase_x::initInput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr), 
                     _pn,
                     pull);
@@ -251,7 +262,7 @@ namespace htl {
 				GPIOSpeed speed = GPIOSpeed::medium) {
 
             	Activator::activate(1 << _pn);
-            	GPIO_initOutput(
+            	GPIOBase_x::initOutput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     _pn,
                     driver,
@@ -264,7 +275,7 @@ namespace htl {
 				GPIOAlt alt) {
                 
             	Activator::activate(1 << _pn);
-            	GPIO_initAlt(
+            	GPIOBase_x::initAlt(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     _pn,
                     driver,
@@ -306,19 +317,20 @@ namespace htl {
             /// \brief Read pin state
             /// \return Pin state.
             ///
-            inline static bool read() {
+            inline static GPIOState read() {
 
                 GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
-                return regs->IDR & (1 << _pn);
+                return ((regs->IDR & (1 << _pn)) == 0) ? GPIOState::clear : GPIOState::set;
             }
 
             /// \brief Write pin state.
-            /// \param b: State to write.
+            /// \param state: State to write.
             ///
-            inline static void write(bool s) {
+            inline static void write(
+            	GPIOState state) {
 
                 GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
-                regs->BSRR = 1 << (_pn + (s ? 0 : 16));
+                regs->BSRR = 1 << (_pn + (state == GPIOState::set ? 0 : 16));
             }
     };
 
@@ -681,6 +693,16 @@ namespace htl {
         };
 
         template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_12> {
+            static constexpr uint32_t pn = 12;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::B, GPIOPin::_13> {
+            static constexpr uint32_t pn = 13;
+        };
+
+        template <>
         struct GPIOPinTrait<GPIOPort::B, GPIOPin::_14> {
             static constexpr uint32_t pn = 14;
         };
@@ -710,6 +732,21 @@ namespace htl {
         template <>
         struct GPIOPinTrait<GPIOPort::C, GPIOPin::_2> {
             static constexpr uint32_t pn = 2;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::C, GPIOPin::_3> {
+            static constexpr uint32_t pn = 3;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::C, GPIOPin::_4> {
+            static constexpr uint32_t pn = 4;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::C, GPIOPin::_5> {
+            static constexpr uint32_t pn = 5;
         };
 
         template <>
@@ -1215,14 +1252,14 @@ namespace htl {
 	};
 
 	template <typename gpio_>
-    const GPIOWrapper& getGPIOAdapter() {
+    const GPIOWrapper& getGPIOWrapper() {
 
         using PortTrait = GPIOPortTrait<gpio_::port>;
         using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
 
-        static GPIOWrapper adapter(PortTrait::addr, PinTrait::pn);
+        static GPIOWrapper wrapper(PortTrait::addr, PinTrait::pn);
 
-        return adapter;
+        return wrapper;
     }
 }
 

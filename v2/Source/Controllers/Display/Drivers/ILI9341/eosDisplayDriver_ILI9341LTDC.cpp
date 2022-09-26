@@ -366,7 +366,12 @@ void DisplayDriver_ILI9341LTDC::writeCommand(
 	uint8_t cmd) {
 
 	PinRS::clear();
-	Spi::send(&cmd, sizeof(cmd));
+	//Spi::send(&cmd, sizeof(cmd));
+	Spi::write8(cmd);
+	while (!Spi::getFlag(SPIFlag::txEmpty))
+		continue;
+	while (Spi::getFlag(SPIFlag::busy))
+		continue;
 }
 
 
@@ -378,5 +383,10 @@ void DisplayDriver_ILI9341LTDC::writeData(
 	uint8_t data) {
 
 	PinRS::set();
-	Spi::send(&data, sizeof(data));
+//	Spi::send(&data, sizeof(data));
+	Spi::write8(data);
+	while (!Spi::getFlag(SPIFlag::txEmpty))
+		continue;
+	while (Spi::getFlag(SPIFlag::busy))
+		continue;
 }

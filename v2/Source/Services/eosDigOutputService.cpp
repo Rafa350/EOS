@@ -515,7 +515,7 @@ void DigOutputService::tmrInterruptFunction() {
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    const htl::GPIOAdapter &gpio):
+    const htl::GPIOWrapper &gpio):
 
     _service(nullptr),
     _gpio(gpio),

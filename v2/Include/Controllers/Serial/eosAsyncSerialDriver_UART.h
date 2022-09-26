@@ -19,17 +19,16 @@ namespace eos {
 			unsigned _rxSize;
 			unsigned _rxCount;
 
+			void initializeImpl() override;
+			void deinitializeImpl() override;
+			bool transmitImpl(const uint8_t *data, unsigned dataLength) override;
+			bool receiveImpl(uint8_t *data, unsigned dataSize) override;
+
 			void interruptHandler();
 			static void interruptHandler(htl::UARTInterruptParam param);
 
 		public:
 			AsyncSerialDriver_UART(htl::UARTWrapper &uart);
-
-			void initialize() override;
-			void deinitialize() override;
-
-			bool transmit(const uint8_t *data, unsigned dataLength) override;
-			bool receive(uint8_t *data, unsigned dataSize) override;
 	};
 }
 

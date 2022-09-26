@@ -199,6 +199,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/eosPlatform.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosPlatform.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosToolchain.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosToolchain.h</locationURI>
+		</link>
+		<link>
 			<name>src/App/STM32F4/appInitialize.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/appInitialize.cpp</locationURI>

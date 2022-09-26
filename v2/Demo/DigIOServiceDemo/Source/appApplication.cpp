@@ -43,14 +43,14 @@ void MyApplication::onInitialize() {
     // Configura la entrada corresponent al switch SW1
     //
     PinSW1::initInput(GPIOPull::up);
-    _sw1 = new DigInput(_digInputService, getGPIOAdapter<PinSW1>());
+    _sw1 = new DigInput(_digInputService, getGPIOWrapper<PinSW1>());
     _sw1->enableChangedEventCallback(_sw1ChangedEventCallback);
 
     // COnfigura la entrada corresponent al switch SW2
     //
     #ifdef EXIST_SW2
         PinSW2::initInput(GPIOPull::up);
-        _sw2 = new DigInput(_digInputService, getGPIOAdapter<PinSW2>());
+        _sw2 = new DigInput(_digInputService, getGPIOWrapper<PinSW2>());
         _sw2->enableChangedEventCallback(_sw2ChangedEventCallback);
     #endif
 
@@ -58,7 +58,7 @@ void MyApplication::onInitialize() {
     //
     #ifdef EXIST_SW3
         PinSW3::initInput(GPIOPull::up);
-        _sw3 = new DigInput(_digInputService, getGPIOAdapter<PinSW3>());
+        _sw3 = new DigInput(_digInputService, getGPIOWrapper<PinSW3>());
         _sw3->enableChangedEventCallback(_sw3ChangedEventCallback);
     #endif
 
@@ -87,14 +87,14 @@ void MyApplication::onInitialize() {
     //
     PinLED1::initOutput();
     PinLED1::clear();
-    _led1 = new DigOutput(_digOutputService, htl::getGPIOAdapter<PinLED1>());
+    _led1 = new DigOutput(_digOutputService, htl::getGPIOWrapper<PinLED1>());
 
     // COnfigura la sortida corresponent al led LED2
     //
     #ifdef EXIST_LED2
         PinLED2::initOutput();
         PinLED2::clear();
-        _led2 = new DigOutput(_digOutputService, htl::getGPIOAdapter<PinLED2>());
+        _led2 = new DigOutput(_digOutputService, htl::getGPIOWrapper<PinLED2>());
     #endif
 
     // COnfigura la sortida corresponent al led LED3
@@ -102,7 +102,7 @@ void MyApplication::onInitialize() {
     #ifdef EXIST_LED3
         PinLED3::initOutput();
         PinLED3::clear();
-        _led3 = new DigOutput(_digOutputService, htl::getGPIOAdapter<PinLED3>());
+        _led3 = new DigOutput(_digOutputService, htl::getGPIOWrapper<PinLED3>());
     #endif
 
     // Configura el temporitzador pel servei de sortides digitals

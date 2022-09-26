@@ -37,6 +37,7 @@ void DisplayDriver_ILI9341::initializeInterface() {
 	Spi::initSCKPin<PinSCK>();
 	Spi::initMOSIPin<PinMOSI>();
 	Spi::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1,	SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
+	Spi::enable();
 }
 
 
@@ -167,7 +168,12 @@ void DisplayDriver_ILI9341::writeCommand(
     uint8_t cmd) {
 
 	PinRS::clear();
-    Spi::send(&cmd, sizeof(cmd));
+
+	Spi::write8(cmd);
+	while (!Spi::isTxEmpty())
+		continue;
+	while (Spi::isBusy())
+		continue;
 }
 
 
@@ -179,7 +185,12 @@ void DisplayDriver_ILI9341::writeData(
     uint8_t data) {
 
 	PinRS::set();
-    Spi::send(&data, sizeof(data));
+
+	Spi::write8(data);
+	while (!Spi::isTxEmpty())
+		continue;
+	while (Spi::isBusy())
+		continue;
 }
 
 
@@ -189,10 +200,17 @@ void DisplayDriver_ILI9341::writeData(
 /// \param    length: Numero de bytes en el buffer.
 ///
 void DisplayDriver_ILI9341::writeData(
-	const uint8_t* data,
+	const uint8_t *data,
 	int length) {
 
 	PinRS::set();
-    Spi::send(data, length);
+
+	while (length--) {
+		Spi::write8(*data++);
+		while (!Spi::isTxEmpty())
+			continue;
+	}
+	while (Spi::isBusy())
+		continue;
 }
 

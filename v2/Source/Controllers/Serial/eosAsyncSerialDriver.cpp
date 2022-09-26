@@ -18,19 +18,55 @@ AsyncSerialDriver::AsyncSerialDriver() :
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Destructor
+/// \brief    Inicialitza el driver.
 ///
-AsyncSerialDriver::~AsyncSerialDriver() {
+void AsyncSerialDriver::initialize() {
 
-	if (_state != State::reset)
-		deinitialize();
+	initializeImpl();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el driver.
+///
+void AsyncSerialDriver::deinitialize() {
+
+	deinitializeImpl();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades.
+/// \param    data: El buffer de dades.
+/// \param    dataLength: Longitut del buffer en bytes.
+/// \return   True si tot es correcte.
+///
+bool AsyncSerialDriver::transmit(
+	const uint8_t *data,
+	unsigned dataLength) {
+
+	return transmitImpl(data, dataLength);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Reb un bloc de dades.
+/// \param    data: El buffer de recepcio.
+/// \param    dataSize: El tasmany del buffer en bytes.
+/// \return   True si tot es correcte.
+///
+bool AsyncSerialDriver::receive(
+	uint8_t *data,
+	unsigned dataSize) {
+
+	return receiveImpl(data, dataSize);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void AsyncSerialDriver::initialize() {
+void AsyncSerialDriver::initializeImpl() {
 
 	_state = State::ready;
 }
@@ -39,7 +75,7 @@ void AsyncSerialDriver::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el driver.
 ///
-void AsyncSerialDriver::deinitialize() {
+void AsyncSerialDriver::deinitializeImpl() {
 
 	_state = State::reset;
 }
@@ -69,7 +105,7 @@ AsyncSerialDriver::State AsyncSerialDriver::getState() const {
 /// \param    callback: El callback
 ///
 void AsyncSerialDriver::enableTxCompletedCallback(
-	ITxCompletedCallback &callback) {
+	const ITxCompletedCallback &callback) {
 
 	_txCompletedCallback = &callback;
 }
@@ -80,7 +116,7 @@ void AsyncSerialDriver::enableTxCompletedCallback(
 /// \param    callback: El callback
 ///
 void AsyncSerialDriver::enableRxCompletedCallback(
-	IRxCompletedCallback &callback) {
+	const IRxCompletedCallback &callback) {
 
 	_rxCompletedCallback = &callback;
 }

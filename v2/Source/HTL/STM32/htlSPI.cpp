@@ -64,6 +64,10 @@ static void setMode(
 
 	if (mode == SPIMode::master)
 		regs->CR1 |= SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM;
+
+	// Per defecte Full-duplex
+	//
+	regs->CR1 &= ~(SPI_CR1_BIDIMODE | SPI_CR1_RXONLY);
 };
 
 
@@ -108,7 +112,7 @@ static void setSize(
 	SPI_TypeDef *regs,
 	SPISize size) {
 
-	#if defined(EOS_PLATAFORM_STM32F4)
+	#if defined(EOS_PLATFORM_STM32F4)
 		if (size == SPISize::_16)
 			regs->CR1 |= SPI_CR1_DFF;
 		else
@@ -217,7 +221,7 @@ static void waitRxFifoEmpty(
 /// \param    firstBite: El primer bit de la trama.
 /// \param    clkDivider: Divisor de frequencia.
 ///
-void htl::SPI_initialize(
+void SPIBase_x::initialize(
 	SPI_TypeDef *regs,
 	SPIMode mode,
 	SPIClkPolarity clkPolarity,
@@ -242,7 +246,7 @@ void htl::SPI_initialize(
 /// \param    dataLength: Longitut del blñoc de dades.
 /// \param    timeout: El temps maxim de bloqueig.
 ///
-void htl::SPI_send(
+void SPIBase_x::send(
 	SPI_TypeDef *regs,
 	const uint8_t *data,
 	unsigned dataLength,

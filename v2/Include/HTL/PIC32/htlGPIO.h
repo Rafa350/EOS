@@ -961,13 +961,13 @@ namespace htl {
     #endif
 
 
-    class GPIOAdapter {
+    class GPIOWrapper {
         private:
             GPIORegisters *_regs;
             uint32_t _mask;
 
         public:
-            GPIOAdapter(
+            GPIOWrapper(
                 uint32_t
                 addr, uint32_t pn):
 
@@ -975,8 +975,8 @@ namespace htl {
                 _mask(1 << pn) {
             }
 
-            GPIOAdapter(
-                const GPIOAdapter &other):
+            GPIOWrapper(
+                const GPIOWrapper &other):
 
                 _regs(other._regs),
                 _mask(other._mask) {
@@ -1004,14 +1004,14 @@ namespace htl {
     };
 
     template <typename gpio_>
-    const GPIOAdapter& getGPIOAdapter() {
+    const GPIOWrapper& getGPIOWrapper() {
 
         using PortTrait = GPIOPortTrait<gpio_::port>;
         using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
 
-        static GPIOAdapter adapter(PortTrait::addr, PinTrait::pn);
+        static GPIOWrapper wrapper(PortTrait::addr, PinTrait::pn);
 
-        return adapter;
+        return wrapper;
     }
 }
 

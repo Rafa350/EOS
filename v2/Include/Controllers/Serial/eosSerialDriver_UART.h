@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eosSerialDriver__
-#define __eosSerialDriver__
+#ifndef __eosSerialDriver_UART__
+#define __eosSerialDriver_UART__
 
 
 #include "HTL/htlUART.h"
@@ -8,13 +8,13 @@
 
 namespace eos {
 
-	class SerialDriver {
+	class SerialDriver_UART {
 		private:
 			htl::UARTAdapter &_uart;
 
 		public:
-			SerialDriver(htl::UARTAdapter &uart);
-			~SerialDriver();
+			SerialDriver_UART(htl::UARTAdapter &uart);
+			~SerialDriver_UART();
 
 			void initialize();
 			void deinitialize();
@@ -25,4 +25,4 @@ namespace eos {
 }
 
 
-#endif // eosSerialDriver__
+#endif // eosSerialDriver_UART__

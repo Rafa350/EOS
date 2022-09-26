@@ -631,6 +631,26 @@ namespace htl {
 				}
 			}
 
+			static bool isTxEmpty()  {
+
+				return  getFlag(UARTFlag::txEmpty);
+			}
+
+			static bool isTxComplete()  {
+
+				return  getFlag(UARTFlag::txComplete);
+			}
+
+			static bool isRxNotEmpty() {
+
+				return getFlag(UARTFlag::rxNotEmpty);
+			}
+
+			static bool isRxTimeout() {
+
+				return getFlag(UARTFlag::rxTimeout);
+			}
+
 			/// \brief Borra el flag.
 			/// \param flag: El flag.
 			///
@@ -854,8 +874,8 @@ namespace htl {
 
 		public:
 			static UARTWrapper_x& instance() {
-				static UARTWrapper_x adapter;
-				return adapter;
+				static UARTWrapper_x wrapper;
+				return wrapper;
 			}
 
 			void write(uint8_t data) const override {

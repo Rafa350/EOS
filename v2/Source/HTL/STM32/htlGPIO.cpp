@@ -136,7 +136,7 @@ static void setAlt(
 /// \param    pn: Numero de pin.
 /// \param    pull: Opcions pull up/down.
 ///
-void htl::GPIO_initInput(
+void GPIOBase_x::initInput(
     GPIO_TypeDef *regs,
     uint32_t pn,
     GPIOPull pull) {
@@ -158,7 +158,7 @@ void htl::GPIO_initInput(
 /// \param    driver: Opcions del driver.
 /// \param    speed: Opcions de velocitat.
 
-void htl::GPIO_initOutput(
+void GPIOBase_x::initOutput(
     GPIO_TypeDef *regs,
     uint32_t pn,
     GPIODriver driver,
@@ -184,7 +184,7 @@ void htl::GPIO_initOutput(
 /// \param    speed: Opcions de velocitat.
 /// \param    alt: Funcio alternativa.
 ///
-void htl::GPIO_initAlt(
+void GPIOBase_x::initAlt(
     GPIO_TypeDef *regs,
     uint32_t pn,
     GPIODriver driver,

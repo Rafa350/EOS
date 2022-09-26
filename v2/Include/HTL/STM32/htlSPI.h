@@ -81,9 +81,6 @@ namespace htl {
 	using SPIInterruptParam = void*;
 	using SPIInterruptFunction = void (*)(SPIInterruptParam);
 
-	void SPI_initialize(SPI_TypeDef*, SPIMode, SPIClkPolarity, SPIClkPhase, SPISize, SPIFirstBit, SPIClockDivider);
-	void SPI_send(SPI_TypeDef*, const uint8_t*, unsigned, unsigned);
-
 	template <SPIChannel>
 	struct SPITrait {
 	};
@@ -92,8 +89,14 @@ namespace htl {
 	struct SPIPinTrait {
 	};
 
+	class SPIBase_x {
+		protected:
+			static void initialize(SPI_TypeDef *regs, SPIMode mode, SPIClkPolarity clkPolarity, SPIClkPhase clkPhase, SPISize size, SPIFirstBit fistBit, SPIClockDivider clkDivider);
+			static void send(SPI_TypeDef *regs, const uint8_t *data, unsigned dataLength, unsigned timeout);
+	};
+
 	template <SPIChannel channel_>
-	class SPI_x {
+	class SPI_x final: SPIBase_x {
 		private:
 			using Trait = SPITrait<channel_>;
             static constexpr uint32_t _addr = Trait::addr;
@@ -160,11 +163,14 @@ namespace htl {
 				SPIFirstBit firstBit,
 				SPIClockDivider clkDivider) {
 
+				_isrFunction = nullptr;
+				_isrParam = nullptr;
+
 				activate();
 				disable();
 
 				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
-				SPI_initialize(regs, mode, clkPolarity, clkPhase, size, firstBit, clkDivider);
+				SPIBase_x::initialize(regs, mode, clkPolarity, clkPhase, size, firstBit, clkDivider);
 
 				enable();
 			}
@@ -175,6 +181,14 @@ namespace htl {
 
             	disable();
             	deactivate();
+            }
+
+            /// \brief Reseteja el modul
+            ///
+            static void reset() {
+
+				_isrFunction = nullptr;
+				_isrParam = nullptr;
             }
 
             /// \brief Habilita el modul
@@ -190,12 +204,14 @@ namespace htl {
             static void disable() {
 
             	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+            	while ((regs->SR & SPI_SR_BSY) != 0)
+            		continue;
             	regs->CR1 &= ~SPI_CR1_SPE;
             }
 
             /// \brief Asigna la funcio d'interrupcio.
             /// \param function: La funcio.
-            /// \param param: EL parametre.
+            /// \param param: El parametre.
             ///
 			static void setInterruptFunction(
 				SPIInterruptFunction function,
@@ -256,6 +272,10 @@ namespace htl {
 				return state;
 			}
 
+			/// \brief Obte el valor d'un flag.
+			/// \param flag: El flag.
+			/// \return El valor del flag.
+			///
 			static bool getFlag(
 				SPIFlag flag) {
 
@@ -269,9 +289,25 @@ namespace htl {
 
 					case SPIFlag::busy:
 						return (regs->SR & SPI_SR_BSY) != 0;
-				}
 
-				return false;
+					default:
+						return false;
+				}
+			}
+
+			static bool isTxEmpty() {
+
+				return getFlag(SPIFlag::txEmpty);
+			}
+
+			static bool isRxNotEmpty() {
+
+				return getFlag(SPIFlag::rxNotEmpty);
+			}
+
+			static bool isBusy() {
+
+				return getFlag(SPIFlag::busy);
 			}
 
 			static void clearFlag(
@@ -328,6 +364,18 @@ namespace htl {
 	           	*((volatile uint16_t*)&regs->DR) = data;
 			}
 
+			static uint8_t read8() {
+
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	return *((volatile uint8_t*)&regs->DR);
+			}
+
+			static uint16_t read16() {
+
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	return *((volatile uint16_t*)&regs->DR);
+			}
+
 			static void send(
 				const uint8_t data,
 				unsigned timeout = _defaultTimeout) {
@@ -341,15 +389,7 @@ namespace htl {
 				unsigned timeout = _defaultTimeout) {
 
 				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
-				SPI_send(regs, data, dataLength, timeout);
-			}
-
-			static void receive(
-				uint8_t *data,
-				unsigned dataSize,
-				unsigned timeout = _defaultTimeout) {
-
-				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				SPIBase_x::send(regs, data, dataLength, timeout);
 			}
 	};
 
@@ -539,6 +579,36 @@ namespace htl {
 			static constexpr GPIOAlt alt = GPIOAlt::_5;
 		};
 	#endif
+
+
+	class SPIWrapper {
+		protected:
+			SPIWrapper() = default;
+			virtual ~SPIWrapper() = default;
+		public:
+	};
+
+	template <typename spi_>
+	class SPIWrapper_x final: public SPIWrapper {
+		private:
+			SPIWrapper_x() = default;
+			SPIWrapper_x(const SPIWrapper_x &) = delete;
+			SPIWrapper_x(const SPIWrapper_x &&) = delete;
+
+			SPIWrapper & operator = (const SPIWrapper_x &) = delete;
+			SPIWrapper & operator = (const SPIWrapper_x &&) = delete;
+
+		public:
+			static SPIWrapper_x& instance() {
+				static SPIWrapper_x wrapper;
+				return wrapper;
+			}
+	};
+
+	template <typename spi_>
+	SPIWrapper& getSPIWrapper() {
+		return SPIWrapper_x<spi_>::instance();
+	}
 }
 
 

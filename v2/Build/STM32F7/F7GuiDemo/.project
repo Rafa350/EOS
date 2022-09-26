@@ -59,6 +59,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/appApplication.h</locationURI>
 		</link>
 		<link>
+			<name>inc/App/appDROForm.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/appDROForm.h</locationURI>
+		</link>
+		<link>
 			<name>inc/App/appLedService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Include/appLedService.h</locationURI>
@@ -87,6 +92,11 @@
 			<name>src/App/appApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appDROForm.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appDROForm.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appLedService.cpp</name>

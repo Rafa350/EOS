@@ -22,9 +22,9 @@ AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void AsyncSerialDriver_UART::initialize() {
+void AsyncSerialDriver_UART::initializeImpl() {
 
-    AsyncSerialDriver::initialize();
+    AsyncSerialDriver::initializeImpl();
 
 	_uart.setInterruptFunction(interruptHandler, this);
 }
@@ -33,11 +33,11 @@ void AsyncSerialDriver_UART::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el driver.
 ///
-void AsyncSerialDriver_UART::deinitialize() {
+void AsyncSerialDriver_UART::deinitializeImpl() {
 
 	_uart.setInterruptFunction(nullptr, nullptr);
 
-    AsyncSerialDriver::deinitialize();
+    AsyncSerialDriver::deinitializeImpl();
 }
 
 
@@ -47,7 +47,7 @@ void AsyncSerialDriver_UART::deinitialize() {
 /// \param    dataLength: Nombre de bytes en el buffer de dades..
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UART::transmit(
+bool AsyncSerialDriver_UART::transmitImpl(
 	const uint8_t *data,
 	unsigned dataLength) {
 
@@ -81,7 +81,7 @@ bool AsyncSerialDriver_UART::transmit(
 /// \param    dataSize: El tamany en bytes del buffer de dades.
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UART::receive(
+bool AsyncSerialDriver_UART::receiveImpl(
 	uint8_t *data,
 	unsigned dataSize) {
 

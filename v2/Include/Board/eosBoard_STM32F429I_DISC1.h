@@ -11,8 +11,8 @@
 #define EXIST_LED1
 
 #define LED1_GPIO            htl::GPIO_G13
-#define LED1_ON              true
-#define LED1_OFF             false
+#define LED1_ON              htl::GPIOState::set
+#define LED1_OFF             htl::GPIOState::clear
 
 #endif // USE_LED1
 
@@ -25,8 +25,8 @@
 #define EXIST_LED2
 
 #define LED2_GPIO            htl::GPIO_G14
-#define LED2_ON              true
-#define LED2_OFF             false
+#define LED2_ON              htl::GPIOState::set
+#define LED2_OFF             htl::GPIOState::clear
 
 #endif // USE_LED2
 
@@ -39,8 +39,8 @@
 #define EXIST_SW1
 
 #define SW1_GPIO             htl::GPIO_A0
-#define SW1_ON               true
-#define SW1_OFF              false
+#define SW1_ON               htl::GPIOState::set
+#define SW1_OFF              htl::GPIOState::clear
 
 #endif // USE_SW1
 
@@ -126,15 +126,18 @@
 #define DISPLAY_RS_GPIO      htl::GPIO_D13
 #define DISPLAY_SCK_GPIO     htl::GPIO_F7
 #define DISPLAY_MOSI_GPIO    htl::GPIO_F9
-#define DISPLAY_TE_GPIO      htl::GPIO_D11
 #define DISPLAY_SPI          htl::SPI_5
+#endif
+#if defined(DISPLAY_INTERFACE_SPI)
+#define DISPLAY_TE_GPIO      htl::GPIO_D11
 #endif
 
 // 8080 interface
 #if defined(DISPLAY_INTERFACE_8080)
 #define DISPLAY_TE_GPIO      htl::GPIO_D11
-#define DISPLAY_RDX_GPIO	 htl::GPIO_D12
-#define DISPLAY_WRX_GPIO     htl::GPIO_D13
+#define DISPLAY_RD_GPIO	     htl::GPIO_D12
+#define DISPLAY_WR_GPIO      htl::GPIO_D13
+#define DISPLAY_TE_GPIO      htl::GPIO_D11
 #endif
 
 // RGB interface

@@ -404,16 +404,16 @@ namespace htl {
     #endif
 
 
-    class TMRAdapter {
+    class TMRWrapper {
         public:
-            TMRAdapter();
+            TMRWrapper();
     };
 
 
     template <typename timer_>
-    TMRAdapter& getTMRAdapter() {
-        static TMRAdapter adapter;
-        return adapter;
+    TMRWrapper& getTMRWrapper() {
+        static TMRWrapper wrapper;
+        return wrapper;
     }
 }
 

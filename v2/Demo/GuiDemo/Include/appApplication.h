@@ -35,7 +35,8 @@ namespace app {
 			void onInitialize() override;
 
 			void createMainPanel();
-			eos::Visual* createKeyboardPanel();
+			eos::Visual *createKeyboardPanel();
+			eos::Visual *createDROPanel();
 			void buttonEventHandler(const eos::ButtonEventArgs& args);
 			void virtualKeyboardEventHandler(const eos::VirtualKeyboardEventArgs& args);
 

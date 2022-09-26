@@ -48,7 +48,7 @@ namespace eos {
 
 	/// \brief Informacio sobre els formats de color
 	///
-	template <ColorFormat FORMAT>
+	template <ColorFormat format_>
 	struct ColorTrait {
 	};
 
@@ -528,7 +528,7 @@ namespace eos {
             ///
             inline bool isTransparent() const {
 
-            	return getA() == 0;
+           		return getA() == 0;
             }
 
             /// \brief Indica si es opac.
@@ -536,7 +536,7 @@ namespace eos {
             ///
             inline bool isOpaque() const {
 
-            	return getA() == 0xFF;
+           		return getA() == 0xFF;
             }
 	};
 

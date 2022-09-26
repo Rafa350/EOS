@@ -11,8 +11,8 @@
 #define EXIST_LED1
 
 #define LED1_GPIO            htl::GPIO_I1
-#define LED1_ON              true
-#define LED1_OFF             false
+#define LED1_ON              htl::GPIOState::set
+#define LED1_OFF             htl::GPIOState::clear
 
 #endif // USE_LED1
 
@@ -25,8 +25,8 @@
 #define EXIST_SW1
 
 #define SW1_GPIO             htl::GPIO_I11
-#define SW1_ON               true
-#define SW1_OFF              false
+#define SW1_ON               htl::GPIOState::set
+#define SW1_OFF              htl::GPIOState::clear
 
 #endif // SW1
 
@@ -119,35 +119,35 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-#define ARDUINO_D0           htl::GPIO_C7
-#define ARDUINO_D1           htl::GPIO_C6
-#define ARDUINO_D2           htl::GPIO_G6
-#define ARDUINO_D3           htl::GPIO_B4
-#define ARDUINO_D4           htl::GPIO_G7
-#define ARDUINO_D5           htl::GPIO_I0
-#define ARDUINO_D6           htl::GPIO_H6
-#define ARDUINO_D7           htl::GPIO_I3
-#define ARDUINO_D8           htl::GPIO_I2
-#define ARDUINO_D9           htl::GPIO_A15
-#define ARDUINO_D10          htl::GPIO_A8
-#define ARDUINO_D11          htl::GPIO_B15
-#define ARDUINO_D12          htl::GPIO_B14
-#define ARDUINO_D13          htl::GPIO_I1
-#define ARDUINO_D14          htl::GPIO_B9
-#define ARDUINO_D15          htl::GPIO_B8
+#define ARDUINO_D0_GPIO      htl::GPIO_C7
+#define ARDUINO_D1_GPIO      htl::GPIO_C6
+#define ARDUINO_D2_GPIO      htl::GPIO_G6
+#define ARDUINO_D3_GPIO      htl::GPIO_B4
+#define ARDUINO_D4_GPIO      htl::GPIO_G7
+#define ARDUINO_D5_GPIO      htl::GPIO_I0
+#define ARDUINO_D6_GPIO      htl::GPIO_H6
+#define ARDUINO_D7_GPIO      htl::GPIO_I3
+#define ARDUINO_D8_GPIO      htl::GPIO_I2
+#define ARDUINO_D9_GPIO      htl::GPIO_A15
+#define ARDUINO_D10_GPIO     htl::GPIO_A8
+#define ARDUINO_D11_GPIO     htl::GPIO_B15
+#define ARDUINO_D12_GPIO     htl::GPIO_B14
+#define ARDUINO_D13_GPIO     htl::GPIO_I1
+#define ARDUINO_D14_GPIO     htl::GPIO_B9
+#define ARDUINO_D15_GPIO     htl::GPIO_B8
 
 #define ARDUINO_UART         htl::UART_6
-#define ARDUINO_RX           htl::GPIO_C7
-#define ARDUINO_TX           htl::GPIO_C6
+#define ARDUINO_RX_GPIO      htl::GPIO_C7
+#define ARDUINO_TX_GPIO      htl::GPIO_C6
 
 #define ARDUINO_I2C          htl::I2CMaster_1
-#define ARDUINO_SCL          htl::GPIO_B8
-#define ARDUINO_SDA          htl::GPIO_B9
+#define ARDUINO_SCL_GPIO     htl::GPIO_B8
+#define ARDUINO_SDA_GPIO     htl::GPIO_B9
 
 #define ARDUINO_SPI          htl::SPI_2
-#define ARDUINO_SCK          htl::GPIO_I1
-#define ARDUINO_MISO         htl::GPIO_B14
-#define ARDUINO_MOSI         htl::GPIO_B15
+#define ARDUINO_SCK_GPIO     htl::GPIO_I1
+#define ARDUINO_MISO_GPIO    htl::GPIO_B14
+#define ARDUINO_MOSI_GPIO    htl::GPIO_B15
 
 #endif // USE_ARDUINO
 

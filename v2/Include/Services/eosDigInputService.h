@@ -64,7 +64,7 @@ namespace eos {
 
         private:
             DigInputService *_service;
-            const htl::GPIOAdapter &_gpio;
+            const htl::GPIOWrapper &_gpio;
             ScanMode _scanMode;
             IChangedEventCallback *_changedEventCallback;
             uint32_t _pattern;
@@ -72,7 +72,7 @@ namespace eos {
             bool _edge;
 
         public:
-            DigInput(DigInputService *service, const htl::GPIOAdapter &gpio);
+            DigInput(DigInputService *service, const htl::GPIOWrapper &gpio);
             ~DigInput();
 
             inline DigInputService* getService() const {
