@@ -52,6 +52,7 @@
             <itemPath>../../../Include/Services/eosDigOutputService.h</itemPath>
             <itemPath>../../../Include/Services/eosTimerService.h</itemPath>
             <itemPath>../../../Include/Services/eosDispatchService.h</itemPath>
+            <itemPath>../../../Include/Services/eosMsgBrokerService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
@@ -126,6 +127,7 @@
             <itemPath>../../../Source/Services/eosDigOutputService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosTimerService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDispatchService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosMsgBrokerService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="StartUp" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">

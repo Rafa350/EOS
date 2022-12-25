@@ -586,6 +586,8 @@ namespace htl {
 			SPIWrapper() = default;
 			virtual ~SPIWrapper() = default;
 		public:
+			virtual void write8(uint8_t data) = 0;
+			virtual void write16(uint16_t data) = 0;
 	};
 
 	template <typename spi_>
@@ -599,9 +601,17 @@ namespace htl {
 			SPIWrapper & operator = (const SPIWrapper_x &&) = delete;
 
 		public:
-			static SPIWrapper_x& instance() {
+			static SPIWrapper& instance() {
 				static SPIWrapper_x wrapper;
 				return wrapper;
+			}
+
+			void write8(uint8_t data) override {
+				spi_::write8(data);
+			}
+
+			void write16(uint16_t data) override {
+				spi_::write16(data);
 			}
 	};
 

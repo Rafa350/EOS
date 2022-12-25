@@ -873,7 +873,7 @@ namespace htl {
 			UARTWrapper & operator = (const UARTWrapper_x &&) = delete;
 
 		public:
-			static UARTWrapper_x& instance() {
+			static UARTWrapper& instance() {
 				static UARTWrapper_x wrapper;
 				return wrapper;
 			}
