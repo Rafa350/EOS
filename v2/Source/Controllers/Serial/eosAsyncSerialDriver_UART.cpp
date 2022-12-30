@@ -13,9 +13,9 @@ using namespace htl;
 /// \param    uart: El modul uart a utilitzar.
 ///
 AsyncSerialDriver_UART::AsyncSerialDriver_UART(
-	UARTWrapper &uart):
+	UARTHandler hUART):
 
-	_uart(uart) {
+	_hUART(hUART) {
 }
 
 
@@ -26,7 +26,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_uart.setInterruptFunction(interruptHandler, this);
+	_hUART->setInterruptFunction(interruptHandler, this);
 }
 
 
@@ -35,7 +35,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 ///
 void AsyncSerialDriver_UART::deinitializeImpl() {
 
-	_uart.setInterruptFunction(nullptr, nullptr);
+	_hUART->setInterruptFunction(nullptr, nullptr);
 
     AsyncSerialDriver::deinitializeImpl();
 }
@@ -64,8 +64,8 @@ bool AsyncSerialDriver_UART::transmitImpl(
 		_txLength = dataLength;
 		_txCount = 0;
 
-		_uart.enableTX();
-		_uart.enableInterrupt(UARTInterrupt::txEmpty);
+		_hUART->enableTX();
+		_hUART->enableInterrupt(UARTInterrupt::txEmpty);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
@@ -98,10 +98,10 @@ bool AsyncSerialDriver_UART::receiveImpl(
 		_rxSize = dataSize;
 		_rxCount = 0;
 
-		_uart.enableRX();
-		_uart.enableInterrupt(UARTInterrupt::rxNotEmpty);
+		_hUART->enableRX();
+		_hUART->enableInterrupt(UARTInterrupt::rxNotEmpty);
         #ifdef EOS_PLATFORM_STM32
-            _uart.enableInterrupt(UARTInterrupt::rxTimeout);
+			_hUART->enableInterrupt(UARTInterrupt::rxTimeout);
         #endif
 
 		// En aquest moment, es generen interrupcions
@@ -119,43 +119,43 @@ bool AsyncSerialDriver_UART::receiveImpl(
 #if defined(EOS_PLATFORM_STM32)
 void AsyncSerialDriver_UART::interruptHandler() {
 
-	if (_uart.getFlag(UARTFlag::txEmpty)) {
+	if (_hUART->getFlag(UARTFlag::txEmpty)) {
 		if (_txCount < _txLength) {
 			_txCount++;
-			_uart.write(*_txData++);
+			_hUART->write(*_txData++);
 			if (_txCount == _txLength) {
-				_uart.disableInterrupt(UARTInterrupt::txEmpty);
-				_uart.enableInterrupt(UARTInterrupt::txComplete);
+				_hUART->disableInterrupt(UARTInterrupt::txEmpty);
+				_hUART->enableInterrupt(UARTInterrupt::txComplete);
 			}
 		}
 	}
 
-	if (_uart.getFlag(UARTFlag::txComplete)) {
-		_uart.clearFlag(UARTFlag::txComplete);
-		_uart.disableInterrupt(UARTInterrupt::txEmpty);
-		_uart.disableInterrupt(UARTInterrupt::txComplete);
-		_uart.disableTX();
+	if (_hUART->getFlag(UARTFlag::txComplete)) {
+		_hUART->clearFlag(UARTFlag::txComplete);
+		_hUART->disableInterrupt(UARTInterrupt::txEmpty);
+		_hUART->disableInterrupt(UARTInterrupt::txComplete);
+		_hUART->disableTX();
 		notifyTxCompleted(_txCount);
 	}
 
-	if (_uart.getFlag(UARTFlag::rxNotEmpty)) {
+	if (_hUART->getFlag(UARTFlag::rxNotEmpty)) {
 		if (_rxCount < _rxSize) {
 			_rxCount++;
-			*_rxData++ = _uart.read();
+			*_rxData++ = _hUART->read();
 			if (_rxCount == _rxSize) {
-				_uart.disableInterrupt(UARTInterrupt::rxNotEmpty);
-				_uart.disableInterrupt(UARTInterrupt::rxTimeout);
-				_uart.disableRX();
+				_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
+				_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
+				_hUART->disableRX();
 				notifyRxCompleted(_rxCount);
 			}
 		}
 	}
 
-	if (_uart.getFlag(UARTFlag::rxTimeout)) {
-		_uart.clearFlag(UARTFlag::rxTimeout);
-		_uart.disableInterrupt(UARTInterrupt::rxNotEmpty);
-		_uart.disableInterrupt(UARTInterrupt::rxTimeout);
-		_uart.disableRX();
+	if (_hUART->getFlag(UARTFlag::rxTimeout)) {
+		_hUART->clearFlag(UARTFlag::rxTimeout);
+		_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
+		_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
+		_hUART->disableRX();
 		notifyRxCompleted(_rxCount);
 	}
 }

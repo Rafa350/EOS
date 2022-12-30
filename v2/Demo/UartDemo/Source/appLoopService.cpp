@@ -52,7 +52,7 @@ void MyAppLoopService::onSetup() {
 
 	// Configura el driver de comunicacio serie
 	//
-	_serial = new AsyncSerialDriver_UART(getUARTWrapper<Uart>());
+	_serial = new AsyncSerialDriver_UART(getUART<Uart>());
 	_serial->initialize();
 	_serial->enableTxCompletedCallback(_txCompletedCallback);
 	_serial->enableRxCompletedCallback(_rxCompletedCallback);

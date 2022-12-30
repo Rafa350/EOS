@@ -959,60 +959,6 @@ namespace htl {
             static constexpr uint32_t an = -1;
         };
     #endif
-
-
-    class GPIOWrapper {
-        private:
-            GPIORegisters *_regs;
-            uint32_t _mask;
-
-        public:
-            GPIOWrapper(
-                uint32_t
-                addr, uint32_t pn):
-
-                _regs(reinterpret_cast<GPIORegisters*>(addr)),
-                _mask(1 << pn) {
-            }
-
-            GPIOWrapper(
-                const GPIOWrapper &other):
-
-                _regs(other._regs),
-                _mask(other._mask) {
-            }
-
-            inline void set() const {
-
-                _regs->LATxSET = _mask;
-            }
-
-            inline void clear() const {
-
-                _regs->LATxCLR = _mask;
-            }
-
-            inline void toggle() const {
-
-                _regs->LATxINV = _mask;
-            }
-
-            inline bool read() const {
-
-                return (_regs->PORTx & _mask) != 0;
-            }
-    };
-
-    template <typename gpio_>
-    const GPIOWrapper& getGPIOWrapper() {
-
-        using PortTrait = GPIOPortTrait<gpio_::port>;
-        using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
-
-        static GPIOWrapper wrapper(PortTrait::addr, PinTrait::pn);
-
-        return wrapper;
-    }
 }
 
 

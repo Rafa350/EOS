@@ -313,7 +313,7 @@ void DigOutputService::cmdClear(
 
     eosAssert(output != nullptr);
 
-    output->_gpio.clear();
+    output->_hGPIO->clear();
     output->_state = DigOutput::State::idle;
 }
 
@@ -327,7 +327,7 @@ void DigOutputService::cmdSet(
 
     eosAssert(output != nullptr);
 
-    output->_gpio.set();
+    output->_hGPIO->set();
     output->_state = DigOutput::State::idle;
 }
 
@@ -341,7 +341,7 @@ void DigOutputService::cmdToggle(
 
     eosAssert(output != nullptr);
 
-    output->_gpio.toggle();
+    output->_hGPIO->toggle();
     output->_state = DigOutput::State::idle;
 }
 
@@ -358,7 +358,7 @@ void DigOutputService::cmdPulse(
     eosAssert(output != nullptr);
 
     if (output->_state == DigOutput::State::idle)
-        output->_gpio.toggle();
+        output->_hGPIO->toggle();
     output->_state = DigOutput::State::pulse;
     output->_widthCnt = width;
 }
@@ -445,7 +445,7 @@ void DigOutputService::cmdTimeOut(
       	switch (output->_state) {
             case DigOutput::State::pulse:
                 if (output->_widthCnt <= time) {
-                    output->_gpio.toggle();
+                    output->_hGPIO->toggle();
                     output->_state = DigOutput::State::idle;
                 }
                 else
@@ -459,22 +459,22 @@ void DigOutputService::cmdTimeOut(
                 if (output->_delayCnt <= time) {
                     switch (output->_state) {
                         case DigOutput::State::delayedSet:
-                            output->_gpio.set();
+                            output->_hGPIO->set();
                             output->_state = DigOutput::State::idle;
                             break;
 
                         case DigOutput::State::delayedClear:
-                            output->_gpio.clear();
+                            output->_hGPIO->clear();
                             output->_state = DigOutput::State::idle;
                             break;
 
                         case DigOutput::State::delayedToggle:
-                            output->_gpio.toggle();
+                            output->_hGPIO->toggle();
                             output->_state = DigOutput::State::idle;
                             break;
 
                         case DigOutput::State::delayedPulse:
-                            output->_gpio.toggle();
+                            output->_hGPIO->toggle();
                             output->_state = DigOutput::State::pulse;
                             break;
 
@@ -515,10 +515,10 @@ void DigOutputService::tmrInterruptFunction() {
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    const htl::GPIOWrapper &gpio):
+    const htl::GPIOHandler hGPIO):
 
     _service(nullptr),
-    _gpio(gpio),
+    _hGPIO(hGPIO),
     _state(State::idle),
 	_delayCnt(0),
 	_widthCnt(0) {

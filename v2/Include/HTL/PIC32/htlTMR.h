@@ -405,6 +405,10 @@ namespace htl {
 
 
     class TMRWrapper {
+        private:
+            TMRWrapper(const TMRWrapper &) = delete;
+            TMRWrapper(const TMRWrapper &&) = delete;
+
         public:
             TMRWrapper();
     };
