@@ -18,8 +18,8 @@
 #define EXIST_LED1
 
 #define LED1_GPIO            htl::GPIO_D0
-#define LED1_ON              true
-#define LED1_OFF             false
+#define LED1_ON              htl::GPIOState::set
+#define LED1_OFF             htl::GPIOState::clear
 
 #endif // USE_LED1
 
@@ -32,8 +32,8 @@
 #define EXIST_LED2
 
 #define LED2_GPIO            htl::GPIO_D1
-#define LED2_ON              true
-#define LED2_OFF             false
+#define LED2_ON              htl::GPIOState::set
+#define LED2_OFF             htl::GPIOState::clear
 
 #endif // USE_LED2
 
@@ -46,8 +46,8 @@
 #define EXIST_LED3
 
 #define LED3_GPIO            htl::GPIO_D2
-#define LED3_ON              true
-#define LED3_OFF             false
+#define LED3_ON              htl::GPIOState::set
+#define LED3_OFF             htl::GPIOState::clear
 
 #endif // USE_LED1
 
@@ -61,8 +61,8 @@
 #define EXIST_SW1
 
 #define SW1_GPIO             htl::GPIO_D6
-#define SW1_ON               false
-#define SW1_OFF              true
+#define SW1_ON               htl::GPIOState::clear
+#define SW1_OFF              htl::GPIOState::set
 
 #endif // USE_SW1
 
@@ -75,8 +75,8 @@
 #define EXIST_SW2
 
 #define SW2_GPIO             htl::GPIO_D7
-#define SW2_ON               false
-#define SW2_OFF              true
+#define SW2_ON               htl::GPIOState::clear
+#define SW2_OFF              htl::GPIOState::set
 
 #endif // USE_SW2
 
@@ -89,8 +89,8 @@
 #define EXIST_SW3
 
 #define SW3_GPIO             htl::GPIO_D13
-#define SW3_ON               false
-#define SW3_OFF              true
+#define SW3_ON               htl::GPIOState::clear
+#define SW3_OFF              htl::GPIOState::set
 
 #endif // USE_SW3
 

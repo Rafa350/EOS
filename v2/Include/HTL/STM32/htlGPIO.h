@@ -205,7 +205,7 @@ namespace htl {
 
 
     /// \class GPIOBase_x
-    /// \brief Base class for gpio pins
+    /// \brief Base class for gpio
     ///
     class GPIOBase_x {
     	protected:
@@ -218,7 +218,7 @@ namespace htl {
     /// \brief Class for gpio pins
     ///
     template <GPIOPort port_, GPIOPin pin_>
-    class GPIO_x final: GPIOBase_x {
+    class GPIO_x final: public GPIOBase_x {
         private:
             using PortTrait = GPIOPortTrait<port_>;
             using PinTrait = GPIOPinTrait<port_, pin_>;
@@ -1200,67 +1200,6 @@ namespace htl {
             static constexpr uint32_t pn = 7;
         };
     #endif
-
-
-	class GPIOWrapper final {
-		private:
-			GPIO_TypeDef *_regs;
-			uint32_t _pn;
-
-			GPIOWrapper(const GPIOWrapper &) = delete;
-			GPIOWrapper(GPIOWrapper &&) = delete;
-
-			GPIOWrapper operator = (const GPIOWrapper&) = delete;
-			GPIOWrapper operator = (const GPIOWrapper&&) = delete;
-
-		public:
-			GPIOWrapper(
-				uint32_t addr,
-				uint32_t pn) :
-
-				 _regs(reinterpret_cast<GPIO_TypeDef*>(addr)),
-				 _pn(pn) {
-			 }
-
-			 inline void set() const {
-
-				 _regs->BSRR = 1 << _pn;
-			 }
-
-			 inline void clear() const {
-
-				 _regs->BSRR = 1 << (_pn + 16);
-			 }
-
-			 inline void toggle() const {
-
-				 _regs->ODR ^= 1 << _pn;
-			 }
-
-			 inline void write(bool state) const {
-
-				 if (state)
-					 set();
-				 else
-					 clear();
-			 }
-
-			 inline bool read() const {
-
-				 return _regs->IDR & (1 << _pn);
-			 }
-	};
-
-	template <typename gpio_>
-    const GPIOWrapper& getGPIOWrapper() {
-
-        using PortTrait = GPIOPortTrait<gpio_::port>;
-        using PinTrait = GPIOPinTrait<gpio_::port, gpio_::pin>;
-
-        static GPIOWrapper wrapper(PortTrait::addr, PinTrait::pn);
-
-        return wrapper;
-    }
 }
 
 

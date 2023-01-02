@@ -26,11 +26,14 @@ namespace htl {
         protected:
             virtual ~IGPIO() = default;
         public:
+            virtual void initInput(GPIOPull pull = GPIOPull::none) const = 0;
+            virtual void initOutput(GPIODriver driver, GPIOSpeed speed = GPIOSpeed::medium) const = 0;
+            virtual void initAlt(GPIODriver driver, GPIOSpeed speed, GPIOAlt alt) const = 0;
             virtual void set() const = 0;
             virtual void clear() const = 0;
             virtual void toggle() const = 0;
-            virtual bool read() const = 0;
-            virtual void write(bool) const = 0;
+            virtual GPIOState read() const = 0;
+            virtual void write(GPIOState state) const = 0;
     };
 
     typedef IGPIO *GPIOHandler;
@@ -51,6 +54,18 @@ namespace htl {
                 return &gpio;
             }
 
+            void initInput(GPIOPull pull = GPIOPull::none) const override {
+            	gpio_::initInput(pull);
+            }
+
+            void initOutput(GPIODriver driver, GPIOSpeed speed = GPIOSpeed::medium) const override {
+            	gpio_::initOutput(driver, speed);
+            }
+
+            void initAlt(GPIODriver driver, GPIOSpeed speed, GPIOAlt alt) const override {
+            	gpio_::initAlt(driver, speed, alt);
+            }
+
             void set() const override {
                 gpio_::set();
             }
@@ -63,12 +78,12 @@ namespace htl {
                 gpio_::toggle();
             };
 
-            bool read() const override {
+            GPIOState read() const override {
                 return gpio_::read();
             }
 
-            void write(bool s) const override {
-                return gpio_::write(s);
+            void write(GPIOState state) const override {
+                return gpio_::write(state);
             }
     };
 

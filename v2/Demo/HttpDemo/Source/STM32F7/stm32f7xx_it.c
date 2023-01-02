@@ -41,3 +41,10 @@ void SysTick_Handler(void) {
 
 	osalSysTickHandler();
 }
+
+
+void ETH_IRQHandler(void)  {
+
+	extern ETH_HandleTypeDef EthHandle;
+	HAL_ETH_IRQHandler(&EthHandle);
+}

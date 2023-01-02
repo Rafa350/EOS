@@ -17,14 +17,8 @@ namespace app {
 
     class MyApplication: public eos::Application {
         private:
-            using PinLED1 = LED1_GPIO;
-            using PinLED2 = LED2_GPIO;
-            using PinLED3 = LED3_GPIO;
-            using PinSW1 = SW1_GPIO;
-            using PinSW2 = SW2_GPIO;
-            using PinSW3 = SW3_GPIO;
-            using TMR_INP = config::digInputService::TMR;
-            using TMR_OUT = config::digOutputService::TMR;
+            using INPSRV_TMR = config::digInputService::TMR;
+            using OUTSRV_TMR = config::digOutputService::TMR;
 
             using DigInputChangedEventCallback = eos::CallbackP1<MyApplication, const eos::DigInput::ChangedEventArgs&>;
 
@@ -65,8 +59,8 @@ namespace app {
             #ifdef EXIST_SW3
                 void sw3ChangedEventHandler(const eos::DigInput::ChangedEventArgs &args);
             #endif
-            static void tmrInpInterruptFunction(htl::TMREvent, htl::TMRInterruptParam);
-            static void tmrOutInterruptFunction(htl::TMREvent, htl::TMRInterruptParam);
+            static void digInputServiceTMRInterruptFunction(htl::TMRInterruptParam);
+            static void digOutputServiceTMRInterruptFunction(htl::TMRInterruptParam);
 
         public:
             MyApplication();

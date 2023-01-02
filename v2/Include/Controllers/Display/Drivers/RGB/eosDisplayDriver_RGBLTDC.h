@@ -17,12 +17,6 @@ namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
 		private:
-			using PinBKE = DISPLAY_BKE_GPIO;
-			using PinLCDE = DISPLAY_LCDE_GPIO;
-			using PinDE = DISPLAY_DE_GPIO;
-			using PinHSYNC = DISPLAY_HSYNC_GPIO;
-			using PinVSYNC = DISPLAY_VSYNC_GPIO;
-			using PinPC = DISPLAY_PC_GPIO;
 			using PinR0 = DISPLAY_R0_GPIO;
 			using PinR1 = DISPLAY_R1_GPIO;
 			using PinR2 = DISPLAY_R2_GPIO;
@@ -47,8 +41,6 @@ namespace eos {
 			using PinB5 = DISPLAY_B5_GPIO;
 			using PinB6 = DISPLAY_B6_GPIO;
 			using PinB7 = DISPLAY_B7_GPIO;
-			using Ltdc = htl::LTDC_1;
-			using LtdcLayer = htl::LTDCLayer_1;
 
 			static constexpr uint16_t _hSync       = DISPLAY_HSYNC;
 			static constexpr uint16_t _vSync       = DISPLAY_VSYNC;

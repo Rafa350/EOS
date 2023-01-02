@@ -112,6 +112,10 @@ static void ConfigureMPU() {
 ///
 void appInitialize() {
 
+	#ifdef EOS_DEBUG
+		__HAL_FREEZE_TIM6_DBGMCU();
+	#endif
+
 	ConfigureMPU();
 	ConfigureSystemCache();
     halSYSInitialize();

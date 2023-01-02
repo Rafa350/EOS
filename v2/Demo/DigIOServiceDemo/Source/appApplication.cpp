@@ -42,34 +42,34 @@ void MyApplication::onInitialize() {
 
     // Configura la entrada corresponent al switch SW1
     //
-    PinSW1::initInput(GPIOPull::up);
-    _sw1 = new DigInput(_digInputService, getGPIO<PinSW1>());
+    SW1_GPIO::initInput(GPIOPull::up);
+    _sw1 = new DigInput(_digInputService, getGPIO<SW1_GPIO>());
     _sw1->enableChangedEventCallback(_sw1ChangedEventCallback);
 
     // Configura la entrada corresponent al switch SW2
     //
     #ifdef EXIST_SW2
-        PinSW2::initInput(GPIOPull::up);
-        _sw2 = new DigInput(_digInputService, getGPIO<PinSW2>());
+        SW2_GPIO::initInput(GPIOPull::up);
+        _sw2 = new DigInput(_digInputService, getGPIO<SW2_GPIO>());
         _sw2->enableChangedEventCallback(_sw2ChangedEventCallback);
     #endif
 
     // Configure la entrada corresponent al switch SW3
     //
     #ifdef EXIST_SW3
-        PinSW3::initInput(GPIOPull::up);
-        _sw3 = new DigInput(_digInputService, getGPIO<PinSW3>());
+        SW3_GPIO::initInput(GPIOPull::up);
+        _sw3 = new DigInput(_digInputService, getGPIO<SW3_GPIO>());
         _sw3->enableChangedEventCallback(_sw3ChangedEventCallback);
     #endif
 
     // Configura el temporitzador pel servei d'entrades digitals
     //
-    TMR_INP::init();
-    TMR_INP::setClockSource(TMRClockSource::pclk);
-    TMR_INP::setResolution(TMRResolution::_16);
-    TMR_INP::setClockDivider(TMRClockDivider::_64);
-    TMR_INP::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digInputService::timerPeriod) / 64000) - 1);
-    TMR_INP::setInterruptFunction(tmrInpInterruptFunction, _digInputService);
+    INPSRV_TMR::init();
+    INPSRV_TMR::setClockSource(TMRClockSource::pclk);
+    INPSRV_TMR::setResolution(TMRResolution::_16);
+    INPSRV_TMR::setClockDivider(TMRClockDivider::_64);
+    INPSRV_TMR::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digInputService::timerPeriod) / 64000) - 1);
+    INPSRV_TMR::setInterruptFunction(digInputServiceTMRInterruptFunction, _digInputService);
 
     // Configura les interrupcions pel servei d'entrades digitals
     //
@@ -85,34 +85,34 @@ void MyApplication::onInitialize() {
 
     // Configura la sortida corresponent al led LED1
     //
-    PinLED1::initOutput();
-    PinLED1::clear();
-    _led1 = new DigOutput(_digOutputService, htl::getGPIO<PinLED1>());
+    LED1_GPIO::initOutput();
+    LED1_GPIO::clear();
+    _led1 = new DigOutput(_digOutputService, htl::getGPIO<LED1_GPIO>());
 
     // COnfigura la sortida corresponent al led LED2
     //
     #ifdef EXIST_LED2
-        PinLED2::initOutput();
-        PinLED2::clear();
-        _led2 = new DigOutput(_digOutputService, htl::getGPIO<PinLED2>());
+        LED2_GPIO::initOutput();
+        LED2_GPIO::clear();
+        _led2 = new DigOutput(_digOutputService, htl::getGPIO<LED2_GPIO>());
     #endif
 
-    // COnfigura la sortida corresponent al led LED3
+    // Configura la sortida corresponent al led LED3
     //
     #ifdef EXIST_LED3
-        PinLED3::initOutput();
-        PinLED3::clear();
-        _led3 = new DigOutput(_digOutputService, htl::getGPIO<PinLED3>());
+        LED3_GPIO::initOutput();
+        LED3_GPIO::clear();
+        _led3 = new DigOutput(_digOutputService, htl::getGPIO<LED3_GPIO>());
     #endif
 
     // Configura el temporitzador pel servei de sortides digitals
     //
-    TMR_OUT::init();
-    TMR_OUT::setClockSource(TMRClockSource::pclk);
-    TMR_OUT::setResolution(TMRResolution::_16);
-    TMR_OUT::setClockDivider(TMRClockDivider::_64);
-    TMR_OUT::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digOutputService::timerPeriod) / 64000) - 1);
-    TMR_OUT::setInterruptFunction(tmrOutInterruptFunction, _digOutputService);
+    OUTSRV_TMR::init();
+    OUTSRV_TMR::setClockSource(TMRClockSource::pclk);
+    OUTSRV_TMR::setResolution(TMRResolution::_16);
+    OUTSRV_TMR::setClockDivider(TMRClockDivider::_64);
+    OUTSRV_TMR::setPeriod(((halSYSGetPeripheralClockFrequency() * config::digOutputService::timerPeriod) / 64000) - 1);
+    OUTSRV_TMR::setInterruptFunction(digOutputServiceTMRInterruptFunction, _digOutputService);
 
     // Configura les interrupcions
     //
@@ -123,13 +123,13 @@ void MyApplication::onInitialize() {
 
     // Inicia el temporitzador del servei d'entrades digitals
     //
-    TMR_INP::enableInterrupt(TMREvent::update);
-    TMR_INP::start();
+    INPSRV_TMR::enableInterrupt(TMRInterrupt::update);
+    INPSRV_TMR::start();
 
     // Inicia el temporitzador del servei de sortides digitals
     //
-    TMR_OUT::enableInterrupt(TMREvent::update);
-    TMR_OUT::start();
+    OUTSRV_TMR::enableInterrupt(TMRInterrupt::update);
+    OUTSRV_TMR::start();
 }
 
 
@@ -140,7 +140,7 @@ void MyApplication::onInitialize() {
 void MyApplication::sw1ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == SW1_ON) {
+    if (args.value == (bool) SW1_ON) {
         _led1->pulse(500);
         _led2->delayedPulse(250, 500);
         #ifdef EXIST_LED3
@@ -158,7 +158,7 @@ void MyApplication::sw1ChangedEventHandler(
 void MyApplication::sw2ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == SW2_ON) {
+    if (args.value == (bool) SW2_ON) {
         #ifdef EXIST_LED3
             _led3->pulse(500);
         #endif
@@ -179,7 +179,7 @@ void MyApplication::sw2ChangedEventHandler(
 void MyApplication::sw3ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == SW3_ON) {
+    if (args.value == (bool) SW3_ON) {
         _led1->pulse(1000);
         #ifdef EXIST_LED2
             _led2->pulse(2000);
@@ -196,12 +196,15 @@ void MyApplication::sw3ChangedEventHandler(
 /// \brief    Procesa la interrupcio del temporitzados del servei
 ///           d'entrades digitals.
 ///
-void MyApplication::tmrInpInterruptFunction(
-    htl::TMREvent event,
+void MyApplication::digInputServiceTMRInterruptFunction(
     htl::TMRInterruptParam param) {
 
-    DigInputService *service = reinterpret_cast<DigInputService*>(param);
-    service->tmrInterruptFunction();
+    if (INPSRV_TMR::getFlag(TMRFlag::update)) {
+        INPSRV_TMR::clearFlag(TMRFlag::update);
+
+        DigInputService *service = reinterpret_cast<DigInputService*>(param);
+        service->tmrInterruptFunction();
+    }
 }
 
 
@@ -209,10 +212,13 @@ void MyApplication::tmrInpInterruptFunction(
 /// \brief    Procesa la interrupcio del temporitzados del servei
 ///           de sortides digitals.
 ///
-void MyApplication::tmrOutInterruptFunction(
-    htl::TMREvent event,
+void MyApplication::digOutputServiceTMRInterruptFunction(
     htl::TMRInterruptParam param) {
 
-    DigOutputService *service = reinterpret_cast<DigOutputService*>(param);
-    service->tmrInterruptFunction();
+    if (OUTSRV_TMR::getFlag(TMRFlag::update)) {
+        OUTSRV_TMR::clearFlag(TMRFlag::update);
+
+        DigOutputService *service = reinterpret_cast<DigOutputService*>(param);
+        service->tmrInterruptFunction();
+    }
 }

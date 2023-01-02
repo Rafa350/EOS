@@ -26,7 +26,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_hUART->setInterruptFunction(interruptHandler, this);
+	_hUART->setInterruptFunction(interruptFunction, this);
 }
 
 
@@ -49,7 +49,7 @@ void AsyncSerialDriver_UART::deinitializeImpl() {
 ///
 bool AsyncSerialDriver_UART::transmitImpl(
 	const uint8_t *data,
-	unsigned dataLength) {
+	int dataLength) {
 
 	if ((data == nullptr) || (dataLength == 0))
 		return false;
@@ -83,7 +83,7 @@ bool AsyncSerialDriver_UART::transmitImpl(
 ///
 bool AsyncSerialDriver_UART::receiveImpl(
 	uint8_t *data,
-	unsigned dataSize) {
+	int dataSize) {
 
 	if ((data == nullptr) || (dataSize == 0))
 		return false;
@@ -162,23 +162,20 @@ void AsyncSerialDriver_UART::interruptHandler() {
 
 
 #elif defined (EOS_PLATFORM_PIC32)
-void AsyncSerialDriver_UART::interruptHandler(
-	UARTEvent event) {
+void AsyncSerialDriver_UART::interruptHandler() {
 
-    switch (event) {
-        case UARTEvent::txEmpty:
-            if (_txCount < _txLength) {
-                _txCount++;
-                _uart.write(*_txData++);
-            }
-            else {
-                _uart.disableInterrupt(UARTEvent::txEmpty);
-                notifyTxCompleted(_txCount);
-            }
-            break;
+    if (_hUART->getFlag(UARTFlag::txEmpty)) {
+        if (_txCount < _txLength) {
+            _txCount++;
+            _hUART->write(*_txData++);
+        }
+        else {
+            _hUART->disableInterrupt(UARTInterrupt::txEmpty);
+            notifyTxCompleted(_txCount);
+        }
+    }
 
-        case UARTEvent::rxNotEmpty:
-            break;
+    if (_hUART->getFlag(UARTFlag::rxNotEmpty)) {
     }
 }
 
@@ -193,7 +190,7 @@ void AsyncSerialDriver_UART::interruptHandler(
 /// \param    event: EL event.
 /// \param    param: EL parametre.
 ///
-void AsyncSerialDriver_UART::interruptHandler(
+void AsyncSerialDriver_UART::interruptFunction(
 	UARTInterruptParam param) {
 
 	AsyncSerialDriver_UART *driver = reinterpret_cast<AsyncSerialDriver_UART*>(param);

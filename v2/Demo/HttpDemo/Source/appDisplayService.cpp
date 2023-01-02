@@ -28,19 +28,19 @@ DisplayService::DisplayService(
 ///
 void DisplayService::onSetup() {
 
-	constexpr int frameBufferLineBytes = (board::display::width * Color::bytes + 63) & 0xFFFFFFC0;
+	constexpr int frameBufferLineBytes = (DISPLAY_WIDTH * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
 	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
-		board::display::width,
-		board::display::height,
+		DISPLAY_WIDTH,
+		DISPLAY_HEIGHT,
 		frameBufferPitch,
 		DisplayOrientation::normal,
-		reinterpret_cast<void*>(board::display::buffer));
+		reinterpret_cast<void*>(DISPLAY_BUFFER));
 
 	_driver = new DisplayDriver_RGBLTDC(frameBuffer);
     _driver->initialize();
-    _driver->displayOn();
+    _driver->enable();
 
     _graphics = new eos::Graphics(_driver);
 }

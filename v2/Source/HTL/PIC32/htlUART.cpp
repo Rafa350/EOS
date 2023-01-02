@@ -5,7 +5,7 @@ using namespace htl;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitz<a el modul UART.
+/// \brief    Inicialitza el modul UART.
 /// \param    regs: EL bloc de registres.
 ///
 void htl::UART_initialize(

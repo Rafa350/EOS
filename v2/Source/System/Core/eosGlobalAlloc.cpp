@@ -12,7 +12,7 @@ void* operator new(
 
     eosAssert(size > 0);
 
-    void* p = osalHeapAlloc(nullptr, size);
+    void *p = osalHeapAlloc(nullptr, size);
     eosAssert(p != nullptr);
 
     return p;

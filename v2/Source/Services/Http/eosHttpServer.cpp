@@ -16,9 +16,9 @@ using namespace eos;
 HttpServer::HttpServer(
 	uint8_t port):
 
-	_getCallback(this, &HttpServer::getHandler),
-	_headCallback(this, &HttpServer::headHandler),
-	_postCallback(this, &HttpServer::postHandler),
+	_getCallback(*this, &HttpServer::getHandler),
+	_headCallback(*this, &HttpServer::headHandler),
+	_postCallback(*this, &HttpServer::postHandler),
 	_port(port) {
 
 }
@@ -62,13 +62,12 @@ void HttpServer::initialize() {
 
 	netif_add(&gnetif, &addr, &mask, &gw, NULL, &ethernetif_init, &tcpip_input);
 	netif_set_default(&gnetif);
+
 	if (netif_is_link_up(&gnetif))
 		netif_set_up(&gnetif);
 	else
 		netif_set_down(&gnetif);
 }
-
-//extern "C" { void http_server_serve(struct netconn *conn); }
 
 
 /// ----------------------------------------------------------------------
@@ -102,7 +101,6 @@ void HttpServer::run() {
 
 					// Serve connection
 					//
-#if 1
 				    struct netbuf *inbuf;
 				    if (netconn_recv(hConnection, &inbuf) == ERR_OK) {
 				    	if (netconn_err(hConnection) == ERR_OK) {
@@ -134,9 +132,6 @@ void HttpServer::run() {
 				    // so we have to make sure to deallocate the buffer)
 				    //
 				    netbuf_delete(inbuf);
-#else
-					http_server_serve(hConnection);
-#endif
 
 					// Delete connection
 					//

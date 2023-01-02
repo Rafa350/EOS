@@ -54,16 +54,6 @@ namespace eos {
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
-			using PinRST = DISPLAY_RST_GPIO;
-			#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-				using PinCS = DISPLAY_CS_GPIO;
-				using PinDC = DISPLAY_DC_GPIO;
-				using PinSCK = DISPLAY_SCK_GPIO;
-				using PinMOSI = DISPLAY_MOSI_GPIO;
-				using Spi = DISPLAY_SPI;
-			#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
-			#endif
-
 			static constexpr int _displayWidth  = DISPLAY_WIDTH;
 			static constexpr int _displayHeight = DISPLAY_HEIGHT;
 

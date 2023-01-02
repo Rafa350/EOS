@@ -50,7 +50,11 @@ namespace htl {
         ext
     };
 
-    enum class TMREvent {
+    enum class TMRFlag {
+        update
+    };
+
+    enum class TMRInterrupt {
         update
     };
 
@@ -85,7 +89,7 @@ namespace htl {
     };
 
     using TMRInterruptParam = void*;
-    using TMRInterruptFunction = void (*)(TMREvent event, TMRInterruptParam param);
+    using TMRInterruptFunction = void (*)(TMRInterruptParam param);
 
     template <TMRTimer timer_>
     struct TMRTimerTrait {
@@ -288,27 +292,27 @@ namespace htl {
             }
 
             static void enableInterrupt(
-                TMREvent event) {
+                TMRInterrupt interrrupt) {
 
                 IE::set();
             }
 
             static bool disableInterrupt(
-                TMREvent event) {
+                TMRInterrupt interrupt) {
 
                 bool state = IE::value();
                 IE::clr();
                 return state;
             }
 
-            inline static bool getInterruptFlag(
-                TMREvent event) {
+            inline static bool getFlag(
+                TMRFlag flag) {
 
                 return IF::value();
             }
 
-            inline static void clearInterruptFlag(
-                TMREvent event) {
+            inline static void clearFlag(
+                TMRFlag flag) {
 
                 IF::clr();
             }
@@ -322,13 +326,11 @@ namespace htl {
             }
 
             /// \brief Invoca la funcio d'interrupcio
-            /// \param event: L'event.
             ///
-            static void interruptHandler(
-                TMREvent event) {
+            static void interruptHandler() {
 
                 if (_isrFunction != nullptr)
-                    _isrFunction(event, _isrParam);
+                    _isrFunction(_isrParam);
             }
     };
 
@@ -402,23 +404,6 @@ namespace htl {
             static constexpr bool isT1 = false;
         };
     #endif
-
-
-    class TMRWrapper {
-        private:
-            TMRWrapper(const TMRWrapper &) = delete;
-            TMRWrapper(const TMRWrapper &&) = delete;
-
-        public:
-            TMRWrapper();
-    };
-
-
-    template <typename timer_>
-    TMRWrapper& getTMRWrapper() {
-        static TMRWrapper wrapper;
-        return wrapper;
-    }
 }
 
 

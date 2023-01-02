@@ -73,6 +73,11 @@ namespace htl {
         fast
     };
 
+    enum class GPIOState {
+        clear,
+        set
+    };
+
     template <GPIOPort>
     struct GPIOPortTrait {
     };
@@ -204,19 +209,19 @@ namespace htl {
             /// \brief  Llegeix l'estat del pin.
             /// \return L'estat del pin
             ///
-            inline static bool read() {
+            inline static GPIOState read() {
 
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
-                return (regs->PORTx & (1 << _pn)) != 0;
+                return (regs->PORTx & (1 << _pn)) ? GPIOState::set : GPIOState::clear;
             }
 
             /// \brief Escriu l'estat del pin.
             /// \param state: EL nou estat.
             ///
             inline static void write(
-                bool value) {
+                GPIOState value) {
 
-                if (value)
+                if (value == GPIOState::set)
                     set();
                 else
                     clear();

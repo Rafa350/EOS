@@ -16,10 +16,6 @@
   ******************************************************************************
   */
 
-#include "eos.h"
-#include "OSAL/osalSemaphore.h"
-#include "OSAL/osalTask.h"
-
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
 #include "lwip/timeouts.h"
@@ -49,12 +45,6 @@
                                                * protocol for processing later. */
 #define ETH_TX_BUFFER_MAX             ((ETH_TX_DESC_CNT) * 2) /* HAL_ETH_Transmit(_IT) may attach two
                                                * buffers per descriptor. */
-#define ETH_MAC_ADDR0 0
-#define ETH_MAC_ADDR1 0
-#define ETH_MAC_ADDR2 0
-#define ETH_MAC_ADDR3 0
-#define ETH_MAC_ADDR4 0
-#define ETH_MAC_ADDR5 0
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/

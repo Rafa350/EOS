@@ -119,9 +119,9 @@ String HttpRequest::getHeader(
 
 		uint8_t state = 0;
 
-		const char* pName;
+		const char *pName;
 		unsigned nameLength;
-		const char* pValue;
+		const char *pValue;
 		unsigned valueLength;
 
 		for (auto it = _pHeaders; it < _pHeaders + _headersLength; it++) {

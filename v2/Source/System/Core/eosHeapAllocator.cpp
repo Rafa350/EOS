@@ -29,7 +29,7 @@ void* MemoryHeapAllocator::allocate(
 /// \param    p: Punter al bloc de memoria.
 ///
 void MemoryHeapAllocator::deallocate(
-    void* p) {
+    void *p) {
 
     eosAssert(p != nullptr);
 

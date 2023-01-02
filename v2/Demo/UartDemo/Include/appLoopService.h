@@ -16,10 +16,6 @@ namespace app {
 
 	class MyAppLoopService: public eos::AppLoopService {
 		private:
-			using Led = LED1_GPIO;
-    	    using PinTX = ARDUINO_TX_GPIO;
-    	    using PinRX = ARDUINO_RX_GPIO;
-    		using Uart = ARDUINO_UART;
         	using TxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::TxCompletedEventArgs&>;
         	using RxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::RxCompletedEventArgs&>;
 
@@ -28,7 +24,7 @@ namespace app {
         	static constexpr htl::UARTParity _parity = htl::UARTParity::none;
         	static constexpr htl::UARTBaudMode _baudMode = htl::UARTBaudMode::_9600;
 
-        	static constexpr htl::INTVector _vector = htl::UARTTrait<Uart::channel>::vector;
+        	static constexpr htl::INTVector _vector = htl::UARTTrait<COM_UART::channel>::vector;
         	static constexpr htl::INTPriority _priority = htl::INTPriority::_5;
         	static constexpr htl::INTSubPriority _subPriority = htl::INTSubPriority::_0;
 

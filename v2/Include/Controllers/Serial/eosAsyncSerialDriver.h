@@ -21,11 +21,11 @@ namespace eos {
 			};
 			struct TxCompletedEventArgs {
 				AsyncSerialDriver *driver;
-				unsigned count;
+				int count;
 			};
 			struct RxCompletedEventArgs {
 				AsyncSerialDriver *driver;
-				unsigned count;
+				int count;
 			};
 			struct AbortedEventArgs {
 				AsyncSerialDriver *driver;
@@ -43,14 +43,14 @@ namespace eos {
 		protected:
             void notifyTxStart();
             void notifyRxStart();
-            void notifyTxCompleted(unsigned count);
-            void notifyRxCompleted(unsigned count);
+            void notifyTxCompleted(int count);
+            void notifyRxCompleted(int count);
             void notifyAborted();
 
 			virtual void initializeImpl();
 			virtual void deinitializeImpl();
-			virtual bool transmitImpl(const uint8_t *data, unsigned dataLength) = 0;
-			virtual bool receiveImpl(uint8_t *data, unsigned dataSize) = 0;
+			virtual bool transmitImpl(const uint8_t *data, int dataLength) = 0;
+			virtual bool receiveImpl(uint8_t *data, int dataSize) = 0;
 
 			/// \brief Constructor.
             ///
@@ -75,8 +75,8 @@ namespace eos {
 			void enableAbortedCallback(const IAbortedCallback &callback);
 			void disableAbortedCallback() { _abortedCallback = nullptr; }
 
-			bool transmit(const uint8_t *data, unsigned dataLength);
-			bool receive(uint8_t *data, unsigned dataSize);
+			bool transmit(const uint8_t *data, int dataLength);
+			bool receive(uint8_t *data, int dataSize);
 	};
 }
 

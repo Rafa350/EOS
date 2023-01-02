@@ -15,14 +15,30 @@ extern const unsigned char *fontArial18pt;
 #ifdef FONT_USE_Arial24pt
 extern const unsigned char *fontArial24pt;
 #endif
+#ifdef FONT_USE_Consolas8pt
 extern const unsigned char *fontConsolas8pt;
+#endif
+#ifdef FONT_USE_Consolas10pt
 extern const unsigned char *fontConsolas10pt;
+#endif
+#ifdef FONT_USE_Consolas12pt
 extern const unsigned char *fontConsolas12pt;
+#endif
+#ifdef FONT_USE_Consolas14pt
 extern const unsigned char *fontConsolas14pt;
+#endif
+#ifdef FONT_USE_Consolas18pt
 extern const unsigned char *fontConsolas18pt;
+#endif
+#ifdef FONT_USE_Consolas24pt
 extern const unsigned char *fontConsolas24pt;
+#endif
+#ifdef FONT_USE_Tahoma10pt
 extern const unsigned char *fontTahoma10pt;
+#endif
+#ifdef FONT_USE_Tahoma12pt
 extern const unsigned char *fontTahoma12pt;
+#endif
 
 
 static const FontTableEntry fonts[] = {

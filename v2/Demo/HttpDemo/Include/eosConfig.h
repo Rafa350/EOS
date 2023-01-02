@@ -5,6 +5,8 @@
 #define USE_LED1
 #define USE_LED2
 #define USE_DISPLAY
+#define FONT_USE_Tahoma10pt
+#define FONT_USE_Tahoma12pt
 #define USE_TOUCHPAD
 #define EOS_USE_STD_STRING
 

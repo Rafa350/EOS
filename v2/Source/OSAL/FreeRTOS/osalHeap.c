@@ -10,7 +10,7 @@
 static HHeap defaultHeap = NULL;
 
 #ifdef SAFE_MODE
-static const char signature[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+static const char signature[8] = { 0xAA, 'E', 'O', 'S', 0x55, 'E', 'O', 'S'};
 #endif
 
 
@@ -49,9 +49,9 @@ void* osalHeapAlloc(
     eosAssert(size > 0);
 
 #ifdef SAFE_MODE
-    void* block = pvPortMalloc(size + sizeof(signature));
+    void *block = pvPortMalloc(size + sizeof(signature));
 #else
-    void* block = pvPortMalloc(size);
+    void *block = pvPortMalloc(size);
 #endif
     eosAssert(block != NULL);
 

@@ -13,19 +13,19 @@ namespace eos {
 		private:
 			htl::UARTHandler _hUART;
 			const uint8_t *_txData;
-			unsigned _txLength;
-			unsigned _txCount;
+			int _txLength;
+			int _txCount;
 			uint8_t *_rxData;
-			unsigned _rxSize;
-			unsigned _rxCount;
+			int _rxSize;
+			int _rxCount;
 
 			void initializeImpl() override;
 			void deinitializeImpl() override;
-			bool transmitImpl(const uint8_t *data, unsigned dataLength) override;
-			bool receiveImpl(uint8_t *data, unsigned dataSize) override;
+			bool transmitImpl(const uint8_t *data, int dataLength) override;
+			bool receiveImpl(uint8_t *data, int dataSize) override;
 
 			void interruptHandler();
-			static void interruptHandler(htl::UARTInterruptParam param);
+			static void interruptFunction(htl::UARTInterruptParam param);
 
 		public:
 			AsyncSerialDriver_UART(htl::UARTHandler hUART);

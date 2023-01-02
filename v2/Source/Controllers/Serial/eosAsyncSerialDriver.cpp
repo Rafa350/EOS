@@ -43,7 +43,7 @@ void AsyncSerialDriver::deinitialize() {
 ///
 bool AsyncSerialDriver::transmit(
 	const uint8_t *data,
-	unsigned dataLength) {
+	int dataLength) {
 
 	return transmitImpl(data, dataLength);
 }
@@ -57,7 +57,7 @@ bool AsyncSerialDriver::transmit(
 ///
 bool AsyncSerialDriver::receive(
 	uint8_t *data,
-	unsigned dataSize) {
+	int dataSize) {
 
 	return receiveImpl(data, dataSize);
 }
@@ -145,7 +145,7 @@ void AsyncSerialDriver::notifyRxStart() {
 /// \param    count: Nombre de bytes transmessos.
 ///
 void AsyncSerialDriver::notifyTxCompleted(
-	unsigned count) {
+	int count) {
 
 	_state = State::ready;
 
@@ -164,7 +164,7 @@ void AsyncSerialDriver::notifyTxCompleted(
 /// \param    count: Nombre de bytes rebuts
 ///
 void AsyncSerialDriver::notifyRxCompleted(
-	unsigned count) {
+	int count) {
 
 	_state = State::ready;
 

@@ -135,10 +135,6 @@ namespace htl {
 	using UARTInterruptParam = void*;
 	using UARTInterruptFunction = void (*)(UARTInterruptParam);
 
-	void UART_initialize();
-	void UART_setProtocol(USART_TypeDef*, UARTWordBits, UARTParity, UARTStopBits, UARTHandsake);
-	void UART_setTimming(USART_TypeDef*, UARTBaudMode, UARTClockSource, unsigned, UARTOverSampling);
-
 	template <UARTChannel>
 	struct UARTTrait {
 	};
@@ -147,8 +143,14 @@ namespace htl {
 	struct UARTPinTrait {
 	};
 
+	class UARTBase_x {
+		protected:
+			static void setProtocol(USART_TypeDef*, UARTWordBits, UARTParity, UARTStopBits, UARTHandsake);
+			static void setTimming(USART_TypeDef*, UARTBaudMode, UARTClockSource, unsigned, UARTOverSampling);
+	};
+
 	template <UARTChannel channel_>
-	class UART_x final {
+	class UART_x final: public UARTBase_x {
 		private:
 			using Trait = UARTTrait<channel_>;
 
@@ -161,7 +163,7 @@ namespace htl {
 			static UARTInterruptParam _isrParam;
 
 		private:
-			UART_x() = delete;
+			UART_x() = default;
 			UART_x(const UART_x &) = delete;
 			UART_x(const UART_x &&) = delete;
 			~UART_x() = delete;
@@ -378,8 +380,12 @@ namespace htl {
 				unsigned rate = 0,
 				UARTOverSampling overSampling = UARTOverSampling::_16) {
 
-				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-				UART_setTimming(regs, baudMode, clockSource, rate, overSampling);
+				UARTBase_x::setTimming(
+					reinterpret_cast<USART_TypeDef*>(_addr),
+					baudMode,
+					clockSource,
+					rate,
+					overSampling);
 			}
 
 			/// \brief Configura el protocol de comunicacio.
@@ -394,7 +400,7 @@ namespace htl {
 				UARTStopBits stopBits,
 				UARTHandsake handsake = UARTHandsake::none) {
 
-				UART_setProtocol(
+				UARTBase_x::setProtocol(
 					reinterpret_cast<USART_TypeDef*>(_addr),
 					wordBits,
 					parity,

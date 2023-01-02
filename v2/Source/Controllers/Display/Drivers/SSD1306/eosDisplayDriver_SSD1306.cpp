@@ -221,18 +221,18 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	PinCS::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
-	PinCS::set();
-	PinDC::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
-	PinRST::initOutput(GPIODriver::pushPull, GPIOSpeed::low);
-	PinRST::clear();
+	DISPLAY_CS_GPIO::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
+	DISPLAY_CS_GPIO::set();
+	DISPLAY_DC_GPIO::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
+	DISPLAY_RST_GPIO::initOutput(GPIODriver::pushPull, GPIOSpeed::low);
+	DISPLAY_RST_GPIO::clear();
 
 	// Inicialitza el modul SPI
 	//
-	Spi::initSCKPin<PinSCK>();
-	Spi::initMOSIPin<PinMOSI>();
-	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
-	Spi::enable();
+	DISPLAY_SPI::initSCKPin<DISPLAY_SCK_GPIO>();
+	DISPLAY_SPI::initMOSIPin<DISPLAY_MOSI_GPIO>();
+	DISPLAY_SPI::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
+	DISPLAY_SPI::enable();
 }
 #else
 #error "DISPLAY_INTERFACE_XXXX"
@@ -246,9 +246,9 @@ void DisplayDriver_SSD1306::initializeController() {
 
 	// Reseteja el controlador
 	//
-	PinRST::clear();
+	DISPLAY_RST_GPIO::clear();
 	halTMRDelay(10);
-	PinRST::set();
+	DISPLAY_RST_GPIO::set();
 	halTMRDelay(150);
 
     // Inicialitza el controlador
@@ -316,16 +316,16 @@ void DisplayDriver_SSD1306::initializeController() {
 void DisplayDriver_SSD1306::writeCommand(
     uint8_t cmd) {
 
-	PinCS::clear();
-	PinDC::clear();
+	DISPLAY_CS_GPIO::clear();
+	DISPLAY_DC_GPIO::clear();
 
-	Spi::write8(cmd);
-	while (!Spi::getFlag(SPIFlag::txEmpty))
+	DISPLAY_SPI::write8(cmd);
+	while (!DISPLAY_SPI::getFlag(SPIFlag::txEmpty))
 		continue;
-	while (Spi::getFlag(SPIFlag::busy))
+	while (DISPLAY_SPI::getFlag(SPIFlag::busy))
 		continue;
 
-	PinCS::set();
+	DISPLAY_CS_GPIO::set();
 }
 #else
 #error "Undefined DISPLAY_INTERFACE_XXXX"
@@ -342,18 +342,18 @@ void DisplayDriver_SSD1306::writeData(
     const uint8_t* data,
 	int length) {
 
-	PinCS::clear();
-	PinDC::set();
+	DISPLAY_CS_GPIO::clear();
+	DISPLAY_DC_GPIO::set();
 
 	while (length--) {
-		Spi::write8(*data++);
-		while (!Spi::getFlag(SPIFlag::txEmpty))
+		DISPLAY_SPI::write8(*data++);
+		while (!DISPLAY_SPI::getFlag(SPIFlag::txEmpty))
 			continue;
 	}
-	while (Spi::getFlag(SPIFlag::busy))
+	while (DISPLAY_SPI::getFlag(SPIFlag::busy))
 		continue;
 
-	PinCS::clear();
+	DISPLAY_CS_GPIO::clear();
 }
 #else
 #error "Undefined DISPLAY_INTERFACE_XXXX"

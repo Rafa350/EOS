@@ -10,7 +10,7 @@ using namespace eos;
 /// \param    application: L'aplicacio.
 ///
 HTTPService::HTTPService(
-	Application* application):
+	Application *application):
 
 	Service(application),
 	httpServer(eosHTTPService_Port) {
@@ -34,7 +34,7 @@ void HTTPService::onInitialize() {
 /// \brief    : Procesa la tasca del servei.
 ///
 void HTTPService::onTask(
-	Task* task) {
+	Task *task) {
 
 	httpServer.run();
 }

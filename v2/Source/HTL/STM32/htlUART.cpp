@@ -66,7 +66,7 @@ static UARTClockSource getClockSource(
 /// \param    parity: Les opcions de paritat.
 /// \param    stopBits: Les opcions de parada.
 ///
-void htl::UART_setProtocol(
+void UARTBase_x::setProtocol(
 	USART_TypeDef *regs,
 	UARTWordBits wordBits,
 	UARTParity parity,
@@ -174,7 +174,7 @@ void htl::UART_setProtocol(
 /// \param    rate: El valor de velocitat.
 /// \param    overSampling: Tipus de mostreig
 ///
-void htl::UART_setTimming(
+void UARTBase_x::setTimming(
 	USART_TypeDef *regs,
 	UARTBaudMode baudMode,
 	UARTClockSource clockSource,

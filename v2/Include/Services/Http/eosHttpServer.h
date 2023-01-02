@@ -19,19 +19,19 @@ namespace eos {
 		private:
 			String _method;
 			String _uri;
-			const char* _pHeaders;
+			const char *_pHeaders;
 			unsigned _headersLength;
 
 		private:
 			void parseText(const String& text);
 
 		public:
-			HttpRequest(const String& text);
-			HttpRequest(const HttpRequest& other);
+			HttpRequest(const String &text);
+			HttpRequest(const HttpRequest &other);
 
 			inline const String& getMethod() const { return _method; }
 			inline const String& getUri() const { return _uri; }
-			inline String getHeader(const String& name) const;
+			inline String getHeader(const String &name) const;
 	};
 
 	/// \brief Resposta HTTP
@@ -47,8 +47,8 @@ namespace eos {
 
 		public:
 			HttpResponse();
-			HttpResponse(unsigned statusCode, const String& statusMessage, const String& body);
-			HttpResponse(const HttpResponse& other);
+			HttpResponse(unsigned statusCode, const String &statusMessage, const String &body);
+			HttpResponse(const HttpResponse &other);
 
 			String getText() const;
 	};
@@ -61,15 +61,15 @@ namespace eos {
 
 		private:
 			String _method;
-			ICallback* _callback;
+			ICallback *_callback;
 
 		public:
-			HttpController(const String& method, ICallback* callback);
+			HttpController(const String &method, ICallback *callback);
 
-			bool canProcess(const HttpRequest& request) const;
-			HttpResponse process(const HttpRequest& request);
+			bool canProcess(const HttpRequest &request) const;
+			HttpResponse process(const HttpRequest &request);
 
-			inline const String& getMethod() const { return _method; }
+			inline const String & getMethod() const { return _method; }
 	};
 
 

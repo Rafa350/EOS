@@ -25,7 +25,7 @@ StringBuilder::StringBuilder():
 StringBuilder::~StringBuilder() {
 
 	if (_container != nullptr)
-		Container::free(_container);
+		osalHeapFree(nullptr, _container);
 }
 
 
@@ -34,17 +34,17 @@ StringBuilder::~StringBuilder() {
 /// \param    La nova capacitat necesaria.
 /// \return   La nova capacitat a reservar.
 ///
-unsigned StringBuilder::calcNewCapacity(
-	unsigned requiredCapacity) const {
+int StringBuilder::calcNewCapacity(
+	int requiredCapacity) const {
 
-	if (requiredCapacity > capacity) {
-		unsigned extra = (capacity == 0) ? 16 :
-				         ((capacity < 128) ? 32 :
-				          capacity >> 2);
+	if (requiredCapacity > _capacity) {
+		int extra = (_capacity == 0) ? 16 :
+				         ((_capacity < 128) ? 32 :
+				          _capacity >> 2);
 		return requiredCapacity + extra;
 	}
 	else
-		return capacity;
+		return _capacity;
 }
 
 
@@ -53,11 +53,16 @@ unsigned StringBuilder::calcNewCapacity(
 /// \param    newCapacity: La nova capacitat de memoria a reservar.
 ///
 void StringBuilder::reserve(
-	unsigned newCapacity) {
+	int newCapacity) {
 
-	if (newCapacity > capacity) {
-		container = static_cast<char*>(Container::resize(container, capacity, newCapacity, size, sizeof(char)));
-		capacity = newCapacity;
+	if (newCapacity > _capacity) {
+		char *newContainer = (char*) osalHeapAlloc(nullptr, newCapacity);
+		if (_container != nullptr) {
+			memcpy(newContainer, _container, _size);
+			osalHeapFree(nullptr, _container);
+			_container = newContainer;
+		}
+		_capacity = newCapacity;
 	}
 }
 
@@ -67,7 +72,7 @@ void StringBuilder::reserve(
 ///
 void StringBuilder::clear() {
 
-	size = 0;
+	_size = 0;
 }
 
 
@@ -78,10 +83,10 @@ void StringBuilder::clear() {
 void StringBuilder::append(
 	char value) {
 
-	if (size + sizeof(char) >= capacity)
-		reserve(calcNewCapacity(capacity + sizeof(char)));
+	if (_size + (int)sizeof(char) >= _capacity)
+		reserve(calcNewCapacity(_capacity + (int)sizeof(char)));
 
-	container[size++] = value;
+	_container[_size++] = value;
 }
 
 
@@ -92,12 +97,12 @@ void StringBuilder::append(
 void StringBuilder::append(
 	const char* value) {
 
-	unsigned length = strlen(value);
-	if (size + length >= capacity)
-		reserve(calcNewCapacity(capacity + length));
+	int length = (int)strlen(value);
+	if (_size + length >= _capacity)
+		reserve(calcNewCapacity(_capacity + length));
 
-	memcpy(&container[size], value, length);
-	size += length;
+	memcpy(&_container[_size], value, length);
+	_size += length;
 }
 
 
@@ -120,7 +125,7 @@ void StringBuilder::append(
 	bool value) {
 
 	static const char* strTrue = "true";
-	static const char* strFalse = "true";
+	static const char* strFalse = "false";
 
 	append(value ? strTrue : strFalse);
 }
@@ -135,7 +140,7 @@ void StringBuilder::append(
 
 	char buffer[15];
 
-	itoa(value, buffer, 10);
+	sprintf(buffer, "%i", value);
 	append(buffer);
 }
 
@@ -149,6 +154,7 @@ void StringBuilder::append(
 
 	char buffer[15];
 
-	utoa(value, buffer, 10);
+	sprintf(buffer, "%u", value);
 	append(buffer);
 }
+

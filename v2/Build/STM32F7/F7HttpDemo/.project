@@ -399,6 +399,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/eosCallbacks.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosCallbacks.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosMath.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosMath.h</locationURI>
@@ -486,7 +491,12 @@
 		<link>
 			<name>src/Framework/EOS/System/eosStringBuilder.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosStringBuilder.cpp</locationURI>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/System/eosStringBuilder.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/STM32/BSP/Components</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/BSP/stm32746g_discovery.c</name>
@@ -704,24 +714,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Http/ethernetif.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Http/httpserver.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosStdHeapAllocator.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Http/httpserver.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosStdHeapAllocator.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections/eosVector.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosVector.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosAllocator.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosAllocator.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosCallbacks.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosCallbacks.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
@@ -742,11 +742,6 @@
 			<name>inc/Framework/EOS/System/Core/eosSemaphore.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosSemaphore.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosString.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosString.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
@@ -879,11 +874,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/eosHttpServer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Http/httpserver.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/httpserver.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>
@@ -1007,6 +997,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/BSP/Components/lan8742.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/Components/lan8742/lan8742.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/LwIP/api/api_lib.c</name>

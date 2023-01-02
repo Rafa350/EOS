@@ -13,7 +13,7 @@ using namespace app;
 /// \brief    Constructor.
 ///
 MyAppLoopService::MyAppLoopService(
-	Application* application):
+	Application *application):
 
 	AppLoopService(application),
 	_serial(nullptr),
@@ -30,29 +30,29 @@ void MyAppLoopService::onSetup() {
 
 	// Inicialitza el LED
 	//
-	Led::initOutput(GPIODriver::pushPull);
-	Led::clear();
+	LED_GPIO::initOutput(GPIODriver::pushPull);
+	LED_GPIO::clear();
 
     // Inicialitza la UART
 	//
-	Uart::initialize();
-	Uart::initTXPin<PinTX>();
-	Uart::initRXPin<PinRX>();
-	Uart::setProtocol(_wordBits, _parity, _stopBits);
+	COM_UART::initialize();
+	COM_UART::initTXPin<COM_TX_GPIO>();
+	COM_UART::initRXPin<COM_RX_GPIO>();
+	COM_UART::setProtocol(_wordBits, _parity, _stopBits);
 #if defined( EOS_PLATFORM_STM32)
-	Uart::setTimming(_baudMode, UARTClockSource::automatic, 0, UARTOverSampling::_16);
+	COM_UART::setTimming(_baudMode, UARTClockSource::automatic, 0, UARTOverSampling::_16);
 #elif defined(EOS_PLATFORM_PIC32)
-	Uart::setTimming(_baudMode);
+	COM_UART::setTimming(_baudMode);
 #else
 #error "Undefined EOS_PLATFORM_XXX"
 #endif
 	INT_1::setInterruptVectorPriority(_vector,	_priority, _subPriority);
 	INT_1::enableInterruptVector(_vector);
-	Uart::enable();
+	COM_UART::enable();
 
 	// Configura el driver de comunicacio serie
 	//
-	_serial = new AsyncSerialDriver_UART(getUART<Uart>());
+	_serial = new AsyncSerialDriver_UART(htl::getUART<COM_UART>());
 	_serial->initialize();
 	_serial->enableTxCompletedCallback(_txCompletedCallback);
 	_serial->enableRxCompletedCallback(_rxCompletedCallback);
@@ -67,9 +67,8 @@ void MyAppLoopService::onLoop() {
 	uint8_t buffer[10];
 
 	while (true) {
-
 		if (_serial->receive(buffer, sizeof(buffer))) {
-			Led::toggle();
+			LED_GPIO::toggle();
 			if (_rxCompleted.wait(unsigned(-1))) {
 				if (_rxDataCount > 0) {
 					if (_serial->transmit(buffer, _rxDataCount))
