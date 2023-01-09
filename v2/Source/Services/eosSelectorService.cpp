@@ -48,34 +48,39 @@ SelectorService::~SelectorService() {
 ///
 void SelectorService::run(
     Task *task) {
-    
-    SelGetStateMessage query;
-    query.cmd = SEL_CMD_GETSTATE;
-    
-    SelGetStateResponse response;
-    
-    BinarySemaphore endTransactionNotify;
 
+    // Repeteix indefinidament
+    //
     while (true) {
         
-        Task::delay(taskLoopDelay);
+        SelGetStateMessage query;
+        query.cmd = SEL_CMD_GETSTATE;
         
-        if (i2cService->startTransaction(
-            addr, 
-            &query, sizeof(query), 
-            &response, sizeof(response), 
-            (unsigned) -1,
-            &endTransactionNotify)) {
-            
-            if (endTransactionNotify.take((unsigned) - 1)) {
-                
-                if (response.cmd == SEL_CMD_GETSTATE) {
+        SelGetStateResponse response;
+        
+        BinarySemaphore endTransactionNotify;
 
-                    if ((state != response.state) || (position != response.position)) {
-                        position = response.position;
-                        state = response.state;
-                        if (evNotify != nullptr)
-                            evNotify->execute(position, state);
+        while (true) {
+            
+            Task::delay(taskLoopDelay);
+            
+            if (i2cService->startTransaction(
+                addr, 
+                &query, sizeof(query), 
+                &response, sizeof(response), 
+                (unsigned) -1,
+                &endTransactionNotify)) {
+                
+                if (endTransactionNotify.take((unsigned) - 1)) {
+                    
+                    if (response.cmd == SEL_CMD_GETSTATE) {
+
+                        if ((state != response.state) || (position != response.position)) {
+                            position = response.position;
+                            state = response.state;
+                            if (evNotify != nullptr)
+                                evNotify->execute(position, state);
+                        }
                     }
                 }
             }

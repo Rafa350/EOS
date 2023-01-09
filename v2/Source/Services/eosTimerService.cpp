@@ -226,34 +226,38 @@ void TimerService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
-void TimerService::onTask(
-    Task *task) {
+void TimerService::onTask() {
 
-    // Espera indefinidament que arribin comandes per procesar
+    // Repeteix indefinidament
     //
-    Command cmd;
-    while (_commandQueue.pop(cmd, unsigned(-1))) {
+    while (true) {
 
-        switch (cmd.opCode) {
-            case OpCode::start:
-                cmdStart(cmd.timer);
-                break;
+        // Espera indefinidament que arribin comandes per procesar
+        //
+        Command cmd;
+        while (_commandQueue.pop(cmd, unsigned(-1))) {
 
-            case OpCode::stop:
-                cmdStop(cmd.timer);
-                break;
+            switch (cmd.opCode) {
+                case OpCode::start:
+                    cmdStart(cmd.timer);
+                    break;
 
-            case OpCode::pause:
-                cmdPause(cmd.timer);
-                break;
+                case OpCode::stop:
+                    cmdStop(cmd.timer);
+                    break;
 
-            case OpCode::resume:
-                cmdResume(cmd.timer);
-                break;
+                case OpCode::pause:
+                    cmdPause(cmd.timer);
+                    break;
 
-            case OpCode::timeOut:
-                cmdTimeOut();
-                break;
+                case OpCode::resume:
+                    cmdResume(cmd.timer);
+                    break;
+
+                case OpCode::timeOut:
+                    cmdTimeOut();
+                    break;
+            }
         }
     }
 }

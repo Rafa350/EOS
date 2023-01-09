@@ -30,7 +30,7 @@ namespace eos {
 
         protected:
             void onInitialize() override;
-            void onTask(Task *task) override;
+            void onTask() override;
 #if Eos_ApplicationTickEnabled
             void onTick();
 #endif

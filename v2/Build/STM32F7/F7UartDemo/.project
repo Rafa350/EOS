@@ -336,6 +336,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/Services/eosMessengerService.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/Services/eosMessengerService.h</location>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
@@ -389,6 +394,11 @@
 			<name>Src/Framework/EOS/Services/eosAppLoopService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Services/eosMessengerService.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/Services/eosMessengerService.cpp</location>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Services/eosService.cpp</name>

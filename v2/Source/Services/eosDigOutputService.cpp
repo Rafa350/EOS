@@ -239,55 +239,56 @@ void DigOutputService::onInitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Bucle de proces del servei.
-/// \param    task: L'objecte Task que executa el servei.
 ///
-void DigOutputService::onTask(
-	Task *task) {
+void DigOutputService::onTask() {
 
-    Command cmd;
+    while (true) {
 
-    // Espera que arribi una comanda
-    //
-    while (_commandQueue.pop(cmd, unsigned(-1))) {
+        Command cmd;
 
-        // Procesa la comanda
+        // Espera que arribi una comanda
         //
-        switch (cmd.opCode) {
-            case OpCode::set:
-                cmdSet(cmd.output);
-                break;
+        while (_commandQueue.pop(cmd, unsigned(-1))) {
 
-            case OpCode::clear:
-                cmdClear(cmd.output);
-                break;
+            // Procesa la comanda
+            //
+            switch (cmd.opCode) {
+                case OpCode::set:
+                    cmdSet(cmd.output);
+                    break;
 
-            case OpCode::toggle:
-                cmdToggle(cmd.output);
-                break;
+                case OpCode::clear:
+                    cmdClear(cmd.output);
+                    break;
 
-            case OpCode::pulse:
-                cmdPulse(cmd.output, cmd.param1);
-                break;
+                case OpCode::toggle:
+                    cmdToggle(cmd.output);
+                    break;
 
-            case OpCode::delayedSet:
-                cmdDelayedSet(cmd.output, cmd.param1);
-                break;
+                case OpCode::pulse:
+                    cmdPulse(cmd.output, cmd.param1);
+                    break;
 
-            case OpCode::delayedClear:
-                cmdDelayedClear(cmd.output, cmd.param1);
-                break;
+                case OpCode::delayedSet:
+                    cmdDelayedSet(cmd.output, cmd.param1);
+                    break;
 
-            case OpCode::delayedToggle:
-                cmdDelayedToggle(cmd.output, cmd.param1);
-                break;
+                case OpCode::delayedClear:
+                    cmdDelayedClear(cmd.output, cmd.param1);
+                    break;
 
-            case OpCode::delayedPulse:
-                cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
-                break;
+                case OpCode::delayedToggle:
+                    cmdDelayedToggle(cmd.output, cmd.param1);
+                    break;
 
-            case OpCode::timeOut:
-                cmdTimeOut(cmd.param1);
-                break;
+                case OpCode::delayedPulse:
+                    cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
+                    break;
+
+                case OpCode::timeOut:
+                    cmdTimeOut(cmd.param1);
+                    break;
+            }
         }
     }
 }

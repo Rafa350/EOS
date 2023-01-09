@@ -115,8 +115,7 @@ void DigInputService::onInitialize() {
 
     // Inicialitza les entrades al valor actual
     //
-    for (auto it = _inputs.begin(); it != _inputs.end(); it++) {
-        DigInput *input = *it;
+    for (auto input: _inputs) {
         input->_value = input->_hGPIO->read() == htl::GPIOState::set;
         input->_edge = false;
         input->_pattern = input->_value ? PATTERN_ON : PATTERN_OFF;
@@ -130,39 +129,41 @@ void DigInputService::onInitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio.
-/// \param    task: La tasca que executa el servei.
 ///
-void DigInputService::onTask(
-	Task *task) {
+void DigInputService::onTask() {
 
-    // Espera que es notifiquin canvis en les entrades
+    // Repeteix indefinidament
     //
-    if (_changes.wait(unsigned(-1))) {
+    while (true) {
 
-		// Procesa les entrades
-		//
-		for (auto it = _inputs.begin(); it != _inputs.end(); it++) {
-			DigInput *input = *it;
+        // Espera que es notifiquin canvis en les entrades
+        //
+        if (_changes.wait(unsigned(-1))) {
 
-			if (input->_changedEventCallback != nullptr) {
+            // Procesa les entrades
+            //
+            for (auto input: _inputs) {
 
-                bool state = INT_1::disableInterrupts();
+                if (input->_changedEventCallback != nullptr) {
 
-				bool edge = input->_edge;
-				input->_edge = false;
+                    bool state = INT_1::disableInterrupts();
 
-                INT_1::restoreInterrupts(state);
+                    bool edge = input->_edge;
+                    input->_edge = false;
 
-				if (edge) {
+                    INT_1::restoreInterrupts(state);
 
-					DigInput::ChangedEventArgs args;
-					args.input = input;
-                    args.value = input->_value;
+                    if (edge) {
 
-					input->_changedEventCallback->execute(args);
-				}
-			}
-		}
+                        DigInput::ChangedEventArgs args;
+                        args.input = input;
+                        args.value = input->_value;
+
+                        input->_changedEventCallback->execute(args);
+                    }
+                }
+            }
+        }
     }
 }
 

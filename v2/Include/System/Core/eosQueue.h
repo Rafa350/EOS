@@ -14,7 +14,7 @@ namespace eos {
     ///
     class GenericQueue {
         private:
-            HQueue hQueue;
+            HQueue _hQueue;
 
         public:
             virtual ~GenericQueue();
@@ -22,12 +22,12 @@ namespace eos {
 
         protected:
             GenericQueue(unsigned size, unsigned capacity);
-            bool genericPut(const void* element, unsigned blockTime);
-            bool genericGet(void* element, unsigned blockTime);
-            bool genericPutISR(void* element);
-            bool genericGetISR(void* element);
-            bool genericIsEmpty() const { return osalQueueIsEmpty(hQueue); }
-            bool genericIsEmptyISR() const { return osalQueueIsEmptyISR(hQueue); }
+            bool genericPut(const void *element, unsigned blockTime);
+            bool genericGet(void *element, unsigned blockTime);
+            bool genericPutISR(void *element);
+            bool genericGetISR(void *element);
+            bool genericIsEmpty() const { return osalQueueIsEmpty(_hQueue); }
+            bool genericIsEmptyISR() const { return osalQueueIsEmptyISR(_hQueue); }
     };
 
     /// \brief Cua personalitzada amb plantilla.

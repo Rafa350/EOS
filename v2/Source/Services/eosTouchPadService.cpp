@@ -46,69 +46,74 @@ void TouchpadService::onInitialize() {
 ///
 void TouchpadService::onTask(
 	Task *task) {
+        
+    // Repeteix indefinidament
+    //
+    while (true) {
 
-	if (_eventCallback != nullptr) {
+        if (_eventCallback != nullptr) {
 
-		if (_lock.wait(-1)) {
+            if (_lock.wait(-1)) {
 
-			// Detecta variacions del estat del touchpad
-			//
-			bool pressed = false;
-			int x = -1;
-			int y = -1;
-			while (_touchDriver->getTouchCount()) {
+                // Detecta variacions del estat del touchpad
+                //
+                bool pressed = false;
+                int x = -1;
+                int y = -1;
+                while (_touchDriver->getTouchCount()) {
 
-				// Obte l'estat
-				//
-				TouchPadState state;
-				_touchDriver->getState(state);
-				if (state.numPoints == 1) {
-					pressed = true;
-					x = state.x[0];
-					y = state.y[0];
-				}
+                    // Obte l'estat
+                    //
+                    TouchPadState state;
+                    _touchDriver->getState(state);
+                    if (state.numPoints == 1) {
+                        pressed = true;
+                        x = state.x[0];
+                        y = state.y[0];
+                    }
 
-				// Detecta canvis de contacte.
-				//
-				if (!_oldPressed && pressed) {
+                    // Detecta canvis de contacte.
+                    //
+                    if (!_oldPressed && pressed) {
 
-					EventArgs args = {
-						.event = EventType::press,
-						.x = x,
-						.y = y
-					};
-					_eventCallback->execute(args);
-				}
+                        EventArgs args = {
+                            .event = EventType::press,
+                            .x = x,
+                            .y = y
+                        };
+                        _eventCallback->execute(args);
+                    }
 
-				// Detecta canvis de posicio
-				//
-				else if (pressed && ((_oldX != x) || (_oldY != y))) {
+                    // Detecta canvis de posicio
+                    //
+                    else if (pressed && ((_oldX != x) || (_oldY != y))) {
 
-					EventArgs args = {
-						.event = EventType::move,
-						.x = x,
-						.y = y
-					};
-					_eventCallback->execute(args);
-				}
+                        EventArgs args = {
+                            .event = EventType::move,
+                            .x = x,
+                            .y = y
+                        };
+                        _eventCallback->execute(args);
+                    }
 
-				_oldPressed = pressed;
-				_oldX = x;
-				_oldY = y;
-			}
+                    _oldPressed = pressed;
+                    _oldX = x;
+                    _oldY = y;
+                }
 
-			if (_oldPressed) {
-				EventArgs args = {
-					.event = EventType::release,
-					.x = x,
-					.y = y
-				};
-				_eventCallback->execute(args);
+                if (_oldPressed) {
+                    EventArgs args = {
+                        .event = EventType::release,
+                        .x = x,
+                        .y = y
+                    };
+                    _eventCallback->execute(args);
 
-				_oldPressed = false;
-			}
-		}
-	}
+                    _oldPressed = false;
+                }
+            }
+        }
+    }
 }
 
 

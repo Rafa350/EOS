@@ -159,53 +159,58 @@ void I2CMasterService::onTerminate() {
 void I2CMasterService::onTask(
     Task *task) {
 
-    // Espara indefinidament que hagi una transaccio e la cua
+    // Repeteix indefinidament
     //
-    if (transactionQueue.pop(transaction, -1)) {
-
-        // Espera a que el bus estigui lliure
+    while (true) {
+        
+        // Espera indefinidament que hagi una transaccio e la cua
         //
-        while (!halI2CIsBusIdle(hI2C))
-            Task::delay(20);
+        if (transactionQueue.pop(transaction, -1)) {
 
-        // Inicialitza la transaccio
-        //
-        writeMode = transaction->txBuffer && transaction->txCount;
-        state = State::sendAddress;
+            // Espera a que el bus estigui lliure
+            //
+            while (!halI2CIsBusIdle(hI2C))
+                Task::delay(20);
 
-        // Inicia la comunicacio. A partir d'aquest punt es
-        // generen les interrupcions del modul I2C
-        //
-        halI2CMasterStart(hI2C);
+            // Inicialitza la transaccio
+            //
+            writeMode = transaction->txBuffer && transaction->txCount;
+            state = State::sendAddress;
 
-        // Espera que finalitzi la transaccio
-        //
-        if (semaphore.wait(eosI2CMasterService_TransactionTimeout)) {
+            // Inicia la comunicacio. A partir d'aquest punt es
+            // generen les interrupcions del modul I2C
+            //
+            halI2CMasterStart(hI2C);
+
+            // Espera que finalitzi la transaccio
+            //
+            if (semaphore.wait(eosI2CMasterService_TransactionTimeout)) {
+            }
+            else {
+            }
+
+            // Retart entre transaccions
+            //
+            Task::delay(eosI2CMasterService_EndTransactionDelay);
+
+            // Notifica el final de la transaccio
+            //
+            if (transaction->callback != nullptr) {
+                I2CMasterService::TransactionEventArgs args;
+                args.txBuffer = (void*) transaction->txBuffer;
+                args.txCount = transaction->txCount;
+                args.rxBuffer = (void*) transaction->rxBuffer;
+                args.rxCount = transaction->rxCount;
+                args.result = I2CMasterService::TransactionResult::ok;
+                transaction->callback->execute(args);
+            }
+
+            // Destrueix la transaccio
+            //
+            transactionAllocator.deallocate(transaction);
+
+            Task::delay(25); // Provisional
         }
-        else {
-        }
-
-        // Retart entre transaccions
-        //
-        Task::delay(eosI2CMasterService_EndTransactionDelay);
-
-        // Notifica el final de la transaccio
-        //
-        if (transaction->callback != nullptr) {
-            I2CMasterService::TransactionEventArgs args;
-            args.txBuffer = (void*) transaction->txBuffer;
-            args.txCount = transaction->txCount;
-            args.rxBuffer = (void*) transaction->rxBuffer;
-            args.rxCount = transaction->rxCount;
-            args.result = I2CMasterService::TransactionResult::ok;
-            transaction->callback->execute(args);
-        }
-
-        // Destrueix la transaccio
-        //
-        transactionAllocator.deallocate(transaction);
-
-        Task::delay(25); // Provisional
     }
 }
 

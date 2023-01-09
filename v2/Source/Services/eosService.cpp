@@ -42,7 +42,7 @@ Service::~Service() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el servei, abans de l'inici del planificador.
+/// \brief    Inicialitza el servei.
 ///
 void Service::initialize() {
 
@@ -54,7 +54,7 @@ void Service::initialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Finalitza el serevei.
+/// \brief    Finalitza el servei.
 ///
 void Service::terminate() {
 
@@ -71,7 +71,7 @@ void Service::terminate() {
 #if Eos_ApplicationTickEnabled
 void Service::tick() {
 
-	if (initialized)
+	if (_initialized)
 		onTick();
 }
 #endif
@@ -79,13 +79,11 @@ void Service::tick() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa les operacions del servei.
-/// \param    task: L'objecte Task que executa el servei.
 ///
-void Service::task(
-	Task *task) {
+void Service::task() {
 
     if (_initialized)
-        onTask(task);
+        onTask();
 }
 
 
@@ -117,9 +115,7 @@ void Service::onTick() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les operacions del servei.
-/// \param    task: L'objecte task que executa el servei.
 ///
-void Service::onTask(
-	Task *task) {
+void Service::onTask() {
 
 }

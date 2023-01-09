@@ -67,11 +67,15 @@ void FsmService::onInitialize() {
 void FsmService::onTask(
     Task *task) {
 
+    // Repeteix indefinidament
+    //
     while (true) {
+        
         for (auto it = machines.begin(); it != machines.end(); it++) {
             FsmMachine* machine = *it;
             machine->task();
         }
+        
     }
 }
 

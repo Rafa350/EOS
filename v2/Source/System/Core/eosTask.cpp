@@ -27,9 +27,9 @@ Task::Task(
     IEventCallback *eventCallback,
     void *eventParams):
 
-    eventCallback(eventCallback),
-    eventParams(eventParams),
-	weakTime(0) {
+    _eventCallback(eventCallback),
+    _eventParams(eventParams),
+	_weakTime(0) {
 
     eosAssert(eventCallback != nullptr);
 
@@ -62,8 +62,8 @@ Task::Task(
     info.function = function;
     info.params = this;
 
-    hTask = osalTaskCreate(&info);
-    eosAssert(hTask != nullptr);
+    _hTask = osalTaskCreate(&info);
+    eosAssert(_hTask != nullptr);
 }
 
 
@@ -72,8 +72,8 @@ Task::Task(
 ///
 Task::~Task() {
 
-    if (hTask != nullptr)
-        osalTaskDestroy(hTask);
+    if (_hTask != nullptr)
+        osalTaskDestroy(_hTask);
 }
 
 
@@ -86,24 +86,23 @@ void Task::function(
     void *params) {
 
     Task *task = reinterpret_cast<Task*>(params);
-    if (task && task->eventCallback) {
+    if (task && task->_eventCallback) {
 
-        task->weakTime = osalGetTickCount();
+        task->_weakTime = osalGetTickCount();
 
         EventArgs args;
         args.task = task;
-        args.params = task->eventParams;
+        args.params = task->_eventParams;
 
-        // Executa continuament la funcio
+        // Executa la funcio callback
         //
-        while (true)
-            task->eventCallback->execute(args);
+        task->_eventCallback->execute(args);
     }
 
     // Destrueix la propia tasca perque no s'executi mes
     //
     osalTaskDestroy(NULL);
-    task->hTask = nullptr;
+    task->_hTask = nullptr;
 }
 
 
@@ -136,7 +135,7 @@ void Task::delay(
 ///
 void Task::delay(
     unsigned time,
-    unsigned& weakTime) {
+    unsigned &weakTime) {
 
 	osalDelayUntil(time, &weakTime);
 }

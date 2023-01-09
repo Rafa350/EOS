@@ -19,8 +19,8 @@ GenericQueue::GenericQueue(
     eosAssert(size > 0);
     eosAssert(capacity > 0);
 
-    hQueue = osalQueueCreate(capacity, size);
-    eosAssert(hQueue != nullptr);
+    _hQueue = osalQueueCreate(capacity, size);
+    eosAssert(_hQueue != nullptr);
 }
 
 
@@ -29,7 +29,7 @@ GenericQueue::GenericQueue(
 ///
 GenericQueue::~GenericQueue() {
 
-    osalQueueDestroy(hQueue);
+    osalQueueDestroy(_hQueue);
 }
 
 
@@ -38,7 +38,7 @@ GenericQueue::~GenericQueue() {
 ///
 void GenericQueue::clear() {
 
-    osalQueueClear(hQueue);
+    osalQueueClear(_hQueue);
 }
 
 
@@ -49,10 +49,10 @@ void GenericQueue::clear() {
 /// \return   True si tot es correcte.
 ///
 bool GenericQueue::genericPut(
-    const void* element,
+    const void *element,
     unsigned blockTime) {
 
-	return osalQueuePut(hQueue, element, blockTime);
+	return osalQueuePut(_hQueue, element, blockTime);
 }
 
 
@@ -62,9 +62,9 @@ bool GenericQueue::genericPut(
 /// \return   True si tot es correcte.
 ///
 bool GenericQueue::genericPutISR(
-    void* element) {
+    void *element) {
 
-	return osalQueuePutISR(hQueue, element);
+	return osalQueuePutISR(_hQueue, element);
 }
 
 
@@ -75,15 +75,20 @@ bool GenericQueue::genericPutISR(
 /// \return   True si tot es correcte.
 ///
 bool GenericQueue::genericGet(
-    void* element,
+    void *element,
     unsigned blockTime) {
 
-	return osalQueueGet(hQueue, element, blockTime);
+	return osalQueueGet(_hQueue, element, blockTime);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Extreu un element en la cua d'ins d'una interrupcio.
+/// \param    element: Punter al element a extreure.
+/// \return   True si tot es correcte.
+///
 bool GenericQueue::genericGetISR(
-    void* element) {
+    void *element) {
 
-	return osalQueueGetISR(hQueue, element);
+	return osalQueueGetISR(_hQueue, element);
 }

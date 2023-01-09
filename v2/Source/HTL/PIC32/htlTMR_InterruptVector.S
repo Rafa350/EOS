@@ -30,6 +30,7 @@
  *
  *************************************************************************/
 
+#ifdef _TMR1x
 	.ent	TMR_1_InterruptVector
 TMR_1_InterruptVector:
 	portSAVE_CONTEXT
@@ -37,6 +38,7 @@ TMR_1_InterruptVector:
 	nop
 	portRESTORE_CONTEXT
 	.end	TMR_1_InterruptVector
+#endif
 
 
 /*************************************************************************

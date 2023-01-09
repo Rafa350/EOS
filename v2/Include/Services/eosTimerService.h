@@ -73,7 +73,7 @@ namespace eos {
 
         protected:
             void onInitialize() override;
-            void onTask(Task *task) override;
+            void onTask() override;
 
         private:
             void cmdStart(TimerCounter* timer);

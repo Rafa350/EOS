@@ -41,12 +41,11 @@ Application::~Application() {
 /// \param    args: Parametres del event.
 ///
 void Application::taskEventHandler(
-    const Task::EventArgs& args) {
+    const Task::EventArgs &args) {
 
-    Service* service = static_cast<Service*>(args.params);
+    Service *service = static_cast<Service*>(args.params);
     if (service != nullptr)
-        while (true)
-            service->task(args.task);
+        service->task();
 }
 
 
@@ -56,7 +55,7 @@ void Application::taskEventHandler(
 ///
 #if Eos_ApplicationTickEnabled
 void Application::timerEventHandler(
-    const Timer::EventArgs& args) {
+    const Timer::EventArgs &args) {
 
     tick();
 }
@@ -102,10 +101,8 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-    for (auto it = services.begin(); it != services.end(); it++) {
-        Service* service = *it;
+    for (auto service: _services)
 		service->tick();
-    }
 }
 #endif
 
@@ -135,11 +132,9 @@ void Application::terminateServices() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa les tasques del servei.
+/// \brief    Posa els serveix en en execucio.
 ///
 void Application::runServices() {
-
-#if  1 //def USE_SCHEDULER
 
     // Inicialitza el terporitzador tick
     //
@@ -150,7 +145,7 @@ void Application::runServices() {
     // Crea una tasca per executar cada servei
     //
     for (auto service: _services) {
-        Task* task = new Task(
+        Task *task = new Task(
             service->getStackSize(),
             service->getPriority(),
             service->getName(),
@@ -162,17 +157,6 @@ void Application::runServices() {
     // Executa les tasques
     //
     Task::startAll();
-
-#else
-    bool done = false;
-    while (!done) {
-
-        // Executa la tasca de cada servei, un a un
-        //
-    	for (auto service: _services)
-    		service->task();
-    }
-#endif
 }
 
 
@@ -181,7 +165,7 @@ void Application::runServices() {
 /// \param    service: El servei a afeigir.
 ///
 void Application::addService(
-    Service* service) {
+    Service *service) {
 
     eosAssert(service != nullptr);
 
@@ -194,7 +178,7 @@ void Application::addService(
 /// \param    service: El servei a eliminar.
 ///
 void Application::removeService(
-    Service* service) {
+    Service *service) {
 
     eosAssert(service != nullptr);
 
@@ -252,8 +236,8 @@ void Application::onTick() {
 /// \param    service: El servei.
 ///
 void eos::link(
-	Application* application,
-	Service* service) {
+	Application *application,
+	Service *service) {
 
 	eosAssert(application != nullptr);
     eosAssert(service->_application == nullptr);
@@ -269,8 +253,8 @@ void eos::link(
 /// \param    service: El servei.
 ///
 void eos::unlink(
-	Application* application,
-	Service* service) {
+	Application *application,
+	Service *service) {
 
 	eosAssert(application != nullptr);
     eosAssert(service->_application == application);

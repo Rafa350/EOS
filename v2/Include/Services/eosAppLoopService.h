@@ -14,12 +14,9 @@ namespace eos {
     /// \brief Clase que implementa el servei basic d'usuari.
     ///
     class AppLoopService: public Service {
-        private:
-            bool _initialized;
-
         protected:
             void onInitialize() override;
-            void onTask(Task* task) override;
+            void onTask() override;
             virtual void onSetup();
             virtual void onLoop();
 

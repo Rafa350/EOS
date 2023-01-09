@@ -45,4 +45,8 @@ void TerminalService::onInitialize() {
 void TerminalService::onTask(
     Task *task) {
 
+    // Repeteix indefinidament
+    //
+    while (true) {
+    }
 }

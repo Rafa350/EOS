@@ -36,11 +36,11 @@ namespace eos {
             Service& operator=(const Service&) = delete;
 
         protected:
-            Service(Application* application);
+            Service(Application *application);
 
             virtual void onInitialize();
             virtual void onTerminate();
-            virtual void onTask(Task* task);
+            virtual void onTask();
 #if Eos_ApplicationTickEnabled
             virtual void onTick();
 #endif
@@ -53,7 +53,7 @@ namespace eos {
 #if Eos_ApplicationTickEnabled
             void tick();
 #endif
-            void task(Task* task);
+            void task();
 
             inline void setName(const String& name) {
                 _name = name;

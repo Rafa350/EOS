@@ -28,7 +28,9 @@ namespace htl {
         public:
             virtual void initInput(GPIOPull pull = GPIOPull::none) const = 0;
             virtual void initOutput(GPIODriver driver, GPIOSpeed speed = GPIOSpeed::medium) const = 0;
+#if !defined(EOS_PLATFORM_PIC32MX) && !defined(EOS_PLATFORM_PIC32MZ)
             virtual void initAlt(GPIODriver driver, GPIOSpeed speed, GPIOAlt alt) const = 0;
+#endif
             virtual void set() const = 0;
             virtual void clear() const = 0;
             virtual void toggle() const = 0;
@@ -62,9 +64,11 @@ namespace htl {
             	gpio_::initOutput(driver, speed);
             }
 
+#if !defined(EOS_PLATFORM_PIC32MX) && !defined(EOS_PLATFORM_PIC32MZ)
             void initAlt(GPIODriver driver, GPIOSpeed speed, GPIOAlt alt) const override {
             	gpio_::initAlt(driver, speed, alt);
             }
+#endif
 
             void set() const override {
                 gpio_::set();

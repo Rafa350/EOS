@@ -164,24 +164,30 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask(
 	Task *task) {
+        
+    // Repeteix indefinidament
+    //
+    while (true) {
 
-	// Refresca la pantalla si cal
-	//
-	if (_screen->isRenderizable())
-		if (_screen->render(context))
-			displayDriver->refresh();
+        // Refresca la pantalla si cal
+        //
+        if (_screen->isRenderizable())
+            if (_screen->render(context))
+                displayDriver->refresh();
 
-	// procesa els missatges.
-	//
-	Message msg;
-	if (_msgQueue.receive(msg)) {
+        // procesa els missatges.
+        //
+        Message msg;
+        if (_msgQueue.receive(msg)) {
 
-		if ((msg.msgId == MsgId::keyboard) && (msg.target == nullptr))
-			msg.target = _focus;
+            if ((msg.msgId == MsgId::keyboard) && (msg.target == nullptr))
+                msg.target = _focus;
 
-		if (msg.target != nullptr)
-			msg.target->dispatch(msg);
-	}
+            if (msg.target != nullptr)
+                msg.target->dispatch(msg);
+        }
+    
+    }
 }
 
 

@@ -9,7 +9,6 @@
 #include "appApplication.h"
 
 
-
 using namespace eos;
 using namespace htl;
 using namespace app;
@@ -19,6 +18,7 @@ using namespace app;
 /// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication():
+    _messageBusEventCallback(*this, &MyApplication::messageBusEventHandler),
     _sw1ChangedEventCallback(*this, &MyApplication::sw1ChangedEventHandler)
     #ifdef EXIST_SW2
         , _sw2ChangedEventCallback(*this, &MyApplication::sw2ChangedEventHandler)
@@ -34,6 +34,14 @@ MyApplication::MyApplication():
 /// \brief    Inicialitza l'aplicacio.
 ///
 void MyApplication::onInitialize() {
+
+    // Configura el servei de missatgeria
+    //
+    _messengerService = new MessengerService(this);
+
+    _messageBus = new MessageBus<ButtonMessage>(10);
+    _messageBus->subscribe(_messageBusEventCallback);
+    _messengerService->addMessageBus(_messageBus);
 
     // Configura el servei d'entrades digitals
 	//
@@ -89,7 +97,7 @@ void MyApplication::onInitialize() {
     LED1_GPIO::clear();
     _led1 = new DigOutput(_digOutputService, htl::getGPIO<LED1_GPIO>());
 
-    // COnfigura la sortida corresponent al led LED2
+    // Configura la sortida corresponent al led LED2
     //
     #ifdef EXIST_LED2
         LED2_GPIO::initOutput();
@@ -133,6 +141,16 @@ void MyApplication::onInitialize() {
 }
 
 
+/// -------------------------------------------------------------------
+/// \brief    Procesa els events de MessageBus
+// \param     args: Parametres del event.
+///
+void MyApplication::messageBusEventHandler(
+    const ButtonMessage &args) {
+
+}
+
+
 /// --------------------------------------------------------------------
 /// \brief    Procesa els events del switch 1.
 /// \param    args: Parametres del event.
@@ -141,6 +159,11 @@ void MyApplication::sw1ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
     if (args.value == (bool) SW1_ON) {
+
+        ButtonMessage msg;
+        msg.id = 1;
+        _messageBus->send(msg, 1000);
+
         _led1->pulse(500);
         _led2->delayedPulse(250, 500);
         #ifdef EXIST_LED3
@@ -159,6 +182,11 @@ void MyApplication::sw2ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
     if (args.value == (bool) SW2_ON) {
+
+        ButtonMessage msg;
+        msg.id = 2;
+        _messageBus->send(msg, 1000);
+
         #ifdef EXIST_LED3
             _led3->pulse(500);
         #endif
@@ -180,6 +208,11 @@ void MyApplication::sw3ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
     if (args.value == (bool) SW3_ON) {
+
+        ButtonMessage msg;
+        msg.id = 3;
+        _messageBus->send(msg, 1000);
+
         _led1->pulse(1000);
         #ifdef EXIST_LED2
             _led2->pulse(2000);

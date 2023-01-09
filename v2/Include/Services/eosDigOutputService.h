@@ -75,7 +75,7 @@ namespace eos {
             void cmdTimeOut(unsigned time);
         protected:
             void onInitialize() override;
-            void onTask(Task *task) override;
+            void onTask() override;
 #if Eos_ApplicationTickEnabled
             void onTick() override;
 #endif

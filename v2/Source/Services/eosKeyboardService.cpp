@@ -38,8 +38,13 @@ void KeyboardService::onInitialize() {
 /// \brief    Procesa les tasques del servei
 ///
 void KeyboardService::onTask() {
-    
-	if (eventCallback != nullptr) {
 
-	}
+    // Repeteix indefinidament
+    //    
+    while (true) {
+
+        if (eventCallback != nullptr) {
+
+        }
+    }
 }

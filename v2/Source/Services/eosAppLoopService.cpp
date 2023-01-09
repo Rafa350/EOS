@@ -12,8 +12,7 @@ using namespace eos;
 AppLoopService::AppLoopService(
     Application *application):
 
-	Service(application),
-    _initialized(false) {
+	Service(application) {
 }
 
 
@@ -28,14 +27,11 @@ void AppLoopService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Bucle d'execucio.
 ///
-void AppLoopService::onTask(
-	Task *task) {
+void AppLoopService::onTask() {
 
-	if (!_initialized) {
-		onSetup();
-		_initialized = true;
-	}
-    onLoop();
+	onSetup();
+	while (true)
+		onLoop();
 }
 
 

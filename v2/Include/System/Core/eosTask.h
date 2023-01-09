@@ -51,10 +51,10 @@ namespace eos {
             static void yieldISR();
 
         private:
-            HTask hTask;
-            IEventCallback *eventCallback;
-            void *eventParams;
-            unsigned weakTime;
+            HTask _hTask;
+            IEventCallback *_eventCallback;
+            void *_eventParams;
+            unsigned _weakTime;
 
             static void function(void *params);
     };

@@ -6,6 +6,12 @@
 #include "System/eosApplication.h"
 
 
+namespace eos {
+
+	class MessengerService;
+}
+
+
 namespace app {
 
     class MyAppLoopService;
@@ -13,6 +19,7 @@ namespace app {
     class MyApplication: public eos::Application {
         private:
             MyAppLoopService *_loopService;
+            eos::MessengerService *_messengerService;
 
         public:
             MyApplication();
