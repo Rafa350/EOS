@@ -41,7 +41,7 @@ namespace htl {
     typedef IGPIO *GPIOHandler;
 
     template <typename gpio_>
-    class GPIO: public IGPIO {
+    class GPIO final: public IGPIO {
         private:
             GPIO() = default;
             GPIO(const GPIO &) = delete;

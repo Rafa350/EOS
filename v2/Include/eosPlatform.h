@@ -37,7 +37,19 @@
 	  defined(STM32)
 
 	// Platform definitions
-	#if defined(STM32F4)
+    #if defined(SMT32F0)
+		#if defined(STM32F030xx)
+			#define EOS_PLATFORM_STM32F0
+		#else
+            #error  "Unknown processor STM32F0"
+		#endif
+	#elif defined(STM32F1)
+		#if defined(STM32F103xx)
+			#define EOS_PLATFORM_STM32F1
+		#else
+            #error  "Unknown processor STM32F1"
+		#endif
+	#elif defined(STM32F4)
 		#define EOS_PLATFORM_STM32F4
 	#elif defined(STM32F7)
 		#if defined(STM32F746xx) || defined(STM32F769xx)

@@ -281,6 +281,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HTL/htl.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/HTL/htl.h</location>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HTL/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>
