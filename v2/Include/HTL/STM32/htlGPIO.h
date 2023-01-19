@@ -17,6 +17,46 @@
 #include "HTL/htl.h"
 
 
+#if defined(EOS_PLATFORM_STM32F0)
+	#define HTL_GPIOA_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOAEN
+	#define HTL_GPIOB_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOBEN
+	#define HTL_GPIOC_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOCEN
+	#define HTL_GPIOD_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIODEN
+	#define HTL_GPIOE_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOEEN
+	#define HTL_GPIOF_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOFEN
+	#define HTL_GPIOA_CLK_DISABLE()    RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN
+	#define HTL_GPIOB_CLK_DISABLE()    RCC->AHBENR &= ~RCC_AHBENR_GPIOBEN
+	#define HTL_GPIOC_CLK_DISABLE()    RCC->AHBENR &= ~RCC_AHBENR_GPIOCEN
+	#define HTL_GPIOD_CLK_DISABLE()    RCC->AHBENR &= ~RCC_AHBENR_GPIODEN
+	#define HTL_GPIOE_CLK_DISABLE()    RCC->AHBENR &= ~RCC_AHBENR_GPIOEEN
+	#define HTL_GPIOF_CLK_DISABLE()    RCC->AHBENR &= ~RCC_AHBENR_GPIOFEN
+
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+	#define HTL_GPIOA_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN
+	#define HTL_GPIOB_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN
+	#define HTL_GPIOC_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN
+	#define HTL_GPIOD_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN
+	#define HTL_GPIOE_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN
+	#define HTL_GPIOF_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN
+	#define HTL_GPIOG_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN
+	#define HTL_GPIOH_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN
+	#define HTL_GPIOI_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN
+	#define HTL_GPIOJ_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN
+	#define HTL_GPIOK_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN
+	#define HTL_GPIOA_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN
+	#define HTL_GPIOB_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN
+	#define HTL_GPIOC_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN
+	#define HTL_GPIOD_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN
+	#define HTL_GPIOE_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN
+	#define HTL_GPIOF_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN
+	#define HTL_GPIOG_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN
+	#define HTL_GPIOH_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN
+	#define HTL_GPIOI_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN
+	#define HTL_GPIOJ_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN
+	#define HTL_GPIOK_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN
+#endif
+
+
 namespace htl {
 
     /// \brief Port identifiers.
@@ -143,28 +183,50 @@ namespace htl {
     			uint16_t mask) {
 
     			if (!_activated) {
-    				if constexpr (port_ == GPIOPort::A)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-    				if constexpr (port_ == GPIOPort::B)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
-    				if constexpr (port_ == GPIOPort::C)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
-    				if constexpr (port_ == GPIOPort::D)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-    				if constexpr (port_ == GPIOPort::E)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
-    				if constexpr (port_ == GPIOPort::F)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
-    				if constexpr (port_ == GPIOPort::G)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
-    				if constexpr (port_ == GPIOPort::H)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
-    				if constexpr (port_ == GPIOPort::I)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
-    				if constexpr (port_ == GPIOPort::J)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
-    				if constexpr (port_ == GPIOPort::K)
-    					RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
+					#ifdef GPIOA_BASE
+    					if constexpr (port_ == GPIOPort::A)
+    						HTL_GPIOA_CLK_ENABLE();
+					#endif
+					#ifdef GPIOB_BASE
+    					if constexpr (port_ == GPIOPort::B)
+    						HTL_GPIOB_CLK_ENABLE();
+					#endif
+					#ifdef GPIOC_BASE
+    					if constexpr (port_ == GPIOPort::C)
+							HTL_GPIOC_CLK_ENABLE();
+					#endif
+					#ifdef GPIOD_BASE
+    					if constexpr (port_ == GPIOPort::D)
+							HTL_GPIOD_CLK_ENABLE();
+					#endif
+					#ifdef GPIOE_BASE
+    					if constexpr (port_ == GPIOPort::E)
+							HTL_GPIOE_CLK_ENABLE();
+					#endif
+					#ifdef GPIOF_BASE
+    					if constexpr (port_ == GPIOPort::F)
+							HTL_GPIOF_CLK_ENABLE();
+					#endif
+					#ifdef GPIOG_BASE
+    					if constexpr (port_ == GPIOPort::G)
+							HTL_GPIOG_CLK_ENABLE();
+					#endif
+					#ifdef GPIOH_BASE
+    					if constexpr (port_ == GPIOPort::H)
+							HTL_GPIOH_CLK_ENABLE();
+					#endif
+					#ifdef GPIOI_BASE
+    					if constexpr (port_ == GPIOPort::I)
+							HTL_GPIOI_CLK_ENABLE();
+					#endif
+					#ifdef GPIOJ_BASE
+    					if constexpr (port_ == GPIOPort::J)
+							HTL_GPIOJ_CLK_ENABLE();
+					#endif
+					#ifdef GPIOK_BASE
+    					if constexpr (port_ == GPIOPort::K)
+							HTL_GPIOK_CLK_ENABLE();
+					#endif
     				__DSB();
     			}
     			_activated |= mask;
@@ -175,28 +237,50 @@ namespace htl {
 
     			_activated &= ~mask;
     			if (!_activated) {
-    				if constexpr (port_ == GPIOPort::A)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN;
-    				if constexpr (port_ == GPIOPort::B)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN;
-    				if constexpr (port_ == GPIOPort::C)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN;
-    				if constexpr (port_ == GPIOPort::D)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN;
-    				if constexpr (port_ == GPIOPort::E)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN;
-    				if constexpr (port_ == GPIOPort::F)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN;
-    				if constexpr (port_ == GPIOPort::G)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN;
-    				if constexpr (port_ == GPIOPort::H)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN;
-    				if constexpr (port_ == GPIOPort::I)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN;
-    				if constexpr (port_ == GPIOPort::J)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN;
-    				if constexpr (port_ == GPIOPort::K)
-    					RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN;
+					#ifdef GPIOA_BASE
+    					if constexpr (port_ == GPIOPort::A)
+    						HTL_GPIOA_CLK_DISABLE();
+					#endif
+					#ifdef GPIOB_BASE
+    					if constexpr (port_ == GPIOPort::B)
+    	    				HTL_GPIOB_CLK_DISABLE();
+					#endif
+					#ifdef GPIOC_BASE
+    					if constexpr(port_ == GPIOPort::C)
+    	    					HTL_GPIOC_CLK_DISABLE();
+					#endif
+					#ifdef GPIOD_BASE
+    					if constexpr (port_ == GPIOPort::D)
+    	    				HTL_GPIOD_CLK_DISABLE();
+					#endif
+					#ifdef GPIOE_BASE
+    					if constexpr (port_ == GPIOPort::E)
+    	    				HTL_GPIOE_CLK_DISABLE();
+					#endif
+					#ifdef GPIOF_BASE
+    					if constexpr (port_ == GPIOPort::F)
+    	    				HTL_GPIOF_CLK_DISABLE();
+					#endif
+					#ifdef GPIOG_BASE
+    					if constexpr (port_ == GPIOPort::G)
+    	    				HTL_GPIOG_CLK_DISABLE();
+					#endif
+					#ifdef GPIOH_BASE
+    					if constexpr (port_ == GPIOPort::H)
+    	    				HTL_GPIOH_CLK_DISABLE();
+					#endif
+					#ifdef GPIOI_BASE
+    					if constexpr (port_ == GPIOPort::I)
+    	    				HTL_GPIOI_CLK_DISABLE();
+					#endif
+					#ifdef GPIOJ_BASE
+    					if constexpr (port_ == GPIOPort::J)
+    	    				HTL_GPIOJ_CLK_DISABLE();
+					#endif
+					#ifdef GPIOK_BASE
+    					if constexpr (port_ == GPIOPort::K)
+    	    				HTL_GPIOK_CLK_DISABLE();
+					#endif
     			}
     		}
     };
@@ -558,6 +642,11 @@ namespace htl {
         template <>
         struct GPIOPinTrait<GPIOPort::A, GPIOPin::_1> {
             static constexpr uint32_t pn = 1;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::A, GPIOPin::_2> {
+            static constexpr uint32_t pn = 2;
         };
 
         template <>

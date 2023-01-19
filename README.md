@@ -1,7 +1,7 @@
 # EOS (Embedded Operating System)
 
 ## Features:
-* Verified targets STM32F4xx, STM32F7xx, PIC32MX.
+* Verified targets STM32F0xx, STM32F1xx, STM32F4xx, STM32F7xx, PIC32MX.
 * FreeRTOS scheduler.
 * HAL module.
   * Independent HAL C bare metal library. C99

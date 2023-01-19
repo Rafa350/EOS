@@ -32,6 +32,8 @@
 //
 #if defined(EOS_PLATFORM_PIC32MX) || defined(EOS_PLATFORM_PIC32MZ)
 	#include "xc.h"
+#elif defined(EOS_PLATFORM_STM32F0)
+	#include "stm32f0xx.h"
 #elif defined(EOS_PLATFORM_STM32F1)
 	#include "stm32f1xx.h"
 #elif defined(EOS_PLATFORM_STM32F4)

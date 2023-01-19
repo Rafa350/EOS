@@ -162,8 +162,7 @@ void GuiService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
-void GuiService::onTask(
-	Task *task) {
+void GuiService::onTask() {
         
     // Repeteix indefinidament
     //

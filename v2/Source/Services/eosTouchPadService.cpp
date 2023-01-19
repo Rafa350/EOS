@@ -44,8 +44,7 @@ void TouchpadService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio.
 ///
-void TouchpadService::onTask(
-	Task *task) {
+void TouchpadService::onTask() {
         
     // Repeteix indefinidament
     //
