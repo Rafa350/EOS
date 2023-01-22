@@ -21,6 +21,9 @@
 #elif defined(HARDWARE_STM32F769I_DISCO)
     #include "Board/eosBoard_STM32F769I_DISCO.h"
 
+#elif defined(HARDWARE_NUCLEO_F030R8)
+    #include "Board/eosBoard_NUCLEO_F030R8.h"
+
 #elif defined(HARDWARE_PINGUINO)
     #include "Board/eosBoard_PINGUINO.h"
     

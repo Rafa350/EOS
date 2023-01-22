@@ -10,31 +10,46 @@
 #include "HTL/STM32/htlINT.h"
 
 
+// Detecta les opcions suportades
+//
+#if defined(EOS_PLATFORM_STM32F0)
+	#define HTL_UART_7BIT_SUPPORT 0
+	#define HTL_UART_LINMODE_SUPPORT 0
+	#define HTL_UART_SMARTCARD_SUPPORT 0
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+	#define HTL_UART_7BIT_SUPPORT 1
+	#define HTL_UART_LINMODE_SUPPORT 1
+	#define HTL_UART_SMARTCARD_SUPPORT 1
+#else
+	#error Unsuported platform
+#endif
+
+
 namespace htl {
 
 	enum class UARTChannel {
-        #ifdef USART1_BASE
+        #ifdef HTL_UART1_EXIST
             _1,
         #endif
-        #ifdef USART2_BASE
+        #ifdef HTL_UART2_EXIST
             _2,
         #endif
-        #ifdef USART3_BASE
+        #ifdef HTL_UART3_EXIST
             _3,
         #endif
-        #ifdef UART4_BASE
+        #ifdef HTL_UART4_EXIST
             _4,
         #endif
-        #ifdef UART5_BASE
+        #ifdef HTL_UART5_EXIST
             _5,
         #endif
-        #ifdef USART6_BASE
+        #ifdef HTL_UART6_EXIST
             _6,
         #endif
-        #ifdef UART7_BASE
+        #ifdef HTL_UART7_EXIST
             _7,
         #endif
-        #ifdef UART8_BASE
+        #ifdef HTL_UART8_EXIST
             _8,
         #endif
 	};
@@ -51,7 +66,9 @@ namespace htl {
 	};
 
 	enum class UARTWordBits {
-		_7,
+		#if HTL_UART_7BIT_SUPPORT == 1
+			_7,
+		#endif
 		_8
 	};
 
@@ -101,7 +118,9 @@ namespace htl {
 		rxNotEmpty,
 		idle,
 		parity,
-		brk,
+		#if HTL_UART_LINMODE_SUPPORT == 1
+			linBrk,
+		#endif
 		endOfBlock,
 		rxTimeout,
 		match,
@@ -116,7 +135,9 @@ namespace htl {
 		overrun,
 		idle,
 		parity,
-		brk,
+		#if HTL_UART_LINMODE_SUPPORT == 1
+			linBrk,
+		#endif
 		endOfBlock,
 		rxTimeout,
 		framming,
@@ -175,35 +196,35 @@ namespace htl {
 			///
 			static void activate() {
 
-				#ifdef USART1_BASE
+				#ifdef HTL_UART1_EXIST
 					if constexpr (channel_ == UARTChannel::_1)
 						RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
 				#endif
-				#ifdef USART2_BASE
+				#ifdef HTL_UART2_EXIST
 					if constexpr (channel_ == UARTChannel::_2)
 						RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
 				#endif
-				#ifdef USART3_BASE
+				#ifdef HTL_UART3_EXIST
 					if constexpr (channel_ == UARTChannel::_3)
 						RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
 				#endif
-				#ifdef UART4_BASE
+				#ifdef HTL_UART4_EXIST
 					if constexpr (channel_ == UARTChannel::_4)
 						RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
 				#endif
-				#ifdef UART5_BASE
+				#ifdef HTL_UART5_EXIST
 					if constexpr (channel_ == UARTChannel::_5)
 						RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
 				#endif
-				#ifdef USART6_BASE
+				#ifdef HTL_UART6_EXIST
 					if constexpr (channel_ == UARTChannel::_6)
 						RCC->APB2ENR |= RCC_APB2ENR_USART6EN;
 				#endif
-				#ifdef UART7_BASE
+				#ifdef HTL_UART7_EXIST
 					if constexpr (channel_ == UARTChannel::_7)
 						RCC->APB1ENR |= RCC_APB1ENR_UART7EN;
 				#endif
-				#ifdef UART8_BASE
+				#ifdef HTL_UART8_EXIST
 					if constexpr (channel_ == UARTChannel::_8)
 						RCC->APB1ENR |= RCC_APB1ENR_UART8EN;
 				#endif
@@ -215,35 +236,35 @@ namespace htl {
 			///
 			static void deactivate() {
 
-				#ifdef USART1_BASE
+				#ifdef HTL_UART1_EXIST
 					if constexpr (channel_ == UARTChannel::_1)
 						RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
 				#endif
-				#ifdef USART2_BASE
+				#ifdef HTL_UART2_EXIST
 					if constexpr (channel_ == UARTChannel::_2)
 						RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
 				#endif
-				#ifdef USART3_BASE
+				#ifdef HTL_UART3_EXIST
 					if constexpr (channel_ == UARTChannel::_3)
 						RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
 				#endif
-				#ifdef UART4_BASE
+				#ifdef HTL_UART4_EXIST
 					if constexpr (channel_ == UARTChannel::_4)
 						RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
 				#endif
-				#ifdef UART5_BASE
+				#ifdef HTL_UART5_EXIST
 					if constexpr (channel_ == UARTChannel::_5)
 						RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
 				#endif
-				#ifdef USART6_BASE
+				#ifdef HTL_UART6_EXIST
 					if constexpr (channel_ == UARTChannel::_6)
 						RCC->APB2ENR &= ~RCC_APB2ENR_USART6EN;
 				#endif
-				#ifdef UART7_BASE
+				#ifdef HTL_UART7_EXIST
 					if constexpr (channel_ == UARTChannel::_7)
 						RCC->APB1ENR &= ~RCC_APB1ENR_UART7EN;
 				#endif
-				#ifdef UART8_BASE
+				#ifdef HTL_UART8_EXIST
 					if constexpr (channel_ == UARTChannel::_8)
 						RCC->APB1ENR &= ~RCC_APB1ENR_UART8EN;
 				#endif
@@ -270,49 +291,49 @@ namespace htl {
 			///
 			static void reset() {
 
-				#ifdef USART1_BASE
+				#ifdef HTL_UART1_EXIST
 					if constexpr (channel_ == UARTChannel::_1) {
 						RCC->APB2RSTR |= RCC_APB2RSTR_USART1RST;
 						RCC->APB2RSTR &= ~RCC_APB2RSTR_USART1RST;
 					}
 				#endif
-				#ifdef USART2_BASE
+				#ifdef HTL_UART2_EXIST
 					if constexpr (channel_ == UARTChannel::_2) {
 						RCC->APB1RSTR |= RCC_APB1RSTR_USART2RST;
 						RCC->APB1RSTR &= ~RCC_APB1RSTR_USART2RST;
 					}
 				#endif
-				#ifdef USART3_BASE
+				#ifdef HTL_UART3_EXIST
 					if constexpr (channel_ == UARTChannel::_3) {
 						RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
 						RCC->APB1RSTR &= ~RCC_APB1RSTR_USART3RST;
 					}
 				#endif
-				#ifdef UART4_BASE
+				#ifdef HTL_UART4_EXIST
 					if constexpr (channel_ == UARTChannel::_4) {
 						RCC->APB1RSTR |= RCC_APB1RSTR_UART4RST;
 						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART4RST;
 					}
 				#endif
-				#ifdef UART5_BASE
+				#ifdef HTL_UART5_EXIST
 					if constexpr (channel_ == UARTChannel::_5) {
 						RCC->APB1RSTR |= RCC_APB1RSTR_UART5RST;
 						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART5RST;
 					}
 				#endif
-				#ifdef USART6_BASE
+				#ifdef HTL_UART6_EXIST
 					if constexpr (channel_ == UARTChannel::_6) {
 						RCC->APB2RSTR |= RCC_APB2RSTR_USART6RST;
 						RCC->APB2RSTR &= ~RCC_APB2RSTR_USART6RST;
 					}
 				#endif
-				#ifdef UART7_BASE
+				#ifdef HTL_UART7_EXIST
 					if constexpr (channel_ == UARTChannel::_7) {
 						RCC->APB1RSTR |= RCC_APB1RSTR_UART7RST;
 						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART7RST;
 					}
 				#endif
-				#ifdef UART8_BASE
+				#ifdef HTL_UART8_EXIST
 					if constexpr (channel_ == UARTChannel::_8) {
 						RCC->APB1RSTR |= RCC_APB1RSTR_UART8RST;
 						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART8RST;
@@ -483,9 +504,11 @@ namespace htl {
 						ATOMIC_SET_BIT(regs->CR3, USART_CR3_CTSIE);
 						break;
 
-					case UARTInterrupt::brk:
-						ATOMIC_SET_BIT(regs->CR2, USART_CR2_LBDIE);
-						break;
+					#if HTL_UART_LINMODE_SUPPORT == 1
+						case UARTInterrupt::linBrk:
+							ATOMIC_SET_BIT(regs->CR2, USART_CR2_LBDIE);
+							break;
+					#endif
 
 					case UARTInterrupt::idle:
 						ATOMIC_SET_BIT(regs->CR1, USART_CR1_IDLEIE);
@@ -540,10 +563,12 @@ namespace htl {
 						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_CTSIE);
 						break;
 
-					case UARTInterrupt::brk:
-						state = (regs->CR2 & USART_CR2_LBDIE) != 0;
-						ATOMIC_CLEAR_BIT(regs->CR2, USART_CR2_LBDIE);
-						break;
+					#if HTL_UART_LINMODE_SUPPORT == 1
+						case UARTInterrupt::linBrk:
+							state = (regs->CR2 & USART_CR2_LBDIE) != 0;
+							ATOMIC_CLEAR_BIT(regs->CR2, USART_CR2_LBDIE);
+							break;
+					#endif
 
 					case UARTInterrupt::idle:
 						state = (regs->CR1 & USART_CR1_IDLEIE) != 0;
@@ -575,10 +600,12 @@ namespace htl {
 						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RTOIE);
 						break;
 
-					case UARTInterrupt::endOfBlock:
-						state = (regs->CR1 & USART_CR1_EOBIE) != 0;
-						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_EOBIE);
-						break;
+					#ifdef USART_CR1_EOBIE
+						case UARTInterrupt::endOfBlock:
+							state = (regs->CR1 & USART_CR1_EOBIE) != 0;
+							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_EOBIE);
+							break;
+					#endif
 
 					case UARTInterrupt::match:
 						state = (regs->CR1 & USART_CR1_CMIE) != 0;
@@ -669,9 +696,11 @@ namespace htl {
 						regs->ICR = USART_ICR_CTSCF;
 						break;
 
-					case UARTFlag::endOfBlock:
-						regs->ICR = USART_ICR_EOBCF;
-						break;
+					#ifdef USART_ICR_EOBCF
+						case UARTFlag::endOfBlock:
+							regs->ICR = USART_ICR_EOBCF;
+							break;
+					#endif
 
 					case UARTFlag::framming:
 						regs->ICR = USART_ICR_FECF;
@@ -701,9 +730,11 @@ namespace htl {
 						regs->ICR = USART_ICR_TCCF;
 						break;
 
-					case UARTFlag::brk:
-						regs->ICR = USART_ICR_LBDCF;
-						break;
+					#if HTL_UART_LINMODE_SUPPORT == 1
+						case UARTFlag::linBrk:
+							regs->ICR = USART_ICR_LBDCF;
+							break;
+					#endif
 
 					case UARTFlag::match:
 						regs->ICR = USART_ICR_CMCF;
@@ -739,50 +770,60 @@ namespace htl {
     template <UARTChannel channel_> UARTInterruptFunction UART_x<channel_>::_isrFunction = nullptr;
     template <UARTChannel channel_> UARTInterruptParam UART_x<channel_>::_isrParam = nullptr;
 
-    #ifdef USART1_BASE
+    #ifdef HTL_UART1_EXIST
         using UART_1 = UART_x<UARTChannel::_1>;
     #endif
-    #ifdef USART2_BASE
+    #ifdef HTL_UART2_EXIST
         using UART_2 = UART_x<UARTChannel::_2>;
     #endif
-    #ifdef USART3_BASE
+    #ifdef HTL_UART3_EXIST
         using UART_3 = UART_x<UARTChannel::_3>;
     #endif
-    #ifdef UART4_BASE
+    #ifdef HTL_UART4_EXIST
         using UART_4 = UART_x<UARTChannel::_4>;
     #endif
-    #ifdef UART5_BASE
+    #ifdef HTL_UART5_EXIST
         using UART_5 = UART_x<UARTChannel::_5>;
     #endif
-    #ifdef USART6_BASE
+    #ifdef HTL_UART6_EXIST
         using UART_6 = UART_x<UARTChannel::_6>;
     #endif
-    #ifdef UART7_BASE
+    #ifdef HTL_UART7_EXIST
         using UART_7 = UART_x<UARTChannel::_7>;
     #endif
-    #ifdef UART8_BASE
+    #ifdef HTL_UART8_EXIST
         using UART_8 = UART_x<UARTChannel::_8>;
     #endif
 
-	#ifdef USART1_BASE
+	#ifdef HTL_UART1_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_1> {
 			static constexpr uint32_t addr = USART1_BASE;
 			static constexpr INTVector vector = INTVector::uart1;
 		};
 
-		template <>
-		struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
-
-		template <>
-		struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
+		#if defined(EOS_PLATFORM_STM32F0)
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_A2, UARTPin::TX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_A3, UARTPin::RX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+		#elif defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_8;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_8;
+			};
+		#endif
 	#endif
 
-	#ifdef USART2_BASE
+	#ifdef HTL_UART2_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_2> {
 			static constexpr uint32_t addr = USART2_BASE;
@@ -790,7 +831,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef USART3_BASE
+	#ifdef HTL_UART3_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_3> {
 			static constexpr uint32_t addr = USART3_BASE;
@@ -798,7 +839,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef UART4_BASE
+	#ifdef HTL_UART4_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_4> {
 			static constexpr uint32_t addr = UART4_BASE;
@@ -806,7 +847,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef UART5_BASE
+	#ifdef HTL_UART5_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_5> {
 			static constexpr uint32_t addr = UART5_BASE;
@@ -814,7 +855,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef USART6_BASE
+	#ifdef HTL_UART6_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_6> {
 			static constexpr uint32_t addr = USART6_BASE;
@@ -832,7 +873,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef UART7_BASE
+	#ifdef HTL_UART7_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_7> {
 			static constexpr uint32_t addr = UART7_BASE;
@@ -840,7 +881,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef UART8_BASE
+	#ifdef HTL_UART8_EXIST
 		template <>
 		struct UARTTrait<UARTChannel::_8> {
 			static constexpr uint32_t addr = UART8_BASE;

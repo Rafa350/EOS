@@ -11,20 +11,48 @@
 namespace htl {
     
 	enum class TMRTimer {
-		_1,
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		_9,
-		_10,
-		_11,
-		_12,
-		_13,
-		_14,
+		#ifdef HTL_TIM1_EXIST
+			_1,
+		#endif
+		#ifdef HTL_TIM2_EXIST
+			_2,
+		#endif
+		#ifdef HTL_TIM3_EXIST
+			_3,
+		#endif
+		#ifdef HTL_TIM4_EXIST
+			_4,
+		#endif
+		#ifdef HTL_TIM5_EXIST
+			_5,
+		#endif
+		#ifdef HTL_TIM6_EXIST
+			_6,
+		#endif
+		#ifdef HTL_TIM7_EXIST
+			_7,
+		#endif
+		#ifdef HTL_TIM8_EXIST
+			_8,
+		#endif
+		#ifdef HTL_TIM9_EXIST
+			_9,
+		#endif
+		#ifdef HTL_TIM10_EXIST
+			_10,
+		#endif
+		#ifdef HTL_TIM11_EXIST
+			_11,
+		#endif
+		#ifdef HTL_TIM12_EXIST
+			_12,
+		#endif
+		#ifdef HTL_TIM13_EXIST
+			_13,
+		#endif
+		#ifdef HTL_TIM14_EXIST
+			_14,
+		#endif
 	};
 
 	enum class TMRDirection {

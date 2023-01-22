@@ -16,37 +16,53 @@ static UARTClockSource getClockSource(
 
 	uint8_t sclk = 0;
     switch ((uint32_t)regs) {
-    	case USART1_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
-			break;
+		#ifdef HTL_UART1_EXIST
+			case USART1_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
+				break;
+		#endif
 
-    	case USART2_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
-    		break;
+		#ifdef HTL_UART2_EXIST
+			case USART2_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
+				break;
+		#endif
 
-    	case USART3_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART3SEL) >> RCC_DCKCFGR2_USART3SEL_Pos;
-    		break;
+		#ifdef HTL_UART3_EXIST
+			case USART3_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART3SEL) >> RCC_DCKCFGR2_USART3SEL_Pos;
+				break;
+		#endif
 
-    	case UART4_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART4SEL) >> RCC_DCKCFGR2_UART4SEL_Pos;
-    		break;
+		#ifdef HTL_UART4_EXIST
+			case UART4_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART4SEL) >> RCC_DCKCFGR2_UART4SEL_Pos;
+				break;
+		#endif
 
-    	case UART5_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART5SEL) >> RCC_DCKCFGR2_UART5SEL_Pos;
-    		break;
+		#ifdef HTL_UART5_EXIST
+			case UART5_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART5SEL) >> RCC_DCKCFGR2_UART5SEL_Pos;
+				break;
+		#endif
 
-    	case USART6_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART6SEL) >> RCC_DCKCFGR2_USART6SEL_Pos;
-			break;
+		#ifdef HTL_UART6_EXIST
+			case USART6_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART6SEL) >> RCC_DCKCFGR2_USART6SEL_Pos;
+				break;
+		#endif
 
-    	case UART7_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART7SEL) >> RCC_DCKCFGR2_UART7SEL_Pos;
-			break;
+		#ifdef HTL_UART7_EXIST
+			case UART7_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART7SEL) >> RCC_DCKCFGR2_UART7SEL_Pos;
+				break;
+		#endif
 
-    	case UART8_BASE:
-    		sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART8SEL) >> RCC_DCKCFGR2_UART8SEL_Pos;
-			break;
+		#ifdef HTL_UART8_EXIST
+			case UART8_BASE:
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART8SEL) >> RCC_DCKCFGR2_UART8SEL_Pos;
+				break;
+		#endif
     }
 
     switch (sclk & 0x03) {
@@ -82,19 +98,29 @@ void UARTBase_x::setProtocol(
 	tmp = regs->CR1;
 
 	switch (7 + uint32_t(wordBits) + (parity == UARTParity::none ? 0 : 1)) {
-		case 7:
-			tmp |= USART_CR1_M1;
-			tmp &= ~USART_CR1_M0;
-			break;
+		#if HTL_UART_7BIT_SUPPORT == 1
+			case 7:
+				tmp |= USART_CR1_M1;
+				tmp &= ~USART_CR1_M0;
+				break;
+		#endif
 
 		case 8:
-			tmp &= ~USART_CR1_M1;
-			tmp &= ~USART_CR1_M0;
+			#if HTL_UART_7BIT_SUPPORT == 1
+				tmp &= ~USART_CR1_M1;
+				tmp &= ~USART_CR1_M0;
+			#else
+				tmp &= ~USART_CR1_M;
+			#endif
 			break;
 
 		case 9:
-			tmp &= ~USART_CR1_M1;
-			tmp |= USART_CR1_M0;
+			#if HTL_UART_7BIT_SUPPORT == 1
+				tmp &= ~USART_CR1_M1;
+				tmp |= USART_CR1_M0;
+			#else
+				tmp |= USART_CR1_M;
+			#endif
 			break;
 	}
 

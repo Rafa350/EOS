@@ -61,37 +61,37 @@ namespace htl {
 
     /// \brief Port identifiers.
     enum class GPIOPort {
-        #ifdef GPIOA_BASE
+        #ifdef HTL_GPIOA_EXIST
             A,
         #endif
-        #ifdef GPIOB_BASE
+        #ifdef HTL_GPIOB_EXIST
             B,
         #endif
-        #ifdef GPIOC_BASE
+        #ifdef HTL_GPIOC_EXIST
             C,
         #endif
-        #ifdef GPIOD_BASE
+        #ifdef HTL_GPIOD_EXIST
             D,
         #endif
-        #ifdef GPIOE_BASE
+        #ifdef HTL_GPIOE_EXIST
             E,
         #endif
-        #ifdef GPIOF_BASE
+        #ifdef HTL_GPIOF_EXIST
             F,
         #endif
-        #ifdef GPIOG_BASE
+        #ifdef HTL_GPIOG_EXIST
             G,
         #endif
-        #ifdef GPIOH_BASE
+        #ifdef HTL_GPIOH_EXIST
             H,
         #endif
-        #ifdef GPIOI_BASE
+        #ifdef HTL_GPIOI_EXIST
             I,
         #endif
-        #ifdef GPIOJ_BASE
+        #ifdef HTL_GPIOJ_EXIST
             J,
         #endif
-        #ifdef GPIOK_BASE
+        #ifdef HTL_GPIOK_EXIST
             K,
         #endif
     };
@@ -183,47 +183,47 @@ namespace htl {
     			uint16_t mask) {
 
     			if (!_activated) {
-					#ifdef GPIOA_BASE
+					#ifdef HTL_GPIOA_EXIST
     					if constexpr (port_ == GPIOPort::A)
     						HTL_GPIOA_CLK_ENABLE();
 					#endif
-					#ifdef GPIOB_BASE
+					#ifdef HTL_GPIOB_EXIST
     					if constexpr (port_ == GPIOPort::B)
     						HTL_GPIOB_CLK_ENABLE();
 					#endif
-					#ifdef GPIOC_BASE
+					#ifdef HTL_GPIOC_EXIST
     					if constexpr (port_ == GPIOPort::C)
 							HTL_GPIOC_CLK_ENABLE();
 					#endif
-					#ifdef GPIOD_BASE
+					#ifdef HTL_GPIOD_EXIST
     					if constexpr (port_ == GPIOPort::D)
 							HTL_GPIOD_CLK_ENABLE();
 					#endif
-					#ifdef GPIOE_BASE
+					#ifdef HTL_GPIOE_EXIST
     					if constexpr (port_ == GPIOPort::E)
 							HTL_GPIOE_CLK_ENABLE();
 					#endif
-					#ifdef GPIOF_BASE
+					#ifdef HTL_GPIOF_EXIST
     					if constexpr (port_ == GPIOPort::F)
 							HTL_GPIOF_CLK_ENABLE();
 					#endif
-					#ifdef GPIOG_BASE
+					#ifdef HTL_GPIOG_EXIST
     					if constexpr (port_ == GPIOPort::G)
 							HTL_GPIOG_CLK_ENABLE();
 					#endif
-					#ifdef GPIOH_BASE
+					#ifdef HTL_GPIOH_EXIST
     					if constexpr (port_ == GPIOPort::H)
 							HTL_GPIOH_CLK_ENABLE();
 					#endif
-					#ifdef GPIOI_BASE
+					#ifdef HTL_GPIOI_EXIST
     					if constexpr (port_ == GPIOPort::I)
 							HTL_GPIOI_CLK_ENABLE();
 					#endif
-					#ifdef GPIOJ_BASE
+					#ifdef HTL_GPIOJ_EXIST
     					if constexpr (port_ == GPIOPort::J)
 							HTL_GPIOJ_CLK_ENABLE();
 					#endif
-					#ifdef GPIOK_BASE
+					#ifdef HTL_GPIOK_EXIST
     					if constexpr (port_ == GPIOPort::K)
 							HTL_GPIOK_CLK_ENABLE();
 					#endif
@@ -237,47 +237,47 @@ namespace htl {
 
     			_activated &= ~mask;
     			if (!_activated) {
-					#ifdef GPIOA_BASE
+					#ifdef HTL_GPIOA_EXIST
     					if constexpr (port_ == GPIOPort::A)
     						HTL_GPIOA_CLK_DISABLE();
 					#endif
-					#ifdef GPIOB_BASE
+					#ifdef HTL_GPIOB_EXIST
     					if constexpr (port_ == GPIOPort::B)
     	    				HTL_GPIOB_CLK_DISABLE();
 					#endif
-					#ifdef GPIOC_BASE
+					#ifdef HTL_GPIOC_EXIST
     					if constexpr(port_ == GPIOPort::C)
-    	    					HTL_GPIOC_CLK_DISABLE();
+    	    				HTL_GPIOC_CLK_DISABLE();
 					#endif
-					#ifdef GPIOD_BASE
+					#ifdef HTL_GPIOD_EXIST
     					if constexpr (port_ == GPIOPort::D)
     	    				HTL_GPIOD_CLK_DISABLE();
 					#endif
-					#ifdef GPIOE_BASE
+					#ifdef HTL_GPIOE_EXIST
     					if constexpr (port_ == GPIOPort::E)
     	    				HTL_GPIOE_CLK_DISABLE();
 					#endif
-					#ifdef GPIOF_BASE
+					#ifdef HTL_GPIOF_EXIST
     					if constexpr (port_ == GPIOPort::F)
     	    				HTL_GPIOF_CLK_DISABLE();
 					#endif
-					#ifdef GPIOG_BASE
+					#ifdef HTL_GPIOG_EXIST
     					if constexpr (port_ == GPIOPort::G)
     	    				HTL_GPIOG_CLK_DISABLE();
 					#endif
-					#ifdef GPIOH_BASE
+					#ifdef HTL_GPIOH_EXIST
     					if constexpr (port_ == GPIOPort::H)
     	    				HTL_GPIOH_CLK_DISABLE();
 					#endif
-					#ifdef GPIOI_BASE
+					#ifdef HTL_GPIOI_EXIST
     					if constexpr (port_ == GPIOPort::I)
     	    				HTL_GPIOI_CLK_DISABLE();
 					#endif
-					#ifdef GPIOJ_BASE
+					#ifdef HTL_GPIOJ_EXIST
     					if constexpr (port_ == GPIOPort::J)
     	    				HTL_GPIOJ_CLK_DISABLE();
 					#endif
-					#ifdef GPIOK_BASE
+					#ifdef HTL_GPIOK_EXIST
     					if constexpr (port_ == GPIOPort::K)
     	    				HTL_GPIOK_CLK_DISABLE();
 					#endif
@@ -418,7 +418,7 @@ namespace htl {
             }
     };
 
-    #ifdef GPIOA_BASE
+    #ifdef HTL_GPIOA_EXIST
         typedef GPIO_x<GPIOPort::A, GPIOPin::_0> GPIO_A0;
         typedef GPIO_x<GPIOPort::A, GPIOPin::_1> GPIO_A1;
         typedef GPIO_x<GPIOPort::A, GPIOPin::_2> GPIO_A2;
@@ -437,7 +437,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::A, GPIOPin::_15> GPIO_A15;
     #endif
 
-    #ifdef GPIOB_BASE
+    #ifdef HTL_GPIOB_EXIST
         typedef GPIO_x<GPIOPort::B, GPIOPin::_0> GPIO_B0;
         typedef GPIO_x<GPIOPort::B, GPIOPin::_1> GPIO_B1;
         typedef GPIO_x<GPIOPort::B, GPIOPin::_2> GPIO_B2;
@@ -456,7 +456,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::B, GPIOPin::_15> GPIO_B15;
     #endif
 
-    #ifdef GPIOC_BASE
+    #ifdef HTL_GPIOC_EXIST
         typedef GPIO_x<GPIOPort::C, GPIOPin::_0> GPIO_C0;
         typedef GPIO_x<GPIOPort::C, GPIOPin::_1> GPIO_C1;
         typedef GPIO_x<GPIOPort::C, GPIOPin::_2> GPIO_C2;
@@ -475,7 +475,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::C, GPIOPin::_15> GPIO_C15;
     #endif
 
-    #ifdef GPIOD_BASE
+    #ifdef HTL_GPIOD_EXIST
         typedef GPIO_x<GPIOPort::D, GPIOPin::_0> GPIO_D0;
         typedef GPIO_x<GPIOPort::D, GPIOPin::_1> GPIO_D1;
         typedef GPIO_x<GPIOPort::D, GPIOPin::_2> GPIO_D2;
@@ -494,7 +494,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::D, GPIOPin::_15> GPIO_D15;
     #endif
 
-    #ifdef GPIOE_BASE
+    #ifdef HTL_GPIOE_EXIST
         typedef GPIO_x<GPIOPort::E, GPIOPin::_0> GPIO_E0;
         typedef GPIO_x<GPIOPort::E, GPIOPin::_1> GPIO_E1;
         typedef GPIO_x<GPIOPort::E, GPIOPin::_2> GPIO_E2;
@@ -513,7 +513,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::E, GPIOPin::_15> GPIO_E15;
     #endif
 
-    #ifdef GPIOF_BASE
+    #ifdef HTL_GPIOF_EXIST
         typedef GPIO_x<GPIOPort::F, GPIOPin::_0> GPIO_F0;
         typedef GPIO_x<GPIOPort::F, GPIOPin::_1> GPIO_F1;
         typedef GPIO_x<GPIOPort::F, GPIOPin::_2> GPIO_F2;
@@ -532,7 +532,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::F, GPIOPin::_15> GPIO_F15;
     #endif
 
-    #ifdef GPIOG_BASE
+    #ifdef HTL_GPIOG_EXIST
         typedef GPIO_x<GPIOPort::G, GPIOPin::_0> GPIO_G0;
         typedef GPIO_x<GPIOPort::G, GPIOPin::_1> GPIO_G1;
         typedef GPIO_x<GPIOPort::G, GPIOPin::_2> GPIO_G2;
@@ -551,7 +551,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::G, GPIOPin::_15> GPIO_G15;
     #endif
 
-    #ifdef GPIOH_BASE
+    #ifdef HTL_GPIOH_EXIST
         typedef GPIO_x<GPIOPort::H, GPIOPin::_0> GPIO_H0;
         typedef GPIO_x<GPIOPort::H, GPIOPin::_1> GPIO_H1;
         typedef GPIO_x<GPIOPort::H, GPIOPin::_2> GPIO_H2;
@@ -570,7 +570,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::H, GPIOPin::_15> GPIO_H15;
     #endif
 
-    #ifdef GPIOI_BASE
+    #ifdef HTL_GPIOI_EXIST
         typedef GPIO_x<GPIOPort::I, GPIOPin::_0> GPIO_I0;
         typedef GPIO_x<GPIOPort::I, GPIOPin::_1> GPIO_I1;
         typedef GPIO_x<GPIOPort::I, GPIOPin::_2> GPIO_I2;
@@ -589,7 +589,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::I, GPIOPin::_15> GPIO_I15;
     #endif
 
-    #ifdef GPIOJ_BASE
+    #ifdef HTL_GPIOJ_EXIST
         typedef GPIO_x<GPIOPort::J, GPIOPin::_0> GPIO_J0;
         typedef GPIO_x<GPIOPort::J, GPIOPin::_1> GPIO_J1;
         typedef GPIO_x<GPIOPort::J, GPIOPin::_2> GPIO_J2;
@@ -608,7 +608,7 @@ namespace htl {
         typedef GPIO_x<GPIOPort::J, GPIOPin::_15> GPIO_J15;
     #endif
 
-    #ifdef GPIOK_BASE
+    #ifdef HTL_GPIOK_EXIST
         typedef GPIO_x<GPIOPort::K, GPIOPin::_0> GPIO_K0;
         typedef GPIO_x<GPIOPort::K, GPIOPin::_1> GPIO_K1;
         typedef GPIO_x<GPIOPort::K, GPIOPin::_2> GPIO_K2;
@@ -628,7 +628,7 @@ namespace htl {
     #endif
 
 
-    #ifdef GPIOA_BASE
+    #ifdef HTL_GPIOA_EXIST
         template<>
         struct GPIOPortTrait<GPIOPort::A> {
             static constexpr uint32_t addr = GPIOA_BASE;
@@ -715,7 +715,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOB_BASE
+    #ifdef HTL_GPIOB_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::B> {
             static constexpr uint32_t addr = GPIOB_BASE;
@@ -802,7 +802,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOC_BASE
+    #ifdef HTL_GPIOC_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::C> {
             static constexpr uint32_t addr = GPIOC_BASE;
@@ -854,7 +854,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOD_BASE
+    #ifdef HTL_GPIOD_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::D> {
             static constexpr uint32_t addr = GPIOD_BASE;
@@ -916,7 +916,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOE_BASE
+    #ifdef HTL_GPIOE_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::E> {
             static constexpr uint32_t addr = GPIOE_BASE;
@@ -938,7 +938,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOF_BASE
+    #ifdef HTL_GPIOF_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::F> {
             static constexpr uint32_t addr = GPIOF_BASE;
@@ -960,7 +960,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOG_BASE
+    #ifdef HTL_GPIOG_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::G> {
             static constexpr uint32_t addr = GPIOG_BASE;
@@ -1007,7 +1007,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOH_BASE
+    #ifdef HTL_GPIOH_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::H> {
             static constexpr uint32_t addr = GPIOH_BASE;
@@ -1084,7 +1084,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOI_BASE
+    #ifdef HTL_GPIOI_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::I> {
             static constexpr uint32_t addr = GPIOI_BASE;
@@ -1161,7 +1161,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOJ_BASE
+    #ifdef HTL_GPIOJ_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::J> {
             static constexpr uint32_t addr = GPIOJ_BASE;
@@ -1243,7 +1243,7 @@ namespace htl {
         };
     #endif
 
-    #ifdef GPIOK_BASE
+    #ifdef HTL_GPIOK_EXIST
         template  <>
         struct GPIOPortTrait<GPIOPort::K> {
             static constexpr uint32_t addr = GPIOK_BASE;
