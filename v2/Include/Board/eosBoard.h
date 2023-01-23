@@ -24,6 +24,9 @@
 #elif defined(HARDWARE_NUCLEO_F030R8)
     #include "Board/eosBoard_NUCLEO_F030R8.h"
 
+#elif defined(HARDWARE_NUCLEO_F103RB)
+    #include "Board/eosBoard_NUCLEO_F103RB.h"
+
 #elif defined(HARDWARE_PINGUINO)
     #include "Board/eosBoard_PINGUINO.h"
     

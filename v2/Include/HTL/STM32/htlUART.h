@@ -811,6 +811,22 @@ namespace htl {
 			struct UARTPinTrait<UARTChannel::_1, GPIO_A3, UARTPin::RX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_1;
 			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_A10, UARTPin::RX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_A14, UARTPin::TX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_1, GPIO_A15, UARTPin::RX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
 		#elif defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			template <>
 			struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
@@ -829,6 +845,34 @@ namespace htl {
 			static constexpr uint32_t addr = USART2_BASE;
 			static constexpr INTVector vector = INTVector::uart2;
 		};
+
+		#if defined(EOS_PLATFORM_STM32F0)
+			template <>
+			struct UARTPinTrait<UARTChannel::_2, GPIO_A2, UARTPin::TX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_2, GPIO_A3, UARTPin::RX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_2, GPIO_A14, UARTPin::TX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_2, GPIO_A15, UARTPin::RX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_1;
+			};
+		#elif defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			template <>
+			struct UARTPinTrait<UARTChannel::_2, GPIO_A9, UARTPin::TX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_8;
+			};
+			template <>
+			struct UARTPinTrait<UARTChannel::_2, GPIO_B7, UARTPin::RX> {
+				static constexpr GPIOAlt alt = GPIOAlt::_8;
+			};
+		#endif
 	#endif
 
 	#ifdef HTL_UART3_EXIST

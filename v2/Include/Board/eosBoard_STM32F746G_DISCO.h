@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __board_SMT32F746G_DISCO__
-#define __board_SMT32F746G_DISCO__
+#ifndef __eosBoard_SMT32F746G_DISCO__
+#define __eosBoard_SMT32F746G_DISCO__
 
 
 // -----------------------------------------------------------------------
@@ -243,4 +243,4 @@
 
 
 
-#endif // __board_SMT32F746G_DISCO__
+#endif // __eosBoard_SMT32F746G_DISCO__

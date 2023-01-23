@@ -38,7 +38,7 @@
 
 	// Platform definitions
     #if defined(STM32F0)
-		#if defined(STM32F030F4Px)
+		#if defined(STM32F030x8)
 			#define EOS_PLATFORM_STM32F0
 		#else
             #error  "Unknown processor STM32F0"

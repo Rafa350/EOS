@@ -258,7 +258,7 @@ void SPIBase_x::send(
 
 	while (count > 0) {
 
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F0)
 		*((volatile uint8_t*)&regs->DR) = *((uint8_t*)p);
 		p += sizeof(uint8_t);
 		count -= sizeof(uint8_t);

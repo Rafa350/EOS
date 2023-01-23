@@ -18,13 +18,21 @@ static UARTClockSource getClockSource(
     switch ((uint32_t)regs) {
 		#ifdef HTL_UART1_EXIST
 			case USART1_BASE:
-				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
+				#if defined(EOS_PLATFORM_STM32F0)
+					sclk = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
+				#else
+					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
+				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART2_EXIST
 			case USART2_BASE:
-				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
+				#if defined(EOS_PLATFORM_STM32F0)
+					sclk = 0;
+				#else
+					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
+				#endif
 				break;
 		#endif
 
@@ -250,10 +258,12 @@ void UARTBase_x::setTimming(
     switch (clockSource) {
     	default:
     	case UARTClockSource::pclk:
+			#if defined(STM32F4) || defined(STM32F7)
     		if ((uint32_t(regs) == USART1_BASE) ||
     			(uint32_t(regs) == USART6_BASE))
     			fclk = halSYSGetPeripheralClock2Frequency();
     		else
+			#endif
     			fclk = halSYSGetPeripheralClock1Frequency();
     		break;
 

@@ -1,5 +1,5 @@
-#ifndef __board_PINGUINO__
-#define __board_PINGUINO__
+#ifndef __eosBoard_PINGUINO__
+#define __eosBoard_PINGUINO__
 
 
 // ----------------------------------------------------------------------

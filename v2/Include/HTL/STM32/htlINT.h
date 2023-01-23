@@ -38,10 +38,10 @@ namespace htl {
 
 	enum class INTVector {
 		#ifdef HTL_DAC_EXIST
-			dac =  TIM6_DAC_IRQn,
+			dac = TIM6_DAC_IRQn,
 		#endif
 		#ifdef HTL_DMA2D_EXIST
-			dma2d =  DMA2D_IRQn,
+			dma2d = DMA2D_IRQn,
 		#endif
 		#if defined(EOS_PLATFORM_STM32F0)
 			exti0 = EXTI0_1_IRQn,

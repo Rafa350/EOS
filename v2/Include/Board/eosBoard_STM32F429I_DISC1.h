@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __board_SMT32F429I_DISC1__
-#define __board_SMT32F429I_DISC1__
+#ifndef __eosBoard_SMT32F429I_DISC1__
+#define __eosBoard_SMT32F429I_DISC1__
 
 
 // -----------------------------------------------------------------------
@@ -185,5 +185,5 @@
 #endif // USE_DISPLAY
 
 
-#endif // __board_SMT32F429I_DISC1__
+#endif // __eosBoard_SMT32F429I_DISC1__
 

@@ -17,16 +17,16 @@
 namespace htl {
 
 	enum class I2CChannel {
-		#ifdef I2C1_BASE
+		#ifdef HTL_I2C1_EXIST
 			_1,
 		#endif
-		#ifdef I2C2_BASE
+		#ifdef HTL_I2C2_EXIST
 			_2,
 		#endif
-		#ifdef I2C3_BASE
+		#ifdef HTL_I2C3_EXIST
 			_3,
 		#endif
-		#ifdef I2C4_BASE
+		#ifdef HTL_I2C4_EXIST
 			_4
 		#endif
 	};
@@ -44,7 +44,7 @@ namespace htl {
 	};
 
 	using I2CInterruptParam = void*;
-	using I2CInterruptFunction = void (*)(I2CEvent, I2CInterruptParam);
+	using I2CInterruptFunction = void (*)(I2CInterruptParam);
 
 	template <I2CChannel>
 	class I2CTrait {
@@ -223,11 +223,10 @@ namespace htl {
             /// \param event: L'event.
             /// \param param: El parametre.
             ///
-            static void interruptHandler(
-            	I2CEvent event) {
+            static void interruptHandler() {
 
             	if (_isrFunction != nullptr)
-            		_isrFunction(event, _isrParam);
+            		_isrFunction(_isrParam);
             }
 	};
 
@@ -304,27 +303,27 @@ namespace htl {
 			}
 	};
 
-	#ifdef I2C1_BASE
+	#ifdef HTL_I2C1_EXIST
 		using I2CMaster_1 = I2CMaster_x<I2CChannel::_1>;
 		using I2CSlave_1 = I2CSlave_x<I2CChannel::_1>;
 	#endif
 
-	#ifdef I2C2_BASE
+	#ifdef HTL_I2C2_EXIST
 		using I2CMaster_2 = I2CMaster_x<I2CChannel::_2>;
 		using I2CSlave_2 = I2CSlave_x<I2CChannel::_2>;
 	#endif
 
-	#ifdef I2C3_BASE
+	#ifdef HTL_I2C3_EXIST
 		using I2CMaster_3 = I2CMaster_x<I2CChannel::_3>;
 		using I2CSlave_3 = I2CSlave_x<I2CChannel::_3>;
 	#endif
 
-	#ifdef I2C4_BASE
+	#ifdef HTL_I2C4_EXIST
 		using I2CMaster_4 = I2CMaster_x<I2CChannel::_4>;
 		using I2CSlave_4 = I2CSlave_x<I2CChannel::_4>;
 	#endif
 
-	#ifdef I2C1_BASE
+	#ifdef HTL_I2C1_EXIST
 		template <>
 		struct I2CTrait<I2CChannel::_1> {
 			static constexpr uint32_t addr = I2C1_BASE;
@@ -340,14 +339,14 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef I2C2_BASE
+	#ifdef HTL_I2C2_EXIST
 		template <>
 		struct I2CTrait<I2CChannel::_2> {
 			static constexpr uint32_t addr = I2C2_BASE;
 		};
 	#endif
 
-	#ifdef I2C3_BASE
+	#ifdef HTL_I2C3_EXIST
 		template <>
 		struct I2CTrait<I2CChannel::_3> {
 			static constexpr uint32_t addr = I2C3_BASE;
@@ -363,7 +362,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef I2C4_BASE
+	#ifdef HTL_I2C4_EXIST
 		template <>
 		struct I2CTrait<I2CChannel::_4> {
 			static constexpr uint32_t addr = I2C4_BASE;

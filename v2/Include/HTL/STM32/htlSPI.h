@@ -13,12 +13,24 @@
 namespace htl {
 
 	enum class SPIChannel {
-		_1,
-		_2,
-		_3,
-		_4,
-		_5,
-		_6
+		#ifdef HTL_SPI1_EXIST
+			_1,
+		#endif
+		#ifdef HTL_SPI2_EXIST
+			_2,
+	    #endif
+		#ifdef HTL_SPI3_EXIST
+			_3,
+		#endif
+		#ifdef HTL_SPI4_EXIST
+			_4,
+		#endif
+		#ifdef HTL_SPI5_EXIST
+			_5,
+		#endif
+		#ifdef HTL_SPI6_EXIST
+			_6
+		#endif
 	};
 
 	enum class SPIMode {
@@ -122,36 +134,60 @@ namespace htl {
 			//
 			static void activate() {
 
-				if constexpr (channel == SPIChannel::_1)
-					RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-				if constexpr (channel == SPIChannel::_2)
-					RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
-				if constexpr (channel == SPIChannel::_3)
-					RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
-				if constexpr (channel == SPIChannel::_4)
-					RCC->APB2ENR |= RCC_APB2ENR_SPI4EN;
-				if constexpr (channel == SPIChannel::_5)
-					RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
-				if constexpr (channel == SPIChannel::_6)
-					RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
+				#ifdef HTL_SPI1_EXIST
+					if constexpr (channel == SPIChannel::_1)
+						RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+				#endif
+				#ifdef HTL_SPI2_EXIST
+					if constexpr (channel == SPIChannel::_2)
+						RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+				#endif
+				#ifdef HTL_SPI3_EXIST
+					if constexpr (channel == SPIChannel::_3)
+						RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
+				#endif
+				#ifdef HTL_SPI4_EXIST
+					if constexpr (channel == SPIChannel::_4)
+						RCC->APB2ENR |= RCC_APB2ENR_SPI4EN;
+				#endif
+				#ifdef HTL_SPI5_EXIST
+					if constexpr (channel == SPIChannel::_5)
+						RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
+				#endif
+				#ifdef HTL_SPI6_EXIST
+					if constexpr (channel == SPIChannel::_6)
+						RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
+				#endif
 			}
 
 			/// \brief Desactiva el modul
 			///
 			static void deactivate() {
 
-				if constexpr (channel == SPIChannel::_1)
-					RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
-				if constexpr (channel == SPIChannel::_2)
-					RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
-				if constexpr (channel == SPIChannel::_3)
-					RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN;
-				if constexpr (channel == SPIChannel::_4)
-					RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN;
-				if constexpr (channel == SPIChannel::_5)
-					RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
-				if constexpr (channel == SPIChannel::_6)
-					RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
+				#ifdef HTL_SPI1_EXIST
+					if constexpr (channel == SPIChannel::_1)
+						RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
+				#endif
+				#ifdef HTL_SPI2_EXIST
+					if constexpr (channel == SPIChannel::_2)
+						RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
+				#endif
+				#ifdef HTL_SPI3_EXIST
+					if constexpr (channel == SPIChannel::_3)
+						RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN;
+				#endif
+				#ifdef HTL_SPI4_EXIST
+					if constexpr (channel == SPIChannel::_4)
+						RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN;
+				#endif
+				#ifdef HTL_SPI5_EXIST
+					if constexpr (channel == SPIChannel::_5)
+						RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
+				#endif
+				#ifdef HTL_SPI6_EXIST
+					if constexpr (channel == SPIChannel::_6)
+						RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
+				#endif
 			}
 
 		public:
@@ -396,122 +432,156 @@ namespace htl {
 	template <SPIChannel channel_> SPIInterruptFunction SPI_x<channel_>::_isrFunction;
 	template <SPIChannel channel_> SPIInterruptParam SPI_x<channel_>::_isrParam;
 
-	#ifdef SPI1
+	#ifdef HTL_SPI1_EXIST
 		using SPI_1 = SPI_x<SPIChannel::_1>;
 	#endif
-	#ifdef SPI2
+	#ifdef HTL_SPI2_EXIST
 		using SPI_2 = SPI_x<SPIChannel::_2>;
 	#endif
-	#ifdef SPI3
+	#ifdef HTL_SPI3_EXIST
 		using SPI_3 = SPI_x<SPIChannel::_3>;
 	#endif
-	#ifdef SPI4
+	#ifdef HTL_SPI4_EXIST
 		using SPI_4 = SPI_x<SPIChannel::_4>;
 	#endif
-	#ifdef SPI5
+	#ifdef HTL_SPI5_EXIST
 		using SPI_5 = SPI_x<SPIChannel::_5>;
 	#endif
-	#ifdef SPI6
+	#ifdef HTL_SPI6_EXIST
 		using SPI_6 = SPI_x<SPIChannel::_6>;
 	#endif
 
-	#ifdef SPI1
+	#ifdef HTL_SPI1_EXIST
 		template<>
 		struct SPITrait<SPIChannel::_1> {
 			static constexpr uint32_t addr = SPI1_BASE;
 			static constexpr INTVector vector = INTVector::spi1;
 		};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_1, GPIO_A5, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+		#if defined(EOS_PLATFORM_STM32F0)
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_A5, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_0;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_1, GPIO_A6, SPIPin::MISO> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_A6, SPIPin::MISO> {
+				static constexpr GPIOAlt alt = GPIOAlt::_0;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_1, GPIO_A7, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_A7, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_0;
+			};
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_A5, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_1, GPIO_B3, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_A6, SPIPin::MISO> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_1, GPIO_B4, SPIPin::MISO> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_A7, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_1, GPIO_B5, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_B3, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
+
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_B4, SPIPin::MISO> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
+
+			template <>
+			struct SPIPinTrait<SPIChannel::_1, GPIO_B5, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
+		#endif
 	#endif
 
-	#ifdef SPI2
+	#ifdef HTL_SPI2_EXIST
 		template<>
 		struct SPITrait<SPIChannel::_2> {
 			static constexpr uint32_t addr = SPI2_BASE;
 			static constexpr INTVector vector = INTVector::spi2;
 		};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_B10, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+		#if defined(EOS_PLATFORM_STM32F0)
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_B10, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_B13, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_B14, SPIPin::MISO> {
+				static constexpr GPIOAlt alt = GPIOAlt::_0;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_B14, SPIPin::MISO> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_B15, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_0;
+			};
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_B10, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_B15, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_B13, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_C2, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_B14, SPIPin::MISO> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_C3, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_B15, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_D3, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_C2, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_I1, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_C3, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_I2, SPIPin::MISO> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_D3, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
 
-		template <>
-		struct SPIPinTrait<SPIChannel::_2, GPIO_I3, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_I1, SPIPin::SCK> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
+
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_I2, SPIPin::MISO> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
+
+			template <>
+			struct SPIPinTrait<SPIChannel::_2, GPIO_I3, SPIPin::MOSI> {
+				static constexpr GPIOAlt alt = GPIOAlt::_5;
+			};
+		#endif
 	#endif
 
-	#ifdef SPI3
+	#ifdef HTL_SPI3_EXIST
 		template<>
 		struct SPITrait<SPIChannel::_3> {
 			static constexpr uint32_t addr = SPI3_BASE;
@@ -554,7 +624,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef SPI4
+	#ifdef HTL_SPI4_EXIST
 		template<>
 		struct SPITrait<SPIChannel::_4> {
 			static constexpr uint32_t addr = SPI4_BASE;
@@ -562,7 +632,7 @@ namespace htl {
 		};
 	#endif
 
-	#ifdef SPI5
+	#ifdef HTL_SPI5_EXIST
 		template<>
 		struct SPITrait<SPIChannel::_5> {
 			static constexpr uint32_t addr = SPI5_BASE;

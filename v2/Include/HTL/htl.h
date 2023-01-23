@@ -44,7 +44,7 @@
 #endif
 
 
-// Comprova l'esistencia dels m oduls TIM
+// Comprova l'esistencia dels moduls TIM
 //
 #ifdef TIM1_BASE
 	#define HTL_TIM1_EXIST
@@ -87,6 +87,22 @@
 #endif
 #ifdef TIM14_BASE
 	#define HTL_TIM14_EXIST
+#endif
+
+
+// Comprova l'existencia dels modulks I2C
+//
+#ifdef I2C1_BASE
+	#define HTL_I2C1_EXIST
+#endif
+#ifdef I2C2_BASE
+	#define HTL_I2C2_EXIST
+#endif
+#ifdef I2C3_BASE
+	#define HTL_I2C3_EXIST
+#endif
+#ifdef I2C4_BASE
+	#define HTL_I2C4_EXIST
 #endif
 
 
