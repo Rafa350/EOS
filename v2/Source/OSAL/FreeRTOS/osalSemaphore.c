@@ -76,5 +76,5 @@ void osalSemaphoreReleaseISR(
 
 	portBASE_TYPE taskWoken = pdFALSE;
 	if (xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken) == pdPASS)
-		portEND_SWITCHING_ISR(taskWoken)
+		portEND_SWITCHING_ISR(taskWoken);
 }

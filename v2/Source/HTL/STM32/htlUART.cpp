@@ -1,6 +1,7 @@
 #include "HTL/htl.h"
 #include "HAL/halSYS.h"
 #include "HTL/STM32/htlUART.h"
+#include "stm32f0xx_hal.h"
 
 
 using namespace htl;
