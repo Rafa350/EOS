@@ -8,11 +8,14 @@
 #include "HTL/htl.h"
 
 
-#if defined(EOS_PLATFORM_PIC32MX) || defined(EOS_PLATFORM_PIC32MZ)
+#if defined(EOS_PLATFORM_PIC32MX) || \
+	defined(EOS_PLATFORM_PIC32MZ)
 	#include "HTL/PIC32/htlGPIO.h"
 
-#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F1) || \
-	defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F0) || \
+	defined(EOS_PLATFORM_STM32F1) || \
+	defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
 	#include "HTL/STM32/htlGPIO.h"
 
 #elif defined(EOS_PLATFORM_MSP432)
