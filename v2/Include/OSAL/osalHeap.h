@@ -12,21 +12,23 @@ extern "C" {
 #endif
 
 
-typedef struct OSAL_HEAP_DATA* HHeap;
+typedef struct OSAL_HEAP_DATA *HHeap;
 
 typedef struct {
 	unsigned start;
 	unsigned length;
+	unsigned allocated;
+	unsigned available;
 } HeapInformation;
 
 HHeap osalHeapCreate(void);
 void osalHeapDestroy(HHeap hHeap);
 
 void *osalHeapAlloc(HHeap hHeap, int size);
-void osalHeapFree(HHeap hHeap, void* block);
+void osalHeapFree(HHeap hHeap, void *block);
 
-bool osalHeapVerify(HHeap hHeap, void* block);
-void osalHeapGetInfo(HHeap hHeap, HeapInformation* info);
+bool osalHeapVerify(HHeap hHeap, void *block);
+void osalHeapGetInfo(HHeap hHeap, HeapInformation *info);
 
 void* osal_malloc(int size);
 void osal_free(void* p);

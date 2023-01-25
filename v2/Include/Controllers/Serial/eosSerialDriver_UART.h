@@ -10,10 +10,10 @@ namespace eos {
 
 	class SerialDriver_UART {
 		private:
-			htl::UARTHandler _hUart;
+			htl::UARTHandler _hUART;
 
 		public:
-			SerialDriver_UART(htl::UARTHandler hUart);
+			SerialDriver_UART(htl::UARTHandler hUART);
 			~SerialDriver_UART();
 
 			void initialize();

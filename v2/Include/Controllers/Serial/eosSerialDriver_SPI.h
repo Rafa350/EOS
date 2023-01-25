@@ -10,10 +10,10 @@ namespace eos {
 
 	class SerialDriver_SPI {
 		private:
-			htl::SPIHandler _hSpi;
+			htl::SPIHandler _hSPI;
 
 		public:
-			SerialDriver_SPI(htl::SPIHandler hSpi);
+			SerialDriver_SPI(htl::SPIHandler hSPI);
 			~SerialDriver_SPI();
 
 			void initialize();

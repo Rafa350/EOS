@@ -9,6 +9,7 @@
 
 static HHeap defaultHeap = NULL;
 
+
 #ifdef SAFE_MODE
 static const char signature[8] = { 0xAA, 'E', 'O', 'S', 0x55, 'E', 'O', 'S'};
 #endif
@@ -71,7 +72,7 @@ void* osalHeapAlloc(
 ///
 void osalHeapFree(
     HHeap hHeap,
-	void* block) {
+	void *block) {
 
     eosAssert(hHeap == NULL);
     eosAssert(block != NULL);
@@ -111,9 +112,17 @@ bool osalHeapVerify(
 ///
 void osalHeapGetInfo(
 	HHeap hHeap,
-	HeapInformation* info) {
+	HeapInformation *info) {
 
 	eosAssert(info != NULL);
+
+	/*HeapStats_t heapStats;
+	vPortGetHeapStats(&heapStats);
+
+	info->start = 0;
+	info->length = configTOTAL_HEAP_SIZE;
+	info->allocated = 0;
+	info->available = 0;*/
 }
 
 
@@ -133,7 +142,7 @@ void* osal_malloc(
 /// \param    p: Adressa del bloc de memoria.
 ///
 void osal_free(
-    void* p) {
+    void *p) {
 
     osalHeapFree(NULL, p);
 }

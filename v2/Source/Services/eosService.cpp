@@ -15,7 +15,7 @@ Service::Service(
 	Application *application) :
 
     _application(nullptr),
-	_stackSize(512),
+	_stackSize(128), // 512
 	_priority(Task::Priority::normal),
     _initialized(false),
 	_name("SERVICE") {
