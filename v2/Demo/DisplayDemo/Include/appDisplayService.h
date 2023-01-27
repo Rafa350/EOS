@@ -11,7 +11,6 @@
 
 namespace eos {
 
-	class Application;
 	class IDisplayDriver;
 	class Graphics;
 }
@@ -46,7 +45,7 @@ namespace app {
 	        int _bitmapTicks;
 
 	    public:
-	        DisplayService(eos::Application *application);
+	        DisplayService();
 
 	    protected:
 	        void onSetup();

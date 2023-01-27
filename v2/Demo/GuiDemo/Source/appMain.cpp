@@ -11,7 +11,9 @@ using namespace app;
 ///
 void appMain() {
 
-    MyApplication  *application = new MyApplication();
-    application->run();
-    delete application;
+    MyApplication *application = new MyApplication();
+    if (application) {
+    	application->run();
+    	delete application;
+    }
 }

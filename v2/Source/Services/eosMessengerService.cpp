@@ -10,9 +10,8 @@ using namespace eos;
 /// \brief    Constructor
 /// \param    application: L'aplicacio.
 ///
-MessengerService::MessengerService(
-	Application *application):
-	Service(application),
+MessengerService::MessengerService():
+	Service(),
     _busTaskEventCallback(*this, &MessengerService::busTaskEventHandler) {
 
 }
@@ -38,12 +37,12 @@ void MessengerService::onInitialize() {
     //
     for (auto bus: _busses) {
 
-        Task *task = new Task(
+/*        Task *task = new Task(
             getStackSize(),
             getPriority(),
             getName(),
             &_busTaskEventCallback,
-            static_cast<void*>(bus));
+            static_cast<void*>(bus));*/
     }
 }
 

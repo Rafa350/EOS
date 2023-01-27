@@ -60,7 +60,7 @@ namespace eos {
 			void onTask() override;
 
 		public:
-			TouchpadService(Application *application);
+			TouchpadService();
 			inline void setEventCallback(IEventCallback *callBack) { _eventCallback = callBack; }
 	};
 }

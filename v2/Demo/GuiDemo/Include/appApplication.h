@@ -7,6 +7,7 @@
 #include "eos.h"
 #include "System/eosApplication.h"
 #include "System/eosCallbacks.h"
+#include "Services/eosTouchpadService.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 
@@ -25,8 +26,23 @@ namespace app {
 
 	class MyApplication: public eos::Application {
 		private:
+			#if eosGuiService_TouchpadEnabled
+				typedef eos::CallbackP1<MyApplication, const eos::TouchpadService::EventArgs&> TouchpadEventCallback;
+			#endif
+
+		private:
 			LedService *_ledService;
 			eos::GuiService *_guiService;
+			#if eosGuiService_KeyboardEnabled
+				KeyboardService* _keyboardService;
+			#endif
+			#if eosGuiService_SelectorEnabled
+				SelectorService* _selectorService;
+			#endif
+			#if eosGuiService_TouchpadEnabled
+				eos::TouchpadService* _touchpadService;
+				TouchpadEventCallback _touchpadEventCallback;
+			#endif
 
 			eos::ButtonEventCallback<MyApplication> _buttonEventCallback;
 			eos::VirtualKeyboardEventCallback<MyApplication> _virtualKeyboardEventCallback;
@@ -38,7 +54,10 @@ namespace app {
 			eos::Visual *createKeyboardPanel();
 			eos::Visual *createDROPanel();
 			void buttonEventHandler(const eos::ButtonEventArgs& args);
-			void virtualKeyboardEventHandler(const eos::VirtualKeyboardEventArgs& args);
+			void virtualKeyboardEventHandler(const eos::VirtualKeyboardEventArgs &args);
+			#if eosGuiService_TouchpadEnabled
+				void touchpadEventHandler(const eos::TouchpadService::EventArgs &args);
+			#endif
 
 		public :
 			MyApplication();

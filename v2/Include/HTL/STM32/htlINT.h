@@ -100,7 +100,7 @@ namespace htl {
 		#ifdef HTL_SPI6_EXIST
 			spi6 = SPI6_IRQn,
 		#endif
-		#ifdef HTL_TIM1_EXIST
+		#ifdef HTL_TMR1_EXIST
 			#if defined(EOS_PLATFORM_STM32F0)
 				tmr1_BRK = TIM1_BRK_UP_TRG_COM_IRQn,
 				tmr1_CC = TIM1_CC_IRQn,
@@ -113,46 +113,46 @@ namespace htl {
 				tmr1_UP = TIM1_UP_TIM10_IRQn,
 			#endif
 		#endif
-		#ifdef HTL_TIM2_EXIST
+		#ifdef HTL_TMR2_EXIST
 			tmr2 = TIM2_IRQn,
 		#endif
-		#ifdef HTL_TIM3_EXIST
+		#ifdef HTL_TMR3_EXIST
 			tmr3 = TIM3_IRQn,
 		#endif
-		#ifdef HTL_TIM4_EXIST
+		#ifdef HTL_TMR4_EXIST
 			tmr4 = TIM4_IRQn,
 		#endif
-		#ifdef HTL_TIM5_EXIST
+		#ifdef HTL_TMR5_EXIST
 			tmr5 = TIM5_IRQn,
 		#endif
-		#ifdef HTL_TIM6_EXIST
+		#ifdef HTL_TMR6_EXIST
 			tmr6 = TIM6_DAC_IRQn,
 		#endif
-		#ifdef HTL_TIM7_EXIST
+		#ifdef HTL_TMR7_EXIST
 			tmr7 = TIM7_IRQn,
 		#endif
-		#ifdef HTL_TIM8_EXIST
+		#ifdef HTL_TMR8_EXIST
 			tmr8_BRK = TIM8_BRK_TIM12_IRQn,
 			tmr8_CC = TIM8_CC_IRQn,
 			tmr8_TRG = TIM8_TRG_COM_TIM14_IRQn,
 			tmr88_UP = TIM8_UP_TIM13_IRQn,
 		#endif
-		#ifdef HTL_TIM9_EXIST
+		#ifdef HTL_TMR9_EXIST
 			tmr9 = TIM1_BRK_TIM9_IRQn,
 		#endif
-		#ifdef HTL_TIM10_EXIST
+		#ifdef HTL_TMR10_EXIST
 			tmr10 = TIM1_UP_TIM10_IRQn,
 		#endif
-		#ifdef HTL_TIM11_EXIST
+		#ifdef HTL_TMR11_EXIST
 			tmr11 = TIM1_TRG_COM_TIM11_IRQn,
 		#endif
-		#ifdef HTL_TIM12_EXIST
+		#ifdef HTL_TMR12_EXIST
 			tmr12 = TIM8_BRK_TIM12_IRQn,
 		#endif
-		#ifdef HTL_TIM13_EXIST
+		#ifdef HTL_TMR13_EXIST
 			tmr13 = TIM8_UP_TIM13_IRQn,
 		#endif
-		#ifdef HTL_TIM14_EXIST
+		#ifdef HTL_TMR14_EXIST
 			#if defined(EOS_PLATFORM_STM32F0)
 				tmr14 = TIM14_IRQn,
 			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)

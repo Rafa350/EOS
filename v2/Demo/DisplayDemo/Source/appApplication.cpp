@@ -12,7 +12,17 @@ using namespace app;
 ///
 MyApplication::MyApplication():
 	eos::Application() {
+}
 
-	_ledService = new LedService(this);
-	_displayService = new DisplayService(this);
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza l'aplicacio.
+///
+void MyApplication::onInitialize() {
+
+	_ledService = new LedService();
+	addService(_ledService, eos::Task::Priority::normal, 128);
+
+	_displayService = new DisplayService();
+	addService(_displayService, eos::Task::Priority::normal, 512);
 }

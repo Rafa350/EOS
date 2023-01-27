@@ -46,46 +46,46 @@
 // Comprova l'esistencia dels moduls TIM
 //
 #ifdef TIM1_BASE
-	#define HTL_TIM1_EXIST
+	#define HTL_TMR1_EXIST
 #endif
 #ifdef TIM2_BASE
-	#define HTL_TIM2_EXIST
+	#define HTL_TMR2_EXIST
 #endif
 #ifdef TIM3_BASE
-	#define HTL_TIM3_EXIST
+	#define HTL_TMR3_EXIST
 #endif
 #ifdef TIM4_BASE
-	#define HTL_TIM4_EXIST
+	#define HTL_TMR4_EXIST
 #endif
 #ifdef TIM5_BASE
-	#define HTL_TIM5_EXIST
+	#define HTL_TMR5_EXIST
 #endif
 #ifdef TIM6_BASE
-	#define HTL_TIM6_EXIST
+	#define HTL_TMR6_EXIST
 #endif
 #ifdef TIM7_BASE
-	#define HTL_TIM7_EXIST
+	#define HTL_TMR7_EXIST
 #endif
 #ifdef TIM8_BASE
-	#define HTL_TIM8_EXIST
+	#define HTL_TMR8_EXIST
 #endif
 #ifdef TIM9_BASE
-	#define HTL_TIM9_EXIST
+	#define HTL_TMR9_EXIST
 #endif
 #ifdef TIM10_BASE
-	#define HTL_TIM10_EXIST
+	#define HTL_TMR10_EXIST
 #endif
 #ifdef TIM11_BASE
-	#define HTL_TIM11_EXIST
+	#define HTL_TMR11_EXIST
 #endif
 #ifdef TIM12_BASE
-	#define HTL_TIM12_EXIST
+	#define HTL_TMR12_EXIST
 #endif
 #ifdef TIM13_BASE
-	#define HTL_TIM13_EXIST
+	#define HTL_TMR13_EXIST
 #endif
 #ifdef TIM14_BASE
-	#define HTL_TIM14_EXIST
+	#define HTL_TMR14_EXIST
 #endif
 
 

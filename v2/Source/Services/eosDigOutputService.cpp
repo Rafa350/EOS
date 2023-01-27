@@ -3,6 +3,7 @@
 #include "HTL/htlGPIO.h"
 #include "HTL/htlINT.h"
 #include "Services/eosDigOutputService.h"
+#include "System/eosMath.h"
 #include "System/Core/eosTask.h"
 
 
@@ -14,10 +15,8 @@ using namespace eos;
 /// \param    application: The application.
 /// \param    settings: Configuration parameters.
 ///
-DigOutputService::DigOutputService(
-    Application *application):
-
-	Service(application),
+DigOutputService::DigOutputService():
+	Service(),
 	_commandQueue(_commandQueueSize) {
 
 }
@@ -28,8 +27,7 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
-    while (!_outputs.isEmpty())
-    	delete _outputs.peekBack();
+	removeOutputs();
 }
 
 
@@ -77,7 +75,7 @@ void DigOutputService::removeOutput(
     Task::enterCriticalSection();
 
     if (output->_service == this) {
-        _outputs.removeAt(_outputs.indexOf(output));
+        //_outputs.removeAt(_outputs.indexOf(output));
         output->_service = nullptr;
     }
 

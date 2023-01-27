@@ -69,7 +69,7 @@ namespace eos {
             void onInitialize() override;
             void busTaskEventHandler(const Task::EventArgs&);
         public:
-            MessengerService(Application *application);
+            MessengerService();
             void addMessageBus(IMessageBus *bus);
     };
 }

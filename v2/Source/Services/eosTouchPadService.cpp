@@ -14,10 +14,7 @@ using namespace htl;
 /// \param    application: Aplicacio on afeigir el servei
 /// \param    cfg: Parametres de configuracio.
 ///
-TouchpadService::TouchpadService(
-	Application *application) :
-
-	Service(application),
+TouchpadService::TouchpadService():
 	_touchDriver(nullptr),
 	_eventCallback(nullptr),
 	_oldX(-1),

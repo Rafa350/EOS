@@ -18,6 +18,9 @@ namespace app {
 			LedService *_ledService;
 			DisplayService *_displayService;
 
+		protected:
+			void onInitialize() override;
+
 		public :
 			MyApplication();
 	};

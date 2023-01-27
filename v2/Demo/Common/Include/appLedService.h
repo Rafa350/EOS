@@ -10,12 +10,6 @@
 #include "HTL/htlGPIO.h"
 
 
-namespace eos {
-
-	class Application;
-}
-
-
 namespace app {
 
 	class LedService: public eos::AppLoopService {
@@ -31,7 +25,7 @@ namespace app {
 			static constexpr htl::GPIOState _ledOFF = LED1_OFF;
 
 		public:
-			LedService(eos::Application *application);
+			LedService();
 
 		protected:
 			void onSetup();

@@ -11,46 +11,46 @@
 namespace htl {
     
 	enum class TMRTimer {
-		#ifdef HTL_TIM1_EXIST
+		#ifdef HTL_TMR1_EXIST
 			_1,
 		#endif
-		#ifdef HTL_TIM2_EXIST
+		#ifdef HTL_TMR2_EXIST
 			_2,
 		#endif
-		#ifdef HTL_TIM3_EXIST
+		#ifdef HTL_TMR3_EXIST
 			_3,
 		#endif
-		#ifdef HTL_TIM4_EXIST
+		#ifdef HTL_TMR4_EXIST
 			_4,
 		#endif
-		#ifdef HTL_TIM5_EXIST
+		#ifdef HTL_TMR5_EXIST
 			_5,
 		#endif
-		#ifdef HTL_TIM6_EXIST
+		#ifdef HTL_TMR6_EXIST
 			_6,
 		#endif
-		#ifdef HTL_TIM7_EXIST
+		#ifdef HTL_TMR7_EXIST
 			_7,
 		#endif
-		#ifdef HTL_TIM8_EXIST
+		#ifdef HTL_TMR8_EXIST
 			_8,
 		#endif
-		#ifdef HTL_TIM9_EXIST
+		#ifdef HTL_TMR9_EXIST
 			_9,
 		#endif
-		#ifdef HTL_TIM10_EXIST
+		#ifdef HTL_TMR10_EXIST
 			_10,
 		#endif
-		#ifdef HTL_TIM11_EXIST
+		#ifdef HTL_TMR11_EXIST
 			_11,
 		#endif
-		#ifdef HTL_TIM12_EXIST
+		#ifdef HTL_TMR12_EXIST
 			_12,
 		#endif
-		#ifdef HTL_TIM13_EXIST
+		#ifdef HTL_TMR13_EXIST
 			_13,
 		#endif
-		#ifdef HTL_TIM14_EXIST
+		#ifdef HTL_TMR14_EXIST
 			_14,
 		#endif
 	};
@@ -112,67 +112,123 @@ namespace htl {
 
 			inline static void activate() {
 
-				if constexpr(timer_ == TMRTimer::_1)
-		            RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-				if constexpr(timer_ == TMRTimer::_2)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-				if constexpr(timer_ == TMRTimer::_3)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-				if constexpr(timer_ == TMRTimer::_4)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-				if constexpr(timer_ == TMRTimer::_5)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-				if constexpr(timer_ == TMRTimer::_6)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-				if constexpr(timer_ == TMRTimer::_7)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
-				if constexpr(timer_ == TMRTimer::_8)
-					RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-				if constexpr(timer_ == TMRTimer::_9)
-					RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
-				if constexpr(timer_ == TMRTimer::_10)
-					RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
-				if constexpr(timer_ == TMRTimer::_11)
-					RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
-				if constexpr(timer_ == TMRTimer::_12)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
-				if constexpr(timer_ == TMRTimer::_13)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
-				if constexpr(timer_ == TMRTimer::_14)
-					RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+				#ifdef HTL_TMR1_EXIST
+					if constexpr(timer_ == TMRTimer::_1)
+						RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+				#endif
+				#ifdef HTL_TMR2_EXIST
+					if constexpr(timer_ == TMRTimer::_2)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+				#endif
+				#ifdef HTL_TMR3_EXIST
+					if constexpr(timer_ == TMRTimer::_3)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+				#endif
+				#ifdef HTL_TMR4_EXIST
+					if constexpr(timer_ == TMRTimer::_4)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+				#endif
+				#ifdef HTL_TMR5_EXIST
+					if constexpr(timer_ == TMRTimer::_5)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
+				#endif
+				#ifdef HTL_TMR6_EXIST
+					if constexpr(timer_ == TMRTimer::_6)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+				#endif
+				#ifdef HTL_TMR7_EXIST
+					if constexpr(timer_ == TMRTimer::_7)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
+				#endif
+				#ifdef HTL_TMR8_EXIST
+					if constexpr(timer_ == TMRTimer::_8)
+						RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
+				#endif
+				#ifdef HTL_TMR9_EXIST
+					if constexpr(timer_ == TMRTimer::_9)
+						RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
+				#endif
+				#ifdef HTL_TMR10_EXIST
+					if constexpr(timer_ == TMRTimer::_10)
+						RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
+				#endif
+				#ifdef HTL_TMR11_EXIST
+					if constexpr(timer_ == TMRTimer::_11)
+						RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
+				#endif
+				#ifdef HTL_TMR12_EXIST
+					if constexpr(timer_ == TMRTimer::_12)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
+				#endif
+				#ifdef HTL_TMR13_EXIST
+					if constexpr(timer_ == TMRTimer::_13)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
+				#endif
+				#ifdef HTL_TMR14_EXIST
+					if constexpr(timer_ == TMRTimer::_14)
+						RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+				#endif
 				__DSB();
 			}
 
 			inline static void deactivate() {
 
-				if constexpr(timer_ == TMRTimer::_1)
-					RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
-				if constexpr(timer_ == TMRTimer::_2)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
-				if constexpr(timer_ == TMRTimer::_3)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
-				if constexpr(timer_ == TMRTimer::_4)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
-				if constexpr(timer_ == TMRTimer::_5)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
-				if constexpr(timer_ == TMRTimer::_6)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM6EN;
-				if constexpr(timer_ == TMRTimer::_7)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM7EN;
-				if constexpr(timer_ == TMRTimer::_8)
-					RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
-				if constexpr(timer_ == TMRTimer::_9)
-					RCC->APB2ENR &= ~RCC_APB2ENR_TIM9EN;
-				if constexpr(timer_ == TMRTimer::_10)
-					RCC->APB2ENR &= ~RCC_APB2ENR_TIM10EN;
-				if constexpr(timer_ == TMRTimer::_11)
-					RCC->APB2ENR &= ~RCC_APB2ENR_TIM11EN;
-				if constexpr(timer_ == TMRTimer::_12)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM12EN;
-				if constexpr(timer_ == TMRTimer::_13)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM13EN;
-				if constexpr(timer_ == TMRTimer::_14)
-					RCC->APB1ENR &= ~RCC_APB1ENR_TIM14EN;
+				#ifdef HTL_TMR1_EXIST
+					if constexpr(timer_ == TMRTimer::_1)
+						RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
+				#endif
+				#ifdef HTL_TMR2_EXIST
+					if constexpr(timer_ == TMRTimer::_2)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
+				#endif
+				#ifdef HTL_TMR3_EXIST
+					if constexpr(timer_ == TMRTimer::_3)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
+				#endif
+				#ifdef HTL_TMR4_EXIST
+					if constexpr(timer_ == TMRTimer::_4)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
+				#endif
+				#ifdef HTL_TMR5_EXIST
+					if constexpr(timer_ == TMRTimer::_5)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
+				#endif
+				#ifdef HTL_TMR6_EXIST
+					if constexpr(timer_ == TMRTimer::_6)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM6EN;
+				#endif
+				#ifdef HTL_TMR7_EXIST
+					if constexpr(timer_ == TMRTimer::_7)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM7EN;
+				#endif
+				#ifdef HTL_TMR8_EXIST
+					if constexpr(timer_ == TMRTimer::_8)
+						RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
+				#endif
+				#ifdef HTL_TMR9_EXIST
+					if constexpr(timer_ == TMRTimer::_9)
+						RCC->APB2ENR &= ~RCC_APB2ENR_TIM9EN;
+				#endif
+				#ifdef HTL_TMR10_EXIST
+					if constexpr(timer_ == TMRTimer::_10)
+						RCC->APB2ENR &= ~RCC_APB2ENR_TIM10EN;
+				#endif
+				#ifdef HTL_TMR11_EXIST
+					if constexpr(timer_ == TMRTimer::_11)
+						RCC->APB2ENR &= ~RCC_APB2ENR_TIM11EN;
+				#endif
+				#ifdef HTL_TMR12_EXIST
+					if constexpr(timer_ == TMRTimer::_12)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM12EN;
+				#endif
+				#ifdef HTL_TMR13_EXIST
+					if constexpr(timer_ == TMRTimer::_13)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM13EN;
+				#endif
+				#ifdef HTL_TMR14_EXIST
+					if constexpr(timer_ == TMRTimer::_14)
+						RCC->APB1ENR &= ~RCC_APB1ENR_TIM14EN;
+				#endif
 			}
 
 		public:
@@ -359,104 +415,161 @@ namespace htl {
 	template <TMRTimer timer_> TMRInterruptFunction TMR_x<timer_>::_isrFunction = nullptr;
 	template <TMRTimer timer_> TMRInterruptParam TMR_x<timer_>::_isrParam = nullptr;
 
-	using TMR_1 = TMR_x<TMRTimer::_1>;
-	using TMR_2 = TMR_x<TMRTimer::_2>;
-	using TMR_3 = TMR_x<TMRTimer::_3>;
-	using TMR_4 = TMR_x<TMRTimer::_4>;
-	using TMR_5 = TMR_x<TMRTimer::_5>;
-	using TMR_6 = TMR_x<TMRTimer::_6>;
-	using TMR_7 = TMR_x<TMRTimer::_7>;
-	using TMR_8 = TMR_x<TMRTimer::_8>;
-	using TMR_9 = TMR_x<TMRTimer::_9>;
-	using TMR_10 = TMR_x<TMRTimer::_10>;
-	using TMR_11 = TMR_x<TMRTimer::_11>;
-	using TMR_12 = TMR_x<TMRTimer::_12>;
-	using TMR_13 = TMR_x<TMRTimer::_13>;
-	using TMR_14 = TMR_x<TMRTimer::_14>;
 
+	#ifdef HTL_TMR1_EXIST
+		using TMR_1 = TMR_x<TMRTimer::_1>;
+	#endif
+	#ifdef HTL_TMR2_EXIST
+		using TMR_2 = TMR_x<TMRTimer::_2>;
+	#endif
+	#ifdef HTL_TMR3_EXIST
+		using TMR_3 = TMR_x<TMRTimer::_3>;
+	#endif
+	#ifdef HTL_TMR4_EXIST
+		using TMR_4 = TMR_x<TMRTimer::_4>;
+	#endif
+	#ifdef HTL_TMR5_EXIST
+		using TMR_5 = TMR_x<TMRTimer::_5>;
+	#endif
+	#ifdef HTL_TMR6_EXIST
+		using TMR_6 = TMR_x<TMRTimer::_6>;
+	#endif
+	#ifdef HTL_TMR7_EXIST
+		using TMR_7 = TMR_x<TMRTimer::_7>;
+	#endif
+	#ifdef HTL_TMR8_EXIST
+		using TMR_8 = TMR_x<TMRTimer::_8>;
+	#endif
+	#ifdef HTL_TMR9_EXIST
+		using TMR_9 = TMR_x<TMRTimer::_9>;
+	#endif
+	#ifdef HTL_TMR10_EXIST
+		using TMR_10 = TMR_x<TMRTimer::_10>;
+	#endif
+	#ifdef HTL_TMR11_EXIST
+		using TMR_11 = TMR_x<TMRTimer::_11>;
+	#endif
+	#ifdef HTL_TMR12_EXIST
+		using TMR_12 = TMR_x<TMRTimer::_12>;
+	#endif
+	#ifdef HTL_TMR13_EXIST
+		using TMR_13 = TMR_x<TMRTimer::_13>;
+	#endif
+	#ifdef HTL_TMR14_EXIST
+		using TMR_14 = TMR_x<TMRTimer::_14>;
+	#endif
+
+#ifdef HTL_TMR1_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_1> {
 		static constexpr uint32_t addr = TIM1_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR2_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_2> {
 		static constexpr uint32_t addr = TIM2_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR3_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_3> {
 		static constexpr uint32_t addr = TIM3_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR4_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_4> {
 		static constexpr uint32_t addr = TIM4_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR5_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_5> {
 		static constexpr uint32_t addr = TIM5_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR6_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_6> {
 		static constexpr uint32_t addr = TIM6_BASE;
 		static constexpr bool suportsClockDivider = false;
 	};
+#endif
 
+#ifdef HTL_TMR7_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_7> {
 		static constexpr uint32_t addr = TIM7_BASE;
 		static constexpr bool suportsClockDivider = false;
 	};
+#endif
 
+#ifdef HTL_TMR8_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_8> {
 		static constexpr uint32_t addr = TIM8_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR9_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_9> {
 		static constexpr uint32_t addr = TIM9_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR10_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_10> {
 		static constexpr uint32_t addr = TIM10_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR11_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_11> {
 		static constexpr uint32_t addr = TIM11_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR12_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_12> {
 		static constexpr uint32_t addr = TIM12_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR13_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_13> {
 		static constexpr uint32_t addr = TIM13_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
+#ifdef HTL_TMR14_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_14> {
 		static constexpr uint32_t addr = TIM14_BASE;
 		static constexpr bool suportsClockDivider = true;
 	};
+#endif
 
 }
 

@@ -37,7 +37,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define OSAL_TASK_PRIORITY_REALTIME    (4u << OSAL_TASK_PRIORITY_pos)
 
 
-HTask osalTaskCreate(const TaskInitializeInfo* info);
+HTask osalTaskCreate(const TaskInitializeInfo *info);
 void osalTaskDestroy(HTask hTask);
 void osalTaskSuspend(HTask hTask);
 void osalTaskResume(HTask hTask);

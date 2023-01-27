@@ -59,7 +59,7 @@ namespace eos {
             TimerEventCallback _osTimerEventCallback;
 
         public:
-            TimerService(Application *application);
+            TimerService();
             ~TimerService();
 
             void addTimer(TimerCounter *timer);

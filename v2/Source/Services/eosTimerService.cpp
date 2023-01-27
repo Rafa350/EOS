@@ -8,12 +8,10 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    application: L'aplicacio a la que pertany el servei.
 ///
-TimerService::TimerService(
-    Application* application):
+TimerService::TimerService():
 
-    Service(application),
+    Service(),
     _commandQueue(10),
     _activeQueue(),
     _osTimerEventCallback(*this, &TimerService::osTimerEventHandler) {

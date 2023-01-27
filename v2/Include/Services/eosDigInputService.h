@@ -8,7 +8,7 @@
 #include "HTL/htlGPIO.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosVector.h"
+#include "System/Collections/eosSingleLinkedList.h"
 #include "System/Core/eosSemaphore.h"
 
 
@@ -21,7 +21,7 @@ namespace eos {
     //
     class DigInputService final: public Service {
         private:
-            typedef Vector<DigInput*> DigInputList;
+            typedef SingleLinkedList<DigInput*> DigInputList;
             typedef DigInputList::Iterator DigInputIterator;
 
         private:
@@ -35,7 +35,7 @@ namespace eos {
             void onTick();
 #endif
         public:
-            DigInputService(Application *application);
+            DigInputService();
             ~DigInputService();
 
             void addInput(DigInput *input);

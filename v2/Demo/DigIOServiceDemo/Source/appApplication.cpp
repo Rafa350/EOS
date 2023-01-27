@@ -37,7 +37,8 @@ void MyApplication::onInitialize() {
 
     // Configura el servei de missatgeria
     //
-    _messengerService = new MessengerService(this);
+    _messengerService = new MessengerService();
+    addService(_messengerService, Task::Priority::normal, 512, "MESSENGER");
 
     _messageBus = new MessageBus<ButtonMessage>(10);
     _messageBus->subscribe(_messageBusEventCallback);
@@ -45,8 +46,8 @@ void MyApplication::onInitialize() {
 
     // Configura el servei d'entrades digitals
 	//
-    _digInputService = new DigInputService(this);
-    _digInputService->setPriority(Task::Priority::high);
+    _digInputService = new DigInputService();
+    addService(_digInputService, Task::Priority::high, 512, "INPUTS");
 
     // Configura la entrada corresponent al switch SW1
     //
@@ -89,7 +90,8 @@ void MyApplication::onInitialize() {
 
     // Configura el servei de sortides digitals
     //
-    _digOutputService = new DigOutputService(this);
+    _digOutputService = new DigOutputService();
+    addService(_digOutputService, Task::Priority::normal, 512, "OUTPUTS");
 
     // Configura la sortida corresponent al led LED1
     //

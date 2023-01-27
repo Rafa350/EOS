@@ -9,10 +9,8 @@ using namespace eos;
 /// \brief    Constructor.
 /// \param    application: Aplicacio on afeigir el servei.
 ///
-AppLoopService::AppLoopService(
-    Application *application):
-
-	Service(application) {
+AppLoopService::AppLoopService():
+	Service() {
 }
 
 

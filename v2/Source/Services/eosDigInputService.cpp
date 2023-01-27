@@ -22,10 +22,8 @@ using namespace htl;
 /// \param    application: The application.
 /// \params   settings: Conmfigurationparameters.
 ///
-DigInputService::DigInputService(
-    Application *application):
-
-	Service(application) {
+DigInputService::DigInputService():
+	Service() {
 }
 
 
@@ -34,8 +32,7 @@ DigInputService::DigInputService(
 ///
 DigInputService::~DigInputService() {
 
-    while (!_inputs.isEmpty())
-        delete _inputs.peekBack();
+	_inputs.clear();
 }
 
 
@@ -78,7 +75,7 @@ void DigInputService::removeInput(
 
     if (input->_service == this) {
         input->_service = nullptr;
-        _inputs.removeAt(_inputs.indexOf(input));
+        //_inputs.removeAt(_inputs.indexOf(input));
     }
 
     // Fi de la seccio critica
@@ -98,7 +95,7 @@ void DigInputService::removeInputs() {
 
     while (!_inputs.isEmpty()) {
         DigInput *input = _inputs.peekBack();
-        _inputs.popBack();
+        //_inputs.popBack();
         input->_service = nullptr;
     }
 

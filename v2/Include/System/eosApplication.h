@@ -6,9 +6,8 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/halTMR.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosVector.h"
+#include "System/Collections/eosSingleLinkedList.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosTimer.h"
 
@@ -18,24 +17,25 @@ namespace eos {
     class Application;
     class Service;
 
-    void link(Application *application, Service *service);
-    void unlink(Application *application, Service *service);
-
     /// \brief Clase que representa l'aplicacio.
     ///
     class Application {
         private:
-            typedef Vector<Service*> ServiceList;
-            typedef Vector<Service*>::Iterator ServiceListIterator;
-            typedef Vector<Task*> TaskList;
+    		struct ServiceInfo {
+    			Service *service;
+    			Task::Priority priority;
+    			unsigned stackSize;
+    			const char *name;
+    			Task *task;
+    		};
+    		typedef SingleLinkedList<ServiceInfo*> ServiceInfoList;
             typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
 #if Eos_ApplicationTickEnabled
             typedef CallbackP1<Application, const Timer::EventArgs&> TimerEventCallback;
 #endif
         private:
             bool _initialized;
-            ServiceList _services;
-            TaskList _tasks;
+            ServiceInfoList _serviceInfoList;
             TaskEventCallback _taskEventCallback;
 #if Eos_ApplicationTickEnabled
             TimerEventCallback _timerEventCallback;
@@ -54,6 +54,8 @@ namespace eos {
 #endif
 
         protected:
+            Application();
+
             virtual void onInitialize();
             virtual void onTerminate();
 #if Eos_ApplicationTickEnabled
@@ -61,7 +63,6 @@ namespace eos {
 #endif
 
         public:
-            Application();
             virtual ~Application();
 
             void run();
@@ -71,14 +72,11 @@ namespace eos {
             static void tmrInterruptFunction(TMRHandler handler, void  params);
 #endif
 
-            void addService(Service *service);
+            void addService(Service *service, Task::Priority priority, unsigned stackSize, const char *name = nullptr);
             void removeService(Service *service);
             void removeServices();
 
             inline bool isInitialized() const { return _initialized; }
-
-        friend void link(Application *application, Service *service);
-        friend void unlink(Application *application, Service *service);
     };
 }
 

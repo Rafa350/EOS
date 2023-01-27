@@ -74,10 +74,9 @@ static inline Color __getRandomColor() {
 /// \brief Constructor de l'objecte.
 /// \param application: Aplicacio al que pertany el servei.
 ///
-DisplayService::DisplayService(
-	Application *application):
+DisplayService::DisplayService():
 
-	AppLoopService(application),
+	AppLoopService(),
 	_text(Font("Consolas", 14, FontStyle::regular), TextAlign::left),
 	_orientation(0) {
 

@@ -28,13 +28,11 @@ using namespace app;
 /// \brief    Contructor.
 ///
 MyApplication::MyApplication():
-
-	Application(),
+#if eosGuiService_TouchpadEnabled
+	_touchpadEventCallback(*this, &MyApplication::touchpadEventHandler),
+#endif
 	_buttonEventCallback(*this, &MyApplication::buttonEventHandler),
 	_virtualKeyboardEventCallback(*this, &MyApplication::virtualKeyboardEventHandler) {
-
-	_ledService = new LedService(this);
-	_guiService = new GuiService(this);
 }
 
 
@@ -43,9 +41,28 @@ MyApplication::MyApplication():
 ///
 void MyApplication::onInitialize() {
 
+	// Inicialitza el servei LED
+	//
+	_ledService = new LedService();
+	addService(_ledService, eos::Task::Priority::normal, 128, "LED");
+
+	// Inicialitza el servei Touchpad
+	//
+	#if eosGuiService_TouchpadEnabled
+		_touchpadService = new eos::TouchpadService();
+		_touchpadService->setEventCallback(&_touchpadEventCallback);
+		addService(_touchpadService, eos::Task::Priority::normal, 128, "TOUCHPAD");
+	#endif
+
+	// Inicialitza el servei GUI
+	//
+	_guiService = new GuiService();
+	addService(_guiService, eos::Task::Priority::normal, 512, "GUI");
+
 	// Carrega els recursos
 	//
 	createMainPanel();
+
 	Application::onInitialize();
 }
 
@@ -137,13 +154,26 @@ void MyApplication::createMainPanel() {
 	eos::Visual* droPanel = createDROPanel();
 
 	eos::Screen* screen = _guiService->getScreen();
-	//screen->addChild(keyboardPanel);
-	screen->addChild(droPanel);
+	screen->addChild(keyboardPanel);
+	//screen->addChild(droPanel);
 	//screen->addChild(tabControl);
 
 	eos::Visual* tb = VisualUtils::getVisual(screen,  1000);
 	_guiService->setFocus(tb);
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa els events del servei TOUCHPAD. Els redirecciona al
+///           servei GUI
+///
+#if eosGuiService_TouchpadEnabled
+void MyApplication::touchpadEventHandler(
+	const eos::TouchpadService::EventArgs &args) {
+
+	_guiService->touchpadEventHandler(args);
+}
+#endif
 
 
 void MyApplication::buttonEventHandler(

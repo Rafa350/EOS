@@ -27,12 +27,6 @@ Application::Application():
 /// \brief    Destructor. Si conte serveis, els elimina de la llista.
 ///
 Application::~Application() {
-
-	// Destrueix els serveis de la llista. El contenidor ja els
-	// destrueix automaticament
-	//
-	while (!_services.isEmpty())
-		delete _services.peekFront();
 }
 
 
@@ -77,7 +71,7 @@ void Application::run() {
     //
     initializeServices();
 
-    // Executa els serveis fins que acavi l'aplicacio.
+    // Executa els serveis fins que finalitzi l'aplicacio.
     //
     runServices();
 
@@ -101,8 +95,8 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-    for (auto service: _services)
-		service->tick();
+    for (auto si: _serviceInfoList)
+		si->service->tick();
 }
 #endif
 
@@ -114,8 +108,8 @@ void Application::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
     //
-    for (auto service: _services)
-        service->initialize();
+    for (auto si: _serviceInfoList)
+        si->service->initialize();
 }
 
 
@@ -126,8 +120,8 @@ void Application::terminateServices() {
 
     // Finalitza els serveis de la llista, un a un.
     //
-    for (auto service: _services)
-        service->terminate();
+    for (auto si: _serviceInfoList)
+  		si->service->terminate();
 }
 
 
@@ -136,7 +130,7 @@ void Application::terminateServices() {
 ///
 void Application::runServices() {
 
-    // Inicialitza el terporitzador tick
+    // Inicialitza el temporitzador tick
     //
 #if Eos_ApplicationTickEnabled
     timer.start(APPLICATION_TICK_PERIOD, 0);
@@ -144,17 +138,19 @@ void Application::runServices() {
 
     // Crea una tasca per executar cada servei
     //
-    for (auto service: _services) {
-        Task *task = new Task(
-            service->getStackSize(),
-            service->getPriority(),
-            service->getName(),
-            &_taskEventCallback,
-            static_cast<void*>(service));
-        _tasks.pushBack(task);
+    for (auto si: _serviceInfoList) {
+    	if (si->service->getState() == Service::State::ready) {
+			si->task = new Task(
+				si->stackSize,
+				si->priority,
+				si->name ? si->name : "SERVICE",
+				&_taskEventCallback,
+				static_cast<void*>(si->service));
+    	}
     }
 
-    // Executa les tasques
+    // Inicia el planificador i executa les tasques. No retorna fins
+    // que finalitzon totes les tasques
     //
     Task::startAll();
 }
@@ -162,14 +158,29 @@ void Application::runServices() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix un servei a l'aplicacio.
-/// \param    service: El servei a afeigir.
+/// \param    service: EL servei.
+/// \param    priority: La prioritat.
+/// \param    stackSize: Tamany del stack.
+/// \param    name: Nom del servei.
 ///
 void Application::addService(
-    Service *service) {
+	Service *service,
+	Task::Priority priority,
+	unsigned stackSize,
+	const char *name) {
 
-    eosAssert(service != nullptr);
+	eosAssert(service != nullptr);
 
-    eos::link(this, service);
+	ServiceInfo *si = new ServiceInfo;
+	eosAssert(si != nullptr);
+
+	si->service = service;
+	si->priority = priority;
+	si->stackSize = stackSize;
+	si->name = name;
+	si->task = nullptr;
+
+	_serviceInfoList.pushBack(si);
 }
 
 
@@ -182,7 +193,12 @@ void Application::removeService(
 
     eosAssert(service != nullptr);
 
-    eos::unlink(this, service);
+    for (auto si: _serviceInfoList) {
+    	if (si->service == service) {
+        	_serviceInfoList.remove(si);
+    		break;
+    	}
+    }
 }
 
 
@@ -191,8 +207,7 @@ void Application::removeService(
 ///
 void Application::removeServices() {
 
-	while (!_services.isEmpty())
-        removeService(_services.peekFront());
+	_serviceInfoList.clear();
 }
 
 
@@ -228,37 +243,3 @@ void Application::onTick() {
 
 }
 #endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Afegeix el servei a la llista de serveis
-/// \param    application: L'aplicacio.
-/// \param    service: El servei.
-///
-void eos::link(
-	Application *application,
-	Service *service) {
-
-	eosAssert(application != nullptr);
-    eosAssert(service->_application == nullptr);
-
-    application->_services.pushBack(service);
-    service->_application = application;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Treu el servei de la llista de serveis.
-/// \param    application: L'aplicacio.
-/// \param    service: El servei.
-///
-void eos::unlink(
-	Application *application,
-	Service *service) {
-
-	eosAssert(application != nullptr);
-    eosAssert(service->_application == application);
-
-    service->_application = nullptr;
-    application->_services.removeAt(application->_services.indexOf(service));
-}

@@ -11,10 +11,8 @@ using namespace app;
 /// ----------------------------------------------------------------------
 /// \brief Contructor de l'objecte.
 ///
-LedService::LedService(
-	Application *application) :
-
-	 AppLoopService(application) {
+LedService::LedService() :
+	 AppLoopService() {
 }
 
 

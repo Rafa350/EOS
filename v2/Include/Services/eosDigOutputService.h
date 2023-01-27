@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "HTL/htlGPIO.h"
 #include "Services/eosService.h"
-#include "System/Collections/eosVector.h"
+#include "System/Collections/eosSingleLinkedList.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -53,7 +53,7 @@ namespace eos {
                 unsigned param2;
             };
             typedef Queue<Command> CommandQueue;
-            typedef Vector<DigOutput*> DigOutputList;
+            typedef SingleLinkedList<DigOutput*> DigOutputList;
             typedef DigOutputList::Iterator DigOutputIterator;
 
         private:
@@ -80,7 +80,7 @@ namespace eos {
             void onTick() override;
 #endif
         public:
-            DigOutputService(Application *application);
+            DigOutputService();
             ~DigOutputService();
 
             void addOutput(DigOutput *output);

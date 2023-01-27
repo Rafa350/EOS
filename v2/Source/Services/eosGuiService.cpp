@@ -34,33 +34,14 @@ static RenderContext *context;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
-/// \param    application: Aplicacio on afeigir el servei.
-/// \param    cfg: Parametres de configuracio
 ///
-GuiService::GuiService(
-	Application* application):
-
-	Service(application),
+GuiService::GuiService():
 	_screen(new Screen()),
 	_active(nullptr),
 	_focus(nullptr),
-	_msgQueue(MessageQueue::instance())
-#if eosGuiService_TouchpadEnabled
-	, _touchpadEventCallback(*this, &GuiService::touchpadEventHandler)
-#endif
-	{
+	_msgQueue(MessageQueue::instance()) {
 
-#if eosGuiService_TouchpadEnabled
-	_touchpadService = new TouchpadService(application);
-	_touchpadService->setEventCallback(&_touchpadEventCallback);
 	_touchpadTarget = nullptr;
-#endif
-
-#if eosGuiService_SelectorEnabled
-#endif
-
-#if eosGuiService_KeyboardEnabled
-#endif
 }
 
 
@@ -86,7 +67,7 @@ void GuiService::setActive(
 /// \param    visual: El visual.
 ///
 void GuiService::setFocus(
-	Visual* visual) {
+	Visual *visual) {
 
 	_focus = visual;
 }

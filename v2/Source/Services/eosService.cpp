@@ -9,35 +9,9 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    application: Aplicacio al que pertany.
 ///
-Service::Service(
-	Application *application) :
-
-    _application(nullptr),
-	_stackSize(128), // 512
-	_priority(Task::Priority::normal),
-    _initialized(false),
-	_name("SERVICE") {
-
-    // Si s'indica l'aplicacio, aleshores s'afegeix a la llista de
-	// serveis d'aquesta.
-	//
-    if (application != nullptr)
-        application->addService(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Destructor.
-///
-Service::~Service() {
-
-	// Al destruir-se, s'elimina ell mateix de la llista de serveis
-	// de l'aplicacio.
-	//
-    if (_application != nullptr)
-        _application->removeService(this);
+Service::Service():
+	_state(State::created) {
 }
 
 
@@ -46,9 +20,9 @@ Service::~Service() {
 ///
 void Service::initialize() {
 
-	if (!_initialized) {
+	if (_state == State::created) {
 		onInitialize();
-        _initialized = true;
+        _state = State::ready;
 	}
 }
 
@@ -58,9 +32,9 @@ void Service::initialize() {
 ///
 void Service::terminate() {
 
-    if (_initialized) {
+    if (_state == State::ready) {
         onTerminate();
-        _initialized = false;
+        _state = State::finished;
     }
 }
 
@@ -71,7 +45,7 @@ void Service::terminate() {
 #if Eos_ApplicationTickEnabled
 void Service::tick() {
 
-	if (_initialized)
+	if (_state == State::running)
 		onTick();
 }
 #endif
@@ -82,8 +56,11 @@ void Service::tick() {
 ///
 void Service::task() {
 
-    if (_initialized)
+    if (_state == State::ready) {
+    	_state = State::running;
         onTask();
+        _state = State::ready;
+    }
 }
 
 

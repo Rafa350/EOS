@@ -6,7 +6,7 @@
 using namespace htl;
 
 
-#ifdef HTL_TIM1_EXIST
+#ifdef HTL_TMR1_EXIST
 void TMR_1_InterruptHandler() {
 
 	TMR_1::interruptHandler();
@@ -14,7 +14,7 @@ void TMR_1_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM2_EXIST
+#ifdef HTL_TMR2_EXIST
 void TMR_2_InterruptHandler() {
 
 	TMR_2::interruptHandler();
@@ -22,7 +22,7 @@ void TMR_2_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM3_EXIST
+#ifdef HTL_TMR3_EXIST
 void TMR_3_InterruptHandler() {
 
 	TMR_3::interruptHandler();
@@ -30,7 +30,7 @@ void TMR_3_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM4_EXIST
+#ifdef HTL_TMR4_EXIST
 void TMR_4_InterruptHandler() {
 
 	TMR_4::interruptHandler();
@@ -38,7 +38,7 @@ void TMR_4_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM5_EXIST
+#ifdef HTL_TMR5_EXIST
 void TMR_5_InterruptHandler() {
 
 	TMR_5::interruptHandler();
@@ -46,7 +46,7 @@ void TMR_5_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM6_EXIST
+#ifdef HTL_TMR6_EXIST
 void TMR_6_InterruptHandler() {
 
 	TMR_6::interruptHandler();
@@ -54,7 +54,7 @@ void TMR_6_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM7_EXIST
+#ifdef HTL_TMR7_EXIST
 void TMR_7_InterruptHandler() {
 
 	TMR_7::interruptHandler();
@@ -62,7 +62,7 @@ void TMR_7_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM8_EXIST
+#ifdef HTL_TMR8_EXIST
 void TMR_8_InterruptHandler() {
 
 	TMR_8::interruptHandler();
@@ -70,7 +70,7 @@ void TMR_8_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM9_EXIST
+#ifdef HTL_TMR9_EXIST
 void TMR_9_InterruptHandler() {
 
 	TMR_9::interruptHandler();
@@ -78,7 +78,7 @@ void TMR_9_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM10_EXIST
+#ifdef HTL_TMR10_EXIST
 void TMR_10_InterruptHandler() {
 
 	TMR_10::interruptHandler();
@@ -86,7 +86,7 @@ void TMR_10_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM11_EXIST
+#ifdef HTL_TMR11_EXIST
 void TMR_11_InterruptHandler() {
 
 	TMR_11::interruptHandler();
@@ -94,7 +94,7 @@ void TMR_11_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM12_EXIST
+#ifdef HTL_TMR12_EXIST
 void TMR_12_InterruptHandler() {
 
 	TMR_12::interruptHandler();
@@ -102,7 +102,7 @@ void TMR_12_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM13_EXIST
+#ifdef HTL_TMR13_EXIST
 void TMR_13_InterruptHandler() {
 
 	TMR_13::interruptHandler();
@@ -110,7 +110,7 @@ void TMR_13_InterruptHandler() {
 #endif
 
 
-#ifdef HTL_TIM14_EXIST
+#ifdef HTL_TMR14_EXIST
 void TMR_14_InterruptHandler() {
 
 	TMR_14::interruptHandler();

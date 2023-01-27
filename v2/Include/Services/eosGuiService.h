@@ -46,8 +46,6 @@ namespace eos {
 			static constexpr uint16_t _displayHeight = DISPLAY_HEIGHT;
 			static constexpr uint32_t _displayBuffer = DISPLAY_BUFFER;
 
-			typedef CallbackP1<GuiService, const TouchpadService::EventArgs&> TouchpadEventCallback;
-
 			Screen* _screen;
 			Visual* _active;
 			Visual* _focus;
@@ -59,13 +57,11 @@ namespace eos {
 			SelectorService* _selectorService;
 #endif
 #if eosGuiService_TouchpadEnabled
-			TouchpadEventCallback _touchpadEventCallback;
-			TouchpadService* _touchpadService;
 			Visual* _touchpadTarget;
 #endif
 
 		public:
-			GuiService(Application* application);
+			GuiService();
 			inline Screen* getScreen() const { return _screen; }
 			inline Visual* getActive() const { return _active; }
 			inline Visual* getFocus() const { return _focus; }
@@ -73,15 +69,14 @@ namespace eos {
 
 			void setActive(Visual* visual);
 			void setFocus(Visual* visual);
+			#if eosGuiService_TouchpadEnabled
+				void touchpadEventHandler(const TouchpadService::EventArgs &args);
+			#endif
 
 		protected:
 			void onInitialize() override;
 			void onTask() override;
 
-		private:
-#if eosGuiService_TouchpadEnabled
-			void touchpadEventHandler(const TouchpadService::EventArgs &args);
-#endif
 	};
 }
 
