@@ -205,9 +205,7 @@ void DigInputService::tmrInterruptFunction() {
 
     // Procesa totes les entrades
     //
-    for (auto it = _inputs.begin(); it != _inputs.end(); it++) {
-
-        DigInput *input = *it;
+    for (auto input: _inputs) {
 
         if (input->_scanMode == DigInput::ScanMode::polling) {
 

@@ -12,28 +12,28 @@
 extern "C" {
 #endif
 
-#ifdef HTL_USART1_EXIST
+#ifdef HTL_UART1_EXIST
     void UART_1_InterruptHandler();
 #endif	
-#ifdef HTL_USART2_EXIST
+#ifdef HTL_UART2_EXIST
     void UART_2_InterruptHandler();
 #endif	
-#ifdef HTL_USART3_EXIST
+#ifdef HTL_UART3_EXIST
     void UART_3_InterruptHandler();
 #endif	
-#ifdef HTL_USART4_EXIST
+#ifdef HTL_UART4_EXIST
     void UART_4_InterruptHandler();
 #endif	
-#ifdef HTL_USART5_EXIST
+#ifdef HTL_UART5_EXIST
     void UART_5_InterruptHandler();
 #endif	
-#ifdef HTL_USART6_EXIST
+#ifdef HTL_UART6_EXIST
     void UART_6_InterruptHandler();
 #endif	
-#ifdef HTL_USART7_EXIST
+#ifdef HTL_UART7_EXIST
     void UART_7_InterruptHandler();
 #endif	
-#ifdef HTL_USART8_EXIST
+#ifdef HTL_UART8_EXIST
     void UART_8_InterruptHandler();
 #endif	
 

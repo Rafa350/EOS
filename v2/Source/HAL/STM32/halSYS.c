@@ -1,6 +1,10 @@
 #include "HAL/hal.h"
 #include "HAL/STM32/halSYS.h"
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F0)
+#include "stm32f0xx_hal.h"
+#elif defined(EOS_PLATFORM_STM32F1)
+#include "stm32f1xx_hal.h"
+#elif defined(EOS_PLATFORM_STM32F4)
 #include "stm32f4xx_hal.h"
 #elif defined(EOS_PLATFORM_STM32F7)
 #include "stm32f7xx_hal.h"
@@ -78,7 +82,7 @@ uint32_t halSYSGetTimerClock2Frequency() {
 
 	// PCLK2 prescaler equal to 1 => TIMCLK = PCLK1
 	//
-	if((RCC->CFGR & RCC_CFGR_PPRE2) == 0)
+	if ((RCC->CFGR & RCC_CFGR_PPRE2) == 0)
 	    return (f);
 
     // PCLK2 prescaler different from 1 => TIMCLK = 2 * PCLK1

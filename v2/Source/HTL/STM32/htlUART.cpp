@@ -1,5 +1,5 @@
 #include "HTL/htl.h"
-#include "HAL/halSYS.h"
+#include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlUART.h"
 #include "stm32f0xx_hal.h"
 
@@ -265,19 +265,19 @@ void UARTBase_x::setTimming(
     			fclk = halSYSGetPeripheralClock2Frequency();
     		else
 			#endif
-    			fclk = halSYSGetPeripheralClock1Frequency();
+    			fclk = Clock::getClockFrequency(ClockId::pclk);
     		break;
 
     	case UARTClockSource::sysclk:
-    		fclk = halSYSGetSystemClockFrequency();
+    		fclk = Clock::getClockFrequency(ClockId::sysclk);
     		break;
 
     	case UARTClockSource::hsi:
-    		fclk = HSI_VALUE;
+    		fclk = Clock::getClockFrequency(ClockId::hsi);
     		break;
 
     	case UARTClockSource::lse:
-    		fclk = LSE_VALUE;
+    		fclk = Clock::getClockFrequency(ClockId::lse);
     		break;
     }
 
