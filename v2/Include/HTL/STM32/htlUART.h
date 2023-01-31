@@ -167,7 +167,7 @@ namespace htl {
 	class UARTBase_x {
 		protected:
 			static void setProtocol(USART_TypeDef*, UARTWordBits, UARTParity, UARTStopBits, UARTHandsake);
-			static void setTimming(USART_TypeDef*, UARTBaudMode, UARTClockSource, unsigned, UARTOverSampling);
+			static void setTimming(USART_TypeDef*, UARTBaudMode, UARTClockSource, uint32_t, UARTOverSampling);
 	};
 
 	template <UARTChannel channel_>
@@ -398,7 +398,7 @@ namespace htl {
 			static void setTimming(
 				UARTBaudMode baudMode = UARTBaudMode::_9600,
 				UARTClockSource clockSource = UARTClockSource::automatic,
-				unsigned rate = 0,
+				uint32_t rate = 0,
 				UARTOverSampling overSampling = UARTOverSampling::_16) {
 
 				UARTBase_x::setTimming(
@@ -427,6 +427,23 @@ namespace htl {
 					parity,
 					stopBits,
 					handsake);
+			}
+
+			/// \brief Configura el timeout per recepcio.
+			/// \param bits: Nombre de bits perduts per generar timeout
+			///
+			static void setRxTimeout(
+				uint32_t lostBits) {
+
+				if constexpr (Trait::supportedRxTimeout) {
+					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+					if (lostBits > 0) {
+						regs->RTOR |= (lostBits << USART_RTOR_RTO_Pos) & USART_RTOR_RTO_Msk;
+						regs->CR2 |= USART_CR2_RTOEN;
+					}
+					else
+						regs->CR2 &= ~USART_CR2_RTOEN;
+				}
 			}
 
 			/// \brief Inicialitza el pin TX
@@ -531,7 +548,8 @@ namespace htl {
 						break;
 
 					case UARTInterrupt::rxTimeout:
-						ATOMIC_SET_BIT(regs->CR1, USART_CR1_RTOIE);
+						if constexpr (Trait::supportedRxTimeout)
+							ATOMIC_SET_BIT(regs->CR1, USART_CR1_RTOIE);
 						break;
 
 					case UARTInterrupt::endOfBlock:
@@ -596,8 +614,10 @@ namespace htl {
 						break;
 
 					case UARTInterrupt::rxTimeout:
-						state = (regs->CR1 & USART_CR1_RTOIE) != 0;
-						ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RTOIE);
+						if constexpr (Trait::supportedRxTimeout) {
+							state = (regs->CR1 & USART_CR1_RTOIE) != 0;
+							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RTOIE);
+						}
 						break;
 
 					#ifdef USART_CR1_EOBIE
@@ -615,6 +635,68 @@ namespace htl {
 					case UARTInterrupt::error:
 						state = (regs->CR3 & USART_CR3_EIE) != 0;
 						ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_EIE);
+						break;
+				}
+
+				return state;
+			}
+
+			/// \brief Comprova si la interrupcio esta habilidata
+			// \param interrupt: La interrupcio.
+			// \return True si esta habilitada, false en cas conmtrari
+			//
+			static bool isInterruptEnabled(
+				UARTInterrupt interrupt) {
+
+				USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
+
+				bool state = false;
+				switch (interrupt) {
+					case UARTInterrupt::cts:
+						state = (regs->CR3 & USART_CR3_CTSIE) != 0;
+						break;
+
+					#if HTL_UART_LINMODE_SUPPORT == 1
+						case UARTInterrupt::linBrk:
+							state = (regs->CR2 & USART_CR2_LBDIE) != 0;
+							break;
+					#endif
+
+					case UARTInterrupt::idle:
+						state = (regs->CR1 & USART_CR1_IDLEIE) != 0;
+						break;
+
+					case UARTInterrupt::txEmpty:
+						state = (regs->CR1 &USART_CR1_TXEIE) != 0;
+						break;
+
+					case UARTInterrupt::txComplete:
+						state = (regs->CR1 & USART_CR1_TCIE) != 0;
+						break;
+
+					case UARTInterrupt::rxNotEmpty:
+						state = (regs->CR1 & USART_CR1_RXNEIE) != 0;
+						break;
+
+					case UARTInterrupt::parity:
+						state = (regs->CR1 & USART_CR1_PEIE) != 0;
+						break;
+
+					case UARTInterrupt::rxTimeout:
+						if constexpr (Trait::supportedRxTimeout)
+							state = (regs->CR1 & USART_CR1_RTOIE) != 0;
+						break;
+
+					case UARTInterrupt::endOfBlock:
+						state = (regs->CR1 & USART_CR1_EOBIE) != 0;
+						break;
+
+					case UARTInterrupt::match:
+						state = (regs->CR1, USART_CR1_CMIE) != 0;
+						break;
+
+					case UARTInterrupt::error:
+						state = (regs->CR3 & USART_CR3_EIE) != 0;
 						break;
 				}
 
@@ -654,7 +736,10 @@ namespace htl {
 						return (regs->ISR & USART_ISR_RXNE) != 0;
 
 					case UARTFlag::rxTimeout:
-						return (regs->ISR & USART_ISR_RTOF) != 0;
+						if constexpr (Trait::supportedRxTimeout)
+							return (regs->ISR & USART_ISR_RTOF) != 0;
+						else
+							return false;
 
 					case UARTFlag::cts:
 						return (regs->ISR & USART_ISR_CTSIF) != 0;
@@ -681,7 +766,10 @@ namespace htl {
 
 			static bool isRxTimeout() {
 
-				return getFlag(UARTFlag::rxTimeout);
+				if constexpr (Trait::suportedRxTimeout)
+					return getFlag(UARTFlag::rxTimeout);
+				else
+					return false;
 			}
 
 			/// \brief Borra el flag.
@@ -723,7 +811,8 @@ namespace htl {
 						break;
 
 					case UARTFlag::rxTimeout:
-						regs->ICR = USART_ICR_RTOCF;
+						if constexpr (Trait::supportedRxTimeout)
+							regs->ICR = USART_ICR_RTOCF;
 						break;
 
 					case UARTFlag::txComplete:
@@ -800,6 +889,7 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_1> {
 			static constexpr uint32_t addr = USART1_BASE;
 			static constexpr INTVector vector = INTVector::uart1;
+			static constexpr bool supportedRxTimeout = true;
 		};
 
 		#if defined(EOS_PLATFORM_STM32F0)
@@ -836,6 +926,8 @@ namespace htl {
 			struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
 			};
+		#else
+			#error Plataforma no soportada
 		#endif
 	#endif
 
@@ -844,6 +936,13 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_2> {
 			static constexpr uint32_t addr = USART2_BASE;
 			static constexpr INTVector vector = INTVector::uart2;
+			#if defined(EOS_PLATFORM_STM32F0)
+				static constexpr bool supportedRxTimeout = false;
+			#elif defined(EOS_PLATFORM_STM32F4)
+				static constexpr bool supportedRxTimeout = true;
+			#else
+				#error Plataforma no soportada
+			#endif
 		};
 
 		#if defined(EOS_PLATFORM_STM32F0)
@@ -872,6 +971,8 @@ namespace htl {
 			struct UARTPinTrait<UARTChannel::_2, GPIO_B7, UARTPin::RX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
 			};
+		#else
+			#error Plataforma no soportada
 		#endif
 	#endif
 
@@ -880,6 +981,7 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_3> {
 			static constexpr uint32_t addr = USART3_BASE;
 			static constexpr INTVector vector = INTVector::uart3;
+			static constexpr bool supportedRxTimeout = true;
 		};
 	#endif
 
@@ -888,6 +990,7 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_4> {
 			static constexpr uint32_t addr = UART4_BASE;
 			static constexpr INTVector vector = INTVector::uart4;
+			static constexpr bool supportedRxTimeout = true;
 		};
 	#endif
 
@@ -896,6 +999,7 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_5> {
 			static constexpr uint32_t addr = UART5_BASE;
 			static constexpr INTVector vector = INTVector::uart5;
+			static constexpr bool supportedRxTimeout = true;
 		};
 	#endif
 
@@ -904,6 +1008,7 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_6> {
 			static constexpr uint32_t addr = USART6_BASE;
 			static constexpr INTVector vector = INTVector::uart6;
+			static constexpr bool supportedRxTimeout = true;
 		};
 
 		template <>
@@ -922,6 +1027,7 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_7> {
 			static constexpr uint32_t addr = UART7_BASE;
 			static constexpr INTVector vector = INTVector::uart7;
+			static constexpr bool supportedRxTimeout = true;
 		};
 	#endif
 
@@ -930,6 +1036,7 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_8> {
 			static constexpr uint32_t addr = UART8_BASE;
 			static constexpr INTVector vector = INTVector::uart8;
+			static constexpr bool supportedRxTimeout = true;
 		};
 	#endif
 

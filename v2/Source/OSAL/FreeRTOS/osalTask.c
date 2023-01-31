@@ -79,3 +79,12 @@ void osalTaskYield(void) {
 
 	taskYIELD();
 }
+
+/// ----------------------------------------------------------------------
+/// \brief    Retorna la marca de nivell de la pila.
+/// \return   El resultat.
+///
+unsigned osalTaskGetStackHighWaterMark(void) {
+
+	return uxTaskGetStackHighWaterMark(NULL);
+}

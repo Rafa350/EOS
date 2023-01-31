@@ -4,7 +4,7 @@
 
 #include "FreeRTOS.h"
 
-#define SAFE_MODE
+#define xSAFE_MODE
 
 
 static HHeap defaultHeap = NULL;
@@ -116,13 +116,10 @@ void osalHeapGetInfo(
 
 	eosAssert(info != NULL);
 
-	/*HeapStats_t heapStats;
-	vPortGetHeapStats(&heapStats);
-
 	info->start = 0;
 	info->length = configTOTAL_HEAP_SIZE;
-	info->allocated = 0;
-	info->available = 0;*/
+	info->available = xPortGetFreeHeapSize();
+	info->allocated = info->length - info->available;
 }
 
 

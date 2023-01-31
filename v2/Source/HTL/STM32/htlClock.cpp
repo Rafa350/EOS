@@ -49,6 +49,269 @@ void Clock::setPClkPrescaler(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Selecciona el rellotge SysClk
+/// \param    source: L'origen.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool Clock::sysClkSource(
+	SysClkSource source) {
+
+	uint32_t tmp = RCC->CFGR;
+
+	tmp &= ~RCC_CFGR_SW_Msk;
+	switch (source) {
+		case SysClkSource::hse:
+			tmp |= RCC_CFGR_SW_HSE;
+			break;
+
+		case SysClkSource::hsi:
+			tmp |= RCC_CFGR_SW_HSI;
+			break;
+
+		case SysClkSource::pll:
+			tmp |= RCC_CFGR_SW_PLL;
+			break;
+	}
+
+	RCC->CFGR = tmp;
+	while (((RCC->CFGR & RCC_CFGR_SWS_Msk) >> 2) != (RCC->CFGR & RCC_CFGR_SW_Msk))
+		continue;
+
+	return true;
+}
+
+
+void Clock::HClkPrescaler(
+	HClkPrescaler value) {
+
+	uint32_t tmp = RCC->CFGR;
+
+	tmp &= ~RCC_CFGR_HPRE_Msk;
+	switch (value) {
+
+	}
+
+	RCC->CFGR = tmp;
+}
+
+
+void Clock::PClkPrescaler(
+	PClkPrescaler value) {
+
+	uint32_t tmp = RCC->CFGR;
+
+	tmp &= ~RCC_CFGR_PPRE_Msk;
+	switch (value) {
+
+	}
+
+	RCC->CFGR = tmp;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Activa el PLL
+///
+void Clock::pllEnable() {
+
+	RCC->CR |= RCC_CR_PLLON;
+	while ((RCC->CR & RCC_CR_PLLRDY) == 0)
+		continue;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el PLL
+///
+void Clock::pllDisable() {
+
+	RCC->CR &= ~RCC_CR_PLLON;
+	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
+		continue;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el rellotge d'entrada del PLL.
+/// \param    value: El valor.
+///
+void Clock::pllSource(
+	PllSource value) {
+
+	uint32_t tmp = RCC->CFGR;
+
+	tmp &= ~RCC_CFGR_PLLSRC_Msk;
+	switch (value) {
+		case PllSource::hsi:
+			tmp |= RCC_CFGR_PLLSRC_HSI_DIV2;
+			break;
+
+		case PllSource::hse:
+			tmp |= RCC_CFGR_PLLSRC_HSE_PREDIV;
+			break;
+	}
+
+	RCC->CFGR = tmp;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el valor del divisor de la entrada HSE del PLL.
+/// \param    value: El valor.
+///
+void Clock::pllHseDivider(
+	PllHseDivider value) {
+
+	uint_32_t tmp = RCC->CFGR2;
+
+	tmp &= ~RCC_CFGR2_PREDIV_Msk;
+	switch (value) {
+		case PllHseDivider::_1:
+			tmp |= RCC_CFGR2_PREDIV_DIV1;
+			break;
+
+		case PllHseDivider::_2:
+			tmp |= RCC_CFGR2_PREDIV_DIV2;
+			break;
+
+		case PllHseDivider::_3:
+			tmp |= RCC_CFGR2_PREDIV_DIV3;
+			break;
+
+		case PllHseDivider::_4:
+			tmp |= RCC_CFGR2_PREDIV_DIV4;
+			break;
+
+		case PllHseDivider::_5:
+			tmp |= RCC_CFGR2_PREDIV_DIV5;
+			break;
+
+		case PllHseDivider::_6:
+			tmp |= RCC_CFGR2_PREDIV_DIV6;
+			break;
+
+		case PllHseDivider::_7:
+			tmp |= RCC_CFGR2_PREDIV_DIV7;
+			break;
+
+		case PllHseDivider::_8:
+			tmp |= RCC_CFGR2_PREDIV_DIV8;
+			break;
+
+		case PllHseDivider::_9:
+			tmp |= RCC_CFGR2_PREDIV_DIV9;
+			break;
+
+		case PllHseDivider::_10:
+			tmp |= RCC_CFGR2_PREDIV_DIV10;
+			break;
+
+		case PllHseDivider::_11:
+			tmp |= RCC_CFGR2_PREDIV_DIV11;
+			break;
+
+		case PllHseDivider::_12:
+			tmp |= RCC_CFGR2_PREDIV_DIV12;
+			break;
+
+		case PllHseDivider::_13:
+			tmp |= RCC_CFGR2_PREDIV_DIV13;
+			break;
+
+		case PllHseDivider::_14:
+			tmp |= RCC_CFGR2_PREDIV_DIV14;
+			break;
+
+		case PllHseDivider::_15:
+			tmp |= RCC_CFGR2_PREDIV_DIV15;
+			break;
+
+		case PllHseDivider::_16:
+			tmp |= RCC_CFGR2_PREDIV_DIV16;
+			break;
+
+	}
+
+	RCC->CFGR2 = tmp;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el valor del multiplicador del PLL.
+/// \param    value: El valor.
+///
+void Clock::pllMultiplier(
+	PllMultiplier value) {
+
+	uint32_t tmp = RCC->CFGR;
+
+	tmp &= ~RCC_CFGR_PLLMUL_Msk;
+	switch (value) {
+		case PllMultiplier::_2:
+			tmp |= RCC_CFGR_PLLMUL2;
+			break;
+
+		case PllMultiplier::_3:
+			tmp |= RCC_CFGR_PLLMUL3;
+			break;
+
+		case PllMultiplier::_4:
+			tmp |= RCC_CFGR_PLLMUL4;
+			break;
+
+		case PllMultiplier::_5:
+			tmp |= RCC_CFGR_PLLMUL5;
+			break;
+
+		case PllMultiplier::_6:
+			tmp |= RCC_CFGR_PLLMUL6;
+			break;
+
+		case PllMultiplier::_7:
+			tmp |= RCC_CFGR_PLLMUL7;
+			break;
+
+		case PllMultiplier::_8:
+			tmp |= RCC_CFGR_PLLMUL8;
+			break;
+
+		case PllMultiplier::_9:
+			tmp |= RCC_CFGR_PLLMUL9;
+			break;
+
+		case PllMultiplier::_10:
+			tmp |= RCC_CFGR_PLLMUL10;
+			break;
+
+		case PllMultiplier::_11:
+			tmp |= RCC_CFGR_PLLMUL11;
+			break;
+
+		case PllMultiplier::_12:
+			tmp |= RCC_CFGR_PLLMUL12;
+			break;
+
+		case PllMultiplier::_13:
+			tmp |= RCC_CFGR_PLLMUL13;
+			break;
+
+		case PllMultiplier::_14:
+			tmp |= RCC_CFGR_PLLMUL14;
+			break;
+
+		case PllMultiplier::_15:
+			tmp |= RCC_CFGR_PLLMUL15;
+			break;
+
+		case PllMultiplier::_16:
+			tmp |= RCC_CFGR_PLLMUL16;
+			break;
+	}
+
+	RCC->CFGR = tmp;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Asigna l'origen del rellotge del PLL.
 /// \param    vaslue: El vaslor.
 ///
@@ -255,58 +518,62 @@ bool Clock::update() {
 unsigned Clock::getClockFrequency(
 	ClockId clockId) {
 
-	static const uint32_t hclkPrescalerFactor[] = { 1, 2, 4, 8, 16, 64, 128, 256, 512 };
-	static const uint32_t pclkPrescalerFactor[] = { 1, 2, 4, 8, 16 };
-	static const uint32_t pllMultiplierFactor[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-	static const uint32_t pllHseDividerFactor[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+	static const uint8_t pclkPrescalerTbl[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
+	static const uint8_t hclkPrescalerTbl[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
+	static const uint8_t pllMultiplierTbl[16] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+	static const uint8_t pllHseDividerTbl[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
 	unsigned fclk = 0;
 
-	if (_updated)
-		switch (clockId) {
-			case ClockId::sysclk:
-				switch (_sysClkSource) {
-					case SysClkSource::hse:
-						fclk = CLOCK_HSE_FREQUENCY;
-						break;
+	switch (clockId) {
+		case ClockId::sysclk:
+			switch (RCC->CFGR & RCC_CFGR_SWS_Msk) {
+				case RCC_CFGR_SWS_HSE:
+					fclk = CLOCK_HSE_FREQUENCY;
+					break;
 
-					case SysClkSource::hsi:
-						fclk = CLOCK_HSI_FREQUENCY;
-						break;
+				case RCC_CFGR_SWS_HSI:
+					fclk = CLOCK_HSI_FREQUENCY;
+					break;
 
-					case SysClkSource::pll:
-						fclk = (_pllSource == PllSource::hsi ?
-							CLOCK_HSI_FREQUENCY / 2 :
-							CLOCK_HSE_FREQUENCY / pllHseDividerFactor[(uint32_t) _pllHseDivider]) *
-								pllMultiplierFactor[(uint32_t) _pllMultiplier];
-						break;
-				}
-				break;
+				case RCC_CFGR_SWS_PLL:
+					if ((RCC->CFGR & RCC_CFGR_PLLSRC_Msk) == RCC_CFGR_PLLSRC_HSI_DIV2)
+						fclk = CLOCK_HSI_FREQUENCY / 2;
+					else
+						fclk = CLOCK_HSE_FREQUENCY / pllHseDividerTbl[(RCC->CFGR2 & RCC_CFGR2_PREDIV_Msk) >> RCC_CFGR2_PREDIV_Pos];
+					fclk *= pllMultiplierTbl[(RCC->CFGR & RCC_CFGR_PLLMUL_Msk) >> RCC_CFGR_PLLMUL_Pos];
+					break;
+			}
+			break;
 
-			case ClockId::pclk:
-				fclk = getClockFrequency(ClockId::hclk) / pclkPrescalerFactor[(uint32_t) _pclkPrescaler];
-				break;
+		case ClockId::pclk:
+			fclk = getClockFrequency(ClockId::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
+			break;
 
-			case ClockId::hclk:
-				fclk = getClockFrequency(ClockId::sysclk) / hclkPrescalerFactor[(uint32_t) _hclkPrescaler];
-				break;
+		case ClockId::hclk:
+			fclk = getClockFrequency(ClockId::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
+			break;
 
-			case ClockId::hse:
-				fclk = CLOCK_HSE_FREQUENCY;
-				break;
+		case ClockId::hse:
+			fclk = CLOCK_HSE_FREQUENCY;
+			break;
 
-			case ClockId::hsi:
-				fclk = CLOCK_HSI_FREQUENCY;
-				break;
+		case ClockId::hsi:
+			fclk = CLOCK_HSI_FREQUENCY;
+			break;
 
-			case ClockId::lse:
-				fclk = CLOCK_LSE_FREQUENCY;
-				break;
+		case ClockId::hsi14:
+			fclk = CLOCK_HSI14_FREQUENCY;
+			break;
 
-			case ClockId::lsi:
-				fclk = CLOCK_LSI_FREQUENCY;
-				break;
-		}
+		case ClockId::lse:
+			fclk = CLOCK_LSE_FREQUENCY;
+			break;
+
+		case ClockId::lsi:
+			fclk = CLOCK_LSI_FREQUENCY;
+			break;
+	}
 
 	return fclk;
 }

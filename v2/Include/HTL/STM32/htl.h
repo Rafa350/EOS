@@ -172,11 +172,12 @@
 // Frequencia dels osciladors interns
 //
 #if defined(EOS_PLATFORM_STM32F0)
-	#define CLOCK_HSI_FREQUENCY 8000000
-	#define CLOCK_LSI_FREQUENCY 40000
+	#define CLOCK_HSI_FREQUENCY        8000000
+	#define CLOCK_HSI14_FREQUENCY     14000000
+	#define CLOCK_LSI_FREQUENCY          40000
 #elif defined(EOS_PLATFORM_STM32F4)
-	#define CLOCK_HSI_FREQUENCY 16000000
-	#define CLOCK_LSI_FREQUENCY 32000
+	#define CLOCK_HSI_FREQUENCY       16000000
+	#define CLOCK_LSI_FREQUENCY          32000
 #else
 	#error Plataforma no soportada
 #endif

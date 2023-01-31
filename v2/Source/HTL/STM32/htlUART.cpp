@@ -1,7 +1,6 @@
 #include "HTL/htl.h"
 #include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlUART.h"
-#include "stm32f0xx_hal.h"
 
 
 using namespace htl;
@@ -30,7 +29,7 @@ static UARTClockSource getClockSource(
 		#ifdef HTL_UART2_EXIST
 			case USART2_BASE:
 				#if defined(EOS_PLATFORM_STM32F0)
-					sclk = 0;
+					sclk = 0; //(RCC->CFGR3 & RCC_CFGR3_USART2SW) >> RCC_CFGR3_USART2SW_Pos;
 				#else
 					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
 				#endif
@@ -213,7 +212,7 @@ void UARTBase_x::setTimming(
 	USART_TypeDef *regs,
 	UARTBaudMode baudMode,
 	UARTClockSource clockSource,
-	unsigned rate,
+	uint32_t rate,
 	UARTOverSampling overSampling) {
 
 	switch (baudMode) {

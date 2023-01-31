@@ -20,6 +20,9 @@ namespace eos {
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
     class DigInputService final: public Service {
+    	public:
+    		static constexpr uint32_t minStackSize = 100;
+
         private:
             typedef SingleLinkedList<DigInput*> DigInputList;
             typedef DigInputList::Iterator DigInputIterator;

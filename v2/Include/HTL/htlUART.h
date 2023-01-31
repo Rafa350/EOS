@@ -40,6 +40,7 @@ namespace htl {
 			virtual void setInterruptFunction(UARTInterruptFunction function, UARTInterruptParam param) const = 0;
 			virtual void enableInterrupt(UARTInterrupt interrupt) const = 0;
 			virtual bool disableInterrupt(UARTInterrupt interrupt) const = 0;
+			virtual bool isInterruptEnabled(UARTInterrupt interrupt) const = 0;
 			virtual bool getFlag(UARTFlag flag) const = 0;
 			virtual void clearFlag(UARTFlag flag) const = 0;
 	};
@@ -96,6 +97,10 @@ namespace htl {
 
 			bool disableInterrupt(UARTInterrupt interrupt) const override {
 				return uart_::disableInterrupt(interrupt);
+			}
+
+			bool isInterruptEnabled(UARTInterrupt interrupt) const override {
+				return uart_::isInterruptEnabled(interrupt);
 			}
 
 			bool getFlag(UARTFlag flag) const override {

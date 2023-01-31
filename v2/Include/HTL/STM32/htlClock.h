@@ -14,6 +14,7 @@ namespace htl {
 		hclk,
 		hse,
 		hsi,
+		hsi14,
 		lse,
 		lsi
 	};
@@ -97,9 +98,21 @@ namespace htl {
 			static PllHseDivider _pllHseDivider;
 
 		public:
-			static void setPllSource(PllSource value);
-			static void setPllMultiplier(PllMultiplier value);
-			static void setPllHseDivider(PllHseDivider value);
+			static void hsiEnable();
+			static void hsiDisable();
+
+			static void hseEnable();
+			static void hseDisable();
+
+			static void pllEnable();
+			static void pllDisable();
+			static void pllSource(PllSource value);
+			static void pllMultiplier(PllMultiplier value);
+			static void pllHseDivider(PllHseDivider value);
+
+			static bool SysClkSource(SysClkSource source);
+			static void HClkPrescaler(HClkPrescaler value);
+			static void PClkPrescaler(PClkPrescaler value);
 
 			static void setSysClkSource(SysClkSource value);
 			static void setHClkPrescaler(HClkPrescaler value);

@@ -56,10 +56,13 @@ namespace eos {
             typedef SingleLinkedList<DigOutput*> DigOutputList;
             typedef DigOutputList::Iterator DigOutputIterator;
 
-        private:
-            const unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
-            const unsigned _minDelay = DigOutputService_MinDelay;
-            const unsigned _minWidth = DigOutputService_MinWidth;
+    	public:
+    		static constexpr uint32_t minStackSize = 128;
+
+    	private:
+            static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
+            static constexpr unsigned _minDelay = DigOutputService_MinDelay;
+            static constexpr unsigned _minWidth = DigOutputService_MinWidth;
             CommandQueue _commandQueue;
             DigOutputList _outputs;
 

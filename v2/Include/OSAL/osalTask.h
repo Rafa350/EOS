@@ -43,6 +43,7 @@ void osalTaskSuspend(HTask hTask);
 void osalTaskResume(HTask hTask);
 void osalTaskSetPriority(HTask hTask, uint8_t priority);
 void osalTaskYield(void);
+unsigned osalTaskGetStackHighWaterMark(void);
 
 
 #ifdef	__cplusplus
