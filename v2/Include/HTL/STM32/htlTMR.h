@@ -95,7 +95,7 @@ namespace htl {
 		private:
 			using Trait = TMRTrait<timer_>;
 			static constexpr uint32_t _addr = Trait::addr;
-			static constexpr bool _suportsClockDivider = Trait::suportsClockDivider;
+			static constexpr bool _supportedClockDivider = Trait::supportedClockDivider;
 
 		private:
 			static TMRInterruptFunction _isrFunction;
@@ -281,7 +281,7 @@ namespace htl {
 			static constexpr void setClockDivider(
 				TMRClockDivider clockDivider) {
 
-				if constexpr (_suportsClockDivider) {
+				if constexpr (_supportedClockDivider) {
 					TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 
 					uint32_t temp = regs->CR1;
@@ -463,7 +463,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_1> {
 		static constexpr uint32_t addr = TIM1_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -471,7 +471,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_2> {
 		static constexpr uint32_t addr = TIM2_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -479,7 +479,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_3> {
 		static constexpr uint32_t addr = TIM3_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supporteClockDivider = true;
 	};
 #endif
 
@@ -487,7 +487,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_4> {
 		static constexpr uint32_t addr = TIM4_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -495,7 +495,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_5> {
 		static constexpr uint32_t addr = TIM5_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -503,7 +503,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_6> {
 		static constexpr uint32_t addr = TIM6_BASE;
-		static constexpr bool suportsClockDivider = false;
+		static constexpr bool supportedClockDivider = false;
 	};
 #endif
 
@@ -511,7 +511,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_7> {
 		static constexpr uint32_t addr = TIM7_BASE;
-		static constexpr bool suportsClockDivider = false;
+		static constexpr bool supportedClockDivider = false;
 	};
 #endif
 
@@ -519,7 +519,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_8> {
 		static constexpr uint32_t addr = TIM8_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -527,7 +527,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_9> {
 		static constexpr uint32_t addr = TIM9_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -535,7 +535,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_10> {
 		static constexpr uint32_t addr = TIM10_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -543,7 +543,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_11> {
 		static constexpr uint32_t addr = TIM11_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -551,7 +551,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_12> {
 		static constexpr uint32_t addr = TIM12_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -559,7 +559,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_13> {
 		static constexpr uint32_t addr = TIM13_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -567,7 +567,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_14> {
 		static constexpr uint32_t addr = TIM14_BASE;
-		static constexpr bool suportsClockDivider = true;
+		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
