@@ -88,39 +88,25 @@ namespace htl {
 	};
 
 	class Clock {
-		private:
-			static bool _updated;
-			static SysClkSource _sysClkSource;
-			static PClkPrescaler _pclkPrescaler;
-			static HClkPrescaler _hclkPrescaler;
-			static PllSource _pllSource;
-			static PllMultiplier _pllMultiplier;
-			static PllHseDivider _pllHseDivider;
-
 		public:
 			static void hsiEnable();
 			static void hsiDisable();
+            static bool isHsiEnabled();
 
 			static void hseEnable();
 			static void hseDisable();
+            static bool isHseEnabled();
 
 			static void pllEnable();
 			static void pllDisable();
-			static void pllSource(PllSource value);
-			static void pllMultiplier(PllMultiplier value);
-			static void pllHseDivider(PllHseDivider value);
+            static bool isPllEnabled();
+			static bool setPllSource(PllSource value);
+			static void setPllMultiplier(PllMultiplier value);
+			static void setPllHseDivider(PllHseDivider value);
 
-			static bool SysClkSource(SysClkSource source);
-			static void HClkPrescaler(HClkPrescaler value);
-			static void PClkPrescaler(PClkPrescaler value);
-
-			static void setSysClkSource(SysClkSource value);
+			static bool setSysClkSource(SysClkSource source);
 			static void setHClkPrescaler(HClkPrescaler value);
 			static void setPClkPrescaler(PClkPrescaler value);
-
-			static void reset();
-			static bool update();
-			static bool isUpdated() { return _updated; }
 
 			static unsigned getClockFrequency(ClockId clockId);
 	};
