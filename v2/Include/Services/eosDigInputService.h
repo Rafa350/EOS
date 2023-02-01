@@ -30,6 +30,9 @@ namespace eos {
         private:
             Semaphore _changes;
             DigInputList _inputs;
+            
+        private:
+            bool scanInputs();
 
         protected:
             void onInitialize() override;
