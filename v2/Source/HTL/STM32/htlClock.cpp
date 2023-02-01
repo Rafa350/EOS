@@ -56,39 +56,39 @@ void Clock::setHClkPrescaler(
 	tmp &= ~RCC_CFGR_HPRE_Msk;
 	switch (value) {
         case HClkPrescaler::_1:
-            tmp |= RCC_CFGR_HPRE_1;
+            tmp |= RCC_CFGR_HPRE_DIV1;
             break;
             
         case HClkPrescaler::_2:
-            tmp |= RCC_CFGR_HPRE_2;
+            tmp |= RCC_CFGR_HPRE_DIV2;
             break;
             
         case HClkPrescaler::_4:
-            tmp |= RCC_CFGR_HPRE_4;
+            tmp |= RCC_CFGR_HPRE_DIV4;
             break;
             
         case HClkPrescaler::_8:
-            tmp |= RCC_CFGR_HPRE_8;
+            tmp |= RCC_CFGR_HPRE_DIV8;
             break;
             
         case HClkPrescaler::_16:
-            tmp |= RCC_CFGR_HPRE_16;
+            tmp |= RCC_CFGR_HPRE_DIV16;
             break;
             
         case HClkPrescaler::_64:
-            tmp |= RCC_CFGR_HPRE_64;
+            tmp |= RCC_CFGR_HPRE_DIV64;
             break;
             
         case HClkPrescaler::_128:
-            tmp |= RCC_CFGR_HPRE_128;
+            tmp |= RCC_CFGR_HPRE_DIV128;
             break;
             
         case HClkPrescaler::_256:
-            tmp |= RCC_CFGR_HPRE_256;
+            tmp |= RCC_CFGR_HPRE_DIV256;
             break;
             
         case HClkPrescaler::_512:
-            tmp |= RCC_CFGR_HPRE_512;
+            tmp |= RCC_CFGR_HPRE_DIV512;
             break;
 	}
 
@@ -108,23 +108,23 @@ void Clock::setPClkPrescaler(
 	tmp &= ~RCC_CFGR_PPRE_Msk;
 	switch (value) {
         case PClkPrescaler::_1:
-            tmp |= RCC_CFGR_PPRE_1;
+            tmp |= RCC_CFGR_PPRE_DIV1;
             break;
 
         case PClkPrescaler::_2:
-            tmp |= RCC_CFGR_PPRE_2;
+            tmp |= RCC_CFGR_PPRE_DIV2;
             break;
 
         case PClkPrescaler::_4:
-            tmp |= RCC_CFGR_PPRE_4;
+            tmp |= RCC_CFGR_PPRE_DIV4;
             break;
 
         case PClkPrescaler::_8:
-            tmp |= RCC_CFGR_PPRE_8;
+            tmp |= RCC_CFGR_PPRE_DIV8;
             break;
 
         case PClkPrescaler::_16:
-            tmp |= RCC_CFGR_PPRE_16;
+            tmp |= RCC_CFGR_PPRE_DIV16;
             break;
 	}
 
@@ -135,7 +135,7 @@ void Clock::setPClkPrescaler(
 /// ----------------------------------------------------------------------
 /// \brief    Activa el rellotge HSI
 ///
-void Clock::HsiEnable() {
+void Clock::hsiEnable() {
     
 }
 
@@ -143,7 +143,7 @@ void Clock::HsiEnable() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el rellotge HSI
 ///
-void Clock::HsiDisable() {
+void Clock::hsiDisable() {
     
 }
 
@@ -154,12 +154,12 @@ bool Clock::isHsiEnabled() {
 }
 
 
-void Clock::HseEnable() {
+void Clock::hseEnable() {
     
 }
 
 
-void Clock::HseDisable() {
+void Clock::hseDisable() {
     
 }
 
@@ -198,7 +198,7 @@ void Clock::pllDisable() {
 ///
 bool Clock::isPllEnabled() {
    
-    return ((RCC->CR & RCC_CR_PLLON) != 0) && ((RCC->CR & RCC_CR_PLLRDY) != 0))   
+    return ((RCC->CR & RCC_CR_PLLON) != 0) && ((RCC->CR & RCC_CR_PLLRDY) != 0);
 }
 
 
@@ -215,7 +215,7 @@ bool Clock::setPllSource(
 	tmp &= ~RCC_CFGR_PLLSRC_Msk;
 	switch (value) {
 		case PllSource::hsi:
-            if (!IsHseEnabled())
+            if (!isHseEnabled())
                 return false;
 			tmp |= RCC_CFGR_PLLSRC_HSI_DIV2;
 			break;
@@ -240,7 +240,7 @@ bool Clock::setPllSource(
 void Clock::setPllHseDivider(
 	PllHseDivider value) {
 
-	uint_32_t tmp = RCC->CFGR2;
+	uint32_t tmp = RCC->CFGR2;
 
 	tmp &= ~RCC_CFGR2_PREDIV_Msk;
 	switch (value) {
@@ -387,155 +387,6 @@ void Clock::setPllMultiplier(
 	}
 
 	RCC->CFGR = tmp;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Actualitza el rellotge amb els nous parametres.
-/// \return   True si tot es correcte, false en cas contrari.
-///
-bool Clock::update() {
-
-	static const uint32_t pllSource[] = {
-		RCC_CFGR_PLLSRC_HSI_DIV2,
-		RCC_CFGR_PLLSRC_HSE_PREDIV
-	};
-
-	static const uint32_t pllMultiplier[] = {
-		RCC_CFGR_PLLMUL2,
-		RCC_CFGR_PLLMUL3,
-		RCC_CFGR_PLLMUL4,
-		RCC_CFGR_PLLMUL5,
-		RCC_CFGR_PLLMUL6,
-		RCC_CFGR_PLLMUL7,
-		RCC_CFGR_PLLMUL8,
-		RCC_CFGR_PLLMUL9,
-		RCC_CFGR_PLLMUL10,
-		RCC_CFGR_PLLMUL11,
-		RCC_CFGR_PLLMUL12,
-		RCC_CFGR_PLLMUL13,
-		RCC_CFGR_PLLMUL14,
-		RCC_CFGR_PLLMUL15,
-		RCC_CFGR_PLLMUL16
-	};
-
-	static const uint32_t pllHseDivider[] = {
-		RCC_CFGR2_PREDIV_DIV1,
-		RCC_CFGR2_PREDIV_DIV2,
-		RCC_CFGR2_PREDIV_DIV3,
-		RCC_CFGR2_PREDIV_DIV4,
-		RCC_CFGR2_PREDIV_DIV5,
-		RCC_CFGR2_PREDIV_DIV6,
-		RCC_CFGR2_PREDIV_DIV7,
-		RCC_CFGR2_PREDIV_DIV8,
-		RCC_CFGR2_PREDIV_DIV9,
-		RCC_CFGR2_PREDIV_DIV10,
-		RCC_CFGR2_PREDIV_DIV11,
-		RCC_CFGR2_PREDIV_DIV12,
-		RCC_CFGR2_PREDIV_DIV13,
-		RCC_CFGR2_PREDIV_DIV14,
-		RCC_CFGR2_PREDIV_DIV15,
-		RCC_CFGR2_PREDIV_DIV16
-	};
-
-	static const uint32_t hclkPrescaler[] = {
-		RCC_CFGR_HPRE_DIV1,
-		RCC_CFGR_HPRE_DIV2,
-		RCC_CFGR_HPRE_DIV4,
-		RCC_CFGR_HPRE_DIV8,
-		RCC_CFGR_HPRE_DIV16,
-		RCC_CFGR_HPRE_DIV64,
-		RCC_CFGR_HPRE_DIV128,
-		RCC_CFGR_HPRE_DIV256,
-		RCC_CFGR_HPRE_DIV512
-	};
-
-	static const uint32_t pclkPrescaler[] = {
-		RCC_CFGR_PPRE_DIV1,
-		RCC_CFGR_PPRE_DIV2,
-		RCC_CFGR_PPRE_DIV4,
-		RCC_CFGR_PPRE_DIV8,
-		RCC_CFGR_PPRE_DIV16
-	};
-
-	if (!_updated) {
-
-		uint32_t tmp;
-
-		// Desactiva el PLL
-		//
-		RCC->CR &= ~RCC_CR_PLLON;
-		while ((RCC->CR & RCC_CR_PLLRDY) != 0)
-			continue;
-
-		// Configura el PLL si cal
-		//
-		if (_sysClkSource == SysClkSource::pll) {
-
-			// Configura el PLL
-			//
-			tmp = RCC->CFGR;
-			tmp &= ~RCC_CFGR_PLLMUL_Msk;
-			tmp |= pllMultiplier[(uint8_t)_pllMultiplier];
-			tmp &= ~RCC_CFGR_PLLSRC_Msk;
-			tmp |= pllSource[(uint8_t) _pllSource];
-			RCC->CFGR = tmp;
-
-			// Selecciona el divisor HSE del PLL
-			//
-			if (_pllSource == PllSource::hse) {
-				tmp = RCC->CFGR2;
-				tmp &= ~RCC_CFGR2_PREDIV_Msk;
-				tmp |= pllHseDivider[(uint32_t) _pllHseDivider];
-				RCC->CFGR2 = tmp;
-			}
-
-			// Activa el PLL
-			//
-			RCC->CR |= RCC_CR_PLLON;
-			while ((RCC->CR & RCC_CR_PLLRDY) == 0)
-				continue;
-		}
-
-		// Selecciona el rellotge del sistema
-		//
-		tmp = RCC->CFGR;
-		tmp &= ~RCC_CFGR_SW_Msk;
-		switch (_sysClkSource) {
-			case SysClkSource::hse:
-				tmp |= RCC_CFGR_SW_HSE;
-				break;
-
-			case SysClkSource::hsi:
-				tmp |= RCC_CFGR_SW_HSI;
-				break;
-
-			case SysClkSource::pll:
-				tmp |= RCC_CFGR_SW_PLL;
-				break;
-		}
-		RCC->CFGR = tmp;
-
-		// Espera que es realitzi el canvi
-		//
-		while (((RCC->CFGR & RCC_CFGR_SWS_Msk) >> 2) != (RCC->CFGR & RCC_CFGR_SW_Msk))
-			continue;
-
-		// Selecciona el divisor del rellotge PCLK i del HCLK
-		//
-		tmp = RCC->CFGR;
-		tmp &= ~RCC_CFGR_HPRE_Msk;
-		tmp |= hclkPrescaler[(uint32_t) _hclkPrescaler];
-		tmp &= ~RCC_CFGR_PPRE_Msk;
-		tmp |= pclkPrescaler[(uint32_t) _pclkPrescaler];
-		RCC->CFGR = tmp;
-
-		_updated = true;
-
-		SystemCoreClockUpdate();
-	}
-
-	return _updated;
 }
 
 
