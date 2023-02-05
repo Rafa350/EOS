@@ -19,6 +19,12 @@ namespace htl {
 		lsi
 	};
 
+	enum class HseBypassMode {
+		on,
+		off,
+		unchanged
+	};
+
 	enum class PllSource {
 		hsi,
 		hse
@@ -93,7 +99,7 @@ namespace htl {
 			static void hsiDisable();
             static bool isHsiEnabled();
 
-			static void hseEnable();
+			static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
 			static void hseDisable();
             static bool isHseEnabled();
 

@@ -137,6 +137,9 @@ void Clock::setPClkPrescaler(
 ///
 void Clock::hsiEnable() {
     
+	RCC->CR |= RCC_CR_HSION;
+	while ((RCC->CR & RCC_CR_HSION) == 0)
+		continue;
 }
 
 
@@ -145,28 +148,65 @@ void Clock::hsiEnable() {
 ///
 void Clock::hsiDisable() {
     
+	RCC->CR &= ~RCC_CR_HSION;
+	while ((RCC->CR & RCC_CR_HSION) != 0)
+		continue;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el rellotge HSI es actiu.
+/// \return   True si esta actiu, false en cas contrari.
+///
 bool Clock::isHsiEnabled() {
     
-    return true;
+    return (RCC->CR & RCC_CR_HSION) != 0;
 }
 
 
-void Clock::hseEnable() {
+/// ----------------------------------------------------------------------
+/// \brief    Activa el rellotge HSE.
+/// \param    bypass: El modus del bypass
+///
+void Clock::hseEnable(
+	HseBypassMode bypass) {
     
+	switch (bypass) {
+		case HseBypassMode::on:
+			RCC->CR |= RCC_CR_HSEBYP;
+			break;
+
+		case HseBypassMode::off:
+			RCC->CR &= ~RCC_CR_HSEBYP;
+			break;
+
+		default:
+			break;
+	}
+	RCC->CR |= RCC_CR_HSEON;
+	while ((RCC->CR & RCC_CR_HSERDY) == 0)
+		continue;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief   Desactiva el rellotge HSE.
+///
 void Clock::hseDisable() {
     
+	RCC->CR &= ~RCC_CR_HSEON;
+	while ((RCC->CR & RCC_CR_HSERDY) != 0)
+		continue;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el rellotge HSE es actiu.
+/// \return   True si esta actiu, false en cas contrari.
+///
 bool Clock::isHseEnabled() {
     
-    return true;
+    return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
 
 

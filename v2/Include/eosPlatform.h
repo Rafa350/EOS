@@ -38,28 +38,36 @@
 
 	// Platform definitions
     #if defined(STM32F0)
-		#if defined(STM32F030F4) || \
-            defined(STM32F030x8)
-			#define EOS_PLATFORM_STM32F0
+		#define EOS_PLATFORM_STM32F0
+		#if defined(STM32F030F4)
+			#define EOS_PLATFORM_STM32F0030F4
+		#elif defined(STM32F030x8)
+			#define EOS_PLATFORM_STM32F0030x8
+		#elif defined(STM32F030xC)
+			#define EOS_PLATFORM_STM32F0030xC
 		#else
             #error  "Unknown processor STM32F0"
 		#endif
 	#elif defined(STM32F1)
+		#define EOS_PLATFORM_STM32F1
 		#if defined(STM32F103xx)
-			#define EOS_PLATFORM_STM32F1
+			#define EOS_PLATFORM_STM32F103xx
 		#else
             #error  "Unknown processor STM32F1"
 		#endif
 	#elif defined(STM32F4)
+		#define EOS_PLATFORM_STM32F4
 		#if defined(STM32F429)
-			#define EOS_PLATFORM_STM32F4
+			#define EOS_PLATFORM_STM32F429
 		#else
 			#error "Unknown processor STM32F4"
 		#endif
 	#elif defined(STM32F7)
-		#if defined(STM32F746xx) || \
-		    defined(STM32F769xx)
-			#define EOS_PLATFORM_STM32F7
+		#define EOS_PLATFORM_STM32F7
+		#if defined(STM32F746xx)
+			#define EOS_PLATFORM_STM32F746xx
+		#elif defined(STM32F769xx)
+			#define EOS_PLATFORM_STM32F769xx
 		#else
             #error  "Unknown processor STM32F7"
 		#endif

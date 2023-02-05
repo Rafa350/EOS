@@ -176,30 +176,11 @@ void DigInputService::onTick() {
 #endif
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'estat de l'entrada.
-/// \param    input: La entrada.
-/// \return   El estat.
+/// ---------------------------------------------------------------------
+/// \brief    Escaneja l'estat de les entrades.
+/// \return   True si s'han produit canvis en l'estat de les entrades.
 ///
-bool DigInputService::read(
-    const DigInput *input) const {
-
-    eosAssert(input != nullptr);
-    eosAssert(input->_service == this);
-
-    bool state = INT_1::disableInterrupts();
-    bool result = input->_value;
-    INT_1::restoreInterrupts(state);
-    return result;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio del temporitzador.
-/// \param    event: L'event que ha generat la interrupcio.
-/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
-///
-void DigInputService::tmrInterruptFunction() {
+bool DigInputService::scanInputs() {
 
     bool changed = false;
 
@@ -233,10 +214,41 @@ void DigInputService::tmrInterruptFunction() {
         }
     }
 
-    // Notifica a la tasca que hi han canvis pendents per procesar
-    //
-    if (changed)
+    return changed;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estat de l'entrada.
+/// \param    input: La entrada.
+/// \return   El estat.
+///
+bool DigInputService::read(
+    const DigInput *input) const {
+
+    eosAssert(input != nullptr);
+    eosAssert(input->_service == this);
+
+    bool state = INT_1::disableInterrupts();
+    bool result = input->_value;
+    INT_1::restoreInterrupts(state);
+    return result;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la interrupcio del temporitzador.
+/// \param    event: L'event que ha generat la interrupcio.
+/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
+///
+void DigInputService::tmrInterruptFunction() {
+
+	if (scanInputs()) {
+
+		// Notifica a la tasca que hi han canvis pendents per procesar
+		//
         _changes.releaseISR();
+	}
 }
 
 

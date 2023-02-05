@@ -36,6 +36,7 @@ namespace htl {
 			virtual void enableInterrupt(TMRInterrupt interrupt) const = 0;
 			virtual bool disableInterrupt(TMRInterrupt interrupt) const = 0;
 			virtual void disableInterrupts() const = 0;
+			virtual bool isInterruptEnabled(TMRInterrupt interrupt) const = 0;
 			virtual bool getFlag(TMRFlag flag) const = 0;
 			virtual void clearFlag(TMRFlag flag) const = 0;
 			virtual void clearFlags() const = 0;
@@ -72,12 +73,10 @@ namespace htl {
 			}
 
 			void enableInterrupt(TMRInterrupt interrupt) const override {
-
 				timer_::enableInterrupt(interrupt);
 			}
 
 			bool disableInterrupt(TMRInterrupt interrupt) const override {
-
 				return timer_::disableInterrupt(interrupt);
 			}
 
@@ -85,13 +84,15 @@ namespace htl {
 				//TODO:: timer_::disableInterrupts();
 			}
 
-			bool getFlag(TMRFlag flag) const override {
+			bool isInterruptEnabled(TMRInterrupt interrupt) const override {
+				return timer_::isInterruptEnabled(interrupt);
+			}
 
+			bool getFlag(TMRFlag flag) const override {
 				return timer_::getFlag(flag);
 			}
 
 			void clearFlag(TMRFlag flag) const override {
-
 				timer_::clearFlag(flag);
 			}
 

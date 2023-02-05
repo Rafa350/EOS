@@ -55,6 +55,12 @@ namespace htl {
 		#endif
 	};
 
+	enum class TMRType {
+		basic,
+		general,
+		advanced
+	};
+
 	enum class TMRDirection {
 		up,
 		down
@@ -72,9 +78,14 @@ namespace htl {
 	};
 
 	enum class TMRInterrupt {
+		brk,
 		update,
 		trigger,
-		com
+		com,
+		cc1,
+		cc2,
+		cc3,
+		cc4
 	};
 
 	enum class TMRFlag {
@@ -95,7 +106,6 @@ namespace htl {
 		private:
 			using Trait = TMRTrait<timer_>;
 			static constexpr uint32_t _addr = Trait::addr;
-			static constexpr bool _supportedClockDivider = Trait::supportedClockDivider;
 
 		private:
 			static TMRInterruptFunction _isrFunction;
@@ -278,10 +288,12 @@ namespace htl {
 				regs->PSC = prescaler;
 			}
 
+			/// \brief Selecciona el divisor del rellotje
+			///
 			static constexpr void setClockDivider(
 				TMRClockDivider clockDivider) {
 
-				if constexpr (_supportedClockDivider) {
+				if constexpr (Trait::type != TMRType::basic) {
 					TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
 
 					uint32_t temp = regs->CR1;
@@ -361,6 +373,29 @@ namespace htl {
 					case TMRInterrupt::com:
 						status = (regs->DIER & TIM_DIER_COMIE) != 0;
 						regs->DIER &= ~TIM_DIER_COMIE;
+						break;
+				}
+
+				return status;
+			}
+
+			static bool isInterruptEnabled(
+				TMRInterrupt interrupt) {
+
+				bool status = false;
+
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				switch (interrupt) {
+					case TMRInterrupt::update:
+						status = (regs->DIER & TIM_DIER_UIE) != 0;
+						break;
+
+					case TMRInterrupt::trigger:
+						status = (regs->DIER & TIM_DIER_TIE) != 0;
+						break;
+
+					case TMRInterrupt::com:
+						status = (regs->DIER & TIM_DIER_COMIE) != 0;
 						break;
 				}
 
@@ -463,7 +498,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_1> {
 		static constexpr uint32_t addr = TIM1_BASE;
-		static constexpr bool supportedClockDivider = true;
+		static constexpr TMRType type = TMRType::advanced;
 	};
 #endif
 
@@ -471,7 +506,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_2> {
 		static constexpr uint32_t addr = TIM2_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -479,7 +513,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_3> {
 		static constexpr uint32_t addr = TIM3_BASE;
-		static constexpr bool supporteClockDivider = true;
 	};
 #endif
 
@@ -487,7 +520,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_4> {
 		static constexpr uint32_t addr = TIM4_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -495,7 +527,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_5> {
 		static constexpr uint32_t addr = TIM5_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -503,7 +534,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_6> {
 		static constexpr uint32_t addr = TIM6_BASE;
-		static constexpr bool supportedClockDivider = false;
+		static constexpr TMRType type = TMRType::basic;
 	};
 #endif
 
@@ -511,7 +542,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_7> {
 		static constexpr uint32_t addr = TIM7_BASE;
-		static constexpr bool supportedClockDivider = false;
+		static constexpr TMRType type = TMRType::basic;
 	};
 #endif
 
@@ -519,7 +550,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_8> {
 		static constexpr uint32_t addr = TIM8_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -527,7 +557,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_9> {
 		static constexpr uint32_t addr = TIM9_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -535,7 +564,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_10> {
 		static constexpr uint32_t addr = TIM10_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -543,7 +571,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_11> {
 		static constexpr uint32_t addr = TIM11_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -551,7 +578,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_12> {
 		static constexpr uint32_t addr = TIM12_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -559,7 +585,6 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_13> {
 		static constexpr uint32_t addr = TIM13_BASE;
-		static constexpr bool supportedClockDivider = true;
 	};
 #endif
 
@@ -567,7 +592,7 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_14> {
 		static constexpr uint32_t addr = TIM14_BASE;
-		static constexpr bool supportedClockDivider = true;
+		static constexpr TMRType type = TMRType::general;
 	};
 #endif
 

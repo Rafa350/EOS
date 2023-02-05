@@ -16,8 +16,10 @@ HSemaphore osalSemaphoreCreate(
 
     if (maxCount == 0)
     	return (HSemaphore) xSemaphoreCreateBinary();
+#if configUSE_COUNTING_SEMAPHORES
     else
         return (HSemaphore) xSemaphoreCreateCounting(maxCount, 0);
+#endif
 }
 
 
