@@ -37,7 +37,9 @@
 	  defined(STM32)
 
 	// Platform definitions
-    #if defined(STM32F0)
+    #if defined(STM32G0)
+		#define EOS_PLATFORM_STM32G0
+    #elif defined(STM32F0)
 		#define EOS_PLATFORM_STM32F0
 		#if defined(STM32F030F4)
 			#define EOS_PLATFORM_STM32F0030F4
@@ -46,14 +48,14 @@
 		#elif defined(STM32F030xC)
 			#define EOS_PLATFORM_STM32F0030xC
 		#else
-            #error  "Unknown processor STM32F0"
+            #error "Unknown processor STM32F0"
 		#endif
 	#elif defined(STM32F1)
 		#define EOS_PLATFORM_STM32F1
 		#if defined(STM32F103xx)
 			#define EOS_PLATFORM_STM32F103xx
 		#else
-            #error  "Unknown processor STM32F1"
+            #error "Unknown processor STM32F1"
 		#endif
 	#elif defined(STM32F4)
 		#define EOS_PLATFORM_STM32F4
@@ -139,6 +141,12 @@ namespace eos {
 			constexpr bool is_STM32_Platform = true;
 		#else
 			constexpr bool is_STM32_Platform = false;
+		#endif
+
+		#ifdef EOS_PLATFORM_STM32FG0
+			constexpr bool is_STM32G0_Platform = true;
+		#else
+			constexpr bool is_STM32G0_Platform = false;
 		#endif
 
 		#ifdef EOS_PLATFORM_STM32F0
