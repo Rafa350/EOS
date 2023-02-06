@@ -17,7 +17,21 @@
 #include "HTL/htl.h"
 
 
-#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32G0)
+	#define HTL_GPIOA_CLK_ENABLE()     RCC->IOPENR |= RCC_IOPENR_GPIOAEN
+	#define HTL_GPIOB_CLK_ENABLE()     RCC->IOPENR |= RCC_IOPENR_GPIOBEN
+	#define HTL_GPIOC_CLK_ENABLE()     RCC->IOPENR |= RCC_IOPENR_GPIOCEN
+	#define HTL_GPIOD_CLK_ENABLE()     RCC->IOPENR |= RCC_IOPENR_GPIODEN
+	#define HTL_GPIOE_CLK_ENABLE()     RCC->IOPENR |= RCC_IOPENR_GPIOEEN
+	#define HTL_GPIOF_CLK_ENABLE()     RCC->IOPENR |= RCC_IOPENR_GPIOFEN
+	#define HTL_GPIOA_CLK_DISABLE()    RCC->IOPENR &= ~RCC_IOPENR_GPIOAEN
+	#define HTL_GPIOB_CLK_DISABLE()    RCC->IOPENR &= ~RCC_IOPENR_GPIOBEN
+	#define HTL_GPIOC_CLK_DISABLE()    RCC->IOPENR &= ~RCC_IOPENR_GPIOCEN
+	#define HTL_GPIOD_CLK_DISABLE()    RCC->IOPENR &= ~RCC_IOPENR_GPIODEN
+	#define HTL_GPIOE_CLK_DISABLE()    RCC->IOPENR &= ~RCC_IOPENR_GPIOEEN
+	#define HTL_GPIOF_CLK_DISABLE()    RCC->IOPENR &= ~RCC_IOPENR_GPIOFEN
+
+#elif defined(EOS_PLATFORM_STM32F0)
 	#define HTL_GPIOA_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOAEN
 	#define HTL_GPIOB_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOBEN
 	#define HTL_GPIOC_CLK_ENABLE()     RCC->AHBENR |= RCC_AHBENR_GPIOCEN
@@ -296,6 +310,7 @@ namespace htl {
 			static void initInput(GPIO_TypeDef *regs, uint32_t pn, GPIOPull pullMode);
 			static void initOutput(GPIO_TypeDef *regs, uint32_t pn, GPIODriver driver, GPIOSpeed speed);
 			static void initAlt(GPIO_TypeDef *regs, uint32_t pn, GPIODriver driver, GPIOSpeed speed, GPIOAlt alt);
+            static void initAnalogic(GPIO_TypeDef *regs, uint32_t pn);
     };
 
     /// \class GPIO_x
@@ -324,7 +339,7 @@ namespace htl {
             GPIO_x & operator = (const GPIO_x &&) = delete;
 
         public:
-            /// \brief Inicialkitza el pin com entrada.
+            /// \brief Inicialitza el pin com entrada.
             /// \param pull: Opcions de pull up/down
             ///
             static void initInput(
@@ -353,6 +368,11 @@ namespace htl {
                     speed);
             }
 
+             /// \brief Inicialitza el pin com a funcio alternativa.
+             /// \param driver: Opcions del driver.
+             /// \param speed: Opcions de velocitat.
+             /// \param alt: Funcio del pin.
+             ///
             static void initAlt(
             	GPIODriver driver,
 				GPIOSpeed speed,
@@ -365,6 +385,16 @@ namespace htl {
                     driver,
                     speed,
 					alt);
+            }
+            
+            /// \brief Inicialitza el pin com entrada/sortida analogica.
+            ///
+            static void initAnalogic() {
+
+            	Activator::activate(1 << _pn);
+            	GPIOBase_x::initAnalogic(
+                    reinterpret_cast<GPIO_TypeDef*>(_addr),
+                    _pn);
             }
 
             /// \brief Desinicialitza el pin.
