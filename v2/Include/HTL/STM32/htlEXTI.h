@@ -132,7 +132,7 @@ namespace htl {
 			}
 
 		public:
-			static void init(
+			static void initialize(
 				GPIOPort port,
 				EXTIMode mode,
 				EXTITrigger trigger) {
@@ -143,7 +143,7 @@ namespace htl {
 				setTrigger(trigger);
 			}
 
-			static void deInit() {
+			static void deinitialize() {
 
 				deactivate();
 			}
@@ -166,6 +166,11 @@ namespace htl {
 				bool state = (EXTI->IMR & (1 << uint32_t(line_))) != 0;
 				EXTI->IMR &= ~(1 << uint32_t(line_));
 				return state;
+			}
+
+			static bool isInterruptEnabled() {
+
+				return (EXTI->IMR & (1 << uint32_t(line_))) != 0;
 			}
 
             inline static bool getInterruptFlag() {

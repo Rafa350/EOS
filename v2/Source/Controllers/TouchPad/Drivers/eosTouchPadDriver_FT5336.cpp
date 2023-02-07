@@ -257,7 +257,7 @@ void TouchPadDriver_FT5336::initializeInterface() {
 	// Inicialitza el pin d'interrupcio
 	//
 	PinINT::initInput(GPIOPull::up);
-	ExtiINT::init(PinINT::port, EXTIMode::interrupt, EXTITrigger::rissing);
+	ExtiINT::initialize(PinINT::port, EXTIMode::interrupt, EXTITrigger::rissing);
 
 	INT_1::setInterruptVectorPriority(_vector, _priority, _subPriority);
 	INT_1::enableInterruptVector(_vector);

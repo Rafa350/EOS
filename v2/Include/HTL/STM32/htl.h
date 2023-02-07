@@ -178,6 +178,9 @@
 #elif defined(EOS_PLATFORM_STM32F4)
 	#define CLOCK_HSI_FREQUENCY       16000000
 	#define CLOCK_LSI_FREQUENCY          32000
+#elif defined(EOS_PLATFORM_STM32F7)
+	#define CLOCK_HSI_FREQUENCY       16000000
+	#define CLOCK_LSI_FREQUENCY          32000
 #else
 	#error Plataforma no soportada
 #endif

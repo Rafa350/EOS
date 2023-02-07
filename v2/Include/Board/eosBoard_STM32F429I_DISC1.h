@@ -115,10 +115,10 @@
 #define FONT_USE_Tahoma12pt
 #define FONT_USE_Tahoma14pt
 
-#define DISPLAY_IM0_GPIO    htl::GPIO_D2
-#define DISPLAY_IM1_GPIO    htl::GPIO_D4
-#define DISPLAY_IM2_GPIO    htl::GPIO_D5
-#define DISPLAY_IM3_GPIO    htl::GPIO_D7
+#define DISPLAY_IM0_GPIO     htl::GPIO_D2
+#define DISPLAY_IM1_GPIO     htl::GPIO_D4
+#define DISPLAY_IM2_GPIO     htl::GPIO_D5
+#define DISPLAY_IM3_GPIO     htl::GPIO_D7
 
 // SPI interface
 #if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
