@@ -891,17 +891,6 @@ namespace htl {
 			static constexpr INTVector vector = INTVector::uart1;
 			static constexpr bool supportedRxTimeout = true;
 		};
-
-		#if defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_8;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_8;
-			};
-		#endif
 	#endif
 
 	#ifdef HTL_UART2_EXIST
@@ -911,23 +900,12 @@ namespace htl {
 			static constexpr INTVector vector = INTVector::uart2;
 			#if defined(EOS_PLATFORM_STM32F0)
 				static constexpr bool supportedRxTimeout = false;
-			#elif defined(EOS_PLATFORM_STM32F4)
+			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr bool supportedRxTimeout = true;
 			#else
 				#error Plataforma no soportada
 			#endif
 		};
-
-		#if defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			template <>
-			struct UARTPinTrait<UARTChannel::_2, GPIO_A9, UARTPin::TX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_8;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_2, GPIO_B7, UARTPin::RX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_8;
-			};
-		#endif
 	#endif
 
 	#ifdef HTL_UART3_EXIST
@@ -964,16 +942,6 @@ namespace htl {
 			static constexpr INTVector vector = INTVector::uart6;
 			static constexpr bool supportedRxTimeout = true;
 		};
-
-		template <>
-		struct UARTPinTrait<UARTChannel::_6, GPIO_C6, UARTPin::TX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
-
-		template <>
-		struct UARTPinTrait<UARTChannel::_6, GPIO_C7, UARTPin::RX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
 	#endif
 
 	#ifdef HTL_UART7_EXIST
@@ -1001,6 +969,10 @@ namespace htl {
     #include "htl/STM32/htlUART_AF_G031J.h"
 #elif defined(EOS_PLATFORM_STM32F030R8)
     #include "htl/STM32/htlUART_AF_F030R.h"
+#elif defined(EOS_PLATFORM_STM32F4)
+    #include "htl/STM32/htlUART_AF_F4.h"
+#elif defined(EOS_PLATFORM_STM32F7)
+    #include "htl/STM32/htlUART_AF_F7.h"
 #else
     #error Plataforma no soportada
 #endif

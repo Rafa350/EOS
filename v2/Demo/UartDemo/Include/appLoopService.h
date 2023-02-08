@@ -47,7 +47,7 @@ namespace app {
 			void onLoop() override;
 
 		public:
-			MyAppLoopService(eos::Application *application);
+			MyAppLoopService();
 	};
 }
 

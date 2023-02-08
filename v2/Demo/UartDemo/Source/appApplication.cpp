@@ -2,6 +2,7 @@
 #include "appApplication.h"
 #include "appLoopService.h"
 #include "Services/eosMessengerService.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace app;
@@ -19,8 +20,11 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
-	_loopService = new MyAppLoopService(this);
-	_messengerService = new eos::MessengerService(this);
+	_loopService = new MyAppLoopService();
+	addService(_loopService, eos::Task::Priority::normal, 512, "LOOP");
+
+	_messengerService = new eos::MessengerService();
+	addService(_messengerService, eos::Task::Priority::normal, 512, "MESSENGER");
 
 	eos::MessageBus<int> *msgBus1 = new eos::MessageBus<int>(10);
 	_messengerService->addMessageBus(msgBus1);

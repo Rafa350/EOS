@@ -12,10 +12,7 @@ using namespace app;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-MyAppLoopService::MyAppLoopService(
-	Application *application):
-
-	AppLoopService(application),
+MyAppLoopService::MyAppLoopService():
 	_serial(nullptr),
 	_txCompletedCallback(*this, &MyAppLoopService::txCompletedEventHandler),
 	_rxCompletedCallback(*this, &MyAppLoopService::rxCompletedEventHandler) {

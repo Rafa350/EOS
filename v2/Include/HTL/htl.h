@@ -6,6 +6,10 @@
 #include "eos.h"
 
 
+namespace htl {
+}
+
+
 #if defined(EOS_PLATFORM_STM32G0) || \
 	defined(EOS_PLATFORM_STM32F0) || \
 	defined(EOS_PLATFORM_STM32F1) || \

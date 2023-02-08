@@ -29,7 +29,7 @@ static UARTClockSource getClockSource(
 		#ifdef HTL_UART2_EXIST
 			case USART2_BASE:
 				#if defined(EOS_PLATFORM_STM32F0)
-					sclk = 0; //(RCC->CFGR3 & RCC_CFGR3_USART2SW) >> RCC_CFGR3_USART2SW_Pos;
+					sclk = 0; // Sempre es PCLK
 				#else
 					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
 				#endif
@@ -261,7 +261,7 @@ void UARTBase_x::setTimming(
 			#if defined(STM32F4) || defined(STM32F7)
     		if ((uint32_t(regs) == USART1_BASE) ||
     			(uint32_t(regs) == USART6_BASE))
-    			fclk = halSYSGetPeripheralClock2Frequency();
+    			fclk =  Clock::getClockFrequency(ClockId::pclk2);
     		else
 			#endif
     			fclk = Clock::getClockFrequency(ClockId::pclk);

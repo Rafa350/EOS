@@ -100,6 +100,7 @@ void Clock::setHClkPrescaler(
 /// \brief    Selecciona el valor del divisor del rellotge PClk (APB)
 /// \param    value: El valor.
 ///
+#if defined(EOS_PLATAFORM_STM32F0)
 void Clock::setPClkPrescaler(
 	PClkPrescaler value) {
 
@@ -130,6 +131,7 @@ void Clock::setPClkPrescaler(
 
 	RCC->CFGR = tmp;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -247,6 +249,7 @@ bool Clock::isPllEnabled() {
 /// \param    value: El valor.
 /// \return   True si tot es correce, false en cas contrari.
 ///
+#if defined(EOS_PLATFORM_STM32F0)
 bool Clock::setPllSource(
 	PllSource value) {
 
@@ -271,12 +274,14 @@ bool Clock::setPllSource(
     
     return true;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el valor del divisor de la entrada HSE del PLL.
 /// \param    value: El valor.
 ///
+#if defined(EOS_PLATFORM_STM32F0)
 void Clock::setPllHseDivider(
 	PllHseDivider value) {
 
@@ -352,12 +357,14 @@ void Clock::setPllHseDivider(
 
 	RCC->CFGR2 = tmp;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el valor del multiplicador del PLL.
 /// \param    value: El valor.
 ///
+#if defined(EOS_PLATFORM_STM32F0)
 void Clock::setPllMultiplier(
 	PllMultiplier value) {
 
@@ -428,6 +435,7 @@ void Clock::setPllMultiplier(
 
 	RCC->CFGR = tmp;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -457,18 +465,28 @@ unsigned Clock::getClockFrequency(
 					break;
 
 				case RCC_CFGR_SWS_PLL:
+#if defined(EOS_PLATFORM_STM32F0)
 					if ((RCC->CFGR & RCC_CFGR_PLLSRC_Msk) == RCC_CFGR_PLLSRC_HSI_DIV2)
 						fclk = CLOCK_HSI_FREQUENCY / 2;
 					else
 						fclk = CLOCK_HSE_FREQUENCY / pllHseDividerTbl[(RCC->CFGR2 & RCC_CFGR2_PREDIV_Msk) >> RCC_CFGR2_PREDIV_Pos];
 					fclk *= pllMultiplierTbl[(RCC->CFGR & RCC_CFGR_PLLMUL_Msk) >> RCC_CFGR_PLLMUL_Pos];
+#endif
 					break;
 			}
 			break;
 
 		case ClockId::pclk:
+#if defined(EOS_PLATFORM_STM32F0)
 			fclk = getClockFrequency(ClockId::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
+#endif
 			break;
+
+#if defined(STM_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		case ClockId::pclk2:
+			fclk = getClockFrequency(ClockId::pclk) * 2;
+			break;
+#endif
 
 		case ClockId::hclk:
 			fclk = getClockFrequency(ClockId::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
@@ -482,9 +500,11 @@ unsigned Clock::getClockFrequency(
 			fclk = CLOCK_HSI_FREQUENCY;
 			break;
 
+#if defined(EOS_PLATFORM_STM32F0)
 		case ClockId::hsi14:
 			fclk = CLOCK_HSI14_FREQUENCY;
 			break;
+#endif
 
 		case ClockId::lse:
 			fclk = CLOCK_LSE_FREQUENCY;
