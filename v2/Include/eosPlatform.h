@@ -41,12 +41,10 @@
 		#define EOS_PLATFORM_STM32G0
     #elif defined(STM32F0)
 		#define EOS_PLATFORM_STM32F0
-		#if defined(STM32F030F4)
-			#define EOS_PLATFORM_STM32F0030F4
-		#elif defined(STM32F030x8)
-			#define EOS_PLATFORM_STM32F0030x8
-		#elif defined(STM32F030xC)
-			#define EOS_PLATFORM_STM32F0030xC
+		#if defined(STM32F030R8)
+			#define EOS_PLATFORM_STM32F030R8
+		#elif defined(STM32F030RC)
+			#define EOS_PLATFORM_STM32F030RC
 		#else
             #error "Unknown processor STM32F0"
 		#endif

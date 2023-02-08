@@ -892,32 +892,7 @@ namespace htl {
 			static constexpr bool supportedRxTimeout = true;
 		};
 
-		#if defined(EOS_PLATFORM_STM32F0)
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_A2, UARTPin::TX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_A3, UARTPin::RX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_A10, UARTPin::RX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_A14, UARTPin::TX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_1, GPIO_A15, UARTPin::RX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-		#elif defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			template <>
 			struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
@@ -926,8 +901,6 @@ namespace htl {
 			struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
 			};
-		#else
-			#error Plataforma no soportada
 		#endif
 	#endif
 
@@ -945,24 +918,7 @@ namespace htl {
 			#endif
 		};
 
-		#if defined(EOS_PLATFORM_STM32F0)
-			template <>
-			struct UARTPinTrait<UARTChannel::_2, GPIO_A2, UARTPin::TX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_2, GPIO_A3, UARTPin::RX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_2, GPIO_A14, UARTPin::TX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-			template <>
-			struct UARTPinTrait<UARTChannel::_2, GPIO_A15, UARTPin::RX> {
-				static constexpr GPIOAlt alt = GPIOAlt::_1;
-			};
-		#elif defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			template <>
 			struct UARTPinTrait<UARTChannel::_2, GPIO_A9, UARTPin::TX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
@@ -971,8 +927,6 @@ namespace htl {
 			struct UARTPinTrait<UARTChannel::_2, GPIO_B7, UARTPin::RX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
 			};
-		#else
-			#error Plataforma no soportada
 		#endif
 	#endif
 
@@ -1041,6 +995,15 @@ namespace htl {
 	#endif
 
 }
+
+
+#if defined(EOS_PLATFORM_STM32G031J)
+    #include "htl/STM32/htlUART_AF_G031J.h"
+#elif defined(EOS_PLATFORM_STM32F030R8)
+    #include "htl/STM32/htlUART_AF_F030R.h"
+#else
+    #error Plataforma no soportada
+#endif
 
 
 #endif // __STM32_htlUART__
