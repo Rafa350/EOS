@@ -3,9 +3,6 @@
 #define __STM32_htl__
 
 
-#include "eos.h"
-
-
 // Comprova l'existencia dels moduls GPIO
 //
 #ifdef GPIOA_BASE

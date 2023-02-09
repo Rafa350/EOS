@@ -3,7 +3,7 @@
 #define __STM32F0_htlClock__
 
 
-#include "HTL/STM32/htl.h"
+#include "HTL/htl.h"
 
 
 #if !defined(EOS_PLATFORM_STM32F0)
@@ -124,4 +124,4 @@ namespace htl {
 }
 
 
-#endif // __STM32F0_htlClock_F0__
+#endif // __STM32F0_htlClock__

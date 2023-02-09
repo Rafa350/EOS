@@ -3,19 +3,19 @@
 #define __STM32_htlClock__
 
 
-#include "htl.h"
+#include "HTL/htl.h"
 
 
 #if defined(EOS_PLATFORM_STM32F0)
-    #include "htl/STM32/F0/htlClock.h"
+    #include "HTL/STM32/F0/htlClock.h"
 #elif defined(EOS_PLATFORM_STM32F1)
-    #include "htl/STM32/F1/htlClock.h"
+    #include "HTL/STM32/F1/htlClock.h"
 #elif defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/F4/htlClock.h"
+    #include "HTL/STM32/F4/htlClock.h"
 #elif defined(EOS_PLATFORM_STM32F7)
-    #include "htl/STM32/F7/htlClock.h"
+    #include "HTL/STM32/F7/htlClock.h"
 #elif defined(EOS_PLATFORM_STM32G0)
-    #include "htl/STM32/G0/htlClock.h"
+    #include "HTL/STM32/G0/htlClock.h"
 #else
     #error Plataforma no soportada
 #endif

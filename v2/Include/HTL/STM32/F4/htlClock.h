@@ -1,9 +1,14 @@
 #pragma once
-#ifndef __htlClock_F4__
-#define __htlClock_F4__
+#ifndef __STM32F4_htlClock__
+#define __STM32F4_htlClock__
 
 
-#include "htl.h"
+#include "HTL/htl.h"
+
+
+#if !defined(EOS_PLATFORM_STM32F4)
+	#error Solo es valido para la plataforma STM32F4
+#endif
 
 
 namespace htl {
@@ -119,4 +124,4 @@ namespace htl {
 }
 
 
-#endif // __htlClock_F4__
+#endif // __STM32_htlClock__
