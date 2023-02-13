@@ -7,45 +7,40 @@
 
 // Amplada del display
 //
-#ifndef DISPLAY_IMAGE_WIDTH
-#define DISPLAY_IMAGE_WIDTH       128
+#ifndef DISPLAY_WIDTH
+#define DISPLAY_WIDTH        128
 #endif
-#if (DISPLAY_IMAGE_WIDTH != 128) && \
-	(DISPLAY_IMAGE_WIDTH != 256)
-#error "DISPLAY_WIDTH"
+#if (DISPLAY_WIDTH != 128) && \
+	(DISPLAY_WIDTH != 256)
+#error "Invalid DISPLAY_WIDTH"
 #endif
 
 // Alçada del display
 //
-#ifndef DISPLAY_IMAGE_HEIGHT
-#define DISPLAY_IMAGE_HEIGHT      64
+#ifndef DISPLAY_HEIGHT
+#define DISPLAY_HEIGHT       64
 #endif
-#if (DISPLAY_IMAGE_HEIGHT != 32) && \
-	(DISPLAY_IMAGE_HEIGHT != 64) && \
-	(DISPLAY_IMAGE_HEIGHT != 128)
-#error "DISPLAY_HEIGHT"
+#if (DISPLAY_HEIGHT != 32) && \
+	(DISPLAY_HEIGHT != 64) && \
+	(DISPLAY_HEIGHT != 128)
+#error "Invalid DISPLAY_HEIGHT"
 #endif
 
 // Tipus d'interficie amb el controlador
 //
-#define DISPLAY_SSD1306_INTERFACE_SPI  0
-#define DISPLAY_SSD1306_INTERFACE_I2C  1
-#ifndef DISPLAY_SSD1306_INTERFACE
-#define DISPLAY_SSD1306_INTERFACE      DISPLAY_SSD1306_INTERFACE_SPI
-#endif
-#if (DISPLAY_SSD1306_INTERFASE != DISPLAY_SSD1306_INTERFACE_SPI) && \
-    (DISPLAY_SSD1306_INTERFASE != DISPLAY_SSD1306_INTERFACE_I2C)
-#error "DISPLAY_SSD1306_INTERFACE"
+#if !defined(DISPLAY_INTERFACE_SPI) && \
+    !defined(DISPLAY_INTERFACE_I2C)
+#error "Undefined DISPLAY_INTERFACE_xxxx"
 #endif
 
 
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "System/Graphics/eosColor.h"
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+#if defined(DISPLAY_INTERFACE_SPI)
 #include "HTL/htlSPI.h"
 #include "HTL/htlGPIO.h"
-#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
+#elif defined(DISPLAY_INTERFACE_I2C)
 #include "HTL/htlI2C.h"
 #endif
 
@@ -56,15 +51,24 @@ namespace eos {
     	private:
 			static constexpr int _displayWidth  = DISPLAY_WIDTH;
 			static constexpr int _displayHeight = DISPLAY_HEIGHT;
+    		static constexpr int _pages = DISPLAY_HEIGHT / 8;
+    		static constexpr int _columns = DISPLAY_WIDTH;
+
+			#if defined(DISPLAY_INTERFACE_SPI)
+				using PinCS = DISPLAY_CS_GPIO;
+				using PinDC = DISPLAY_DC_GPIO;
+				using PinRST = DISPLAY_RST_GPIO;
+				using PinSCK = DISPLAY_SCK_GPIO;
+				using PinMOSI = DISPLAY_MOSI_GPIO;
+				using Spi = DISPLAY_SPI;
+			#endif
 
 			FrameBuffer *_frameBuffer;
-    		int _pages;
-    		int _columns;
 
             void initializeInterface();
             void initializeController();
             void writeCommand(uint8_t cmd);
-            void writeData(const uint8_t* data, int length);
+            void writeData(const uint8_t *data, int length);
 
     	public:
             DisplayDriver_SSD1306(FrameBuffer *frameBuffer);

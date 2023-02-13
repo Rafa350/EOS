@@ -15,9 +15,7 @@ using namespace htl;
 DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 	FrameBuffer *frameBuffer):
 
-	_frameBuffer(frameBuffer),
-    _pages(_displayHeight / 8),
-	_columns(_displayWidth) {
+	_frameBuffer(frameBuffer) {
 }
 
 
@@ -216,26 +214,24 @@ void DisplayDriver_SSD1306::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief     Inicialitza l'interficie amb el controlador.
 ///
-#if defined(DISPLAY_INTERFACE_SPI)
+#ifdef DISPLAY_INTERFACE_SPI
 void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	DISPLAY_CS_GPIO::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
-	DISPLAY_CS_GPIO::set();
-	DISPLAY_DC_GPIO::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
-	DISPLAY_RST_GPIO::initOutput(GPIODriver::pushPull, GPIOSpeed::low);
-	DISPLAY_RST_GPIO::clear();
+	PinCS::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
+	PinCS::set();
+	PinDC::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
+	PinRST::initOutput(GPIODriver::pushPull, GPIOSpeed::low);
+	PinRST::clear();
 
 	// Inicialitza el modul SPI
 	//
-	DISPLAY_SPI::initSCKPin<DISPLAY_SCK_GPIO>();
-	DISPLAY_SPI::initMOSIPin<DISPLAY_MOSI_GPIO>();
-	DISPLAY_SPI::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
-	DISPLAY_SPI::enable();
+	Spi::initSCKPin<PinSCK>();
+	Spi::initMOSIPin<PinMOSI>();
+	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
+	Spi::enable();
 }
-#else
-#error "DISPLAY_INTERFACE_XXXX"
 #endif
 
 
@@ -246,9 +242,9 @@ void DisplayDriver_SSD1306::initializeController() {
 
 	// Reseteja el controlador
 	//
-	DISPLAY_RST_GPIO::clear();
+	PinRST::clear();
 	halTMRDelay(10);
-	DISPLAY_RST_GPIO::set();
+	PinRST::set();
 	halTMRDelay(150);
 
     // Inicialitza el controlador
@@ -312,23 +308,21 @@ void DisplayDriver_SSD1306::initializeController() {
 /// \brief    Escriu un byte de comanda en el display.
 /// \param    cmd: La comanda.
 ///
-#if defined (DISPLAY_INTERFACE_SPI)
+#ifdef DISPLAY_INTERFACE_SPI
 void DisplayDriver_SSD1306::writeCommand(
     uint8_t cmd) {
 
-	DISPLAY_CS_GPIO::clear();
-	DISPLAY_DC_GPIO::clear();
+	PinCS::clear();
+	PinDC::clear();
 
-	DISPLAY_SPI::write8(cmd);
-	while (!DISPLAY_SPI::getFlag(SPIFlag::txEmpty))
+	Spi::write8(cmd);
+	while (!Spi::getFlag(SPIFlag::txEmpty))
 		continue;
-	while (DISPLAY_SPI::getFlag(SPIFlag::busy))
+	while (Spi::getFlag(SPIFlag::busy))
 		continue;
 
-	DISPLAY_CS_GPIO::set();
+	PinCS::set();
 }
-#else
-#error "Undefined DISPLAY_INTERFACE_XXXX"
 #endif
 
 
@@ -337,25 +331,23 @@ void DisplayDriver_SSD1306::writeCommand(
 /// \param    data: Buffer de dades.
 /// \param    length: Longitut de les dades en bytes.
 ///
-#if defined(DISPLAY_INTERFACE_SPI)
+#ifdef DISPLAY_INTERFACE_SPI
 void DisplayDriver_SSD1306::writeData(
     const uint8_t* data,
 	int length) {
 
-	DISPLAY_CS_GPIO::clear();
-	DISPLAY_DC_GPIO::set();
+	PinCS::clear();
+	PinDC::set();
 
 	while (length--) {
-		DISPLAY_SPI::write8(*data++);
-		while (!DISPLAY_SPI::getFlag(SPIFlag::txEmpty))
+		Spi::write8(*data++);
+		while (!Spi::getFlag(SPIFlag::txEmpty))
 			continue;
 	}
-	while (DISPLAY_SPI::getFlag(SPIFlag::busy))
+	while (Spi::getFlag(SPIFlag::busy))
 		continue;
 
-	DISPLAY_CS_GPIO::clear();
+	PinCS::clear();
 }
-#else
-#error "Undefined DISPLAY_INTERFACE_XXXX"
 #endif
 

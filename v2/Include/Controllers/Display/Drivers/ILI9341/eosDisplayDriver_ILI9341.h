@@ -4,8 +4,19 @@
 
 
 #include "eos.h"
-#if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
-#include "HTL/htlSPI.h"
+
+
+#if !defined(DISPLAY_INTERFACE_SPI) && \
+    !defined(DISPLAY_INTERFACE_8080) && \
+    !defined(DISPLAY_INTERFACE_6800) && \
+    !defined(DISPLAY_INTERFACE_RGB)
+    #error "Undefined DISPLAY_INTERFACE_xxxx"
+#endif
+
+
+#if defined(DISPLAY_INTERFACE_SPI) || \
+    defined(DISPLAY_INTERFACE_RGB)
+    #include "HTL/htlSPI.h"
 #endif
 #include "HTL/htlGPIO.h"
 #include "Controllers/Display/eosDisplayDriver.h"
@@ -21,16 +32,17 @@ namespace eos {
 				using PinWRX = DISPLAY_WRX_GPIO;
     			using PinTE = DISPLAY_TE_GPIO;
 			#endif
-			#if defined(DISPLAY_INTERFACE_6800)
+			#if defined (DISPLAY_INTERFACE_6800)
 				using PinTE = DISPLAY_TE_GPIO;
 			#endif
-			#if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
+			#if defined(DISPLAY_INTERFACE_SPI) || \
+			    defined(DISPLAY_INTERFACE_RGB)
     			using PinTE = DISPLAY_TE_GPIO;
 				using PinSCK = DISPLAY_SCK_GPIO;
 				using PinMOSI = DISPLAY_MOSI_GPIO;
 				using Spi = DISPLAY_SPI;
 			#endif
-			#ifdef DISPLAY_RST_GPIO
+			#if defined(DISPLAY_RST_GPIO)
     			using PinRST = DISPLAY_RST_GPIO;
 			#endif
     		using PinCS = DISPLAY_CS_GPIO;

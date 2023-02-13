@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "HTL/htlGPIO.h"
 
 
 // Amplada del display
@@ -12,7 +13,7 @@
 #endif
 #if (DISPLAY_WIDTH != 128) && \
 	(DISPLAY_WIDTH != 256)
-#error "DISPLAY_WIDTH"
+#error "Invalid DISPLAY_WIDTH"
 #endif
 
 // Alçada del display
@@ -23,25 +24,17 @@
 #if (DISPLAY_HEIGHT != 32) && \
 	(DISPLAY_HEIGHT != 64) && \
 	(DISPLAY_HEIGHT != 128)
-#error "DISPLAY_HEIGHT"
+#error "Invalid DISPLAY_HEIGHT"
 #endif
 
 
 // Tipus d'interficie amb el controlador
 //
-#define DISPLAY_INTERFACE_ST7565_SPI  0
-#define DISPLAY_INTERFACE_ST7565_I2C  1
-#define DISPLAY_INTERFACE_ST7565_8080 2
-#define DISPLAY_INTERFACE_ST7565_6800 3
-
-#ifndef DISPLAY_INTERFACE
-#define DISPLAY_INTERFACE    DISPLAY_ST7565_INTERFACE_SPI
-#endif
-#if (DISPLAY_INTERFACE != DISPLAY_INTERFACE_ST7565_SPI) && \
-    (DISPLAY_INTERFACE != DISPLAY_INTERFACE_ST7565_I2C) && \
-    (DISPLAY_INTERFACE != DISPLAY_INTERFACE_ST7565_8080) && \
-    (DISPLAY_INTERFACE != DISPLAY_INTERFACE_ST7565_6800)
-#error "DISPLAY_INTERFACE"
+#if !defined(DISPLAY_INTERFACE_SPI) && \
+    !defined(DISPLAY_INTERFACE_I2C) && \
+    !defined(DISPLAY_INTERFACE_8080) && \
+    !defined(DISPLAY_INTERFACE_6800)
+#error "Undefined DISPLAY_INTERFACE_xxxx"
 #endif
 
 
@@ -56,6 +49,14 @@ namespace eos {
     	private:
             static constexpr int _displayWidth = DISPLAY_WIDTH;
             static constexpr int _displayHeight = DISPLAY_HEIGHT;
+			#if defined(DISPLAY_INTERFACE_8080)
+				#if defined(DISPLAY_CS_GPIO)
+            		using PinCS = DISPLAY_CS_GPIO;
+				#endif
+            	using PinRD = DISPLAY_RD_GPIO;
+            	using PinWR = DISPLAY_WR_GPIO;
+            	using PinA0 = DISPLAY_A0_GPIO;
+			#endif
 
             FrameBuffer *_frameBuffer;
 

@@ -14,6 +14,9 @@ MyApplication::MyApplication():
 
 	eos::Application() {
 
-	_ledService = new LedService(this);
-	_displayService = new DisplayService(this);
+	_ledService = new LedService();
+	addService(_ledService, eos::Task::Priority::normal, 128, "LED");
+
+	_displayService = new DisplayService();
+	addService(_displayService, eos::Task::Priority::normal, 128, "DISPLAY");
 }

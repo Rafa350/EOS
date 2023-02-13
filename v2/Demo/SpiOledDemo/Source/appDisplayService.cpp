@@ -14,10 +14,7 @@ using namespace app;
 /// \brief    Constructor:
 /// \param    application: L'aplicacio.
 ///
-DisplayService::DisplayService(
-	Application* application) :
-
-	AppLoopService(application) {
+DisplayService::DisplayService() {
 }
 
 

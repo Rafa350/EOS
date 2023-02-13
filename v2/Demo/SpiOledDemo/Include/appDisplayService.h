@@ -32,7 +32,7 @@ namespace app {
 			void onLoop();
 
 		public:
-			DisplayService(eos::Application *application);
+			DisplayService();
 	};
 }
 

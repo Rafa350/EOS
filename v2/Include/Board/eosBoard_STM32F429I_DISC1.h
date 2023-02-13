@@ -115,72 +115,73 @@
 #define FONT_USE_Tahoma12pt
 #define FONT_USE_Tahoma14pt
 
-#define DISPLAY_IM0_GPIO     htl::GPIO_D2
-#define DISPLAY_IM1_GPIO     htl::GPIO_D4
-#define DISPLAY_IM2_GPIO     htl::GPIO_D5
-#define DISPLAY_IM3_GPIO     htl::GPIO_D7
+#define DISPLAY_IM0_GPIO          htl::GPIO_D2
+#define DISPLAY_IM1_GPIO          htl::GPIO_D4
+#define DISPLAY_IM2_GPIO          htl::GPIO_D5
+#define DISPLAY_IM3_GPIO          htl::GPIO_D7
 
 // SPI interface
-#if defined(DISPLAY_INTERFACE_SPI) || defined(DISPLAY_INTERFACE_RGB)
-#define DISPLAY_CS_GPIO      htl::GPIO_C2
-#define DISPLAY_RS_GPIO      htl::GPIO_D13
-#define DISPLAY_SCK_GPIO     htl::GPIO_F7
-#define DISPLAY_MOSI_GPIO    htl::GPIO_F9
-#define DISPLAY_SPI          htl::SPI_5
+#if defined(DISPLAY_INTERFACE_SPI) || \
+	defined(DISPLAY_INTERFACE_RGB)
+#define DISPLAY_CS_GPIO           htl::GPIO_C2
+#define DISPLAY_RS_GPIO           htl::GPIO_D13
+#define DISPLAY_SCK_GPIO          htl::GPIO_F7
+#define DISPLAY_MOSI_GPIO         htl::GPIO_F9
+#define DISPLAY_SPI               htl::SPI_5
 #endif
 #if defined(DISPLAY_INTERFACE_SPI)
-#define DISPLAY_TE_GPIO      htl::GPIO_D11
+#define DISPLAY_TE_GPIO           htl::GPIO_D11
 #endif
 
 // 8080 interface
 #if defined(DISPLAY_INTERFACE_8080)
-#define DISPLAY_TE_GPIO      htl::GPIO_D11
-#define DISPLAY_RD_GPIO	     htl::GPIO_D12
-#define DISPLAY_WR_GPIO      htl::GPIO_D13
-#define DISPLAY_TE_GPIO      htl::GPIO_D11
+#define DISPLAY_TE_GPIO           htl::GPIO_D11
+#define DISPLAY_RD_GPIO	          htl::GPIO_D12
+#define DISPLAY_WR_GPIO           htl::GPIO_D13
+#define DISPLAY_TE_GPIO           htl::GPIO_D11
 #endif
 
 // RGB interface
-#ifdef DISPLAY_INTERFACE_RGB
-#define DISPLAY_HSYNC_GPIO   htl::GPIO_C6
-#define DISPLAY_VSYNC_GPIO   htl::GPIO_A4
-#define DISPLAY_DE_GPIO      htl::GPIO_F10
-#define DISPLAY_PC_GPIO      htl::GPIO_G7
-#define DISPLAY_R2_GPIO      htl::GPIO_C10
-#define DISPLAY_R3_GPIO      htl::GPIO_B0
-#define DISPLAY_R4_GPIO      htl::GPIO_A11
-#define DISPLAY_R5_GPIO      htl::GPIO_A12
-#define DISPLAY_R6_GPIO      htl::GPIO_B1
-#define DISPLAY_R7_GPIO      htl::GPIO_G6
-#define DISPLAY_G2_GPIO      htl::GPIO_A6
-#define DISPLAY_G3_GPIO      htl::GPIO_G10
-#define DISPLAY_G4_GPIO      htl::GPIO_B10
-#define DISPLAY_G5_GPIO      htl::GPIO_B11
-#define DISPLAY_G6_GPIO      htl::GPIO_C7
-#define DISPLAY_G7_GPIO      htl::GPIO_D3
-#define DISPLAY_B2_GPIO      htl::GPIO_D6
-#define DISPLAY_B3_GPIO      htl::GPIO_G11
-#define DISPLAY_B4_GPIO      htl::GPIO_G12
-#define DISPLAY_B5_GPIO      htl::GPIO_A3
-#define DISPLAY_B6_GPIO      htl::GPIO_B8
-#define DISPLAY_B7_GPIO      htl::GPIO_B9
+#if defined(DISPLAY_INTERFACE_RGB)
+#define DISPLAY_HSYNC_GPIO        htl::GPIO_C6
+#define DISPLAY_VSYNC_GPIO        htl::GPIO_A4
+#define DISPLAY_DE_GPIO           htl::GPIO_F10
+#define DISPLAY_PC_GPIO           htl::GPIO_G7
+#define DISPLAY_R2_GPIO           htl::GPIO_C10
+#define DISPLAY_R3_GPIO           htl::GPIO_B0
+#define DISPLAY_R4_GPIO           htl::GPIO_A11
+#define DISPLAY_R5_GPIO           htl::GPIO_A12
+#define DISPLAY_R6_GPIO           htl::GPIO_B1
+#define DISPLAY_R7_GPIO           htl::GPIO_G6
+#define DISPLAY_G2_GPIO           htl::GPIO_A6
+#define DISPLAY_G3_GPIO           htl::GPIO_G10
+#define DISPLAY_G4_GPIO           htl::GPIO_B10
+#define DISPLAY_G5_GPIO           htl::GPIO_B11
+#define DISPLAY_G6_GPIO           htl::GPIO_C7
+#define DISPLAY_G7_GPIO           htl::GPIO_D3
+#define DISPLAY_B2_GPIO           htl::GPIO_D6
+#define DISPLAY_B3_GPIO           htl::GPIO_G11
+#define DISPLAY_B4_GPIO           htl::GPIO_G12
+#define DISPLAY_B5_GPIO           htl::GPIO_A3
+#define DISPLAY_B6_GPIO           htl::GPIO_B8
+#define DISPLAY_B7_GPIO           htl::GPIO_B9
 
-#define DISPLAY_HSYNC_POL    htl::LTDCPolarity::activeLow;   // HSync polarity
-#define DISPLAY_VSYNC_POL    htl::LTDCPolarity::activeLow;   // VSync polarity
-#define DISPLAY_DE_POL       htl::LTDCPolarity::activeLow;   // DE polarity
-#define DISPLAY_PC_POL       htl::LTDCPolarity::activeLow;   // PC polarity
+#define DISPLAY_HSYNC_POL         htl::LTDCPolarity::activeLow;   // HSync polarity
+#define DISPLAY_VSYNC_POL         htl::LTDCPolarity::activeLow;   // VSync polarity
+#define DISPLAY_DE_POL            htl::LTDCPolarity::activeLow;   // DE polarity
+#define DISPLAY_PC_POL            htl::LTDCPolarity::activeLow;   // PC polarity
 #endif
 
-#define DISPLAY_WIDTH  		 240            // Amplada fisica de la pantalla
-#define DISPLAY_HEIGHT       320            // Alçada fisica de la pantall
-#define DISPLAY_HSYNC        9              // Horizontal sync
-#define DISPLAY_VSYNC        1              // Vertical sync
-#define DISPLAY_HBP          29             // Horizontal back Porch
-#define DISPLAY_VBP          3              // Vertical back Porch
-#define DISPLAY_HFP          2              // Horizontal front Porch
-#define DISPLAY_VFP          2              // Vertical front Porch
+#define DISPLAY_WIDTH  		      240            // Amplada fisica de la pantalla
+#define DISPLAY_HEIGHT            320            // Alçada fisica de la pantall
+#define DISPLAY_HSYNC             9              // Horizontal sync
+#define DISPLAY_VSYNC             1              // Vertical sync
+#define DISPLAY_HBP               29             // Horizontal back Porch
+#define DISPLAY_VBP               3              // Vertical back Porch
+#define DISPLAY_HFP               2              // Horizontal front Porch
+#define DISPLAY_VFP               2              // Vertical front Porch
 
-#define DISPLAY_BUFFER       0xD0000000;
+#define DISPLAY_BUFFER            0xD0000000;
 
 #endif // USE_DISPLAY
 

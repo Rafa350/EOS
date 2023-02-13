@@ -3,8 +3,8 @@
 #include "HTL/htlGPIO.h"
 
 
-#if (DISPLAY_INTERFACE != DISPLAY_INTERFACE_ST7565_8080)
-#error Interface no soportado
+#if !defined(DISPLAY_INTERFACE_8080)
+#error "This file is for DISPLAY_INTERFACE_8080 only"
 #endif
 
 
@@ -17,11 +17,11 @@ using namespace eos;
 void DisplayDriver_ST7565::initializeInterface() {
     
 	#ifdef DISPLAY_CS_GPIO
-		DISPLAY_CS_GPIO::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high, htl::GPIOInitState::set);
+		PinCS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high, htl::GPIOInitState::set);
 	#endif
-	DISPLAY_A0_GPIO::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high);
-	DISPLAY_WR_GPIO::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high, htl::GPIOInitState::set);
-	DISPLAY_RD_GPIO::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high, htl::GPIOInitState::set);
+	PinA0::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high);
+	PinWR::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high, htl::GPIOInitState::set);
+	PinRD::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::high, htl::GPIOInitState::set);
 } 
 
 
@@ -32,13 +32,13 @@ void DisplayDriver_ST7565::initializeInterface() {
 void DisplayDriver_ST7565::writeDataRegister(
     uint8_t data) {
 
-    DISPLAY_A0_GPIO::set();
+    PinA0::set();
 	#ifdef DISPLAY_CS_GPIO
-		DISPLAY_CS_GPIO::clear();
+		PinCS::clear();
 	#endif
     writeRegister(data);
 	#ifdef DISPLAY_CS_GPIO
-		DISPLAY_CS_GPIO::set();
+		PinCS::set();
 	#endif
 }
 
@@ -50,13 +50,13 @@ void DisplayDriver_ST7565::writeDataRegister(
 void DisplayDriver_ST7565::writeCtrlRegister(
     uint8_t cmd) {
 
-    DISPLAY_A0_GPIO::clear();
+    PinA0::clear();
 	#ifdef DISPLAY_CS_GPIO
-		DISPLAY_CS_GPIO::clear();
+		PinCS::clear();
 	#endif
     writeRegister(cmd);
 	#ifdef DISPLAY_CS_GPIO
-		DISPLAY_CS_GPIO::set();
+		PinCS::set();
 	#endif
 
     // Retard per procesar la comanda
