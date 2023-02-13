@@ -15,7 +15,7 @@ namespace htl {
 	defined(EOS_PLATFORM_STM32F1) || \
 	defined(EOS_PLATFORM_STM32F4) || \
 	defined(EOS_PLATFORM_STM32F7)
-	#include "STM32/htl.h"
+	#include "HTL/STM32/htl.h"
 #endif
 
 

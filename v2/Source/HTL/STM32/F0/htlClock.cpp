@@ -143,7 +143,7 @@ void Clock::setPClkPrescaler(
 void Clock::hsiEnable() {
     
 	RCC->CR |= RCC_CR_HSION;
-	while ((RCC->CR & RCC_CR_HSION) == 0)
+	while ((RCC->CR & RCC_CR_HSIRDY) == 0)
 		continue;
 }
 
@@ -154,7 +154,7 @@ void Clock::hsiEnable() {
 void Clock::hsiDisable() {
     
 	RCC->CR &= ~RCC_CR_HSION;
-	while ((RCC->CR & RCC_CR_HSION) != 0)
+	while ((RCC->CR & RCC_CR_HSIRDY) != 0)
 		continue;
 }
 
@@ -165,7 +165,7 @@ void Clock::hsiDisable() {
 ///
 bool Clock::isHsiEnabled() {
     
-    return (RCC->CR & RCC_CR_HSION) != 0;
+    return (RCC->CR & RCC_CR_HSIRDY) != 0;
 }
 
 

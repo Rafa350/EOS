@@ -39,6 +39,15 @@
 	// Platform definitions
     #if defined(STM32G0)
 		#define EOS_PLATFORM_STM32G0
+		#if defined(STM32G031Fx)
+			#define EOS_PLATFORM_STM32G031Fx
+		#elif defined(STM32G031Jx)
+			#define EOS_PLATFORM_STM32G031Jx
+		#elif defined(STM32G031Kx)
+			#define EOS_PLATFORM_STM32G031Kx
+		#else
+            #error "Unknown processor STM32G0"
+		#endif
     #elif defined(STM32F0)
 		#define EOS_PLATFORM_STM32F0
 		#if defined(STM32F030R8)

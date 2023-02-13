@@ -174,6 +174,12 @@ namespace htl {
         fast
     };
 
+    enum class GPIOInitState {
+    	noChange,
+		clear,
+		set
+    };
+
     enum class GPIOState {
 		clear,
     	set
@@ -358,11 +364,18 @@ namespace htl {
             ///
             static void initOutput(
             	GPIODriver driver,
-				GPIOSpeed speed = GPIOSpeed::medium) {
+				GPIOSpeed speed = GPIOSpeed::medium,
+				GPIOInitState state = GPIOInitState::noChange) {
 
             	Activator::activate(1 << _pn);
-            	GPIOBase_x::initOutput(
-                    reinterpret_cast<GPIO_TypeDef*>(_addr),
+
+                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
+
+                if (state != GPIOInitState::noChange)
+                	regs->BSRR = 1 << (_pn + (state == GPIOInitState::set ? 0 : 16));
+
+                GPIOBase_x::initOutput(
+                    regs,
                     _pn,
                     driver,
                     speed);

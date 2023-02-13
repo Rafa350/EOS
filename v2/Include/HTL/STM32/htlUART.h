@@ -965,16 +965,22 @@ namespace htl {
 }
 
 
-#if defined(EOS_PLATFORM_STM32G031J)
-    #include "htl/STM32/htlUART_AF_G031J.h"
-#elif defined(EOS_PLATFORM_STM32G031F)
+#if defined(EOS_PLATFORM_STM32G031Fx)
     #include "htl/STM32/htlUART_AF_G031F.h"
+#elif defined(EOS_PLATFORM_STM32G031Jx)
+    #include "htl/STM32/htlUART_AF_G031J.h"
+#elif defined(EOS_PLATFORM_STM32G031Kx)
+    #include "htl/STM32/htlUART_AF_G031K.h"
+    
 #elif defined(EOS_PLATFORM_STM32F030R8)
     #include "htl/STM32/htlUART_AF_F030R.h"
+    
 #elif defined(EOS_PLATFORM_STM32F4)
     #include "htl/STM32/htlUART_AF_F4.h"
+    
 #elif defined(EOS_PLATFORM_STM32F7)
     #include "htl/STM32/htlUART_AF_F7.h"
+    
 #else
     #error Plataforma no soportada
 #endif

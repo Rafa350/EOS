@@ -9,7 +9,7 @@
 #include "HTL/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32G031F) 
+#if defined(EOS_PLATFORM_STM32G031Fx) 
 
 
 namespace htl {

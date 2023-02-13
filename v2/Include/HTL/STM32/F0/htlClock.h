@@ -104,7 +104,11 @@ namespace htl {
 			static void hsiDisable();
             static bool isHsiEnabled();
 
-			static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+			static void hsi14Enable();
+			static void hsi14Disable();
+            static bool isHsi14Enabled();
+
+            static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
 			static void hseDisable();
             static bool isHseEnabled();
 

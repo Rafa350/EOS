@@ -9,6 +9,7 @@
 
 #define CLOCK_HSE_FREQUENCY        8000000 // Hz
 #define CLOCK_HSE_STARTUP          100     // ms
+#define CLOCK_HSE_BYPASS           1       // Bypass enabled
 #define CLOCK_LSE_FREQUENCY        32768   // Hz
 #define CLOCK_LSE_STARTUP          5000    // ms
 

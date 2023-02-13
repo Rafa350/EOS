@@ -17,11 +17,20 @@ namespace htl {
 		sysclk,
 		pclk,
 		hclk,
-		hse,
-		hsi,
-		hsi14,
-		lse,
-		lsi
+		hclk8,
+		#ifdef CLOCK_HSE_FREQUENCY
+			hse,
+		#endif
+		hsi16,
+		hsi48,
+		#ifdef CLOCK_LSE_FREQUENCY
+			lse,
+		#endif
+		lsi,
+		hsisys,
+		pllpclk,
+		pllqclk,
+		pllrclk
 	};
 
 	enum class HseBypassMode {
@@ -31,51 +40,33 @@ namespace htl {
 	};
 
 	enum class PllSource {
-		hsi,
-		hse
-	};
-
-	enum class PllHseDivider {
-		_1,
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		_9,
-		_10,
-		_11,
-		_12,
-		_13,
-		_14,
-		_15,
-		_16
-	};
-
-	enum class PllMultiplier {
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		_9,
-		_10,
-		_11,
-		_12,
-		_13,
-		_14,
-		_15,
-		_16
+		hsi16,
+		#ifdef CLOCK_HSE_FREQUENCY
+			hse
+		#endif
 	};
 
 	enum class SysClkSource {
-		hsi,
-		hse,
-		pll
+		lsi,
+		#ifdef CLOCK_LSE_FREQUENCY
+			lse,
+		#endif
+		#ifdef CLOCK_HSE_FREQUENCY
+			hse,
+		#endif
+		pllrclk,
+		hsisys
+	};
+
+	enum class HsisysPrescaler {
+		_1,
+		_2,
+		_4,
+		_8,
+		_16,
+		_32,
+		_64,
+		_128
 	};
 
 	enum class HClkPrescaler {
@@ -100,22 +91,34 @@ namespace htl {
 
 	class Clock {
 		public:
-			static void hsiEnable();
-			static void hsiDisable();
-            static bool isHsiEnabled();
+			static void hsi16Enable();
+			static void hsi16Disable();
+            static bool isHsi16Enabled();
 
-			static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
-			static void hseDisable();
-            static bool isHseEnabled();
+            #ifdef CLOCK_HSE_FREQUENCY
+				static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+				static void hseDisable();
+				static bool isHseEnabled();
+			#endif
+
+			static void lsiEnable();
+			static void lsiDisable();
+			static bool isLsiEnabled();
+
+			static void lseEnable();
+			static void lseDisable();
+			static bool isLseEnabled();
 
 			static void pllEnable();
 			static void pllDisable();
             static bool isPllEnabled();
-			static bool setPllSource(PllSource value);
-			static void setPllMultiplier(PllMultiplier value);
-			static void setPllHseDivider(PllHseDivider value);
+			static bool configurePll(PllSource source, int multiplier, int divider);
+			static bool configurePllP(int divider);
+			static bool configurePllQ(int divider);
+			static bool configurePllR(int divider);
 
 			static bool setSysClkSource(SysClkSource source);
+			static void setHsisysPrescaler(HsisysPrescaler value);
 			static void setHClkPrescaler(HClkPrescaler value);
 			static void setPClkPrescaler(PClkPrescaler value);
 

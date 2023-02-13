@@ -40,6 +40,8 @@
 	#include "stm32f4xx.h"
 #elif defined(EOS_PLATFORM_STM32F7)
 	#include "stm32f7xx.h"
+#elif defined(EOS_PLATFORM_STM32G0)
+	#include "stm32g0xx.h"
 #elif defined(EOS_PLATFORM_MSP432)
     #include "msp.h"
 #elif defined(EOS_PLATFORM_DOS) || defined(EOS_PLATFORM_WINDOWS)

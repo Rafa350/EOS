@@ -3,6 +3,9 @@
 #define __STM32_htl__
 
 
+#include "HTL/htl.h"
+
+
 // Comprova l'existencia dels moduls GPIO
 //
 #ifdef GPIOA_BASE
@@ -172,12 +175,20 @@
 	#define CLOCK_HSI_FREQUENCY        8000000
 	#define CLOCK_HSI14_FREQUENCY     14000000
 	#define CLOCK_LSI_FREQUENCY          40000
+
 #elif defined(EOS_PLATFORM_STM32F4)
 	#define CLOCK_HSI_FREQUENCY       16000000
 	#define CLOCK_LSI_FREQUENCY          32000
+
 #elif defined(EOS_PLATFORM_STM32F7)
 	#define CLOCK_HSI_FREQUENCY       16000000
 	#define CLOCK_LSI_FREQUENCY          32000
+
+#elif defined(EOS_PLATFORM_STM32G0)
+	#define CLOCK_HSI16_FREQUENCY     16000000
+	#define CLOCK_HSI48_FREQUENCY     48000000
+	#define CLOCK_LSI_FREQUENCY          32000
+
 #else
 	#error Plataforma no soportada
 #endif

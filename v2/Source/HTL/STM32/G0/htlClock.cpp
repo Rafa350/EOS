@@ -2,6 +2,18 @@
 #include "HTL/STM32/htlClock.h"
 
 
+#if !defined(EOS_PLATFORM_STM32G0)
+	#error Solo es valido para la plataforma STM32G0
+#endif
+
+
+#define RCC_CFGR_SW_HSISYS        (0 << RCC_CFGR_SW_Pos)
+#define RCC_CFGR_SW_HSE           (1 << RCC_CFGR_SW_Pos)
+#define RCC_CFGR_SW_PLLRCLK       (2 << RCC_CFGR_SW_Pos)
+#define RCC_CFGR_SW_LSI           (3 << RCC_CFGR_SW_Pos)
+#define RCC_CFGR_SW_LSE           (4 << RCC_CFGR_SW_Pos)
+
+
 using namespace htl;
 
 
@@ -17,22 +29,36 @@ bool Clock::setSysClkSource(
 
 	tmp &= ~RCC_CFGR_SW_Msk;
 	switch (source) {
-		case SysClkSource::hse:
-            if (!isHseEnabled())
-                return false;
-			tmp |= RCC_CFGR_SW_HSE;
+		#ifdef CLOCK_HSE_FREQUENCY
+			case SysClkSource::hse:
+				if (!isHseEnabled())
+					return false;
+				tmp |= RCC_CFGR_SW_HSE;
+				break;
+		#endif
+
+		case SysClkSource::lsi:
+			if (!isLsiEnabled())
+				return false;
+			tmp |= RCC_CFGR_SW_LSI;
 			break;
 
-		case SysClkSource::hsi:
-            if (!isHsiEnabled())
+		#ifdef CLOCK_LSE_FREQUENCY
+			case SysClkSource::lse:
+				if (!isLseEnabled())
+					return false;
+				tmp |= RCC_CFGR_SW_LSE;
+				break;
+		#endif
+
+		case SysClkSource::pllrclk:
+            if (!isPllEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN_Msk) == 0))
                 return false;
-			tmp |= RCC_CFGR_SW_HSI;
+			tmp |= RCC_CFGR_SW_PLLRCLK;
 			break;
 
-		case SysClkSource::pll:
-            if (!isPllEnabled())
-                return false;
-			tmp |= RCC_CFGR_SW_PLL;
+		case SysClkSource::hsisys:
+			tmp |= RCC_CFGR_SW_HSISYS;
 			break;
 	}
 
@@ -41,6 +67,20 @@ bool Clock::setSysClkSource(
 		continue;
 
 	return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el divisor del rellotge HSISYS
+/// \param    value: El valor del divisor.
+///
+void Clock::setHsisysPrescaler(
+	HsisysPrescaler value) {
+
+	uint32_t tmp = RCC->CR;
+	tmp &= ~RCC_CR_HSIDIV;
+	tmp  |= ((uint32_t) value) << RCC_CR_HSIDIV_Pos;
+	RCC->CR = tmp;
 }
 
 
@@ -56,39 +96,39 @@ void Clock::setHClkPrescaler(
 	tmp &= ~RCC_CFGR_HPRE_Msk;
 	switch (value) {
         case HClkPrescaler::_1:
-            tmp |= RCC_CFGR_HPRE_DIV1;
+            tmp |= 0b0000 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_2:
-            tmp |= RCC_CFGR_HPRE_DIV2;
+            tmp |= 0b1000 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_4:
-            tmp |= RCC_CFGR_HPRE_DIV4;
+            tmp |= 0b1001 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_8:
-            tmp |= RCC_CFGR_HPRE_DIV8;
+            tmp |= 0b1010 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_16:
-            tmp |= RCC_CFGR_HPRE_DIV16;
+            tmp |= 0b1011 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_64:
-            tmp |= RCC_CFGR_HPRE_DIV64;
+            tmp |= 0b1100 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_128:
-            tmp |= RCC_CFGR_HPRE_DIV128;
+            tmp |= 0b1101 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_256:
-            tmp |= RCC_CFGR_HPRE_DIV256;
+            tmp |= 0b1110 << RCC_CFGR_HPRE_Pos;
             break;
             
         case HClkPrescaler::_512:
-            tmp |= RCC_CFGR_HPRE_DIV512;
+            tmp |= 0b1111 << RCC_CFGR_HPRE_Pos;
             break;
 	}
 
@@ -100,7 +140,6 @@ void Clock::setHClkPrescaler(
 /// \brief    Selecciona el valor del divisor del rellotge PClk (APB)
 /// \param    value: El valor.
 ///
-#if defined(EOS_PLATAFORM_STM32F0)
 void Clock::setPClkPrescaler(
 	PClkPrescaler value) {
 
@@ -109,35 +148,34 @@ void Clock::setPClkPrescaler(
 	tmp &= ~RCC_CFGR_PPRE_Msk;
 	switch (value) {
         case PClkPrescaler::_1:
-            tmp |= RCC_CFGR_PPRE_DIV1;
+            tmp |= 0b000 << RCC_CFGR_PPRE_Pos;
             break;
 
         case PClkPrescaler::_2:
-            tmp |= RCC_CFGR_PPRE_DIV2;
+            tmp |= 0b100 << RCC_CFGR_PPRE_Pos;
             break;
 
         case PClkPrescaler::_4:
-            tmp |= RCC_CFGR_PPRE_DIV4;
+            tmp |= 0b101 << RCC_CFGR_PPRE_Pos;
             break;
 
         case PClkPrescaler::_8:
-            tmp |= RCC_CFGR_PPRE_DIV8;
+            tmp |= 0b110 << RCC_CFGR_PPRE_Pos;
             break;
 
         case PClkPrescaler::_16:
-            tmp |= RCC_CFGR_PPRE_DIV16;
+            tmp |= 0b111 << RCC_CFGR_PPRE_Pos;
             break;
 	}
 
 	RCC->CFGR = tmp;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el rellotge HSI
 ///
-void Clock::hsiEnable() {
+void Clock::hsi16Enable() {
     
 	RCC->CR |= RCC_CR_HSION;
 	while ((RCC->CR & RCC_CR_HSION) == 0)
@@ -148,7 +186,7 @@ void Clock::hsiEnable() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el rellotge HSI
 ///
-void Clock::hsiDisable() {
+void Clock::hsi16Disable() {
     
 	RCC->CR &= ~RCC_CR_HSION;
 	while ((RCC->CR & RCC_CR_HSION) != 0)
@@ -160,9 +198,41 @@ void Clock::hsiDisable() {
 /// \brief    Comprova si el rellotge HSI es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool Clock::isHsiEnabled() {
+bool Clock::isHsi16Enabled() {
     
     return (RCC->CR & RCC_CR_HSION) != 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Activa el rellotge LSI
+///
+void Clock::lsiEnable() {
+
+	RCC->CR |= RCC_CSR_LSION;
+	while ((RCC->CR & RCC_CSR_LSION) == 0)
+		continue;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el rellotge LSI
+///
+void Clock::lsiDisable() {
+
+	RCC->CR &= ~RCC_CSR_LSION;
+	while ((RCC->CR & RCC_CSR_LSION) != 0)
+		continue;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el rellotge LSI es actiu.
+/// \return   True si esta actiu, false en cas contrari.
+///
+bool Clock::isLsiEnabled() {
+
+    return (RCC->CSR & RCC_CSR_LSION) != 0;
 }
 
 
@@ -170,6 +240,7 @@ bool Clock::isHsiEnabled() {
 /// \brief    Activa el rellotge HSE.
 /// \param    bypass: El modus del bypass
 ///
+#ifdef CLOCK_HSE_FREQUENCY
 void Clock::hseEnable(
 	HseBypassMode bypass) {
     
@@ -189,27 +260,32 @@ void Clock::hseEnable(
 	while ((RCC->CR & RCC_CR_HSERDY) == 0)
 		continue;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief   Desactiva el rellotge HSE.
 ///
+#ifdef CLOCK_HSE_FREQUENCY
 void Clock::hseDisable() {
     
 	RCC->CR &= ~RCC_CR_HSEON;
 	while ((RCC->CR & RCC_CR_HSERDY) != 0)
 		continue;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el rellotge HSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
+#ifdef CLOCK_HSE_FREQUENCY
 bool Clock::isHseEnabled() {
     
     return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -231,6 +307,12 @@ void Clock::pllDisable() {
 	RCC->CR &= ~RCC_CR_PLLON;
 	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
 		continue;
+
+	uint32_t tmp = RCC->PLLCFGR;
+	tmp &= ~RCC_PLLCFGR_PLLPEN;
+	tmp &= ~RCC_PLLCFGR_PLLQEN;
+	tmp &= ~RCC_PLLCFGR_PLLREN;
+	RCC->PLLCFGR = tmp;
 }
 
 
@@ -245,197 +327,123 @@ bool Clock::isPllEnabled() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el rellotge d'entrada del PLL.
-/// \param    value: El valor.
-/// \return   True si tot es correce, false en cas contrari.
+/// \brief    Activa el PLL.
+/// \param    source: Rellotge font.
+/// \param    multiplier: Factor de multiplicacio.
+/// \param    divider: Fasctor de divisio.
+/// \return   True si s'ha realitzat l'operacio correctament.
 ///
-#if defined(EOS_PLATFORM_STM32F0)
-bool Clock::setPllSource(
-	PllSource value) {
+bool Clock::configurePll(
+	PllSource source,
+	int multiplier,
+	int divider) {
 
-	uint32_t tmp = RCC->CFGR;
+	if (divider < 2 || divider > 8 || multiplier < 8 || divider > 86)
+		return false;
 
-	tmp &= ~RCC_CFGR_PLLSRC_Msk;
-	switch (value) {
-		case PllSource::hsi:
-            if (!isHseEnabled())
+	if (isPllEnabled())
+		return false;
+
+    uint32_t tmp = RCC->PLLCFGR;
+
+	tmp &= ~RCC_PLLCFGR_PLLSRC_Msk;
+	switch (source) {
+		case PllSource::hsi16:
+            if (!isHsi16Enabled())
                 return false;
-			tmp |= RCC_CFGR_PLLSRC_HSI_DIV2;
+			tmp |= 0b10 << RCC_PLLCFGR_PLLSRC_Pos;
 			break;
 
-		case PllSource::hse:
-            if (!isHseEnabled())
-                return false;
-			tmp |= RCC_CFGR_PLLSRC_HSE_PREDIV;
-			break;
+		#ifdef CLOCK_HSE_FREQUENCY
+			case PllSource::hse:
+				if (!isHseEnabled())
+					return false;
+				tmp |= 0b11 << RCC_PLLCFGR_PLLSRC_Pos;
+				break;
+		#endif
 	}
 
-	RCC->CFGR = tmp;
-    
-    return true;
+	tmp &= ~RCC_PLLCFGR_PLLM_Msk;
+	tmp &= ~RCC_PLLCFGR_PLLN_Msk;
+	tmp |= (divider - 1) << RCC_PLLCFGR_PLLM_Pos;
+	tmp |= multiplier << RCC_PLLCFGR_PLLN_Pos;
+
+	RCC->PLLCFGR = tmp;
+
+	return true;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el valor del divisor de la entrada HSE del PLL.
-/// \param    value: El valor.
+/// \brief    Configura la sortida P del PLL.
+/// \param    divider: El valor del divisor.
+/// \return   True si s'ha realitzat l'operacio correctament.
 ///
-#if defined(EOS_PLATFORM_STM32F0)
-void Clock::setPllHseDivider(
-	PllHseDivider value) {
+bool Clock::configurePllP(
+	int divider) {
 
-	uint32_t tmp = RCC->CFGR2;
+	if (divider < 2 || divider > 32)
+		return false;
 
-	tmp &= ~RCC_CFGR2_PREDIV_Msk;
-	switch (value) {
-		case PllHseDivider::_1:
-			tmp |= RCC_CFGR2_PREDIV_DIV1;
-			break;
+	if (isPllEnabled())
+		return false;
 
-		case PllHseDivider::_2:
-			tmp |= RCC_CFGR2_PREDIV_DIV2;
-			break;
+	uint32_t tmp = RCC->PLLCFGR;
+	tmp &= ~RCC_PLLCFGR_PLLP_Msk;
+	tmp |= (divider - 1) << RCC_PLLCFGR_PLLP_Pos;
+	tmp |= RCC_PLLCFGR_PLLPEN;
+	RCC->PLLCFGR = tmp;
 
-		case PllHseDivider::_3:
-			tmp |= RCC_CFGR2_PREDIV_DIV3;
-			break;
-
-		case PllHseDivider::_4:
-			tmp |= RCC_CFGR2_PREDIV_DIV4;
-			break;
-
-		case PllHseDivider::_5:
-			tmp |= RCC_CFGR2_PREDIV_DIV5;
-			break;
-
-		case PllHseDivider::_6:
-			tmp |= RCC_CFGR2_PREDIV_DIV6;
-			break;
-
-		case PllHseDivider::_7:
-			tmp |= RCC_CFGR2_PREDIV_DIV7;
-			break;
-
-		case PllHseDivider::_8:
-			tmp |= RCC_CFGR2_PREDIV_DIV8;
-			break;
-
-		case PllHseDivider::_9:
-			tmp |= RCC_CFGR2_PREDIV_DIV9;
-			break;
-
-		case PllHseDivider::_10:
-			tmp |= RCC_CFGR2_PREDIV_DIV10;
-			break;
-
-		case PllHseDivider::_11:
-			tmp |= RCC_CFGR2_PREDIV_DIV11;
-			break;
-
-		case PllHseDivider::_12:
-			tmp |= RCC_CFGR2_PREDIV_DIV12;
-			break;
-
-		case PllHseDivider::_13:
-			tmp |= RCC_CFGR2_PREDIV_DIV13;
-			break;
-
-		case PllHseDivider::_14:
-			tmp |= RCC_CFGR2_PREDIV_DIV14;
-			break;
-
-		case PllHseDivider::_15:
-			tmp |= RCC_CFGR2_PREDIV_DIV15;
-			break;
-
-		case PllHseDivider::_16:
-			tmp |= RCC_CFGR2_PREDIV_DIV16;
-			break;
-
-	}
-
-	RCC->CFGR2 = tmp;
+	return true;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el valor del multiplicador del PLL.
-/// \param    value: El valor.
+/// \brief    Configura la sortida Q del PLL
+/// \param    divider: El valor del divisor.
+/// \return   True si s'ha realitzat l'operacio correctament.
 ///
-#if defined(EOS_PLATFORM_STM32F0)
-void Clock::setPllMultiplier(
-	PllMultiplier value) {
+bool Clock::configurePllQ(
+	int divider) {
 
-	uint32_t tmp = RCC->CFGR;
+	if (divider < 2 || divider > 8)
+		return false;
 
-	tmp &= ~RCC_CFGR_PLLMUL_Msk;
-	switch (value) {
-		case PllMultiplier::_2:
-			tmp |= RCC_CFGR_PLLMUL2;
-			break;
+	if (isPllEnabled())
+		return false;
 
-		case PllMultiplier::_3:
-			tmp |= RCC_CFGR_PLLMUL3;
-			break;
+	uint32_t tmp = RCC->PLLCFGR;
+	tmp &= ~RCC_PLLCFGR_PLLQ_Msk;
+	tmp |= (divider - 1) << RCC_PLLCFGR_PLLQ_Pos;
+	tmp |= RCC_PLLCFGR_PLLQEN;
+	RCC->PLLCFGR = tmp;
 
-		case PllMultiplier::_4:
-			tmp |= RCC_CFGR_PLLMUL4;
-			break;
-
-		case PllMultiplier::_5:
-			tmp |= RCC_CFGR_PLLMUL5;
-			break;
-
-		case PllMultiplier::_6:
-			tmp |= RCC_CFGR_PLLMUL6;
-			break;
-
-		case PllMultiplier::_7:
-			tmp |= RCC_CFGR_PLLMUL7;
-			break;
-
-		case PllMultiplier::_8:
-			tmp |= RCC_CFGR_PLLMUL8;
-			break;
-
-		case PllMultiplier::_9:
-			tmp |= RCC_CFGR_PLLMUL9;
-			break;
-
-		case PllMultiplier::_10:
-			tmp |= RCC_CFGR_PLLMUL10;
-			break;
-
-		case PllMultiplier::_11:
-			tmp |= RCC_CFGR_PLLMUL11;
-			break;
-
-		case PllMultiplier::_12:
-			tmp |= RCC_CFGR_PLLMUL12;
-			break;
-
-		case PllMultiplier::_13:
-			tmp |= RCC_CFGR_PLLMUL13;
-			break;
-
-		case PllMultiplier::_14:
-			tmp |= RCC_CFGR_PLLMUL14;
-			break;
-
-		case PllMultiplier::_15:
-			tmp |= RCC_CFGR_PLLMUL15;
-			break;
-
-		case PllMultiplier::_16:
-			tmp |= RCC_CFGR_PLLMUL16;
-			break;
-	}
-
-	RCC->CFGR = tmp;
+	return true;
 }
-#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura la sortida R del PLL
+/// \param    divider: El valor del divisor.
+/// \return   True si s'ha realitzat l'operacio correctament.
+///
+bool Clock::configurePllR(
+	int divider) {
+
+	if (divider < 2 || divider > 8)
+		return false;
+
+	if (isPllEnabled())
+		return false;
+
+	uint32_t tmp = RCC->PLLCFGR;
+	tmp &= ~RCC_PLLCFGR_PLLR_Msk;
+	tmp |= (divider - 1) << RCC_PLLCFGR_PLLR_Pos;
+	tmp |= RCC_PLLCFGR_PLLREN;
+	RCC->PLLCFGR = tmp;
+
+	return true;
+}
 
 
 /// ----------------------------------------------------------------------
@@ -446,72 +454,81 @@ void Clock::setPllMultiplier(
 unsigned Clock::getClockFrequency(
 	ClockId clockId) {
 
+	static const uint8_t hsiDividerTbl[8] = { 0, 1, 2, 3, 4, 5, 6, 7};
 	static const uint8_t pclkPrescalerTbl[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
 	static const uint8_t hclkPrescalerTbl[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
-	static const uint8_t pllMultiplierTbl[16] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-	static const uint8_t pllHseDividerTbl[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
 	unsigned fclk = 0;
 
 	switch (clockId) {
 		case ClockId::sysclk:
 			switch (RCC->CFGR & RCC_CFGR_SWS_Msk) {
-				case RCC_CFGR_SWS_HSE:
-					fclk = CLOCK_HSE_FREQUENCY;
+				case RCC_CFGR_SW_HSISYS:
+					fclk = getClockFrequency(ClockId::hsisys);
 					break;
 
-				case RCC_CFGR_SWS_HSI:
-					fclk = CLOCK_HSI_FREQUENCY;
+				#ifdef CLOCK_HSE_FREQUENCY
+					case RCC_CFGR_SW_HSE
+						fclk = CLOCK_HSE_FREQUENCY;
+						break;
+				#endif
+
+				case RCC_CFGR_SW_PLLRCLK:
 					break;
 
-				case RCC_CFGR_SWS_PLL:
-#if defined(EOS_PLATFORM_STM32F0)
-					if ((RCC->CFGR & RCC_CFGR_PLLSRC_Msk) == RCC_CFGR_PLLSRC_HSI_DIV2)
-						fclk = CLOCK_HSI_FREQUENCY / 2;
-					else
-						fclk = CLOCK_HSE_FREQUENCY / pllHseDividerTbl[(RCC->CFGR2 & RCC_CFGR2_PREDIV_Msk) >> RCC_CFGR2_PREDIV_Pos];
-					fclk *= pllMultiplierTbl[(RCC->CFGR & RCC_CFGR_PLLMUL_Msk) >> RCC_CFGR_PLLMUL_Pos];
-#endif
+				case RCC_CFGR_SW_LSI:
+					fclk = CLOCK_LSI_FREQUENCY;
 					break;
+
+				#ifdef CLOCK_LSE_FREQUENCY
+					case RCC_CFGR_SW_LSE:
+						fclk = CLICK_LSE_FREQUENCY;
+						break;
+				#endif
 			}
 			break;
 
 		case ClockId::pclk:
-#if defined(EOS_PLATFORM_STM32F0)
 			fclk = getClockFrequency(ClockId::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
-#endif
 			break;
-
-#if defined(STM_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-		case ClockId::pclk2:
-			fclk = getClockFrequency(ClockId::pclk) * 2;
-			break;
-#endif
 
 		case ClockId::hclk:
 			fclk = getClockFrequency(ClockId::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 			break;
 
-		case ClockId::hse:
-			fclk = CLOCK_HSE_FREQUENCY;
+		case ClockId::hclk8:
+			fclk = getClockFrequency(ClockId::hclk) / 8;
 			break;
 
-		case ClockId::hsi:
-			fclk = CLOCK_HSI_FREQUENCY;
+		case ClockId::hsisys:
+			fclk = CLOCK_HSI16_FREQUENCY >> hsiDividerTbl[(RCC->CR & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos];
 			break;
 
-#if defined(EOS_PLATFORM_STM32F0)
-		case ClockId::hsi14:
-			fclk = CLOCK_HSI14_FREQUENCY;
-			break;
-#endif
+		#ifdef CLOCK_HSE_FREQUENCY
+			case ClockId::hse:
+				fclk = CLOCK_HSE_FREQUENCY;
+				break;
+		#endif
 
-		case ClockId::lse:
-			fclk = CLOCK_LSE_FREQUENCY;
+		case ClockId::hsi16:
+			fclk = CLOCK_HSI16_FREQUENCY;
 			break;
+
+		case ClockId::hsi48:
+			fclk = CLOCK_HSI48_FREQUENCY;
+			break;
+
+			#ifdef CLOCK_LSE_FREQUENCY
+			case ClockId::lse:
+				fclk = CLOCK_LSE_FREQUENCY;
+				break;
+		#endif
 
 		case ClockId::lsi:
 			fclk = CLOCK_LSI_FREQUENCY;
+			break;
+
+		default:
 			break;
 	}
 

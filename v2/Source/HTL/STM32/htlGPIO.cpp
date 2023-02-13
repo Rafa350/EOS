@@ -43,9 +43,6 @@ static void setSpeed(
 
 		uint32_t value = 1; // Per defecte medium
 
-		#pragma GCC diagnostic push
-		#pragma GCC diagnostic ignored "-Wswitch"
-		#pragma GCC diagnostic ignored "-Wswitch-default"
 		switch (speed) {
 			case GPIOSpeed::low:
 				value = 0;
@@ -58,8 +55,10 @@ static void setSpeed(
 			case GPIOSpeed::fast:
 				value = 3;
 				break;
+
+			default:
+				break;
 		}
-		#pragma GCC diagnostic pop
 
 		// Configura el registre OSPEEDR (Output Speed Register)
 		//
@@ -86,9 +85,6 @@ static void setPull(
 
 		uint32_t value = 0; // Per defecte sense PU/PD
 
-		#pragma GCC diagnostic push
-		#pragma GCC diagnostic ignored "-Wswitch"
-		#pragma GCC diagnostic ignored "-Wswitch-default"
 		switch (pull) {
 			case GPIOPull::down:
 				value = 2;
@@ -97,8 +93,10 @@ static void setPull(
 			case GPIOPull::up:
 				value = 1;
 				break;
+
+			default:
+				break;
 		}
-		#pragma GCC diagnostic pop
 
 		// Configura el registre PUPDR (Pull Up/Down Register)
 		//
@@ -201,4 +199,22 @@ void GPIOBase_x::initAlt(
     setDriver(regs, pn, driver);
     setSpeed(regs, pn, speed);
     setAlt(regs, pn, alt);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el pin com a entrada/sortida analogica.
+/// \param    regs: Bloc de registres.
+/// \param    pn: Numero de pin.
+///
+void GPIOBase_x::initAnalogic(
+	GPIO_TypeDef *regs,
+	uint32_t pn) {
+
+    // Configura el registre MODER (Mode Register)
+    //
+    uint32_t tmp = regs->MODER;
+    tmp &= ~(0b11 << (pn * 2));
+    tmp |= 0b11 << (pn * 2);
+    regs->MODER = tmp;
 }
