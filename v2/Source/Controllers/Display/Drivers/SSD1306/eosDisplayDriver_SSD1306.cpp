@@ -198,15 +198,16 @@ void DisplayDriver_SSD1306::setPixels(
 ///
 void DisplayDriver_SSD1306::refresh() {
 
+    constexpr int pages = _displayHeight / 8;
 	const uint8_t *buffer = reinterpret_cast<const uint8_t*>(_frameBuffer->getBuffer());
 
-    for (int page = 0; page < _pages; page++) {
+    for (int page = 0; page < pages; page++) {
 
     	writeCommand(0xB0 + page); // Set the current page.
         writeCommand(0x00);        // Set first column (LO nibble)
         writeCommand(0x10);        // Set first column (HI nibble)
 
-        writeData(&buffer[page * _columns], _columns);
+        writeData(&buffer[page * _displayWidth], _displayWidth);
     }
 }
 

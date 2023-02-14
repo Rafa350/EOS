@@ -42,6 +42,7 @@
 #include "HTL/htlGPIO.h"
 #elif defined(DISPLAY_INTERFACE_I2C)
 #include "HTL/htlI2C.h"
+#include "HTL/htlGPIO.h"
 #endif
 
 
@@ -51,8 +52,6 @@ namespace eos {
     	private:
 			static constexpr int _displayWidth  = DISPLAY_WIDTH;
 			static constexpr int _displayHeight = DISPLAY_HEIGHT;
-    		static constexpr int _pages = DISPLAY_HEIGHT / 8;
-    		static constexpr int _columns = DISPLAY_WIDTH;
 
 			#if defined(DISPLAY_INTERFACE_SPI)
 				using PinCS = DISPLAY_CS_GPIO;

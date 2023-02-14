@@ -101,7 +101,7 @@ void DisplayDriver_ST7565::setPixel(
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa una linia de pixels horitzontals.
-/// \param    x : Coordinada X.
+/// \param    x: Coordinada X.
 /// \param    y: Colordinada Y.
 /// \param    size: Longitut de la linia.
 /// \param    color: Color dels pixels.
@@ -130,10 +130,17 @@ void DisplayDriver_ST7565::setVPixels(
 	Color color) {
 
 	_frameBuffer->setPixels(x, y, 1, size, color);
-
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa una regio rectangular de pixels.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
+/// \param    width: Amplada de la regio.
+/// \param    heught: Alçada de la regio.
+/// \param    color: Color dels pixels.
+///
 void DisplayDriver_ST7565::setPixels(
     int x,
     int y,
@@ -141,12 +148,12 @@ void DisplayDriver_ST7565::setPixels(
     int height,
     Color color) {
 
+	_frameBuffer->setPixels(x, y, width, height, color);
 }
 
 
 void DisplayDriver_ST7565::refresh() {
 
-	constexpr int columns = _displayWidth;
 	constexpr int pages = _displayHeight / 8;
 
     // Transfereix les pagines modificades

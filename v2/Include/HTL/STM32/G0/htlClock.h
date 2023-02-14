@@ -105,9 +105,11 @@ namespace htl {
 			static void lsiDisable();
 			static bool isLsiEnabled();
 
-			static void lseEnable();
-			static void lseDisable();
-			static bool isLseEnabled();
+            #ifdef CLOCK_LSE_FREQUENCY
+                static void lseEnable();
+                static void lseDisable();
+                static bool isLseEnabled();
+            #endif
 
 			static void pllEnable();
 			static void pllDisable();

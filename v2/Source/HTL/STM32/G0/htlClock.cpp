@@ -289,6 +289,44 @@ bool Clock::isHseEnabled() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Activa el rellotge LSE.
+///
+#ifdef CLOCK_LSE_FREQUENCY
+void Clock::lseEnable() {
+
+	RCC->CR |= RCC_CR_LSEON;
+	while ((RCC->CR & RCC_CR_LSERDY) == 0)
+		continue;
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief   Desactiva el rellotge LSE.
+///
+#ifdef CLOCK_LSE_FREQUENCY
+void Clock::lseDisable() {
+    
+	RCC->CR &= ~RCC_CR_LSEON;
+	while ((RCC->CR & RCC_CR_LSERDY) != 0)
+		continue;
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el rellotge LSE es actiu.
+/// \return   True si esta actiu, false en cas contrari.
+///
+#ifdef CLOCK_LSE_FREQUENCY
+bool Clock::isLseEnabled() {
+    
+    return (RCC->CR & RCC_CR_LSERDY) != 0;
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Activa el PLL
 ///
 void Clock::pllEnable() {
