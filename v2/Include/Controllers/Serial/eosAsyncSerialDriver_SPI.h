@@ -1,6 +1,6 @@
 #pragma once
 #ifndef __eosAsyncSerialDriver_SPI__
-#define __eosAsyncSerialDriver_SPU__
+#define __eosAsyncSerialDriver_SPI__
 
 
 #include "Controllers/Serial/eosAsyncSerialDriver.h"

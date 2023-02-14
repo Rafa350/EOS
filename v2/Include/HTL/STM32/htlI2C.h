@@ -6,7 +6,7 @@
 // EOS includes
 //
 #include "HTL/htl.h"
-#include "HTL/STM32/htlGPIO.h"
+#include "HTL/htlGPIO.h"
 
 
 #ifndef DISCOVERY_I2Cx_TIMING
@@ -85,19 +85,19 @@ namespace htl {
 			///
 			static void activate() {
 
-				#ifdef I2C1_BASE
+				#ifdef HTL_I2C1_EXIST
 					if constexpr (channel_ == I2CChannel::_1)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
 				#endif
-				#ifdef I2C2_BASE
+				#ifdef HTL_I2C2_EXIST
 					if constexpr (channel_ == I2CChannel::_2)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
 				#endif
-				#ifdef I2C3_BASE
+				#ifdef HTL_I2C3_EXIST
 					if constexpr (channel_ == I2CChannel::_3)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C3EN;
 				#endif
-				#ifdef I2C4_BASE
+				#ifdef HTL_I2C4_EXIST
 					if constexpr (channel_ == I2CChannel::_4)
 						RCC->APB1ENR |= RCC_APB1ENR_I2C4EN;
 				#endif
@@ -107,19 +107,19 @@ namespace htl {
 			///
             static void deactivate() {
 
-				#ifdef I2C1_BASE
+				#ifdef HTL_I2C1_EXIST
 					if constexpr (channel_ == I2CChannel::_1)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
 				#endif
-				#ifdef I2C2_BASE
+				#ifdef HTL_I2C2_EXIST
 					if constexpr (channel_ == I2CChannel::_2)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
 				#endif
-				#ifdef I2C3_BASE
+				#ifdef HTL_I2C3_EXIST
 					if constexpr (channel_ == I2CChannel::_3)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C3EN;
 				#endif
-				#ifdef I2C4_BASE
+				#ifdef HTL_I2C4_EXIST
 					if constexpr (channel_ == I2CChannel::_4)
 						RCC->APB1ENR &= ~RCC_APB1ENR_I2C4EN;
 				#endif
