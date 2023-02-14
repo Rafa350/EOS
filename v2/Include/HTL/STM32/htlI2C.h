@@ -328,15 +328,6 @@ namespace htl {
 		struct I2CTrait<I2CChannel::_1> {
 			static constexpr uint32_t addr = I2C1_BASE;
 		};
-
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B6, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_4;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B7, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_4;
-		};
 	#endif
 
 	#ifdef HTL_I2C2_EXIST
@@ -351,15 +342,6 @@ namespace htl {
 		struct I2CTrait<I2CChannel::_3> {
 			static constexpr uint32_t addr = I2C3_BASE;
 		};
-
-		template <>
-		struct I2CPinTrait<I2CChannel::_3, GPIO_H7, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_4;
-		};
-		template <>
-		struct I2CPinTrait<I2CChannel::_3, GPIO_H8, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_4;
-		};
 	#endif
 
 	#ifdef HTL_I2C4_EXIST
@@ -369,6 +351,27 @@ namespace htl {
 		};
 	#endif
 }
+
+
+#if defined(EOS_PLATFORM_STM32G031Fx)
+    #include "htl/STM32/htlI2C_AF_G031F.h"
+#elif defined(EOS_PLATFORM_STM32G031Jx)
+    #include "htl/STM32/htlUART_AF_G031J.h"
+#elif defined(EOS_PLATFORM_STM32G031Kx)
+    #include "htl/STM32/htlI2C_AF_G031K.h"
+
+#elif defined(EOS_PLATFORM_STM32F030R8)
+    #include "htl/STM32/htlI2C_AF_F030R.h"
+
+#elif defined(EOS_PLATFORM_STM32F4)
+    #include "htl/STM32/htlI2C_AF_F4.h"
+
+#elif defined(EOS_PLATFORM_STM32F7)
+    #include "htl/STM32/htlI2C_AF_F7.h"
+
+#else
+    #error Plataforma no soportada
+#endif
 
 
 #endif // __STM32_htlI2C__

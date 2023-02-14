@@ -9,7 +9,7 @@ using namespace htl;
 #ifdef HTL_SPI1_EXIST
 void SPI_1_InterruptHandler() {
 
-	SPI_1::InterruptHandler();
+	SPI_1::interruptHandler();
 }
 #endif
 
@@ -17,7 +17,7 @@ void SPI_1_InterruptHandler() {
 #ifdef HTL_SPI2_EXIST
 void SPI_2_InterruptHandler() {
 
-	SPI_2::InterruptHandler();
+	SPI_2::interruptHandler();
 }
 #endif
 
@@ -25,7 +25,7 @@ void SPI_2_InterruptHandler() {
 #ifdef HTL_SPI3_EXIST
 void SPI_3_InterruptHandler() {
 
-	SPI_3::InterruptHandler();
+	SPI_3::interruptHandler();
 }
 #endif
 
@@ -33,7 +33,7 @@ void SPI_3_InterruptHandler() {
 #ifdef HTL_SPI4_EXIST
 void SPI_4_InterruptHandler() {
 
-	SPI_4::InterruptHandler();
+	SPI_4::interruptHandler();
 }
 #endif
 
@@ -41,7 +41,7 @@ void SPI_4_InterruptHandler() {
 #ifdef HTL_SPI5_EXIST
 void SPI_5_InterruptHandler() {
 
-	SPI_5::InterruptHandler();
+	SPI_5::interruptHandler();
 }
 #endif
 
@@ -49,7 +49,7 @@ void SPI_5_InterruptHandler() {
 #ifdef HTL_SPI6_EXIST
 void SPI_6_InterruptHandler() {
 
-	SPI_6::InterruptHandler();
+	SPI_6::interruptHandler();
 }
 #endif
 

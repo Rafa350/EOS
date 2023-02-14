@@ -354,7 +354,7 @@ namespace htl {
 				}
 			}
 
-			static void InterruptHandler() {
+			static void interruptHandler() {
 
 				if (_isrFunction != nullptr)
 					_isrFunction(_isrParam);
