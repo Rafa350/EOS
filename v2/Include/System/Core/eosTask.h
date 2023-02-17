@@ -11,8 +11,6 @@
 
 namespace eos {
 
-	class String;
-
     /// \brief Clase que implementa una tasca.
     ///
     class Task {
@@ -22,7 +20,6 @@ namespace eos {
                 void *params;
             };
 
-        private:
             typedef ICallbackP1<const EventArgs&> IEventCallback;
 
         public:
@@ -33,7 +30,7 @@ namespace eos {
                 high
             };
 
-            Task(unsigned stackSize, Priority priority, const String &name, IEventCallback *eventCallback, void *eventParams);
+            Task(unsigned stackSize, Priority priority, const char *name, IEventCallback *eventCallback, void *eventParams);
             virtual ~Task();
 
             static void delay(unsigned time);

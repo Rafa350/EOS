@@ -21,7 +21,8 @@ namespace htl {
 		hsi,
 		hsi14,
 		lse,
-		lsi
+		lsi,
+		i2cclk
 	};
 
 	enum class HseBypassMode {
@@ -78,6 +79,11 @@ namespace htl {
 		pll
 	};
 
+	enum class I2CClkSource {
+		hsi,
+		sysclk
+	};
+
 	enum class HClkPrescaler {
 		_1,
 		_2,
@@ -120,6 +126,8 @@ namespace htl {
 			static void setPllHseDivider(PllHseDivider value);
 
 			static bool setSysClkSource(SysClkSource source);
+			static void setI2CClkSource(I2CClkSource source);
+
 			static void setHClkPrescaler(HClkPrescaler value);
 			static void setPClkPrescaler(PClkPrescaler value);
 

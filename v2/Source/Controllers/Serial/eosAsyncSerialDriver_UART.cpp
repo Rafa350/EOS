@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "Controllers/Serial/eosAsyncSerialDriver_UART.h"
-#include "HAL/halSYS.h"
 #include "HTL/htlUART.h"
 
 

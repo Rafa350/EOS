@@ -9,11 +9,6 @@
 #include "HTL/htlGPIO.h"
 
 
-#ifndef DISCOVERY_I2Cx_TIMING
-#define DISCOVERY_I2Cx_TIMING     ((uint32_t)0x40912732)
-#endif
-
-
 namespace htl {
 
 	enum class I2CChannel {
@@ -31,11 +26,29 @@ namespace htl {
 		#endif
 	};
 
-	enum class I2CEvent {
+	enum class I2CInterrupt {
+        rx,
+        tx,
+        stop,
+        tc,
+        addr,
+        nack,
+        err
 	};
 
-	enum class I2CError {
-		none
+	enum class I2CFlag {
+        rxne,
+        txis,
+        stop,
+        tcr,
+        tc,
+        addr,
+        nack,
+        berr,
+        arlo,
+        pecerr,
+        timeout,
+        alert
 	};
 
 	enum class I2CPin {
@@ -58,14 +71,11 @@ namespace htl {
 	class I2C_x {
 		private:
 			using Trait = I2CTrait<channel_>;
-
 			static constexpr uint32_t _addr = Trait::addr;
 
+		private:
 			static I2CInterruptParam _isrParam;
 			static I2CInterruptFunction _isrFunction;
-
-		protected:
-			static I2C_HandleTypeDef _handle;
 
 		public:
 			static constexpr I2CChannel channel = channel_;
@@ -125,7 +135,7 @@ namespace htl {
 				#endif
             }
 
-		protected:
+		public:
             /// \brief Inicialitza edl modul en modus master
             ///
 			static bool initMaster() {
@@ -135,8 +145,8 @@ namespace htl {
 
 				I2C_TypeDef *regs= reinterpret_cast<I2C_TypeDef*>(_addr);
 
-				_handle.Instance = regs;
-				_handle.Init.Timing           = DISCOVERY_I2Cx_TIMING;
+				/*_handle.Instance = regs;
+				_handle.Init.Timing           = (uint32_t)0x40912732;
 			    _handle.Init.OwnAddress1      = 0;
 			    _handle.Init.AddressingMode   = I2C_ADDRESSINGMODE_7BIT;
 			    _handle.Init.DualAddressMode  = I2C_DUALADDRESS_DISABLE;
@@ -147,31 +157,57 @@ namespace htl {
 					return false;
 
 				enable();
-
+*/
 				return true;
 			}
+
+			/// \brief Inicialitza el modul com escalu
+			// \param addr: Adressa.
+			//
+			static void initSlave(
+				uint8_t addr) {
+
+				activate();
+				disable();
+
+				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+				regs->OAR1 = I2C_OAR1_OA1EN | (addr & 0x3FF);
+				regs->OAR2 = 0;
+				regs->CR1 |= I2C_CR1_SBC;
+			}
+
+			/// \brief Configuracio del timing
+			/// \param prescaler:
+			/// \param scldel:
+			/// \param sdadel:
+			/// \param sclh:
+			/// \param scll:
+			///
+			static void setTimming(
+				uint8_t prescaler,
+				uint8_t scldel,
+				uint8_t sdadel,
+				uint8_t sclh,
+				uint8_t scll) {
+
+				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+				regs->TIMINGR =
+					((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
+					((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
+					((sdadel << I2C_TIMINGR_SDADEL_Pos) & I2C_TIMINGR_SDADEL_Msk) |
+					((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
+					((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
+			}
             
-		public:
 			/// \brief Desinicialitza el modul.
 			///
             static void deinitialize() {
                 
             	disable();
-
-            	HAL_I2C_DeInit(&_handle);
-
             	deactivate();
             }
 
-            /// \brief Obte el codi de l'ultime error i el reseteja
-            /// \return El codi d'error.
-            ///
-            static I2CError getError() {
-
-            	return I2CError::none;
-            }
-
-            /// \brief Activa la comunicacio
+            /// \brief Activa lel dispositiu
             //
 			static void enable() {
 
@@ -179,13 +215,45 @@ namespace htl {
 				regs->CR1 |= I2C_CR1_PE;
 			}
 
-			/// \brief Desactiva la comunicacio
+			/// \brief Desactiva el dispositiu
 			///
 			static void disable() {
 
 				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
 				regs->CR1 &= ~I2C_CR1_PE;
 			}
+            
+            /// \brief Reset per software del dispositiu.
+            ///
+            static void reset() {
+				#ifdef HTL_I2C1_EXIST
+					if constexpr (channel_ == I2CChannel::_1) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_I2C1RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C1RST;
+					}
+				#endif
+				#ifdef HTL_I2C2_EXIST
+					if constexpr (channel_ == I2CChannel::_2) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_I2C2RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C2RST;
+					}
+				#endif
+				#ifdef HTL_I2C3_EXIST
+					if constexpr (channel_ == I2CChannel::_3) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_I2C3RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C3RST;
+					}
+				#endif
+				#ifdef HTL_I2C4_EXIST
+					if constexpr (channel_ == I2CChannel::_4) {
+						RCC->APB1RSTR |= RCC_APB1RSTR_I2C4RST;
+						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C4RST;
+					}
+				#endif
+
+				_isrFunction = nullptr;
+				_isrParam = nullptr;
+            }
 
 			/// \brief Inicialitza el pin SCL
 			///
@@ -220,107 +288,160 @@ namespace htl {
             }
 
             /// \brief Invoca la funcio d'interrupcio.
-            /// \param event: L'event.
-            /// \param param: El parametre.
             ///
             static void interruptHandler() {
 
             	if (_isrFunction != nullptr)
             		_isrFunction(_isrParam);
             }
+            
+            /// \brief Habilita una interrupcio.
+            /// \param interrupt: L'interrupcio a habilitar.
+            ///
+            static void enableInterrupt(
+                I2CInterrupt interrupt) {
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+                switch (interrupt) {
+                	case I2CInterrupt::addr:
+                		regs->CR1 |= I2C_CR1_ADDRIE;
+                		break;
+
+                	case I2CInterrupt::rx:
+                		regs->CR1 |= I2C_CR1_RXIE;
+                		break;
+
+                	case I2CInterrupt::err:
+                        regs->CR1 |= I2C_CR1_ERRIE;
+                        break;
+
+                    case I2CInterrupt::stop:
+                        regs->CR1 |= I2C_CR1_STOPIE;
+                        break;
+
+                    case I2CInterrupt::tc:
+                        regs->CR1 |= I2C_CR1_TCIE;
+                        break;
+
+                    default:
+                    	break;
+                }
+            }
+            
+            /// \brief Deshabilita una interrupcio.
+            /// \param interrupt: L'interrupcio a deshabilitar.
+            ///
+            static bool disableInterrupt(
+                I2CInterrupt interrupt) {
+
+            	bool state = false;
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	switch (interrupt) {
+            		case I2CInterrupt::addr:
+            			state = (regs->CR1 & I2C_CR1_ADDRIE) != 0;
+                		regs->CR1 &= ~I2C_CR1_ADDRIE;
+            			break;
+
+            		case I2CInterrupt::rx:
+            			state = (regs->CR1 & I2C_CR1_RXIE) != 0;
+                		regs->CR1 &= ~I2C_CR1_RXIE;
+            			break;
+
+            		default:
+            			break;
+            	}
+
+            	return state;
+            }
+            
+            /// \brief Comproba si una interrupcio esta habilitada.
+            /// \para interrupt: L'interrupcio.
+            /// \return True si esta habiolitada.
+            ///
+            static bool isInterruptEnabled(
+                I2CInterrupt interrupt) {
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	switch (interrupt) {
+            		case I2CInterrupt::addr:
+            			return (regs->CR1 & I2C_CR1_ADDRIE) != 0;
+
+            		case I2CInterrupt::rx:
+            			return (regs->CR1 & I2C_CR1_RXIE) != 0;
+
+            		default:
+            			return false;
+            	}
+            }
+            
+            /// \brief Obte el valor d'un flag.
+            /// \param flag: El flag;
+            /// \return El valor del flag.
+            ///
+            static bool getFlag(
+                I2CFlag flag) {
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	switch (flag) {
+            		case I2CFlag::addr:
+            			return (regs->ISR & I2C_ISR_ADDR) != 0;
+
+            		case I2CFlag::rxne:
+            			return (regs->ISR & I2C_ISR_RXNE) != 0;
+
+            		default:
+            			return false;
+            	}
+            }
+            
+            /// \brief Borra un flag.
+            /// \param flag: El flag.
+            ///
+            static void clearFlag(
+                I2CFlag flag) {
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	switch (flag) {
+            		case I2CFlag::addr:
+            			regs->ICR |= I2C_ICR_ADDRCF;
+            			break;
+
+            		default:
+            			break;
+            	}
+            }
+
+            static uint8_t read() {
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	return regs->RXDR;
+            }
+
+            static void write(uint8_t data) {
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	regs->TXDR = data;
+            }
+
+            static void nack() {
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	regs->CR2 |= I2C_CR2_NACK;
+            }
 	};
 
-	template <I2CChannel channel_> I2C_HandleTypeDef I2C_x<channel_>::_handle;
 	template <I2CChannel channel_> I2CInterruptFunction I2C_x<channel_>::_isrFunction;
 	template <I2CChannel channel_> I2CInterruptParam I2C_x<channel_>::_isrParam;
 
-	template <I2CChannel channel_>
-	class I2CMaster_x final: public I2C_x<channel_> {
-		public:
-			static void initialize() {
-
-				I2C_x<channel_>::initMaster();
-			}
-
-			/// \brief Envia un bloc de dades al esclau
-			/// \param addr: Adressa I2C.
-			/// \param data: Buffer de dades.
-			/// \param dataLength: Numero de bytes en el buffer.
-			/// \param timeout: Temps maxim de bloqueig.
-			///
-			static bool send(
-				uint8_t addr,
-				const uint8_t *data,
-				unsigned dataLength,
-				unsigned timeout = 1000) {
-
-				if (HAL_I2C_Master_Transmit(
-					&I2C_x<channel_>::_handle,
-					addr,
-					(uint8_t*) data,
-					dataLength,
-					timeout) != HAL_OK)
-					return false;
-
-				return true;
-			}
-
-			/// \brief Reb un bloc de dades del esclau.
-			/// \param addr: Adressa I2C.
-			/// \param data: Buffer de dades.
-			/// \param dataSize: Tamany del buffer de dades.
-			/// \param timeout: Temps maxim de bloqueig.
-			///
-			static bool receive(
-				uint8_t addr,
-				uint8_t *data,
-				unsigned dataSize,
-				unsigned timeout = 1000) {
-
-				if (HAL_I2C_Master_Receive(
-					&I2C_x<channel_>::_handle,
-					addr,
-					data,
-					dataSize,
-					timeout) != HAL_OK)
-					return false;
-
-				return true;
-			}
-	};
-
-	template <I2CChannel channel_>
-	class I2CSlave_x final: public I2C_x<channel_> {
-		public:
-			static bool send() {
-
-				return false;
-			}
-
-			static bool reveive() {
-
-				return false;
-			}
-	};
-
 	#ifdef HTL_I2C1_EXIST
-		using I2CMaster_1 = I2CMaster_x<I2CChannel::_1>;
-		using I2CSlave_1 = I2CSlave_x<I2CChannel::_1>;
+	    using I2C_1 = I2C_x<I2CChannel::_1>;
 	#endif
-
 	#ifdef HTL_I2C2_EXIST
-		using I2CMaster_2 = I2CMaster_x<I2CChannel::_2>;
-		using I2CSlave_2 = I2CSlave_x<I2CChannel::_2>;
+	    using I2C_2 = I2C_x<I2CChannel::_2>;
 	#endif
-
 	#ifdef HTL_I2C3_EXIST
-		using I2CMaster_3 = I2CMaster_x<I2CChannel::_3>;
-		using I2CSlave_3 = I2CSlave_x<I2CChannel::_3>;
+	    using I2C_3 = I2C_x<I2CChannel::_3>;
 	#endif
-
 	#ifdef HTL_I2C4_EXIST
-		using I2CMaster_4 = I2CMaster_x<I2CChannel::_4>;
-		using I2CSlave_4 = I2CSlave_x<I2CChannel::_4>;
+	    using I2C_4 = I2C_x<I2CChannel::_4>;
 	#endif
 
 	#ifdef HTL_I2C1_EXIST

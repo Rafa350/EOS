@@ -11,7 +11,7 @@ using namespace htl;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el rellotge SysClk
+/// \brief    Selecciona la font de SysClk
 /// \param    source: L'origen.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
@@ -46,6 +46,25 @@ bool Clock::setSysClkSource(
 		continue;
 
 	return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona la font del rellotge I2CClk
+/// \param    source: La font.
+///
+void Clock::setI2CClkSource(
+	I2CClkSource source) {
+
+	switch (source) {
+		case I2CClkSource::hsi:
+			RCC->CFGR3 &= ~RCC_CFGR3_I2C1SW;
+			break;
+
+		case I2CClkSource::sysclk:
+			RCC->CFGR3 |= RCC_CFGR3_I2C1SW;
+			break;
+	}
 }
 
 
@@ -477,6 +496,13 @@ unsigned Clock::getClockFrequency(
 
 		case ClockId::hclk:
 			fclk = getClockFrequency(ClockId::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
+			break;
+
+		case ClockId::i2cclk:
+			if ((RCC->CFGR3 & RCC_CFGR3_I2C1SW) == 0)
+				fclk = CLOCK_HSI_FREQUENCY;
+			else
+				fclk = getClockFrequency(ClockId::sysclk);
 			break;
 
 		case ClockId::hse:

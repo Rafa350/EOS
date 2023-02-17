@@ -183,6 +183,18 @@ namespace htl {
 		#ifdef HTL_UART8_EXIST
 			uart8 = UART8_IRQn,
 		#endif
+		#ifdef HTL_I2C1_EXIST
+			i2c1 = I2C1_IRQn,
+		#endif
+		#ifdef HTL_I2C2_EXIST
+			i2c2 = I2C2_IRQn,
+		#endif
+		#ifdef HTL_I2C3_EXIST
+			i2c3 = I2C3_IRQn,
+		#endif
+		#ifdef HTL_I2C4_EXIST
+			i2c4 = I2C4_IRQn,
+		#endif
 	};
 
 	template <int dummy>

@@ -2,7 +2,6 @@
 #include "eosAssert.h"
 #include "OSAL/osalTask.h"
 #include "OSAL/osalKernel.h"
-#include "System/eosString.h"
 #include "System/Core/eosTask.h"
 
 #include "FreeRTOS.h"
@@ -23,7 +22,7 @@ using namespace eos;
 Task::Task(
     unsigned stackSize,
     Priority priority,
-    const String &name,
+    const char *name,
     IEventCallback *eventCallback,
     void *eventParams):
 

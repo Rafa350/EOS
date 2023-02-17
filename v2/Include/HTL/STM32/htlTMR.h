@@ -350,6 +350,9 @@ namespace htl {
 					case TMRInterrupt::com:
 						regs->DIER |= TIM_DIER_COMIE;
 						break;
+
+					default:
+						break;
 				}
 			}
 
