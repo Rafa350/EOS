@@ -348,6 +348,11 @@ namespace htl {
                 		regs->CR1 &= ~I2C_CR1_RXIE;
             			break;
 
+            		case I2CInterrupt::stop:
+            			state = (regs->CR1 & I2C_CR1_STOPIE) != 0;
+                		regs->CR1 &= ~I2C_CR1_STOPIE;
+            			break;
+
             		default:
             			break;
             	}
@@ -370,6 +375,9 @@ namespace htl {
             		case I2CInterrupt::rx:
             			return (regs->CR1 & I2C_CR1_RXIE) != 0;
 
+            		case I2CInterrupt::stop:
+            			return (regs->CR1 & I2C_CR1_STOPIE) != 0;
+
             		default:
             			return false;
             	}
@@ -390,6 +398,9 @@ namespace htl {
             		case I2CFlag::rxne:
             			return (regs->ISR & I2C_ISR_RXNE) != 0;
 
+            		case I2CFlag::stop:
+            			return (regs->ISR & I2C_ISR_STOPF) != 0;
+
             		default:
             			return false;
             	}
@@ -407,21 +418,33 @@ namespace htl {
             			regs->ICR |= I2C_ICR_ADDRCF;
             			break;
 
+            		case I2CFlag::stop:
+            			regs->ICR |= I2C_ICR_STOPCF;
+            			break;
+
             		default:
             			break;
             	}
             }
 
+            /// \brief Llegeix un byte.
+            /// \return El byte lleigit.
+            ///
             static uint8_t read() {
             	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
             	return regs->RXDR;
             }
 
+            /// \brief Escriu un byte
+            /// \return El byte lleigit.
+            ///
             static void write(uint8_t data) {
             	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
             	regs->TXDR = data;
             }
 
+            /// \brief Genera NACK
+            ///
             static void nack() {
             	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
             	regs->CR2 |= I2C_CR2_NACK;

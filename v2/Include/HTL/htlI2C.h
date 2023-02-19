@@ -33,6 +33,7 @@ namespace htl {
 		public:
 			virtual void write(uint8_t data) const = 0;
 			virtual uint8_t read() const = 0;
+			virtual void nack() const = 0;
 			virtual void enable() const = 0;
 			virtual void disable() const = 0;
 			virtual void setInterruptFunction(I2CInterruptFunction function, I2CInterruptParam param) const = 0;
@@ -67,6 +68,10 @@ namespace htl {
 
 			uint8_t read() const override {
 				return i2c_::read();
+			}
+
+			void nack() const override {
+				i2c_::nack();
 			}
 
 			void enable() const override {

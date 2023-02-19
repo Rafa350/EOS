@@ -11,7 +11,12 @@ namespace eos {
 
 	class AsyncSerialDriver_I2C: public AsyncSerialDriver {
 		private:
+			struct Flags {
+				int rxMode:1;
+			};
+		private:
 			htl::I2CHandler _hI2C;
+			Flags _flags;
 			const uint8_t *_txData;
 			int _txLength;
 			int _txCount;

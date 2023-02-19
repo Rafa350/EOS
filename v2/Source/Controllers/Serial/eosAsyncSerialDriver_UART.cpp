@@ -118,52 +118,56 @@ bool AsyncSerialDriver_UART::receiveImpl(
 #if defined(EOS_PLATFORM_STM32)
 void AsyncSerialDriver_UART::interruptHandler() {
 
-	if (_hUART->isInterruptEnabled(UARTInterrupt::txEmpty) &&
-		_hUART->getFlag(UARTFlag::txEmpty)) {
+	if (_hUART->isInterruptEnabled(UARTInterrupt::txEmpty)) {
 
-		if (_txCount < _txLength) {
-			_txCount++;
-			_hUART->write(*_txData++);
-			if (_txCount == _txLength) {
-				_hUART->disableInterrupt(UARTInterrupt::txEmpty);
-				_hUART->enableInterrupt(UARTInterrupt::txComplete);
+		if (_hUART->getFlag(UARTFlag::txEmpty)) {
+			if (_txCount < _txLength) {
+				_txCount++;
+				_hUART->write(*_txData++);
+				if (_txCount == _txLength) {
+					_hUART->disableInterrupt(UARTInterrupt::txEmpty);
+					_hUART->enableInterrupt(UARTInterrupt::txComplete);
+				}
 			}
 		}
 	}
 
-	if (_hUART->isInterruptEnabled(UARTInterrupt::txComplete) &&
-		_hUART->getFlag(UARTFlag::txComplete)) {
+	if (_hUART->isInterruptEnabled(UARTInterrupt::txComplete)) {
 
-		_hUART->clearFlag(UARTFlag::txComplete);
-		_hUART->disableInterrupt(UARTInterrupt::txEmpty);
-		_hUART->disableInterrupt(UARTInterrupt::txComplete);
-		_hUART->disableTX();
-		notifyTxCompleted(_txCount);
+		if (_hUART->getFlag(UARTFlag::txComplete)) {
+			_hUART->clearFlag(UARTFlag::txComplete);
+			_hUART->disableInterrupt(UARTInterrupt::txEmpty);
+			_hUART->disableInterrupt(UARTInterrupt::txComplete);
+			_hUART->disableTX();
+			notifyTxCompleted(_txCount);
+		}
 	}
 
-	if (_hUART->isInterruptEnabled(UARTInterrupt::rxNotEmpty) &&
-		_hUART->getFlag(UARTFlag::rxNotEmpty)) {
+	if (_hUART->isInterruptEnabled(UARTInterrupt::rxNotEmpty)) {
 
-		if (_rxCount < _rxSize) {
-			_rxCount++;
-			*_rxData++ = _hUART->read();
-			if (_rxCount == _rxSize) {
-				_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
-				_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-				_hUART->disableRX();
-				notifyRxCompleted(_rxCount);
+		if (_hUART->getFlag(UARTFlag::rxNotEmpty)) {
+			if (_rxCount < _rxSize) {
+				_rxCount++;
+				*_rxData++ = _hUART->read();
+				if (_rxCount == _rxSize) {
+					_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
+					_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
+					_hUART->disableRX();
+					notifyRxCompleted(_rxCount);
+				}
 			}
 		}
 	}
 
-	if (_hUART->isInterruptEnabled(UARTInterrupt::rxTimeout) &&
-		_hUART->getFlag(UARTFlag::rxTimeout)) {
+	if (_hUART->isInterruptEnabled(UARTInterrupt::rxTimeout)) {
 
-		_hUART->clearFlag(UARTFlag::rxTimeout);
-		_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
-		_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-		_hUART->disableRX();
-		notifyRxCompleted(_rxCount);
+		if (_hUART->getFlag(UARTFlag::rxTimeout)) {
+			_hUART->clearFlag(UARTFlag::rxTimeout);
+			_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
+			_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
+			_hUART->disableRX();
+			notifyRxCompleted(_rxCount);
+		}
 	}
 }
 

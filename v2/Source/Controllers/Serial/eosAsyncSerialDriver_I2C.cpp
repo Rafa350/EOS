@@ -54,6 +54,7 @@ bool AsyncSerialDriver_I2C::transmitImpl(
 	else {
 		notifyTxStart();
 
+		_flags.rxMode = 0;
 		_txData = data;
 		_txLength = dataLength;
 		_txCount = 0;
@@ -61,7 +62,7 @@ bool AsyncSerialDriver_I2C::transmitImpl(
 		_hI2C->enable();
 		_hI2C->enableInterrupt(I2CInterrupt::tx);
 
-		// En aquest moment es genera una interrupcio txEmpty
+		// En aquest moment es genera una interrupcio
 		// i comença la transmissio controlada per interrupcions.
 
 		return true;
@@ -82,6 +83,7 @@ bool AsyncSerialDriver_I2C::receiveImpl(
 	else {
 		notifyRxStart();
 
+		_flags.rxMode = 1;
 		_rxData = data;
 		_rxSize = dataSize;
 		_rxCount = 0;
@@ -102,20 +104,54 @@ bool AsyncSerialDriver_I2C::receiveImpl(
 ///
 void AsyncSerialDriver_I2C::interruptHandler() {
 
-	if (_hI2C->getFlag(I2CFlag::addr) && _hI2C->isInterruptEnabled(I2CInterrupt::addr)) {
-		_hI2C->clearFlag(I2CFlag::addr);
-		_hI2C->disableInterrupt(I2CInterrupt::addr);
-		_hI2C->enableInterrupt(I2CInterrupt::rx);
+	if (_hI2C->isInterruptEnabled(I2CInterrupt::addr)) {
+
+		if (_hI2C->getFlag(I2CFlag::addr)) {
+			_hI2C->clearFlag(I2CFlag::addr);
+			_hI2C->disableInterrupt(I2CInterrupt::addr);
+			_hI2C->enableInterrupt(I2CInterrupt::stop);
+			if (_flags.rxMode)
+				_hI2C->enableInterrupt(I2CInterrupt::rx);
+			else
+				_hI2C->enableInterrupt(I2CInterrupt::tx);
+			return;
+		}
 	}
 
-	if (_hI2C->getFlag(I2CFlag::rxne) && _hI2C->isInterruptEnabled(I2CInterrupt::rx)) {
-		if (_rxCount < _rxSize) {
-			_rxCount++;
-			*_rxData++ = _hI2C->read();
-			if (_rxCount == _rxSize) {
-				_hI2C->disableInterrupt(I2CInterrupt::rx);
-				notifyRxCompleted(_rxCount);
+	if (_hI2C->isInterruptEnabled(I2CInterrupt::rx)) {
+
+		if (_hI2C->getFlag(I2CFlag::rxne)) {
+			uint8_t data = _hI2C->read();
+			if (_rxCount < _rxSize) {
+				*_rxData++ = data;
+				_rxCount++;
+
+				// Si es l'ultim, tots els que es rebin despres contestaran NACK
+				//
+				if (_rxCount == _rxSize)
+					_hI2C->nack();
 			}
+			return;
+		}
+	}
+
+	if (_hI2C->isInterruptEnabled(I2CInterrupt::stop)) {
+
+		if (_hI2C->getFlag(I2CFlag::stop)) {
+			_hI2C->clearFlag(I2CFlag::stop);
+			_hI2C->disableInterrupt(I2CInterrupt::stop);
+			notifyRxCompleted(_rxCount);
+			return;
+		}
+	}
+
+	if (_hI2C->isInterruptEnabled(I2CInterrupt::tx)) {
+
+		if (_hI2C->getFlag(I2CFlag::txis)) {
+			if (_txCount < _txLength) {
+				_hI2C->write(*_txData++);
+			}
+			return;
 		}
 	}
 }
