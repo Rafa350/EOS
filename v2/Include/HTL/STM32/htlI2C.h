@@ -173,7 +173,7 @@ namespace htl {
 				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
 				regs->OAR1 = I2C_OAR1_OA1EN | (addr & 0x3FF);
 				regs->OAR2 = 0;
-				regs->CR1 |= I2C_CR1_SBC;
+				regs->CR1 &= ~(I2C_CR1_SBC | I2C_CR1_NOSTRETCH);
 			}
 
 			/// \brief Configuracio del timing
@@ -311,6 +311,10 @@ namespace htl {
                 		regs->CR1 |= I2C_CR1_RXIE;
                 		break;
 
+                	case I2CInterrupt::tx:
+                		regs->CR1 |= I2C_CR1_TXIE;
+                		break;
+
                 	case I2CInterrupt::err:
                         regs->CR1 |= I2C_CR1_ERRIE;
                         break;
@@ -348,6 +352,11 @@ namespace htl {
                 		regs->CR1 &= ~I2C_CR1_RXIE;
             			break;
 
+            		case I2CInterrupt::tx:
+            			state = (regs->CR1 & I2C_CR1_TXIE) != 0;
+                		regs->CR1 &= ~I2C_CR1_TXIE;
+            			break;
+
             		case I2CInterrupt::stop:
             			state = (regs->CR1 & I2C_CR1_STOPIE) != 0;
                 		regs->CR1 &= ~I2C_CR1_STOPIE;
@@ -375,6 +384,9 @@ namespace htl {
             		case I2CInterrupt::rx:
             			return (regs->CR1 & I2C_CR1_RXIE) != 0;
 
+            		case I2CInterrupt::tx:
+            			return (regs->CR1 & I2C_CR1_TXIE) != 0;
+
             		case I2CInterrupt::stop:
             			return (regs->CR1 & I2C_CR1_STOPIE) != 0;
 
@@ -397,6 +409,9 @@ namespace htl {
 
             		case I2CFlag::rxne:
             			return (regs->ISR & I2C_ISR_RXNE) != 0;
+
+            		case I2CFlag::txis:
+            			return (regs->ISR & I2C_ISR_TXIS) != 0;
 
             		case I2CFlag::stop:
             			return (regs->ISR & I2C_ISR_STOPF) != 0;

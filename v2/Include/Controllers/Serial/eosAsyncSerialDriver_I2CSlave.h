@@ -9,14 +9,9 @@
 
 namespace eos {
 
-	class AsyncSerialDriver_I2C: public AsyncSerialDriver {
-		private:
-			struct Flags {
-				int rxMode:1;
-			};
+	class AsyncSerialDriver_I2CSlave: public AsyncSerialDriver {
 		private:
 			htl::I2CHandler _hI2C;
-			Flags _flags;
 			const uint8_t *_txData;
 			int _txLength;
 			int _txCount;
@@ -30,11 +25,13 @@ namespace eos {
 			bool transmitImpl(const uint8_t *data, int dataLength) override;
 			bool receiveImpl(uint8_t *data, int dataSize) override;
 
-			void interruptHandler();
-			static void interruptFunction(htl::I2CInterruptParam param);
+			void rxInterruptHandler();
+			void txInterruptHandler();
+			static void rxInterruptFunction(htl::I2CInterruptParam param);
+			static void txInterruptFunction(htl::I2CInterruptParam param);
 
 		public:
-			AsyncSerialDriver_I2C(htl::I2CHandler hI2C);
+			AsyncSerialDriver_I2CSlave(htl::I2CHandler hI2C);
 	};
 }
 
