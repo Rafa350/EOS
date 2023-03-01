@@ -971,6 +971,8 @@ namespace htl {
     #include "htl/STM32/htlUART_AF_G031J.h"
 #elif defined(EOS_PLATFORM_STM32G031Kx)
     #include "htl/STM32/htlUART_AF_G031K.h"
+#elif defined(EOS_PLATFORM_STM32G051Kx)
+    #include "htl/STM32/htlUART_AF_G051K.h"
     
 #elif defined(EOS_PLATFORM_STM32F030R8)
     #include "htl/STM32/htlUART_AF_F030R.h"

@@ -413,6 +413,9 @@ namespace htl {
             		case I2CFlag::txis:
             			return (regs->ISR & I2C_ISR_TXIS) != 0;
 
+            		case I2CFlag::nack:
+            			return (regs->ISR & I2C_ISR_NACKF) != 0;
+
             		case I2CFlag::stop:
             			return (regs->ISR & I2C_ISR_STOPF) != 0;
 
@@ -435,6 +438,10 @@ namespace htl {
 
             		case I2CFlag::stop:
             			regs->ICR |= I2C_ICR_STOPCF;
+            			break;
+
+            		case I2CFlag::nack:
+            			regs->ICR |= I2C_ICR_NACKCF;
             			break;
 
             		default:

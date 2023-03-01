@@ -18,7 +18,7 @@ namespace eos {
             void onInitialize() override;
             void onTask() override;
             virtual void onSetup();
-            virtual void onLoop();
+            virtual bool onLoop();
 
         public:
             AppLoopService();

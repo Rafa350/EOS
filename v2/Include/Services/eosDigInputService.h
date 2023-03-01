@@ -37,9 +37,7 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTask() override;
-#if Eos_ApplicationTickEnabled
-            void onTick();
-#endif
+
         public:
             DigInputService();
             ~DigInputService();

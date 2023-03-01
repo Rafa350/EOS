@@ -16,7 +16,6 @@ using namespace eos;
 /// \param    settings: Configuration parameters.
 ///
 DigOutputService::DigOutputService():
-	Service(),
 	_commandQueue(_commandQueueSize) {
 
 }
@@ -437,57 +436,55 @@ void DigOutputService::cmdDelayedPulse(
 void DigOutputService::cmdTimeOut(
     unsigned time) {
 
-    for (auto it = _outputs.begin(); it != _outputs.end(); it++) {
+    for (auto output: _outputs) {
 
-        DigOutput *output = *it;
+		switch (output->_state) {
+			case DigOutput::State::pulse:
+				if (output->_widthCnt <= time) {
+					output->_hGPIO->toggle();
+					output->_state = DigOutput::State::idle;
+				}
+				else
+					output->_widthCnt -= time;
+				break;
 
-      	switch (output->_state) {
-            case DigOutput::State::pulse:
-                if (output->_widthCnt <= time) {
-                    output->_hGPIO->toggle();
-                    output->_state = DigOutput::State::idle;
-                }
-                else
-                    output->_widthCnt -= time;
-                break;
+			case DigOutput::State::delayedSet:
+			case DigOutput::State::delayedClear:
+			case DigOutput::State::delayedToggle:
+			case DigOutput::State::delayedPulse:
+				if (output->_delayCnt <= time) {
+					switch (output->_state) {
+						case DigOutput::State::delayedSet:
+							output->_hGPIO->set();
+							output->_state = DigOutput::State::idle;
+							break;
 
-            case DigOutput::State::delayedSet:
-            case DigOutput::State::delayedClear:
-            case DigOutput::State::delayedToggle:
-            case DigOutput::State::delayedPulse:
-                if (output->_delayCnt <= time) {
-                    switch (output->_state) {
-                        case DigOutput::State::delayedSet:
-                            output->_hGPIO->set();
-                            output->_state = DigOutput::State::idle;
-                            break;
+						case DigOutput::State::delayedClear:
+							output->_hGPIO->clear();
+							output->_state = DigOutput::State::idle;
+							break;
 
-                        case DigOutput::State::delayedClear:
-                            output->_hGPIO->clear();
-                            output->_state = DigOutput::State::idle;
-                            break;
+						case DigOutput::State::delayedToggle:
+							output->_hGPIO->toggle();
+							output->_state = DigOutput::State::idle;
+							break;
 
-                        case DigOutput::State::delayedToggle:
-                            output->_hGPIO->toggle();
-                            output->_state = DigOutput::State::idle;
-                            break;
+						case DigOutput::State::delayedPulse:
+							output->_hGPIO->toggle();
+							output->_state = DigOutput::State::pulse;
+							break;
 
-                        case DigOutput::State::delayedPulse:
-                            output->_hGPIO->toggle();
-                            output->_state = DigOutput::State::pulse;
-                            break;
+						default:
+							break;
+					}
+				}
+				else
+					output->_delayCnt -= time;
+				break;
 
-                        default:
-                            break;
-                    }
-                }
-                else
-                    output->_delayCnt -= time;
-                break;
-
-            default:
-                break;
-        }
+			default:
+				break;
+		}
     }
 }
 

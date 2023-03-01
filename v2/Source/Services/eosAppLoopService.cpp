@@ -28,8 +28,8 @@ void AppLoopService::onInitialize() {
 void AppLoopService::onTask() {
 
 	onSetup();
-	while (true)
-		onLoop();
+	while (!onLoop())
+		continue;
 }
 
 
@@ -43,8 +43,10 @@ void AppLoopService::onSetup() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Executa les operacions del servei. S'executa continuament.
+/// \brief    Executa les operacions del servei.
+/// \return   True si cal finalitzar el proces.
 ///
-void AppLoopService::onLoop() {
+bool AppLoopService::onLoop() {
 
+	return true;
 }

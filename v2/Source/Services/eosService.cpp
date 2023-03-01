@@ -39,18 +39,6 @@ void Service::terminate() {
 }
 
 
-/// ---------------------------------------------------------------------
-/// \brief    Executa les operacions de la interrupcio tick.
-///
-#if Eos_ApplicationTickEnabled
-void Service::tick() {
-
-	if (_state == State::running)
-		onTick();
-}
-#endif
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Executa les operacions del servei.
 ///
@@ -65,7 +53,7 @@ void Service::task() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la inicialitzacio.
+/// \brief    Procesa la inicialitzacio del servei
 ///
 void Service::onInitialize() {
 
@@ -73,21 +61,11 @@ void Service::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la finalitzacio.
+/// \brief    Procesa la finalitzacio del servei
 ///
 void Service::onTerminate() {
 
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa les operacions de la interrupcio tick.
-///
-#if Eos_ApplicationTickEnabled
-void Service::onTick() {
-
-}
-#endif
 
 
 /// ----------------------------------------------------------------------
