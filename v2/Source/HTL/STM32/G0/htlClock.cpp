@@ -294,8 +294,8 @@ bool Clock::isHseEnabled() {
 #ifdef CLOCK_LSE_FREQUENCY
 void Clock::lseEnable() {
 
-	RCC->CR |= RCC_CR_LSEON;
-	while ((RCC->CR & RCC_CR_LSERDY) == 0)
+	RCC->BDCR |= RCC_BDCR_LSEON;
+	while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
 		continue;
 }
 #endif
@@ -307,8 +307,8 @@ void Clock::lseEnable() {
 #ifdef CLOCK_LSE_FREQUENCY
 void Clock::lseDisable() {
     
-	RCC->CR &= ~RCC_CR_LSEON;
-	while ((RCC->CR & RCC_CR_LSERDY) != 0)
+	RCC->BDCR &= ~RCC_BDCR_LSEON;
+	while ((RCC->BDCR & RCC_BDCR_LSERDY) != 0)
 		continue;
 }
 #endif
@@ -321,7 +321,7 @@ void Clock::lseDisable() {
 #ifdef CLOCK_LSE_FREQUENCY
 bool Clock::isLseEnabled() {
     
-    return (RCC->CR & RCC_CR_LSERDY) != 0;
+    return (RCC->BDCR & RCC_BDCR_LSERDY) != 0;
 }
 #endif
 
@@ -506,7 +506,7 @@ unsigned Clock::getClockFrequency(
 					break;
 
 				#ifdef CLOCK_HSE_FREQUENCY
-					case RCC_CFGR_SW_HSE
+					case RCC_CFGR_SW_HSE:
 						fclk = CLOCK_HSE_FREQUENCY;
 						break;
 				#endif
@@ -520,7 +520,7 @@ unsigned Clock::getClockFrequency(
 
 				#ifdef CLOCK_LSE_FREQUENCY
 					case RCC_CFGR_SW_LSE:
-						fclk = CLICK_LSE_FREQUENCY;
+						fclk = CLOCK_LSE_FREQUENCY;
 						break;
 				#endif
 			}

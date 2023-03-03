@@ -20,6 +20,81 @@
 	#define HTL_UART_7BIT_SUPPORT 1
 	#define HTL_UART_LINMODE_SUPPORT 1
 	#define HTL_UART_SMARTCARD_SUPPORT 1
+#elif defined(EOS_PLATFORM_STM32G0)
+	#define HTL_UART_7BIT_SUPPORT 0
+	#define HTL_UART_LINMODE_SUPPORT 0
+	#define HTL_UART_SMARTCARD_SUPPORT 0
+#else
+	#error Unsuported platform
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32G0)
+	namespace htl {
+		#ifdef HTL_UART1_EXIST
+			inline void UART1ClockEnable() {
+				RCC->APBENR2 |= RCC_APBENR2_USART1EN;
+			}
+			inline void UART1ClockDisable() {
+				RCC->APBENR2 &= ~RCC_APBENR2_USART1EN;
+			}
+			inline void UART1Reset() {
+				RCC->APBRSTR2 |= RCC_APBRSTR2_USART1RST;
+				RCC->APBRSTR2 &= ~RCC_APBRSTR2_USART1RST;
+			}
+		#endif
+		#ifdef HTL_UART2_EXIST
+			inline void UART2ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_USART2EN;
+			}
+			inline void UART2ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_USART2EN;
+			}
+			inline void UART2Reset() {
+				RCC->APBRSTR1 |= RCC_APBRSTR1_USART2RST;
+				RCC->APBRSTR1 &= ~RCC_APBRSTR1_USART2RST;
+			}
+		#endif
+	}
+#elif defined(EOS_PLATFORM_STM32F0)
+	namespace htl {
+		#ifdef HTL_UART1_EXIST
+			inline void UART1ClockEnable() {
+				RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+			}
+			inline void UART1ClockDisable() {
+				RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+			}
+			inline void UART1Reset() {
+				RCC->APB2RSTR |= RCC_APB2RSTR_USART1RST;
+				RCC->APB2RSTR &= ~RCC_APB2RSTR_USART1RST;
+			}
+		#endif
+		#ifdef HTL_UART2_EXIST
+			inline void UART2ClockEnable() {
+				RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+			}
+			inline void UART2ClockDisable() {
+				RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+			}
+			inline void UART2Reset() {
+				RCC->APB1RSTR |= RCC_APB1RSTR_USART2RST;
+				RCC->APB1RSTR &= ~RCC_APB1RSTR_USART2RST;
+			}
+		#endif
+		#ifdef HTL_EXIST_USART3
+			inline void UART3Reset() {
+				RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
+				RCC->APB1RSTR &= ~RCC_APB1RSTR_USART3RST;
+			}
+		#endif
+		#ifdef HTL_EXIST_USART4
+			inline void UART4Reset() {
+				RCC->APB1RSTR |= RCC_APB1RSTR_USART4RST;
+				RCC->APB1RSTR &= ~RCC_APB1RSTR_USART4RST;
+			}
+		#endif
+	}
 #else
 	#error Unsuported platform
 #endif
@@ -198,11 +273,11 @@ namespace htl {
 
 				#ifdef HTL_UART1_EXIST
 					if constexpr (channel_ == UARTChannel::_1)
-						RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+						UART1ClockEnable();
 				#endif
 				#ifdef HTL_UART2_EXIST
 					if constexpr (channel_ == UARTChannel::_2)
-						RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+						UART2ClockEnable();
 				#endif
 				#ifdef HTL_UART3_EXIST
 					if constexpr (channel_ == UARTChannel::_3)
@@ -238,11 +313,11 @@ namespace htl {
 
 				#ifdef HTL_UART1_EXIST
 					if constexpr (channel_ == UARTChannel::_1)
-						RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+						UART1ClockDisable();
 				#endif
 				#ifdef HTL_UART2_EXIST
 					if constexpr (channel_ == UARTChannel::_2)
-						RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+						UART2ClockDisable();
 				#endif
 				#ifdef HTL_UART3_EXIST
 					if constexpr (channel_ == UARTChannel::_3)
@@ -292,52 +367,36 @@ namespace htl {
 			static void reset() {
 
 				#ifdef HTL_UART1_EXIST
-					if constexpr (channel_ == UARTChannel::_1) {
-						RCC->APB2RSTR |= RCC_APB2RSTR_USART1RST;
-						RCC->APB2RSTR &= ~RCC_APB2RSTR_USART1RST;
-					}
+					if constexpr (channel_ == UARTChannel::_1)
+						UART1Reset();
 				#endif
 				#ifdef HTL_UART2_EXIST
-					if constexpr (channel_ == UARTChannel::_2) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_USART2RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_USART2RST;
-					}
+					if constexpr (channel_ == UARTChannel::_2)
+						UART2Reset();
 				#endif
 				#ifdef HTL_UART3_EXIST
-					if constexpr (channel_ == UARTChannel::_3) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_USART3RST;
-					}
+					if constexpr (channel_ == UARTChannel::_3)
+						UART3Reset();
 				#endif
 				#ifdef HTL_UART4_EXIST
-					if constexpr (channel_ == UARTChannel::_4) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_UART4RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART4RST;
-					}
+					if constexpr (channel_ == UARTChannel::_4)
+						UART4Reset();
 				#endif
 				#ifdef HTL_UART5_EXIST
-					if constexpr (channel_ == UARTChannel::_5) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_UART5RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART5RST;
-					}
+					if constexpr (channel_ == UARTChannel::_5)
+						UART5Reset();
 				#endif
 				#ifdef HTL_UART6_EXIST
-					if constexpr (channel_ == UARTChannel::_6) {
-						RCC->APB2RSTR |= RCC_APB2RSTR_USART6RST;
-						RCC->APB2RSTR &= ~RCC_APB2RSTR_USART6RST;
-					}
+					if constexpr (channel_ == UARTChannel::_6)
+						UART6Reset();
 				#endif
 				#ifdef HTL_UART7_EXIST
-					if constexpr (channel_ == UARTChannel::_7) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_UART7RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART7RST;
-					}
+					if constexpr (channel_ == UARTChannel::_7)
+						UART7Reset();
 				#endif
 				#ifdef HTL_UART8_EXIST
-					if constexpr (channel_ == UARTChannel::_8) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_UART8RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_UART8RST;
-					}
+					if constexpr (channel_ == UARTChannel::_8)
+						UART8Reset();
 				#endif
 			}
 
@@ -902,6 +961,8 @@ namespace htl {
 				static constexpr bool supportedRxTimeout = false;
 			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr bool supportedRxTimeout = true;
+			#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr bool supportedRxTimeout = false;
 			#else
 				#error Plataforma no soportada
 			#endif
@@ -974,7 +1035,7 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32G051Kx)
     #include "htl/STM32/htlUART_AF_G051K.h"
     
-#elif defined(EOS_PLATFORM_STM32F030R8)
+#elif defined(EOS_PLATFORM_STM32F030Rx)
     #include "htl/STM32/htlUART_AF_F030R.h"
     
 #elif defined(EOS_PLATFORM_STM32F4)

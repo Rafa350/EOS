@@ -8,6 +8,89 @@
 #include "HTL/htl.h"
 
 
+#if defined(EOS_PLATFORM_STM32G0)
+	namespace htl {
+		#ifdef HTL_TMR1_EXIST
+			inline void TMR1ClockEnable() {
+				RCC->APBENR2 |= RCC_APBENR2_TIM1EN;
+			}
+			inline void TMR1ClockDisable() {
+				RCC->APBENR2 &= ~RCC_APBENR2_TIM1EN;
+			}
+		#endif
+		#ifdef HTL_TMR2_EXIST
+			inline void TMR2ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_TIM2EN;
+			}
+			inline void TMR2ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_TIM2EN;
+			}
+		#endif
+		#ifdef HTL_TMR3_EXIST
+			inline void TMR3ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_TIM3EN;
+			}
+			inline void TMR3ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_TIM3EN;
+			}
+		#endif
+		#ifdef HTL_TMR14_EXIST
+			inline void TMR14ClockEnable() {
+				RCC->APBENR2 |= RCC_APBENR2_TIM14EN;
+			}
+			inline void TMR14ClockDisable() {
+				RCC->APBENR2 &= ~RCC_APBENR2_TIM14EN;
+			}
+		#endif
+	}
+#elif defined(EOS_PLATFORM_STM32F0)
+	namespace htl {
+		#ifdef HTL_TMR1_EXIST
+			inline void TMR1ClockEnable() {
+				RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+			}
+			inline void TMR1ClockDisable() {
+				RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
+			}
+		#endif
+		#ifdef HTL_TMR2_EXIST
+			inline void TMR1ClockEnable() {
+				RCC->APB2ENR |= RCC_APB2ENR_TIM2EN;
+			}
+			inline void TMR1ClockDisable() {
+				RCC->APB2ENR &= ~RCC_APB2ENR_TIM2EN;
+			}
+		#endif
+		#ifdef HTL_TMR3_EXIST
+			inline void TMR3ClockEnable() {
+				RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+			}
+			inline void TMR3ClockDisable() {
+				RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
+			}
+		#endif
+		#ifdef HTL_TMR6_EXIST
+			inline void TMR6ClockEnable() {
+				RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+			}
+			inline void TMR6ClockDisable() {
+				RCC->APB1ENR &= ~RCC_APB1ENR_TIM6EN;
+			}
+		#endif
+		#ifdef HTL_TMR14_EXIST
+			inline void TMR14ClockEnable() {
+				RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+			}
+			inline void TMR14ClockDisable() {
+				RCC->APB1ENR &= ~RCC_APB1ENR_TIM14EN;
+			}
+		#endif
+	}
+#else
+	#error "Plataforma no soportada"
+#endif
+
+
 namespace htl {
     
 	enum class TMRTimer {
@@ -124,15 +207,15 @@ namespace htl {
 
 				#ifdef HTL_TMR1_EXIST
 					if constexpr(timer_ == TMRTimer::_1)
-						RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+						TMR1ClockEnable();
 				#endif
 				#ifdef HTL_TMR2_EXIST
 					if constexpr(timer_ == TMRTimer::_2)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+						TMR2ClockEnable();
 				#endif
 				#ifdef HTL_TMR3_EXIST
 					if constexpr(timer_ == TMRTimer::_3)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+						TMR3ClockEnable();
 				#endif
 				#ifdef HTL_TMR4_EXIST
 					if constexpr(timer_ == TMRTimer::_4)
@@ -144,7 +227,7 @@ namespace htl {
 				#endif
 				#ifdef HTL_TMR6_EXIST
 					if constexpr(timer_ == TMRTimer::_6)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+						TMR6ClockEnable();
 				#endif
 				#ifdef HTL_TMR7_EXIST
 					if constexpr(timer_ == TMRTimer::_7)
@@ -176,7 +259,7 @@ namespace htl {
 				#endif
 				#ifdef HTL_TMR14_EXIST
 					if constexpr(timer_ == TMRTimer::_14)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+						TMR14ClockEnable();
 				#endif
 				__DSB();
 			}
@@ -185,15 +268,15 @@ namespace htl {
 
 				#ifdef HTL_TMR1_EXIST
 					if constexpr(timer_ == TMRTimer::_1)
-						RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
+						TMR1ClockDisable();
 				#endif
 				#ifdef HTL_TMR2_EXIST
 					if constexpr(timer_ == TMRTimer::_2)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
+						TMR2ClockDisable();
 				#endif
 				#ifdef HTL_TMR3_EXIST
 					if constexpr(timer_ == TMRTimer::_3)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
+						TMR3ClockDisable();
 				#endif
 				#ifdef HTL_TMR4_EXIST
 					if constexpr(timer_ == TMRTimer::_4)
@@ -237,7 +320,7 @@ namespace htl {
 				#endif
 				#ifdef HTL_TMR14_EXIST
 					if constexpr(timer_ == TMRTimer::_14)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM14EN;
+						TMR14ClockDisable();
 				#endif
 			}
 

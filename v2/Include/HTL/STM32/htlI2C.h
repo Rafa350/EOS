@@ -9,6 +9,65 @@
 #include "HTL/htlGPIO.h"
 
 
+#if defined(EOS_PLATFORM_STM32G0)
+	namespace htl {
+		#ifdef HTL_I2C1_EXIST
+			inline void I2C1ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_I2C1EN;
+			}
+			inline void I2C1ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_I2C1EN;
+			}
+			inline void I2C1Reset() {
+				RCC->APBRSTR1 |= RCC_APBRSTR1_I2C1RST;
+				RCC->APBRSTR1 &= ~RCC_APBRSTR1_I2C1RST;
+			}
+		#endif
+		#ifdef HTL_I2C2_EXIST
+			inline void I2C2ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_I2C2EN;
+			}
+			inline void I2C2ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_I2C2EN;
+			}
+			inline void I2C2Reset() {
+				RCC->APBRSTR1 |= RCC_APBRSTR1_I2C2RST;
+				RCC->APBRSTR1 &= ~RCC_APBRSTR1_I2C2RST;
+			}
+		#endif
+	}
+#elif defined(EOS_PLATFORM_STM32F0)
+	namespace htl {
+		#ifdef HTL_I2C1_EXIST
+			inline void I2C1ClockEnable() {
+				RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
+			}
+			inline void I2C1ClockDisable() {
+				RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
+			}
+			inline void I2C1Reset() {
+				RCC->APB1RSTR |= RCC_APB1RSTR_I2C1RST;
+				RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C1RST;
+			}
+		#endif
+		#ifdef HTL_I2C2_EXIST
+			inline void I2C2ClockEnable() {
+				RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
+			}
+			inline void I2C2ClockDisable() {
+				RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
+			}
+			inline void I2C2Reset() {
+				RCC->APB1RSTR |= RCC_APB1RSTR_I2C2RST;
+				RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C2RST;
+			}
+		#endif
+	}
+#else
+	#error "Plataforma no soportada"
+#endif
+
+
 namespace htl {
 
 	enum class I2CChannel {
@@ -97,19 +156,19 @@ namespace htl {
 
 				#ifdef HTL_I2C1_EXIST
 					if constexpr (channel_ == I2CChannel::_1)
-						RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
+						I2C1ClockEnable();
 				#endif
 				#ifdef HTL_I2C2_EXIST
 					if constexpr (channel_ == I2CChannel::_2)
-						RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
+				        I2C2ClockEnable();
 				#endif
 				#ifdef HTL_I2C3_EXIST
 					if constexpr (channel_ == I2CChannel::_3)
-						RCC->APB1ENR |= RCC_APB1ENR_I2C3EN;
+				        I2C3ClockEnable();
 				#endif
 				#ifdef HTL_I2C4_EXIST
 					if constexpr (channel_ == I2CChannel::_4)
-						RCC->APB1ENR |= RCC_APB1ENR_I2C4EN;
+						I2C4ClockEnable();
 				#endif
             }
 
@@ -119,19 +178,19 @@ namespace htl {
 
 				#ifdef HTL_I2C1_EXIST
 					if constexpr (channel_ == I2CChannel::_1)
-						RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
+						I2C1ClockDisable();
 				#endif
 				#ifdef HTL_I2C2_EXIST
 					if constexpr (channel_ == I2CChannel::_2)
-						RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
+						I2C2ClockDisable();
 				#endif
 				#ifdef HTL_I2C3_EXIST
 					if constexpr (channel_ == I2CChannel::_3)
-						RCC->APB1ENR &= ~RCC_APB1ENR_I2C3EN;
+						I2C3ClockDisable();
 				#endif
 				#ifdef HTL_I2C4_EXIST
 					if constexpr (channel_ == I2CChannel::_4)
-						RCC->APB1ENR &= ~RCC_APB1ENR_I2C4EN;
+						I2C4ClockDisable();
 				#endif
             }
 
@@ -227,28 +286,20 @@ namespace htl {
             ///
             static void reset() {
 				#ifdef HTL_I2C1_EXIST
-					if constexpr (channel_ == I2CChannel::_1) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_I2C1RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C1RST;
-					}
+					if constexpr (channel_ == I2CChannel::_1)
+						I2C1Reset();
 				#endif
 				#ifdef HTL_I2C2_EXIST
-					if constexpr (channel_ == I2CChannel::_2) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_I2C2RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C2RST;
-					}
+					if constexpr (channel_ == I2CChannel::_2)
+						I2C2Reset();
 				#endif
 				#ifdef HTL_I2C3_EXIST
-					if constexpr (channel_ == I2CChannel::_3) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_I2C3RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C3RST;
-					}
+					if constexpr (channel_ == I2CChannel::_3)
+						I2C3Reset();
 				#endif
 				#ifdef HTL_I2C4_EXIST
-					if constexpr (channel_ == I2CChannel::_4) {
-						RCC->APB1RSTR |= RCC_APB1RSTR_I2C4RST;
-						RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C4RST;
-					}
+					if constexpr (channel_ == I2CChannel::_4)
+						I2C4Reset();
 				#endif
 
 				_isrFunction = nullptr;
@@ -526,7 +577,7 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32G031Kx)
     #include "htl/STM32/htlI2C_AF_G031K.h"
 
-#elif defined(EOS_PLATFORM_STM32F030R8)
+#elif defined(EOS_PLATFORM_STM32F030Rx)
     #include "htl/STM32/htlI2C_AF_F030R.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)

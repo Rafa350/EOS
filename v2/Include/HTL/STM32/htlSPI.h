@@ -10,6 +10,77 @@
 #include "HTL/STM32/htlINT.h"
 
 
+#if defined(EOS_PLATFORM_STM32G0)
+	namespace htl {
+		#ifdef HTL_SPI1_EXIST
+			inline void SPI1ClockEnable() {
+				RCC->APBENR2 |= RCC_APBENR2_SPI1EN;
+			}
+			inline void SPI1ClockDisable() {
+				RCC->APBENR2 &= ~RCC_APBENR2_SPI1EN;
+			}
+			inline void SPI1Reset() {
+			}
+		#endif
+		#ifdef HTL_SPI2_EXIST
+			inline void SPI2ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_SPI2EN;
+			}
+			inline void SPI2ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_SPI2EN;
+			}
+			inline void SPI2Reset() {
+			}
+		#endif
+		#ifdef HTL_SPI3_EXIST
+			inline void SPI3ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_SPI3EN;
+			}
+			inline void SPI3ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_SPI3EN;
+			}
+			inline void SPI3Reset() {
+			}
+		#endif
+		#ifdef HTL_SPI4_EXIST
+			inline void SPI4ClockEnable() {
+				RCC->APBENR1 |= RCC_APBENR1_SPI4EN;
+			}
+			inline void SPI4ClockDisable() {
+				RCC->APBENR1 &= ~RCC_APBENR1_SPI4EN;
+			}
+			inline void SPI4Reset() {
+			}
+		#endif
+	}
+#elif defined(EOS_PLATFORM_STM32F0)
+	namespace htl {
+		#ifdef HTL_SPI1_EXIST
+			inline void SPI1ClockEnable() {
+				RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+			}
+			inline void SPI1ClockDisable() {
+				RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
+			}
+			inline void SPI1Reset() {
+			}
+		#endif
+		#ifdef HTL_SPI2_EXIST
+			inline void SPI2ClockEnable() {
+				RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+			}
+			inline void SPI2ClockDisable() {
+				RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
+			}
+			inline void SPI2Reset() {
+			}
+		#endif
+	}
+#else
+	#error "Plataforma no soportada"
+#endif
+
+
 namespace htl {
 
 	enum class SPIChannel {
@@ -136,11 +207,11 @@ namespace htl {
 
 				#ifdef HTL_SPI1_EXIST
 					if constexpr (channel == SPIChannel::_1)
-						RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+						SPI1ClockEnable();
 				#endif
 				#ifdef HTL_SPI2_EXIST
 					if constexpr (channel == SPIChannel::_2)
-						RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+						SPI2ClockEnable();
 				#endif
 				#ifdef HTL_SPI3_EXIST
 					if constexpr (channel == SPIChannel::_3)
@@ -166,11 +237,11 @@ namespace htl {
 
 				#ifdef HTL_SPI1_EXIST
 					if constexpr (channel == SPIChannel::_1)
-						RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
+						SPI1ClockDisable();
 				#endif
 				#ifdef HTL_SPI2_EXIST
 					if constexpr (channel == SPIChannel::_2)
-						RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
+						SPI2ClockDisable();
 				#endif
 				#ifdef HTL_SPI3_EXIST
 					if constexpr (channel == SPIChannel::_3)

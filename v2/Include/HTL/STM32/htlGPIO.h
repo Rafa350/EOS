@@ -1023,8 +1023,48 @@ namespace htl {
         };
 
         template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_0> {
+            static constexpr uint32_t pn = 0;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_1> {
+            static constexpr uint32_t pn = 1;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_2> {
+            static constexpr uint32_t pn = 2;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_3> {
+            static constexpr uint32_t pn = 3;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_4> {
+            static constexpr uint32_t pn = 4;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_5> {
+            static constexpr uint32_t pn = 5;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_6> {
+            static constexpr uint32_t pn = 6;
+        };
+
+        template <>
         struct GPIOPinTrait<GPIOPort::F, GPIOPin::_7> {
             static constexpr uint32_t pn = 7;
+        };
+
+        template <>
+        struct GPIOPinTrait<GPIOPort::F, GPIOPin::_8> {
+            static constexpr uint32_t pn = 8;
         };
 
         template <>

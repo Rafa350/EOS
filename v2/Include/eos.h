@@ -33,6 +33,9 @@
 #if defined(EOS_PLATFORM_PIC32MX) || defined(EOS_PLATFORM_PIC32MZ)
 	#include "xc.h"
 #elif defined(EOS_PLATFORM_STM32F0)
+	#if defined(EOS_PLATFORM_STM32F030R8)
+		#define STM32F030x8
+	#endif
 	#include "stm32f0xx.h"
 #elif defined(EOS_PLATFORM_STM32F1)
 	#include "stm32f1xx.h"
@@ -41,6 +44,11 @@
 #elif defined(EOS_PLATFORM_STM32F7)
 	#include "stm32f7xx.h"
 #elif defined(EOS_PLATFORM_STM32G0)
+	#if defined(EOS_PLATFORM_STM32G031xx)
+		#define STM32G031xx
+	#elif defined(EOS_PLATFORM_STM32G051xx)
+		#define STM32G051xx
+	#endif
 	#include "stm32g0xx.h"
 #elif defined(EOS_PLATFORM_MSP432)
     #include "msp.h"

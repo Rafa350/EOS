@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_htlUART_G031KK_
-#define __STM32_htlUART_GO31J__
+#ifndef __STM32_htlUART_G031K_
+#define __STM32_htlUART_GO31K__
 
 
 // EOS includes
@@ -31,6 +31,14 @@ namespace htl {
             static constexpr GPIOAlt alt = GPIOAlt::_1;
         };
         template <>
+        struct UARTPinTrait<UARTChannel::_1, GPIO_B3, UARTPin::RTS> {
+            static constexpr GPIOAlt alt = GPIOAlt::_4;
+        };
+        template <>
+        struct UARTPinTrait<UARTChannel::_1, GPIO_B4, UARTPin::CTS> {
+            static constexpr GPIOAlt alt = GPIOAlt::_4;
+        };
+        template <>
         struct UARTPinTrait<UARTChannel::_1, GPIO_B6, UARTPin::TX> {
             static constexpr GPIOAlt alt = GPIOAlt::_0;
         };
@@ -46,11 +54,15 @@ namespace htl {
             static constexpr GPIOAlt alt = GPIOAlt::_1;
         };
         template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A1, UARTPin::RST> {
+        struct UARTPinTrait<UARTChannel::_2, GPIO_A1, UARTPin::RTS> {
             static constexpr GPIOAlt alt = GPIOAlt::_1;
         };
         template <>
         struct UARTPinTrait<UARTChannel::_2, GPIO_A2, UARTPin::TX> {
+            static constexpr GPIOAlt alt = GPIOAlt::_1;
+        };
+        template <>
+        struct UARTPinTrait<UARTChannel::_2, GPIO_A3, UARTPin::RX> {
             static constexpr GPIOAlt alt = GPIOAlt::_1;
         };
         template <>
@@ -65,8 +77,8 @@ namespace htl {
 }
 
 
-#endif // EOS_PLATFORM_STM32G031J
+#endif // EOS_PLATFORM_STM32G031Kx
 
 
-#endif // __STM32_htlUART_G031J__
+#endif // __STM32_htlUART_G031K__
 
