@@ -158,17 +158,17 @@ void DisplayDriver_ST7565::refresh() {
 
     // Transfereix les pagines modificades
     //
-    for (unsigned page = 0; page < 8; page++) {
+    for (int page = 0; page < pages; page++) {
 
         uint8_t flags = vFlags[page];
         if (flags) {
             setPage(page);
-            unsigned offset = _displayWidth * page;
+            int offset = _displayWidth * page;
             uint8_t mask = 0b10000000u;
-            for (unsigned j = 0; j < 128; j += 16) {
+            for (int j = 0; j < _displayWidth; j += 16) {
                 if ((flags & mask) != 0) {
                     setColumn(j);
-                    for (unsigned i = 0; i < 16; i++)
+                    for (int i = 0; i < 16; i++)
                         writeDataRegister(vRam[offset + j + i]);
                 }
                 mask >>= 1;
