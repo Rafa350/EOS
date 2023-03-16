@@ -1026,7 +1026,10 @@ namespace htl {
 }
 
 
-#if defined(EOS_PLATFORM_STM32G031)
+#if defined(EOS_PLATFORM_STM32G030)
+    #include "htl/STM32/htlUART_AF_G030.h"
+    
+#elif defined(EOS_PLATFORM_STM32G031)
     #include "htl/STM32/htlUART_AF_G031.h"
     
 #elif defined(EOS_PLATFORM_STM32F030)

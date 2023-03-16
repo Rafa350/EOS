@@ -39,7 +39,12 @@
 	// Platform definitions
     #if defined(STM32G0)
 		#define EOS_PLATFORM_STM32G0
-		#if defined(STM32G031J4) || defined(STM32G031J6) \
+        #if defined(STM32G030J6) || \
+            defined(STM32G030F6) || \
+            defined(STM32G030K6) || defined(STM32G030K8) || \
+            defined(STM32G030C6) || defined(STM32G030C8)
+			#define EOS_PLATFORM_STM32G030
+		#elif defined(STM32G031J4) || defined(STM32G031J6) \
             defined(STM32G031Y8) || \
             defined(STM32G031F4) || defined(STM32G031F6) || defined(STM32G031F8) || \
             defined(STM32G031G4) || defined(STM32G031G6) || defined(STM32G031G8) || \

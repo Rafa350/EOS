@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_htlUART_AF_F030R__
-#define __STM32_htlUART_AF_F030R__
+#ifndef __STM32_htlUART_AF_F030__
+#define __STM32_htlUART_AF_F030__
 
 
 // EOS includes
@@ -9,7 +9,7 @@
 #include "HTL/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32F030Rx)
+#if defined(EOS_PLATFORM_STM32F030)
 
 
 namespace htl {
@@ -70,8 +70,8 @@ namespace htl {
 }
 
 
-#endif // EOS_PLATFORM_STM32F030Rx
+#endif // EOS_PLATFORM_STM32F030
 
 
-#endif // __STM32_htlUART_AF_F030R__
+#endif // __STM32_htlUART_AF_F030__
 
