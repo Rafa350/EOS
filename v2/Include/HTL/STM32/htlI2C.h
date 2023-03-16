@@ -570,15 +570,11 @@ namespace htl {
 }
 
 
-#if defined(EOS_PLATFORM_STM32G031Fx)
-    #include "htl/STM32/htlI2C_AF_G031F.h"
-#elif defined(EOS_PLATFORM_STM32G031Jx)
-    #include "htl/STM32/htlUART_AF_G031J.h"
-#elif defined(EOS_PLATFORM_STM32G031Kx)
-    #include "htl/STM32/htlI2C_AF_G031K.h"
+#if defined(EOS_PLATFORM_STM32G031)
+    #include "htl/STM32/htlI2C_AF_G031.h"
 
-#elif defined(EOS_PLATFORM_STM32F030Rx)
-    #include "htl/STM32/htlI2C_AF_F030R.h"
+#elif defined(EOS_PLATFORM_STM32F030)
+    #include "htl/STM32/htlI2C_AF_F030.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)
     #include "htl/STM32/htlI2C_AF_F4.h"
