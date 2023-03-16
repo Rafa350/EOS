@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_htlUART_G051K__
-#define __STM32_htlUART_GO51K__
+#ifndef __STM32_htlUART_AF_G051K__
+#define __STM32_htlUART_AF_GO51K__
 
 
 // EOS includes
@@ -65,8 +65,8 @@ namespace htl {
 }
 
 
-#endif // EOS_PLATFORM_STM32G051K
+#endif // EOS_PLATFORM_STM32G051Kx
 
 
-#endif // __STM32_htlUART_G051K__
+#endif // __STM32_htlUART_AF_G051K__
 

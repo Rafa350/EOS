@@ -77,8 +77,8 @@ namespace htl {
 }
 
 
-#endif // EOS_PLATFORM_STM32G031J
+#endif // EOS_PLATFORM_STM32G031Fx
 
 
-#endif // __STM32_htlUART_G031J__
+#endif // __STM32_htlUART_AF_G031F__
 
