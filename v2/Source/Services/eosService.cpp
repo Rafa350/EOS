@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/eosService.h"
-#include "System/eosApplication.h"
+#include "System/eosRTOSApplication.h"
 
 
 using namespace eos;

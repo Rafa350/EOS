@@ -129,7 +129,7 @@
 
 // Comprova l'existencia dels moduls UART/USART
 //
-#ifdef USART1_BASE
+#if defined(USART1_BASE)
 	#define HTL_UART1_EXIST
 #endif
 #ifdef USART2_BASE

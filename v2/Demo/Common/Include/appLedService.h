@@ -6,13 +6,17 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/eosAppLoopService.h"
+#include "Services/eosService.h"
 #include "HTL/htlGPIO.h"
 
 
 namespace app {
 
-	class LedService: public eos::AppLoopService {
+	class LedService: public eos::Service {
+		public:
+			static constexpr uint32_t stackSize = 128;
+			static constexpr const char *serviceName = "LED";
+
 		private:
 			#ifdef EXIST_LED1
 				using PinLED1 = LED1_GPIO;
@@ -28,8 +32,8 @@ namespace app {
 			LedService();
 
 		protected:
-			void onSetup();
-			void onLoop();
+			void onInitialize() override;
+			void onTask() override;
 	};
 
 }

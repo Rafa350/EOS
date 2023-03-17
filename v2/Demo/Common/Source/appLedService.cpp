@@ -12,22 +12,20 @@ using namespace app;
 /// \brief Contructor de l'objecte.
 ///
 LedService::LedService() :
-	 AppLoopService() {
+	 Service() {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa la inicialitzacio de la tasca.
 ///
-void LedService::onSetup() {
+void LedService::onInitialize() {
 
 	#ifdef EXIST_LED1
-		PinLED1::initOutput(GPIODriver::pushPull);
-		PinLED1::write(_ledON);
+		PinLED1::initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitState::set);
 	#endif
 	#ifdef EXIST_LED2
-		PinLED2::initOutput(GPIODriver::pushPull);
-		PinLED2::write(_ledOFF);
+		PinLED2::initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitState::clear);
 	#endif
 }
 
@@ -35,17 +33,14 @@ void LedService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void LedService::onLoop() {
+void LedService::onTask() {
 
-	while (true) {
+	Task::delay(500);
 
-		Task::delay(500);
-
-		#ifdef EXIST_LED1
-			PinLED1::toggle();
-		#endif
-		#ifdef EXIST_LED2
-			PinLED2::toggle();
-		#endif
-	}
+	#ifdef EXIST_LED1
+		PinLED1::toggle();
+	#endif
+	#ifdef EXIST_LED2
+		PinLED2::toggle();
+	#endif
 }

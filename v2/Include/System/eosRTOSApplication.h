@@ -1,11 +1,12 @@
 #pragma once
-#ifndef __eosApplication__
-#define	__eosApplication__
+#ifndef __eosRTOSApplication__
+#define	__eosRTOSApplication__
 
 
 // EOS includes
 //
 #include "eos.h"
+#include "System/eosApplicationBase.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosSingleLinkedList.h"
 #include "System/Core/eosTask.h"
@@ -14,12 +15,11 @@
 
 namespace eos {
 
-    class Application;
     class Service;
 
     /// \brief Clase que representa l'aplicacio.
     ///
-    class Application {
+    class RTOSApplication: public ApplicationBase {
         private:
     		struct ServiceInfo {
     			Service *service;
@@ -29,12 +29,11 @@ namespace eos {
     			Task *task;
     		};
     		typedef SingleLinkedList<ServiceInfo*> ServiceInfoList;
-            typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
+            typedef CallbackP1<RTOSApplication, const Task::EventArgs&> TaskEventCallback;
 #if Eos_ApplicationTickEnabled
-            typedef CallbackP1<Application, const Timer::EventArgs&> TimerEventCallback;
+            typedef CallbackP1<RTOSApplication, const Timer::EventArgs&> TimerEventCallback;
 #endif
         private:
-            bool _initialized;
             ServiceInfoList _serviceInfoList;
             TaskEventCallback _taskEventCallback;
 #if Eos_ApplicationTickEnabled
@@ -42,45 +41,28 @@ namespace eos {
             Timer timer;
 #endif
 
-            Application(const Application&) = delete;
-            Application& operator=(const Application&) = delete;
+            RTOSApplication(const RTOSApplication&) = delete;
+            RTOSApplication& operator=(const RTOSApplication&) = delete;
 
-            void initializeServices();
-            void terminateServices();
-            void runServices();
+            void initializeServices() override;
+            void terminateServices() override;
+            void runServices() override;
             void taskEventHandler(const Task::EventArgs &args);
 #if Eos_ApplicationTickEnabled
             void timerEventHandler(const Timer::EventArgs &args);
 #endif
 
         protected:
-            Application();
-
-            virtual void onInitialize();
-            virtual void onTerminate();
-#if Eos_ApplicationTickEnabled
-            virtual void onTick();
-#endif
+            RTOSApplication();
 
         public:
-            virtual ~Application();
-
-            void run();
-#if Eos_ApplicationTickEnabled
-            void tick();
-            void tmrInterruptFunction();
-            static void tmrInterruptFunction(TMRHandler handler, void  params);
-#endif
-
             void addService(Service *service, Task::Priority priority, unsigned stackSize, const char *name = nullptr);
             void removeService(Service *service);
             void removeServices();
-
-            inline bool isInitialized() const { return _initialized; }
     };
 }
 
 
-#endif // __eosApplication__
+#endif // __eosRTOSApplication__
 
 

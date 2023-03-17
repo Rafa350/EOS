@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/eosService.h"
-#include "System/eosApplication.h"
+#include "System/eosRTOSApplication.h"
 #include "System/Core/eosTask.h"
 
 
@@ -11,12 +11,11 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-Application::Application():
+RTOSApplication::RTOSApplication():
 
-	_initialized(false),
-    _taskEventCallback(*this, &Application::taskEventHandler)
+    _taskEventCallback(*this, &RTOSApplication::taskEventHandler)
 #if Eos_ApplicationTickEnabled
-    ,timerEventCallback(this, &Application::timerEventHandler),
+    ,timerEventCallback(this, &RTOSApplication::timerEventHandler),
     timer(true, &timerEventCallback, this)
 #endif
 {
@@ -24,22 +23,18 @@ Application::Application():
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Destructor. Si conte serveis, els elimina de la llista.
-///
-Application::~Application() {
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Procesa el event d'inici de la tasca del servei.
 /// \param    args: Parametres del event.
 ///
-void Application::taskEventHandler(
+void RTOSApplication::taskEventHandler(
     const Task::EventArgs &args) {
 
     Service *service = static_cast<Service*>(args.params);
     if (service != nullptr)
-        service->task();
+
+        // TODO: Trobar un mecanisme per finalitzar el bucle
+    	while (true)
+    		service->task();
 }
 
 
@@ -48,7 +43,7 @@ void Application::taskEventHandler(
 /// \param    args: Parametres del event.
 ///
 #if Eos_ApplicationTickEnabled
-void Application::timerEventHandler(
+void RTOSApplication::timerEventHandler(
     const Timer::EventArgs &args) {
 
     tick();
@@ -57,39 +52,10 @@ void Application::timerEventHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Executa l'aplicacio.
-///
-void Application::run() {
-
-	_initialized = true;
-
-    // Notifica la inicialitzacio de l'aplicacio.
-    //
-    onInitialize();
-
-    // Inicialitzacio tots els serveis.
-    //
-    initializeServices();
-
-    // Executa els serveis fins que finalitzi l'aplicacio.
-    //
-    runServices();
-
-    // Finalitza tots els serveis
-    //
-    terminateServices();
-
-    // Notifica el final de l'aplicacio.
-    //
-    onTerminate();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Procesa la senyal tick del sistema
 ///
 #if Eos_ApplicationTickEnabled
-void Application::tick() {
+void RTOSApplication::tick() {
 
 	onTick();
 
@@ -104,7 +70,7 @@ void Application::tick() {
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza els serveis.
 ///
-void Application::initializeServices() {
+void RTOSApplication::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
     //
@@ -116,7 +82,7 @@ void Application::initializeServices() {
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza els serveis.
 ///
-void Application::terminateServices() {
+void RTOSApplication::terminateServices() {
 
     // Finalitza els serveis de la llista, un a un.
     //
@@ -128,7 +94,7 @@ void Application::terminateServices() {
 /// ----------------------------------------------------------------------
 /// \brief    Posa els serveix en en execucio.
 ///
-void Application::runServices() {
+void RTOSApplication::runServices() {
 
     // Inicialitza el temporitzador tick
     //
@@ -163,7 +129,7 @@ void Application::runServices() {
 /// \param    stackSize: Tamany del stack.
 /// \param    name: Nom del servei.
 ///
-void Application::addService(
+void RTOSApplication::addService(
 	Service *service,
 	Task::Priority priority,
 	unsigned stackSize,
@@ -188,7 +154,7 @@ void Application::addService(
 /// \brief    Elimina un servei de l'aplicacio
 /// \param    service: El servei a eliminar.
 ///
-void Application::removeService(
+void RTOSApplication::removeService(
     Service *service) {
 
     eosAssert(service != nullptr);
@@ -205,41 +171,7 @@ void Application::removeService(
 /// ----------------------------------------------------------------------
 /// \brief    Elimina tots els serveis de l'aplicacio.
 ///
-void Application::removeServices() {
+void RTOSApplication::removeServices() {
 
 	_serviceInfoList.clear();
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Notificacio de la initcialitzacio de l'aplicacio.
-///
-void Application::onInitialize() {
-
-#if Eos_UseApplicationInitializeCallback
-    if (initializeEventCallback != nullptr)
-	    initializeEventCallback->execute(this);
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Notificacio la finalitzacio de l'aplicacio.
-///
-void Application::onTerminate() {
-
-#if Eos_UseApplicationTerminateCallback
-	if (terminateEventCallback != nullptr)
-	    terminateEventCallback->execute(this);
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Notificacio del senyal tick
-///
-#if Eos_ApplicationTickEnabled
-void Application::onTick() {
-
-}
-#endif

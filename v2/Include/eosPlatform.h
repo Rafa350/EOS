@@ -44,25 +44,25 @@
             defined(STM32G030K6) || defined(STM32G030K8) || \
             defined(STM32G030C6) || defined(STM32G030C8)
 			#define EOS_PLATFORM_STM32G030
-		#elif defined(STM32G031J4) || defined(STM32G031J6) \
-            defined(STM32G031Y8) || \
-            defined(STM32G031F4) || defined(STM32G031F6) || defined(STM32G031F8) || \
-            defined(STM32G031G4) || defined(STM32G031G6) || defined(STM32G031G8) || \
-            defined(STM32G031K4) || defined(STM32G031K6) || defined(STM32G031K8) || \
-            defined(STM32G031C4) || defined(STM32G031C6) || defined(STM32G031C8) 
+		#elif defined(STM32G031J6)
 			#define EOS_PLATFORM_STM32G031
+			#define EOS_PLATFORM_STM32G031J6
+		#elif defined(STM32G031F6)
+			#define EOS_PLATFORM_STM32G031
+			#define EOS_PLATFORM_STM32G031F6
+		#elif defined(STM32G031K8)
+			#define EOS_PLATFORM_STM32G031
+			#define EOS_PLATFORM_STM32G031K8
 		#else
             #error "Unknown processor STM32G0"
 		#endif
     #elif defined(STM32F0)
 		#define EOS_PLATFORM_STM32F0
 		#if defined(STM32F030R8)
-			#define EOS_PLATFORM_STM32F030xx
-			#define EOS_PLATFORM_STM32F030Rx
+			#define EOS_PLATFORM_STM32F030
 			#define EOS_PLATFORM_STM32F030R8
 		#elif defined(STM32F030RC)
-			#define EOS_PLATFORM_STM32F030xx
-			#define EOS_PLATFORM_STM32F030Rx
+			#define EOS_PLATFORM_STM32F030
 			#define EOS_PLATFORM_STM32F030RC
 		#else
             #error "Unknown processor STM32F0"

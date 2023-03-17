@@ -54,7 +54,7 @@ namespace htl {
             static constexpr GPIOAlt alt = GPIOAlt::_1;
         };
         template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A1, UARTPin::RST> {
+        struct UARTPinTrait<UARTChannel::_2, GPIO_A1, UARTPin::RTS> {
             static constexpr GPIOAlt alt = GPIOAlt::_1;
         };
         template <>
