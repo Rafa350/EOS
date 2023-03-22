@@ -12,22 +12,23 @@
 #if (EOS_TOOLCHAIN_DETECTED == 1) && \
 	defined(EOS_TOOLCHAIN_XC32)
 
-	// Platform definitions
+    #define EOS_PLATFORM_PIC32
 	#if defined(__PIC32MX)
         #define EOS_PLATFORM_PIC32MX
         #if defined(__32MX460F512L__)
             #define EOS_PLATFORM_PIC32MX4
+            #define EOS_PLATFORM_PIC32MX460F512L
         #elif defined(__32MX795F512L__)
             #define EOS_PLATFORM_PIC32MX7
+            #define EOS_PLATFORM_PIC32MX795F512L
         #else
-            #error  "Unknown processor PIC32MX"
+            #error "Unknown processor PIC32MX"
         #endif
     #elif defined(__PIC32MZ)
 		#define EOS_PLATFORM_PIC32MZ
 	#else
 		#error "Unknown processor"
 	#endif
-    #define EOS_PLATFORM_PIC32
 	#define EOS_PLATFORM_DETECTED 1
 
 
@@ -36,14 +37,27 @@
 	  defined(EOS_TOOLCHAIN_GNU) && \
 	  defined(STM32)
 
-	// Platform definitions
+    #define EOS_PLATFORM_STM32
     #if defined(STM32G0)
 		#define EOS_PLATFORM_STM32G0
-        #if defined(STM32G030J6) || \
-            defined(STM32G030F6) || \
-            defined(STM32G030K6) || defined(STM32G030K8) || \
-            defined(STM32G030C6) || defined(STM32G030C8)
-			#define EOS_PLATFORM_STM32G030
+        #if defined(STM32G030J6)
+            #define EOS_PLATFORM_STM32G030
+            #define EOS_PLATFORM_STM32G030J6
+        #elif defined(STM32G030F6) 
+            #define EOS_PLATFORM_STM32G030
+            #define EOS_PLATFORM_STM32G030F6           
+        #elif defined(STM32G030K6)
+            #define EOS_PLATFORM_STM32G030
+            #define EOS_PLATFORM_STM32G030K6
+        #elif defined(STM32G030K8)
+            #define EOS_PLATFORM_STM32G030
+            #define EOS_PLATFORM_STM32G030K8
+        #elif defined(STM32G030C6)
+            #define EOS_PLATFORM_STM32G030
+            #define EOS_PLATFORM_STM32G030C6
+        #elif efined(STM32G030C8)
+            #define EOS_PLATFORM_STM32G030
+            #define EOS_PLATFORM_STM32G030C8
 		#elif defined(STM32G031J6)
 			#define EOS_PLATFORM_STM32G031
 			#define EOS_PLATFORM_STM32G031J6
@@ -56,6 +70,7 @@
 		#else
             #error "Unknown processor STM32G0"
 		#endif
+        
     #elif defined(STM32F0)
 		#define EOS_PLATFORM_STM32F0
 		#if defined(STM32F030R8)
@@ -67,6 +82,7 @@
 		#else
             #error "Unknown processor STM32F0"
 		#endif
+        
 	#elif defined(STM32F1)
 		#define EOS_PLATFORM_STM32F1
 		#if defined(STM32F103xx)
@@ -74,6 +90,7 @@
 		#else
             #error "Unknown processor STM32F1"
 		#endif
+        
 	#elif defined(STM32F4)
 		#define EOS_PLATFORM_STM32F4
 		#if defined(STM32F429xx)
@@ -81,6 +98,7 @@
 		#else
 			#error "Unknown processor STM32F4"
 		#endif
+        
 	#elif defined(STM32F7)
 		#define EOS_PLATFORM_STM32F7
 		#if defined(STM32F746xx)
@@ -90,10 +108,10 @@
 		#else
             #error  "Unknown processor STM32F7"
 		#endif
+        
 	#else
 		#error "Unknown processor"
 	#endif
-    #define EOS_PLATFORM_STM32
 	#define EOS_PLATFORM_DETECTED 1
 
 
@@ -102,7 +120,6 @@
 	  defined(EOS_TOOLCHAIN_GNU) && \
 	  defined(MSP432)
 
-    // Platform definitions
     #define EOS_PLATFORM_MSP432
 	#define EOS_PLATFORM_DETECTED 1
 
@@ -112,7 +129,6 @@
 	  defined(EOS_TOOLCHAIN_GNU) && \
 	  (defined(__MINGW32__) || defined(__MINGW64__))
 
-    // Platform definitions
     #define EOS_PLATFORM_DOS
     #define EOS_PLATFORM_WINDOWS
 	#define EOS_PLATFORM_DETECTED 1
@@ -122,7 +138,6 @@
 #elif (EOS_TOOLCHAIN_DETECTED == 1) && \
 	  defined(EOS_TOOLCHAIN_MVC)
 
-	// Platform definitions
     #define EOS_PLATFORM_DOS
 	#define EOS_PLATFORM_WINDOWS
 	#define EOS_PLATFORM_DETECTED 1

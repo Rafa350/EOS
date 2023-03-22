@@ -53,6 +53,7 @@
 			}
 		#endif
 	}
+    
 #elif defined(EOS_PLATFORM_STM32F0)
 	namespace htl {
 		#ifdef HTL_SPI1_EXIST
@@ -76,8 +77,9 @@
 			}
 		#endif
 	}
+    
 #else
-	#error "Plataforma no soportada"
+	#error "Unknown pkatform"
 #endif
 
 

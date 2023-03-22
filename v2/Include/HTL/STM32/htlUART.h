@@ -25,7 +25,7 @@
 	#define HTL_UART_LINMODE_SUPPORT 0
 	#define HTL_UART_SMARTCARD_SUPPORT 0
 #else
-	#error Unsuported platform
+	#error "Unknown platform"
 #endif
 
 
@@ -1042,7 +1042,7 @@ namespace htl {
     #include "htl/STM32/htlUART_AF_F7.h"
     
 #else
-    #error Plataforma no soportada
+    #error "Unknown platform"
 #endif
 
 

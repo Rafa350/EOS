@@ -218,3 +218,59 @@ void GPIOBase_x::initAnalogic(
     tmp |= 0b11 << (pn * 2);
     regs->MODER = tmp;
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el port com entrades digitals.
+/// \brief    regs: Bloc de registres.
+/// \brief    mask: Mascara de pins.
+/// \brief    pull: Opcions pullup.
+/// 
+void GPIOPortBase_x::initInput(
+    GPIO_TypeDef *regs, 
+    uint16_t mask, 
+    GPIOPull pull) {
+        
+    for (int pn = 0; pn < 16; pn++) {
+        if (mask & (1 << pn)) {
+    
+            // Configura el registre MODER (Mode Register)
+            //
+            uint32_t tmp = regs->MODER;
+            tmp &= ~(0b11 << (pn * 2));
+            regs->MODER = tmp;
+
+            setPull(regs, pn, pull);
+        }
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el port com sortides digitals.
+/// \param    regs: Bloc de registres.
+/// \param    mask: Mascara de pins.
+/// \param    driver: Opcions del driver.
+/// \paran    speed: Opcions de velocitat.
+///
+void GPIOPortBase_x::initOutput(
+    GPIO_TypeDef *regs, 
+    uint16_t mask, 
+    GPIODriver driver, 
+    GPIOSpeed speed) {
+    
+    for (int pn = 0; pn < 16; pn++) {
+        if (mask & (1 << pn)) {
+
+            // Configura el registre MODER (Mode Register)
+            //
+            uint32_t tmp = regs->MODER;
+            tmp &= ~(0b11 << (pn * 2));
+            tmp |= 0b01 << (pn * 2);
+            regs->MODER = tmp;
+
+            setDriver(regs, pn, driver);
+            setSpeed(regs, pn, speed);
+        }
+    }
+}

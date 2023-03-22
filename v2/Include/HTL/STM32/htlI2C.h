@@ -36,6 +36,7 @@
 			}
 		#endif
 	}
+    
 #elif defined(EOS_PLATFORM_STM32F0)
 	namespace htl {
 		#ifdef HTL_I2C1_EXIST
@@ -63,8 +64,9 @@
 			}
 		#endif
 	}
+    
 #else
-	#error "Plataforma no soportada"
+	#error "Unknown platform"
 #endif
 
 
@@ -570,7 +572,10 @@ namespace htl {
 }
 
 
-#if defined(EOS_PLATFORM_STM32G031)
+#if defined(EOS_PLATFORM_STM32G030)
+    #include "htl/STM32/htlI2C_AF_G030.h"
+
+#elif defined(EOS_PLATFORM_STM32G031)
     #include "htl/STM32/htlI2C_AF_G031.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
@@ -583,7 +588,7 @@ namespace htl {
     #include "htl/STM32/htlI2C_AF_F7.h"
 
 #else
-    #error Plataforma no soportada
+    #error "Unknown platform"
 #endif
 
 

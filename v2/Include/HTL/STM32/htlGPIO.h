@@ -60,6 +60,7 @@
 			}
 		#endif
 	}
+    
 #elif defined(EOS_PLATFORM_STM32F0)
 	namespace htl {
 		#ifdef HTL_GPIOA_EXIST
@@ -103,29 +104,101 @@
 			}
 		#endif
 	}
+    
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-	#define HTL_GPIOA_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN
-	#define HTL_GPIOB_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN
-	#define HTL_GPIOC_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN
-	#define HTL_GPIOD_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN
-	#define HTL_GPIOE_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN
-	#define HTL_GPIOF_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN
-	#define HTL_GPIOG_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN
-	#define HTL_GPIOH_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN
-	#define HTL_GPIOI_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN
-	#define HTL_GPIOJ_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN
-	#define HTL_GPIOK_CLK_ENABLE()     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN
-	#define HTL_GPIOA_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN
-	#define HTL_GPIOB_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN
-	#define HTL_GPIOC_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN
-	#define HTL_GPIOD_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN
-	#define HTL_GPIOE_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN
-	#define HTL_GPIOF_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN
-	#define HTL_GPIOG_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN
-	#define HTL_GPIOH_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN
-	#define HTL_GPIOI_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN
-	#define HTL_GPIOJ_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN
-	#define HTL_GPIOK_CLK_DISABLE()    RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN
+    namespace htl {
+        #ifdef HTL_GPIOA_EXIST
+            inline void PortAClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+            }
+            inline void PortAClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN;
+            }
+        #endif
+        #ifdef HTL_GPIOB_EXIST
+            inline void PortBClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+            }
+            inline void PortBClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN;
+            }
+        #endif
+        #ifdef HTL_GPIOC_EXIST
+            inline void PortCClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+            }
+            inline void PortCClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN;
+            }
+        #endif
+        #ifdef HTL_GPIOD_EXIST
+            inline void PortDClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+            }
+            inline void PortDClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN;
+            }
+        #endif
+        #ifdef HTL_GPIOE_EXIST
+            inline void PortEClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
+            }
+            inline void PortEClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN;
+            }
+        #endif
+        #ifdef HTL_GPIOF_EXIST
+            inline void PortFClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
+            }
+            inline void PortFClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN;
+            }
+        #endif
+        #ifdef HTL_GPIOG_EXIST
+            inline void PortGClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
+            }
+            inline void PortGClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN;
+            }
+        #endif
+        #ifdef HTL_GPIOH_EXIST
+            inline void PortHClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
+            }
+            inline void PortHClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN;
+            }
+        #endif
+        #ifdef HTL_GPIOI_EXIST
+            inline void PortIClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
+            }
+            inline void PortIClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN;
+            }
+        #endif
+        #ifdef HTL_GPIOJ_EXIST
+            inline void PortJClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
+            }
+            inline void PortJClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN;
+            }
+        #endif
+        #ifdef HTL_GPIOK_EXIST
+            inline void PortKClockEnable() {
+                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
+            }
+            inline void PortKClockDisable() {
+                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN;
+            }
+        #endif
+    }
+
+#else    
+    #error "Unknown platform"
 #endif
 
 
@@ -364,14 +437,98 @@ namespace htl {
     };
 
     template <GPIOPortId portId_> uint16_t GPIOPortActivator<portId_>::_activated = 0;
+    
+    
+    /// \class GPIOPortBase_x
+    /// \brief Base class for gpio port.
+    ///
+    class GPIOPortBase_x {
+        protected:
+            static void initInput(GPIO_TypeDef *regs, uint16_t mask, GPIOPull pull);
+            static void initOutput(GPIO_TypeDef *regs, uint16_t mask, GPIODriver driver, GPIOSpeed speed);
+    };
+    
+    /// \class GPIOPort_x
+    /// \brief Class form gpio port.
+    ///
+    template <GPIOPortId portId_>
+    class GPIOPort_x final: public GPIOPortBase_x {
+        private:
+            using PortTrait = GPIOPortTrait<portId_>;
+            using Activator = GPIOPortActivator<portId_>;
+            static constexpr uint32_t _addr = PortTrait::addr;
+
+        public:
+            static constexpr GPIOPortId port = portId_;
+            static constexpr GPIOPinId pin = pinId_;
+            
+        public:
+            /// \brief Initialize port as inputs.
+            /// \param mask: Pin mask.
+            /// \param pull: Pull up/down options
+            ///
+            static void initInput(
+                uint16_t mask,
+            	GPIOPull pull = GPIOPull::none) {
+
+            	Activator::activate(mask);
+            	GPIOPortBase_x::initInput(
+                    reinterpret_cast<GPIO_TypeDef*>(_addr), 
+                    mask,
+                    pull);
+            }
+
+            /// \brief Initialize port as outputs.
+            /// \param mask: Pin mask.
+            /// \param driver: Driver options.
+            /// \param speed: Speed options.
+            ///
+            static void initOutput(
+                uint16_t mask,
+            	GPIODriver driver,
+				GPIOSpeed speed = GPIOSpeed::medium,
+				GPIOInitState state = GPIOInitState::noChange) {
+
+            	Activator::activate(mask);
+                GPIOBase_x::initOutput(
+                    reinterpret_cast<GPIO_TypeDef*>(_addr),
+                    mask,
+                    driver,
+                    speed);
+            }
+
+            /// \brief Set pins to set state
+            /// \param mask: Pin mask.
+            ///
+            static void set(uint16_t mask) {
+                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
+                regs->BSRR = mask;
+            }
+
+            /// \brief Set pins to clear state
+            /// \param mask: Pin mask.
+            ///
+            static void clear(uint16_t mask) {
+                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
+                regs->BSRR = mask << 16;
+            }
+
+            /// \brief Toggle pin state
+            /// \param mask: Pin mask.
+            ///
+            static void toggle(uint16_t mask) {
+                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
+                regs->ODR ^= mask;
+            }
+    };
 
 
     /// \class GPIOBase_x
-    /// \brief Base class for gpio
+    /// \brief Base class for gpio pins
     ///
     class GPIOBase_x {
     	protected:
-			static void initInput(GPIO_TypeDef *regs, uint32_t pn, GPIOPull pullMode);
+			static void initInput(GPIO_TypeDef *regs, uint32_t pn, GPIOPull pull);
 			static void initOutput(GPIO_TypeDef *regs, uint32_t pn, GPIODriver driver, GPIOSpeed speed);
 			static void initAlt(GPIO_TypeDef *regs, uint32_t pn, GPIODriver driver, GPIOSpeed speed, GPIOAlt alt);
             static void initAnalogic(GPIO_TypeDef *regs, uint32_t pn);
@@ -520,6 +677,7 @@ namespace htl {
     };
 
     #ifdef HTL_GPIOA_EXIST
+        using GPIO_A = GPIOPort_x<GPIOPortId::A>;
         typedef GPIO_x<GPIOPortId::A, GPIOPinId::_0> GPIO_A0;
         typedef GPIO_x<GPIOPortId::A, GPIOPinId::_1> GPIO_A1;
         typedef GPIO_x<GPIOPortId::A, GPIOPinId::_2> GPIO_A2;
@@ -539,6 +697,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOB_EXIST
+        using GPIO_B = GPIOPort_x<GPIOPortId::B>;
         typedef GPIO_x<GPIOPortId::B, GPIOPinId::_0> GPIO_B0;
         typedef GPIO_x<GPIOPortId::B, GPIOPinId::_1> GPIO_B1;
         typedef GPIO_x<GPIOPortId::B, GPIOPinId::_2> GPIO_B2;
@@ -558,6 +717,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOC_EXIST
+        using GPIO_C = GPIOPort_x<GPIOPortId::C>;
         typedef GPIO_x<GPIOPortId::C, GPIOPinId::_0> GPIO_C0;
         typedef GPIO_x<GPIOPortId::C, GPIOPinId::_1> GPIO_C1;
         typedef GPIO_x<GPIOPortId::C, GPIOPinId::_2> GPIO_C2;
@@ -577,6 +737,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOD_EXIST
+        using GPIO_D = GPIOPort_x<GPIOPortId::D>;
         typedef GPIO_x<GPIOPortId::D, GPIOPinId::_0> GPIO_D0;
         typedef GPIO_x<GPIOPortId::D, GPIOPinId::_1> GPIO_D1;
         typedef GPIO_x<GPIOPortId::D, GPIOPinId::_2> GPIO_D2;
@@ -596,6 +757,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOE_EXIST
+        using GPIO_E = GPIOPort_x<GPIOPortId::E>;
         typedef GPIO_x<GPIOPortId::E, GPIOPinId::_0> GPIO_E0;
         typedef GPIO_x<GPIOPortId::E, GPIOPinId::_1> GPIO_E1;
         typedef GPIO_x<GPIOPortId::E, GPIOPinId::_2> GPIO_E2;
@@ -615,6 +777,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOF_EXIST
+        using GPIO_F = GPIOPort_x<GPIOPortId::F>;
         typedef GPIO_x<GPIOPortId::F, GPIOPinId::_0> GPIO_F0;
         typedef GPIO_x<GPIOPortId::F, GPIOPinId::_1> GPIO_F1;
         typedef GPIO_x<GPIOPortId::F, GPIOPinId::_2> GPIO_F2;
@@ -634,6 +797,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOG_EXIST
+        using GPIO_G = GPIOPort_x<GPIOPortId::G>;
         typedef GPIO_x<GPIOPortId::G, GPIOPinId::_0> GPIO_G0;
         typedef GPIO_x<GPIOPortId::G, GPIOPinId::_1> GPIO_G1;
         typedef GPIO_x<GPIOPortId::G, GPIOPinId::_2> GPIO_G2;
@@ -653,6 +817,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOH_EXIST
+        using GPIO_H = GPIOPort_x<GPIOPortId::H>;
         typedef GPIO_x<GPIOPortId::H, GPIOPinId::_0> GPIO_H0;
         typedef GPIO_x<GPIOPortId::H, GPIOPinId::_1> GPIO_H1;
         typedef GPIO_x<GPIOPortId::H, GPIOPinId::_2> GPIO_H2;
@@ -672,6 +837,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOI_EXIST
+        using GPIO_I = GPIOPort_x<GPIOPortId::I>;
         typedef GPIO_x<GPIOPortId::I, GPIOPinId::_0> GPIO_I0;
         typedef GPIO_x<GPIOPortId::I, GPIOPinId::_1> GPIO_I1;
         typedef GPIO_x<GPIOPortId::I, GPIOPinId::_2> GPIO_I2;
@@ -691,6 +857,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOJ_EXIST
+        using GPIO_J = GPIOPort_x<GPIOPortId::J>;
         typedef GPIO_x<GPIOPortId::J, GPIOPinId::_0> GPIO_J0;
         typedef GPIO_x<GPIOPortId::J, GPIOPinId::_1> GPIO_J1;
         typedef GPIO_x<GPIOPortId::J, GPIOPinId::_2> GPIO_J2;
@@ -710,6 +877,7 @@ namespace htl {
     #endif
 
     #ifdef HTL_GPIOK_EXIST
+        using GPIO_K = GPIOPort_x<GPIOPortId::K>;
         typedef GPIO_x<GPIOPortId::K, GPIOPinId::_0> GPIO_K0;
         typedef GPIO_x<GPIOPortId::K, GPIOPinId::_1> GPIO_K1;
         typedef GPIO_x<GPIOPortId::K, GPIOPinId::_2> GPIO_K2;
