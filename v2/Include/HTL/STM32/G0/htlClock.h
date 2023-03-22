@@ -7,7 +7,7 @@
 
 
 #if !defined(EOS_PLATFORM_STM32G0)
-	#error Solo es valido para la plataforma STM32G0
+	#error "Valid for STM32G0 platform only"
 #endif
 
 

@@ -368,7 +368,7 @@ bool Clock::isPllEnabled() {
 /// \brief    Activa el PLL.
 /// \param    source: Rellotge font.
 /// \param    multiplier: Factor de multiplicacio.
-/// \param    divider: Fasctor de divisio.
+/// \param    divider: Factor de divisio.
 /// \return   True si s'ha realitzat l'operacio correctament.
 ///
 bool Clock::configurePll(
@@ -376,7 +376,7 @@ bool Clock::configurePll(
 	int multiplier,
 	int divider) {
 
-	if (divider < 2 || divider > 8 || multiplier < 8 || divider > 86)
+	if (divider < 1 || divider > 8 || multiplier < 8 || multiplier > 86)
 		return false;
 
 	if (isPllEnabled())
@@ -512,6 +512,11 @@ unsigned Clock::getClockFrequency(
 				#endif
 
 				case RCC_CFGR_SW_PLLRCLK:
+					fclk = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC) == (0b10 << RCC_PLLCFGR_PLLSRC_Pos) ?
+						 CLOCK_HSI16_FREQUENCY : CLOCK_HSE_FREQUENCY;
+					fclk *= (RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos;
+					fclk /= (RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos;
+					fclk /=
 					break;
 
 				case RCC_CFGR_SW_LSI:
@@ -556,7 +561,7 @@ unsigned Clock::getClockFrequency(
 			fclk = CLOCK_HSI48_FREQUENCY;
 			break;
 
-			#ifdef CLOCK_LSE_FREQUENCY
+		#ifdef CLOCK_LSE_FREQUENCY
 			case ClockId::lse:
 				fclk = CLOCK_LSE_FREQUENCY;
 				break;

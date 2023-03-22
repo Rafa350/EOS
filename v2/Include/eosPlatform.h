@@ -55,7 +55,7 @@
         #elif defined(STM32G030C6)
             #define EOS_PLATFORM_STM32G030
             #define EOS_PLATFORM_STM32G030C6
-        #elif efined(STM32G030C8)
+        #elif defined(STM32G030C8)
             #define EOS_PLATFORM_STM32G030
             #define EOS_PLATFORM_STM32G030C8
 		#elif defined(STM32G031J6)

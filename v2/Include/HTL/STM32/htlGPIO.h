@@ -460,7 +460,6 @@ namespace htl {
 
         public:
             static constexpr GPIOPortId port = portId_;
-            static constexpr GPIOPinId pin = pinId_;
             
         public:
             /// \brief Initialize port as inputs.
@@ -490,7 +489,7 @@ namespace htl {
 				GPIOInitState state = GPIOInitState::noChange) {
 
             	Activator::activate(mask);
-                GPIOBase_x::initOutput(
+                GPIOPortBase_x::initOutput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     mask,
                     driver,

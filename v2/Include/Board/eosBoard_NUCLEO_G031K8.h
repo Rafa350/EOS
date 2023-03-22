@@ -73,7 +73,7 @@
 #define ARDUINO_RX_GPIO      htl::GPIO_B6  // D0
 #define ARDUINO_TX_GPIO      htl::GPIO_B7  // D1
 
-#define ARDUINO_I2C          htl::I2CMaster_1
+#define ARDUINO_I2C          htl::I2C_1
 #define ARDUINO_SCL_GPIO     htl::GPIO_A9  // D5
 #define ARDUINO_SDA_GPIO     htl::GPIO_A10 // D4
 
