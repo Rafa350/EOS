@@ -30,7 +30,7 @@ HHeap osalHeapCreate() {
 /// \brief    Destrueix el heap.
 /// \param    hHeam: Handler del heap.
 ///
-void halHeapDestroy(
+void osalHeapDestroy(
 	HHeap hHeap) {
 
 }

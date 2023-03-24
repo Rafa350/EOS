@@ -190,7 +190,8 @@
 	#define CLOCK_LSI_FREQUENCY          32000
 
 #else
-	#error Plataforma no soportada
+	#error "Unknown platform"
+
 #endif
 
 

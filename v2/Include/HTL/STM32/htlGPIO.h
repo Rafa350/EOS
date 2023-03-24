@@ -17,191 +17,6 @@
 #include "HTL/htl.h"
 
 
-#if defined(EOS_PLATFORM_STM32G0)
-	namespace htl {
-		#ifdef HTL_GPIOA_EXIST
-			inline void PortAClockEnable() {
-				RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
-			}
-			inline void PortAClockDisable() {
-				RCC->IOPENR &= ~RCC_IOPENR_GPIOAEN;
-			}
-		#endif
-		#ifdef HTL_GPIOB_EXIST
-			inline void PortBClockEnable() {
-				RCC->IOPENR |= RCC_IOPENR_GPIOBEN;
-			}
-			inline void PortBClockDisable() {
-				RCC->IOPENR &= ~RCC_IOPENR_GPIOBEN;
-			}
-		#endif
-		#ifdef HTL_GPIOC_EXIST
-			inline void PortCClockEnable() {
-				RCC->IOPENR |= RCC_IOPENR_GPIOCEN;
-			}
-			inline void PortCClockDisable() {
-				RCC->IOPENR &= ~RCC_IOPENR_GPIOCEN;
-			}
-		#endif
-		#ifdef HTL_GPIOD_EXIST
-			inline void PortDClockEnable() {
-				RCC->IOPENR |= RCC_IOPENR_GPIODEN;
-			}
-			inline void PortDClockDisable() {
-				RCC->IOPENR &= ~RCC_IOPENR_GPIODEN;
-			}
-		#endif
-		#ifdef HTL_GPIOF_EXIST
-			inline void PortFClockEnable() {
-				RCC->IOPENR |= RCC_IOPENR_GPIOFEN;
-			}
-			inline void PortFClockDisable() {
-				RCC->IOPENR &= ~RCC_IOPENR_GPIOFEN;
-			}
-		#endif
-	}
-    
-#elif defined(EOS_PLATFORM_STM32F0)
-	namespace htl {
-		#ifdef HTL_GPIOA_EXIST
-			inline void PortAClockEnable() {
-				RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-			}
-			inline void PortAClockDisable() {
-				RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN;
-			}
-		#endif
-		#ifdef HTL_GPIOB_EXIST
-			inline void PortBClockEnable() {
-				RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
-			}
-			inline void PortBClockDisable() {
-				RCC->AHBENR &= ~RCC_AHBENR_GPIOBEN;
-			}
-		#endif
-		#ifdef HTL_GPIOC_EXIST
-			inline void PortCClockEnable() {
-				RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
-			}
-			inline void PortCClockDisable() {
-				RCC->AHBENR &= ~RCC_AHBENR_GPIOCEN;
-			}
-		#endif
-		#ifdef HTL_GPIOD_EXIST
-			inline void PortDClockEnable() {
-				RCC->AHBENR |= RCC_AHBENR_GPIODEN;
-			}
-			inline void PortDClockDisable() {
-				RCC->AHBENR &= ~RCC_AHBENR_GPIODEN;
-			}
-		#endif
-		#ifdef HTL_GPIOF_EXIST
-			inline void PortFClockEnable() {
-				RCC->AHBENR |= RCC_AHBENR_GPIOFEN;
-			}
-			inline void PortFClockDisable() {
-				RCC->AHBENR &= ~RCC_AHBENR_GPIOFEN;
-			}
-		#endif
-	}
-    
-#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-    namespace htl {
-        #ifdef HTL_GPIOA_EXIST
-            inline void PortAClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-            }
-            inline void PortAClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOAEN;
-            }
-        #endif
-        #ifdef HTL_GPIOB_EXIST
-            inline void PortBClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
-            }
-            inline void PortBClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOBEN;
-            }
-        #endif
-        #ifdef HTL_GPIOC_EXIST
-            inline void PortCClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
-            }
-            inline void PortCClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOCEN;
-            }
-        #endif
-        #ifdef HTL_GPIOD_EXIST
-            inline void PortDClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-            }
-            inline void PortDClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIODEN;
-            }
-        #endif
-        #ifdef HTL_GPIOE_EXIST
-            inline void PortEClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
-            }
-            inline void PortEClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOEEN;
-            }
-        #endif
-        #ifdef HTL_GPIOF_EXIST
-            inline void PortFClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
-            }
-            inline void PortFClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOFEN;
-            }
-        #endif
-        #ifdef HTL_GPIOG_EXIST
-            inline void PortGClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
-            }
-            inline void PortGClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOGEN;
-            }
-        #endif
-        #ifdef HTL_GPIOH_EXIST
-            inline void PortHClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
-            }
-            inline void PortHClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOHEN;
-            }
-        #endif
-        #ifdef HTL_GPIOI_EXIST
-            inline void PortIClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
-            }
-            inline void PortIClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOIEN;
-            }
-        #endif
-        #ifdef HTL_GPIOJ_EXIST
-            inline void PortJClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
-            }
-            inline void PortJClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOJEN;
-            }
-        #endif
-        #ifdef HTL_GPIOK_EXIST
-            inline void PortKClockEnable() {
-                RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
-            }
-            inline void PortKClockDisable() {
-                RCC->AHB1ENR &= ~RCC_AHB1ENR_GPIOKEN;
-            }
-        #endif
-    }
-
-#else    
-    #error "Unknown platform"
-#endif
-
-
 namespace htl {
 
     /// \brief Port identifiers.
@@ -327,6 +142,9 @@ namespace htl {
     template <GPIOPortId portId_>
     class GPIOPortActivator final {
     	private:
+    		using PortTrait = GPIOPortTrait<portId_>;
+    		static constexpr uint32_t en_addr = PortTrait::en_addr;
+    		static constexpr uint32_t en_bit = PortTrait::en_bit;
     		static uint16_t _activated;
 
     	public:
@@ -334,50 +152,8 @@ namespace htl {
     			uint16_t mask) {
 
     			if (!_activated) {
-					#ifdef HTL_GPIOA_EXIST
-    					if constexpr (portId_ == GPIOPortId::A)
-    						PortAClockEnable();
-					#endif
-					#ifdef HTL_GPIOB_EXIST
-    					if constexpr (portId_ == GPIOPortId::B)
-    						PortBClockEnable();
-					#endif
-					#ifdef HTL_GPIOC_EXIST
-    					if constexpr (portId_ == GPIOPortId::C)
-							PortCClockEnable();
-					#endif
-					#ifdef HTL_GPIOD_EXIST
-    					if constexpr (portId_ == GPIOPortId::D)
-							PortCClockEnable();
-					#endif
-					#ifdef HTL_GPIOE_EXIST
-    					if constexpr (portId_ == GPIOPortId::E)
-							PortDClockEnable();
-					#endif
-					#ifdef HTL_GPIOF_EXIST
-    					if constexpr (portId_ == GPIOPortId::F)
-							PortFClockEnable();
-					#endif
-					#ifdef HTL_GPIOG_EXIST
-    					if constexpr (portId_ == GPIOPortId::G)
-							PortGClockEnable();
-					#endif
-					#ifdef HTL_GPIOH_EXIST
-    					if constexpr (portId_ == GPIOPortId::H)
-							PortHClockEnable();
-					#endif
-					#ifdef HTL_GPIOI_EXIST
-    					if constexpr (portId_ == GPIOPortId::I)
-							PortIClockEnable();
-					#endif
-					#ifdef HTL_GPIOJ_EXIST
-    					if constexpr (portId_ == GPIOPortId::J)
-							PorJClockEnable();
-					#endif
-					#ifdef HTL_GPIOK_EXIST
-    					if constexpr (portId_ == GPIOPortId::K)
-							PortKClockEnable();
-					#endif
+					uint32_t *p = reinterpret_cast<uint32_t*>(en_addr);
+					*p |= 1 << en_bit;
     				__DSB();
     			}
     			_activated |= mask;
@@ -388,50 +164,8 @@ namespace htl {
 
     			_activated &= ~mask;
     			if (!_activated) {
-					#ifdef HTL_GPIOA_EXIST
-    					if constexpr (portId_ == GPIOPortId::A)
-    						PortAClockDisable();
-					#endif
-					#ifdef HTL_GPIOB_EXIST
-    					if constexpr (portId_ == GPIOPortId::B)
-    	    				PortBClockDisable();
-					#endif
-					#ifdef HTL_GPIOC_EXIST
-    					if constexpr(portId_ == GPIOPortId::C)
-    	    				PortCClockDisable();
-					#endif
-					#ifdef HTL_GPIOD_EXIST
-    					if constexpr (portId_ == GPIOPortId::D)
-    	    				PortDClockDisable();
-					#endif
-					#ifdef HTL_GPIOE_EXIST
-    					if constexpr (portId_ == GPIOPortId::E)
-    	    				PortEClockDisable();
-					#endif
-					#ifdef HTL_GPIOF_EXIST
-    					if constexpr (portId_ == GPIOPortId::F)
-    	    				PortFClockDisable();
-					#endif
-					#ifdef HTL_GPIOG_EXIST
-    					if constexpr (portId_ == GPIOPortId::G)
-    	    				PortGClockDisable();
-					#endif
-					#ifdef HTL_GPIOH_EXIST
-    					if constexpr (portId_ == GPIOPortId::H)
-    	    				PortHClockDisable();
-					#endif
-					#ifdef HTL_GPIOI_EXIST
-    					if constexpr (portId_ == GPIOPortId::I)
-    	    				PortIClockDisable();
-					#endif
-					#ifdef HTL_GPIOJ_EXIST
-    					if constexpr (portId_ == GPIOPortId::J)
-    	    				PortJClockDisable();
-					#endif
-					#ifdef HTL_GPIOK_EXIST
-    					if constexpr (portId_ == GPIOPortId::K)
-    	    				PortKClockDisable();
-					#endif
+					uint32_t *p = reinterpret_cast<uint32_t*>(en_addr);
+					*p &= ~(1 << en_bit);
     			}
     		}
     };
@@ -900,6 +634,13 @@ namespace htl {
         template<>
         struct GPIOPortTrait<GPIOPortId::A> {
             static constexpr uint32_t addr = GPIOA_BASE;
+				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+					static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+					static constexpr uint32_t en_bit = RCC_AHB1ENR_GPIOAEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+					static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+					static constexpr uint32_t en_bit = RCC_IOPENR_GPIOAEN_Pos;
+				#endif
         };
 
         template <>
@@ -987,6 +728,13 @@ namespace htl {
         template  <>
         struct GPIOPortTrait<GPIOPortId::B> {
             static constexpr uint32_t addr = GPIOB_BASE;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+            	static constexpr uint32_t en_bit = RCC_AHB1ENR_GPIOBEN_Pos;
+			#elif defined(EOS_PLATFORM_STM32G0)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+            	static constexpr uint32_t en_bit = RCC_IOPENR_GPIOBEN_Pos;
+			#endif
         };
 
         template <>
@@ -1074,6 +822,13 @@ namespace htl {
         template  <>
         struct GPIOPortTrait<GPIOPortId::C> {
             static constexpr uint32_t addr = GPIOC_BASE;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+            	static constexpr uint32_t en_bit = RCC_AHB1ENR_GPIOBEN_Pos;
+			#elif defined(EOS_PLATFORM_STM32G0)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+            	static constexpr uint32_t en_bit = RCC_IOPENR_GPIOCEN_Pos;
+			#endif
         };
 
         template <>
@@ -1161,6 +916,13 @@ namespace htl {
         template  <>
         struct GPIOPortTrait<GPIOPortId::D> {
             static constexpr uint32_t addr = GPIOD_BASE;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+            	static constexpr uint32_t en_bit = RCC_AHB1ENR_GPIODEN_Pos;
+			#elif defined(EOS_PLATFORM_STM32G0)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+            	static constexpr uint32_t en_bit = RCC_IOPENR_GPIODEN_Pos;
+			#endif
         };
 
         template <>
@@ -1223,6 +985,13 @@ namespace htl {
         template  <>
         struct GPIOPortTrait<GPIOPortId::E> {
             static constexpr uint32_t addr = GPIOE_BASE;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t en_bit = RCC_AHB1ENR_GPIOEEN_Pos;
+			#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t en_bit = RCC_IOPENR_GPIOEEN_Pos;
+			#endif
         };
 
         template <>
@@ -1245,6 +1014,13 @@ namespace htl {
         template  <>
         struct GPIOPortTrait<GPIOPortId::F> {
             static constexpr uint32_t addr = GPIOF_BASE;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+            	static constexpr uint32_t en_bit = RCC_AHB1ENR_GPIOFEN_Pos;
+			#elif defined(EOS_PLATFORM_STM32G0)
+            	static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+            	static constexpr uint32_t en_bit = RCC_IOPENR_GPIOFEN_Pos;
+			#endif
         };
 
         template <>
@@ -1307,6 +1083,13 @@ namespace htl {
         template  <>
         struct GPIOPortTrait<GPIOPortId::G> {
             static constexpr uint32_t addr = GPIOG_BASE;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t en_bit = RCC_AHB1ENR_GPIOGEN_Pos;
+			#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t en_bit = RCC_IOPENR_GPIOGEN_Pos;
+			#endif
         };
 
         template <>

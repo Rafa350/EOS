@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/eosAppLoopService.h"
+#include "Services/eosService.h"
 #include "System/Graphics/eosText.h"
 
 
@@ -18,7 +18,7 @@ namespace eos {
 
 namespace app {
 
-	class DisplayService: public eos::AppLoopService {
+	class DisplayService: public eos::Service {
 	    private:
 			static constexpr uint32_t _displayWidth = DISPLAY_WIDTH;
 			static constexpr uint32_t _displayHeight = DISPLAY_HEIGHT;
@@ -48,8 +48,8 @@ namespace app {
 	        DisplayService();
 
 	    protected:
-	        void onSetup();
-	        void onLoop();
+	        void onInitialize();
+	        void onTask();
 
 	    private:
 	        void drawBackground(const char *title);

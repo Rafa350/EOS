@@ -75,8 +75,6 @@ static inline Color __getRandomColor() {
 /// \param application: Aplicacio al que pertany el servei.
 ///
 DisplayService::DisplayService():
-
-	AppLoopService(),
 	_text(Font("Consolas", 14, FontStyle::regular), TextAlign::left),
 	_orientation(0) {
 
@@ -87,7 +85,7 @@ DisplayService::DisplayService():
 ///-----------------------------------------------------------------------
 /// \brief Process la inicialitzacio de la tasca.
 ///
-void DisplayService::onSetup() {
+void DisplayService::onInitialize() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
@@ -147,7 +145,7 @@ void DisplayService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void DisplayService::onLoop() {
+void DisplayService::onTask() {
 
     _pointsTicks = 0;
     _horizontalLinesTicks = 0;

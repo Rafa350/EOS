@@ -19,6 +19,9 @@
 	defined(EOS_PLATFORM_STM32G0)
 	#include "HTL/STM32/htlINT.h"
 
+#else
+	#error "Unknown platform"
+
 #endif
 
 

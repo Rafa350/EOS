@@ -17,7 +17,7 @@
 #elif defined(EOS_PLATFORM_STM32G0)
     #include "HTL/STM32/G0/htlClock.h"
 #else
-    #error Plataforma no soportada
+	#error "Unknown platform"
 #endif
 
 

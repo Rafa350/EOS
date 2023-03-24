@@ -16,6 +16,10 @@ namespace htl {
 	defined(EOS_PLATFORM_STM32F4) || \
 	defined(EOS_PLATFORM_STM32F7)
 	#include "HTL/STM32/htl.h"
+
+#else
+	#error "Unknown platform"
+
 #endif
 
 

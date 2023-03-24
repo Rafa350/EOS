@@ -77,9 +77,71 @@
 			}
 		#endif
 	}
+
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+	#ifdef HTL_SPI1_EXIST
+		inline void SPI1ClockEnable() {
+			RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+		}
+		inline void SPI1ClockDisable() {
+			RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
+		}
+		inline void SPI1Reset() {
+		}
+	#endif
+	#ifdef HTL_SPI2_EXIST
+		inline void SPI2ClockEnable() {
+			RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+		}
+		inline void SPI2ClockDisable() {
+			RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
+		}
+		inline void SPI2Reset() {
+		}
+	#endif
+	#ifdef HTL_SPI3_EXIST
+		inline void SPI3ClockEnable() {
+			RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
+		}
+		inline void SPI3ClockDisable() {
+			RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN;
+		}
+		inline void SPI3Reset() {
+		}
+	#endif
+	#ifdef HTL_SPI4_EXIST
+		inline void SPI4ClockEnable() {
+			RCC->APB2ENR |= RCC_APB2ENR_SPI4EN;
+		}
+		inline void SPI4ClockDisable() {
+			RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN;
+		}
+		inline void SPI4Reset() {
+		}
+	#endif
+	#ifdef HTL_SPI5_EXIST
+		inline void SPI5ClockEnable() {
+			RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
+		}
+		inline void SPI5ClockDisable() {
+			RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
+		}
+		inline void SPI5Reset() {
+		}
+	#endif
+	#ifdef HTL_SPI6_EXIST
+		inline void SPI6ClockEnable() {
+			RCC->APB2ENR |= RCC_APB2ENR_SPI6EN;
+		}
+		inline void SPI6ClockDisable() {
+			RCC->APB2ENR &= ~RCC_APB2ENR_SPI6EN;
+		}
+		inline void SPI6Reset() {
+		}
+	#endif
     
 #else
-	#error "Unknown pkatform"
+	#error "Unknown platform"
 #endif
 
 
@@ -217,19 +279,19 @@ namespace htl {
 				#endif
 				#ifdef HTL_SPI3_EXIST
 					if constexpr (channel == SPIChannel::_3)
-						RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
+						SPI3ClockEnable();
 				#endif
 				#ifdef HTL_SPI4_EXIST
 					if constexpr (channel == SPIChannel::_4)
-						RCC->APB2ENR |= RCC_APB2ENR_SPI4EN;
+						SPI4ClockEnable();
 				#endif
 				#ifdef HTL_SPI5_EXIST
 					if constexpr (channel == SPIChannel::_5)
-						RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
+						SPI5ClockEnable();
 				#endif
 				#ifdef HTL_SPI6_EXIST
 					if constexpr (channel == SPIChannel::_6)
-						RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
+						SPI6ClockEnable();
 				#endif
 			}
 
@@ -247,19 +309,19 @@ namespace htl {
 				#endif
 				#ifdef HTL_SPI3_EXIST
 					if constexpr (channel == SPIChannel::_3)
-						RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN;
+						SPI3ClockDisable();
 				#endif
 				#ifdef HTL_SPI4_EXIST
 					if constexpr (channel == SPIChannel::_4)
-						RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN;
+						SPI4ClockDisable();
 				#endif
 				#ifdef HTL_SPI5_EXIST
 					if constexpr (channel == SPIChannel::_5)
-						RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
+						SPI5ClockDisable();
 				#endif
 				#ifdef HTL_SPI6_EXIST
 					if constexpr (channel == SPIChannel::_6)
-						RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
+						SPI6ClockDisable();
 				#endif
 			}
 

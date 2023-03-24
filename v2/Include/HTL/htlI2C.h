@@ -22,6 +22,9 @@
 #elif defined(EOS_PLATFORM_MSP432)
     #include "HTL/MSP432/htlI2C.h"
 
+#else
+	#error "Unknown platform"
+
 #endif
 
 

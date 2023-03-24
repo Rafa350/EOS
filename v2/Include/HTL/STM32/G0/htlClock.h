@@ -39,6 +39,21 @@ namespace htl {
 		unchanged
 	};
 
+	enum class MCOOutput {
+		_1,
+		_2
+	};
+
+	enum class MCOSource {
+		none,
+		lsi,
+		lse,
+		sysclk,
+		hsi16,
+		hse,
+		pllrclk
+	};
+
 	enum class PllSource {
 		hsi16,
 		#ifdef CLOCK_HSE_FREQUENCY
@@ -118,6 +133,8 @@ namespace htl {
 			static bool configurePllP(int divider);
 			static bool configurePllQ(int divider);
 			static bool configurePllR(int divider);
+
+			static void configureMCO(MCOOutput output, MCOSource source, int divider);
 
 			static bool setSysClkSource(SysClkSource source);
 			static void setHsisysPrescaler(HsisysPrescaler value);

@@ -13,6 +13,12 @@
 #define RCC_CFGR_SW_LSI           (3 << RCC_CFGR_SW_Pos)
 #define RCC_CFGR_SW_LSE           (4 << RCC_CFGR_SW_Pos)
 
+#define RCC_CFGR_SWS_HSISYS       (0 << RCC_CFGR_SWS_Pos)
+#define RCC_CFGR_SWS_HSE          (1 << RCC_CFGR_SWS_Pos)
+#define RCC_CFGR_SWS_PLLRCLK      (2 << RCC_CFGR_SWS_Pos)
+#define RCC_CFGR_SWS_LSI          (3 << RCC_CFGR_SWS_Pos)
+#define RCC_CFGR_SWS_LSE          (4 << RCC_CFGR_SWS_Pos)
+
 
 using namespace htl;
 
@@ -63,7 +69,7 @@ bool Clock::setSysClkSource(
 	}
 
 	RCC->CFGR = tmp;
-	while (((RCC->CFGR & RCC_CFGR_SWS_Msk) >> 2) != (RCC->CFGR & RCC_CFGR_SW_Msk))
+	while (((RCC->CFGR & RCC_CFGR_SWS_Msk) >> RCC_CFGR_SWS_Pos) != ((RCC->CFGR & RCC_CFGR_SW_Msk) >> RCC_CFGR_SW_Pos))
 		continue;
 
 	return true;
@@ -367,8 +373,8 @@ bool Clock::isPllEnabled() {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el PLL.
 /// \param    source: Rellotge font.
-/// \param    multiplier: Factor de multiplicacio.
-/// \param    divider: Factor de divisio.
+/// \param    multiplier: Factor de multiplicacio (N).
+/// \param    divider: Factor de divisio (M).
 /// \return   True si s'ha realitzat l'operacio correctament.
 ///
 bool Clock::configurePll(
@@ -403,8 +409,8 @@ bool Clock::configurePll(
 
 	tmp &= ~RCC_PLLCFGR_PLLM_Msk;
 	tmp &= ~RCC_PLLCFGR_PLLN_Msk;
-	tmp |= (divider - 1) << RCC_PLLCFGR_PLLM_Pos;
-	tmp |= multiplier << RCC_PLLCFGR_PLLN_Pos;
+	tmp |= ((divider - 1) << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk;
+	tmp |= (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk;
 
 	RCC->PLLCFGR = tmp;
 
@@ -426,9 +432,11 @@ bool Clock::configurePllP(
 	if (isPllEnabled())
 		return false;
 
+	uint32_t div = divider - 1;
+
 	uint32_t tmp = RCC->PLLCFGR;
 	tmp &= ~RCC_PLLCFGR_PLLP_Msk;
-	tmp |= (divider - 1) << RCC_PLLCFGR_PLLP_Pos;
+	tmp |= (div << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP_Msk;
 	tmp |= RCC_PLLCFGR_PLLPEN;
 	RCC->PLLCFGR = tmp;
 
@@ -450,9 +458,11 @@ bool Clock::configurePllQ(
 	if (isPllEnabled())
 		return false;
 
+	uint32_t div = divider - 1;
+
 	uint32_t tmp = RCC->PLLCFGR;
 	tmp &= ~RCC_PLLCFGR_PLLQ_Msk;
-	tmp |= (divider - 1) << RCC_PLLCFGR_PLLQ_Pos;
+	tmp |= (div << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ_Msk;
 	tmp |= RCC_PLLCFGR_PLLQEN;
 	RCC->PLLCFGR = tmp;
 
@@ -474,13 +484,85 @@ bool Clock::configurePllR(
 	if (isPllEnabled())
 		return false;
 
+	uint32_t div = divider - 1;
+
 	uint32_t tmp = RCC->PLLCFGR;
 	tmp &= ~RCC_PLLCFGR_PLLR_Msk;
-	tmp |= (divider - 1) << RCC_PLLCFGR_PLLR_Pos;
+	tmp |= (div << RCC_PLLCFGR_PLLR_Pos) & RCC_PLLCFGR_PLLR_Msk;
 	tmp |= RCC_PLLCFGR_PLLREN;
 	RCC->PLLCFGR = tmp;
 
 	return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura les sortides MCO
+/// \param    output: La sortida.
+/// \param    source: El clock origen.
+/// \param    divider: El divisor.
+///
+void Clock::configureMCO(
+	MCOOutput output,
+	MCOSource source,
+	int divider) {
+
+	if (divider < 1 || divider > 128)
+		return;
+
+	uint32_t src = 0b0000;
+	switch (source) {
+		case MCOSource::hse:
+			src = 0b0100;
+			break;
+
+		case MCOSource::hsi16:
+			src = 0b0011;
+			break;
+
+		case MCOSource::lsi:
+			src = 0b0110;
+			break;
+
+		case MCOSource::lse:
+			src = 0b0111;
+			break;
+
+		case MCOSource::sysclk:
+			src = 0b0001;
+			break;
+
+		case MCOSource::pllrclk:
+			src = 0b0101;
+			break;
+
+		default:
+			break;
+	}
+
+	uint32_t div = divider - 1;
+
+	uint32_t tmp = RCC->CFGR;
+	switch (output) {
+		case MCOOutput::_1:
+			tmp &= ~RCC_CFGR_MCOSEL_Msk;
+			tmp |= (src << RCC_CFGR_MCOSEL_Pos) & RCC_CFGR_MCOSEL_Msk;
+			tmp |= (div << RCC_CFGR_MCOPRE_Pos) & RCC_CFGR_MCOPRE_Msk;
+			break;
+
+		#ifdef EOS_PLATFORM_STM32G0B0
+			case MCOOutput::_2:
+				tmp &= ~RCC_CFGR_MCO2SEL_Msk;
+				tmp |= (src << RCC_CFGR_MCO2SEL_Pos) & RCC_CFGR__MCO2PRE_Msk;
+				tmp |= (div << RCC_CFGR_MCO2PRE_Pos) & RCC_CFGR_MCO2PRE_Msk;
+				break;
+		#endif
+
+		default:
+			break;
+	}
+
+	RCC->CFGR = tmp;
 }
 
 
@@ -501,30 +583,30 @@ unsigned Clock::getClockFrequency(
 	switch (clockId) {
 		case ClockId::sysclk:
 			switch (RCC->CFGR & RCC_CFGR_SWS_Msk) {
-				case RCC_CFGR_SW_HSISYS:
+				case RCC_CFGR_SWS_HSISYS:
 					fclk = getClockFrequency(ClockId::hsisys);
 					break;
 
 				#ifdef CLOCK_HSE_FREQUENCY
-					case RCC_CFGR_SW_HSE:
+					case RCC_CFGR_SWS_HSE:
 						fclk = CLOCK_HSE_FREQUENCY;
 						break;
 				#endif
 
-				case RCC_CFGR_SW_PLLRCLK:
+				case RCC_CFGR_SWS_PLLRCLK:
 					fclk = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC) == (0b10 << RCC_PLLCFGR_PLLSRC_Pos) ?
 						 CLOCK_HSI16_FREQUENCY : CLOCK_HSE_FREQUENCY;
-					fclk *= (RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos;
-					fclk /= (RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos;
-					fclk /=
+					fclk /= ((RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos) + 1;
+					fclk *= (RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos;
+					fclk /= ((RCC->PLLCFGR & RCC_PLLCFGR_PLLR) >> RCC_PLLCFGR_PLLR_Pos) + 1;
 					break;
 
-				case RCC_CFGR_SW_LSI:
+				case RCC_CFGR_SWS_LSI:
 					fclk = CLOCK_LSI_FREQUENCY;
 					break;
 
 				#ifdef CLOCK_LSE_FREQUENCY
-					case RCC_CFGR_SW_LSE:
+					case RCC_CFGR_SWS_LSE:
 						fclk = CLOCK_LSE_FREQUENCY;
 						break;
 				#endif

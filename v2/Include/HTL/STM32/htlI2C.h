@@ -87,6 +87,12 @@ namespace htl {
 		#endif
 	};
 
+	enum class I2CClockSource {
+		pclk,
+		sysclk,
+		hsi16
+	};
+
 	enum class I2CInterrupt {
         rx,
         tx,
@@ -235,6 +241,31 @@ namespace htl {
 				regs->OAR1 = I2C_OAR1_OA1EN | (addr & 0x3FF);
 				regs->OAR2 = 0;
 				regs->CR1 &= ~(I2C_CR1_SBC | I2C_CR1_NOSTRETCH);
+			}
+
+			/// \brief Selecciona el clock
+			// \param source: Clock origen
+			//
+			static void setClockSource(
+				I2CClockSource source) {
+
+				#ifdef HTL_I2C1_EXIST
+					if constexpr (channel_ == I2CChannel::_1) {
+						uint32_t tmp = RCC->CCIPR;
+						tmp &= ~RCC_CCIPR_I2C1SEL_Msk;
+						switch (source) {
+							case I2CClockSource::hsi16:
+								tmp |= 0b10 << RCC_CCIPR_I2C1SEL_Pos;
+								break;
+							case I2CClockSource::sysclk:
+								tmp |= 0b01 << RCC_CCIPR_I2C1SEL_Pos;
+								break;
+							default:
+								break;
+						}
+						RCC->CCIPR = tmp;
+					}
+				#endif
 			}
 
 			/// \brief Configuracio del timing
@@ -546,6 +577,10 @@ namespace htl {
 		template <>
 		struct I2CTrait<I2CChannel::_1> {
 			static constexpr uint32_t addr = I2C1_BASE;
+			#if defined(EOS_PLATFORM_STM32G0)
+        		static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+        		static constexpr uint32_t en_bit = RCC_APBENR1_I2C1EN_Pos;
+			#endif
 		};
 	#endif
 
@@ -553,6 +588,10 @@ namespace htl {
 		template <>
 		struct I2CTrait<I2CChannel::_2> {
 			static constexpr uint32_t addr = I2C2_BASE;
+			#if defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t en_bit = RCC_APBENR1_I2C2EN_Pos;
+			#endif
 		};
 	#endif
 

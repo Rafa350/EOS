@@ -184,13 +184,28 @@ namespace htl {
 			uart8 = UART8_IRQn,
 		#endif
 		#ifdef HTL_I2C1_EXIST
-			i2c1 = I2C1_IRQn,
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				i2c1_EV = I2C1_EV_IRQn,
+				i2c1_ER = I2C1_ER_IRQn,
+			#elif defined(EOS_PLATFORM_STM32G0)
+				i2c1 = I2C1_IRQn,
+			#endif
 		#endif
 		#ifdef HTL_I2C2_EXIST
-			i2c2 = I2C2_IRQn,
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				i2c2_EV = I2C2_EV_IRQn,
+				i2c2_ER = I2C2_ER_IRQn,
+			#elif defined(EOS_PLATFORM_STM32G0)
+				i2c2 = I2C2_IRQn,
+			#endif
 		#endif
 		#ifdef HTL_I2C3_EXIST
-			i2c3 = I2C3_IRQn,
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				i2c3_EV = I2C3_EV_IRQn,
+				i2c3_ER = I2C3_ER_IRQn,
+			#elif defined(EOS_PLATFORM_STM32G0)
+				i2c3 = I2C3_IRQn,
+			#endif
 		#endif
 		#ifdef HTL_I2C4_EXIST
 			i2c4 = I2C4_IRQn,

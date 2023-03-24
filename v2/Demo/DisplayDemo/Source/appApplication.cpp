@@ -10,8 +10,7 @@ using namespace app;
 ///-----------------------------------------------------------------------
 /// \brief Contructor.
 ///
-MyApplication::MyApplication():
-	eos::Application() {
+MyApplication::MyApplication() {
 }
 
 
