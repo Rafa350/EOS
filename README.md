@@ -1,7 +1,7 @@
 # EOS (Embedded Operating System)
 
 ## Features:
-* Verified targets STM32F0xx, STM32F1xx, STM32F4xx, STM32F7xx, STM32G0x1xx, PIC32MX.
+* Verified targets STM32F0xx, STM32F1xx, STM32F4xx, STM32F7xx, STM32G030xx, STM32G0x1xx, PIC32MX.
 * FreeRTOS scheduler.
 * HAL module.
   * Independent HAL C bare metal library. C99
@@ -17,7 +17,6 @@
 * Based on services.
   * Digital inputs service.
   * Digital outputs service.
-  * User loop service.
   * GUI service (Graphic User Interface).
   * FSM service (Finite State Machine).
   * I2C comunication queue service.
@@ -30,7 +29,7 @@
   * v2 (Current version)
     * Include (Include files)
 	* Source (Source files)
-	* Library (STM32F4, STM32F4, PIC32 libraries)
+	* Library (STM32, PIC32 libraries)
 	* Demo (Demos)
 	* Build (Projects and builds for demos)
 	* Tools (EOS developement tools)
