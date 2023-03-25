@@ -63,7 +63,7 @@ void MyApplication::onInitialize() {
 	//
 	createMainPanel();
 
-	Application::onInitialize();
+	RTOSApplication::onInitialize();
 }
 
 

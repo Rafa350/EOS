@@ -9,81 +9,20 @@
 #include "HTL/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32G0)
-	namespace htl {
-		#ifdef HTL_I2C1_EXIST
-			inline void I2C1ClockEnable() {
-				RCC->APBENR1 |= RCC_APBENR1_I2C1EN;
-			}
-			inline void I2C1ClockDisable() {
-				RCC->APBENR1 &= ~RCC_APBENR1_I2C1EN;
-			}
-			inline void I2C1Reset() {
-				RCC->APBRSTR1 |= RCC_APBRSTR1_I2C1RST;
-				RCC->APBRSTR1 &= ~RCC_APBRSTR1_I2C1RST;
-			}
-		#endif
-		#ifdef HTL_I2C2_EXIST
-			inline void I2C2ClockEnable() {
-				RCC->APBENR1 |= RCC_APBENR1_I2C2EN;
-			}
-			inline void I2C2ClockDisable() {
-				RCC->APBENR1 &= ~RCC_APBENR1_I2C2EN;
-			}
-			inline void I2C2Reset() {
-				RCC->APBRSTR1 |= RCC_APBRSTR1_I2C2RST;
-				RCC->APBRSTR1 &= ~RCC_APBRSTR1_I2C2RST;
-			}
-		#endif
-	}
-    
-#elif defined(EOS_PLATFORM_STM32F0)
-	namespace htl {
-		#ifdef HTL_I2C1_EXIST
-			inline void I2C1ClockEnable() {
-				RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
-			}
-			inline void I2C1ClockDisable() {
-				RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
-			}
-			inline void I2C1Reset() {
-				RCC->APB1RSTR |= RCC_APB1RSTR_I2C1RST;
-				RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C1RST;
-			}
-		#endif
-		#ifdef HTL_I2C2_EXIST
-			inline void I2C2ClockEnable() {
-				RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
-			}
-			inline void I2C2ClockDisable() {
-				RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
-			}
-			inline void I2C2Reset() {
-				RCC->APB1RSTR |= RCC_APB1RSTR_I2C2RST;
-				RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C2RST;
-			}
-		#endif
-	}
-    
-#else
-	#error "Unknown platform"
-#endif
-
-
 namespace htl {
 
 	enum class I2CChannel {
 		#ifdef HTL_I2C1_EXIST
-			_1,
+		_1,
 		#endif
 		#ifdef HTL_I2C2_EXIST
-			_2,
+		_2,
 		#endif
 		#ifdef HTL_I2C3_EXIST
-			_3,
+		_3,
 		#endif
 		#ifdef HTL_I2C4_EXIST
-			_4
+		_4
 		#endif
 	};
 
@@ -138,7 +77,11 @@ namespace htl {
 	class I2C_x {
 		private:
 			using Trait = I2CTrait<channel_>;
-			static constexpr uint32_t _addr = Trait::addr;
+			static constexpr uint32_t _i2cAddr = Trait::i2cAddr;
+			static constexpr uint32_t _rccEnableAddr = Trait::rccEnableAddr;
+			static constexpr uint32_t _rccEnablePos = Trait::rccEnablePos;
+			static constexpr uint32_t _rccResetAddr = Trait::rccResetAddr;
+			static constexpr uint32_t _rccResetPos = Trait::rccResetPos;
 
 		private:
 			static I2CInterruptParam _isrParam;
@@ -162,44 +105,16 @@ namespace htl {
 			///
 			static void activate() {
 
-				#ifdef HTL_I2C1_EXIST
-					if constexpr (channel_ == I2CChannel::_1)
-						I2C1ClockEnable();
-				#endif
-				#ifdef HTL_I2C2_EXIST
-					if constexpr (channel_ == I2CChannel::_2)
-				        I2C2ClockEnable();
-				#endif
-				#ifdef HTL_I2C3_EXIST
-					if constexpr (channel_ == I2CChannel::_3)
-				        I2C3ClockEnable();
-				#endif
-				#ifdef HTL_I2C4_EXIST
-					if constexpr (channel_ == I2CChannel::_4)
-						I2C4ClockEnable();
-				#endif
+				uint32_t *p = reinterpret_cast<uint32_t*>(_rccEnableAddr);
+				*p |= 1 << _rccEnablePos;
             }
 
 			/// \brief Desactiva el modul
 			///
             static void deactivate() {
 
-				#ifdef HTL_I2C1_EXIST
-					if constexpr (channel_ == I2CChannel::_1)
-						I2C1ClockDisable();
-				#endif
-				#ifdef HTL_I2C2_EXIST
-					if constexpr (channel_ == I2CChannel::_2)
-						I2C2ClockDisable();
-				#endif
-				#ifdef HTL_I2C3_EXIST
-					if constexpr (channel_ == I2CChannel::_3)
-						I2C3ClockDisable();
-				#endif
-				#ifdef HTL_I2C4_EXIST
-					if constexpr (channel_ == I2CChannel::_4)
-						I2C4ClockDisable();
-				#endif
+				uint32_t *p = reinterpret_cast<uint32_t*>(_rccEnableAddr);
+				*p &= ~(1 << _rccEnablePos);
             }
 
 		public:
@@ -210,7 +125,7 @@ namespace htl {
 				activate();
 				disable();
 
-				I2C_TypeDef *regs= reinterpret_cast<I2C_TypeDef*>(_addr);
+				I2C_TypeDef *regs= reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
 
 				/*_handle.Instance = regs;
 				_handle.Init.Timing           = (uint32_t)0x40912732;
@@ -237,7 +152,7 @@ namespace htl {
 				activate();
 				disable();
 
-				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
 				regs->OAR1 = I2C_OAR1_OA1EN | (addr & 0x3FF);
 				regs->OAR2 = 0;
 				regs->CR1 &= ~(I2C_CR1_SBC | I2C_CR1_NOSTRETCH);
@@ -250,21 +165,23 @@ namespace htl {
 				I2CClockSource source) {
 
 				#ifdef HTL_I2C1_EXIST
-					if constexpr (channel_ == I2CChannel::_1) {
-						uint32_t tmp = RCC->CCIPR;
-						tmp &= ~RCC_CCIPR_I2C1SEL_Msk;
-						switch (source) {
-							case I2CClockSource::hsi16:
-								tmp |= 0b10 << RCC_CCIPR_I2C1SEL_Pos;
-								break;
-							case I2CClockSource::sysclk:
-								tmp |= 0b01 << RCC_CCIPR_I2C1SEL_Pos;
-								break;
-							default:
-								break;
-						}
-						RCC->CCIPR = tmp;
+				#if defined(EOS_PLATFORM_STM32G0)
+				if constexpr (channel_ == I2CChannel::_1) {
+					uint32_t tmp = RCC->CCIPR;
+					tmp &= ~RCC_CCIPR_I2C1SEL_Msk;
+					switch (source) {
+						case I2CClockSource::hsi16:
+							tmp |= 0b10 << RCC_CCIPR_I2C1SEL_Pos;
+							break;
+						case I2CClockSource::sysclk:
+							tmp |= 0b01 << RCC_CCIPR_I2C1SEL_Pos;
+							break;
+						default:
+							break;
 					}
+					RCC->CCIPR = tmp;
+				}
+				#endif
 				#endif
 			}
 
@@ -282,7 +199,7 @@ namespace htl {
 				uint8_t sclh,
 				uint8_t scll) {
 
-				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
 				regs->TIMINGR =
 					((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
 					((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
@@ -303,7 +220,7 @@ namespace htl {
             //
 			static void enable() {
 
-				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
 				regs->CR1 |= I2C_CR1_PE;
 			}
 
@@ -311,29 +228,17 @@ namespace htl {
 			///
 			static void disable() {
 
-				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+				I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
 				regs->CR1 &= ~I2C_CR1_PE;
 			}
             
             /// \brief Reset per software del dispositiu.
             ///
             static void reset() {
-				#ifdef HTL_I2C1_EXIST
-					if constexpr (channel_ == I2CChannel::_1)
-						I2C1Reset();
-				#endif
-				#ifdef HTL_I2C2_EXIST
-					if constexpr (channel_ == I2CChannel::_2)
-						I2C2Reset();
-				#endif
-				#ifdef HTL_I2C3_EXIST
-					if constexpr (channel_ == I2CChannel::_3)
-						I2C3Reset();
-				#endif
-				#ifdef HTL_I2C4_EXIST
-					if constexpr (channel_ == I2CChannel::_4)
-						I2C4Reset();
-				#endif
+
+            	volatile uint32_t *p = reinterpret_cast<volatile uint32_t*>(_rccResetAddr);
+            	*p |= 1 << _rccResetPos;
+            	*p &= ~(1 << _rccResetPos);
 
 				_isrFunction = nullptr;
 				_isrParam = nullptr;
@@ -385,7 +290,7 @@ namespace htl {
             static void enableInterrupt(
                 I2CInterrupt interrupt) {
 
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
                 switch (interrupt) {
                 	case I2CInterrupt::addr:
                 		regs->CR1 |= I2C_CR1_ADDRIE;
@@ -424,7 +329,7 @@ namespace htl {
 
             	bool state = false;
 
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
             	switch (interrupt) {
             		case I2CInterrupt::addr:
             			state = (regs->CR1 & I2C_CR1_ADDRIE) != 0;
@@ -460,7 +365,7 @@ namespace htl {
             static bool isInterruptEnabled(
                 I2CInterrupt interrupt) {
 
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
             	switch (interrupt) {
             		case I2CInterrupt::addr:
             			return (regs->CR1 & I2C_CR1_ADDRIE) != 0;
@@ -486,7 +391,7 @@ namespace htl {
             static bool getFlag(
                 I2CFlag flag) {
 
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
             	switch (flag) {
             		case I2CFlag::addr:
             			return (regs->ISR & I2C_ISR_ADDR) != 0;
@@ -514,7 +419,7 @@ namespace htl {
             static void clearFlag(
                 I2CFlag flag) {
 
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
             	switch (flag) {
             		case I2CFlag::addr:
             			regs->ICR |= I2C_ICR_ADDRCF;
@@ -537,7 +442,8 @@ namespace htl {
             /// \return El byte lleigit.
             ///
             static uint8_t read() {
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
             	return regs->RXDR;
             }
 
@@ -545,14 +451,16 @@ namespace htl {
             /// \return El byte lleigit.
             ///
             static void write(uint8_t data) {
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
             	regs->TXDR = data;
             }
 
             /// \brief Genera NACK
             ///
             static void nack() {
-            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_addr);
+
+            	I2C_TypeDef *regs = reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
             	regs->CR2 |= I2C_CR2_NACK;
             }
 	};
@@ -561,52 +469,72 @@ namespace htl {
 	template <I2CChannel channel_> I2CInterruptParam I2C_x<channel_>::_isrParam;
 
 	#ifdef HTL_I2C1_EXIST
-	    using I2C_1 = I2C_x<I2CChannel::_1>;
+	using I2C_1 = I2C_x<I2CChannel::_1>;
 	#endif
 	#ifdef HTL_I2C2_EXIST
-	    using I2C_2 = I2C_x<I2CChannel::_2>;
+	using I2C_2 = I2C_x<I2CChannel::_2>;
 	#endif
 	#ifdef HTL_I2C3_EXIST
-	    using I2C_3 = I2C_x<I2CChannel::_3>;
+	using I2C_3 = I2C_x<I2CChannel::_3>;
 	#endif
 	#ifdef HTL_I2C4_EXIST
-	    using I2C_4 = I2C_x<I2CChannel::_4>;
+	using I2C_4 = I2C_x<I2CChannel::_4>;
 	#endif
 
 	#ifdef HTL_I2C1_EXIST
-		template <>
-		struct I2CTrait<I2CChannel::_1> {
-			static constexpr uint32_t addr = I2C1_BASE;
-			#if defined(EOS_PLATFORM_STM32G0)
-        		static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-        		static constexpr uint32_t en_bit = RCC_APBENR1_I2C1EN_Pos;
-			#endif
-		};
+	template <>
+	struct I2CTrait<I2CChannel::_1> {
+		static constexpr uint32_t i2cAddr = I2C1_BASE;
+		#if defined(EOS_PLATFORM_STM32G0)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+		static constexpr uint32_t rccEnablePos = RCC_APBENR1_I2C1EN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR1);
+		static constexpr uint32_t rccResetPos = RCC_APBRSTR1_I2C1RST_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C1EN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
+		static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C1RST_Pos;
+		#endif
+	};
 	#endif
 
 	#ifdef HTL_I2C2_EXIST
-		template <>
-		struct I2CTrait<I2CChannel::_2> {
-			static constexpr uint32_t addr = I2C2_BASE;
-			#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t en_addr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t en_bit = RCC_APBENR1_I2C2EN_Pos;
-			#endif
-		};
+	template <>
+	struct I2CTrait<I2CChannel::_2> {
+		static constexpr uint32_t i2cAddr = I2C2_BASE;
+		#if defined(EOS_PLATFORM_STM32G0)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+		static constexpr uint32_t rccEnablePos = RCC_APBENR1_I2C2EN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR1);
+		static constexpr uint32_t rccResetPos = RCC_APBRSTR1_I2C2RST_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C2EN_Pos;
+		#endif
+	};
 	#endif
 
 	#ifdef HTL_I2C3_EXIST
-		template <>
-		struct I2CTrait<I2CChannel::_3> {
-			static constexpr uint32_t addr = I2C3_BASE;
-		};
+	template <>
+	struct I2CTrait<I2CChannel::_3> {
+		static constexpr uint32_t i2cAddr = I2C3_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C3EN_Pos;
+		#endif
+	};
 	#endif
 
 	#ifdef HTL_I2C4_EXIST
-		template <>
-		struct I2CTrait<I2CChannel::_4> {
-			static constexpr uint32_t addr = I2C4_BASE;
-		};
+	template <>
+	struct I2CTrait<I2CChannel::_4> {
+		static constexpr uint32_t i2cAddr = I2C4_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C4EN_Pos;
+		#endif
+	};
 	#endif
 }
 

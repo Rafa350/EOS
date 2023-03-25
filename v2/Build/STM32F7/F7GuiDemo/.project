@@ -414,9 +414,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/eosApplication.h</name>
+			<name>inc/Framework/EOS/System/eosApplicationBase.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplicationBase.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/eosCallbacks.h</name>
@@ -442,6 +442,11 @@
 			<name>inc/Framework/EOS/System/eosPointers.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosPointers.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/eosRTOSApplication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosRTOSApplication.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/eosRefCounter.h</name>
@@ -489,11 +494,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Services/eosGuiService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosGuiService.cpp</locationURI>
@@ -527,11 +527,6 @@
 			<name>src/Framework/EOS/System/Graphics</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/eosApplication.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/eosDebug.cpp</name>

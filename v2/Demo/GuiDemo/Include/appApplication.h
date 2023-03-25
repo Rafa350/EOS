@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosApplication.h"
+#include "System/eosRTOSApplication.h"
 #include "System/eosCallbacks.h"
 #include "Services/eosTouchpadService.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
@@ -24,7 +24,7 @@ namespace app {
 
 	class LedService;
 
-	class MyApplication: public eos::Application {
+	class MyApplication: public eos::RTOSApplication {
 		private:
 			#if eosGuiService_TouchpadEnabled
 				typedef eos::CallbackP1<MyApplication, const eos::TouchpadService::EventArgs&> TouchpadEventCallback;

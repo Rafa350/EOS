@@ -96,7 +96,6 @@ namespace eos {
 
             void drawPolygon(const Point* points, int numPoints, Color color);
 
-            // TODO: Eliminar en favor de paintBitmap
             void drawBitmap(int x, int y, const Bitmap& bitmap) const;
             inline void drawBitmap(const Point& p, const Bitmap& bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
 

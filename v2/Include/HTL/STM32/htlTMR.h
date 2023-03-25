@@ -8,89 +8,6 @@
 #include "HTL/htl.h"
 
 
-#if defined(EOS_PLATFORM_STM32G0)
-	namespace htl {
-		#ifdef HTL_TMR1_EXIST
-			inline void TMR1ClockEnable() {
-				RCC->APBENR2 |= RCC_APBENR2_TIM1EN;
-			}
-			inline void TMR1ClockDisable() {
-				RCC->APBENR2 &= ~RCC_APBENR2_TIM1EN;
-			}
-		#endif
-		#ifdef HTL_TMR2_EXIST
-			inline void TMR2ClockEnable() {
-				RCC->APBENR1 |= RCC_APBENR1_TIM2EN;
-			}
-			inline void TMR2ClockDisable() {
-				RCC->APBENR1 &= ~RCC_APBENR1_TIM2EN;
-			}
-		#endif
-		#ifdef HTL_TMR3_EXIST
-			inline void TMR3ClockEnable() {
-				RCC->APBENR1 |= RCC_APBENR1_TIM3EN;
-			}
-			inline void TMR3ClockDisable() {
-				RCC->APBENR1 &= ~RCC_APBENR1_TIM3EN;
-			}
-		#endif
-		#ifdef HTL_TMR14_EXIST
-			inline void TMR14ClockEnable() {
-				RCC->APBENR2 |= RCC_APBENR2_TIM14EN;
-			}
-			inline void TMR14ClockDisable() {
-				RCC->APBENR2 &= ~RCC_APBENR2_TIM14EN;
-			}
-		#endif
-	}
-#elif defined(EOS_PLATFORM_STM32F0)
-	namespace htl {
-		#ifdef HTL_TMR1_EXIST
-			inline void TMR1ClockEnable() {
-				RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-			}
-			inline void TMR1ClockDisable() {
-				RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
-			}
-		#endif
-		#ifdef HTL_TMR2_EXIST
-			inline void TMR1ClockEnable() {
-				RCC->APB2ENR |= RCC_APB2ENR_TIM2EN;
-			}
-			inline void TMR1ClockDisable() {
-				RCC->APB2ENR &= ~RCC_APB2ENR_TIM2EN;
-			}
-		#endif
-		#ifdef HTL_TMR3_EXIST
-			inline void TMR3ClockEnable() {
-				RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-			}
-			inline void TMR3ClockDisable() {
-				RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
-			}
-		#endif
-		#ifdef HTL_TMR6_EXIST
-			inline void TMR6ClockEnable() {
-				RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-			}
-			inline void TMR6ClockDisable() {
-				RCC->APB1ENR &= ~RCC_APB1ENR_TIM6EN;
-			}
-		#endif
-		#ifdef HTL_TMR14_EXIST
-			inline void TMR14ClockEnable() {
-				RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
-			}
-			inline void TMR14ClockDisable() {
-				RCC->APB1ENR &= ~RCC_APB1ENR_TIM14EN;
-			}
-		#endif
-	}
-#else
-	#error "Plataforma no soportada"
-#endif
-
-
 namespace htl {
     
 	enum class TMRTimer {
@@ -188,7 +105,9 @@ namespace htl {
 	class TMR_x final {
 		private:
 			using Trait = TMRTrait<timer_>;
-			static constexpr uint32_t _addr = Trait::addr;
+			static constexpr uint32_t _timAddr = Trait::addr;
+			static constexpr uint32_t _rccAddr = Trait::rccAddr;
+			static constexpr uint32_t _enablePos = Trait::enablePos;
 
 		private:
 			static TMRInterruptFunction _isrFunction;
@@ -205,123 +124,15 @@ namespace htl {
 
 			inline static void activate() {
 
-				#ifdef HTL_TMR1_EXIST
-					if constexpr(timer_ == TMRTimer::_1)
-						TMR1ClockEnable();
-				#endif
-				#ifdef HTL_TMR2_EXIST
-					if constexpr(timer_ == TMRTimer::_2)
-						TMR2ClockEnable();
-				#endif
-				#ifdef HTL_TMR3_EXIST
-					if constexpr(timer_ == TMRTimer::_3)
-						TMR3ClockEnable();
-				#endif
-				#ifdef HTL_TMR4_EXIST
-					if constexpr(timer_ == TMRTimer::_4)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-				#endif
-				#ifdef HTL_TMR5_EXIST
-					if constexpr(timer_ == TMRTimer::_5)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-				#endif
-				#ifdef HTL_TMR6_EXIST
-					if constexpr(timer_ == TMRTimer::_6)
-						TMR6ClockEnable();
-				#endif
-				#ifdef HTL_TMR7_EXIST
-					if constexpr(timer_ == TMRTimer::_7)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
-				#endif
-				#ifdef HTL_TMR8_EXIST
-					if constexpr(timer_ == TMRTimer::_8)
-						RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-				#endif
-				#ifdef HTL_TMR9_EXIST
-					if constexpr(timer_ == TMRTimer::_9)
-						RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
-				#endif
-				#ifdef HTL_TMR10_EXIST
-					if constexpr(timer_ == TMRTimer::_10)
-						RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
-				#endif
-				#ifdef HTL_TMR11_EXIST
-					if constexpr(timer_ == TMRTimer::_11)
-						RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
-				#endif
-				#ifdef HTL_TMR12_EXIST
-					if constexpr(timer_ == TMRTimer::_12)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
-				#endif
-				#ifdef HTL_TMR13_EXIST
-					if constexpr(timer_ == TMRTimer::_13)
-						RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
-				#endif
-				#ifdef HTL_TMR14_EXIST
-					if constexpr(timer_ == TMRTimer::_14)
-						TMR14ClockEnable();
-				#endif
+				uint32_t *p = reinterpret_cast<uint32_t*>(_rccAddr);
+				*p |= 1 << _enablePos;
 				__DSB();
 			}
 
 			inline static void deactivate() {
 
-				#ifdef HTL_TMR1_EXIST
-					if constexpr(timer_ == TMRTimer::_1)
-						TMR1ClockDisable();
-				#endif
-				#ifdef HTL_TMR2_EXIST
-					if constexpr(timer_ == TMRTimer::_2)
-						TMR2ClockDisable();
-				#endif
-				#ifdef HTL_TMR3_EXIST
-					if constexpr(timer_ == TMRTimer::_3)
-						TMR3ClockDisable();
-				#endif
-				#ifdef HTL_TMR4_EXIST
-					if constexpr(timer_ == TMRTimer::_4)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
-				#endif
-				#ifdef HTL_TMR5_EXIST
-					if constexpr(timer_ == TMRTimer::_5)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
-				#endif
-				#ifdef HTL_TMR6_EXIST
-					if constexpr(timer_ == TMRTimer::_6)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM6EN;
-				#endif
-				#ifdef HTL_TMR7_EXIST
-					if constexpr(timer_ == TMRTimer::_7)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM7EN;
-				#endif
-				#ifdef HTL_TMR8_EXIST
-					if constexpr(timer_ == TMRTimer::_8)
-						RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
-				#endif
-				#ifdef HTL_TMR9_EXIST
-					if constexpr(timer_ == TMRTimer::_9)
-						RCC->APB2ENR &= ~RCC_APB2ENR_TIM9EN;
-				#endif
-				#ifdef HTL_TMR10_EXIST
-					if constexpr(timer_ == TMRTimer::_10)
-						RCC->APB2ENR &= ~RCC_APB2ENR_TIM10EN;
-				#endif
-				#ifdef HTL_TMR11_EXIST
-					if constexpr(timer_ == TMRTimer::_11)
-						RCC->APB2ENR &= ~RCC_APB2ENR_TIM11EN;
-				#endif
-				#ifdef HTL_TMR12_EXIST
-					if constexpr(timer_ == TMRTimer::_12)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM12EN;
-				#endif
-				#ifdef HTL_TMR13_EXIST
-					if constexpr(timer_ == TMRTimer::_13)
-						RCC->APB1ENR &= ~RCC_APB1ENR_TIM13EN;
-				#endif
-				#ifdef HTL_TMR14_EXIST
-					if constexpr(timer_ == TMRTimer::_14)
-						TMR14ClockDisable();
-				#endif
+				uint32_t *p = reinterpret_cast<uint32_t*>(_rccAddr);
+				*p &= ~(1 << _enablePos);
 			}
 
 		public:
@@ -336,7 +147,7 @@ namespace htl {
 			///
 			static void deinitialize() {
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				regs->CR1 &= ~TIM_CR1_CEN;
 				regs->DIER &= ~(TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
 
@@ -346,7 +157,7 @@ namespace htl {
 			static constexpr void setDirection(
 				TMRDirection direction) {
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				if (direction == TMRDirection::down)
 					regs->CR1 |= TIM_CR1_DIR;
 				else
@@ -360,14 +171,14 @@ namespace htl {
 			static void setPeriod(
 				uint32_t period) {
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				regs->ARR = period;
 			}
 
 			static void setPrescaler(
 				uint32_t prescaler) {
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				regs->PSC = prescaler;
 			}
 
@@ -377,7 +188,7 @@ namespace htl {
 				TMRClockDivider clockDivider) {
 
 				if constexpr (Trait::type != TMRType::basic) {
-					TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+					TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 
 					uint32_t temp = regs->CR1;
 					temp &= ~TIM_CR1_CKD;
@@ -399,13 +210,13 @@ namespace htl {
 
 			inline static void start() {
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				regs->CR1 |= TIM_CR1_CEN;
 			}
 
 			inline static void stop() {
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				regs->CR1 &= ~TIM_CR1_CEN;
 			}
 
@@ -420,7 +231,7 @@ namespace htl {
 			static constexpr void enableInterrupt(
 				TMRInterrupt interrupt) {
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				switch (interrupt) {
 					case TMRInterrupt::update:
 						regs->DIER |= TIM_DIER_UIE;
@@ -444,7 +255,7 @@ namespace htl {
 
 				bool status = false;
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				switch (interrupt) {
 					case TMRInterrupt::update:
 						status = (regs->DIER & TIM_DIER_UIE) != 0;
@@ -470,7 +281,7 @@ namespace htl {
 
 				bool status = false;
 
-				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				switch (interrupt) {
 					case TMRInterrupt::update:
 						status = (regs->DIER & TIM_DIER_UIE) != 0;
@@ -491,7 +302,7 @@ namespace htl {
             static bool getFlag(
             	TMRFlag flag) {
 
-            	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+            	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				switch (flag) {
 					case TMRFlag::update:
 						return (regs->SR & TIM_SR_UIF) != 0;
@@ -510,7 +321,7 @@ namespace htl {
             static constexpr void clearFlag(
             	TMRFlag flag) {
 
-            	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+            	TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_timAddr);
 				switch (flag) {
 					case TMRFlag::update:
 						regs->SR &= ~TIM_SR_UIF;
@@ -583,102 +394,158 @@ namespace htl {
 #ifdef HTL_TMR1_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_1> {
-		static constexpr uint32_t addr = TIM1_BASE;
+		static constexpr uint32_t timAddr = TIM1_BASE;
 		static constexpr TMRType type = TMRType::advanced;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+			static constexpr uint32_t enablePos = RCC_APB2ENR_TIM1EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR2_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_2> {
-		static constexpr uint32_t addr = TIM2_BASE;
+		static constexpr uint32_t timAddr = TIM2_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM2EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR3_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_3> {
-		static constexpr uint32_t addr = TIM3_BASE;
+		static constexpr uint32_t timAddr = TIM3_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM3EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR4_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_4> {
-		static constexpr uint32_t addr = TIM4_BASE;
+		static constexpr uint32_t timAddr = TIM4_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM4EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR5_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_5> {
-		static constexpr uint32_t addr = TIM5_BASE;
+		static constexpr uint32_t timAddr = TIM5_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM5EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR6_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_6> {
-		static constexpr uint32_t addr = TIM6_BASE;
+		static constexpr uint32_t timAddr = TIM6_BASE;
 		static constexpr TMRType type = TMRType::basic;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM6EN_Pos;
+		#endif
 	};
 #endif
 
-#ifdef HTL_TMR7_EXIST
+#ifdef HTL_TMR7_EXIST7
 	template <>
 	struct TMRTrait<TMRTimer::_7> {
-		static constexpr uint32_t addr = TIM7_BASE;
+		static constexpr uint32_t timAddr = TIM7_BASE;
 		static constexpr TMRType type = TMRType::basic;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM7EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR8_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_8> {
-		static constexpr uint32_t addr = TIM8_BASE;
+		static constexpr uint32_t timAddr = TIM8_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+			static constexpr uint32_t enablePos = RCC_APB2ENR_TIM8EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR9_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_9> {
-		static constexpr uint32_t addr = TIM9_BASE;
+		static constexpr uint32_t timAddr = TIM9_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+			static constexpr uint32_t enablePos = RCC_APB2ENR_TIM9EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR10_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_10> {
-		static constexpr uint32_t addr = TIM10_BASE;
+		static constexpr uint32_t timAddr = TIM10_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+			static constexpr uint32_t enablePos = RCC_APB2ENR_TIM10EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR11_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_11> {
-		static constexpr uint32_t addr = TIM11_BASE;
+		static constexpr uint32_t timAddr = TIM11_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+			static constexpr uint32_t enablePos = RCC_APB2ENR_TIM11EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR12_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_12> {
-		static constexpr uint32_t addr = TIM12_BASE;
+		static constexpr uint32_t timAddr = TIM12_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM12EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR13_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_13> {
-		static constexpr uint32_t addr = TIM13_BASE;
+		static constexpr uint32_t timAddr = TIM13_BASE;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM13EN_Pos;
+		#endif
 	};
 #endif
 
 #ifdef HTL_TMR14_EXIST
 	template <>
 	struct TMRTrait<TMRTimer::_14> {
-		static constexpr uint32_t addr = TIM14_BASE;
+		static constexpr uint32_t timAddr = TIM14_BASE;
 		static constexpr TMRType type = TMRType::general;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM14EN_Pos;
+		#endif
 	};
 #endif
 

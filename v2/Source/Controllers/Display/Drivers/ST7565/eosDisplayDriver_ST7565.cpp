@@ -22,10 +22,6 @@
 using namespace eos;
 
 
-static uint8_t vRam[DISPLAY_WIDTH * DISPLAY_HEIGHT / 8];
-static uint8_t vFlags[DISPLAY_HEIGHT / 8];
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
@@ -70,6 +66,12 @@ void DisplayDriver_ST7565::disable() {
 
     writeCtrlRegister(CMD_DISPLAY_OFF);
     writeCtrlRegister(CMD_ALL_ON);
+}
+
+
+void DisplayDriver_ST7565::setOrientation(
+	DisplayOrientation orientation) {
+
 }
 
 
@@ -152,29 +154,44 @@ void DisplayDriver_ST7565::setPixels(
 }
 
 
+void DisplayDriver_ST7565::setPixels(
+	int x,
+	int y,
+	int width,
+	int height,
+	const Color *colors,
+	int pitch) {
+
+}
+
+
+void DisplayDriver_ST7565::setPixels(
+	int x,
+	int y,
+	int width,
+	int height,
+	const void *pixels,
+	ColorFormat format,
+	int pitch) {
+
+}
+
+
 void DisplayDriver_ST7565::refresh() {
 
 	constexpr int pages = _displayHeight / 8;
+	uint8_t *vRam = reinterpret_cast<uint8_t*>(_frameBuffer->getBuffer());
 
     // Transfereix les pagines modificades
     //
     for (int page = 0; page < pages; page++) {
-
-        uint8_t flags = vFlags[page];
-        if (flags) {
-            setPage(page);
-            int offset = _displayWidth * page;
-            uint8_t mask = 0b10000000u;
-            for (int j = 0; j < _displayWidth; j += 16) {
-                if ((flags & mask) != 0) {
-                    setColumn(j);
-                    for (int i = 0; i < 16; i++)
-                        writeDataRegister(vRam[offset + j + i]);
-                }
-                mask >>= 1;
-            }
-            vFlags[page] = 0b00000000;
-        }
+		setPage(page);
+		int offset = _displayWidth * page;
+		for (int j = 0; j < _displayWidth; j += 16) {
+			setColumn(j);
+			for (int i = 0; i < 16; i++)
+				writeDataRegister(vRam[offset + j + i]);
+		}
     }
 }
 

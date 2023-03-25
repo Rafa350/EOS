@@ -264,7 +264,7 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el canal I2C
 	//
-	I2C::initialize();
+	I2C::initMaster();
 	I2C::initSCLPin<PinSCL>();
 	I2C::initSDAPin<PinSDA>();
 }

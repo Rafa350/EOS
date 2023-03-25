@@ -208,7 +208,12 @@ namespace htl {
 			#endif
 		#endif
 		#ifdef HTL_I2C4_EXIST
-			i2c4 = I2C4_IRQn,
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				i2c4_EV = I2C4_EV_IRQn,
+				i2c4_ER = I2C4_ER_IRQn,
+			#elif defined(EOS_PLATFORM_STM32G0)
+				i2c4 = I2C4_IRQn,
+			#endif
 		#endif
 	};
 

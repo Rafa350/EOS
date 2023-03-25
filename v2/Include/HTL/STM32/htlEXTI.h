@@ -87,11 +87,11 @@ namespace htl {
 			}
 
 			static void setPort(
-				GPIOPort port) {
+				GPIOPortId portId) {
 
 				uint32_t temp = SYSCFG->EXTICR[uint32_t(line_) >> 2];
 				temp &= ~(0xF << (4 * (uint32_t(line_) & 0x03)));
-				temp |= (uint32_t(port) & 0xF) << (4 * (uint32_t(line_) & 0x03));
+				temp |= (uint32_t(portId) & 0xF) << (4 * (uint32_t(line_) & 0x03));
 				SYSCFG->EXTICR[uint32_t(line_) >> 2] = temp;
 			}
 
@@ -133,12 +133,12 @@ namespace htl {
 
 		public:
 			static void initialize(
-				GPIOPort port,
+				GPIOPortId portId,
 				EXTIMode mode,
 				EXTITrigger trigger) {
 
 				activate();
-				setPort(port);
+				setPort(portId);
 				setMode(mode);
 				setTrigger(trigger);
 			}

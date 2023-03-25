@@ -112,7 +112,7 @@
 #define TOUCHPAD_INT_GPIO    htl::GPIO_I13
 #define TOUCHPAD_INT_EXTI    htl::EXTI_13
 
-#define TOUCHPAD_I2C         htl::I2CMaster_3
+#define TOUCHPAD_I2C         htl::I2C_3
 #define TOUCHPAD_I2C_ADDR    0x70
 
 #define TOUCHPAD_WIDTH       DISPLAY_WIDTH
