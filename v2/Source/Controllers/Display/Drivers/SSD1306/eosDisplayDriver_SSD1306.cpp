@@ -220,17 +220,17 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	PinCS::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
-	PinCS::set();
+	PinCS::initOutput(GPIODriver::pushPull, GPIOSpeed::fast, GPIOInitState::set);
 	PinDC::initOutput(GPIODriver::pushPull, GPIOSpeed::fast);
-	PinRST::initOutput(GPIODriver::pushPull, GPIOSpeed::low);
-	PinRST::clear();
+	#ifdef DISPLAY_RST_GPIO
+	PinRST::initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitState::clear);
+	#endif
 
 	// Inicialitza el modul SPI
 	//
 	Spi::initSCKPin<PinSCK>();
 	Spi::initMOSIPin<PinMOSI>();
-	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_128);
+	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_4);
 	Spi::enable();
 }
 #endif
@@ -243,10 +243,12 @@ void DisplayDriver_SSD1306::initializeController() {
 
 	// Reseteja el controlador
 	//
+	#ifdef DISPLAY_RST_GPIO
 	PinRST::clear();
 	halTMRDelay(10);
 	PinRST::set();
 	halTMRDelay(150);
+	#endif
 
     // Inicialitza el controlador
     //

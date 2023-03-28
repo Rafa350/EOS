@@ -14,14 +14,14 @@ using namespace eos;
 /// \param    orientation: Orientacio inicial.
 ///
 FrameBuffer::FrameBuffer(
-	int width,
-	int height,
+	int frameWidth,
+	int frameHeight,
 	DisplayOrientation orientation) :
 
-	_frameWidth(width),
-	_frameHeight(height),
-	_maxX(width - 1),
-	_maxY(height - 1),
+	_frameWidth(frameWidth),
+	_frameHeight(frameHeight),
+	_maxX(frameWidth - 1),
+	_maxY(frameHeight - 1),
 	_orientation(DisplayOrientation::normal) {
 }
 

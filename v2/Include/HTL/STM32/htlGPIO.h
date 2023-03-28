@@ -145,6 +145,8 @@ namespace htl {
     		using PortTrait = GPIOPortTrait<portId_>;
     		static constexpr uint32_t _rccEnableAddr = PortTrait::rccEnableAddr;
     		static constexpr uint32_t _rccEnablePos = PortTrait::rccEnablePos;
+    		static constexpr uint32_t _rccResetAddr = PortTrait::rccResetAddr;
+    		static constexpr uint32_t _rccResetPos = PortTrait::rccResetPos;
     		static uint16_t _activated;
 
     	public:
@@ -167,6 +169,15 @@ namespace htl {
 					uint32_t *p = reinterpret_cast<uint32_t*>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
     			}
+    		}
+
+    		static void reset() {
+
+				uint32_t *p = reinterpret_cast<uint32_t*>(_rccResetAddr);
+				*p |= 1 << _rccResetPos;
+				*p &= ~(1 << _rccResetPos);
+
+				_activated = 0;
     		}
     };
 
@@ -237,6 +248,11 @@ namespace htl {
                     mask,
                     driver,
                     speed);
+            }
+
+            static void reset() {
+
+            	Activator::reset();
             }
 
             /// \brief Set pins to set state
@@ -643,13 +659,15 @@ namespace htl {
 	template<>
 	struct GPIOPortTrait<GPIOPortId::A> {
 		static constexpr uint32_t gpioAddr = GPIOA_BASE;
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOAEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOAEN_Pos;
-			#endif
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOAEN_Pos;
+		#elif defined(EOS_PLATFORM_STM32G0)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+		static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOAEN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+		static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOARST_Pos;
+		#endif
 	};
 
 	template <>
@@ -738,11 +756,13 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::B> {
 		static constexpr uint32_t gpioAddr = GPIOB_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOBEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOBEN_Pos;
 		#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOBEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+		static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOBEN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+		static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOBRST_Pos;
 		#endif
 	};
 
@@ -832,11 +852,13 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::C> {
 		static constexpr uint32_t gpioAddr = GPIOC_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOBEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOBEN_Pos;
 		#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOCEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+		static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOCEN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+		static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOCRST_Pos;
 		#endif
 	};
 
@@ -926,11 +948,13 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::D> {
 		static constexpr uint32_t gpioAddr = GPIOD_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIODEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIODEN_Pos;
 		#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIODEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+		static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIODEN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+		static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIODRST_Pos;
 		#endif
 	};
 
@@ -995,11 +1019,13 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::E> {
 		static constexpr uint32_t gpioAddr = GPIOE_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOEEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOEEN_Pos;
 		#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOEEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+		static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOEEN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+		static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOERST_Pos;
 		#endif
 	};
 
@@ -1024,11 +1050,13 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::F> {
 		static constexpr uint32_t gpioAddr = GPIOF_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOFEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOFEN_Pos;
 		#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOFEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+		static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOFEN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+		static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOFRST_Pos;
 		#endif
 	};
 
@@ -1093,11 +1121,13 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::G> {
 		static constexpr uint32_t gpioAddr = GPIOG_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOGEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOGEN_Pos;
 		#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOGEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+		static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOGEN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+		static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOGRST_Pos;
 		#endif
 	};
 
@@ -1147,8 +1177,8 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::H> {
 		static constexpr uint32_t gpioAddr = GPIOH_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOHEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOHEN_Pos;
 		#endif
 	};
 
@@ -1228,8 +1258,8 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::I> {
 		static constexpr uint32_t gpioAddr = GPIOI_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOIEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOIEN_Pos;
 		#endif
 	};
 
@@ -1309,8 +1339,8 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::J> {
 		static constexpr uint32_t gpioAddr = GPIOJ_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOJEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOJEN_Pos;
 		#endif
 	};
 
@@ -1395,8 +1425,8 @@ namespace htl {
 	struct GPIOPortTrait<GPIOPortId::K> {
 		static constexpr uint32_t gpioAddr = GPIOK_BASE;
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOKEN_Pos;
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOKEN_Pos;
 		#endif
 	};
 

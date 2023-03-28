@@ -7,22 +7,22 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    width: Amplada.
-/// \param    height: Alçada.
+/// \param    frameWidth: Amplada.
+/// \param    frameHeight: Alçada.
+/// \param    framePitch: El pitch
 /// \param    orientation: Orientacio.
 /// \param    buffer: El buffer de memoria.
-/// \param    pitch: El pitch
 ///
 MonoFrameBuffer::MonoFrameBuffer(
-	int width,
-	int height,
+	int frameWidth,
+	int frameHeight,
+	int framePitch,
 	DisplayOrientation orientation,
-	void *buffer,
-	int pitch):
+	void *buffer):
 
-	FrameBuffer(width, height, orientation),
+	FrameBuffer(frameWidth, frameHeight, orientation),
 	_buffer(reinterpret_cast<uint8_t*>(buffer)),
-	_framePitch(pitch) {
+	_framePitch(framePitch) {
 }
 
 
@@ -37,7 +37,7 @@ void MonoFrameBuffer::put(
 	int y,
 	Color color) {
 
-	uint8_t *page = &_buffer[(y >> 3) * _framePitch];
+	uint8_t *page = &_buffer[(y >> 3) * getWidth()];
 	if (color.getL() > 127)
 		page[x] |= 1 << (y & 7);
 	else

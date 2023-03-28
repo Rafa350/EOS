@@ -10,161 +10,26 @@
 #include "HTL/STM32/htlINT.h"
 
 
-#if defined(EOS_PLATFORM_STM32G0)
-	namespace htl {
-		#ifdef HTL_SPI1_EXIST
-			inline void SPI1ClockEnable() {
-				RCC->APBENR2 |= RCC_APBENR2_SPI1EN;
-			}
-			inline void SPI1ClockDisable() {
-				RCC->APBENR2 &= ~RCC_APBENR2_SPI1EN;
-			}
-			inline void SPI1Reset() {
-			}
-		#endif
-		#ifdef HTL_SPI2_EXIST
-			inline void SPI2ClockEnable() {
-				RCC->APBENR1 |= RCC_APBENR1_SPI2EN;
-			}
-			inline void SPI2ClockDisable() {
-				RCC->APBENR1 &= ~RCC_APBENR1_SPI2EN;
-			}
-			inline void SPI2Reset() {
-			}
-		#endif
-		#ifdef HTL_SPI3_EXIST
-			inline void SPI3ClockEnable() {
-				RCC->APBENR1 |= RCC_APBENR1_SPI3EN;
-			}
-			inline void SPI3ClockDisable() {
-				RCC->APBENR1 &= ~RCC_APBENR1_SPI3EN;
-			}
-			inline void SPI3Reset() {
-			}
-		#endif
-		#ifdef HTL_SPI4_EXIST
-			inline void SPI4ClockEnable() {
-				RCC->APBENR1 |= RCC_APBENR1_SPI4EN;
-			}
-			inline void SPI4ClockDisable() {
-				RCC->APBENR1 &= ~RCC_APBENR1_SPI4EN;
-			}
-			inline void SPI4Reset() {
-			}
-		#endif
-	}
-    
-#elif defined(EOS_PLATFORM_STM32F0)
-	namespace htl {
-		#ifdef HTL_SPI1_EXIST
-			inline void SPI1ClockEnable() {
-				RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-			}
-			inline void SPI1ClockDisable() {
-				RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
-			}
-			inline void SPI1Reset() {
-			}
-		#endif
-		#ifdef HTL_SPI2_EXIST
-			inline void SPI2ClockEnable() {
-				RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
-			}
-			inline void SPI2ClockDisable() {
-				RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
-			}
-			inline void SPI2Reset() {
-			}
-		#endif
-	}
-
-#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-	#ifdef HTL_SPI1_EXIST
-		inline void SPI1ClockEnable() {
-			RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-		}
-		inline void SPI1ClockDisable() {
-			RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
-		}
-		inline void SPI1Reset() {
-		}
-	#endif
-	#ifdef HTL_SPI2_EXIST
-		inline void SPI2ClockEnable() {
-			RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
-		}
-		inline void SPI2ClockDisable() {
-			RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
-		}
-		inline void SPI2Reset() {
-		}
-	#endif
-	#ifdef HTL_SPI3_EXIST
-		inline void SPI3ClockEnable() {
-			RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
-		}
-		inline void SPI3ClockDisable() {
-			RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN;
-		}
-		inline void SPI3Reset() {
-		}
-	#endif
-	#ifdef HTL_SPI4_EXIST
-		inline void SPI4ClockEnable() {
-			RCC->APB2ENR |= RCC_APB2ENR_SPI4EN;
-		}
-		inline void SPI4ClockDisable() {
-			RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN;
-		}
-		inline void SPI4Reset() {
-		}
-	#endif
-	#ifdef HTL_SPI5_EXIST
-		inline void SPI5ClockEnable() {
-			RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
-		}
-		inline void SPI5ClockDisable() {
-			RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
-		}
-		inline void SPI5Reset() {
-		}
-	#endif
-	#ifdef HTL_SPI6_EXIST
-		inline void SPI6ClockEnable() {
-			RCC->APB2ENR |= RCC_APB2ENR_SPI6EN;
-		}
-		inline void SPI6ClockDisable() {
-			RCC->APB2ENR &= ~RCC_APB2ENR_SPI6EN;
-		}
-		inline void SPI6Reset() {
-		}
-	#endif
-    
-#else
-	#error "Unknown platform"
-#endif
-
-
 namespace htl {
 
 	enum class SPIChannel {
 		#ifdef HTL_SPI1_EXIST
-			_1,
+		_1,
 		#endif
 		#ifdef HTL_SPI2_EXIST
-			_2,
+		_2,
 	    #endif
 		#ifdef HTL_SPI3_EXIST
-			_3,
+		_3,
 		#endif
 		#ifdef HTL_SPI4_EXIST
-			_4,
+		_4,
 		#endif
 		#ifdef HTL_SPI5_EXIST
-			_5,
+		_5,
 		#endif
 		#ifdef HTL_SPI6_EXIST
-			_6
+		_6
 		#endif
 	};
 
@@ -246,7 +111,9 @@ namespace htl {
 	class SPI_x final: SPIBase_x {
 		private:
 			using Trait = SPITrait<channel_>;
-            static constexpr uint32_t _addr = Trait::addr;
+            static constexpr uint32_t _spiAddr = Trait::spiAddr;
+            static constexpr uint32_t _rccEnableAddr = Trait::rccEnableAddr;
+            static constexpr uint32_t _rccEnablePos = Trait::rccEnablePos;
 			static constexpr unsigned _defaultTimeout = 1000;
 
 		private:
@@ -269,60 +136,16 @@ namespace htl {
 			//
 			static void activate() {
 
-				#ifdef HTL_SPI1_EXIST
-					if constexpr (channel == SPIChannel::_1)
-						SPI1ClockEnable();
-				#endif
-				#ifdef HTL_SPI2_EXIST
-					if constexpr (channel == SPIChannel::_2)
-						SPI2ClockEnable();
-				#endif
-				#ifdef HTL_SPI3_EXIST
-					if constexpr (channel == SPIChannel::_3)
-						SPI3ClockEnable();
-				#endif
-				#ifdef HTL_SPI4_EXIST
-					if constexpr (channel == SPIChannel::_4)
-						SPI4ClockEnable();
-				#endif
-				#ifdef HTL_SPI5_EXIST
-					if constexpr (channel == SPIChannel::_5)
-						SPI5ClockEnable();
-				#endif
-				#ifdef HTL_SPI6_EXIST
-					if constexpr (channel == SPIChannel::_6)
-						SPI6ClockEnable();
-				#endif
+				uint32_t *p = reinterpret_cast<uint32_t*>(_rccEnableAddr);
+				*p |= 1 << _rccEnablePos;
 			}
 
 			/// \brief Desactiva el modul
 			///
 			static void deactivate() {
 
-				#ifdef HTL_SPI1_EXIST
-					if constexpr (channel == SPIChannel::_1)
-						SPI1ClockDisable();
-				#endif
-				#ifdef HTL_SPI2_EXIST
-					if constexpr (channel == SPIChannel::_2)
-						SPI2ClockDisable();
-				#endif
-				#ifdef HTL_SPI3_EXIST
-					if constexpr (channel == SPIChannel::_3)
-						SPI3ClockDisable();
-				#endif
-				#ifdef HTL_SPI4_EXIST
-					if constexpr (channel == SPIChannel::_4)
-						SPI4ClockDisable();
-				#endif
-				#ifdef HTL_SPI5_EXIST
-					if constexpr (channel == SPIChannel::_5)
-						SPI5ClockDisable();
-				#endif
-				#ifdef HTL_SPI6_EXIST
-					if constexpr (channel == SPIChannel::_6)
-						SPI6ClockDisable();
-				#endif
+				uint32_t *p = reinterpret_cast<uint32_t*>(_rccEnableAddr);
+				*p &= ~(1 << _rccEnablePos);
 			}
 
 		public:
@@ -340,7 +163,7 @@ namespace htl {
 				activate();
 				disable();
 
-				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 				SPIBase_x::initialize(regs, mode, clkPolarity, clkPhase, size, firstBit, clkDivider);
 
 				enable();
@@ -366,7 +189,7 @@ namespace htl {
             //
             static void enable() {
 
-            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
             	regs->CR1 |= SPI_CR1_SPE;
             }
 
@@ -374,7 +197,7 @@ namespace htl {
             ///
             static void disable() {
 
-            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
             	while ((regs->SR & SPI_SR_BSY) != 0)
             		continue;
             	regs->CR1 &= ~SPI_CR1_SPE;
@@ -398,7 +221,7 @@ namespace htl {
 			static void enableInterrupt(
 				SPIInterrupt interrupt) {
 
-				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 				switch (interrupt) {
 					case SPIInterrupt::txEmpty:
 						regs->CR2 |= SPI_CR2_TXEIE;
@@ -422,7 +245,7 @@ namespace htl {
 
 				bool state = false;
 
-				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 				switch (interrupt) {
 					case SPIInterrupt::txEmpty:
 						state = (regs->CR2 & SPI_CR2_TXEIE) != 0;
@@ -450,7 +273,7 @@ namespace htl {
 			static bool getFlag(
 				SPIFlag flag) {
 
-            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 				switch (flag) {
 					case SPIFlag::txEmpty:
 						return (regs->SR & SPI_SR_TXE) != 0;
@@ -484,7 +307,7 @@ namespace htl {
 			static void clearFlag(
 				SPIFlag flag) {
 
-            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+            	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 				switch (flag) {
 				}
 			}
@@ -524,26 +347,26 @@ namespace htl {
 			static void write8(
 				uint8_t data) {
 
-	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 	           	*((volatile uint8_t*)&regs->DR) = data;
 			}
 
 			static void write16(
 				uint16_t data) {
 
-	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 	           	*((volatile uint16_t*)&regs->DR) = data;
 			}
 
 			static uint8_t read8() {
 
-	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 	           	return *((volatile uint8_t*)&regs->DR);
 			}
 
 			static uint16_t read16() {
 
-	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+	           	SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 	           	return *((volatile uint16_t*)&regs->DR);
 			}
 
@@ -559,7 +382,7 @@ namespace htl {
 				unsigned dataLength,
 				unsigned timeout = _defaultTimeout) {
 
-				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_addr);
+				SPI_TypeDef *regs = reinterpret_cast<SPI_TypeDef*>(_spiAddr);
 				SPIBase_x::send(regs, data, dataLength, timeout);
 			}
 	};
@@ -568,224 +391,92 @@ namespace htl {
 	template <SPIChannel channel_> SPIInterruptParam SPI_x<channel_>::_isrParam;
 
 	#ifdef HTL_SPI1_EXIST
-		using SPI_1 = SPI_x<SPIChannel::_1>;
+	using SPI_1 = SPI_x<SPIChannel::_1>;
 	#endif
 	#ifdef HTL_SPI2_EXIST
-		using SPI_2 = SPI_x<SPIChannel::_2>;
+	using SPI_2 = SPI_x<SPIChannel::_2>;
 	#endif
 	#ifdef HTL_SPI3_EXIST
-		using SPI_3 = SPI_x<SPIChannel::_3>;
+	using SPI_3 = SPI_x<SPIChannel::_3>;
 	#endif
 	#ifdef HTL_SPI4_EXIST
-		using SPI_4 = SPI_x<SPIChannel::_4>;
+	using SPI_4 = SPI_x<SPIChannel::_4>;
 	#endif
 	#ifdef HTL_SPI5_EXIST
-		using SPI_5 = SPI_x<SPIChannel::_5>;
+	using SPI_5 = SPI_x<SPIChannel::_5>;
 	#endif
 	#ifdef HTL_SPI6_EXIST
-		using SPI_6 = SPI_x<SPIChannel::_6>;
+	using SPI_6 = SPI_x<SPIChannel::_6>;
 	#endif
 
 	#ifdef HTL_SPI1_EXIST
-		template<>
-		struct SPITrait<SPIChannel::_1> {
-			static constexpr uint32_t addr = SPI1_BASE;
-			static constexpr INTVector vector = INTVector::spi1;
-		};
-
-		#if defined(EOS_PLATFORM_STM32F0)
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_A5, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_0;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_A6, SPIPin::MISO> {
-				static constexpr GPIOAlt alt = GPIOAlt::_0;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_A7, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_0;
-			};
-		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_A5, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_A6, SPIPin::MISO> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_A7, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_B3, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_B4, SPIPin::MISO> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_1, GPIO_B5, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
+	template<>
+	struct SPITrait<SPIChannel::_1> {
+		static constexpr uint32_t spiAddr = SPI1_BASE;
+		#if defined(EOS_PLATFORM_STM32G0)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
+		static constexpr uint32_t rccEnablePos = RCC_APBENR2_SPI1EN_Pos;
 		#endif
+		static constexpr INTVector vector = INTVector::spi1;
+	};
 	#endif
 
 	#ifdef HTL_SPI2_EXIST
-		template<>
-		struct SPITrait<SPIChannel::_2> {
-			static constexpr uint32_t addr = SPI2_BASE;
-			static constexpr INTVector vector = INTVector::spi2;
-		};
-
-		#if defined(EOS_PLATFORM_STM32F0)
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_B10, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_B14, SPIPin::MISO> {
-				static constexpr GPIOAlt alt = GPIOAlt::_0;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_B15, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_0;
-			};
-		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_B10, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_B13, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_B14, SPIPin::MISO> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_B15, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_C2, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_C3, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_D3, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_I1, SPIPin::SCK> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_I2, SPIPin::MISO> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
-
-			template <>
-			struct SPIPinTrait<SPIChannel::_2, GPIO_I3, SPIPin::MOSI> {
-				static constexpr GPIOAlt alt = GPIOAlt::_5;
-			};
+	template<>
+	struct SPITrait<SPIChannel::_2> {
+		static constexpr uint32_t spiAddr = SPI2_BASE;
+		#if defined(EOS_PLATFORM_STM32G0)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+		static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI2EN_Pos;
 		#endif
+		static constexpr INTVector vector = INTVector::spi2;
+	};
 	#endif
 
 	#ifdef HTL_SPI3_EXIST
-		template<>
-		struct SPITrait<SPIChannel::_3> {
-			static constexpr uint32_t addr = SPI3_BASE;
-			static constexpr INTVector vector = INTVector::spi3;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_3, GPIO_B3, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_3, GPIO_B4, SPIPin::MISO> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_3, GPIO_B5, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_3, GPIO_C10, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_3, GPIO_C11, SPIPin::MISO> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_3, GPIO_C12, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_3, GPIO_D6, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+	template<>
+	struct SPITrait<SPIChannel::_3> {
+		static constexpr uint32_t spiAddr = SPI3_BASE;
+		static constexpr INTVector vector = INTVector::spi3;
+	};
 	#endif
 
 	#ifdef HTL_SPI4_EXIST
-		template<>
-		struct SPITrait<SPIChannel::_4> {
-			static constexpr uint32_t addr = SPI4_BASE;
-			static constexpr INTVector vector = INTVector::spi4;
-		};
+	template<>
+	struct SPITrait<SPIChannel::_4> {
+		static constexpr uint32_t spiAddr = SPI4_BASE;
+		static constexpr INTVector vector = INTVector::spi4;
+	};
 	#endif
 
 	#ifdef HTL_SPI5_EXIST
-		template<>
-		struct SPITrait<SPIChannel::_5> {
-			static constexpr uint32_t addr = SPI5_BASE;
-			static constexpr INTVector vector = INTVector::spi5;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_5, GPIO_F7, SPIPin::SCK> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
-
-		template <>
-		struct SPIPinTrait<SPIChannel::_5, GPIO_F9, SPIPin::MOSI> {
-			static constexpr GPIOAlt alt = GPIOAlt::_5;
-		};
+	template<>
+	struct SPITrait<SPIChannel::_5> {
+		static constexpr uint32_t addr = SPI5_BASE;
+		static constexpr INTVector vector = INTVector::spi5;
+	};
 	#endif
-
 }
+
+
+#if defined(EOS_PLATFORM_STM32G030)
+    #include "htl/STM32/htlSPI_AF_G030.h"
+
+#elif defined(EOS_PLATFORM_STM32G031)
+    #include "htl/STM32/htlSPI_AF_G031.h"
+
+#elif defined(EOS_PLATFORM_STM32F030)
+    #include "htl/STM32/htlSPI_AF_F030.h"
+
+#elif defined(EOS_PLATFORM_STM32F4)
+    #include "htl/STM32/htlSPI_AF_F4.h"
+
+#elif defined(EOS_PLATFORM_STM32F7)
+    #include "htl/STM32/htlSPI_AF_F7.h"
+
+#else
+    #error "Unknown platform"
+#endif
 
 
 #endif // __STM32_htlSPI__

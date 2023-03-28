@@ -20,7 +20,7 @@ namespace eos {
             void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) override;
 
         public:
-            MonoFrameBuffer(int width, int height, DisplayOrientation orientation, void *buffer, int pitch);
+            MonoFrameBuffer(int frameWidth, int frameHeight, int framePitch, DisplayOrientation orientation, void *buffer);
 
             inline void *getBuffer() const override { return _buffer; }
     };

@@ -30,7 +30,7 @@ namespace eos {
             virtual void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) = 0;
 
 		public:
-			FrameBuffer(int width, int height, DisplayOrientation orientation);
+			FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation);
 			virtual ~FrameBuffer() = default;
 
             void setOrientation(DisplayOrientation orientation);

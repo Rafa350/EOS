@@ -6,47 +6,62 @@
 using namespace htl;
 
 
+#define SPI_CR1_BR_DIV2         (0 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV4         (1 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV8         (2 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV16        (3 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV32        (4 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV64        (5 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV128       (6 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV256       (7 << SPI_CR1_BR_Pos)
+
+#define SPI_CR2_DS_LEN8         (7 << SPI_CR2_DS_Pos)
+#define SPI_CR2_DS_LEN16        (15 << SPI_CR2_DS_Pos)
+
+
 /// -------------------------------------------------------------------------
 /// \brief    Asigna el divisor del rellotge.
 /// \param    regs: El bloc de registres.
 /// \param    clkDivider: El valor del divisor.
+/// \remarks  La frequencia resultant es PCLK/clkDivider
 ///
 static void setClockDivider(
 	SPI_TypeDef *regs,
 	SPIClockDivider clkDivider) {
 
 	uint32_t tmp = regs->CR1;
-	tmp &= ~(SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0);
+	tmp &= ~SPI_CR1_BR_Msk;
 	switch (clkDivider) {
 		case SPIClockDivider::_2:
+			tmp |= SPI_CR1_BR_DIV2;
 			break;
 
 		case SPIClockDivider::_4:
-			tmp |= SPI_CR1_BR_0;
+			tmp |= SPI_CR1_BR_DIV4;
 			break;
 
 		case SPIClockDivider::_8:
-			tmp |= SPI_CR1_BR_1;
+			tmp |= SPI_CR1_BR_DIV8;
 			break;
 
 		case SPIClockDivider::_16:
-			tmp |= SPI_CR1_BR_1 | SPI_CR1_BR_0;
+			tmp |= SPI_CR1_BR_DIV16;
 			break;
 
 		case SPIClockDivider::_32:
-			tmp |= SPI_CR1_BR_2;
+			tmp |= SPI_CR1_BR_DIV32;
 			break;
 
 		case SPIClockDivider::_64:
-			tmp |= SPI_CR1_BR_2 | SPI_CR1_BR_0;
+			tmp |= SPI_CR1_BR_DIV64;
 			break;
 
 		case SPIClockDivider::_128:
-			tmp |= SPI_CR1_BR_2 | SPI_CR1_BR_1;
+			tmp |= SPI_CR1_BR_DIV128;
 			break;
 
 		case SPIClockDivider::_256:
-			tmp |= SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0;
+			tmp |= SPI_CR1_BR_DIV256;
 			break;
 	}
 	regs->CR1 = tmp;
@@ -113,24 +128,38 @@ static void setSize(
 	SPISize size) {
 
 	#if defined(EOS_PLATFORM_STM32F4)
-		if (size == SPISize::_16)
-			regs->CR1 |= SPI_CR1_DFF;
-		else
-			regs->CR1 &= ~SPI_CR1_DFF;
+	if (size == SPISize::_16)
+		regs->CR1 |= SPI_CR1_DFF;
+	else
+		regs->CR1 &= ~SPI_CR1_DFF;
 
 	#elif defined(EOS_PLATFORM_STM32F7)
-		uint32_t tmp = regs->CR2;
-		tmp &= ~(SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
-		switch (size) {
-			case SPISize::_8:
-				tmp |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
-				break;
+	uint32_t tmp = regs->CR2;
+	tmp &= ~(SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
+	switch (size) {
+		case SPISize::_8:
+			tmp |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
+			break;
 
-			case SPISize::_16:
-				tmp |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
-				break;
-		}
-		regs->CR2 = tmp;
+		case SPISize::_16:
+			tmp |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
+			break;
+	}
+	regs->CR2 = tmp;
+
+	#elif defined(EOS_PLATFORM_STM32G0)
+	uint32_t tmp = regs->CR2;
+	tmp &= ~SPI_CR2_DS_Msk;
+	switch (size) {
+		case SPISize::_8:
+			tmp |= SPI_CR2_DS_LEN8;
+			break;
+
+		case SPISize::_16:
+			tmp |= SPI_CR2_DS_LEN16;
+			break;
+	}
+	regs->CR2 = tmp;
 	#endif
 }
 
@@ -258,12 +287,12 @@ void SPIBase_x::send(
 
 	while (count > 0) {
 
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F0)
+		#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F0)
 		*((volatile uint8_t*)&regs->DR) = *((uint8_t*)p);
 		p += sizeof(uint8_t);
 		count -= sizeof(uint8_t);
 
-#elif defined(EOS_PLATFORM_STM32F7)
+		#elif defined(EOS_PLATFORM_STM32F7)
 		if (count > 1) {
 			// Acces com a 16 bits (Packing mode)
 			regs->DR = *((uint16_t*)p);
@@ -276,9 +305,9 @@ void SPIBase_x::send(
 			p += sizeof(uint8_t);
 			count -= sizeof(uint8_t);
 		}
-#else
-#error "Undefined EOS_PLATFORM_XXXX"
-#endif
+		#else
+		#error "Undefined EOS_PLATFORM_XXXX"
+		#endif
 
 		while ((regs->SR & SPI_SR_TXE) == 0) {
 			if (halSYSCheckTimeout(startTime, timeout)) {
