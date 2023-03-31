@@ -107,8 +107,8 @@ void DisplayDriver_ILI9341LTDC::clear(
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_ILI9341LTDC::setPixel(
-	int x,
-	int y,
+	int16_t x,
+	int16_t y,
 	Color color) {
 
 	_frameBuffer->setPixel(x, y, color);
@@ -124,9 +124,9 @@ void DisplayDriver_ILI9341LTDC::setPixel(
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_ILI9341LTDC::setHPixels(
-	int x,
-	int y,
-	int size,
+	int16_t x,
+	int16_t y,
+	int16_t size,
 	Color color) {
 
 	_frameBuffer->setPixels(x, y, size, 1, color);
@@ -142,9 +142,9 @@ void DisplayDriver_ILI9341LTDC::setHPixels(
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_ILI9341LTDC::setVPixels(
-	int x,
-	int y,
-	int size,
+	int16_t x,
+	int16_t y,
+	int16_t size,
 	Color color) {
 
 	_frameBuffer->setPixels(x, y, 1, size, color);
@@ -160,10 +160,10 @@ void DisplayDriver_ILI9341LTDC::setVPixels(
 /// \param    color: Color.
 ///
 void DisplayDriver_ILI9341LTDC::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	Color color) {
 
 	_frameBuffer->setPixels(x, y, width, height, color);
@@ -180,25 +180,25 @@ void DisplayDriver_ILI9341LTDC::setPixels(
 /// \param    pitch: Pitch dels colors.
 ///
 void DisplayDriver_ILI9341LTDC::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const Color *colors,
-	int pitch) {
+	int16_t pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, colors, pitch);
 }
 
 
 void DisplayDriver_ILI9341LTDC::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const void *pixels,
 	ColorFormat format,
-	int pitch) {
+	int16_t pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
 }

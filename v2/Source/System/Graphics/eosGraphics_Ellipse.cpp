@@ -16,10 +16,10 @@ using namespace eos;
 /// \param    color: Color.
 ///
 void Graphics::drawEllipse(
-	int x1,
-	int y1,
-	int x2,
-	int y2,
+	int16_t x1,
+	int16_t y1,
+	int16_t x2,
+	int16_t y2,
 	Color color) const {
 
 	// Transforma a coordinades fisiques
@@ -43,19 +43,19 @@ void Graphics::drawEllipse(
 
 		// Obte el centre i els radis
 		//
-		int cx = (x1 + x2) / 2;
-		int cy = (y1 + y2) / 2;
-		int rx = (x2 - x1) / 2;
-		int ry = (y2 - y1) / 2;
+		int16_t cx = (x1 + x2) / 2;
+		int16_t cy = (y1 + y2) / 2;
+		int16_t rx = (x2 - x1) / 2;
+		int16_t ry = (y2 - y1) / 2;
 
 		// Precalcula els factors constants
 		//
-		int aa = 2 * rx * rx;
-		int bb = 2 * ry * ry;
+		int16_t aa = 2 * rx * rx;
+		int16_t bb = 2 * ry * ry;
 
-		int x, y, error;
-		int changeX, changeY;
-		int stoppingX, stoppingY;
+		int16_t x, y, error;
+		int16_t changeX, changeY;
+		int16_t stoppingX, stoppingY;
 
 		// Genera el primer grup de punts
 		//
@@ -69,7 +69,7 @@ void Graphics::drawEllipse(
 
 		while (stoppingX >= stoppingY) {
 
-			int xx, yy;
+			int16_t xx, yy;
 
 			xx = cx + x;
 			yy = cy + y;
@@ -115,7 +115,7 @@ void Graphics::drawEllipse(
 
 		while (stoppingX <= stoppingY) {
 
-			int xx, yy;
+			int16_t xx, yy;
 
 			xx = cx + x;
 			yy = cy + y;
@@ -161,10 +161,10 @@ void Graphics::drawEllipse(
 /// \param    color: Color
 ///
 void Graphics::fillEllipse(
-	int x1,
-	int y1,
-	int x2,
-	int y2,
+	int16_t x1,
+	int16_t y1,
+	int16_t x2,
+	int16_t y2,
 	Color color) const {
 
 	// Transforma a coordinades fisiques
@@ -188,19 +188,19 @@ void Graphics::fillEllipse(
 
 		// Obte el centre i els radis
 		//
-		int cx = (x1 + x2) / 2;
-		int cy = (y1 + y2) / 2;
-		int rx = (x2 - x1) / 2;
-		int ry = (y2 - y1) / 2;
+		int16_t cx = (x1 + x2) / 2;
+		int16_t cy = (y1 + y2) / 2;
+		int16_t rx = (x2 - x1) / 2;
+		int16_t ry = (y2 - y1) / 2;
 
 		// Precalcula els factors constants
 		//
-		int aa = 2 * rx * rx;
-		int bb = 2 * ry * ry;
+		int16_t aa = 2 * rx * rx;
+		int16_t bb = 2 * ry * ry;
 
-		int x, y, error;
-		int changeX, changeY;
-		int stoppingX, stoppingY;
+		int16_t x, y, error;
+		int16_t changeX, changeY;
+		int16_t stoppingX, stoppingY;
 
 		// Genera el primer grup de punts
 		//
@@ -214,7 +214,7 @@ void Graphics::fillEllipse(
 
 		while (stoppingX >= stoppingY) {
 
-			int xx1, xx2, yy;
+			int16_t xx1, xx2, yy;
 
 			xx1 = cx - x;
 			xx2 = cx + x;
@@ -252,7 +252,7 @@ void Graphics::fillEllipse(
 
 		while (stoppingX <= stoppingY) {
 
-			int xx1, xx2, yy;
+			int16_t xx1, xx2, yy;
 
 			xx1 = cx - x;
 			xx2 = cx + x;

@@ -23,8 +23,8 @@ Size::Size():
 /// \param    height: L'alçada.
 ///
 Size::Size(
-	int width,
-	int height):
+	int16_t width,
+	int16_t height):
 
 	_width(width),
 	_height(height) {
@@ -66,8 +66,8 @@ Size::Size(
 /// \remarks  El increment tant en amplada com en alçada pot ser negatiu.
 ///
 Size Size::inflated(
-	int h,
-	int v) const {
+	int16_t h,
+	int16_t v) const {
 
 	return Size(
 		Math::max(0, _width + h),
@@ -83,10 +83,10 @@ Size Size::inflated(
 /// \param    bottom: Inflat per avall.
 ///
 Size Size::inflated(
-	int left,
-	int top,
-	int right,
-	int bottom) const {
+	int16_t left,
+	int16_t top,
+	int16_t right,
+	int16_t bottom) const {
 
 	return Size(
 		Math::max(0, _width + left + right),
@@ -99,7 +99,7 @@ Size Size::inflated(
 /// \param    s: El tamany limit.
 ///
 Size Size::constrained(
-	const Size& s) const {
+	const Size &s) const {
 
 	return Size(
 		Math::min(_width, s._width),
@@ -123,7 +123,7 @@ bool Size::isEmpty() const {
 /// \return   Referencia al propi objecte.
 ///
 Size& Size::operator = (
-	const Size& s) {
+	const Size &s) {
 
 	_width = s._width;
 	_height = s._height;
@@ -137,7 +137,7 @@ Size& Size::operator = (
 /// \return   True si son iguals.
 ///
 bool Size::operator == (
-	const Size& s) const {
+	const Size &s) const {
 
 	return (_width == s._width) && (_height == s._height);
 }

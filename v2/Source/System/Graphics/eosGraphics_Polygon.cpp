@@ -14,13 +14,13 @@ using namespace eos;
 #define MAX_POINTS  15
 
 struct Edge {
-    int yMin;
-    int yMax;
-    int xVal;
-    int dx;
-    int dy;
-    int sum;
-    int step;
+    int16_t yMin;
+    int16_t yMax;
+    int16_t xVal;
+    int16_t dx;
+    int16_t dy;
+    int16_t sum;
+    int16_t step;
 };
 
 typedef Vector<Edge, MAX_POINTS, true> EdgeList;
@@ -29,7 +29,7 @@ typedef typename EdgeList::Iterator EdgeIterator;
 static EdgeList __global;
 static EdgeList __active;
 
-static void fillPolygonAlgorithm(Graphics* g, const Point* points, int numPoints, Color color);
+static void fillPolygonAlgorithm(Graphics *g, const Point *points, int16_t numPoints, Color color);
 
 
 /// ----------------------------------------------------------------------
@@ -40,18 +40,18 @@ static void fillPolygonAlgorithm(Graphics* g, const Point* points, int numPoints
 ///
 void Graphics::drawPolygon(
 	const Point *points,
-	int numPoints,
+	int16_t numPoints,
 	Color color) {
 
 	if (numPoints >= 2) {
 
-		int x1 = points[numPoints - 1].getX();
-		int y1 = points[numPoints - 1].getY();
+		int16_t x1 = points[numPoints - 1].getX();
+		int16_t y1 = points[numPoints - 1].getY();
 
-		for (int i = 0; i < numPoints; i++) {
+		for (int16_t i = 0; i < numPoints; i++) {
 
-			int x2 = points[i].getX();
-			int y2 = points[i].getY();
+			int16_t x2 = points[i].getX();
+			int16_t y2 = points[i].getY();
 
 			drawLine(x1, y1, x2, y2, color);
 
@@ -69,8 +69,8 @@ void Graphics::drawPolygon(
 /// \param    color: El color per dibuixar.
 ///
 void Graphics::fillPolygon(
-	const Point* points,
-	int numPoints,
+	const Point *points,
+	int16_t numPoints,
 	Color color) {
 
 	if (numPoints > 2 && numPoints < MAX_POINTS)
@@ -80,8 +80,8 @@ void Graphics::fillPolygon(
 
 
 static bool compareGlobalEdges(
-	const Edge& e1,
-	const Edge& e2) {
+	const Edge &e1,
+	const Edge &e2) {
 
 	if (e1.yMin < e2.yMin)
 		return true;
@@ -99,8 +99,8 @@ static bool compareGlobalEdges(
 
 
 static bool compareActiveEdges(
-	const Edge& e1,
-	const Edge& e2) {
+	const Edge &e1,
+	const Edge &e2) {
 
 	return e1.xVal < e2.xVal;
 }
@@ -113,18 +113,18 @@ static bool compareActiveEdges(
 ///
 static void initializeGlobalEdges(
 	EdgeList& globalEdges,
-	const Point* points,
-	int numPoints) {
+	const Point *points,
+	int16_t numPoints) {
 
 	globalEdges.clear();
 
-	int x1 = points[numPoints - 1].getX();
-	int y1 = points[numPoints - 1].getY();
+	int16_t x1 = points[numPoints - 1].getX();
+	int16_t y1 = points[numPoints - 1].getY();
 
-	for (int i = 0; i < numPoints; i++) {
+	for (int16_t i = 0; i < numPoints; i++) {
 
-		int x2 = points[i].getX();
-		int y2 = points[i].getY();
+		int16_t x2 = points[i].getX();
+		int16_t y2 = points[i].getY();
 
 		if (y1 != y2) {
 			Edge edge;
@@ -165,9 +165,9 @@ static void initializeGlobalEdges(
 /// \param    yScan: Linia actual d'exploracio.
 ///
 static void addActiveEdges(
-	EdgeList& activeEdges,
-	EdgeList& globalEdges,
-	int yScan) {
+	EdgeList &activeEdges,
+	EdgeList &globalEdges,
+	int16_t yScan) {
 
 	auto it = globalEdges.begin();
 	while (it != globalEdges.end()) {
@@ -188,8 +188,8 @@ static void addActiveEdges(
 /// \param    yScan: Linia actual d'exploracio.
 ///
 static void removeActiveEdges(
-	EdgeList& edges,
-	int yScan) {
+	EdgeList &edges,
+	int16_t yScan) {
 
 	auto it = edges.begin();
 	while (it != edges.end()) {
@@ -206,9 +206,9 @@ static void removeActiveEdges(
 /// \param    activeEdges: Llista d'actius
 ///
 static void updateActiveEdges(
-	EdgeList& activeEdges) {
+	EdgeList &activeEdges) {
 
-	for (auto& edge: activeEdges) {
+	for (auto &edge: activeEdges) {
 		if (edge.dx != 0) {
 			edge.sum += edge.dx;
 			while (edge.sum >= edge.dy) {
@@ -229,9 +229,9 @@ static void updateActiveEdges(
 /// \param    color: Color de la linia.
 ///
 static void drawScanLine(
-	EdgeList& activeEdges,
-	int yScan,
-	Graphics* g,
+	EdgeList &activeEdges,
+	int16_t yScan,
+	Graphics *g,
 	Color color) {
 
 	if (!activeEdges.isEmpty()) {
@@ -239,10 +239,10 @@ static void drawScanLine(
 		bool parity = true;
 
 		auto it = activeEdges.begin();
-		int x1 = (*it).xVal;
+		int16_t x1 = (*it).xVal;
 		++it;
 		while (it != activeEdges.end()) {
-			int x2 = (*it).xVal;
+			int16_t x2 = (*it).xVal;
 
 			if (parity)
 				g->drawHLine(x1, x2, yScan, color);
@@ -256,13 +256,13 @@ static void drawScanLine(
 
 
 static void fillPolygonAlgorithm(
-	Graphics* g,
-	const Point* points,
-	int numPoints,
+	Graphics *g,
+	const Point *points,
+	int16_t numPoints,
 	Color color) {
 
-	EdgeList& globalEdges = __global;
-	EdgeList& activeEdges = __active;
+	EdgeList &globalEdges = __global;
+	EdgeList &activeEdges = __active;
 
 	// Inicialitza la llista global
 	//
@@ -270,7 +270,7 @@ static void fillPolygonAlgorithm(
 
 	// Obte la primera linia per procesar
 	//
-	int yScan = globalEdges.peekFront().yMin;
+	int16_t yScan = globalEdges.peekFront().yMin;
 
 	do {
 		// Elimina els segment que ja s'ha procesat

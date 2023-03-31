@@ -26,10 +26,10 @@ Rect::Rect():
 /// \param    height: Alçada.
 ///
 Rect::Rect(
-	int x,
-	int y,
-	int width,
-	int height):
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height):
 
 	_x(x),
 	_y(y),
@@ -47,8 +47,8 @@ Rect::Rect(
 /// \param    s: Tamany.
 ///
 Rect::Rect(
-	const Point& p,
-	const Size& s):
+	const Point &p,
+	const Size &s):
 
 	_x(p.getX()),
 	_y(p.getY()),
@@ -132,10 +132,10 @@ Rect::Rect(
 /// \return   El resultat.
 ///
 Rect Rect::inflated(
-	int left,
-	int top,
-	int right,
-	int bottom) const {
+	int16_t left,
+	int16_t top,
+	int16_t right,
+	int16_t bottom) const {
 
 	return Rect(
 		_x - left,
@@ -152,8 +152,8 @@ Rect Rect::inflated(
 /// \return   El rectangle resultant de l'operacio.
 ///
 Rect Rect::translated(
-	int x,
-	int y) const {
+	int16_t x,
+	int16_t y) const {
 
 	return Rect(_x + x, _y + y, _width, _height);
 }
@@ -191,8 +191,8 @@ Rect Rect::intersected(
 /// \return   True si conte el punt.
 ///
 bool Rect::contains(
-	int x,
-	int y) const {
+	int16_t x,
+	int16_t y) const {
 
 	return
 		(x >= _x) && (y >= _y) &&

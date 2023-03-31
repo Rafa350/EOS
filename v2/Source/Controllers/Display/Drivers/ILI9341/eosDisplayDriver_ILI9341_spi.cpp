@@ -201,7 +201,7 @@ void DisplayDriver_ILI9341::writeData(
 ///
 void DisplayDriver_ILI9341::writeData(
 	const uint8_t *data,
-	int length) {
+	int32_t length) {
 
 	PinRS::set();
 

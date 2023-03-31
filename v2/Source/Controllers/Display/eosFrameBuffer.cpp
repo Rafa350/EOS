@@ -14,8 +14,8 @@ using namespace eos;
 /// \param    orientation: Orientacio inicial.
 ///
 FrameBuffer::FrameBuffer(
-	int frameWidth,
-	int frameHeight,
+	int16_t frameWidth,
+	int16_t frameHeight,
 	DisplayOrientation orientation) :
 
 	_frameWidth(frameWidth),
@@ -57,11 +57,11 @@ void FrameBuffer::setOrientation(
 /// \param    y: Coordinada y.
 ///
 void FrameBuffer::transform(
-	int &x,
-	int &y) const {
+	int16_t &x,
+	int16_t &y) const {
 
-	int xx = x;
-	int yy = y;
+	int16_t xx = x;
+	int16_t yy = y;
 
 	// Realitza la rotacio. D'aquesta manera es mes rapida que
 	// fer dues multiplicacione fent servir la formula.
@@ -98,15 +98,15 @@ void FrameBuffer::transform(
 /// \remarks  Les coordinades son retornades en forma normalitzada.
 ///
 void FrameBuffer::transform(
-	int &x1,
-	int &y1,
-	int &x2,
-	int &y2) const {
+	int16_t &x1,
+	int16_t &y1,
+	int16_t &x2,
+	int16_t &y2) const {
 
-	int xx1;
-	int yy1;
-	int xx2;
-	int yy2;
+	int16_t xx1;
+	int16_t yy1;
+	int16_t xx2;
+	int16_t yy2;
 
 	// Realitza la rotacio. D'aquesta manera es mes rapida que
 	// fer dues multiplicacione fent servir la formula.
@@ -169,8 +169,8 @@ void FrameBuffer::clear(
 /// \param    color: Color.
 ///
 void FrameBuffer::setPixel(
-	int x,
-	int y,
+	int16_t x,
+	int16_t y,
 	Color color) {
 
 	if ((x >= 0) && (x <= _maxX) && (y >= 0) && (y <= _maxY)) {
@@ -189,21 +189,21 @@ void FrameBuffer::setPixel(
 /// \param    color: Color.
 ///
 void FrameBuffer::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	Color color) {
 
-	int x1 = x;
-	int y1 = y;
-	int x2 = x + width - 1;
-	int y2 = y + height - 1;
+	int16_t x1 = x;
+	int16_t y1 = y;
+	int16_t x2 = x + width - 1;
+	int16_t y2 = y + height - 1;
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = Math::max(x1, 0);
-	y1 = Math::max(y1, 0);
+	x1 = Math::max(x1, (int16_t)0);
+	y1 = Math::max(y1, (int16_t)0);
 	x2 = Math::min(x2, _maxX);
 	y2 = Math::min(y2, _maxY);
 
@@ -233,12 +233,12 @@ void FrameBuffer::setPixels(
 /// \param    pitch: El pitch del array de colors.
 ///
 void FrameBuffer::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const Color *colors,
-	int colorPitch) {
+	int16_t colorPitch) {
 
 	// TODO: Girs i retall
 
@@ -257,30 +257,30 @@ void FrameBuffer::setPixels(
 /// \param    colorPpitch: Pitch de la llista de colors.
 ///
 void FrameBuffer::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const void *colors,
 	ColorFormat colorFormat,
-	int colorPitch)  {
+	int16_t colorPitch)  {
 
-	int x1 = x;
-	int y1 = y;
-	int x2 = x + width - 1;
-	int y2 = y + height - 1;
+	int16_t x1 = x;
+	int16_t y1 = y;
+	int16_t x2 = x + width - 1;
+	int16_t y2 = y + height - 1;
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = Math::max(x1, 0);
-	y1 = Math::max(y1, 0);
+	x1 = Math::max(x1, (int16_t)0);
+	y1 = Math::max(y1, (int16_t)0);
 	x2 = Math::min(x2, _maxX);
 	y2 = Math::min(y2, _maxY);
 
 	if ((x1 <= x2) && (y1 <= y2)) {
 		transform(x1, y1, x2, y2);
 
-		int bytesPerPixel = 2;
+		int16_t bytesPerPixel = 2;
 
 		switch (_orientation) {
 			case DisplayOrientation::rotate0:
@@ -288,7 +288,7 @@ void FrameBuffer::setPixels(
 				break;
 
 			case DisplayOrientation::rotate90:
-				for (int yy = 0; yy < height; yy++) {
+				for (int16_t yy = 0; yy < height; yy++) {
 					copy(
 						x1 + height - yy, y1,
 						1, width,
@@ -299,15 +299,15 @@ void FrameBuffer::setPixels(
 				break;
 
 			case DisplayOrientation::rotate180:
-				for (int yy = 0; yy < height; yy++)
-					for (int xx = 0; xx < width; xx++) {
+				for (int16_t yy = 0; yy < height; yy++)
+					for (int16_t xx = 0; xx < width; xx++) {
 						int p = (int)colors + ((yy * colorPitch) + xx) * bytesPerPixel;
 				}
 				break;
 
 			case DisplayOrientation::rotate270:
-				for (int yy = 0; yy < height; yy++)
-					for (int xx = 0; xx < width; xx++) {
+				for (int16_t yy = 0; yy < height; yy++)
+					for (int16_t xx = 0; xx < width; xx++) {
 						int p = (int)colors + ((yy * colorPitch) + xx) * bytesPerPixel;
 				}
 				break;

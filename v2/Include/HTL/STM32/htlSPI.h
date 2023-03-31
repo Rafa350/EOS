@@ -416,6 +416,9 @@ namespace htl {
 		#if defined(EOS_PLATFORM_STM32G0)
 		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 		static constexpr uint32_t rccEnablePos = RCC_APBENR2_SPI1EN_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI1EN_Pos;
 		#endif
 		static constexpr INTVector vector = INTVector::spi1;
 	};
@@ -428,6 +431,9 @@ namespace htl {
 		#if defined(EOS_PLATFORM_STM32G0)
 		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 		static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI2EN_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI2EN_Pos;
 		#endif
 		static constexpr INTVector vector = INTVector::spi2;
 	};
@@ -438,6 +444,10 @@ namespace htl {
 	struct SPITrait<SPIChannel::_3> {
 		static constexpr uint32_t spiAddr = SPI3_BASE;
 		static constexpr INTVector vector = INTVector::spi3;
+		#if defined(EOS_PLATFORM_STM32F4)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI3EN_Pos;
+		#endif
 	};
 	#endif
 
@@ -446,14 +456,22 @@ namespace htl {
 	struct SPITrait<SPIChannel::_4> {
 		static constexpr uint32_t spiAddr = SPI4_BASE;
 		static constexpr INTVector vector = INTVector::spi4;
+		#if defined(EOS_PLATFORM_STM32F4)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI4EN_Pos;
+		#endif
 	};
 	#endif
 
 	#ifdef HTL_SPI5_EXIST
 	template<>
 	struct SPITrait<SPIChannel::_5> {
-		static constexpr uint32_t addr = SPI5_BASE;
+		static constexpr uint32_t spiAddr = SPI5_BASE;
 		static constexpr INTVector vector = INTVector::spi5;
+		#if defined(EOS_PLATFORM_STM32F4)
+		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+		static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI5EN_Pos;
+		#endif
 	};
 	#endif
 }

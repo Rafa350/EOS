@@ -122,8 +122,8 @@ void DisplayDriver_ILI9341::clear(
 /// \param    color: Color del pixel.
 ///
 void DisplayDriver_ILI9341::setPixel(
-    int x,
-    int y,
+    int16_t x,
+    int16_t y,
     Color color) {
 
     selectRegion(x, y, x, y);
@@ -139,9 +139,9 @@ void DisplayDriver_ILI9341::setPixel(
 /// \param    color: Color dels pixels.
 ///
 void DisplayDriver_ILI9341::setHPixels(
-    int x,
-    int y,
-    int length,
+    int16_t x,
+    int16_t y,
+    int16_t length,
     Color color) {
 
     selectRegion(x, y, x + length - 1, y);
@@ -157,9 +157,9 @@ void DisplayDriver_ILI9341::setHPixels(
 /// \param    color: Color dels pixels.
 ///
 void DisplayDriver_ILI9341::setVPixels(
-    int x,
-    int y,
-    int length,
+    int16_t x,
+    int16_t y,
+    int16_t length,
     Color color) {
 
     selectRegion(x, y, x, y + length - 1);
@@ -176,10 +176,10 @@ void DisplayDriver_ILI9341::setVPixels(
 /// \param    color: Color dels pixels.
 ///
 void DisplayDriver_ILI9341::setPixels(
-    int x,
-    int y,
-    int width,
-    int height,
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
     Color color) {
 
     selectRegion(x, y, x + width - 1, y + height - 1);
@@ -197,12 +197,12 @@ void DisplayDriver_ILI9341::setPixels(
 /// \param    pitch: Pitch dels colors.
 ///
 void DisplayDriver_ILI9341::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const Color *colors,
-	int pitch) {
+	int16_t pitch) {
 }
 
 
@@ -215,13 +215,13 @@ void DisplayDriver_ILI9341::setPixels(
 /// \param    colors: Color dels pixels.
 ///
 void DisplayDriver_ILI9341::setPixels(
-    int x,
-    int y,
-    int width,
-    int height,
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
     const void *pixels,
 	ColorFormat format,
-	int pitch) {
+	int16_t pitch) {
 
     //selectRegion(x, y, x + width - 1, y + height - 1);
     //writeRegion(colors, width * height);
@@ -276,10 +276,10 @@ void DisplayDriver_ILI9341::disable() {
 /// \param    y2: Coordinada Y final.
 ///
 void DisplayDriver_ILI9341::selectRegion(
-    int x1,
-    int y1,
-    int x2,
-    int y2) {
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
+    int16_t y2) {
 
 	uint8_t buffer[4];
 
@@ -348,7 +348,7 @@ void DisplayDriver_ILI9341::writeRegion(
 ///
 void DisplayDriver_ILI9341::writeRegion(
     Color color,
-    int count) {
+    int32_t count) {
 
 	Color::Pixel c = color;
 
@@ -388,7 +388,7 @@ void DisplayDriver_ILI9341::writeRegion(
 ///
 void DisplayDriver_ILI9341::writeRegion(
     const Color *colors,
-    int count) {
+    int32_t count) {
 
     while (count--)
         writeRegion(*colors++, 1);
@@ -402,7 +402,7 @@ void DisplayDriver_ILI9341::writeRegion(
 ///
 void DisplayDriver_ILI9341::readRegion(
     Color *colors,
-    int count) {
+    int32_t count) {
 #if 0
     select();
     writeCommand(CMD_MEMORY_READ);

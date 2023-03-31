@@ -5,8 +5,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosString.h"
-//#include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosSize.h"
@@ -26,7 +24,7 @@ namespace eos {
 
 	class Text {
 		private:
-			String _text;
+			const char *_text;
 			Font _font;
 			Brush _background;
 			Brush _foreground;
@@ -36,27 +34,27 @@ namespace eos {
 
 		private:
 			void recalcBounds();
-			void drawChar(const Graphics* graphics, int x, int y, Color color, char ch) const;
+			void drawChar(const Graphics *graphics, int x, int y, Color color, char ch) const;
 
 		public:
 			Text();
 			Text(const Font& font, TextAlign align);
-			Text(const Font& font, TextAlign align, const String& text);
+			Text(const Font& font, TextAlign align, const char *text);
 
-			void setText(const String& text);
-			void setFont(const Font& font);
+			void setText(const char *text);
+			void setFont(const Font &font);
 			void setAlign(TextAlign align);
-			void setBackground(const Brush& background);
-			void setForeground(const Brush& foreground);
+			void setBackground(const Brush &background);
+			void setForeground(const Brush &foreground);
 
-			const String& getText() const { return _text; }
+			const char* getText() const { return _text; }
 			const Font& getFont() const { return _font; }
 			TextAlign getAlign() const { return _align; }
 			const Brush& getBackground() const { return _background; }
 			const Brush& getForeground() const { return _foreground; }
 			Size getBounds() const { return Size(_width, _height); }
 
-			void draw(const Graphics* graphics, const Point& position) const;
+			void draw(const Graphics *graphics, const Point &position) const;
 	};
 }
 

@@ -44,31 +44,31 @@ namespace eos {
             /// \return El valor.
             /// \remarks El valor depen de l'orientacio del display.
             ///
-            virtual int getMaxX() const = 0;
+            virtual int16_t getMaxX() const = 0;
 
             /// \brief Obte el valor maxim de la coordinada Y.
             /// \return El valor.
             /// \remarks El valor depen de l'orientacio del display.
             ///
-            virtual int getMaxY() const = 0;
+            virtual int16_t getMaxY() const = 0;
 
             /// \brief Obte l'amplada fisica del display.
             /// \return El valor.
             ///
-            virtual int getWidth() const = 0;
+            virtual int16_t getWidth() const = 0;
 
             /// \brief Obte l'alçada fisica del display.
             /// \return El valor.
             ///
-            virtual int getHeight() const = 0;
+            virtual int16_t getHeight() const = 0;
 
             virtual void clear(Color color) = 0;
-            virtual void setPixel(int x, int y, Color color) = 0;
-            virtual void setHPixels(int x, int y, int length, Color color) = 0;
-            virtual void setVPixels(int x, int y, int length, Color color) = 0;
-            virtual void setPixels(int x, int y, int width, int height, Color color) = 0;
-            virtual void setPixels(int x, int y, int width, int height, const Color *colors, int colorPitch) = 0;
-            virtual void setPixels(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) = 0;
+            virtual void setPixel(int16_t x, int16_t y, Color color) = 0;
+            virtual void setHPixels(int16_t x, int16_t y, int16_t length, Color color) = 0;
+            virtual void setVPixels(int16_t x, int16_t y, int16_t length, Color color) = 0;
+            virtual void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color) = 0;
+            virtual void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) = 0;
+            virtual void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) = 0;
 
             virtual void refresh() = 0;
     };

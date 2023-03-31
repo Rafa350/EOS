@@ -20,10 +20,10 @@ using namespace eos;
 /// \remarks  Utilitza les coordinades fisiques.
 ///
 void Graphics::setClip(
-    int x1,
-    int y1,
-    int x2,
-    int y2) {
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
+    int16_t y2) {
 
 	// Normalitzacio de coordinades
 	//
@@ -34,8 +34,8 @@ void Graphics::setClip(
 
     // Asigna la nova area de retall
     //
-	_state.clipX1 = Math::max(0, x1);
-	_state.clipY1 = Math::max(0, y1);
+	_state.clipX1 = Math::max((int16_t)0, x1);
+	_state.clipY1 = Math::max((int16_t)0, y1);
 	_state.clipX2 = Math::min(x2, _driver->getMaxX());
 	_state.clipY2 = Math::min(y2, _driver->getMaxY());
 }
@@ -60,8 +60,8 @@ void Graphics::resetClip() {
 /// \return   True si es visible.
 ///
 bool Graphics::clipPoint(
-    int x,
-    int y) const {
+    int16_t x,
+    int16_t y) const {
 
 	return
     	(x >= _state.clipX1) && (x <= _state.clipX2) &&
@@ -77,9 +77,9 @@ bool Graphics::clipPoint(
 /// \return   True si es visible.
 ///
 bool Graphics::clipHLine(
-	int &x1,
-	int &x2,
-	int y) const {
+	int16_t &x1,
+	int16_t &x2,
+	int16_t y) const {
 
 	// Descarta si es fora de l'area de visualitzacio
 	//
@@ -108,9 +108,9 @@ bool Graphics::clipHLine(
 /// \return   True si es visible.
 ///
 bool Graphics::clipVLine(
-	int x,
-	int &y1,
-	int &y2) const {
+	int16_t x,
+	int16_t &y1,
+	int16_t &y2) const {
 
 	// Descarta si es fora de l'area de visualitzacio
 	//
@@ -140,10 +140,10 @@ bool Graphics::clipVLine(
 /// \return   True si es visible.
 ///
 bool Graphics::clipLine(
-    int &x1,
-    int &y1,
-    int &x2,
-    int &y2) const {
+    int16_t &x1,
+    int16_t &y1,
+    int16_t &x2,
+    int16_t &y2) const {
 
 	// La descarta si es fora de l'area de visualitzacio
 	//
@@ -153,16 +153,16 @@ bool Graphics::clipLine(
         ((y1 > _state.clipY2) && (y2 > _state.clipY2)))
         return false;
 
-    int t1 = 0;
-    int t2 = 1 << 16;
+    int32_t t1 = 0;
+    int32_t t2 = 1 << 16;
 
-    int dx = x2 - x1;
+    int16_t dx = x2 - x1;
     if (!clipTest(-dx, x1 - _state.clipX1, t1, t2))
         return false;
     if (!clipTest(dx, _state.clipX2 - x1, t1, t2))
         return false;
 
-    int dy = y2 - y1;
+    int16_t dy = y2 - y1;
     if (!clipTest(-dy, y1 - _state.clipY1, t1, t2))
         return false;
     if (!clipTest(dy, _state.clipY2 - y1, t1, t2))
@@ -172,16 +172,16 @@ bool Graphics::clipLine(
     // evita els errors d'arrodoniment.
     //
     if (t2 < (1 << 16)) {
-        x2 = Math::min(_state.clipX2, x1 + ((t2 * dx) >> 16));
-        y2 = Math::min(_state.clipY2, y1 + ((t2 * dy) >> 16));
+        x2 = Math::min(_state.clipX2, (int16_t)(x1 + ((t2 * dx) >> 16)));
+        y2 = Math::min(_state.clipY2, (int16_t)(y1 + ((t2 * dy) >> 16)));
     }
 
     // Ajusta el punt d'interseccio x1, y1. La funcio max
     // evita els errors d'errodoniment.
     //
     if (t1 > 0) {
-        x1 = Math::max(_state.clipX1, x1 + ((t1 * dx) >> 16));
-        y1 = Math::max(_state.clipY1, y1 + ((t1 * dy) >> 16));
+        x1 = Math::max(_state.clipX1, (int16_t)(x1 + ((t1 * dx) >> 16)));
+        y1 = Math::max(_state.clipY1, (int16_t)(y1 + ((t1 * dy) >> 16)));
     }
 
     return true;
@@ -197,16 +197,14 @@ bool Graphics::clipLine(
 /// \return:  True si es visible, false en cas contrari.
 ///
 bool Graphics::clipTest(
-    int p,
-    int q,
-    int &t1,
-    int &t2) {
-
-    int r;
+    int16_t p,
+    int16_t q,
+    int32_t &t1,
+    int32_t &t2) {
 
     if (p < 0) {
         if (q < 0) {
-            r = (q << 16) / p;
+            int32_t r = (q << 16) / p;
             if (r > t2)
                 return false;
             else if (r > t1)
@@ -216,7 +214,7 @@ bool Graphics::clipTest(
 
     else if (p > 0) {
         if (q < p) {
-            r = (q << 16) / p;
+            int32_t r = (q << 16) / p;
             if (r < t1)
                 return false;
             else if (r < t2)
@@ -241,10 +239,10 @@ bool Graphics::clipTest(
 /// \return   True si es visible.
 ///
 bool Graphics::clipRectangle(
-    int &x1,
-    int &y1,
-    int &x2,
-    int &y2) const {
+    int16_t &x1,
+    int16_t &y1,
+    int16_t &x2,
+    int16_t &y2) const {
 
 	// Normalitza les coordinades
 	//

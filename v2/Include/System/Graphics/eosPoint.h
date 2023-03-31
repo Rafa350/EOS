@@ -11,27 +11,27 @@ namespace eos {
 	///
 	class Point {
 		private:
-			int _x;
-			int _y;
+			int16_t _x;
+			int16_t _y;
 
         public:
 			Point();
-            Point(int x, int y);
-            Point(const Point& p);
-            Point(const Point&& p);
+            Point(int16_t x, int16_t y);
+            Point(const Point &p);
+            Point(const Point &&p);
 
-            inline int getX() const { return _x; }
-            inline int getY() const { return _y; }
+            inline int16_t getX() const { return _x; }
+            inline int16_t getY() const { return _y; }
 
-            Point& translate(int dx, int dy);
-            Point& translate(const Point& d);
-            Point translated(int dx, int dy) const;
-            Point translated(const Point& p) const;
+            Point& translate(int16_t dx, int16_t dy);
+            Point& translate(const Point &d);
+            Point translated(int16_t dx, int16_t dy) const;
+            Point translated(const Point &p) const;
 
-            Point& operator = (const Point& p);
+            Point& operator = (const Point &p);
 
-            bool operator == (const Point& p) const;
-            inline bool operator != (const Point& p) const { return !(*this == p); }
+            bool operator == (const Point &p) const;
+            inline bool operator != (const Point &p) const { return !(*this == p); }
 	};
 }
 

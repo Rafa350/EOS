@@ -25,10 +25,10 @@ void Graphics::paintRectangle(
 
 	if (penVisible || brushVisible) {
 
-		int x1 = box.getMinX();
-		int y1 = box.getMinY();
-		int x2 = box.getMaxX();
-		int y2 = box.getMaxY();
+		int16_t x1 = box.getMinX();
+		int16_t y1 = box.getMinY();
+		int16_t x2 = box.getMaxX();
+		int16_t y2 = box.getMaxY();
 
 		if (brushVisible) {
 			Color c = brush.getColor();
@@ -37,7 +37,7 @@ void Graphics::paintRectangle(
 
 		if (penVisible) {
 			Color c = pen.getColor();
-			int t = pen.getThickness();
+			int16_t t = pen.getThickness();
 			if (t < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
 				if (t > 1) {
 					fillRectangle(x1, y1, x2, y1 + t, c);
@@ -62,10 +62,10 @@ void Graphics::paintRectangle(
 /// \param    color: Color.
 ///
 void Graphics::drawRectangle(
-    int x1,
-    int y1,
-    int x2,
-    int y2,
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
+    int16_t y2,
 	Color color) const {
 
     // Transforma a coordinades fisiques.
@@ -80,7 +80,7 @@ void Graphics::drawRectangle(
     if (y1 > y2)
         Math::swap(y1, y2);
 
-    int xx1, xx2, yy1, yy2;
+    int16_t xx1, xx2, yy1, yy2;
 
     xx1 = x1;
     xx2 = x2;
@@ -117,10 +117,10 @@ void Graphics::drawRectangle(
 /// \param    color: Color.
 ///
 void Graphics::fillRectangle(
-    int x1,
-    int y1,
-    int x2,
-    int y2,
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
+    int16_t y2,
 	Color color) const {
 
     // Transforma a coordinades fisiques.

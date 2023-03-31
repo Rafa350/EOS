@@ -45,10 +45,10 @@ void Graphics::paintLine(
 ///           en millor-la. Potser codi maquina.
 ///
 void Graphics::drawLine(
-    int x1,
-    int y1,
-    int x2,
-    int y2,
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
+    int16_t y2,
 	Color color) const {
 
 	// Transforma a coordinades fisiques
@@ -78,11 +78,11 @@ void Graphics::drawLine(
 		//
 		else {
 
-            int stepX, stepY;
-            int p, incE, incNE;
+            int16_t stepX, stepY;
+            int16_t p, incE, incNE;
 
-            int deltaX = x2 - x1;
-            int deltaY = y2 - y1;
+            int16_t deltaX = x2 - x1;
+            int16_t deltaY = y2 - y1;
 
             if (deltaX < 0)  {
                 deltaX = -deltaX;
@@ -163,11 +163,11 @@ void Graphics::drawLine(
 ///           en millor-la. Potser codi maquina.
 ///
 void Graphics::drawLine(
-	int x0,
-	int y0,
-	int x1,
-	int y1,
-	int thickness,
+	int16_t x0,
+	int16_t y0,
+	int16_t x1,
+	int16_t y1,
+	int16_t thickness,
 	Color color) const {
 
 	// Transforma a coordinades fisiques
@@ -177,16 +177,16 @@ void Graphics::drawLine(
 
     if (clipLine(x0, y0, x1, y1)) {
 
-		int e2, x2, y2;
+		int16_t e2, x2, y2;
 
-		int dx = Math::abs(x1 - x0);
-		int sx = x0 < x1 ? 1 : -1;
-		int dy = Math::abs(y1 - y0);
-		int sy = y0 < y1 ? 1 : -1;
+		int16_t dx = Math::abs(x1 - x0);
+		int16_t sx = x0 < x1 ? 1 : -1;
+		int16_t dy = Math::abs(y1 - y0);
+		int16_t sy = y0 < y1 ? 1 : -1;
 
-		int err = dx - dy;
+		int16_t err = dx - dy;
 		float wd = thickness;
-		float ed = dx + dy == 0 ? 1.0f : (int)sqrt((float)(dx * dx) + (float)(dy * dy));
+		float ed = dx + dy == 0 ? 1.0f : sqrt((float)(dx * dx) + (float)(dy * dy));
 
 		// Pixel loop
 		//
@@ -260,14 +260,14 @@ void Graphics::drawLine(
 /// \param    color: Color.
 ///
 void Graphics::drawHLine(
-	int x1,
-	int x2,
-	int y,
+	int16_t x1,
+	int16_t x2,
+	int16_t y,
 	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//
-	int y2 = y;
+	int16_t y2 = y;
 	transform(x1, y);
 	transform(x2, y2);
 
@@ -289,14 +289,14 @@ void Graphics::drawHLine(
 /// \param    color: Color.
 ///
 void Graphics::drawVLine(
-	int x,
-	int y1,
-	int y2,
+	int16_t x,
+	int16_t y1,
+	int16_t y2,
 	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//
-	int x2 = x;
+	int16_t x2 = x;
 	transform(x, y1);
 	transform(x2, y2);
 

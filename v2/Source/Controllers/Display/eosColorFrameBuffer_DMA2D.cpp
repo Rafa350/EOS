@@ -130,9 +130,9 @@ static constexpr DMA2DInputColorMode getInputColorMode(
 /// \param    buffer: Buffer.
 ///
 ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
-	int width,
-	int height,
-	int pitch,
+	int16_t width,
+	int16_t height,
+	int16_t pitch,
 	DisplayOrientation orientation,
 	void *buffer):
 
@@ -162,8 +162,8 @@ void *ColorFrameBuffer_DMA2D::getBuffer() const {
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
 void ColorFrameBuffer_DMA2D::put(
-	int x,
-	int y,
+	int16_t x,
+	int16_t y,
 	Color color) {
 
 	// Color amb opacitat (Canal alpha)
@@ -203,10 +203,10 @@ void ColorFrameBuffer_DMA2D::put(
 /// \param    color: Color.
 ///
 void ColorFrameBuffer_DMA2D::fill(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	Color color) {
 
 	uint8_t opacity = color.getOpacity();
@@ -229,9 +229,9 @@ void ColorFrameBuffer_DMA2D::fill(
 		//
 		else {
 			Color::Pixel c = color;
-			for (int yy = y; yy < height + y; yy++) {
+			for (int16_t yy = y; yy < height + y; yy++) {
 				Color::Pixel *ptr = getPixelPtr(x, yy);
-				for (int xx = x; xx < width + x; xx++)
+				for (int16_t xx = x; xx < width + x; xx++)
 					*ptr++ = c;
 			}
 		}
@@ -243,9 +243,9 @@ void ColorFrameBuffer_DMA2D::fill(
 
 		Color::Pixel c = color;
 
-		for (int yy = y; yy < height + y; yy++) {
+		for (int16_t yy = y; yy < height + y; yy++) {
 			Color::Pixel *ptr = getPixelPtr(x, yy);
-			for (int xx = x; xx < width + x; xx++) {
+			for (int16_t xx = x; xx < width + x; xx++) {
 				*ptr = combinePixels(c, *ptr, opacity);
 				ptr++;
 			}
@@ -264,12 +264,12 @@ void ColorFrameBuffer_DMA2D::fill(
 /// \param    colorPitch: Pitch de la llista de colors.
 ///
 void ColorFrameBuffer_DMA2D::copy(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const Color *colors,
-	int colorPitch) {
+	int16_t colorPitch) {
 
 	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
 	// per hardware.
@@ -306,13 +306,13 @@ void ColorFrameBuffer_DMA2D::copy(
 /// \param    colorPitch: Pitch de la llista de colors.
 ///
 void ColorFrameBuffer_DMA2D::copy(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const void *colors,
 	ColorFormat colorFormat,
-	int colorPitch) {
+	int16_t colorPitch) {
 
 	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
 	// per hardware.

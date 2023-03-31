@@ -14,8 +14,8 @@ using namespace eos;
 /// \param    bitmap: El bitmap.
 ///
 void Graphics::paintBitmap(
-	const Point& position,
-	const Bitmap& bitmap) const {
+	const Point &position,
+	const Bitmap &bitmap) const {
 
 	//bitmap.draw(this, position);
 
@@ -30,19 +30,19 @@ void Graphics::paintBitmap(
 /// \param    bitmap: El bitmap
 ///
 void Graphics::drawBitmap(
-    int x,
-    int y,
+    int16_t x,
+    int16_t y,
     const Bitmap &bitmap) const {
 
-	int x1 = x;
-	int y1 = y;
-	int x2 = x + bitmap.getWidth() - 1;
-	int y2 = y + bitmap.getHeight() - 1;
+	int16_t x1 = x;
+	int16_t y1 = y;
+	int16_t x2 = x + bitmap.getWidth() - 1;
+	int16_t y2 = y + bitmap.getHeight() - 1;
 
 	if (clipRectangle(x1, y1, x2, y2)) {
 
-        int w = x2 - x1 + 1;
-        int h = y2 - y1 + 1;
+        int16_t w = x2 - x1 + 1;
+        int16_t h = y2 - y1 + 1;
 
         if ((w > 0) && (h > 0)) {
         	_driver->setPixels(

@@ -37,12 +37,12 @@ Transformation::Transformation(
 /// \param    ty: Component ty.
 ///
 Transformation::Transformation(
-    int m11,
-    int m12,
-    int m21,
-    int m22,
-    int tx,
-    int ty) {
+    int16_t m11,
+    int16_t m12,
+    int16_t m21,
+    int16_t m22,
+    int16_t tx,
+    int16_t ty) {
 
 	m[0][0] = m11;
 	m[0][1] = m12;
@@ -100,8 +100,8 @@ void Transformation::identity() {
 /// \param    ty: Component Y de la translacio.
 ///
 void Transformation::translate(
-	int tx,
-	int ty) {
+	int16_t tx,
+	int16_t ty) {
 
 	if (type == TypeIdentity) {
 
@@ -142,10 +142,10 @@ void Transformation::translate(
 /// \param    oy: Coordinada Y de l'origen del escalat.
 ///
 void Transformation::scale(
-	int sx,
-	int sy,
-	int ox,
-	int oy) {
+	int16_t sx,
+	int16_t sy,
+	int16_t ox,
+	int16_t oy) {
 
 	Matrix sm, rm;
 
@@ -182,8 +182,8 @@ void Transformation::scale(
 ///
 void Transformation::rotate(
 	RotateTransformationAngle r,
-	int ox,
-	int oy) {
+	int16_t ox,
+	int16_t oy) {
 
 	combineType(type, type, TypeTranslation | TypeScale);
 }
@@ -211,8 +211,8 @@ void Transformation::combine(
 /// \param    y: Coordinada Y del punt.
 ///
 void Transformation::apply(
-	int &x,
-	int &y) const {
+	int16_t &x,
+	int16_t &y) const {
 
 	switch (type) {
 		case TypeIdentity:

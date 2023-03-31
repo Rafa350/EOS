@@ -52,8 +52,8 @@ namespace eos {
 			static constexpr htl::LTDCPolarity _vSyncPol = DISPLAY_VSYNC_POL;
 			static constexpr htl::LTDCPolarity _dePol    = DISPLAY_DE_POL;
 			static constexpr htl::LTDCPolarity _pcPol    = DISPLAY_PC_POL;
-			static constexpr int _displayWidth     = DISPLAY_WIDTH;
-			static constexpr int _displayHeight    = DISPLAY_HEIGHT;
+			static constexpr int16_t _displayWidth = DISPLAY_WIDTH;
+			static constexpr int16_t _displayHeight= DISPLAY_HEIGHT;
 			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;
 
     		FrameBuffer *_displayFrameBuffer;
@@ -72,18 +72,18 @@ namespace eos {
             void disable() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getWidth() const override { return _displayWidth; }
-            inline int getHeight() const override { return _displayHeight; }
-            inline int getMaxX() const override { return _displayFrameBuffer->getMaxX(); }
-            inline int getMaxY() const override { return _displayFrameBuffer->getMaxY(); }
+            inline int16_t getWidth() const override { return _displayWidth; }
+            inline int16_t getHeight() const override { return _displayHeight; }
+            inline int16_t getMaxX() const override { return _displayFrameBuffer->getMaxX(); }
+            inline int16_t getMaxY() const override { return _displayFrameBuffer->getMaxY(); }
 
             void clear(Color color) override;
-            void setPixel(int x, int y, Color color) override;
-            void setHPixels(int x, int y, int size, Color color) override;
-            void setVPixels(int x, int y, int size, Color color) override;
-            void setPixels(int x, int y, int width, int height, Color color) override;
-            void setPixels(int x, int y, int width, int height, const Color *colors, int colorPitch) override;
-            void setPixels(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) override;
+            void setPixel(int16_t x, int16_t y, Color color) override;
+            void setHPixels(int16_t x, int16_t y, int16_t size, Color color) override;
+            void setVPixels(int16_t x, int16_t y, int16_t size, Color color) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
 
             void refresh() override;
     };

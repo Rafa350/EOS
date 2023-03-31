@@ -109,8 +109,8 @@ void DisplayDriver_RGBLTDC::clear(
 /// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setPixel(
-	int x,
-	int y,
+	int16_t x,
+	int16_t y,
 	Color color) {
 
 	_workFrameBuffer->setPixel(x, y, color);
@@ -125,9 +125,9 @@ void DisplayDriver_RGBLTDC::setPixel(
 /// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setHPixels(
-	int x,
-	int y,
-	int size,
+	int16_t x,
+	int16_t y,
+	int16_t size,
 	Color color) {
 
 	_workFrameBuffer->setPixels(x, y, size, 1, color);
@@ -142,9 +142,9 @@ void DisplayDriver_RGBLTDC::setHPixels(
 /// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setVPixels(
-	int x,
-	int y,
-	int size,
+	int16_t x,
+	int16_t y,
+	int16_t size,
 	Color color) {
 
 	_workFrameBuffer->setPixels(x, y, 1, size, color);
@@ -160,10 +160,10 @@ void DisplayDriver_RGBLTDC::setVPixels(
 /// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	Color color) {
 
 	_workFrameBuffer->setPixels(x, y, width, height, color);
@@ -180,12 +180,12 @@ void DisplayDriver_RGBLTDC::setPixels(
 /// \param    pitch: Pitch de la regio a copiar.
 ///
 void DisplayDriver_RGBLTDC::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const Color *colors,
-	int pitch) {
+	int16_t pitch) {
 
 	_workFrameBuffer->setPixels(x, y, width, height, colors, pitch);
 }
@@ -202,13 +202,13 @@ void DisplayDriver_RGBLTDC::setPixels(
 /// \param    colorPitch: Pitch de la llista de colors.
 ///
 void DisplayDriver_RGBLTDC::setPixels(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const void *colors,
 	ColorFormat colorFormat,
-	int colorPitch) {
+	int16_t colorPitch) {
 
 	_workFrameBuffer->setPixels(x, y, width, height, colors, colorFormat, colorPitch);
 }

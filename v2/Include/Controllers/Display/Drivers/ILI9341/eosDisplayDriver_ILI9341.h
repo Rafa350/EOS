@@ -49,12 +49,12 @@ namespace eos {
     		using PinRS = DISPLAY_RS_GPIO;
 
     	private:
-    		constexpr static int _displayWidth = DISPLAY_WIDTH;
-    		constexpr static int _displayHeight = DISPLAY_HEIGHT;
+    		constexpr static int16_t _displayWidth = DISPLAY_WIDTH;
+    		constexpr static int16_t _displayHeight = DISPLAY_HEIGHT;
 
     	private:
-    		int _maxX;
-    		int _maxY;
+    		int16_t _maxX;
+    		int16_t _maxY;
 
         public:
             DisplayDriver_ILI9341();
@@ -66,28 +66,28 @@ namespace eos {
             void disable() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int getMaxX() const override { return _maxX; }
-            inline int getMaxY() const override { return _maxY; }
-            inline int getWidth() const override { return _displayWidth; }
-            inline int getHeight() const override { return _displayHeight; }
+            inline int16_t getMaxX() const override { return _maxX; }
+            inline int16_t getMaxY() const override { return _maxY; }
+            inline int16_t getWidth() const override { return _displayWidth; }
+            inline int16_t getHeight() const override { return _displayHeight; }
 
             void clear(Color color) override;
 
-            void setPixel(int x, int y, Color color) override;
-            void setHPixels(int x, int y, int size, Color color) override;
-            void setVPixels(int x, int y, int size, Color color) override;
-            void setPixels(int x, int y, int width, int height, Color color) override;
-            void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
-            void setPixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
+            void setPixel(int16_t x, int16_t y, Color color) override;
+            void setHPixels(int16_t x, int16_t y, int16_t size, Color color) override;
+            void setVPixels(int16_t x, int16_t y, int16_t size, Color color) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t pitch) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const void *pixels, ColorFormat format, int16_t pitch) override;
 
             void refresh() override;
 
         private:
             void writeRegion(Color color);
-            void writeRegion(Color color, int count);
-            void writeRegion(const Color *colors, int count);
-            void readRegion(Color *colors, int count);
-            void selectRegion(int x1, int y1, int x2, int y2);
+            void writeRegion(Color color, int32_t count);
+            void writeRegion(const Color *colors, int32_t count);
+            void readRegion(Color *colors, int32_t count);
+            void selectRegion(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
             void initializeInterface();
             void initializeController();
@@ -96,7 +96,7 @@ namespace eos {
             void close();
             void writeCommand(uint8_t cmd);
             void writeData(uint8_t data);
-            void writeData(const uint8_t *data, int length);
+            void writeData(const uint8_t *data, int32_t length);
     };
 }
 

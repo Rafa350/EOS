@@ -57,7 +57,7 @@ Text::Text(
 Text::Text(
 	const Font& font,
 	TextAlign align,
-	const String &text):
+	const char *text):
 
 	_text(text),
 	_font(font),
@@ -74,7 +74,7 @@ Text::Text(
 /// \param    text: El text.
 ///
 void Text::setText(
-	const String &text) {
+	const char *text) {
 
 	if (_text != text) {
 		_text = text;
@@ -124,8 +124,8 @@ void Text::setForeground(
 ///
 void Text::recalcBounds() {
 
-	int i = _text.getLength();
 	const char* p = _text;
+	int i = strlen(p);
 
 	_width = 0;
 	_height = 0;
@@ -154,8 +154,8 @@ void Text::draw(
 	const Graphics *graphics,
 	const Point &position) const {
 
-	int l = _text.getLength();
 	const char* p = _text;
+	int l = strlen(p);
 
 	if (l > 0) {
 

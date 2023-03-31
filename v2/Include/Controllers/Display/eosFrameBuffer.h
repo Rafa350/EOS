@@ -14,40 +14,40 @@ namespace eos {
 	///
 	class FrameBuffer {
 		private:
-			const int _frameWidth;
-			const int _frameHeight;
-			int _maxX;
-			int _maxY;
+			const int16_t _frameWidth;
+			const int16_t _frameHeight;
+			int16_t _maxX;
+			int16_t _maxY;
 			DisplayOrientation _orientation;
 
-            void transform(int& x, int& y) const;
-            void transform(int& x1, int& y1, int &x2, int& y2) const;
+            void transform(int16_t &x, int16_t &y) const;
+            void transform(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2) const;
 
         protected:
-            virtual void put(int x, int y, Color color) = 0;
-            virtual void fill(int x, int y, int width, int height, Color color) = 0;
-            virtual void copy(int x, int y, int width, int height, const Color *colors, int colorPitch) = 0;
-            virtual void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) = 0;
+            virtual void put(int16_t x, int16_t y, Color color) = 0;
+            virtual void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) = 0;
+            virtual void copy(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) = 0;
+            virtual void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) = 0;
 
 		public:
-			FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation);
+			FrameBuffer(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation);
 			virtual ~FrameBuffer() = default;
 
             void setOrientation(DisplayOrientation orientation);
 
-            inline int getMaxX() const { return _maxX; }
-            inline int getMaxY() const { return _maxY; }
-            inline int getWidth() const { return _frameWidth; }
-            inline int getHeight() const { return _frameHeight; }
-            virtual void *getBuffer() const = 0;
+            inline int16_t getMaxX() const { return _maxX; }
+            inline int16_t getMaxY() const { return _maxY; }
+            inline int16_t getWidth() const { return _frameWidth; }
+            inline int16_t getHeight() const { return _frameHeight; }
+            virtual uint8_t *getBuffer() const = 0;
 
             void clear(Color color);
-            void setPixel(int x, int y, Color color);
-            inline void setHPixels(int x, int y, int size, Color color) { setPixels(x, y, size, 1, color); }
-            inline void setVPixels(int x, int y, int size, Color color) { setPixels(x, y, 1, size, color); }
-            void setPixels(int x, int y, int width, int height, Color color);
-            void setPixels(int x, int y, int width, int height, const Color *colors, int colorPitch);
-            void setPixels(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch);
+            void setPixel(int16_t x, int16_t y, Color color);
+            inline void setHPixels(int16_t x, int16_t y, int16_t size, Color color) { setPixels(x, y, size, 1, color); }
+            inline void setVPixels(int16_t x, int16_t y, int16_t size, Color color) { setPixels(x, y, 1, size, color); }
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color);
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch);
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch);
 	};
 }
 

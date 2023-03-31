@@ -30,40 +30,7 @@ namespace htl {
         DECLARE_I2C_PIN(I2CChannel::_1, I2CPin::SDA, GPIO_B9, GPIOAlt::_6)
         DECLARE_I2C_PIN(I2CChannel::_1, I2CPin::SCL, GPIO_B10, GPIOAlt::_1)
         DECLARE_I2C_PIN(I2CChannel::_1, I2CPin::SDA, GPIO_B11, GPIOAlt::_1)
-    
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_A9, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_A10, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B6, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B7, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B8, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B9, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B10, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_1;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_1, GPIO_B11, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_1;
-		};
-	#endif
+	#endif // HTL_I2C1_EXIST
 
 	#ifdef HTL_I2C2_EXIST
         DECLARE_I2C_PIN(I2CChannel::_2, I2CPin::SCL, GPIO_A11, GPIOAlt::_6)
@@ -72,33 +39,7 @@ namespace htl {
         DECLARE_I2C_PIN(I2CChannel::_2, I2CPin::SDA, GPIO_B11, GPIOAlt::_6)
         DECLARE_I2C_PIN(I2CChannel::_2, I2CPin::SCL, GPIO_B13, GPIOAlt::_6)
         DECLARE_I2C_PIN(I2CChannel::_2, I2CPin::SDA, GPIO_B14, GPIOAlt::_6)
-        
-		template<>
-		struct I2CPinTrait<I2CChannel::_2, GPIO_A11, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-
-		template<>
-		struct I2CPinTrait<I2CChannel::_2, GPIO_A12, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_2, GPIO_B10, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_2, GPIO_B11, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_2, GPIO_B13, I2CPin::SCL> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-		template<>
-		struct I2CPinTrait<I2CChannel::_2, GPIO_B14, I2CPin::SDA> {
-			static constexpr GPIOAlt alt = GPIOAlt::_6;
-		};
-	#endif
+	#endif // HTL_I2C2_EXIST
 }
 
 

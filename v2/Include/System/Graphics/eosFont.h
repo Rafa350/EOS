@@ -75,22 +75,22 @@ namespace eos {
 
         public:
             Font();
-            Font(const String &name, int height, FontStyle style);
+            Font(const char *name, int height, FontStyle style);
             Font(const Font &font);
             ~Font();
 
-            Font& operator = (const Font& font);
-            bool operator == (const Font& font) const;
-            inline bool operator != (const Font& font) const { return !(*this == font); }
+            Font& operator = (const Font &font);
+            bool operator == (const Font &font) const;
+            inline bool operator != (const Font &font) const { return !(*this == font); }
 
-            void getFontInfo(FontInfo& fi) const;
-            void getCharInfo(char ch, CharInfo& ci) const;
+            void getFontInfo(FontInfo &fi) const;
+            void getCharInfo(char ch, CharInfo &ci) const;
             int getFontHeight() const;
             int getFontAscent() const;
             int getFontDescent() const;
             int getCharAdvance(char ch) const;
 
-            static const uint8_t* getFontResource(const String& name, int height, FontStyle style);
+            static const uint8_t* getFontResource(const char *name, int height, FontStyle style);
     };
 }
 

@@ -78,7 +78,7 @@ Font::Font() :
 /// \param    style: Estil.
 ///
 Font::Font(
-	const String& name,
+	const char *name,
 	int height,
 	FontStyle style):
 
@@ -95,7 +95,7 @@ Font::Font(
 /// \param    font: L'altre objecte per copiar.
 ///
 Font::Font(
-	const Font& font):
+	const Font &font):
 
 	_impl(font._impl) {
 
@@ -121,7 +121,7 @@ Font::~Font() {
 /// \return   El punter al bloc.
 ///
 Font::ImplPtr Font::makeImpl(
-	const uint8_t* fontResource) {
+	const uint8_t *fontResource) {
 
 	auto& cache = ImplPtrCache::instance();
 
@@ -279,7 +279,7 @@ int Font::getCharAdvance(
 ///
 extern const FontTableEntry* fontResourceTable;
 const uint8_t* Font::getFontResource(
-	const String& name,
+	const char *name,
 	int height,
 	FontStyle style) {
 
@@ -287,7 +287,7 @@ const uint8_t* Font::getFontResource(
 
 	for (int i = 0; pResource[i].name != nullptr; i++) {
 		const FontTableEntry* pEntry = &pResource[i];
-		if ((name.isEqual(pEntry->name)) &&
+		if ((strcmp(name, pEntry->name) == 0) &&
 			(pEntry->height == height) &&
 			(pEntry->style == style)) {
 

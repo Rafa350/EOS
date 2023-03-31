@@ -45,7 +45,7 @@ bool AsyncSerialDriver::transmit(
 	const uint8_t *data,
 	int dataLength) {
 
-	return transmitImpl(data, dataLength);
+	return isBusy() ? false : transmitImpl(data, dataLength);
 }
 
 
@@ -59,7 +59,7 @@ bool AsyncSerialDriver::receive(
 	uint8_t *data,
 	int dataSize) {
 
-	return receiveImpl(data, dataSize);
+	return isBusy() ? false : receiveImpl(data, dataSize);
 }
 
 

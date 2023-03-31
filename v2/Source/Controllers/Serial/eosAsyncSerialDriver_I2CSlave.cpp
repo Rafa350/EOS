@@ -51,9 +51,6 @@ bool AsyncSerialDriver_I2CSlave::transmitImpl(
 	if ((data == nullptr) || (dataLength == 0))
 		return false;
 
-	else if (isBusy())
-		return false;
-
 	else {
 		notifyTxStart();
 
@@ -83,9 +80,6 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 	int dataSize) {
 
 	if ((data == nullptr) || (dataSize == 0))
-		return false;
-
-	else if (isBusy())
 		return false;
 
 	else {
@@ -131,7 +125,7 @@ void AsyncSerialDriver_I2CSlave::txInterruptHandler() {
 		_hI2C->disableInterrupt(I2CInterrupt::stop);
 		_hI2C->setInterruptFunction(nullptr, nullptr);
 		_hI2C->disable();
-		notifyTxCompleted(_rxCount);
+		notifyTxCompleted(_txCount);
 	}
 
 	// Deteccio de NACK

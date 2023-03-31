@@ -11,31 +11,31 @@ namespace eos {
     ///
 	class Size {
 		private:
-			int _width;
-			int _height;
+			int16_t _width;
+			int16_t _height;
 
 		public:
 			Size();
-			Size(int width, int height);
-			Size(const Size& s);
-			Size(const Size&& s);
+			Size(int16_t width, int16_t height);
+			Size(const Size &s);
+			Size(const Size &&s);
 
 			/// \brief Obte l'amplada.
-			inline int getWidth() const { return _width; }
+			inline int16_t getWidth() const { return _width; }
 
 			/// \brief Obte l'alçada.
-			inline int getHeight() const { return _height; }
+			inline int16_t getHeight() const { return _height; }
 
-			Size inflated(int h, int v) const;
-			Size inflated(int left, int top, int right, int bottom) const;
-			Size constrained(const Size& s) const;
+			Size inflated(int16_t h, int16_t v) const;
+			Size inflated(int16_t left, int16_t top, int16_t right, int16_t bottom) const;
+			Size constrained(const Size &s) const;
 
 			bool isEmpty() const;
 
-			Size& operator = (const Size& s);
+			Size& operator = (const Size &s);
 
-			bool operator == (const Size& s) const;
-            inline bool operator != (const Size& s) const { return !(*this == s); }
+			bool operator == (const Size &s) const;
+            inline bool operator != (const Size &s) const { return !(*this == s); }
 	};
 }
 

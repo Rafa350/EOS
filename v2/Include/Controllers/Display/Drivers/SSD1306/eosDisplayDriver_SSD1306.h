@@ -50,8 +50,8 @@ namespace eos {
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
-			static constexpr int _displayWidth  = DISPLAY_WIDTH;
-			static constexpr int _displayHeight = DISPLAY_HEIGHT;
+			static constexpr int16_t _displayWidth  = DISPLAY_WIDTH;
+			static constexpr int16_t _displayHeight = DISPLAY_HEIGHT;
 
 			#if defined(DISPLAY_INTERFACE_SPI)
 				using PinCS = DISPLAY_CS_GPIO;
@@ -79,18 +79,18 @@ namespace eos {
             void enable() override;
             void disable() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getMaxX() const override { return _frameBuffer->getMaxX(); }
-            int getMaxY() const override { return _frameBuffer->getMaxY(); }
-            int getWidth() const override { return _displayWidth; }
-            int getHeight() const override { return _displayHeight; };
+            int16_t getMaxX() const override { return _frameBuffer->getMaxX(); }
+            int16_t getMaxY() const override { return _frameBuffer->getMaxY(); }
+            int16_t getWidth() const override { return _displayWidth; }
+            int16_t getHeight() const override { return _displayHeight; };
 
             void clear(Color color) override;
-            void setPixel(int x, int y, Color color) override;
-            void setHPixels(int x, int y, int size, Color color) override;
-            void setVPixels(int x, int y, int size, Color color) override;
-            void setPixels(int x, int y, int width, int height, Color color) override;
-            void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
-            void setPixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
+            void setPixel(int16_t x, int16_t y, Color color) override;
+            void setHPixels(int16_t x, int16_t y, int16_t size, Color color) override;
+            void setVPixels(int16_t x, int16_t y, int16_t size, Color color) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t pitch) override;
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const void *pixels, ColorFormat format, int16_t pitch) override;
 
             void refresh() override;
     };

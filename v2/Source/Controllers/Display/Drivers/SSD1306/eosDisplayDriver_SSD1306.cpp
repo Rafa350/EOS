@@ -86,8 +86,8 @@ void DisplayDriver_SSD1306::clear(
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_SSD1306::setPixel(
-    int x,
-    int y,
+    int16_t x,
+    int16_t y,
     Color color) {
 
 	_frameBuffer->setPixel(x, y, color);
@@ -103,9 +103,9 @@ void DisplayDriver_SSD1306::setPixel(
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_SSD1306::setHPixels(
-    int x,
-    int y,
-    int size,
+    int16_t x,
+    int16_t y,
+    int16_t size,
     Color color) {
 
 	_frameBuffer->setPixels(x, y, size, 1, color);
@@ -121,9 +121,9 @@ void DisplayDriver_SSD1306::setHPixels(
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_SSD1306::setVPixels(
-    int x,
-    int y,
-    int size,
+    int16_t x,
+    int16_t y,
+    int16_t size,
     Color color) {
 
 	_frameBuffer->setPixels(x, y, 1, size, color);
@@ -139,10 +139,10 @@ void DisplayDriver_SSD1306::setVPixels(
 /// \param    color: Color.
 ///
 void DisplayDriver_SSD1306::setPixels(
-    int x,
-    int y,
-    int width,
-    int height,
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
     Color color) {
 
 	_frameBuffer->setPixels(x, y, width, height, color);
@@ -159,12 +159,12 @@ void DisplayDriver_SSD1306::setPixels(
 /// \param    pitch: Pitch dels colors.
 ///
 void DisplayDriver_SSD1306::setPixels(
-    int x,
-    int y,
-    int width,
-    int height,
-    const Color* color,
-	int pitch) {
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
+    const Color *color,
+	int16_t pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, color, pitch);
 }
@@ -181,13 +181,13 @@ void DisplayDriver_SSD1306::setPixels(
 /// \param    pitch: Pitch dels colors.
 ///
 void DisplayDriver_SSD1306::setPixels(
-    int x,
-    int y,
-    int width,
-    int height,
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
     const void *pixels,
     ColorFormat format,
-    int pitch) {
+    int16_t pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
 }
@@ -198,10 +198,10 @@ void DisplayDriver_SSD1306::setPixels(
 ///
 void DisplayDriver_SSD1306::refresh() {
 
-    constexpr int pages = _displayHeight / 8;
+    constexpr int16_t pages = _displayHeight / 8;
 	const uint8_t *buffer = reinterpret_cast<const uint8_t*>(_frameBuffer->getBuffer());
 
-    for (int page = 0; page < pages; page++) {
+    for (int16_t page = 0; page < pages; page++) {
 
     	writeCommand(0xB0 + page); // Set the current page.
         writeCommand(0x00);        // Set first column (LO nibble)

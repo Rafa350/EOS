@@ -19,18 +19,18 @@ void Graphics::paintRoundedRectangle(
 	const Pen &pen,
 	const Brush &brush,
 	const Rect &box,
-	int rx,
-	int ry) const {
+	int16_t rx,
+	int16_t ry) const {
 
 	bool penVisible = !pen.isNull();
 	bool brushVisible = !brush.isNull();
 
 	if (penVisible || brushVisible) {
 
-		int x1 = box.getMinX();
-		int y1 = box.getMinY();
-		int x2 = box.getMaxX();
-		int y2 = box.getMaxY();
+		int16_t x1 = box.getMinX();
+		int16_t y1 = box.getMinY();
+		int16_t x2 = box.getMaxX();
+		int16_t y2 = box.getMaxY();
 
 		if (brushVisible) {
 			Color color = brush.getColor();
@@ -56,12 +56,12 @@ void Graphics::paintRoundedRectangle(
 /// \param    color: Color.
 ///
 void Graphics::drawRoundedRectangle(
-	int x1,
-	int y1,
-	int x2,
-	int y2,
-	int rx,
-	int ry,
+	int16_t x1,
+	int16_t y1,
+	int16_t x2,
+	int16_t y2,
+	int16_t rx,
+	int16_t ry,
 	Color color) const {
 
 	if ((rx == 0) || (ry == 0))
@@ -83,17 +83,17 @@ void Graphics::drawRoundedRectangle(
 
 		// Precalcula els factors constants
 		//
-		int aa = 2 * rx * rx;
-		int bb = 2 * ry * ry;
-		int xc1 = x1 + rx;
-		int xc2 = x2 - rx;
-		int yc1 = y1 + ry;
-		int yc2 = y2 - ry;
+		int16_t aa = 2 * rx * rx;
+		int16_t bb = 2 * ry * ry;
+		int16_t xc1 = x1 + rx;
+		int16_t xc2 = x2 - rx;
+		int16_t yc1 = y1 + ry;
+		int16_t yc2 = y2 - ry;
 
-		int x, y, error;
-		int changeX, changeY;
-		int stoppingX, stoppingY;
-		int xx1, xx2, yy1, yy2;
+		int16_t x, y, error;
+		int16_t changeX, changeY;
+		int16_t stoppingX, stoppingY;
+		int16_t xx1, xx2, yy1, yy2;
 
 		// Dibuixa el primer grup de punts
 		//
@@ -222,12 +222,12 @@ void Graphics::drawRoundedRectangle(
 /// \param    ry: Radi y de les cantonades.
 ///
 void Graphics::fillRoundedRectangle(
-	int x1,
-	int y1,
-	int x2,
-	int y2,
-	int rx,
-	int ry,
+	int16_t x1,
+	int16_t y1,
+	int16_t x2,
+	int16_t y2,
+	int16_t rx,
+	int16_t ry,
 	Color color) const {
 
 	if ((rx == 0) || (ry == 0))
@@ -249,17 +249,17 @@ void Graphics::fillRoundedRectangle(
 
 		// Precalcula els factors constants
 		//
-		int aa = 2 * rx * rx;
-		int bb = 2 * ry * ry;
-		int xc1 = x1 + rx;
-		int xc2 = x2 - rx;
-		int yc1 = y1 + ry;
-		int yc2 = y2 - ry;
+		int16_t aa = 2 * rx * rx;
+		int16_t bb = 2 * ry * ry;
+		int16_t xc1 = x1 + rx;
+		int16_t xc2 = x2 - rx;
+		int16_t yc1 = y1 + ry;
+		int16_t yc2 = y2 - ry;
 
-		int x, y, error;
-		int changeX, changeY;
-		int stoppingX, stoppingY;
-		int xx1, yy1, xx2, yy2;
+		int16_t x, y, error;
+		int16_t changeX, changeY;
+		int16_t stoppingX, stoppingY;
+		int16_t xx1, yy1, xx2, yy2;
 
 		// Dibuixa el primer grup de linies
 		//

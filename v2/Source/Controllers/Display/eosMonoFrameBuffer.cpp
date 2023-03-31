@@ -14,11 +14,11 @@ using namespace eos;
 /// \param    buffer: El buffer de memoria.
 ///
 MonoFrameBuffer::MonoFrameBuffer(
-	int frameWidth,
-	int frameHeight,
-	int framePitch,
+	int16_t frameWidth,
+	int16_t frameHeight,
+	int16_t framePitch,
 	DisplayOrientation orientation,
-	void *buffer):
+	uint8_t *buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
 	_buffer(reinterpret_cast<uint8_t*>(buffer)),
@@ -33,8 +33,8 @@ MonoFrameBuffer::MonoFrameBuffer(
 /// \param    color: Color del pixel.
 ///
 void MonoFrameBuffer::put(
-	int x,
-	int y,
+	int16_t x,
+	int16_t y,
 	Color color) {
 
 	uint8_t *page = &_buffer[(y >> 3) * getWidth()];
@@ -46,36 +46,36 @@ void MonoFrameBuffer::put(
 
 
 void MonoFrameBuffer::fill(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	Color color) {
 
-	for (int yy = y; yy < y + height; yy++)
-		for (int xx = x; xx < x + width; xx++)
+	for (int16_t yy = y; yy < y + height; yy++)
+		for (int16_t xx = x; xx < x + width; xx++)
 			put(xx, yy, color);
 
 }
 
 
 void MonoFrameBuffer::copy(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const Color *colors,
-	int colorPitch) {
+	int16_t colorPitch) {
 
 }
 
 void MonoFrameBuffer::copy(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	const void *color,
 	ColorFormat colorFormat,
-	int colorPitch) {
+	int16_t colorPitch) {
 
 }

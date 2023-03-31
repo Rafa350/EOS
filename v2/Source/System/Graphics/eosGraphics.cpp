@@ -86,10 +86,10 @@ void Graphics::pop() {
 void Graphics::clear(
     Color color) const {
 
-	int x1 = 0;
-	int y1 = 0;
-	int x2 = _driver->getMaxX();
-	int y2 = _driver->getMaxY();
+	int16_t x1 = 0;
+	int16_t y1 = 0;
+	int16_t x2 = _driver->getMaxX();
+	int16_t y2 = _driver->getMaxY();
 
     if (clipRectangle(x1, y1, x2, y2))
         _driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
@@ -103,8 +103,8 @@ void Graphics::clear(
 /// \param    color: Colcor
 ///
 void Graphics::drawPoint(
-    int x,
-    int y,
+    int16_t x,
+    int16_t y,
 	Color color) const {
 
 	// Transforma a coordinades fisiques
@@ -122,8 +122,8 @@ void Graphics::drawPoint(
 /// \param    y: Coordinada Y del punt.
 ///
 void Graphics::transform(
-	int& x,
-	int& y) const {
+	int16_t &x,
+	int16_t &y) const {
 
 	_state.ct.apply(x, y);
 }
