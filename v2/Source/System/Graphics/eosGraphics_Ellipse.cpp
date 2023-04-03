@@ -8,6 +8,40 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Dibuixa una el·lipse.
+/// \param    pen: El pen.
+/// \param    brush: El brush.
+/// \param    rect: El rectangle que conte l'el·lipse.
+///
+void Graphics::paintEllipse(
+	const Pen &pen,
+	const Brush &brush,
+	const Rect &box) const {
+
+	bool penVisible = !pen.isNull();
+	bool brushVisible = !brush.isNull();
+
+	if (penVisible || brushVisible) {
+
+		int16_t x1 = box.getMinX();
+		int16_t y1 = box.getMinY();
+		int16_t x2 = box.getMaxX();
+		int16_t y2 = box.getMaxY();
+
+		if (brushVisible) {
+			Color color = brush.getColor();
+			fillEllipse(x1, y1, x2, y2, color);
+		}
+
+		if (penVisible) {
+			Color color = pen.getColor();
+			drawEllipse(x1, y1, x2, y2, color);
+		}
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Dibuixa una el·lipse buida inscrita en un rectangle.
 /// \param    x1: Coordinada X del primer punt.
 /// \param    y1: Coordinada Y del primer punt.

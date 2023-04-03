@@ -7,7 +7,6 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
-#include "System/Collections/eosStdHeapAllocator.h"
 
 // Std includes
 //
@@ -17,24 +16,22 @@
 
 namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
-    namespace System {
-        namespace Collections {
+    namespace system {
+        namespace collections {
 #endif            
-
-            template <typename Element_, int initialCapacity_ = 10, bool fixedCapacity_ = false>
+            template <typename Element_, unsigned initialCapacity_ = 10, bool fixedCapacity_ = false>
             class Vector {
             	private:
-            		using Allocator = StdHeapAllocator<Element_>;
-            		using Container = std::vector<Element_, Allocator>;
+            		using Container = std::vector<Element_>;
 
             	public:
-                    typedef typename Container::value_type Value;
-                    typedef typename Container::reference Reference;
-                    typedef typename Container::const_reference CReference;
-                    typedef typename Container::pointer Pointer;
-                    typedef typename Container::const_pointer CPointer;
-                    typedef typename Container::iterator Iterator;
-                    typedef typename Container::const_iterator CIterator;
+                    using Value = typename Container::value_type;
+                    using Reference = typename Container::reference;
+                    using CReference = typename Container::const_reference;
+                    using Pointer = typename Container::pointer;
+                    using CPointer = typename Container::const_pointer;
+                    using Iterator = typename Container::iterator;
+                    using CIterator = typename Container::const_iterator;
 
             	private:
             		Container _c;
@@ -50,7 +47,7 @@ namespace eos {
 
                     /// \brief Constructor copia
                     ///
-                    Vector(const Vector& other) = delete;
+                    Vector(const Vector &other) = delete;
 
                     /// \brief Inserta un element al final
                     /// \param element: L'element a inserter.
@@ -69,24 +66,28 @@ namespace eos {
                     /// \brief Extreu un element del final.
                     ///
                     inline void popBack() {
-                    	_c.pop_back();
+                    	eosAssert(_c.size > 0);
+                  		_c.pop_back();
                     }
 
                     /// \brief Extreu un element del principi.
                     ///
                     inline void popFront() {
+                    	eosAssert(_c.size > 0);
                     	_c.remove(_c.begin());
                     }
 
                     /// \brief Obte el element del principi.
                     ///
                     inline Reference peekFront() {
+            			eosAssert(_c.size() > 0);
                         return _c.front();
                     }
 
                     /// \brief Obte el element del principi.
                     ///
                     inline CReference peekFront() const {
+            			eosAssert(_c.size() > 0);
                         return _c.front();
                     }
 
@@ -94,6 +95,7 @@ namespace eos {
                     /// \return Una referencia a l'element.
                     //
                     inline Reference peekBack() {
+            			eosAssert(_c.size() > 0);
                         return _c.back();
                     }
 
@@ -101,6 +103,7 @@ namespace eos {
                     /// \return Una referencia a l'element.
                     ///
                     inline CReference peekBack() const {
+            			eosAssert(_c.size() > 0);
                         return _c.back();
                     }
 
@@ -108,7 +111,8 @@ namespace eos {
                     /// \param index: Posicio de l'element.
                     /// \return Una referenciua a l'element.
                     ///
-                    inline Reference getAt(int index) {
+                    inline Reference getAt(unsigned index) {
+            			eosAssert(index < _c.size());
                         return _c.at(index);
                     }
 
@@ -116,7 +120,8 @@ namespace eos {
                     /// \param index: Posicio de l'element.
                     /// \return Una referencia a l'element.
                     ///
-                    inline CReference getAt(int index) const {
+                    inline CReference getAt(unsigned index) const {
+            			eosAssert(index < _c.size());
                         return _c.at(index);
                     }
 
@@ -125,7 +130,7 @@ namespace eos {
                     /// \param index: La posicio on insertar l'element.
                     /// \return True si tot es correcte. False en cas contrari.
                     ///
-                    bool insertAt(int index, CReference element) {
+                    bool insertAt(unsigned index, CReference element) {
                     	_c.insert(_c.begin() + index, element);
                     	return true;
                     }
@@ -143,7 +148,7 @@ namespace eos {
                     /// \param index: Index del element a eliminar.
                     /// \return True si tot es correcte. False en cas contrari.
                     ///
-                    bool removeAt(int index) {
+                    bool removeAt(unsigned index) {
                     	_c.erase(_c.begin() + index);
                     	return true;
                     }
@@ -170,7 +175,7 @@ namespace eos {
                     /// \param offset: Index del primer element a copiar.
                     /// \param length: Numero d'elements a copiar.
                     ///
-                    void copyTo(Pointer dst, int offset, int length) const {
+                    void copyTo(Pointer dst, unsigned offset, unsigned length) const {
                     	std::copy(_c.begin() + offset, _c.begin() + offset + length, dst);
                     }
 
@@ -220,14 +225,14 @@ namespace eos {
                     /// \brief Obte el tamany
                     /// \return El tamamy.
                     ///
-                    inline int getSize() const {
+                    inline unsigned getSize() const {
                     	return _c.size();
                     }
 
                     /// \brief Obte la capacitat actual.
                     /// \return La capacitat.
                     ///
-                    inline int getCapacity() const {
+                    inline unsigned getCapacity() const {
                     	return _c.capacity();
                     }
 
@@ -259,7 +264,7 @@ namespace eos {
                     /// \param index: La posicio.
                     /// \return L'element en la posicio indicada.
                     ///
-                    inline CReference operator [] (int index) const {
+                    inline CReference operator [] (unsigned index) const {
                         return _c[index];
                     }
 
@@ -267,10 +272,11 @@ namespace eos {
                     /// \param index: La posicio.
                     /// \return L'element en la posicio indicada.
                     ///
-                    inline Reference operator [] (int index) {
+                    inline Reference operator [] (unsigned index) {
                         return _c[index];
                     }
             };
+
 
 #ifdef EOS_USE_FULL_NAMESPACE            
         }

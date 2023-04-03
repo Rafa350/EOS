@@ -13,8 +13,8 @@ namespace eos {
     ///
     class MemoryPoolAllocator {
         private:
-            uint8_t* _blocks;
-            uint8_t* _nextBlock;
+            uint8_t *_blocks;
+            uint8_t *_nextBlock;
             int _blockSize;
             int _maxBlocks;
             int _freeBlocks;
@@ -91,15 +91,15 @@ namespace eos {
 
         		eosAssert(size == sizeof(T_));
 
-        		auto& allocator = Allocator::instance();
+        		auto &allocator = Allocator::instance();
         		return allocator.allocate();
         	}
 
-        	void operator delete(void* p) {
+        	void operator delete(void *p) {
 
         		eosAssert(p != nullptr);
 
-        		auto& allocator = Allocator::instance();
+        		auto &allocator = Allocator::instance();
         		allocator.deallocate(static_cast<T_*>(p));
         	}
     };

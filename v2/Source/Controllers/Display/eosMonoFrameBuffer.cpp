@@ -39,9 +39,9 @@ void MonoFrameBuffer::put(
 
 	uint8_t *page = &_buffer[(y >> 3) * getWidth()];
 	if (color.getL() > 127)
-		page[x] |= 1 << (y & 7);
+		page[x] |= 1 << (y & 7);    // L>127 -> Color blanc
 	else
-		page[x] &= ~(1 << (y & 7));
+		page[x] &= ~(1 << (y & 7)); // L<128 -> Color negre
 }
 
 

@@ -9,29 +9,29 @@
 
 namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
-   	namespace System {
-       	namespace Collections {
+   	namespace system {
+       	namespace collections {
 #endif
 
        		/// \brief Standard allocator for standard containers in heap.
 			///
-			template <typename T>
+			template <typename T_>
 			class StdHeapAllocator {
 				public:
-					typedef T value_type;
+					typedef T_ value_type;
 
 				public:
 					StdHeapAllocator () = default;
 
-					template <class U>
-					constexpr StdHeapAllocator(const StdHeapAllocator <U>&) {
+					template <class U_>
+					constexpr StdHeapAllocator(const StdHeapAllocator<U_> &) {
 					}
 
-					T* allocate(size_t n) {
-						return static_cast<T*>(alloc(n * sizeof(T)));
+					T_* allocate(size_t n) {
+						return static_cast<T_*>(alloc(n * sizeof(T_)));
 					}
 
-					void deallocate(T* p, size_t n) {
+					void deallocate(T_ *p, size_t n) {
 						free(p);
 					}
 
@@ -47,13 +47,13 @@ namespace eos {
 					}
 			};
 
-			template <typename T, typename U>
-			bool operator == (const StdHeapAllocator <T>&, const StdHeapAllocator <U>&) {
+			template <typename T_, typename U_>
+			bool operator == (const StdHeapAllocator<T_>&, const StdHeapAllocator<U_>&) {
 				return true;
 			}
 
-			template <typename T, typename U>
-			bool operator != (const StdHeapAllocator <T>&, const StdHeapAllocator <U>&) {
+			template <typename T_, typename U_>
+			bool operator != (const StdHeapAllocator<T_>&, const StdHeapAllocator<U_>&) {
 				return false;
 			}
 

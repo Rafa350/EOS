@@ -39,7 +39,7 @@ Size::Size(
 /// \param    s: L'objecte a copiar.
 ///
 Size::Size(
-	const Size& s):
+	const Size &s):
 
 	_width(s._width),
 	_height(s._height) {
@@ -51,7 +51,7 @@ Size::Size(
 /// \param    s: L'objecte a copiar.
 ///
 Size::Size(
-	const Size&& s):
+	const Size &&s):
 
 	_width(s._width),
 	_height(s._height) {

@@ -13,8 +13,8 @@ using namespace eos;
 /// \param    text: El text.
 ///
 void Graphics::paintText(
-	const Point& position,
-	const Text& text) const {
+	const Point &position,
+	const Text &text) const {
 
 	text.draw(this, position);
 }

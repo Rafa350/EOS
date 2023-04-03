@@ -5,21 +5,13 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosPointers.h"
-#include "System/eosSingleton.h"
-#include "System/Collections/eosVector.h"
 #include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosBrush.h"
-
-
-#ifndef eosGraphics_MaxPens
-	#define eosGraphics_MaxPens 10
-#endif
 
 
 namespace eos {
 
 	enum class PenStyle {
+		null,
 		solid
 	};
 
@@ -31,33 +23,26 @@ namespace eos {
 
 	};
 
-	class Pen {
+	class Pen final {
 		private:
-			struct Impl;
-			typedef SharedPtr<Impl> ImplPtr;
-			typedef Singleton<Vector<ImplPtr, eosGraphics_MaxPens, true>> ImplPtrCache;
-
-		private:
-			ImplPtr _impl;
-
-		private:
-			ImplPtr makeImpl(PenStyle style, Color color, int thickness);
+			PenStyle _style;
+			Color _color;
+			int16_t _thickness;
 
 		public:
 			Pen();
 			Pen(PenStyle style, Color color, int thickness);
-			Pen(const Pen& pen);
-			~Pen();
+			Pen(const Pen &pen);
 
-			Pen& operator = (const Pen& pen);
-			bool operator == (const Pen& pen) const;
-			inline bool operator != (const Pen& pen) const { return !(*this == pen); }
+			Pen& operator = (const Pen &pen);
+			bool operator == (const Pen &pen) const;
+			inline bool operator != (const Pen &pen) const { return !(*this == pen); }
 
-			Color getColor() const;
-			int getThickness() const;
-			PenStyle getStyle() const;
+			inline Color getColor() const { return _color; }
+			inline int16_t getThickness() const { return _thickness; }
+			inline PenStyle getStyle() const { return _style; }
 
-			bool isNull() const;
+			inline bool isNull() const { return _color.isTransparent(); }
 	};
 }
 

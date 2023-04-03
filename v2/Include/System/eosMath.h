@@ -8,23 +8,28 @@
 #include "eos.h"
 
 
+// Std includes
+//
+#include <cmath>
+
+
 namespace eos {
 
     namespace Math {
 
 		template <typename T_>
 		inline T_ min(T_ a, T_ b) {
-			return a < b ? a : b;
+			return std::min(a, b);
 		}
 
 		template <typename T_>
 		inline T_ max(T_ a, T_ b) {
-			return a > b ? a : b;
+			return std::max(a, b);
 		}
 
 		template <typename T_>
 		inline T_ abs(T_ a) {
-			return a < 0 ? -a : a;
+			return std::abs(a);
 		}
 
 		inline int32_t abs(int32_t val) {

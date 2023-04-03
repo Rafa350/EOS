@@ -29,7 +29,7 @@ namespace eos {
 
 		public:
 			ColorFrameBuffer_DMA2D(int16_t width, int16_t height, int16_t pitch, DisplayOrientation orientation, void *buffer);
-            void *getBuffer() const override;
+            uint8_t *getBuffer() const override;
 	};
 }
 

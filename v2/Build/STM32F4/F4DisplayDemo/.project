@@ -709,6 +709,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBitmap.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosBrush.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBrush.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
@@ -732,6 +737,11 @@
 			<name>inc/Framework/EOS/System/Graphics/eosGraphics.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosGraphics.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosPen.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosPen.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosPoint.h</name>

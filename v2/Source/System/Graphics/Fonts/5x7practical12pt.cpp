@@ -12,6 +12,9 @@
  ************************************************************************/
 
 
+#include "eos.h"
+
+
 #ifdef FONT_USE_5x7practical12pt
 
 
@@ -301,7 +304,7 @@ static const unsigned char font[] = {
 /* 0563 */    0xF8, 0x10, 0x20, 0x40, 0xF8, 
 };
 
-const unsigned char *font5x7practical12pt = &font;
+const unsigned char *font5x7practical12pt = font;
 
 
 #endif

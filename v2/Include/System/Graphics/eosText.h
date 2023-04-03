@@ -38,8 +38,8 @@ namespace eos {
 
 		public:
 			Text();
-			Text(const Font& font, TextAlign align);
-			Text(const Font& font, TextAlign align, const char *text);
+			Text(const Font &font, TextAlign align);
+			Text(const Font &font, TextAlign align, const char *text);
 
 			void setText(const char *text);
 			void setFont(const Font &font);

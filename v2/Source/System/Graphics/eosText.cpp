@@ -55,7 +55,7 @@ Text::Text(
 /// \param    text: El text.
 ///
 Text::Text(
-	const Font& font,
+	const Font &font,
 	TextAlign align,
 	const char *text):
 
@@ -78,6 +78,16 @@ void Text::setText(
 
 	if (_text != text) {
 		_text = text;
+		recalcBounds();
+	}
+}
+
+
+void Text::setFont(
+	const Font &font) {
+
+	if (_font != font) {
+		_font = font;
 		recalcBounds();
 	}
 }
@@ -124,23 +134,24 @@ void Text::setForeground(
 ///
 void Text::recalcBounds() {
 
-	const char* p = _text;
-	int i = strlen(p);
-
 	_width = 0;
 	_height = 0;
 
-	while(i > 1) {
-		_width += _font.getCharAdvance(*p++);
-		i--;
-	}
+	const char *p = _text;
+	if (p != nullptr) {
+		int i = strlen(p);
+		while(i > 1) {
+			_width += _font.getCharAdvance(*p++);
+			i--;
+		}
 
-	if (i > 0) {
-		CharInfo ci;
-		_font.getCharInfo(*p, ci);
-		_width += ci.left + ci.width;
+		if (i > 0) {
+			CharInfo ci;
+			_font.getCharInfo(*p, ci);
+			_width += ci.left + ci.width;
 
-		_height = _font.getFontHeight();
+			_height = _font.getFontHeight();
+		}
 	}
 }
 
@@ -159,14 +170,13 @@ void Text::draw(
 
 	if (l > 0) {
 
-		Color bkColor = _background.getColor();
-		Color fgColor = _foreground.getColor();
-
 		int x = position.getX();
 		int y = position.getY();
 
+		Color bkColor = _background.getColor();
 		graphics->drawRectangle(x, y, x + _width - 1, y + _height - 1, bkColor);
 
+		Color fgColor = _foreground.getColor();
 		y += _font.getFontAscent();
 		while (l > 0) {
 

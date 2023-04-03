@@ -8,7 +8,7 @@
 #include "eos.h"
 #include "System/eosApplicationBase.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosSingleLinkedList.h"
+#include "System/Collections/eosList.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosTimer.h"
 
@@ -28,7 +28,7 @@ namespace eos {
     			const char *name;
     			Task *task;
     		};
-    		typedef SingleLinkedList<ServiceInfo*> ServiceInfoList;
+    		typedef List<ServiceInfo*> ServiceInfoList;
             typedef CallbackP1<RTOSApplication, const Task::EventArgs&> TaskEventCallback;
 #if Eos_ApplicationTickEnabled
             typedef CallbackP1<RTOSApplication, const Timer::EventArgs&> TimerEventCallback;

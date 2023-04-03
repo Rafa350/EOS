@@ -18,14 +18,14 @@ using namespace eos;
 /// \param    color: Color.
 ///
 void Graphics::drawCircle(
-    int x,
-    int y,
-    int r,
+    int16_t x,
+    int16_t y,
+    int16_t r,
 	Color color) const {
 
-    int xx = r;
-    int yy = 0;
-    int d = 1 - xx;
+    int16_t xx = r;
+    int16_t yy = 0;
+    int16_t d = 1 - xx;
 
     while (yy <= xx) {
         drawPoint(x + xx, y + yy, color);
@@ -56,14 +56,14 @@ void Graphics::drawCircle(
 /// \param    color: COlor.
 ///
 void Graphics::fillCircle(
-    int cx,
-    int cy,
-    int r,
+    int16_t cx,
+    int16_t cy,
+    int16_t r,
 	Color color) const {
 
-    int x = r;
-    int y = 0;
-    int d = 1 - x;
+    int16_t x = r;
+    int16_t y = 0;
+    int16_t d = 1 - x;
 
     while (y <= x) {
 

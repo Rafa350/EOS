@@ -1,7 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosString.h"
-#include "System/Core/eosPoolAllocator.h"
 #include "System/Graphics/eosFont.h"
 
 
@@ -21,53 +19,11 @@ using namespace eos;
 #define FR_CHAR_ADVANCE 4
 
 
-#ifdef EOS_DEBUG
-static int __allocatedFontCount = 0;
-static int __allocatedFontImplCount = 0;
-#endif
-
-
-class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
-	private:
-    	const uint8_t* _fontResource;
-
-	public:
-    	Impl(const uint8_t* fontResource):
-    		_fontResource(fontResource) {
-#ifdef EOS_DEBUG
-			__allocatedFontImplCount++;
-#endif
-    	}
-
-    	~Impl() {
-#ifdef EOS_DEBUG
-			__allocatedFontImplCount--;
-#endif
-    	}
-
-    	bool operator == (const Impl& other) const {
-    		return _fontResource == other._fontResource;
-    	}
-
-    	inline bool operator != (const Impl& other) const {
-    		return !(*this == other);
-    	}
-
-    	inline const uint8_t* getFontResource() const {
-    		return _fontResource;
-    	}
-};
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor. Crea el font per defecte.
 ///
 Font::Font() :
-	_impl(makeImpl(getFontResource(eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle))) {
-
-#ifdef EOS_DEBUG
-	__allocatedFontCount++;
-#endif
+	_fontResource(getFontResource(eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle)) {
 }
 
 
@@ -82,11 +38,8 @@ Font::Font(
 	int height,
 	FontStyle style):
 
-	_impl(makeImpl(getFontResource(name, height, style))) {
+	_fontResource(getFontResource(name, height, style)) {
 
-#ifdef EOS_DEBUG
-	__allocatedFontCount++;
-#endif
 }
 
 
@@ -97,47 +50,8 @@ Font::Font(
 Font::Font(
 	const Font &font):
 
-	_impl(font._impl) {
+	_fontResource(font._fontResource) {
 
-#ifdef EOS_DEBUG
-	__allocatedFontCount++;
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Destructor
-///
-Font::~Font() {
-
-#ifdef EOS_DEBUG
-	__allocatedFontCount--;
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Crea el bloc de memoria de Impl
-/// \return   El punter al bloc.
-///
-Font::ImplPtr Font::makeImpl(
-	const uint8_t *fontResource) {
-
-	auto& cache = ImplPtrCache::instance();
-
-	eosAssert(fontResource != nullptr);
-
-	// Si ja esta en el cache, el reutilitza.
-	//
-	for (auto it = cache.begin(); it != cache.end(); it++) {
-		ImplPtr impl = *it;
-		if (impl->getFontResource() == fontResource)
-			return impl;
-	}
-
-	ImplPtr impl(new Font::Impl(fontResource));
-	cache.pushBack(impl);
-	return impl;
 }
 
 
@@ -147,9 +61,9 @@ Font::ImplPtr Font::makeImpl(
 /// \return   El propi objecte.
 ///
 Font& Font::operator = (
-	const Font& font) {
+	const Font &font) {
 
-	_impl = font._impl;
+	_fontResource = font._fontResource;
 
 	return *this;
 }
@@ -163,7 +77,7 @@ Font& Font::operator = (
 bool Font::operator == (
 	const Font& font) const {
 
-	return *_impl == *font._impl;
+	return _fontResource == font._fontResource;
 }
 
 
@@ -173,7 +87,7 @@ bool Font::operator == (
 ///
 int Font::getFontHeight() const {
 
-	const uint8_t* fr = _impl->getFontResource();
+	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_HEIGHT];
 }
 
@@ -184,7 +98,7 @@ int Font::getFontHeight() const {
 ///
 int Font::getFontAscent() const {
 
-	const uint8_t* fr = _impl->getFontResource();
+	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_ASCENT];
 }
 
@@ -195,7 +109,7 @@ int Font::getFontAscent() const {
 ///
 int Font::getFontDescent() const {
 
-	const uint8_t* fr = _impl->getFontResource();
+	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_DESCENT];
 }
 
@@ -205,9 +119,9 @@ int Font::getFontDescent() const {
 /// \param fi: Destinacio de la informacio.
 ///
 void Font::getFontInfo(
-    FontInfo& fi) const {
+    FontInfo &fi) const {
 
-	const uint8_t* fr = _impl->getFontResource();
+	const uint8_t *fr = _fontResource;
 
 	fi.height = fr[FR_FONT_HEIGHT];
     fi.ascent = fr[FR_FONT_ASCENT];
@@ -226,7 +140,7 @@ void Font::getCharInfo(
     char ch,
     CharInfo &ci) const {
 
-    const uint8_t* fr = _impl->getFontResource();
+    const uint8_t *fr = _fontResource;
 
     if ((ch >= fr[FR_FONT_FIRST]) && (ch <= fr[FR_FONT_LAST])) {
         int offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
@@ -259,7 +173,7 @@ void Font::getCharInfo(
 int Font::getCharAdvance(
     char ch) const {
 
-	const uint8_t* fr = _impl->getFontResource();
+	const uint8_t *fr = _fontResource;
 
     if ((ch >= fr[FR_FONT_FIRST]) && (ch <= fr[FR_FONT_LAST])) {
 		int offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
@@ -277,16 +191,16 @@ int Font::getCharAdvance(
 /// \param height: Alçada del font.
 /// \param style: Estil del font.
 ///
-extern const FontTableEntry* fontResourceTable;
+extern const FontTableEntry *fontResourceTable;
 const uint8_t* Font::getFontResource(
 	const char *name,
 	int height,
 	FontStyle style) {
 
-	const FontTableEntry* pResource = fontResourceTable;
+	const FontTableEntry *pResource = fontResourceTable;
 
 	for (int i = 0; pResource[i].name != nullptr; i++) {
-		const FontTableEntry* pEntry = &pResource[i];
+		const FontTableEntry *pEntry = &pResource[i];
 		if ((strcmp(name, pEntry->name) == 0) &&
 			(pEntry->height == height) &&
 			(pEntry->style == style)) {

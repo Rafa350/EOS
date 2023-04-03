@@ -24,7 +24,7 @@ void* operator new(
 /// \param    p: Punter al bloc de memoria a alliberar.
 ///
 void operator delete(
-    void* p) {
+    void *p) {
 
     eosAssert(p != nullptr);
 

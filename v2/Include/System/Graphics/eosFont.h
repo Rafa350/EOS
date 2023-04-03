@@ -5,14 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosPointers.h"
-#include "System/eosSingleton.h"
-#include "System/Collections/eosVector.h"
 
-
-#ifndef eosGraphics_MaxFonts
-	#define eosGraphics_MaxFonts 10
-#endif
 
 #ifndef eosGraphics_DefFontName
 	#define eosGraphics_DefFontName "Tahoma"
@@ -36,10 +29,10 @@ namespace eos {
     };
 
     struct FontTableEntry {       // Entrada de la taula de fonts
-        const char* name;         // -Nom del font
+        const char *name;         // -Nom del font
         int16_t height;           // -Alçada
         FontStyle style;          // -Estil
-        const uint8_t* resource;  // -Taula d'informacio del font
+        const uint8_t *resource;  // -Taula d'informacio del font
     };
 
     struct FontInfo {             // Informacio del font
@@ -56,28 +49,17 @@ namespace eos {
         int16_t left;             // -Offset horitzontal del bitmap
         int16_t top;              // -Offset vertical del bitmap
         int16_t advance;          // -Offset fins al origen del seguent bitmap
-        const uint8_t* bitmap;    // -Punter al primer byte del caracter
+        const uint8_t *bitmap;    // -Punter al primer byte del caracter
     };
-
-    class String;
 
     class Font {
     	private:
-    		struct Impl;
-    		typedef SharedPtr<Impl> ImplPtr;
-			typedef Singleton<Vector<ImplPtr, eosGraphics_MaxFonts, true>> ImplPtrCache;
-
-    	private:
-    		ImplPtr _impl;
-
-        private:
-            ImplPtr makeImpl(const uint8_t *fontResource);
+    		const uint8_t *_fontResource;
 
         public:
             Font();
             Font(const char *name, int height, FontStyle style);
             Font(const Font &font);
-            ~Font();
 
             Font& operator = (const Font &font);
             bool operator == (const Font &font) const;

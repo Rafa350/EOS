@@ -31,22 +31,22 @@ void Graphics::paintRectangle(
 		int16_t y2 = box.getMaxY();
 
 		if (brushVisible) {
-			Color c = brush.getColor();
-			fillRectangle(x1, y1, x2, y2, c);
+			Color color = brush.getColor();
+			fillRectangle(x1, y1, x2, y2, color);
 		}
 
 		if (penVisible) {
-			Color c = pen.getColor();
-			int16_t t = pen.getThickness();
-			if (t < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
-				if (t > 1) {
-					fillRectangle(x1, y1, x2, y1 + t, c);
-					fillRectangle(x1, y2 - t, x2, y2, c);
-					fillRectangle(x1, y1 + t, x1 + t, y2 - t, c);
-					fillRectangle(x2 - t, y1 + t, x2, y2 - t, c);
+			Color color = pen.getColor();
+			int16_t thickness = pen.getThickness();
+			if (thickness < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
+				if (thickness > 1) {
+					fillRectangle(x1, y1, x2, y1 + thickness, color);
+					fillRectangle(x1, y2 - thickness, x2, y2, color);
+					fillRectangle(x1, y1 + thickness, x1 + thickness, y2 - thickness, color);
+					fillRectangle(x2 - thickness, y1 + thickness, x2, y2 - thickness, color);
 				}
 				else
-					drawRectangle(x1, y1, x2, y2, c);
+					drawRectangle(x1, y1, x2, y2, color);
 			}
 		}
 	}

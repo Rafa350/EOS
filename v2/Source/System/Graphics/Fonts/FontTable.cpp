@@ -39,6 +39,12 @@ extern const unsigned char *fontTahoma10pt;
 #ifdef FONT_USE_Tahoma12pt
 extern const unsigned char *fontTahoma12pt;
 #endif
+#ifdef FONT_USE_5x7practical12pt
+extern const unsigned char *font5x7practical12pt;
+#endif
+#ifdef FONT_USE_MicrosoftSansSerif18pt
+extern const unsigned char *fontMicrosoftSansSerif18pt;
+#endif
 
 
 static const FontTableEntry fonts[] = {
@@ -88,6 +94,14 @@ static const FontTableEntry fonts[] = {
 
 #ifdef FONT_USE_Tahoma12pt
     { "Tahoma", 12, FontStyle::regular, fontTahoma12pt },
+#endif
+
+#ifdef FONT_USE_5x7practical12pt
+    { "5x7practical", 12, FontStyle::regular, font5x7practical12pt },
+#endif
+
+#ifdef FONT_USE_MicrosoftSansSerif18pt
+    { "MicrosoftSansSerif", 18, FontStyle::regular, fontMicrosoftSansSerif18pt },
 #endif
 
 	// Marca de final de taula

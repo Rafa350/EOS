@@ -16,7 +16,7 @@ using namespace eos;
 /// \param    driver: Driver del display
 ///
 Graphics::Graphics(
-    IDisplayDriver* driver) :
+    IDisplayDriver *driver) :
 
     _driver(driver) {
 
@@ -39,7 +39,7 @@ Graphics::~Graphics() {
 /// \param    combine: True si cal combinar la transformacio amb l'actual.
 ///
 void Graphics::setTransformation(
-	const Transformation& t,
+	const Transformation &t,
 	bool combine) {
 
 	// Asigna la nova transformacio

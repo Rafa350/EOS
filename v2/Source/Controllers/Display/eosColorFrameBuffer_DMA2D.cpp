@@ -148,9 +148,9 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 /// \brief    Obter l'adresa del buffer d'imatge.
 /// \return   L'adressa.
 ///
-void *ColorFrameBuffer_DMA2D::getBuffer() const {
+uint8_t *ColorFrameBuffer_DMA2D::getBuffer() const {
 
-	return _buffer;
+	return (uint8_t*) _buffer;
 }
 
 

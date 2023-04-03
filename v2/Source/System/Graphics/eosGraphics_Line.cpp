@@ -24,7 +24,7 @@ void Graphics::paintLine(
 	if (!pen.isNull()) {
 
 		Color color = pen.getColor();
-		int thickness = pen.getThickness();
+		int16_t thickness = pen.getThickness();
 
 		if (thickness <= 1)
 			drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color);

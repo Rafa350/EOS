@@ -54,14 +54,14 @@ namespace eos {
 			static constexpr int16_t _displayHeight = DISPLAY_HEIGHT;
 
 			#if defined(DISPLAY_INTERFACE_SPI)
-				using PinCS = DISPLAY_CS_GPIO;
-				using PinDC = DISPLAY_DC_GPIO;
-				#ifdef DISPLAY_RST_GPIO
-				using PinRST = DISPLAY_RST_GPIO;
-				#endif
-				using PinSCK = DISPLAY_SCK_GPIO;
-				using PinMOSI = DISPLAY_MOSI_GPIO;
-				using Spi = DISPLAY_SPI;
+			using PinCS = DISPLAY_CS_GPIO;
+			using PinDC = DISPLAY_DC_GPIO;
+			#ifdef DISPLAY_RST_GPIO
+			using PinRST = DISPLAY_RST_GPIO;
+			#endif
+			using PinSCK = DISPLAY_SCK_GPIO;
+			using PinMOSI = DISPLAY_MOSI_GPIO;
+			using Spi = DISPLAY_SPI;
 			#endif
 
 			FrameBuffer *_frameBuffer;

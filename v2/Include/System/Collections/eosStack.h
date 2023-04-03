@@ -6,7 +6,6 @@
 //
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Collections/eosStdHeapAllocator.h"
 
 // Std includes
 //
@@ -15,23 +14,22 @@
 
 namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
-    namespace System {
-        namespace Collections {
+    namespace system {
+        namespace collections {
 #endif
 
             /// \brief Implementa un contenidos FIFO de tamany fix o variable.
         	/// \remarks El contenidor enmagatzema copies del element.
             ///
-			template <typename Element_, int initialCapacity_ = 0, bool fixedCapacity_ = false>
+			template <typename Element_, unsigned initialCapacity_ = 0, bool fixedCapacity_ = false>
 			class Stack {
 				private:
-					using Allocator = StdHeapAllocator<Element_>;
-					using Container = std::vector<Element_, Allocator>;
+					using Container = std::vector<Element_>;
 
 				public:
-					typedef typename Container::value_type Value;
-					typedef typename Container::reference Reference;
-					typedef typename Container::const_reference CReference;
+					using Value = typename Container::value_type;
+					using Reference = typename Container::reference;
+					using CReference = typename Container::const_reference;
 
 				private:
 					Container _c;
@@ -47,27 +45,21 @@ namespace eos {
 
 					/// \brief Constructor copia
 					///
-					Stack(const Stack& other) = delete;
+					Stack(const Stack &other) = delete;
 
 					/// \brief Afegeix un element a la pila.
 					/// \param element: L'element a afeigir.
 					//
-					inline bool push(CReference element) {
-						if constexpr (fixedCapacity_)
-							if (_c.size() == _c.capacity())
-								return false;
+					inline void push(CReference element) {
+						eosAssert((fixedCapacity_ && (_c.size() < _c.capacity())) || !fixedCapacity_);
 						_c.push_back(element);
-						return true;
 					}
 
 					/// \brief Elimina un element de la pila.
 					///
-					inline bool pop() {
-						if (_c.size() > 0) {
-							_c.pop_back();
-							return true;
-						}
-						return false;
+					inline void pop() {
+						eosAssert(_c.size() > 0);
+						_c.pop_back();
 					}
 
 					/// \brief: Obte el primer element de la pila.
@@ -112,14 +104,14 @@ namespace eos {
 					/// \brief Obte el tamany de la pila.
 					/// \return El valor.
 					///
-					inline int getSize() const {
+					inline unsigned getSize() const {
 						return _c.size();
 					}
 
 					/// \brief Obte capacitat actual de la pila.
 					/// \return El valor.
 					///
-					inline int getCapacity() const {
+					inline unsigned getCapacity() const {
 						return _c.capacity();
 					}
 			};

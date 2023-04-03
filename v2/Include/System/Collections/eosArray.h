@@ -10,27 +10,27 @@
 
 namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
-    namespace System {
-        namespace Collections {
+    namespace system {
+        namespace collections {
 #endif
 
             /// \brief Implementa array de tamany fix.
             /// \remarks La llista enmagatzema copies del element.
             ///
-            template <typename Element, int size>
+            template <typename Element_, int size_>
             class Array {
 
                 public:
-                    typedef Element Value;
-                    typedef Element& Reference;
-                    typedef const Element& CReference;
-                    typedef Element* Pointer;
-                    typedef const Element* CPointer;
-                    typedef Element* Iterator;
-                    typedef const Element* CIterator;
+                    typedef Element_ Value;
+                    typedef Element_ &Reference;
+                    typedef const Element_ &CReference;
+                    typedef Element_ *Pointer;
+                    typedef const Element_ *CPointer;
+                    typedef Element_ *Iterator;
+                    typedef const Element_ *CIterator;
 
                 private:
-                    Value elements[size];
+                    Value _elements[size_];
 
                 public:
                     /// \brief Constructor per defecte.
@@ -40,8 +40,8 @@ namespace eos {
 
                     /// \brief Constructor copia.
                     ///
-                    Array(const Array& other) {
-                        memmove(elements, other.elements, size * sizeof(Value));
+                    Array(const Array &other) {
+                        memmove(_elements, other._elements, size_ * sizeof(Value));
                     }
 
                     /// \brief Contructor a partir d'un rang.
@@ -55,8 +55,8 @@ namespace eos {
 
                     /// \brief Constructor a partir d'un array 'C'.
                     ///
-                    Array(const Value array[], int arraySize = size) {
-                        memmove(elements, array, Math::min(size, arraySize) * sizeof(Value));
+                    Array(const Value array[], int arraySize = size_) {
+                        memmove(_elements, array, Math::min(size, arraySize) * sizeof(Value));
                     }
 
                     /// \brief Destructor
@@ -67,40 +67,40 @@ namespace eos {
                     /// \brief Obte el iterator al principi
                     ///
                     inline Iterator begin() {
-                        return elements;
+                        return _elements;
                     }
 
                     /// \brief Obte el iterator al principi
                     ///
                     inline CIterator begin() const {
-                        return elements;
+                        return _elements;
                     }
 
                     /// \brief Obte el iterator al final
                     ///
                     inline Iterator end() {
-                        return &elements[size];
+                        return &_elements[size_];
                     }
 
                     /// \brief Obte el iterator al final
                     ///
                     inline CIterator end() const {
-                        return &elements[size];
+                        return &_elements[size_];
                     }
 
                     /// \brief Obte el tamany del array.
                     /// \return El tamany.
                     ///
                     inline int getSize() const {
-                        return size;
+                        return size_;
                     }
 
                     /// \brief Operador d'assignacio.
                     /// \param array: El array a asignar.
                     /// \return Una referencia a this.
                     ///
-                    Array& operator = (const Array& array) {
-                        memmove(elements, array.elements, size * sizeof(Value));
+                    Array& operator = (const Array &array) {
+                        memmove(_elements, array._elements, size_ * sizeof(Value));
                         return *this;
                     }
 
@@ -108,14 +108,14 @@ namespace eos {
                     /// \param index: Index del element
                     ///
                     inline CReference operator [] (int index) const {
-                        return elements[index];
+                        return _elements[index];
                     }
 
                     /// \brief Obte un element del array
                     /// \param indes: Index del element
                     ///
                     inline Reference operator [] (int index) {
-                        return elements[index];
+                        return _elements[index];
                     }
             };
 
