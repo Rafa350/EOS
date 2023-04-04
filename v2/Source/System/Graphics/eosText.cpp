@@ -20,8 +20,8 @@ Text::Text():
 
 	_text(""),
 	_font(Font()),
-	_background(Brush(BrushStyle::solid, defaultBackground)),
-	_foreground(Brush(BrushStyle::solid, defaultForeground)),
+	//_background(defaultBackground)),
+	_foreground(Brush(defaultForeground)),
 	_align(TextAlign::center),
 	_width(0),
 	_height(0) {
@@ -39,8 +39,8 @@ Text::Text(
 
 	_text(""),
 	_font(font),
-	_background(Brush(BrushStyle::solid, defaultBackground)),
-	_foreground(Brush(BrushStyle::solid, defaultForeground)),
+	//_background(Brush(defaultBackground)),
+	_foreground(Brush(defaultForeground)),
 	_align(align),
 	_width(0),
 	_height(0) {
@@ -61,8 +61,8 @@ Text::Text(
 
 	_text(text),
 	_font(font),
-	_background(Brush(BrushStyle::solid, defaultBackground)),
-	_foreground(Brush(BrushStyle::solid, defaultForeground)),
+	//_background(Brush(defaultBackground)),
+	_foreground(Brush(defaultForeground)),
 	_align(align) {
 
 	recalcBounds();
@@ -166,15 +166,17 @@ void Text::draw(
 	const Point &position) const {
 
 	const char* p = _text;
-	int l = strlen(p);
+	unsigned l = strlen(p);
 
 	if (l > 0) {
 
-		int x = position.getX();
-		int y = position.getY();
+		int16_t x = position.getX();
+		int16_t y = position.getY();
 
-		Color bkColor = _background.getColor();
-		graphics->drawRectangle(x, y, x + _width - 1, y + _height - 1, bkColor);
+		if (!_background.isNull()) {
+			Color bkColor = _background.getColor();
+			graphics->drawRectangle(x, y, x + _width - 1, y + _height - 1, bkColor);
+		}
 
 		Color fgColor = _foreground.getColor();
 		y += _font.getFontAscent();

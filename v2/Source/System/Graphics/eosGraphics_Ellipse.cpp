@@ -87,9 +87,9 @@ void Graphics::drawEllipse(
 		int16_t aa = 2 * rx * rx;
 		int16_t bb = 2 * ry * ry;
 
-		int16_t x, y, error;
-		int16_t changeX, changeY;
-		int16_t stoppingX, stoppingY;
+		int16_t x, y;
+		int32_t error, changeX, changeY;
+		int32_t stoppingX, stoppingY;
 
 		// Genera el primer grup de punts
 		//
@@ -232,9 +232,9 @@ void Graphics::fillEllipse(
 		int16_t aa = 2 * rx * rx;
 		int16_t bb = 2 * ry * ry;
 
-		int16_t x, y, error;
-		int16_t changeX, changeY;
-		int16_t stoppingX, stoppingY;
+		int16_t x, y;
+		int32_t error, changeX, changeY;
+		int32_t stoppingX, stoppingY;
 
 		// Genera el primer grup de punts
 		//

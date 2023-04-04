@@ -18,7 +18,7 @@ namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
     namespace system {
         namespace collections {
-#endif            
+#endif
             template <typename Element_>
             class List {
             	private:
@@ -107,12 +107,16 @@ namespace eos {
                     inline unsigned getSize() const {
                     	return _c.size();
                     }
+
+                    inline bool isEmpty() const {
+                        return _c.empty();
+                    }
             };
 
-#ifdef EOS_USE_FULL_NAMESPACE            
+#ifdef EOS_USE_FULL_NAMESPACE
         }
     }
-#endif    
+#endif
 }
 
 

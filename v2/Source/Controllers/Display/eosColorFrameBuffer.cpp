@@ -19,11 +19,11 @@ static inline Color::Pixel *getPixelPtr(
 
 
 ColorFrameBuffer::ColorFrameBuffer(
-	int frameWidth,
-	int frameHeight,
-	int framePitch,
+	int16_t frameWidth,
+	int16_t frameHeight,
+	int16_t framePitch,
 	DisplayOrientation orientation,
-	void *buffer):
+	uint8_t *buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
 	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
@@ -39,8 +39,8 @@ ColorFrameBuffer::ColorFrameBuffer(
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
 void ColorFrameBuffer::put(
-	int x,
-	int y,
+	int16_t x,
+	int16_t y,
 	const Color color) {
 
 	uint8_t opacity = color.getOpacity();
@@ -63,10 +63,10 @@ void ColorFrameBuffer::put(
 /// \param    color: Color.-
 ///
 void ColorFrameBuffer::fill(
-	int x,
-	int y,
-	int width,
-	int height,
+	int16_t x,
+	int16_t y,
+	int16_t width,
+	int16_t height,
 	Color color) {
 
 	Color::Pixel c = color;

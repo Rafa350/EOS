@@ -5,7 +5,7 @@
 #include "htl/htlINT.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
-#include "System/eosApplication.h"
+#include "System/eosRTOSApplication.h"
 #include "appApplication.h"
 
 

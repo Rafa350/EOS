@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "HTL/htlGPIO.h"
 #include "Services/eosService.h"
-#include "System/Collections/eosSingleLinkedList.h"
+#include "System/Collections/eosList.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -53,7 +53,7 @@ namespace eos {
                 unsigned param2;
             };
             typedef Queue<Command> CommandQueue;
-            typedef SingleLinkedList<DigOutput*> DigOutputList;
+            typedef List<DigOutput*> DigOutputList;
             typedef DigOutputList::Iterator DigOutputIterator;
 
     	public:

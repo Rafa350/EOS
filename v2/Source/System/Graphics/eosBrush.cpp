@@ -12,21 +12,19 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 Brush::Brush() :
-	_style(BrushStyle::solid),
+	_style(BrushStyle::null),
 	_color(Colors::transparent) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    style: L'estil.
 /// \param    color: El color.
 ///
 Brush::Brush(
-	BrushStyle style,
 	Color color):
 
-	_style (style),
+	_style(BrushStyle::solid),
 	_color(color) {
 }
 

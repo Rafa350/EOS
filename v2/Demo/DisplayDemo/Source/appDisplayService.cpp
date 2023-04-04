@@ -78,7 +78,7 @@ DisplayService::DisplayService():
 	_text(Font("Consolas", 14, FontStyle::regular), TextAlign::left),
 	_orientation(0) {
 
-	_text.setForeground(Brush(BrushStyle::solid, Colors::yellow));
+	_text.setForeground(Brush(Colors::yellow));
 }
 
 

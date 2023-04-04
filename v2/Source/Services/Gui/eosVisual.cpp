@@ -210,10 +210,10 @@ void Visual::measure(
 	if (isVisible()) {
 
 		Size measuredSize = measureOverride(_margin.deflate(availableSize));
-		int declaredWidth = _size.getWidth();
-		int declaredHeight = _size.getHeight();
-		int width = declaredWidth != 0 ? declaredWidth : measuredSize.getWidth();
-		int height = declaredHeight != 0 ? declaredHeight : measuredSize.getHeight();
+		int16_t declaredWidth = _size.getWidth();
+		int16_t declaredHeight = _size.getHeight();
+		int16_t width = declaredWidth != 0 ? declaredWidth : measuredSize.getWidth();
+		int16_t height = declaredHeight != 0 ? declaredHeight : measuredSize.getHeight();
 
 		// Ajusta l'amplada als limits
 		//
@@ -238,7 +238,7 @@ void Visual::measure(
 /// \param    finalSize: Tamany final per asignar al visual.
 ///
 void Visual::arrange(
-	const Rect& finalRect) {
+	const Rect &finalRect) {
 
 	if (isVisible()) {
 
@@ -310,10 +310,10 @@ void Visual::arrange(
 ///           els fills. Si no te fills, el tamany es zero.
 ///
 Size Visual::measureOverride(
-	const Size& availableSize) const {
+	const Size &availableSize) const {
 
-	int width = 0;
-	int height = 0;
+	int16_t width = 0;
+	int16_t height = 0;
 
 	for (auto it = _childs.begin(); it != _childs.end(); it++) {
 		Visual* child = *it;

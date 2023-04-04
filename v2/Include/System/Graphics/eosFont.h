@@ -52,7 +52,7 @@ namespace eos {
         const uint8_t *bitmap;    // -Punter al primer byte del caracter
     };
 
-    class Font {
+    class Font final {
     	private:
     		const uint8_t *_fontResource;
 

@@ -17,12 +17,12 @@ using namespace eos;
 /// \param    color: Color.
 ///
 void Graphics::drawTriangle(
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    int x3,
-    int y3,
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
+    int16_t y2,
+    int16_t x3,
+    int16_t y3,
 	Color color) const {
 
 	// Dibuixa el triangle com tres linies independents

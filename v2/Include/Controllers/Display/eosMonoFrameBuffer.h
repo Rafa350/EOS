@@ -8,7 +8,7 @@
 
 namespace eos {
 
-    class MonoFrameBuffer: public FrameBuffer {
+    class MonoFrameBuffer final: public FrameBuffer {
         private:
             uint8_t *_buffer;
             const int16_t _framePitch;

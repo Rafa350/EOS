@@ -11,7 +11,7 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 Control::Control():
-	_background(Brush(BrushStyle::solid, Colors::white)) {
+	_background(Colors::white) {
 
 }
 

@@ -31,7 +31,7 @@ namespace eos {
 
 		public:
 			Pen();
-			Pen(PenStyle style, Color color, int thickness);
+			Pen(Color color, int thickness);
 			Pen(const Pen &pen);
 
 			Pen& operator = (const Pen &pen);
@@ -42,7 +42,7 @@ namespace eos {
 			inline int16_t getThickness() const { return _thickness; }
 			inline PenStyle getStyle() const { return _style; }
 
-			inline bool isNull() const { return _color.isTransparent(); }
+			inline bool isNull() const { return _style == PenStyle::null; }
 	};
 }
 

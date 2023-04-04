@@ -13,7 +13,7 @@ uint32_t reg, a, b, c;
 ///
 void appMain() {
 
-	Application *app = new MyApplication();
+	ApplicationBase *app = new MyApplication();
 	app->run();
 	delete app;
 }

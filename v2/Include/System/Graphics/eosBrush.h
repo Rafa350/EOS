@@ -17,14 +17,14 @@ namespace eos {
 		radialGradient
 	};
 
-	class Brush {
+	class Brush final {
 		private:
 			BrushStyle _style;
 			Color _color;
 
 		public:
 			Brush();
-			Brush(BrushStyle style, Color color);
+			Brush(Color color);
 			Brush(const Brush &brush);
 
 			Brush& operator = (const Brush &brush);
@@ -34,7 +34,7 @@ namespace eos {
 			inline Color getColor() const { return _color; }
 			inline BrushStyle getStyle() const { return _style; }
 
-			inline bool isNull() const { return _color.isTransparent(); }
+			inline bool isNull() const { return _style == BrushStyle::null; }
 	};
 
 }

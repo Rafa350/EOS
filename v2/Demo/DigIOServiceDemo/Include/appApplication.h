@@ -8,7 +8,7 @@
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosMessengerService.h"
-#include "System/eosApplication.h"
+#include "System/eosRTOSApplication.h"
 #include "System/eosCallbacks.h"
 
 
@@ -20,7 +20,7 @@ namespace app {
         int id;
     } ButtonMessage;
 
-    class MyApplication: public eos::Application {
+    class MyApplication: public eos::RTOSApplication {
         private:
             using INPSRV_TMR = config::digInputService::TMR;
             using OUTSRV_TMR = config::digOutputService::TMR;

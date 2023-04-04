@@ -8,7 +8,7 @@
 #include "HTL/htlGPIO.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosSingleLinkedList.h"
+#include "System/Collections/eosList.h"
 #include "System/Core/eosSemaphore.h"
 
 
@@ -24,13 +24,13 @@ namespace eos {
     		static constexpr uint32_t minStackSize = 100;
 
         private:
-            typedef SingleLinkedList<DigInput*> DigInputList;
+            typedef List<DigInput*> DigInputList;
             typedef DigInputList::Iterator DigInputIterator;
 
         private:
             Semaphore _changes;
             DigInputList _inputs;
-            
+
         private:
             bool scanInputs();
 

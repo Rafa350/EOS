@@ -12,16 +12,16 @@ namespace eos {
 	class ColorFrameBuffer: public FrameBuffer {
 		private:
 			Color::Pixel* _buffer;
-			int _bufferPitch;
+			int16_t _bufferPitch;
 
 		protected:
-            void put(int x, int y, Color color) override;
-            void fill(int x, int y, int width, int height, Color color) override;
-            void copy(int x, int y, int width, int height, const Color *colors, int offset) override;
-            void copy(int x, int y, int width, int height, const void *colors, ColorFormat colorFormat, int colorPitch) override;
+            void put(int16_t x, int16_t y, Color color) override;
+            void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
+            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) override;
+            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
 
 		public:
-			ColorFrameBuffer(int frameWidth, int frameHeight, int framePitch, DisplayOrientation orientation, void *buffer);
+			ColorFrameBuffer(int16_t frameWidth, int16_t frameHeight, int16_t framePitch, DisplayOrientation orientation, uint8_t *buffer);
 	};
 }
 

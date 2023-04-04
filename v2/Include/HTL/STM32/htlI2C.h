@@ -27,9 +27,14 @@ namespace htl {
 	};
 
 	enum class I2CClockSource {
-		pclk,
 		sysclk,
-		hsi16
+		#if defined(EOS_PLATFORM_STM32F4)
+		hsi,
+		pclk1,
+		#elif defined(EOS_PLATFORM_STM32G0)
+		hsi16,
+		pclk,
+		#endif
 	};
 
 	enum class I2CInterrupt {
@@ -126,8 +131,8 @@ namespace htl {
 				disable();
 
 				I2C_TypeDef *regs= reinterpret_cast<I2C_TypeDef*>(_i2cAddr);
-
-				/*_handle.Instance = regs;
+/*
+				_handle.Instance = regs;
 				_handle.Init.Timing           = (uint32_t)0x40912732;
 			    _handle.Init.OwnAddress1      = 0;
 			    _handle.Init.AddressingMode   = I2C_ADDRESSINGMODE_7BIT;
@@ -137,9 +142,9 @@ namespace htl {
 			    _handle.Init.NoStretchMode    = I2C_NOSTRETCH_DISABLE;
 				if (HAL_I2C_Init(&_handle) != HAL_OK)
 					return false;
-
-				enable();
 */
+				enable();
+
 				return true;
 			}
 
@@ -511,6 +516,8 @@ namespace htl {
 		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C2EN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
+		static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C2RST_Pos;
 		#endif
 	};
 	#endif
@@ -522,6 +529,8 @@ namespace htl {
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C3EN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
+		static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C3RST_Pos;
 		#endif
 	};
 	#endif
@@ -533,6 +542,8 @@ namespace htl {
 		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 		static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C4EN_Pos;
+		static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
+		static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C4RST_Pos;
 		#endif
 	};
 	#endif

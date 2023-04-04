@@ -13,7 +13,7 @@ using namespace eos;
 ///
 Pen::Pen() :
 
-	_style(PenStyle::solid),
+	_style(PenStyle::null),
 	_color(Colors::transparent),
 	_thickness(0) {
 
@@ -22,16 +22,14 @@ Pen::Pen() :
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    style: Estil.
 /// \param    color: El color de linia.
 /// \param    thickness: Amplada de linia.
 ///
 Pen::Pen(
-	PenStyle style,
 	Color color,
 	int thickness):
 
-	_style(style),
+	_style(PenStyle::solid),
 	_color(color),
 	_thickness(thickness) {
 

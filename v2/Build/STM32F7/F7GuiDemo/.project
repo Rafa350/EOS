@@ -729,6 +729,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlI2C.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlI2C_AF_F7.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlI2C_AF_F7.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlINT.h</locationURI>
@@ -742,11 +747,6 @@
 			<name>inc/Framework/EOS/HTL/STM32/htlLTDC_IRQ.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC_IRQ.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlRegisters.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlRegisters.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlTMR.h</name>

@@ -14,7 +14,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Border::Border():
-	_borderBrush(Brush(BrushStyle::solid, Colors::black)),
+	_borderBrush(Colors::black),
 	_borderThickness(1),
 	_cornerRadius(0) {
 
@@ -87,7 +87,7 @@ void Border::onRender(
 
 	const Rect r(Point(0, 0), getBounds().getSize());
 
-	Pen pen(PenStyle::solid, _borderBrush.getColor(), _borderThickness.getLeft());
+	Pen pen(_borderBrush.getColor(), _borderThickness.getLeft());
 	const Brush& brush = getBackground();
 
 	g.paintRoundedRectangle(pen, brush, r, _cornerRadius, _cornerRadius);

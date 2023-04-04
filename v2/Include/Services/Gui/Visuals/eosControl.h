@@ -19,7 +19,7 @@ namespace eos {
 		public:
 			Control();
 
-            void setBackground(const Brush& value);
+            void setBackground(const Brush &value);
             inline const Brush& getBackground() const { return _background; }
 	};
 }
