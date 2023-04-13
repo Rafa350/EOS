@@ -8,6 +8,73 @@
 #include "HTL/htl.h"
 
 
+namespace htlV2 {
+
+    enum class GPIOPortId {
+        A, B, C, D, E, F, G
+    };
+
+    struct __attribute__((packed , aligned(4))) GPIORegisters {
+        volatile uint32_t TRISx;
+        volatile uint32_t TRISxCLR;
+        volatile uint32_t TRISxSET;
+        volatile uint32_t TRISxINV;
+        volatile uint32_t PORTx;
+        volatile uint32_t PORTxCLR;
+        volatile uint32_t PORTxSET;
+        volatile uint32_t PORTxINV;
+        volatile uint32_t LATx;
+        volatile uint32_t LATxCLR;
+        volatile uint32_t LATxSET;
+        volatile uint32_t LATxINV;
+        volatile uint32_t ODCx;
+        volatile uint32_t ODCxCLR;
+        volatile uint32_t ODCxSET;
+        volatile uint32_t ODCxINV;
+    };
+
+    class GPIO {
+        private:
+            GPIORegisters *_registers;
+
+        protected:
+            GPIO(GPIORegisters registers);
+
+        public:
+            void activate();
+            void deactivate();
+            void reset();
+
+            void initInput();
+            void initOutput();
+
+            void set(uint16_t mask);
+            void clear(uint16_t mask);
+            void toggle(uint16_t mask);
+            void write(uint16_t clearMask, uint16_t setMask);
+    };
+
+    typedef GPIO *GPIOhandler;
+
+    template <GPIOPort port_>
+    class GPIO_x: public GPIO {
+        public:
+            static GPIOHandler instance() {
+                static GPIO_x<gpio_> gpio;
+                return &gpio;
+            }
+    };
+
+    using GPIO_A = GPIO_x<GPIOPort::A>;
+    using GPIO_B = GPIO_x<GPIOPort::B>;
+    using GPIO_C = GPIO_x<GPIOPort::C>;
+    using GPIO_D = GPIO_x<GPIOPort::D>;
+    using GPIO_E = GPIO_x<GPIOPort::E>;
+    using GPIO_F = GPIO_x<GPIOPort::F>;
+    using GPIO_G = GPIO_x<GPIOPort::G>;
+}
+
+
 namespace htl {
 
     enum class GPIOPort {
