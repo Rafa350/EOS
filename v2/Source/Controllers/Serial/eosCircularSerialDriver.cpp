@@ -16,9 +16,9 @@ CircularSerialDriver::CircularSerialDriver(
 	uint8_t *txBuffer,
 	uint16_t txBufferSize,
 	uint8_t *rxBuffer,
-	uint8_t rxBufferSize) :
+	uint16_t rxBufferSize) :
 
-	_txBufferFullCallback(nullptr),
+	_txBufferEmptyCallback(nullptr),
 	_rxBufferNotEmptyCallback(nullptr),
 	_txBuffer(txBuffer, txBufferSize),
 	_rxBuffer(rxBuffer, rxBufferSize) {
@@ -26,55 +26,111 @@ CircularSerialDriver::CircularSerialDriver(
 }
 
 
-void CircularSerialDriver::notifyTxBufferFull() {
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que el buffer de transmissio es buit.
+///
+void CircularSerialDriver::notifyTxBufferEmpty() {
 
-	if (_txBufferFullCallback != nullptr) {
-		TxBufferFullEventArgs args;
-		_txBufferFullCallback->execute(args);
+	if (_txBufferEmptyCallback != nullptr) {
+
+		TxBufferEmptyEventArgs args;
+		args.availableSpace = txAvailableSpace();
+
+		_txBufferEmptyCallback->execute(args);
 	}
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que el buffer de recepcio no es buit.
+///
 void CircularSerialDriver::notifyRxBufferNotEmpty() {
 
 	if (_rxBufferNotEmptyCallback != nullptr) {
+
 		RxBufferNotEmptyEventArgs args;
+		args.availableData = rxAvailableData();
+
 		_rxBufferNotEmptyCallback->execute(args);
 	}
 }
 
 
+void CircularSerialDriver::enableTxBufferEmptyCallback(
+	const ITxBufferEmptyCallback &callback) {
+
+	_txBufferEmptyCallback = &callback;
+}
+
+
+void CircularSerialDriver::enableRxBufferNotEmptyCallback(
+	const IRxBufferNotEmptyCallback &callback) {
+
+	_rxBufferNotEmptyCallback = &callback;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialutza el driver.
+///
 void CircularSerialDriver::initialize() {
 
 	initializeImpl();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el driver.
+///
 void CircularSerialDriver::deinitialize() {
 
 	deinitializeImpl();
 }
 
 
-void CircularSerialDriver::txPush(
-	uint8_t data) {
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'espai disponible en el buffer de transmissio.
+/// \return   El nombre de bytes dispoibles.
+///
+uint16_t CircularSerialDriver::txAvailableSpace() const {
 
-	_txBuffer.push(data);
+	return _txBuffer.getCapacity() - _txBuffer.getSize();
 }
 
 
-void CircularSerialDriver::rxPush(
-	uint8_t data) {
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'espai disponible en el buffer de recepcio.
+/// \return   El nombre de bytes dispoibles.
+///
+uint16_t CircularSerialDriver::rxAvailableSpace() const {
 
-	_rxBuffer.push(data);
+	return _rxBuffer.getCapacity() - _rxBuffer.getSize();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Trasmiteix un bloc de dades.
+/// \param    data: Bloc de dades.
+/// \param    dataLength: Longitut del bloc en bytes.
+/// \return   El nombre real de bytes transmessos.
+///
 uint16_t CircularSerialDriver::transmit(
 	const uint8_t *data,
 	uint16_t dataLength) {
 
-	transmitImpl(data, dataLength);
+	return transmitImpl(data, dataLength);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Reb un bloc de dades.
+/// \param    data: Bloc de dades.
+/// \param    dataSIze: TYemeny del bloc en bytes.
+/// \return   El nombre real de bytes rebuts.
+///
+uint16_t CircularSerialDriver::receive(
+	uint8_t *data,
+	uint16_t dataSize) {
+
+	return receiveImpl(data, dataSize);
+}

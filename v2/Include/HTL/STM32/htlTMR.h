@@ -105,7 +105,7 @@ namespace htl {
 	class TMR_x final {
 		private:
 			using Trait = TMRTrait<timer_>;
-			static constexpr uint32_t _timAddr = Trait::addr;
+			static constexpr uint32_t _timAddr = Trait::timAddr;
 			static constexpr uint32_t _rccAddr = Trait::rccAddr;
 			static constexpr uint32_t _enablePos = Trait::enablePos;
 
@@ -396,7 +396,10 @@ namespace htl {
 	struct TMRTrait<TMRTimer::_1> {
 		static constexpr uint32_t timAddr = TIM1_BASE;
 		static constexpr TMRType type = TMRType::advanced;
-		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOS_PLATFORM_STM32F0)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+			static constexpr uint32_t enablePos = RCC_APB2ENR_TIM1EN_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 			static constexpr uint32_t enablePos = RCC_APB2ENR_TIM1EN_Pos;
 		#endif
@@ -418,7 +421,10 @@ namespace htl {
 	template <>
 	struct TMRTrait<TMRTimer::_3> {
 		static constexpr uint32_t timAddr = TIM3_BASE;
-		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOS_PLATFORM_STM32F0)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM3EN_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM3EN_Pos;
 		#endif
@@ -452,7 +458,10 @@ namespace htl {
 	struct TMRTrait<TMRTimer::_6> {
 		static constexpr uint32_t timAddr = TIM6_BASE;
 		static constexpr TMRType type = TMRType::basic;
-		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOS_PLATFORM_STM32F0)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM6EN_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM6EN_Pos;
 		#endif
@@ -542,7 +551,10 @@ namespace htl {
 	struct TMRTrait<TMRTimer::_14> {
 		static constexpr uint32_t timAddr = TIM14_BASE;
 		static constexpr TMRType type = TMRType::general;
-		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOS_PLATFORM_STM32F0)
+			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM14EN_Pos;
+		#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 			static constexpr uint32_t enablePos = RCC_APB1ENR_TIM14EN_Pos;
 		#endif

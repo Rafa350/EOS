@@ -25,8 +25,8 @@ namespace app {
 				using PinLED2 = LED2_GPIO;
 			#endif
 
-			static constexpr htl::GPIOState _ledON = LED1_ON;
-			static constexpr htl::GPIOState _ledOFF = LED1_OFF;
+			static constexpr htl::GPIOPinState _ledON = LED1_ON;
+			static constexpr htl::GPIOPinState _ledOFF = LED1_OFF;
 
 		public:
 			LedService();

@@ -187,7 +187,7 @@ namespace htl {
 			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				i2c1_EV = I2C1_EV_IRQn,
 				i2c1_ER = I2C1_ER_IRQn,
-			#elif defined(EOS_PLATFORM_STM32G0)
+			#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
 				i2c1 = I2C1_IRQn,
 			#endif
 		#endif
@@ -195,7 +195,7 @@ namespace htl {
 			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				i2c2_EV = I2C2_EV_IRQn,
 				i2c2_ER = I2C2_ER_IRQn,
-			#elif defined(EOS_PLATFORM_STM32G0)
+			#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
 				i2c2 = I2C2_IRQn,
 			#endif
 		#endif

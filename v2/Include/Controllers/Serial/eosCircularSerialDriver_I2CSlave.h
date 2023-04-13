@@ -12,17 +12,17 @@ namespace eos {
 	class CircularSerialDriver_I2CSlave final : public CircularSerialDriver {
 		private:
 			htl::I2CHandler _hI2C;
+			htl::I2CTransferContext _context;
 
 		private:
-			void rxInterruptHandler();
-			void txInterruptHandler();
-			static void rxInterruptFunction(htl::I2CInterruptParam param);
-			static void txInterruptFunction(htl::I2CInterruptParam param);
+			void interruptHandler(htl::I2CInterruptNotify notify);
+			static void interruptFunction(htl::I2CInterruptNotify notify, htl::I2CInterruptParam param);
 
 		protected:
 			void initializeImpl() override;
 			void deinitializeImpl() override;
 			uint16_t transmitImpl(const uint8_t *data, uint16_t dataLength) override;
+			uint16_t receiveImpl(uint8_t *data, uint16_t dataSize) override;
 
 		public:
 			CircularSerialDriver_I2CSlave(uint8_t *txBuffer, uint16_t txBufferSize,

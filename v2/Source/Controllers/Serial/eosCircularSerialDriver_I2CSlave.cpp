@@ -7,6 +7,14 @@ using namespace eos;
 using namespace htl;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    txBuffer: Buffer de transmissio.
+/// \param    txBufferSize: Tamany del buffer de transmissio.
+/// \param    rxBuffer: Buffer de recepcio.
+/// \param    rxBufferSize: Tamany del buffer de recepcio.
+/// \param    hI2C: Handler del modul I2C.
+///
 CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 	uint8_t *txBuffer,
 	uint16_t txBufferSize,
@@ -20,84 +28,112 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio.
+///
 void CircularSerialDriver_I2CSlave::initializeImpl() {
 
+	_hI2C->setInterruptFunction(interruptFunction, this);
+	_hI2C->enable();
+	_hI2C->enableInterrupt(I2CInterrupt::addr);
+
+	//COM2::listenIT(buffer, size, &_context);
+
+	uint8_t buffer[10];
+	I2CTransferContext context;
+	COM2::readIT(buffer, sizeof(buffer), &context);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitzacio.
+///
 void CircularSerialDriver_I2CSlave::deinitializeImpl() {
 
+	_hI2C->disable();
+	_hI2C->setInterruptFunction(nullptr, nullptr);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades.
+/// \param    data: El bloc de dades.
+/// \param    dataLength: Longitut en bytes del bloc de dades.
+/// \return   El nombre de bytes realment transmessos.
+///
 uint16_t CircularSerialDriver_I2CSlave::transmitImpl(
 	const uint8_t *data,
 	uint16_t dataLength) {
 
-	while (dataLength--)
-		txPush(*data++);
+	uint16_t dataCount = 0;
+	while ((dataCount < dataLength) && txAvailableSpace())
+		txPush(data[dataCount++]);
 
-	return dataLength;
+	return dataCount;
 }
 
 
-void CircularSerialDriver_I2CSlave::rxInterruptHandler() {
+/// ----------------------------------------------------------------------
+/// \brief    Recepcio d'un bloc de dades.
+/// \param    data: El bloc de on deixar les dades.
+/// \param    dataLength: Tamany en bytes del bloc de dades.
+/// \return   El nombre de bytes realment rebuts.
+///
+uint16_t CircularSerialDriver_I2CSlave::receiveImpl(
+	uint8_t *data,
+	uint16_t dataSize) {
 
-	// Coincidencia amb l'adressa
-	//
-	if (_hI2C->getFlag(I2CFlag::addr)) {
-		_hI2C->clearFlag(I2CFlag::addr);
-		_hI2C->disableInterrupt(I2CInterrupt::addr);
-		_hI2C->enableInterrupt(I2CInterrupt::stop);
-		_hI2C->enableInterrupt(I2CInterrupt::rx);
-	}
+	uint16_t dataCount = 0;
+	while ((dataCount < dataSize) && rxAvailableData())
+		data[dataCount++] = rxPop();
 
-	// Buffer de recepcio ple
-	//
-	else if (_hI2C->getFlag(I2CFlag::rxne)) {
-		uint8_t data = _hI2C->read();
-		uint16_t availableSpace = rxAvailableSpace();
-		if (availableSpace > 0) {
-			rxPush(data);
+	return dataCount;
+}
 
-			// Si nomes queda espai per rebre un byte, fa que generi un NACK
-			// automaticamen quant es rebi el proper
+
+/// ----------------------------------------------------------------------
+/// \brief    Gestio de les interrupcions.
+/// \param    notify: La notificacio.
+///
+void CircularSerialDriver_I2CSlave::interruptHandler(
+	htl::I2CInterruptNotify notify) {
+
+	switch (notify) {
+		case I2CInterruptNotify::addrMatch:
+			break;
+
+		case I2CInterruptNotify::rxNotEmpty: {
+
+			uint8_t data = _hI2C->read();
+
+			// Si hi ha espai, guarda el byte.
 			//
-			if (availableSpace == 1)
-				_hI2C->nack();
+			uint16_t availableSpace = rxAvailableSpace();
+			if (availableSpace > 0)
+				rxPush(data);
+			break;
 		}
-	}
 
-	// Deteccio de la condicio stop
-	//
-	else if (_hI2C->getFlag(I2CFlag::stop)) {
-		_hI2C->clearFlag(I2CFlag::stop);
-		_hI2C->disableInterrupt(I2CInterrupt::rx);
-		_hI2C->disableInterrupt(I2CInterrupt::stop);
-		_hI2C->setInterruptFunction(nullptr, nullptr);
-		_hI2C->disable();
-		//notifyRxCompleted(_rxCount);
+		case I2CInterruptNotify::completted:
+			if (rxAvailableData() > 0)
+				notifyRxBufferNotEmpty();
+			break;
+
+		default:
+			break;
 	}
 }
 
 
-void CircularSerialDriver_I2CSlave::txInterruptHandler() {
-
-}
-
-
-void CircularSerialDriver_I2CSlave::rxInterruptFunction(
+/// ----------------------------------------------------------------------
+/// \brief    Gestio de les interrupcions.
+/// \param    notify: Notificacio.
+/// \param    param: Parametre de la interrupcio.
+///
+void CircularSerialDriver_I2CSlave::interruptFunction(
+    htl::I2CInterruptNotify notify,
 	htl::I2CInterruptParam param) {
 
 	CircularSerialDriver_I2CSlave *driver = reinterpret_cast<CircularSerialDriver_I2CSlave*>(param);
-	driver->rxInterruptHandler();
+	driver->interruptHandler(notify);
 }
-
-
-void CircularSerialDriver_I2CSlave::txInterruptFunction(
-	htl::I2CInterruptParam param) {
-
-	CircularSerialDriver_I2CSlave *driver = reinterpret_cast<CircularSerialDriver_I2CSlave*>(param);
-	driver->txInterruptHandler();
-}
-

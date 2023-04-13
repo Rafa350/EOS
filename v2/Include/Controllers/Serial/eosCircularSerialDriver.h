@@ -12,42 +12,46 @@ namespace eos {
 
 	class CircularSerialDriver {
 		public:
-			struct TxBufferFullEventArgs {
+			struct TxBufferEmptyEventArgs {
+				uint16_t availableSpace;
 			};
 			struct RxBufferNotEmptyEventArgs {
+				uint16_t availableData;
 			};
-			using ITxBufferFullCallback = ICallbackP1<const TxBufferFullEventArgs&>;
+			using ITxBufferEmptyCallback = ICallbackP1<const TxBufferEmptyEventArgs&>;
 			using IRxBufferNotEmptyCallback = ICallbackP1<const RxBufferNotEmptyEventArgs&>;
 
 		private:
-			const ITxBufferFullCallback *_txBufferFullCallback;
+			const ITxBufferEmptyCallback *_txBufferEmptyCallback;
 			const IRxBufferNotEmptyCallback *_rxBufferNotEmptyCallback;
 			CircularBuffer _txBuffer;
 			CircularBuffer _rxBuffer;
 
 		protected:
-			void notifyTxBufferFull();
+			void notifyTxBufferEmpty();
 			void notifyRxBufferNotEmpty();
 
-			void txPush(uint8_t data);
-			uint8_t txPop();
+			inline void txPush(uint8_t data) { _txBuffer.push(data); }
+			inline uint8_t txPop() { return _txBuffer.pop(); }
 			uint16_t txAvailableSpace() const;
-			uint16_t txAvailableData() const;
-			void rxPush(uint8_t data);
-			uint8_t rxPop();
+			inline uint16_t txAvailableData() const { return _txBuffer.getSize(); }
+
+			inline void rxPush(uint8_t data) { _rxBuffer.push(data); }
+			inline uint8_t rxPop() { return _rxBuffer.pop(); }
 			uint16_t rxAvailableSpace() const;
-			uint16_t rxAvailableData() const;
+			inline uint16_t rxAvailableData() const { return _rxBuffer.getSize(); }
 
 			virtual void initializeImpl() = 0;
 			virtual void deinitializeImpl() = 0;
 
 			virtual uint16_t transmitImpl(const uint8_t *data, uint16_t dataLength) = 0;
+			virtual uint16_t receiveImpl(uint8_t *data, uint16_t dataLength) = 0;
 
 		public:
-			CircularSerialDriver(uint8_t *txBuffer, uint16_t txBufferSize, uint8_t *rxBuffer, uint8_t rxBufferSize);
+			CircularSerialDriver(uint8_t *txBuffer, uint16_t txBufferSize, uint8_t *rxBuffer, uint16_t rxBufferSize);
 
-			void enableTxBufferFullCallback(const ITxBufferFullCallback &callback);
-			void disableTxBufferFullCallback() { _txBufferFullCallback = nullptr; }
+			void enableTxBufferEmptyCallback(const ITxBufferEmptyCallback &callback);
+			void disableTxBufferEmptyCallback() { _txBufferEmptyCallback = nullptr; }
 			void enableRxBufferNotEmptyCallback(const IRxBufferNotEmptyCallback &callback);
 			void disableRxBufferNotEmptyCallback() { _rxBufferNotEmptyCallback = nullptr; }
 
@@ -55,6 +59,9 @@ namespace eos {
 			void deinitialize();
 
 			uint16_t transmit(const uint8_t *data, uint16_t dataLength);
+			uint16_t receive(uint8_t *data, uint16_t dataSize);
+			inline uint16_t receivePending() const { return rxAvailableData(); }
+			inline uint16_t transmitPending() const { return txAvailableData(); }
 	};
 }
 

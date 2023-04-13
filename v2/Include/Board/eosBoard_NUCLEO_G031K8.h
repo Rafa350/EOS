@@ -22,8 +22,8 @@
 #define EXIST_LED1
 
 #define LED1_GPIO            htl::GPIO_C6
-#define LED1_ON              htl::GPIOState::set
-#define LED1_OFF             htl::GPIOState::clear
+#define LED1_ON              htl::GPIOPinState::set
+#define LED1_OFF             htl::GPIOPinState::clear
 
 #define LED1_Initialize()    LED1_GPIO::initOutput(htl::GPIODriver::pushPull)
 #define LED1_On()            LED1_GPIO::set()

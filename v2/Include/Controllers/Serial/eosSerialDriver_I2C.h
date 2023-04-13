@@ -3,12 +3,13 @@
 #define __eosSerialDriver_I2C__
 
 
+#include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlSPI.h"
 
 
 namespace eos {
 
-	class SerialDriver_I2C {
+	class SerialDriver_I2C: public SerialDriver {
 		private:
 			htl::I2CHandler _hI2C;
 

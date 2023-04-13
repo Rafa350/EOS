@@ -42,8 +42,8 @@ namespace htl {
             virtual void set() const = 0;
             virtual void clear() const = 0;
             virtual void toggle() const = 0;
-            virtual GPIOState read() const = 0;
-            virtual void write(GPIOState state) const = 0;
+            virtual GPIOPinState read() const = 0;
+            virtual void write(GPIOPinState state) const = 0;
     };
 
     typedef IGPIO *GPIOHandler;
@@ -90,11 +90,11 @@ namespace htl {
                 gpio_::toggle();
             };
 
-            GPIOState read() const override {
+            GPIOPinState read() const override {
                 return gpio_::read();
             }
 
-            void write(GPIOState state) const override {
+            void write(GPIOPinState state) const override {
                 return gpio_::write(state);
             }
     };

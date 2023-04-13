@@ -22,10 +22,10 @@ LedService::LedService() :
 void LedService::onInitialize() {
 
 	#ifdef EXIST_LED1
-		PinLED1::initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitState::set);
+		PinLED1::initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitPinState::set);
 	#endif
 	#ifdef EXIST_LED2
-		PinLED2::initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitState::clear);
+		PinLED2::initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitPinState::clear);
 	#endif
 }
 

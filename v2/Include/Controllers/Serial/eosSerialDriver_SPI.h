@@ -3,12 +3,13 @@
 #define __eosSerialDriver_SPI__
 
 
+#include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlSPI.h"
 
 
 namespace eos {
 
-	class SerialDriver_SPI {
+	class SerialDriver_SPI: public SerialDriver {
 		private:
 			htl::SPIHandler _hSPI;
 

@@ -3,12 +3,13 @@
 #define __eosSerialDriver_UART__
 
 
+#inclide "Controllers/Serial//eosSerialDriver.h"
 #include "HTL/htlUART.h"
 
 
 namespace eos {
 
-	class SerialDriver_UART {
+	class SerialDriver_UART: public SerialDriver {
 		private:
 			htl::UARTHandler _hUART;
 
