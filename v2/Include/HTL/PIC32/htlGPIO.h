@@ -10,8 +10,45 @@
 
 namespace htlV2 {
 
-    enum class GPIOPortId {
+    enum class GPIOPortID: uint8_t {
         A, B, C, D, E, F, G
+    };
+    
+    enum class GPIOPinID: uint8_t {
+        _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15
+    };
+    
+    typedef uint16_t GPIOPinMask;
+    
+    enum class GPIOPull: uint8_t {
+        noChange,
+        none,
+        up
+    };
+
+    enum class GPIODriver: uint8_t {
+        noChange,
+        pushPull,
+        openDrain
+    };
+
+    enum class GPIOSpeed: uint8_t {
+        noChange,
+        low,
+        medium,
+        hight,
+        fast
+    };
+    
+    enum class GPIOInitPinState: uint8_t {
+        noChange,
+        clear,
+        set
+    };
+
+    enum class GPIOPinState: uint8_t {
+        clear,
+        set
     };
 
     struct __attribute__((packed , aligned(4))) GPIORegisters {
@@ -32,47 +69,202 @@ namespace htlV2 {
         volatile uint32_t ODCxSET;
         volatile uint32_t ODCxINV;
     };
+    
 
-    class GPIO {
+    class GPIOPort {
         private:
             GPIORegisters *_registers;
 
         protected:
-            GPIO(GPIORegisters registers);
+            GPIOPort(GPIORegisters *registers);
 
         public:
             void activate();
             void deactivate();
             void reset();
+            
+            void initInput(GPIOPinMask mask);
+            void initOutput(GPIOPinMask mask, GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::medium);
 
-            void initInput();
-            void initOutput();
-
-            void set(uint16_t mask);
-            void clear(uint16_t mask);
-            void toggle(uint16_t mask);
-            void write(uint16_t clearMask, uint16_t setMask);
-    };
-
-    typedef GPIO *GPIOhandler;
-
-    template <GPIOPort port_>
-    class GPIO_x: public GPIO {
-        public:
-            static GPIOHandler instance() {
-                static GPIO_x<gpio_> gpio;
-                return &gpio;
+            inline void set(GPIOPinMask mask) { 
+                _registers->LATxSET = mask; 
+            }
+            inline void set(GPIOPinID pinID) { 
+                _registers->LATxSET = 1 << (int)pinID; 
+            }
+            
+            inline void clear(GPIOPinMask mask) { 
+                _registers->LATxCLR = mask; 
+            }
+            inline void clear(GPIOPinID pinID) { 
+                _registers->LATxCLR = 1 << (int)pinID; 
+            }
+            
+            inline void toggle(GPIOPinMask mask) { 
+                _registers->LATxINV = mask; 
+            }
+            inline void toggle(GPIOPinID pinID) { 
+                _registers->LATxINV = 1 << (int)pinID; 
+            }
+            
+            inline GPIOPinMask read() { 
+                return _registers->PORTx; 
+            }
+            inline GPIOPinState read(GPIOPinID pinID) {
+                return (_registers->PORTx & (1 << (int)pinID)) ? GPIOPinState::set : GPIOPinState::clear;
+            }
+            
+            inline void write(GPIOPinMask mask) { 
+                _registers->LATx = mask; 
+            }            
+            inline void write(GPIOPinMask clearMask, GPIOPinMask setMask) {
+                uint16_t r = _registers->PORTx;
+                r &= ~clearMask;
+                r |= setMask;
+                _registers->LATx = r;
+            }
+            inline void write(GPIOPinID pinID, GPIOPinState state) {
+                if (state == GPIOPinState::set)
+                    _registers->LATxSET = 1 << (int) pinID;
+                else
+                    _registers->LATxCLR = 1 << (int) pinID;
             }
     };
 
-    using GPIO_A = GPIO_x<GPIOPort::A>;
-    using GPIO_B = GPIO_x<GPIOPort::B>;
-    using GPIO_C = GPIO_x<GPIOPort::C>;
-    using GPIO_D = GPIO_x<GPIOPort::D>;
-    using GPIO_E = GPIO_x<GPIOPort::E>;
-    using GPIO_F = GPIO_x<GPIOPort::F>;
-    using GPIO_G = GPIO_x<GPIOPort::G>;
-}
+    typedef GPIOPort *GPIOPortHandler;
+        
+    template <GPIOPortID>
+    struct GPIOInfo {                
+    };   
+
+    template <GPIOPortID portID_>
+    class GPIOPort_x final: public GPIOPort {
+        private:
+            using Info = GPIOInfo<portID_>;
+        private:
+            static constexpr uint32_t _regAddr = Info::regAddr;
+        protected:
+            GPIOPort_x(): 
+                GPIOPort(reinterpret_cast<GPIORegisters*>(_regAddr)) {
+            }
+        public:
+            static GPIOPortHandler getHandler() {
+                static GPIOPort_x port;
+                return &port;
+            }
+    };
+
+    typedef GPIOPort_x<GPIOPortID::A> GPIO_A;
+    typedef GPIOPort_x<GPIOPortID::B> GPIO_B;
+    typedef GPIOPort_x<GPIOPortID::C> GPIO_C;
+    typedef GPIOPort_x<GPIOPortID::D> GPIO_D;
+    typedef GPIOPort_x<GPIOPortID::E> GPIO_E;
+    typedef GPIOPort_x<GPIOPortID::F> GPIO_F;
+    typedef GPIOPort_x<GPIOPortID::G> GPIO_G;
+
+    
+    class GPIOPin {
+        private:
+            GPIORegisters *_registers;
+            GPIOPinMask _pinMask;
+            
+        protected:
+            GPIOPin(GPIORegisters *registers, GPIOPinID pinID);
+            
+        public :
+            void initInput();
+            void initOutput(GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::medium, GPIOInitPinState state = GPIOInitPinState::noChange);
+
+            inline void set() {
+                _registers->LATxSET = _pinMask; 
+            }
+            
+            inline void clear() {
+                _registers->LATxCLR = _pinMask; 
+            }
+            
+            inline void toggle() {
+                _registers->LATxINV = _pinMask; 
+            }
+            
+            inline GPIOPinState read() {
+                return _registers->PORTx & _pinMask ? GPIOPinState::set : GPIOPinState::clear;
+            }
+            
+            inline void write(GPIOPinState state) {
+                if (state == GPIOPinState::set)
+                    _registers->LATxSET = _pinMask;
+                else
+                    _registers->LATxCLR = _pinMask;
+            }
+    };
+    
+    typedef GPIOPin *GPIOPinHandler;
+    
+    template <GPIOPortID portID_, GPIOPinID pinID_>
+    class GPIOPin_x: public GPIOPin {
+        private:
+            using Info = GPIOInfo<portID_>;
+        private:
+            static constexpr uint32_t _regAddr = Info::regAddr;
+        protected:
+            GPIOPin_x(): 
+                GPIOPin(reinterpret_cast<GPIORegisters*>(_regAddr), pinID_) {
+            }
+        public:
+            static GPIOPinHandler getHandler() {
+                static GPIOPin_x pin;
+                return &pin;
+            }
+    };
+    
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_0> GPIO_A0;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_1> GPIO_A1;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_2> GPIO_A2;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_3> GPIO_A3;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_4> GPIO_A4;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_5> GPIO_A5;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_6> GPIO_A6;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_7> GPIO_A7;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_8> GPIO_A8;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_9> GPIO_A9;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_10> GPIO_A10;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_11> GPIO_A11;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_12> GPIO_A12;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_13> GPIO_A13;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_14> GPIO_A14;
+    typedef GPIOPin_x<GPIOPortID::A, GPIOPinID::_15> GPIO_A15;
+    
+    template <>
+    struct GPIOInfo<GPIOPortID::A> {
+        static constexpr uint32_t regAddr = _PORTA_BASE_ADDRESS - 0x10;
+    };
+    template <>
+    struct GPIOInfo<GPIOPortID::B> {
+        static constexpr uint32_t regAddr = _PORTB_BASE_ADDRESS - 0x10;
+    };
+    template <>
+    struct GPIOInfo<GPIOPortID::C> {
+        static constexpr uint32_t regAddr = _PORTC_BASE_ADDRESS - 0x10;
+    };
+    template <>
+    struct GPIOInfo<GPIOPortID::D> {
+        static constexpr uint32_t regAddr = _PORTD_BASE_ADDRESS - 0x10;
+    };
+    template <>
+    struct GPIOInfo<GPIOPortID::E> {
+        static constexpr uint32_t regAddr = _PORTE_BASE_ADDRESS - 0x10;
+    };
+    template <>
+    struct GPIOInfo<GPIOPortID::F> {
+        static constexpr uint32_t regAddr = _PORTF_BASE_ADDRESS - 0x10;
+    };
+    template <>
+    struct GPIOInfo<GPIOPortID::G> {
+        static constexpr uint32_t regAddr = _PORTG_BASE_ADDRESS - 0x10;
+    };
+    
+ }
 
 
 namespace htl {

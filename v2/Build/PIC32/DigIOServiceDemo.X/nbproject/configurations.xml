@@ -108,6 +108,7 @@
               <itemPath>../../../Source/HTL/PIC32/htlTMR_InterruptVector.S</itemPath>
               <itemPath>../../../Source/HTL/PIC32/htlCN_IRQ.cpp</itemPath>
               <itemPath>../../../Source/HTL/PIC32/htlTMR_IRQ.cpp</itemPath>
+              <itemPath>../../../Source/HTL/PIC32/htlGPIO.cpp</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
