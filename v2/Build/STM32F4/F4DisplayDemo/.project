@@ -659,6 +659,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlLTDC_AF_F4.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC_AF_F4.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlSPI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlSPI.h</locationURI>
@@ -792,6 +797,11 @@
 			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlLTDC.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlSPI.cpp</name>

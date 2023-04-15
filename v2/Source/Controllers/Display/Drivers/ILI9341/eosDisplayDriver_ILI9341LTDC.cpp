@@ -52,7 +52,9 @@ void DisplayDriver_ILI9341LTDC::deinitialize() {
 ///
 void DisplayDriver_ILI9341LTDC::enable() {
 
-	Ltdc::enable();
+	auto ltdc(ltdc::LTDCDevice::getHandler());
+
+	ltdc->enable();
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
@@ -67,13 +69,15 @@ void DisplayDriver_ILI9341LTDC::enable() {
 ///
 void DisplayDriver_ILI9341LTDC::disable() {
 
+	auto ltdc(ltdc::LTDCDevice::getHandler());
+
 	open();
 	writeCommand(CMD_DISPLAY_OFF);
 	writeCommand(CMD_ENTER_SLEEP_MODE);
 	halTMRDelay(120);
 	close();
 
-	Ltdc::disable();
+	ltdc->disable();
 }
 
 
@@ -220,34 +224,39 @@ void DisplayDriver_ILI9341LTDC::refresh() {
 ///
 void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
+	auto pinCS(PinCS::getHandler());
+	auto pinRS(PinRS::getHandler());
+	#ifdef DISPLAY_RTS_Pin
+	auto pinRST(PinRST::getHandler());
+	#endif
+
 	// Inicialitza el modul GPIO
 	//
-	PinCS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	PinCS::set();
-	PinRS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	PinRS::clear();
-	#ifdef DISPLAY_RTS_GPIO
-		PinRST::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-		PinRST::clear();
+	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+	#ifdef DISPLAY_RTS_Pin
+		pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
 	#endif
 
 	// Inicialitza el modul SPI
 	//
-	Spi::initSCKPin<PinSCK>();
-	Spi::initMOSIPin<PinMOSI>();
-	Spi::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1,	SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
+	auto spi(DISPLAY_SPI::getHandler());
+	spi->initSCKPin<PinSCK>();
+	spi->initMOSIPin<PinMOSI>();
+	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::high, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_8);
 
 	// Inicialitza el modul LTDC
 	//
-	Ltdc::initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	Ltdc::initDEPin<PinDE>(_dePol);
-	Ltdc::initHSYNCPin<PinHSYNC>(_hSyncPol);
-	Ltdc::initVSYNCPin<PinVSYNC>(_vSyncPol);
-	Ltdc::initPCPin<PinPC>(_pcPol);
-	Ltdc::initRPins<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	Ltdc::initGPins<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	Ltdc::initBPins<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	Ltdc::setBackgroundColor(RGB(0, 0, 255));
+	auto ltdc(ltdc::LTDCDevice::getHandler());
+	ltdc->initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	ltdc->initDEPin<PinDE>(_dePol);
+	ltdc->initHSYNCPin<PinHSYNC>(_hSyncPol);
+	ltdc->initVSYNCPin<PinVSYNC>(_vSyncPol);
+	ltdc->initPCPin<PinPC>(_pcPol);
+	ltdc->initRPins<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	ltdc->initGPins<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	ltdc->initBPins<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	ltdc->setBackgroundColor(RGB(0, 0, 255));
 
 	// Inicialitza la capa 1 del modul LTDC
 	//
@@ -313,9 +322,10 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 #error "Display no soportado"
 #endif
 
-	#ifdef DISPLAY_RST_GPIO
+	#ifdef DISPLAY_RST_Pin
     	halTMRDelay(10);
-    	PinRST::set();
+    	auto pinRST(PinRST::getHandler());
+    	pinRST->set();
     	halTMRDelay(120);
 	#endif
 
@@ -345,7 +355,9 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 ///
 void DisplayDriver_ILI9341LTDC::open() {
 
-	PinCS::clear();
+	auto pinCS(PinCS::getHandler());
+
+	pinCS->clear();
 }
 
 
@@ -354,7 +366,9 @@ void DisplayDriver_ILI9341LTDC::open() {
 ///
 void DisplayDriver_ILI9341LTDC::close() {
 
-	PinCS::set();
+	auto pinCS(PinCS::getHandler());
+
+	pinCS->set();
 }
 
 
@@ -365,12 +379,14 @@ void DisplayDriver_ILI9341LTDC::close() {
 void DisplayDriver_ILI9341LTDC::writeCommand(
 	uint8_t cmd) {
 
-	PinRS::clear();
-	//Spi::send(&cmd, sizeof(cmd));
-	Spi::write8(cmd);
-	while (!Spi::getFlag(SPIFlag::txEmpty))
+	auto pinRS(PinRS::getHandler());
+	auto spi(Spi::getHandler());
+
+	pinRS->clear();
+	spi->write8(cmd);
+	while (!spi->isTxEmpty())
 		continue;
-	while (Spi::getFlag(SPIFlag::busy))
+	while (spi->isBusy())
 		continue;
 }
 
@@ -382,11 +398,13 @@ void DisplayDriver_ILI9341LTDC::writeCommand(
 void DisplayDriver_ILI9341LTDC::writeData(
 	uint8_t data) {
 
-	PinRS::set();
-//	Spi::send(&data, sizeof(data));
-	Spi::write8(data);
-	while (!Spi::getFlag(SPIFlag::txEmpty))
+	auto pinRS(PinRS::getHandler());
+	auto spi(Spi::getHandler());
+
+	pinRS->set();
+	spi->write8(data);
+	while (!spi->isTxEmpty())
 		continue;
-	while (Spi::getFlag(SPIFlag::busy))
+	while (spi->isBusy())
 		continue;
 }

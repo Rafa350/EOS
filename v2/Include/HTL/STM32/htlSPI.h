@@ -6,8 +6,7 @@
 // EOS includes
 //
 #include "HTL/htl.h"
-#include "HTL/STM32/htlGPIO.h"
-#include "HTL/STM32/htlINT.h"
+#include "HTL/htlGPIO.h"
 
 
 namespace htl {
@@ -165,7 +164,7 @@ namespace htl {
 				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
 				static constexpr uint32_t _rccResetAddr = HI::rccResetAddr;
 				static constexpr uint32_t _rccResetPos = HI::rccResetPos;
-				static SPIDeviceX _spi;
+				static SPIDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
@@ -188,31 +187,28 @@ namespace htl {
 					*p &= ~(1 << _rccResetPos);
 				}
 			public:
-				inline static SPIDeviceHandler getHandler() {
-					return &_spi;
+				inline static SPIDeviceX * getHandler() {
+					return &_device;
 				}
 				template <typename pin_>
-				static void initSCKPin() {
-					gpio::PinHandler handler = pin_::getHandler();
+				void initSCKPin() {
 					gpio::GPIOAlt alt = internal::SPIAltFunction<deviceID_, PinFunction::sck, pin_>::alt;
-					handler->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
 				}
 				template <typename pin_>
-				static void initMOSIPin() {
-					gpio::PinHandler handler = pin_::getHandler();
+				void initMOSIPin() {
 					gpio::GPIOAlt alt = internal::SPIAltFunction<deviceID_, PinFunction::mosi, pin_>::alt;
-					handler->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
 				}
 				template <typename pin_>
-				static void initMISOPin() {
-					gpio::PinHandler handler = pin_::getHandler();
+				void initMISOPin() {
 					gpio::GPIOAlt alt = internal::SPIAltFunction<deviceID_, PinFunction::miso, pin_>::alt;
-					handler->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
 				}
 		};
 
 		template <DeviceID deviceID_>
-		SPIDeviceX<deviceID_> SPIDeviceX<deviceID_>::_spi;
+		SPIDeviceX<deviceID_> SPIDeviceX<deviceID_>::_device;
 
 		#ifdef HTL_SPI1_EXIST
 		typedef SPIDeviceX<DeviceID::_1> SPIDevice1;
@@ -232,7 +228,7 @@ namespace htl {
 		#ifdef HTL_SPI6_EXIST
 		typedef SPIDeviceX<DeviceID::_6> SPIDevice6;
 		#endif
-
+/*
 		class SPIBase_x {
 			protected:
 				static void initialize(SPI_TypeDef *regs, SPIMode mode, SPIClkPolarity clkPolarity, SPIClkPhase clkPhase, SPISize size, SPIFirstBit fistBit, SPIClockDivider clkDivider);
@@ -535,7 +531,7 @@ namespace htl {
 		#ifdef HTL_SPI6_EXIST
 		using SPI_6 = SPI_x<DeviceID::_6>;
 		#endif
-
+*/
 		namespace internal {
 
 			#ifdef HTL_SPI1_EXIST
@@ -550,6 +546,8 @@ namespace htl {
 				#elif defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI1EN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
+				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI1RST_Pos;
 				#endif
 				static constexpr INTVector vector = INTVector::spi1;
 			};
@@ -567,6 +565,8 @@ namespace htl {
 				#elif defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI2EN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
+				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_SPI2RST_Pos;
 				#endif
 				static constexpr INTVector vector = INTVector::spi2;
 			};
@@ -580,6 +580,8 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI3EN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
+				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_SPI3RST_Pos;
 				#endif
 			};
 			#endif
@@ -592,6 +594,8 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI4EN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
+				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI4RST_Pos;
 				#endif
 			};
 			#endif
@@ -604,6 +608,8 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI5EN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
+				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI5RST_Pos;
 				#endif
 			};
 			#endif

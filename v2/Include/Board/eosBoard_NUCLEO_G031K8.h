@@ -24,8 +24,8 @@
 #define LED1_Pin             htl::gpio::PinC6
 #define LED1_PortID          LED1_Pin::portID
 #define LED1_PinID           LED1_Pin::pinID
-#define LED1_ON              htl::gpio::PinState::set
-#define LED1_OFF             htl::gpio::PinState::clear
+#define LED1_StateON         htl::gpio::PinState::set
+#define LED1_StateOFF        htl::gpio::PinState::clear
 
 #define LED1_Initialize()    LED1_GPIO::getPinHandler()->initOutput(htl::gpio::OutDriver::pushPull)
 #define LED1_On()            LED1_GPIO::getPinHandler()->set()

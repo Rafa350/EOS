@@ -37,16 +37,16 @@ namespace eos {
 			#endif
 			#if defined(DISPLAY_INTERFACE_SPI) || \
 			    defined(DISPLAY_INTERFACE_RGB)
-    			using PinTE = DISPLAY_TE_GPIO;
-				using PinSCK = DISPLAY_SCK_GPIO;
-				using PinMOSI = DISPLAY_MOSI_GPIO;
+    			using PinTE = DISPLAY_TE_Pin;
+				using PinSCK = DISPLAY_SCK_Pin;
+				using PinMOSI = DISPLAY_MOSI_Pin;
 				using Spi = DISPLAY_SPI;
 			#endif
 			#if defined(DISPLAY_RST_GPIO)
     			using PinRST = DISPLAY_RST_GPIO;
 			#endif
-    		using PinCS = DISPLAY_CS_GPIO;
-    		using PinRS = DISPLAY_RS_GPIO;
+    		using PinCS = DISPLAY_CS_Pin;
+    		using PinRS = DISPLAY_RS_Pin;
 
     	private:
     		constexpr static int16_t _displayWidth = DISPLAY_WIDTH;

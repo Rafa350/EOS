@@ -291,6 +291,7 @@ void SPIDevice::deinitialize() {
 }
 
 
+/*
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el modul SPI.
 /// \param    regs: El bloc de registres
@@ -374,3 +375,4 @@ void SPIBase_x::send(
 #endif
 }
 
+*/

@@ -118,7 +118,7 @@ namespace htl {
 				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
 				static constexpr uint32_t _rccResetAddr = HI::rccResetAddr;
 				static constexpr uint32_t _rccResetPos = HI::rccResetPos;
-				static I2CSlaveDeviceX _i2c;
+				static I2CSlaveDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
@@ -141,17 +141,17 @@ namespace htl {
 					*p &= ~(1 << _rccResetPos);
 				}
 			public:
-				inline static I2CSlaveDeviceHandler getHandler() {
-					return &_i2c;
+				inline static I2CSlaveDeviceX * getHandler() {
+					return &_device;
 				}
 				template <typename pin_>
-				static void initSCLPin() {
+				void initSCLPin() {
 					gpio::PinHandler handler = pin_::getHandler();
 					gpio::GPIOAlt alt = internal::I2CAltFunction<deviceID_, PinFunction::scl, pin_>::alt;
 					handler->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, alt);
 				}
 				template <typename pin_>
-				static void initSDAPin() {
+				void initSDAPin() {
 					gpio::PinHandler handler = pin_::getHandler();
 					gpio::GPIOAlt alt = internal::I2CAltFunction<deviceID_, PinFunction::sda, pin_>::alt;
 					handler->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, alt);
@@ -159,7 +159,7 @@ namespace htl {
 		};
 
 		template <DeviceID deviceID_>
-		I2CSlaveDeviceX<deviceID_> I2CSlaveDeviceX<deviceID_>::_i2c;
+		I2CSlaveDeviceX<deviceID_> I2CSlaveDeviceX<deviceID_>::_device;
 
 
 		#ifdef HTL_I2C1_EXIST

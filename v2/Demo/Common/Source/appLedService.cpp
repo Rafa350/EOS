@@ -28,7 +28,7 @@ void LedService::onInitialize() {
 
 	#ifdef EXIST_LED2
 		auto pinLED2 = LED2_Pin::getHandler();
-		pinLED2->initOutput(GPIODriver::pushPull, GPIOSpeed::low, GPIOInitPinState::clear);
+		pinLED2->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::InitPinState::clear);
 	#endif
 }
 

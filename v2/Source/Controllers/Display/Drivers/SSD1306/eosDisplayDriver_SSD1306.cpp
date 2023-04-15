@@ -220,27 +220,22 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	gpio::PinHandler pinCS = PinCS::getHandler();
+	auto pinCS = PinCS::getHandler();
 	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
-	gpio::PinHandler pinDC = PinDC::getHandler();
+	auto pinDC = PinDC::getHandler();
 	pinDC->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast);
 	#ifdef DISPLAY_RST_GPIO
-	gpio::PinHandler pinRST = PinRST::getHandler();
+	auto pinRST = PinRST::getHandler();
 	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::InitPinState::clear);
 	#endif
 
 	// Inicialitza el modul SPI
 	//
-	SpiDISPLAY::initSCKPin<PinSCK>();
-	SpiDISPLAY::initMOSIPin<PinMOSI>();
-	spi::SPIDeviceHandler spiDisplay = SpiDISPLAY::getHandler();
-	spiDisplay->initialize(spi::SPIMode::master, spi::SPIClkPolarity::low, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_4);
-	spiDisplay->enable();
-
-/*	Spi::initSCKPin<PinSCK>();
-	Spi::initMOSIPin<PinMOSI>();
-	Spi::initialize(SPIMode::master, SPIClkPolarity::low, SPIClkPhase::edge1, SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_4);
-	Spi::enable();*/
+	auto spi = SpiDISPLAY::getHandler();
+	spi->initSCKPin<PinSCK>();
+	spi->initMOSIPin<PinMOSI>();
+	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::low, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_4);
+	spi->enable();
 }
 #endif
 
@@ -253,9 +248,10 @@ void DisplayDriver_SSD1306::initializeController() {
 	// Reseteja el controlador
 	//
 	#ifdef DISPLAY_RST_GPIO
-	PinRST::clear();
+	auto pinRST = PinRST::getHandler();
+	pinRST->clear();
 	halTMRDelay(10);
-	PinRST::set();
+	pinRST->set();
 	halTMRDelay(150);
 	#endif
 
@@ -324,17 +320,17 @@ void DisplayDriver_SSD1306::initializeController() {
 void DisplayDriver_SSD1306::writeCommand(
     uint8_t cmd) {
 
-	gpio::PinHandler pinCS = PinCS::getHandler();
-	gpio::PinHandler pinDC = PinDC::getHandler();
-	spi::SPIDeviceHandler spiDisplay = SpiDISPLAY::getHandler();
+	auto pinCS = PinCS::getHandler();
+	auto pinDC = PinDC::getHandler();
+	auto spi = SpiDISPLAY::getHandler();
 
 	pinCS->clear();
 	pinDC->clear();
 
-	spiDisplay->write8(cmd);
-	while (!spiDisplay->isTxEmpty())
+	spi->write8(cmd);
+	while (!spi->isTxEmpty())
 		continue;
-	while (spiDisplay->isBusy())
+	while (spi->isBusy())
 		continue;
 
 	pinCS->set();
@@ -352,19 +348,19 @@ void DisplayDriver_SSD1306::writeData(
     const uint8_t* data,
 	int length) {
 
-	gpio::PinHandler pinCS = PinCS::getHandler();
-	gpio::PinHandler pinDC = PinDC::getHandler();
-	spi::SPIDeviceHandler spiDisplay = SpiDISPLAY::getHandler();
+	auto pinCS = PinCS::getHandler();
+	auto pinDC = PinDC::getHandler();
+	auto spi = SpiDISPLAY::getHandler();
 
 	pinCS->clear();
 	pinDC->set();
 
 	while (length--) {
-		spiDisplay->write8(*data++);
-		while (!spiDisplay->isTxEmpty())
+		spi->write8(*data++);
+		while (!spi->isTxEmpty())
 			continue;
 	}
-	while (spiDisplay->isBusy())
+	while (spi->isBusy())
 		continue;
 
 	pinCS->clear();

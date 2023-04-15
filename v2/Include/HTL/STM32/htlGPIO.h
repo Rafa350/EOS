@@ -285,7 +285,7 @@ namespace htl {
 					Activator::reset();
 				}
 			public:
-				inline static PortHandler getHandler() {
+				inline static PortX * getHandler() {
 					return &_port;
 				}
 		};
@@ -345,7 +345,7 @@ namespace htl {
 					Activator::activate(1 << int(pinID_));
 				}
 			public:
-				inline static PinHandler getHandler() {
+				inline static PinX * getHandler() {
 					return &_pin;
 				}
 		};
@@ -354,7 +354,7 @@ namespace htl {
 		PinX<portID_, pinID_> PinX<portID_, pinID_>::_pin;
 
 		template <PortID portID_, PinID pinID_>
-		inline PinHandler getPinHandler() {
+		inline PinX<portID_, pinID_> * getPinHandler() {
 			return PinX<portID_, pinID_>::getHandler();
 		}
 
@@ -465,6 +465,60 @@ namespace htl {
 		typedef PinX<PortID::F, PinID::_13> PinF13;
 		typedef PinX<PortID::F, PinID::_14> PinF14;
 		typedef PinX<PortID::F, PinID::_15> PinF15;
+		#endif
+		#ifdef HTL_GPIOG_EXIST
+		typedef PinX<PortID::G, PinID::_0> PinG0;
+		typedef PinX<PortID::G, PinID::_1> PinG1;
+		typedef PinX<PortID::G, PinID::_2> PinG2;
+		typedef PinX<PortID::G, PinID::_3> PinG3;
+		typedef PinX<PortID::G, PinID::_4> PinG4;
+		typedef PinX<PortID::G, PinID::_5> PinG5;
+		typedef PinX<PortID::G, PinID::_6> PinG6;
+		typedef PinX<PortID::G, PinID::_7> PinG7;
+		typedef PinX<PortID::G, PinID::_8> PinG8;
+		typedef PinX<PortID::G, PinID::_9> PinG9;
+		typedef PinX<PortID::G, PinID::_10> PinG10;
+		typedef PinX<PortID::G, PinID::_11> PinG11;
+		typedef PinX<PortID::G, PinID::_12> PinG12;
+		typedef PinX<PortID::G, PinID::_13> PinG13;
+		typedef PinX<PortID::G, PinID::_14> PinG14;
+		typedef PinX<PortID::G, PinID::_15> PinG15;
+		#endif
+		#ifdef HTL_GPIOH_EXIST
+		typedef PinX<PortID::H, PinID::_0> PinH0;
+		typedef PinX<PortID::H, PinID::_1> PinH1;
+		typedef PinX<PortID::H, PinID::_2> PinH2;
+		typedef PinX<PortID::H, PinID::_3> PinH3;
+		typedef PinX<PortID::H, PinID::_4> PinH4;
+		typedef PinX<PortID::H, PinID::_5> PinH5;
+		typedef PinX<PortID::H, PinID::_6> PinH6;
+		typedef PinX<PortID::H, PinID::_7> PinH7;
+		typedef PinX<PortID::H, PinID::_8> PinH8;
+		typedef PinX<PortID::H, PinID::_9> PinH9;
+		typedef PinX<PortID::H, PinID::_10> PinH10;
+		typedef PinX<PortID::H, PinID::_11> PinH11;
+		typedef PinX<PortID::H, PinID::_12> PinH12;
+		typedef PinX<PortID::H, PinID::_13> PinH13;
+		typedef PinX<PortID::H, PinID::_14> PinH14;
+		typedef PinX<PortID::H, PinID::_15> PinH15;
+		#endif
+		#ifdef HTL_GPIOI_EXIST
+		typedef PinX<PortID::I, PinID::_0> PinI0;
+		typedef PinX<PortID::I, PinID::_1> PinI1;
+		typedef PinX<PortID::I, PinID::_2> PinI2;
+		typedef PinX<PortID::I, PinID::_3> PinI3;
+		typedef PinX<PortID::I, PinID::_4> PinI4;
+		typedef PinX<PortID::I, PinID::_5> PinI5;
+		typedef PinX<PortID::I, PinID::_6> PinI6;
+		typedef PinX<PortID::I, PinID::_7> PinI7;
+		typedef PinX<PortID::I, PinID::_8> PinI8;
+		typedef PinX<PortID::I, PinID::_9> PinI9;
+		typedef PinX<PortID::I, PinID::_10> PinI10;
+		typedef PinX<PortID::I, PinID::_11> PinI11;
+		typedef PinX<PortID::I, PinID::_12> PinI12;
+		typedef PinX<PortID::I, PinID::_13> PinI13;
+		typedef PinX<PortID::I, PinID::_14> PinI14;
+		typedef PinX<PortID::I, PinID::_15> PinI15;
 		#endif
 
 

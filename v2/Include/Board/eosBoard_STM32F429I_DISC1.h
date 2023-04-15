@@ -10,9 +10,11 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_GPIO            htl::GPIO_G13
-#define LED1_ON              htl::GPIOState::set
-#define LED1_OFF             htl::GPIOState::clear
+#define LED1_Pin             htl::gpio::PinG13
+#define LED1_PortID          LED1_Pin::portID
+#define LED1_PinID           LED1_Pin::PinID
+#define LED1_StateON         htl::gpio::PinState::set
+#define LED1_StateOFF        htl::gpio::PinState::clear
 
 #endif // USE_LED1
 
@@ -24,9 +26,11 @@
 #ifdef USE_LED2
 #define EXIST_LED2
 
-#define LED2_GPIO            htl::GPIO_G14
-#define LED2_ON              htl::GPIOState::set
-#define LED2_OFF             htl::GPIOState::clear
+#define LED2_Pin             htl::gpio::PinG14
+#define LED2_PortID          LED2_Pin::portID
+#define LED2_PinID           LED2_Pin::PinID
+#define LED2_StateON         htl::gpio::PinState::set
+#define LED2_StateOFF        htl::gpio::PinState::clear
 
 #endif // USE_LED2
 
@@ -38,9 +42,11 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_GPIO             htl::GPIO_A0
-#define SW1_ON               htl::GPIOState::set
-#define SW1_OFF              htl::GPIOState::clear
+#define SW1_Pin              htl::gpio::PinA0
+#define SW1_PortID           SW1_Pin::portID
+#define SW1_PinID            SW!_Pin::pinID
+#define SW1_StateON          htl::gpio::PinState::set
+#define SW1_StateOFF         htl::gpio::PinState::clear
 
 #endif // USE_SW1
 
@@ -123,14 +129,14 @@
 // SPI interface
 #if defined(DISPLAY_INTERFACE_SPI) || \
 	defined(DISPLAY_INTERFACE_RGB)
-#define DISPLAY_CS_GPIO           htl::GPIO_C2
-#define DISPLAY_RS_GPIO           htl::GPIO_D13
-#define DISPLAY_SCK_GPIO          htl::GPIO_F7
-#define DISPLAY_MOSI_GPIO         htl::GPIO_F9
-#define DISPLAY_SPI               htl::SPI_5
+#define DISPLAY_CS_Pin           htl::gpio::PinC2
+#define DISPLAY_RS_Pin           htl::gpio::PinD13
+#define DISPLAY_SCK_Pin          htl::gpio::PinF7
+#define DISPLAY_MOSI_Pin         htl::gpio::PinF9
+#define DISPLAY_SPI              htl::spi::SPIDevice5
 #endif
 #if defined(DISPLAY_INTERFACE_SPI)
-#define DISPLAY_TE_GPIO           htl::GPIO_D11
+#define DISPLAY_TE_Pin           htl::gpio::PinD11
 #endif
 
 // 8080 interface
@@ -143,33 +149,33 @@
 
 // RGB interface
 #if defined(DISPLAY_INTERFACE_RGB)
-#define DISPLAY_HSYNC_GPIO        htl::GPIO_C6
-#define DISPLAY_VSYNC_GPIO        htl::GPIO_A4
-#define DISPLAY_DE_GPIO           htl::GPIO_F10
-#define DISPLAY_PC_GPIO           htl::GPIO_G7
-#define DISPLAY_R2_GPIO           htl::GPIO_C10
-#define DISPLAY_R3_GPIO           htl::GPIO_B0
-#define DISPLAY_R4_GPIO           htl::GPIO_A11
-#define DISPLAY_R5_GPIO           htl::GPIO_A12
-#define DISPLAY_R6_GPIO           htl::GPIO_B1
-#define DISPLAY_R7_GPIO           htl::GPIO_G6
-#define DISPLAY_G2_GPIO           htl::GPIO_A6
-#define DISPLAY_G3_GPIO           htl::GPIO_G10
-#define DISPLAY_G4_GPIO           htl::GPIO_B10
-#define DISPLAY_G5_GPIO           htl::GPIO_B11
-#define DISPLAY_G6_GPIO           htl::GPIO_C7
-#define DISPLAY_G7_GPIO           htl::GPIO_D3
-#define DISPLAY_B2_GPIO           htl::GPIO_D6
-#define DISPLAY_B3_GPIO           htl::GPIO_G11
-#define DISPLAY_B4_GPIO           htl::GPIO_G12
-#define DISPLAY_B5_GPIO           htl::GPIO_A3
-#define DISPLAY_B6_GPIO           htl::GPIO_B8
-#define DISPLAY_B7_GPIO           htl::GPIO_B9
+#define DISPLAY_HSYNC_Pin         htl::gpio::PinC6
+#define DISPLAY_VSYNC_Pin         htl::gpio::PinA4
+#define DISPLAY_DE_Pin            htl::gpio::PinF10
+#define DISPLAY_PC_Pin            htl::gpio::PinG7
+#define DISPLAY_R2_Pin            htl::gpio::PinC10
+#define DISPLAY_R3_Pin            htl::gpio::PinB0
+#define DISPLAY_R4_Pin            htl::gpio::PinA11
+#define DISPLAY_R5_Pin            htl::gpio::PinA12
+#define DISPLAY_R6_Pin            htl::gpio::PinB1
+#define DISPLAY_R7_Pin            htl::gpio::PinG6
+#define DISPLAY_G2_Pin            htl::gpio::PinA6
+#define DISPLAY_G3_Pin            htl::gpio::PinG10
+#define DISPLAY_G4_Pin            htl::gpio::PinB10
+#define DISPLAY_G5_Pin            htl::gpio::PinB11
+#define DISPLAY_G6_Pin            htl::gpio::PinC7
+#define DISPLAY_G7_Pin            htl::gpio::PinD3
+#define DISPLAY_B2_Pin            htl::gpio::PinD6
+#define DISPLAY_B3_Pin            htl::gpio::PinG11
+#define DISPLAY_B4_Pin            htl::gpio::PinG12
+#define DISPLAY_B5_Pin            htl::gpio::PinA3
+#define DISPLAY_B6_Pin            htl::gpio::PinB8
+#define DISPLAY_B7_Pin            htl::gpio::PinB9
 
-#define DISPLAY_HSYNC_POL         htl::LTDCPolarity::activeLow;   // HSync polarity
-#define DISPLAY_VSYNC_POL         htl::LTDCPolarity::activeLow;   // VSync polarity
-#define DISPLAY_DE_POL            htl::LTDCPolarity::activeLow;   // DE polarity
-#define DISPLAY_PC_POL            htl::LTDCPolarity::activeLow;   // PC polarity
+#define DISPLAY_HSYNC_POL         htl::ltdc::LTDCPolarity::activeLow;   // HSync polarity
+#define DISPLAY_VSYNC_POL         htl::ltdc::LTDCPolarity::activeLow;   // VSync polarity
+#define DISPLAY_DE_POL            htl::ltdc::LTDCPolarity::activeLow;   // DE polarity
+#define DISPLAY_PC_POL            htl::ltdc::LTDCPolarity::activeLow;   // PC polarity
 #endif
 
 #define DISPLAY_WIDTH  		      240            // Amplada fisica de la pantalla

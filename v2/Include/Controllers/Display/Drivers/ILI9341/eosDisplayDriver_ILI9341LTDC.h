@@ -15,36 +15,35 @@ namespace eos {
 
     class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
     	private:
-    		using PinCS = DISPLAY_CS_GPIO;
-    		using PinRS = DISPLAY_RS_GPIO;
-    		using PinSCK = DISPLAY_SCK_GPIO;
-    		using PinMOSI = DISPLAY_MOSI_GPIO;
+    		using PinCS = DISPLAY_CS_Pin;
+    		using PinRS = DISPLAY_RS_Pin;
+    		using PinSCK = DISPLAY_SCK_Pin;
+    		using PinMOSI = DISPLAY_MOSI_Pin;
 
-			using PinDE = DISPLAY_DE_GPIO;
-			using PinHSYNC = DISPLAY_HSYNC_GPIO;
-			using PinVSYNC = DISPLAY_VSYNC_GPIO;
-			using PinPC = DISPLAY_PC_GPIO;
-			using PinR2 = DISPLAY_R2_GPIO;
-			using PinR3 = DISPLAY_R3_GPIO;
-			using PinR4 = DISPLAY_R4_GPIO;
-			using PinR5 = DISPLAY_R5_GPIO;
-			using PinR6 = DISPLAY_R6_GPIO;
-			using PinR7 = DISPLAY_R7_GPIO;
-			using PinG2 = DISPLAY_G2_GPIO;
-			using PinG3 = DISPLAY_G3_GPIO;
-			using PinG4 = DISPLAY_G4_GPIO;
-			using PinG5 = DISPLAY_G5_GPIO;
-			using PinG6 = DISPLAY_G6_GPIO;
-			using PinG7 = DISPLAY_G7_GPIO;
-			using PinB2 = DISPLAY_B2_GPIO;
-			using PinB3 = DISPLAY_B3_GPIO;
-			using PinB4 = DISPLAY_B4_GPIO;
-			using PinB5 = DISPLAY_B5_GPIO;
-			using PinB6 = DISPLAY_B6_GPIO;
-			using PinB7 = DISPLAY_B7_GPIO;
+			using PinDE = DISPLAY_DE_Pin;
+			using PinHSYNC = DISPLAY_HSYNC_Pin;
+			using PinVSYNC = DISPLAY_VSYNC_Pin;
+			using PinPC = DISPLAY_PC_Pin;
+			using PinR2 = DISPLAY_R2_Pin;
+			using PinR3 = DISPLAY_R3_Pin;
+			using PinR4 = DISPLAY_R4_Pin;
+			using PinR5 = DISPLAY_R5_Pin;
+			using PinR6 = DISPLAY_R6_Pin;
+			using PinR7 = DISPLAY_R7_Pin;
+			using PinG2 = DISPLAY_G2_Pin;
+			using PinG3 = DISPLAY_G3_Pin;
+			using PinG4 = DISPLAY_G4_Pin;
+			using PinG5 = DISPLAY_G5_Pin;
+			using PinG6 = DISPLAY_G6_Pin;
+			using PinG7 = DISPLAY_G7_Pin;
+			using PinB2 = DISPLAY_B2_Pin;
+			using PinB3 = DISPLAY_B3_Pin;
+			using PinB4 = DISPLAY_B4_Pin;
+			using PinB5 = DISPLAY_B5_Pin;
+			using PinB6 = DISPLAY_B6_Pin;
+			using PinB7 = DISPLAY_B7_Pin;
 
 			using Spi = DISPLAY_SPI;
-			using Ltdc = htl::LTDC_1;
 			using LtdcLayer = htl::LTDCLayer_1;
 
 			static constexpr uint16_t _hSync       = DISPLAY_HSYNC;
@@ -53,10 +52,10 @@ namespace eos {
 			static constexpr uint16_t _vBP         = DISPLAY_VBP;
 			static constexpr uint16_t _hFP         = DISPLAY_HFP;
 			static constexpr uint16_t _vFP         = DISPLAY_VFP;
-			static constexpr htl::LTDCPolarity _hSyncPol = DISPLAY_HSYNC_POL;
-			static constexpr htl::LTDCPolarity _vSyncPol = DISPLAY_VSYNC_POL;
-			static constexpr htl::LTDCPolarity _dePol    = DISPLAY_DE_POL;
-			static constexpr htl::LTDCPolarity _pcPol    = DISPLAY_PC_POL;
+			static constexpr htl::ltdc::LTDCPolarity _hSyncPol = DISPLAY_HSYNC_POL;
+			static constexpr htl::ltdc::LTDCPolarity _vSyncPol = DISPLAY_VSYNC_POL;
+			static constexpr htl::ltdc::LTDCPolarity _dePol    = DISPLAY_DE_POL;
+			static constexpr htl::ltdc::LTDCPolarity _pcPol    = DISPLAY_PC_POL;
 			static constexpr uint16_t _width       = DISPLAY_WIDTH;
 			static constexpr uint16_t _height      = DISPLAY_HEIGHT;
 			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;

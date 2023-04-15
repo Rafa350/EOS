@@ -22,22 +22,28 @@ void DisplayDriver_ILI9341::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-	PinTE::initInput(GPIOPull::up);
+	auto pinTE = PinTE::getHandler();
 	#ifdef DISPLAY_RST_GPIO
-		PinRST.initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-		PinRST::clear();
+	auto pinRST = PinRST::getHandler();
 	#endif
-	PinCS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	PinCS::set();
-	PinRS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
-	PinRS::clear();
+	auto pinCS = PinCS::getHandler();
+	auto pinRS = PinRS::getHandler();
+
+
+	pinTE->initInput(gpio::PullUpDn::up);
+	#ifdef DISPLAY_RST_GPIO
+		pinRST.initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+	#endif
+	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
 
 	// Inicialitza el modul SPI
     //
-	Spi::initSCKPin<PinSCK>();
-	Spi::initMOSIPin<PinMOSI>();
-	Spi::initialize(SPIMode::master, SPIClkPolarity::high, SPIClkPhase::edge1,	SPISize::_8, SPIFirstBit::msb, SPIClockDivider::_8);
-	Spi::enable();
+	auto spi = Spi::getHandler();
+	spi->initSCKPin<PinSCK>();
+	spi->initMOSIPin<PinMOSI>();
+	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::high, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_8);
+	spi->enable();
 }
 
 
@@ -147,7 +153,9 @@ void DisplayDriver_ILI9341::initializeController() {
 ///
 void DisplayDriver_ILI9341::open() {
 
-	PinCS::clear();
+	auto pinCS = PinCS::getHandler();
+
+	pinCS->clear();
 }
 
 
@@ -156,7 +164,9 @@ void DisplayDriver_ILI9341::open() {
 ///
 void DisplayDriver_ILI9341::close() {
 
-	PinCS::set();
+	auto pinCS = PinCS::getHandler();
+
+	pinCS->set();
 }
 
 
@@ -167,12 +177,15 @@ void DisplayDriver_ILI9341::close() {
 void DisplayDriver_ILI9341::writeCommand(
     uint8_t cmd) {
 
-	PinRS::clear();
+	auto pinRS = PinRS::getHandler();
+	auto spi = Spi::getHandler();
 
-	Spi::write8(cmd);
-	while (!Spi::isTxEmpty())
+	pinRS->clear();
+
+	spi->write8(cmd);
+	while (!spi->isTxEmpty())
 		continue;
-	while (Spi::isBusy())
+	while (spi->isBusy())
 		continue;
 }
 
@@ -184,12 +197,15 @@ void DisplayDriver_ILI9341::writeCommand(
 void DisplayDriver_ILI9341::writeData(
     uint8_t data) {
 
-	PinRS::set();
+	auto pinRS = PinRS::getHandler();
+	auto spi = Spi::getHandler();
 
-	Spi::write8(data);
-	while (!Spi::isTxEmpty())
+	pinRS->set();
+
+	spi->write8(data);
+	while (!spi->isTxEmpty())
 		continue;
-	while (Spi::isBusy())
+	while (spi->isBusy())
 		continue;
 }
 
@@ -203,14 +219,18 @@ void DisplayDriver_ILI9341::writeData(
 	const uint8_t *data,
 	int32_t length) {
 
-	PinRS::set();
+	auto pinRS = PinRS::getHandler();
+	auto spi = Spi::getHandler();
+
+	pinRS->set();
 
 	while (length--) {
-		Spi::write8(*data++);
-		while (!Spi::isTxEmpty())
+		spi->write8(*data++);
+		while (!spi->isTxEmpty())
 			continue;
 	}
-	while (Spi::isBusy())
+
+	while (spi->isBusy())
 		continue;
 }
 
