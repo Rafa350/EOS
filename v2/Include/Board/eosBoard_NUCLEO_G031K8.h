@@ -21,14 +21,16 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_GPIO            htl::GPIO_C6
-#define LED1_ON              htl::GPIOPinState::set
-#define LED1_OFF             htl::GPIOPinState::clear
+#define LED1_Pin             htl::gpio::PinC6
+#define LED1_PortID          LED1_Pin::portID
+#define LED1_PinID           LED1_Pin::pinID
+#define LED1_ON              htl::gpio::PinState::set
+#define LED1_OFF             htl::gpio::PinState::clear
 
-#define LED1_Initialize()    LED1_GPIO::initOutput(htl::GPIODriver::pushPull)
-#define LED1_On()            LED1_GPIO::set()
-#define LED1_Off()           LED1_GPIO::clear()
-#define LED1_Toggle()        LED1_GPIO::toggle()
+#define LED1_Initialize()    LED1_GPIO::getPinHandler()->initOutput(htl::gpio::OutDriver::pushPull)
+#define LED1_On()            LED1_GPIO::getPinHandler()->set()
+#define LED1_Off()           LED1_GPIO::getPinHandler()->clear()
+#define LED1_Toggle()        LED1_GPIO::getPinHandler()->toggle()
 
 #endif // USE_LED1
 

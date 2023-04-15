@@ -3,7 +3,7 @@
 #include "HTL/STM32/htlSPI.h"
 
 
-using namespace htl;
+using namespace htl::spi;
 
 
 #define SPI_CR1_BR_DIV2         (0 << SPI_CR1_BR_Pos)
@@ -243,6 +243,55 @@ static void waitRxFifoEmpty(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    spi: Registres hardware del modul SPI.
+///
+SPIDevice::SPIDevice(SPI_TypeDef *spi):
+	_spi(spi) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el modul SPI.
+/// \param    mode: El modus de comunicacio.
+/// \param    clkPolarity: Polaritat del senyal CLK
+/// \param    clkPhase: Fase del senyal CLK
+/// \param    size: El tamany de trama
+/// \param    firstBite: El primer bit de la trama.
+/// \param    clkDivider: Divisor de frequencia.
+///
+void SPIDevice::initialize(
+	SPIMode mode,
+	SPIClkPolarity clkPolarity,
+	SPIClkPhase clkPhase,
+	SPISize size,
+	SPIFirstBit firstBit,
+	SPIClockDivider clkDivider) {
+
+	activate();
+	disable();
+
+	setClockDivider(_spi, clkDivider);
+	setMode(_spi, mode);
+	setClkPolarity(_spi, clkPolarity);
+	setClkPhase(_spi, clkPhase);
+	setSize(_spi, size);
+	setFirstBit(_spi, firstBit);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el modul SPI.
+///
+void SPIDevice::deinitialize() {
+
+	disable();
+	deactivate();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicialitza el modul SPI.
 /// \param    regs: El bloc de registres
 /// \param    mode: El modus de comunicacio.
@@ -324,3 +373,4 @@ void SPIBase_x::send(
 	waitRxFifoEmpty(regs, startTime, timeout);
 #endif
 }
+

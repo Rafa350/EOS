@@ -3,13 +3,13 @@
 #include "HTL/STM32/htlI2C_IRQ.h"
 
 
-using namespace htl;
+using namespace htl::i2c;
 
 
 #ifdef HTL_I2C1_EXIST
 void I2CSlave_1_InterruptHandler() {
 
-	I2CSlave_1::interruptHandler();
+	I2CSlaveDevice1::getHandler()->interruptService();
 }
 #endif
 
@@ -17,7 +17,7 @@ void I2CSlave_1_InterruptHandler() {
 #ifdef HTL_I2C2_EXIST
 void I2CSlave_2_InterruptHandler() {
 
-	I2CSlave_2::interruptHandler();
+	I2CSlaveDevice2::getHandler()->interruptService();
 }
 #endif
 
@@ -25,7 +25,7 @@ void I2CSlave_2_InterruptHandler() {
 #ifdef HTL_I2C3_EXIST
 void I2CSlave_3_InterruptHandler() {
 
-	I2CSlave_3::interruptHandler();
+	I2CSlaveDevice3::getHandler()->interruptHandler();
 }
 #endif
 
@@ -33,7 +33,7 @@ void I2CSlave_3_InterruptHandler() {
 #ifdef HTL_I2C4_EXIST
 void I2CSlave_4_InterruptHandler() {
 
-	I2CSlave_4::interruptHandler();
+	I2CSlaveDevice4::getHandler()->interruptHandler();
 }
 #endif
 

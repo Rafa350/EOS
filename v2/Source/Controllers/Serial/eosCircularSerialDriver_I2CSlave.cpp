@@ -20,7 +20,7 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 	uint16_t txBufferSize,
 	uint8_t *rxBuffer,
 	uint8_t rxBufferSize,
-	htl::I2CHandler hI2C) :
+	htl::i2c::I2CSlaveDeviceHandler hI2C) :
 
 	CircularSerialDriver(txBuffer, txBufferSize, rxBuffer, rxBufferSize),
 	_hI2C(hI2C) {
@@ -33,15 +33,8 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 ///
 void CircularSerialDriver_I2CSlave::initializeImpl() {
 
-	_hI2C->setInterruptFunction(interruptFunction, this);
-	_hI2C->enable();
-	_hI2C->enableInterrupt(I2CInterrupt::addr);
-
-	//COM2::listenIT(buffer, size, &_context);
-
-	uint8_t buffer[10];
-	I2CTransferContext context;
-	COM2::readIT(buffer, sizeof(buffer), &context);
+	//_hI2C->setInterruptFunction(interruptFunction, this);
+	_hI2C->listen(_buffer, sizeof(_buffer));
 }
 
 
@@ -96,25 +89,25 @@ uint16_t CircularSerialDriver_I2CSlave::receiveImpl(
 /// \param    notify: La notificacio.
 ///
 void CircularSerialDriver_I2CSlave::interruptHandler(
-	htl::I2CInterruptNotify notify) {
+	htl::i2c::I2CInterruptNotify notify) {
 
 	switch (notify) {
-		case I2CInterruptNotify::addrMatch:
+		case i2c::I2CInterruptNotify::addrMatch:
 			break;
 
-		case I2CInterruptNotify::rxNotEmpty: {
+		case i2c::I2CInterruptNotify::rxNotEmpty: {
 
-			uint8_t data = _hI2C->read();
+/*			uint8_t data = _hI2C->read();
 
 			// Si hi ha espai, guarda el byte.
 			//
 			uint16_t availableSpace = rxAvailableSpace();
 			if (availableSpace > 0)
-				rxPush(data);
+				rxPush(data);*/
 			break;
 		}
 
-		case I2CInterruptNotify::completted:
+		case i2c::I2CInterruptNotify::completted:
 			if (rxAvailableData() > 0)
 				notifyRxBufferNotEmpty();
 			break;
@@ -131,8 +124,8 @@ void CircularSerialDriver_I2CSlave::interruptHandler(
 /// \param    param: Parametre de la interrupcio.
 ///
 void CircularSerialDriver_I2CSlave::interruptFunction(
-    htl::I2CInterruptNotify notify,
-	htl::I2CInterruptParam param) {
+    htl::i2c::I2CInterruptNotify notify,
+	htl::i2c::I2CInterruptParam param) {
 
 	CircularSerialDriver_I2CSlave *driver = reinterpret_cast<CircularSerialDriver_I2CSlave*>(param);
 	driver->interruptHandler(notify);

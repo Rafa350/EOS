@@ -3,13 +3,13 @@
 #include "HTL/STM32/htlSPI_IRQ.h"
 
 
-using namespace htl;
+using namespace htl::spi;
 
 
 #ifdef HTL_SPI1_EXIST
 void SPI_1_InterruptHandler() {
 
-	SPI_1::interruptHandler();
+	SPIDevice1::getHandler()->interruptService();
 }
 #endif
 
@@ -17,7 +17,7 @@ void SPI_1_InterruptHandler() {
 #ifdef HTL_SPI2_EXIST
 void SPI_2_InterruptHandler() {
 
-	SPI_2::interruptHandler();
+	SPIDevice2::getHandler()->interruptService();
 }
 #endif
 
@@ -25,7 +25,7 @@ void SPI_2_InterruptHandler() {
 #ifdef HTL_SPI3_EXIST
 void SPI_3_InterruptHandler() {
 
-	SPI_3::interruptHandler();
+	SPIDevice3::getHandler()->interruptService();
 }
 #endif
 
@@ -33,7 +33,7 @@ void SPI_3_InterruptHandler() {
 #ifdef HTL_SPI4_EXIST
 void SPI_4_InterruptHandler() {
 
-	SPI_4::interruptHandler();
+	SPIDevice4::getHandler()->interruptService();
 }
 #endif
 
@@ -41,7 +41,7 @@ void SPI_4_InterruptHandler() {
 #ifdef HTL_SPI5_EXIST
 void SPI_5_InterruptHandler() {
 
-	SPI_5::interruptHandler();
+	SPIDevice5::getHandler()->interruptService();
 }
 #endif
 
@@ -49,7 +49,7 @@ void SPI_5_InterruptHandler() {
 #ifdef HTL_SPI6_EXIST
 void SPI_6_InterruptHandler() {
 
-	SPI_6::interruptHandler();
+	SPIDevice6::getHandler()->interruptService();
 }
 #endif
 

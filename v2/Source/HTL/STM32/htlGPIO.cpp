@@ -2,136 +2,156 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-using namespace htl;
+using namespace htl::gpio;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el modus de treball dels pins.
+/// \param    gpio: Registres hardware del modul GPIO.
+/// \param    mask: Mascara de pins.
+/// \param    mode: Opcions del modus de treball.
+///
 static void setMode(
 	GPIO_TypeDef *gpio,
-	GPIOPinNumber pn,
+	PinMask mask,
 	uint8_t mode) {
 
-    uint32_t tmp = gpio->MODER;
-    tmp &= ~(0b11 << (pn * 2));
-    tmp |= mode << (pn * 2);
-    gpio->MODER = tmp;
+	for (PinNumber pn = 0; pn < 15; pn++) {
+		if ((mask & (1 << pn)) != 0) {
+
+			uint32_t tmp = gpio->MODER;
+			tmp &= ~(0b11 << (pn * 2));
+			tmp |= (mode & 0b11) << (pn * 2);
+			gpio->MODER = tmp;
+		}
+	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el driver de sortida.
-/// \param    gpio: El bloc de registres.
-/// \param    pn: El numero de pin.
-/// \param    driver: El driver a seleccionar.
+/// \param    gpio: Registres hardware del modul GPIO
+/// \param    mask: Mascara de pins.
+/// \param    driver: Opcions de driver.
 ///
 static void setDriver(
 	GPIO_TypeDef *gpio,
-	GPIOPinNumber pn,
-	GPIODriver driver) {
+	PinMask mask,
+	OutDriver driver) {
 
-    // Configura el registre OTYPER (Output Type Register)
-    //
-	if (driver != GPIODriver::noChange) {
-		uint32_t tmp = gpio->OTYPER;
-		tmp &= ~(1 << pn);
-		if (driver == GPIODriver::openDrain)
-			tmp |= 1 << pn;
-		gpio->OTYPER = tmp;
+	if (driver != OutDriver::noChange) {
+
+		for (PinNumber pn = 0; pn < 15; pn++) {
+			if ((mask & (1 << pn)) != 0) {
+				uint32_t tmp = gpio->OTYPER;
+				tmp &= ~(1 << pn);
+				if (driver == OutDriver::openDrain)
+					tmp |= 1 << pn;
+				gpio->OTYPER = tmp;
+			}
+		}
 	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona la velocitat de sortida.
-/// \param    gpio: El bloc de registres.
-/// \param    pn: El numero de pin.
-/// \param    speed: La velocitat a seleccionar.
+/// \param    gpio: Registres de hardware del modul.
+/// \param    mask: Mascara de pins.
+/// \param    speed: Opcions de velocitat.
 ///
 static void setSpeed(
 	GPIO_TypeDef *gpio,
-	GPIOPinNumber pn,
-	GPIOSpeed speed) {
+	PinMask mask,
+	Speed speed) {
 
-	if (speed != GPIOSpeed::noChange) {
+	if (speed != Speed::noChange) {
 
 		uint32_t value = 1; // Per defecte medium
 
 		switch (speed) {
-			case GPIOSpeed::low:
+			case Speed::low:
 				value = 0;
 				break;
-			case GPIOSpeed::high:
+			case Speed::high:
 				value = 2;
 				break;
-			case GPIOSpeed::fast:
+			case Speed::fast:
 				value = 3;
 				break;
 			default:
 				break;
 		}
 
-		// Configura el registre OSPEEDR (Output Speed Register)
-		//
-		uint32_t tmp = gpio->OSPEEDR;
-		tmp &= ~(0b11 << (pn * 2));
-		tmp |= value << (pn * 2);
-		gpio->OSPEEDR = tmp;
+		for (PinNumber pn = 0; pn < 15; pn++) {
+			if ((mask & (1 << pn)) != 0) {
+				uint32_t tmp = gpio->OSPEEDR;
+				tmp &= ~(0b11 << (pn * 2));
+				tmp |= value << (pn * 2);
+				gpio->OSPEEDR = tmp;
+			}
+		}
 	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona la opcio pull.
-/// \param    gpio: El bloc de registres.
-/// \param    pn: El numero de pin.
-/// \param    pull: El pull a seleccionar.
+/// \param    gpio: Els registres hardware del modul GPIO
+/// \param    mask: La mascara de pins.
+/// \param    pull: Les opcions pull.
 ///
 static void setPull(
 	GPIO_TypeDef *gpio,
-	GPIOPinNumber pn,
-	GPIOPull pull) {
+	PinMask mask,
+	PullUpDn pull) {
 
-	if (pull != GPIOPull::noChange) {
+	if (pull != PullUpDn::noChange) {
 
 		uint32_t value = 0; // Per defecte sense PU/PD
 
 		switch (pull) {
-			case GPIOPull::down:
+			case PullUpDn::down:
 				value = 2;
 				break;
-			case GPIOPull::up:
+			case PullUpDn::up:
 				value = 1;
 				break;
 			default:
 				break;
 		}
 
-		// Configura el registre PUPDR (Pull Up/Down Register)
-		//
-		uint32_t tmp = gpio->PUPDR;
-		tmp &= ~(0b11 << (pn * 2));
-		tmp |= value << (pn * 2);
-		gpio->PUPDR = tmp;
+		for (PinNumber pn = 0; pn < 15; pn++) {
+			if ((mask & (1 << pn)) != 0) {
+				uint32_t tmp = gpio->PUPDR;
+				tmp &= ~(0b11 << (pn * 2));
+				tmp |= value << (pn * 2);
+				gpio->PUPDR = tmp;
+			}
+		}
 	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona la funcio alternariva del pin.
-/// \param    gpio: El bloc de registres.
-/// \param    pn: El numero de pin.
+/// \param    gpio: Els registres hardware del modul GPIO.
+/// \param    mask: La mascara de pins
 /// \param    alt: Identificador de la funcio alternativa.
 ///
 static void setAlt(
 	GPIO_TypeDef *gpio,
-	GPIOPinNumber pn,
+	PinMask mask,
 	GPIOAlt alt) {
 
-    // Configura el registre AFR (Alternate Funcion Register)
-    //
-    uint32_t tmp = gpio->AFR[pn >> 3];
-    tmp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
-    tmp |= (uint32_t(alt) & 0b1111) << ((pn & 0x07) * 4);
-    gpio->AFR[pn >> 3] = tmp;
+	for (PinNumber pn = 0; pn < 15; pn++) {
+		if ((mask & (1 << pn)) != 0) {
+			uint32_t tmp = gpio->AFR[pn >> 3];
+			tmp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
+			tmp |= (uint32_t(alt) & 0b1111) << ((pn & 0x07) * 4);
+			gpio->AFR[pn >> 3] = tmp;
+		}
+	}
 }
 
 
@@ -139,7 +159,7 @@ static void setAlt(
 /// \brief    Constructor.
 /// \param    gpio: Registres hardware del modul GPIO.
 ///
-GPIOPort::GPIOPort(
+Port::Port(
 	GPIO_TypeDef *regs):
 
 	_gpio(regs) {
@@ -152,16 +172,14 @@ GPIOPort::GPIOPort(
 /// \param    mask: Mascara de pins a configurar.
 /// \param    pull: Opcions de pull up-down
 ///
-void GPIOPort::initInput(
-	GPIOPinMask mask,
-	GPIOPull pull) {
+void Port::initInput(
+	PinMask mask,
+	PullUpDn pull) {
 
-	for (GPIOPinNumber pn = 0; pn < 15; pn++) {
-		if ((mask & (1 << pn)) != 0) {
-		    setMode(_gpio, pn, 0);
-		    setPull(_gpio, pn, pull);
-		}
-	}
+	activate(mask);
+
+    setMode(_gpio, mask, 0);
+    setPull(_gpio, mask, pull);
 }
 
 
@@ -171,18 +189,16 @@ void GPIOPort::initInput(
 /// \param    driver: Opcions de driver.
 /// \param    speed: Opcions de velocitat.
 ///
-void GPIOPort::initOutput(
-	GPIOPinMask mask,
-	GPIODriver driver,
-	GPIOSpeed speed) {
+void Port::initOutput(
+	PinMask mask,
+	OutDriver driver,
+	Speed speed) {
 
-	for (GPIOPinNumber pn = 0; pn < 15; pn++) {
-		if ((mask & (1 << pn)) != 0) {
-			setMode(_gpio, pn, 1);
-			setDriver(_gpio, pn, driver);
-			setSpeed(_gpio, pn, speed);
-		}
-	}
+	activateImpl(mask);
+
+	setMode(_gpio, mask, 1);
+	setDriver(_gpio, mask, driver);
+	setSpeed(_gpio, mask, speed);
 }
 
 
@@ -191,13 +207,26 @@ void GPIOPort::initOutput(
 /// \param    gpio: Registres harware del modul GPIO.
 /// \param    pinID: Identificador del pin.
 ///
-GPIOPin::GPIOPin(
+Pin::Pin(
 	GPIO_TypeDef *gpio,
-	GPIOPinID pinID) :
+	PinID pinID) :
 
 	_gpio(gpio),
-	_pinID(pinID) {
+	_mask(1 << int(pinID)) {
 
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio com entrada.
+/// \param    pull: Opcions pull up/down.
+///
+void Pin::initInput(
+    PullUpDn pull) {
+
+	activateImpl();
+
+    setMode(_gpio, _mask, 0);
+    setPull(_gpio, _mask, pull);
 }
 
 
@@ -207,27 +236,49 @@ GPIOPin::GPIOPin(
 /// \param    speed: Opcions de velocitat.
 /// \param    state: Estat inicial.
 ///
-void GPIOPin::initOutput(
-	GPIODriver driver,
-	GPIOSpeed speed,
-	GPIOInitPinState state) {
+void Pin::initOutput(
+	OutDriver driver,
+	Speed speed,
+	InitPinState state) {
+
+	activateImpl();
 
 	switch (state) {
-		case GPIOInitPinState::set:
+		case InitPinState::set:
 			set();
 			break;
-		case GPIOInitPinState::clear:
+		case InitPinState::clear:
 			clear();
 			break;
 		default:
 			break;
 	}
 
-	GPIOPinNumber pn = int(_pinID);
+	setMode(_gpio, _mask, 1);
+	setDriver(_gpio, _mask, driver);
+	setSpeed(_gpio, _mask, speed);
+}
 
-	setMode(_gpio, pn, 1);
-	setDriver(_gpio, pn, driver);
-	setSpeed(_gpio, pn, speed);
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza un pin com a sortida alternativa.
+/// \param    regs: Bloc de registres.
+/// \param    pn: Numero de pin.
+/// \param    driver: Opcions del driver de sortida.
+/// \param    speed: Opcions de velocitat.
+/// \param    alt: Funcio alternativa.
+///
+void Pin::initAlt(
+    OutDriver driver,
+    Speed speed,
+    GPIOAlt alt) {
+
+	activateImpl();
+
+    setMode(_gpio, _mask, 2);
+    setDriver(_gpio, _mask, driver);
+    setSpeed(_gpio, _mask, speed);
+    setAlt(_gpio, _mask, alt);
 }
 
 
@@ -240,7 +291,7 @@ void GPIOPin::initOutput(
 void GPIOBase_x::initInput(
     GPIO_TypeDef *regs,
     uint32_t pn,
-    GPIOPull pull) {
+    PullUpDn pull) {
 
     // Configura el registre MODER (Mode Register)
     //
@@ -248,7 +299,7 @@ void GPIOBase_x::initInput(
     tmp &= ~(0b11 << (pn * 2));
     regs->MODER = tmp;
 
-    setPull(regs, pn, pull);
+    setPull(regs, 1 << pn, pull);
 }
 
 
@@ -262,8 +313,8 @@ void GPIOBase_x::initInput(
 void GPIOBase_x::initOutput(
     GPIO_TypeDef *regs,
     uint32_t pn,
-    GPIODriver driver,
-    GPIOSpeed speed) {
+    OutDriver driver,
+    Speed speed) {
 
     // Configura el registre MODER (Mode Register)
     //
@@ -272,8 +323,8 @@ void GPIOBase_x::initOutput(
     tmp |= 0b01 << (pn * 2);
     regs->MODER = tmp;
 
-    setDriver(regs, pn, driver);
-    setSpeed(regs, pn, speed);
+    setDriver(regs, 1 << pn, driver);
+    setSpeed(regs, 1 << pn, speed);
 }
 
 
@@ -288,8 +339,8 @@ void GPIOBase_x::initOutput(
 void GPIOBase_x::initAlt(
     GPIO_TypeDef *regs,
     uint32_t pn,
-    GPIODriver driver,
-    GPIOSpeed speed,
+    OutDriver driver,
+    Speed speed,
     GPIOAlt alt) {
         
     // Configura el registre MODER (Mode Register)
@@ -299,9 +350,9 @@ void GPIOBase_x::initAlt(
     tmp |= 0b10 << (pn * 2);
     regs->MODER = tmp;
 
-    setDriver(regs, pn, driver);
-    setSpeed(regs, pn, speed);
-    setAlt(regs, pn, alt);
+    setDriver(regs, 1 << pn, driver);
+    setSpeed(regs, 1 << pn, speed);
+    setAlt(regs, 1 << pn, alt);
 }
 
 
@@ -320,60 +371,4 @@ void GPIOBase_x::initAnalogic(
     tmp &= ~(0b11 << (pn * 2));
     tmp |= 0b11 << (pn * 2);
     regs->MODER = tmp;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el port com entrades digitals.
-/// \brief    regs: Bloc de registres.
-/// \brief    mask: Mascara de pins.
-/// \brief    pull: Opcions pullup.
-/// 
-void GPIOPortBase_x::initInput(
-    GPIO_TypeDef *regs, 
-    uint16_t mask, 
-    GPIOPull pull) {
-        
-    for (int pn = 0; pn < 16; pn++) {
-        if (mask & (1 << pn)) {
-    
-            // Configura el registre MODER (Mode Register)
-            //
-            uint32_t tmp = regs->MODER;
-            tmp &= ~(0b11 << (pn * 2));
-            regs->MODER = tmp;
-
-            setPull(regs, pn, pull);
-        }
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el port com sortides digitals.
-/// \param    regs: Bloc de registres.
-/// \param    mask: Mascara de pins.
-/// \param    driver: Opcions del driver.
-/// \paran    speed: Opcions de velocitat.
-///
-void GPIOPortBase_x::initOutput(
-    GPIO_TypeDef *regs, 
-    uint16_t mask, 
-    GPIODriver driver, 
-    GPIOSpeed speed) {
-    
-    for (int pn = 0; pn < 16; pn++) {
-        if (mask & (1 << pn)) {
-
-            // Configura el registre MODER (Mode Register)
-            //
-            uint32_t tmp = regs->MODER;
-            tmp &= ~(0b11 << (pn * 2));
-            tmp |= 0b01 << (pn * 2);
-            regs->MODER = tmp;
-
-            setDriver(regs, pn, driver);
-            setSpeed(regs, pn, speed);
-        }
-    }
 }

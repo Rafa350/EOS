@@ -12,48 +12,52 @@
 #if defined(EOS_PLATFORM_STM32G031)
 
 
-#define DECLARE_SPI_PIN(ch, fn, pin, af)   \
-	template <>                            \
-	struct SPIPinTrait<ch, pin, fn> {      \
-		static constexpr GPIOAlt alt = af; \
+#define DECLARE_ALT_FUNCTION(id, fn, pin, af)  \
+	template <>                                \
+	struct SPIAltFunction<DeviceID::_##id, fn, pin> {       \
+		static constexpr gpio::GPIOAlt alt = af;     \
 	};
 
 
 namespace htl {
+	namespace spi {
+		namespace internal {
 
-	#ifdef HTL_SPI1_EXIST
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::SCK,  GPIO_A1,  GPIOAlt::_0)
-    DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::MOSI, GPIO_A2,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::SCK,  GPIO_A5,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::MISO, GPIO_A6,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::MOSI, GPIO_A7,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::MISO, GPIO_A11, GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::MOSI, GPIO_A12, GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::SCK,  GPIO_B3,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::MISO, GPIO_B4,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_1, SPIPin::MOSI, GPIO_B5,  GPIOAlt::_0)
-	#endif // HTL_SPI1_EXIST
+			#ifdef HTL_SPI1_EXIST
+			DECLARE_ALT_FUNCTION(1, PinFunction::sck,  gpio::PinA1,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::mosi, gpio::PinA2,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::sck,  gpio::PinA5,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::miso, gpio::PinA6,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::mosi, gpio::PinA7,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::miso, gpio::PinA11, gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::mosi, gpio::PinA12, gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::sck,  gpio::PinB3,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::miso, gpio::PinB4,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(1, PinFunction::mosi, gpio::PinB5,  gpio::GPIOAlt::_0)
+			#endif // HTL_SPI1_EXIST
 
-	#ifdef HTL_SPI2_EXIST
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::SCK,  GPIO_A0,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MISO, GPIO_A3,  GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MOSI, GPIO_A4,  GPIOAlt::_1)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MISO, GPIO_A9,  GPIOAlt::_4)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MOSI, GPIO_A10, GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MISO, GPIO_B1,  GPIOAlt::_1)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MISO, GPIO_B6,  GPIOAlt::_4)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MOSI, GPIO_B7,  GPIOAlt::_1)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::SCK,  GPIO_B8,  GPIOAlt::_1)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::SCK,  GPIO_B10, GPIOAlt::_5)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MOSI, GPIO_B11, GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::SCK,  GPIO_B13, GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MISO, GPIO_B14, GPIOAlt::_0)
-	DECLARE_SPI_PIN(SPIChannel::_2, SPIPin::MOSI, GPIO_B15, GPIOAlt::_0)
-	#endif // HTL_SPI2_EXIST
+			#ifdef HTL_SPI2_EXIST
+			DECLARE_ALT_FUNCTION(2, PinFunction::sck,  gpio::PinA0,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(2, PinFunction::miso, gpio::PinA3,  gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(2, PinFunction::mosi, gpio::PinA4,  gpio::GPIOAlt::_1)
+			DECLARE_ALT_FUNCTION(2, PinFunction::miso, gpio::PinA9,  gpio::GPIOAlt::_4)
+			DECLARE_ALT_FUNCTION(2, PinFunction::mosi, gpio::PinA10, gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(2, PinFunction::miso, gpio::PinB1,  gpio::GPIOAlt::_1)
+			DECLARE_ALT_FUNCTION(2, PinFunction::miso, gpio::PinB6,  gpio::GPIOAlt::_4)
+			DECLARE_ALT_FUNCTION(2, PinFunction::mosi, gpio::PinB7,  gpio::GPIOAlt::_1)
+			DECLARE_ALT_FUNCTION(2, PinFunction::sck,  gpio::PinB8,  gpio::GPIOAlt::_1)
+			DECLARE_ALT_FUNCTION(2, PinFunction::sck,  gpio::PinB10, gpio::GPIOAlt::_5)
+			DECLARE_ALT_FUNCTION(2, PinFunction::mosi, gpio::PinB11, gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(2, PinFunction::sck,  gpio::PinB13, gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(2, PinFunction::miso, gpio::PinB14, gpio::GPIOAlt::_0)
+			DECLARE_ALT_FUNCTION(2, PinFunction::mosi, gpio::PinB15, gpio::GPIOAlt::_0)
+			#endif // HTL_SPI2_EXIST
+		}
+	}
 }
 
 
-#undef DECLARE_SPI_PIN
+#undef DECLARE_ALT_FUNCTION
 
 
 #endif // EOS_PLATFORM_STM32G031
