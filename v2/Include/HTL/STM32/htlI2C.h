@@ -44,23 +44,29 @@ namespace htl {
 			sda
 		};
 
-		enum class I2CInterruptNotify {
-			undefined,
+		enum class I2CInterruptStatus {
 			addrMatch,
-			rxNotEmpty,
-			txEmpty,
-			nack,
-			completted
+			rxPartial,
+			rxCompleted
 		};
-		using I2CInterruptParam = void*;
-		using I2CInterruptFunction = void (*)(I2CInterruptNotify, I2CInterruptParam);
 
+		typedef void * I2CInterruptParam;
+
+		struct I2CInterruptContext {
+			I2CInterruptStatus status;
+			uint8_t *buffer;
+			uint16_t size;
+			uint16_t count;
+			I2CInterruptParam param;
+		};
+
+		typedef void (*I2CInterruptFunction)(I2CInterruptContext*);
 
 		class I2CSlaveDevice {
 			private:
 				I2C_TypeDef * const _i2c;
-				I2CInterruptFunction _isrFunction;
-				I2CInterruptParam _isrParam;
+				I2CInterruptFunction _function;
+				I2CInterruptParam _param;
 				uint8_t *_buffer;
 				uint16_t _size;
 				uint16_t _count;
@@ -105,7 +111,7 @@ namespace htl {
 			class HardwareInfo;
 
 			template <DeviceID, PinFunction, typename>
-			struct I2CAltFunction;
+			struct I2CPinFunctionID;
 		}
 
 		template <DeviceID deviceID_>
@@ -146,15 +152,13 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initSCLPin() {
-					gpio::PinHandler handler = pin_::getHandler();
-					gpio::PinFunctionID alt = internal::I2CAltFunction<deviceID_, PinFunction::scl, pin_>::alt;
-					handler->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, alt);
+					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::scl, pin_>::alt;
+					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initSDAPin() {
-					gpio::PinHandler handler = pin_::getHandler();
-					gpio::PinFunctionID alt = internal::I2CAltFunction<deviceID_, PinFunction::sda, pin_>::alt;
-					handler->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, alt);
+					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::sda, pin_>::alt;
+					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, pinFunctionID);
 				}
 		};
 

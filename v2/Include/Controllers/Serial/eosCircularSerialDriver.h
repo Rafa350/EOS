@@ -37,6 +37,7 @@ namespace eos {
 			inline uint16_t txAvailableData() const { return _txBuffer.getSize(); }
 
 			inline void rxPush(uint8_t data) { _rxBuffer.push(data); }
+			inline void rxPush(uint8_t *data, uint16_t dataLength) { _rxBuffer.push(data, dataLength); }
 			inline uint8_t rxPop() { return _rxBuffer.pop(); }
 			uint16_t rxAvailableSpace() const;
 			inline uint16_t rxAvailableData() const { return _rxBuffer.getSize(); }

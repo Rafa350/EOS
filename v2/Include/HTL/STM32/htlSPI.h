@@ -152,7 +152,7 @@ namespace htl {
 			struct HardwareInfo;
 
 			template <DeviceID, PinFunction, typename>
-			struct SPIAltFunction;
+			struct SPIPinFunctionID;
 		}
 
 		template <DeviceID deviceID_>
@@ -193,18 +193,18 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initSCKPin() {
-					gpio::PinFunctionID alt = internal::SPIAltFunction<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
+					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::sck, pin_>::alt;
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initMOSIPin() {
-					gpio::PinFunctionID alt = internal::SPIAltFunction<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
+					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::mosi, pin_>::alt;
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initMISOPin() {
-					gpio::PinFunctionID alt = internal::SPIAltFunction<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
+					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::miso, pin_>::alt;
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 		};
 

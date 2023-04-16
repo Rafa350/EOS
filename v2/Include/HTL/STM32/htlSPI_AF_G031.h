@@ -14,7 +14,7 @@
 
 #define ALT_FUNCTION(id, fn, pin, af)                 \
 	template <>                                       \
-	struct SPIAltFunction<DeviceID::_##id, fn, pin> { \
+	struct SPIPinFunctionID<DeviceID::_##id, fn, pin> { \
 		static constexpr gpio::PinFunctionID alt = af;      \
 	};
 

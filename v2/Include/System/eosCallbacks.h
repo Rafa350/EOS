@@ -14,7 +14,6 @@ namespace eos {
         public:
             virtual ~ICallbackP1() {
             }
-
             virtual void execute(param1_ p1) const = 0;
     };
 
@@ -22,17 +21,14 @@ namespace eos {
     class CallbackP1: public ICallbackP1<param1_> {
         public:
             using Method = void (instance_::*)(param1_);
-
         private:
             instance_ &_instance;
             Method _method;
-
         public:
             inline CallbackP1(instance_ &instance, Method method):
             	_instance(instance),
 				_method(method) {
             }
-
             void execute(param1_ p1) const override {
                 if (_method != nullptr)
                     (_instance.*_method)(p1);
@@ -45,7 +41,6 @@ namespace eos {
         public:
             virtual ~ICallbackP2() {
             }
-
             virtual void execute(param1_ p1, param2_ p2) const = 0;
     };
 
@@ -53,7 +48,6 @@ namespace eos {
     class CallbackP2: public ICallbackP2<param1_, param2_> {
         public:
     	    using Method = void (instance_::*)(param1_, param2_);
-
         private:
             instance_ &_instance;
             Method _method;
@@ -63,7 +57,6 @@ namespace eos {
             	_instance(instance),
 				_method(method) {
             }
-
             void execute(param1_ p1, param2_ p2) const override {
                 if (_method != nullptr)
                     (_instance.*_method)(p1, p2);
@@ -76,7 +69,6 @@ namespace eos {
         public:
             virtual ~ICallbackP1R() {
             }
-
             virtual R_ execute(P1_ p1) const = 0;
     };
 
@@ -84,17 +76,14 @@ namespace eos {
     class CallbackP1R: public ICallbackP1R<R_, P1_> {
         public:
             using Method = R_ (C_::*)(P1_);
-
         private:
             C_ &_instance;
             Method _method;
-
         public:
             inline CallbackP1R(C_ &instance, Method method):
             	_instance(instance),
 				_method(method) {
             }
-
             R_ execute(P1_ p1) const override {
                 if (_method != nullptr)
                     return (_instance.*_method)(p1);
@@ -116,17 +105,14 @@ namespace eos {
     class CallbackP2R: public ICallbackP2R<R_, P1_, P2_> {
         public:
             using Method = R_ (C_::*)(P1_, P2_);
-
         private:
             C_ &_instance;
             Method _method;
-
         public:
             inline CallbackP2R(C_ &instance, Method method):
             	_instance(instance),
 				_method(method) {
             }
-
             R_ execute(P1_ p1, P2_ p2) const override {
                 if (_method != nullptr)
                     return (_instance.*_method)(p1, p2);

@@ -13,8 +13,8 @@ I2CSlaveDevice::I2CSlaveDevice(
 	I2C_TypeDef *i2c) :
 
 	_i2c(i2c),
-	_isrFunction(nullptr),
-	_isrParam(nullptr),
+	_function(nullptr),
+	_param(nullptr),
 	_buffer(nullptr),
 	_size(0),
 	_count(0) {
@@ -104,8 +104,8 @@ void I2CSlaveDevice::setInterruptFunction(
 	I2CInterruptFunction function,
 	I2CInterruptParam param) {
 
-	_isrFunction = function;
-	_isrParam = param;
+	_function = function;
+	_param = param;
 }
 
 
@@ -132,8 +132,15 @@ void I2CSlaveDevice::interruptService() {
 
     	_count = 0;
 
-    	if (_isrFunction != nullptr)
-    		_isrFunction(I2CInterruptNotify::addrMatch, _isrParam);
+    	if (_function != nullptr) {
+    		I2CInterruptContext context;
+    		context.status = I2CInterruptStatus::addrMatch;
+    		context.buffer = _buffer;
+    		context.size = _size;
+    		context.count = _count;
+    		context.param = _param;
+    		_function(&context);
+    	}
 	}
 
 	// Interrupcio RXNE
@@ -144,11 +151,22 @@ void I2CSlaveDevice::interruptService() {
 		//
 		uint8_t data = _i2c->RXDR;
 
-		if (_count < _size)
+		if (_count < _size) {
 			_buffer[_count++] = data;
 
-    	if (_isrFunction != nullptr)
-    		_isrFunction(I2CInterruptNotify::rxNotEmpty, _isrParam);
+			if (_count == _size) {
+				if (_function != nullptr) {
+					I2CInterruptContext context;
+					context.status = I2CInterruptStatus::rxPartial;
+					context.buffer = _buffer;
+					context.size = _size;
+					context.count = _count;
+					context.param = _param;
+					_function(&context);
+				}
+				_count = 0;
+			}
+		}
 	}
 
 	// Interrupcio TXE
@@ -158,16 +176,16 @@ void I2CSlaveDevice::interruptService() {
 		if (_count < _size)
 			_i2c->TXDR = _buffer[_count++];
 
-		if (_isrFunction != nullptr)
-    		_isrFunction(I2CInterruptNotify::txEmpty, _isrParam);
+		//if (_function != nullptr)
+    	//	_function(I2CInterruptNotify::txEmpty, _isrParam);
 	}
 
 	// Interrupcio NACK
 	//
 	if ((cr1 & I2C_CR1_NACKIE) && (isr & I2C_ISR_NACKF)) {
 
-    	if (_isrFunction != nullptr)
-    		_isrFunction(I2CInterruptNotify::nack, _isrParam);
+    	//if (_function != nullptr)
+    	//	_function(I2CInterruptNotify::nack, _isrParam);
 	}
 
 	// Interrupcio STOP
@@ -179,8 +197,15 @@ void I2CSlaveDevice::interruptService() {
 
     	icr |= I2C_ICR_STOPCF;
 
-    	if (_isrFunction != nullptr)
-    		_isrFunction(I2CInterruptNotify::completted, _isrParam);
+    	if (_function != nullptr) {
+			I2CInterruptContext context;
+			context.status = I2CInterruptStatus::rxCompleted;
+			context.buffer = _buffer;
+			context.size = _size;
+			context.count = _count;
+			context.param = _param;
+			_function(&context);
+    	}
 	}
 
 	_i2c->CR1 = cr1;

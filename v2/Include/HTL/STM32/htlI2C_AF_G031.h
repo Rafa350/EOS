@@ -14,7 +14,7 @@
 
 #define ALT_FUNCTION(id, fn, pin, af)                 \
 	template <>                                       \
-	struct I2CAltFunction<DeviceID::_##id, fn, pin> { \
+	struct I2CPinFunctionID<DeviceID::_##id, fn, pin> { \
 		static constexpr gpio::PinFunctionID alt = af;      \
 	};
 

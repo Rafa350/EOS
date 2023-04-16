@@ -13,17 +13,17 @@ using namespace htl;
 /// \param    txBufferSize: Tamany del buffer de transmissio.
 /// \param    rxBuffer: Buffer de recepcio.
 /// \param    rxBufferSize: Tamany del buffer de recepcio.
-/// \param    hI2C: Handler del modul I2C.
+/// \param    i2c: Handler del modul I2C.
 ///
 CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 	uint8_t *txBuffer,
 	uint16_t txBufferSize,
 	uint8_t *rxBuffer,
 	uint8_t rxBufferSize,
-	htl::i2c::I2CSlaveDeviceHandler hI2C) :
+	htl::i2c::I2CSlaveDeviceHandler i2c) :
 
 	CircularSerialDriver(txBuffer, txBufferSize, rxBuffer, rxBufferSize),
-	_hI2C(hI2C) {
+	_i2c(i2c) {
 
 }
 
@@ -33,8 +33,8 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 ///
 void CircularSerialDriver_I2CSlave::initializeImpl() {
 
-	//_hI2C->setInterruptFunction(interruptFunction, this);
-	_hI2C->listen(_buffer, sizeof(_buffer));
+	_i2c->setInterruptFunction(interruptFunction, this);
+	_i2c->listen(_buffer, sizeof(_buffer));
 }
 
 
@@ -43,8 +43,8 @@ void CircularSerialDriver_I2CSlave::initializeImpl() {
 ///
 void CircularSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_hI2C->disable();
-	_hI2C->setInterruptFunction(nullptr, nullptr);
+	_i2c->disable();
+	_i2c->setInterruptFunction(nullptr, nullptr);
 }
 
 
@@ -89,25 +89,27 @@ uint16_t CircularSerialDriver_I2CSlave::receiveImpl(
 /// \param    notify: La notificacio.
 ///
 void CircularSerialDriver_I2CSlave::interruptHandler(
-	htl::i2c::I2CInterruptNotify notify) {
+	i2c::I2CInterruptContext *context) {
 
-	switch (notify) {
-		case i2c::I2CInterruptNotify::addrMatch:
+	switch (context->status) {
+		case i2c::I2CInterruptStatus::addrMatch:
 			break;
 
-		case i2c::I2CInterruptNotify::rxNotEmpty: {
-
-/*			uint8_t data = _hI2C->read();
-
-			// Si hi ha espai, guarda el byte.
-			//
-			uint16_t availableSpace = rxAvailableSpace();
-			if (availableSpace > 0)
-				rxPush(data);*/
+		case i2c::I2CInterruptStatus::rxPartial: {
+			if (context->count > 0) {
+				uint16_t availableSpace = rxAvailableSpace();
+				if (availableSpace > context->count)
+					rxPush(context->buffer, context->count);
+			}
 			break;
 		}
 
-		case i2c::I2CInterruptNotify::completted:
+		case i2c::I2CInterruptStatus::rxCompleted:
+			if (context->count > 0) {
+				uint16_t availableSpace = rxAvailableSpace();
+				if (availableSpace > context->count)
+					rxPush(context->buffer, context->count);
+			}
 			if (rxAvailableData() > 0)
 				notifyRxBufferNotEmpty();
 			break;
@@ -124,9 +126,8 @@ void CircularSerialDriver_I2CSlave::interruptHandler(
 /// \param    param: Parametre de la interrupcio.
 ///
 void CircularSerialDriver_I2CSlave::interruptFunction(
-    htl::i2c::I2CInterruptNotify notify,
-	htl::i2c::I2CInterruptParam param) {
+	i2c::I2CInterruptContext *context) {
 
-	CircularSerialDriver_I2CSlave *driver = reinterpret_cast<CircularSerialDriver_I2CSlave*>(param);
-	driver->interruptHandler(notify);
+	CircularSerialDriver_I2CSlave *driver = reinterpret_cast<CircularSerialDriver_I2CSlave*>(context->param);
+	driver->interruptHandler(context);
 }

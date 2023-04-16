@@ -11,12 +11,12 @@ namespace eos {
 
 	class CircularSerialDriver_I2CSlave final : public CircularSerialDriver {
 		private:
-			htl::i2c::I2CSlaveDeviceHandler _hI2C;
-			uint8_t _buffer[1];
+			htl::i2c::I2CSlaveDeviceHandler _i2c;
+			uint8_t _buffer[10];
 
 		private:
-			void interruptHandler(htl::i2c::I2CInterruptNotify notify);
-			static void interruptFunction(htl::i2c::I2CInterruptNotify notify, htl::i2c::I2CInterruptParam param);
+			void interruptHandler(htl::i2c::I2CInterruptContext *context);
+			static void interruptFunction(htl::i2c::I2CInterruptContext *context);
 
 		protected:
 			void initializeImpl() override;
@@ -26,7 +26,7 @@ namespace eos {
 
 		public:
 			CircularSerialDriver_I2CSlave(uint8_t *txBuffer, uint16_t txBufferSize,
-				uint8_t *rxBuffer, uint8_t rxBufferSize, htl::i2c::I2CSlaveDeviceHandler hI2C);
+				uint8_t *rxBuffer, uint8_t rxBufferSize, htl::i2c::I2CSlaveDeviceHandler i2c);
 
 			void initialize();
 			void deinitialize();
