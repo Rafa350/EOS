@@ -3,34 +3,16 @@
 #include "HTL/STM32/htlLTDC_IRQ.h"
 
 
-using namespace htl;
+using namespace htl::ltdc;
 
 
 void LTDC_InterruptHandler() {
 
-	uint32_t isr = LTDC->ISR;
-	if (isr != 0) {
-		LTDC->ICR = isr;
-
-		if (isr & LTDC_ISR_LIF)
-			LTDC_1::interruptHandler(LTDCEvent::line);
-
-		if (isr & LTDC_ISR_RRIF)
-			LTDC_1::interruptHandler(LTDCEvent::reload);
-	}
+	LTDCDevice::getHandler()->interruptService();
 }
 
 
 void LTDC_ER_InterruptHandler() {
 
-	uint32_t isr = LTDC->ISR;
-	if (isr != 0) {
-		LTDC->ICR = isr;
-
-		if (isr & LTDC_ISR_FUIF)
-			LTDC_1::interruptHandler(LTDCEvent::fifoError);
-
-		if (isr & LTDC_ISR_TERRIF)
-			LTDC_1::interruptHandler(LTDCEvent::transferError);
-	}
+	LTDCDevice::getHandler()->interruptERService();
 }

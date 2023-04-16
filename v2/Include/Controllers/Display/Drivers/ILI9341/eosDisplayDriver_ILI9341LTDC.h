@@ -44,7 +44,6 @@ namespace eos {
 			using PinB7 = DISPLAY_B7_Pin;
 
 			using Spi = DISPLAY_SPI;
-			using LtdcLayer = htl::LTDCLayer_1;
 
 			static constexpr uint16_t _hSync       = DISPLAY_HSYNC;
 			static constexpr uint16_t _vSync       = DISPLAY_VSYNC;
@@ -52,10 +51,10 @@ namespace eos {
 			static constexpr uint16_t _vBP         = DISPLAY_VBP;
 			static constexpr uint16_t _hFP         = DISPLAY_HFP;
 			static constexpr uint16_t _vFP         = DISPLAY_VFP;
-			static constexpr htl::ltdc::LTDCPolarity _hSyncPol = DISPLAY_HSYNC_POL;
-			static constexpr htl::ltdc::LTDCPolarity _vSyncPol = DISPLAY_VSYNC_POL;
-			static constexpr htl::ltdc::LTDCPolarity _dePol    = DISPLAY_DE_POL;
-			static constexpr htl::ltdc::LTDCPolarity _pcPol    = DISPLAY_PC_POL;
+			static constexpr htl::ltdc::PinPolarity _hSyncPol = DISPLAY_HSYNC_POL;
+			static constexpr htl::ltdc::PinPolarity _vSyncPol = DISPLAY_VSYNC_POL;
+			static constexpr htl::ltdc::PinPolarity _dePol    = DISPLAY_DE_POL;
+			static constexpr htl::ltdc::PinPolarity _pcPol    = DISPLAY_PC_POL;
 			static constexpr uint16_t _width       = DISPLAY_WIDTH;
 			static constexpr uint16_t _height      = DISPLAY_HEIGHT;
 			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;

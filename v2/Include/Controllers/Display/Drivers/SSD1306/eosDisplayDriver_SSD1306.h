@@ -61,7 +61,7 @@ namespace eos {
 			#endif
 			using PinSCK = DISPLAY_SCK_PIN;
 			using PinMOSI = DISPLAY_MOSI_PIN;
-			using SpiDISPLAY = DISPLAY_SPI;
+			using Spi = DISPLAY_SPI;
 			#endif
 
 			FrameBuffer *_frameBuffer;

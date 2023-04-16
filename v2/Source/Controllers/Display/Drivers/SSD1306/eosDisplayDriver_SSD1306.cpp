@@ -198,10 +198,10 @@ void DisplayDriver_SSD1306::setPixels(
 ///
 void DisplayDriver_SSD1306::refresh() {
 
-    constexpr int16_t pages = _displayHeight / 8;
+    constexpr int8_t pages = _displayHeight / 8;
 	const uint8_t *buffer = reinterpret_cast<const uint8_t*>(_frameBuffer->getBuffer());
 
-    for (int16_t page = 0; page < pages; page++) {
+    for (int8_t page = 0; page < pages; page++) {
 
     	writeCommand(0xB0 + page); // Set the current page.
         writeCommand(0x00);        // Set first column (LO nibble)
@@ -218,12 +218,18 @@ void DisplayDriver_SSD1306::refresh() {
 #ifdef DISPLAY_INTERFACE_SPI
 void DisplayDriver_SSD1306::initializeInterface() {
 
-	// Inicialitza modul GPIO
+	// Inicialitza el pin CS
 	//
 	auto pinCS = PinCS::getHandler();
 	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+
+	// Inicialitza el pin DC
+	//
 	auto pinDC = PinDC::getHandler();
 	pinDC->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast);
+
+	// Inicialitza el pin RST
+	//
 	#ifdef DISPLAY_RST_GPIO
 	auto pinRST = PinRST::getHandler();
 	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::InitPinState::clear);
@@ -231,7 +237,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza el modul SPI
 	//
-	auto spi = SpiDISPLAY::getHandler();
+	auto spi = Spi::getHandler();
 	spi->initSCKPin<PinSCK>();
 	spi->initMOSIPin<PinMOSI>();
 	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::low, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_4);
@@ -322,7 +328,7 @@ void DisplayDriver_SSD1306::writeCommand(
 
 	auto pinCS = PinCS::getHandler();
 	auto pinDC = PinDC::getHandler();
-	auto spi = SpiDISPLAY::getHandler();
+	auto spi = Spi::getHandler();
 
 	pinCS->clear();
 	pinDC->clear();
@@ -350,7 +356,7 @@ void DisplayDriver_SSD1306::writeData(
 
 	auto pinCS = PinCS::getHandler();
 	auto pinDC = PinDC::getHandler();
-	auto spi = SpiDISPLAY::getHandler();
+	auto spi = Spi::getHandler();
 
 	pinCS->clear();
 	pinDC->set();

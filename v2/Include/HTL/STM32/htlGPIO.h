@@ -82,7 +82,7 @@ namespace htl {
 		typedef uint16_t PinMask;
 
 		/// \brief Alternate function identifiers
-		enum class GPIOAlt {
+		enum class PinFunctionID {
 			_0,
 			_1,
 			_2,
@@ -223,7 +223,8 @@ namespace htl {
 			public:
 				void initInput(PullUpDn pull);
 				void initOutput(OutDriver driver, Speed speed, InitPinState state = InitPinState::noChange);
-				void initAlt(OutDriver driver, Speed speed, GPIOAlt alt);
+				void initAnalogic();
+				void initAlt(OutDriver driver, Speed speed, PinFunctionID pinFunctionID);
 				inline void set() {
 					_gpio->BSRR = _mask;
 				}
@@ -254,9 +255,6 @@ namespace htl {
 
 			template <PortID>
 			struct HardwareInfo;
-
-			template <PortID, PinID>
-			struct GPIOPinTrait;
 		}
 
 
@@ -285,7 +283,7 @@ namespace htl {
 					Activator::reset();
 				}
 			public:
-				inline static PortX * getHandler() {
+				static constexpr PortX * getHandler() {
 					return &_port;
 				}
 		};
@@ -345,7 +343,7 @@ namespace htl {
 					Activator::activate(1 << int(pinID_));
 				}
 			public:
-				inline static PinX * getHandler() {
+				static constexpr PinX * getHandler() {
 					return &_pin;
 				}
 		};
@@ -520,6 +518,42 @@ namespace htl {
 		typedef PinX<PortID::I, PinID::_14> PinI14;
 		typedef PinX<PortID::I, PinID::_15> PinI15;
 		#endif
+		#ifdef HTL_GPIOJ_EXIST
+		typedef PinX<PortID::J, PinID::_0> PinJ0;
+		typedef PinX<PortID::J, PinID::_1> PinJ1;
+		typedef PinX<PortID::J, PinID::_2> PinJ2;
+		typedef PinX<PortID::J, PinID::_3> PinJ3;
+		typedef PinX<PortID::J, PinID::_4> PinJ4;
+		typedef PinX<PortID::J, PinID::_5> PinJ5;
+		typedef PinX<PortID::J, PinID::_6> PinJ6;
+		typedef PinX<PortID::J, PinID::_7> PinJ7;
+		typedef PinX<PortID::J, PinID::_8> PinJ8;
+		typedef PinX<PortID::J, PinID::_9> PinJ9;
+		typedef PinX<PortID::J, PinID::_10> PinJ10;
+		typedef PinX<PortID::J, PinID::_11> PinJ11;
+		typedef PinX<PortID::J, PinID::_12> PinJ12;
+		typedef PinX<PortID::J, PinID::_13> PinJ13;
+		typedef PinX<PortID::J, PinID::_14> PinJ14;
+		typedef PinX<PortID::J, PinID::_15> PinJ15;
+		#endif
+		#ifdef HTL_GPIOK_EXIST
+		typedef PinX<PortID::K, PinID::_0> PinK0;
+		typedef PinX<PortID::K, PinID::_1> PinK1;
+		typedef PinX<PortID::K, PinID::_2> PinK2;
+		typedef PinX<PortID::K, PinID::_3> PinK3;
+		typedef PinX<PortID::K, PinID::_4> PinK4;
+		typedef PinX<PortID::K, PinID::_5> PinK5;
+		typedef PinX<PortID::K, PinID::_6> PinK6;
+		typedef PinX<PortID::K, PinID::_7> PinK7;
+		typedef PinX<PortID::K, PinID::_8> PinK8;
+		typedef PinX<PortID::K, PinID::_9> PinK9;
+		typedef PinX<PortID::K, PinID::_10> PinK10;
+		typedef PinX<PortID::K, PinID::_11> PinK11;
+		typedef PinX<PortID::K, PinID::_12> PinK12;
+		typedef PinX<PortID::K, PinID::_13> PinK13;
+		typedef PinX<PortID::K, PinID::_14> PinK14;
+		typedef PinX<PortID::K, PinID::_15> PinK15;
+		#endif
 
 
 		namespace internal {
@@ -527,11 +561,11 @@ namespace htl {
 			template <PortID portId_>
 			class PortActivator final {
 				private:
-					using PortTrait = internal::HardwareInfo<portId_>;
-					static constexpr uint32_t _rccEnableAddr = PortTrait::rccEnableAddr;
-					static constexpr uint32_t _rccEnablePos = PortTrait::rccEnablePos;
-					static constexpr uint32_t _rccResetAddr = PortTrait::rccResetAddr;
-					static constexpr uint32_t _rccResetPos = PortTrait::rccResetPos;
+					using HI = internal::HardwareInfo<portId_>;
+					static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
+					static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
+					static constexpr uint32_t _rccResetAddr = HI::rccResetAddr;
+					static constexpr uint32_t _rccResetPos = HI::rccResetPos;
 					static PinMask _activated;
 				public:
 					static void activate(PinMask mask) {
@@ -562,1200 +596,178 @@ namespace htl {
 		}
 
 
-		/// \class GPIOBase_x
-		/// \brief Base class for gpio pins
-		///
-		class GPIOBase_x {
-			protected:
-				static void initInput(GPIO_TypeDef *regs, uint32_t pn, PullUpDn pull);
-				static void initOutput(GPIO_TypeDef *regs, uint32_t pn, OutDriver driver, Speed speed);
-				static void initAlt(GPIO_TypeDef *regs, uint32_t pn, OutDriver driver, Speed speed, GPIOAlt alt);
-				static void initAnalogic(GPIO_TypeDef *regs, uint32_t pn);
-		};
-
-		/// \class GPIO_x
-		/// \brief Class for gpio pins
-		///
-		template <PortID portId_, PinID pinId_>
-		class GPIO_x final: public GPIOBase_x {
-			private:
-				using PortTrait = internal::HardwareInfo<portId_>;
-				using PinTrait = internal::GPIOPinTrait<portId_, pinId_>;
-				using Activator = internal::PortActivator<portId_>;
-				static constexpr uint32_t _gpioAddr = PortTrait::gpioAddr;
-				static constexpr uint32_t _pn = PinTrait::pn;
-
-			public:
-				static constexpr PortID port = portId_;
-				static constexpr PinID pin = pinId_;
-
-			private:
-				GPIO_x() = delete;
-				GPIO_x(const GPIO_x &) = delete;
-				GPIO_x(const GPIO_x &&) = delete;
-				~GPIO_x() = delete;
-
-				GPIO_x & operator = (const GPIO_x &) = delete;
-				GPIO_x & operator = (const GPIO_x &&) = delete;
-
-			public:
-				/// \brief Inicialitza el pin com entrada.
-				/// \param pull: Opcions de pull up/down
-				///
-				static void initInput(
-					PullUpDn pull = PullUpDn::none) {
-
-					Activator::activate(1 << _pn);
-					GPIOBase_x::initInput(
-						reinterpret_cast<GPIO_TypeDef*>(_gpioAddr),
-						_pn,
-						pull);
-				}
-
-				/// \brief Inicialitza el pin com a sortida.
-				/// \param driver: Opcions de driver
-				/// \param speed: Opcions de velocitat.
-				///
-				static void initOutput(
-					OutDriver driver,
-					Speed speed = Speed::medium,
-					InitPinState state = InitPinState::noChange) {
-
-					Activator::activate(1 << _pn);
-
-					GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-
-					if (state != InitPinState::noChange)
-						regs->BSRR = 1 << (_pn + (state == InitPinState::set ? 0 : 16));
-
-					GPIOBase_x::initOutput(
-						regs,
-						_pn,
-						driver,
-						speed);
-				}
-
-				 /// \brief Inicialitza el pin com a funcio alternativa.
-				 /// \param driver: Opcions del driver.
-				 /// \param speed: Opcions de velocitat.
-				 /// \param alt: Funcio del pin.
-				 ///
-				static void initAlt(
-					OutDriver driver,
-					Speed speed,
-					GPIOAlt alt) {
-
-					Activator::activate(1 << _pn);
-					GPIOBase_x::initAlt(
-						reinterpret_cast<GPIO_TypeDef*>(_gpioAddr),
-						_pn,
-						driver,
-						speed,
-						alt);
-				}
-
-				/// \brief Inicialitza el pin com entrada/sortida analogica.
-				///
-				static void initAnalogic() {
-
-					Activator::activate(1 << _pn);
-					GPIOBase_x::initAnalogic(
-						reinterpret_cast<GPIO_TypeDef*>(_gpioAddr),
-						_pn);
-				}
-
-				/// \brief Desinicialitza el pin.
-				///
-				static void deinitialize() {
-
-					Activator::deactivate(1 << _pn);
-				}
-
-				/// \brief Set pin to ON state.
-				///
-				inline static void set() {
-
-					GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					regs->BSRR = 1 << _pn;
-				}
-
-				/// \brief Set pin to OFF state.
-				///
-				inline static void clear() {
-
-					GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					regs->BSRR = 1 << (_pn + 16);
-				}
-
-				/// \brief Toggle pin state.
-				///
-				inline static void toggle() {
-
-					GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					regs->ODR ^= 1 << _pn;
-				}
-
-				/// \brief Read pin state
-				/// \return Pin state.
-				///
-				inline static PinState read() {
-
-					GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					return ((regs->IDR & (1 << _pn)) == 0) ? PinState::clear : PinState::set;
-				}
-
-				/// \brief Write pin state.
-				/// \param state: State to write.
-				///
-				inline static void write(
-					PinState state) {
-
-					GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					regs->BSRR = 1 << (_pn + (state == PinState::set ? 0 : 16));
-				}
-		};
-
-		#ifdef HTL_GPIOA_EXIST
-		typedef GPIO_x<PortID::A, PinID::_0> GPIO_A0;
-		typedef GPIO_x<PortID::A, PinID::_1> GPIO_A1;
-		typedef GPIO_x<PortID::A, PinID::_2> GPIO_A2;
-		typedef GPIO_x<PortID::A, PinID::_3> GPIO_A3;
-		typedef GPIO_x<PortID::A, PinID::_4> GPIO_A4;
-		typedef GPIO_x<PortID::A, PinID::_5> GPIO_A5;
-		typedef GPIO_x<PortID::A, PinID::_6> GPIO_A6;
-		typedef GPIO_x<PortID::A, PinID::_7> GPIO_A7;
-		typedef GPIO_x<PortID::A, PinID::_8> GPIO_A8;
-		typedef GPIO_x<PortID::A, PinID::_9> GPIO_A9;
-		typedef GPIO_x<PortID::A, PinID::_10> GPIO_A10;
-		typedef GPIO_x<PortID::A, PinID::_11> GPIO_A11;
-		typedef GPIO_x<PortID::A, PinID::_12> GPIO_A12;
-		typedef GPIO_x<PortID::A, PinID::_13> GPIO_A13;
-		typedef GPIO_x<PortID::A, PinID::_14> GPIO_A14;
-		typedef GPIO_x<PortID::A, PinID::_15> GPIO_A15;
-		#endif
-
-		#ifdef HTL_GPIOB_EXIST
-		typedef GPIO_x<PortID::B, PinID::_0> GPIO_B0;
-		typedef GPIO_x<PortID::B, PinID::_1> GPIO_B1;
-		typedef GPIO_x<PortID::B, PinID::_2> GPIO_B2;
-		typedef GPIO_x<PortID::B, PinID::_3> GPIO_B3;
-		typedef GPIO_x<PortID::B, PinID::_4> GPIO_B4;
-		typedef GPIO_x<PortID::B, PinID::_5> GPIO_B5;
-		typedef GPIO_x<PortID::B, PinID::_6> GPIO_B6;
-		typedef GPIO_x<PortID::B, PinID::_7> GPIO_B7;
-		typedef GPIO_x<PortID::B, PinID::_8> GPIO_B8;
-		typedef GPIO_x<PortID::B, PinID::_9> GPIO_B9;
-		typedef GPIO_x<PortID::B, PinID::_10> GPIO_B10;
-		typedef GPIO_x<PortID::B, PinID::_11> GPIO_B11;
-		typedef GPIO_x<PortID::B, PinID::_12> GPIO_B12;
-		typedef GPIO_x<PortID::B, PinID::_13> GPIO_B13;
-		typedef GPIO_x<PortID::B, PinID::_14> GPIO_B14;
-		typedef GPIO_x<PortID::B, PinID::_15> GPIO_B15;
-		#endif
-
-		#ifdef HTL_GPIOC_EXIST
-		typedef GPIO_x<PortID::C, PinID::_0> GPIO_C0;
-		typedef GPIO_x<PortID::C, PinID::_1> GPIO_C1;
-		typedef GPIO_x<PortID::C, PinID::_2> GPIO_C2;
-		typedef GPIO_x<PortID::C, PinID::_3> GPIO_C3;
-		typedef GPIO_x<PortID::C, PinID::_4> GPIO_C4;
-		typedef GPIO_x<PortID::C, PinID::_5> GPIO_C5;
-		typedef GPIO_x<PortID::C, PinID::_6> GPIO_C6;
-		typedef GPIO_x<PortID::C, PinID::_7> GPIO_C7;
-		typedef GPIO_x<PortID::C, PinID::_8> GPIO_C8;
-		typedef GPIO_x<PortID::C, PinID::_9> GPIO_C9;
-		typedef GPIO_x<PortID::C, PinID::_10> GPIO_C10;
-		typedef GPIO_x<PortID::C, PinID::_11> GPIO_C11;
-		typedef GPIO_x<PortID::C, PinID::_12> GPIO_C12;
-		typedef GPIO_x<PortID::C, PinID::_13> GPIO_C13;
-		typedef GPIO_x<PortID::C, PinID::_14> GPIO_C14;
-		typedef GPIO_x<PortID::C, PinID::_15> GPIO_C15;
-		#endif
-
-		#ifdef HTL_GPIOD_EXIST
-		typedef GPIO_x<PortID::D, PinID::_0> GPIO_D0;
-		typedef GPIO_x<PortID::D, PinID::_1> GPIO_D1;
-		typedef GPIO_x<PortID::D, PinID::_2> GPIO_D2;
-		typedef GPIO_x<PortID::D, PinID::_3> GPIO_D3;
-		typedef GPIO_x<PortID::D, PinID::_4> GPIO_D4;
-		typedef GPIO_x<PortID::D, PinID::_5> GPIO_D5;
-		typedef GPIO_x<PortID::D, PinID::_6> GPIO_D6;
-		typedef GPIO_x<PortID::D, PinID::_7> GPIO_D7;
-		typedef GPIO_x<PortID::D, PinID::_8> GPIO_D8;
-		typedef GPIO_x<PortID::D, PinID::_9> GPIO_D9;
-		typedef GPIO_x<PortID::D, PinID::_10> GPIO_D10;
-		typedef GPIO_x<PortID::D, PinID::_11> GPIO_D11;
-		typedef GPIO_x<PortID::D, PinID::_12> GPIO_D12;
-		typedef GPIO_x<PortID::D, PinID::_13> GPIO_D13;
-		typedef GPIO_x<PortID::D, PinID::_14> GPIO_D14;
-		typedef GPIO_x<PortID::D, PinID::_15> GPIO_D15;
-		#endif
-
-		#ifdef HTL_GPIOE_EXIST
-		typedef GPIO_x<PortID::E, PinID::_0> GPIO_E0;
-		typedef GPIO_x<PortID::E, PinID::_1> GPIO_E1;
-		typedef GPIO_x<PortID::E, PinID::_2> GPIO_E2;
-		typedef GPIO_x<PortID::E, PinID::_3> GPIO_E3;
-		typedef GPIO_x<PortID::E, PinID::_4> GPIO_E4;
-		typedef GPIO_x<PortID::E, PinID::_5> GPIO_E5;
-		typedef GPIO_x<PortID::E, PinID::_6> GPIO_E6;
-		typedef GPIO_x<PortID::E, PinID::_7> GPIO_E7;
-		typedef GPIO_x<PortID::E, PinID::_8> GPIO_E8;
-		typedef GPIO_x<PortID::E, PinID::_9> GPIO_E9;
-		typedef GPIO_x<PortID::E, PinID::_10> GPIO_E10;
-		typedef GPIO_x<PortID::E, PinID::_11> GPIO_E11;
-		typedef GPIO_x<PortID::E, PinID::_12> GPIO_E12;
-		typedef GPIO_x<PortID::E, PinID::_13> GPIO_E13;
-		typedef GPIO_x<PortID::E, PinID::_14> GPIO_E14;
-		typedef GPIO_x<PortID::E, PinID::_15> GPIO_E15;
-		#endif
-
-		#ifdef HTL_GPIOF_EXIST
-		typedef GPIO_x<PortID::F, PinID::_0> GPIO_F0;
-		typedef GPIO_x<PortID::F, PinID::_1> GPIO_F1;
-		typedef GPIO_x<PortID::F, PinID::_2> GPIO_F2;
-		typedef GPIO_x<PortID::F, PinID::_3> GPIO_F3;
-		typedef GPIO_x<PortID::F, PinID::_4> GPIO_F4;
-		typedef GPIO_x<PortID::F, PinID::_5> GPIO_F5;
-		typedef GPIO_x<PortID::F, PinID::_6> GPIO_F6;
-		typedef GPIO_x<PortID::F, PinID::_7> GPIO_F7;
-		typedef GPIO_x<PortID::F, PinID::_8> GPIO_F8;
-		typedef GPIO_x<PortID::F, PinID::_9> GPIO_F9;
-		typedef GPIO_x<PortID::F, PinID::_10> GPIO_F10;
-		typedef GPIO_x<PortID::F, PinID::_11> GPIO_F11;
-		typedef GPIO_x<PortID::F, PinID::_12> GPIO_F12;
-		typedef GPIO_x<PortID::F, PinID::_13> GPIO_F13;
-		typedef GPIO_x<PortID::F, PinID::_14> GPIO_F14;
-		typedef GPIO_x<PortID::F, PinID::_15> GPIO_F15;
-		#endif
-
-		#ifdef HTL_GPIOG_EXIST
-		typedef GPIO_x<PortID::G, PinID::_0> GPIO_G0;
-		typedef GPIO_x<PortID::G, PinID::_1> GPIO_G1;
-		typedef GPIO_x<PortID::G, PinID::_2> GPIO_G2;
-		typedef GPIO_x<PortID::G, PinID::_3> GPIO_G3;
-		typedef GPIO_x<PortID::G, PinID::_4> GPIO_G4;
-		typedef GPIO_x<PortID::G, PinID::_5> GPIO_G5;
-		typedef GPIO_x<PortID::G, PinID::_6> GPIO_G6;
-		typedef GPIO_x<PortID::G, PinID::_7> GPIO_G7;
-		typedef GPIO_x<PortID::G, PinID::_8> GPIO_G8;
-		typedef GPIO_x<PortID::G, PinID::_9> GPIO_G9;
-		typedef GPIO_x<PortID::G, PinID::_10> GPIO_G10;
-		typedef GPIO_x<PortID::G, PinID::_11> GPIO_G11;
-		typedef GPIO_x<PortID::G, PinID::_12> GPIO_G12;
-		typedef GPIO_x<PortID::G, PinID::_13> GPIO_G13;
-		typedef GPIO_x<PortID::G, PinID::_14> GPIO_G14;
-		typedef GPIO_x<PortID::G, PinID::_15> GPIO_G15;
-		#endif
-
-		#ifdef HTL_GPIOH_EXIST
-		typedef GPIO_x<PortID::H, PinID::_0> GPIO_H0;
-		typedef GPIO_x<PortID::H, PinID::_1> GPIO_H1;
-		typedef GPIO_x<PortID::H, PinID::_2> GPIO_H2;
-		typedef GPIO_x<PortID::H, PinID::_3> GPIO_H3;
-		typedef GPIO_x<PortID::H, PinID::_4> GPIO_H4;
-		typedef GPIO_x<PortID::H, PinID::_5> GPIO_H5;
-		typedef GPIO_x<PortID::H, PinID::_6> GPIO_H6;
-		typedef GPIO_x<PortID::H, PinID::_7> GPIO_H7;
-		typedef GPIO_x<PortID::H, PinID::_8> GPIO_H8;
-		typedef GPIO_x<PortID::H, PinID::_9> GPIO_H9;
-		typedef GPIO_x<PortID::H, PinID::_10> GPIO_H10;
-		typedef GPIO_x<PortID::H, PinID::_11> GPIO_H11;
-		typedef GPIO_x<PortID::H, PinID::_12> GPIO_H12;
-		typedef GPIO_x<PortID::H, PinID::_13> GPIO_H13;
-		typedef GPIO_x<PortID::H, PinID::_14> GPIO_H14;
-		typedef GPIO_x<PortID::H, PinID::_15> GPIO_H15;
-		#endif
-
-		#ifdef HTL_GPIOI_EXIST
-		typedef GPIO_x<PortID::I, PinID::_0> GPIO_I0;
-		typedef GPIO_x<PortID::I, PinID::_1> GPIO_I1;
-		typedef GPIO_x<PortID::I, PinID::_2> GPIO_I2;
-		typedef GPIO_x<PortID::I, PinID::_3> GPIO_I3;
-		typedef GPIO_x<PortID::I, PinID::_4> GPIO_I4;
-		typedef GPIO_x<PortID::I, PinID::_5> GPIO_I5;
-		typedef GPIO_x<PortID::I, PinID::_6> GPIO_I6;
-		typedef GPIO_x<PortID::I, PinID::_7> GPIO_I7;
-		typedef GPIO_x<PortID::I, PinID::_8> GPIO_I8;
-		typedef GPIO_x<PortID::I, PinID::_9> GPIO_I9;
-		typedef GPIO_x<PortID::I, PinID::_10> GPIO_I10;
-		typedef GPIO_x<PortID::I, PinID::_11> GPIO_I11;
-		typedef GPIO_x<PortID::I, PinID::_12> GPIO_I12;
-		typedef GPIO_x<PortID::I, PinID::_13> GPIO_I13;
-		typedef GPIO_x<PortID::I, PinID::_14> GPIO_I14;
-		typedef GPIO_x<PortID::I, PinID::_15> GPIO_I15;
-		#endif
-
-		#ifdef HTL_GPIOJ_EXIST
-		typedef GPIO_x<PortID::J, PinID::_0> GPIO_J0;
-		typedef GPIO_x<PortID::J, PinID::_1> GPIO_J1;
-		typedef GPIO_x<PortID::J, PinID::_2> GPIO_J2;
-		typedef GPIO_x<PortID::J, PinID::_3> GPIO_J3;
-		typedef GPIO_x<PortID::J, PinID::_4> GPIO_J4;
-		typedef GPIO_x<PortID::J, PinID::_5> GPIO_J5;
-		typedef GPIO_x<PortID::J, PinID::_6> GPIO_J6;
-		typedef GPIO_x<PortID::J, PinID::_7> GPIO_J7;
-		typedef GPIO_x<PortID::J, PinID::_8> GPIO_J8;
-		typedef GPIO_x<PortID::J, PinID::_9> GPIO_J9;
-		typedef GPIO_x<PortID::J, PinID::_10> GPIO_J10;
-		typedef GPIO_x<PortID::J, PinID::_11> GPIO_J11;
-		typedef GPIO_x<PortID::J, PinID::_12> GPIO_J12;
-		typedef GPIO_x<PortID::J, PinID::_13> GPIO_J13;
-		typedef GPIO_x<PortID::J, PinID::_14> GPIO_J14;
-		typedef GPIO_x<PortID::J, PinID::_15> GPIO_J15;
-		#endif
-
-		#ifdef HTL_GPIOK_EXIST
-		typedef GPIO_x<PortID::K, PinID::_0> GPIO_K0;
-		typedef GPIO_x<PortID::K, PinID::_1> GPIO_K1;
-		typedef GPIO_x<PortID::K, PinID::_2> GPIO_K2;
-		typedef GPIO_x<PortID::K, PinID::_3> GPIO_K3;
-		typedef GPIO_x<PortID::K, PinID::_4> GPIO_K4;
-		typedef GPIO_x<PortID::K, PinID::_5> GPIO_K5;
-		typedef GPIO_x<PortID::K, PinID::_6> GPIO_K6;
-		typedef GPIO_x<PortID::K, PinID::_7> GPIO_K7;
-		typedef GPIO_x<PortID::K, PinID::_8> GPIO_K8;
-		typedef GPIO_x<PortID::K, PinID::_9> GPIO_K9;
-		typedef GPIO_x<PortID::K, PinID::_10> GPIO_K10;
-		typedef GPIO_x<PortID::K, PinID::_11> GPIO_K11;
-		typedef GPIO_x<PortID::K, PinID::_12> GPIO_K12;
-		typedef GPIO_x<PortID::K, PinID::_13> GPIO_K13;
-		typedef GPIO_x<PortID::K, PinID::_14> GPIO_K14;
-		typedef GPIO_x<PortID::K, PinID::_15> GPIO_K15;
-		#endif
-
-
 		namespace internal {
-		#ifdef HTL_GPIOA_EXIST
-		template<>
-		struct HardwareInfo<PortID::A> {
-			static constexpr uint32_t gpioAddr = GPIOA_BASE;
-			#if defined(EOS_PLATFORM_STM32F0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOAEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOAEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOAEN_Pos;
-			static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
-			static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOARST_Pos;
+
+			#ifdef HTL_GPIOA_EXIST
+			template<>
+			struct HardwareInfo<PortID::A> {
+				static constexpr uint32_t gpioAddr = GPIOA_BASE;
+				#if defined(EOS_PLATFORM_STM32F0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOAEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOAEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOAEN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+				static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOARST_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_8> {
-			static constexpr uint32_t pn = 8;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_12> {
-			static constexpr uint32_t pn = 12;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_13> {
-			static constexpr uint32_t pn = 13;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::A, PinID::_15> {
-			static constexpr uint32_t pn = 15;
-		};
-		#endif
-
-		#ifdef HTL_GPIOB_EXIST
-		template  <>
-		struct HardwareInfo<PortID::B> {
-			static constexpr uint32_t gpioAddr = GPIOB_BASE;
-			#if defined(EOS_PLATFORM_STM32F0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOBEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOBEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOBEN_Pos;
-			static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
-			static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOBRST_Pos;
+			#ifdef HTL_GPIOB_EXIST
+			template  <>
+			struct HardwareInfo<PortID::B> {
+				static constexpr uint32_t gpioAddr = GPIOB_BASE;
+				#if defined(EOS_PLATFORM_STM32F0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOBEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOBEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOBEN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+				static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOBRST_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_8> {
-			static constexpr uint32_t pn = 8;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_12> {
-			static constexpr uint32_t pn = 12;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_13> {
-			static constexpr uint32_t pn = 13;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::B, PinID::_15> {
-			static constexpr uint32_t pn = 15;
-		};
-		#endif
-
-		#ifdef HTL_GPIOC_EXIST
-		template  <>
-		struct HardwareInfo<PortID::C> {
-			static constexpr uint32_t gpioAddr = GPIOC_BASE;
-			#if defined(EOS_PLATFORM_STM32F0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOCEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOCEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOCEN_Pos;
-			static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
-			static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOCRST_Pos;
+			#ifdef HTL_GPIOC_EXIST
+			template  <>
+			struct HardwareInfo<PortID::C> {
+				static constexpr uint32_t gpioAddr = GPIOC_BASE;
+				#if defined(EOS_PLATFORM_STM32F0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOCEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOCEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOCEN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+				static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOCRST_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_8> {
-			static constexpr uint32_t pn = 8;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_12> {
-			static constexpr uint32_t pn = 12;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_13> {
-			static constexpr uint32_t pn = 13;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::C, PinID::_15> {
-			static constexpr uint32_t pn = 15;
-		};
-		#endif
-
-		#ifdef HTL_GPIOD_EXIST
-		template  <>
-		struct HardwareInfo<PortID::D> {
-			static constexpr uint32_t gpioAddr = GPIOD_BASE;
-			#if defined(EOS_PLATFORM_STM32F0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIODEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIODEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIODEN_Pos;
-			static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
-			static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIODRST_Pos;
+			#ifdef HTL_GPIOD_EXIST
+			template  <>
+			struct HardwareInfo<PortID::D> {
+				static constexpr uint32_t gpioAddr = GPIOD_BASE;
+				#if defined(EOS_PLATFORM_STM32F0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIODEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIODEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIODEN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+				static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIODRST_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_12> {
-			static constexpr uint32_t pn = 12;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_13> {
-			static constexpr uint32_t pn = 13;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::D, PinID::_15> {
-			static constexpr uint32_t pn = 15;
-		};
-		#endif
-
-		#ifdef HTL_GPIOE_EXIST
-		template  <>
-		struct HardwareInfo<PortID::E> {
-			static constexpr uint32_t gpioAddr = GPIOE_BASE;
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOEEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOEEN_Pos;
-			static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
-			static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOERST_Pos;
+			#ifdef HTL_GPIOE_EXIST
+			template  <>
+			struct HardwareInfo<PortID::E> {
+				static constexpr uint32_t gpioAddr = GPIOE_BASE;
+				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOEEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOEEN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+				static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOERST_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::E, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::E, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::E, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-		#endif
-
-		#ifdef HTL_GPIOF_EXIST
-		template  <>
-		struct HardwareInfo<PortID::F> {
-			static constexpr uint32_t gpioAddr = GPIOF_BASE;
-			#if defined(EOS_PLATFORM_STM32F0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOFEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOFEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOFEN_Pos;
-			static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
-			static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOFRST_Pos;
+			#ifdef HTL_GPIOF_EXIST
+			template  <>
+			struct HardwareInfo<PortID::F> {
+				static constexpr uint32_t gpioAddr = GPIOF_BASE;
+				#if defined(EOS_PLATFORM_STM32F0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOFEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOFEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOFEN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+				static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOFRST_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_8> {
-			static constexpr uint32_t pn = 8;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::F, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-		#endif
-
-		#ifdef HTL_GPIOG_EXIST
-		template  <>
-		struct HardwareInfo<PortID::G> {
-			static constexpr uint32_t gpioAddr = GPIOG_BASE;
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOGEN_Pos;
-			#elif defined(EOS_PLATFORM_STM32G0)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-			static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOGEN_Pos;
-			static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
-			static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOGRST_Pos;
+			#ifdef HTL_GPIOG_EXIST
+			template  <>
+			struct HardwareInfo<PortID::G> {
+				static constexpr uint32_t gpioAddr = GPIOG_BASE;
+				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOGEN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOGEN_Pos;
+				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPRSTR);
+				static constexpr uint32_t rccResetPos = RCC_IOPRSTR_GPIOGRST_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_12> {
-			static constexpr uint32_t pn = 12;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_13> {
-			static constexpr uint32_t pn = 13;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::G, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-		#endif
-
-		#ifdef HTL_GPIOH_EXIST
-		template  <>
-		struct HardwareInfo<PortID::H> {
-			static constexpr uint32_t gpioAddr = GPIOH_BASE;
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOHEN_Pos;
+			#ifdef HTL_GPIOH_EXIST
+			template  <>
+			struct HardwareInfo<PortID::H> {
+				static constexpr uint32_t gpioAddr = GPIOH_BASE;
+				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOHEN_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_8> {
-			static constexpr uint32_t pn = 8;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_12> {
-			static constexpr uint32_t pn = 12;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::H, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-		#endif
-
-		#ifdef HTL_GPIOI_EXIST
-		template  <>
-		struct HardwareInfo<PortID::I> {
-			static constexpr uint32_t gpioAddr = GPIOI_BASE;
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOIEN_Pos;
+			#ifdef HTL_GPIOI_EXIST
+			template  <>
+			struct HardwareInfo<PortID::I> {
+				static constexpr uint32_t gpioAddr = GPIOI_BASE;
+				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOIEN_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_12> {
-			static constexpr uint32_t pn = 12;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_13> {
-			static constexpr uint32_t pn = 13;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::I, PinID::_15> {
-			static constexpr uint32_t pn = 15;
-		};
-		#endif
-
-		#ifdef HTL_GPIOJ_EXIST
-		template  <>
-		struct HardwareInfo<PortID::J> {
-			static constexpr uint32_t gpioAddr = GPIOJ_BASE;
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOJEN_Pos;
+			#ifdef HTL_GPIOJ_EXIST
+			template  <>
+			struct HardwareInfo<PortID::J> {
+				static constexpr uint32_t gpioAddr = GPIOJ_BASE;
+				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOJEN_Pos;
+				#endif
+			};
 			#endif
-		};
 
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_8> {
-			static constexpr uint32_t pn = 8;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_9> {
-			static constexpr uint32_t pn = 9;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_10> {
-			static constexpr uint32_t pn = 10;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_11> {
-			static constexpr uint32_t pn = 11;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_13> {
-			static constexpr uint32_t pn = 13;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_14> {
-			static constexpr uint32_t pn = 14;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::J, PinID::_15> {
-			static constexpr uint32_t pn = 15;
-		};
-		#endif
-
-		#ifdef HTL_GPIOK_EXIST
-		template  <>
-		struct HardwareInfo<PortID::K> {
-			static constexpr uint32_t gpioAddr = GPIOK_BASE;
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-			static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOKEN_Pos;
+			#ifdef HTL_GPIOK_EXIST
+			template  <>
+			struct HardwareInfo<PortID::K> {
+				static constexpr uint32_t gpioAddr = GPIOK_BASE;
+				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOKEN_Pos;
+				#endif
+			};
 			#endif
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_0> {
-			static constexpr uint32_t pn = 0;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_1> {
-			static constexpr uint32_t pn = 1;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_2> {
-			static constexpr uint32_t pn = 2;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_3> {
-			static constexpr uint32_t pn = 3;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_4> {
-			static constexpr uint32_t pn = 4;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_5> {
-			static constexpr uint32_t pn = 5;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_6> {
-			static constexpr uint32_t pn = 6;
-		};
-
-		template <>
-		struct GPIOPinTrait<PortID::K, PinID::_7> {
-			static constexpr uint32_t pn = 7;
-		};
-		#endif
 		}
 	}
 }

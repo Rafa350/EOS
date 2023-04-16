@@ -20,21 +20,26 @@ using namespace htl;
 ///
 void DisplayDriver_ILI9341::initializeInterface() {
 
-	// Inicialitza el modul GPIO
+	// Inicialitza el pin TE
 	//
 	auto pinTE = PinTE::getHandler();
+	pinTE->initInput(gpio::PullUpDn::up);
+
+	// Inicialitza el pin RST
+	//
 	#ifdef DISPLAY_RST_GPIO
 	auto pinRST = PinRST::getHandler();
+	pinRST.initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
 	#endif
+
+	// Inicialitza el pin CS
+	//
 	auto pinCS = PinCS::getHandler();
-	auto pinRS = PinRS::getHandler();
-
-
-	pinTE->initInput(gpio::PullUpDn::up);
-	#ifdef DISPLAY_RST_GPIO
-		pinRST.initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
-	#endif
 	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+
+	// Inicialitza el pin RS
+	//
+	auto pinRS = PinRS::getHandler();
 	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
 
 	// Inicialitza el modul SPI
@@ -201,7 +206,6 @@ void DisplayDriver_ILI9341::writeData(
 	auto spi = Spi::getHandler();
 
 	pinRS->set();
-
 	spi->write8(data);
 	while (!spi->isTxEmpty())
 		continue;
@@ -229,7 +233,6 @@ void DisplayDriver_ILI9341::writeData(
 		while (!spi->isTxEmpty())
 			continue;
 	}
-
 	while (spi->isBusy())
 		continue;
 }

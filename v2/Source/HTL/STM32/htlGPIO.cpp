@@ -134,21 +134,21 @@ static void setPull(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona la funcio alternariva del pin.
+/// \brief    Selecciona la funcio alternativa del pin.
 /// \param    gpio: Els registres hardware del modul GPIO.
 /// \param    mask: La mascara de pins
-/// \param    alt: Identificador de la funcio alternativa.
+/// \param    pinFunctionID: Identificador de la funcio alternativa.
 ///
-static void setAlt(
+static void setPinFunction(
 	GPIO_TypeDef *gpio,
 	PinMask mask,
-	GPIOAlt alt) {
+	PinFunctionID pinFunctionID) {
 
 	for (PinNumber pn = 0; pn < 15; pn++) {
 		if ((mask & (1 << pn)) != 0) {
 			uint32_t tmp = gpio->AFR[pn >> 3];
 			tmp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
-			tmp |= (uint32_t(alt) & 0b1111) << ((pn & 0x07) * 4);
+			tmp |= (uint32_t(pinFunctionID) & 0b1111) << ((pn & 0x07) * 4);
 			gpio->AFR[pn >> 3] = tmp;
 		}
 	}
@@ -266,93 +266,19 @@ void Pin::initOutput(
 /// \param    pn: Numero de pin.
 /// \param    driver: Opcions del driver de sortida.
 /// \param    speed: Opcions de velocitat.
-/// \param    alt: Funcio alternativa.
+/// \param    pinFunctionID: Funcio alternativa.
 ///
 void Pin::initAlt(
     OutDriver driver,
     Speed speed,
-    GPIOAlt alt) {
+    PinFunctionID pinFunctionID) {
 
 	activateImpl();
 
     setMode(_gpio, _mask, 2);
     setDriver(_gpio, _mask, driver);
     setSpeed(_gpio, _mask, speed);
-    setAlt(_gpio, _mask, alt);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com a entrada.
-/// \param    regs: Bloc de registres.
-/// \param    pn: Numero de pin.
-/// \param    pull: Opcions pull up/down.
-///
-void GPIOBase_x::initInput(
-    GPIO_TypeDef *regs,
-    uint32_t pn,
-    PullUpDn pull) {
-
-    // Configura el registre MODER (Mode Register)
-    //
-    uint32_t tmp = regs->MODER;
-    tmp &= ~(0b11 << (pn * 2));
-    regs->MODER = tmp;
-
-    setPull(regs, 1 << pn, pull);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el pin com a sortida.
-/// \param    reg: Bloc de registres.
-/// \param    pn: Numero de pin.
-/// \param    driver: Opcions del driver.
-/// \param    speed: Opcions de velocitat.
-
-void GPIOBase_x::initOutput(
-    GPIO_TypeDef *regs,
-    uint32_t pn,
-    OutDriver driver,
-    Speed speed) {
-
-    // Configura el registre MODER (Mode Register)
-    //
-    uint32_t tmp = regs->MODER;
-    tmp &= ~(0b11 << (pn * 2));
-    tmp |= 0b01 << (pn * 2);
-    regs->MODER = tmp;
-
-    setDriver(regs, 1 << pn, driver);
-    setSpeed(regs, 1 << pn, speed);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com a sortida alternativa.
-/// \param    regs: Bloc de registres.
-/// \param    pn: Numero de pin.
-/// \param    driver: Opcions del driver de sortida.
-/// \param    speed: Opcions de velocitat.
-/// \param    alt: Funcio alternativa.
-///
-void GPIOBase_x::initAlt(
-    GPIO_TypeDef *regs,
-    uint32_t pn,
-    OutDriver driver,
-    Speed speed,
-    GPIOAlt alt) {
-        
-    // Configura el registre MODER (Mode Register)
-    //
-    uint32_t tmp = regs->MODER;
-    tmp &= ~(0b11 << (pn * 2));
-    tmp |= 0b10 << (pn * 2);
-    regs->MODER = tmp;
-
-    setDriver(regs, 1 << pn, driver);
-    setSpeed(regs, 1 << pn, speed);
-    setAlt(regs, 1 << pn, alt);
+    setPinFunction(_gpio, _mask, pinFunctionID);
 }
 
 
@@ -361,14 +287,9 @@ void GPIOBase_x::initAlt(
 /// \param    regs: Bloc de registres.
 /// \param    pn: Numero de pin.
 ///
-void GPIOBase_x::initAnalogic(
-	GPIO_TypeDef *regs,
-	uint32_t pn) {
+void Pin::initAnalogic() {
 
-    // Configura el registre MODER (Mode Register)
-    //
-    uint32_t tmp = regs->MODER;
-    tmp &= ~(0b11 << (pn * 2));
-    tmp |= 0b11 << (pn * 2);
-    regs->MODER = tmp;
+	activateImpl();
+
+	setMode(_gpio, _mask, 3);
 }

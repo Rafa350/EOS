@@ -224,26 +224,28 @@ void DisplayDriver_ILI9341LTDC::refresh() {
 ///
 void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
+	// Inicialitza el pin CS
+	//
 	auto pinCS(PinCS::getHandler());
+	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+
+	// Inicialitza el piun RS
 	auto pinRS(PinRS::getHandler());
+	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+
+	// Inicialitza el pin RST
 	#ifdef DISPLAY_RTS_Pin
 	auto pinRST(PinRST::getHandler());
-	#endif
-
-	// Inicialitza el modul GPIO
-	//
-	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
-	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
-	#ifdef DISPLAY_RTS_Pin
-		pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
 	#endif
 
 	// Inicialitza el modul SPI
 	//
-	auto spi(DISPLAY_SPI::getHandler());
+	auto spi(Spi::getHandler());
 	spi->initSCKPin<PinSCK>();
 	spi->initMOSIPin<PinMOSI>();
 	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::high, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_8);
+	spi->enable();
 
 	// Inicialitza el modul LTDC
 	//
@@ -260,24 +262,26 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza la capa 1 del modul LTDC
 	//
-	constexpr LTDCPixelFormat pixelFormat =
-		Color::format == ColorFormat::argb8888 ? LTDCPixelFormat::argb8888 :
-		Color::format == ColorFormat::argb4444 ? LTDCPixelFormat::argb4444 :
-		Color::format == ColorFormat::argb1555 ? LTDCPixelFormat::argb1555 :
-		Color::format == ColorFormat::rgb888 ? LTDCPixelFormat::rgb888 :
-		Color::format == ColorFormat::al88 ? LTDCPixelFormat::al88 :
-		Color::format == ColorFormat::al44 ? LTDCPixelFormat::al44 :
-		Color::format == ColorFormat::l8 ? LTDCPixelFormat::l8 :
-		LTDCPixelFormat::rgb565;
-
-	LtdcLayer::setWindow(0, 0, _width, _height);
-	LtdcLayer::setFrameFormat(
+	constexpr ltdc::LTDCPixelFormat pixelFormat =
+		Color::format == ColorFormat::argb8888 ? ltdc::LTDCPixelFormat::argb8888 :
+		Color::format == ColorFormat::argb4444 ? ltdc::LTDCPixelFormat::argb4444 :
+		Color::format == ColorFormat::argb1555 ? ltdc::LTDCPixelFormat::argb1555 :
+		Color::format == ColorFormat::rgb888 ? ltdc::LTDCPixelFormat::rgb888 :
+		Color::format == ColorFormat::al88 ? ltdc::LTDCPixelFormat::al88 :
+		Color::format == ColorFormat::al44 ? ltdc::LTDCPixelFormat::al44 :
+		Color::format == ColorFormat::l8 ? ltdc::LTDCPixelFormat::l8 :
+        ltdc::LTDCPixelFormat::rgb565;
+	auto layer(ltdc::LTDCLayerDevice1::getHandler());
+	layer->setWindow(0, 0, _width, _height);
+	layer->setFrameFormat(
 		pixelFormat,
 		_width * Color::bytes,
 		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
 		_height);
-	LtdcLayer::setFrameBuffer(reinterpret_cast<void*>(_buffer));
-	LtdcLayer::enable();
+	layer->setFrameBuffer(reinterpret_cast<void*>(_buffer));
+	layer->enable();
+
+	ltdc->reload();
 }
 
 

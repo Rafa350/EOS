@@ -7,6 +7,7 @@
 //
 #include "HTL/htl.h"
 #include "HTL/htlGPIO.h"
+#include "HTL/htlINT.h"
 
 
 namespace htl {
@@ -187,22 +188,22 @@ namespace htl {
 					*p &= ~(1 << _rccResetPos);
 				}
 			public:
-				inline static SPIDeviceX * getHandler() {
+				static constexpr SPIDeviceX * getHandler() {
 					return &_device;
 				}
 				template <typename pin_>
 				void initSCKPin() {
-					gpio::GPIOAlt alt = internal::SPIAltFunction<deviceID_, PinFunction::sck, pin_>::alt;
+					gpio::PinFunctionID alt = internal::SPIAltFunction<deviceID_, PinFunction::sck, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
 				}
 				template <typename pin_>
 				void initMOSIPin() {
-					gpio::GPIOAlt alt = internal::SPIAltFunction<deviceID_, PinFunction::mosi, pin_>::alt;
+					gpio::PinFunctionID alt = internal::SPIAltFunction<deviceID_, PinFunction::mosi, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
 				}
 				template <typename pin_>
 				void initMISOPin() {
-					gpio::GPIOAlt alt = internal::SPIAltFunction<deviceID_, PinFunction::miso, pin_>::alt;
+					gpio::PinFunctionID alt = internal::SPIAltFunction<deviceID_, PinFunction::miso, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, alt);
 				}
 		};

@@ -141,19 +141,19 @@ namespace htl {
 					*p &= ~(1 << _rccResetPos);
 				}
 			public:
-				inline static I2CSlaveDeviceX * getHandler() {
+				static constexpr I2CSlaveDeviceX * getHandler() {
 					return &_device;
 				}
 				template <typename pin_>
 				void initSCLPin() {
 					gpio::PinHandler handler = pin_::getHandler();
-					gpio::GPIOAlt alt = internal::I2CAltFunction<deviceID_, PinFunction::scl, pin_>::alt;
+					gpio::PinFunctionID alt = internal::I2CAltFunction<deviceID_, PinFunction::scl, pin_>::alt;
 					handler->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, alt);
 				}
 				template <typename pin_>
 				void initSDAPin() {
 					gpio::PinHandler handler = pin_::getHandler();
-					gpio::GPIOAlt alt = internal::I2CAltFunction<deviceID_, PinFunction::sda, pin_>::alt;
+					gpio::PinFunctionID alt = internal::I2CAltFunction<deviceID_, PinFunction::sda, pin_>::alt;
 					handler->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, alt);
 				}
 		};

@@ -20,9 +20,11 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_GPIO            htl::GPIO_I1
-#define LED1_ON              htl::GPIOState::set
-#define LED1_OFF             htl::GPIOState::clear
+#define LED1_Pin             htl::gpio::PinI1
+#define LED1_PortID          LED1_Pin::portID
+#define LED1_PinID           LED1_Pin::pinID
+#define LED1_StateON         htl::gpio::PinState::set
+#define LED1_StateOFF        htl::gpio::PinState::clear
 
 #endif // USE_LED1
 
@@ -48,36 +50,36 @@
 #ifdef USE_DISPLAY
 #define EXIST_DISPLAY
 
-#define DISPLAY_BKE_GPIO     htl::GPIO_K3
-#define DISPLAY_LCDE_GPIO    htl::GPIO_I12
-#define DISPLAY_PC_GPIO      htl::GPIO_I14
-#define DISPLAY_HSYNC_GPIO   htl::GPIO_I10
-#define DISPLAY_VSYNC_GPIO   htl::GPIO_I9
-#define DISPLAY_DE_GPIO      htl::GPIO_K7
-#define DISPLAY_R0_GPIO      htl::GPIO_I15
-#define DISPLAY_R1_GPIO      htl::GPIO_J0
-#define DISPLAY_R2_GPIO      htl::GPIO_J1
-#define DISPLAY_R3_GPIO      htl::GPIO_J2
-#define DISPLAY_R4_GPIO      htl::GPIO_J3
-#define DISPLAY_R5_GPIO      htl::GPIO_J4
-#define DISPLAY_R6_GPIO      htl::GPIO_J5
-#define DISPLAY_R7_GPIO      htl::GPIO_J6
-#define DISPLAY_G0_GPIO      htl::GPIO_J7
-#define DISPLAY_G1_GPIO      htl::GPIO_J8
-#define DISPLAY_G2_GPIO      htl::GPIO_J9
-#define DISPLAY_G3_GPIO      htl::GPIO_J10
-#define DISPLAY_G4_GPIO      htl::GPIO_J11
-#define DISPLAY_G5_GPIO      htl::GPIO_K0
-#define DISPLAY_G6_GPIO      htl::GPIO_K1
-#define DISPLAY_G7_GPIO      htl::GPIO_K2
-#define DISPLAY_B0_GPIO      htl::GPIO_E4
-#define DISPLAY_B1_GPIO      htl::GPIO_J13
-#define DISPLAY_B2_GPIO      htl::GPIO_J14
-#define DISPLAY_B3_GPIO      htl::GPIO_J15
-#define DISPLAY_B4_GPIO      htl::GPIO_G12
-#define DISPLAY_B5_GPIO      htl::GPIO_K4
-#define DISPLAY_B6_GPIO      htl::GPIO_K5
-#define DISPLAY_B7_GPIO      htl::GPIO_K6
+#define DISPLAY_BKE_Pin      htl::gpio::PinK3
+#define DISPLAY_LCDE_Pin     htl::gpio::PinI12
+#define DISPLAY_PC_GPIO      htl::gpio::PinI14
+#define DISPLAY_HSYNC_GPIO   htl::gpio::PinI10
+#define DISPLAY_VSYNC_GPIO   htl::gpio::PinI9
+#define DISPLAY_DE_GPIO      htl::gpio::PinK7
+#define DISPLAY_R0_GPIO      htl::gpio::PinI15
+#define DISPLAY_R1_GPIO      htl::gpio::PinJ0
+#define DISPLAY_R2_GPIO      htl::gpio::PinJ1
+#define DISPLAY_R3_GPIO      htl::gpio::PinJ2
+#define DISPLAY_R4_GPIO      htl::gpio::PinJ3
+#define DISPLAY_R5_GPIO      htl::gpio::PinJ4
+#define DISPLAY_R6_GPIO      htl::gpio::PinJ5
+#define DISPLAY_R7_GPIO      htl::gpio::PinJ6
+#define DISPLAY_G0_GPIO      htl::gpio::PinJ7
+#define DISPLAY_G1_GPIO      htl::gpio::PinJ8
+#define DISPLAY_G2_GPIO      htl::gpio::PinJ9
+#define DISPLAY_G3_GPIO      htl::gpio::PinJ10
+#define DISPLAY_G4_GPIO      htl::gpio::PinJ11
+#define DISPLAY_G5_GPIO      htl::gpio::PinK0
+#define DISPLAY_G6_GPIO      htl::gpio::PinK1
+#define DISPLAY_G7_GPIO      htl::gpio::PinK2
+#define DISPLAY_B0_GPIO      htl::gpio::PinE4
+#define DISPLAY_B1_GPIO      htl::gpio::PinJ13
+#define DISPLAY_B2_GPIO      htl::gpio::PinJ14
+#define DISPLAY_B3_GPIO      htl::gpio::PinJ15
+#define DISPLAY_B4_GPIO      htl::gpio::PinG12
+#define DISPLAY_B5_GPIO      htl::gpio::PinK4
+#define DISPLAY_B6_GPIO      htl::gpio::PinK5
+#define DISPLAY_B7_GPIO      htl::gpio::PinK6
 
 #define DISPLAY_WIDTH 		 480            // Amplada de la imatge
 #define DISPLAY_HEIGHT		 272            // Alçada de la imatge
@@ -87,10 +89,10 @@
 #define DISPLAY_VBP          2              // Vertical back porch
 #define DISPLAY_HFP          32             // Horizontal front porch
 #define DISPLAY_VFP          2              // Vertical front porch
-#define DISPLAY_HSYNC_POL    htl::LTDCPolarity::activeLow
-#define DISPLAY_VSYNC_POL    htl::LTDCPolarity::activeLow
-#define DISPLAY_DE_POL       htl::LTDCPolarity::activeLow
-#define DISPLAY_PC_POL       htl::LTDCPolarity::activeLow
+#define DISPLAY_HSYNC_POL    htl::ltdc::PinPolarity::activeLow
+#define DISPLAY_VSYNC_POL    htl::ltdc::PinPolarity::activeLow
+#define DISPLAY_DE_POL       htl::ltdc::PinPolarity::activeLow
+#define DISPLAY_PC_POL       htl::ltdc::PinPolarity::activeLow
 
 #define DISPLAY_BUFFER       0xC0000000
 
