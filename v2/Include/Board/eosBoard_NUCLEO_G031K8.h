@@ -27,10 +27,10 @@
 #define LED1_StateON         htl::gpio::PinState::set
 #define LED1_StateOFF        htl::gpio::PinState::clear
 
-#define LED1_Initialize()    LED1_GPIO::getPinHandler()->initOutput(htl::gpio::OutDriver::pushPull)
-#define LED1_On()            LED1_GPIO::getPinHandler()->set()
-#define LED1_Off()           LED1_GPIO::getPinHandler()->clear()
-#define LED1_Toggle()        LED1_GPIO::getPinHandler()->toggle()
+#define LED1_Initialize()    LED1_Pin::getHandler()->initOutput(htl::gpio::OutDriver::pushPull)
+#define LED1_On()            LED1_Pin::getHandler()->set()
+#define LED1_Off()           LED1_Pin::getHandler()->clear()
+#define LED1_Toggle()        LED1_Pin::getHandler()->toggle()
 
 #endif // USE_LED1
 
@@ -38,15 +38,64 @@
 // -----------------------------------------------------------------------
 // SW1 (Blue button)
 // -----------------------------------------------------------------------
-//
+
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_GPIO             htl::GPIO_F2
-#define SW1_ON               htl::GPIOState::set
-#define SW1_OFF              htl::GPIOState::clear
+#define SW1_Pin              htl::gpio::PinF2
+#define SW1_StateON          htl::gpio::PinState::set
+#define SW1_StateOFF         htl::gpio::PinState::clear
 
-#endif // SW1
+#define SW1_Initialize()     SW1_Pin::getandler()->initInput()
+#define SW1_Read()           SW1_Pin::getHandler()->read()
+
+#endif // USE_SW1
+
+
+// -----------------------------------------------------------------------
+// CN3 expansion connector
+// -----------------------------------------------------------------------
+//
+#ifdef USE_CN3
+#define EXIST_CN3
+
+#define CN3_1_Pin            htl::gpio::PinB6
+#define CN3_2_Pin            htl::gpip::PinB7
+#define CN3_3_Pin            htl::gpip::PinF2
+#define CN3_5_Pin            htl::gpip::PinA15
+#define CN3_6_Pin            htl::gpip::PinB1
+#define CN3_7_Pin            htl::gpip::PinA10
+#define CN3_8_Pin            htl::gpip::PinA9
+#define CN3_9_Pin            htl::gpip::PinB0
+#define CN3_10_Pin           htl::gpip::PinB2
+#define CN3_11_Pin           htl::gpip::PinB8
+#define CN3_12_Pin           htl::gpip::PinA8
+#define CN3_13_Pin           htl::gpip::PinB9
+#define CN3_14_Pin           htl::gpip::PinB5
+#define CN3_15_Pin           htl::gpip::PinB4
+
+#endif // USE_CN3
+
+
+// -----------------------------------------------------------------------
+// CN4 expansion connector
+// -----------------------------------------------------------------------
+
+#ifdef USE_CN4
+#define EXIST_CN4
+
+#define CN4_3_Pin            htl::gpip::PinF2
+#define CN4_5_Pin            htl::gpip::PinA7
+#define CN4_6_Pin            htl::gpip::PinA6
+#define CN4_7_Pin            htl::gpip::PinA11
+#define CN4_8_Pin            htl::gpip::PinA12
+#define CN4_9_Pin            htl::gpip::PinA5
+#define CN4_10_Pin           htl::gpip::PinA5
+#define CN4_11_Pin           htl::gpip::PinA1
+#define CN4_12_Pin           htl::gpip::PinA0
+#define CN4_15_Pin           htl::gpio::PinB3
+
+#endif // USE_CN4
 
 
 // -----------------------------------------------------------------------
@@ -56,33 +105,34 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-#define ARDUINO_D0_GPIO      htl::GPIO_B6
-#define ARDUINO_D1_GPIO      htl::GPIO_B7
-#define ARDUINO_D2_GPIO      htl::GPIO_A15
-#define ARDUINO_D3_GPIO      htl::GPIO_B1
-#define ARDUINO_D4_GPIO      htl::GPIO_A10
-#define ARDUINO_D5_GPIO      htl::GPIO_A9
-#define ARDUINO_D6_GPIO      htl::GPIO_B0
-#define ARDUINO_D7_GPIO      htl::GPIO_B2
-#define ARDUINO_D8_GPIO      htl::GPIO_B8
-#define ARDUINO_D9_GPIO      htl::GPIO_A8
-#define ARDUINO_D10_GPIO     htl::GPIO_B9
-#define ARDUINO_D11_GPIO     htl::GPIO_B5
-#define ARDUINO_D12_GPIO     htl::GPIO_B4
-#define ARDUINO_D13_GPIO     htl::GPIO_B3
+#define ARDUINO_D0_Pin       htl::gpio::PinB6
+#define ARDUINO_D1_Pin       htl::gpio::PinB7
+#define ARDUINO_D2_Pin       htl::gpio::PinA15
+#define ARDUINO_D3_Pin       htl::gpio::PinB1
+#define ARDUINO_D4_Pin       htl::gpio::PinA10
+#define ARDUINO_D5_Pin       htl::gpio::PinA9
+#define ARDUINO_D6_Pin       htl::gpio::PinB0
+#define ARDUINO_D7_Pin       htl::gpio::PinB2
+#define ARDUINO_D8_Pin       htl::gpio::PinB8
+#define ARDUINO_D9_Pin       htl::gpio::PinA8
+#define ARDUINO_D10_Pin      htl::gpio::PinB9
+#define ARDUINO_D11_Pin      htl::gpio::PinB5
+#define ARDUINO_D12_Pin      htl::gpio::PinB4
+#define ARDUINO_D13_Pin      htl::gpio::PinB3
 
-#define ARDUINO_UART         htl::UART_1
-#define ARDUINO_RX_GPIO      htl::GPIO_B6  // D0
-#define ARDUINO_TX_GPIO      htl::GPIO_B7  // D1
+#define ARDUINO_UART         htl::uart::UARTDevice1
+#define ARDUINO_RX_Pin       htl::gpio::PinB6  // D0
+#define ARDUINO_TX_Pin       htl::gpio::PinB7  // D1
 
-#define ARDUINO_I2C          htl::I2C_1
-#define ARDUINO_SCL_GPIO     htl::GPIO_A9  // D5
-#define ARDUINO_SDA_GPIO     htl::GPIO_A10 // D4
+#define ARDUINO_I2CMaster    htl::i2c::I2CMasterDevice1
+#define ARDUINO_I2CSlave     htl::i2c::I2CSlaveDevice1
+#define ARDUINO_SCL_Pin      htl::gpio::PinA9  // D5
+#define ARDUINO_SDA_Pin      htl::gpio::PinA10 // D4
 
-#define ARDUINO_SPI          htl::SPI_1
-#define ARDUINO_SCK_GPIO     htl::GPIO_B3  // D13
-#define ARDUINO_MISO_GPIO    htl::GPIO_B4  // D12
-#define ARDUINO_MOSI_GPIO    htl::GPIO_B5  // D11
+#define ARDUINO_SPI          htl::spi::SPIDevice1
+#define ARDUINO_SCK_Pin      htl::gpio::PinB3  // D13
+#define ARDUINO_MISO_Pin     htl::gpio::PinB4  // D12
+#define ARDUINO_MOSI_Pin     htl::gpio::PinB5  // D11
 
 #endif // USE_ARDUINO
 
