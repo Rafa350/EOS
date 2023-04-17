@@ -51,24 +51,27 @@ void MyApplication::onInitialize() {
 
     // Configura la entrada corresponent al switch SW1
     //
-    SW1_GPIO::initInput(GPIOPull::up);
-    _sw1 = new DigInput(_digInputService, getGPIO<SW1_GPIO>());
+    auto pinSW1 = SW1_Pin::getHandler();
+    pinSW1->initInput(gpio::PullUp::up);
+    _sw1 = new DigInput(_digInputService, pinSW1);
     _sw1->enableChangedEventCallback(_sw1ChangedEventCallback);
 
     // Configura la entrada corresponent al switch SW2
     //
     #ifdef EXIST_SW2
-        SW2_GPIO::initInput(GPIOPull::up);
-        _sw2 = new DigInput(_digInputService, getGPIO<SW2_GPIO>());
-        _sw2->enableChangedEventCallback(_sw2ChangedEventCallback);
+    auto pinSW2 = SW2_Pin::getHandler();
+    pinSW2->initInput(gpio::PullUp::up);
+    _sw2 = new DigInput(_digInputService, pinSW2);
+    _sw2->enableChangedEventCallback(_sw2ChangedEventCallback);
     #endif
 
     // Configure la entrada corresponent al switch SW3
     //
     #ifdef EXIST_SW3
-        SW3_GPIO::initInput(GPIOPull::up);
-        _sw3 = new DigInput(_digInputService, getGPIO<SW3_GPIO>());
-        _sw3->enableChangedEventCallback(_sw3ChangedEventCallback);
+    auto pinSW3 = SW3_Pin::getHandler();
+    pinSW3->initInput(gpio::PullUp::up);
+    _sw3 = new DigInput(_digInputService, pinSW3);
+    _sw3->enableChangedEventCallback(_sw3ChangedEventCallback);
     #endif
 
     // Configura el temporitzador pel servei d'entrades digitals
@@ -95,24 +98,27 @@ void MyApplication::onInitialize() {
 
     // Configura la sortida corresponent al led LED1
     //
-    LED1_GPIO::initOutput();
-    LED1_GPIO::clear();
-    _led1 = new DigOutput(_digOutputService, htl::getGPIO<LED1_GPIO>());
+    auto pinLED1 = LED1_Pin::getHandler();
+    pinLED1->initOutput();
+    pinLED1->clear();
+    _led1 = new DigOutput(_digOutputService, pinLED1);
 
     // Configura la sortida corresponent al led LED2
     //
     #ifdef EXIST_LED2
-        LED2_GPIO::initOutput();
-        LED2_GPIO::clear();
-        _led2 = new DigOutput(_digOutputService, htl::getGPIO<LED2_GPIO>());
+    auto pinLED2 = LED2_Pin::getHandler();
+    pinLED2->INIToUTPUT();
+    pinLED2->clear();
+    _led2 = new DigOutput(_digOutputService, pinLED2);
     #endif
 
     // Configura la sortida corresponent al led LED3
     //
     #ifdef EXIST_LED3
-        LED3_GPIO::initOutput();
-        LED3_GPIO::clear();
-        _led3 = new DigOutput(_digOutputService, htl::getGPIO<LED3_GPIO>());
+    auto pinLED3 = LED3_Pin::getHandler();
+    pinLED3->initOutput();
+    pinLED3->clear();
+    _led3 = new DigOutput(_digOutputService, pinLED3);
     #endif
 
     // Configura el temporitzador pel servei de sortides digitals
@@ -160,7 +166,7 @@ void MyApplication::messageBusEventHandler(
 void MyApplication::sw1ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == (bool) SW1_ON) {
+    if (args.value == (bool) SW1_StateON) {
 
         ButtonMessage msg;
         msg.id = 1;

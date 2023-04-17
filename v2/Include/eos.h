@@ -11,11 +11,11 @@
 
 
 #if EOS_TOOLCHAIN_DETECTED != 1
-#error "unknown toolchain"
+#error "Unknown toolchain"
 #endif
 
 #if EOS_PLATFORM_DETECTED != 1
-#error "unknown platform"
+#error "Unknown platform"
 #endif
 
 

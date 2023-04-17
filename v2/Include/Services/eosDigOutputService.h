@@ -116,13 +116,13 @@ namespace eos {
             };
         public:
             DigOutputService *_service;
-            const htl::GPIOHandler _hGPIO;
+            const htl::gpio::PinHandler _pin;
             State _state;
             unsigned _delayCnt;
             unsigned _widthCnt;
 
         public:
-            DigOutput(DigOutputService *service, const htl::GPIOHandler hGPIO);
+            DigOutput(DigOutputService *service, const htl::gpio::PinHandler pin);
             ~DigOutput();
 
             inline DigOutputService* getService() const {

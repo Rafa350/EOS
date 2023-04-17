@@ -311,7 +311,7 @@ void DigOutputService::cmdClear(
 
     eosAssert(output != nullptr);
 
-    output->_hGPIO->clear();
+    output->_pin->clear();
     output->_state = DigOutput::State::idle;
 }
 
@@ -325,7 +325,7 @@ void DigOutputService::cmdSet(
 
     eosAssert(output != nullptr);
 
-    output->_hGPIO->set();
+    output->_pin->set();
     output->_state = DigOutput::State::idle;
 }
 
@@ -339,7 +339,7 @@ void DigOutputService::cmdToggle(
 
     eosAssert(output != nullptr);
 
-    output->_hGPIO->toggle();
+    output->_pin->toggle();
     output->_state = DigOutput::State::idle;
 }
 
@@ -356,7 +356,7 @@ void DigOutputService::cmdPulse(
     eosAssert(output != nullptr);
 
     if (output->_state == DigOutput::State::idle)
-        output->_hGPIO->toggle();
+        output->_pin->toggle();
     output->_state = DigOutput::State::pulse;
     output->_widthCnt = width;
 }
@@ -441,7 +441,7 @@ void DigOutputService::cmdTimeOut(
 		switch (output->_state) {
 			case DigOutput::State::pulse:
 				if (output->_widthCnt <= time) {
-					output->_hGPIO->toggle();
+					output->_pin->toggle();
 					output->_state = DigOutput::State::idle;
 				}
 				else
@@ -455,22 +455,22 @@ void DigOutputService::cmdTimeOut(
 				if (output->_delayCnt <= time) {
 					switch (output->_state) {
 						case DigOutput::State::delayedSet:
-							output->_hGPIO->set();
+							output->_pin->set();
 							output->_state = DigOutput::State::idle;
 							break;
 
 						case DigOutput::State::delayedClear:
-							output->_hGPIO->clear();
+							output->_pin->clear();
 							output->_state = DigOutput::State::idle;
 							break;
 
 						case DigOutput::State::delayedToggle:
-							output->_hGPIO->toggle();
+							output->_pin->toggle();
 							output->_state = DigOutput::State::idle;
 							break;
 
 						case DigOutput::State::delayedPulse:
-							output->_hGPIO->toggle();
+							output->_pin->toggle();
 							output->_state = DigOutput::State::pulse;
 							break;
 
@@ -511,10 +511,10 @@ void DigOutputService::tmrInterruptFunction() {
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    const htl::GPIOHandler hGPIO):
+    const htl::gpio::PinHandler pin):
 
     _service(nullptr),
-    _hGPIO(hGPIO),
+    _pin(pin),
     _state(State::idle),
 	_delayCnt(0),
 	_widthCnt(0) {

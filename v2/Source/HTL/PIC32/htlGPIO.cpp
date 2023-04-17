@@ -1,83 +1,83 @@
 #include "HTL/htlGPIO.h"
 
 
-using namespace htlV2;
+using namespace htl::gpio;
 
 
-static void initOutput(GPIORegisters*, GPIOPinMask, GPIODriver, GPIOSpeed);
+static void initOutput(internal::GPIORegisters*, PinMask, OutDriver, Speed);
 
 
-GPIOPort::GPIOPort(
-    GPIORegisters *registers) :
-    
-    _registers(registers) {
-    
-}
+Port::Port(
+    internal::GPIORegisters *gpio) :
 
-
-void GPIOPort::activate() {
-    
-}
-
-
-void GPIOPort::deactivate() {
-    
+    _gpio(gpio) {
 
 }
 
 
-void GPIOPort::reset() {
-    
+void Port::activate() {
+
 }
 
 
-void GPIOPort::initOutput(
-    GPIOPinMask mask, 
-    GPIODriver driver, 
-    GPIOSpeed speed) {
-            
-    initOutput(_registers, mask, driver, speed);
+void Port::deactivate() {
+
+
 }
 
 
-GPIOPin::GPIOPin(
-    GPIORegisters *registers, 
-    GPIOPinID pinID) :
-    
-    _registers(registers),
+void Port::reset() {
+
+}
+
+
+void Port::initOutput(
+    PinMask mask,
+    OutDriver driver,
+    Speed speed) {
+
+    initOutput(_gpio, mask, driver, speed);
+}
+
+
+Pin::Pin(
+    internal::GPIORegisters *gpio,
+    PinID pinID) :
+
+    _gpio(gpio),
     _pinMask(1 << (int)pinID) {
-    
-}
-    
 
-void GPIOPin::initOutput(
-    GPIODriver driver,
-    GPIOSpeed speed,
-    GPIOInitPinState state) {
+}
+
+
+void Pin::initOutput(
+    OutDriver driver,
+    Speed speed,
+    InitPinState state) {
 
     write(state);
-    initOutput(_registers, _pinMask, driver, speed);
+    initOutput(_gpio, _pinMask, driver, speed);
 }
 
 
 
 void initOutput(
-    GPIORegisters *registers, 
-    GPIOPinMask mask,
-    GPIODriver driver,
-    GPIOSpeed speed) {
-    
-    registers->TRISxCLR = mask;
+    internal::GPIORegisters *gpio,
+    PinMask mask,
+    OutDriver driver,
+    Speed speed) {
+
+    gpio->TRISxCLR = mask;
 
     switch (driver) {
-        case GPIODriver::openDrain:
-            registers->ODCxSET = mask;
+        case OutDriver::openDrain:
+            gpio->ODCxSET = mask;
             break;
-            
-        case GPIODriver::pushPull:
-            registers->ODCxCLR = mask;
+
+        case OutDriver::pushPull:
+            gpio->ODCxCLR = mask;
             break;
-            
+
         default:
             break;
     }

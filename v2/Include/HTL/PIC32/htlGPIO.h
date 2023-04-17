@@ -18,55 +18,55 @@
 
 
 namespace htl {
-    
+
     namespace gpio {
 
         enum class PortID {
-            #ifdef HTL_PORTA_EXIST
-            A, 
+            #ifdef HTL_GPIOA_EXIST
+            A,
             #endif
-            #ifdef HTL_PORTB_EXIST
-            B, 
+            #ifdef HTL_GPIOB_EXIST
+            B,
             #endif
-            #ifdef HTL_PORTC_EXIST
-            C, 
+            #ifdef HTL_GPIOC_EXIST
+            C,
             #endif
-            #ifdef HTL_PORTD_EXIST
-            D, 
+            #ifdef HTL_GPIOD_EXIST
+            D,
             #endif
-            #ifdef HTL_PORTE_EXIST
-            E, 
+            #ifdef HTL_GPIOE_EXIST
+            E,
             #endif
-            #ifdef HTL_PORTF_EXIST
-            F, 
+            #ifdef HTL_GPIOF_EXIST
+            F,
             #endif
-            #ifdef HTL_PORTG_EXIST
+            #ifdef HTL_GPIOG_EXIST
             G
             #endif
         };
-        
+
         enum class PinID {
-            _0, 
-            _1, 
-            _2, 
-            _3, 
-            _4, 
-            _5, 
-            _6, 
-            _7, 
-            _8, 
-            _9, 
-            _10, 
-            _11, 
-            _12, 
-            _13, 
-            _14, 
+            _0,
+            _1,
+            _2,
+            _3,
+            _4,
+            _5,
+            _6,
+            _7,
+            _8,
+            _9,
+            _10,
+            _11,
+            _12,
+            _13,
+            _14,
             _15
         };
-    
+
         typedef uint8_t PinNumber;
         typedef uint16_t PinMask;
-    
+
         enum class PullUp {
             noChange,
             none,
@@ -86,7 +86,7 @@ namespace htl {
             hight,
             fast
         };
-        
+
         enum class InitPinState {
             noChange,
             clear,
@@ -119,9 +119,9 @@ namespace htl {
                 volatile uint32_t ODCxSET;
                 volatile uint32_t ODCxINV;
             };
-            
+
         }
-    
+
 
         class Port {
             private:
@@ -134,33 +134,33 @@ namespace htl {
                 void reset();
                 void initInput(PinMask mask, PullUp pullUp = PullUp::none);
                 void initOutput(PinMask mask, OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
-                inline void set(PinMask mask) { 
-                    _gpio->LATxSET = mask; 
+                inline void set(PinMask mask) {
+                    _gpio->LATxSET = mask;
                 }
-                inline void set(PinID pinID) { 
-                    _gpio->LATxSET = 1 << (int)pinID; 
+                inline void set(PinID pinID) {
+                    _gpio->LATxSET = 1 << (int)pinID;
                 }
-                inline void clear(PinMask mask) { 
-                    _gpio->LATxCLR = mask; 
+                inline void clear(PinMask mask) {
+                    _gpio->LATxCLR = mask;
                 }
-                inline void clear(PinID pinID) { 
-                    _gpio->LATxCLR = 1 << (int)pinID; 
+                inline void clear(PinID pinID) {
+                    _gpio->LATxCLR = 1 << (int)pinID;
                 }
-                inline void toggle(PinMask mask) { 
-                    _gpio->LATxINV = mask; 
+                inline void toggle(PinMask mask) {
+                    _gpio->LATxINV = mask;
                 }
-                inline void toggle(PinID pinID) { 
-                    _gpio->LATxINV = 1 << (int)pinID; 
+                inline void toggle(PinID pinID) {
+                    _gpio->LATxINV = 1 << (int)pinID;
                 }
-                inline PinMask read() { 
-                    return _gpio->PORTx; 
+                inline PinMask read() {
+                    return _gpio->PORTx;
                 }
                 inline PinState read(PinID pinID) {
                     return (_gpio->PORTx & (1 << (int)pinID)) ? PinState::set : PinState::clear;
                 }
-                inline void write(PinMask mask) { 
-                    _gpio->LATx = mask; 
-                }            
+                inline void write(PinMask mask) {
+                    _gpio->LATx = mask;
+                }
                 inline void write(PinMask clearMask, PinMask setMask) {
                     uint16_t r = _gpio->PORTx;
                     r &= ~clearMask;
@@ -179,10 +179,10 @@ namespace htl {
 
 
         namespace internal {
-            
+
             template <PortID>
             struct HardwareInfo;
-            
+
         }
 
         template <PortID portID_>
@@ -191,11 +191,11 @@ namespace htl {
                 using HI = internal::HardwareInfo<portID_>;
             private:
                 static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-                static _port;
+                static PortX _port;
 			public:
 				static constexpr PortID portID = portID_;
             protected:
-                PortX(): 
+                PortX():
                     Port(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr)) {
                 }
             public:
@@ -212,60 +212,60 @@ namespace htl {
 			return PortX<portID_>::getHandler();
 		}
 
-        #ifdef HTL_PORTA_EXIST
+        #ifdef HTL_GPIOA_EXIST
         typedef PortX<PortID::A> PortA;
         #endif
-        #ifdef HTL_PORTB_EXIST
+        #ifdef HTL_GPIOB_EXIST
         typedef PortX<PortID::B> PortB;
         #endif
-        #ifdef HTL_PORTC_EXIST
+        #ifdef HTL_GPIOC_EXIST
         typedef PortX<PortID::C> PortC;
         #endif
-        #ifdef HTL_PORTD_EXIST
+        #ifdef HTL_GPIOD_EXIST
         typedef PortX<PortID::D> PortD;
         #endif
-        #ifdef HTL_PORTE_EXIST
+        #ifdef HTL_GPIOE_EXIST
         typedef PortX<PortID::E> PortE;
         #endif
-        #ifdef HTL_PORTF_EXIST
+        #ifdef HTL_GPIOF_EXIST
         typedef PortX<PortID::F> PortF;
         #endif
-        #ifdef HTL_PORTG_EXIST
+        #ifdef HTL_GPIOG_EXIST
         typedef PortX<PortID::G> PortG;
         #endif
 
-    
+
         class Pin {
             private:
                 internal::GPIORegisters *_gpio;
                 PinMask _pinMask;
             protected:
-                GPIOPin(internal::GPIORegisters *gpio, PinID pinID);
+                Pin(internal::GPIORegisters *gpio, PinID pinID);
             public :
                 void initInput();
                 void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium, InitPinState state = InitPinState::noChange);
                 inline void set() {
-                    _gpio->LATxSET = _pinMask; 
+                    _gpio->LATxSET = _pinMask;
                 }
                 inline void clear() {
-                    _gpio->LATxCLR = _pinMask; 
+                    _gpio->LATxCLR = _pinMask;
                 }
                 inline void toggle() {
-                    _gpio->LATxINV = _pinMask; 
+                    _gpio->LATxINV = _pinMask;
                 }
-                inline GPIOPinState read() {
-                    return _gpio->PORTx & _pinMask ? GPIOPinState::set : GPIOPinState::clear;
+                inline PinState read() {
+                    return _gpio->PORTx & _pinMask ? PinState::set : PinState::clear;
                 }
-                inline void write(GPIOPinState state) {
-                    if (state == GPIOPinState::set)
+                inline void write(PinState state) {
+                    if (state == PinState::set)
                         _gpio->LATxSET = _pinMask;
                     else
                         _gpio->LATxCLR = _pinMask;
                 }
         };
-        
+
         typedef Pin * PinHandler;
-        
+
         template <PortID portID_, PinID pinID_>
         class PinX final: public Pin {
             private:
@@ -274,7 +274,7 @@ namespace htl {
                 static constexpr uint32_t _gpioAddr = HI::gpioAddr;
                 static PinX _pin;
             protected:
-                PinX(): 
+                PinX():
                     Pin(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr), pinID_) {
                 }
             public:
@@ -282,16 +282,16 @@ namespace htl {
                     return &_pin;
                 }
         };
-        
+
 		template <PortID portID_, PinID pinID_>
-		PinX<portID_, pinID_> PinX<portID_>::_pin;
+		PinX<portID_, pinID_> PinX<portID_, pinID_>::_pin;
 
 		template <PortID portID_, PinID pinID_>
 		inline PinHandler getPinHandler() {
 			return PinX<portID_, pinID_>::getHandler();
 		}
 
-        #ifdef HTL_PORTA_EXIST
+        #ifdef HTL_GPIOA_EXIST
         typedef PinX<PortID::A, PinID::_0> PinA0;
         typedef PinX<PortID::A, PinID::_1> PinA1;
         typedef PinX<PortID::A, PinID::_2> PinA2;
@@ -310,38 +310,94 @@ namespace htl {
         typedef PinX<PortID::A, PinID::_15> PinA15;
         #endif
 
-          
+        #ifdef HTL_GPIOB_EXIST
+        typedef PinX<PortID::B, PinID::_0> PinB0;
+        typedef PinX<PortID::B, PinID::_1> PinB1;
+        typedef PinX<PortID::B, PinID::_2> PinB2;
+        typedef PinX<PortID::B, PinID::_3> PinB3;
+        typedef PinX<PortID::B, PinID::_4> PinB4;
+        typedef PinX<PortID::B, PinID::_5> PinB5;
+        typedef PinX<PortID::B, PinID::_6> PinB6;
+        typedef PinX<PortID::B, PinID::_7> PinB7;
+        typedef PinX<PortID::B, PinID::_8> PinB8;
+        typedef PinX<PortID::B, PinID::_9> PinB9;
+        typedef PinX<PortID::B, PinID::_10> PinB10;
+        typedef PinX<PortID::B, PinID::_11> PinB11;
+        typedef PinX<PortID::B, PinID::_12> PinB12;
+        typedef PinX<PortID::B, PinID::_13> PinB13;
+        typedef PinX<PortID::B, PinID::_14> PiBA14;
+        typedef PinX<PortID::B, PinID::_15> PiBA15;
+        #endif
+
+        #ifdef HTL_GPIOC_EXIST
+        typedef PinX<PortID::C, PinID::_0> PinC0;
+        typedef PinX<PortID::C, PinID::_1> PinC1;
+        typedef PinX<PortID::C, PinID::_2> PinC2;
+        typedef PinX<PortID::C, PinID::_3> PinC3;
+        typedef PinX<PortID::C, PinID::_4> PinC4;
+        typedef PinX<PortID::C, PinID::_5> PinC5;
+        typedef PinX<PortID::C, PinID::_6> PinC6;
+        typedef PinX<PortID::C, PinID::_7> PinC7;
+        typedef PinX<PortID::C, PinID::_8> PinC8;
+        typedef PinX<PortID::C, PinID::_9> PinC9;
+        typedef PinX<PortID::C, PinID::_10> PinC10;
+        typedef PinX<PortID::C, PinID::_11> PinC11;
+        typedef PinX<PortID::C, PinID::_12> PinC12;
+        typedef PinX<PortID::C, PinID::_13> PinC13;
+        typedef PinX<PortID::C, PinID::_14> PiBC14;
+        typedef PinX<PortID::C, PinID::_15> PiBC15;
+        #endif
+
+        #ifdef HTL_GPIOD_EXIST
+        typedef PinX<PortID::D, PinID::_0> PinD0;
+        typedef PinX<PortID::D, PinID::_1> PinD1;
+        typedef PinX<PortID::D, PinID::_2> PinD2;
+        typedef PinX<PortID::D, PinID::_3> PinD3;
+        typedef PinX<PortID::D, PinID::_4> PinD4;
+        typedef PinX<PortID::D, PinID::_5> PinD5;
+        typedef PinX<PortID::D, PinID::_6> PinD6;
+        typedef PinX<PortID::D, PinID::_7> PinD7;
+        typedef PinX<PortID::D, PinID::_8> PinD8;
+        typedef PinX<PortID::D, PinID::_9> PinD9;
+        typedef PinX<PortID::D, PinID::_10> PinD10;
+        typedef PinX<PortID::D, PinID::_11> PinD11;
+        typedef PinX<PortID::D, PinID::_12> PinD12;
+        typedef PinX<PortID::D, PinID::_13> PinD13;
+        typedef PinX<PortID::D, PinID::_14> PiBD14;
+        typedef PinX<PortID::D, PinID::_15> PiBD15;
+        #endif
+
         namespace internal {
-    
-            #ifdef HTL_PORTA_EXIST
+
+            #ifdef HTL_GPIOA_EXIST
             template <>
             struct HardwareInfo<PortID::A> {
                 static constexpr uint32_t gpioAddr = _PORTA_BASE_ADDRESS - 0x10;
             };
             #endif
 
-            #ifdef HTL_PORTB_EXIST
+            #ifdef HTL_GPIOB_EXIST
             template <>
             struct HardwareInfo<PortID::B> {
                 static constexpr uint32_t gpioAddr = _PORTB_BASE_ADDRESS - 0x10;
             };
             #endif
 
-            #ifdef HTL_PORTC_EXIST
+            #ifdef HTL_GPIOC_EXIST
             template <>
             struct HardwareInfo<PortID::C> {
                 static constexpr uint32_t gpioAddr = _PORTC_BASE_ADDRESS - 0x10;
             };
             #endif
 
-            #ifdef HTL_PORTD_EXIST
+            #ifdef HTL_GPIOD_EXIST
             template <>
             struct HardwareInfo<PortID::D> {
                 static constexpr uint32_t gpioAddr = _PORTD_BASE_ADDRESS - 0x10;
             };
             #endif
 
-            #ifdef HTL_PORTE_EXIST
+            #ifdef HTL_GPIOE_EXIST
             template <>
             struct HardwareInfo<PortID::E> {
                 static constexpr uint32_t gpioAddr = _PORTE_BASE_ADDRESS - 0x10;

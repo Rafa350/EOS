@@ -4,6 +4,7 @@
 #include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
+#include "HTL/PIC32/htlGPIO.h"
 
 
 #define PATTERN_MASK     0x0FFF
@@ -113,7 +114,7 @@ void DigInputService::onInitialize() {
     // Inicialitza les entrades al valor actual
     //
     for (auto input: _inputs) {
-        input->_value = input->_hGPIO->read() == htl::GPIOState::set;
+        input->_value = input->_pin->read() == gpio::PinState::set;
         input->_edge = false;
         input->_pattern = input->_value ? PATTERN_ON : PATTERN_OFF;
     }
@@ -193,7 +194,7 @@ bool DigInputService::scanInputs() {
             // Actualitza el patro
             //
             input->_pattern <<= 1;
-            if (input->_hGPIO->read() == htl::GPIOState::set)
+            if (input->_pin->read() == gpio::PinState::set)
                 input->_pattern |= 1;
 
             // Analitza el patro per detectar un flanc positiu
@@ -259,10 +260,10 @@ void DigInputService::tmrInterruptFunction() {
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const GPIOHandler hGPIO):
+    const htl::gpio::PinHandler pin):
 
 	_service(nullptr),
-    _hGPIO(hGPIO),
+    _pin(pin),
     _scanMode(ScanMode::polling),
     _changedEventCallback(nullptr) {
 
