@@ -242,7 +242,7 @@ namespace htl {
             protected:
                 Pin(internal::GPIORegisters *gpio, PinID pinID);
             public :
-                void initInput();
+                void initInput(PullUp pullUp = PullUp::noChange);
                 void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium, InitPinState state = InitPinState::noChange);
                 inline void set() {
                     _gpio->LATxSET = _pinMask;
@@ -273,12 +273,15 @@ namespace htl {
             private:
                 static constexpr uint32_t _gpioAddr = HI::gpioAddr;
                 static PinX _pin;
+            public:
+                static constexpr PortID portID = portID_;
+                static constexpr PinID pinID = pinID_;
             protected:
                 PinX():
                     Pin(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr), pinID_) {
                 }
             public:
-                inline static PinHandler getHandler() {
+                inline static PinX * getHandler() {
                     return &_pin;
                 }
         };

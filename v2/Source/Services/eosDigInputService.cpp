@@ -114,9 +114,9 @@ void DigInputService::onInitialize() {
     // Inicialitza les entrades al valor actual
     //
     for (auto input: _inputs) {
-        input->_value = input->_pin->read() == gpio::PinState::set;
+        input->_pinState = input->_pin->read();
         input->_edge = false;
-        input->_pattern = input->_value ? PATTERN_ON : PATTERN_OFF;
+        input->_pattern = input->_pinState == gpio::PinState::set ? PATTERN_ON : PATTERN_OFF;
     }
 
     // Inicialitza el servei base
@@ -155,7 +155,7 @@ void DigInputService::onTask() {
 
                         DigInput::ChangedEventArgs args;
                         args.input = input;
-                        args.value = input->_value;
+                        args.pinState = input->_pinState;
 
                         input->_changedEventCallback->execute(args);
                     }
@@ -200,7 +200,7 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc positiu
             //
             if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-                input->_value = 1;
+                input->_pinState = gpio::PinState::set;
                 input->_edge = 1;
                 changed = true;
             }
@@ -208,7 +208,7 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc negatiu
             //
             else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-                input->_value = 0;
+                input->_pinState = gpio::PinState::clear;
                 input->_edge = 1;
                 changed = true;
             }
@@ -224,16 +224,16 @@ bool DigInputService::scanInputs() {
 /// \param    input: La entrada.
 /// \return   El estat.
 ///
-bool DigInputService::read(
+htl::gpio::PinState DigInputService::read(
     const DigInput *input) const {
 
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
     bool state = INT_1::disableInterrupts();
-    bool result = input->_value;
+    htl::gpio::PinState pinState = input->_pinState;
     INT_1::restoreInterrupts(state);
-    return result;
+    return pinState;
 }
 
 
@@ -260,7 +260,7 @@ void DigInputService::tmrInterruptFunction() {
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const htl::gpio::PinHandler pin):
+    htl::gpio::PinHandler pin):
 
 	_service(nullptr),
     _pin(pin),

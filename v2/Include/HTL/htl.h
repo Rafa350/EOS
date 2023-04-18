@@ -6,10 +6,6 @@
 #include "eos.h"
 
 
-namespace htl {
-}
-
-
 #if defined(EOS_PLATFORM_PIC32MX) || \
     defined(EOS_PLATFORM_PIC32MZ)
     #include "HTL/PIC32/htl.h"

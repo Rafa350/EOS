@@ -8,38 +8,26 @@
 
 // Comprova l'existencia dels moduls GPIO
 //
-#ifdef GPIOA_BASE
+#ifdef _PORTA_BASE_ADDRESS
 	#define HTL_GPIOA_EXIST
 #endif
-#ifdef GPIOB_BASE
+#ifdef _PORTB_BASE_ADDRESS
 	#define HTL_GPIOB_EXIST
 #endif
-#ifdef GPIOC_BASE
+#ifdef _PORTC_BASE_ADDRESS
 	#define HTL_GPIOC_EXIST
 #endif
-#ifdef GPIOD_BASE
+#ifdef _PORTD_BASE_ADDRESS
 	#define HTL_GPIOD_EXIST
 #endif
-#ifdef GPIOE_BASE
+#ifdef _PORTE_BASE_ADDRESS
 	#define HTL_GPIOE_EXIST
 #endif
-#ifdef GPIOF_BASE
+#ifdef _PORTF_BASE_ADDRESS
 	#define HTL_GPIOF_EXIST
 #endif
-#ifdef GPIOG_BASE
+#ifdef _PORTG_BASE_ADDRESS
 	#define HTL_GPIOG_EXIST
-#endif
-#ifdef GPIOH_BASE
-	#define HTL_GPIOH_EXIST
-#endif
-#ifdef GPIOI_BASE
-	#define HTL_GPIOI_EXIST
-#endif
-#ifdef GPIOJ_BASE
-	#define HTL_GPIOJ_EXIST
-#endif
-#ifdef GPIOK_BASE
-	#define HTL_GPIOK_EXIST
 #endif
 
 

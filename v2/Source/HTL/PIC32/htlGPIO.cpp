@@ -4,64 +4,14 @@
 using namespace htl::gpio;
 
 
-static void initOutput(internal::GPIORegisters*, PinMask, OutDriver, Speed);
-
-
-Port::Port(
-    internal::GPIORegisters *gpio) :
-
-    _gpio(gpio) {
-
-}
-
-
-void Port::activate() {
-
-}
-
-
-void Port::deactivate() {
-
-
-}
-
-
-void Port::reset() {
-
-}
-
-
-void Port::initOutput(
-    PinMask mask,
-    OutDriver driver,
-    Speed speed) {
-
-    initOutput(_gpio, mask, driver, speed);
-}
-
-
-Pin::Pin(
-    internal::GPIORegisters *gpio,
-    PinID pinID) :
-
-    _gpio(gpio),
-    _pinMask(1 << (int)pinID) {
-
-}
-
-
-void Pin::initOutput(
-    OutDriver driver,
-    Speed speed,
-    InitPinState state) {
-
-    write(state);
-    initOutput(_gpio, _pinMask, driver, speed);
-}
-
-
-
-void initOutput(
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza els pins de sortida.
+/// \param    gpio: Registres de hardware del dispositiu.
+/// \param    mask: Mascara de pins.
+/// \param    driver: Driver de sortida.
+/// \param    speed: Velocitat.
+///
+static void initializeOutput(
     internal::GPIORegisters *gpio,
     PinMask mask,
     OutDriver driver,
@@ -81,4 +31,91 @@ void initOutput(
         default:
             break;
     }
+}
+
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    gpio: Registres del hardware del dispositiu.
+///
+Port::Port(
+    internal::GPIORegisters *gpio) :
+
+    _gpio(gpio) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Activa el dispositiu.
+///
+void Port::activate() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el dispositiu.
+///
+void Port::deactivate() {
+
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Reseteja el dispositiu.
+///
+void Port::reset() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el port com sortides.
+///
+void Port::initOutput(
+    PinMask mask,
+    OutDriver driver,
+    Speed speed) {
+
+    activate();
+    initializeOutput(_gpio, mask, driver, speed);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    gpio: Registres de hardware del dispositiu.
+/// \param    pinID: Identificador del pin.
+///
+Pin::Pin(
+    internal::GPIORegisters *gpio,
+    PinID pinID) :
+
+    _gpio(gpio),
+    _pinMask(1 << (int)pinID) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el pin com entrada.
+///
+void Pin::initInput(
+    PullUp pullUp) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el pin copm a sortida.
+///
+void Pin::initOutput(
+    OutDriver driver,
+    Speed speed,
+    InitPinState pinState) {
+
+    initializeOutput(_gpio, _pinMask, driver, speed);
 }

@@ -33,14 +33,10 @@ namespace eos {
 
 			inline void txPush(uint8_t data) { _txBuffer.push(data); }
 			inline uint8_t txPop() { return _txBuffer.pop(); }
-			uint16_t txAvailableSpace() const;
-			inline uint16_t txAvailableData() const { return _txBuffer.getSize(); }
 
 			inline void rxPush(uint8_t data) { _rxBuffer.push(data); }
 			inline void rxPush(uint8_t *data, uint16_t dataLength) { _rxBuffer.push(data, dataLength); }
 			inline uint8_t rxPop() { return _rxBuffer.pop(); }
-			uint16_t rxAvailableSpace() const;
-			inline uint16_t rxAvailableData() const { return _rxBuffer.getSize(); }
 
 			virtual void initializeImpl() = 0;
 			virtual void deinitializeImpl() = 0;
@@ -59,10 +55,15 @@ namespace eos {
 			void initialize();
 			void deinitialize();
 
+			uint16_t txAvailableSpace() const;
+			inline uint16_t txAvailableData() const { return _txBuffer.getSize(); }
+			inline void txPurge() { _txBuffer.clear(); }
 			uint16_t transmit(const uint8_t *data, uint16_t dataLength);
+
+			uint16_t rxAvailableSpace() const;
+			inline uint16_t rxAvailableData() const { return _rxBuffer.getSize(); }
+			inline void rxPurge() { _rxBuffer.clear(); }
 			uint16_t receive(uint8_t *data, uint16_t dataSize);
-			inline uint16_t receivePending() const { return rxAvailableData(); }
-			inline uint16_t transmitPending() const { return txAvailableData(); }
 	};
 }
 

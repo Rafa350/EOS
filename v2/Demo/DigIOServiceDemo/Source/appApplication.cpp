@@ -99,7 +99,7 @@ void MyApplication::onInitialize() {
     // Configura la sortida corresponent al led LED1
     //
     auto pinLED1 = LED1_Pin::getHandler();
-    pinLED1->initOutput();
+    pinLED1->initOutput(gpio::OutDriver::pushPull);
     pinLED1->clear();
     _led1 = new DigOutput(_digOutputService, pinLED1);
 
@@ -107,7 +107,7 @@ void MyApplication::onInitialize() {
     //
     #ifdef EXIST_LED2
     auto pinLED2 = LED2_Pin::getHandler();
-    pinLED2->INIToUTPUT();
+    pinLED2->initOutput(gpio::OutDriver::pushPull);
     pinLED2->clear();
     _led2 = new DigOutput(_digOutputService, pinLED2);
     #endif
@@ -116,7 +116,7 @@ void MyApplication::onInitialize() {
     //
     #ifdef EXIST_LED3
     auto pinLED3 = LED3_Pin::getHandler();
-    pinLED3->initOutput();
+    pinLED3->initOutput(gpio::OutDriver::pushPull);
     pinLED3->clear();
     _led3 = new DigOutput(_digOutputService, pinLED3);
     #endif
@@ -166,7 +166,7 @@ void MyApplication::messageBusEventHandler(
 void MyApplication::sw1ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == (bool) SW1_StateON) {
+    if (args.pinState == SW1_StateON) {
 
         ButtonMessage msg;
         msg.id = 1;
@@ -189,7 +189,7 @@ void MyApplication::sw1ChangedEventHandler(
 void MyApplication::sw2ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == (bool) SW2_ON) {
+    if (args.pinState == SW2_StateON) {
 
         ButtonMessage msg;
         msg.id = 2;
@@ -215,7 +215,7 @@ void MyApplication::sw2ChangedEventHandler(
 void MyApplication::sw3ChangedEventHandler(
     const DigInput::ChangedEventArgs &args) {
 
-    if (args.value == (bool) SW3_ON) {
+    if (args.pinState == SW3_StateON) {
 
         ButtonMessage msg;
         msg.id = 3;

@@ -61,8 +61,8 @@
 #define EXIST_SW1
 
 #define SW1_Pin              htl::gpio::PinD6
-#define SW1_ON               htl::gpio::PinState::clear
-#define SW1_OFF              htl::gpio::PinState::set
+#define SW1_StateON          htl::gpio::PinState::clear
+#define SW1_StateOFF         htl::gpio::PinState::set
 
 #endif // USE_SW1
 
@@ -75,8 +75,8 @@
 #define EXIST_SW2
 
 #define SW2_Pin              htl::gpio::PinD7
-#define SW2_ON               htl::gpio::PinState::clear
-#define SW2_OFF              htl::gpio::PinState::set
+#define SW2_StateON          htl::gpio::PinState::clear
+#define SW2_StateOFF         htl::gpio::PinState::set
 
 #endif // USE_SW2
 
@@ -89,8 +89,8 @@
 #define EXIST_SW3
 
 #define SW3_Pin              htl::gpio::PinD13
-#define SW3_ON               htl::gpio::PinState::clear
-#define SW3_OFF              htl::gpio::PinState::set
+#define SW3_StateON          htl::gpio::PinState::clear
+#define SW3_StateOFF         htl::gpio::PinState::set
 
 #endif // USE_SW3
 

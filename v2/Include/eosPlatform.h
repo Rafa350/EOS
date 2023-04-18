@@ -13,23 +13,18 @@
 	defined(EOS_TOOLCHAIN_XC32)
 
     #define EOS_PLATFORM_PIC32
-	#if defined(__PIC32MX)
+	#if defined(__32MX460F512L__)
         #define EOS_PLATFORM_PIC32MX
-        #if defined(__32MX460F512L__)
-            #define EOS_PLATFORM_PIC32MX4
-            #define EOS_PLATFORM_PIC32MX460F512L
-        #elif defined(__32MX795F512L__)
-            #define EOS_PLATFORM_PIC32MX7
-            #define EOS_PLATFORM_PIC32MX795F512L
-        #else
-            #error "Unknown processor PIC32MX"
-        #endif
-    #elif defined(__PIC32MZ)
-		#define EOS_PLATFORM_PIC32MZ
-	#else
-		#error "Unknown processor"
-	#endif
-	#define EOS_PLATFORM_DETECTED 1
+        #define EOS_PLATFORM_PIC32MX4
+        #define EOS_PLATFORM_PIC32MX460F512L
+    #elif defined(__32MX795F512L__)
+        #define EOS_PLATFORM_PIC32MX
+        #define EOS_PLATFORM_PIC32MX7
+        #define EOS_PLATFORM_PIC32MX795F512L
+    #else
+        #error "Unknown processor PIC32"
+    #endif
+    #define EOS_PLATFORM_DETECTED 1
 
 
 // GNU/STM32 compiler
