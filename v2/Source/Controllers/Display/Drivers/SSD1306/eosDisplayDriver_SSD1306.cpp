@@ -240,7 +240,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	auto spi = Spi::getHandler();
 	spi->initSCKPin<PinSCK>();
 	spi->initMOSIPin<PinMOSI>();
-	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::low, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_4);
+	spi->initialize(spi::SPIMode::master, spi::ClkPolarity::low, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_4);
 	spi->enable();
 }
 #endif
@@ -333,11 +333,7 @@ void DisplayDriver_SSD1306::writeCommand(
 	pinCS->clear();
 	pinDC->clear();
 
-	spi->write8(cmd);
-	while (!spi->isTxEmpty())
-		continue;
-	while (spi->isBusy())
-		continue;
+	spi->transmit(&cmd, 1);
 
 	pinCS->set();
 }
@@ -361,13 +357,7 @@ void DisplayDriver_SSD1306::writeData(
 	pinCS->clear();
 	pinDC->set();
 
-	while (length--) {
-		spi->write8(*data++);
-		while (!spi->isTxEmpty())
-			continue;
-	}
-	while (spi->isBusy())
-		continue;
+	spi->transmit(data, length);
 
 	pinCS->clear();
 }

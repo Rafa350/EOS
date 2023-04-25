@@ -10,13 +10,22 @@
 namespace eos {
 
 	class CircularSerialDriver_I2CSlave final : public CircularSerialDriver {
+		public:
+			using AddressMatchCallback = htl::i2c::AddressMatchCallback<CircularSerialDriver_I2CSlave>;
+			using RxPartialCallback = htl::i2c::RxPartialCallback<CircularSerialDriver_I2CSlave>;
+			using RxCompletedCallback = htl::i2c::RxCompletedCallback<CircularSerialDriver_I2CSlave>;
+
 		private:
 			htl::i2c::I2CSlaveDeviceHandler _i2c;
 			uint8_t _buffer[10];
+			AddressMatchCallback _addressMatchCallback;
+			RxPartialCallback _rxPartialCallback;
+			RxCompletedCallback _rxCompletedCallback;
 
 		private:
-			void interruptHandler(htl::i2c::I2CInterruptContext *context);
-			static void interruptFunction(htl::i2c::I2CInterruptContext *context);
+			void addressMatchHandler(uint16_t addr);
+			void rxPartialHandler(const uint8_t *buffer, uint16_t count);
+			void rxCompletedHandler(const uint8_t *buffer, uint16_t count);
 
 		protected:
 			void initializeImpl() override;

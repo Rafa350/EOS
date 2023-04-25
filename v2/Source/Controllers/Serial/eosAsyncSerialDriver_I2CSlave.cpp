@@ -12,9 +12,9 @@ using namespace htl;
 /// \param    hI2C: El modul I2C a utilitzar.
 ///
 AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
-	I2CHandler hI2C):
+	i2c::I2CSlaveDeviceHandler i2c):
 
-	_hI2C(hI2C) {
+	_i2c(i2c) {
 
 }
 
@@ -33,7 +33,7 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 ///
 void AsyncSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_hI2C->setInterruptFunction(nullptr, nullptr);
+	_i2c->setInterruptFunction(nullptr, nullptr);
 
 	AsyncSerialDriver::deinitializeImpl();
 }
@@ -58,9 +58,9 @@ bool AsyncSerialDriver_I2CSlave::transmitImpl(
 		_txLength = dataLength;
 		_txCount = 0;
 
-		_hI2C->setInterruptFunction(txInterruptFunction, this);
-		_hI2C->enable();
-		_hI2C->enableInterrupt(I2CInterrupt::addr);
+		_i2c->setInterruptFunction(txInterruptFunction, this);
+		_i2c->enable();
+		_i2c->enableInterrupt(I2CInterrupt::addr);
 
 		// En aquest moment es genera una interrupcio
 		// i comença la transmissio controlada per interrupcions.
@@ -89,9 +89,9 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 		_rxSize = dataSize;
 		_rxCount = 0;
 
-		_hI2C->setInterruptFunction(rxInterruptFunction, this);
-		_hI2C->enable();
-		_hI2C->enableInterrupt(I2CInterrupt::addr);
+		_i2c->setInterruptFunction(rxInterruptFunction, this);
+		_i2c->enable();
+		_i2c->enableInterrupt(I2CInterrupt::addr);
 
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles.
@@ -104,53 +104,25 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 /// ----------------------------------------------------------------------
 /// \brief    Gestiona les interrupcions per transmissio.
 ///
-void AsyncSerialDriver_I2CSlave::txInterruptHandler() {
+void AsyncSerialDriver_I2CSlave::txInterruptFunction(
+	i2c::I2CInterruptContext *context) {
 
-	// Coincidencia amb l'adressa
-	//
-	if (_hI2C->getFlag(I2CFlag::addr)) {
-		_hI2C->clearFlag(I2CFlag::addr);
-		_hI2C->disableInterrupt(I2CInterrupt::addr);
-		_hI2C->enableInterrupt(I2CInterrupt::stop);
-		_hI2C->enableInterrupt(I2CInterrupt::tx);
-		_hI2C->write(*_txData++);
-		_txCount++;
-	}
+	switch (context->status) {
 
-	// Deteccio de la condicio stop
-	//
-	else if (_hI2C->getFlag(I2CFlag::stop)) {
-		_hI2C->clearFlag(I2CFlag::stop);
-		_hI2C->disableInterrupt(I2CInterrupt::tx);
-		_hI2C->disableInterrupt(I2CInterrupt::stop);
-		_hI2C->setInterruptFunction(nullptr, nullptr);
-		_hI2C->disable();
-		notifyTxCompleted(_txCount);
-	}
+		case i2c::I2CInterruptStatus::addrMatch:
+			break;
 
-	// Deteccio de NACK
-	//
-	else if (_hI2C->getFlag(I2CFlag::nack)) {
-		_hI2C->clearFlag(I2CFlag::nack);
-	}
-
-	// Buffer de tramsmssio buit
-	//
-	else if (_hI2C->getFlag(I2CFlag::txis)) {
-		if (_txCount < _txLength) {
-			_hI2C->write(*_txData++);
-			_txCount++;
-		}
-		else
-			_hI2C->disableInterrupt(I2CInterrupt::tx);
-	}
+		case i2c::I2CInterruptStatus::rxCompleted:
+			notifyTxCompleted(context->count);
+			break;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Gestiona les interrupcions per recepcio.
 ///
-void AsyncSerialDriver_I2CSlave::rxInterruptHandler() {
+void AsyncSerialDriver_I2CSlave::rxInterruptFunction(
+	i2c::I2CInterruptContext *context) {
 
 	// Coincidencia amb l'adressa
 	//
@@ -188,28 +160,3 @@ void AsyncSerialDriver_I2CSlave::rxInterruptHandler() {
 		notifyRxCompleted(_rxCount);
 	}
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Gestiona les interrupcions per transmissio.
-/// \param    param: L'objecte AsyncSerialDriver_I2C.
-///
-void AsyncSerialDriver_I2CSlave::txInterruptFunction(
-	htl::I2CInterruptParam param) {
-
-	AsyncSerialDriver_I2CSlave *driver = reinterpret_cast<AsyncSerialDriver_I2CSlave*>(param);
-	driver->txInterruptHandler();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Gestiona les interrupcions per recepcio.
-/// \param    param: L'objecte AsyncSerialDriver_I2C.
-///
-void AsyncSerialDriver_I2CSlave::rxInterruptFunction(
-	htl::I2CInterruptParam param) {
-
-	AsyncSerialDriver_I2CSlave *driver = reinterpret_cast<AsyncSerialDriver_I2CSlave*>(param);
-	driver->rxInterruptHandler();
-}
-

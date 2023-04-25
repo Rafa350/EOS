@@ -19,7 +19,7 @@ namespace eos {
 			CircularBuffer(uint8_t *buffer, uint16_t bufferSize);
 
 			void push(uint8_t data);
-			void push(uint8_t *data, uint16_t dataLength);
+			void push(const uint8_t *data, uint16_t dataLength);
 			uint8_t pop();
 			void clear();
 

@@ -45,7 +45,7 @@ void CircularBuffer::push(
 /// \param    dataLength: El tamany del bloc de dades en bytes.
 ///
 void CircularBuffer::push(
-	uint8_t *data,
+	const uint8_t *data,
 	uint16_t dataLength) {
 
 	if (_count + dataLength < _bufferSize)

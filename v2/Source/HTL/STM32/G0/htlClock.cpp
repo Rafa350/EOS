@@ -35,13 +35,11 @@ bool Clock::setSysClkSource(
 
 	tmp &= ~RCC_CFGR_SW_Msk;
 	switch (source) {
-		#ifdef CLOCK_HSE_FREQUENCY
-			case SysClkSource::hse:
-				if (!isHseEnabled())
-					return false;
-				tmp |= RCC_CFGR_SW_HSE;
-				break;
-		#endif
+		case SysClkSource::hse:
+			if (!isHseEnabled())
+				return false;
+			tmp |= RCC_CFGR_SW_HSE;
+			break;
 
 		case SysClkSource::lsi:
 			if (!isLsiEnabled())
@@ -49,13 +47,11 @@ bool Clock::setSysClkSource(
 			tmp |= RCC_CFGR_SW_LSI;
 			break;
 
-		#ifdef CLOCK_LSE_FREQUENCY
-			case SysClkSource::lse:
-				if (!isLseEnabled())
-					return false;
-				tmp |= RCC_CFGR_SW_LSE;
-				break;
-		#endif
+		case SysClkSource::lse:
+			if (!isLseEnabled())
+				return false;
+			tmp |= RCC_CFGR_SW_LSE;
+			break;
 
 		case SysClkSource::pllrclk:
             if (!isPllEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN_Msk) == 0))
@@ -246,7 +242,6 @@ bool Clock::isLsiEnabled() {
 /// \brief    Activa el rellotge HSE.
 /// \param    bypass: El modus del bypass
 ///
-#ifdef CLOCK_HSE_FREQUENCY
 void Clock::hseEnable(
 	HseBypassMode bypass) {
     
@@ -266,70 +261,59 @@ void Clock::hseEnable(
 	while ((RCC->CR & RCC_CR_HSERDY) == 0)
 		continue;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief   Desactiva el rellotge HSE.
 ///
-#ifdef CLOCK_HSE_FREQUENCY
 void Clock::hseDisable() {
     
 	RCC->CR &= ~RCC_CR_HSEON;
 	while ((RCC->CR & RCC_CR_HSERDY) != 0)
 		continue;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el rellotge HSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-#ifdef CLOCK_HSE_FREQUENCY
 bool Clock::isHseEnabled() {
     
     return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el rellotge LSE.
 ///
-#ifdef CLOCK_LSE_FREQUENCY
 void Clock::lseEnable() {
 
 	RCC->BDCR |= RCC_BDCR_LSEON;
 	while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
 		continue;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief   Desactiva el rellotge LSE.
 ///
-#ifdef CLOCK_LSE_FREQUENCY
 void Clock::lseDisable() {
     
 	RCC->BDCR &= ~RCC_BDCR_LSEON;
 	while ((RCC->BDCR & RCC_BDCR_LSERDY) != 0)
 		continue;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el rellotge LSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-#ifdef CLOCK_LSE_FREQUENCY
 bool Clock::isLseEnabled() {
     
     return (RCC->BDCR & RCC_BDCR_LSERDY) != 0;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------
@@ -398,13 +382,11 @@ bool Clock::configurePll(
 			tmp |= 0b10 << RCC_PLLCFGR_PLLSRC_Pos;
 			break;
 
-		#ifdef CLOCK_HSE_FREQUENCY
-			case PllSource::hse:
-				if (!isHseEnabled())
-					return false;
-				tmp |= 0b11 << RCC_PLLCFGR_PLLSRC_Pos;
-				break;
-		#endif
+		case PllSource::hse:
+			if (!isHseEnabled())
+				return false;
+			tmp |= 0b11 << RCC_PLLCFGR_PLLSRC_Pos;
+			break;
 	}
 
 	tmp &= ~RCC_PLLCFGR_PLLM_Msk;
@@ -587,11 +569,9 @@ unsigned Clock::getClockFrequency(
 					fclk = getClockFrequency(ClockId::hsisys);
 					break;
 
-				#ifdef CLOCK_HSE_FREQUENCY
-					case RCC_CFGR_SWS_HSE:
-						fclk = CLOCK_HSE_FREQUENCY;
-						break;
-				#endif
+				case RCC_CFGR_SWS_HSE:
+					fclk = CLOCK_HSE_FREQUENCY;
+					break;
 
 				case RCC_CFGR_SWS_PLLRCLK:
 					fclk = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC) == (0b10 << RCC_PLLCFGR_PLLSRC_Pos) ?
@@ -605,11 +585,9 @@ unsigned Clock::getClockFrequency(
 					fclk = CLOCK_LSI_FREQUENCY;
 					break;
 
-				#ifdef CLOCK_LSE_FREQUENCY
-					case RCC_CFGR_SWS_LSE:
-						fclk = CLOCK_LSE_FREQUENCY;
-						break;
-				#endif
+				case RCC_CFGR_SWS_LSE:
+					fclk = CLOCK_LSE_FREQUENCY;
+					break;
 			}
 			break;
 
@@ -629,11 +607,9 @@ unsigned Clock::getClockFrequency(
 			fclk = CLOCK_HSI16_FREQUENCY >> hsiDividerTbl[(RCC->CR & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos];
 			break;
 
-		#ifdef CLOCK_HSE_FREQUENCY
-			case ClockId::hse:
-				fclk = CLOCK_HSE_FREQUENCY;
-				break;
-		#endif
+		case ClockId::hse:
+			fclk = CLOCK_HSE_FREQUENCY;
+			break;
 
 		case ClockId::hsi16:
 			fclk = CLOCK_HSI16_FREQUENCY;
@@ -643,11 +619,9 @@ unsigned Clock::getClockFrequency(
 			fclk = CLOCK_HSI48_FREQUENCY;
 			break;
 
-		#ifdef CLOCK_LSE_FREQUENCY
-			case ClockId::lse:
-				fclk = CLOCK_LSE_FREQUENCY;
-				break;
-		#endif
+		case ClockId::lse:
+			fclk = CLOCK_LSE_FREQUENCY;
+			break;
 
 		case ClockId::lsi:
 			fclk = CLOCK_LSI_FREQUENCY;

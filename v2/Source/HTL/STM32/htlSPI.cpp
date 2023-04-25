@@ -27,40 +27,40 @@ using namespace htl::spi;
 ///
 static void setClockDivider(
 	SPI_TypeDef *regs,
-	SPIClockDivider clkDivider) {
+	ClockDivider clkDivider) {
 
 	uint32_t tmp = regs->CR1;
 	tmp &= ~SPI_CR1_BR_Msk;
 	switch (clkDivider) {
-		case SPIClockDivider::_2:
+		case ClockDivider::_2:
 			tmp |= SPI_CR1_BR_DIV2;
 			break;
 
-		case SPIClockDivider::_4:
+		case ClockDivider::_4:
 			tmp |= SPI_CR1_BR_DIV4;
 			break;
 
-		case SPIClockDivider::_8:
+		case ClockDivider::_8:
 			tmp |= SPI_CR1_BR_DIV8;
 			break;
 
-		case SPIClockDivider::_16:
+		case ClockDivider::_16:
 			tmp |= SPI_CR1_BR_DIV16;
 			break;
 
-		case SPIClockDivider::_32:
+		case ClockDivider::_32:
 			tmp |= SPI_CR1_BR_DIV32;
 			break;
 
-		case SPIClockDivider::_64:
+		case ClockDivider::_64:
 			tmp |= SPI_CR1_BR_DIV64;
 			break;
 
-		case SPIClockDivider::_128:
+		case ClockDivider::_128:
 			tmp |= SPI_CR1_BR_DIV128;
 			break;
 
-		case SPIClockDivider::_256:
+		case ClockDivider::_256:
 			tmp |= SPI_CR1_BR_DIV256;
 			break;
 	}
@@ -93,9 +93,9 @@ static void setMode(
 ///
 static void setClkPolarity(
 	SPI_TypeDef *regs,
-	SPIClkPolarity polarity) {
+	ClkPolarity polarity) {
 
-	if (polarity == SPIClkPolarity::high)
+	if (polarity == ClkPolarity::high)
 		regs->CR1 |= SPI_CR1_CPOL;
 	else
 		regs->CR1 &= ~SPI_CR1_CPOL;
@@ -109,9 +109,9 @@ static void setClkPolarity(
 ///
 static void setClkPhase(
 	SPI_TypeDef *regs,
-	SPIClkPhase phase) {
+	ClkPhase phase) {
 
-	if (phase == SPIClkPhase::edge2)
+	if (phase == ClkPhase::edge2)
 		regs->CR1 |= SPI_CR1_CPHA;
 	else
 		regs->CR1 &= ~SPI_CR1_CPHA;
@@ -125,10 +125,10 @@ static void setClkPhase(
 ///
 static void setSize(
 	SPI_TypeDef *regs,
-	SPISize size) {
+	WordSize size) {
 
 	#if defined(EOS_PLATFORM_STM32F4)
-	if (size == SPISize::_16)
+	if (size == WordSize::_16)
 		regs->CR1 |= SPI_CR1_DFF;
 	else
 		regs->CR1 &= ~SPI_CR1_DFF;
@@ -137,11 +137,11 @@ static void setSize(
 	uint32_t tmp = regs->CR2;
 	tmp &= ~(SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
 	switch (size) {
-		case SPISize::_8:
+		case WordSize::_8:
 			tmp |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
 			break;
 
-		case SPISize::_16:
+		case WordSize::_16:
 			tmp |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
 			break;
 	}
@@ -151,11 +151,11 @@ static void setSize(
 	uint32_t tmp = regs->CR2;
 	tmp &= ~SPI_CR2_DS_Msk;
 	switch (size) {
-		case SPISize::_8:
+		case WordSize::_8:
 			tmp |= SPI_CR2_DS_LEN8;
 			break;
 
-		case SPISize::_16:
+		case WordSize::_16:
 			tmp |= SPI_CR2_DS_LEN16;
 			break;
 	}
@@ -171,9 +171,9 @@ static void setSize(
 ///
 static void setFirstBit(
 	SPI_TypeDef *regs,
-	SPIFirstBit firstBit) {
+	FirstBit firstBit) {
 
-	if (firstBit == SPIFirstBit::lsb)
+	if (firstBit == FirstBit::lsb)
 		regs->CR1 |= SPI_CR1_LSBFIRST;
 	else
 		regs->CR1 &= ~SPI_CR1_LSBFIRST;
@@ -205,6 +205,19 @@ static void waitBusy(
 /// \param    timeout: Temps maxim de bloqueig.
 ///
 #ifdef EOS_PLATFORM_STM32F7
+static void waitRxFifoEmpty(
+	SPI_TypeDef *regs,
+	unsigned startTime,
+	unsigned timeout) {
+
+	while ((regs->SR & SPI_SR_FRLVL) != 0) {
+		if (halSYSCheckTimeout(startTime, timeout)) {
+
+		}
+
+		uint8_t dummy = *((__IO uint8_t *)&regs->DR);
+	}
+}
 static void waitTxFifoEmpty(
 	SPI_TypeDef *regs,
 	unsigned startTime,
@@ -226,19 +239,6 @@ static void waitTxFifoEmpty(
 /// \param    timeout: Temps maxim de bloqueig.
 ///
 #ifdef EOS_PLATFORM_STM32F7
-static void waitRxFifoEmpty(
-	SPI_TypeDef *regs,
-	unsigned startTime,
-	unsigned timeout) {
-
-	while ((regs->SR & SPI_SR_FRLVL) != 0) {
-		if (halSYSCheckTimeout(startTime, timeout)) {
-
-		}
-
-		uint8_t dummy = *((__IO uint8_t *)&regs->DR);
-	}
-}
 #endif
 
 
@@ -263,11 +263,11 @@ SPIDevice::SPIDevice(SPI_TypeDef *spi):
 ///
 void SPIDevice::initialize(
 	SPIMode mode,
-	SPIClkPolarity clkPolarity,
-	SPIClkPhase clkPhase,
-	SPISize size,
-	SPIFirstBit firstBit,
-	SPIClockDivider clkDivider) {
+	ClkPolarity clkPolarity,
+	ClkPhase clkPhase,
+	WordSize size,
+	FirstBit firstBit,
+	ClockDivider clkDivider) {
 
 	activate();
 	disable();
@@ -288,6 +288,30 @@ void SPIDevice::deinitialize() {
 
 	disable();
 	deactivate();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades.
+/// \param    buffer: El bloc de dades.
+/// \param    size: Tamany del bloc en bytes.
+/// \return   El nombre de bytes transmissos.
+///
+uint16_t SPIDevice::transmit(
+	const uint8_t *buffer,
+	uint16_t size) {
+
+	uint16_t count = 0;
+
+	while (count < size) {
+		write8(buffer[count++]);
+		while (!isTxEmpty())
+			continue;
+	}
+	while (isBusy())
+		continue;
+
+	return count;
 }
 
 

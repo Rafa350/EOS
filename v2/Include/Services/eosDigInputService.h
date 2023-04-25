@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosDigInputService__
 #define	__eosDigInputService__
 

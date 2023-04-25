@@ -35,7 +35,7 @@ namespace eos {
 			inline uint8_t txPop() { return _txBuffer.pop(); }
 
 			inline void rxPush(uint8_t data) { _rxBuffer.push(data); }
-			inline void rxPush(uint8_t *data, uint16_t dataLength) { _rxBuffer.push(data, dataLength); }
+			inline void rxPush(const uint8_t *data, uint16_t dataLength) { _rxBuffer.push(data, dataLength); }
 			inline uint8_t rxPop() { return _rxBuffer.pop(); }
 
 			virtual void initializeImpl() = 0;

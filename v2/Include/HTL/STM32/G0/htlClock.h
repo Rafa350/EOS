@@ -18,14 +18,10 @@ namespace htl {
 		pclk,
 		hclk,
 		hclk8,
-		#ifdef CLOCK_HSE_FREQUENCY
-			hse,
-		#endif
+		hse,
 		hsi16,
 		hsi48,
-		#ifdef CLOCK_LSE_FREQUENCY
-			lse,
-		#endif
+		lse,
 		lsi,
 		hsisys,
 		pllpclk,
@@ -56,19 +52,13 @@ namespace htl {
 
 	enum class PllSource {
 		hsi16,
-		#ifdef CLOCK_HSE_FREQUENCY
-			hse
-		#endif
+		hse
 	};
 
 	enum class SysClkSource {
 		lsi,
-		#ifdef CLOCK_LSE_FREQUENCY
-			lse,
-		#endif
-		#ifdef CLOCK_HSE_FREQUENCY
-			hse,
-		#endif
+		lse,
+		hse,
 		pllrclk,
 		hsisys
 	};
@@ -110,21 +100,17 @@ namespace htl {
 			static void hsi16Disable();
             static bool isHsi16Enabled();
 
-            #ifdef CLOCK_HSE_FREQUENCY
-				static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
-				static void hseDisable();
-				static bool isHseEnabled();
-			#endif
+            static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+			static void hseDisable();
+			static bool isHseEnabled();
 
 			static void lsiEnable();
 			static void lsiDisable();
 			static bool isLsiEnabled();
 
-            #ifdef CLOCK_LSE_FREQUENCY
-                static void lseEnable();
-                static void lseDisable();
-                static bool isLseEnabled();
-            #endif
+            static void lseEnable();
+            static void lseDisable();
+            static bool isLseEnabled();
 
 			static void pllEnable();
 			static void pllDisable();

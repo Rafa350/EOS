@@ -11,7 +11,7 @@ namespace eos {
 
 	class AsyncSerialDriver_I2CSlave final: public AsyncSerialDriver {
 		private:
-			htl::I2CHandler _hI2C;
+			htl::i2c::I2CSlaveDeviceHandler _i2c;
 			const uint8_t *_txData;
 			int _txLength;
 			int _txCount;
@@ -20,10 +20,8 @@ namespace eos {
 			int _rxCount;
 
 		private:
-			void rxInterruptHandler();
-			void txInterruptHandler();
-			static void rxInterruptFunction(htl::I2CInterruptParam param);
-			static void txInterruptFunction(htl::I2CInterruptParam param);
+			static void rxInterruptFunction(htl::i2c::I2CInterruptContext *context);
+			static void txInterruptFunction(htl::i2c::I2CInterruptContext *context);
 
 		protected:
 			void initializeImpl() override;
@@ -32,7 +30,7 @@ namespace eos {
 			bool receiveImpl(uint8_t *data, int dataSize) override;
 
 		public:
-			AsyncSerialDriver_I2CSlave(htl::I2CHandler hI2C);
+			AsyncSerialDriver_I2CSlave(htl::i2c::I2CSlaveDeviceHandler i2c);
 	};
 }
 

@@ -4,7 +4,6 @@
 #include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
-#include "HTL/PIC32/htlGPIO.h"
 
 
 #define PATTERN_MASK     0x0FFF

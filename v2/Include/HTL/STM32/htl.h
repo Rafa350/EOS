@@ -187,7 +187,13 @@
 #elif defined(EOS_PLATFORM_STM32G0)
 	#define CLOCK_HSI16_FREQUENCY     16000000
 	#define CLOCK_HSI48_FREQUENCY     48000000
+	#ifndef CLOCK_HSE_FREQUENCY
+		#define CLOCK_HSE_FREQUENCY    8000000
+	#endif
 	#define CLOCK_LSI_FREQUENCY          32000
+	#ifndef CLOCK_LSE_FREQUENCY
+		#define CLOCK_LSE_FREQUENCY      32768
+	#endif
 
 #else
 	#error "Unknown platform"

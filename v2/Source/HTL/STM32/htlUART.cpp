@@ -4,6 +4,7 @@
 
 
 using namespace htl;
+using namespace htl::uart;
 
 
 /// ----------------------------------------------------------------------
@@ -11,14 +12,16 @@ using namespace htl;
 /// \param    regs: El bloc de registres
 /// \return   La opcio corresponent al rellotge.
 ///
-static UARTClockSource getClockSource(
+static ClockSource getClockSource(
 	USART_TypeDef *regs) {
 
 	uint8_t sclk = 0;
     switch ((uint32_t)regs) {
 		#ifdef HTL_UART1_EXIST
 			case USART1_BASE:
-				#if defined(EOS_PLATFORM_STM32F0)
+				#if defined(EOS_PLATFORM_STM32G0)
+					sclk = (RCC->CCIPR & RCC_CCIPR_USART1SEL) >> RCC_CCIPR_USART1SEL_Pos;
+				#elif defined(EOS_PLATFORM_STM32F0)
 					sclk = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
 				#else
 					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
@@ -28,7 +31,9 @@ static UARTClockSource getClockSource(
 
 		#ifdef HTL_UART2_EXIST
 			case USART2_BASE:
-				#if defined(EOS_PLATFORM_STM32F0)
+				#if defined(EOS_PLATFORM_STM32G0)
+					sclk = 0; //(RCC->CCIPR & RCC_CCIPR_USART2SEL) >> RCC_CCIPR_USART2SEL_Pos;
+				#elif defined(EOS_PLATFORM_STM32F0)
 					sclk = 0; // Sempre es PCLK
 				#else
 					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
@@ -75,27 +80,47 @@ static UARTClockSource getClockSource(
 
     switch (sclk & 0x03) {
     	default:
-    	case 0: return UARTClockSource::pclk;
-    	case 1: return UARTClockSource::sysclk;
-    	case 2: return UARTClockSource::hsi;
-    	case 3: return UARTClockSource::lse;
+    	case 0: return ClockSource::pclk;
+    	case 1: return ClockSource::sysclk;
+    	case 2: return ClockSource::hsi;
+    	case 3: return ClockSource::lse;
     }
 }
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Inicialitza el modul UART.
+///
+void UARTDevice::initialize() {
+
+	activate();
+	disable();
+
+	_usart->CR1 &= ~USART_CR1_FIFOEN;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el modul.
+///
+void UARTDevice::deinitialize() {
+
+	disable();
+	deactivate();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Selecciona el protocol de comunicacio.
-/// \param    regs: El bloc de registres.
 /// \param    wordBits: Lers opcions de paraula.
 /// \param    parity: Les opcions de paritat.
 /// \param    stopBits: Les opcions de parada.
 ///
-void UARTBase_x::setProtocol(
-	USART_TypeDef *regs,
-	UARTWordBits wordBits,
-	UARTParity parity,
-	UARTStopBits stopBits,
-	UARTHandsake handsake) {
+void UARTDevice::setProtocol(
+	WordBits wordBits,
+	Parity parity,
+	StopBits stopBits,
+	Handsake handsake) {
 
 	uint32_t tmp;
 
@@ -103,9 +128,9 @@ void UARTBase_x::setProtocol(
 	// -Tamany de paraula
 	// -Paritat
 	//
-	tmp = regs->CR1;
+	tmp = _usart->CR1;
 
-	switch (7 + uint32_t(wordBits) + (parity == UARTParity::none ? 0 : 1)) {
+	switch (7 + uint32_t(wordBits) + (parity == Parity::none ? 0 : 1)) {
 		#if HTL_UART_7BIT_SUPPORT == 1
 			case 7:
 				tmp |= USART_CR1_M1;
@@ -133,118 +158,116 @@ void UARTBase_x::setProtocol(
 	}
 
     switch (parity) {
-    	case UARTParity::none:
+    	case Parity::none:
     		tmp &= ~USART_CR1_PCE;
     		break;
 
-    	case UARTParity::even:
+    	case Parity::even:
     		tmp |= USART_CR1_PCE;
     		tmp &= ~USART_CR1_PS;
     		break;
 
-    	case UARTParity::odd:
+    	case Parity::odd:
     		tmp |= USART_CR1_PCE;
     		tmp |= USART_CR1_PS;
     		break;
     }
-	regs->CR1 = tmp;
+	_usart->CR1 = tmp;
 
 	// Configura el registre CR2 (Control Register 2)
 	// -Bits de parada
 	// -Habilita del timeout en recepcio
 	//
-	tmp = regs->CR2;
+	tmp = _usart->CR2;
     switch (stopBits) {
-    	case UARTStopBits::_0p5:
+    	case StopBits::_0p5:
     		tmp &= ~USART_CR2_STOP_1;
     		tmp |= USART_CR2_STOP_0;
     		break;
 
-    	case UARTStopBits::_1:
+    	case StopBits::_1:
     		tmp &= ~USART_CR2_STOP_1;
     		tmp &= ~USART_CR2_STOP_0;
     		break;
 
-    	case UARTStopBits::_1p5:
+    	case StopBits::_1p5:
     		tmp |= USART_CR2_STOP_1;
     		tmp |= USART_CR2_STOP_0;
     		break;
 
-    	case UARTStopBits::_2:
+    	case StopBits::_2:
     		tmp |= USART_CR2_STOP_1;
     		tmp &= ~USART_CR2_STOP_0;
     		break;
     }
 	tmp |= USART_CR2_RTOEN;
-    regs->CR2 = tmp;
+    _usart->CR2 = tmp;
 
     // Configura el registre CR3
     // -Opcions CTS
     // -Opcions RST
     //
-    tmp = regs->CR3;
+    tmp = _usart->CR3;
     switch (handsake) {
-		case UARTHandsake::none:
+		case Handsake::none:
 			tmp &= ~(USART_CR3_RTSE | USART_CR3_CTSE);
 			break;
 
-		case UARTHandsake::ctsrts:
+		case Handsake::ctsrts:
 			tmp |= (USART_CR3_RTSE | USART_CR3_CTSE);
 			break;
 	}
-    regs->CR3 = tmp;
+    _usart->CR3 = tmp;
 
     // El timeout en recepcio
     //
-    regs->RTOR = 11 * 100;
+    _usart->RTOR = 11 * 100;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna els valor de temporitzacio
-/// \param    regs: El bloc de registres.
+/// \brief    Asigna els valor de temporitzacio.
 /// \param    baudMode: Les opcions del baud rate
 /// \param    clockSource: Les opcions de clocking.
 /// \param    rate: El valor de velocitat.
 /// \param    overSampling: Tipus de mostreig
 ///
-void UARTBase_x::setTimming(
-	USART_TypeDef *regs,
-	UARTBaudMode baudMode,
-	UARTClockSource clockSource,
+void UARTDevice::setTimming(
+	BaudMode baudMode,
+	ClockSource clockSource,
 	uint32_t rate,
-	UARTOverSampling overSampling) {
+	OverSampling overSampling) {
 
 	switch (baudMode) {
-    	case UARTBaudMode::_1200:
+    	case BaudMode::_1200:
     		rate = 1200;
     		break;
 
-    	case UARTBaudMode::_2400:
+    	case BaudMode::_2400:
     		rate = 2400;
     		break;
 
-    	case UARTBaudMode::_4800:
+    	case BaudMode::_4800:
     		rate = 4800;
     		break;
 
-    	case UARTBaudMode::_9600:
+    	case BaudMode::_9600:
     		rate = 9600;
     		break;
 
-    	case UARTBaudMode::_19200:
+    	case BaudMode::_19200:
     		rate = 19200;
     		break;
 
-    	case UARTBaudMode::_38400:
+    	case BaudMode::_38400:
     		rate = 38400;
     		break;
 
-    	case UARTBaudMode::_57600:
+    	case BaudMode::_57600:
     		rate = 57600;
     		break;
 
-    	case UARTBaudMode::_115200:
+    	case BaudMode::_115200:
     		rate = 115200;
     		break;
 
@@ -253,11 +276,11 @@ void UARTBase_x::setTimming(
     }
 
     uint32_t fclk;
-    if (clockSource == UARTClockSource::automatic)
-    	clockSource = getClockSource(regs);
+    if (clockSource == ClockSource::automatic)
+    	clockSource = getClockSource(_usart);
     switch (clockSource) {
     	default:
-    	case UARTClockSource::pclk:
+    	case ClockSource::pclk:
 			#if defined(STM32F4) || defined(STM32F7)
     		if ((uint32_t(regs) == USART1_BASE) ||
     			(uint32_t(regs) == USART6_BASE))
@@ -267,35 +290,146 @@ void UARTBase_x::setTimming(
     			fclk = Clock::getClockFrequency(ClockId::pclk);
     		break;
 
-    	case UARTClockSource::sysclk:
+    	case ClockSource::sysclk:
     		fclk = Clock::getClockFrequency(ClockId::sysclk);
     		break;
 
-    	case UARTClockSource::hsi:
-    		fclk = Clock::getClockFrequency(ClockId::hsi);
-    		break;
+		case ClockSource::hsi:
+			#if defined(EOS_PLATFORM_STM32G0)
+			fclk = Clock::getClockFrequency(ClockId::hsi16);
+			#else
+			fclk = Clock::getClockFrequency(ClockId::hsi);
+			#endif
+			break;
 
-    	case UARTClockSource::lse:
+		case ClockSource::lse:
     		fclk = Clock::getClockFrequency(ClockId::lse);
     		break;
     }
 
     uint32_t div;
-    if (baudMode == UARTBaudMode::div)
+    if (baudMode == BaudMode::div)
     	div = rate;
     else {
-        if (overSampling == UARTOverSampling::_8)
+        if (overSampling == OverSampling::_8)
         	div = (fclk + fclk + (rate / 2)) / rate;
         else
            	div = (fclk + (rate / 2)) / rate;
     }
 
-    if (overSampling == UARTOverSampling::_8) {
+    if (overSampling == OverSampling::_8) {
         uint32_t temp = (uint16_t)(div & 0xFFF0U);
         temp |= (uint16_t)((div & (uint16_t)0x000FU) >> 1U);
-        regs->BRR = temp;
+        _usart->BRR = temp;
     }
     else
-    	regs->BRR = div;
+    	_usart->BRR = div;
+}
+
+
+void UARTDevice::setRxTimeout(
+	uint32_t lostBits) {
+
+	if (_usart == reinterpret_cast<USART_TypeDef*>(USART1_BASE)) {
+
+		if (lostBits > 0) {
+			_usart->RTOR |= (lostBits << USART_RTOR_RTO_Pos) & USART_RTOR_RTO_Msk;
+			_usart->CR2 |= USART_CR2_RTOEN;
+		}
+		else
+			_usart->CR2 &= ~USART_CR2_RTOEN;
+
+	}
+}
+
+
+uint16_t UARTDevice::transmit(
+	const uint8_t *buffer,
+	uint16_t size) {
+
+	return 0;
+}
+
+
+uint16_t UARTDevice::receive(
+	uint8_t *buffer,
+	uint16_t size) {
+
+	_rxBuffer = buffer;
+	_rxSize = size;
+	_rxCount = 0;
+
+	return 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa les interrupcions.
+///
+void UARTDevice::interruptService() {
+
+	uint32_t isr = _usart->ISR;
+	uint32_t cr1 = _usart->CR1;
+	uint32_t cr2 = _usart->CR2;
+	uint32_t icr = 0;
+
+	if (cr1 & USART_CR1_FIFOEN) {
+
+	}
+
+	else {
+
+		// Interrupcio TXEFE (FIFO/TX empty)
+		//
+		if ((cr1 & USART_CR1_TXEIE_TXFNFIE) && (isr & USART_ISR_TXE_TXFNF)) {
+
+			if (_txCount < _txSize) {
+				_usart->TDR = _txBuffer[_txCount++];
+				if (_txCount == _txSize) {
+					//_hUART->disableInterrupt(UARTInterrupt::txEmpty);
+					//_hUART->enableInterrupt(UARTInterrupt::txComplete);
+				}
+			}
+		}
+
+		// Interrupcio TXC
+		//
+		if ((cr1 & USART_CR1_TCIE) && (isr & USART_ISR_TC)) {
+
+				/*_hUART->clearFlag(UARTFlag::txComplete);
+				_hUART->disableInterrupt(UARTInterrupt::txEmpty);
+				_hUART->disableInterrupt(UARTInterrupt::txComplete);
+				_hUART->disableTX();
+				notifyTxCompleted(_txCount);*/
+		}
+
+		/// Interupcio FIFO/RD not empty
+		//
+		if ((cr1 & USART_CR1_RXNEIE_RXFNEIE) && (isr & USART_ISR_RXNE_RXFNE)) {
+
+			if (_rxCount < _rxSize) {
+				_rxBuffer[_rxCount++] = _usart->RDR;
+				if (_rxCount == _rxSize) {
+					/*_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
+					_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
+					_hUART->disableRX();
+					notifyRxCompleted(_rxCount);*/
+				}
+			}
+		}
+
+		/*if (_hUART->isInterruptEnabled(UARTInterrupt::rxTimeout)) {
+
+			if (_hUART->getFlag(UARTFlag::rxTimeout)) {
+				_hUART->clearFlag(UARTFlag::rxTimeout);
+				_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
+				_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
+				_hUART->disableRX();
+				notifyRxCompleted(_rxCount);
+			}
+		}*/
+	}
+
+	_usart->ICR = icr;
 }
 

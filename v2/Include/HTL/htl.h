@@ -4,6 +4,7 @@
 
 
 #include "eos.h"
+#include "System/eosCallbacks.h"
 
 
 #if defined(EOS_PLATFORM_PIC32MX) || \

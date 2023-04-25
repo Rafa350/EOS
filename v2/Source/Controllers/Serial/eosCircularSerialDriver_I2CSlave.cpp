@@ -23,7 +23,10 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 	htl::i2c::I2CSlaveDeviceHandler i2c) :
 
 	CircularSerialDriver(txBuffer, txBufferSize, rxBuffer, rxBufferSize),
-	_i2c(i2c) {
+	_i2c(i2c),
+	_addressMatchCallback(*this, &CircularSerialDriver_I2CSlave::addressMatchHandler),
+	_rxPartialCallback(*this, &CircularSerialDriver_I2CSlave::rxPartialHandler),
+	_rxCompletedCallback(*this, &CircularSerialDriver_I2CSlave::rxCompletedHandler) {
 
 }
 
@@ -33,7 +36,9 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 ///
 void CircularSerialDriver_I2CSlave::initializeImpl() {
 
-	_i2c->setInterruptFunction(interruptFunction, this);
+	_i2c->enableAddressMatchCallback(_addressMatchCallback);
+	_i2c->enableRxPartialCallback(_rxPartialCallback);
+	_i2c->enableRxCompletedCallback(_rxCompletedCallback);
 	_i2c->listen(_buffer, sizeof(_buffer));
 }
 
@@ -44,7 +49,9 @@ void CircularSerialDriver_I2CSlave::initializeImpl() {
 void CircularSerialDriver_I2CSlave::deinitializeImpl() {
 
 	_i2c->disable();
-	_i2c->setInterruptFunction(nullptr, nullptr);
+	_i2c->disableAddressMatchCallback();
+	_i2c->disableRxPartialCallback();
+	_i2c->disableRxCompletedCallback();
 }
 
 
@@ -85,49 +92,45 @@ uint16_t CircularSerialDriver_I2CSlave::receiveImpl(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Gestio de les interrupcions.
-/// \param    notify: La notificacio.
+/// \brief    Es crida quant hi ha coincidencia amb l'adressa I2C
+/// \param    addr: L'adressa.
 ///
-void CircularSerialDriver_I2CSlave::interruptHandler(
-	i2c::I2CInterruptContext *context) {
+void CircularSerialDriver_I2CSlave::addressMatchHandler(
+	uint16_t addr) {
 
-	switch (context->status) {
-		case i2c::I2CInterruptStatus::addrMatch:
-			break;
+}
 
-		case i2c::I2CInterruptStatus::rxPartial: {
-			if (context->count > 0) {
-				uint16_t availableSpace = rxAvailableSpace();
-				if (availableSpace > context->count)
-					rxPush(context->buffer, context->count);
-			}
-			break;
-		}
 
-		case i2c::I2CInterruptStatus::rxCompleted:
-			if (context->count > 0) {
-				uint16_t availableSpace = rxAvailableSpace();
-				if (availableSpace > context->count)
-					rxPush(context->buffer, context->count);
-			}
-			if (rxAvailableData() > 0)
-				notifyRxBufferNotEmpty();
-			break;
+/// ----------------------------------------------------------------------
+/// \brief    Es crida quant el buffer es ple, pero no ha acabat
+///           la transmissio. Recepcio parcial.
+/// \param    buffer: El buffer de dades.
+/// \param    count: Nombre de bytes en el buffer.
+///
+void CircularSerialDriver_I2CSlave::rxPartialHandler(
+		const uint8_t *buffer, uint16_t count) {
 
-		default:
-			break;
+	if (count > 0) {
+		uint16_t availableSpace = rxAvailableSpace();
+		if (availableSpace >= count)
+			rxPush(buffer, count);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Gestio de les interrupcions.
-/// \param    notify: Notificacio.
-/// \param    param: Parametre de la interrupcio.
+/// \brief    Es crida quant ha acabat la transmissio
+/// \param    buffer: El buffer de dades.
+/// \param    count: Nombre de bytes en el buffer.
 ///
-void CircularSerialDriver_I2CSlave::interruptFunction(
-	i2c::I2CInterruptContext *context) {
+void CircularSerialDriver_I2CSlave::rxCompletedHandler(
+		const uint8_t *buffer, uint16_t count) {
 
-	CircularSerialDriver_I2CSlave *driver = reinterpret_cast<CircularSerialDriver_I2CSlave*>(context->param);
-	driver->interruptHandler(context);
+	if (count > 0) {
+		uint16_t availableSpace = rxAvailableSpace();
+		if (availableSpace >= count)
+			rxPush(buffer, count);
+	}
+	if (rxAvailableData() > 0)
+		notifyRxBufferNotEmpty();
 }

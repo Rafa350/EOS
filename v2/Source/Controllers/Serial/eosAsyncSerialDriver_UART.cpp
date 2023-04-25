@@ -12,9 +12,9 @@ using namespace htl;
 /// \param    uart: El modul uart a utilitzar.
 ///
 AsyncSerialDriver_UART::AsyncSerialDriver_UART(
-	UARTHandler hUART):
+	uart::UARTDeviceHandler uart):
 
-	_hUART(hUART) {
+	_uart(uart)  {
 }
 
 
@@ -25,7 +25,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_hUART->setInterruptFunction(interruptFunction, this);
+	_uart->setInterruptFunction(interruptFunction, this);
 }
 
 
@@ -34,7 +34,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 ///
 void AsyncSerialDriver_UART::deinitializeImpl() {
 
-	_hUART->setInterruptFunction(nullptr, nullptr);
+	_uart->setInterruptFunction(nullptr, nullptr);
 
     AsyncSerialDriver::deinitializeImpl();
 }
@@ -63,8 +63,8 @@ bool AsyncSerialDriver_UART::transmitImpl(
 		_txLength = dataLength;
 		_txCount = 0;
 
-		_hUART->enableTX();
-		_hUART->enableInterrupt(UARTInterrupt::txEmpty);
+		_uart->enableTX();
+		_uart->enableInterrupt(UARTInterrupt::txEmpty);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.

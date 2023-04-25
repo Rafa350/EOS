@@ -5,8 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "SYstem/eosEvents.h"
-#include "System/eosString.h"
+#include "System/eosEvents.h"
 #include "System/Core/eosTask.h"
 
 

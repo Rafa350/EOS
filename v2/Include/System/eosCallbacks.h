@@ -51,7 +51,6 @@ namespace eos {
         private:
             instance_ &_instance;
             Method _method;
-
         public:
             inline CallbackP2(instance_ &instance, Method method):
             	_instance(instance),
@@ -60,6 +59,33 @@ namespace eos {
             void execute(param1_ p1, param2_ p2) const override {
                 if (_method != nullptr)
                     (_instance.*_method)(p1, p2);
+            }
+    };
+
+
+    template <typename param1_, typename param2_, typename param3_>
+    class ICallbackP3 {
+        public:
+            virtual ~ICallbackP3() {
+            }
+            virtual void execute(param1_ p1, param2_ p2, param3_ p3) const = 0;
+    };
+
+    template <typename instance_, typename param1_, typename param2_, typename param3_>
+    class CallbackP3: public ICallbackP3<param1_, param2_, param3_> {
+        public:
+    	    using Method = void (instance_::*)(param1_, param2_, param3_);
+        private:
+            instance_ &_instance;
+            Method _method;
+        public:
+            inline CallbackP3(instance_ &instance, Method method):
+            	_instance(instance),
+				_method(method) {
+            }
+            void execute(param1_ p1, param2_ p2, param3_ p3) const override {
+                if (_method != nullptr)
+                    (_instance.*_method)(p1, p2, p3);
             }
     };
 

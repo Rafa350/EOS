@@ -12,68 +12,44 @@
 #if defined(EOS_PLATFORM_STM32G031) 
 
 
-namespace htl {
-	#ifdef HTL_UART1_EXIST
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_A10, UARTPin::RX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_A11, UARTPin::CTS> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_A12, UARTPin::RTS> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_B3, UARTPin::RTS> {
-            static constexpr GPIOAlt alt = GPIOAlt::_4;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_B4, UARTPin::CTS> {
-            static constexpr GPIOAlt alt = GPIOAlt::_4;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_B6, UARTPin::TX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-	#endif
+#define ALT_FUNCTION(id, fn, pin, af)                    \
+	template <>                                          \
+	struct UARTPinFunctionID<DeviceID::_##id, fn, pin> { \
+		static constexpr gpio::PinFunctionID alt = af;   \
+	};
 
-	#ifdef HTL_UART2_EXIST
-        template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A0, UARTPin::CTS> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A1, UARTPin::RTS> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A2, UARTPin::TX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A3, UARTPin::RX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A14, UARTPin::TX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-        template <>
-        struct UARTPinTrait<UARTChannel::_2, GPIO_A15, UARTPin::RX> {
-            static constexpr GPIOAlt alt = GPIOAlt::_1;
-        };
-	#endif
+
+namespace htl {
+	namespace uart {
+		namespace internal {
+			#ifdef HTL_UART1_EXIST
+				ALT_FUNCTION(1, PinFunction::tx,  gpio::PinA9,  gpio::PinFunctionID::_1)
+    			ALT_FUNCTION(1, PinFunction::tx,  gpio::PinB6,  gpio::PinFunctionID::_0)
+
+				ALT_FUNCTION(1, PinFunction::rx,  gpio::PinA10, gpio::PinFunctionID::_1)
+    			ALT_FUNCTION(1, PinFunction::rx,  gpio::PinB7,  gpio::PinFunctionID::_0)
+
+				ALT_FUNCTION(1, PinFunction::cts, gpio::PinA11, gpio::PinFunctionID::_1)
+    			ALT_FUNCTION(1, PinFunction::cts, gpio::PinB4,  gpio::PinFunctionID::_4)
+
+				ALT_FUNCTION(1, PinFunction::rts, gpio::PinA12, gpio::PinFunctionID::_1)
+				ALT_FUNCTION(1, PinFunction::rts, gpio::PinB3,  gpio::PinFunctionID::_4)
+			#endif
+
+			#ifdef HTL_UART2_EXIST
+				ALT_FUNCTION(2, PinFunction::tx,  gpio::PinA2,  gpio::PinFunctionID::_1)
+				ALT_FUNCTION(2, PinFunction::tx,  gpio::PinA14, gpio::PinFunctionID::_1)
+
+				ALT_FUNCTION(2, PinFunction::rx,  gpio::PinA3,  gpio::PinFunctionID::_1)
+				ALT_FUNCTION(2, PinFunction::rx,  gpio::PinA15, gpio::PinFunctionID::_1)
+
+				ALT_FUNCTION(2, PinFunction::cts,  gpio::PinA0, gpio::PinFunctionID::_1)
+				ALT_FUNCTION(2, PinFunction::cts,  gpio::PinD3, gpio::PinFunctionID::_0)
+
+				ALT_FUNCTION(2, PinFunction::rts,  gpio::PinA1, gpio::PinFunctionID::_1)
+			#endif
+		}
+	}
 }
 
 

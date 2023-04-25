@@ -7,6 +7,7 @@
 //
 #include "HTL/htl.h"
 #include "HTL/htlGPIO.h"
+#include "HTL/htlINT.h"
 
 
 namespace htl {
@@ -44,32 +45,36 @@ namespace htl {
 			sda
 		};
 
-		enum class I2CInterruptStatus {
-			addrMatch,
-			rxPartial,
-			rxCompleted
-		};
+		using IAddressMatchCallback = eos::ICallbackP1<uint16_t>;
+		using IRxPartialCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
+		using IRxCompletedCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
+		using ITxPartialCallback = eos::ICallbackP3<const uint8_t*, uint16_t, uint16_t&>;
+		using ITxCompletedCallback = eos::ICallbackP3<const uint8_t*, uint16_t, uint16_t&>;
 
-		typedef void * I2CInterruptParam;
+		template <typename instance_>
+		using AddressMatchCallback = eos::CallbackP1<instance_, uint16_t>;
 
-		struct I2CInterruptContext {
-			I2CInterruptStatus status;
-			uint8_t *buffer;
-			uint16_t size;
-			uint16_t count;
-			I2CInterruptParam param;
-		};
+		template <typename instance_>
+		using RxPartialCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
 
-		typedef void (*I2CInterruptFunction)(I2CInterruptContext*);
+		template <typename instance_>
+		using RxCompletedCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+
+		template <typename instance_>
+		using TxPartialCallback = eos::CallbackP3<instance_, const uint8_t*, uint16_t, uint16_t&>;
+
+		template <typename instance_>
+		using TxCompletedCallback = eos::CallbackP3<instance_, const uint8_t*, uint16_t, uint16_t&>;
 
 		class I2CSlaveDevice {
 			private:
 				I2C_TypeDef * const _i2c;
-				I2CInterruptFunction _function;
-				I2CInterruptParam _param;
 				uint8_t *_buffer;
 				uint16_t _size;
 				uint16_t _count;
+				IAddressMatchCallback *_addressMatchCallback;
+				IRxPartialCallback *_rxPartialCallback;
+				IRxCompletedCallback *_rxCompletedCallback;
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
@@ -91,7 +96,24 @@ namespace htl {
 				void initialize(uint16_t addr);
 				void deinitialize();
 				void setTimming(uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
-				void setInterruptFunction(I2CInterruptFunction function, I2CInterruptParam param);
+				inline void enableAddressMatchCallback(IAddressMatchCallback &callback) {
+					_addressMatchCallback = &callback;
+				}
+				inline void enableRxPartialCallback(IRxPartialCallback &callback) {
+					_rxPartialCallback = &callback;
+				}
+				inline void enableRxCompletedCallback(IRxCompletedCallback &callback) {
+					_rxCompletedCallback = &callback;
+				}
+				inline void disableAddressMatchCallback() {
+					_addressMatchCallback = nullptr;
+				}
+				inline void disableRxPartialCallback() {
+					_rxPartialCallback = nullptr;
+				}
+				inline void disableRxCompletedCallback() {
+					_rxCompletedCallback = nullptr;
+				}
 				inline void enable() {
 					_i2c->CR1 |= I2C_CR1_PE;
 				}
@@ -127,6 +149,7 @@ namespace htl {
 				static I2CSlaveDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr INTVector irqVectorID = HI::irqVectorID;
 			private:
 				I2CSlaveDeviceX() :
 					I2CSlaveDevice(reinterpret_cast<I2C_TypeDef *>(_i2cAddr)) {
@@ -202,6 +225,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C1RST_Pos;
 				#endif
+				static constexpr INTVector irqVectorID = htl::INTVector::i2c1;
 			};
 			#endif
 
@@ -225,6 +249,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C2RST_Pos;
 				#endif
+				static constexpr INTVector irqVectorID = htl::INTVector::i2c2;
 			};
 			#endif
 

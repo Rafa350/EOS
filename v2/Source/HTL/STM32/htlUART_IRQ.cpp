@@ -3,13 +3,13 @@
 #include "HTL/STM32/htlUART_IRQ.h"
 
 
-using namespace htl;
+using namespace htl::uart;
 
 
 #ifdef HTL_UART1_EXIST
 void UART_1_InterruptHandler() {
 
-	UART_1::interruptHandler();
+	UARTDevice1::getHandler()->interruptService();
 }
 #endif
 
@@ -17,7 +17,7 @@ void UART_1_InterruptHandler() {
 #ifdef HTL_UART2_EXIST
 void UART_2_InterruptHandler() {
 
-	UART_2::interruptHandler();
+	UARTDevice2::getHandler()->interruptService();
 }
 #endif
 
@@ -25,7 +25,7 @@ void UART_2_InterruptHandler() {
 #ifdef HTL_UART3_EXIST
 void UART_3_InterruptHandler() {
 
-	UART_3::interruptHandler();
+	UARTDevice3::getHandler()->interruptService();
 }
 #endif
 
@@ -33,7 +33,7 @@ void UART_3_InterruptHandler() {
 #ifdef HTL_UART4_EXIST
 void UART_4_InterruptHandler() {
 
-	UART_4::interruptHandler();
+	UARTDevice4::getHandler()->interruptService();
 }
 #endif
 
@@ -41,7 +41,7 @@ void UART_4_InterruptHandler() {
 #ifdef HTL_UART5_EXIST
 void UART_5_InterruptHandler() {
 
-	UART_5::interruptHandler();
+	UARTDevice5::getHandler()->interruptService();
 }
 #endif
 
@@ -49,7 +49,7 @@ void UART_5_InterruptHandler() {
 #ifdef HTL_UART6_EXIST
 void UART_6_InterruptHandler() {
 
-	UART_6::interruptHandler();
+	UARTDevice6::getHandler()->interruptService();
 }
 #endif
 
@@ -57,7 +57,7 @@ void UART_6_InterruptHandler() {
 #ifdef HTL_UART7_EXIST
 void UART_7_InterruptHandler() {
 
-	UART_7::interruptHandler();
+	UARTDevice7::getHandler()->interruptService();
 }
 #endif
 
@@ -65,7 +65,7 @@ void UART_7_InterruptHandler() {
 #ifdef HTL_UART8_EXIST
 void UART_8_InterruptHandler() {
 
-	UART_8::interruptHandler();
+	UARTDevice8::getHandler()->interruptService();
 }
 #endif
 
