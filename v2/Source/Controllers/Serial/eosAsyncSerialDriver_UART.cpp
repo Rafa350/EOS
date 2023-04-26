@@ -14,7 +14,8 @@ using namespace htl;
 AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 	uart::UARTDeviceHandler uart):
 
-	_uart(uart)  {
+	_uart(uart),
+	_txCompletedCallback(*this, &AsyncSerialDriver_UART::txCompletedHandler){
 }
 
 
@@ -25,7 +26,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_uart->setInterruptFunction(interruptFunction, this);
+	_uart->enableTxCompletedCallback(_txCompletedCallback);
 }
 
 
@@ -34,7 +35,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 ///
 void AsyncSerialDriver_UART::deinitializeImpl() {
 
-	_uart->setInterruptFunction(nullptr, nullptr);
+	_uart->disableTxCompletedCallback();
 
     AsyncSerialDriver::deinitializeImpl();
 }
@@ -59,12 +60,7 @@ bool AsyncSerialDriver_UART::transmitImpl(
 	else {
 		notifyTxStart();
 
-		_txData = data;
-		_txLength = dataLength;
-		_txCount = 0;
-
-		_uart->enableTX();
-		_uart->enableInterrupt(UARTInterrupt::txEmpty);
+		_uart->transmit(data,  dataLength);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
@@ -97,12 +93,13 @@ bool AsyncSerialDriver_UART::receiveImpl(
 		_rxSize = dataSize;
 		_rxCount = 0;
 
+		/*
 		_hUART->enableRX();
 		_hUART->enableInterrupt(UARTInterrupt::rxNotEmpty);
         #ifdef EOS_PLATFORM_STM32
 			_hUART->enableInterrupt(UARTInterrupt::rxTimeout);
         #endif
-
+*/
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles en la UART.
 
@@ -110,6 +107,16 @@ bool AsyncSerialDriver_UART::receiveImpl(
 	}
 }
 
+
+void AsyncSerialDriver_UART::txCompletedHandler(
+	const uint8_t *buffer,
+	uint16_t size) {
+
+	notifyTxCompleted(size);
+}
+
+
+/*
 
 /// ----------------------------------------------------------------------
 /// \brief    Gestiona les interrupcions.
@@ -194,16 +201,5 @@ void AsyncSerialDriver_UART::interruptHandler() {
 #else
 #error "Undefined EOS_PLATFORM_XXXX"
 #endif
+*/
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Gestiona les interrupcions.
-/// \param    event: EL event.
-/// \param    param: EL parametre.
-///
-void AsyncSerialDriver_UART::interruptFunction(
-	UARTInterruptParam param) {
-
-	AsyncSerialDriver_UART *driver = reinterpret_cast<AsyncSerialDriver_UART*>(param);
-	driver->interruptHandler();
-}

@@ -53,6 +53,9 @@ namespace htl {
 }
 
 
+#undef ALT_FUNCTION
+
+
 #endif // EOS_PLATFORM_STM32G031
 
 

@@ -104,6 +104,7 @@ namespace htl {
 				SPIDevice & operator = (const SPIDevice &) = delete;
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
+				void interruptService();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 				virtual void resetImpl() = 0;
@@ -141,7 +142,7 @@ namespace htl {
 					return (_spi->SR & SPI_SR_BSY) != 0;
 				}
 				uint16_t transmit(const uint8_t *buffer, uint16_t size);
-				void interruptService();
+				uint16_t receive(uint8_t *buffer, uint16_t size);
 		};
 
 		typedef SPIDevice* SPIDeviceHandler;
@@ -192,6 +193,9 @@ namespace htl {
 			public:
 				static constexpr SPIDeviceX * getHandler() {
 					return &_device;
+				}
+				inline static void interruptHandler() {
+					getHandler()->interruptService();
 				}
 				template <typename pin_>
 				void initSCKPin() {

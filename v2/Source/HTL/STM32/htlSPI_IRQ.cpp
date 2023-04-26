@@ -9,7 +9,7 @@ using namespace htl::spi;
 #ifdef HTL_SPI1_EXIST
 void SPI_1_InterruptHandler() {
 
-	SPIDevice1::getHandler()->interruptService();
+	SPIDevice1::interruptHandler();
 }
 #endif
 
@@ -17,7 +17,7 @@ void SPI_1_InterruptHandler() {
 #ifdef HTL_SPI2_EXIST
 void SPI_2_InterruptHandler() {
 
-	SPIDevice2::getHandler()->interruptService();
+	SPIDevice2::interruptHandler();
 }
 #endif
 
@@ -25,7 +25,7 @@ void SPI_2_InterruptHandler() {
 #ifdef HTL_SPI3_EXIST
 void SPI_3_InterruptHandler() {
 
-	SPIDevice3::getHandler()->interruptService();
+	SPIDevice3::interruptHandler();
 }
 #endif
 
@@ -33,7 +33,7 @@ void SPI_3_InterruptHandler() {
 #ifdef HTL_SPI4_EXIST
 void SPI_4_InterruptHandler() {
 
-	SPIDevice4::getHandler()->interruptService();
+	SPIDevice4::interruptHandler();
 }
 #endif
 
@@ -41,7 +41,7 @@ void SPI_4_InterruptHandler() {
 #ifdef HTL_SPI5_EXIST
 void SPI_5_InterruptHandler() {
 
-	SPIDevice5::getHandler()->interruptService();
+	SPIDevice5::interruptHandler();
 }
 #endif
 
@@ -49,7 +49,7 @@ void SPI_5_InterruptHandler() {
 #ifdef HTL_SPI6_EXIST
 void SPI_6_InterruptHandler() {
 
-	SPIDevice6::getHandler()->interruptService();
+	SPIDevice6::interruptHandler();
 }
 #endif
 

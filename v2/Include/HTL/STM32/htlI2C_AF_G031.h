@@ -18,6 +18,7 @@
 		static constexpr gpio::PinFunctionID alt = af;      \
 	};
 
+
 namespace htl {
 	namespace i2c {
 		namespace internal {

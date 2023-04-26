@@ -12,9 +12,12 @@ using namespace htl;
 /// \param    hI2C: El modul I2C a utilitzar.
 ///
 AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
-	i2c::I2CSlaveDeviceHandler i2c):
+	i2c::I2CSlaveDeviceHandler i2c) :
 
-	_i2c(i2c) {
+	_i2c(i2c),
+	_addressMatchCallback(*this, &AsyncSerialDriver_I2CSlave::addressMatchHandler),
+	_rxPartialCallback(*this, &AsyncSerialDriver_I2CSlave::rxPartialHandler),
+	_rxCompletedCallback(*this, &AsyncSerialDriver_I2CSlave::rxCompletedHandler) {
 
 }
 
@@ -25,6 +28,10 @@ AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
 void AsyncSerialDriver_I2CSlave::initializeImpl() {
 
 	AsyncSerialDriver::initializeImpl();
+
+	_i2c->enableAddressMatchCallback(_addressMatchCallback);
+	_i2c->enableRxPartialCallback(_rxPartialCallback);
+	_i2c->enableRxCompletedCallback(_rxCompletedCallback);
 }
 
 
@@ -33,7 +40,9 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 ///
 void AsyncSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_i2c->setInterruptFunction(nullptr, nullptr);
+	_i2c->disableAddressMatchCallback();
+	_i2c->disableRxPartialCallback();
+	_i2c->disableRxCompletedCallback();
 
 	AsyncSerialDriver::deinitializeImpl();
 }
@@ -58,9 +67,8 @@ bool AsyncSerialDriver_I2CSlave::transmitImpl(
 		_txLength = dataLength;
 		_txCount = 0;
 
-		_i2c->setInterruptFunction(txInterruptFunction, this);
-		_i2c->enable();
-		_i2c->enableInterrupt(I2CInterrupt::addr);
+		//_i2c->enable();
+		//_i2c->enableInterrupt(I2CInterrupt::addr);
 
 		// En aquest moment es genera una interrupcio
 		// i comença la transmissio controlada per interrupcions.
@@ -85,13 +93,9 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 	else {
 		notifyRxStart();
 
-		_rxData = data;
-		_rxSize = dataSize;
-		_rxCount = 0;
-
-		_i2c->setInterruptFunction(rxInterruptFunction, this);
-		_i2c->enable();
-		_i2c->enableInterrupt(I2CInterrupt::addr);
+		////************************************
+		/// PROVISIONAL fins implementar receive
+		_i2c->listen(data, dataSize);
 
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles.
@@ -102,61 +106,37 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Gestiona les interrupcions per transmissio.
+/// \brief    Es crida quant hi ha coincidencia amb l'adressa
+/// \param    addr: L'adressa I2C.
 ///
-void AsyncSerialDriver_I2CSlave::txInterruptFunction(
-	i2c::I2CInterruptContext *context) {
+void AsyncSerialDriver_I2CSlave::addressMatchHandler(
+	uint16_t addr) {
 
-	switch (context->status) {
+}
 
-		case i2c::I2CInterruptStatus::addrMatch:
-			break;
 
-		case i2c::I2CInterruptStatus::rxCompleted:
-			notifyTxCompleted(context->count);
-			break;
+/// \brief    Es crida qwuan han arribat dades i el buffer es ple. Permet
+///           buidar-lo i continuar la recepcio.
+/// \param    buffer: Buffer de dades.
+/// \param    count: Nombre de bytes en el buffer.
+///
+void AsyncSerialDriver_I2CSlave::rxPartialHandler(
+	const uint8_t *buffer,
+	uint16_t count) {
+
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Gestiona les interrupcions per recepcio.
+/// \brief    Es crida quant han arribat les dades i ha finalitzat la comunicacio.
+/// \param    buffer: El buffer de dades.
+/// \param    count: El nombre de bytes en el buffer.
 ///
-void AsyncSerialDriver_I2CSlave::rxInterruptFunction(
-	i2c::I2CInterruptContext *context) {
+void AsyncSerialDriver_I2CSlave::rxCompletedHandler(
+	const uint8_t *buffer,
+	uint16_t count) {
 
-	// Coincidencia amb l'adressa
-	//
-	if (_hI2C->getFlag(I2CFlag::addr)) {
-		_hI2C->clearFlag(I2CFlag::addr);
-		_hI2C->disableInterrupt(I2CInterrupt::addr);
-		_hI2C->enableInterrupt(I2CInterrupt::stop);
-		_hI2C->enableInterrupt(I2CInterrupt::rx);
-	}
-
-	// Buffer de recepcio ple
-	//
-	else if (_hI2C->getFlag(I2CFlag::rxne)) {
-		uint8_t data = _hI2C->read();
-		if (_rxCount < _rxSize) {
-			*_rxData++ = data;
-			_rxCount++;
-
-			// Si nomes queda per rebre un, fa que generi un NACK
-			// automaticamen quant es rebi l'ultim
-			//
-			if (_rxCount == _rxSize - 1)
-				_hI2C->nack();
-		}
-	}
-
-	// Deteccio de la condicio stop
-	//
-	else if (_hI2C->getFlag(I2CFlag::stop)) {
-		_hI2C->clearFlag(I2CFlag::stop);
-		_hI2C->disableInterrupt(I2CInterrupt::rx);
-		_hI2C->disableInterrupt(I2CInterrupt::stop);
-		_hI2C->setInterruptFunction(nullptr, nullptr);
-		_hI2C->disable();
-		notifyRxCompleted(_rxCount);
-	}
+	notifyTxCompleted(count);
 }
+
+

@@ -117,40 +117,6 @@ namespace htl {
 			_16
 		};
 
-		enum class Interrupt {
-			txEmpty,
-			cts,
-			txComplete,
-			rxNotEmpty,
-			idle,
-			parity,
-			#if HTL_UART_LINMODE_SUPPORT == 1
-				linBrk,
-			#endif
-			endOfBlock,
-			rxTimeout,
-			match,
-			error
-		};
-
-		enum class Flag {
-			txEmpty,
-			cts,
-			txComplete,
-			rxNotEmpty,
-			overrun,
-			idle,
-			parity,
-			#if HTL_UART_LINMODE_SUPPORT == 1
-				linBrk,
-			#endif
-			endOfBlock,
-			rxTimeout,
-			framming,
-			noise,
-			match
-		};
-
 		enum class PinFunction {
 			tx,
 			rx,
@@ -159,8 +125,10 @@ namespace htl {
 			de
 		};
 
-		using UARTInterruptParam = void*;
-		using UARTInterruptFunction = void (*)(UARTInterruptParam);
+		using ITxCompletedCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
+
+		template <typename instance_>
+		using TxCompletedCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
 
 		namespace internal {
 
@@ -177,14 +145,16 @@ namespace htl {
 				uint8_t *_rxBuffer;
 				uint16_t _rxSize;
 				uint16_t _rxCount;
-				uint8_t *_txBuffer;
+				const uint8_t *_txBuffer;
 				uint16_t _txSize;
 				uint16_t _txCount;
+				ITxCompletedCallback *_txCompletedCallback;
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
 			protected:
 				UARTDevice(USART_TypeDef *usart);
+				void interruptService();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 				virtual void resetImpl() = 0;
@@ -221,7 +191,12 @@ namespace htl {
 				void setProtocol(WordBits wordBits, Parity parity, StopBits stopBits, Handsake handlsake);
 				void setTimming(BaudMode baudMode, ClockSource clockSource, uint32_t rate, OverSampling oversampling);
 				void setRxTimeout(uint32_t lostBits);
-				void interruptService();
+				inline void enableTxCompletedCallback(ITxCompletedCallback &callback) {
+					_txCompletedCallback = &callback;
+				}
+				inline void disableTxCompletedCallback() {
+					_txCompletedCallback = nullptr;
+				}
 				uint16_t transmit(const uint8_t *buffer, uint16_t size);
 				uint16_t receive(uint8_t *buffer, uint16_t size);
 		};
@@ -266,6 +241,9 @@ namespace htl {
 				static constexpr UARTDeviceX * getHandler() {
 					return &_device;
 				}
+				inline static void interruptHandler() {
+					getHandler()->interruptService();
+				}
 				template <typename pin_>
 				void initTXPin() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::tx, pin_>::alt;
@@ -287,6 +265,10 @@ namespace htl {
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 		};
+
+		template <DeviceID deviceID_>
+		UARTDeviceX<deviceID_> UARTDeviceX<deviceID_>::_device;
+
 		/*	public:
 				/// \bried Inicialitza el modul.
 				///

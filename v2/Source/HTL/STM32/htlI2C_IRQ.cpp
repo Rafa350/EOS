@@ -7,33 +7,33 @@ using namespace htl::i2c;
 
 
 #ifdef HTL_I2C1_EXIST
-void I2CSlave_1_InterruptHandler() {
+void I2CSlaveDevice1_InterruptHandler() {
 
-	I2CSlaveDevice1::getHandler()->interruptService();
+	I2CSlaveDevice1::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_I2C2_EXIST
-void I2CSlave_2_InterruptHandler() {
+void I2CSlaveDevice2_InterruptHandler() {
 
-	I2CSlaveDevice2::getHandler()->interruptService();
+	I2CSlaveDevice2::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_I2C3_EXIST
-void I2CSlave_3_InterruptHandler() {
+void I2CSlaveDevice3_InterruptHandler() {
 
-	I2CSlaveDevice3::getHandler()->interruptHandler();
+	I2CSlaveDevice3::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_I2C4_EXIST
-void I2CSlave_4_InterruptHandler() {
+void I2CSlaveDevice4_InterruptHandler() {
 
-	I2CSlaveDevice4::getHandler()->interruptHandler();
+	I2CSlaveDevice4::interruptHandler();
 }
 #endif
 

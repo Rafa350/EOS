@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "htl/htlGPIO.h"
 #include "System/Core/eosTask.h"
 #include "appLedService.h"
 

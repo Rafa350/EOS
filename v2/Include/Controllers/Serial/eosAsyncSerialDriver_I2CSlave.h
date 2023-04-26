@@ -10,18 +10,24 @@
 namespace eos {
 
 	class AsyncSerialDriver_I2CSlave final: public AsyncSerialDriver {
+		public:
+			using AddressMatchCallback = htl::i2c::AddressMatchCallback<AsyncSerialDriver_I2CSlave>;
+			using RxPartialCallback = htl::i2c::RxPartialCallback<AsyncSerialDriver_I2CSlave>;
+			using RxCompletedCallback = htl::i2c::RxCompletedCallback<AsyncSerialDriver_I2CSlave>;
+
 		private:
 			htl::i2c::I2CSlaveDeviceHandler _i2c;
 			const uint8_t *_txData;
 			int _txLength;
 			int _txCount;
-			uint8_t *_rxData;
-			int _rxSize;
-			int _rxCount;
+			AddressMatchCallback _addressMatchCallback;
+			RxPartialCallback _rxPartialCallback;
+			RxCompletedCallback _rxCompletedCallback;
 
 		private:
-			static void rxInterruptFunction(htl::i2c::I2CInterruptContext *context);
-			static void txInterruptFunction(htl::i2c::I2CInterruptContext *context);
+			void addressMatchHandler(uint16_t addr);
+			void rxPartialHandler(const uint8_t *buffer, uint16_t count);
+			void rxCompletedHandler(const uint8_t *buffer, uint16_t count);
 
 		protected:
 			void initializeImpl() override;

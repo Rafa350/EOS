@@ -89,6 +89,19 @@ static ClockSource getClockSource(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    usart: Registres hardware del modul USART.
+///
+UARTDevice::UARTDevice(
+	USART_TypeDef *usart):
+
+	_usart(usart),
+	_txCompletedCallback(nullptr) {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicialitza el modul UART.
 ///
 void UARTDevice::initialize() {
@@ -343,9 +356,21 @@ void UARTDevice::setRxTimeout(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades.
+/// \param    buffer: El bloc de dades.
+/// \param    size: Tamany del bloc de dades
+/// \return   El nombre de bytes transmessos.
+///
 uint16_t UARTDevice::transmit(
 	const uint8_t *buffer,
 	uint16_t size) {
+
+	_txBuffer = buffer;
+	_txSize = size;
+	_txCount = 0;
+
+	enableTX();
 
 	return 0;
 }
@@ -385,10 +410,8 @@ void UARTDevice::interruptService() {
 
 			if (_txCount < _txSize) {
 				_usart->TDR = _txBuffer[_txCount++];
-				if (_txCount == _txSize) {
-					//_hUART->disableInterrupt(UARTInterrupt::txEmpty);
-					//_hUART->enableInterrupt(UARTInterrupt::txComplete);
-				}
+				if (_txCount == _txSize)
+					ATOMIC_MODIFY_REG(_usart->CR1, USART_CR1_TXEIE_TXFNFIE, USART_CR1_TCIE);
 			}
 		}
 
@@ -396,11 +419,10 @@ void UARTDevice::interruptService() {
 		//
 		if ((cr1 & USART_CR1_TCIE) && (isr & USART_ISR_TC)) {
 
-				/*_hUART->clearFlag(UARTFlag::txComplete);
-				_hUART->disableInterrupt(UARTInterrupt::txEmpty);
-				_hUART->disableInterrupt(UARTInterrupt::txComplete);
-				_hUART->disableTX();
-				notifyTxCompleted(_txCount);*/
+			icr |= USART_ICR_TCCF;
+			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
+			if (_txCompletedCallback != nullptr)
+				_txCompletedCallback->execute(_txBuffer, _txCount);
 		}
 
 		/// Interupcio FIFO/RD not empty
@@ -418,16 +440,17 @@ void UARTDevice::interruptService() {
 			}
 		}
 
-		/*if (_hUART->isInterruptEnabled(UARTInterrupt::rxTimeout)) {
+		// Interrupcio RX timeout
+		//
+		if ((cr1 & USART_CR1_RTOIE) && (isr & USART_ISR_RTOF)) {
 
-			if (_hUART->getFlag(UARTFlag::rxTimeout)) {
-				_hUART->clearFlag(UARTFlag::rxTimeout);
-				_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
+			icr |= USART_ICR_RTOCF;
+		/*	ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_)
+			_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
 				_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
 				_hUART->disableRX();
-				notifyRxCompleted(_rxCount);
-			}
-		}*/
+				notifyRxCompleted(_rxCount);*/
+		}
 	}
 
 	_usart->ICR = icr;

@@ -80,6 +80,7 @@ namespace htl {
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *gpio);
+				void interruptService();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 				virtual void resetImpl() = 0;
@@ -121,7 +122,6 @@ namespace htl {
 					_i2c->CR1 &= ~I2C_CR1_PE;
 				}
 				void listen(uint8_t *buffer, uint16_t size);
-				void interruptService();
 		};
 
 		typedef I2CSlaveDevice *I2CSlaveDeviceHandler;
@@ -172,6 +172,9 @@ namespace htl {
 			public:
 				static constexpr I2CSlaveDeviceX * getHandler() {
 					return &_device;
+				}
+				inline static void interruptHandler() {
+					getHandler()->interruptService();
 				}
 				template <typename pin_>
 				void initSCLPin() {

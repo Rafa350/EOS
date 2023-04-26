@@ -7,55 +7,55 @@ using namespace htl::uart;
 
 
 #ifdef HTL_UART1_EXIST
-void UART_1_InterruptHandler() {
+void UARTDevice1_InterruptHandler() {
 
-	UARTDevice1::getHandler()->interruptService();
+	UARTDevice1::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_UART2_EXIST
-void UART_2_InterruptHandler() {
+void UARTDevice2_InterruptHandler() {
 
-	UARTDevice2::getHandler()->interruptService();
+	UARTDevice2::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_UART3_EXIST
-void UART_3_InterruptHandler() {
+void UARTDevice3_InterruptHandler() {
 
-	UARTDevice3::getHandler()->interruptService();
+	UARTDevice3::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_UART4_EXIST
-void UART_4_InterruptHandler() {
+void UARTDevice4_InterruptHandler() {
 
-	UARTDevice4::getHandler()->interruptService();
+	UARTDevice4::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_UART5_EXIST
-void UART_5_InterruptHandler() {
+void UARTDevice5_InterruptHandler() {
 
-	UARTDevice5::getHandler()->interruptService();
+	UARTDevice5::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_UART6_EXIST
-void UART_6_InterruptHandler() {
+void UARTDevice6_InterruptHandler() {
 
-	UARTDevice6::getHandler()->interruptService();
+	UARTDevice6::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_UART7_EXIST
-void UART_7_InterruptHandler() {
+void UARTDevice7_InterruptHandler() {
 
 	UARTDevice7::getHandler()->interruptService();
 }

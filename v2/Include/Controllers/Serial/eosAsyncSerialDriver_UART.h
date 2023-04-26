@@ -9,23 +9,21 @@
 
 namespace eos {
 
-	class AsyncSerialDriver_UART: public AsyncSerialDriver {
+	class AsyncSerialDriver_UART final: public AsyncSerialDriver {
+		private:
+			using TxCompletedCallback = htl::uart::TxCompletedCallback<AsyncSerialDriver_UART>;
 		private:
 			htl::uart::UARTDeviceHandler _uart;
-			const uint8_t *_txData;
-			int _txLength;
-			int _txCount;
 			uint8_t *_rxData;
 			int _rxSize;
 			int _rxCount;
-
+			TxCompletedCallback _txCompletedCallback;
+		private:
 			void initializeImpl() override;
 			void deinitializeImpl() override;
 			bool transmitImpl(const uint8_t *data, int dataLength) override;
 			bool receiveImpl(uint8_t *data, int dataSize) override;
-
-			void interruptHandler();
-			static void interruptFunction(htl::uart::UARTInterruptParam param);
+			void txCompletedHandler(const uint8_t *buffer, uint16_t size);
 
 		public:
 			AsyncSerialDriver_UART(htl::uart::UARTDeviceHandler hUART);
