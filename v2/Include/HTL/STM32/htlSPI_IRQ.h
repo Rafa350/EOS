@@ -13,22 +13,22 @@ extern "C" {
 #endif
 
 #ifdef HTL_SPI1_EXIST
-	void SPI_1_InterruptHandler();
+	void SPIDevice1_InterruptHandler();
 #endif
 #ifdef HTL_SPI2_EXIST
-	void SPI_2_InterruptHandler();
+	void SPIDevice2_InterruptHandler();
 #endif
 #ifdef HTL_SPI3_EXIST
-	void SPI_3_InterruptHandler();
+	void SPIDevice3_InterruptHandler();
 #endif
 #ifdef HTL_SPI4_EXIST
-	void SPI_4_InterruptHandler();
+	void SPIDevice4_InterruptHandler();
 #endif
 #ifdef HTL_SPI5_EXIST
-	void SPI_5_InterruptHandler();
+	void SPIDevice5_InterruptHandler();
 #endif
 #ifdef HTL_SPI6_EXIST
-	void SPI_6_InterruptHandler();
+	void SPIDevice6_InterruptHandler();
 #endif
 	
 #ifdef __cplusplus

@@ -6,13 +6,13 @@
 using namespace htl::ltdc;
 
 
-void LTDC_InterruptHandler() {
+void LTDCDevice_InterruptHandler() {
 
-	LTDCDevice::getHandler()->interruptService();
+	LTDCDevice::interruptHandler();
 }
 
 
-void LTDC_ER_InterruptHandler() {
+void LTDCDevice_InterruptHandler_ER() {
 
-	LTDCDevice::getHandler()->interruptERService();
+	LTDCDevice::interruptHandler_ER();
 }

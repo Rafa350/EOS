@@ -11,8 +11,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	void LTDC_InterruptHandler();
-	void LTDC_ER_InterruptHandler();
+	void LTDCDevice_InterruptHandler();
+	void LTDCDevice_InterruptHandler_ER();
 #ifdef __cplusplus
 }
 #endif

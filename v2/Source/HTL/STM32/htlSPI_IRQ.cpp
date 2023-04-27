@@ -7,7 +7,7 @@ using namespace htl::spi;
 
 
 #ifdef HTL_SPI1_EXIST
-void SPI_1_InterruptHandler() {
+void SPIDevice1_InterruptHandler() {
 
 	SPIDevice1::interruptHandler();
 }
@@ -15,7 +15,7 @@ void SPI_1_InterruptHandler() {
 
 
 #ifdef HTL_SPI2_EXIST
-void SPI_2_InterruptHandler() {
+void SPIDevice2_InterruptHandler() {
 
 	SPIDevice2::interruptHandler();
 }
@@ -23,7 +23,7 @@ void SPI_2_InterruptHandler() {
 
 
 #ifdef HTL_SPI3_EXIST
-void SPI_3_InterruptHandler() {
+void SPIDevice3_InterruptHandler() {
 
 	SPIDevice3::interruptHandler();
 }
@@ -31,7 +31,7 @@ void SPI_3_InterruptHandler() {
 
 
 #ifdef HTL_SPI4_EXIST
-void SPI_4_InterruptHandler() {
+void SPIDevice4_InterruptHandler() {
 
 	SPIDevice4::interruptHandler();
 }
@@ -39,7 +39,7 @@ void SPI_4_InterruptHandler() {
 
 
 #ifdef HTL_SPI5_EXIST
-void SPI_5_InterruptHandler() {
+void SPIDevice5_InterruptHandler() {
 
 	SPIDevice5::interruptHandler();
 }
@@ -47,7 +47,7 @@ void SPI_5_InterruptHandler() {
 
 
 #ifdef HTL_SPI6_EXIST
-void SPI_6_InterruptHandler() {
+void SPIDevice6_InterruptHandler() {
 
 	SPIDevice6::interruptHandler();
 }
