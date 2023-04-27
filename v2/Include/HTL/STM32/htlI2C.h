@@ -288,19 +288,19 @@ namespace htl {
 
 
 #if defined(EOS_PLATFORM_STM32G030)
-    #include "htl/STM32/htlI2C_AF_G030.h"
+    #include "htl/STM32/G0/htlI2C_AF_G030.h"
 
 #elif defined(EOS_PLATFORM_STM32G031)
-    #include "htl/STM32/htlI2C_AF_G031.h"
+    #include "htl/STM32/G0/htlI2C_AF_G031.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
-    #include "htl/STM32/htlI2C_AF_F030.h"
+    #include "htl/STM32/F0/htlI2C_AF_F030.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/htlI2C_AF_F4.h"
+    #include "htl/STM32/F4/htlI2C_AF_F4.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
-    #include "htl/STM32/htlI2C_AF_F7.h"
+    #include "htl/STM32/F7/htlI2C_AF_F7.h"
 
 #else
     #error "Unknown platform"

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_htlUART_AF_F4__
-#define __STM32_htlUART_AF_F4__
+#ifndef __STM32_F4_htlUART_AF_F4__
+#define __STM32_F4_htlUART_AF_F4__
 
 
 // EOS includes
@@ -84,5 +84,5 @@ namespace htl {
 #endif // EOS_PLATFORM_STM32F4
 
 
-#endif // __STM32_htlUART_AF_F7__
+#endif // __STM32_F4_htlUART_AF_F7__
 

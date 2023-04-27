@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_htlSPI_AF_G030__
-#define __STM32_htlSPI_AF_G030__
+#ifndef __STM32_G0_htlSPI_AF_G030__
+#define __STM32_G0_htlSPI_AF_G030__
 
 
 // EOS includes
@@ -208,4 +208,4 @@ namespace htl {
 }
 
 
-#endif // __STM32_htlSPI_AF_G030__
+#endif // __STM32_G0_htlSPI_AF_G030__

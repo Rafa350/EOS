@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32F4_htlClock__
-#define __STM32F4_htlClock__
+#ifndef __STM32_F4_htlClock__
+#define __STM32_F4_htlClock__
 
 
 #include "HTL/htl.h"
@@ -124,4 +124,4 @@ namespace htl {
 }
 
 
-#endif // __STM32_htlClock__
+#endif // __STM32_F4_htlClock__
