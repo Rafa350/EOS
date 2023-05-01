@@ -317,32 +317,6 @@ uint16_t SPIDevice::transmit(
 
 /*
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el modul SPI.
-/// \param    regs: El bloc de registres
-/// \param    mode: El modus de comunicacio.
-/// \param    size: El tamany de trama
-/// \param    firstBite: El primer bit de la trama.
-/// \param    clkDivider: Divisor de frequencia.
-///
-void SPIBase_x::initialize(
-	SPI_TypeDef *regs,
-	SPIMode mode,
-	SPIClkPolarity clkPolarity,
-	SPIClkPhase clkPhase,
-	SPISize size,
-	SPIFirstBit firstBit,
-	SPIClockDivider clkDivider) {
-
-	setClockDivider(regs, clkDivider);
-	setMode(regs, mode);
-	setClkPolarity(regs, clkPolarity);
-	setClkPhase(regs, clkPhase);
-	setSize(regs, size);
-	setFirstBit(regs, firstBit);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Transfereix un bloc de dades.
 /// \param    regs: El bloc de registres.
 /// \param    data: El bloc de dades.

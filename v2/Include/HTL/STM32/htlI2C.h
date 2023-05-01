@@ -46,41 +46,57 @@ namespace htl {
 		};
 
 		using IAddressMatchCallback = eos::ICallbackP1<uint16_t>;
-		using IRxPartialCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
+		using IRxDataCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
 		using IRxCompletedCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
-		using ITxPartialCallback = eos::ICallbackP3<const uint8_t*, uint16_t, uint16_t&>;
-		using ITxCompletedCallback = eos::ICallbackP3<const uint8_t*, uint16_t, uint16_t&>;
+		using ITxDataCallback = eos::ICallbackP3<uint8_t*, uint16_t, uint16_t&>;
+		using ITxCompletedCallback = eos::ICallbackP0;
 
 		template <typename instance_>
 		using AddressMatchCallback = eos::CallbackP1<instance_, uint16_t>;
 
 		template <typename instance_>
-		using RxPartialCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		using RxDataCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
 
 		template <typename instance_>
 		using RxCompletedCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
 
 		template <typename instance_>
-		using TxPartialCallback = eos::CallbackP3<instance_, const uint8_t*, uint16_t, uint16_t&>;
+		using TxDataCallback = eos::CallbackP3<instance_, uint8_t*, uint16_t, uint16_t&>;
 
 		template <typename instance_>
-		using TxCompletedCallback = eos::CallbackP3<instance_, const uint8_t*, uint16_t, uint16_t&>;
+		using TxCompletedCallback = eos::CallbackP0<instance_>;
 
 		class I2CSlaveDevice {
 			private:
+				enum class State {
+					reset,
+					ready,
+					listen,
+					listenRx,
+					listenTx
+				};
+			private:
 				I2C_TypeDef * const _i2c;
+				State _state;
 				uint8_t *_buffer;
-				uint16_t _size;
+				uint16_t _bufferSize;
 				uint16_t _count;
+				uint16_t _maxCount;
 				IAddressMatchCallback *_addressMatchCallback;
-				IRxPartialCallback *_rxPartialCallback;
+				IRxDataCallback *_rxDataCallback;
 				IRxCompletedCallback *_rxCompletedCallback;
+				ITxDataCallback *_txDataCallback;
+				ITxCompletedCallback *_txCompletedCallback;
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *gpio);
+				void interruptServiceListen();
+				void interruptServiceListenRx();
+				void interruptServiceListenTx();
 				void interruptService();
+				void interruptServiceER();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 				virtual void resetImpl() = 0;
@@ -94,26 +110,37 @@ namespace htl {
 				inline void reset() {
 					resetImpl();
 				}
-				void initialize(uint16_t addr);
+				void initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				void deinitialize();
-				void setTimming(uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				inline void enableAddressMatchCallback(IAddressMatchCallback &callback) {
 					_addressMatchCallback = &callback;
 				}
-				inline void enableRxPartialCallback(IRxPartialCallback &callback) {
-					_rxPartialCallback = &callback;
+				inline void enableRxDataCallback(IRxDataCallback &callback) {
+					_rxDataCallback = &callback;
 				}
 				inline void enableRxCompletedCallback(IRxCompletedCallback &callback) {
 					_rxCompletedCallback = &callback;
 				}
+				inline void enableTxDataCallback(ITxDataCallback &callback) {
+					_txDataCallback = &callback;
+				}
+				inline void enableTxCompletedCallback(ITxCompletedCallback &callback) {
+					_txCompletedCallback = &callback;
+				}
 				inline void disableAddressMatchCallback() {
 					_addressMatchCallback = nullptr;
 				}
-				inline void disableRxPartialCallback() {
-					_rxPartialCallback = nullptr;
+				inline void disableRxDataCallback() {
+					_rxDataCallback = nullptr;
+				}
+				inline void disableTxDataCallback() {
+					_txDataCallback = nullptr;
 				}
 				inline void disableRxCompletedCallback() {
 					_rxCompletedCallback = nullptr;
+				}
+				inline void disableTxCompletedCallback() {
+					_txCompletedCallback = nullptr;
 				}
 				inline void enable() {
 					_i2c->CR1 |= I2C_CR1_PE;
@@ -121,7 +148,11 @@ namespace htl {
 				inline void disable() {
 					_i2c->CR1 &= ~I2C_CR1_PE;
 				}
-				void listen(uint8_t *buffer, uint16_t size);
+				void listen(uint8_t *buffer, uint16_t bufferSize);
+				void endListen();
+				inline State getState() const {
+					return _state;
+				}
 		};
 
 		typedef I2CSlaveDevice *I2CSlaveDeviceHandler;
@@ -176,13 +207,16 @@ namespace htl {
 				inline static void interruptHandler() {
 					getHandler()->interruptService();
 				}
+				inline static void interruptHandlerER() {
+					getHandler()->interruptServiceER();
+				}
 				template <typename pin_>
-				void initSCLPin() {
+				void initPinSCL() {
 					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::scl, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
-				void initSDAPin() {
+				void initPinSDA() {
 					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::sda, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, pinFunctionID);
 				}

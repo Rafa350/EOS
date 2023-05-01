@@ -135,7 +135,7 @@ namespace htl {
 			tmr8_BRK = TIM8_BRK_TIM12_IRQn,
 			tmr8_CC = TIM8_CC_IRQn,
 			tmr8_TRG = TIM8_TRG_COM_TIM14_IRQn,
-			tmr88_UP = TIM8_UP_TIM13_IRQn,
+			tmr8_UP = TIM8_UP_TIM13_IRQn,
 		#endif
 		#ifdef HTL_TMR9_EXIST
 			tmr9 = TIM1_BRK_TIM9_IRQn,

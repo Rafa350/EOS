@@ -25,8 +25,10 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 	CircularSerialDriver(txBuffer, txBufferSize, rxBuffer, rxBufferSize),
 	_i2c(i2c),
 	_addressMatchCallback(*this, &CircularSerialDriver_I2CSlave::addressMatchHandler),
-	_rxPartialCallback(*this, &CircularSerialDriver_I2CSlave::rxPartialHandler),
-	_rxCompletedCallback(*this, &CircularSerialDriver_I2CSlave::rxCompletedHandler) {
+	_rxDataCallback(*this, &CircularSerialDriver_I2CSlave::rxDataHandler),
+	_rxCompletedCallback(*this, &CircularSerialDriver_I2CSlave::rxCompletedHandler),
+	_txDataCallback(*this, &CircularSerialDriver_I2CSlave::txDataHandler),
+	_txCompletedCallback(*this, &CircularSerialDriver_I2CSlave::txCompletedHandler) {
 
 }
 
@@ -37,8 +39,10 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 void CircularSerialDriver_I2CSlave::initializeImpl() {
 
 	_i2c->enableAddressMatchCallback(_addressMatchCallback);
-	_i2c->enableRxPartialCallback(_rxPartialCallback);
+	_i2c->enableRxDataCallback(_rxDataCallback);
 	_i2c->enableRxCompletedCallback(_rxCompletedCallback);
+	_i2c->enableTxDataCallback(_txDataCallback);
+	_i2c->enableTxCompletedCallback(_txCompletedCallback);
 	_i2c->listen(_buffer, sizeof(_buffer));
 }
 
@@ -50,8 +54,11 @@ void CircularSerialDriver_I2CSlave::deinitializeImpl() {
 
 	_i2c->disable();
 	_i2c->disableAddressMatchCallback();
-	_i2c->disableRxPartialCallback();
+	_i2c->disableRxDataCallback();
 	_i2c->disableRxCompletedCallback();
+	_i2c->disableTxDataCallback();
+	_i2c->disableTxCompletedCallback();
+	_i2c->endListen();
 }
 
 
@@ -98,17 +105,19 @@ uint16_t CircularSerialDriver_I2CSlave::receiveImpl(
 void CircularSerialDriver_I2CSlave::addressMatchHandler(
 	uint16_t addr) {
 
+	addr = 0;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant el buffer es ple, pero no ha acabat
-///           la transmissio. Recepcio parcial.
+///           la recepcio.
 /// \param    buffer: El buffer de dades.
 /// \param    count: Nombre de bytes en el buffer.
 ///
-void CircularSerialDriver_I2CSlave::rxPartialHandler(
-		const uint8_t *buffer, uint16_t count) {
+void CircularSerialDriver_I2CSlave::rxDataHandler(
+	const uint8_t *buffer,
+	uint16_t count) {
 
 	if (count > 0) {
 		uint16_t availableSpace = rxAvailableSpace();
@@ -119,12 +128,13 @@ void CircularSerialDriver_I2CSlave::rxPartialHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant ha acabat la transmissio
+/// \brief    Es crida quant ha acabat la recepcio
 /// \param    buffer: El buffer de dades.
 /// \param    count: Nombre de bytes en el buffer.
 ///
 void CircularSerialDriver_I2CSlave::rxCompletedHandler(
-		const uint8_t *buffer, uint16_t count) {
+	const uint8_t *buffer,
+	uint16_t count) {
 
 	if (count > 0) {
 		uint16_t availableSpace = rxAvailableSpace();
@@ -133,4 +143,32 @@ void CircularSerialDriver_I2CSlave::rxCompletedHandler(
 	}
 	if (rxAvailableData() > 0)
 		notifyRxBufferNotEmpty();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Es crida quant el buffer es buit i calen dades per transmetre.
+/// \param    buffer: EL buffer de dades.
+/// \param    bufferSize: El tamany del buffer.
+/// \param    count: El nombre de bytes en el buffer.
+///
+void CircularSerialDriver_I2CSlave::txDataHandler(
+	uint8_t *buffer,
+	uint16_t bufferSize,
+	uint16_t &count) {
+
+	uint16_t availableData = txAvailableData();
+	count = 0;
+	while ((availableData > 0) && (count < bufferSize)) {
+		buffer[count++] = txPop();
+		availableData--;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Es criuda quant ha acabat la transmissio.
+///
+void CircularSerialDriver_I2CSlave::txCompletedHandler() {
+
 }

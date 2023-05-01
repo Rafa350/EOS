@@ -9,6 +9,32 @@
 
 namespace eos {
 
+	class ICallbackP0 {
+		public:
+			virtual ~ICallbackP0() {
+			}
+			virtual void execute() const = 0;
+	};
+
+	template <typename instance_>
+	class CallbackP0: public ICallbackP0 {
+		public:
+			using Method = void (instance_::*)();
+		private:
+			instance_ &_instance;
+			Method _method;
+		public:
+			inline CallbackP0(instance_ &instance, Method method):
+				_instance(instance),
+				_method(method) {
+			}
+			void execute() const override {
+				if (_method != nullptr)
+					(_instance.*_method)();
+			}
+	};
+
+
     template <typename param1_>
     class ICallbackP1 {
         public:
