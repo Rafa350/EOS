@@ -127,8 +127,13 @@ namespace htl {
 
 		using ITxCompletedCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
 
+		using IRxCompletedCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
+
 		template <typename instance_>
 		using TxCompletedCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+
+		template <typename instance_>
+		using RxCompletedCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
 
 		namespace internal {
 
@@ -140,8 +145,16 @@ namespace htl {
 		}
 
 		class UARTDevice {
+			public:
+				enum class State {
+					reset,
+					ready,
+					transmiting,
+					receiving
+				};
 			private:
 				USART_TypeDef * const _usart;
+				State _state;
 				uint8_t *_rxBuffer;
 				uint16_t _rxSize;
 				uint16_t _rxCount;
@@ -149,6 +162,7 @@ namespace htl {
 				uint16_t _txSize;
 				uint16_t _txCount;
 				ITxCompletedCallback *_txCompletedCallback;
+				IRxCompletedCallback *_rxCompletedCallback;
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
@@ -194,11 +208,20 @@ namespace htl {
 				inline void enableTxCompletedCallback(ITxCompletedCallback &callback) {
 					_txCompletedCallback = &callback;
 				}
+				inline void enableRxCompletedCallback(IRxCompletedCallback &callback) {
+					_rxCompletedCallback = &callback;
+				}
 				inline void disableTxCompletedCallback() {
 					_txCompletedCallback = nullptr;
 				}
+				inline void disableRxCompletedCallback() {
+					_rxCompletedCallback = nullptr;
+				}
 				uint16_t transmit(const uint8_t *buffer, uint16_t size);
 				uint16_t receive(uint8_t *buffer, uint16_t size);
+				State getState() const {
+					return _state;
+				}
 		};
 
 		typedef UARTDevice *UARTDeviceHandler;
@@ -245,22 +268,22 @@ namespace htl {
 					getHandler()->interruptService();
 				}
 				template <typename pin_>
-				void initTXPin() {
+				void initPinTX() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::tx, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
-				void initRXPin() {
+				void initPinRX() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::rx, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
-				void initCTSPin() {
+				void initPinCTS() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::cts, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
-				void initRTSPin() {
+				void initPinRTS() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::rts, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}

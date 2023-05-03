@@ -12,7 +12,7 @@ namespace eos {
 	class AsyncSerialDriver_I2CSlave final: public AsyncSerialDriver {
 		public:
 			using AddressMatchCallback = htl::i2c::AddressMatchCallback<AsyncSerialDriver_I2CSlave>;
-			using RxPartialCallback = htl::i2c::RxPartialCallback<AsyncSerialDriver_I2CSlave>;
+			using RxDataCallback = htl::i2c::RxDataCallback<AsyncSerialDriver_I2CSlave>;
 			using RxCompletedCallback = htl::i2c::RxCompletedCallback<AsyncSerialDriver_I2CSlave>;
 
 		private:
@@ -21,12 +21,12 @@ namespace eos {
 			int _txLength;
 			int _txCount;
 			AddressMatchCallback _addressMatchCallback;
-			RxPartialCallback _rxPartialCallback;
+			RxDataCallback _rxDataCallback;
 			RxCompletedCallback _rxCompletedCallback;
 
 		private:
 			void addressMatchHandler(uint16_t addr);
-			void rxPartialHandler(const uint8_t *buffer, uint16_t count);
+			void rxDataHandler(const uint8_t *buffer, uint16_t count);
 			void rxCompletedHandler(const uint8_t *buffer, uint16_t count);
 
 		protected:

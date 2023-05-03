@@ -96,7 +96,9 @@ UARTDevice::UARTDevice(
 	USART_TypeDef *usart):
 
 	_usart(usart),
-	_txCompletedCallback(nullptr) {
+	_state(State::reset),
+	_txCompletedCallback(nullptr),
+	_rxCompletedCallback(nullptr) {
 
 }
 
@@ -106,10 +108,15 @@ UARTDevice::UARTDevice(
 ///
 void UARTDevice::initialize() {
 
-	activate();
-	disable();
+	if (_state == State::reset) {
 
-	_usart->CR1 &= ~USART_CR1_FIFOEN;
+		activate();
+		disable();
+
+		_usart->CR1 &= ~USART_CR1_FIFOEN;
+
+		_state = State::ready;
+	}
 }
 
 
@@ -118,8 +125,13 @@ void UARTDevice::initialize() {
 ///
 void UARTDevice::deinitialize() {
 
-	disable();
-	deactivate();
+	if (_state == State::ready) {
+
+		disable();
+		deactivate();
+
+		_state = State::reset;
+	}
 }
 
 
@@ -376,6 +388,12 @@ uint16_t UARTDevice::transmit(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Reb un bloc de dades.
+/// \param    buffer: Buffer de dades.
+/// \param    size: Tamany del buffer en bytes.
+/// \return   El mombre de bytes rebuts.
+///
 uint16_t UARTDevice::receive(
 	uint8_t *buffer,
 	uint16_t size) {
@@ -383,6 +401,8 @@ uint16_t UARTDevice::receive(
 	_rxBuffer = buffer;
 	_rxSize = size;
 	_rxCount = 0;
+
+	enableRX();
 
 	return 0;
 }
@@ -434,8 +454,9 @@ void UARTDevice::interruptService() {
 				if (_rxCount == _rxSize) {
 					/*_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
 					_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-					_hUART->disableRX();
-					notifyRxCompleted(_rxCount);*/
+					_hUART->disableRX();*/
+					if (_rxCompletedCallback != nullptr)
+						_rxCompletedCallback->execute(_rxBuffer, _rxCount);
 				}
 			}
 		}
@@ -448,8 +469,9 @@ void UARTDevice::interruptService() {
 		/*	ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_)
 			_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
 				_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-				_hUART->disableRX();
-				notifyRxCompleted(_rxCount);*/
+				_hUART->disableRX();*/
+			if (_rxCompletedCallback != nullptr)
+				_rxCompletedCallback->execute(_rxBuffer, _rxCount);
 		}
 	}
 

@@ -14,9 +14,6 @@ namespace eos {
 			using TxCompletedCallback = htl::uart::TxCompletedCallback<AsyncSerialDriver_UART>;
 		private:
 			htl::uart::UARTDeviceHandler _uart;
-			uint8_t *_rxData;
-			int _rxSize;
-			int _rxCount;
 			TxCompletedCallback _txCompletedCallback;
 		private:
 			void initializeImpl() override;

@@ -22,8 +22,6 @@
 #define EXIST_LED1
 
 #define LED1_Pin             htl::gpio::PinC6
-#define LED1_PortID          LED1_Pin::portID
-#define LED1_PinID           LED1_Pin::pinID
 #define LED1_StateON         htl::gpio::PinState::set
 #define LED1_StateOFF        htl::gpio::PinState::clear
 

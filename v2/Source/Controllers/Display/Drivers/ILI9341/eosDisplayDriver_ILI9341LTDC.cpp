@@ -244,20 +244,20 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	auto spi(Spi::getHandler());
 	spi->initSCKPin<PinSCK>();
 	spi->initMOSIPin<PinMOSI>();
-	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::high, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_8);
+	spi->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
 	spi->enable();
 
 	// Inicialitza el modul LTDC
 	//
 	auto ltdc(ltdc::LTDCDevice::getHandler());
 	ltdc->initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	ltdc->initDEPin<PinDE>(_dePol);
-	ltdc->initHSYNCPin<PinHSYNC>(_hSyncPol);
-	ltdc->initVSYNCPin<PinVSYNC>(_vSyncPol);
-	ltdc->initPCPin<PinPC>(_pcPol);
-	ltdc->initRPins<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	ltdc->initGPins<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	ltdc->initBPins<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	ltdc->initPinDE<PinDE>(_dePol);
+	ltdc->initPinHSYNC<PinHSYNC>(_hSyncPol);
+	ltdc->initPinVSYNC<PinVSYNC>(_vSyncPol);
+	ltdc->initPinPC<PinPC>(_pcPol);
+	ltdc->initPinRX<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	ltdc->initPinGX<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	ltdc->initPinBX<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
 	ltdc->setBackgroundColor(RGB(0, 0, 255));
 
 	// Inicialitza la capa 1 del modul LTDC

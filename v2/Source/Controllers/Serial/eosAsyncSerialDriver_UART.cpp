@@ -27,6 +27,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
     AsyncSerialDriver::initializeImpl();
 
 	_uart->enableTxCompletedCallback(_txCompletedCallback);
+	_uart->enable();
 }
 
 
@@ -35,6 +36,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
 ///
 void AsyncSerialDriver_UART::deinitializeImpl() {
 
+	_uart->disable();
 	_uart->disableTxCompletedCallback();
 
     AsyncSerialDriver::deinitializeImpl();
@@ -89,17 +91,8 @@ bool AsyncSerialDriver_UART::receiveImpl(
 	else {
 		notifyRxStart();
 
-		_rxData = data;
-		_rxSize = dataSize;
-		_rxCount = 0;
+		_uart->receive(data, dataSize);
 
-		/*
-		_hUART->enableRX();
-		_hUART->enableInterrupt(UARTInterrupt::rxNotEmpty);
-        #ifdef EOS_PLATFORM_STM32
-			_hUART->enableInterrupt(UARTInterrupt::rxTimeout);
-        #endif
-*/
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles en la UART.
 

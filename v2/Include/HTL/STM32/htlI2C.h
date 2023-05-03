@@ -67,7 +67,7 @@ namespace htl {
 		using TxCompletedCallback = eos::CallbackP0<instance_>;
 
 		class I2CSlaveDevice {
-			private:
+			public:
 				enum class State {
 					reset,
 					ready,

@@ -16,7 +16,7 @@ AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
 
 	_i2c(i2c),
 	_addressMatchCallback(*this, &AsyncSerialDriver_I2CSlave::addressMatchHandler),
-	_rxPartialCallback(*this, &AsyncSerialDriver_I2CSlave::rxPartialHandler),
+	_rxDataCallback(*this, &AsyncSerialDriver_I2CSlave::rxDataHandler),
 	_rxCompletedCallback(*this, &AsyncSerialDriver_I2CSlave::rxCompletedHandler) {
 
 }
@@ -30,7 +30,7 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 	AsyncSerialDriver::initializeImpl();
 
 	_i2c->enableAddressMatchCallback(_addressMatchCallback);
-	_i2c->enableRxPartialCallback(_rxPartialCallback);
+	_i2c->enableRxDataCallback(_rxDataCallback);
 	_i2c->enableRxCompletedCallback(_rxCompletedCallback);
 }
 
@@ -41,7 +41,7 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 void AsyncSerialDriver_I2CSlave::deinitializeImpl() {
 
 	_i2c->disableAddressMatchCallback();
-	_i2c->disableRxPartialCallback();
+	_i2c->disableRxDataCallback();
 	_i2c->disableRxCompletedCallback();
 
 	AsyncSerialDriver::deinitializeImpl();
@@ -115,12 +115,13 @@ void AsyncSerialDriver_I2CSlave::addressMatchHandler(
 }
 
 
+/// ----------------------------------------------------------------------
 /// \brief    Es crida qwuan han arribat dades i el buffer es ple. Permet
 ///           buidar-lo i continuar la recepcio.
 /// \param    buffer: Buffer de dades.
 /// \param    count: Nombre de bytes en el buffer.
 ///
-void AsyncSerialDriver_I2CSlave::rxPartialHandler(
+void AsyncSerialDriver_I2CSlave::rxDataHandler(
 	const uint8_t *buffer,
 	uint16_t count) {
 
