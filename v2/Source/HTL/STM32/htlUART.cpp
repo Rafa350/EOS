@@ -105,8 +105,9 @@ UARTDevice::UARTDevice(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el modul UART.
+/// \return   El resultat de l'operacio.
 ///
-void UARTDevice::initialize() {
+UARTDevice::Result UARTDevice::initialize() {
 
 	if (_state == State::reset) {
 
@@ -114,16 +115,23 @@ void UARTDevice::initialize() {
 		disable();
 
 		_usart->CR1 &= ~USART_CR1_FIFOEN;
+	    _usart->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
+		_usart->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
 		_state = State::ready;
+		return Result::ok;
 	}
+
+	else
+		return Result::error;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el modul.
+/// \return   El resultat de l'operacio.
 ///
-void UARTDevice::deinitialize() {
+UARTDevice::Result UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -131,7 +139,12 @@ void UARTDevice::deinitialize() {
 		deactivate();
 
 		_state = State::reset;
+
+		return Result::ok;
 	}
+
+	else
+		return Result::error;
 }
 
 
@@ -140,6 +153,7 @@ void UARTDevice::deinitialize() {
 /// \param    wordBits: Lers opcions de paraula.
 /// \param    parity: Les opcions de paritat.
 /// \param    stopBits: Les opcions de parada.
+/// \param    handsake: Protocol.
 ///
 void UARTDevice::setProtocol(
 	WordBits wordBits,
@@ -309,26 +323,26 @@ void UARTDevice::setTimming(
 			#if defined(STM32F4) || defined(STM32F7)
     		if ((uint32_t(regs) == USART1_BASE) ||
     			(uint32_t(regs) == USART6_BASE))
-    			fclk =  Clock::getClockFrequency(ClockId::pclk2);
+    			fclk =  clock::getClockFrequency(clock::ClockID::pclk2);
     		else
 			#endif
-    			fclk = Clock::getClockFrequency(ClockId::pclk);
+    			fclk = clock::getClockFrequency(clock::ClockID::pclk);
     		break;
 
     	case ClockSource::sysclk:
-    		fclk = Clock::getClockFrequency(ClockId::sysclk);
+    		fclk = clock::getClockFrequency(clock::ClockID::sysclk);
     		break;
 
 		case ClockSource::hsi:
 			#if defined(EOS_PLATFORM_STM32G0)
-			fclk = Clock::getClockFrequency(ClockId::hsi16);
+			fclk = clock::getClockFrequency(clock::ClockID::hsi16);
 			#else
-			fclk = Clock::getClockFrequency(ClockId::hsi);
+			fclk = clock::getClockFrequency(clock::ClockID::hsi);
 			#endif
 			break;
 
 		case ClockSource::lse:
-    		fclk = Clock::getClockFrequency(ClockId::lse);
+    		fclk = clock::getClockFrequency(clock::ClockID::lse);
     		break;
     }
 
@@ -352,59 +366,56 @@ void UARTDevice::setTimming(
 }
 
 
-void UARTDevice::setRxTimeout(
-	uint32_t lostBits) {
-
-	if (_usart == reinterpret_cast<USART_TypeDef*>(USART1_BASE)) {
-
-		if (lostBits > 0) {
-			_usart->RTOR |= (lostBits << USART_RTOR_RTO_Pos) & USART_RTOR_RTO_Msk;
-			_usart->CR2 |= USART_CR2_RTOEN;
-		}
-		else
-			_usart->CR2 &= ~USART_CR2_RTOEN;
-
-	}
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
-/// \param    buffer: El bloc de dades.
-/// \param    size: Tamany del bloc de dades
-/// \return   El nombre de bytes transmessos.
+/// \param    data: Buffer de dades.
+/// \param    dataLength: El nombre de bytes en el buffer.
+/// \return   El resultat de l'operacio
 ///
-uint16_t UARTDevice::transmit(
-	const uint8_t *buffer,
-	uint16_t size) {
+UARTDevice::Result UARTDevice::transmit(
+	const uint8_t *data,
+	uint16_t dataLength) {
 
-	_txBuffer = buffer;
-	_txSize = size;
-	_txCount = 0;
+	if (_state == State::ready) {
 
-	enableTX();
+		_state = State::transmiting;
 
-	return 0;
+		_txBuffer = data;
+		_txSize = dataLength;
+		_txCount = 0;
+
+		_usart->CR1 |= USART_CR1_TXEIE_TXFNFIE;
+		enableTX();
+
+		return Result::ok;
+	}
+
+	else if ((_state == State::transmiting) || (_state == State::receiving))
+		return Result::busy;
+
+	else
+		return Result::error;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades.
-/// \param    buffer: Buffer de dades.
-/// \param    size: Tamany del buffer en bytes.
-/// \return   El mombre de bytes rebuts.
+/// \param    data: Buffer de dades.
+/// \param    dataSize: Tamany del buffer en bytes.
+/// \return   El resultat de l'operacio.
 ///
-uint16_t UARTDevice::receive(
-	uint8_t *buffer,
-	uint16_t size) {
+UARTDevice::Result UARTDevice::receive(
+	uint8_t *data,
+	uint16_t dataSize) {
 
-	_rxBuffer = buffer;
-	_rxSize = size;
+	_rxBuffer = data;
+	_rxSize = dataSize;
 	_rxCount = 0;
 
+	_usart->CR1 |= USART_CR1_RXNEIE_RXFNEIE;
 	enableRX();
 
-	return 0;
+	return Result::ok;
 }
 
 
@@ -413,12 +424,7 @@ uint16_t UARTDevice::receive(
 ///
 void UARTDevice::interruptService() {
 
-	uint32_t isr = _usart->ISR;
-	uint32_t cr1 = _usart->CR1;
-	uint32_t cr2 = _usart->CR2;
-	uint32_t icr = 0;
-
-	if (cr1 & USART_CR1_FIFOEN) {
+	if (_usart->CR1 & USART_CR1_FIFOEN) {
 
 	}
 
@@ -426,7 +432,7 @@ void UARTDevice::interruptService() {
 
 		// Interrupcio TXEFE (FIFO/TX empty)
 		//
-		if ((cr1 & USART_CR1_TXEIE_TXFNFIE) && (isr & USART_ISR_TXE_TXFNF)) {
+		if ((_usart->CR1 & USART_CR1_TXEIE_TXFNFIE) && (_usart->ISR & USART_ISR_TXE_TXFNF)) {
 
 			if (_txCount < _txSize) {
 				_usart->TDR = _txBuffer[_txCount++];
@@ -435,26 +441,25 @@ void UARTDevice::interruptService() {
 			}
 		}
 
-		// Interrupcio TXC
+		// Interrupcio TC (Transmission complete). Nomes en l'ultim caracter transmes
 		//
-		if ((cr1 & USART_CR1_TCIE) && (isr & USART_ISR_TC)) {
+		if ((_usart->CR1 & USART_CR1_TCIE) && (_usart->ISR & USART_ISR_TC)) {
 
-			icr |= USART_ICR_TCCF;
+			_usart->ICR |= USART_ICR_TCCF;
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
 			if (_txCompletedCallback != nullptr)
 				_txCompletedCallback->execute(_txBuffer, _txCount);
+			_state = State::ready;
 		}
 
 		/// Interupcio FIFO/RD not empty
 		//
-		if ((cr1 & USART_CR1_RXNEIE_RXFNEIE) && (isr & USART_ISR_RXNE_RXFNE)) {
+		if ((_usart->CR1 & USART_CR1_RXNEIE_RXFNEIE) && (_usart->ISR & USART_ISR_RXNE_RXFNE)) {
 
 			if (_rxCount < _rxSize) {
 				_rxBuffer[_rxCount++] = _usart->RDR;
 				if (_rxCount == _rxSize) {
-					/*_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
-					_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-					_hUART->disableRX();*/
+					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
 					if (_rxCompletedCallback != nullptr)
 						_rxCompletedCallback->execute(_rxBuffer, _rxCount);
 				}
@@ -463,18 +468,13 @@ void UARTDevice::interruptService() {
 
 		// Interrupcio RX timeout
 		//
-		if ((cr1 & USART_CR1_RTOIE) && (isr & USART_ISR_RTOF)) {
+		if ((_usart->CR1 & USART_CR1_RTOIE) && (_usart->ISR & USART_ISR_RTOF)) {
 
-			icr |= USART_ICR_RTOCF;
-		/*	ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_)
-			_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
-				_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-				_hUART->disableRX();*/
+			_usart->ICR |= USART_ICR_RTOCF;
+			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
 			if (_rxCompletedCallback != nullptr)
 				_rxCompletedCallback->execute(_rxBuffer, _rxCount);
 		}
 	}
-
-	_usart->ICR = icr;
 }
 

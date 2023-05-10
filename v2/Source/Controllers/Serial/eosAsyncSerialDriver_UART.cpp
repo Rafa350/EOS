@@ -15,7 +15,8 @@ AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 	uart::UARTDeviceHandler uart):
 
 	_uart(uart),
-	_txCompletedCallback(*this, &AsyncSerialDriver_UART::txCompletedHandler){
+	_txCompletedCallback(*this, &AsyncSerialDriver_UART::txCompletedHandler),
+	_rxCompletedCallback(*this, &AsyncSerialDriver_UART::rxCompletedHandler) {
 }
 
 
@@ -27,6 +28,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
     AsyncSerialDriver::initializeImpl();
 
 	_uart->enableTxCompletedCallback(_txCompletedCallback);
+	_uart->enableRxCompletedCallback(_rxCompletedCallback);
 	_uart->enable();
 }
 
@@ -38,6 +40,7 @@ void AsyncSerialDriver_UART::deinitializeImpl() {
 
 	_uart->disable();
 	_uart->disableTxCompletedCallback();
+	_uart->disableRxCompletedCallback();
 
     AsyncSerialDriver::deinitializeImpl();
 }
@@ -101,98 +104,27 @@ bool AsyncSerialDriver_UART::receiveImpl(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Es crida quant acaba la transmissio.
+/// \param    buffer: El buffer de dades.
+/// \param    count: En nombre de bytes transmessos.
+///
 void AsyncSerialDriver_UART::txCompletedHandler(
 	const uint8_t *buffer,
-	uint16_t size) {
+	uint16_t count) {
 
-	notifyTxCompleted(size);
+	notifyTxCompleted(count);
 }
 
-
-/*
 
 /// ----------------------------------------------------------------------
-/// \brief    Gestiona les interrupcions.
-/// \param    event: El event.
+/// \brief    Es crida quant acaba la recepcio.
+/// \param    buffer: El buffer de dades.
+/// \param    count: El nombre de bytes rebuts.
 ///
-#if defined(EOS_PLATFORM_STM32)
-void AsyncSerialDriver_UART::interruptHandler() {
+void AsyncSerialDriver_UART::rxCompletedHandler(
+	const uint8_t *buffer,
+	uint16_t count) {
 
-	if (_hUART->isInterruptEnabled(UARTInterrupt::txEmpty)) {
-
-		if (_hUART->getFlag(UARTFlag::txEmpty)) {
-			if (_txCount < _txLength) {
-				_txCount++;
-				_hUART->write(*_txData++);
-				if (_txCount == _txLength) {
-					_hUART->disableInterrupt(UARTInterrupt::txEmpty);
-					_hUART->enableInterrupt(UARTInterrupt::txComplete);
-				}
-			}
-		}
-	}
-
-	if (_hUART->isInterruptEnabled(UARTInterrupt::txComplete)) {
-
-		if (_hUART->getFlag(UARTFlag::txComplete)) {
-			_hUART->clearFlag(UARTFlag::txComplete);
-			_hUART->disableInterrupt(UARTInterrupt::txEmpty);
-			_hUART->disableInterrupt(UARTInterrupt::txComplete);
-			_hUART->disableTX();
-			notifyTxCompleted(_txCount);
-		}
-	}
-
-	if (_hUART->isInterruptEnabled(UARTInterrupt::rxNotEmpty)) {
-
-		if (_hUART->getFlag(UARTFlag::rxNotEmpty)) {
-			if (_rxCount < _rxSize) {
-				_rxCount++;
-				*_rxData++ = _hUART->read();
-				if (_rxCount == _rxSize) {
-					_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
-					_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-					_hUART->disableRX();
-					notifyRxCompleted(_rxCount);
-				}
-			}
-		}
-	}
-
-	if (_hUART->isInterruptEnabled(UARTInterrupt::rxTimeout)) {
-
-		if (_hUART->getFlag(UARTFlag::rxTimeout)) {
-			_hUART->clearFlag(UARTFlag::rxTimeout);
-			_hUART->disableInterrupt(UARTInterrupt::rxNotEmpty);
-			_hUART->disableInterrupt(UARTInterrupt::rxTimeout);
-			_hUART->disableRX();
-			notifyRxCompleted(_rxCount);
-		}
-	}
+	notifyRxCompleted(count);
 }
-
-
-#elif defined (EOS_PLATFORM_PIC32)
-void AsyncSerialDriver_UART::interruptHandler() {
-
-    if (_hUART->getFlag(UARTFlag::txEmpty)) {
-        if (_txCount < _txLength) {
-            _txCount++;
-            _hUART->write(*_txData++);
-        }
-        else {
-            _hUART->disableInterrupt(UARTInterrupt::txEmpty);
-            notifyTxCompleted(_txCount);
-        }
-    }
-
-    if (_hUART->getFlag(UARTFlag::rxNotEmpty)) {
-    }
-}
-
-
-#else
-#error "Undefined EOS_PLATFORM_XXXX"
-#endif
-*/
-

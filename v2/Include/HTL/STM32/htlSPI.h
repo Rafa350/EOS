@@ -170,7 +170,7 @@ namespace htl {
 				static SPIDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
-				static constexpr INTVector irqVectorID = HI::irqVectorID;
+				static constexpr irq::VectorID irqVectorID = HI::irqVectorID;
 			private:
 				SPIDeviceX() :
 					SPIDevice(reinterpret_cast<SPI_TypeDef *>(_spiAddr)) {
@@ -254,7 +254,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI1RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = INTVector::spi1;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi1;
 			};
 			#endif
 
@@ -273,7 +273,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_SPI2RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = INTVector::spi2;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi2;
 			};
 			#endif
 

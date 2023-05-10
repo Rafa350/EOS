@@ -87,6 +87,15 @@
 #ifdef TIM14_BASE
 	#define HTL_TMR14_EXIST
 #endif
+#ifdef TIM15_BASE
+	#define HTL_TMR15_EXIST
+#endif
+#ifdef TIM16_BASE
+	#define HTL_TMR16_EXIST
+#endif
+#ifdef TIM17_BASE
+	#define HTL_TMR17_EXIST
+#endif
 
 
 // Comprova l'existencia dels modulks I2C

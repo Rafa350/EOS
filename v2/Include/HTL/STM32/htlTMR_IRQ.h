@@ -13,46 +13,55 @@ extern "C" {
 #endif
 
 #ifdef HTL_TMR1_EXIST
-	void TMR_1_InterruptHandler();
+	void TMRDevice1_InterruptHandler();
 #endif
 #ifdef HTL_TMR2_EXIST
-	void TMR_2_InterruptHandler();
+	void TMRDevice2_InterruptHandler();
 #endif
 #ifdef HTL_TMR3_EXIST
-	void TMR_3_InterruptHandler();
+	void TMRDevice3_InterruptHandler();
 #endif
 #ifdef HTL_TMR4_EXIST
-	void TMR_4_InterruptHandler();
+	void TMRDevice4_InterruptHandler();
 #endif
 #ifdef HTL_TMR5_EXIST
-	void TMR_5_InterruptHandler();
+	void TMRDevice5_InterruptHandler();
 #endif
 #ifdef HTL_TMR6_EXIST
-	void TMR_6_InterruptHandler();
+	void TMRDevice6_InterruptHandler();
 #endif
 #ifdef HTL_TMR7_EXIST
-	void TMR_7_InterruptHandler();
+	void TMRDevice7_InterruptHandler();
 #endif
 #ifdef HTL_TMR8_EXIST
-	void TMR_8_InterruptHandler();
+	void TMRDevice8_InterruptHandler();
 #endif
 #ifdef HTL_TMR9_EXIST
-	void TMR_9_InterruptHandler();
+	void TMRDevice9_InterruptHandler();
 #endif
 #ifdef HTL_TMR10_EXIST
-	void TMR_10_InterruptHandler();
+	void TMRDevice10_InterruptHandler();
 #endif
 #ifdef HTL_TMR11_EXIST
-	void TMR_11_InterruptHandler();
+	void TMRDevice11_InterruptHandler();
 #endif
 #ifdef HTL_TMR12_EXIST
-	void TMR_12_InterruptHandler();
+	void TMRDevice12_InterruptHandler();
 #endif
 #ifdef HTL_TMR13_EXIST
-	void TMR_13_InterruptHandler();
+	void TMRDevice13_InterruptHandler();
 #endif
 #ifdef HTL_TMR14_EXIST
-	void TMR_14_InterruptHandler();
+	void TMRDevice14_InterruptHandler();
+#endif
+#ifdef HTL_TMR15_EXIST
+	void TMRDevice15_InterruptHandler();
+#endif
+#ifdef HTL_TMR16_EXIST
+	void TMRDevice16_InterruptHandler();
+#endif
+#ifdef HTL_TMR17_EXIST
+	void TMRDevice17_InterruptHandler();
 #endif
 	
 #ifdef __cplusplus

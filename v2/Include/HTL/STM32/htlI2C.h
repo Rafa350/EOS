@@ -75,6 +75,11 @@ namespace htl {
 					listenRx,
 					listenTx
 				};
+				enum class Result {
+					ok,
+					error,
+					busy
+				};
 			private:
 				I2C_TypeDef * const _i2c;
 				State _state;
@@ -110,8 +115,8 @@ namespace htl {
 				inline void reset() {
 					resetImpl();
 				}
-				void initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
-				void deinitialize();
+				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
+				Result deinitialize();
 				inline void enableAddressMatchCallback(IAddressMatchCallback &callback) {
 					_addressMatchCallback = &callback;
 				}
@@ -148,7 +153,7 @@ namespace htl {
 				inline void disable() {
 					_i2c->CR1 &= ~I2C_CR1_PE;
 				}
-				void listen(uint8_t *buffer, uint16_t bufferSize);
+				Result listen(uint8_t *buffer, uint16_t bufferSize);
 				void endListen();
 				inline State getState() const {
 					return _state;
@@ -180,7 +185,7 @@ namespace htl {
 				static I2CSlaveDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
-				static constexpr INTVector irqVectorID = HI::irqVectorID;
+				static constexpr irq::VectorID irqVectorID = HI::irqVectorID;
 			private:
 				I2CSlaveDeviceX() :
 					I2CSlaveDevice(reinterpret_cast<I2C_TypeDef *>(_i2cAddr)) {
@@ -262,7 +267,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C1RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = htl::INTVector::i2c1;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::i2c1;
 			};
 			#endif
 
@@ -286,7 +291,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_I2C2RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = htl::INTVector::i2c2;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::i2c2;
 			};
 			#endif
 

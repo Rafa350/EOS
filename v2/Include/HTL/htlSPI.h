@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __htlSPI__
 #define	__htlSPI__
 

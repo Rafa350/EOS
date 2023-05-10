@@ -3,116 +3,140 @@
 #include "HTL/STM32/htlTMR_IRQ.h"
 
 
-using namespace htl;
+using namespace htl::tmr;
 
 
 #ifdef HTL_TMR1_EXIST
-void TMR_1_InterruptHandler() {
+void TMRDevice1_InterruptHandler() {
 
-	TMR_1::interruptHandler();
+	TMRDevice1::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR2_EXIST
-void TMR_2_InterruptHandler() {
+void TMRDevice2_InterruptHandler() {
 
-	TMR_2::interruptHandler();
+	TMRDevice2::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR3_EXIST
-void TMR_3_InterruptHandler() {
+void TMRDevice3_InterruptHandler() {
 
-	TMR_3::interruptHandler();
+	TMRDevice3::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR4_EXIST
-void TMR_4_InterruptHandler() {
+void TMRDevice4_InterruptHandler() {
 
-	TMR_4::interruptHandler();
+	TMRDevice4::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR5_EXIST
-void TMR_5_InterruptHandler() {
+void TMRDevice5_InterruptHandler() {
 
-	TMR_5::interruptHandler();
+	TMRDevice5::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR6_EXIST
-void TMR_6_InterruptHandler() {
+void TMRDevice6_InterruptHandler() {
 
-	TMR_6::interruptHandler();
+	TMRDevice6::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR7_EXIST
-void TMR_7_InterruptHandler() {
+void TMRDevice7_InterruptHandler() {
 
-	TMR_7::interruptHandler();
+	TMRDevice7::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR8_EXIST
-void TMR_8_InterruptHandler() {
+void TMRDevice8_InterruptHandler() {
 
-	TMR_8::interruptHandler();
+	TMRDevice8::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR9_EXIST
-void TMR_9_InterruptHandler() {
+void TMRDevice9_InterruptHandler() {
 
-	TMR_9::interruptHandler();
+	TMRDevice9::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR10_EXIST
-void TMR_10_InterruptHandler() {
+void TMRDevice10_InterruptHandler() {
 
-	TMR_10::interruptHandler();
+	TMRDevice10::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR11_EXIST
-void TMR_11_InterruptHandler() {
+void TMRDevice11_InterruptHandler() {
 
-	TMR_11::interruptHandler();
+	TMRDevice11::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR12_EXIST
-void TMR_12_InterruptHandler() {
+void TMRDevice12_InterruptHandler() {
 
-	TMR_12::interruptHandler();
+	TMRDevice12::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR13_EXIST
-void TMR_13_InterruptHandler() {
+void TMRDevice13_InterruptHandler() {
 
-	TMR_13::interruptHandler();
+	TMRDevice13::interruptHandler();
 }
 #endif
 
 
 #ifdef HTL_TMR14_EXIST
-void TMR_14_InterruptHandler() {
+void TMRDevice14_InterruptHandler() {
 
-	TMR_14::interruptHandler();
+	TMRDevice14::interruptHandler();
+}
+#endif
+
+
+#ifdef HTL_TMR15_EXIST
+void TMRDevice15_InterruptHandler() {
+
+	TMRDevice15::interruptHandler();
+}
+#endif
+
+
+#ifdef HTL_TMR16_EXIST
+void TMRDevice16_InterruptHandler() {
+
+	TMRDevice16::interruptHandler();
+}
+#endif
+
+
+#ifdef HTL_TMR17_EXIST
+void TMRDevice17_InterruptHandler() {
+
+	TMRDevice17::interruptHandler();
 }
 #endif

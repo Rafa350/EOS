@@ -143,12 +143,12 @@ void DigInputService::onTask() {
 
                 if (input->_changedEventCallback != nullptr) {
 
-                    bool state = INT_1::disableInterrupts();
+                    bool state = irq::disableInterrupts();
 
                     bool edge = input->_edge;
                     input->_edge = false;
 
-                    INT_1::restoreInterrupts(state);
+                    irq::restoreInterrupts(state);
 
                     if (edge) {
 
@@ -229,9 +229,9 @@ htl::gpio::PinState DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    bool state = INT_1::disableInterrupts();
+    bool state = irq::disableInterrupts();
     htl::gpio::PinState pinState = input->_pinState;
-    INT_1::restoreInterrupts(state);
+    irq::restoreInterrupts(state);
     return pinState;
 }
 

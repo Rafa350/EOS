@@ -1,5 +1,5 @@
-#include "htl/htl.h"
-#include "htl/htlI2C.h"
+#include "HTL/htl.h"
+#include "HTL/htlI2C.h"
 
 
 using namespace htl::i2c;
@@ -30,7 +30,7 @@ I2CSlaveDevice::I2CSlaveDevice(
 /// \brief    Inicialitza el modul com esclau.
 /// \param    addr: Adressa I2C.
 ///
-void I2CSlaveDevice::initialize(
+I2CSlaveDevice::Result I2CSlaveDevice::initialize(
 	uint16_t addr,
 	uint8_t prescaler,
 	uint8_t scldel,
@@ -59,14 +59,19 @@ void I2CSlaveDevice::initialize(
 		_i2c->CR1 &= ~(I2C_CR1_NOSTRETCH | I2C_CR1_SBC);
 
 		_state = State::ready;
+
+		return Result::ok;
 	}
+
+	else
+		return Result::error;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el modul.
 ///
-void I2CSlaveDevice::deinitialize() {
+I2CSlaveDevice::Result I2CSlaveDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -74,7 +79,12 @@ void I2CSlaveDevice::deinitialize() {
 		deactivate();
 
 		_state = State::reset;
+
+		return Result::ok;
 	}
+
+	else
+		return Result::error;
 }
 
 
@@ -83,7 +93,7 @@ void I2CSlaveDevice::deinitialize() {
 /// \param    buffer: Buffer de dades.
 /// \param    bufferSize: Tamany del buffer de dades.
 ///
-void I2CSlaveDevice::listen(
+I2CSlaveDevice::Result I2CSlaveDevice::listen(
 	uint8_t *buffer,
 	uint16_t bufferSize) {
 
@@ -96,7 +106,12 @@ void I2CSlaveDevice::listen(
 		enable();
 
 		_i2c->CR1 |= I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE;
+
+		return Result::ok;
 	}
+
+	else
+		return Result::error;
 }
 
 
@@ -147,23 +162,17 @@ void I2CSlaveDevice::interruptService() {
 ///
 void I2CSlaveDevice::interruptServiceListen() {
 
-	// Obte el valor dels registres
-	//
-	uint32_t cr1 = _i2c->CR1;
-	uint32_t isr = _i2c->ISR;
-	uint32_t icr = _i2c->ICR;
-
 	// S'ha detectat coincidencia amb l'adressa.
 	//
-	if ((cr1 & I2C_CR1_ADDRIE) && (isr & I2C_ISR_ADDR)) {
+	if ((_i2c->CR1 & I2C_CR1_ADDRIE) && (_i2c->ISR & I2C_ISR_ADDR)) {
 
 		// Borra el flag i allivera el bus
 		//
-    	icr |= I2C_ICR_ADDRCF;
+		_i2c->ICR |= I2C_ICR_ADDRCF;
 
     	// Si es una transmissio
     	//
-    	if (isr & I2C_ISR_DIR) {
+    	if (_i2c->ISR & I2C_ISR_DIR) {
 
     		// Inicialitza els contadors
     		//
@@ -172,7 +181,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 
     		// Habilita la interrupcio TX
     		//
-    		cr1 |= I2C_CR1_TXIE;
+    		_i2c->CR1 |= I2C_CR1_TXIE;
 
     		_state = State::listenTx;
     	}
@@ -188,7 +197,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 
     		// Habilita la interrupcio RX
     		//
-    		cr1 |= I2C_CR1_RXIE;
+    		_i2c->CR1 |= I2C_CR1_RXIE;
 
     		_state = State::listenRx;
     	}
@@ -197,15 +206,10 @@ void I2CSlaveDevice::interruptServiceListen() {
     	//
     	if (_addressMatchCallback != nullptr)
     		_addressMatchCallback->execute(
-    			(((isr & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
-				(((isr & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0));
+    			(((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
+				(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0));
 
 	}
-
-	// Actualitza el valor dels registres.
-	//
-	_i2c->CR1 = cr1;
-	_i2c->ICR = icr;
 }
 
 
@@ -214,15 +218,9 @@ void I2CSlaveDevice::interruptServiceListen() {
 ///
 void I2CSlaveDevice::interruptServiceListenRx() {
 
-	// Obte el valor dels registres
-	//
-	uint32_t cr1 = _i2c->CR1;
-	uint32_t isr = _i2c->ISR;
-	uint32_t icr = _i2c->ICR;
-
 	// El registre de recepcio de dades no es buit
 	//
-	if ((cr1 & I2C_CR1_RXIE) &&	(isr & I2C_ISR_RXNE)) {
+	if ((_i2c->CR1 & I2C_CR1_RXIE) && (_i2c->ISR & I2C_ISR_RXNE)) {
 
 		// Lectura necesaria per borrar el flag i alliverar el bus
 		//
@@ -248,15 +246,15 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 
 	// Deteccio de la condicio STOP
 	//
-	if ((cr1 & I2C_CR1_STOPIE) && (isr & I2C_ISR_STOPF)) {
+	if ((_i2c->CR1 & I2C_CR1_STOPIE) && (_i2c->ISR & I2C_ISR_STOPF)) {
 
 		// Borra el flag
 		//
-    	icr |= I2C_ICR_STOPCF;
+		_i2c->ICR |= I2C_ICR_STOPCF;
 
     	// Desabilita les interrupcions
     	//
-    	cr1 &= ~I2C_CR1_RXIE;
+		_i2c->CR1 &= ~I2C_CR1_RXIE;
 
 		// Notifica el final
 		//
@@ -267,11 +265,6 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 		//
 		_state = State::listen;
 	}
-
-	// Actualitza el valor dels registres
-	//
-	_i2c->CR1 = cr1;
-	_i2c->ICR = icr;
 }
 
 
@@ -280,36 +273,26 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 ///
 void I2CSlaveDevice::interruptServiceListenTx() {
 
-	// Obte el valor dels registres
-	//
-	uint32_t cr1 = _i2c->CR1;
-	uint32_t isr = _i2c->ISR;
-	uint32_t icr = _i2c->ICR;
-
 	// S'ha detectat un NACK
 	//
-	if ((cr1 & I2C_CR1_NACKIE) && (isr & I2C_ISR_NACKF)) {
+	if ((_i2c->CR1 & I2C_CR1_NACKIE) && (_i2c->ISR & I2C_ISR_NACKF)) {
 
 		// Borra el flag
 		//
-		icr |= I2C_ICR_NACKCF;
+		_i2c->ICR |= I2C_ICR_NACKCF;
 	}
 
 	// S'ha detectat la condicio STOP
 	//
-	if ((cr1 & I2C_CR1_STOPIE) && (isr & I2C_ISR_STOPF)) {
+	if ((_i2c->CR1 & I2C_CR1_STOPIE) && (_i2c->ISR & I2C_ISR_STOPF)) {
 
 		// Borra el flag
 		//
-    	icr |= I2C_ICR_STOPCF;
+    	_i2c->ICR |= I2C_ICR_STOPCF;
 
     	// Desabilita les interrupcions
     	//
-    	cr1 &= ~(I2C_CR1_TXIE | I2C_CR1_RXIE);
-
-		// Deshabilita les interrupcions.
-		//
-		cr1 &= ~I2C_CR1_TXIE;
+    	_i2c->CR1 &= ~(I2C_CR1_TXIE | I2C_CR1_RXIE);
 
 		// Notifica el final
 		//
@@ -323,7 +306,7 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 
 	// El registre de transmissio de dades es buit
 	//
-	if ((cr1 & I2C_CR1_TXIE) && (isr & I2C_ISR_TXE)) {
+	if ((_i2c->CR1 & I2C_CR1_TXIE) && (_i2c->ISR & I2C_ISR_TXE)) {
 
 		// Si el buffer es buit, o si ja s'han transmet tot el contingut del
 		// buffer, ho notifica
@@ -341,12 +324,7 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 			_i2c->TXDR = _buffer[_count++];
 		else {
 			_i2c->TXDR = 0;
-			//cr1 &= ~I2C_CR1_TXIE;
+			//_i2c->CR1 &= ~I2C_CR1_TXIE;
 		}
 	}
-
-	// Actualitza el valor dels registres.
-	//
-	_i2c->CR1 = cr1;
-	_i2c->ICR = icr;
 }

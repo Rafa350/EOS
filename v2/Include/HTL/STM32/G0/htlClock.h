@@ -13,122 +13,122 @@
 
 namespace htl {
 
-	enum class ClockId {
-		sysclk,
-		pclk,
-		hclk,
-		hclk8,
-		hse,
-		hsi16,
-		hsi48,
-		lse,
-		lsi,
-		hsisys,
-		pllpclk,
-		pllqclk,
-		pllrclk
-	};
+	namespace clock {
 
-	enum class HseBypassMode {
-		on,
-		off,
-		unchanged
-	};
+		enum class ClockID {
+			sysclk,
+			pclk,
+			hclk,
+			hclk8,
+			hse,
+			hsi16,
+			hsi48,
+			lse,
+			lsi,
+			hsisys,
+			pllpclk,
+			pllqclk,
+			pllrclk
+		};
 
-	enum class MCOOutput {
-		_1,
-		_2
-	};
+		enum class HseBypassMode {
+			on,
+			off,
+			unchanged
+		};
 
-	enum class MCOSource {
-		none,
-		lsi,
-		lse,
-		sysclk,
-		hsi16,
-		hse,
-		pllrclk
-	};
+		enum class MCOOutput {
+			_1,
+			_2
+		};
 
-	enum class PllSource {
-		hsi16,
-		hse
-	};
+		enum class MCOSource {
+			none,
+			lsi,
+			lse,
+			sysclk,
+			hsi16,
+			hse,
+			pllrclk
+		};
 
-	enum class SysClkSource {
-		lsi,
-		lse,
-		hse,
-		pllrclk,
-		hsisys
-	};
+		enum class PllSource {
+			hsi16,
+			hse
+		};
 
-	enum class HsisysPrescaler {
-		_1,
-		_2,
-		_4,
-		_8,
-		_16,
-		_32,
-		_64,
-		_128
-	};
+		enum class SysClkSource {
+			lsi,
+			lse,
+			hse,
+			pllrclk,
+			hsisys
+		};
 
-	enum class HClkPrescaler {
-		_1,
-		_2,
-		_4,
-		_8,
-		_16,
-		_64,
-		_128,
-		_256,
-		_512
-	};
+		enum class HsisysPrescaler {
+			_1,
+			_2,
+			_4,
+			_8,
+			_16,
+			_32,
+			_64,
+			_128
+		};
 
-	enum class PClkPrescaler {
-		_1,
-		_2,
-		_4,
-		_8,
-		_16
-	};
+		enum class HClkPrescaler {
+			_1,
+			_2,
+			_4,
+			_8,
+			_16,
+			_64,
+			_128,
+			_256,
+			_512
+		};
 
-	class Clock {
-		public:
-			static void hsi16Enable();
-			static void hsi16Disable();
-            static bool isHsi16Enabled();
+		enum class PClkPrescaler {
+			_1,
+			_2,
+			_4,
+			_8,
+			_16
+		};
 
-            static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
-			static void hseDisable();
-			static bool isHseEnabled();
+		void hsi16Enable();
+		void hsi16Disable();
+		bool isHsi16Enabled();
 
-			static void lsiEnable();
-			static void lsiDisable();
-			static bool isLsiEnabled();
+		void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+		void hseDisable();
+		bool isHseEnabled();
 
-            static void lseEnable();
-            static void lseDisable();
-            static bool isLseEnabled();
+		void lsiEnable();
+		void lsiDisable();
+		bool isLsiEnabled();
 
-			static void pllEnable();
-			static void pllDisable();
-            static bool isPllEnabled();
-			static bool configurePll(PllSource source, int multiplier, int divider);
-			static bool configurePllP(int divider);
-			static bool configurePllQ(int divider);
-			static bool configurePllR(int divider);
+		void lseEnable();
+		void lseDisable();
+		bool isLseEnabled();
 
-			static void configureMCO(MCOOutput output, MCOSource source, int divider);
+		void pllEnable();
+	    void pllDisable();
+		bool isPllEnabled();
+		bool configurePll(PllSource source, int multiplier, int divider);
+		bool configurePllP(int divider);
+		bool configurePllQ(int divider);
+		bool configurePllR(int divider);
 
-			static bool setSysClkSource(SysClkSource source);
-			static void setHsisysPrescaler(HsisysPrescaler value);
-			static void setHClkPrescaler(HClkPrescaler value);
-			static void setPClkPrescaler(PClkPrescaler value);
+		void configureMCO(MCOOutput output, MCOSource source, int divider);
 
-			static unsigned getClockFrequency(ClockId clockId);
-	};
+		bool setSysClkSource(SysClkSource source);
+		void setHsisysPrescaler(HsisysPrescaler value);
+		void setHClkPrescaler(HClkPrescaler value);
+		void setPClkPrescaler(PClkPrescaler value);
+
+		unsigned getClockFrequency(ClockID clockId);
+	}
 }
 
 

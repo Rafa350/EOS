@@ -152,6 +152,11 @@ namespace htl {
 					transmiting,
 					receiving
 				};
+				enum class Result {
+					ok,
+					error,
+					busy
+				};
 			private:
 				USART_TypeDef * const _usart;
 				State _state;
@@ -200,11 +205,10 @@ namespace htl {
 				inline void disableRX() {
 					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RE);
 				}
-				void initialize();
-				void deinitialize();
+				Result initialize();
+				Result deinitialize();
 				void setProtocol(WordBits wordBits, Parity parity, StopBits stopBits, Handsake handlsake);
 				void setTimming(BaudMode baudMode, ClockSource clockSource, uint32_t rate, OverSampling oversampling);
-				void setRxTimeout(uint32_t lostBits);
 				inline void enableTxCompletedCallback(ITxCompletedCallback &callback) {
 					_txCompletedCallback = &callback;
 				}
@@ -217,8 +221,8 @@ namespace htl {
 				inline void disableRxCompletedCallback() {
 					_rxCompletedCallback = nullptr;
 				}
-				uint16_t transmit(const uint8_t *buffer, uint16_t size);
-				uint16_t receive(uint8_t *buffer, uint16_t size);
+				Result transmit(const uint8_t *data, uint16_t dataLength);
+				Result receive(uint8_t *data, uint16_t dataSize);
 				State getState() const {
 					return _state;
 				}
@@ -240,7 +244,7 @@ namespace htl {
 				static UARTDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
-				static constexpr INTVector irqVectorID = HI::vector;
+				static constexpr irq::VectorID irqVectorID = HI::irqVectorID;
 			private:
 				UARTDeviceX() :
 					UARTDevice(reinterpret_cast<USART_TypeDef*>(_usartAddr)) {
@@ -287,580 +291,21 @@ namespace htl {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::rts, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
+				void setRxTimeout(uint32_t lostBits) {
+					if constexpr(HI::supportedRxTimeout) {
+						USART_TypeDef *usart = reinterpret_cast<USART_TypeDef*>(_usartAddr);
+						if (lostBits > 0) {
+							usart->RTOR |= (lostBits << USART_RTOR_RTO_Pos) & USART_RTOR_RTO_Msk;
+							usart->CR2 |= USART_CR2_RTOEN;
+						}
+						else
+							usart->CR2 &= ~USART_CR2_RTOEN;
+					}
+				}
 		};
 
 		template <DeviceID deviceID_>
 		UARTDeviceX<deviceID_> UARTDeviceX<deviceID_>::_device;
-
-		/*	public:
-				/// \bried Inicialitza el modul.
-				///
-				static void initialize() {
-
-					activate();
-					disable();
-				}
-
-				/// \bried Desinicialitza el modul.
-				///
-				static void deinitialize() {
-
-					disable();
-					deactivate();
-				}
-
-				/// \brief Reseteja el modul
-				///
-				static void reset() {
-
-					#ifdef HTL_UART1_EXIST
-						if constexpr (channel_ == UARTChannel::_1)
-							UART1Reset();
-					#endif
-					#ifdef HTL_UART2_EXIST
-						if constexpr (channel_ == UARTChannel::_2)
-							UART2Reset();
-					#endif
-					#ifdef HTL_UART3_EXIST
-						if constexpr (channel_ == UARTChannel::_3)
-							UART3Reset();
-					#endif
-					#ifdef HTL_UART4_EXIST
-						if constexpr (channel_ == UARTChannel::_4)
-							UART4Reset();
-					#endif
-					#ifdef HTL_UART5_EXIST
-						if constexpr (channel_ == UARTChannel::_5)
-							UART5Reset();
-					#endif
-					#ifdef HTL_UART6_EXIST
-						if constexpr (channel_ == UARTChannel::_6)
-							UART6Reset();
-					#endif
-					#ifdef HTL_UART7_EXIST
-						if constexpr (channel_ == UARTChannel::_7)
-							UART7Reset();
-					#endif
-					#ifdef HTL_UART8_EXIST
-						if constexpr (channel_ == UARTChannel::_8)
-							UART8Reset();
-					#endif
-				}
-
-				/// \brief Habilita el modul.
-				///
-				static void enable() {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					regs->CR1 |= USART_CR1_UE;
-				}
-
-				/// \brief Habilita la transmisio
-				///
-				static void enableTX() {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					ATOMIC_SET_BIT(regs->CR1, USART_CR1_TE);
-				}
-
-				/// \brief Habilita la recepcio.
-				///
-				static void enableRX() {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					ATOMIC_SET_BIT(regs->CR1, USART_CR1_RE);
-				}
-
-				/// \brief Deshabilita el modul.
-				///
-				static void disable() {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					regs->CR1 &= ~(USART_CR1_UE | USART_CR1_RE | USART_CR1_TE);
-				}
-
-				/// \brief Deshabilita la transmisio.
-				///
-				static void disableTX() {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TE);
-				}
-
-				/// \brief Deshabilita la recepcio.
-				///
-				static void disableRX() {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RE);
-				}
-
-				/// \brief Configuracio del timing.
-				/// \param baudMode: Opcions de baud.
-				/// \param clocCource: Opcions del clock.
-				/// \param baud: El valor de velocitat.
-				/// \param overSampling: Valor del sobre mostrejat
-				///
-				static void setTimming(
-					UARTBaudMode baudMode = UARTBaudMode::_9600,
-					UARTClockSource clockSource = UARTClockSource::automatic,
-					uint32_t rate = 0,
-					UARTOverSampling overSampling = UARTOverSampling::_16) {
-
-					UARTBase_x::setTimming(
-						reinterpret_cast<USART_TypeDef*>(_addr),
-						baudMode,
-						clockSource,
-						rate,
-						overSampling);
-				}
-
-				/// \brief Configura el protocol de comunicacio.
-				/// \param work: Numero de bits de dades.
-				/// \param parity: Opcions de paritat.
-				/// \param stop: Numero dels bits de parada.
-				/// \param handsake: El protocol hardware.
-				///
-				static void setProtocol(
-					UARTWordBits wordBits,
-					UARTParity parity,
-					UARTStopBits stopBits,
-					UARTHandsake handsake = UARTHandsake::none) {
-
-					UARTBase_x::setProtocol(
-						reinterpret_cast<USART_TypeDef*>(_addr),
-						wordBits,
-						parity,
-						stopBits,
-						handsake);
-				}
-
-				/// \brief Configura el timeout per recepcio.
-				/// \param bits: Nombre de bits perduts per generar timeout
-				///
-				static void setRxTimeout(
-					uint32_t lostBits) {
-
-					if constexpr (Trait::supportedRxTimeout) {
-						USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-						if (lostBits > 0) {
-							regs->RTOR |= (lostBits << USART_RTOR_RTO_Pos) & USART_RTOR_RTO_Msk;
-							regs->CR2 |= USART_CR2_RTOEN;
-						}
-						else
-							regs->CR2 &= ~USART_CR2_RTOEN;
-					}
-				}
-
-				/// \brief Inicialitza el pin TX
-				///
-				template <typename gpio_>
-				static void initTXPin() {
-
-					gpio_::initAlt(
-						htl::gpio::OutDriver::pushPull,
-						htl::gpio::Speed::fast,
-						UARTPinTrait<channel_, gpio_, UARTPin::TX>::alt);
-				}
-
-				/// \brief Inicialitza el pin RX
-				///
-				template <typename gpio_>
-				static void initRXPin() {
-
-					gpio_::initAlt(
-						htl::gpio::OutDriver::pushPull,
-						htl::gpio::Speed::fast,
-						UARTPinTrait<channel_, gpio_, UARTPin::RX>::alt);
-				}
-
-				/// \brief Inicialitza el pin CTS
-				///
-				template <typename gpio_>
-				static void initCTSPin() {
-
-					gpio_::initAlt(
-						htl::gpio::OutDriver::pushPull,
-						htl::gpio::Speed::fast,
-						UARTPinTrait<channel_, gpio_, UARTPin::CTS>::alt);
-				}
-
-				/// \brief Inicialitza el pin RTS
-				///
-				template <typename gpio_>
-				static void initRTSPin() {
-
-					gpio_::initAlt(
-						htl::gpio::OutDriver::pushPull,
-						htl::gpio::Speed::fast,
-						UARTPinTrait<channel_, gpio_, UARTPin::RTS>::alt);
-				}
-
-				/// \brief Escriu un byte en el buffer de transmissio.
-				/// \param data: El byte.
-				///
-				static void write(
-					uint8_t data) {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					regs->TDR = data;
-				}
-
-				/// \brief Llegeix un byte del buffer de recepcio.
-				/// \return El byte.
-				///
-				static uint8_t read() {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					return regs->RDR;
-				}
-
-				/// \brief Habilita les interrupcions
-				/// \param interrupt: La interrupcio.
-				///
-				static void enableInterrupt(
-					UARTInterrupt interrupt) {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					switch (interrupt) {
-						case UARTInterrupt::cts:
-							ATOMIC_SET_BIT(regs->CR3, USART_CR3_CTSIE);
-							break;
-
-						#if HTL_UART_LINMODE_SUPPORT == 1
-							case UARTInterrupt::linBrk:
-								ATOMIC_SET_BIT(regs->CR2, USART_CR2_LBDIE);
-								break;
-						#endif
-
-						case UARTInterrupt::idle:
-							ATOMIC_SET_BIT(regs->CR1, USART_CR1_IDLEIE);
-							break;
-
-						case UARTInterrupt::txEmpty:
-							ATOMIC_SET_BIT(regs->CR1, USART_CR1_TXEIE);
-							break;
-
-						case UARTInterrupt::txComplete:
-							ATOMIC_SET_BIT(regs->CR1, USART_CR1_TCIE);
-							break;
-
-						case UARTInterrupt::rxNotEmpty:
-							ATOMIC_SET_BIT(regs->CR1, USART_CR1_RXNEIE);
-							break;
-
-						case UARTInterrupt::parity:
-							ATOMIC_SET_BIT(regs->CR1, USART_CR1_PEIE);
-							break;
-
-						case UARTInterrupt::rxTimeout:
-							if constexpr (Trait::supportedRxTimeout)
-								ATOMIC_SET_BIT(regs->CR1, USART_CR1_RTOIE);
-							break;
-
-						case UARTInterrupt::endOfBlock:
-							ATOMIC_SET_BIT(regs->CR1, USART_CR1_EOBIE);
-							break;
-
-						case UARTInterrupt::match:
-							ATOMIC_SET_BIT(regs->CR1, USART_CR1_CMIE);
-							break;
-
-						case UARTInterrupt::error:
-							ATOMIC_SET_BIT(regs->CR3, USART_CR3_EIE);
-							break;
-					}
-				}
-
-				/// \brief Deshabilita les interrupcions
-				/// \param event: El event.
-				///
-				static bool disableInterrupt(
-					UARTInterrupt interrupt) {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-
-					bool state = false;
-					switch (interrupt) {
-						case UARTInterrupt::cts:
-							state = (regs->CR3 & USART_CR3_CTSIE) != 0;
-							ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_CTSIE);
-							break;
-
-						#if HTL_UART_LINMODE_SUPPORT == 1
-							case UARTInterrupt::linBrk:
-								state = (regs->CR2 & USART_CR2_LBDIE) != 0;
-								ATOMIC_CLEAR_BIT(regs->CR2, USART_CR2_LBDIE);
-								break;
-						#endif
-
-						case UARTInterrupt::idle:
-							state = (regs->CR1 & USART_CR1_IDLEIE) != 0;
-							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_IDLEIE);
-							break;
-
-						case UARTInterrupt::txEmpty:
-							state = (regs->CR1 & USART_CR1_TXEIE) != 0;
-							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TXEIE);
-							break;
-
-						case UARTInterrupt::txComplete:
-							state = (regs->CR1 & USART_CR1_TCIE) != 0;
-							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_TCIE);
-							break;
-
-						case UARTInterrupt::rxNotEmpty:
-							state = regs->CR1 & USART_CR1_RXNEIE;
-							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RXNEIE);
-							break;
-
-						case UARTInterrupt::parity:
-							state = (regs->CR1 & USART_CR1_PEIE) != 0;
-							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_PEIE);
-							break;
-
-						case UARTInterrupt::rxTimeout:
-							if constexpr (Trait::supportedRxTimeout) {
-								state = (regs->CR1 & USART_CR1_RTOIE) != 0;
-								ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_RTOIE);
-							}
-							break;
-
-						#ifdef USART_CR1_EOBIE
-							case UARTInterrupt::endOfBlock:
-								state = (regs->CR1 & USART_CR1_EOBIE) != 0;
-								ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_EOBIE);
-								break;
-						#endif
-
-						case UARTInterrupt::match:
-							state = (regs->CR1 & USART_CR1_CMIE) != 0;
-							ATOMIC_CLEAR_BIT(regs->CR1, USART_CR1_CMIE);
-							break;
-
-						case UARTInterrupt::error:
-							state = (regs->CR3 & USART_CR3_EIE) != 0;
-							ATOMIC_CLEAR_BIT(regs->CR3, USART_CR3_EIE);
-							break;
-					}
-
-					return state;
-				}
-
-				/// \brief Comprova si la interrupcio esta habilidata
-				// \param interrupt: La interrupcio.
-				// \return True si esta habilitada, false en cas conmtrari
-				//
-				static bool isInterruptEnabled(
-					UARTInterrupt interrupt) {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-
-					bool state = false;
-					switch (interrupt) {
-						case UARTInterrupt::cts:
-							state = (regs->CR3 & USART_CR3_CTSIE) != 0;
-							break;
-
-						#if HTL_UART_LINMODE_SUPPORT == 1
-							case UARTInterrupt::linBrk:
-								state = (regs->CR2 & USART_CR2_LBDIE) != 0;
-								break;
-						#endif
-
-						case UARTInterrupt::idle:
-							state = (regs->CR1 & USART_CR1_IDLEIE) != 0;
-							break;
-
-						case UARTInterrupt::txEmpty:
-							state = (regs->CR1 &USART_CR1_TXEIE) != 0;
-							break;
-
-						case UARTInterrupt::txComplete:
-							state = (regs->CR1 & USART_CR1_TCIE) != 0;
-							break;
-
-						case UARTInterrupt::rxNotEmpty:
-							state = (regs->CR1 & USART_CR1_RXNEIE) != 0;
-							break;
-
-						case UARTInterrupt::parity:
-							state = (regs->CR1 & USART_CR1_PEIE) != 0;
-							break;
-
-						case UARTInterrupt::rxTimeout:
-							if constexpr (Trait::supportedRxTimeout)
-								state = (regs->CR1 & USART_CR1_RTOIE) != 0;
-							break;
-
-						case UARTInterrupt::endOfBlock:
-							state = (regs->CR1 & USART_CR1_EOBIE) != 0;
-							break;
-
-						case UARTInterrupt::match:
-							state = (regs->CR1, USART_CR1_CMIE) != 0;
-							break;
-
-						case UARTInterrupt::error:
-							state = (regs->CR3 & USART_CR3_EIE) != 0;
-							break;
-					}
-
-					return state;
-				}
-
-				/// \brief Obte un flag.
-				/// \param flag: El flag.
-				///
-				static bool getFlag(
-					UARTFlag flag) {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					switch (flag) {
-						case UARTFlag::framming:
-							return (regs->ISR & USART_ISR_FE) != 0;
-
-						case UARTFlag::idle:
-							return (regs->ISR & USART_ISR_IDLE) != 0;
-
-						case UARTFlag::noise:
-							return (regs->ISR & USART_ISR_NE) != 0;
-
-						case UARTFlag::overrun:
-							return (regs->ISR & USART_ISR_ORE) != 0;
-
-						case UARTFlag::parity:
-							return (regs->ISR & USART_ISR_PE) != 0;
-
-						case UARTFlag::txComplete:
-							return (regs->ISR & USART_ISR_TC) != 0;
-
-						case UARTFlag::txEmpty:
-							return (regs->ISR & USART_ISR_TXE) != 0;
-
-						case UARTFlag::rxNotEmpty:
-							return (regs->ISR & USART_ISR_RXNE) != 0;
-
-						case UARTFlag::rxTimeout:
-							if constexpr (Trait::supportedRxTimeout)
-								return (regs->ISR & USART_ISR_RTOF) != 0;
-							else
-								return false;
-
-						case UARTFlag::cts:
-							return (regs->ISR & USART_ISR_CTSIF) != 0;
-
-						default:
-							return false;
-					}
-				}
-
-				static bool isTxEmpty()  {
-
-					return  getFlag(UARTFlag::txEmpty);
-				}
-
-				static bool isTxComplete()  {
-
-					return  getFlag(UARTFlag::txComplete);
-				}
-
-				static bool isRxNotEmpty() {
-
-					return getFlag(UARTFlag::rxNotEmpty);
-				}
-
-				static bool isRxTimeout() {
-
-					if constexpr (Trait::suportedRxTimeout)
-						return getFlag(UARTFlag::rxTimeout);
-					else
-						return false;
-				}
-
-				/// \brief Borra el flag.
-				/// \param flag: El flag.
-				///
-				static void clearFlag(
-					UARTFlag flag) {
-
-					USART_TypeDef *regs = reinterpret_cast<USART_TypeDef*>(_addr);
-					switch (flag) {
-						case UARTFlag::cts:
-							regs->ICR = USART_ICR_CTSCF;
-							break;
-
-						#ifdef USART_ICR_EOBCF
-							case UARTFlag::endOfBlock:
-								regs->ICR = USART_ICR_EOBCF;
-								break;
-						#endif
-
-						case UARTFlag::framming:
-							regs->ICR = USART_ICR_FECF;
-							break;
-
-						case UARTFlag::idle:
-							regs->ICR = USART_ICR_IDLECF;
-							break;
-
-						case UARTFlag::noise:
-							regs->ICR = USART_ICR_NCF;
-							break;
-
-						case UARTFlag::overrun:
-							regs->ICR = USART_ICR_ORECF;
-							break;
-
-						case UARTFlag::parity:
-							regs->ICR = USART_ICR_PECF;
-							break;
-
-						case UARTFlag::rxTimeout:
-							if constexpr (Trait::supportedRxTimeout)
-								regs->ICR = USART_ICR_RTOCF;
-							break;
-
-						case UARTFlag::txComplete:
-							regs->ICR = USART_ICR_TCCF;
-							break;
-
-						#if HTL_UART_LINMODE_SUPPORT == 1
-							case UARTFlag::linBrk:
-								regs->ICR = USART_ICR_LBDCF;
-								break;
-						#endif
-
-						case UARTFlag::match:
-							regs->ICR = USART_ICR_CMCF;
-							break;
-
-						default:
-							break;
-					}
-				}
-
-				/// \brief Asigna la funcio d'interrupcio.
-				/// \param function: La funcio.
-				/// \param param: El parametre.
-				///
-				static void setInterruptFunction(
-					UARTInterruptFunction function,
-					UARTInterruptParam param) {
-
-					_isrFunction = function;
-					_isrParam = param;
-				}
-
-				/// \brief Invoca la funcio d'interrupcio.
-				/// \param event: L'event.
-				//
-				static void interruptHandler() {
-
-					if (_isrFunction != nullptr)
-						_isrFunction(_isrParam);
-				}
-		};*/
 
 
 		#ifdef HTL_UART1_EXIST
@@ -900,7 +345,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR2);
 				static constexpr uint32_t rccResetPos = RCC_APBRSTR2_USART1RST_Pos;
 				#endif
-				static constexpr INTVector vector = INTVector::uart1;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::uart1;
 			};
 			#endif
 
@@ -916,12 +361,10 @@ namespace htl {
 				static constexpr bool supportedRxTimeout = false;
 				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr bool supportedRxTimeout = true;
-				#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr bool supportedRxTimeout = false;
 				#else
 				#error Plataforma no soportada
 				#endif
-				static constexpr INTVector vector = INTVector::uart2;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::uart2;
 			};
 			#endif
 

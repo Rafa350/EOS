@@ -230,7 +230,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza el pin RST
 	//
-	#ifdef DISPLAY_RST_GPIO
+	#ifdef DISPLAY_RST_PIN
 	auto pinRST = PinRST::getHandler();
 	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::InitPinState::clear);
 	#endif
@@ -253,12 +253,12 @@ void DisplayDriver_SSD1306::initializeController() {
 
 	// Reseteja el controlador
 	//
-	#ifdef DISPLAY_RST_GPIO
+	#ifdef DISPLAY_RST_PIN
 	auto pinRST = PinRST::getHandler();
 	pinRST->clear();
-	halTMRDelay(10);
+	//halTMRDelay(10);
 	pinRST->set();
-	halTMRDelay(150);
+	//halTMRDelay(150);
 	#endif
 
     // Inicialitza el controlador
