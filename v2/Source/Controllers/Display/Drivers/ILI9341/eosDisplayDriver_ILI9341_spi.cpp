@@ -47,7 +47,7 @@ void DisplayDriver_ILI9341::initializeInterface() {
 	auto spi = Spi::getHandler();
 	spi->initSCKPin<PinSCK>();
 	spi->initMOSIPin<PinMOSI>();
-	spi->initialize(spi::SPIMode::master, spi::SPIClkPolarity::high, spi::SPIClkPhase::edge1, spi::SPISize::_8, spi::SPIFirstBit::msb, spi::SPIClockDivider::_8);
+	spi->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
 	spi->enable();
 }
 

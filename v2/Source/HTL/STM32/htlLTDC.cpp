@@ -158,11 +158,6 @@ void LTDCDevice::interruptService() {
 }
 
 
-void LTDCDevice::interruptERService() {
-
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    layer: Registres de hardware del modul LTDC_Layer.

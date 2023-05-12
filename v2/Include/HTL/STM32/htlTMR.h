@@ -55,6 +55,15 @@ namespace htl {
 			#ifdef HTL_TMR14_EXIST
 				_14,
 			#endif
+			#ifdef HTL_TMR15_EXIST
+				_15,
+			#endif
+			#ifdef HTL_TMR16_EXIST
+				_16,
+			#endif
+			#ifdef HTL_TMR17_EXIST
+				_17,
+			#endif
 		};
 
 		enum class TMRType {
@@ -63,17 +72,23 @@ namespace htl {
 			advanced
 		};
 
-		enum class TMRDirection {
+		enum class CountDirection {
 			up,
 			down
 		};
 
-		enum class TMRResolution {
+		enum class CountResolution {
 			_16,
 			_32
 		};
 
-		enum class TMRClockDivider {
+		/*enum class ClockSource {
+			pclk1,
+			pclk2,
+			pllqclk
+		};*/
+
+		enum class ClockDivider {
 			_1,
 			_2,
 			_4
@@ -96,11 +111,14 @@ namespace htl {
 			com
 		};
 
-		using ITriggerCallback = eos::ICallbackP1<uint16_t>;
+		using ITriggerEventCallback = eos::ICallbackP1<uint16_t>;
+		using IUpdateEventCallback = eos::ICallbackP1<uint16_t>;
 
 		template <typename instance_>
-		using TriggerCallback = eos::CallbackP1<instance_, uint16_t>;
+		using TriggerEventCallback = eos::CallbackP1<instance_, uint16_t>;
 
+		template <typename instance_>
+		using UpdateEventCallback = eos::CallbackP1<instance_, uint16_t>;
 
 		namespace internal {
 
@@ -111,7 +129,8 @@ namespace htl {
 		class TMRDevice {
 			private:
 				TIM_TypeDef * const _tim;
-				ITriggerCallback *_triggerCallback;
+				ITriggerEventCallback *_triggerEventCallback;
+				IUpdateEventCallback *_updateEventCallback;
 			private:
 				TMRDevice(const TMRDevice &) = delete;
 				TMRDevice & operator = (const TMRDevice &) = delete;
@@ -133,16 +152,22 @@ namespace htl {
 				}
 				void initialize();
 				void deinitialize();
-				void setDirection(TMRDirection direction);
-				void setResolution(TMRResolution);
+				void setDirection(CountDirection direction);
+				void setResolution(CountResolution);
 				void setPeriod(uint32_t period);
 				void setPrescaler(uint32_t prescaler);
-				void setClockDivider(TMRClockDivider clockDivider);
-				inline void enableTriggerCallback(ITriggerCallback &callback) {
-					_triggerCallback = &callback;
+				void setClockDivider(ClockDivider clockDivider);
+				inline void enableTriggerEventCallback(ITriggerEventCallback &callback) {
+					_triggerEventCallback = &callback;
 				}
-				inline void disableTriggerCallback() {
-					_triggerCallback = nullptr;
+				inline void enableUpdateEventCallback(IUpdateEventCallback &callback) {
+					_updateEventCallback = &callback;
+				}
+				inline void disableTriggerEventCallback() {
+					_triggerEventCallback = nullptr;
+				}
+				inline void disableUpdateEventCallback() {
+					_updateEventCallback = nullptr;
 				}
 				inline void start() {
 					_tim->CR1 |= TIM_CR1_CEN;
@@ -241,6 +266,15 @@ namespace htl {
 		#endif
 		#ifdef HTL_TMR14_EXIST
 			using TMRDevice14 = TMRDeviceX<DeviceID::_14>;
+		#endif
+		#ifdef HTL_TMR15_EXIST
+			using TMRDevice15 = TMRDeviceX<DeviceID::_15>;
+		#endif
+		#ifdef HTL_TMR16_EXIST
+			using TMRDevice16 = TMRDeviceX<DeviceID::_16>;
+		#endif
+		#ifdef HTL_TMR17_EXIST
+			using TMRDevice17 = TMRDeviceX<DeviceID::_17>;
 		#endif
 
 		namespace internal {

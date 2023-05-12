@@ -103,9 +103,9 @@ namespace htl {
 				spi6 = SPI6_IRQn,
 			#endif
 			#ifdef HTL_TMR1_EXIST
+				#if defined(EOS_PLATFORM_STM32G0)
 					tmr1_CC = TIM1_CC_IRQn,
 					tmr1_BRK_UP_TRG_COM = TIM1_BRK_UP_TRG_COM_IRQn,
-				#if defined(EOS_PLATFORM_STM32G0)
 				#elif defined(EOS_PLATFORM_STM32F0)
 					tmr1_BRK = TIM1_BRK_UP_TRG_COM_IRQn,
 					tmr1_CC = TIM1_CC_IRQn,

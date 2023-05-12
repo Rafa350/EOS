@@ -318,6 +318,18 @@ namespace htl {
 		#ifdef HTL_GPIOG_EXIST
 		typedef PortX<PortID::G> PortG;
 		#endif
+		#ifdef HTL_GPIOH_EXIST
+		typedef PortX<PortID::H> PortH;
+		#endif
+		#ifdef HTL_GPIOI_EXIST
+		typedef PortX<PortID::I> PortI;
+		#endif
+		#ifdef HTL_GPIOJ_EXIST
+		typedef PortX<PortID::J> PortJ;
+		#endif
+		#ifdef HTL_GPIOK_EXIST
+		typedef PortX<PortID::K> PortK;
+		#endif
 
 
 		template <PortID portID_, PinID pinID_>

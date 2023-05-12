@@ -287,7 +287,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_SPI3RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = INTVector::spi3;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi3;
 			};
 			#endif
 
@@ -301,7 +301,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI4RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = INTVector::spi4;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi4;
 			};
 			#endif
 
@@ -315,7 +315,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI5RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = INTVector::spi5;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi5;
 			};
 			#endif
 
@@ -329,7 +329,7 @@ namespace htl {
 				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
 				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI6RST_Pos;
 				#endif
-				static constexpr INTVector irqVectorID = INTVector::spi6;
+				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi6;
 			};
 			#endif
 		}

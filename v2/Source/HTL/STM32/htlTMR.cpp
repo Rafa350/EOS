@@ -13,11 +13,15 @@ TMRDevice::TMRDevice(
 	TIM_TypeDef *tim) :
 
 	_tim(tim),
-	_triggerCallback(nullptr) {
+	_triggerEventCallback(nullptr),
+	_updateEventCallback(nullptr) {
 
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el timer.
+///
 void TMRDevice::initialize() {
 
 	activate();
@@ -26,6 +30,9 @@ void TMRDevice::initialize() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el timer.
+///
 void TMRDevice::deinitialize() {
 
 	_tim->CR1 &= ~TIM_CR1_CEN;
@@ -36,16 +43,16 @@ void TMRDevice::deinitialize() {
 
 
 void TMRDevice::setDirection(
-	TMRDirection direction) {
+	CountDirection direction) {
 
-	if (direction == TMRDirection::down)
+	if (direction == CountDirection::down)
 		_tim->CR1 |= TIM_CR1_DIR;
 	else
 		_tim->CR1 &= ~TIM_CR1_DIR;
 }
 
 void TMRDevice::setResolution(
-	TMRResolution resolution) {
+	CountResolution resolution) {
 }
 
 
@@ -64,20 +71,20 @@ void TMRDevice::setPrescaler(
 
 
 void TMRDevice::setClockDivider(
-	TMRClockDivider clockDivider) {
+	ClockDivider clockDivider) {
 
 	//if constexpr (HI::type != TMRType::basic) {
 		uint32_t temp = _tim->CR1;
 		temp &= ~TIM_CR1_CKD;
 		switch (clockDivider) {
-			case TMRClockDivider::_1:
+			case ClockDivider::_1:
 				break;
 
-			case TMRClockDivider::_2:
+			case ClockDivider::_2:
 				temp |= TIM_CR1_CKD_0;
 				break;
 
-			case TMRClockDivider::_4:
+			case ClockDivider::_4:
 				temp |= TIM_CR1_CKD_1;
 				break;
 		}
@@ -201,7 +208,13 @@ void TMRDevice::interruptService() {
 
 	if ((_tim->SR & TIM_SR_TIF) && (_tim->DIER & TIM_DIER_TIE)) {
 		_tim->SR &= ~TIM_SR_TIF;
-		if (_triggerCallback != nullptr)
-			_triggerCallback->execute(0);
+		if (_triggerEventCallback != nullptr)
+			_triggerEventCallback->execute(0);
+	}
+
+	if ((_tim->SR & TIM_SR_UIF) && (_tim->DIER & TIM_DIER_UIE)) {
+		_tim->SR &= ~TIM_SR_UIF;
+		if (_updateEventCallback != nullptr)
+			_updateEventCallback->execute(0);
 	}
 }
