@@ -11,9 +11,7 @@ LTDCDevice LTDCDevice::_device;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-LTDCDevice::LTDCDevice():
-	_ltdc(reinterpret_cast<LTDC_TypeDef*>(LTDC_BASE)) {
-
+LTDCDevice::LTDCDevice() {
 }
 
 
@@ -66,39 +64,39 @@ void LTDCDevice::initialize(
 
 	// Configura el registre SSCR (Sinchronization Size Configuration Register)
 	//
-	tmp = _ltdc->SSCR;
+	tmp = LTDC->SSCR;
 	tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
 	tmp |= ((hSync - 1) << LTDC_SSCR_HSW_Pos) & LTDC_SSCR_HSW;
 	tmp |= ((vSync - 1) << LTDC_SSCR_VSH_Pos) & LTDC_SSCR_VSH;
-	_ltdc->SSCR = tmp;
+	LTDC->SSCR = tmp;
 
 	// Configura el registre BPCR (Back Porch Configuration Register)
 	//
-	tmp = _ltdc->BPCR;
+	tmp = LTDC->BPCR;
 	tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
 	tmp |= ((hSync + hBP - 1) << LTDC_BPCR_AHBP_Pos) & LTDC_BPCR_AHBP;
 	tmp |= ((vSync + vBP - 1) << LTDC_BPCR_AVBP_Pos) & LTDC_BPCR_AVBP;
-	_ltdc->BPCR = tmp;
+	LTDC->BPCR = tmp;
 
 	// Configura el registre AWCR (Active Width Configuration Register)
 	// -AAW = HSYNC + HBP + WIDTH - 1
 	// -AAH = VSYNC + VBP + HEIGHT - 1
 	//
-	tmp = _ltdc->AWCR;
+	tmp = LTDC->AWCR;
 	tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
 	tmp |= ((hSync + hBP + width - 1) << LTDC_AWCR_AAW_Pos) & LTDC_AWCR_AAW;
 	tmp |= ((vSync + vBP + height - 1) << LTDC_AWCR_AAH_Pos) & LTDC_AWCR_AAH;
-	_ltdc->AWCR = tmp;
+	LTDC->AWCR = tmp;
 
 	// Configura el registre TWCR (Total Width Configuration Register)
 	// -TOTALW = HSYNC + HBP + WIDTH + HFP - 1
 	// -TOTALH = VSYNC + VBP + HEIGHT + VFP - 1
 	//
-	tmp = _ltdc->TWCR;
+	tmp = LTDC->TWCR;
 	tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
 	tmp |= ((hSync + hBP + width + hFP - 1) << LTDC_TWCR_TOTALW_Pos) & LTDC_TWCR_TOTALW;
 	tmp |= ((vSync + vBP + height + vFP - 1) << LTDC_TWCR_TOTALH_Pos) & LTDC_TWCR_TOTALH;
-	_ltdc->TWCR = tmp;
+	LTDC->TWCR = tmp;
 }
 
 
@@ -121,12 +119,12 @@ void LTDCDevice::setBackgroundColor(
 
 	// Configura el registre BCCR (Back Color Configuration Register)
 	//
-	uint32_t tmp = _ltdc->BCCR;
+	uint32_t tmp = LTDC->BCCR;
 	tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
 	tmp |= ((rgb & 0x00FF0000) >> 16) << LTDC_BCCR_BCRED_Pos;
 	tmp |= ((rgb & 0x0000FF00) >> 8) << LTDC_BCCR_BCGREEN_Pos;
 	tmp |= (rgb & 0x000000FF) << LTDC_BCCR_BCBLUE_Pos;
-	_ltdc->BCCR = tmp;
+	LTDC->BCCR = tmp;
 }
 
 
@@ -137,22 +135,25 @@ void LTDCDevice::reload() {
 
 	// Si el LTDC no esta actiu, fa una actualitzacio immediata
 	//
-	if ((_ltdc->GCR & LTDC_GCR_LTDCEN) == 0)
-		_ltdc->SRCR |= LTDC_SRCR_IMR;
+	if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
+		LTDC->SRCR |= LTDC_SRCR_IMR;
 
 	// En cas contrari, fa l'actualitzacio durant la sincronitzacio
 	// vertical, i espera que finalitzi.
 	//
 	else {
-		_ltdc->SRCR |= LTDC_SRCR_VBR;
-		while ((_ltdc->CDSR & LTDC_CDSR_VSYNCS) != 0)
+		LTDC->SRCR |= LTDC_SRCR_VBR;
+		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) != 0)
 			continue;
-		while ((_ltdc->CDSR & LTDC_CDSR_VSYNCS) == 0)
+		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
 			continue;
 	}
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa les interrupcions.
+///
 void LTDCDevice::interruptService() {
 
 }

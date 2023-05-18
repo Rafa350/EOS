@@ -10,235 +10,78 @@
 
 
 namespace htl {
+    
+    namespace dma2d {
 
-	/// \brief Format de color d'entrada.
-	/// \remarks Els valors corresponen al registre hardware. No modificar.
-	///
-	enum class DMA2DInputColorMode {
-		argb8888 = 0,
-		rgb888 = 1,
-		rgb565 = 2,
-		argb1555 = 3,
-		argb4444 = 4,
-		l8 = 5,
-		al44 = 6,
-		al88 = 7,
-		l4 = 8,
-		a8 = 9,
-		a4 = 10
-	};
+        /// \brief Format de color d'entrada.
+        /// \remarks Els valors corresponen al registre hardware. No modificar.
+        ///
+        enum class InputColorMode {
+            argb8888 = 0,
+            rgb888 = 1,
+            rgb565 = 2,
+            argb1555 = 3,
+            argb4444 = 4,
+            l8 = 5,
+            al44 = 6,
+            al88 = 7,
+            l4 = 8,
+            a8 = 9,
+            a4 = 10
+        };
 
-	/// \brief Format de color de sortida.
-    /// \remarks Els valors corresponen al registre hardware. No modificar.
-	///
-	enum class DMA2DOutputColorMode {
-		argb8888 = 0,
-		rgb888 = 1,
-		rgb565 = 2,
-		argb1555 = 3,
-		argb4444 = 4
-	};
+        /// \brief Format de color de sortida.
+        /// \remarks Els valors corresponen al registre hardware. No modificar.
+        ///
+        enum class OutputColorMode {
+            argb8888 = 0,
+            rgb888 = 1,
+            rgb565 = 2,
+            argb1555 = 3,
+            argb4444 = 4
+        };
 
-	/// \brief Events d'interrupcio.
-	///
-	enum class DMA2DEvent {
-		configurationError,
-		clutTransferComplete,
-		clutAccessError,
-		transferWatermark,
-		transferComplete,
-		transferError
-	};
+        /// \brief Events d'interrupcio.
+        ///
+        enum class Event {
+            configurationError,
+            clutTransferComplete,
+            clutAccessError,
+            transferWatermark,
+            transferComplete,
+            transferError
+        };
+        
 
-	using DMA2DInterruptParam = void*;
-	using DMA2DInterruptFunction = void (*)(DMA2DEvent, DMA2DInterruptParam);
-
-	void DMA2D_startFill(void*,	int, int, int, DMA2DOutputColorMode, uint32_t);
-	void DMA2D_startCopy(void*, int, int, int, DMA2DOutputColorMode, const void*, int, DMA2DInputColorMode);
-	bool DMA2D_waitForFinish();
-
-	template <int dummy>
-	class DMA2D_x final {
-		private:
-			static DMA2DInterruptParam _isrParam;
-			static DMA2DInterruptFunction _isrFunction;
-
-		private:
-			DMA2D_x() = delete;
-			DMA2D_x(const DMA2D_x &) = delete;
-			DMA2D_x(const DMA2D_x &&) = delete;
-			~DMA2D_x() = delete;
-
-			DMA2D_x & operator = (const DMA2D_x &) = delete;
-			DMA2D_x & operator = (const DMA2D_x &&) = delete;
-
-			/// \brief Activa el modul
-			///
-			static void activate() {
-
-				RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
-				__DSB();
-			}
-
-			/// \brief Desactiva el modul.
-			///
-			static void deactivate() {
-
-				RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2DEN;
-			}
-
-		public:
-			/// \brief Inicialitza el modul.
-			///
-			inline static void initialize() {
-
-				activate();
-			}
-
-			/// \brief Desinicialitza el modul
-			///
-			inline static void deinitialize() {
-
-				deactivate();
-			}
-
-			/// \brief Inicia el proces de omprit una regio
-			/// \param dst: Adressa del primer pixel de la regio.
-			/// \param width: Amplada.
-			/// \param height: Alçada.
-			/// \param pitch: Amplada fins a la seguent linia.
-			/// \param colorMode: Format de color.
-			/// \param color: El color en el format especificat.
-			///
-			inline static void startFill(
-				void *ptr,
-				int width,
-				int height,
-				int pitch,
-				DMA2DOutputColorMode colorMode,
-				uint32_t color) {
-
-				DMA2D_startFill(ptr, width, height, pitch, colorMode, color);
-			}
-
-			inline static void startCopy(
-				void *ptr,
-				int width,
-				int height,
-				int pitch,
-				DMA2DOutputColorMode colorMode,
-				const void *src,
-				int srcPitch,
-				DMA2DInputColorMode srcColorMode) {
-
-				DMA2D_startCopy(ptr, width, height, pitch, colorMode, src, srcPitch, srcColorMode);
-			}
-
-			/// \brief Espera que finalitzi l'operacio de transferencia.
-			///
-			inline static bool waitForFinish() {
-
-				return DMA2D_waitForFinish();
-			}
-
-			/// \brief Habilita la interrupcio.
-			/// \param event: El event.
-			///
-			static void enableInterrupt(
-				DMA2DEvent event) {
-
-				switch (event) {
-					case DMA2DEvent::transferComplete:
-						DMA2D->CR |= DMA2D_CR_TCIE;
-						break;
-
-					case DMA2DEvent::transferWatermark:
-						DMA2D->CR |= DMA2D_CR_TWIE;
-						break;
-
-					case DMA2DEvent::clutAccessError:
-						DMA2D->CR |= DMA2D_CR_CAEIE;
-						break;
-
-					case DMA2DEvent::clutTransferComplete:
-						DMA2D->CR |= DMA2D_CR_CTCIE;
-						break;
-
-					case DMA2DEvent::configurationError:
-						DMA2D->CR |= DMA2D_CR_CEIE;
-						break;
-
-					case DMA2DEvent::transferError:
-						DMA2D->CR |= DMA2D_CR_TEIE;
-						break;
+        class DMA2DDevice final {
+            private:
+                static DMA2DDevice _device;
+            private:
+                DMA2DDevice();
+                DMA2DDevice(const DMA2DDevice &) = delete;
+                DMA2DDevice(const DMA2DDevice &&) = delete;
+                DMA2DDevice & operator = (const DMA2DDevice &) = delete;
+                DMA2DDevice & operator = (const DMA2DDevice &&) = delete;
+                void activate();
+                void deactivate();
+            public:
+                void initialize();
+                void deinitialize();
+                void startFill(void *ptr, uint16_t width, uint16_t height, uint16_t pitch, OutputColorMode colorMode, uint32_t color);
+                void startCopy(void *ptr, uint16_t width, uint16_t height, uint16_t pitch, DOutputColorMode colorMode, const void *src, uint16_t srcPitch, InputColorMode srcColorMode);
+                bool waitForFinish();
+				void interruptService();
+				static constexpr DMA2DDevice * getHandler() {
+					return &_device;
 				}
-			}
+                inline static void interruptHandler() {
+                    getHandler()->interuptService();
+                }
+        };
 
-			/// \brief Desabilita la interrupcio.
-			/// \return L'estat previ.
-			///
-			static bool disableInterrupt(
-				DMA2DEvent event) {
+        typedef DMA2DDevice *DMA2DDeviceHandler;
 
-				bool state = false;
-				switch (event) {
-					case DMA2DEvent::transferComplete:
-						state = (DMA2D->CR & DMA2D_CR_TCIE) != 0;
-						DMA2D->CR &= ~DMA2D_CR_TCIE;
-						break;
-
-					case DMA2DEvent::transferWatermark:
-						state = (DMA2D->CR & DMA2D_CR_TWIE) != 0;
-						DMA2D->CR &= ~DMA2D_CR_TWIE;
-						break;
-
-					case DMA2DEvent::clutAccessError:
-						state = (DMA2D->CR & DMA2D_CR_CAEIE) != 0;
-						DMA2D->CR &= ~DMA2D_CR_CAEIE;
-						break;
-
-					case DMA2DEvent::clutTransferComplete:
-						state = (DMA2D->CR & DMA2D_CR_CTCIE) != 0;
-						DMA2D->CR &= ~DMA2D_CR_CTCIE;
-						break;
-
-					case DMA2DEvent::configurationError:
-						state = (DMA2D->CR & DMA2D_CR_CEIE) != 0;
-						DMA2D->CR &= ~DMA2D_CR_CEIE;
-						break;
-
-					case DMA2DEvent::transferError:
-						state = (DMA2D->CR & DMA2D_CR_TEIE) != 0;
-						DMA2D->CR &= ~DMA2D_CR_TEIE;
-						break;
-				}
-				return state;
-			}
-
-			static void setInterruptFuncxtion(
-				DMA2DInterruptFunction function,
-				DMA2DInterruptParam param) {
-
-				_isrFunction = function;
-				_isrParam = param;
-			}
-
-			/// \brief Invoca la funcio d'interruipcio.
-			/// \param event: El event.
-			///
-			static void InterruptHandler(
-				DMA2DEvent event) {
-
-				if (_isrFunction != nullptr)
-					_isrFunction(event, _isrParam);
-			}
-	};
-
-	template<int dummy_> DMA2DInterruptFunction DMA2D_x<dummy_>::_isrFunction = nullptr;
-    template<int dummy_> DMA2DInterruptParam DMA2D_x<dummy_>::_isrParam = nullptr;
-
-
-	using DMA2D_1 = DMA2D_x<1>;
+    }
 }
 
 

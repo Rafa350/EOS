@@ -12,7 +12,6 @@
 extern "C" {
 #endif
 	void LTDCDevice_InterruptHandler();
-	void LTDCDevice_InterruptHandler_ER();
 #ifdef __cplusplus
 }
 #endif

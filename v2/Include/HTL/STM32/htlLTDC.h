@@ -69,9 +69,6 @@ namespace htl {
 			_2
 		};
 
-		using LTDCInterruptParam = void*;
-		using LTDCInterruptFunction = void (*)(LTDCEvent, LTDCInterruptParam);
-
 		namespace internal {
 
 			template <LayerID>
@@ -83,7 +80,6 @@ namespace htl {
 
 		class LTDCDevice final {
 			private:
-				LTDC_TypeDef * const _ltdc;
 				static LTDCDevice _device;
 			private:
 				LTDCDevice(const LTDCDevice &) = delete;
@@ -101,36 +97,36 @@ namespace htl {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::hsync, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 					if (polarity == PinPolarity::activeHigh)
-						_ltdc->GCR |= LTDC_GCR_HSPOL;
+						LTDC->GCR |= LTDC_GCR_HSPOL;
 					else if (polarity == PinPolarity::activeLow)
-						_ltdc->GCR &= ~LTDC_GCR_HSPOL;
+						LTDC->GCR &= ~LTDC_GCR_HSPOL;
 				}
 				template <typename pin_>
 				void initPinVSYNC(PinPolarity polarity = PinPolarity::noChange) {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::vsync, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 					if (polarity == PinPolarity::activeHigh)
-						_ltdc->GCR |= LTDC_GCR_VSPOL;
+						LTDC->GCR |= LTDC_GCR_VSPOL;
 					else if (polarity == PinPolarity::activeLow)
-						_ltdc->GCR &= ~LTDC_GCR_VSPOL;
+						LTDC->GCR &= ~LTDC_GCR_VSPOL;
 				}
 				template <typename pin_>
 				void initPinPC(PinPolarity polarity = PinPolarity::noChange) {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::pc, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 					if (polarity == PinPolarity::activeHigh)
-						_ltdc->GCR |= LTDC_GCR_PCPOL;
+						LTDC->GCR |= LTDC_GCR_PCPOL;
 					else if (polarity == PinPolarity::activeLow)
-						_ltdc->GCR &= ~LTDC_GCR_PCPOL;
+						LTDC->GCR &= ~LTDC_GCR_PCPOL;
 				}
 				template <typename pin_>
 				void initPinDE(PinPolarity polarity = PinPolarity::noChange) {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::de, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 					if (polarity == PinPolarity::activeHigh)
-						_ltdc->GCR |= LTDC_GCR_DEPOL;
+						LTDC->GCR |= LTDC_GCR_DEPOL;
 					else if (polarity == PinPolarity::activeLow)
-						_ltdc->GCR &= ~LTDC_GCR_DEPOL;
+						LTDC->GCR &= ~LTDC_GCR_DEPOL;
 				}
 				template <typename pinR2_, typename pinR3_, typename pinR4_, typename pinR5_, typename pinR6_, typename pinR7_>
 				void initPinRX() {
@@ -193,20 +189,23 @@ namespace htl {
 					pinB7_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b7, pinB7_>::alt);
 				}
 				inline void enable() {
-					_ltdc->GCR |= LTDC_GCR_LTDCEN;
+					LTDC->GCR |= LTDC_GCR_LTDCEN;
 				}
 				inline void disable() {
-					_ltdc->GCR &= ~LTDC_GCR_LTDCEN;
+					LTDC->GCR &= ~LTDC_GCR_LTDCEN;
 				}
 				void setBackgroundColor(uint32_t rgb);
 				void reload();
 				void interruptService();
-				static LTDCDevice * getHandler() {
+				static constexpr LTDCDevice * getHandler() {
 					return &_device;
 				}
+                inline static interruptHandler() {
+                    getHandler()->interruptService();
+                }
 		};
 
-		typedef LTDCDevice * LTDCDeviceHandler;
+		typedef LTDCDevice *LTDCDeviceHandler;
 
 
 		class LTDCLayerDevice {

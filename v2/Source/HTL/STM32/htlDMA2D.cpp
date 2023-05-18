@@ -2,7 +2,55 @@
 #include "HTL/STM32/htlDMA2D.h"
 
 
-using namespace htl;
+using namespace htl::dma2d;
+
+
+DMA2DDevice DMA2DDevice::_device;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+///
+DMA2DDevice::DMA2DDevice(){
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Activa el modul
+///
+void DMA2DDevice::activate() {
+
+    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
+    __DSB();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Desactiva el modul.
+///
+void DMA2DDevice::deactivate() {
+
+    RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2DEN;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialkitzacio.
+///
+void DMA2DDevice::initialize() {
+    
+    activete();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitzacio.
+///
+void DMA2DDevice::deinitialize() {
+    
+    deactivate();
+}
 
 
 /// ----------------------------------------------------------------------
@@ -16,12 +64,12 @@ using namespace htl;
 /// \remarks  En aquest casa no hi ha conversio. El color d'entrada es
 ///           el mateix que el de sortida.
 ///
-void htl::DMA2D_startFill(
+void DMA2DDevice::startFill(
 	void *ptr,
-	int width,
-	int height,
-	int pitch,
-	DMA2DOutputColorMode colorMode,
+	uint16_t width,
+	uint16_t height,
+	uint16_t pitch,
+	OutputColorMode colorMode,
 	uint32_t color) {
 
 	// Selecciona el tipus de transferencia com a R2M
@@ -69,15 +117,15 @@ void htl::DMA2D_startFill(
 /// \param    srcPitch: Pitch del mapa de bits.
 /// \param    srcColorMode: Format de color del mapa de bits.
 ///
-void htl::DMA2D_startCopy(
+void DMA2DDevice::startCopy(
 	void *ptr,
-	int width,
-	int height,
-	int pitch,
-	DMA2DOutputColorMode colorMode,
+	uint16_t width,
+	uint16_t height,
+	uint16_t pitch,
+	OutputColorMode colorMode,
 	const void* src,
-	int srcPitch,
-	DMA2DInputColorMode srcColorMode) {
+	uint16_t srcPitch,
+	InputColorMode srcColorMode) {
 
 	uint32_t tmp;
 
@@ -127,7 +175,7 @@ void htl::DMA2D_startCopy(
 /// \brief    Espera que acabi la transaccio.
 /// \return   True si tot es correcte, false en cas d'error.
 ///
-bool htl::DMA2D_waitForFinish() {
+bool DMA2DDevice::waitForFinish() {
 
 	// Espera que acabi
 	//
@@ -161,4 +209,12 @@ bool htl::DMA2D_waitForFinish() {
 	// Retorna OK
 	//
 	return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa les interrupcions.
+///
+void DMA2DDevice::interruptService() {
+      
 }

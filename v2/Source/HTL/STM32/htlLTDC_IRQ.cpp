@@ -10,9 +10,3 @@ void LTDCDevice_InterruptHandler() {
 
 	LTDCDevice::interruptHandler();
 }
-
-
-void LTDCDevice_InterruptHandler_ER() {
-
-	LTDCDevice::interruptHandler_ER();
-}
