@@ -40,17 +40,6 @@ namespace htl {
             argb1555 = 3,
             argb4444 = 4
         };
-
-        /// \brief Events d'interrupcio.
-        ///
-        enum class Event {
-            configurationError,
-            clutTransferComplete,
-            clutAccessError,
-            transferWatermark,
-            transferComplete,
-            transferError
-        };
         
 
         class DMA2DDevice final {
