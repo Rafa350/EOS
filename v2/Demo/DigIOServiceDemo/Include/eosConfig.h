@@ -46,14 +46,14 @@ namespace config {
 #define DigInputService_TimerPeriod                   5    // 5 ms de periode
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define DigInputService_Timer					      htl::TMR_2
-#define DigInputService_TimerInterruptVector          htl::INTVector::tmr2
-#define DigInputService_TimerInterruptPriority        htl::INTPriority::_2
-#define DigInputService_TimerInterruptSubPriority     htl::INTSubPriority::_0
+#define DigInputService_TimerInterruptVector          htl::irq::VectorID::tmr2
+#define DigInputService_TimerInterruptPriority        htl::irq::Priority::_2
+#define DigInputService_TimerInterruptSubPriority     htl::irq::SubPriority::_0
 #elif defined(HARDWARE_STM32F429I_DISC1)
 #define DigInputService_Timer					      htl::TMR_2
-#define DigInputService_TimerInterruptVector          htl::INTVector::tmr2
-#define DigInputService_TimerInterruptPriority        htl::INTPriority::_5
-#define DigInputService_TimerInterruptSubPriority     htl::INTSubPriority::_0
+#define DigInputService_TimerInterruptVector          htl::irq::VectorID::tmr2
+#define DigInputService_TimerInterruptPriority        htl::irq::Priority::_5
+#define DigInputService_TimerInterruptSubPriority     htl::irq::SubPriority::_0
 #endif
 
 // Configuracio del servei DigOutputs
@@ -64,14 +64,14 @@ namespace config {
 #define DigOutputService_TimerPeriod                  1    // 1 ms de periode
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define DigOutputService_Timer					      htl::TMR_3
-#define DigOutputService_TimerInterruptVector         htl::INTVector::tmr3
-#define DigOutputService_TimerInterruptPriority       htl::INTPriority::_2
-#define DigOutputService_TimerInterruptSubPriority    htl::INTSubPriority::_0
+#define DigOutputService_TimerInterruptVector         htl::irq::VectorID::tmr3
+#define DigOutputService_TimerInterruptPriority       htl::irq::Priority::_2
+#define DigOutputService_TimerInterruptSubPriority    htl::irq::SubPriority::_0
 #elif defined(HARDWARE_STM32F429I_DISC1)
 #define DigOutputService_Timer                        htl::TMR_3
-#define DigOutputService_TimerInterruptVector         htl::INTVector::tmr3
-#define DigOutputService_TimerInterruptPriority       htl::INTPriority::_5
-#define DigOutputService_TimerInterruptSubPriority    htl::INTSubPriority::_0
+#define DigOutputService_TimerInterruptVector         htl::irq::VectorID::tmr3
+#define DigOutputService_TimerInterruptPriority       htl::irq::Priority::_5
+#define DigOutputService_TimerInterruptSubPriority    htl::irq::SubPriority::_0
 #endif
 
 

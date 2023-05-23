@@ -15,7 +15,7 @@ namespace htl {
 
 		/// \brief Image format.
 		///
-		enum class LTDCPixelFormat {
+		enum class PixelFormat {
 			argb8888 = 0,
 			rgb888 = 1,
 			rgb565 = 2,
@@ -26,18 +26,9 @@ namespace htl {
 			al88 = 7
 		};
 
-		/// \brief Interrupt events.
-		///
-		enum class LTDCEvent {
-			line = 0,
-			reload = 3,
-			fifoError = 1,
-			transferError = 2
-		};
-
 		/// \brief Clock divider factor.
 		///
-		enum class LTDCClockDivider {
+		enum class ClockDivider {
 			_2 = 0,
 			_4 = 1,
 			_8 = 2,
@@ -86,10 +77,9 @@ namespace htl {
 				LTDCDevice & operator = (const LTDCDevice &) = delete;
 			private:
 				LTDCDevice();
-			public:
 				void activate();
 				void deactivate();
-				void reset();
+			public:
 				void initialize(uint16_t width, uint16_t height, uint16_t hSync, uint16_t vSync, uint16_t hBP, uint16_t vBP, uint16_t hFP, uint16_t vFP);
 				void deinitialize();
 				template <typename pin_>
@@ -200,7 +190,7 @@ namespace htl {
 				static constexpr LTDCDevice * getHandler() {
 					return &_device;
 				}
-                inline static interruptHandler() {
+                inline static void interruptHandler() {
                     getHandler()->interruptService();
                 }
 		};
@@ -224,7 +214,7 @@ namespace htl {
 					_layer->CR &= ~LTDC_LxCR_LEN;
 				}
 				void setWindow(int16_t x, int16_t y, int16_t width, int16_t height);
-				void setFrameFormat(LTDCPixelFormat format, int16_t width, int16_t pitch, int16_t lines);
+				void setFrameFormat(PixelFormat format, int16_t width, int16_t pitch, int16_t lines);
 				void setFrameBuffer(void *buffer);
 				void setConstantAlpha(uint8_t a);
 				void setDefaultColor(uint32_t argb);

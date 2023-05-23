@@ -66,12 +66,6 @@ namespace htl {
 			#endif
 		};
 
-		enum class TMRType {
-			basic,
-			general,
-			advanced
-		};
-
 		enum class CountDirection {
 			up,
 			down
@@ -127,8 +121,20 @@ namespace htl {
 		}
 
 		class TMRDevice {
+			public:
+				enum class State {
+					reset,
+					ready,
+					busy
+				};
+				enum class Result {
+					ok,
+					error,
+					busy
+				};
 			private:
 				TIM_TypeDef * const _tim;
+				State _state;
 				ITriggerEventCallback *_triggerEventCallback;
 				IUpdateEventCallback *_updateEventCallback;
 			private:
@@ -137,21 +143,12 @@ namespace htl {
 			protected:
 				TMRDevice(TIM_TypeDef *tim);
 				void interruptService();
-				virtual void activateImpl() = 0;
-				virtual void deactivateImpl() = 0;
-				virtual void resetImpl() = 0;
+				virtual void activate() = 0;
+				virtual void deactivate() = 0;
+				virtual void reset() = 0;
 			public:
-				inline void activate() {
-					activateImpl();
-				}
-				inline void deactivate() {
-					deactivateImpl();
-				}
-				inline void reset() {
-					resetImpl();
-				}
-				void initialize();
-				void deinitialize();
+				Result initialize();
+				Result deinitialize();
 				void setDirection(CountDirection direction);
 				void setResolution(CountResolution);
 				void setPeriod(uint32_t period);
@@ -169,17 +166,10 @@ namespace htl {
 				inline void disableUpdateEventCallback() {
 					_updateEventCallback = nullptr;
 				}
-				inline void start() {
-					_tim->CR1 |= TIM_CR1_CEN;
-				}
-				inline void stop() {
-					_tim->CR1 &= ~TIM_CR1_CEN;
-				}
-				void enableInterrupt(TMRInterrupt interrupt);
-				bool disableInterrupt(TMRInterrupt interrupt);
-				bool isInterruptEnabled(TMRInterrupt interrupt);
-				bool getFlag(TMRFlag flag);
-				void clearFlag(TMRFlag flag);
+				Result start();
+				Result startInterrupt();
+				Result stop();
+				Result stopInterrupt();
 		};
 
 		typedef TMRDevice *TMRDeviceHandler;
@@ -201,16 +191,16 @@ namespace htl {
 					TMRDevice(reinterpret_cast<TIM_TypeDef*>(_timAddr)) {
 				}
 			protected:
-				void activateImpl() override {
+				void activate() override {
 					uint32_t *p = reinterpret_cast<uint32_t*>(_rccAddr);
 					*p |= 1 << _enablePos;
 					__DSB();
 				}
-				void deactivateImpl() override {
+				void deactivate() override {
 					uint32_t *p = reinterpret_cast<uint32_t*>(_rccAddr);
 					*p &= ~(1 << _enablePos);
 				}
-				void resetImpl() override {
+				void reset() override {
 				}
 			public:
 				static constexpr TMRDeviceX * getHandler() {
@@ -283,7 +273,6 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_1> {
 				static constexpr uint32_t timAddr = TIM1_BASE;
-				static constexpr TMRType type = TMRType::advanced;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t enablePos = RCC_APBENR2_TIM1EN_Pos;
@@ -447,7 +436,6 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_14> {
 				static constexpr uint32_t timAddr = TIM14_BASE;
-				static constexpr TMRType type = TMRType::general;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t enablePos = RCC_APBENR2_TIM14EN_Pos;

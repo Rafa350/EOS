@@ -98,7 +98,7 @@
 #endif
 
 
-// Comprova l'existencia dels modulks I2C
+// Comprova l'existencia dels moduls I2C
 //
 #ifdef I2C1_BASE
 	#define HTL_I2C1_EXIST

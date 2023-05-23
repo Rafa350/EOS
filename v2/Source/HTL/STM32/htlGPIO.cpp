@@ -194,7 +194,7 @@ void Port::initOutput(
 	OutDriver driver,
 	Speed speed) {
 
-	activateImpl(mask);
+	activate(mask);
 
 	setMode(_gpio, mask, 1);
 	setDriver(_gpio, mask, driver);
@@ -223,7 +223,7 @@ Pin::Pin(
 void Pin::initInput(
     PullUpDn pull) {
 
-	activateImpl();
+	activate();
 
     setMode(_gpio, _mask, 0);
     setPull(_gpio, _mask, pull);
@@ -241,7 +241,7 @@ void Pin::initOutput(
 	Speed speed,
 	InitPinState state) {
 
-	activateImpl();
+	activate();
 
 	switch (state) {
 		case InitPinState::set:
@@ -273,7 +273,7 @@ void Pin::initAlt(
     Speed speed,
     PinFunctionID pinFunctionID) {
 
-	activateImpl();
+	activate();
 
     setMode(_gpio, _mask, 2);
     setDriver(_gpio, _mask, driver);
@@ -289,7 +289,7 @@ void Pin::initAlt(
 ///
 void Pin::initAnalogic() {
 
-	activateImpl();
+	activate();
 
 	setMode(_gpio, _mask, 3);
 }

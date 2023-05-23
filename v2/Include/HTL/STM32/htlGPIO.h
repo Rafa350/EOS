@@ -147,23 +147,11 @@ namespace htl {
 				Port & operator = (const Port &) = delete;
 			protected:
 				Port(GPIO_TypeDef *gpio);
-				virtual void activateImpl(PinMask mask) = 0;
-				virtual void deactivateImpl(PinMask mask) = 0;
-				virtual void resetImpl() = 0;
+				virtual void activate(PinMask mask) = 0;
+				virtual void deactivate(PinMask mask) = 0;
+				virtual void reset() = 0;
 			public:
-				inline void activate(PinMask mask) {
-					activateImpl(mask);
-				}
-				inline void deactivate(PinMask mask) {
-					activateImpl(mask);
-				}
-				inline void reset() {
-					resetImpl();
-				}
 				void initInput(PinMask mask, PullUpDn pull);
-				void initOutput(PinID pinID, OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium) {
-					initOutput(1 << int(pinID), driver, speed);
-				}
 				void initOutput(PinMask mask, OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
 				inline void set(PinMask mask) {
 					_gpio->BSRR = mask;
@@ -218,8 +206,8 @@ namespace htl {
 				Pin & operator = (const Pin &) = delete;
 			protected:
 				Pin(GPIO_TypeDef *gpio, PinID pinID);
-				virtual void activateImpl() = 0;
-				virtual void deactivateImpl() = 0;
+				virtual void activate() = 0;
+				virtual void deactivate() = 0;
 			public:
 				void initInput(PullUpDn pull);
 				void initOutput(OutDriver driver, Speed speed, InitPinState state = InitPinState::noChange);
@@ -273,14 +261,11 @@ namespace htl {
 					Port(reinterpret_cast<GPIO_TypeDef *>(_gpioAddr)) {
 				}
 			protected:
-				void activateImpl(PinMask mask) override {
+				void activate(PinMask mask) override {
 					Activator::activate(mask);
 				}
-				void deactivateImpl(PinMask mask) override {
+				void deactivate(PinMask mask) override {
 					Activator::activate(mask);
-				}
-				void resetImpl() override {
-					Activator::reset();
 				}
 			public:
 				static constexpr PortX * getHandler() {
@@ -348,10 +333,10 @@ namespace htl {
 					Pin(reinterpret_cast<GPIO_TypeDef *>(_gpioAddr), pinID_) {
 				}
 			protected:
-				void activateImpl() override {
+				void activate() override {
 					Activator::activate(1 << int(pinID_));
 				}
-				void deactivateImpl() override {
+				void deactivate() override {
 					Activator::activate(1 << int(pinID_));
 				}
 			public:

@@ -85,7 +85,7 @@ void MyApplication::onInitialize() {
 
     // Configura les interrupcions pel servei d'entrades digitals
     //
-    htl::INT_1::setInterruptVectorPriority(
+    irq::setInterruptVectorPriority(
         DigInputService_TimerInterruptVector,
         DigInputService_TimerInterruptPriority,
         DigInputService_TimerInterruptSubPriority);
@@ -132,7 +132,7 @@ void MyApplication::onInitialize() {
 
     // Configura les interrupcions
     //
-    INT_1::setInterruptVectorPriority(
+    irq::setInterruptVectorPriority(
         DigOutputService_TimerInterruptVector,
         DigOutputService_TimerInterruptPriority,
         DigOutputService_TimerInterruptSubPriority);

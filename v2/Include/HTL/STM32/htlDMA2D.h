@@ -57,14 +57,14 @@ namespace htl {
                 void initialize();
                 void deinitialize();
                 void startFill(void *ptr, uint16_t width, uint16_t height, uint16_t pitch, OutputColorMode colorMode, uint32_t color);
-                void startCopy(void *ptr, uint16_t width, uint16_t height, uint16_t pitch, DOutputColorMode colorMode, const void *src, uint16_t srcPitch, InputColorMode srcColorMode);
+                void startCopy(void *ptr, uint16_t width, uint16_t height, uint16_t pitch, OutputColorMode colorMode, const void *src, uint16_t srcPitch, InputColorMode srcColorMode);
                 bool waitForFinish();
 				void interruptService();
 				static constexpr DMA2DDevice * getHandler() {
 					return &_device;
 				}
                 inline static void interruptHandler() {
-                    getHandler()->interuptService();
+                    getHandler()->interruptService();
                 }
         };
 

@@ -40,9 +40,16 @@ I2CSlaveDevice::Result I2CSlaveDevice::initialize(
 
 	if (_state == State::reset) {
 
+		// Activa el dispositiu
+		//
 		activate();
-		disable();
 
+		// Deshabilita les comunicacions
+		//
+		_i2c->CR1 &= ~I2C_CR1_PE;
+
+		// Configura els parametres de timing
+		//
 		_i2c->TIMINGR =
 			((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
 			((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
@@ -50,12 +57,16 @@ I2CSlaveDevice::Result I2CSlaveDevice::initialize(
 			((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
 			((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
 
+		// Configura l'adressa I2C
+		//
 		_i2c->OAR1 &= ~I2C_OAR1_OA1EN;
 		_i2c->OAR1 |= (addr << I2C_OAR1_OA1_Pos) & I2C_OAR1_OA1_Msk;
 		_i2c->OAR1 |= I2C_OAR1_OA1EN;
 
 		_i2c->OAR2 &= ~I2C_OAR2_OA2EN;
 
+		// Configura els parametres de comunicacio i protocol
+		//
 		_i2c->CR1 &= ~(I2C_CR1_NOSTRETCH | I2C_CR1_SBC);
 
 		_state = State::ready;
@@ -75,7 +86,12 @@ I2CSlaveDevice::Result I2CSlaveDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		disable();
+		// Deshabilita les comunicacions.
+		//
+		_i2c->CR1 &= ~I2C_CR1_PE;
+
+		// Desactiva el dispositiu.
+		//
 		deactivate();
 
 		_state = State::reset;
@@ -103,9 +119,9 @@ I2CSlaveDevice::Result I2CSlaveDevice::listen(
 		_bufferSize = bufferSize;
 		_state = State::listen;
 
-		enable();
-
-		_i2c->CR1 |= I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE;
+		// Habilita les comunicacions i les interrupcions
+		//
+		_i2c->CR1 |= I2C_CR1_PE | I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE;
 
 		return Result::ok;
 	}
@@ -122,9 +138,9 @@ void I2CSlaveDevice::endListen() {
 
 	if (_state == State::listen) {
 
-		_i2c->CR1 &= ~(I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE);
-
-		disable();
+		// Deshabilita els comunicacions i les interrupcions
+		//
+		_i2c->CR1 &= ~(I2C_CR1_PE | I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE);
 
 		_buffer = nullptr;
 		_bufferSize = 0;

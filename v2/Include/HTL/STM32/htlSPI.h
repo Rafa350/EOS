@@ -102,6 +102,12 @@ namespace htl {
 			private:
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
+				inline void activate() {
+					activateImpl();
+				}
+				inline void deactivate() {
+					activateImpl();
+				}
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
 				void interruptService();
@@ -109,15 +115,6 @@ namespace htl {
 				virtual void deactivateImpl() = 0;
 				virtual void resetImpl() = 0;
 			public:
-				inline void activate() {
-					activateImpl();
-				}
-				inline void deactivate() {
-					activateImpl();
-				}
-				inline void reset() {
-					resetImpl();
-				}
 				void initialize(SPIMode mode, ClkPolarity clkPolarity, ClkPhase clkPhase, WordSize size, FirstBit firstBit, ClockDivider clkDivider);
 				void deinitialize();
 				inline void enable() {

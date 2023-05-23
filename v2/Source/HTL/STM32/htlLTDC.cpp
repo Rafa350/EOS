@@ -35,16 +35,6 @@ void LTDCDevice::deactivate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Reseteja el dispositiu.
-///
-void LTDCDevice::reset() {
-
-	RCC->APB2RSTR |= RCC_APB2RSTR_LTDCRST;
-	RCC->APB2RSTR &= ~RCC_APB2RSTR_LTDCRST;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
 ///
 void LTDCDevice::initialize(
@@ -202,7 +192,7 @@ void LTDCLayerDevice::setWindow(
 
 
 void LTDCLayerDevice::setFrameFormat(
-	LTDCPixelFormat format,
+	PixelFormat format,
 	int16_t width,
 	int16_t pitch,
 	int16_t lines) {

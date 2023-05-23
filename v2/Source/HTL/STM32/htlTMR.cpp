@@ -13,6 +13,7 @@ TMRDevice::TMRDevice(
 	TIM_TypeDef *tim) :
 
 	_tim(tim),
+	_state(State::reset),
 	_triggerEventCallback(nullptr),
 	_updateEventCallback(nullptr) {
 
@@ -22,23 +23,44 @@ TMRDevice::TMRDevice(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el timer.
 ///
-void TMRDevice::initialize() {
+TMRDevice::Result TMRDevice::initialize() {
 
-	activate();
+	if (_state == State::reset) {
 
-	_tim->CR1 &= ~TIM_CR1_CEN;
+		activate();
+
+		_tim->CR1 &= ~TIM_CR1_CEN;
+
+		_state = State::ready;
+
+		return Result::ok;
+	}
+
+	else
+		return Result::error;
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el timer.
 ///
-void TMRDevice::deinitialize() {
+TMRDevice::Result TMRDevice::deinitialize() {
 
-	_tim->CR1 &= ~TIM_CR1_CEN;
-	_tim->DIER &= ~(TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
+	if (_state == State::ready) {
 
-	deactivate();
+		_tim->CR1 &= ~TIM_CR1_CEN;
+		_tim->DIER &= ~(TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
+
+		deactivate();
+
+		_state = State::reset;
+
+		return Result::ok;
+	}
+
+	else
+		return Result::error;
 }
 
 
@@ -50,6 +72,7 @@ void TMRDevice::setDirection(
 	else
 		_tim->CR1 &= ~TIM_CR1_DIR;
 }
+
 
 void TMRDevice::setResolution(
 	CountResolution resolution) {
@@ -73,7 +96,7 @@ void TMRDevice::setPrescaler(
 void TMRDevice::setClockDivider(
 	ClockDivider clockDivider) {
 
-	//if constexpr (HI::type != TMRType::basic) {
+	if (IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) ) {
 		uint32_t temp = _tim->CR1;
 		temp &= ~TIM_CR1_CKD;
 		switch (clockDivider) {
@@ -89,115 +112,82 @@ void TMRDevice::setClockDivider(
 				break;
 		}
 		_tim->CR1 = temp;
-	//}
-}
-
-
-void TMRDevice::enableInterrupt(
-	TMRInterrupt interrupt) {
-
-	switch (interrupt) {
-		case TMRInterrupt::update:
-			_tim->DIER |= TIM_DIER_UIE;
-			break;
-
-		case TMRInterrupt::trigger:
-			_tim->DIER |= TIM_DIER_TIE;
-			break;
-
-		case TMRInterrupt::com:
-			_tim->DIER |= TIM_DIER_COMIE;
-			break;
-
-		default:
-			break;
-	}
-}
-
-bool TMRDevice::disableInterrupt(
-	TMRInterrupt interrupt) {
-
-	bool status = false;
-
-	switch (interrupt) {
-		case TMRInterrupt::update:
-			status = (_tim->DIER & TIM_DIER_UIE) != 0;
-			_tim->DIER &= ~TIM_DIER_UIE;
-			break;
-
-		case TMRInterrupt::trigger:
-			status = (_tim->DIER & TIM_DIER_TIE) != 0;
-			_tim->DIER &= ~TIM_DIER_TIE;
-			break;
-
-		case TMRInterrupt::com:
-			status = (_tim->DIER & TIM_DIER_COMIE) != 0;
-			_tim->DIER &= ~TIM_DIER_COMIE;
-			break;
-	}
-
-	return status;
-}
-
-
-bool TMRDevice::isInterruptEnabled(
-	TMRInterrupt interrupt) {
-
-	bool status = false;
-
-	switch (interrupt) {
-		case TMRInterrupt::update:
-			status = (_tim->DIER & TIM_DIER_UIE) != 0;
-			break;
-
-		case TMRInterrupt::trigger:
-			status = (_tim->DIER & TIM_DIER_TIE) != 0;
-			break;
-
-		case TMRInterrupt::com:
-			status = (_tim->DIER & TIM_DIER_COMIE) != 0;
-			break;
-	}
-
-	return status;
-}
-
-
-bool TMRDevice::getFlag(
-	TMRFlag flag) {
-
-	switch (flag) {
-		case TMRFlag::update:
-			return (_tim->SR & TIM_SR_UIF) != 0;
-
-		case TMRFlag::trigger:
-			return (_tim->SR & TIM_SR_TIF) != 0;
-
-		case TMRFlag::com:
-			return (_tim->SR & TIM_SR_COMIF) != 0;
-
-		default:
-			return false;
 	}
 }
 
 
-void TMRDevice::clearFlag(
-	TMRFlag flag) {
+/// ----------------------------------------------------------------------
+/// \brief    Inicia el contador en modus polling
+///
+TMRDevice::Result TMRDevice::start() {
 
-	switch (flag) {
-		case TMRFlag::update:
-			_tim->SR &= ~TIM_SR_UIF;
-			break;
+	if (_state == State::ready) {
 
-		case TMRFlag::trigger:
-			_tim->SR &= ~TIM_SR_TIF;
-			break;
+		_tim->SR &= ~TIM_SR_UIF;    // Borra el flag.
+		_tim->CR1 |= TIM_CR1_CEN;   // Comença a contar.
 
-		case TMRFlag::com:
-			_tim->SR &= ~TIM_SR_COMIF;
-			break;
+		_state = State::busy;
+
+		return Result::ok;
 	}
+	else
+		return Result::error;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicia el contador en modus interrupcio
+///
+TMRDevice::Result TMRDevice::startInterrupt() {
+
+	if (_state == State::ready) {
+
+		_tim->SR &= ~TIM_SR_UIF;    // Borra el flag.
+		_tim->DIER |= TIM_DIER_UIE; // Habilita la interrupcio
+		_tim->CR1 |= TIM_CR1_CEN;   // Comença a contar
+
+		return Result::ok;
+	}
+	else
+		return Result::error;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza el contador en modus polling.
+///
+TMRDevice::Result TMRDevice::stop() {
+
+	if (_state == State::busy) {
+
+		_tim->CR1 &= ~TIM_CR1_CEN;  // Deixa de contar.
+		_tim->SR &= ~TIM_SR_UIF;    // Borra el flag.
+
+		_state = State::ready;
+
+		return Result::ok;
+	}
+	else
+		return Result::error;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza el contador en modus interrupcio.
+///
+TMRDevice::Result TMRDevice::stopInterrupt() {
+
+	if (_state == State::busy) {
+
+		_tim->CR1 &= ~TIM_CR1_CEN;    // Deixa de contar
+		_tim->DIER &= ~TIM_DIER_UIE;  // Deshabilita la interrupcio.
+		_tim->SR &= ~TIM_SR_UIF;      // Borra el flag.
+
+		_state = State::ready;
+
+		return Result::ok;
+	}
+	else
+		return Result::error;
 }
 
 
@@ -206,12 +196,16 @@ void TMRDevice::clearFlag(
 ///
 void TMRDevice::interruptService() {
 
+	// Event TRIGGER
+	//
 	if ((_tim->SR & TIM_SR_TIF) && (_tim->DIER & TIM_DIER_TIE)) {
 		_tim->SR &= ~TIM_SR_TIF;
 		if (_triggerEventCallback != nullptr)
 			_triggerEventCallback->execute(0);
 	}
 
+	// Event UPDATE
+	//
 	if ((_tim->SR & TIM_SR_UIF) && (_tim->DIER & TIM_DIER_UIE)) {
 		_tim->SR &= ~TIM_SR_UIF;
 		if (_updateEventCallback != nullptr)

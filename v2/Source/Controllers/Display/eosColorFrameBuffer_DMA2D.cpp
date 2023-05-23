@@ -65,57 +65,57 @@ static constexpr bool isOutputColorSupported(
 /// \param    format: El format de color.
 /// \return   El modus de color.
 ///
-static constexpr DMA2DOutputColorMode getOutputColorMode(
+static constexpr dma2d::OutputColorMode getOutputColorMode(
 	ColorFormat format) {
 
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
-			return DMA2DOutputColorMode::argb8888;
+			return dma2d::OutputColorMode::argb8888;
 
 		case ColorFormat::argb4444:
-			return DMA2DOutputColorMode::argb4444;
+			return dma2d::OutputColorMode::argb4444;
 
 		case ColorFormat::argb1555:
-			return DMA2DOutputColorMode::argb1555;
+			return dma2d::OutputColorMode::argb1555;
 
 		case ColorFormat::rgb888:
-			return DMA2DOutputColorMode::rgb888;
+			return dma2d::OutputColorMode::rgb888;
 
 		case ColorFormat::rgb565:
-			return DMA2DOutputColorMode::rgb565;
+			return dma2d::OutputColorMode::rgb565;
 	}
 }
 
 
-static constexpr DMA2DInputColorMode getInputColorMode(
+static constexpr dma2d::InputColorMode getInputColorMode(
 	ColorFormat format) {
 
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
-			return DMA2DInputColorMode::argb8888;
+			return dma2d::InputColorMode::argb8888;
 
 		case ColorFormat::argb4444:
-			return DMA2DInputColorMode::argb4444;
+			return dma2d::InputColorMode::argb4444;
 
 		case ColorFormat::argb1555:
-			return DMA2DInputColorMode::argb1555;
+			return dma2d::InputColorMode::argb1555;
 
 		case ColorFormat::rgb888:
-			return DMA2DInputColorMode::rgb888;
+			return dma2d::InputColorMode::rgb888;
 
 		case ColorFormat::rgb565:
-			return DMA2DInputColorMode::rgb565;
+			return dma2d::InputColorMode::rgb565;
 
 		case ColorFormat::al88:
-			return DMA2DInputColorMode::al88;
+			return dma2d::InputColorMode::al88;
 
 		case ColorFormat::al44:
-			return DMA2DInputColorMode::al44;
+			return dma2d::InputColorMode::al44;
 
 		case ColorFormat::l8:
-			return DMA2DInputColorMode::l8;
+			return dma2d::InputColorMode::l8;
 	}
 }
 
@@ -137,10 +137,11 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	void *buffer):
 
 	FrameBuffer(width, height, orientation),
+	_dma2d(dma2d::DMA2DDevice::getHandler()),
 	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
 	_framePitch(pitch) {
 
-    DMA2D_1::initialize();
+    _dma2d->initialize();
 }
 
 
@@ -219,10 +220,10 @@ void ColorFrameBuffer_DMA2D::fill(
 		//
 		if constexpr (isOutputColorSupported(Color::format)) {
 			Color::Pixel *ptr = getPixelPtr(x, y);
-			DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
+			dma2d::OutputColorMode dstColorMode = getOutputColorMode(Color::format);
 			Color::Pixel c = color;
-			Dma2d::startFill(ptr, width, height, _framePitch, dstColorMode, c);
-			Dma2d::waitForFinish();
+			_dma2d->startFill(ptr, width, height, _framePitch, dstColorMode, c);
+			_dma2d->waitForFinish();
 		}
 
 		// En cas contrari realitza una transferencia per software
@@ -282,10 +283,10 @@ void ColorFrameBuffer_DMA2D::copy(
 		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 		// les opcions.
 		//
-		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
-		DMA2DInputColorMode srcColorMode = getInputColorMode(Color::format);
-		Dma2d::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
-		Dma2d::waitForFinish();
+		dma2d::OutputColorMode dstColorMode = getOutputColorMode(Color::format);
+		dma2d::InputColorMode srcColorMode = getInputColorMode(Color::format);
+		_dma2d->startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
+		_dma2d->waitForFinish();
 	}
 
 	// En cas contrari realitza la transferencia per software.
@@ -325,9 +326,9 @@ void ColorFrameBuffer_DMA2D::copy(
 		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 		// les opcions. No cal cridar a 'toPixel()'
 		//
-		DMA2DOutputColorMode dstColorMode = getOutputColorMode(Color::format);
-		DMA2DInputColorMode srcColorMode = getInputColorMode(colorFormat);
-		Dma2d::startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
-		Dma2d::waitForFinish();
+		dma2d::OutputColorMode dstColorMode = getOutputColorMode(Color::format);
+		dma2d::InputColorMode srcColorMode = getInputColorMode(colorFormat);
+		_dma2d->startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
+		_dma2d->waitForFinish();
 	}
 }

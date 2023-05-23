@@ -174,19 +174,9 @@ namespace htl {
 			protected:
 				UARTDevice(USART_TypeDef *usart);
 				void interruptService();
-				virtual void activateImpl() = 0;
-				virtual void deactivateImpl() = 0;
-				virtual void resetImpl() = 0;
+				virtual void activate() = 0;
+				virtual void deactivate() = 0;
 			public:
-				inline void activate() {
-					activateImpl();
-				}
-				inline void deactivate() {
-					deactivateImpl();
-				}
-				inline void reset() {
-					resetImpl();
-				}
 				inline void enable() {
 					_usart->CR1 |= USART_CR1_UE;
 				}
@@ -239,8 +229,6 @@ namespace htl {
 				static constexpr uint32_t _usartAddr = HI::usartAddr;
 				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
 				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
-				static constexpr uint32_t _rccResetAddr = HI::rccResetAddr;
-				static constexpr uint32_t _rccResetPos = HI::rccResetPos;
 				static UARTDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
@@ -250,19 +238,14 @@ namespace htl {
 					UARTDevice(reinterpret_cast<USART_TypeDef*>(_usartAddr)) {
 				}
 			protected:
-				void activateImpl() override {
+				void activate() override {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
-				void deactivateImpl() override{
+				void deactivate() override{
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
-				}
-				void resetImpl() override{
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccResetAddr);
-					*p |= 1 << _rccResetPos;
-					*p &= ~(1 << _rccResetPos);
 				}
 			public:
 				static constexpr UARTDeviceX * getHandler() {
@@ -342,8 +325,6 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR2_USART1EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR2);
-				static constexpr uint32_t rccResetPos = RCC_APBRSTR2_USART1RST_Pos;
 				#endif
 				static constexpr irq::VectorID irqVectorID = irq::VectorID::uart1;
 			};
@@ -356,8 +337,6 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART2EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR1);
-				static constexpr uint32_t rccResetPos = RCC_APBRSTR1_USART2RST_Pos;
 				static constexpr bool supportedRxTimeout = false;
 				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr bool supportedRxTimeout = true;

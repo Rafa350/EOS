@@ -36,11 +36,11 @@ void DMA2DDevice::deactivate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialkitzacio.
+/// \brief    Inicialitzacio.
 ///
 void DMA2DDevice::initialize() {
     
-    activete();
+    activate();
 }
 
 

@@ -262,15 +262,15 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza la capa 1 del modul LTDC
 	//
-	constexpr ltdc::LTDCPixelFormat pixelFormat =
-		Color::format == ColorFormat::argb8888 ? ltdc::LTDCPixelFormat::argb8888 :
-		Color::format == ColorFormat::argb4444 ? ltdc::LTDCPixelFormat::argb4444 :
-		Color::format == ColorFormat::argb1555 ? ltdc::LTDCPixelFormat::argb1555 :
-		Color::format == ColorFormat::rgb888 ? ltdc::LTDCPixelFormat::rgb888 :
-		Color::format == ColorFormat::al88 ? ltdc::LTDCPixelFormat::al88 :
-		Color::format == ColorFormat::al44 ? ltdc::LTDCPixelFormat::al44 :
-		Color::format == ColorFormat::l8 ? ltdc::LTDCPixelFormat::l8 :
-        ltdc::LTDCPixelFormat::rgb565;
+	constexpr ltdc::PixelFormat pixelFormat =
+		Color::format == ColorFormat::argb8888 ? ltdc::PixelFormat::argb8888 :
+		Color::format == ColorFormat::argb4444 ? ltdc::PixelFormat::argb4444 :
+		Color::format == ColorFormat::argb1555 ? ltdc::PixelFormat::argb1555 :
+		Color::format == ColorFormat::rgb888 ? ltdc::PixelFormat::rgb888 :
+		Color::format == ColorFormat::al88 ? ltdc::PixelFormat::al88 :
+		Color::format == ColorFormat::al44 ? ltdc::PixelFormat::al44 :
+		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
+        ltdc::PixelFormat::rgb565;
 	auto layer(ltdc::LTDCLayerDevice1::getHandler());
 	layer->setWindow(0, 0, _width, _height);
 	layer->setFrameFormat(
