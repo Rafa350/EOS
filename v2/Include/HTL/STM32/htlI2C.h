@@ -95,11 +95,11 @@ namespace htl {
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
-			protected:
-				I2CSlaveDevice(I2C_TypeDef *gpio);
 				void interruptServiceListen();
 				void interruptServiceListenRx();
 				void interruptServiceListenTx();
+			protected:
+				I2CSlaveDevice(I2C_TypeDef *gpio);
 				void interruptService();
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;
@@ -166,7 +166,6 @@ namespace htl {
 				static I2CSlaveDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
-				static constexpr irq::VectorID irqVectorID = HI::irqVectorID;
 			private:
 				I2CSlaveDeviceX() :
 					I2CSlaveDevice(reinterpret_cast<I2C_TypeDef *>(_i2cAddr)) {
@@ -234,7 +233,6 @@ namespace htl {
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C1EN_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::i2c1;
 			};
 			#endif
 
@@ -252,7 +250,6 @@ namespace htl {
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C2EN_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::i2c2;
 			};
 			#endif
 

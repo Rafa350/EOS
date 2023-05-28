@@ -52,13 +52,12 @@ void CircularSerialDriver_I2CSlave::initializeImpl() {
 ///
 void CircularSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_i2c->disable();
+	_i2c->endListen();
 	_i2c->disableAddressMatchCallback();
 	_i2c->disableRxDataCallback();
 	_i2c->disableRxCompletedCallback();
 	_i2c->disableTxDataCallback();
 	_i2c->disableTxCompletedCallback();
-	_i2c->endListen();
 }
 
 

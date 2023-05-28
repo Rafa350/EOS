@@ -21,24 +21,86 @@ TMRDevice::TMRDevice(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el timer.
+/// \brief    Inicialitza el temporitzador en modus base de temps
+/// \param    prescaler: Valor del prescaler.
+/// \param    period: Periode.
+/// \param    repeat: Contador de repeticions del event 'update'.
 ///
-TMRDevice::Result TMRDevice::initialize() {
+TMRDevice::Result TMRDevice::initBase(
+	ClockDivider clkDiv,
+	uint32_t prescaler,
+	uint32_t period,
+	uint32_t repeat) {
 
-	if (_state == State::reset) {
-
-		activate();
-
-		_tim->CR1 &= ~TIM_CR1_CEN;
-
-		_state = State::ready;
-
-		return Result::ok;
-	}
-
-	else
+	if (!IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) && clkDiv != ClockDivider::_1)
 		return Result::error;
 
+	if (!IS_TIM_REPETITION_COUNTER_INSTANCE(_tim) && repeat != 0)
+		return Result::error;
+
+	if (_state != State::reset)
+		return Result::error;
+
+	// Activa el dispositiu
+	//
+	activate();
+
+	// Inicialitza el timer.
+	// -Para el contador (CEN = 0).
+	// -Inicialitza ARR de forma in mediata (ARPE = 0).
+	// -Inidiclitza el divisor del rellotge.
+	//
+	uint32_t cr1 = _tim->CR1;
+	cr1 &= ~(TIM_CR1_CEN | TIM_CR1_ARPE);
+	if (IS_TIM_CLOCK_DIVISION_INSTANCE(_tim)) {
+		cr1 &= ~TIM_CR1_CKD;
+		switch (clkDiv) {
+			case ClockDivider::_1:
+				break;
+
+			case ClockDivider::_2:
+				cr1 |= TIM_CR1_CKD_0;
+				break;
+
+			case ClockDivider::_4:
+				cr1 |= TIM_CR1_CKD_1;
+				break;
+		}
+	}
+	_tim->CR1 = cr1;
+
+	// Configura la base de temps
+	//
+	_tim->ARR = period;
+	_tim->PSC = prescaler;
+
+	// Configura cada quant es genere un event 'update'
+	//
+	if (IS_TIM_REPETITION_COUNTER_INSTANCE(_tim))
+		_tim->RCR = repeat;
+
+	_state = State::ready;
+
+	return Result::ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el temporitzador en modus generador PWM
+/// \param    prescaler: Valor del prescaler.
+/// \param    period: Periode.
+/// \param    duty: Duty
+///
+TMRDevice::Result TMRDevice::initPWM(
+	ClockDivider clkDiv,
+	uint32_t prescaler,
+	uint32_t period,
+	uint32_t duty) {
+
+	if (initBase(clkDiv, prescaler, period) != Result::ok)
+		return Result::error;
+
+	return Result::ok;
 }
 
 
@@ -64,55 +126,20 @@ TMRDevice::Result TMRDevice::deinitialize() {
 }
 
 
-void TMRDevice::setDirection(
-	CountDirection direction) {
-
-	if (direction == CountDirection::down)
-		_tim->CR1 |= TIM_CR1_DIR;
-	else
-		_tim->CR1 &= ~TIM_CR1_DIR;
-}
-
-
-void TMRDevice::setResolution(
-	CountResolution resolution) {
-}
-
-
+/// ----------------------------------------------------------------------
+/// \brief    Canvia el periode del temporitzador.
+/// \param    period: El nou valor del periode.
+/// \param    immediate: True si el canvi es inmediat.
+///
 void TMRDevice::setPeriod(
-	uint32_t period) {
+	uint32_t period,
+	bool immediate) {
 
+	if (immediate)
+		_tim->CR1 &= ~TIM_CR1_ARPE;
+	else
+		_tim->CR1 |= TIM_CR1_ARPE;
 	_tim->ARR = period;
-}
-
-
-void TMRDevice::setPrescaler(
-	uint32_t prescaler) {
-
-	_tim->PSC = prescaler;
-}
-
-
-void TMRDevice::setClockDivider(
-	ClockDivider clockDivider) {
-
-	if (IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) ) {
-		uint32_t temp = _tim->CR1;
-		temp &= ~TIM_CR1_CKD;
-		switch (clockDivider) {
-			case ClockDivider::_1:
-				break;
-
-			case ClockDivider::_2:
-				temp |= TIM_CR1_CKD_0;
-				break;
-
-			case ClockDivider::_4:
-				temp |= TIM_CR1_CKD_1;
-				break;
-		}
-		_tim->CR1 = temp;
-	}
 }
 
 

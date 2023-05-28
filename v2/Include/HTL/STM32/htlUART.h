@@ -232,7 +232,6 @@ namespace htl {
 				static UARTDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
-				static constexpr irq::VectorID irqVectorID = HI::irqVectorID;
 			private:
 				UARTDeviceX() :
 					UARTDevice(reinterpret_cast<USART_TypeDef*>(_usartAddr)) {
@@ -326,7 +325,6 @@ namespace htl {
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR2_USART1EN_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::uart1;
 			};
 			#endif
 
@@ -343,7 +341,6 @@ namespace htl {
 				#else
 				#error Plataforma no soportada
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::uart2;
 			};
 			#endif
 

@@ -142,29 +142,25 @@ namespace htl {
 				TMRDevice & operator = (const TMRDevice &) = delete;
 			protected:
 				TMRDevice(TIM_TypeDef *tim);
-				void interruptService();
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;
-				virtual void reset() = 0;
+				void interruptService();
 			public:
-				Result initialize();
+				Result initBase(ClockDivider clkDiv, uint32_t prescaler, uint32_t period, uint32_t repeat = 0);
+				Result initPWM(ClockDivider clkDiv, uint32_t prescaler, uint32_t period, uint32_t duty);
 				Result deinitialize();
-				void setDirection(CountDirection direction);
-				void setResolution(CountResolution);
-				void setPeriod(uint32_t period);
-				void setPrescaler(uint32_t prescaler);
-				void setClockDivider(ClockDivider clockDivider);
+				void setPeriod(uint32_t period, bool immediate = false);
 				inline void enableTriggerEventCallback(ITriggerEventCallback &callback) {
 					_triggerEventCallback = &callback;
 				}
 				inline void enableUpdateEventCallback(IUpdateEventCallback &callback) {
 					_updateEventCallback = &callback;
 				}
-				inline void disableTriggerEventCallback() {
-					_triggerEventCallback = nullptr;
-				}
 				inline void disableUpdateEventCallback() {
 					_updateEventCallback = nullptr;
+				}
+				inline void disableTriggerEventCallback() {
+					_triggerEventCallback = nullptr;
 				}
 				Result start();
 				Result startInterrupt();
@@ -185,7 +181,6 @@ namespace htl {
 				static TMRDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
-				//static constexpr irq::VectorID irqVectorID = HI::irqVectorID;
 			private:
 				TMRDeviceX() :
 					TMRDevice(reinterpret_cast<TIM_TypeDef*>(_timAddr)) {
@@ -199,8 +194,6 @@ namespace htl {
 				void deactivate() override {
 					uint32_t *p = reinterpret_cast<uint32_t*>(_rccAddr);
 					*p &= ~(1 << _enablePos);
-				}
-				void reset() override {
 				}
 			public:
 				static constexpr TMRDeviceX * getHandler() {

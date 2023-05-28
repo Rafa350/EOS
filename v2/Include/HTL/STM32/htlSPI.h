@@ -113,7 +113,6 @@ namespace htl {
 				void interruptService();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
-				virtual void resetImpl() = 0;
 			public:
 				void initialize(SPIMode mode, ClkPolarity clkPolarity, ClkPhase clkPhase, WordSize size, FirstBit firstBit, ClockDivider clkDivider);
 				void deinitialize();
@@ -142,7 +141,7 @@ namespace htl {
 				uint16_t receive(uint8_t *buffer, uint16_t size);
 		};
 
-		typedef SPIDevice* SPIDeviceHandler;
+		typedef SPIDevice * SPIDeviceHandler;
 
 
 		namespace internal {
@@ -167,7 +166,6 @@ namespace htl {
 				static SPIDeviceX _device;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
-				static constexpr irq::VectorID irqVectorID = HI::irqVectorID;
 			private:
 				SPIDeviceX() :
 					SPIDevice(reinterpret_cast<SPI_TypeDef *>(_spiAddr)) {
@@ -181,11 +179,6 @@ namespace htl {
 				void deactivateImpl() {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
-				}
-				void resetImpl() {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccResetAddr);
-					*p |= 1 << _rccResetPos;
-					*p &= ~(1 << _rccResetPos);
 				}
 			public:
 				static constexpr SPIDeviceX * getHandler() {
@@ -243,15 +236,10 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR2_SPI1EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR2);
-				static constexpr uint32_t rccResetPos = RCC_APBRSTR2_SPI1RST_Pos;
 				#elif defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI1EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
-				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI1RST_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi1;
 			};
 			#endif
 
@@ -262,15 +250,10 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI2EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR1);
-				static constexpr uint32_t rccResetPos = RCC_APBRSTR1_SPI2RST_Pos;
 				#elif defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI2EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
-				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_SPI2RST_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi2;
 			};
 			#endif
 
@@ -281,10 +264,7 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI3EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1RSTR);
-				static constexpr uint32_t rccResetPos = RCC_APB1RSTR_SPI3RST_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi3;
 			};
 			#endif
 
@@ -295,10 +275,7 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI4EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
-				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI4RST_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi4;
 			};
 			#endif
 
@@ -309,10 +286,7 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI5EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
-				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI5RST_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi5;
 			};
 			#endif
 
@@ -323,10 +297,7 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI6EN_Pos;
-				static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2RSTR);
-				static constexpr uint32_t rccResetPos = RCC_APB2RSTR_SPI6RST_Pos;
 				#endif
-				static constexpr irq::VectorID irqVectorID = irq::VectorID::spi6;
 			};
 			#endif
 		}
