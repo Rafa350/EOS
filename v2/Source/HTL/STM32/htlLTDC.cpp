@@ -47,46 +47,44 @@ void LTDCDevice::initialize(
 	uint16_t hFP,
 	uint16_t vFP) {
 
-	uint32_t tmp;
-
 	activate();
 	disable();
 
 	// Configura el registre SSCR (Sinchronization Size Configuration Register)
 	//
-	tmp = LTDC->SSCR;
-	tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
-	tmp |= ((hSync - 1) << LTDC_SSCR_HSW_Pos) & LTDC_SSCR_HSW;
-	tmp |= ((vSync - 1) << LTDC_SSCR_VSH_Pos) & LTDC_SSCR_VSH;
-	LTDC->SSCR = tmp;
+	uint32_t sscr = LTDC->SSCR;
+	sscr &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
+	sscr |= ((hSync - 1) << LTDC_SSCR_HSW_Pos) & LTDC_SSCR_HSW;
+	sscr |= ((vSync - 1) << LTDC_SSCR_VSH_Pos) & LTDC_SSCR_VSH;
+	LTDC->SSCR = sscr;
 
 	// Configura el registre BPCR (Back Porch Configuration Register)
 	//
-	tmp = LTDC->BPCR;
-	tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
-	tmp |= ((hSync + hBP - 1) << LTDC_BPCR_AHBP_Pos) & LTDC_BPCR_AHBP;
-	tmp |= ((vSync + vBP - 1) << LTDC_BPCR_AVBP_Pos) & LTDC_BPCR_AVBP;
-	LTDC->BPCR = tmp;
+	uint32_t bpcr = LTDC->BPCR;
+	bpcr &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
+	bpcr |= ((hSync + hBP - 1) << LTDC_BPCR_AHBP_Pos) & LTDC_BPCR_AHBP;
+	bpcr |= ((vSync + vBP - 1) << LTDC_BPCR_AVBP_Pos) & LTDC_BPCR_AVBP;
+	LTDC->BPCR = bpcr;
 
 	// Configura el registre AWCR (Active Width Configuration Register)
 	// -AAW = HSYNC + HBP + WIDTH - 1
 	// -AAH = VSYNC + VBP + HEIGHT - 1
 	//
-	tmp = LTDC->AWCR;
-	tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-	tmp |= ((hSync + hBP + width - 1) << LTDC_AWCR_AAW_Pos) & LTDC_AWCR_AAW;
-	tmp |= ((vSync + vBP + height - 1) << LTDC_AWCR_AAH_Pos) & LTDC_AWCR_AAH;
-	LTDC->AWCR = tmp;
+	uint32_t awcr = LTDC->AWCR;
+	awcr &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
+	awcr |= ((hSync + hBP + width - 1) << LTDC_AWCR_AAW_Pos) & LTDC_AWCR_AAW;
+	awcr |= ((vSync + vBP + height - 1) << LTDC_AWCR_AAH_Pos) & LTDC_AWCR_AAH;
+	LTDC->AWCR = awcr;
 
 	// Configura el registre TWCR (Total Width Configuration Register)
 	// -TOTALW = HSYNC + HBP + WIDTH + HFP - 1
 	// -TOTALH = VSYNC + VBP + HEIGHT + VFP - 1
 	//
-	tmp = LTDC->TWCR;
-	tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-	tmp |= ((hSync + hBP + width + hFP - 1) << LTDC_TWCR_TOTALW_Pos) & LTDC_TWCR_TOTALW;
-	tmp |= ((vSync + vBP + height + vFP - 1) << LTDC_TWCR_TOTALH_Pos) & LTDC_TWCR_TOTALH;
-	LTDC->TWCR = tmp;
+	uint32_t twcr = LTDC->TWCR;
+	twcr &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
+	twcr |= ((hSync + hBP + width + hFP - 1) << LTDC_TWCR_TOTALW_Pos) & LTDC_TWCR_TOTALW;
+	twcr |= ((vSync + vBP + height + vFP - 1) << LTDC_TWCR_TOTALH_Pos) & LTDC_TWCR_TOTALH;
+	LTDC->TWCR = twcr;
 }
 
 
@@ -109,12 +107,12 @@ void LTDCDevice::setBackgroundColor(
 
 	// Configura el registre BCCR (Back Color Configuration Register)
 	//
-	uint32_t tmp = LTDC->BCCR;
-	tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
-	tmp |= ((rgb & 0x00FF0000) >> 16) << LTDC_BCCR_BCRED_Pos;
-	tmp |= ((rgb & 0x0000FF00) >> 8) << LTDC_BCCR_BCGREEN_Pos;
-	tmp |= (rgb & 0x000000FF) << LTDC_BCCR_BCBLUE_Pos;
-	LTDC->BCCR = tmp;
+	uint32_t bccr = LTDC->BCCR;
+	bccr &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
+	bccr |= ((rgb & 0x00FF0000) >> 16) << LTDC_BCCR_BCRED_Pos;
+	bccr |= ((rgb & 0x0000FF00) >> 8) << LTDC_BCCR_BCGREEN_Pos;
+	bccr |= (rgb & 0x000000FF) << LTDC_BCCR_BCBLUE_Pos;
+	LTDC->BCCR = bccr;
 }
 
 
@@ -167,27 +165,25 @@ void LTDCLayerDevice::setWindow(
 	int16_t width,
 	int16_t height) {
 
-	uint32_t tmp;
-
 	// Configura Lx_WHPCR (Window Horizontal Position Configuration Register)
 	// -Tamany horitzontal de la finestra
 	//
 	uint32_t ahbp = (LTDC->BPCR & LTDC_BPCR_AHBP) >> LTDC_BPCR_AHBP_Pos;
-	tmp = _layer->WHPCR;
-	tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
-	tmp |= ((ahbp + x + 1) << LTDC_LxWHPCR_WHSTPOS_Pos) & LTDC_LxWHPCR_WHSTPOS;
-	tmp |= ((ahbp + width - x) << LTDC_LxWHPCR_WHSPPOS_Pos) & LTDC_LxWHPCR_WHSPPOS;
-	_layer->WHPCR = tmp;
+	uint32_t whpcr = _layer->WHPCR;
+	whpcr &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
+	whpcr |= ((ahbp + x + 1) << LTDC_LxWHPCR_WHSTPOS_Pos) & LTDC_LxWHPCR_WHSTPOS;
+	whpcr |= ((ahbp + width - x) << LTDC_LxWHPCR_WHSPPOS_Pos) & LTDC_LxWHPCR_WHSPPOS;
+	_layer->WHPCR = whpcr;
 
 	// Configura Lx_WHPCR (Window Vertical Position Configuration Register)
 	// -Tamany vertical de la finestra
 	//
 	uint32_t avbp = (LTDC->BPCR & LTDC_BPCR_AVBP) >> LTDC_BPCR_AVBP_Pos;
-	tmp = _layer->WVPCR;
-	tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
-	tmp |= ((avbp + y + 1) << LTDC_LxWVPCR_WVSTPOS_Pos) & LTDC_LxWVPCR_WVSTPOS;
-	tmp |= ((avbp + height - y) << LTDC_LxWVPCR_WVSPPOS_Pos) & LTDC_LxWVPCR_WVSPPOS;
-	_layer->WVPCR = tmp;
+	uint32_t wvpcr = _layer->WVPCR;
+	wvpcr &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
+	wvpcr |= ((avbp + y + 1) << LTDC_LxWVPCR_WVSTPOS_Pos) & LTDC_LxWVPCR_WVSTPOS;
+	wvpcr |= ((avbp + height - y) << LTDC_LxWVPCR_WVSPPOS_Pos) & LTDC_LxWVPCR_WVSPPOS;
+	_layer->WVPCR = wvpcr;
 }
 
 
@@ -197,31 +193,29 @@ void LTDCLayerDevice::setFrameFormat(
 	int16_t pitch,
 	int16_t lines) {
 
-	uint32_t tmp;
-
 	// Configura Lx_PFCR (Pixel Format Configuration Register)
 	// -Format de color del buffer d'imatge.
 	//
-	tmp = _layer->PFCR;
-	tmp &= ~(0b111 << LTDC_LxPFCR_PF_Pos);
-	tmp |= (uint32_t(format) & 0b111) << LTDC_LxPFCR_PF_Pos;
-	_layer->PFCR = tmp;
+	uint32_t pfcr = _layer->PFCR;
+	pfcr &= ~(0b111 << LTDC_LxPFCR_PF_Pos);
+	pfcr |= (uint32_t(format) & 0b111) << LTDC_LxPFCR_PF_Pos;
+	_layer->PFCR = pfcr;
 
 	// Configura Lx_CFBLR (Color Frame Buffer Length Register)
 	// -Longitut de la linia en bytes.
 	//
-	tmp = _layer->CFBLR;
-	tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
-	tmp |= (pitch & 0x1FFF) << LTDC_LxCFBLR_CFBP_Pos;
-	tmp |= ((width + 3) & 0x1FFF) << LTDC_LxCFBLR_CFBLL_Pos;
-	_layer->CFBLR = tmp;
+	uint32_t cfblr = _layer->CFBLR;
+	cfblr &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
+	cfblr |= (pitch & 0x1FFF) << LTDC_LxCFBLR_CFBP_Pos;
+	cfblr |= ((width + 3) & 0x1FFF) << LTDC_LxCFBLR_CFBLL_Pos;
+	_layer->CFBLR = cfblr;
 
 	// Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
 	//
-	tmp = _layer->CFBLNR;
-	tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
-	tmp |= lines & LTDC_LxCFBLNR_CFBLNBR;
-	_layer->CFBLNR = tmp;
+	uint32_t cfblnr = _layer->CFBLNR;
+	cfblnr  &= ~(LTDC_LxCFBLNR_CFBLNBR);
+	cfblnr |= lines & LTDC_LxCFBLNR_CFBLNBR;
+	_layer->CFBLNR = cfblnr;
 }
 
 
@@ -280,13 +274,13 @@ void LTDCLayerDevice::setDefaultColor(
 	// Configura Lx_DCCR (Default Color Configuration Register)
 	// -Color per defecte
 	//
-	uint32_t tmp = _layer->DCCR;
-	tmp &= ~(LTDC_LxDCCR_DCALPHA | LTDC_LxDCCR_DCRED | LTDC_LxDCCR_DCGREEN | LTDC_LxDCCR_DCBLUE);
-	tmp |= ((argb & 0xFF000000) >> 24) << LTDC_LxDCCR_DCALPHA_Pos;
-	tmp |= ((argb & 0x00FF0000) >> 16) << LTDC_LxDCCR_DCRED_Pos;
-	tmp |= ((argb & 0x0000FF00) >> 8) << LTDC_LxDCCR_DCGREEN_Pos;
-	tmp |= (argb & 0x000000FF) << LTDC_LxDCCR_DCBLUE_Pos;
-	_layer->DCCR = tmp;
+	uint32_t dccr = _layer->DCCR;
+	dccr &= ~(LTDC_LxDCCR_DCALPHA | LTDC_LxDCCR_DCRED | LTDC_LxDCCR_DCGREEN | LTDC_LxDCCR_DCBLUE);
+	dccr |= ((argb & 0xFF000000) >> 24) << LTDC_LxDCCR_DCALPHA_Pos;
+	dccr |= ((argb & 0x00FF0000) >> 16) << LTDC_LxDCCR_DCRED_Pos;
+	dccr |= ((argb & 0x0000FF00) >> 8) << LTDC_LxDCCR_DCGREEN_Pos;
+	dccr |= (argb & 0x000000FF) << LTDC_LxDCCR_DCBLUE_Pos;
+	_layer->DCCR = dccr;
 }
 
 
@@ -311,12 +305,12 @@ void LTDCLayerDevice::setKeyColor(
 	// Configura Lx_CKCR (Color Key Configuration Register)
 	// -Color clau per croma e
 	//
-	uint32_t tmp = _layer->CKCR;
-	tmp &= ~(LTDC_LxCKCR_CKRED | LTDC_LxCKCR_CKGREEN | LTDC_LxCKCR_CKBLUE);
-	tmp |= ((rgb & 0x00FF0000) >> 16) << LTDC_LxCKCR_CKRED_Pos;
-	tmp |= ((rgb & 0x0000FF00) >> 8) << LTDC_LxCKCR_CKGREEN_Pos;
-	tmp |= (rgb & 0x000000FF) << LTDC_LxCKCR_CKBLUE_Pos;
-	_layer->CKCR = tmp;
+	uint32_t ckcr = _layer->CKCR;
+	ckcr &= ~(LTDC_LxCKCR_CKRED | LTDC_LxCKCR_CKGREEN | LTDC_LxCKCR_CKBLUE);
+	ckcr |= ((rgb & 0x00FF0000) >> 16) << LTDC_LxCKCR_CKRED_Pos;
+	ckcr |= ((rgb & 0x0000FF00) >> 8) << LTDC_LxCKCR_CKGREEN_Pos;
+	ckcr |= (rgb & 0x000000FF) << LTDC_LxCKCR_CKBLUE_Pos;
+	_layer->CKCR = ckcr;
 
 	// Activa el color croma
 	//

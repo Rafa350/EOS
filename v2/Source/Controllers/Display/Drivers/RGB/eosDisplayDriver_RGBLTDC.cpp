@@ -269,28 +269,28 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	// Inicialitza el modul LTDC
 	//
 	auto ltdc(ltdc::LTDCDevice::getHandler());
-	ltdc->initPCPin<DISPLAY_PC_GPIO>(_pcPol);
-	ltdc->initHSYNCPin<DISPLAY_HSYNC_GPIO>(_hSyncPol);
-	ltdc->initVSYNCPin<DISPLAY_VSYNC_GPIO>(_vSyncPol);
-	ltdc->initDEPin<DISPLAY_DE_GPIO>(_dePol);
-	ltdc->initRPins<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	ltdc->initGPins<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	ltdc->initBPins<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	ltdc->initPinPC<DISPLAY_PC_GPIO>(_pcPol);
+	ltdc->initPinHSYNC<DISPLAY_HSYNC_GPIO>(_hSyncPol);
+	ltdc->initPinVSYNC<DISPLAY_VSYNC_GPIO>(_vSyncPol);
+	ltdc->initPinDE<DISPLAY_DE_GPIO>(_dePol);
+	ltdc->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	ltdc->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	ltdc->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
 	ltdc->initialize(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	ltdc->setBackgroundColor(0x0000FF);
 
 	// Inicialitza la capa 1
 	// La capa ocupa tota la superficie de la pantalla
 	//
-	constexpr ltdc::LTDCPixelFormat pixelFormat =
-		Color::format == ColorFormat::argb8888 ? ltdc::LTDCPixelFormat::argb8888 :
-		Color::format == ColorFormat::argb4444 ? ltdc::LTDCPixelFormat::argb4444 :
-		Color::format == ColorFormat::argb1555 ? ltdc::LTDCPixelFormat::argb1555 :
-		Color::format == ColorFormat::rgb888 ? ltdc::LTDCPixelFormat::rgb888 :
-		Color::format == ColorFormat::al88 ? ltdc::LTDCPixelFormat::al88 :
-		Color::format == ColorFormat::al44 ? ltdc::LTDCPixelFormat::al44 :
-		Color::format == ColorFormat::l8 ? ltdc::LTDCPixelFormat::l8 :
-				ltdc::LTDCPixelFormat::rgb565;
+	constexpr ltdc::PixelFormat pixelFormat =
+		Color::format == ColorFormat::argb8888 ? ltdc::PixelFormat::argb8888 :
+		Color::format == ColorFormat::argb4444 ? ltdc::PixelFormat::argb4444 :
+		Color::format == ColorFormat::argb1555 ? ltdc::PixelFormat::argb1555 :
+		Color::format == ColorFormat::rgb888 ? ltdc::PixelFormat::rgb888 :
+		Color::format == ColorFormat::al88 ? ltdc::PixelFormat::al88 :
+		Color::format == ColorFormat::al44 ? ltdc::PixelFormat::al44 :
+		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
+				ltdc::PixelFormat::rgb565;
 
 	auto layer(ltdc::LTDCLayerDevice1::getHandler());
 	layer->setWindow(0, 0, _displayWidth, _displayHeight);

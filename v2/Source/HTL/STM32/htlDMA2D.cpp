@@ -78,12 +78,12 @@ void DMA2DDevice::startFill(
 
 	// Asigna el format de color
 	//
-	uint32_t tmp = DMA2D->OPFCCR;
-	tmp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-	tmp |= (uint32_t(colorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
+	uint32_t opfccr = DMA2D->OPFCCR;
+	opfccr &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
+	opfccr |= (uint32_t(colorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
 	// Aqui tambe Swap Blue/Red
 	// Aqui tambe Invert Alpha
-	DMA2D->OPFCCR = tmp;
+	DMA2D->OPFCCR = opfccr;
 
 	// Asigna el color
 	//
@@ -127,27 +127,25 @@ void DMA2DDevice::startCopy(
 	uint16_t srcPitch,
 	InputColorMode srcColorMode) {
 
-	uint32_t tmp;
-
 	// Selecciona el tipus de transferencia com a M2M/PFC
 	//
 	DMA2D->CR = 0b01 << DMA2D_CR_MODE_Pos;
 
 	// Selecciona el format del color del origen
 	//
-	tmp = DMA2D->FGPFCCR;
-	tmp &= ~(0b1111 << DMA2D_FGPFCCR_CM_Pos);
-	tmp |= (uint32_t(srcColorMode) & 0b1111) << DMA2D_FGPFCCR_CM_Pos;
-	DMA2D->FGPFCCR = tmp;
+	uint32_t fgpfccr = DMA2D->FGPFCCR;
+	fgpfccr &= ~(0b1111 << DMA2D_FGPFCCR_CM_Pos);
+	fgpfccr |= (uint32_t(srcColorMode) & 0b1111) << DMA2D_FGPFCCR_CM_Pos;
+	DMA2D->FGPFCCR = fgpfccr;
 
 	// Selecciona el format de color del desti
 	//
-    tmp = DMA2D->OPFCCR;
-    tmp &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
-    tmp |= (uint32_t(colorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
+    uint32_t opfccr = DMA2D->OPFCCR;
+    opfccr &= ~(0b111 << DMA2D_OPFCCR_CM_Pos);
+    opfccr |= (uint32_t(colorMode) & 0b111) << DMA2D_OPFCCR_CM_Pos;
 	// Aqui tambe Swap Blue/Red
 	// Aqui tambe Invert Alpha
-	DMA2D->OPFCCR = tmp;
+	DMA2D->OPFCCR = opfccr;
 
 	// Selecciona l'adressa i el offset del origen
 	//

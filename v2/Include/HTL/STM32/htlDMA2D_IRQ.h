@@ -11,7 +11,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	void DMA2D_InterruptHandler();
+	void DMA2DDevice_InterruptHandler();
 #ifdef __cplusplus
 }
 #endif
