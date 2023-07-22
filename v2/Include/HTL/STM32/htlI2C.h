@@ -286,6 +286,9 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32G031)
     #include "htl/STM32/G0/htlI2C_AF_G031.h"
 
+#elif defined(EOS_PLATFORM_STM32G051)
+    #include "htl/STM32/G0/htlI2C_AF_G051.h"
+
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlI2C_AF_F030.h"
 

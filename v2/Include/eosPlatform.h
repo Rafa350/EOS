@@ -62,6 +62,9 @@
 		#elif defined(STM32G031K8)
 			#define EOS_PLATFORM_STM32G031
 			#define EOS_PLATFORM_STM32G031K8
+		#elif defined(STM32G051C8)
+			#define EOS_PLATFORM_STM32G051
+			#define EOS_PLATFORM_STM32G051C8
 		#elif defined(STM32G051K8)
 			#define EOS_PLATFORM_STM32G051
 			#define EOS_PLATFORM_STM32G051K8
@@ -149,53 +152,56 @@
 #ifdef __cplusplus
 namespace eos {
 	namespace build {
-		#ifdef EOS_PLATFORM_PIC32
-			constexpr bool is_PIC32_Platform = true;
-		#else
-			constexpr bool is_PIC32_Platform = false;
-		#endif
 
-		#ifdef EOS_PLATFORM_PIC32MX
-			constexpr bool is_PIC32MX_Platform = true;
-		#else
-			constexpr bool is_PIC32MX_Platform = false;
-		#endif
+		struct Platform {
+			#ifdef EOS_PLATFORM_PIC32
+			static constexpr bool is_PIC32_Platform = true;
+			#else
+			static constexpr bool is_PIC32_Platform = false;
+			#endif
 
-		#ifdef EOS_PLATFORM_PIC32MZ
-			constexpr bool is_PIC32MZ_Platform = true;
-		#else
-			constexpr bool is_PIC32MZ_Platform = false;
-		#endif
+			#ifdef EOS_PLATFORM_PIC32MX
+			static constexpr bool is_PIC32MX_Platform = true;
+			#else
+			static constexpr bool is_PIC32MX_Platform = false;
+			#endif
 
-		#ifdef EOS_PLATFORM_STM32
-			constexpr bool is_STM32_Platform = true;
-		#else
-			constexpr bool is_STM32_Platform = false;
-		#endif
+			#ifdef EOS_PLATFORM_PIC32MZ
+			static constexpr bool is_PIC32MZ_Platform = true;
+			#else
+			static constexpr bool is_PIC32MZ_Platform = false;
+			#endif
 
-		#ifdef EOS_PLATFORM_STM32FG0
-			constexpr bool is_STM32G0_Platform = true;
-		#else
-			constexpr bool is_STM32G0_Platform = false;
-		#endif
+			#ifdef EOS_PLATFORM_STM32
+			static constexpr bool is_STM32_Platform = true;
+			#else
+			static constexpr bool is_STM32_Platform = false;
+			#endif
 
-		#ifdef EOS_PLATFORM_STM32F0
-			constexpr bool is_STM32F0_Platform = true;
-		#else
-			constexpr bool is_STM32F0_Platform = false;
-		#endif
+			#ifdef EOS_PLATFORM_STM32FG0
+			static constexpr bool is_STM32G0_Platform = true;
+			#else
+			static constexpr bool is_STM32G0_Platform = false;
+			#endif
 
-		#ifdef EOS_PLATFORM_STM32F4
-			constexpr bool is_STM32F4_Platform = true;
-		#else
-			constexpr bool is_STM32F4_Platform = false;
-		#endif
+			#ifdef EOS_PLATFORM_STM32F0
+			static constexpr bool is_STM32F0_Platform = true;
+			#else
+			static constexpr bool is_STM32F0_Platform = false;
+			#endif
 
-		#ifdef EOS_PLATFORM_STM32F7
-			constexpr bool is_STM32F7_Platform = true;
-		#else
-			constexpr bool is_STM32F7_Platform = false;
-		#endif
+			#ifdef EOS_PLATFORM_STM32F4
+			static constexpr bool is_STM32F4_Platform = true;
+			#else
+			static constexpr bool is_STM32F4_Platform = false;
+			#endif
+
+			#ifdef EOS_PLATFORM_STM32F7
+			static constexpr bool is_STM32F7_Platform = true;
+			#else
+			static constexpr bool is_STM32F7_Platform = false;
+			#endif
+		};
 	}
 }
 #endif

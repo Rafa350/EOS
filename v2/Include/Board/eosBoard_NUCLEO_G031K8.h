@@ -25,7 +25,7 @@
 #define LED1_StateON         htl::gpio::PinState::set
 #define LED1_StateOFF        htl::gpio::PinState::clear
 
-#define LED1_Initialize()    LED1_Pin::getHandler()->initOutput(htl::gpio::OutDriver::pushPull)
+#define LED1_Initialize()    LED1_Pin::getHandler()->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium)
 #define LED1_On()            LED1_Pin::getHandler()->set()
 #define LED1_Off()           LED1_Pin::getHandler()->clear()
 #define LED1_Toggle()        LED1_Pin::getHandler()->toggle()

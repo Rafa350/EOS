@@ -42,23 +42,26 @@
 #ifdef __cplusplus
 namespace eos {
 	namespace build {
-		#ifdef EOS_TOOLCHAIN_XC8
-			constexpr bool is_XC8_Toolchain = true;
-		#else
-			constexpr bool is_XC8_Toolchain = false;
-		#endif
 
-		#ifdef EOS_TOOLCHAIN_GNU
-			constexpr bool is_GNU_Toolchain = true;
-		#else
-			constexpr bool is_GNU_Toolchain = false;
-		#endif
+		struct Toolchain {
+			#ifdef EOS_TOOLCHAIN_XC8
+			static constexpr bool is_XC8_Toolchain = true;
+			#else
+			static constexpr bool is_XC8_Toolchain = false;
+			#endif
 
-		#ifdef EOS_TOOLCHAIN_MVC
-			constexpr bool is_MVC_Toolchain = true;
-		#else
-			constexpr bool is_MVC_Toolchain = false;
-		#endif
+			#ifdef EOS_TOOLCHAIN_GNU
+			static constexpr bool is_GNU_Toolchain = true;
+			#else
+			static constexpr bool is_GNU_Toolchain = false;
+			#endif
+
+			#ifdef EOS_TOOLCHAIN_MVC
+			static constexpr bool is_MVC_Toolchain = true;
+			#else
+			static constexpr bool is_MVC_Toolchain = false;
+			#endif
+		};
 	}
 }
 #endif
