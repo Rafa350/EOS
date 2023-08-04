@@ -131,10 +131,18 @@ namespace htl {
 				tmr5 = TIM5_IRQn,
 			#endif
 			#ifdef HTL_TMR6_EXIST
+				#if defined(EOS_PLATFORM_STM32G0)
+				tmr6 = TIM6_DAC_LPTIM1_IRQn,
+				#else
 				tmr6 = TIM6_DAC_IRQn,
+				#endif
 			#endif
 			#ifdef HTL_TMR7_EXIST
+				#if defined(EOS_PLATFORM_STM32G0)
+				tmr7 = TIM7_LPTIM2_IRQn,
+				#else
 				tmr7 = TIM7_IRQn,
+				#endif
 			#endif
 			#ifdef HTL_TMR8_EXIST
 				tmr8_BRK = TIM8_BRK_TIM12_IRQn,
@@ -171,7 +179,11 @@ namespace htl {
 				uart2 = USART2_IRQn,
 			#endif
 			#ifdef HTL_UART3_EXIST
+				#if defined(EOS_PLATFORM_STM32G0)
+				uart3 = USART3_4_LPUART1_IRQn,
+				#else
 				uart3 = USART3_IRQn,
+				#endif
 			#endif
 			#ifdef HTL_UART4_EXIST
 				uart4 = UART4_IRQn,

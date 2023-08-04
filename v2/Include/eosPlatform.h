@@ -68,6 +68,9 @@
 		#elif defined(STM32G051K8)
 			#define EOS_PLATFORM_STM32G051
 			#define EOS_PLATFORM_STM32G051K8
+		#elif defined(STM32G071R8)
+			#define EOS_PLATFORM_STM32G071
+			#define EOS_PLATFORM_STM32G071R8
 		#else
             #error "Unknown processor STM32G0"
 		#endif

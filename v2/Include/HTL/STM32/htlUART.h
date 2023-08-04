@@ -348,8 +348,15 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_3> {
 				static constexpr uint32_t usartAddr = USART3_BASE;
-				static constexpr INTVector vector = INTVector::uart3;
+				#if defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART3EN_Pos;
+				static constexpr bool supportedRxTimeout = false;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr bool supportedRxTimeout = true;
+				#else
+				#error Plataforma no soportada
+				#endif
 			};
 			#endif
 
@@ -410,6 +417,9 @@ namespace htl {
     
 #elif defined(EOS_PLATFORM_STM32G051)
     #include "htl/STM32/G0/htlUART_AF_G051.h"
+
+#elif defined(EOS_PLATFORM_STM32G071)
+    #include "htl/STM32/G0/htlUART_AF_G071.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlUART_AF_F030.h"

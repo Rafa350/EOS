@@ -20,30 +20,34 @@ static ClockSource getClockSource(
 		#ifdef HTL_UART1_EXIST
 			case USART1_BASE:
 				#if defined(EOS_PLATFORM_STM32G0)
-					sclk = (RCC->CCIPR & RCC_CCIPR_USART1SEL) >> RCC_CCIPR_USART1SEL_Pos;
+				sclk = (RCC->CCIPR & RCC_CCIPR_USART1SEL) >> RCC_CCIPR_USART1SEL_Pos;
 				#elif defined(EOS_PLATFORM_STM32F0)
-					sclk = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
+				sclk = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
 				#else
-					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
 				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART2_EXIST
 			case USART2_BASE:
-				#if defined(EOS_PLATFORM_STM32G0)
-					sclk = 0; //(RCC->CCIPR & RCC_CCIPR_USART2SEL) >> RCC_CCIPR_USART2SEL_Pos;
-				#elif defined(EOS_PLATFORM_STM32F0)
-					sclk = 0; // Sempre es PCLK
+				#if defined(EOS_PLATFORM_STM32G071) || \
+					defined(EOS_PLATFORM_STM32G081) || \
+					defined(EOS_PLATFORM_STM32G0B1) || \
+					defined(EOS_PLATFORM_STM32G0C1)
+				sclk = (RCC->CCIPR & RCC_CCIPR_USART2SEL) >> RCC_CCIPR_USART2SEL_Pos;
 				#else
-					sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
+				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
 				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART3_EXIST
 			case USART3_BASE:
+				#if defined(EOS_PLATFORM_STM32G071)
+				#else
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART3SEL) >> RCC_DCKCFGR2_USART3SEL_Pos;
+				#endif
 				break;
 		#endif
 
@@ -408,14 +412,25 @@ UARTDevice::Result UARTDevice::receive(
 	uint8_t *data,
 	uint16_t dataSize) {
 
-	_rxBuffer = data;
-	_rxSize = dataSize;
-	_rxCount = 0;
+	if (_state == State::ready) {
 
-	_usart->CR1 |= USART_CR1_RXNEIE_RXFNEIE;
-	enableRX();
+		_state = State::receiving;
 
-	return Result::ok;
+		_rxBuffer = data;
+		_rxSize = dataSize;
+		_rxCount = 0;
+
+		_usart->CR1 |= USART_CR1_RXNEIE_RXFNEIE;
+		enableRX();
+
+		return Result::ok;
+	}
+
+	else if ((_state == State::transmiting) || (_state == State::receiving))
+		return Result::busy;
+
+	else
+		return Result::error;
 }
 
 
@@ -462,6 +477,7 @@ void UARTDevice::interruptService() {
 					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
 					if (_rxCompletedCallback != nullptr)
 						_rxCompletedCallback->execute(_rxBuffer, _rxCount);
+					_state = State::ready;
 				}
 			}
 		}
@@ -474,6 +490,7 @@ void UARTDevice::interruptService() {
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
 			if (_rxCompletedCallback != nullptr)
 				_rxCompletedCallback->execute(_rxBuffer, _rxCount);
+			_state = State::ready;
 		}
 	}
 }
