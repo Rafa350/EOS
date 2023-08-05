@@ -19,11 +19,11 @@ static ClockSource getClockSource(
     switch ((uint32_t)regs) {
 		#ifdef HTL_UART1_EXIST
 			case USART1_BASE:
-				#if defined(EOS_PLATFORM_STM32G0)
+				#if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART1SEL)
 				sclk = (RCC->CCIPR & RCC_CCIPR_USART1SEL) >> RCC_CCIPR_USART1SEL_Pos;
 				#elif defined(EOS_PLATFORM_STM32F0)
 				sclk = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
-				#else
+				#elif defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
 				#endif
 				break;
@@ -31,12 +31,9 @@ static ClockSource getClockSource(
 
 		#ifdef HTL_UART2_EXIST
 			case USART2_BASE:
-				#if defined(EOS_PLATFORM_STM32G071) || \
-					defined(EOS_PLATFORM_STM32G081) || \
-					defined(EOS_PLATFORM_STM32G0B1) || \
-					defined(EOS_PLATFORM_STM32G0C1)
+				#if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART2SEL)
 				sclk = (RCC->CCIPR & RCC_CCIPR_USART2SEL) >> RCC_CCIPR_USART2SEL_Pos;
-				#else
+				#elif defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
 				#endif
 				break;
@@ -44,40 +41,53 @@ static ClockSource getClockSource(
 
 		#ifdef HTL_UART3_EXIST
 			case USART3_BASE:
-				#if defined(EOS_PLATFORM_STM32G071)
-				#else
+				#if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART3SEL)
+				sclk = (RCC->CCIPR & RCC_CCIPR_USART3SEL) >> RCC_CCIPR_USART3SEL_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART3SEL) >> RCC_DCKCFGR2_USART3SEL_Pos;
 				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART4_EXIST
-			case UART4_BASE:
+			case USART4_BASE:
+				#if defined(EOS_PLATFORM_STM32G0)  && defined(RCC_CCIPR_USART4SEL)
+				sclk = (RCC->CCIPR & RCC_CCIPR_USART4SEL) >> RCC_CCIPR_USART4SEL_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART4SEL) >> RCC_DCKCFGR2_UART4SEL_Pos;
+				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART5_EXIST
 			case UART5_BASE:
+				#if defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART5SEL) >> RCC_DCKCFGR2_UART5SEL_Pos;
+				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART6_EXIST
 			case USART6_BASE:
+				#if defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART6SEL) >> RCC_DCKCFGR2_USART6SEL_Pos;
+				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART7_EXIST
 			case UART7_BASE:
+				#if defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART7SEL) >> RCC_DCKCFGR2_UART7SEL_Pos;
+				#endif
 				break;
 		#endif
 
 		#ifdef HTL_UART8_EXIST
 			case UART8_BASE:
+				#if defined(EOS_PLATFORM_STM32F7)
 				sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART8SEL) >> RCC_DCKCFGR2_UART8SEL_Pos;
+				#endif
 				break;
 		#endif
     }
@@ -325,8 +335,8 @@ void UARTDevice::setTimming(
     	default:
     	case ClockSource::pclk:
 			#if defined(STM32F4) || defined(STM32F7)
-    		if ((uint32_t(regs) == USART1_BASE) ||
-    			(uint32_t(regs) == USART6_BASE))
+    		if ((uint32_t(_usart) == USART1_BASE) ||
+    			(uint32_t(_usart) == USART6_BASE))
     			fclk =  clock::getClockFrequency(clock::ClockID::pclk2);
     		else
 			#endif

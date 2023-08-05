@@ -186,7 +186,11 @@ namespace htl {
 				#endif
 			#endif
 			#ifdef HTL_UART4_EXIST
+				#if defined(EOS_PLATFORM_STM32G0)
+				uart4 = USART3_4_LPUART1_IRQn,
+				#else
 				uart4 = UART4_IRQn,
+				#endif
 			#endif
 			#ifdef HTL_UART5_EXIST
 				uart5 = UART5_IRQn,

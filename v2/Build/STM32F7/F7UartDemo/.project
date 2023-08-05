@@ -346,11 +346,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTask.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/Services/eosAppLoopService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/Services/eosMessengerService.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/Services/eosMessengerService.h</location>
@@ -406,11 +401,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/Services/eosAppLoopService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/Services/eosMessengerService.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/Services/eosMessengerService.cpp</location>
@@ -436,14 +426,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/System/eosApplication.cpp</name>
+			<name>Src/Framework/EOS/System/eosApplicationBase.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplicationBase.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/System/eosDebug.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosDebug.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/eosRTOSApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRTOSApplication.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/System/eosString.cpp</name>
@@ -586,6 +581,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/F7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/htl.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htl.h</locationURI>
@@ -594,11 +594,6 @@
 			<name>Inc/Framework/EOS/HTL/STM32/htlClock.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlClock.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/Framework/EOS/HTL/STM32/htlClock_F7.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlClock_F7.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
@@ -629,11 +624,6 @@
 			<name>Inc/Framework/EOS/HTL/STM32/htlUART.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/Framework/EOS/HTL/STM32/htlUART_AF_F7.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART_AF_F7.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/htlUART_IRQ.h</name>
@@ -686,9 +676,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlClock_F7.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlClock_F7.cpp</locationURI>
+			<name>Src/Framework/EOS/HTL/STM32/F7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
@@ -774,6 +764,21 @@
 			<name>Src/Framework/EOS/System/Core/eosTask.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/F7/htlClock.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlClock.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/F7/htlUART_AF_F7.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlUART_AF_F7.h</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32/F7/htlClock.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F7/htlClock.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

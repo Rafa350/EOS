@@ -147,7 +147,7 @@
 #ifdef USART3_BASE
 	#define HTL_UART3_EXIST
 #endif
-#ifdef UART4_BASE
+#ifdef USART4_BASE
 	#define HTL_UART4_EXIST
 #endif
 #ifdef UART5_BASE

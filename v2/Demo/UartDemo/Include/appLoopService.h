@@ -14,7 +14,7 @@
 
 namespace app {
 
-	class MyAppLoopService: public eos::AppLoopService {
+	class MyAppLoopService: public eos::Service {
 		private:
         	using TxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::TxCompletedEventArgs&>;
         	using RxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::RxCompletedEventArgs&>;
@@ -43,8 +43,8 @@ namespace app {
             void rxCompletedEventHandler(const eos::AsyncSerialDriver::RxCompletedEventArgs &args);
 
 		protected:
-			void onSetup() override;
-			void onLoop() override;
+			void onInitialize() override;
+			void onTask() override;
 
 		public:
 			MyAppLoopService();

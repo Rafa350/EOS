@@ -23,7 +23,7 @@ MyAppLoopService::MyAppLoopService():
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
 ///
-void MyAppLoopService::onSetup() {
+void MyAppLoopService::onInitialize() {
 
 	// Inicialitza el LED
 	//
@@ -59,7 +59,7 @@ void MyAppLoopService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio.
 ///
-void MyAppLoopService::onLoop() {
+void MyAppLoopService::onTask() {
 
 	uint8_t buffer[10];
 

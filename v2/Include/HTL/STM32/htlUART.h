@@ -363,9 +363,16 @@ namespace htl {
 			#ifdef HTL_UART4_EXIST
 			template <>
 			struct HardwareInfo<DeviceID::_4> {
-				static constexpr uint32_t usartAddr = UART4_BASE;
-				static constexpr INTVector vector = INTVector::uart4;
+				static constexpr uint32_t usartAddr = USART4_BASE;
+				#if defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART4EN_Pos;
+				static constexpr bool supportedRxTimeout = false;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr bool supportedRxTimeout = true;
+				#else
+				#error Plataforma no soportada
+				#endif
 			};
 			#endif
 
