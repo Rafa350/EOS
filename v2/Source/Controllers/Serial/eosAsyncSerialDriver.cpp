@@ -11,9 +11,9 @@ using namespace eos;
 AsyncSerialDriver::AsyncSerialDriver() :
 
 	_state(State::reset),
-	_txCompletedCallback(nullptr),
-	_rxCompletedCallback(nullptr),
-	_abortedCallback(nullptr) {
+	_txCompletedEvent(nullptr),
+	_rxCompletedEvent(nullptr),
+	_abortedEvent(nullptr) {
 }
 
 
@@ -101,24 +101,24 @@ AsyncSerialDriver::State AsyncSerialDriver::getState() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Habilita el callback del event 'TxCompleted'
-/// \param    callback: El callback
+/// \brief    Habilita l'event 'TxCompleted'
+/// \param    event: L'event
 ///
-void AsyncSerialDriver::enableTxCompletedCallback(
-	const ITxCompletedCallback &callback) {
+void AsyncSerialDriver::enableTxCompletedEvent(
+	const ITxCompletedEvent &event) {
 
-	_txCompletedCallback = &callback;
+	_txCompletedEvent = &event;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Habilita el callback del event 'RxCompleted'
-/// \param    callback: El callback
+/// \brief    Habilita l'event 'RxCompleted'
+/// \param    event: L'event
 ///
-void AsyncSerialDriver::enableRxCompletedCallback(
-	const IRxCompletedCallback &callback) {
+void AsyncSerialDriver::enableRxCompletedEvent(
+	const IRxCompletedEvent &event) {
 
-	_rxCompletedCallback = &callback;
+	_rxCompletedEvent = &event;
 }
 
 
@@ -149,12 +149,12 @@ void AsyncSerialDriver::notifyTxCompleted(
 
 	_state = State::ready;
 
-	if (_txCompletedCallback != nullptr) {
+	if (_txCompletedEvent != nullptr) {
 
 		TxCompletedEventArgs args;
 		args.count = count;
 
-		_txCompletedCallback->execute(args);
+		_txCompletedEvent->execute(args);
 	}
 }
 
@@ -168,11 +168,11 @@ void AsyncSerialDriver::notifyRxCompleted(
 
 	_state = State::ready;
 
-	if (_rxCompletedCallback != nullptr) {
+	if (_rxCompletedEvent != nullptr) {
 
 		RxCompletedEventArgs args;
 		args.count = count;
 
-		_rxCompletedCallback->execute(args);
+		_rxCompletedEvent->execute(args);
 	}
 }

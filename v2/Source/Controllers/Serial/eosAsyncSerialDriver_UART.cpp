@@ -15,8 +15,8 @@ AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 	uart::UARTDeviceHandler uart):
 
 	_uart(uart),
-	_txCompletedCallback(*this, &AsyncSerialDriver_UART::txCompletedHandler),
-	_rxCompletedCallback(*this, &AsyncSerialDriver_UART::rxCompletedHandler) {
+	_txCompletedEvent(*this, &AsyncSerialDriver_UART::txCompletedEventHandler),
+	_rxCompletedEvent(*this, &AsyncSerialDriver_UART::rxCompletedEventHandler) {
 }
 
 
@@ -27,8 +27,8 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_uart->enableTxCompletedCallback(_txCompletedCallback);
-	_uart->enableRxCompletedCallback(_rxCompletedCallback);
+	_uart->enableTxCompletedCallback(_txCompletedEvent);
+	_uart->enableRxCompletedCallback(_rxCompletedEvent);
 	_uart->enable();
 }
 
@@ -109,7 +109,7 @@ bool AsyncSerialDriver_UART::receiveImpl(
 /// \param    buffer: El buffer de dades.
 /// \param    count: En nombre de bytes transmessos.
 ///
-void AsyncSerialDriver_UART::txCompletedHandler(
+void AsyncSerialDriver_UART::txCompletedEventHandler(
 	const uint8_t *buffer,
 	uint16_t count) {
 
@@ -122,7 +122,7 @@ void AsyncSerialDriver_UART::txCompletedHandler(
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes rebuts.
 ///
-void AsyncSerialDriver_UART::rxCompletedHandler(
+void AsyncSerialDriver_UART::rxCompletedEventHandler(
 	const uint8_t *buffer,
 	uint16_t count) {
 

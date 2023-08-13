@@ -11,23 +11,23 @@ namespace eos {
 
 	class AsyncSerialDriver_I2CSlave final: public AsyncSerialDriver {
 		public:
-			using AddressMatchCallback = htl::i2c::AddressMatchCallback<AsyncSerialDriver_I2CSlave>;
-			using RxDataCallback = htl::i2c::RxDataCallback<AsyncSerialDriver_I2CSlave>;
-			using RxCompletedCallback = htl::i2c::RxCompletedCallback<AsyncSerialDriver_I2CSlave>;
+			using AddressMatchEvent = htl::i2c::AddressMatchCallback<AsyncSerialDriver_I2CSlave>;
+			using RxDataEvent = htl::i2c::RxDataCallback<AsyncSerialDriver_I2CSlave>;
+			using RxCompletedEvent = htl::i2c::RxCompletedCallback<AsyncSerialDriver_I2CSlave>;
 
 		private:
 			htl::i2c::I2CSlaveDeviceHandler _i2c;
 			const uint8_t *_txData;
 			int _txLength;
 			int _txCount;
-			AddressMatchCallback _addressMatchCallback;
-			RxDataCallback _rxDataCallback;
-			RxCompletedCallback _rxCompletedCallback;
+			AddressMatchEvent _addressMatchEvent;
+			RxDataEvent _rxDataEvent;
+			RxCompletedEvent _rxCompletedEvent;
 
 		private:
-			void addressMatchHandler(uint16_t addr);
-			void rxDataHandler(const uint8_t *buffer, uint16_t count);
-			void rxCompletedHandler(const uint8_t *buffer, uint16_t count);
+			void addressMatchEventHandler(uint16_t addr);
+			void rxDataEventHandler(const uint8_t *buffer, uint16_t count);
+			void rxCompletedEventHandler(const uint8_t *buffer, uint16_t count);
 
 		protected:
 			void initializeImpl() override;

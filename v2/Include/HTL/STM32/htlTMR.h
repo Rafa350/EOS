@@ -334,10 +334,12 @@ namespace htl {
 
 			#ifdef HTL_TMR6_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_6> {
+			struct HardwareInfo<DeviceID::_6> {
 				static constexpr uint32_t timAddr = TIM6_BASE;
-				static constexpr TMRType type = TMRType::basic;
-				#if defined(EOS_PLATFORM_STM32F0)
+				#if defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t enablePos = RCC_APBENR1_TIM6EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM6EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)

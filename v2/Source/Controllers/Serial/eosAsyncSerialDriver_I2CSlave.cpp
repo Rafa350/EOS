@@ -15,9 +15,9 @@ AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
 	i2c::I2CSlaveDeviceHandler i2c) :
 
 	_i2c(i2c),
-	_addressMatchCallback(*this, &AsyncSerialDriver_I2CSlave::addressMatchHandler),
-	_rxDataCallback(*this, &AsyncSerialDriver_I2CSlave::rxDataHandler),
-	_rxCompletedCallback(*this, &AsyncSerialDriver_I2CSlave::rxCompletedHandler) {
+	_addressMatchEvent(*this, &AsyncSerialDriver_I2CSlave::addressMatchEventHandler),
+	_rxDataEvent(*this, &AsyncSerialDriver_I2CSlave::rxDataEventHandler),
+	_rxCompletedEvent(*this, &AsyncSerialDriver_I2CSlave::rxCompletedEventHandler) {
 
 }
 
@@ -29,9 +29,9 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 
 	AsyncSerialDriver::initializeImpl();
 
-	_i2c->enableAddressMatchCallback(_addressMatchCallback);
-	_i2c->enableRxDataCallback(_rxDataCallback);
-	_i2c->enableRxCompletedCallback(_rxCompletedCallback);
+	_i2c->enableAddressMatchCallback(_addressMatchEvent);
+	_i2c->enableRxDataCallback(_rxDataEvent);
+	_i2c->enableRxCompletedCallback(_rxCompletedEvent);
 }
 
 
@@ -109,7 +109,7 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 /// \brief    Es crida quant hi ha coincidencia amb l'adressa
 /// \param    addr: L'adressa I2C.
 ///
-void AsyncSerialDriver_I2CSlave::addressMatchHandler(
+void AsyncSerialDriver_I2CSlave::addressMatchEventHandler(
 	uint16_t addr) {
 
 }
@@ -121,7 +121,7 @@ void AsyncSerialDriver_I2CSlave::addressMatchHandler(
 /// \param    buffer: Buffer de dades.
 /// \param    count: Nombre de bytes en el buffer.
 ///
-void AsyncSerialDriver_I2CSlave::rxDataHandler(
+void AsyncSerialDriver_I2CSlave::rxDataEventHandler(
 	const uint8_t *buffer,
 	uint16_t count) {
 
@@ -133,7 +133,7 @@ void AsyncSerialDriver_I2CSlave::rxDataHandler(
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes en el buffer.
 ///
-void AsyncSerialDriver_I2CSlave::rxCompletedHandler(
+void AsyncSerialDriver_I2CSlave::rxCompletedEventHandler(
 	const uint8_t *buffer,
 	uint16_t count) {
 

@@ -109,10 +109,10 @@ static ClockSource getClockSource(
 UARTDevice::UARTDevice(
 	USART_TypeDef *usart):
 
-	_usart(usart),
-	_state(State::reset),
-	_txCompletedCallback(nullptr),
-	_rxCompletedCallback(nullptr) {
+	_usart {usart},
+	_state {State::reset},
+	_txCompletedCallback {nullptr},
+	_rxCompletedCallback {nullptr} {
 
 }
 

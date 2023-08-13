@@ -58,19 +58,19 @@
 #define EXIST_CN3
 
 #define CN3_1_Pin            htl::gpio::PinB6
-#define CN3_2_Pin            htl::gpip::PinB7
-#define CN3_3_Pin            htl::gpip::PinF2
-#define CN3_5_Pin            htl::gpip::PinA15
-#define CN3_6_Pin            htl::gpip::PinB1
-#define CN3_7_Pin            htl::gpip::PinA10
-#define CN3_8_Pin            htl::gpip::PinA9
-#define CN3_9_Pin            htl::gpip::PinB0
-#define CN3_10_Pin           htl::gpip::PinB2
-#define CN3_11_Pin           htl::gpip::PinB8
-#define CN3_12_Pin           htl::gpip::PinA8
-#define CN3_13_Pin           htl::gpip::PinB9
-#define CN3_14_Pin           htl::gpip::PinB5
-#define CN3_15_Pin           htl::gpip::PinB4
+#define CN3_2_Pin            htl::gpio::PinB7
+#define CN3_3_Pin            htl::gpio::PinF2
+#define CN3_5_Pin            htl::gpio::PinA15
+#define CN3_6_Pin            htl::gpio::PinB1
+#define CN3_7_Pin            htl::gpio::PinA10
+#define CN3_8_Pin            htl::gpio::PinA9
+#define CN3_9_Pin            htl::gpio::PinB0
+#define CN3_10_Pin           htl::gpio::PinB2
+#define CN3_11_Pin           htl::gpio::PinB8
+#define CN3_12_Pin           htl::gpio::PinA8
+#define CN3_13_Pin           htl::gpio::PinB9
+#define CN3_14_Pin           htl::gpio::PinB5
+#define CN3_15_Pin           htl::gpio::PinB4
 
 #endif // USE_CN3
 
@@ -82,15 +82,15 @@
 #ifdef USE_CN4
 #define EXIST_CN4
 
-#define CN4_3_Pin            htl::gpip::PinF2
-#define CN4_5_Pin            htl::gpip::PinA7
-#define CN4_6_Pin            htl::gpip::PinA6
-#define CN4_7_Pin            htl::gpip::PinA11
-#define CN4_8_Pin            htl::gpip::PinA12
-#define CN4_9_Pin            htl::gpip::PinA5
-#define CN4_10_Pin           htl::gpip::PinA5
-#define CN4_11_Pin           htl::gpip::PinA1
-#define CN4_12_Pin           htl::gpip::PinA0
+#define CN4_3_Pin            htl::gpio::PinF2
+#define CN4_5_Pin            htl::gpio::PinA7
+#define CN4_6_Pin            htl::gpio::PinA6
+#define CN4_7_Pin            htl::gpio::PinA11
+#define CN4_8_Pin            htl::gpio::PinA12
+#define CN4_9_Pin            htl::gpio::PinA5
+#define CN4_10_Pin           htl::gpio::PinA5
+#define CN4_11_Pin           htl::gpio::PinA1
+#define CN4_12_Pin           htl::gpio::PinA0
 #define CN4_15_Pin           htl::gpio::PinB3
 
 #endif // USE_CN4

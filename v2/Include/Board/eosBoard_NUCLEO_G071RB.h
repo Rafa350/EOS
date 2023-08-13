@@ -40,11 +40,98 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_GPIO             htl::GPIO_C13
+#define SW1_GPIO             htl::gpio::PinC13
 #define SW1_ON               htl::GPIOState::set
 #define SW1_OFF              htl::GPIOState::clear
 
 #endif // SW1
+
+
+// -----------------------------------------------------------------------
+// CN7 expansion connector
+// -----------------------------------------------------------------------
+//
+#ifdef USE_CN7
+#define EXISTS_CN7
+
+#define CN7_1_Pin            htl::gpio::PinC10
+#define CN7_2_Pin            htl::gpio::PinC11
+#define CN7_3_Pin            htl::gpio::PinC12
+#define CN7_4_Pin            htl::gpio::PinD2
+#define CN7_7_Pin            htl::gpio::PinA14
+#define CN7_9_Pin            htl::gpio::PinD0
+#define CN7_11_Pin           htl::gpio::PinD3
+#define CN7_13_Pin			 htl::gpio::PinA13
+#define CN7_15_Pin  		 htl::gpio::PinD4
+#define CN7_17_Pin  		 htl::gpio::PinA15
+#define CN7_21_Pin  		 htl::gpio::PinB7
+#define CN7_23_Pin  		 htl::gpio::PinC13
+#define CN7_25_Pin  		 htl::gpio::PinC14
+#define CN7_26_Pin  		 htl::gpio::PinD5
+#define CN7_27_Pin  		 htl::gpio::PinC15
+#define CN7_29_Pin  		 htl::gpio::PinF0
+#define CN7_31_Pin  		 htl::gpio::PinF1
+#define CN7_35_Pin  		 htl::gpio::PinC2
+#define CN7_37_Pin  		 htl::gpio::PinC3
+
+#ifndef USE_ARDUINO
+#define CN7_10_Pin           htl::gpio::PinD1
+#define CN7_28_Pin  		 htl::gpio::PinA0
+#define CN7_30_Pin  		 htl::gpio::PinA1
+#define CN7_32_Pin  		 htl::gpio::PinA4
+#define CN7_34_Pin  		 htl::gpio::PinB1
+#define CN7_36_Pin  		 htl::gpio::PinB11
+#define CN7_38_Pin  		 htl::gpio::PinB12
+#endif
+
+#endif
+
+
+// -----------------------------------------------------------------------
+// CN10 expansion connector
+// -----------------------------------------------------------------------
+//
+#ifdef USE_CN10
+#define EXISTS_CN10
+
+#define CN10_1_Pin  		 htl::gpio::PinC9
+#define CN10_2_Pin  		 htl::gpio::PinC8
+#define CN10_4_Pin  		 htl::gpio::PinC6
+#define CN10_6_Pin  		 htl::gpio::PinA3
+#define CN10_10_Pin  		 htl::gpio::PinD6
+#define CN10_12_Pin  		 htl::gpio::PinA12
+#define CN10_14_Pin  		 htl::gpio::PinA11
+#define CN10_16_Pin  		 htl::gpio::PinC1
+#define CN10_18_Pin  		 htl::gpio::PinC0
+#define CN10_22_Pin  		 htl::gpio::PinB2
+#define CN10_24_Pin  		 htl::gpio::PinB6
+#define CN10_26_Pin  		 htl::gpio::PinB15
+#define CN10_28_Pin  		 htl::gpio::PinB10
+#define CN10_30_Pin  		 htl::gpio::PinB13
+#define CN10_34_Pin  		 htl::gpio::PinA2
+#define CN10_36_Pin  		 htl::gpio::PinD8
+#define CN10_38_Pin  		 htl::gpio::PinD9
+
+#ifndef USE_ARDUINO
+#define CN10_3_Pin  		 htl::gpio::PinB8
+#define CN10_5_Pin  		 htl::gpio::PinB9
+#define CN10_11_Pin  		 htl::gpio::PinA5
+#define CN10_13_Pin  		 htl::gpio::PinA6
+#define CN10_15_Pin  		 htl::gpio::PinA7
+#define CN10_17_Pin  		 htl::gpio::PinB0
+#define CN10_19_Pin  		 htl::gpio::PinC7
+#define CN10_21_Pin  		 htl::gpio::PinA9
+#define CN10_23_Pin  		 htl::gpio::PinA8
+#define CN10_25_Pin  		 htl::gpio::PinB14
+#define CN10_27_Pin  		 htl::gpio::PinB4
+#define CN10_29_Pin  		 htl::gpio::PinB5
+#define CN10_31_Pin  		 htl::gpio::PinB3
+#define CN10_33_Pin  		 htl::gpio::PinA10
+#define CN10_35_Pin  		 htl::gpio::PinC4
+#define CN10_37_Pin  		 htl::gpio::PinC5
+#endif
+
+#endif
 
 
 // -----------------------------------------------------------------------
@@ -54,22 +141,22 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-#define ARDUINO_D0_GPIO      htl::GPIO_C5
-#define ARDUINO_D1_GPIO      htl::GPIO_C4
-#define ARDUINO_D2_GPIO      htl::GPIO_A10
-#define ARDUINO_D3_GPIO      htl::GPIO_B3
-#define ARDUINO_D4_GPIO      htl::GPIO_B5
-#define ARDUINO_D5_GPIO      htl::GPIO_B4
-#define ARDUINO_D6_GPIO      htl::GPIO_B14
-#define ARDUINO_D7_GPIO      htl::GPIO_A8
-#define ARDUINO_D8_GPIO      htl::GPIO_A9
-#define ARDUINO_D9_GPIO      htl::GPIO_C7
-#define ARDUINO_D10_GPIO     htl::GPIO_B0
-#define ARDUINO_D11_GPIO     htl::GPIO_A7
-#define ARDUINO_D12_GPIO     htl::GPIO_A6
-#define ARDUINO_D13_GPIO     htl::GPIO_A5
-#define ARDUINO_D14_GPIO     htl::GPIO_B9
-#define ARDUINO_D15_GPIO     htl::GPIO_B8
+#define ARDUINO_D0_Pin       htl::gpio::PinC5
+#define ARDUINO_D1_Pin       htl::gpio::PinC4
+#define ARDUINO_D2_Pin       htl::gpio::PinA10
+#define ARDUINO_D3_Pin       htl::gpio::PinB3
+#define ARDUINO_D4_Pin       htl::gpio::PinB5
+#define ARDUINO_D5_Pin       htl::gpio::PinB4
+#define ARDUINO_D6_Pin       htl::gpio::PinB14
+#define ARDUINO_D7_Pin       htl::gpio::PinA8
+#define ARDUINO_D8_Pin       htl::gpio::PinA9
+#define ARDUINO_D9_Pin       htl::gpio::PinC7
+#define ARDUINO_D10_Pin      htl::gpio::PinB0
+#define ARDUINO_D11_Pin      htl::gpio::PinA7
+#define ARDUINO_D12_Pin      htl::gpio::PinA6
+#define ARDUINO_D13_Pin      htl::gpio::PinA5
+#define ARDUINO_D14_Pin      htl::gpio::PinB9
+#define ARDUINO_D15_Pin      htl::gpio::PinB8
 
 #define ARDUINO_UART         htl::UART_2
 #define ARDUINO_RX_GPIO      ARDUINO_D0_GPIO

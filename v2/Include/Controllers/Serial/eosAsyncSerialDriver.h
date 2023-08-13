@@ -30,15 +30,18 @@ namespace eos {
 			struct AbortedEventArgs {
 				AsyncSerialDriver *driver;
 			};
-    		using ITxCompletedCallback = ICallbackP1<const TxCompletedEventArgs&>;
-    		using IRxCompletedCallback = ICallbackP1<const RxCompletedEventArgs&>;
-    		using IAbortedCallback = ICallbackP1<const AbortedEventArgs&>;
+    		using ITxCompletedEvent = ICallbackP1<const TxCompletedEventArgs&>;
+    		using IRxCompletedEvent = ICallbackP1<const RxCompletedEventArgs&>;
+    		using IAbortedEvent = ICallbackP1<const AbortedEventArgs&>;
+    		template <typename _instance> using TxCompletedEvent = CallbackP1<_instance, const TxCompletedEventArgs&>;
+    		template <typename _instance> using RxCompletedEvent = CallbackP1<_instance, const RxCompletedEventArgs&>;
+    		template <typename _instance> using AbortedEvent = CallbackP1<_instance, const AbortedEventArgs&>;
 
 		private:
 			State _state;
-            const ITxCompletedCallback *_txCompletedCallback;
-            const IRxCompletedCallback *_rxCompletedCallback;
-            const IAbortedCallback *_abortedCallback;
+            const ITxCompletedEvent *_txCompletedEvent;
+            const IRxCompletedEvent *_rxCompletedEvent;
+            const IAbortedEvent *_abortedEvent;
 
 		protected:
             void notifyTxStart();
@@ -68,12 +71,12 @@ namespace eos {
 			inline bool isBusy() const { return getState() != State::ready; }
 			inline bool isReady() const { return getState() == State::ready; }
 
-			void enableTxCompletedCallback(const ITxCompletedCallback &callback);
-			void disableTxCompletedCallback() { _txCompletedCallback = nullptr; }
-			void enableRxCompletedCallback(const IRxCompletedCallback &callback);
-			void disableRxCompletedCallback() { _rxCompletedCallback = nullptr; }
-			void enableAbortedCallback(const IAbortedCallback &callback);
-			void disableAbortedCallback() { _abortedCallback = nullptr; }
+			void enableTxCompletedEvent(const ITxCompletedEvent &event);
+			void disableTxCompletedEvent() { _txCompletedEvent = nullptr; }
+			void enableRxCompletedEvent(const IRxCompletedEvent &event);
+			void disableRxCompletedEvent() { _rxCompletedEvent = nullptr; }
+			void enableAbortedEvent(const IAbortedEvent &event);
+			void disableAbortedEvent() { _abortedEvent = nullptr; }
 
 			bool transmit(const uint8_t *data, int dataLength);
 			bool receive(uint8_t *data, int dataSize);

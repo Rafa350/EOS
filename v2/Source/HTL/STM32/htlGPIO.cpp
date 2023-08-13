@@ -162,7 +162,7 @@ static void setPinFunction(
 Port::Port(
 	GPIO_TypeDef *regs):
 
-	_gpio(regs) {
+	_gpio { regs } {
 
 }
 

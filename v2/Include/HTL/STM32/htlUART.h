@@ -234,7 +234,7 @@ namespace htl {
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
 				UARTDeviceX() :
-					UARTDevice(reinterpret_cast<USART_TypeDef*>(_usartAddr)) {
+					UARTDevice {reinterpret_cast<USART_TypeDef*>(_usartAddr)} {
 				}
 			protected:
 				void activate() override {

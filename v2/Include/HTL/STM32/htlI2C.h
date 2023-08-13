@@ -168,7 +168,7 @@ namespace htl {
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
 				I2CSlaveDeviceX() :
-					I2CSlaveDevice(reinterpret_cast<I2C_TypeDef *>(_i2cAddr)) {
+					I2CSlaveDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
 				}
 			protected:
 				void activate() override {
@@ -288,6 +288,9 @@ namespace htl {
 
 #elif defined(EOS_PLATFORM_STM32G051)
     #include "htl/STM32/G0/htlI2C_AF_G051.h"
+
+#elif defined(EOS_PLATFORM_STM32G071)
+    #include "htl/STM32/G0/htlI2C_AF_G071.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlI2C_AF_F030.h"
