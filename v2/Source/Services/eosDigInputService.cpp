@@ -141,7 +141,7 @@ void DigInputService::onTask() {
             //
             for (auto input: _inputs) {
 
-                if (input->_changedEventCallback != nullptr) {
+                if (input->isChangedEventEnabled()) {
 
                     bool state = irq::disableInterrupts();
 
@@ -156,7 +156,7 @@ void DigInputService::onTask() {
                         args.input = input;
                         args.pinState = input->_pinState;
 
-                        input->_changedEventCallback->execute(args);
+                        input->_changedEvent->execute(args);
                     }
                 }
             }
@@ -261,10 +261,11 @@ DigInput::DigInput(
     DigInputService *service,
     htl::gpio::PinHandler pin):
 
-	_service(nullptr),
-    _pin(pin),
-    _scanMode(ScanMode::polling),
-    _changedEventCallback(nullptr) {
+	_service {nullptr},
+    _pin {pin},
+    _scanMode {ScanMode::polling},
+    _changedEvent {nullptr},
+	_changedEventEnabled {false} {
 
     if (service != nullptr)
         service->addInput(this);

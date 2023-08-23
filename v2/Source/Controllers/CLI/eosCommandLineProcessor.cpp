@@ -5,11 +5,18 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor de l'objecte.
+///
 CommandLineProcessor::CommandLineProcessor() {
 
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Registra una comanda.
+/// \param    command: La comanda a registrar
+///
 void CommandLineProcessor::addCommand(
 	CommandDefinition *command) {
 
@@ -17,6 +24,11 @@ void CommandLineProcessor::addCommand(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la linia de comanda.
+/// \param    text: El text de la linia de comanda.
+/// \return   True si tot es correcte.
+///
 bool CommandLineProcessor::process(
 	const char *text) {
 

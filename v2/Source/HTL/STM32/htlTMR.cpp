@@ -12,16 +12,19 @@ using namespace htl::tmr;
 TMRDevice::TMRDevice(
 	TIM_TypeDef *tim) :
 
-	_tim(tim),
-	_state(State::reset),
-	_triggerEventCallback(nullptr),
-	_updateEventCallback(nullptr) {
+	_tim {tim},
+	_state {State::reset},
+	_triggerEvent {nullptr},
+	_triggerEventEnabled {false},
+	_updateEvent {nullptr},
+	_updateEventEnabled {false}{
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el temporitzador en modus base de temps
+/// \param    clkDiv: Divisor del rellotge.
 /// \param    prescaler: Valor del prescaler.
 /// \param    period: Periode.
 /// \param    repeat: Contador de repeticions del event 'update'.
@@ -227,15 +230,15 @@ void TMRDevice::interruptService() {
 	//
 	if ((_tim->SR & TIM_SR_TIF) && (_tim->DIER & TIM_DIER_TIE)) {
 		_tim->SR &= ~TIM_SR_TIF;
-		if (_triggerEventCallback != nullptr)
-			_triggerEventCallback->execute(0);
+		if (isTriggerEventEnabled())
+			_triggerEvent->execute(0);
 	}
 
 	// Event UPDATE
 	//
 	if ((_tim->SR & TIM_SR_UIF) && (_tim->DIER & TIM_DIER_UIE)) {
 		_tim->SR &= ~TIM_SR_UIF;
-		if (_updateEventCallback != nullptr)
-			_updateEventCallback->execute(0);
+		if (isUpdateEventEnabled())
+			_updateEvent->execute(0);
 	}
 }

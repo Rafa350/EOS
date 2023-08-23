@@ -105,14 +105,14 @@ namespace htl {
 			com
 		};
 
-		using ITriggerEventCallback = eos::ICallbackP1<uint16_t>;
-		using IUpdateEventCallback = eos::ICallbackP1<uint16_t>;
+		using ITriggerEvent = eos::ICallbackP1<uint16_t>;
+		using IUpdateEvent = eos::ICallbackP1<uint16_t>;
 
 		template <typename instance_>
-		using TriggerEventCallback = eos::CallbackP1<instance_, uint16_t>;
+		using TriggerEvent = eos::CallbackP1<instance_, uint16_t>;
 
 		template <typename instance_>
-		using UpdateEventCallback = eos::CallbackP1<instance_, uint16_t>;
+		using UpdateEvent = eos::CallbackP1<instance_, uint16_t>;
 
 		namespace internal {
 
@@ -135,8 +135,10 @@ namespace htl {
 			private:
 				TIM_TypeDef * const _tim;
 				State _state;
-				ITriggerEventCallback *_triggerEventCallback;
-				IUpdateEventCallback *_updateEventCallback;
+				ITriggerEvent *_triggerEvent;
+				bool _triggerEventEnabled;
+				IUpdateEvent *_updateEvent;
+				bool _updateEventEnabled;
 			private:
 				TMRDevice(const TMRDevice &) = delete;
 				TMRDevice & operator = (const TMRDevice &) = delete;
@@ -150,17 +152,31 @@ namespace htl {
 				Result initPWM(ClockDivider clkDiv, uint32_t prescaler, uint32_t period, uint32_t duty);
 				Result deinitialize();
 				void setPeriod(uint32_t period, bool immediate = false);
-				inline void enableTriggerEventCallback(ITriggerEventCallback &callback) {
-					_triggerEventCallback = &callback;
+				inline void setTriggerEvent(ITriggerEvent &event, bool enabled = true) {
+					_triggerEvent = &event;
+					_triggerEventEnabled = enabled;
 				}
-				inline void enableUpdateEventCallback(IUpdateEventCallback &callback) {
-					_updateEventCallback = &callback;
+				inline void setUpdateEvent(IUpdateEvent &event, bool enabled = true) {
+					_updateEvent = &event;
+					_updateEventEnabled = enabled;
 				}
-				inline void disableUpdateEventCallback() {
-					_updateEventCallback = nullptr;
+				inline void enableUpdateEvent() {
+					_updateEventEnabled = true;
 				}
-				inline void disableTriggerEventCallback() {
-					_triggerEventCallback = nullptr;
+				inline void enableTriggerEvent() {
+					_triggerEventEnabled = true;
+				}
+				inline void disableUpdateEvent() {
+					_updateEventEnabled = false;
+				}
+				inline void disableTriggerEvent() {
+					_triggerEventEnabled = false;
+				}
+				inline bool isTriggerEventEnabled() const {
+					return (_triggerEvent != nullptr) && _triggerEventEnabled;
+				}
+				inline bool isUpdateEventEnabled() const {
+					return (_updateEvent != nullptr) && _updateEventEnabled;
 				}
 				Result start();
 				Result startInterrupt();

@@ -33,9 +33,9 @@ namespace eos {
     		using ITxCompletedEvent = ICallbackP1<const TxCompletedEventArgs&>;
     		using IRxCompletedEvent = ICallbackP1<const RxCompletedEventArgs&>;
     		using IAbortedEvent = ICallbackP1<const AbortedEventArgs&>;
-    		template <typename _instance> using TxCompletedEvent = CallbackP1<_instance, const TxCompletedEventArgs&>;
-    		template <typename _instance> using RxCompletedEvent = CallbackP1<_instance, const RxCompletedEventArgs&>;
-    		template <typename _instance> using AbortedEvent = CallbackP1<_instance, const AbortedEventArgs&>;
+    		template <typename instance_> using TxCompletedEvent = CallbackP1<instance_, const TxCompletedEventArgs&>;
+    		template <typename instance_> using RxCompletedEvent = CallbackP1<instance_, const RxCompletedEventArgs&>;
+    		template <typename instance_> using AbortedEvent = CallbackP1<instance_, const AbortedEventArgs&>;
 
 		private:
 			State _state;

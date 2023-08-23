@@ -125,15 +125,15 @@ namespace htl {
 			de
 		};
 
-		using ITxCompletedCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
+		using ITxCompletedEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
 
-		using IRxCompletedCallback = eos::ICallbackP2<const uint8_t*, uint16_t>;
-
-		template <typename instance_>
-		using TxCompletedCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		using IRxCompletedEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
 
 		template <typename instance_>
-		using RxCompletedCallback = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		using TxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+
+		template <typename instance_>
+		using RxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
 
 		namespace internal {
 
@@ -166,8 +166,10 @@ namespace htl {
 				const uint8_t *_txBuffer;
 				uint16_t _txSize;
 				uint16_t _txCount;
-				ITxCompletedCallback *_txCompletedCallback;
-				IRxCompletedCallback *_rxCompletedCallback;
+				ITxCompletedEvent *_txCompletedEvent;
+				bool _txCompletedEventEnabled;
+				IRxCompletedEvent *_rxCompletedEvent;
+				bool _rxCompletedEventEnabled;
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
@@ -199,17 +201,31 @@ namespace htl {
 				Result deinitialize();
 				void setProtocol(WordBits wordBits, Parity parity, StopBits stopBits, Handsake handlsake);
 				void setTimming(BaudMode baudMode, ClockSource clockSource, uint32_t rate, OverSampling oversampling);
-				inline void enableTxCompletedCallback(ITxCompletedCallback &callback) {
-					_txCompletedCallback = &callback;
+				inline void setTxCompletedEvent(ITxCompletedEvent &event, bool enabled = true) {
+					_txCompletedEvent = &event;
+					_txCompletedEventEnabled = enabled;
 				}
-				inline void enableRxCompletedCallback(IRxCompletedCallback &callback) {
-					_rxCompletedCallback = &callback;
+				inline void setRxCompletedEvent(IRxCompletedEvent &event, bool enabled = true) {
+					_rxCompletedEvent = &event;
+					_rxCompletedEventEnabled = enabled;
 				}
-				inline void disableTxCompletedCallback() {
-					_txCompletedCallback = nullptr;
+				inline void enableTxCompletedEvent() {
+					_txCompletedEventEnabled = true;
 				}
-				inline void disableRxCompletedCallback() {
-					_rxCompletedCallback = nullptr;
+				inline void enableRxCompletedEvent() {
+					_rxCompletedEventEnabled = true;
+				}
+				inline void disableTxCompletedEvent() {
+					_txCompletedEventEnabled = false;
+				}
+				inline void disableRxCompletedEvent() {
+					_rxCompletedEventEnabled = false;
+				}
+				inline bool isTxCompletedEventEnabled() const {
+					return (_txCompletedEvent != nullptr) && _txCompletedEventEnabled;
+				}
+				inline bool isRxCompletedEventEnabled() const {
+					return (_rxCompletedEvent != nullptr) && _rxCompletedEventEnabled;
 				}
 				Result transmit(const uint8_t *data, uint16_t dataLength);
 				Result receive(uint8_t *data, uint16_t dataSize);

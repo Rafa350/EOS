@@ -60,7 +60,8 @@ namespace eos {
                 DigInput *input;
                 htl::gpio::PinState pinState;
             };
-        	using IChangedEventCallback = ICallbackP1<const ChangedEventArgs&>;
+        	using IChangedEvent = ICallbackP1<const ChangedEventArgs&>;
+        	template <typename instance_> using ChangedEvent = CallbackP1<instance_, const ChangedEventArgs&>;
 
             enum class ScanMode {    // Modus d'exploracio de la entrada
                 polling,             // -Polling
@@ -71,7 +72,8 @@ namespace eos {
             DigInputService *_service;
             const htl::gpio::PinHandler _pin;
             ScanMode _scanMode;
-            IChangedEventCallback *_changedEventCallback;
+            IChangedEvent *_changedEvent;
+            bool _changedEventEnabled;
             uint32_t _pattern;
             htl::gpio::PinState _pinState;
             bool _edge;
@@ -92,12 +94,21 @@ namespace eos {
                 _scanMode = scanMode;
             }
 
-            inline void enableChangedEventCallback(IChangedEventCallback &callback) {
-                _changedEventCallback = &callback;
+            inline void setChangedEvent(IChangedEvent &event, bool enabled = true) {
+                _changedEvent = &event;
+                _changedEventEnabled = enabled;
             }
 
-            inline void disableChangeEcentCallback() {
-                _changedEventCallback = nullptr;
+            inline bool isChangedEventEnabled() const {
+            	return (_changedEvent != nullptr) && _changedEventEnabled;
+            }
+
+            inline void enableChangeEvent() {
+                _changedEventEnabled = true;
+            }
+
+            inline void disableChangeEvent() {
+                _changedEventEnabled = false;
             }
 
         friend DigInputService;

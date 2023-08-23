@@ -27,8 +27,8 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_uart->enableTxCompletedCallback(_txCompletedEvent);
-	_uart->enableRxCompletedCallback(_rxCompletedEvent);
+	_uart->setTxCompletedEvent(_txCompletedEvent);
+	_uart->setRxCompletedEvent(_rxCompletedEvent);
 	_uart->enable();
 }
 
@@ -39,8 +39,8 @@ void AsyncSerialDriver_UART::initializeImpl() {
 void AsyncSerialDriver_UART::deinitializeImpl() {
 
 	_uart->disable();
-	_uart->disableTxCompletedCallback();
-	_uart->disableRxCompletedCallback();
+	_uart->disableTxCompletedEvent();
+	_uart->disableRxCompletedEvent();
 
     AsyncSerialDriver::deinitializeImpl();
 }

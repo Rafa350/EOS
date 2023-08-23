@@ -40,9 +40,9 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_GPIO             htl::gpio::PinC13
-#define SW1_ON               htl::GPIOState::set
-#define SW1_OFF              htl::GPIOState::clear
+#define SW1_Pin              htl::gpio::PinC13
+#define SW1_StateON          htl::GPIOState::set
+#define SW1_StateOF          htl::GPIOState::clear
 
 #endif // SW1
 

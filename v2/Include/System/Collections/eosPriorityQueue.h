@@ -42,7 +42,7 @@ namespace eos {
                             }
 
                             Queue(Comparator_ comparator):
-                                std::priority_queue<Element_, Container, Comparator_>(comparator) {
+                                std::priority_queue<Element_, Container, Comparator_> {comparator} {
                             }
 
                             bool remove(CReference value) {
@@ -76,7 +76,7 @@ namespace eos {
                     /// \param comparator: El objecte comparador.
                     ///
                     PriorityQueue(Comparator_ comparator) :
-                        _q(comparator) {
+                        _q {comparator} {
                     }
 
                     PriorityQueue(const PriorityQueue &other) = delete;
