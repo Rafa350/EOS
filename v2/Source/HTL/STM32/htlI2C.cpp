@@ -17,11 +17,11 @@ I2CSlaveDevice::I2CSlaveDevice(
 	_buffer(nullptr),
 	_bufferSize(0),
 	_count(0),
-	_addressMatchCallback(nullptr),
-	_rxDataCallback(nullptr),
-	_rxCompletedCallback(nullptr),
-	_txDataCallback(nullptr),
-	_txCompletedCallback(nullptr) {
+	_addressMatchEvent(nullptr),
+	_rxDataEvent(nullptr),
+	_rxCompletedEvent(nullptr),
+	_txDataEvent(nullptr),
+	_txCompletedEvent(nullptr) {
 
 }
 
@@ -220,8 +220,8 @@ void I2CSlaveDevice::interruptServiceListen() {
 
     	// Notifica l'adressa
     	//
-    	if (_addressMatchCallback != nullptr)
-    		_addressMatchCallback->execute(
+    	if (_addressMatchEvent != nullptr)
+    		_addressMatchEvent->execute(
     			(((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
 				(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0));
 
@@ -250,8 +250,8 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 			// Si el buffer es ple, notifica i inicialitza el buffer
 			//
 			if (_count == _maxCount) {
-	    		if (_rxDataCallback != nullptr)
-		    		_rxDataCallback->execute(_buffer, _count);
+	    		if (_rxDataEvent != nullptr)
+		    		_rxDataEvent->execute(_buffer, _count);
 
 	    		// Contador a zero per tornar a carregar el buffer
 	    		//
@@ -274,8 +274,8 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 
 		// Notifica el final
 		//
-		if (_rxCompletedCallback != nullptr)
-			_rxCompletedCallback->execute(_buffer, _count);
+		if (_rxCompletedEvent != nullptr)
+			_rxCompletedEvent->execute(_buffer, _count);
 
 		// Canvia al nou estat
 		//
@@ -312,8 +312,8 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 
 		// Notifica el final
 		//
-		if (_txCompletedCallback != nullptr)
-			_txCompletedCallback->execute();
+		if (_txCompletedEvent != nullptr)
+			_txCompletedEvent->execute();
 
 		// Canvia al nou estat
 		//
@@ -330,8 +330,8 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 		if ((_count == 0) || (_count == _maxCount)) {
 			_count = 0;
 			_maxCount = 0;
-			if (_txDataCallback != nullptr)
-				_txDataCallback->execute(_buffer, _bufferSize, _maxCount);
+			if (_txDataEvent != nullptr)
+				_txDataEvent->execute(_buffer, _bufferSize, _maxCount);
 		}
 
 		// Si hi han dades en el buffer els transmiteix

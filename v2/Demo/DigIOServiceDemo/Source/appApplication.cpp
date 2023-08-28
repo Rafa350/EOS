@@ -19,12 +19,12 @@ using namespace app;
 ///
 MyApplication::MyApplication():
     _messageBusEventCallback(*this, &MyApplication::messageBusEventHandler),
-    _sw1ChangedEventCallback(*this, &MyApplication::sw1ChangedEventHandler)
+    _sw1ChangedEvent(*this, &MyApplication::sw1ChangedEventHandler)
     #ifdef EXIST_SW2
-        , _sw2ChangedEventCallback(*this, &MyApplication::sw2ChangedEventHandler)
+        , _sw2ChangedEvent(*this, &MyApplication::sw2ChangedEventHandler)
     #endif
     #ifdef EXIST_SW3
-        , _sw3ChangedEventCallback(*this, &MyApplication::sw3ChangedEventHandler)
+        , _sw3ChangedEvent(*this, &MyApplication::sw3ChangedEventHandler)
     #endif
 {
 }
@@ -54,7 +54,7 @@ void MyApplication::onInitialize() {
     auto pinSW1 = SW1_Pin::getHandler();
     pinSW1->initInput(gpio::PullUp::up);
     _sw1 = new DigInput(_digInputService, pinSW1);
-    _sw1->enableChangedEventCallback(_sw1ChangedEventCallback);
+    _sw1->setChangedEvent(_sw1ChangedEvent);
 
     // Configura la entrada corresponent al switch SW2
     //
@@ -62,7 +62,7 @@ void MyApplication::onInitialize() {
     auto pinSW2 = SW2_Pin::getHandler();
     pinSW2->initInput(gpio::PullUp::up);
     _sw2 = new DigInput(_digInputService, pinSW2);
-    _sw2->enableChangedEventCallback(_sw2ChangedEventCallback);
+    _sw2->setChangedEvent(_sw2ChangedEvent);
     #endif
 
     // Configure la entrada corresponent al switch SW3
@@ -71,7 +71,7 @@ void MyApplication::onInitialize() {
     auto pinSW3 = SW3_Pin::getHandler();
     pinSW3->initInput(gpio::PullUp::up);
     _sw3 = new DigInput(_digInputService, pinSW3);
-    _sw3->enableChangedEventCallback(_sw3ChangedEventCallback);
+    _sw3->setChangedEvent(_sw3ChangedEvent);
     #endif
 
     // Configura el temporitzador pel servei d'entrades digitals

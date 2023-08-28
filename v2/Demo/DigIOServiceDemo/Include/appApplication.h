@@ -25,7 +25,7 @@ namespace app {
             using INPSRV_TMR = config::digInputService::TMR;
             using OUTSRV_TMR = config::digOutputService::TMR;
 
-            using DigInputChangedEventCallback = eos::CallbackP1<MyApplication, const eos::DigInput::ChangedEventArgs&>;
+            using DigInputChangedEvent = eos::DigInput::ChangedEvent<MyApplication>;
             using MessageBusCallback = eos::CallbackP1<MyApplication, const ButtonMessage&>;
 
         private:
@@ -47,15 +47,15 @@ namespace app {
             #endif
             #ifdef EXIST_SW1
                 eos::DigInput *_sw1;
-                DigInputChangedEventCallback _sw1ChangedEventCallback;
+                DigInputChangedEvent _sw1ChangedEvent;
             #endif
             #ifdef EXIST_SW2
                 eos::DigInput *_sw2;
-                DigInputChangedEventCallback _sw2ChangedEventCallback;
+                DigInputChangedEvent _sw2ChangedEvent;
             #endif
             #ifdef EXIST_SW3
                 eos::DigInput *_sw3;
-                DigInputChangedEventCallback _sw3ChangedEventCallback;
+                DigInputChangedEvent _sw3ChangedEvent;
             #endif
 
         protected:

@@ -51,7 +51,7 @@ TMRDevice::Result TMRDevice::initBase(
 	// Inicialitza el timer.
 	// -Para el contador (CEN = 0).
 	// -Inicialitza ARR de forma in mediata (ARPE = 0).
-	// -Inidiclitza el divisor del rellotge.
+	// -Inicilitza el divisor del rellotge.
 	//
 	uint32_t cr1 = _tim->CR1;
 	cr1 &= ~(TIM_CR1_CEN | TIM_CR1_ARPE);
@@ -181,6 +181,7 @@ TMRDevice::Result TMRDevice::startInterrupt() {
 	else
 		return Result::error;
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza el contador en modus polling.

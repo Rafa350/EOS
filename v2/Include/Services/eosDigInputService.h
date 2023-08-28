@@ -17,6 +17,7 @@ namespace eos {
 
     class DigInputService;
     class DigInput;
+    class DigInputDriver;
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //

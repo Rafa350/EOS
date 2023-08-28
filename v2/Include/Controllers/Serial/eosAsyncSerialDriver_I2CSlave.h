@@ -11,9 +11,9 @@ namespace eos {
 
 	class AsyncSerialDriver_I2CSlave final: public AsyncSerialDriver {
 		public:
-			using AddressMatchEvent = htl::i2c::AddressMatchCallback<AsyncSerialDriver_I2CSlave>;
-			using RxDataEvent = htl::i2c::RxDataCallback<AsyncSerialDriver_I2CSlave>;
-			using RxCompletedEvent = htl::i2c::RxCompletedCallback<AsyncSerialDriver_I2CSlave>;
+			using AddressMatchEvent = htl::i2c::AddressMatchEvent<AsyncSerialDriver_I2CSlave>;
+			using RxDataEvent = htl::i2c::RxDataEvent<AsyncSerialDriver_I2CSlave>;
+			using RxCompletedEvent = htl::i2c::RxCompletedEvent<AsyncSerialDriver_I2CSlave>;
 
 		private:
 			htl::i2c::I2CSlaveDeviceHandler _i2c;
