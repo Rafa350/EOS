@@ -469,7 +469,7 @@ void DigOutputService::cmdDelayedPulse(
 void DigOutputService::cmdRepeatPulse(
     DigOutput *output,
     unsigned width,
-    unsigned espace) {
+    unsigned space) {
     
     eosAssert(output != nullptr);
 
@@ -563,7 +563,7 @@ void DigOutputService::tmrInterruptFunction() {
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: El servei al que s'asignara la sortida.
-/// \param    gpio: El GPIO.
+/// \param    pin: El handler del pin
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
@@ -587,4 +587,42 @@ DigOutput::~DigOutput() {
 
     if (_service != nullptr)
         _service->removeOutput(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor
+/// \param    pin: Handler del pin.
+///
+DigOutputPinDriver_GPIO::DigOutputPinDriver_GPIO(
+	htl::gpio::PinHandler pin):
+	_pin {pin} {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posa el pin a estat set.
+///
+void DigOutputPinDriver_GPIO::set() {
+
+	_pin->set();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posa el pin a estat clear
+///
+void DigOutputPinDriver_GPIO::clear() {
+
+	_pin->set();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inverteix l'estat del pin
+///
+void DigOutputPinDriver_GPIO::toggle() {
+
+	_pin->set();
 }

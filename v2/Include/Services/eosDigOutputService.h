@@ -36,7 +36,7 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
         private:
-            enum class OpCode: uint8_t {
+            enum class OpCode {
                 set,
                 clear,
                 toggle,
@@ -196,7 +196,7 @@ namespace eos {
             const htl::gpio::PinHandler _pin;
             
         public:
-            DigOutputPinDriver(const htl::gpio::PinHandler pin);
+            DigOutputPinDriver_GPIO(const htl::gpio::PinHandler pin);
             void set() override;
             void clear() override;
             void toggle() override;
