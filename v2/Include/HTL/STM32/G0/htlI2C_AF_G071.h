@@ -24,15 +24,18 @@ namespace htl {
 		namespace internal {
 
 			#ifdef HTL_I2C1_EXIST
-			ALT_FUNCTION(1, PinFunction::scl, gpio::PinA9,  gpio::PinFunctionID::_6)
-			ALT_FUNCTION(1, PinFunction::scl, gpio::PinB6,  gpio::PinFunctionID::_6)
-			ALT_FUNCTION(1, PinFunction::scl, gpio::PinB8,  gpio::PinFunctionID::_6)
-			ALT_FUNCTION(1, PinFunction::scl, gpio::PinB10, gpio::PinFunctionID::_1)
+			ALT_FUNCTION(1, PinFunction::scl,   gpio::PinA9,  gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::scl,   gpio::PinB6,  gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::scl,   gpio::PinB8,  gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::scl,   gpio::PinB10, gpio::PinFunctionID::_1)
 
-			ALT_FUNCTION(1, PinFunction::sda, gpio::PinA10, gpio::PinFunctionID::_6)
-			ALT_FUNCTION(1, PinFunction::sda, gpio::PinB7,  gpio::PinFunctionID::_6)
-			ALT_FUNCTION(1, PinFunction::sda, gpio::PinB9,  gpio::PinFunctionID::_6)
-			ALT_FUNCTION(1, PinFunction::sda, gpio::PinB11, gpio::PinFunctionID::_1)
+			ALT_FUNCTION(1, PinFunction::sda,   gpio::PinA10, gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::sda,   gpio::PinB7,  gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::sda,   gpio::PinB9,  gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::sda,   gpio::PinB11, gpio::PinFunctionID::_1)
+
+			ALT_FUNCTION(1, PinFunction::alert, gpio::PinA1,  gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::alert, gpio::PinB5,  gpio::PinFunctionID::_6)
 			#endif // HTL_I2C1_EXIST
 
 			#ifdef HTL_I2C2_EXIST

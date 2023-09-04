@@ -33,6 +33,9 @@ namespace htl {
 			ALT_FUNCTION(1, PinFunction::sda, gpio::PinB7,  gpio::PinFunctionID::_6)
 			ALT_FUNCTION(1, PinFunction::sda, gpio::PinB9,  gpio::PinFunctionID::_6)
 			ALT_FUNCTION(1, PinFunction::sda, gpio::PinB11, gpio::PinFunctionID::_1)
+
+			ALT_FUNCTION(1, PinFunction::alert, gpio::PinA1,  gpio::PinFunctionID::_6)
+			ALT_FUNCTION(1, PinFunction::alert, gpio::PinB5,  gpio::PinFunctionID::_6)
 			#endif // HTL_I2C1_EXIST
 
 			#ifdef HTL_I2C2_EXIST
