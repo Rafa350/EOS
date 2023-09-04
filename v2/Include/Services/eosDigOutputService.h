@@ -30,6 +30,7 @@
 namespace eos {
 
     class DigOutput;
+    class DigOutputPinDriver;
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
@@ -44,6 +45,7 @@ namespace eos {
                 delayedClear,
                 delayedToggle,
                 delayedPulse,
+                repeatPulse,
                 timeOut
             };
             struct Command {
@@ -52,9 +54,9 @@ namespace eos {
                 unsigned param1;
                 unsigned param2;
             };
-            typedef Queue<Command> CommandQueue;
-            typedef List<DigOutput*> DigOutputList;
-            typedef DigOutputList::Iterator DigOutputIterator;
+            using CommandQueue = Queue<Command>;
+            using DigOutputList = List<DigOutput*>;
+            using DigOutputIterator = DigOutputList::Iterator;
 
     	public:
     		static constexpr uint32_t minStackSize = 128;
@@ -75,6 +77,7 @@ namespace eos {
             void cmdDelayedClear(DigOutput *output, unsigned delay);
             void cmdDelayedToggle(DigOutput *output, unsigned delay);
             void cmdDelayedPulse(DigOutput *output, unsigned delay, unsigned width);
+            void cmdRepeatPulse(DigOutput *output, unsigned width, unsigned space);
             void cmdTimeOut(unsigned time);
 
         protected:
@@ -98,6 +101,7 @@ namespace eos {
             void delayedClear(DigOutput *output, unsigned delay);
             void delayedToggle(DigOutput *output, unsigned delay);
             void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
+            void repeatPulse(DigOutput *output, unsigned width, unsigned space);
 
             void tmrInterruptFunction();
     };
@@ -112,7 +116,9 @@ namespace eos {
                 delayedClear,
                 delayedToggle,
                 delayedPulse,
-                pulse
+                pulse,
+                repeatPulse,
+                repeatSpace
             };
         public:
             DigOutputService *_service;
@@ -123,6 +129,7 @@ namespace eos {
 
         public:
             DigOutput(DigOutputService *service, const htl::gpio::PinHandler pin);
+            DigOutput(DigOutputService *service, const DigOutputPinDriver *pinDriver);
             ~DigOutput();
 
             inline DigOutputService* getService() const {
@@ -164,8 +171,35 @@ namespace eos {
             inline void delayedPulse(unsigned delay, unsigned width) {
                 _service->delayedPulse(this, delay, width);
             }
+            
+            inline void repeatPulse(unsigned width, unsigned space) {
+                _service->repeatPulse(this, width, space);
+            }
 
             friend DigOutputService;
+    };
+    
+    /// \brief Clase abstracta que implementa del driver del pin
+    ///
+    class DigOutputPinDriver {
+        public:
+            virtual ~DigOutputPinDriver() = default;
+            virtual void set() = 0;
+            virtual void clear() = 0;
+            virtual void toggle() = 0;
+    };
+    
+    /// \brief Clase que implementa del driver del pin amb acces directe a GPIO
+    ///
+    class DigOutputPinDriver_GPIO final: public DigOutputPinDriver {
+        private:
+            const htl::gpio::PinHandler _pin;
+            
+        public:
+            DigOutputPinDriver(const htl::gpio::PinHandler pin);
+            void set() override;
+            void clear() override;
+            void toggle() override;
     };
 }
 

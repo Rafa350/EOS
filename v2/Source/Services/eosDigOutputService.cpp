@@ -184,6 +184,7 @@ void DigOutputService::toggle(
 /// ----------------------------------------------------------------------
 /// \brief    Genera un puls de conmutacio.
 /// \param    output: La sortida.
+/// \param    width: L'amplada del puls.
 ///
 void DigOutputService::pulse(
     DigOutput *output,
@@ -204,6 +205,8 @@ void DigOutputService::pulse(
 /// ----------------------------------------------------------------------
 /// \brief    Genera un puls de conmutacio retardat.
 /// \param    output: La sortida.
+/// \param    delay: El retard del puls.
+/// \param    width: L'amplada del puls.
 ///
 void DigOutputService::delayedPulse(
     DigOutput *output,
@@ -218,6 +221,30 @@ void DigOutputService::delayedPulse(
         .output = output,
         .param1 = Math::max(delay, _minDelay),
         .param2 = Math::max(width, _minWidth)
+    };
+    _commandQueue.push(cmd, unsigned(-1));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un puls de conmutacio ciclic.
+/// \param    output: La sortida.
+/// \param    width: L'amplada del puls.
+/// \param    space: L'amplada del espai. 
+///
+void DigOutputService::repeatPulse(
+    DigOutput *output,
+    unsigned width,
+    unsigned space) {
+
+    eosAssert(output != nullptr);
+    eosAssert(output->_service == this);
+
+    Command cmd = {
+        .opCode = OpCode::repeatPulse,
+        .output = output,
+        .param1 = Math::max(width, _minWidth),
+        .param2 = Math::max(space, _minWidth)
     };
     _commandQueue.push(cmd, unsigned(-1));
 }
@@ -280,6 +307,10 @@ void DigOutputService::onTask() {
 
                 case OpCode::delayedPulse:
                     cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
+                    break;
+
+                case OpCode::repeatPulse:
+                    cmdRepeatPulse(cmd.output, cmd.param1, cmd.param2);
                     break;
 
                 case OpCode::timeOut:
@@ -429,6 +460,25 @@ void DigOutputService::cmdDelayedPulse(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'repeatPulse'.
+/// \param    output: La sortida.
+/// \param    width: L'amplada del puls.
+/// \param    space: L'amplada del espai.
+///
+void DigOutputService::cmdRepeatPulse(
+    DigOutput *output,
+    unsigned width,
+    unsigned espace) {
+    
+    eosAssert(output != nullptr);
+
+    output->_state = DigOutput::State::repeatPulse;
+    output->_widthCnt = width;
+    output->_delayCnt = space;
+}
+
+
 /// ---------------------------------------------------------------------
 /// \brief    Procesa la comanda 'timeOut'
 /// \param    time: El interval de temps.
@@ -481,7 +531,13 @@ void DigOutputService::cmdTimeOut(
 				else
 					output->_delayCnt -= time;
 				break;
+                
+            case DigOutput::State::repeatPulse:
+                break;
 
+            case DigOutput::State::repeatSpace:
+                break;
+                    
 			default:
 				break;
 		}
