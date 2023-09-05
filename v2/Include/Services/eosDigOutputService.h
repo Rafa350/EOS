@@ -51,8 +51,8 @@ namespace eos {
             struct Command {
                 OpCode opCode;
                 DigOutput *output;
-                unsigned param1;
-                unsigned param2;
+                uint16_t time1;
+                uint16_t time2;
             };
             using CommandQueue = Queue<Command>;
             using DigOutputList = List<DigOutput*>;
@@ -63,8 +63,8 @@ namespace eos {
 
     	private:
             static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
-            static constexpr unsigned _minDelay = DigOutputService_MinDelay;
-            static constexpr unsigned _minWidth = DigOutputService_MinWidth;
+            static constexpr uint16_t _minDelay = DigOutputService_MinDelay;
+            static constexpr uint16_t _minWidth = DigOutputService_MinWidth;
             CommandQueue _commandQueue;
             DigOutputList _outputs;
 
@@ -72,13 +72,13 @@ namespace eos {
             void cmdClear(DigOutput *output);
             void cmdSet(DigOutput *output);
             void cmdToggle(DigOutput *output);
-            void cmdPulse(DigOutput *output, unsigned width);
-            void cmdDelayedSet(DigOutput *output, unsigned delay);
-            void cmdDelayedClear(DigOutput *output, unsigned delay);
-            void cmdDelayedToggle(DigOutput *output, unsigned delay);
-            void cmdDelayedPulse(DigOutput *output, unsigned delay, unsigned width);
-            void cmdRepeatPulse(DigOutput *output, unsigned width, unsigned space);
-            void cmdTimeOut(unsigned time);
+            void cmdPulse(DigOutput *output, uint16_t width);
+            void cmdDelayedSet(DigOutput *output, uint16_t delay);
+            void cmdDelayedClear(DigOutput *output, uint16_t delay);
+            void cmdDelayedToggle(DigOutput *output, uint16_t delay);
+            void cmdDelayedPulse(DigOutput *output, uint16_t delay, uint16_t width);
+            void cmdRepeatPulse(DigOutput *output, uint16_t width, uint16_t space);
+            void cmdTimeOut(uint16_t time);
 
         protected:
             void onInitialize() override;
@@ -96,12 +96,12 @@ namespace eos {
             void clear(DigOutput *output);
             void write(DigOutput *output, bool value);
             void toggle(DigOutput *output);
-            void pulse(DigOutput *output, unsigned width);
-            void delayedSet(DigOutput *output, unsigned delay);
-            void delayedClear(DigOutput *output, unsigned delay);
-            void delayedToggle(DigOutput *output, unsigned delay);
-            void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
-            void repeatPulse(DigOutput *output, unsigned width, unsigned space);
+            void pulse(DigOutput *output, uint16_t width);
+            void delayedSet(DigOutput *output, uint16_t delay);
+            void delayedClear(DigOutput *output, uint16_t delay);
+            void delayedToggle(DigOutput *output, uint16_t delay);
+            void delayedPulse(DigOutput *output, uint16_t delay, uint16_t width);
+            void repeatPulse(DigOutput *output, uint16_t width, uint16_t space);
 
             void tmrInterruptFunction();
     };
@@ -110,26 +110,28 @@ namespace eos {
     ///
     class DigOutput final {
         private:
-            enum class State: uint8_t {
+            enum class State {
                 idle,
                 delayedSet,
                 delayedClear,
                 delayedToggle,
                 delayedPulse,
-                pulse,
+                singlePulse,
                 repeatPulse,
-                repeatSpace
+                repeatInterval
             };
+
         public:
             DigOutputService *_service;
-            const htl::gpio::PinHandler _pin;
+            DigOutputPinDriver *_drv;
             State _state;
-            unsigned _delayCnt;
-            unsigned _widthCnt;
+            uint16_t _timeCnt;
+            uint16_t _time1;
+            uint16_t _time2;
 
         public:
             DigOutput(DigOutputService *service, const htl::gpio::PinHandler pin);
-            DigOutput(DigOutputService *service, const DigOutputPinDriver *pinDriver);
+            DigOutput(DigOutputService *service, DigOutputPinDriver *drv);
             ~DigOutput();
 
             inline DigOutputService* getService() const {
@@ -156,23 +158,23 @@ namespace eos {
                 _service->pulse(this, width);
             }
 
-            inline void delayedSet(unsigned delay) {
+            inline void delayedSet(uint16_t delay) {
                 _service->delayedSet(this, delay);
             }
 
-            inline void delayedClear(unsigned delay) {
+            inline void delayedClear(uint16_t delay) {
                 _service->delayedClear(this, delay);
             }
 
-            inline void delayedToggle(unsigned delay) {
+            inline void delayedToggle(uint16_t delay) {
                 _service->delayedToggle(this, delay);
             }
 
-            inline void delayedPulse(unsigned delay, unsigned width) {
+            inline void delayedPulse(uint16_t delay, uint16_t width) {
                 _service->delayedPulse(this, delay, width);
             }
             
-            inline void repeatPulse(unsigned width, unsigned space) {
+            inline void repeatPulse(uint16_t width, uint16_t space) {
                 _service->repeatPulse(this, width, space);
             }
 

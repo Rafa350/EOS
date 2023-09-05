@@ -188,7 +188,7 @@ void DigOutputService::toggle(
 ///
 void DigOutputService::pulse(
     DigOutput *output,
-    unsigned width) {
+    uint16_t width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -196,7 +196,7 @@ void DigOutputService::pulse(
     Command cmd = {
         .opCode = OpCode::pulse,
         .output = output,
-        .param1 = Math::max(width, _minWidth)
+        .time1 = Math::max(width, _minWidth)
     };
     _commandQueue.push(cmd, unsigned(-1));
 }
@@ -210,8 +210,8 @@ void DigOutputService::pulse(
 ///
 void DigOutputService::delayedPulse(
     DigOutput *output,
-    unsigned delay,
-    unsigned width) {
+    uint16_t delay,
+    uint16_t width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -219,8 +219,8 @@ void DigOutputService::delayedPulse(
     Command cmd = {
         .opCode = OpCode::delayedPulse,
         .output = output,
-        .param1 = Math::max(delay, _minDelay),
-        .param2 = Math::max(width, _minWidth)
+        .time1 = Math::max(delay, _minDelay),
+        .time2 = Math::max(width, _minWidth)
     };
     _commandQueue.push(cmd, unsigned(-1));
 }
@@ -234,8 +234,8 @@ void DigOutputService::delayedPulse(
 ///
 void DigOutputService::repeatPulse(
     DigOutput *output,
-    unsigned width,
-    unsigned space) {
+    uint16_t width,
+    uint16_t space) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -243,8 +243,8 @@ void DigOutputService::repeatPulse(
     Command cmd = {
         .opCode = OpCode::repeatPulse,
         .output = output,
-        .param1 = Math::max(width, _minWidth),
-        .param2 = Math::max(space, _minWidth)
+        .time1 = Math::max(width, _minWidth),
+        .time2 = Math::max(space, _minWidth)
     };
     _commandQueue.push(cmd, unsigned(-1));
 }
@@ -290,31 +290,31 @@ void DigOutputService::onTask() {
                     break;
 
                 case OpCode::pulse:
-                    cmdPulse(cmd.output, cmd.param1);
+                    cmdPulse(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedSet:
-                    cmdDelayedSet(cmd.output, cmd.param1);
+                    cmdDelayedSet(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedClear:
-                    cmdDelayedClear(cmd.output, cmd.param1);
+                    cmdDelayedClear(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedToggle:
-                    cmdDelayedToggle(cmd.output, cmd.param1);
+                    cmdDelayedToggle(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedPulse:
-                    cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
+                    cmdDelayedPulse(cmd.output, cmd.time1, cmd.time2);
                     break;
 
                 case OpCode::repeatPulse:
-                    cmdRepeatPulse(cmd.output, cmd.param1, cmd.param2);
+                    cmdRepeatPulse(cmd.output, cmd.time1, cmd.time2);
                     break;
 
                 case OpCode::timeOut:
-                    cmdTimeOut(cmd.param1);
+                    cmdTimeOut(cmd.time1);
                     break;
             }
         }
@@ -342,7 +342,7 @@ void DigOutputService::cmdClear(
 
     eosAssert(output != nullptr);
 
-    output->_pin->clear();
+    output->_drv->clear();
     output->_state = DigOutput::State::idle;
 }
 
@@ -356,7 +356,7 @@ void DigOutputService::cmdSet(
 
     eosAssert(output != nullptr);
 
-    output->_pin->set();
+    output->_drv->set();
     output->_state = DigOutput::State::idle;
 }
 
@@ -370,7 +370,7 @@ void DigOutputService::cmdToggle(
 
     eosAssert(output != nullptr);
 
-    output->_pin->toggle();
+    output->_drv->toggle();
     output->_state = DigOutput::State::idle;
 }
 
@@ -382,14 +382,14 @@ void DigOutputService::cmdToggle(
 ///
 void DigOutputService::cmdPulse(
     DigOutput *output,
-    unsigned width) {
+    uint16_t width) {
 
     eosAssert(output != nullptr);
 
     if (output->_state == DigOutput::State::idle)
-        output->_pin->toggle();
-    output->_state = DigOutput::State::pulse;
-    output->_widthCnt = width;
+        output->_drv->toggle();
+    output->_state = DigOutput::State::singlePulse;
+    output->_timeCnt = width;
 }
 
 
@@ -400,12 +400,12 @@ void DigOutputService::cmdPulse(
 ///
 void DigOutputService::cmdDelayedSet(
     DigOutput *output,
-    unsigned delay) {
+    uint16_t delay) {
 
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedSet;
-    output->_delayCnt = delay;
+    output->_timeCnt = delay;
 }
 
 
@@ -416,12 +416,12 @@ void DigOutputService::cmdDelayedSet(
 ///
 void DigOutputService::cmdDelayedClear(
     DigOutput *output,
-    unsigned delay) {
+    uint16_t delay) {
 
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedClear;
-    output->_delayCnt = delay;
+    output->_timeCnt = delay;
 }
 
 
@@ -432,12 +432,12 @@ void DigOutputService::cmdDelayedClear(
 ///
 void DigOutputService::cmdDelayedToggle(
     DigOutput *output,
-    unsigned delay) {
+    uint16_t delay) {
 
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedToggle;
-    output->_delayCnt = delay;
+    output->_timeCnt = delay;
 }
 
 
@@ -449,14 +449,14 @@ void DigOutputService::cmdDelayedToggle(
 ///
 void DigOutputService::cmdDelayedPulse(
     DigOutput *output,
-    unsigned delay,
-    unsigned width) {
+    uint16_t delay,
+    uint16_t width) {
 
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedPulse;
-    output->_delayCnt = delay;
-    output->_widthCnt = width;
+    output->_timeCnt = delay;
+    output->_time1 = width;
 }
 
 
@@ -468,14 +468,18 @@ void DigOutputService::cmdDelayedPulse(
 ///
 void DigOutputService::cmdRepeatPulse(
     DigOutput *output,
-    unsigned width,
-    unsigned space) {
+    uint16_t width,
+    uint16_t space) {
     
     eosAssert(output != nullptr);
 
+    if ((output->_state == DigOutput::State::idle) ||
+        (output->_state == DigOutput::State::repeatInterval))
+    	output->_drv->toggle();
     output->_state = DigOutput::State::repeatPulse;
-    output->_widthCnt = width;
-    output->_delayCnt = space;
+    output->_timeCnt = width;
+    output->_time1 = width;
+    output->_time2 = space;
 }
 
 
@@ -484,44 +488,45 @@ void DigOutputService::cmdRepeatPulse(
 /// \param    time: El interval de temps.
 ///
 void DigOutputService::cmdTimeOut(
-    unsigned time) {
+    uint16_t time) {
 
     for (auto output: _outputs) {
 
 		switch (output->_state) {
-			case DigOutput::State::pulse:
-				if (output->_widthCnt <= time) {
-					output->_pin->toggle();
+			case DigOutput::State::singlePulse:
+				if (output->_timeCnt <= time) {
+					output->_drv->toggle();
 					output->_state = DigOutput::State::idle;
 				}
 				else
-					output->_widthCnt -= time;
+					output->_timeCnt -= time;
 				break;
 
 			case DigOutput::State::delayedSet:
 			case DigOutput::State::delayedClear:
 			case DigOutput::State::delayedToggle:
 			case DigOutput::State::delayedPulse:
-				if (output->_delayCnt <= time) {
+				if (output->_timeCnt <= time) {
 					switch (output->_state) {
 						case DigOutput::State::delayedSet:
-							output->_pin->set();
+							output->_drv->set();
 							output->_state = DigOutput::State::idle;
 							break;
 
 						case DigOutput::State::delayedClear:
-							output->_pin->clear();
+							output->_drv->clear();
 							output->_state = DigOutput::State::idle;
 							break;
 
 						case DigOutput::State::delayedToggle:
-							output->_pin->toggle();
+							output->_drv->toggle();
 							output->_state = DigOutput::State::idle;
 							break;
 
 						case DigOutput::State::delayedPulse:
-							output->_pin->toggle();
-							output->_state = DigOutput::State::pulse;
+							output->_drv->toggle();
+							output->_timeCnt = output->_time1;
+							output->_state = DigOutput::State::singlePulse;
 							break;
 
 						default:
@@ -529,13 +534,27 @@ void DigOutputService::cmdTimeOut(
 					}
 				}
 				else
-					output->_delayCnt -= time;
+					output->_timeCnt -= time;
 				break;
                 
             case DigOutput::State::repeatPulse:
+            	if (output->_timeCnt <= time) {
+            		output->_drv->toggle();
+            		output->_timeCnt = output->_time2;
+            		output->_state = DigOutput::State::repeatInterval;
+            	}
+            	else
+            		output->_timeCnt -= time;
                 break;
 
-            case DigOutput::State::repeatSpace:
+            case DigOutput::State::repeatInterval:
+            	if (output->_timeCnt <= time) {
+            		output->_drv->toggle();
+            		output->_timeCnt = output->_time1;
+            		output->_state = DigOutput::State::repeatPulse;
+            	}
+            	else
+            		output->_timeCnt -= time;
                 break;
                     
 			default:
@@ -554,7 +573,7 @@ void DigOutputService::tmrInterruptFunction() {
 
     Command cmd = {
         .opCode = OpCode::timeOut,
-        .param1 = 1
+        .time1 = 1
     };
     _commandQueue.pushISR(cmd);
 }
@@ -569,11 +588,33 @@ DigOutput::DigOutput(
     DigOutputService *service,
     const htl::gpio::PinHandler pin):
 
-    _service(nullptr),
-    _pin(pin),
-    _state(State::idle),
-	_delayCnt(0),
-	_widthCnt(0) {
+    _service {nullptr},
+    _drv {new DigOutputPinDriver_GPIO(pin)},
+    _state {State::idle},
+	_timeCnt {0},
+	_time1 {0},
+	_time2 {0} {
+
+    if (service != nullptr)
+        service->addOutput(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    service: El servei al que s'asignara la sortida.
+/// \param    drv: El driver del pin
+///
+DigOutput::DigOutput(
+    DigOutputService *service,
+    DigOutputPinDriver *drv):
+
+    _service {nullptr},
+    _drv {drv},
+    _state {State::idle},
+	_timeCnt {0},
+	_time1 {0},
+	_time2 {0} {
 
     if (service != nullptr)
         service->addOutput(this);
@@ -615,7 +656,7 @@ void DigOutputPinDriver_GPIO::set() {
 ///
 void DigOutputPinDriver_GPIO::clear() {
 
-	_pin->set();
+	_pin->clear();
 }
 
 
@@ -624,5 +665,5 @@ void DigOutputPinDriver_GPIO::clear() {
 ///
 void DigOutputPinDriver_GPIO::toggle() {
 
-	_pin->set();
+	_pin->toggle();
 }
