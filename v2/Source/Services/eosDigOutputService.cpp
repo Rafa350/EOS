@@ -582,32 +582,11 @@ void DigOutputService::tmrInterruptFunction() {
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: El servei al que s'asignara la sortida.
-/// \param    pin: El handler del pin
-///
-DigOutput::DigOutput(
-    DigOutputService *service,
-    const htl::gpio::PinHandler pin):
-
-    _service {nullptr},
-    _drv {new DigOutputPinDriver_GPIO(pin)},
-    _state {State::idle},
-	_timeCnt {0},
-	_time1 {0},
-	_time2 {0} {
-
-    if (service != nullptr)
-        service->addOutput(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    service: El servei al que s'asignara la sortida.
 /// \param    drv: El driver del pin
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    DigOutputPinDriver *drv):
+    PinDriver *drv):
 
     _service {nullptr},
     _drv {drv},
@@ -628,42 +607,4 @@ DigOutput::~DigOutput() {
 
     if (_service != nullptr)
         _service->removeOutput(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor
-/// \param    pin: Handler del pin.
-///
-DigOutputPinDriver_GPIO::DigOutputPinDriver_GPIO(
-	htl::gpio::PinHandler pin):
-	_pin {pin} {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Posa el pin a estat set.
-///
-void DigOutputPinDriver_GPIO::set() {
-
-	_pin->set();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Posa el pin a estat clear
-///
-void DigOutputPinDriver_GPIO::clear() {
-
-	_pin->clear();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inverteix l'estat del pin
-///
-void DigOutputPinDriver_GPIO::toggle() {
-
-	_pin->toggle();
 }

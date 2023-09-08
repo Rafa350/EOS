@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "Controllers/Pin/eosPinDriver.h"
 #include "HTL/htlGPIO.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosList.h"
@@ -30,7 +31,6 @@
 namespace eos {
 
     class DigOutput;
-    class DigOutputPinDriver;
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
@@ -123,15 +123,14 @@ namespace eos {
 
         public:
             DigOutputService *_service;
-            DigOutputPinDriver *_drv;
+            PinDriver *_drv;
             State _state;
             uint16_t _timeCnt;
             uint16_t _time1;
             uint16_t _time2;
 
         public:
-            DigOutput(DigOutputService *service, const htl::gpio::PinHandler pin);
-            DigOutput(DigOutputService *service, DigOutputPinDriver *drv);
+            DigOutput(DigOutputService *service, PinDriver *drv);
             ~DigOutput();
 
             inline DigOutputService* getService() const {
@@ -181,28 +180,6 @@ namespace eos {
             friend DigOutputService;
     };
     
-    /// \brief Clase abstracta que implementa del driver del pin
-    ///
-    class DigOutputPinDriver {
-        public:
-            virtual ~DigOutputPinDriver() = default;
-            virtual void set() = 0;
-            virtual void clear() = 0;
-            virtual void toggle() = 0;
-    };
-    
-    /// \brief Clase que implementa del driver del pin amb acces directe a GPIO
-    ///
-    class DigOutputPinDriver_GPIO final: public DigOutputPinDriver {
-        private:
-            const htl::gpio::PinHandler _pin;
-            
-        public:
-            DigOutputPinDriver_GPIO(const htl::gpio::PinHandler pin);
-            void set() override;
-            void clear() override;
-            void toggle() override;
-    };
 }
 
 
