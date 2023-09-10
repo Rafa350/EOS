@@ -44,7 +44,7 @@ void osalHeapDestroy(
 ///
 void* osalHeapAlloc(
     HHeap hHeap,
-	int size) {
+	unsigned size) {
 
     eosAssert(hHeap == NULL);
     eosAssert(size > 0);

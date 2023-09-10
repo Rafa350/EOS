@@ -57,14 +57,15 @@ static void initializeCLK() {
 	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz
 	// LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz
 	//
-#if 0
+#if 1
 	pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
 	pclkInit.PLLSAI.PLLSAIN = 192;
 	pclkInit.PLLSAI.PLLSAIR = board::display::fdiv;
 	pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
 	HAL_RCCEx_PeriphCLKConfig(&pclkInit);
 #else
-	htl::LTDC_1::initClock(192, DISPLAY_CLK_FDIV, htl::LTDCClockDivider::_4);
+	auto hLTDC = htl::ltdc::LTDDevice::getHandler();
+	hLTDC->initClock(192, DISPLAY_CLK_FDIV, htl::LTDCClockDivider::_4);
 #endif
 }
 

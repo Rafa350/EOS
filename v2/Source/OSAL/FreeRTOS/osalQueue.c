@@ -12,8 +12,8 @@
 /// \result   El handler de la cua. NULL en cas d'error.
 ///
 HQueue osalQueueCreate(
-	int maxElements,
-	int elementSize) {
+	unsigned maxElements,
+	unsigned elementSize) {
 
 	eosAssert(maxElements > 0);
 	eosAssert(elementSize > 0);
@@ -121,6 +121,48 @@ bool osalQueueGet(
 /// \return   True si tot es correcte.
 ///
 bool osalQueueGetISR(
+	HQueue hQueue,
+	void *element) {
+
+	eosAssert(hQueue != NULL);
+	eosAssert(element != NULL);
+
+    BaseType_t taskWoken = pdFALSE;
+    bool result = xQueueReceiveFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
+    if (result)
+    	portEND_SWITCHING_ISR(taskWoken);
+    return result;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte un element de la cua.
+/// \param    hQueue: Handler de la cua.
+/// \param    element: Buffer on deixar l'element.
+/// \param    blockTime: Temps maxim de bloqueig en ms.
+/// \return   True si tot es correcte
+///
+bool osalQueuePeek(
+	HQueue hQueue,
+	void *element,
+	unsigned blockTime) {
+
+	eosAssert(hQueue != NULL);
+	eosAssert(element != NULL);
+
+    TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    return xQueueReceive((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte un element de la cua. Aquesta versio es per ser cridada
+///           d'ins d'una interrupcio.
+/// \param    hQueue: Handler de la cua.
+/// \param    element: Buffer on deixar l'element.
+/// \return   True si tot es correcte.
+///
+bool osalQueuePeekISR(
 	HQueue hQueue,
 	void *element) {
 

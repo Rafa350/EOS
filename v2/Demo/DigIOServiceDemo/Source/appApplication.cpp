@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "Controllers/Pin/eosPinDriver_GPIO.h"
 #include "HAL/halSYS.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlTMR.h"
@@ -101,7 +102,7 @@ void MyApplication::onInitialize() {
     auto pinLED1 = LED1_Pin::getHandler();
     pinLED1->initOutput(gpio::OutDriver::pushPull);
     pinLED1->clear();
-    _led1 = new DigOutput(_digOutputService, pinLED1);
+    _led1 = new DigOutput(_digOutputService, new PinDriver_GPIO(pinLED1));
 
     // Configura la sortida corresponent al led LED2
     //
@@ -109,7 +110,7 @@ void MyApplication::onInitialize() {
     auto pinLED2 = LED2_Pin::getHandler();
     pinLED2->initOutput(gpio::OutDriver::pushPull);
     pinLED2->clear();
-    _led2 = new DigOutput(_digOutputService, pinLED2);
+    _led2 = new DigOutput(_digOutputService, new PinDriver_GPIO(pinLED2));
     #endif
 
     // Configura la sortida corresponent al led LED3
@@ -118,7 +119,7 @@ void MyApplication::onInitialize() {
     auto pinLED3 = LED3_Pin::getHandler();
     pinLED3->initOutput(gpio::OutDriver::pushPull);
     pinLED3->clear();
-    _led3 = new DigOutput(_digOutputService, pinLED3);
+    _led3 = new DigOutput(_digOutputService, new PinDriver_GPIO(pinLED3));
     #endif
 
     // Configura el temporitzador pel servei de sortides digitals

@@ -16,7 +16,8 @@ using namespace eos;
 /// \param    settings: Configuration parameters.
 ///
 DigOutputService::DigOutputService():
-	_commandQueue(_commandQueueSize) {
+	_timeCounter {0},
+	_commandQueue {_commandQueueSize} {
 
 }
 
@@ -144,6 +145,24 @@ void DigOutputService::clear(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Conmuta l'estat de la sortida.
+/// \param    output: La sortida.
+///
+void DigOutputService::toggle(
+    DigOutput *output) {
+
+    eosAssert(output != nullptr);
+    eosAssert(output->_service == this);
+
+    Command cmd = {
+        .opCode = OpCode::toggle,
+        .output = output
+    };
+    _commandQueue.push(cmd, unsigned(-1));
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Asigna un valor a la sortida.
 /// \param    output: La sortida.
 /// \param    value: El valor a asignar.
@@ -164,31 +183,13 @@ void DigOutputService::write(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Conmuta l'estat de la sortida.
-/// \param    output: La sortida.
-///
-void DigOutputService::toggle(
-    DigOutput *output) {
-
-    eosAssert(output != nullptr);
-    eosAssert(output->_service == this);
-
-    Command cmd = {
-        .opCode = OpCode::toggle,
-        .output = output
-    };
-    _commandQueue.push(cmd, unsigned(-1));
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Genera un puls de conmutacio.
 /// \param    output: La sortida.
 /// \param    width: L'amplada del puls.
 ///
 void DigOutputService::pulse(
     DigOutput *output,
-    uint16_t width) {
+    unsigned width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -210,8 +211,8 @@ void DigOutputService::pulse(
 ///
 void DigOutputService::delayedPulse(
     DigOutput *output,
-    uint16_t delay,
-    uint16_t width) {
+    unsigned delay,
+    unsigned width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -234,8 +235,8 @@ void DigOutputService::delayedPulse(
 ///
 void DigOutputService::repeatPulse(
     DigOutput *output,
-    uint16_t width,
-    uint16_t space) {
+    unsigned width,
+    unsigned space) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -382,7 +383,7 @@ void DigOutputService::cmdToggle(
 ///
 void DigOutputService::cmdPulse(
     DigOutput *output,
-    uint16_t width) {
+    unsigned width) {
 
     eosAssert(output != nullptr);
 
@@ -400,7 +401,7 @@ void DigOutputService::cmdPulse(
 ///
 void DigOutputService::cmdDelayedSet(
     DigOutput *output,
-    uint16_t delay) {
+    unsigned delay) {
 
     eosAssert(output != nullptr);
 
@@ -416,7 +417,7 @@ void DigOutputService::cmdDelayedSet(
 ///
 void DigOutputService::cmdDelayedClear(
     DigOutput *output,
-    uint16_t delay) {
+    unsigned delay) {
 
     eosAssert(output != nullptr);
 
@@ -432,7 +433,7 @@ void DigOutputService::cmdDelayedClear(
 ///
 void DigOutputService::cmdDelayedToggle(
     DigOutput *output,
-    uint16_t delay) {
+    unsigned delay) {
 
     eosAssert(output != nullptr);
 
@@ -449,8 +450,8 @@ void DigOutputService::cmdDelayedToggle(
 ///
 void DigOutputService::cmdDelayedPulse(
     DigOutput *output,
-    uint16_t delay,
-    uint16_t width) {
+    unsigned delay,
+    unsigned width) {
 
     eosAssert(output != nullptr);
 
@@ -468,8 +469,8 @@ void DigOutputService::cmdDelayedPulse(
 ///
 void DigOutputService::cmdRepeatPulse(
     DigOutput *output,
-    uint16_t width,
-    uint16_t space) {
+    unsigned width,
+    unsigned space) {
     
     eosAssert(output != nullptr);
 
@@ -488,7 +489,7 @@ void DigOutputService::cmdRepeatPulse(
 /// \param    time: El interval de temps.
 ///
 void DigOutputService::cmdTimeOut(
-    uint16_t time) {
+    unsigned time) {
 
     for (auto output: _outputs) {
 
@@ -570,6 +571,10 @@ void DigOutputService::cmdTimeOut(
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
 void DigOutputService::tmrInterruptFunction() {
+
+	// Incrementa el contador de temps
+	//
+	_timeCounter++;
 
     Command cmd = {
         .opCode = OpCode::timeOut,

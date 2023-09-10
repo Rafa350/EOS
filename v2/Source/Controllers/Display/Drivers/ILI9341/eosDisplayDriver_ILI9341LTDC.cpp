@@ -251,10 +251,10 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	//
 	auto ltdc(ltdc::LTDCDevice::getHandler());
 	ltdc->initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	ltdc->initPinDE<PinDE>(_dePol);
-	ltdc->initPinHSYNC<PinHSYNC>(_hSyncPol);
-	ltdc->initPinVSYNC<PinVSYNC>(_vSyncPol);
-	ltdc->initPinPC<PinPC>(_pcPol);
+	ltdc->initPinDE<PinDE, _dePol>();
+	ltdc->initPinHSYNC<PinHSYNC, _hSyncPol>();
+	ltdc->initPinVSYNC<PinVSYNC,_vSyncPol>();
+	ltdc->initPinPC<PinPC, _pcPol>();
 	ltdc->initPinRX<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
 	ltdc->initPinGX<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
 	ltdc->initPinBX<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();

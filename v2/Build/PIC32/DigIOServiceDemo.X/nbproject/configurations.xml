@@ -50,7 +50,6 @@
             <itemPath>../../../Include/Services/eosService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigOutputService.h</itemPath>
-            <itemPath>../../../Include/Services/eosTimerService.h</itemPath>
             <itemPath>../../../Include/Services/eosDispatchService.h</itemPath>
             <itemPath>../../../Include/Services/eosMessengerService.h</itemPath>
           </logicalFolder>
@@ -127,7 +126,6 @@
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDigInputService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDigOutputService.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosTimerService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDispatchService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosMessengerService.cpp</itemPath>
           </logicalFolder>

@@ -109,12 +109,12 @@
 #if defined(USE_TOUCHPAD) & defined(USE_DISPLAY)
 #define EXIST_TOUCHPAD
 
-#define TOUCHPAD_SCL_GPIO    htl::GPIO_H7
-#define TOUCHPAD_SDA_GPIO    htl::GPIO_H8
-#define TOUCHPAD_INT_GPIO    htl::GPIO_I13
+#define TOUCHPAD_SCL_GPIO    htl::gpio::PinH7
+#define TOUCHPAD_SDA_GPIO    htl::gpio::PinH8
+#define TOUCHPAD_INT_GPIO    htl::gpio::PinI13
 #define TOUCHPAD_INT_EXTI    htl::EXTI_13
 
-#define TOUCHPAD_I2C         htl::I2C_3
+#define TOUCHPAD_I2C         htl::I2CSlaveDevice3
 #define TOUCHPAD_I2C_ADDR    0x70
 
 #define TOUCHPAD_WIDTH       DISPLAY_WIDTH

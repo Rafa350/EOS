@@ -83,6 +83,19 @@ bool GenericQueue::genericGet(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte un element en la cua.
+/// \param    element: Punter a l'element.
+/// \param    blockTime: Temps maxim de bloqueig en milisegons.
+/// \return   True si tot es correcte.
+///
+bool GenericQueue::genericPeek(
+    void *element,
+    unsigned blockTime) {
+
+	return osalQueuePeek(_hQueue, element, blockTime);
+}
+
+/// ----------------------------------------------------------------------
 /// \brief    Extreu un element en la cua d'ins d'una interrupcio.
 /// \param    element: Punter al element a extreure.
 /// \return   True si tot es correcte.

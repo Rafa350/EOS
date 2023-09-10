@@ -256,7 +256,8 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el pin d'interrupcio
 	//
-	PinINT::initInput(GPIOPull::up);
+	auto pinINT = PinINT::getHandler();
+	pinINT->initInput(GPIOPull::up);
 	ExtiINT::initialize(PinINT::port, EXTIMode::interrupt, EXTITrigger::rissing);
 
 	INT_1::setInterruptVectorPriority(_vector, _priority, _subPriority);
@@ -264,9 +265,10 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el canal I2C
 	//
-	I2C::initMaster();
-	I2C::initSCLPin<PinSCL>();
-	I2C::initSDAPin<PinSDA>();
+	auto hI2C = I2C::getHandler();
+	hI2C->initMaster();
+	hI2C->initSCLPin<PinSCL>();
+	hI2C->initSDAPin<PinSDA>();
 }
 
 

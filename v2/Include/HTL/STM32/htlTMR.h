@@ -108,11 +108,8 @@ namespace htl {
 		using ITriggerEvent = eos::ICallbackP1<uint16_t>;
 		using IUpdateEvent = eos::ICallbackP1<uint16_t>;
 
-		template <typename instance_>
-		using TriggerEvent = eos::CallbackP1<instance_, uint16_t>;
-
-		template <typename instance_>
-		using UpdateEvent = eos::CallbackP1<instance_, uint16_t>;
+		template <typename instance_> using TriggerEvent = eos::CallbackP1<instance_, uint16_t>;
+		template <typename instance_> using UpdateEvent = eos::CallbackP1<instance_, uint16_t>;
 
 		namespace internal {
 
@@ -136,12 +133,20 @@ namespace htl {
 				TIM_TypeDef * const _tim;
 				State _state;
 				ITriggerEvent *_triggerEvent;
-				bool _triggerEventEnabled;
 				IUpdateEvent *_updateEvent;
+				bool _triggerEventEnabled;
 				bool _updateEventEnabled;
 			private:
 				TMRDevice(const TMRDevice &) = delete;
 				TMRDevice & operator = (const TMRDevice &) = delete;
+				inline void invokeTriggerEvent(uint16_t v) {
+					if (isTriggerEventEnabled())
+						_triggerEvent->execute(v);
+				}
+				inline void invokeUpdateEvent(uint16_t v) {
+					if (isUpdateEventEnabled())
+						_updateEvent->execute(v);
+				}
 			protected:
 				TMRDevice(TIM_TypeDef *tim);
 				virtual void activate() = 0;
@@ -161,10 +166,10 @@ namespace htl {
 					_updateEventEnabled = enabled;
 				}
 				inline void enableUpdateEvent() {
-					_updateEventEnabled = true;
+					_updateEventEnabled = _updateEvent != nullptr;
 				}
 				inline void enableTriggerEvent() {
-					_triggerEventEnabled = true;
+					_triggerEventEnabled = _triggerEvent != nullptr;
 				}
 				inline void disableUpdateEvent() {
 					_updateEventEnabled = false;
@@ -173,10 +178,10 @@ namespace htl {
 					_triggerEventEnabled = false;
 				}
 				inline bool isTriggerEventEnabled() const {
-					return (_triggerEvent != nullptr) && _triggerEventEnabled;
+					return _triggerEventEnabled;
 				}
 				inline bool isUpdateEventEnabled() const {
-					return (_updateEvent != nullptr) && _updateEventEnabled;
+					return _updateEventEnabled;
 				}
 				Result start();
 				Result startInterrupt();
@@ -328,7 +333,7 @@ namespace htl {
 
 			#ifdef HTL_TMR4_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_4> {
+			struct HardwareInfo<DeviceID::_4> {
 				static constexpr uint32_t timAddr = TIM4_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -339,7 +344,7 @@ namespace htl {
 
 			#ifdef HTL_TMR5_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_5> {
+			struct HardwareInfo<DeviceID::_5> {
 				static constexpr uint32_t timAddr = TIM5_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -365,12 +370,14 @@ namespace htl {
 			};
 			#endif
 
-			#ifdef HTL_TMR7_EXIST7
+			#ifdef HTL_TMR7_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_7> {
+			struct HardwareInfo<DeviceID::_7> {
 				static constexpr uint32_t timAddr = TIM7_BASE;
-				static constexpr TMRType type = TMRType::basic;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				#if defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t enablePos = RCC_APBENR1_TIM7EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM7EN_Pos;
 				#endif
@@ -379,7 +386,7 @@ namespace htl {
 
 			#ifdef HTL_TMR8_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_8> {
+			struct HardwareInfo<DeviceID::_8> {
 				static constexpr uint32_t timAddr = TIM8_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -390,7 +397,7 @@ namespace htl {
 
 			#ifdef HTL_TMR9_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_9> {
+			struct HardwareInfo<DeviceID::_9> {
 				static constexpr uint32_t timAddr = TIM9_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -401,7 +408,7 @@ namespace htl {
 
 			#ifdef HTL_TMR10_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_10> {
+			struct HardwareInfo<DeviceID::_10> {
 				static constexpr uint32_t timAddr = TIM10_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -412,7 +419,7 @@ namespace htl {
 
 			#ifdef HTL_TMR11_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_11> {
+			struct HardwareInfo<DeviceID::_11> {
 				static constexpr uint32_t timAddr = TIM11_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -423,7 +430,7 @@ namespace htl {
 
 			#ifdef HTL_TMR12_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_12> {
+			struct HardwareInfo<DeviceID::_12> {
 				static constexpr uint32_t timAddr = TIM12_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -434,7 +441,7 @@ namespace htl {
 
 			#ifdef HTL_TMR13_EXIST
 			template <>
-			struct HardwareInfo<TMRTimer::_13> {
+			struct HardwareInfo<DeviceID::_13> {
 				static constexpr uint32_t timAddr = TIM13_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);

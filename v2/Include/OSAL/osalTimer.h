@@ -19,7 +19,7 @@ typedef void (*TimerCallback)(HTimer hTimer);
 typedef struct {
 	TimerOptions options;
 	TimerCallback callback;
-	void* param;
+	void *param;
 } TimerInitializeInfo;
 
 #define OSAL_TIMER_BLOCK               ((unsigned) -1)
@@ -33,7 +33,7 @@ typedef struct {
 #define OSAL_TIMER_AUTO_ON             ((TimerOptions)1 << OSAL_TIMER_AUTO_POS)
 
 
-HTimer osalTimerCreate(const TimerInitializeInfo* info);
+HTimer osalTimerCreate(const TimerInitializeInfo *info);
 bool osalTimerDestroy(HTimer hTimer, unsigned blockTime);
 
 bool osalTimerStart(HTimer hTimer, unsigned time, unsigned blockTime);

@@ -29,9 +29,9 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 
 	AsyncSerialDriver::initializeImpl();
 
-	_i2c->enableAddressMatchCallback(_addressMatchEvent);
-	_i2c->enableRxDataCallback(_rxDataEvent);
-	_i2c->enableRxCompletedCallback(_rxCompletedEvent);
+	_i2c->setAddressMatchEvent(_addressMatchEvent);
+	_i2c->setRxDataEvent(_rxDataEvent);
+	_i2c->setRxCompletedEvent(_rxCompletedEvent);
 }
 
 
@@ -40,9 +40,9 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 ///
 void AsyncSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_i2c->disableAddressMatchCallback();
-	_i2c->disableRxDataCallback();
-	_i2c->disableRxCompletedCallback();
+	_i2c->disableAddressMatchEvent();
+	_i2c->disableRxDataEvent();
+	_i2c->disableRxCompletedEvent();
 
 	AsyncSerialDriver::deinitializeImpl();
 }

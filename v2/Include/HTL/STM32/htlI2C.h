@@ -52,20 +52,11 @@ namespace htl {
 		using ITxDataEvent = eos::ICallbackP3<uint8_t*, uint16_t, uint16_t&>;
 		using ITxCompletedEvent = eos::ICallbackP0;
 
-		template <typename instance_>
-		using AddressMatchEvent = eos::CallbackP1<instance_, uint16_t>;
-
-		template <typename instance_>
-		using RxDataEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
-
-		template <typename instance_>
-		using RxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
-
-		template <typename instance_>
-		using TxDataCallback = eos::CallbackP3<instance_, uint8_t*, uint16_t, uint16_t&>;
-
-		template <typename instance_>
-		using TxCompletedEvent = eos::CallbackP0<instance_>;
+		template <typename instance_> using AddressMatchEvent = eos::CallbackP1<instance_, uint16_t>;
+		template <typename instance_> using RxDataEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		template <typename instance_> using RxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		template <typename instance_> using TxDataCallback = eos::CallbackP3<instance_, uint8_t*, uint16_t, uint16_t&>;
+		template <typename instance_> using TxCompletedEvent = eos::CallbackP0<instance_>;
 
 		class I2CSlaveDevice {
 			public:
@@ -93,12 +84,37 @@ namespace htl {
 				IRxCompletedEvent *_rxCompletedEvent;
 				ITxDataEvent *_txDataEvent;
 				ITxCompletedEvent *_txCompletedEvent;
+				bool _addressMatchEventEnabled;
+				bool _rxDataEventEnabled;
+				bool _rxCompletedEventEnabled;
+				bool _txDataEventEnabled;
+				bool _txCompletedEventEnabled;
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 				void interruptServiceListen();
 				void interruptServiceListenRx();
 				void interruptServiceListenTx();
+				inline void invokeAddressMatchEvent(uint16_t address) const {
+					if (isAddressMatchEventEnabled())
+						_addressMatchEvent->execute(address);
+				}
+				inline void invokeRxDataEvent(uint8_t *buffer, uint16_t count) const {
+					if (isRxDataEventEnabled())
+						_rxDataEvent->execute(buffer, count);
+				}
+				inline void invokeRxCompletedEvent(uint8_t *buffer, uint16_t count) const {
+					if (isRxCompletedEventEnabled())
+						_rxCompletedEvent->execute(buffer, count);
+				}
+				inline void invokeTxDataEvent(uint8_t *buffer, uint16_t size, uint16_t count) const {
+					if (isTxDataEventEnabled())
+						_txDataEvent->execute(buffer, size, count);
+				}
+				inline void invokeTxCompletedEvent() const {
+					if (isTxCompletedEventEnabled())
+						_txCompletedEvent->execute();
+				}
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *gpio);
 				void interruptService();
@@ -107,35 +123,70 @@ namespace htl {
 			public:
 				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				Result deinitialize();
-				inline void enableAddressMatchCallback(IAddressMatchEvent &callback) {
-					_addressMatchEvent = &callback;
+				inline void setAddressMatchEvent(IAddressMatchEvent &event, bool enabled = true) {
+					_addressMatchEvent = &event;
+					_addressMatchEventEnabled = enabled;
 				}
-				inline void enableRxDataCallback(IRxDataEvent &callback) {
-					_rxDataEvent = &callback;
+				inline void setRxDataEvent(IRxDataEvent &event, bool enabled = true) {
+					_rxDataEvent = &event;
+					_rxDataEventEnabled = enabled;
 				}
-				inline void enableRxCompletedCallback(IRxCompletedEvent &callback) {
-					_rxCompletedEvent = &callback;
+				inline void setRxCompletedEvent(IRxCompletedEvent &event, bool enabled = true) {
+					_rxCompletedEvent = &event;
+					_rxCompletedEventEnabled = enabled;
 				}
-				inline void enableTxDataCallback(ITxDataEvent &callback) {
-					_txDataEvent = &callback;
+				inline void setTxDataEvent(ITxDataEvent &event, bool enabled = true) {
+					_txDataEvent = &event;
+					_txDataEventEnabled = enabled;
 				}
-				inline void enableTxCompletedCallback(ITxCompletedEvent &callback) {
-					_txCompletedEvent = &callback;
+				inline void setTxCompletedEvent(ITxCompletedEvent &event, bool enabled = true) {
+					_txCompletedEvent = &event;
+					_txCompletedEventEnabled = enabled;
 				}
-				inline void disableAddressMatchCallback() {
-					_addressMatchEvent = nullptr;
+				inline void enableAddressMatchEvent() {
+					_addressMatchEventEnabled = _addressMatchEvent != nullptr;
 				}
-				inline void disableRxDataCallback() {
-					_rxDataEvent = nullptr;
+				inline void enableRxDataEvent() {
+					_rxDataEventEnabled = _rxDataEvent != nullptr;
 				}
-				inline void disableTxDataCallback() {
-					_txDataEvent = nullptr;
+				inline void enableTxDataEvent() {
+					_txDataEventEnabled = _txDataEvent != nullptr;
 				}
-				inline void disableRxCompletedCallback() {
-					_rxCompletedEvent = nullptr;
+				inline void enableRxCompletedEvent() {
+					_rxCompletedEventEnabled = _rxCompletedEvent != nullptr;
 				}
-				inline void disableTxCompletedCallback() {
-					_txCompletedEvent = nullptr;
+				inline void enableTxCompletedEvent() {
+					_txCompletedEventEnabled = _txCompletedEvent != nullptr;
+				}
+				inline void disableAddressMatchEvent() {
+					_addressMatchEventEnabled = false;
+				}
+				inline void disableRxDataEvent() {
+					_rxDataEventEnabled = false;
+				}
+				inline void disableTxDataEvent() {
+					_txDataEventEnabled = false;
+				}
+				inline void disableRxCompletedEvent() {
+					_rxCompletedEventEnabled = false;
+				}
+				inline void disableTxCompletedEvent() {
+					_txCompletedEventEnabled = false;
+				}
+				inline bool isAddressMatchEventEnabled() const {
+					return _addressMatchEventEnabled;
+				}
+				inline bool isRxDataEventEnabled() const {
+					return _rxDataEventEnabled;
+				}
+				inline bool isTxDataEventEnabled() const {
+					return _txDataEventEnabled;
+				}
+				inline bool isRxCompletedEventEnabled() const{
+					return _rxCompletedEventEnabled;
+				}
+				inline bool isTxCompletedEventEnabled() const {
+					return _txCompletedEventEnabled;
 				}
 				Result listen(uint8_t *buffer, uint16_t bufferSize);
 				void endListen();

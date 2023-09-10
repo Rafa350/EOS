@@ -14,10 +14,10 @@ using namespace eos;
 Timer::Timer(
     bool autoreload) :
 
-    hTimer(nullptr),
-    autoreload(autoreload),
-    eventCallback(nullptr),
-    eventParam(nullptr) {
+    _hTimer {nullptr},
+    _autoreload {autoreload},
+    _timerEvent {nullptr},
+    _param {nullptr} {
 }
 
 
@@ -27,13 +27,13 @@ Timer::Timer(
 ///
 Timer::Timer(
     bool autoreload,
-    IEventCallback* eventCallback,
-    void* eventParam) :
+    ITimerEvent &event,
+    void *param) :
 
-    hTimer(nullptr),
-    autoreload(autoreload),
-    eventCallback(eventCallback),
-    eventParam(eventParam) {
+    _hTimer {nullptr},
+    _autoreload {autoreload},
+    _timerEvent {&event},
+    _param {param} {
 }
 
 
@@ -42,8 +42,8 @@ Timer::Timer(
 ///
 Timer::~Timer() {
 
-    if (hTimer != nullptr)
-        osalTimerDestroy(hTimer, 10);
+    if (_hTimer != nullptr)
+        osalTimerDestroy(_hTimer, 10);
 }
 
 
@@ -56,17 +56,17 @@ void Timer::start(
     unsigned time,
     unsigned blockTime) {
 
-    if (hTimer == nullptr) {
+    if (_hTimer == nullptr) {
 
     	TimerInitializeInfo info;
     	info.options = 0;
-    	info.options |= autoreload ? OSAL_TIMER_AUTO_ON : OSAL_TIMER_AUTO_OFF;
+    	info.options |= _autoreload ? OSAL_TIMER_AUTO_ON : OSAL_TIMER_AUTO_OFF;
     	info.callback = timerFunction;
     	info.param = this;
-    	hTimer = osalTimerCreate(&info);
+    	_hTimer = osalTimerCreate(&info);
     }
 
-    osalTimerStart(hTimer, time, blockTime);
+    osalTimerStart(_hTimer, time, blockTime);
 }
 
 
@@ -77,8 +77,8 @@ void Timer::start(
 void Timer::stop(
     unsigned blockTime) {
 
-    if (hTimer != nullptr)
-    	osalTimerStop(hTimer, blockTime);
+    if (_hTimer != nullptr)
+    	osalTimerStop(_hTimer, blockTime);
 }
 
 
@@ -88,8 +88,8 @@ void Timer::stop(
 ///
 bool Timer::isActive() const {
 
-    if (hTimer != nullptr)
-		return osalTimerIsActive(hTimer);
+    if (_hTimer != nullptr)
+		return osalTimerIsActive(_hTimer);
     else
     	return false;
 }
@@ -103,13 +103,14 @@ void Timer::timerFunction(
     HTimer hTimer) {
 
     Timer *timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
-    if ((timer != nullptr) && (timer->eventCallback != nullptr)) {
+    if ((timer != nullptr) && (timer->_timerEvent != nullptr)) {
 
-        EventArgs args;
-        args.timer = timer;
-        args.param = timer->eventParam;
+        TimerEventArgs args {
+        	.timer = timer,
+        	.param = timer->_param
+        };
 
-        timer->eventCallback->execute(args);
+        timer->_timerEvent->execute(args);
     }
 }
 

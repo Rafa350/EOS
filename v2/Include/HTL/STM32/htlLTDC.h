@@ -82,40 +82,40 @@ namespace htl {
 			public:
 				void initialize(uint16_t width, uint16_t height, uint16_t hSync, uint16_t vSync, uint16_t hBP, uint16_t vBP, uint16_t hFP, uint16_t vFP);
 				void deinitialize();
-				template <typename pin_>
-				void initPinHSYNC(PinPolarity polarity = PinPolarity::noChange) {
+				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
+				void initPinHSYNC() {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::hsync, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
-					if (polarity == PinPolarity::activeHigh)
+					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_HSPOL;
-					else if (polarity == PinPolarity::activeLow)
+					else if constexpr (polarity_ == PinPolarity::activeLow)
 						LTDC->GCR &= ~LTDC_GCR_HSPOL;
 				}
-				template <typename pin_>
-				void initPinVSYNC(PinPolarity polarity = PinPolarity::noChange) {
+				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
+				void initPinVSYNC() {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::vsync, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
-					if (polarity == PinPolarity::activeHigh)
+					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_VSPOL;
-					else if (polarity == PinPolarity::activeLow)
+					else if constexpr (polarity_ == PinPolarity::activeLow)
 						LTDC->GCR &= ~LTDC_GCR_VSPOL;
 				}
-				template <typename pin_>
-				void initPinPC(PinPolarity polarity = PinPolarity::noChange) {
+				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
+				void initPinPC() {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::pc, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
-					if (polarity == PinPolarity::activeHigh)
+					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_PCPOL;
-					else if (polarity == PinPolarity::activeLow)
+					else if constexpr (polarity_ == PinPolarity::activeLow)
 						LTDC->GCR &= ~LTDC_GCR_PCPOL;
 				}
-				template <typename pin_>
-				void initPinDE(PinPolarity polarity = PinPolarity::noChange) {
+				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
+				void initPinDE() {
 					gpio::PinFunctionID pinFunctionID = internal::LTDCPinFunctionID<PinFunction::de, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
-					if (polarity == PinPolarity::activeHigh)
+					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_DEPOL;
-					else if (polarity == PinPolarity::activeLow)
+					else if constexpr (polarity_ == PinPolarity::activeLow)
 						LTDC->GCR &= ~LTDC_GCR_DEPOL;
 				}
 				template <typename pinR2_, typename pinR3_, typename pinR4_, typename pinR5_, typename pinR6_, typename pinR7_>

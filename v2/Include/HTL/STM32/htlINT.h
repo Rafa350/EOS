@@ -79,6 +79,23 @@ namespace htl {
 				exti13 = EXTI15_10_IRQn,
 				exti14 = EXTI15_10_IRQn,
 				exti15 = EXTI15_10_IRQn,
+			#elif defined(EOS_PLATFORM_STM32G0)
+				exti0 = EXTI0_1_IRQn,
+				exti1 = EXTI0_1_IRQn,
+				exti2 = EXTI2_3_IRQn,
+				exti3 = EXTI2_3_IRQn,
+				exti4 = EXTI4_15_IRQn,
+				exti5 = EXTI4_15_IRQn,
+				exti6 = EXTI4_15_IRQn,
+				exti7 = EXTI4_15_IRQn,
+				exti8 = EXTI4_15_IRQn,
+				exti9 = EXTI4_15_IRQn,
+				exti10 = EXTI4_15_IRQn,
+				exti11 = EXTI4_15_IRQn,
+				exti12 = EXTI4_15_IRQn,
+				exti13 = EXTI4_15_IRQn,
+				exti14 = EXTI4_15_IRQn,
+				exti15 = EXTI4_15_IRQn,
 			#endif
 			#ifdef HTL_LTDC_EXIST
 				ltdc = LTDC_IRQn,

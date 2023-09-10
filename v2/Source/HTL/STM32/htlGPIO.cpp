@@ -162,7 +162,11 @@ static void setPinFunction(
 Port::Port(
 	GPIO_TypeDef *regs):
 
-	_gpio { regs } {
+	_gpio {regs},
+	_risingEdgeEvent {nullptr},
+	_fallingEdgeEvent {nullptr},
+	_risingEdgeEventEnabled {false},
+	_fallingEdgeEventEnabled {false} {
 
 }
 
@@ -199,6 +203,112 @@ void Port::initOutput(
 	setMode(_gpio, mask, 1);
 	setDriver(_gpio, mask, driver);
 	setSpeed(_gpio, mask, speed);
+}
+
+
+void Port::setFallingEdgeEvent(
+	IFallingEdgeEvent &event,
+	bool enabled) {
+
+	_fallingEdgeEvent = &event;
+	_fallingEdgeEventEnabled = enabled;
+}
+
+
+void Port::setRisingEdgeEvent(
+	IRisingEdgeEvent &event,
+	bool enabled) {
+
+	_risingEdgeEvent = &event;
+	_risingEdgeEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la interrupcio en el pin seleccionat del port.
+/// \param    pin: El pin
+/// \param    edge: El flanc que genera la interrupcio.
+/// \remarks  Hi han limitavcions en funcio del hardware.
+///
+void Port::enableInterruptPin(
+	PinID pin,
+	Edge edge) {
+
+	_interruptPin = pin;
+
+	#if defined(EOS_PLATFORM_STM32G0)
+
+	/// Asigna el port GPIO a la linia EXTI
+	//
+	uint32_t port = (uint32_t(_gpio) >> 10) & 0x000F;
+	uint32_t tmp = EXTI->EXTICR[uint32_t(pin) >> 2u];
+	tmp &= ~(EXTI_EXTICR1_EXTI0 << (EXTI_EXTICR1_EXTI1_Pos * (uint32_t(pin) & 0x03u)));
+	tmp |= (port << (EXTI_EXTICR1_EXTI1_Pos * (uint32_t(pin) & 0x03u)));
+	EXTI->EXTICR[uint32_t(pin) >> 2u] = tmp;
+
+	// Configura en modus interrupcio
+	//
+	EXTI->IMR1 |= 1 << uint32_t(pin);
+	EXTI->EMR1 &= ~(1 << uint32_t(pin));
+
+	// Configura el registre RTSR (Rising Trigger Selection Register)
+	//
+	if ((edge == Edge::rising) || (edge == Edge::all))
+		EXTI->RTSR1 |= 1 << uint32_t(pin);
+	else
+		EXTI->RTSR1 &= ~(1 << uint32_t(pin));
+
+	// Configura el registre FTSR1 (Falling Trigger Selection Register)
+	//
+	if ((edge == Edge::falling) || (edge == Edge::all))
+		EXTI->FTSR1 |= 1 << uint32_t(pin);
+	else
+		EXTI->FTSR1 &= ~(1 << uint32_t(pin));
+
+	#else
+		#error "Unknown platform"
+	#endif
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita la interrupcio del pin.
+///
+void Port::disableInterruptPin() {
+
+	#if defined(EOS_PLATFORM_STM32G0)
+
+	EXTI->RTSR1 &= ~(1 << uint32_t(_interruptPin));
+	EXTI->FTSR1 &= ~(1 << uint32_t(_interruptPin));
+
+	#else
+		#error "Unknown platform"
+	#endif
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa les interupcions.
+///
+void Port::interruptService() {
+
+	// Revisar per que els flags son per tots els ports
+
+	uint32_t mask = 1 << uint32_t(_interruptPin);
+
+	if (EXTI->FPR1 & mask) {
+		EXTI->FPR1 = mask;
+
+		if (_fallingEdgeEventEnabled)
+			_fallingEdgeEvent->execute(_interruptPin);
+	}
+
+	if (EXTI->RPR1 & mask) {
+		EXTI->RPR1 = mask;
+
+		if (_risingEdgeEventEnabled)
+			_risingEdgeEvent->execute(_interruptPin);
+	}
 }
 
 

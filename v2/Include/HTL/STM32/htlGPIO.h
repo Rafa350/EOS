@@ -138,10 +138,27 @@ namespace htl {
 			set
 		};
 
+		enum class Edge {
+			falling,
+			rising,
+			all
+		};
+
+
+		using IRisingEdgeEvent = eos::ICallbackP1<PinID>;
+		using IFallingEdgeEvent = eos::ICallbackP1<PinID>;
+
+		template <typename instance_> using RisingEdgeEvent = eos::CallbackP1<instance_, PinID>;
+		template <typename instance_> using FallingEdgeEvent = eos::CallbackP1<instance_, PinID>;
 
 		class Port {
 			private:
 				GPIO_TypeDef * const _gpio;
+				PinID _interruptPin;
+				IRisingEdgeEvent *_risingEdgeEvent;
+				IFallingEdgeEvent *_fallingEdgeEvent;
+				bool _risingEdgeEventEnabled;
+				bool _fallingEdgeEventEnabled;
 			private:
 				Port(const Port &) = delete;
 				Port & operator = (const Port &) = delete;
@@ -150,9 +167,26 @@ namespace htl {
 				virtual void activate(PinMask mask) = 0;
 				virtual void deactivate(PinMask mask) = 0;
 				virtual void reset() = 0;
+				void interruptService();
 			public:
 				void initInput(PinMask mask, PullUpDn pull);
 				void initOutput(PinMask mask, OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
+				void enableInterruptPin(PinID pin, Edge edge);
+				void disableInterruptPin();
+				void setFallingEdgeEvent(IFallingEdgeEvent &event, bool enabled);
+				void setRisingEdgeEvent(IRisingEdgeEvent &event, bool enabled);
+				inline void enableFallingEdgeEvent() {
+					_risingEdgeEventEnabled = _risingEdgeEvent != nullptr;
+				}
+				inline void enableRaisingEdgeEvent() {
+					_fallingEdgeEventEnabled = _fallingEdgeEvent != nullptr;
+				}
+				inline void disableFallingEdgeEvent() {
+					_risingEdgeEventEnabled = false;
+				}
+				inline void disableRaisingEdgeEvent() {
+					_fallingEdgeEventEnabled = false;
+				}
 				inline void set(PinMask mask) {
 					_gpio->BSRR = mask;
 				}
@@ -267,9 +301,14 @@ namespace htl {
 				void deactivate(PinMask mask) override {
 					Activator::activate(mask);
 				}
+				void reset() override {
+				}
 			public:
 				static constexpr PortX * getHandler() {
 					return &_port;
+				}
+				inline static void interruptHandler() {
+					getHandler()->interruptService();
 				}
 		};
 
@@ -590,10 +629,6 @@ namespace htl {
 
 			template <PortID portId_>
 			PinMask PortActivator<portId_>::_activated = 0;
-		}
-
-
-		namespace internal {
 
 			#ifdef HTL_GPIOA_EXIST
 			template<>

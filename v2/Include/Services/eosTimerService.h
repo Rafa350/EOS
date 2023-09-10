@@ -19,7 +19,7 @@ namespace eos {
     class TimerCounter;
 
     struct QueueComparator {
-        bool operator () (const TimerCounter* left, const TimerCounter* right);
+        bool operator () (const TimerCounter *left, const TimerCounter *right);
     };
 
     class TimerService final : public Service {
@@ -56,7 +56,7 @@ namespace eos {
             TimerQueue _activeQueue;
             unsigned _osPeriod;
             Timer _osTimer;
-            TimerEventCallback _osTimerEventCallback;
+            TimerEvent<TimerService> *_osTimerEventCallback;
 
         public:
             TimerService();

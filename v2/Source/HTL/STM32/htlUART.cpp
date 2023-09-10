@@ -112,8 +112,8 @@ UARTDevice::UARTDevice(
 	_usart {usart},
 	_state {State::reset},
 	_txCompletedEvent {nullptr},
-	_txCompletedEventEnabled {false},
 	_rxCompletedEvent {nullptr},
+	_txCompletedEventEnabled {false},
 	_rxCompletedEventEnabled {false} {
 
 }

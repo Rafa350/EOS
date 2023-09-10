@@ -126,14 +126,10 @@ namespace htl {
 		};
 
 		using ITxCompletedEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
-
 		using IRxCompletedEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
 
-		template <typename instance_>
-		using TxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
-
-		template <typename instance_>
-		using RxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		template <typename instance_> using TxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		template <typename instance_> using RxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
 
 		namespace internal {
 
@@ -167,8 +163,8 @@ namespace htl {
 				uint16_t _txSize;
 				uint16_t _txCount;
 				ITxCompletedEvent *_txCompletedEvent;
-				bool _txCompletedEventEnabled;
 				IRxCompletedEvent *_rxCompletedEvent;
+				bool _txCompletedEventEnabled;
 				bool _rxCompletedEventEnabled;
 			private:
 				UARTDevice(const UARTDevice &) = delete;
@@ -213,19 +209,19 @@ namespace htl {
 					_txCompletedEventEnabled = true;
 				}
 				inline void enableRxCompletedEvent() {
-					_rxCompletedEventEnabled = true;
+					_rxCompletedEventEnabled = _rxCompletedEvent != nullptr;
 				}
 				inline void disableTxCompletedEvent() {
-					_txCompletedEventEnabled = false;
+					_txCompletedEventEnabled = _txCompletedEvent != nullptr;
 				}
 				inline void disableRxCompletedEvent() {
 					_rxCompletedEventEnabled = false;
 				}
 				inline bool isTxCompletedEventEnabled() const {
-					return (_txCompletedEvent != nullptr) && _txCompletedEventEnabled;
+					return _txCompletedEventEnabled;
 				}
 				inline bool isRxCompletedEventEnabled() const {
-					return (_rxCompletedEvent != nullptr) && _rxCompletedEventEnabled;
+					return _rxCompletedEventEnabled;
 				}
 				Result transmit(const uint8_t *data, uint16_t dataLength);
 				Result receive(uint8_t *data, uint16_t dataSize);
