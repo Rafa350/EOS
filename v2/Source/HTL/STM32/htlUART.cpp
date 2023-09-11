@@ -475,7 +475,7 @@ void UARTDevice::interruptService() {
 			_usart->ICR |= USART_ICR_TCCF;
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
 			if (isTxCompletedEventEnabled())
-				_txCompletedEvent->execute(_txBuffer, _txCount);
+				_txCompletedEvent->execute(*this, _txBuffer, _txCount);
 			_state = State::ready;
 		}
 
@@ -488,7 +488,7 @@ void UARTDevice::interruptService() {
 				if (_rxCount == _rxSize) {
 					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
 					if (isRxCompletedEventEnabled())
-						_rxCompletedEvent->execute(_rxBuffer, _rxCount);
+						_rxCompletedEvent->execute(*this, _rxBuffer, _rxCount);
 					_state = State::ready;
 				}
 			}
@@ -501,7 +501,7 @@ void UARTDevice::interruptService() {
 			_usart->ICR |= USART_ICR_RTOCF;
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
 			if (isRxCompletedEventEnabled())
-				_rxCompletedEvent->execute(_rxBuffer, _rxCount);
+				_rxCompletedEvent->execute(*this, _rxBuffer, _rxCount);
 			_state = State::ready;
 		}
 	}

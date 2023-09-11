@@ -225,7 +225,9 @@ void I2CSlaveDevice::interruptServiceListen() {
 
     	// Notifica l'adressa
     	//
-    	invokeAddressMatchEvent(
+    	if (_addressMatchEventEnabled)
+    		_addressMatchEvent->execute(
+    			*this,
     			(((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
 				(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0));
 
@@ -254,7 +256,8 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 			// Si el buffer es ple, notifica i inicialitza el buffer
 			//
 			if (_count == _maxCount) {
-		    	invokeRxDataEvent(_buffer, _count);
+				if (_rxDataEventEnabled)
+					_rxDataEvent->execute(*this, _buffer, _count);
 
 	    		// Contador a zero per tornar a carregar el buffer
 	    		//
@@ -277,7 +280,8 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 
 		// Notifica el final
 		//
-		invokeRxCompletedEvent(_buffer, _count);
+		if (_rxCompletedEventEnabled)
+			_rxCompletedEvent->execute(*this, _buffer, _count);
 
 		// Canvia al nou estat
 		//
@@ -314,7 +318,8 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 
 		// Notifica el final
 		//
-		invokeTxCompletedEvent();
+    	if (_txCompletedEventEnabled)
+    		_txCompletedEvent->execute(*this);
 
 		// Canvia al nou estat
 		//
@@ -331,7 +336,8 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 		if ((_count == 0) || (_count == _maxCount)) {
 			_count = 0;
 			_maxCount = 0;
-			invokeTxDataEvent(_buffer, _bufferSize, _maxCount);
+			if (_txDataEventEnabled)
+				_txDataEvent->execute(*this, _buffer, _bufferSize, _maxCount);
 		}
 
 		// Si hi han dades en el buffer els transmiteix

@@ -46,17 +46,21 @@ namespace htl {
 			alert
 		};
 
-		using IAddressMatchEvent = eos::ICallbackP1<uint16_t>;
-		using IRxDataEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
-		using IRxCompletedEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
-		using ITxDataEvent = eos::ICallbackP3<uint8_t*, uint16_t, uint16_t&>;
-		using ITxCompletedEvent = eos::ICallbackP0;
 
-		template <typename instance_> using AddressMatchEvent = eos::CallbackP1<instance_, uint16_t>;
-		template <typename instance_> using RxDataEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
-		template <typename instance_> using RxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
-		template <typename instance_> using TxDataCallback = eos::CallbackP3<instance_, uint8_t*, uint16_t, uint16_t&>;
-		template <typename instance_> using TxCompletedEvent = eos::CallbackP0<instance_>;
+		class I2CSlaveDevice;
+
+		using IAddressMatchEvent = eos::ICallbackP2<I2CSlaveDevice&, uint16_t>;
+		using IRxDataEvent = eos::ICallbackP3<I2CSlaveDevice&, const uint8_t*, uint16_t>;
+		using IRxCompletedEvent = eos::ICallbackP3<I2CSlaveDevice&, const uint8_t*, uint16_t>;
+		using ITxDataEvent = eos::ICallbackP4<I2CSlaveDevice&, uint8_t*, uint16_t, uint16_t&>;
+		using ITxCompletedEvent = eos::ICallbackP1<I2CSlaveDevice&>;
+
+		template <typename instance_> using AddressMatchEvent = eos::CallbackP2<instance_, I2CSlaveDevice&, uint16_t>;
+		template <typename instance_> using RxDataEvent = eos::CallbackP3<instance_, I2CSlaveDevice&, const uint8_t*, uint16_t>;
+		template <typename instance_> using RxCompletedEvent = eos::CallbackP3<instance_, I2CSlaveDevice&, const uint8_t*, uint16_t>;
+		template <typename instance_> using TxDataCallback = eos::CallbackP4<instance_, I2CSlaveDevice&, uint8_t*, uint16_t, uint16_t&>;
+		template <typename instance_> using TxCompletedEvent = eos::CallbackP1<instance_, I2CSlaveDevice&>;
+
 
 		class I2CSlaveDevice {
 			public:
@@ -95,26 +99,6 @@ namespace htl {
 				void interruptServiceListen();
 				void interruptServiceListenRx();
 				void interruptServiceListenTx();
-				inline void invokeAddressMatchEvent(uint16_t address) const {
-					if (isAddressMatchEventEnabled())
-						_addressMatchEvent->execute(address);
-				}
-				inline void invokeRxDataEvent(uint8_t *buffer, uint16_t count) const {
-					if (isRxDataEventEnabled())
-						_rxDataEvent->execute(buffer, count);
-				}
-				inline void invokeRxCompletedEvent(uint8_t *buffer, uint16_t count) const {
-					if (isRxCompletedEventEnabled())
-						_rxCompletedEvent->execute(buffer, count);
-				}
-				inline void invokeTxDataEvent(uint8_t *buffer, uint16_t size, uint16_t count) const {
-					if (isTxDataEventEnabled())
-						_txDataEvent->execute(buffer, size, count);
-				}
-				inline void invokeTxCompletedEvent() const {
-					if (isTxCompletedEventEnabled())
-						_txCompletedEvent->execute();
-				}
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *gpio);
 				void interruptService();

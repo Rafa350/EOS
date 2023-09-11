@@ -22,8 +22,8 @@ namespace eos {
 			void deinitializeImpl() override;
 			bool transmitImpl(const uint8_t *data, int dataLength) override;
 			bool receiveImpl(uint8_t *data, int dataSize) override;
-			void txCompletedEventHandler(const uint8_t *buffer, uint16_t count);
-			void rxCompletedEventHandler(const uint8_t *buffer, uint16_t count);
+			void txCompletedEventHandler(htl::uart::UARTDevice &sender, const uint8_t *buffer, uint16_t count);
+			void rxCompletedEventHandler(htl::uart::UARTDevice &sender, const uint8_t *buffer, uint16_t count);
 
 		public:
 			AsyncSerialDriver_UART(htl::uart::UARTDeviceHandler hUART);

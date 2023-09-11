@@ -145,20 +145,9 @@ namespace htl {
 		};
 
 
-		using IRisingEdgeEvent = eos::ICallbackP1<PinID>;
-		using IFallingEdgeEvent = eos::ICallbackP1<PinID>;
-
-		template <typename instance_> using RisingEdgeEvent = eos::CallbackP1<instance_, PinID>;
-		template <typename instance_> using FallingEdgeEvent = eos::CallbackP1<instance_, PinID>;
-
 		class Port {
 			private:
 				GPIO_TypeDef * const _gpio;
-				PinID _interruptPin;
-				IRisingEdgeEvent *_risingEdgeEvent;
-				IFallingEdgeEvent *_fallingEdgeEvent;
-				bool _risingEdgeEventEnabled;
-				bool _fallingEdgeEventEnabled;
 			private:
 				Port(const Port &) = delete;
 				Port & operator = (const Port &) = delete;
@@ -167,26 +156,9 @@ namespace htl {
 				virtual void activate(PinMask mask) = 0;
 				virtual void deactivate(PinMask mask) = 0;
 				virtual void reset() = 0;
-				void interruptService();
 			public:
 				void initInput(PinMask mask, PullUpDn pull);
 				void initOutput(PinMask mask, OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
-				void enableInterruptPin(PinID pin, Edge edge);
-				void disableInterruptPin();
-				void setFallingEdgeEvent(IFallingEdgeEvent &event, bool enabled);
-				void setRisingEdgeEvent(IRisingEdgeEvent &event, bool enabled);
-				inline void enableFallingEdgeEvent() {
-					_risingEdgeEventEnabled = _risingEdgeEvent != nullptr;
-				}
-				inline void enableRaisingEdgeEvent() {
-					_fallingEdgeEventEnabled = _fallingEdgeEvent != nullptr;
-				}
-				inline void disableFallingEdgeEvent() {
-					_risingEdgeEventEnabled = false;
-				}
-				inline void disableRaisingEdgeEvent() {
-					_fallingEdgeEventEnabled = false;
-				}
 				inline void set(PinMask mask) {
 					_gpio->BSRR = mask;
 				}
@@ -268,6 +240,50 @@ namespace htl {
 		};
 
 		typedef Pin *PinHandler;
+
+
+		class PinInterrupt;
+
+		using IRisingEdgeEvent = eos::ICallbackP1<PinInterrupt&>;
+		using IFallingEdgeEvent = eos::ICallbackP1<PinInterrupt&>;
+
+		template <typename instance_> using RisingEdgeEvent = eos::CallbackP1<instance_, PinInterrupt&>;
+		template <typename instance_> using FallingEdgeEvent = eos::CallbackP1<instance_, PinInterrupt&>;
+
+		class PinInterrupt {
+			private:
+				uint32_t _portNum;
+				uint32_t _pinNum;
+				IRisingEdgeEvent *_risingEdgeEvent;
+				IFallingEdgeEvent *_fallingEdgeEvent;
+				bool _risingEdgeEventEnabled;
+				bool _fallingEdgeEventEnabled;
+			private:
+				PinInterrupt(const PinInterrupt &) = delete;
+				PinInterrupt & operator = (const PinInterrupt &) = delete;
+			protected:
+				PinInterrupt(GPIO_TypeDef *gpio, PinID pinID);
+				void interruptService();
+			public:
+				void enableInterruptPin(Edge edge);
+				void disableInterruptPin();
+				void setFallingEdgeEvent(IFallingEdgeEvent &event, bool enabled);
+				void setRisingEdgeEvent(IRisingEdgeEvent &event, bool enabled);
+				inline void enableFallingEdgeEvent() {
+					_risingEdgeEventEnabled = _risingEdgeEvent != nullptr;
+				}
+				inline void enableRaisingEdgeEvent() {
+					_fallingEdgeEventEnabled = _fallingEdgeEvent != nullptr;
+				}
+				inline void disableFallingEdgeEvent() {
+					_risingEdgeEventEnabled = false;
+				}
+				inline void disableRaisingEdgeEvent() {
+					_fallingEdgeEventEnabled = false;
+				}
+		};
+
+		typedef PinInterrupt *PinInterruptHandler;
 
 
 		namespace internal {
@@ -590,6 +606,38 @@ namespace htl {
 		typedef PinX<PortID::K, PinID::_14> PinK14;
 		typedef PinX<PortID::K, PinID::_15> PinK15;
 		#endif
+
+
+		template <PortID portID_, PinID pinID_>
+		class PinInterruptX final: public PinInterrupt {
+			private:
+				using HI = internal::HardwareInfo<portID_>;
+			private:
+				static constexpr uint32_t _gpioAddr = HI::gpioAddr;
+				static PinInterruptX _pin;
+			public:
+				static constexpr PortID portID = portID_;
+				static constexpr PinID pinID = pinID_;
+			private:
+				PinInterruptX():
+					PinInterrupt(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), pinID_) {
+				}
+			public:
+				static constexpr PinInterruptX * getHandler() {
+					return &_pin;
+				}
+				inline static void interruptHandler() {
+					getHandler()->interruptService();
+				}
+		};
+
+		template <PortID portID_, PinID pinID_>
+		PinInterruptX<portID_, pinID_> PinInterruptX<portID_, pinID_>::_pin;
+
+		template <PortID portID_, PinID pinID_>
+		inline PinInterruptX<portID_, pinID_> * getPinInterruptHandler() {
+			return PinInterruptX<portID_, pinID_>::getHandler();
+		}
 
 
 		namespace internal {

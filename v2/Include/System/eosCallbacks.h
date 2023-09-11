@@ -116,6 +116,33 @@ namespace eos {
     };
 
 
+    template <typename param1_, typename param2_, typename param3_, typename param4_>
+    class ICallbackP4 {
+        public:
+            virtual ~ICallbackP4() {
+            }
+            virtual void execute(param1_ p1, param2_ p2, param3_ p3, param4_ p4) const = 0;
+    };
+
+    template <typename instance_, typename param1_, typename param2_, typename param3_, typename param4_>
+    class CallbackP4: public ICallbackP4<param1_, param2_, param3_, param4_> {
+        public:
+    	    using Method = void (instance_::*)(param1_, param2_, param3_, param4_);
+        private:
+            instance_ &_instance;
+            Method _method;
+        public:
+            inline CallbackP4(instance_ &instance, Method method):
+            	_instance(instance),
+				_method(method) {
+            }
+            void execute(param1_ p1, param2_ p2, param3_ p3, param4_ p4) const override {
+                if (_method != nullptr)
+                    (_instance.*_method)(p1, p2, p3, p4);
+            }
+    };
+
+
     template <typename R_, typename P1_>
     class ICallbackP1R {
         public:

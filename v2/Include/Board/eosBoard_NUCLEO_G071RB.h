@@ -40,8 +40,8 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_Pin              htl::gpio::PinC13
-#define SW1_ExInt            htl::exti::ExINT_13
+#define SW1_Pin              htl::gpio::PinX<htl::gpio::PortID::C, htl::gpio::PinID::_13>
+#define SW1_PinInterrupt     htl::gpio::PinInterruptX<htl::gpio::PortID::C, htl::gpio::PinID::_13>
 #define SW1_StateON          htl::GPIOState::set
 #define SW1_StateOF          htl::GPIOState::clear
 

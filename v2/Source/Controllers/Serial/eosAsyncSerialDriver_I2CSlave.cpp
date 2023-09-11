@@ -110,6 +110,7 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 /// \param    addr: L'adressa I2C.
 ///
 void AsyncSerialDriver_I2CSlave::addressMatchEventHandler(
+	htl::i2c::I2CSlaveDevice &sender,
 	uint16_t addr) {
 
 }
@@ -122,6 +123,7 @@ void AsyncSerialDriver_I2CSlave::addressMatchEventHandler(
 /// \param    count: Nombre de bytes en el buffer.
 ///
 void AsyncSerialDriver_I2CSlave::rxDataEventHandler(
+	htl::i2c::I2CSlaveDevice &sender,
 	const uint8_t *buffer,
 	uint16_t count) {
 
@@ -134,6 +136,7 @@ void AsyncSerialDriver_I2CSlave::rxDataEventHandler(
 /// \param    count: El nombre de bytes en el buffer.
 ///
 void AsyncSerialDriver_I2CSlave::rxCompletedEventHandler(
+	htl::i2c::I2CSlaveDevice &sender,
 	const uint8_t *buffer,
 	uint16_t count) {
 

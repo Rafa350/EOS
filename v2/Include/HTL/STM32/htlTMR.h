@@ -105,17 +105,22 @@ namespace htl {
 			com
 		};
 
-		using ITriggerEvent = eos::ICallbackP1<uint16_t>;
-		using IUpdateEvent = eos::ICallbackP1<uint16_t>;
 
-		template <typename instance_> using TriggerEvent = eos::CallbackP1<instance_, uint16_t>;
-		template <typename instance_> using UpdateEvent = eos::CallbackP1<instance_, uint16_t>;
+		class TMRDevice;
+
+		using ITriggerEvent = eos::ICallbackP2<TMRDevice&, uint16_t>;
+		using IUpdateEvent = eos::ICallbackP2<TMRDevice&, uint16_t>;
+
+		template <typename instance_> using TriggerEvent = eos::CallbackP2<instance_, TMRDevice&, uint16_t>;
+		template <typename instance_> using UpdateEvent = eos::CallbackP2<instance_, TMRDevice&, uint16_t>;
+
 
 		namespace internal {
 
 			template <DeviceID>
 			struct HardwareInfo;
 		}
+
 
 		class TMRDevice {
 			public:
@@ -139,14 +144,6 @@ namespace htl {
 			private:
 				TMRDevice(const TMRDevice &) = delete;
 				TMRDevice & operator = (const TMRDevice &) = delete;
-				inline void invokeTriggerEvent(uint16_t v) {
-					if (isTriggerEventEnabled())
-						_triggerEvent->execute(v);
-				}
-				inline void invokeUpdateEvent(uint16_t v) {
-					if (isUpdateEventEnabled())
-						_updateEvent->execute(v);
-				}
 			protected:
 				TMRDevice(TIM_TypeDef *tim);
 				virtual void activate() = 0;

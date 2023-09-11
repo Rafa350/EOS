@@ -125,11 +125,15 @@ namespace htl {
 			de
 		};
 
-		using ITxCompletedEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
-		using IRxCompletedEvent = eos::ICallbackP2<const uint8_t*, uint16_t>;
 
-		template <typename instance_> using TxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
-		template <typename instance_> using RxCompletedEvent = eos::CallbackP2<instance_, const uint8_t*, uint16_t>;
+		class UARTDevice;
+
+		using ITxCompletedEvent = eos::ICallbackP3<UARTDevice&, const uint8_t*, uint16_t>;
+		using IRxCompletedEvent = eos::ICallbackP3<UARTDevice&, const uint8_t*, uint16_t>;
+
+		template <typename instance_> using TxCompletedEvent = eos::CallbackP3<instance_, UARTDevice&, const uint8_t*, uint16_t>;
+		template <typename instance_> using RxCompletedEvent = eos::CallbackP3<instance_, UARTDevice&, const uint8_t*, uint16_t>;
+
 
 		namespace internal {
 
@@ -139,6 +143,7 @@ namespace htl {
 			template <DeviceID, PinFunction, typename>
 			struct UARTPinFunctionID;
 		}
+
 
 		class UARTDevice {
 			public:

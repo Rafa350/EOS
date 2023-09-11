@@ -231,13 +231,15 @@ void TMRDevice::interruptService() {
 	//
 	if ((_tim->SR & TIM_SR_TIF) && (_tim->DIER & TIM_DIER_TIE)) {
 		_tim->SR &= ~TIM_SR_TIF;
-		invokeTriggerEvent(0);
+		if (_triggerEventEnabled)
+			_triggerEvent->execute(*this, 0);
 	}
 
 	// Event UPDATE
 	//
 	if ((_tim->SR & TIM_SR_UIF) && (_tim->DIER & TIM_DIER_UIE)) {
 		_tim->SR &= ~TIM_SR_UIF;
-		invokeUpdateEvent(0);
+		if (_updateEventEnabled)
+			_updateEvent->execute(*this, 0);
 	}
 }

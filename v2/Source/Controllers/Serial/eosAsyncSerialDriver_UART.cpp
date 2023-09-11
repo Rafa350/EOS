@@ -110,6 +110,7 @@ bool AsyncSerialDriver_UART::receiveImpl(
 /// \param    count: En nombre de bytes transmessos.
 ///
 void AsyncSerialDriver_UART::txCompletedEventHandler(
+	htl::uart::UARTDevice &sender,
 	const uint8_t *buffer,
 	uint16_t count) {
 
@@ -123,6 +124,7 @@ void AsyncSerialDriver_UART::txCompletedEventHandler(
 /// \param    count: El nombre de bytes rebuts.
 ///
 void AsyncSerialDriver_UART::rxCompletedEventHandler(
+	htl::uart::UARTDevice &sender,
 	const uint8_t *buffer,
 	uint16_t count) {
 
