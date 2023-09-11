@@ -323,7 +323,7 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 
 		// Canvia al nou estat
 		//
-		_state = State::listen;
+        _state = State::listen;
 	}
 
 	// El registre de transmissio de dades es buit

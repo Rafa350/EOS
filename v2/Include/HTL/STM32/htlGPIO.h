@@ -389,10 +389,10 @@ namespace htl {
 				}
 			protected:
 				void activate() override {
-					Activator::activate(1 << int(pinID_));
+					Activator::activate(1 << uint32_t(pinID_));
 				}
 				void deactivate() override {
-					Activator::activate(1 << int(pinID_));
+					Activator::activate(1 << uint32_t(pinID_));
 				}
 			public:
 				static constexpr PinX * getHandler() {

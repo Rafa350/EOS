@@ -322,7 +322,36 @@ PinInterrupt::PinInterrupt(
 void PinInterrupt::enableInterruptPin(
 	Edge edge) {
 
-	#if defined(EOS_PLATFORM_STM32G0)
+	#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+
+	uint32_t tmp = SYSCFG->EXTICR[_pinNum >> 2];
+	tmp &= ~(((uint32_t)0x0F) << (4 * (_pinNum & 0x03)));
+	tmp |= (_portNum << (4 * (_pinNum & 0x03)));
+	SYSCFG->EXTICR[_pinNum >> 2] = tmp;
+
+	uint32_t mask = 1 << _pinNum;
+
+	// Configura en modus interrupcio
+	//
+	EXTI->IMR |= mask;
+	EXTI->EMR &= ~mask;
+
+	// Configura el registre RTSR (Rising Trigger Selection Register)
+	//
+	if ((edge == Edge::rising) || (edge == Edge::all))
+		EXTI->RTSR |= mask;
+	else
+		EXTI->RTSR &= ~mask;
+
+	// Configura el registre FTSR1 (Falling Trigger Selection Register)
+	//
+	if ((edge == Edge::falling) || (edge == Edge::all))
+		EXTI->FTSR |= mask;
+	else
+		EXTI->FTSR &= ~mask;
+
+
+	#elif defined(EOS_PLATFORM_STM32G0)
 
 	/// Asigna el port GPIO a la linia EXTI
 	//
@@ -363,7 +392,13 @@ void PinInterrupt::enableInterruptPin(
 ///
 void PinInterrupt::disableInterruptPin() {
 
-	#if defined(EOS_PLATFORM_STM32G0)
+	#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+
+	uint32_t mask = 1 << _pinNum;
+	EXTI->RTSR &= ~mask;
+	EXTI->FTSR &= ~mask;
+
+	#elif defined(EOS_PLATFORM_STM32G0)
 
 	uint32_t mask = 1 << _pinNum;
 	EXTI->RTSR1 &= ~mask;
@@ -412,6 +447,29 @@ void PinInterrupt::interruptService() {
 
 	uint32_t mask = 1 << _pinNum;
 
+	#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+
+	if (EXTI->PR & mask) {
+		EXTI->PR = mask;
+
+		GPIO_TypeDef *gpio = reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE + (_portNum * 0x400));
+
+		// Si la entrada es 1, es un flanc ascendent
+		//
+		if (gpio->IDR & mask) {
+			if (_risingEdgeEventEnabled)
+				_risingEdgeEvent->execute(*this);
+		}
+
+		// En cas contrari es un flanc descendent
+		//
+		else {
+			if (_fallingEdgeEventEnabled)
+				_fallingEdgeEvent->execute(*this);
+		}
+	}
+
+	#elif defined(EOS_PLATFORM_STM32G0)
 	if (EXTI->FPR1 & mask) {
 		EXTI->FPR1 = mask;
 
@@ -425,5 +483,6 @@ void PinInterrupt::interruptService() {
 		if (_risingEdgeEventEnabled)
 			_risingEdgeEvent->execute(*this);
 	}
+	#endif
 }
 
