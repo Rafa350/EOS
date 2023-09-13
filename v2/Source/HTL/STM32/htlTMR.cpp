@@ -14,10 +14,8 @@ TMRDevice::TMRDevice(
 
 	_tim {tim},
 	_state {State::reset},
-	_triggerEvent {nullptr},
-	_updateEvent {nullptr},
-	_triggerEventEnabled {false},
-	_updateEventEnabled {false}{
+	_notifyEvent {nullptr},
+	_notifyEventEnabled {false}{
 
 }
 
@@ -231,15 +229,23 @@ void TMRDevice::interruptService() {
 	//
 	if ((_tim->SR & TIM_SR_TIF) && (_tim->DIER & TIM_DIER_TIE)) {
 		_tim->SR &= ~TIM_SR_TIF;
-		if (_triggerEventEnabled)
-			_triggerEvent->execute(*this, 0);
+		if (_notifyEventEnabled) {
+			NotifyEventArgs args = {
+				.id = NotifyID::trigger
+			};
+			_notifyEvent->execute(this, args);
+		}
 	}
 
 	// Event UPDATE
 	//
 	if ((_tim->SR & TIM_SR_UIF) && (_tim->DIER & TIM_DIER_UIE)) {
 		_tim->SR &= ~TIM_SR_UIF;
-		if (_updateEventEnabled)
-			_updateEvent->execute(*this, 0);
+		if (_notifyEventEnabled) {
+			NotifyEventArgs args = {
+				.id = NotifyID::update
+			};
+			_notifyEvent->execute(this, args);
+		}
 	}
 }

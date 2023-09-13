@@ -101,7 +101,7 @@ static void setupLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza lin ies d'intedrrupcio externess.
+/// \brief    Inicialitza linies d'interrupcio externes.
 /// \param    info: Llista de configuracio.
 /// \param    count: Numero d'elements en la llista.
 ///

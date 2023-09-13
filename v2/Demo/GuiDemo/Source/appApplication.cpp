@@ -29,7 +29,7 @@ using namespace app;
 ///
 MyApplication::MyApplication():
 #if eosGuiService_TouchpadEnabled
-	_touchpadEventCallback(*this, &MyApplication::touchpadEventHandler),
+	_touchPadNotifyEvent(*this, &MyApplication::touchPadNotifyEventHandler),
 #endif
 	_buttonEventCallback(*this, &MyApplication::buttonEventHandler),
 	_virtualKeyboardEventCallback(*this, &MyApplication::virtualKeyboardEventHandler) {
@@ -49,9 +49,9 @@ void MyApplication::onInitialize() {
 	// Inicialitza el servei Touchpad
 	//
 	#if eosGuiService_TouchpadEnabled
-		_touchpadService = new eos::TouchpadService();
-		_touchpadService->setEventCallback(&_touchpadEventCallback);
-		addService(_touchpadService, eos::Task::Priority::normal, 128, "TOUCHPAD");
+		_touchPadService = new eos::TouchPadService();
+		_touchPadService->setNotifyEvent(_touchPadNotifyEvent, true);
+		addService(_touchPadService, eos::Task::Priority::normal, 128, "TOUCHPAD");
 	#endif
 
 	// Inicialitza el servei GUI
@@ -168,10 +168,11 @@ void MyApplication::createMainPanel() {
 ///           servei GUI
 ///
 #if eosGuiService_TouchpadEnabled
-void MyApplication::touchpadEventHandler(
-	const eos::TouchpadService::EventArgs &args) {
+void MyApplication::touchPadNotifyEventHandler(
+	eos::TouchPadService *sender,
+	eos::TouchPadService::NotifyEventArgs &args) {
 
-	_guiService->touchpadEventHandler(args);
+	_guiService->touchPadNotifyEventHandler(sender, args);
 }
 #endif
 

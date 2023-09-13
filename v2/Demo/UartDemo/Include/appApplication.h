@@ -3,7 +3,7 @@
 
 
 #include "eos.h"
-#include "System/eosApplication.h"
+#include "System/eosRTOSApplication.h"
 
 
 namespace eos {
@@ -16,7 +16,7 @@ namespace app {
 
     class MyAppLoopService;
 
-    class MyApplication: public eos::Application {
+    class MyApplication: public eos::RTOSApplication {
         private:
             MyAppLoopService *_loopService;
             eos::MessengerService *_messengerService;

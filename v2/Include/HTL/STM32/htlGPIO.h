@@ -244,11 +244,15 @@ namespace htl {
 
 		class PinInterrupt;
 
-		using IRisingEdgeEvent = eos::ICallbackP1<PinInterrupt&>;
-		using IFallingEdgeEvent = eos::ICallbackP1<PinInterrupt&>;
+		struct EdgeEventArgs {
+		};
 
-		template <typename instance_> using RisingEdgeEvent = eos::CallbackP1<instance_, PinInterrupt&>;
-		template <typename instance_> using FallingEdgeEvent = eos::CallbackP1<instance_, PinInterrupt&>;
+		using IRisingEdgeEvent = eos::ICallbackP2<PinInterrupt*, EdgeEventArgs&>;
+		using IFallingEdgeEvent = eos::ICallbackP2<PinInterrupt*, EdgeEventArgs&>;
+
+		template <typename instance_> using RisingEdgeEvent = eos::CallbackP2<instance_, PinInterrupt*, EdgeEventArgs&>;
+		template <typename instance_> using FallingEdgeEvent = eos::CallbackP2<instance_, PinInterrupt*, EdgeEventArgs&>;
+
 
 		class PinInterrupt {
 			private:
@@ -267,8 +271,8 @@ namespace htl {
 			public:
 				void enableInterruptPin(Edge edge);
 				void disableInterruptPin();
-				void setFallingEdgeEvent(IFallingEdgeEvent &event, bool enabled);
-				void setRisingEdgeEvent(IRisingEdgeEvent &event, bool enabled);
+				void setFallingEdgeEvent(IFallingEdgeEvent &event, bool enabled = true);
+				void setRisingEdgeEvent(IRisingEdgeEvent &event, bool enabled = true);
 				inline void enableFallingEdgeEvent() {
 					_risingEdgeEventEnabled = _risingEdgeEvent != nullptr;
 				}

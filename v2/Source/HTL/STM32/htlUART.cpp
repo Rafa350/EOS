@@ -111,10 +111,8 @@ UARTDevice::UARTDevice(
 
 	_usart {usart},
 	_state {State::reset},
-	_txCompletedEvent {nullptr},
-	_rxCompletedEvent {nullptr},
-	_txCompletedEventEnabled {false},
-	_rxCompletedEventEnabled {false} {
+	_notifyEvent {nullptr},
+	_notifyEventEnabled {false} {
 
 }
 
@@ -186,28 +184,28 @@ void UARTDevice::setProtocol(
 	tmp = _usart->CR1;
 
 	switch (7 + uint32_t(wordBits) + (parity == Parity::none ? 0 : 1)) {
-		#if HTL_UART_7BIT_SUPPORT == 1
-			case 7:
-				tmp |= USART_CR1_M1;
-				tmp &= ~USART_CR1_M0;
-				break;
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		case 7:
+			tmp |= USART_CR1_M1;
+			tmp &= ~USART_CR1_M0;
+			break;
 		#endif
 
 		case 8:
-			#if HTL_UART_7BIT_SUPPORT == 1
-				tmp &= ~USART_CR1_M1;
-				tmp &= ~USART_CR1_M0;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			tmp &= ~USART_CR1_M1;
+			tmp &= ~USART_CR1_M0;
 			#else
-				tmp &= ~USART_CR1_M;
+			tmp &= ~USART_CR1_M;
 			#endif
 			break;
 
 		case 9:
-			#if HTL_UART_7BIT_SUPPORT == 1
-				tmp &= ~USART_CR1_M1;
-				tmp |= USART_CR1_M0;
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+			tmp &= ~USART_CR1_M1;
+			tmp |= USART_CR1_M0;
 			#else
-				tmp |= USART_CR1_M;
+			tmp |= USART_CR1_M;
 			#endif
 			break;
 	}
@@ -336,7 +334,7 @@ void UARTDevice::setTimming(
     switch (clockSource) {
     	default:
     	case ClockSource::pclk:
-			#if defined(STM32F4) || defined(STM32F7)
+			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
     		if ((uint32_t(_usart) == USART1_BASE) ||
     			(uint32_t(_usart) == USART6_BASE))
     			fclk =  clock::getClockFrequency(clock::ClockID::pclk2);
@@ -474,8 +472,16 @@ void UARTDevice::interruptService() {
 
 			_usart->ICR |= USART_ICR_TCCF;
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
-			if (isTxCompletedEventEnabled())
-				_txCompletedEvent->execute(*this, _txBuffer, _txCount);
+			if (_notifyEventEnabled) {
+				NotifyEventArgs args = {
+					.id = NotifyID::txCompleted,
+					.TxCompleted {
+						.buffer = _txBuffer,
+						.length = _txCount
+					}
+				};
+				_notifyEvent->execute(this, args);
+			}
 			_state = State::ready;
 		}
 
@@ -487,8 +493,16 @@ void UARTDevice::interruptService() {
 				_rxBuffer[_rxCount++] = _usart->RDR;
 				if (_rxCount == _rxSize) {
 					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-					if (isRxCompletedEventEnabled())
-						_rxCompletedEvent->execute(*this, _rxBuffer, _rxCount);
+					if (_notifyEventEnabled) {
+						NotifyEventArgs args = {
+							.id = NotifyID::rxCompleted,
+							.RxCompleted {
+								.buffer = _rxBuffer,
+								.length = _rxCount
+							}
+						};
+						_notifyEvent->execute(this, args);
+					}
 					_state = State::ready;
 				}
 			}
@@ -500,8 +514,16 @@ void UARTDevice::interruptService() {
 
 			_usart->ICR |= USART_ICR_RTOCF;
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-			if (isRxCompletedEventEnabled())
-				_rxCompletedEvent->execute(*this, _rxBuffer, _rxCount);
+			if (_notifyEventEnabled) {
+				NotifyEventArgs args = {
+					.id = NotifyID::rxCompleted,
+					.RxCompleted {
+						.buffer = _rxBuffer,
+						.length = _rxCount
+					}
+				};
+				_notifyEvent->execute(this, args);
+			}
 			_state = State::ready;
 		}
 	}

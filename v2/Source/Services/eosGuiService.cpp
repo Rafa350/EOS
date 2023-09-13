@@ -177,8 +177,9 @@ void GuiService::onTask() {
 /// \param    args: Arguments del event.
 ///
 #if eosGuiService_TouchpadEnabled
-void GuiService::touchpadEventHandler(
-	const TouchpadService::EventArgs &args) {
+void GuiService::touchPadNotifyEventHandler(
+	TouchPadService *sender,
+	TouchPadService::NotifyEventArgs &args) {
 
 	Message msg;
 	msg.msgId = MsgId::touchpad;
@@ -211,18 +212,18 @@ void GuiService::touchpadEventHandler(
 	}
 
 	msg.target = target;
-	switch (args.event) {
-		case TouchpadService::EventType::press:
+	switch (args.notifyType) {
+		case TouchPadService::NotifyType::press:
 			msg.touchpad.event = MsgTouchpadEvent::press;
 			msg.touchpad.x = args.x;
 			msg.touchpad.y = args.y;
 			break;
 
-		case TouchpadService::EventType::release:
+		case TouchPadService::NotifyType::release:
 			msg.touchpad.event = MsgTouchpadEvent::release;
 			break;
 
-		case TouchpadService::EventType::move:
+		case TouchPadService::NotifyType::move:
 			msg.touchpad.event = MsgTouchpadEvent::move;
 			msg.touchpad.x = args.x;
 			msg.touchpad.y = args.y;

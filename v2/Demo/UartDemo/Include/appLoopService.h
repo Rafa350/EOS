@@ -7,7 +7,6 @@
 #include "HTL/htlGPIO.h"
 #include "HTL/htlUART.h"
 #include "HTL/htlINT.h"
-#include "Services/eosAppLoopService.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 

@@ -25,9 +25,9 @@ namespace eos {
 			RxCompletedEvent _rxCompletedEvent;
 
 		private:
-			void addressMatchEventHandler(htl::i2c::I2CSlaveDevice &sender, uint16_t addr);
-			void rxDataEventHandler(htl::i2c::I2CSlaveDevice &sender, const uint8_t *buffer, uint16_t count);
-			void rxCompletedEventHandler(htl::i2c::I2CSlaveDevice &sender, const uint8_t *buffer, uint16_t count);
+			void addressMatchEventHandler(htl::i2c::I2CSlaveDevice *sender, uint16_t addr);
+			void rxDataEventHandler(htl::i2c::I2CSlaveDevice *sender, const uint8_t *buffer, uint16_t count);
+			void rxCompletedEventHandler(htl::i2c::I2CSlaveDevice *sender, const uint8_t *buffer, uint16_t count);
 
 		protected:
 			void initializeImpl() override;

@@ -17,30 +17,30 @@ namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
 		private:
-			using PinR0 = DISPLAY_R0_GPIO;
-			using PinR1 = DISPLAY_R1_GPIO;
-			using PinR2 = DISPLAY_R2_GPIO;
-			using PinR3 = DISPLAY_R3_GPIO;
-			using PinR4 = DISPLAY_R4_GPIO;
-			using PinR5 = DISPLAY_R5_GPIO;
-			using PinR6 = DISPLAY_R6_GPIO;
-			using PinR7 = DISPLAY_R7_GPIO;
-			using PinG0 = DISPLAY_G0_GPIO;
-			using PinG1 = DISPLAY_G1_GPIO;
-			using PinG2 = DISPLAY_G2_GPIO;
-			using PinG3 = DISPLAY_G3_GPIO;
-			using PinG4 = DISPLAY_G4_GPIO;
-			using PinG5 = DISPLAY_G5_GPIO;
-			using PinG6 = DISPLAY_G6_GPIO;
-			using PinG7 = DISPLAY_G7_GPIO;
-			using PinB0 = DISPLAY_B0_GPIO;
-			using PinB1 = DISPLAY_B1_GPIO;
-			using PinB2 = DISPLAY_B2_GPIO;
-			using PinB3 = DISPLAY_B3_GPIO;
-			using PinB4 = DISPLAY_B4_GPIO;
-			using PinB5 = DISPLAY_B5_GPIO;
-			using PinB6 = DISPLAY_B6_GPIO;
-			using PinB7 = DISPLAY_B7_GPIO;
+			using PinR0 = DISPLAY_R0_Pin;
+			using PinR1 = DISPLAY_R1_Pin;
+			using PinR2 = DISPLAY_R2_Pin;
+			using PinR3 = DISPLAY_R3_Pin;
+			using PinR4 = DISPLAY_R4_Pin;
+			using PinR5 = DISPLAY_R5_Pin;
+			using PinR6 = DISPLAY_R6_Pin;
+			using PinR7 = DISPLAY_R7_Pin;
+			using PinG0 = DISPLAY_G0_Pin;
+			using PinG1 = DISPLAY_G1_Pin;
+			using PinG2 = DISPLAY_G2_Pin;
+			using PinG3 = DISPLAY_G3_Pin;
+			using PinG4 = DISPLAY_G4_Pin;
+			using PinG5 = DISPLAY_G5_Pin;
+			using PinG6 = DISPLAY_G6_Pin;
+			using PinG7 = DISPLAY_G7_Pin;
+			using PinB0 = DISPLAY_B0_Pin;
+			using PinB1 = DISPLAY_B1_Pin;
+			using PinB2 = DISPLAY_B2_Pin;
+			using PinB3 = DISPLAY_B3_Pin;
+			using PinB4 = DISPLAY_B4_Pin;
+			using PinB5 = DISPLAY_B5_Pin;
+			using PinB6 = DISPLAY_B6_Pin;
+			using PinB7 = DISPLAY_B7_Pin;
 			using PinLCDE = DISPLAY_LCDE_Pin;
 			using PinBKE = DISPLAY_BKE_Pin;
 

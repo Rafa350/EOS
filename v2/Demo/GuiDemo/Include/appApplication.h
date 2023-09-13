@@ -27,7 +27,7 @@ namespace app {
 	class MyApplication: public eos::RTOSApplication {
 		private:
 			#if eosGuiService_TouchpadEnabled
-				typedef eos::CallbackP1<MyApplication, const eos::TouchpadService::EventArgs&> TouchpadEventCallback;
+				using TouchPadNotifyEvent = eos::TouchPadService::NotifyEvent<MyApplication>;
 			#endif
 
 		private:
@@ -40,8 +40,8 @@ namespace app {
 				SelectorService* _selectorService;
 			#endif
 			#if eosGuiService_TouchpadEnabled
-				eos::TouchpadService* _touchpadService;
-				TouchpadEventCallback _touchpadEventCallback;
+				eos::TouchPadService* _touchPadService;
+				TouchPadNotifyEvent _touchPadNotifyEvent;
 			#endif
 
 			eos::ButtonEventCallback<MyApplication> _buttonEventCallback;
@@ -56,7 +56,7 @@ namespace app {
 			void buttonEventHandler(const eos::ButtonEventArgs& args);
 			void virtualKeyboardEventHandler(const eos::VirtualKeyboardEventArgs &args);
 			#if eosGuiService_TouchpadEnabled
-				void touchpadEventHandler(const eos::TouchpadService::EventArgs &args);
+				void touchPadNotifyEventHandler(eos::TouchPadService *sender, eos::TouchPadService::NotifyEventArgs &args);
 			#endif
 
 		public :

@@ -7,7 +7,6 @@
 //
 #include "HTL/htl.h"
 #include "HTL/htlGPIO.h"
-#include "HTL/htlINT.h"
 
 
 namespace htl {
@@ -49,20 +48,27 @@ namespace htl {
 
 		class I2CSlaveDevice;
 
-		using IAddressMatchEvent = eos::ICallbackP2<I2CSlaveDevice&, uint16_t>;
-		using IRxDataEvent = eos::ICallbackP3<I2CSlaveDevice&, const uint8_t*, uint16_t>;
-		using IRxCompletedEvent = eos::ICallbackP3<I2CSlaveDevice&, const uint8_t*, uint16_t>;
-		using ITxDataEvent = eos::ICallbackP4<I2CSlaveDevice&, uint8_t*, uint16_t, uint16_t&>;
-		using ITxCompletedEvent = eos::ICallbackP1<I2CSlaveDevice&>;
+		using IAddressMatchEvent = eos::ICallbackP2<I2CSlaveDevice*, uint16_t>;
+		using IRxDataEvent = eos::ICallbackP3<I2CSlaveDevice*, const uint8_t*, uint16_t>;
+		using IRxCompletedEvent = eos::ICallbackP3<I2CSlaveDevice*, const uint8_t*, uint16_t>;
+		using ITxDataEvent = eos::ICallbackP4<I2CSlaveDevice*, uint8_t*, uint16_t, uint16_t&>;
+		using ITxCompletedEvent = eos::ICallbackP1<I2CSlaveDevice*>;
 
-		template <typename instance_> using AddressMatchEvent = eos::CallbackP2<instance_, I2CSlaveDevice&, uint16_t>;
-		template <typename instance_> using RxDataEvent = eos::CallbackP3<instance_, I2CSlaveDevice&, const uint8_t*, uint16_t>;
-		template <typename instance_> using RxCompletedEvent = eos::CallbackP3<instance_, I2CSlaveDevice&, const uint8_t*, uint16_t>;
-		template <typename instance_> using TxDataCallback = eos::CallbackP4<instance_, I2CSlaveDevice&, uint8_t*, uint16_t, uint16_t&>;
-		template <typename instance_> using TxCompletedEvent = eos::CallbackP1<instance_, I2CSlaveDevice&>;
+		template <typename instance_> using AddressMatchEvent = eos::CallbackP2<instance_, I2CSlaveDevice*, uint16_t>;
+		template <typename instance_> using RxDataEvent = eos::CallbackP3<instance_, I2CSlaveDevice*, const uint8_t*, uint16_t>;
+		template <typename instance_> using RxCompletedEvent = eos::CallbackP3<instance_, I2CSlaveDevice*, const uint8_t*, uint16_t>;
+		template <typename instance_> using TxDataCallback = eos::CallbackP4<instance_, I2CSlaveDevice*, uint8_t*, uint16_t, uint16_t&>;
+		template <typename instance_> using TxCompletedEvent = eos::CallbackP1<instance_, I2CSlaveDevice*>;
 
 
-		class I2CSlaveDevice {
+		class I2CDevice {
+			protected:
+				virtual void activate() = 0;
+				virtual void deactivate() = 0;
+		};
+
+
+		class I2CSlaveDevice: public I2CDevice {
 			public:
 				enum class State {
 					reset,
@@ -102,8 +108,6 @@ namespace htl {
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *gpio);
 				void interruptService();
-				virtual void activate() = 0;
-				virtual void deactivate() = 0;
 			public:
 				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				Result deinitialize();
@@ -180,6 +184,17 @@ namespace htl {
 		};
 
 		typedef I2CSlaveDevice *I2CSlaveDeviceHandler;
+
+
+		class I2CMasterDevice: public I2CDevice {
+			private:
+				I2C_TypeDef * const _i2c;
+			private:
+				I2CMasterDevice(const I2C_TypeDef&) = delete;
+				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
+			protected:
+				I2CMasterDevice(I2C_TypeDef *i2c);
+		};
 
 
 		namespace internal {

@@ -58,11 +58,10 @@ namespace eos {
     class DigInput final {
         public:
             struct ChangedEventArgs {
-                DigInput *input;
                 htl::gpio::PinState pinState;
             };
-        	using IChangedEvent = ICallbackP1<const ChangedEventArgs&>;
-        	template <typename instance_> using ChangedEvent = CallbackP1<instance_, const ChangedEventArgs&>;
+        	using IChangedEvent = ICallbackP2<DigInput*, ChangedEventArgs&>;
+        	template <typename instance_> using ChangedEvent = CallbackP2<instance_, DigInput*, ChangedEventArgs&>;
 
             enum class ScanMode {    // Modus d'exploracio de la entrada
                 polling,             // -Polling
@@ -100,12 +99,8 @@ namespace eos {
                 _changedEventEnabled = enabled;
             }
 
-            inline bool isChangedEventEnabled() const {
-            	return (_changedEvent != nullptr) && _changedEventEnabled;
-            }
-
             inline void enableChangeEvent() {
-                _changedEventEnabled = true;
+                _changedEventEnabled = _changedEvent != nullptr;
             }
 
             inline void disableChangeEvent() {

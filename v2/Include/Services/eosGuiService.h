@@ -70,7 +70,7 @@ namespace eos {
 			void setActive(Visual* visual);
 			void setFocus(Visual* visual);
 			#if eosGuiService_TouchpadEnabled
-				void touchpadEventHandler(const TouchpadService::EventArgs &args);
+				void touchPadNotifyEventHandler(TouchPadService *sender, TouchPadService::NotifyEventArgs &args);
 			#endif
 
 		protected:

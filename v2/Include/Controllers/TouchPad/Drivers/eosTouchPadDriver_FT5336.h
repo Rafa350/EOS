@@ -241,24 +241,36 @@
 
 namespace eos {
 
+	class TouchPadDriver_FT5336;
+
+	using ITouchPadEvent = ICallbackP1<TouchPadDriver_FT5336*>;
+
+	template <typename instance_>
+	using TouchPadEvent = CallbackP1<instance_, TouchPadDriver_FT5336*>;
+
+
 	class TouchPadDriver_FT5336: public ITouchPadDriver {
 		private:
-	    	using PinINT = TOUCHPAD_INT_GPIO;
-			using PinSCL = TOUCHPAD_SCL_GPIO;
-			using PinSDA = TOUCHPAD_SDA_GPIO;
-			using I2C = TOUCHPAD_I2C;
-	    	using ExtiINT = TOUCHPAD_INT_EXTI;
+	    	using PinINT = TOUCHPAD_INT_Pin;
+	    	using PinInterruptINT = TOUCHPAD_INT_PinInterrupt;
+			using PinSCL = TOUCHPAD_SCL_Pin;
+			using PinSDA = TOUCHPAD_SDA_Pin;
+			using I2C = TOUCHPAD_I2C_Device;
+
+			using IntRisingEdgeEvent = htl::gpio::RisingEdgeEvent<TouchPadDriver_FT5336>;
 
 			static constexpr uint16_t _width = TOUCHPAD_WIDTH;
      		static constexpr uint16_t _height = TOUCHPAD_HEIGHT;
      		static constexpr uint8_t _i2cAddr = TOUCHPAD_I2C_ADDR;
 
-     		static constexpr htl::INTVector _vector = htl::EXTITrait<ExtiINT::line>::vector;
-        	static constexpr htl::INTPriority _priority = htl::INTPriority::_15;
-        	static constexpr htl::INTSubPriority _subPriority = htl::INTSubPriority::_0;
+     		static constexpr htl::irq::VectorID _vector = TOUCHPAD_INT_IntVector;
+        	static constexpr htl::irq::Priority _priority = htl::irq::Priority::_15;
+        	static constexpr htl::irq::SubPriority _subPriority = htl::irq::SubPriority::_0;
 
 			static ITouchPadDriver *_instance;
 			TouchPadOrientation _orientation;
+			IntRisingEdgeEvent _intRisingEdgeEvent;
+			ITouchPadEvent *_touchPadEvent;
 
 			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &) = delete;
 			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &&) = delete;
@@ -266,6 +278,7 @@ namespace eos {
 			void initializeInterface();
 			uint8_t readRegister(uint8_t reg);
 			void writeRegister(uint8_t reg, uint8_t value);
+			void intRisingEdgeEventHandler(htl::gpio::PinInterrupt *sender, htl::gpio::EdgeEventArgs &args);
 
 		public:
 			TouchPadDriver_FT5336();
@@ -278,6 +291,9 @@ namespace eos {
 			int getTouchCount();
 			bool getState(TouchPadState& state);
 			void setOrientation(TouchPadOrientation orientation);
+			void setTouchPadEvent(ITouchPadEvent &event, bool enabled = true) {
+				_touchPadEvent = &event;
+			}
 			void enableInt();
 			void disableInt();
 			void clearInt();

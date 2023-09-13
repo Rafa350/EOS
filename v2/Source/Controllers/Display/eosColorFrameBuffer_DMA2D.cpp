@@ -5,6 +5,11 @@
 #include "System/Graphics/eosColorMath.h"
 
 
+#ifndef HTL_DMA2D_EXIST
+#error "DMA2D hardware unavailable"
+#endif
+
+
 using namespace eos;
 using namespace htl;
 

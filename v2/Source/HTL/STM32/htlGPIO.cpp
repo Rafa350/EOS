@@ -211,8 +211,8 @@ Pin::Pin(
 	GPIO_TypeDef *gpio,
 	PinID pinID) :
 
-	_gpio(gpio),
-	_mask(1 << uint32_t(pinID)) {
+	_gpio {gpio},
+	_mask {uint16_t(1 << uint16_t(pinID))} {
 
 }
 
@@ -322,7 +322,13 @@ PinInterrupt::PinInterrupt(
 void PinInterrupt::enableInterruptPin(
 	Edge edge) {
 
-	#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+	#if defined(EOS_PLATFORM_STM32F4) || \
+	    defined(EOS_PLATFORM_STM32F7)
+
+	if ((RCC->APB2ENR & RCC_APB2ENR_SYSCFGEN) == 0) {
+		RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+		__DSB();
+	}
 
 	uint32_t tmp = SYSCFG->EXTICR[_pinNum >> 2];
 	tmp &= ~(((uint32_t)0x0F) << (4 * (_pinNum & 0x03)));
@@ -392,7 +398,8 @@ void PinInterrupt::enableInterruptPin(
 ///
 void PinInterrupt::disableInterruptPin() {
 
-	#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+	#if defined(EOS_PLATFORM_STM32F4) || \
+	    defined(EOS_PLATFORM_STM32F7)
 
 	uint32_t mask = 1 << _pinNum;
 	EXTI->RTSR &= ~mask;
@@ -447,7 +454,8 @@ void PinInterrupt::interruptService() {
 
 	uint32_t mask = 1 << _pinNum;
 
-	#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+	#if defined(EOS_PLATFORM_STM32F4) || \
+	    defined(EOS_PLATFORM_STM32F7)
 
 	if (EXTI->PR & mask) {
 		EXTI->PR = mask;
@@ -457,32 +465,42 @@ void PinInterrupt::interruptService() {
 		// Si la entrada es 1, es un flanc ascendent
 		//
 		if (gpio->IDR & mask) {
-			if (_risingEdgeEventEnabled)
-				_risingEdgeEvent->execute(*this);
+			if (_risingEdgeEventEnabled) {
+				EdgeEventArgs args;
+				_risingEdgeEvent->execute(this, args);
+			}
 		}
 
 		// En cas contrari es un flanc descendent
 		//
 		else {
-			if (_fallingEdgeEventEnabled)
-				_fallingEdgeEvent->execute(*this);
+			if (_fallingEdgeEventEnabled) {
+				EdgeEventArgs args;
+				_fallingEdgeEvent->execute(this, args);
+			}
 		}
 	}
 
 	#elif defined(EOS_PLATFORM_STM32G0)
+
 	if (EXTI->FPR1 & mask) {
 		EXTI->FPR1 = mask;
 
-		if (_fallingEdgeEventEnabled)
-			_fallingEdgeEvent->execute(*this);
+		if (_fallingEdgeEventEnabled) {
+			EdgeEventArgs args;
+			_fallingEdgeEvent->execute(this, args);
+		}
 	}
 
 	if (EXTI->RPR1 & mask) {
 		EXTI->RPR1 = mask;
 
-		if (_risingEdgeEventEnabled)
-			_risingEdgeEvent->execute(*this);
+		if (_risingEdgeEventEnabled) {
+			EdgeEventArgs args;
+			_risingEdgeEvent->execute(this, args);
+		}
 	}
+
 	#endif
 }
 

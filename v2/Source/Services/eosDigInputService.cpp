@@ -141,7 +141,7 @@ void DigInputService::onTask() {
             //
             for (auto input: _inputs) {
 
-                if (input->isChangedEventEnabled()) {
+                if (input->_changedEventEnabled) {
 
                     bool state = irq::disableInterrupts();
 
@@ -152,11 +152,11 @@ void DigInputService::onTask() {
 
                     if (edge) {
 
-                        DigInput::ChangedEventArgs args;
-                        args.input = input;
-                        args.pinState = input->_pinState;
+                        DigInput::ChangedEventArgs args = {
+                        	.pinState = input->_pinState
+                        };
 
-                        input->_changedEvent->execute(args);
+                        input->_changedEvent->execute(input, args);
                     }
                 }
             }

@@ -7,26 +7,6 @@
 //
 #include "HTL/htl.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "HTL/STM32/htlINT.h"
-
-
-// Detecta les opcions suportades
-//
-#if defined(EOS_PLATFORM_STM32F0)
-	#define HTL_UART_7BIT_SUPPORT 0
-	#define HTL_UART_LINMODE_SUPPORT 0
-	#define HTL_UART_SMARTCARD_SUPPORT 0
-#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-	#define HTL_UART_7BIT_SUPPORT 1
-	#define HTL_UART_LINMODE_SUPPORT 1
-	#define HTL_UART_SMARTCARD_SUPPORT 1
-#elif defined(EOS_PLATFORM_STM32G0)
-	#define HTL_UART_7BIT_SUPPORT 0
-	#define HTL_UART_LINMODE_SUPPORT 0
-	#define HTL_UART_SMARTCARD_SUPPORT 0
-#else
-	#error "Unknown platform"
-#endif
 
 
 namespace htl {
@@ -72,7 +52,8 @@ namespace htl {
 		};
 
 		enum class WordBits {
-			#if HTL_UART_7BIT_SUPPORT == 1
+			#if defined(EOS_PLATFORM_STM32F4) || \
+			    defined(EOS_PLATFORM_STM32F7)
 				_7,
 			#endif
 			_8
@@ -126,13 +107,29 @@ namespace htl {
 		};
 
 
+		enum class NotifyID {
+			null,
+			rxCompleted,
+			txCompleted
+		};
+
+		struct NotifyEventArgs {
+			NotifyID id;
+			union {
+				struct {
+					const uint8_t *buffer;
+					uint16_t length;
+				} TxCompleted;
+				struct {
+					const uint8_t *buffer;
+					uint16_t length;
+				} RxCompleted;
+			};
+		};
+
 		class UARTDevice;
-
-		using ITxCompletedEvent = eos::ICallbackP3<UARTDevice&, const uint8_t*, uint16_t>;
-		using IRxCompletedEvent = eos::ICallbackP3<UARTDevice&, const uint8_t*, uint16_t>;
-
-		template <typename instance_> using TxCompletedEvent = eos::CallbackP3<instance_, UARTDevice&, const uint8_t*, uint16_t>;
-		template <typename instance_> using RxCompletedEvent = eos::CallbackP3<instance_, UARTDevice&, const uint8_t*, uint16_t>;
+		using INotifyEvent = eos::ICallbackP2<UARTDevice*, NotifyEventArgs&>;
+		template <typename instance_> using NotifyEvent = eos::CallbackP2<instance_, UARTDevice*, NotifyEventArgs&>;
 
 
 		namespace internal {
@@ -167,10 +164,8 @@ namespace htl {
 				const uint8_t *_txBuffer;
 				uint16_t _txSize;
 				uint16_t _txCount;
-				ITxCompletedEvent *_txCompletedEvent;
-				IRxCompletedEvent *_rxCompletedEvent;
-				bool _txCompletedEventEnabled;
-				bool _rxCompletedEventEnabled;
+				INotifyEvent *_notifyEvent;
+				bool _notifyEventEnabled;
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
@@ -202,31 +197,15 @@ namespace htl {
 				Result deinitialize();
 				void setProtocol(WordBits wordBits, Parity parity, StopBits stopBits, Handsake handlsake);
 				void setTimming(BaudMode baudMode, ClockSource clockSource, uint32_t rate, OverSampling oversampling);
-				inline void setTxCompletedEvent(ITxCompletedEvent &event, bool enabled = true) {
-					_txCompletedEvent = &event;
-					_txCompletedEventEnabled = enabled;
+				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+					_notifyEvent = &event;
+					_notifyEventEnabled = enabled;
 				}
-				inline void setRxCompletedEvent(IRxCompletedEvent &event, bool enabled = true) {
-					_rxCompletedEvent = &event;
-					_rxCompletedEventEnabled = enabled;
+				inline void enableNotifyEvent() {
+					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
-				inline void enableTxCompletedEvent() {
-					_txCompletedEventEnabled = true;
-				}
-				inline void enableRxCompletedEvent() {
-					_rxCompletedEventEnabled = _rxCompletedEvent != nullptr;
-				}
-				inline void disableTxCompletedEvent() {
-					_txCompletedEventEnabled = _txCompletedEvent != nullptr;
-				}
-				inline void disableRxCompletedEvent() {
-					_rxCompletedEventEnabled = false;
-				}
-				inline bool isTxCompletedEventEnabled() const {
-					return _txCompletedEventEnabled;
-				}
-				inline bool isRxCompletedEventEnabled() const {
-					return _rxCompletedEventEnabled;
+				inline void disableNotifyEvent() {
+					_notifyEventEnabled = false;
 				}
 				Result transmit(const uint8_t *data, uint16_t dataLength);
 				Result receive(uint8_t *data, uint16_t dataSize);

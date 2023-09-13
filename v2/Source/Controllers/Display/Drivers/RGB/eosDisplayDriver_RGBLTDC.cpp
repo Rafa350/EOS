@@ -1,13 +1,4 @@
 #include "eos.h"
-
-#if !((defined(LTDC) && (defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7))))
-#error "LTDC hardware unavailable"
-#endif
-
-
-// Utilitza una sola capa (LTDC_Layer1). Pot treballar en modus simple
-// o doble buffer.
-
 #include "eosAssert.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
@@ -15,6 +6,11 @@
 #include "HTL/STM32/htlLTDC.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
+
+
+#ifndef HTL_LTDC_EXIST
+#error "LTDC hardware unavailable"
+#endif
 
 
 using namespace eos;
@@ -269,10 +265,10 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	// Inicialitza el modul LTDC
 	//
 	auto ltdc(ltdc::LTDCDevice::getHandler());
-	ltdc->initPinPC<DISPLAY_PC_GPIO>(_pcPol);
-	ltdc->initPinHSYNC<DISPLAY_HSYNC_GPIO>(_hSyncPol);
-	ltdc->initPinVSYNC<DISPLAY_VSYNC_GPIO>(_vSyncPol);
-	ltdc->initPinDE<DISPLAY_DE_GPIO>(_dePol);
+	ltdc->initPinPC<DISPLAY_PC_Pin, _pcPol>();
+	ltdc->initPinHSYNC<DISPLAY_HSYNC_Pin, _hSyncPol>();
+	ltdc->initPinVSYNC<DISPLAY_VSYNC_Pin, _vSyncPol>();
+	ltdc->initPinDE<DISPLAY_DE_Pin, _dePol>();
 	ltdc->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
 	ltdc->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
 	ltdc->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();

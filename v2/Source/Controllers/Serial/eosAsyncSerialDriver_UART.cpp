@@ -15,8 +15,9 @@ AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 	uart::UARTDeviceHandler uart):
 
 	_uart(uart),
-	_txCompletedEvent(*this, &AsyncSerialDriver_UART::txCompletedEventHandler),
-	_rxCompletedEvent(*this, &AsyncSerialDriver_UART::rxCompletedEventHandler) {
+	_uartNotifyEvent(*this, &AsyncSerialDriver_UART::uartNotifyEventHandler) {
+	//_txCompletedEvent(*this, &AsyncSerialDriver_UART::txCompletedEventHandler),
+	//_rxCompletedEvent(*this, &AsyncSerialDriver_UART::rxCompletedEventHandler) {
 }
 
 
@@ -27,8 +28,9 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_uart->setTxCompletedEvent(_txCompletedEvent);
-	_uart->setRxCompletedEvent(_rxCompletedEvent);
+	//_uart->setTxCompletedEvent(_txCompletedEvent);
+	//_uart->setRxCompletedEvent(_rxCompletedEvent);
+	_uart->setNotifyEvent(_uartNotifyEvent);
 	_uart->enable();
 }
 
@@ -39,8 +41,9 @@ void AsyncSerialDriver_UART::initializeImpl() {
 void AsyncSerialDriver_UART::deinitializeImpl() {
 
 	_uart->disable();
-	_uart->disableTxCompletedEvent();
-	_uart->disableRxCompletedEvent();
+	_uart->disableNotifyEvent();
+	//_uart->disableTxCompletedEvent();
+	//_uart->disableRxCompletedEvent();
 
     AsyncSerialDriver::deinitializeImpl();
 }
@@ -105,28 +108,21 @@ bool AsyncSerialDriver_UART::receiveImpl(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant acaba la transmissio.
-/// \param    buffer: El buffer de dades.
-/// \param    count: En nombre de bytes transmessos.
+/// \brief    Es crida quant hi ha una notificacio del UART
+/// \param    sender: L'objecte que genera el event.
+/// \param    args: Parametres de la notificacio.
 ///
-void AsyncSerialDriver_UART::txCompletedEventHandler(
-	htl::uart::UARTDevice &sender,
-	const uint8_t *buffer,
-	uint16_t count) {
+void AsyncSerialDriver_UART::uartNotifyEventHandler(
+	htl::uart::UARTDevice *sender,
+	htl::uart::NotifyEventArgs &args) {
 
-	notifyTxCompleted(count);
-}
+	switch (args.id) {
+		case htl::uart::NotifyID::txCompleted:
+			notifyTxCompleted(args.TxCompleted.length);
+			break;
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Es crida quant acaba la recepcio.
-/// \param    buffer: El buffer de dades.
-/// \param    count: El nombre de bytes rebuts.
-///
-void AsyncSerialDriver_UART::rxCompletedEventHandler(
-	htl::uart::UARTDevice &sender,
-	const uint8_t *buffer,
-	uint16_t count) {
-
-	notifyRxCompleted(count);
+		case htl::uart::NotifyID::rxCompleted:
+			notifyRxCompleted(args.RxCompleted.length);
+			break;
+	}
 }

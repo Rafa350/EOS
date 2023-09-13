@@ -4,7 +4,6 @@
 #include "HTL/htlGPIO.h"
 #include "HTL/htlI2C.h"
 #include "HTL/htlINT.h"
-#include "HTL/STM32/htlEXTI.h"
 #include "HTL/STM32/htlINT.h"
 #include "System/eosMath.h"
 
@@ -17,7 +16,9 @@ using namespace htl;
 /// \brief    Contructor.
 ///
 TouchPadDriver_FT5336::TouchPadDriver_FT5336():
-	_orientation(TouchPadOrientation::normal) {
+	_orientation {TouchPadOrientation::normal},
+	_intRisingEdgeEvent {*this, &TouchPadDriver_FT5336::intRisingEdgeEventHandler},
+	_touchPadEvent {nullptr} {
 }
 
 
@@ -66,6 +67,18 @@ int TouchPadDriver_FT5336::getTouchCount() {
     if (numPoints > FT5336_MAX_DETECTABLE_TOUCH)
     	numPoints = 0;
     return numPoints;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Handler del event RisingEdgeEvent
+///
+void TouchPadDriver_FT5336::intRisingEdgeEventHandler(
+	htl::gpio::PinInterrupt *sender,
+	htl::gpio::EventEdgeArgs &args) {
+
+	if (_touchPadEvent != nullptr)
+		_touchPadEvent->execute(this);
 }
 
 
@@ -257,18 +270,21 @@ void TouchPadDriver_FT5336::initializeInterface() {
 	// Inicialitza el pin d'interrupcio
 	//
 	auto pinINT = PinINT::getHandler();
-	pinINT->initInput(GPIOPull::up);
-	ExtiINT::initialize(PinINT::port, EXTIMode::interrupt, EXTITrigger::rissing);
+	pinINT->initInput(gpio::PullUpDn::up);
 
-	INT_1::setInterruptVectorPriority(_vector, _priority, _subPriority);
-	INT_1::enableInterruptVector(_vector);
+	auto pinInterruptINT = PinInterruptINT::getHandler();
+	pinInterruptINT->enableInterruptPin(htl::gpio::Edge::rising);
+	pinInterruptINT->setRisingEdgeEvent(_intRisingEdgeEvent);
+
+	irq::setInterruptVectorPriority(_vector, _priority, _subPriority);
+	irq::enableInterruptVector(_vector);
 
 	// Inicialitza el canal I2C
 	//
 	auto hI2C = I2C::getHandler();
 	hI2C->initMaster();
-	hI2C->initSCLPin<PinSCL>();
-	hI2C->initSDAPin<PinSDA>();
+	hI2C->initPinSCL<PinSCL>();
+	hI2C->initPinSDA<PinSDA>();
 }
 
 
@@ -286,7 +302,8 @@ void TouchPadDriver_FT5336::writeRegister(
 	data[0] = reg;
 	data[1] = value;
 
-	I2C::send(_i2cAddr, data, sizeof(data));
+	auto hI2C = I2C::getHandler();
+	hI2C->send(_i2cAddr, data, sizeof(data));
 }
 
 
@@ -301,8 +318,9 @@ uint8_t TouchPadDriver_FT5336::readRegister(
 
 	uint8_t value;
 
-	I2C::send(_i2cAddr, &reg, 1);
-	I2C::receive(_i2cAddr, &value, sizeof(value));
+	auto hI2C = I2C::getHandler();
+	hI2C->send(_i2cAddr, &reg, 1);
+	nI2C->receive(_i2cAddr, &value, sizeof(value));
 
 	return value;
 }

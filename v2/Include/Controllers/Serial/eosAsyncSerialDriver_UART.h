@@ -11,19 +11,14 @@ namespace eos {
 
 	class AsyncSerialDriver_UART final: public AsyncSerialDriver {
 		private:
-			using TxCompletedEvent = htl::uart::TxCompletedEvent<AsyncSerialDriver_UART>;
-			using RxCompletedEvent = htl::uart::RxCompletedEvent<AsyncSerialDriver_UART>;
-		private:
 			htl::uart::UARTDeviceHandler _uart;
-			TxCompletedEvent _txCompletedEvent;
-			RxCompletedEvent _rxCompletedEvent;
+			htl::uart::NotifyEvent<AsyncSerialDriver_UART> _uartNotifyEvent;
 		private:
 			void initializeImpl() override;
 			void deinitializeImpl() override;
 			bool transmitImpl(const uint8_t *data, int dataLength) override;
 			bool receiveImpl(uint8_t *data, int dataSize) override;
-			void txCompletedEventHandler(htl::uart::UARTDevice &sender, const uint8_t *buffer, uint16_t count);
-			void rxCompletedEventHandler(htl::uart::UARTDevice &sender, const uint8_t *buffer, uint16_t count);
+			void uartNotifyEventHandler(htl::uart::UARTDevice *sender, htl::uart::NotifyEventArgs &args);
 
 		public:
 			AsyncSerialDriver_UART(htl::uart::UARTDeviceHandler hUART);

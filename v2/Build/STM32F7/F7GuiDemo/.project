@@ -379,11 +379,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoopService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Services/eosGuiService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosGuiService.h</locationURI>
@@ -714,11 +709,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D_IRQ.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlEXTI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlEXTI.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlEXTI_IRQ.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlEXTI_IRQ.h</locationURI>
@@ -962,11 +952,6 @@
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D_IRQ.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D_IRQ.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlEXTI_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlEXTI_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>

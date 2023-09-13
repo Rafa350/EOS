@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
-#include "HTL/STM32/htlEXTI.h"
+#include "Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
@@ -27,41 +27,41 @@ namespace eos {
 
 	/// \brief Clase que implementa un servei de control del touchpad
 	///
-	class TouchpadService final: public Service {
+	class TouchPadService final: public Service {
 		public:
-			enum class EventType {
+			enum class NotifyType {
 				press,
 				release,
 				move
 			};
-
-			struct EventArgs {
-				EventType event;
-				int x;
-				int y;
+			struct NotifyEventArgs {
+				NotifyType notifyType;
+				int16_t x;
+				int16_t y;
 			};
+			using INotifyEvent = ICallbackP2<TouchPadService*, NotifyEventArgs&>;
+			template <typename instance_> using NotifyEvent = CallbackP2<instance_, TouchPadService*, NotifyEventArgs&>;
 
 		private:
-			using EXTI_INT = TOUCHPAD_INT_EXTI;
-			typedef ICallbackP1<const EventArgs&> IEventCallback;
-
-    		ITouchPadDriver *_touchDriver;
-        	IEventCallback *_eventCallback;
+    		TouchPadDriver_FT5336 *_touchDriver;
+    		TouchPadEvent<TouchPadService> _touchPadEvent;
+    		INotifyEvent *_notifyEvent;
+    		bool _notifyEventEnabled;
         	Semaphore _lock;
-        	int _oldX;
-        	int _oldY;
-        	int _oldPressed;
+        	int16_t _oldX;
+        	int16_t _oldY;
+        	bool _oldPressed;
 
-        	void interruptHandler();
-			static void interruptHandler(htl::EXTIEvent event, htl::EXTIInterruptParam param);
+		private:
+        	void touchPadEventHandler(TouchPadDriver_FT5336 *sender);
 
 		protected:
 			void onInitialize() override;
 			void onTask() override;
 
 		public:
-			TouchpadService();
-			inline void setEventCallback(IEventCallback *callBack) { _eventCallback = callBack; }
+			TouchPadService();
+			void setNotifyEvent(INotifyEvent &event, bool enabled = true);
 	};
 }
 
