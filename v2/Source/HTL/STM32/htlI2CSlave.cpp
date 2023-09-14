@@ -17,16 +17,8 @@ I2CSlaveDevice::I2CSlaveDevice(
 	_buffer {nullptr},
 	_bufferSize {0},
 	_count {0},
-	_addressMatchEvent {nullptr},
-	_rxDataEvent {nullptr},
-	_rxCompletedEvent {nullptr},
-	_txDataEvent {nullptr},
-	_txCompletedEvent {nullptr},
-	_addressMatchEventEnabled {false},
-	_rxDataEventEnabled {false},
-	_rxCompletedEventEnabled {false},
-	_txDataEventEnabled {false},
-	_txCompletedEventEnabled {false} {
+    _notifyEvent {nullptr},
+    _notifyEventEnabled {false} {
 
 }
 
@@ -223,14 +215,12 @@ void I2CSlaveDevice::interruptServiceListen() {
     		_state = State::listenRx;
     	}
 
-    	// Notifica l'adressa
+    	// Notifica la coincidencia amb l'adressa
     	//
-    	if (_addressMatchEventEnabled)
-    		_addressMatchEvent->execute(
-    			this,
-    			(((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
-				(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0));
-
+        uint16_t addr = 
+            (((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
+			(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0));
+        notifyAddressMatch(addr);
 	}
 }
 
@@ -256,8 +246,7 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 			// Si el buffer es ple, notifica i inicialitza el buffer
 			//
 			if (_count == _maxCount) {
-				if (_rxDataEventEnabled)
-					_rxDataEvent->execute(this, _buffer, _count);
+                notifyRxData(_buffer, _count);
 
 	    		// Contador a zero per tornar a carregar el buffer
 	    		//
@@ -280,8 +269,7 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 
 		// Notifica el final
 		//
-		if (_rxCompletedEventEnabled)
-			_rxCompletedEvent->execute(this, _buffer, _count);
+        notifyRxCompleted(_buffer, _count);
 
 		// Canvia al nou estat
 		//
@@ -318,8 +306,7 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 
 		// Notifica el final
 		//
-    	if (_txCompletedEventEnabled)
-    		_txCompletedEvent->execute(this);
+        notifyTxCompleted();
 
 		// Canvia al nou estat
 		//
@@ -336,8 +323,7 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 		if ((_count == 0) || (_count == _maxCount)) {
 			_count = 0;
 			_maxCount = 0;
-			if (_txDataEventEnabled)
-				_txDataEvent->execute(this, _buffer, _bufferSize, _maxCount);
+            notifyTxData(_buffer, _bufferSize, &_maxCount);
 		}
 
 		// Si hi han dades en el buffer els transmiteix
@@ -349,4 +335,89 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 			//_i2c->CR1 &= ~I2C_CR1_TXIE;
 		}
 	}
+}
+
+
+void I2CSlaveDevice::notifyAddressMatch(
+    uint16_t addr) {
+    
+    if (_notifyEventEnabled) {
+        NotifyEventArgs args = {
+            .id = NotifyID::addressMatch,
+            .isr = true,
+            .AddressMatch {
+                .addr = addr
+            }
+        };
+        _addressMatchEvent->execute(this, args);
+    }
+}
+
+
+void I2CSlaveDevice::notifyRxData(
+    const uint8_t *buffer, 
+    uint16_t length) {
+    
+    if (_notifyEventEnabled) {
+        NotifyEventArgs args {
+            .id = NotifyID::rxData,
+            .isr = true;
+            .RxData {
+                .buffer = buffer,
+                .length = length
+            }
+        };
+        _rxDataEvent->execute(this, args);
+    }
+}
+
+
+void I2CSlaveDevice::notifyRxCompleted(
+    const uint8_t *buffer, 
+    uint16_t length) {
+    
+    if (_notifyEventEnabled) {
+        NotifyEventArgs args {
+            .id = NotifyID::rxCompleted,
+            .isr = true;
+            .RxCompleted {
+                .buffer = buffer,
+                .length = length
+            }
+        };
+        _rxDataEvent->execute(this, args);
+    }
+}
+
+
+void I2CSlaceDevice::notifyTxData(
+    uint8_t *buffer, 
+    uint16_t size, 
+    uint16_t &length) {
+    
+    if (_notifyEventEnabled) {
+        NotifyEventArgs args = {
+            .id = NotifyID::txData,
+            .isr = true,
+            .TxData {
+                .buffer = buffer,
+                .size = size,
+                -length = 0
+            }
+        }
+        _notifyEvent->execute(this, args);
+        length = args.TxData.length;
+    }
+}
+
+
+void I2CSlaveDevice::notifyTxCompleted() {
+    
+    if (_notifyEventEnabled) {
+        NotifyEventArgs args = {
+            .id = NotifyID::txCompleted,
+            .isr = true
+        }
+        _notifyEvent->execute(this, args);
+    }
 }

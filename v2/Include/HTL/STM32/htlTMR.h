@@ -108,7 +108,7 @@ namespace htl {
 
 		class TMRDevice;
 		using INotifyEvent = eos::ICallbackP2<TMRDevice*, NotifyEventArgs&>;
-		template <typename instance_> using NotifyEvent = eos::CallbackP2<instance_, TMRDevice*, NotifyEventArgs&>;
+		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, TMRDevice*, NotifyEventArgs&>;
 
 
 		namespace internal {

@@ -130,7 +130,7 @@ namespace htl {
 
 		class UARTDevice;
 		using INotifyEvent = eos::ICallbackP2<UARTDevice*, NotifyEventArgs&>;
-		template <typename instance_> using NotifyEvent = eos::CallbackP2<instance_, UARTDevice*, NotifyEventArgs&>;
+		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, UARTDevice*, NotifyEventArgs&>;
 
 
 		namespace internal {

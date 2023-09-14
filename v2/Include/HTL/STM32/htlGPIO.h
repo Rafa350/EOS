@@ -263,7 +263,7 @@ namespace htl {
 
 		class PinInterrupt;
 		using INotifyEvent = eos::ICallbackP2<PinInterrupt*, NotifyEventArgs&>;
-		template <typename instance_> using NotifyEvent = eos::CallbackP2<instance_, PinInterrupt*, NotifyEventArgs&>;
+		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, PinInterrupt*, NotifyEventArgs&>;
 
 
 		class PinInterrupt {

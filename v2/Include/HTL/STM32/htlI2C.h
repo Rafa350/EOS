@@ -44,9 +44,51 @@ namespace htl {
 			sda,
 			alert
 		};
+        
+        
+        enum class NotifyID {
+            addressMatch,
+            rxData,
+            rxCompleted,
+            txData,
+            txCompleted
+        };
+        
+        struct NotityEventArgs {
+            NotifyID id;            
+            bool isr;
+            union {
+                struct {
+                    uint16_t addr;
+                } AddressMatch;
+                struct {
+                    const uint16_t *buffer;
+                    uint16_t length;
+                } RxData;
+                struct {
+                    const uint16_t *buffer;
+                    uint16_t length;
+                } RxCompleted;
+                struct {
+                    uint8_t *buffer;
+                    uint16_t size;
+                    uint16_t length;
+                } TxData;
+                struct {
+                    
+                } TxCompleted;
+            }
+        }
 
 
 		class I2CSlaveDevice;
+        using ISlaveNotifyEvent = eos::ICallbackP2<I2CSlaveDevice*, NotifyEventArgs&);
+        template <typename instance_> using SlaveNotifyEvent = eos::CallbackP2<instance_, I2CSlaveDevice*, NotifyEventArgs&);
+
+		class I2CMasterDevice;
+        using IMasterNotifyEvent = eos::ICallbackP2<I2CMasterDevice*, NotifyEventArgs&);
+        template <typename Instance_> using MasterNotifyEvent = eos::CallbackP2<Instance_, I2CMasterDevice*, NotifyEventArgs&);
+
 
 		using IAddressMatchEvent = eos::ICallbackP2<I2CSlaveDevice*, uint16_t>;
 		using IRxDataEvent = eos::ICallbackP3<I2CSlaveDevice*, const uint8_t*, uint16_t>;
@@ -89,19 +131,16 @@ namespace htl {
 				uint16_t _bufferSize;
 				uint16_t _count;
 				uint16_t _maxCount;
-				IAddressMatchEvent *_addressMatchEvent;
-				IRxDataEvent *_rxDataEvent;
-				IRxCompletedEvent *_rxCompletedEvent;
-				ITxDataEvent *_txDataEvent;
-				ITxCompletedEvent *_txCompletedEvent;
-				bool _addressMatchEventEnabled;
-				bool _rxDataEventEnabled;
-				bool _rxCompletedEventEnabled;
-				bool _txDataEventEnabled;
-				bool _txCompletedEventEnabled;
+                ISlaveNotifyEvent *_notifyEvent;
+                bool _notifyEventEnabled;
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
+                void notifyAddressMatch(uint16_t addr);
+                void notifyRxData(const uint8_t *buffer, uint16_t length);
+                void notifyRxCompleted(const uint8_t *buffer, uint16_t length);
+                void notifyTxData(uint8_t *buffer, uint16_t size, uint16_t &length);
+                void notifyTxCompleted();
 				void interruptServiceListen();
 				void interruptServiceListenRx();
 				void interruptServiceListenTx();
@@ -111,70 +150,15 @@ namespace htl {
 			public:
 				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				Result deinitialize();
-				inline void setAddressMatchEvent(IAddressMatchEvent &event, bool enabled = true) {
-					_addressMatchEvent = &event;
-					_addressMatchEventEnabled = enabled;
+				inline void setNotifyEvent(INotifyEventEvent &event, bool enabled = true) {
+					_notifyEvent = &event;
+					_notifyEventEnabled = enabled;
 				}
-				inline void setRxDataEvent(IRxDataEvent &event, bool enabled = true) {
-					_rxDataEvent = &event;
-					_rxDataEventEnabled = enabled;
+				inline void enableNotifyEvent() {
+					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
-				inline void setRxCompletedEvent(IRxCompletedEvent &event, bool enabled = true) {
-					_rxCompletedEvent = &event;
-					_rxCompletedEventEnabled = enabled;
-				}
-				inline void setTxDataEvent(ITxDataEvent &event, bool enabled = true) {
-					_txDataEvent = &event;
-					_txDataEventEnabled = enabled;
-				}
-				inline void setTxCompletedEvent(ITxCompletedEvent &event, bool enabled = true) {
-					_txCompletedEvent = &event;
-					_txCompletedEventEnabled = enabled;
-				}
-				inline void enableAddressMatchEvent() {
-					_addressMatchEventEnabled = _addressMatchEvent != nullptr;
-				}
-				inline void enableRxDataEvent() {
-					_rxDataEventEnabled = _rxDataEvent != nullptr;
-				}
-				inline void enableTxDataEvent() {
-					_txDataEventEnabled = _txDataEvent != nullptr;
-				}
-				inline void enableRxCompletedEvent() {
-					_rxCompletedEventEnabled = _rxCompletedEvent != nullptr;
-				}
-				inline void enableTxCompletedEvent() {
-					_txCompletedEventEnabled = _txCompletedEvent != nullptr;
-				}
-				inline void disableAddressMatchEvent() {
-					_addressMatchEventEnabled = false;
-				}
-				inline void disableRxDataEvent() {
-					_rxDataEventEnabled = false;
-				}
-				inline void disableTxDataEvent() {
-					_txDataEventEnabled = false;
-				}
-				inline void disableRxCompletedEvent() {
-					_rxCompletedEventEnabled = false;
-				}
-				inline void disableTxCompletedEvent() {
-					_txCompletedEventEnabled = false;
-				}
-				inline bool isAddressMatchEventEnabled() const {
-					return _addressMatchEventEnabled;
-				}
-				inline bool isRxDataEventEnabled() const {
-					return _rxDataEventEnabled;
-				}
-				inline bool isTxDataEventEnabled() const {
-					return _txDataEventEnabled;
-				}
-				inline bool isRxCompletedEventEnabled() const{
-					return _rxCompletedEventEnabled;
-				}
-				inline bool isTxCompletedEventEnabled() const {
-					return _txCompletedEventEnabled;
+				inline void disableNotifyEvent() {
+					_notifyEventEnabled = false;
 				}
 				Result listen(uint8_t *buffer, uint16_t bufferSize);
 				void endListen();
