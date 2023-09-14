@@ -78,7 +78,10 @@ namespace htl {
 			_15
 		};
 
+        /// \brief Number of pin (0..15)
 		typedef uint8_t PinNumber;
+        
+        /// \brief Mask for pin position
 		typedef uint16_t PinMask;
 
 		/// \brief Alternate function identifiers
@@ -101,7 +104,7 @@ namespace htl {
 			_15
 		};
 
-		/// \brief Pull up/down mode identifier.
+		/// \brief Pull up/down mode configuration.
 		enum class PullUpDn {
 			noChange,
 			none,
@@ -109,14 +112,14 @@ namespace htl {
 			down
 		};
 
-		/// \brief Driver type identifier.
+		/// \brief Driver type configuration.
 		enum class OutDriver {
 			noChange,
 			pushPull,
 			openDrain
 		};
 
-		/// \brief Speed identifier.
+		/// \brief Speed configuration.
 		enum class Speed {
 			noChange,
 			low,
@@ -125,20 +128,16 @@ namespace htl {
 			fast
 		};
 
-		/// \brief Initial pin state.
-		enum class InitPinState {
-			noChange,
-			clear,
-			set
-		};
-
 		/// \brief Pin state.
 		enum class PinState {
 			clear,
 			set
 		};
 
+        
+        /// \brief Edge interrupcion selection
 		enum class Edge {
+            none,
 			falling,
 			rising,
 			all
@@ -203,6 +202,7 @@ namespace htl {
 		typedef Port *PortHandler;
 
 
+        /// brief Class form access to GPIO individual pin functions
 		class Pin {
 			private:
 				GPIO_TypeDef * const _gpio;
@@ -216,7 +216,8 @@ namespace htl {
 				virtual void deactivate() = 0;
 			public:
 				void initInput(PullUpDn pull);
-				void initOutput(OutDriver driver, Speed speed, InitPinState state = InitPinState::noChange);
+				void initOutput(OutDriver driver, Speed speed);
+				void initOutput(OutDriver driver, Speed speed, PinState state);
 				void initAnalogic();
 				void initAlt(OutDriver driver, Speed speed, PinFunctionID pinFunctionID);
 				inline void set() {
@@ -231,7 +232,7 @@ namespace htl {
 				inline void write(PinState state) {
 					if (state == PinState::set)
 						_gpio->BSRR = _mask;
-					else
+					else 
 						_gpio->BSRR = _mask << 16;
 				}
 				inline PinState read() {
@@ -615,6 +616,29 @@ namespace htl {
 		typedef PinX<PortID::K, PinID::_14> PinK14;
 		typedef PinX<PortID::K, PinID::_15> PinK15;
 		#endif
+        
+        
+        template <PortID portID:, PinID pinID_>
+        class DirectPinX final {
+			private:
+				using HI = internal::HardwareInfo<portID_>;
+			private:
+				static constexpr uint32_t _gpioAddr = HI::gpioAddr;
+                static constexpr uint32_t _mask = 1 << uint32_t(pinID_);
+			public:
+				static constexpr PortID portID = portID_;
+				static constexpr PinID pinID = pinID_;
+            public:
+				static constexpr void set() {
+					reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = _mask;
+				}
+				static constexpr void clear() {
+					reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = _mask << 16;
+				}
+				static constexpr void toggle() {
+					 reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR ^= _mask;
+				}
+        };
 
 
 		template <PortID portID_, PinID pinID_>
@@ -686,6 +710,7 @@ namespace htl {
 
 			template <PortID portId_>
 			PinMask PortActivator<portId_>::_activated = 0;
+
 
 			#ifdef HTL_GPIOA_EXIST
 			template<>

@@ -216,6 +216,7 @@ Pin::Pin(
 
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com entrada.
 /// \param    pull: Opcions pull up/down.
@@ -234,20 +235,37 @@ void Pin::initInput(
 /// \brief    Inicialitzacio com sortida.
 /// \param    driver: Opcions de driver.
 /// \param    speed: Opcions de velocitat.
+///
+void Pin::initOutput(
+	OutDriver driver,
+	Speed speed) {
+
+	activate();
+
+	setMode(_gpio, _mask, 1);
+	setDriver(_gpio, _mask, driver);
+	setSpeed(_gpio, _mask, speed);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio com sortida.
+/// \param    driver: Opcions de driver.
+/// \param    speed: Opcions de velocitat.
 /// \param    state: Estat inicial.
 ///
 void Pin::initOutput(
 	OutDriver driver,
 	Speed speed,
-	InitPinState state) {
+	PinState state) {
 
 	activate();
 
 	switch (state) {
-		case InitPinState::set:
+		case PinState::set:
 			set();
 			break;
-		case InitPinState::clear:
+		case PinState::clear:
 			clear();
 			break;
 		default:
@@ -473,6 +491,9 @@ void PinInterrupt::interruptService() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Invoca l'event de notificacio RisingEdge
+///
 void PinInterrupt::notifyRisingEdge() {
 
 	if (_notifyEventEnabled) {
@@ -485,6 +506,9 @@ void PinInterrupt::notifyRisingEdge() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Invoca l'event de notificacio FallingEdge
+///
 void PinInterrupt::notifyFallingEdge() {
 
 	if (_notifyEventEnabled) {
