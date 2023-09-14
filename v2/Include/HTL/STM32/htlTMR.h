@@ -173,7 +173,7 @@ namespace htl {
 				static constexpr uint32_t _timAddr = HI::timAddr;
 				static constexpr uint32_t _rccAddr = HI::rccAddr;
 				static constexpr uint32_t _enablePos = HI::enablePos;
-				static TMRDeviceX _device;
+				static TMRDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
@@ -192,7 +192,7 @@ namespace htl {
 				}
 			public:
 				static constexpr TMRDeviceX * getHandler() {
-					return &_device;
+					return &_instance;
 				}
 				inline static void interruptHandler() {
 					getHandler()->interruptService();
@@ -200,7 +200,7 @@ namespace htl {
 		};
 
 		template <DeviceID deviceID_>
-		TMRDeviceX<deviceID_> TMRDeviceX<deviceID_>::_device;
+		TMRDeviceX<deviceID_> TMRDeviceX<deviceID_>::_instance;
 
 
 		#ifdef HTL_TMR1_EXIST

@@ -54,7 +54,7 @@ namespace htl {
             txCompleted
         };
         
-        struct NotityEventArgs {
+        struct NotifyEventArgs {
             NotifyID id;            
             bool isr;
             union {
@@ -62,11 +62,11 @@ namespace htl {
                     uint16_t addr;
                 } AddressMatch;
                 struct {
-                    const uint16_t *buffer;
+                    const uint8_t *buffer;
                     uint16_t length;
                 } RxData;
                 struct {
-                    const uint16_t *buffer;
+                    const uint8_t *buffer;
                     uint16_t length;
                 } RxCompleted;
                 struct {
@@ -75,32 +75,19 @@ namespace htl {
                     uint16_t length;
                 } TxData;
                 struct {
-                    
+                    uint16_t length;
                 } TxCompleted;
-            }
-        }
+            };
+        };
 
 
 		class I2CSlaveDevice;
-        using ISlaveNotifyEvent = eos::ICallbackP2<I2CSlaveDevice*, NotifyEventArgs&);
-        template <typename instance_> using SlaveNotifyEvent = eos::CallbackP2<instance_, I2CSlaveDevice*, NotifyEventArgs&);
+        using ISlaveNotifyEvent = eos::ICallbackP2<I2CSlaveDevice*, NotifyEventArgs&>;
+        template <typename Instance_> using SlaveNotifyEvent = eos::CallbackP2<Instance_, I2CSlaveDevice*, NotifyEventArgs&>;
 
 		class I2CMasterDevice;
-        using IMasterNotifyEvent = eos::ICallbackP2<I2CMasterDevice*, NotifyEventArgs&);
-        template <typename Instance_> using MasterNotifyEvent = eos::CallbackP2<Instance_, I2CMasterDevice*, NotifyEventArgs&);
-
-
-		using IAddressMatchEvent = eos::ICallbackP2<I2CSlaveDevice*, uint16_t>;
-		using IRxDataEvent = eos::ICallbackP3<I2CSlaveDevice*, const uint8_t*, uint16_t>;
-		using IRxCompletedEvent = eos::ICallbackP3<I2CSlaveDevice*, const uint8_t*, uint16_t>;
-		using ITxDataEvent = eos::ICallbackP4<I2CSlaveDevice*, uint8_t*, uint16_t, uint16_t&>;
-		using ITxCompletedEvent = eos::ICallbackP1<I2CSlaveDevice*>;
-
-		template <typename instance_> using AddressMatchEvent = eos::CallbackP2<instance_, I2CSlaveDevice*, uint16_t>;
-		template <typename instance_> using RxDataEvent = eos::CallbackP3<instance_, I2CSlaveDevice*, const uint8_t*, uint16_t>;
-		template <typename instance_> using RxCompletedEvent = eos::CallbackP3<instance_, I2CSlaveDevice*, const uint8_t*, uint16_t>;
-		template <typename instance_> using TxDataCallback = eos::CallbackP4<instance_, I2CSlaveDevice*, uint8_t*, uint16_t, uint16_t&>;
-		template <typename instance_> using TxCompletedEvent = eos::CallbackP1<instance_, I2CSlaveDevice*>;
+        using IMasterNotifyEvent = eos::ICallbackP2<I2CMasterDevice*, NotifyEventArgs&>;
+        template <typename Instance_> using MasterNotifyEvent = eos::CallbackP2<Instance_, I2CMasterDevice*, NotifyEventArgs&>;
 
 
 		class I2CDevice {
@@ -150,7 +137,7 @@ namespace htl {
 			public:
 				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				Result deinitialize();
-				inline void setNotifyEvent(INotifyEventEvent &event, bool enabled = true) {
+				inline void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true) {
 					_notifyEvent = &event;
 					_notifyEventEnabled = enabled;
 				}
@@ -198,7 +185,7 @@ namespace htl {
 				static constexpr uint32_t _i2cAddr = HI::i2cAddr;
 				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
 				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
-				static I2CSlaveDeviceX _device;
+				static I2CSlaveDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
@@ -217,7 +204,7 @@ namespace htl {
 				}
 			public:
 				static constexpr I2CSlaveDeviceX * getHandler() {
-					return &_device;
+					return &_instance;
 				}
 				inline static void interruptHandler() {
 					getHandler()->interruptService();
@@ -240,7 +227,7 @@ namespace htl {
 		};
 
 		template <DeviceID deviceID_>
-		I2CSlaveDeviceX<deviceID_> I2CSlaveDeviceX<deviceID_>::_device;
+		I2CSlaveDeviceX<deviceID_> I2CSlaveDeviceX<deviceID_>::_instance;
 
 
 		#ifdef HTL_I2C1_EXIST

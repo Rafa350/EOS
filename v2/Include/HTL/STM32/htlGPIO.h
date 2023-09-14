@@ -313,7 +313,7 @@ namespace htl {
 				using Activator = internal::PortActivator<portID_>;
 			private:
 				static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-				static PortX _port;
+				static PortX _instance;
 			public:
 				static constexpr PortID portID = portID_;
 			private:
@@ -331,7 +331,7 @@ namespace htl {
 				}
 			public:
 				static constexpr PortX * getHandler() {
-					return &_port;
+					return &_instance;
 				}
 				inline static void interruptHandler() {
 					getHandler()->interruptService();
@@ -339,7 +339,7 @@ namespace htl {
 		};
 
 		template <PortID portID_>
-		PortX<portID_> PortX<portID_>::_port;
+		PortX<portID_> PortX<portID_>::_instance;
 
 		template <PortID portID_>
 		inline PortHandler getPortHandler() {
@@ -389,7 +389,7 @@ namespace htl {
 				using Activator = internal::PortActivator<portID_>;
 			private:
 				static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-				static PinX _pin;
+				static PinX _instance;
 			public:
 				static constexpr PortID portID = portID_;
 				static constexpr PinID pinID = pinID_;
@@ -406,12 +406,12 @@ namespace htl {
 				}
 			public:
 				static constexpr PinX * getHandler() {
-					return &_pin;
+					return &_instance;
 				}
 		};
 
 		template <PortID portID_, PinID pinID_>
-		PinX<portID_, pinID_> PinX<portID_, pinID_>::_pin;
+		PinX<portID_, pinID_> PinX<portID_, pinID_>::_instance;
 
 		template <PortID portID_, PinID pinID_>
 		inline PinX<portID_, pinID_> * getPinHandler() {
@@ -618,7 +618,7 @@ namespace htl {
 		#endif
         
         
-        template <PortID portID:, PinID pinID_>
+        template <PortID portID_, PinID pinID_>
         class DirectPinX final {
 			private:
 				using HI = internal::HardwareInfo<portID_>;
@@ -647,7 +647,7 @@ namespace htl {
 				using HI = internal::HardwareInfo<portID_>;
 			private:
 				static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-				static PinInterruptX _pin;
+				static PinInterruptX _instance;
 			public:
 				static constexpr PortID portID = portID_;
 				static constexpr PinID pinID = pinID_;
@@ -657,7 +657,7 @@ namespace htl {
 				}
 			public:
 				static constexpr PinInterruptX * getHandler() {
-					return &_pin;
+					return &_instance;
 				}
 				inline static void interruptHandler() {
 					getHandler()->interruptService();
@@ -665,7 +665,7 @@ namespace htl {
 		};
 
 		template <PortID portID_, PinID pinID_>
-		PinInterruptX<portID_, pinID_> PinInterruptX<portID_, pinID_>::_pin;
+		PinInterruptX<portID_, pinID_> PinInterruptX<portID_, pinID_>::_instance;
 
 		template <PortID portID_, PinID pinID_>
 		inline PinInterruptX<portID_, pinID_> * getPinInterruptHandler() {

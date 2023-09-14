@@ -219,7 +219,7 @@ void I2CSlaveDevice::interruptServiceListen() {
     	//
         uint16_t addr = 
             (((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
-			(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0));
+			(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0);
         notifyAddressMatch(addr);
 	}
 }
@@ -323,7 +323,7 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 		if ((_count == 0) || (_count == _maxCount)) {
 			_count = 0;
 			_maxCount = 0;
-            notifyTxData(_buffer, _bufferSize, &_maxCount);
+            notifyTxData(_buffer, _bufferSize, _maxCount);
 		}
 
 		// Si hi han dades en el buffer els transmiteix
@@ -349,7 +349,7 @@ void I2CSlaveDevice::notifyAddressMatch(
                 .addr = addr
             }
         };
-        _addressMatchEvent->execute(this, args);
+        _notifyEvent->execute(this, args);
     }
 }
 
@@ -359,15 +359,15 @@ void I2CSlaveDevice::notifyRxData(
     uint16_t length) {
     
     if (_notifyEventEnabled) {
-        NotifyEventArgs args {
+        NotifyEventArgs args = {
             .id = NotifyID::rxData,
-            .isr = true;
+            .isr = true,
             .RxData {
                 .buffer = buffer,
                 .length = length
             }
         };
-        _rxDataEvent->execute(this, args);
+        _notifyEvent->execute(this, args);
     }
 }
 
@@ -377,20 +377,20 @@ void I2CSlaveDevice::notifyRxCompleted(
     uint16_t length) {
     
     if (_notifyEventEnabled) {
-        NotifyEventArgs args {
+        NotifyEventArgs args = {
             .id = NotifyID::rxCompleted,
-            .isr = true;
+            .isr = true,
             .RxCompleted {
                 .buffer = buffer,
                 .length = length
             }
         };
-        _rxDataEvent->execute(this, args);
+        _notifyEvent->execute(this, args);
     }
 }
 
 
-void I2CSlaceDevice::notifyTxData(
+void I2CSlaveDevice::notifyTxData(
     uint8_t *buffer, 
     uint16_t size, 
     uint16_t &length) {
@@ -402,9 +402,9 @@ void I2CSlaceDevice::notifyTxData(
             .TxData {
                 .buffer = buffer,
                 .size = size,
-                -length = 0
+                .length = 0
             }
-        }
+        };
         _notifyEvent->execute(this, args);
         length = args.TxData.length;
     }
@@ -417,7 +417,7 @@ void I2CSlaveDevice::notifyTxCompleted() {
         NotifyEventArgs args = {
             .id = NotifyID::txCompleted,
             .isr = true
-        }
+        };
         _notifyEvent->execute(this, args);
     }
 }

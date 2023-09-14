@@ -11,23 +11,17 @@ namespace eos {
 
 	class AsyncSerialDriver_I2CSlave final: public AsyncSerialDriver {
 		public:
-			using AddressMatchEvent = htl::i2c::AddressMatchEvent<AsyncSerialDriver_I2CSlave>;
-			using RxDataEvent = htl::i2c::RxDataEvent<AsyncSerialDriver_I2CSlave>;
-			using RxCompletedEvent = htl::i2c::RxCompletedEvent<AsyncSerialDriver_I2CSlave>;
+			using I2CNotifyEvent = htl::i2c::SlaveNotifyEvent<AsyncSerialDriver_I2CSlave>;
 
 		private:
 			htl::i2c::I2CSlaveDeviceHandler _i2c;
+			I2CNotifyEvent _i2cNotifyEvent;
 			const uint8_t *_txData;
 			int _txLength;
 			int _txCount;
-			AddressMatchEvent _addressMatchEvent;
-			RxDataEvent _rxDataEvent;
-			RxCompletedEvent _rxCompletedEvent;
 
 		private:
-			void addressMatchEventHandler(htl::i2c::I2CSlaveDevice *sender, uint16_t addr);
-			void rxDataEventHandler(htl::i2c::I2CSlaveDevice *sender, const uint8_t *buffer, uint16_t count);
-			void rxCompletedEventHandler(htl::i2c::I2CSlaveDevice *sender, const uint8_t *buffer, uint16_t count);
+			void i2cNotifyEventHandler(htl::i2c::I2CSlaveDevice *sender, htl::i2c::NotifyEventArgs &args);
 
 		protected:
 			void initializeImpl() override;

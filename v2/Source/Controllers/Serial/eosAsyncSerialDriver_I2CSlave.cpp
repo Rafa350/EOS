@@ -15,9 +15,7 @@ AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
 	i2c::I2CSlaveDeviceHandler i2c) :
 
 	_i2c(i2c),
-	_addressMatchEvent(*this, &AsyncSerialDriver_I2CSlave::addressMatchEventHandler),
-	_rxDataEvent(*this, &AsyncSerialDriver_I2CSlave::rxDataEventHandler),
-	_rxCompletedEvent(*this, &AsyncSerialDriver_I2CSlave::rxCompletedEventHandler) {
+	_i2cNotifyEvent(*this, &AsyncSerialDriver_I2CSlave::i2cNotifyEventHandler) {
 
 }
 
@@ -29,9 +27,7 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 
 	AsyncSerialDriver::initializeImpl();
 
-	_i2c->setAddressMatchEvent(_addressMatchEvent);
-	_i2c->setRxDataEvent(_rxDataEvent);
-	_i2c->setRxCompletedEvent(_rxCompletedEvent);
+	_i2c->setNotifyEvent(_i2cNotifyEvent);
 }
 
 
@@ -40,9 +36,7 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 ///
 void AsyncSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_i2c->disableAddressMatchEvent();
-	_i2c->disableRxDataEvent();
-	_i2c->disableRxCompletedEvent();
+	_i2c->disableNotifyEvent();
 
 	AsyncSerialDriver::deinitializeImpl();
 }
@@ -106,41 +100,22 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant hi ha coincidencia amb l'adressa
-/// \param    addr: L'adressa I2C.
+/// \brief    Procesa els events de notificacio.
+/// \param    sender: L'objecte que ha generat l'event
+/// \param    args: Parametres del event
 ///
-void AsyncSerialDriver_I2CSlave::addressMatchEventHandler(
+void AsyncSerialDriver_I2CSlave::i2cNotifyEventHandler(
 	htl::i2c::I2CSlaveDevice *sender,
-	uint16_t addr) {
+	htl::i2c::NotifyEventArgs &args) {
 
-}
+	switch (args.id) {
+		case htl::i2c::NotifyID::txCompleted:
+			notifyTxCompleted(args.TxCompleted.length);
+			break;
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Es crida qwuan han arribat dades i el buffer es ple. Permet
-///           buidar-lo i continuar la recepcio.
-/// \param    buffer: Buffer de dades.
-/// \param    count: Nombre de bytes en el buffer.
-///
-void AsyncSerialDriver_I2CSlave::rxDataEventHandler(
-	htl::i2c::I2CSlaveDevice *sender,
-	const uint8_t *buffer,
-	uint16_t count) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Es crida quant han arribat les dades i ha finalitzat la comunicacio.
-/// \param    buffer: El buffer de dades.
-/// \param    count: El nombre de bytes en el buffer.
-///
-void AsyncSerialDriver_I2CSlave::rxCompletedEventHandler(
-	htl::i2c::I2CSlaveDevice *sender,
-	const uint8_t *buffer,
-	uint16_t count) {
-
-	notifyTxCompleted(count);
+		default:
+			break;
+	}
 }
 
 

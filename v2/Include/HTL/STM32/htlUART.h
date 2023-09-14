@@ -225,7 +225,7 @@ namespace htl {
 				static constexpr uint32_t _usartAddr = HI::usartAddr;
 				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
 				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
-				static UARTDeviceX _device;
+				static UARTDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
@@ -244,7 +244,7 @@ namespace htl {
 				}
 			public:
 				static constexpr UARTDeviceX * getHandler() {
-					return &_device;
+					return &_instance;
 				}
 				inline static void interruptHandler() {
 					getHandler()->interruptService();
@@ -283,7 +283,7 @@ namespace htl {
 		};
 
 		template <DeviceID deviceID_>
-		UARTDeviceX<deviceID_> UARTDeviceX<deviceID_>::_device;
+		UARTDeviceX<deviceID_> UARTDeviceX<deviceID_>::_instance;
 
 
 		#ifdef HTL_UART1_EXIST
