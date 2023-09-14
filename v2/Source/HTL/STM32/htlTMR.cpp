@@ -144,6 +144,15 @@ void TMRDevice::setPeriod(
 }
 
 
+void TMRDevice::setNotifyEvent(
+	INotifyEvent &event,
+	bool enabled) {
+
+	_notifyEvent = &event;
+	_notifyEventEnabled = enabled;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el contador en modus polling
 ///
@@ -229,23 +238,37 @@ void TMRDevice::interruptService() {
 	//
 	if ((_tim->SR & TIM_SR_TIF) && (_tim->DIER & TIM_DIER_TIE)) {
 		_tim->SR &= ~TIM_SR_TIF;
-		if (_notifyEventEnabled) {
-			NotifyEventArgs args = {
-				.id = NotifyID::trigger
-			};
-			_notifyEvent->execute(this, args);
-		}
+		notifyTrigger();
 	}
 
 	// Event UPDATE
 	//
 	if ((_tim->SR & TIM_SR_UIF) && (_tim->DIER & TIM_DIER_UIE)) {
 		_tim->SR &= ~TIM_SR_UIF;
-		if (_notifyEventEnabled) {
-			NotifyEventArgs args = {
-				.id = NotifyID::update
-			};
-			_notifyEvent->execute(this, args);
-		}
+		notifyUpdate();
+	}
+}
+
+
+void TMRDevice::notifyTrigger() {
+
+	if (_notifyEventEnabled) {
+		NotifyEventArgs args = {
+			.id = NotifyID::trigger,
+			.isr = true
+		};
+		_notifyEvent->execute(this, args);
+	}
+}
+
+
+void TMRDevice::notifyUpdate() {
+
+	if (_notifyEventEnabled) {
+		NotifyEventArgs args = {
+			.id = NotifyID::update,
+			.isr = true
+		};
+		_notifyEvent->execute(this, args);
 	}
 }

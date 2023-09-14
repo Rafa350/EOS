@@ -115,6 +115,7 @@ namespace htl {
 
 		struct NotifyEventArgs {
 			NotifyID id;
+			bool isr;
 			union {
 				struct {
 					const uint8_t *buffer;
@@ -169,6 +170,8 @@ namespace htl {
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
+				void notifyTxCompleted(const uint8_t *buffer, uint16_t count);
+				void notifyRxCompleted(const uint8_t *buffer, uint16_t count);
 			protected:
 				UARTDevice(USART_TypeDef *usart);
 				void interruptService();
@@ -197,10 +200,7 @@ namespace htl {
 				Result deinitialize();
 				void setProtocol(WordBits wordBits, Parity parity, StopBits stopBits, Handsake handlsake);
 				void setTimming(BaudMode baudMode, ClockSource clockSource, uint32_t rate, OverSampling oversampling);
-				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-					_notifyEvent = &event;
-					_notifyEventEnabled = enabled;
-				}
+				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}

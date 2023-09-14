@@ -380,6 +380,15 @@ void UARTDevice::setTimming(
 }
 
 
+void UARTDevice::setNotifyEvent(
+	INotifyEvent &event,
+	bool enabled) {
+
+	_notifyEvent = &event;
+	_notifyEventEnabled = enabled;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
 /// \param    data: Buffer de dades.
@@ -472,16 +481,7 @@ void UARTDevice::interruptService() {
 
 			_usart->ICR |= USART_ICR_TCCF;
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
-			if (_notifyEventEnabled) {
-				NotifyEventArgs args = {
-					.id = NotifyID::txCompleted,
-					.TxCompleted {
-						.buffer = _txBuffer,
-						.length = _txCount
-					}
-				};
-				_notifyEvent->execute(this, args);
-			}
+			notifyTxCompleted(_txBuffer, _txCount);
 			_state = State::ready;
 		}
 
@@ -493,16 +493,7 @@ void UARTDevice::interruptService() {
 				_rxBuffer[_rxCount++] = _usart->RDR;
 				if (_rxCount == _rxSize) {
 					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-					if (_notifyEventEnabled) {
-						NotifyEventArgs args = {
-							.id = NotifyID::rxCompleted,
-							.RxCompleted {
-								.buffer = _rxBuffer,
-								.length = _rxCount
-							}
-						};
-						_notifyEvent->execute(this, args);
-					}
+					notifyRxCompleted(_rxBuffer, _rxCount);
 					_state = State::ready;
 				}
 			}
@@ -514,18 +505,55 @@ void UARTDevice::interruptService() {
 
 			_usart->ICR |= USART_ICR_RTOCF;
 			ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-			if (_notifyEventEnabled) {
-				NotifyEventArgs args = {
-					.id = NotifyID::rxCompleted,
-					.RxCompleted {
-						.buffer = _rxBuffer,
-						.length = _rxCount
-					}
-				};
-				_notifyEvent->execute(this, args);
-			}
+			notifyRxCompleted(_rxBuffer, _rxCount);
 			_state = State::ready;
 		}
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Invoca el event de notificacio TxComplete
+/// \param    buffer: El buffer de dades.
+/// \param    count: El nombre de bytes de dades.
+///
+void UARTDevice::notifyTxCompleted(
+	const uint8_t *buffer,
+	uint16_t count) {
+
+	if (_notifyEventEnabled) {
+		NotifyEventArgs args = {
+			.id = NotifyID::txCompleted,
+			.isr = true,
+			.RxCompleted {
+				.buffer = buffer,
+				.length = count
+			}
+		};
+		_notifyEvent->execute(this, args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Invoca el event de notificacio RxComplete
+/// \param    buffer: El buffer de dades.
+/// \param    count: El nombre de bytes de dades.
+///
+void UARTDevice::notifyRxCompleted(
+	const uint8_t *buffer,
+	uint16_t count) {
+
+	if (_notifyEventEnabled) {
+		NotifyEventArgs args = {
+			.id = NotifyID::rxCompleted,
+			.isr = true,
+			.RxCompleted {
+				.buffer = buffer,
+				.length = count
+			}
+		};
+		_notifyEvent->execute(this, args);
 	}
 }
 

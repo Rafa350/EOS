@@ -242,48 +242,53 @@ namespace htl {
 		typedef Pin *PinHandler;
 
 
-		class PinInterrupt;
-
-		struct EdgeEventArgs {
+		enum class NotifyID {
+			null,
+			risingEdge,
+			fallingEdge
 		};
 
-		using IRisingEdgeEvent = eos::ICallbackP2<PinInterrupt*, EdgeEventArgs&>;
-		using IFallingEdgeEvent = eos::ICallbackP2<PinInterrupt*, EdgeEventArgs&>;
+		struct NotifyEventArgs {
+			NotifyID id;
+			bool isr;
+			union {
+				struct {
 
-		template <typename instance_> using RisingEdgeEvent = eos::CallbackP2<instance_, PinInterrupt*, EdgeEventArgs&>;
-		template <typename instance_> using FallingEdgeEvent = eos::CallbackP2<instance_, PinInterrupt*, EdgeEventArgs&>;
+				} RissingEdge;
+				struct {
+
+				} FallingEdge;
+			};
+		};
+
+		class PinInterrupt;
+		using INotifyEvent = eos::ICallbackP2<PinInterrupt*, NotifyEventArgs&>;
+		template <typename instance_> using NotifyEvent = eos::CallbackP2<instance_, PinInterrupt*, NotifyEventArgs&>;
 
 
 		class PinInterrupt {
 			private:
 				uint32_t _portNum;
 				uint32_t _pinNum;
-				IRisingEdgeEvent *_risingEdgeEvent;
-				IFallingEdgeEvent *_fallingEdgeEvent;
-				bool _risingEdgeEventEnabled;
-				bool _fallingEdgeEventEnabled;
+				INotifyEvent *_notifyEvent;
+				bool _notifyEventEnabled;
 			private:
 				PinInterrupt(const PinInterrupt &) = delete;
 				PinInterrupt & operator = (const PinInterrupt &) = delete;
+				void notifyRisingEdge();
+				void notifyFallingEdge();
 			protected:
 				PinInterrupt(GPIO_TypeDef *gpio, PinID pinID);
 				void interruptService();
 			public:
 				void enableInterruptPin(Edge edge);
 				void disableInterruptPin();
-				void setFallingEdgeEvent(IFallingEdgeEvent &event, bool enabled = true);
-				void setRisingEdgeEvent(IRisingEdgeEvent &event, bool enabled = true);
-				inline void enableFallingEdgeEvent() {
-					_risingEdgeEventEnabled = _risingEdgeEvent != nullptr;
+				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
+				inline void enableNotifyEvent() {
+					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
-				inline void enableRaisingEdgeEvent() {
-					_fallingEdgeEventEnabled = _fallingEdgeEvent != nullptr;
-				}
-				inline void disableFallingEdgeEvent() {
-					_risingEdgeEventEnabled = false;
-				}
-				inline void disableRaisingEdgeEvent() {
-					_fallingEdgeEventEnabled = false;
+				inline void disableEventEvent() {
+					_notifyEventEnabled = false;
 				}
 		};
 

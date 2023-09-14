@@ -88,23 +88,6 @@ namespace htl {
 			_4
 		};
 
-		enum class TMRInterrupt {
-			brk,
-			update,
-			trigger,
-			com,
-			cc1,
-			cc2,
-			cc3,
-			cc4
-		};
-
-		enum class TMRFlag {
-			update,
-			trigger,
-			com
-		};
-
 
 		enum class NotifyID {
 			null,
@@ -114,6 +97,7 @@ namespace htl {
 
 		struct NotifyEventArgs {
 			NotifyID id;
+			bool isr;
 			union {
 				struct {
 				} Trigger;
@@ -154,6 +138,8 @@ namespace htl {
 			private:
 				TMRDevice(const TMRDevice &) = delete;
 				TMRDevice & operator = (const TMRDevice &) = delete;
+				void notifyTrigger();
+				void notifyUpdate();
 			protected:
 				TMRDevice(TIM_TypeDef *tim);
 				virtual void activate() = 0;
@@ -164,10 +150,7 @@ namespace htl {
 				Result initPWM(ClockDivider clkDiv, uint32_t prescaler, uint32_t period, uint32_t duty);
 				Result deinitialize();
 				void setPeriod(uint32_t period, bool immediate = false);
-				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-					_notifyEvent = &event;
-					_notifyEventEnabled = enabled;
-				}
+				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}

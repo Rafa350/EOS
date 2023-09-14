@@ -16,8 +16,6 @@ AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 
 	_uart(uart),
 	_uartNotifyEvent(*this, &AsyncSerialDriver_UART::uartNotifyEventHandler) {
-	//_txCompletedEvent(*this, &AsyncSerialDriver_UART::txCompletedEventHandler),
-	//_rxCompletedEvent(*this, &AsyncSerialDriver_UART::rxCompletedEventHandler) {
 }
 
 
@@ -28,8 +26,6 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	//_uart->setTxCompletedEvent(_txCompletedEvent);
-	//_uart->setRxCompletedEvent(_rxCompletedEvent);
 	_uart->setNotifyEvent(_uartNotifyEvent);
 	_uart->enable();
 }
@@ -42,8 +38,6 @@ void AsyncSerialDriver_UART::deinitializeImpl() {
 
 	_uart->disable();
 	_uart->disableNotifyEvent();
-	//_uart->disableTxCompletedEvent();
-	//_uart->disableRxCompletedEvent();
 
     AsyncSerialDriver::deinitializeImpl();
 }
@@ -123,6 +117,9 @@ void AsyncSerialDriver_UART::uartNotifyEventHandler(
 
 		case htl::uart::NotifyID::rxCompleted:
 			notifyRxCompleted(args.RxCompleted.length);
+			break;
+
+		default:
 			break;
 	}
 }

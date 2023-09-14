@@ -306,10 +306,8 @@ PinInterrupt::PinInterrupt(
 
 	_portNum {(uint32_t(gpio) >> 10) & 0x000F},
 	_pinNum {uint32_t(pinID)},
-	_risingEdgeEvent {nullptr},
-	_fallingEdgeEvent {nullptr},
-	_risingEdgeEventEnabled {false},
-	_fallingEdgeEventEnabled {false} {
+	_notifyEvent {nullptr},
+	_notifyEventEnabled {false} {
 
 }
 
@@ -422,26 +420,12 @@ void PinInterrupt::disableInterruptPin() {
 /// \param    event: El event.
 /// \param    enabled: Indica si esta habilitat o no.
 ///
-void PinInterrupt::setFallingEdgeEvent(
-	IFallingEdgeEvent &event,
+void PinInterrupt::setNotifyEvent(
+	INotifyEvent &event,
 	bool enabled) {
 
-	_fallingEdgeEvent = &event;
-	_fallingEdgeEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna l'event.
-/// \param    event: El event.
-/// \param    enabled: Indica si esta habilitat o no.
-///
-void PinInterrupt::setRisingEdgeEvent(
-	IRisingEdgeEvent &event,
-	bool enabled) {
-
-	_risingEdgeEvent = &event;
-	_risingEdgeEventEnabled = enabled;
+	_notifyEvent = &event;
+	_notifyEventEnabled = enabled;
 }
 
 
@@ -464,43 +448,51 @@ void PinInterrupt::interruptService() {
 
 		// Si la entrada es 1, es un flanc ascendent
 		//
-		if (gpio->IDR & mask) {
-			if (_risingEdgeEventEnabled) {
-				EdgeEventArgs args;
-				_risingEdgeEvent->execute(this, args);
-			}
-		}
+		if (gpio->IDR & mask)
+			notifyRisingEdge();
 
 		// En cas contrari es un flanc descendent
 		//
-		else {
-			if (_fallingEdgeEventEnabled) {
-				EdgeEventArgs args;
-				_fallingEdgeEvent->execute(this, args);
-			}
-		}
+		else
+			notifyFallingEdge();
 	}
 
 	#elif defined(EOS_PLATFORM_STM32G0)
 
 	if (EXTI->FPR1 & mask) {
 		EXTI->FPR1 = mask;
-
-		if (_fallingEdgeEventEnabled) {
-			EdgeEventArgs args;
-			_fallingEdgeEvent->execute(this, args);
-		}
+		notifyFallingEdge();
 	}
 
 	if (EXTI->RPR1 & mask) {
 		EXTI->RPR1 = mask;
-
-		if (_risingEdgeEventEnabled) {
-			EdgeEventArgs args;
-			_risingEdgeEvent->execute(this, args);
-		}
+		notifyRisingEdge();
 	}
 
 	#endif
+}
+
+
+void PinInterrupt::notifyRisingEdge() {
+
+	if (_notifyEventEnabled) {
+		NotifyEventArgs args = {
+			.id = NotifyID::risingEdge,
+			.isr = true
+		};
+		_notifyEvent->execute(this, args);
+	}
+}
+
+
+void PinInterrupt::notifyFallingEdge() {
+
+	if (_notifyEventEnabled) {
+		NotifyEventArgs args = {
+			.id = NotifyID::fallingEdge,
+			.isr = true
+		};
+		_notifyEvent->execute(this, args);
+	}
 }
 
