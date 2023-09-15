@@ -54,9 +54,8 @@ static void enableCache() {
 static void initializeGPIO() {
 
 #if defined(HARDWARE_STM32F746G_DISCO) && !defined(USE_DISPLAY)
-	using PinBKE = htl::GPIO_K3;
-    PinBKE::initOutput(htl::GPIODriver::pushPull);
-	PinBKE::clear();
+	auto pinBKE = htl::gpio::PinK3::getHandler();
+    pinBKE->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::low, htl::gpio::PinState::clear);
 #endif
 }
 

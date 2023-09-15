@@ -145,31 +145,12 @@ void clock::setHClkPrescaler(
 void clock::setPClkPrescaler(
 	PClkPrescaler value) {
 
+	static const uint32_t tbl[] = { 0b000, 0b100, 0b101, 0b110, 0b111 };
+
 	uint32_t tmp = RCC->CFGR;
 
 	tmp &= ~RCC_CFGR_PPRE_Msk;
-	switch (value) {
-        case PClkPrescaler::_1:
-            tmp |= 0b000 << RCC_CFGR_PPRE_Pos;
-            break;
-
-        case PClkPrescaler::_2:
-            tmp |= 0b100 << RCC_CFGR_PPRE_Pos;
-            break;
-
-        case PClkPrescaler::_4:
-            tmp |= 0b101 << RCC_CFGR_PPRE_Pos;
-            break;
-
-        case PClkPrescaler::_8:
-            tmp |= 0b110 << RCC_CFGR_PPRE_Pos;
-            break;
-
-        case PClkPrescaler::_16:
-            tmp |= 0b111 << RCC_CFGR_PPRE_Pos;
-            break;
-	}
-
+	tmp |= tbl[uint32_t(value)] << RCC_CFGR_PPRE_Pos;
 	RCC->CFGR = tmp;
 }
 
@@ -487,10 +468,7 @@ bool clock::configurePllR(
 void clock::configureMCO(
 	clock::MCOOutput output,
 	clock::MCOSource source,
-	int divider) {
-
-	if (divider < 1 || divider > 128)
-		return;
+	clock::MCODivider divider) {
 
 	uint32_t src = 0b0000;
 	switch (source) {
@@ -522,7 +500,7 @@ void clock::configureMCO(
 			break;
 	}
 
-	uint32_t div = divider - 1;
+	uint32_t div = uint32_t(divider);
 
 	uint32_t tmp = RCC->CFGR;
 	switch (output) {
@@ -593,6 +571,10 @@ unsigned clock::getClockFrequency(
 
 		case ClockID::pclk:
 			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
+			break;
+
+		case ClockID::timpclk:
+			fclk = getClockFrequency(ClockID::pclk) << (((RCC->CFGR & ~RCC_CFGR_PPRE_Msk) == 0) ? 0 : 1);
 			break;
 
 		case ClockID::hclk:

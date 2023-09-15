@@ -11,27 +11,15 @@ namespace eos {
 
 	class CircularSerialDriver_I2CSlave final : public CircularSerialDriver {
 		public:
-			using AddressMatchCallback = htl::i2c::AddressMatchCallback<CircularSerialDriver_I2CSlave>;
-			using RxDataCallback = htl::i2c::RxDataCallback<CircularSerialDriver_I2CSlave>;
-			using RxCompletedCallback = htl::i2c::RxCompletedCallback<CircularSerialDriver_I2CSlave>;
-			using TxDataCallback = htl::i2c::TxDataCallback<CircularSerialDriver_I2CSlave>;
-			using TxCompletedCallback = htl::i2c::TxCompletedCallback<CircularSerialDriver_I2CSlave>;
+			using I2CNotifyEvent = htl::i2c::SlaveNotifyEvent<CircularSerialDriver_I2CSlave>;
 
 		private:
 			htl::i2c::I2CSlaveDeviceHandler _i2c;
 			uint8_t _buffer[10];
-			AddressMatchCallback _addressMatchCallback;
-			RxDataCallback _rxDataCallback;
-			RxCompletedCallback _rxCompletedCallback;
-			TxDataCallback _txDataCallback;
-			TxCompletedCallback _txCompletedCallback;
+			I2CNotifyEvent _i2cNotifyEvent;
 
 		private:
-			void addressMatchHandler(uint16_t addr);
-			void rxDataHandler(const uint8_t *buffer, uint16_t count);
-			void rxCompletedHandler(const uint8_t *buffer, uint16_t count);
-			void txDataHandler(uint8_t *buffer, uint16_t bufferSize, uint16_t &count);
-			void txCompletedHandler();
+			void i2cNotifyEventHandler(htl::i2c::I2CSlaveDevice *sender, htl::i2c::NotifyEventArgs &args);
 
 		protected:
 			void initializeImpl() override;

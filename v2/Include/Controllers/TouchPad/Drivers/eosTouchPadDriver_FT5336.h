@@ -257,7 +257,7 @@ namespace eos {
 			using PinSDA = TOUCHPAD_SDA_Pin;
 			using I2C = TOUCHPAD_I2C_Device;
 
-			using IntRisingEdgeEvent = htl::gpio::RisingEdgeEvent<TouchPadDriver_FT5336>;
+			using IntNotifyEvent = htl::gpio::NotifyEvent<TouchPadDriver_FT5336>;
 
 			static constexpr uint16_t _width = TOUCHPAD_WIDTH;
      		static constexpr uint16_t _height = TOUCHPAD_HEIGHT;
@@ -269,7 +269,7 @@ namespace eos {
 
 			static ITouchPadDriver *_instance;
 			TouchPadOrientation _orientation;
-			IntRisingEdgeEvent _intRisingEdgeEvent;
+			IntNotifyEvent _intNotifyEvent;
 			ITouchPadEvent *_touchPadEvent;
 
 			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &) = delete;
@@ -278,7 +278,7 @@ namespace eos {
 			void initializeInterface();
 			uint8_t readRegister(uint8_t reg);
 			void writeRegister(uint8_t reg, uint8_t value);
-			void intRisingEdgeEventHandler(htl::gpio::PinInterrupt *sender, htl::gpio::EdgeEventArgs &args);
+			void intNotifyEventHandler(htl::gpio::PinInterrupt *sender, htl::gpio::NotifyEventArgs &args);
 
 		public:
 			TouchPadDriver_FT5336();

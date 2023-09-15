@@ -17,7 +17,7 @@ using namespace htl;
 ///
 TouchPadDriver_FT5336::TouchPadDriver_FT5336():
 	_orientation {TouchPadOrientation::normal},
-	_intRisingEdgeEvent {*this, &TouchPadDriver_FT5336::intRisingEdgeEventHandler},
+	_intNotifyEvent {*this, &TouchPadDriver_FT5336::intNotifyEventHandler},
 	_touchPadEvent {nullptr} {
 }
 
@@ -73,12 +73,14 @@ int TouchPadDriver_FT5336::getTouchCount() {
 /// ----------------------------------------------------------------------
 /// \brief    Handler del event RisingEdgeEvent
 ///
-void TouchPadDriver_FT5336::intRisingEdgeEventHandler(
+void TouchPadDriver_FT5336::intNotifyEventHandler(
 	htl::gpio::PinInterrupt *sender,
-	htl::gpio::EventEdgeArgs &args) {
+	htl::gpio::NotifyEventArgs &args) {
 
-	if (_touchPadEvent != nullptr)
-		_touchPadEvent->execute(this);
+	if (args.id == htl::gpio::NotifyID::risingEdge) {
+		if (_touchPadEvent != nullptr)
+			_touchPadEvent->execute(this);
+	}
 }
 
 

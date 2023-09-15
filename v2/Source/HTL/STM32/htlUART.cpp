@@ -513,7 +513,7 @@ void UARTDevice::interruptService() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Invoca el event de notificacio TxComplete
+/// \brief    Llança un event de notificacio TxComplete
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes de dades.
 ///
@@ -536,7 +536,7 @@ void UARTDevice::notifyTxCompleted(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Invoca el event de notificacio RxComplete
+/// \brief    llança un event de notificacio RxComplete
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes de dades.
 ///

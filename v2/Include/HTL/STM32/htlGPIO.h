@@ -14,7 +14,7 @@
 
 // EOS includes
 //
-#include "HTL/htl.h"
+#include "HTL/STM32/htl.h"
 
 
 namespace htl {
@@ -162,25 +162,25 @@ namespace htl {
 					_gpio->BSRR = mask;
 				}
 				inline void set(PinID pinID) {
-					_gpio->BSRR = 1 << int(pinID);
+					_gpio->BSRR = 1 << uint32_t(pinID);
 				}
 				inline void clear(PinMask mask) {
 					_gpio->BSRR = mask << 16;
 				}
 				inline void clear(PinID pinID) {
-					_gpio->BSRR = 1 << (int(pinID) + 16);
+					_gpio->BSRR = 1 << (uint32_t(pinID) + 16);
 				}
 				inline void toggle(PinMask mask) {
 					_gpio->ODR ^= mask;
 				}
 				inline void toggle(PinID pinID) {
-					_gpio->ODR ^= 1 << int(pinID);
+					_gpio->ODR ^= 1 << uint32_t(pinID);
 				}
 				inline PinMask read() {
 					return _gpio->IDR;
 				}
 				inline PinState read(PinID pinID) {
-					return (_gpio->IDR & (1 << int(pinID))) ? PinState::set : PinState::clear;
+					return (_gpio->IDR & (1 << uint32_t(pinID))) ? PinState::set : PinState::clear;
 				}
 				inline void write(PinMask mask) {
 					_gpio->ODR = mask;
@@ -193,9 +193,9 @@ namespace htl {
 				}
 				inline void write(PinID pinID, PinState state) {
 					if (state == PinState::set)
-						_gpio->BSRR = 1 << int(pinID);
+						_gpio->BSRR = 1 << uint32_t(pinID);
 					else
-						_gpio->BSRR = 1 << (int(pinID) + 16);
+						_gpio->BSRR = 1 << (uint32_t(pinID) + 16);
 				}
 		};
 

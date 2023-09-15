@@ -250,6 +250,9 @@ void TMRDevice::interruptService() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Llasça un event de notificacio Trigger
+///
 void TMRDevice::notifyTrigger() {
 
 	if (_notifyEventEnabled) {
@@ -262,6 +265,9 @@ void TMRDevice::notifyTrigger() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Llasça un event de notificacio Update
+///
 void TMRDevice::notifyUpdate() {
 
 	if (_notifyEventEnabled) {

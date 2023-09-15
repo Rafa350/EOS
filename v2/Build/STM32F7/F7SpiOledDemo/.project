@@ -317,6 +317,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/htl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htl.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>
@@ -340,11 +345,6 @@
 			<name>inc/Framework/EOS/System/Graphics</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/eosApplication.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
@@ -402,11 +402,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosService.cpp</locationURI>
@@ -427,14 +422,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/eosApplication.cpp</name>
+			<name>src/Framework/EOS/System/eosApplicationBase.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplicationBase.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/eosDebug.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosDebug.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosRTOSApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRTOSApplication.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/BSP/stm32746g_discovery.c</name>
@@ -597,6 +597,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSYS.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htl.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlGPIO.h</locationURI>
@@ -755,6 +765,11 @@
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/SSD1306</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/htlSPI_AF_F7.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlSPI_AF_F7.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Driver/SSD1306</name>

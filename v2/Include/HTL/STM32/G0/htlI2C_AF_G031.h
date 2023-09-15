@@ -5,8 +5,8 @@
 
 // EOS includes
 //
-#include "HTL/htl.h"
-#include "HTL/htlGPIO.h"
+#include "HTL/STM32/htl.h"
+#include "HTL/STM32/htlGPIO.h"
 
 
 #if defined(EOS_PLATFORM_STM32G031)

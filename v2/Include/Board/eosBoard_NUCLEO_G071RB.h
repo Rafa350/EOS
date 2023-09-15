@@ -45,7 +45,7 @@
 #define SW1_StateON          htl::GPIOState::set
 #define SW1_StateOF          htl::GPIOState::clear
 
-#endif // SW1
+#endif // USE_SW1
 
 
 // -----------------------------------------------------------------------
@@ -159,18 +159,18 @@
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
-#define ARDUINO_UART         htl::UART_2
-#define ARDUINO_RX_GPIO      ARDUINO_D0_GPIO
-#define ARDUINO_TX_GPIO      ARDUINO_D1_GPIO
+#define ARDUINO_UART_Device  htl::UART_2
+#define ARDUINO_RX_Pin       ARDUINO_D0_GPIO
+#define ARDUINO_TX_Pin       ARDUINO_D1_GPIO
 
-#define ARDUINO_I2C          htl::I2CMaster_1
-#define ARDUINO_SCL_GPIO     ARDUINO_D15_GPIO
-#define ARDUINO_SDA_GPIO     ARDUINO_D14_GPIO
+#define ARDUINO_I2C_Device   htl::I2CMaster_1
+#define ARDUINO_SCL_Pin      ARDUINO_D15_GPIO
+#define ARDUINO_SDA_Pin      ARDUINO_D14_GPIO
 
-#define ARDUINO_SPI          htl::SPI_1
-#define ARDUINO_SCK_GPIO     ARDUINO_D13_GPIO
-#define ARDUINO_MISO_GPIO    ARDUINO_D12_GPIO
-#define ARDUINO_MOSI_GPIO    ARDUINO_D11_GPIO
+#define ARDUINO_SPI_Device   htl::SPI_1
+#define ARDUINO_SCK_Pin      ARDUINO_D13_GPIO
+#define ARDUINO_MISO_Pin     ARDUINO_D12_GPIO
+#define ARDUINO_MOSI_Pin     ARDUINO_D11_GPIO
 
 #endif // USE_ARDUINO
 

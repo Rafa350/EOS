@@ -5,9 +5,8 @@
 
 // EOS includes
 //
-#include "HTL/htl.h"
-#include "HTL/htlGPIO.h"
-#include "HTL/htlINT.h"
+#include "HTL/STM32/htl.h"
+#include "HTL/STM32/htlGPIO.h"
 
 
 namespace htl {
@@ -239,9 +238,12 @@ namespace htl {
 				#elif defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI1EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI1EN_Pos;
 				#endif
 			};
-			#endif
+				#endif
 
 			#ifdef HTL_SPI2_EXIST
 			template<>
@@ -251,6 +253,9 @@ namespace htl {
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI2EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F4)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI2EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI2EN_Pos;
 				#endif
@@ -264,6 +269,9 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI3EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI3EN_Pos;
 				#endif
 			};
 			#endif
@@ -273,6 +281,9 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_4> {
 				static constexpr uint32_t spiAddr = SPI4_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI4EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI4EN_Pos;
 				#endif
@@ -286,6 +297,9 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI5EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI5EN_Pos;
 				#endif
 			};
 			#endif
@@ -295,6 +309,9 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_6> {
 				static constexpr uint32_t spiAddr = SPI6_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
+				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI6EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI6EN_Pos;
 				#endif

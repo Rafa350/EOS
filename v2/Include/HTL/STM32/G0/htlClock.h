@@ -3,7 +3,7 @@
 #define __STM32_G0_htlClock__
 
 
-#include "HTL/htl.h"
+#include "HTL/STM32/htl.h"
 
 
 #if !defined(EOS_PLATFORM_STM32G0)
@@ -18,6 +18,7 @@ namespace htl {
 		enum class ClockID {
 			sysclk,
 			pclk,
+			timpclk,
 			hclk,
 			hclk8,
 			hse,
@@ -50,6 +51,17 @@ namespace htl {
 			hsi16,
 			hse,
 			pllrclk
+		};
+
+		enum class MCODivider {
+			_1,
+			_2,
+			_4,
+			_8,
+			_16,
+			_32,
+			_64,
+			_128
 		};
 
 		enum class PllSource {
@@ -120,7 +132,7 @@ namespace htl {
 		bool configurePllQ(int divider);
 		bool configurePllR(int divider);
 
-		void configureMCO(MCOOutput output, MCOSource source, int divider);
+		void configureMCO(MCOOutput output, MCOSource source, MCODivider divider);
 
 		bool setSysClkSource(SysClkSource source);
 		void setHsisysPrescaler(HsisysPrescaler value);

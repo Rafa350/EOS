@@ -3,7 +3,7 @@
 #define __STM32_htlClock__
 
 
-#include "HTL/htl.h"
+#include "HTL/STM32/htl.h"
 
 
 #if defined(EOS_PLATFORM_STM32F0)

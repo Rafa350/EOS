@@ -52,16 +52,19 @@ namespace eos {
     	private:
 			static constexpr int16_t _displayWidth  = DISPLAY_WIDTH;
 			static constexpr int16_t _displayHeight = DISPLAY_HEIGHT;
+			static constexpr htl::spi::ClockDivider _spiClockDivider = DISPLAY_SPI_ClockDivider;
+			static constexpr htl::spi::ClkPolarity _spiClkPolarity = htl::spi::ClkPolarity::low;
+			static constexpr htl::spi::ClkPhase _spiClkPhase = htl::spi::ClkPhase::edge1;
 
 			#if defined(DISPLAY_INTERFACE_SPI)
-			using PinCS = DISPLAY_CS_PIN;
-			using PinDC = DISPLAY_DC_PIN;
-			#ifdef DISPLAY_RST_PIN
-			using PinRST = DISPLAY_RST_PIN;
+			using PinCS = DISPLAY_CS_Pin;
+			using PinDC = DISPLAY_DC_Pin;
+			#ifdef DISPLAY_RST_Pin
+			using PinRST = DISPLAY_RST_Pin;
 			#endif
-			using PinSCK = DISPLAY_SCK_PIN;
-			using PinMOSI = DISPLAY_MOSI_PIN;
-			using Spi = DISPLAY_SPI;
+			using PinSCK = DISPLAY_SCK_Pin;
+			using PinMOSI = DISPLAY_MOSI_Pin;
+			using SpiDevice = DISPLAY_SPI_Device;
 			#endif
 
 			FrameBuffer *_frameBuffer;

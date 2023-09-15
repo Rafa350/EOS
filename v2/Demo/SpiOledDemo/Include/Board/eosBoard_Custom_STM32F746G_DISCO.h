@@ -13,9 +13,9 @@
 #ifdef USE_CUSTOM_LED1
 #define EXIST_LED1
 
-#define LED1_GPIO            ARDUINO_D3_GPIO
-#define LED1_ON              htl::GPIOState::set
-#define LED1_OFF             htl::GPIOState::clear
+#define LED1_Pin             ARDUINO_D3_Pin
+#define LED1_StateON         htl::GPIOState::set
+#define LED1_StateOFF        htl::GPIOState::clear
 
 #endif // USE_CUSTOM_LED1
 
@@ -27,9 +27,9 @@
 #ifdef USE_CUSTOM_LED2
 #define EXIST_LED2
 
-#define LED2_GPIO            ARDUINO_D2_GPIO
-#define LED2_ON              htl::GPIOState::set
-#define LED2_OFF             htl::GPIOState::clear
+#define LED2_Pin             ARDUINO_D2_Pin
+#define LED2_StateON         htl::GPIOState::set
+#define LED2_StateOFF        htl::GPIOState::clear
 
 #endif // USE_CUSTOM_LED2
 
@@ -44,12 +44,12 @@
 #if defined(DISPLAY_ADAFRUIT_SSD1306_128x64_D098)
 #define DISPLAY_INTERFACE_SPI
 
-#define DISPLAY_RST_GPIO     ARDUINO_D6_GPIO
-#define DISPLAY_DC_GPIO      ARDUINO_D5_GPIO
-#define DISPLAY_CS_GPIO      ARDUINO_D7_GPIO
-#define DISPLAY_SCK_GPIO     ARDUINO_SCK_GPIO
-#define DISPLAY_MOSI_GPIO    ARDUINO_MOSI_GPIO
-#define DISPLAY_SPI          ARDUINO_SPI
+#define DISPLAY_RST_Pin      ARDUINO_D6_Pin
+#define DISPLAY_DC_Pin       ARDUINO_D5_Pin
+#define DISPLAY_CS_Pin       ARDUINO_D7_Pin
+#define DISPLAY_SCK_Pin      ARDUINO_SCK_Pin
+#define DISPLAY_MOSI_Pin     ARDUINO_MOSI_Pin
+#define DISPLAY_SPI_Device   ARDUINO_SPI_Device
 
 #endif
 

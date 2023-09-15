@@ -1,12 +1,12 @@
 #pragma once
 #ifndef __STM32_G0_htlUART_AF_G071__
-#define __STM32_G0_htlUART_AF_GO71__
+#define __STM32_G0_htlUART_AF_G071__
 
 
 // EOS includes
 //
-#include "HTL/htl.h"
-#include "HTL/htlGPIO.h"
+#include "HTL/STM32/htl.h"
+#include "HTL/STM32/htlGPIO.h"
 
 
 #if defined(EOS_PLATFORM_STM32G071)

@@ -1,12 +1,22 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HAL/halTMR.h"
+#include "HTL/htlTick.h"
 #include "Controllers/Display/eosMonoFrameBuffer.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 
 
 using namespace eos;
 using namespace htl;
+
+
+static void __delay(
+	uint32_t time) {
+
+	if (time > 0) {
+		auto tick = tick::Tick::getHandler();
+		tick->wait(time);
+	}
+}
 
 
 /// ----------------------------------------------------------------------
@@ -199,7 +209,7 @@ void DisplayDriver_SSD1306::setPixels(
 void DisplayDriver_SSD1306::refresh() {
 
     constexpr int8_t pages = _displayHeight / 8;
-	const uint8_t *buffer = reinterpret_cast<const uint8_t*>(_frameBuffer->getBuffer());
+	const uint8_t *buffer = _frameBuffer->getBuffer();
 
     for (int8_t page = 0; page < pages; page++) {
 
@@ -221,7 +231,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	// Inicialitza el pin CS
 	//
 	auto pinCS = PinCS::getHandler();
-	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::PinState::set);
 
 	// Inicialitza el pin DC
 	//
@@ -230,17 +240,18 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza el pin RST
 	//
-	#ifdef DISPLAY_RST_PIN
+	#ifdef DISPLAY_RST_Pin
 	auto pinRST = PinRST::getHandler();
-	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::InitPinState::clear);
+	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::PinState::clear);
 	#endif
 
 	// Inicialitza el modul SPI
 	//
-	auto spi = Spi::getHandler();
+	auto spi = SpiDevice::getHandler();
 	spi->initSCKPin<PinSCK>();
 	spi->initMOSIPin<PinMOSI>();
-	spi->initialize(spi::SPIMode::master, spi::ClkPolarity::low, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_4);
+	spi->initialize(spi::SPIMode::master, _spiClkPolarity, _spiClkPhase,
+		spi::WordSize::_8, spi::FirstBit::msb, _spiClockDivider);
 	spi->enable();
 }
 #endif
@@ -253,12 +264,12 @@ void DisplayDriver_SSD1306::initializeController() {
 
 	// Reseteja el controlador
 	//
-	#ifdef DISPLAY_RST_PIN
+	#ifdef DISPLAY_RST_Pin
 	auto pinRST = PinRST::getHandler();
 	pinRST->clear();
-	//halTMRDelay(10);
+	__delay(10);
 	pinRST->set();
-	//halTMRDelay(150);
+	__delay(150);
 	#endif
 
     // Inicialitza el controlador
@@ -328,7 +339,7 @@ void DisplayDriver_SSD1306::writeCommand(
 
 	auto pinCS = PinCS::getHandler();
 	auto pinDC = PinDC::getHandler();
-	auto spi = Spi::getHandler();
+	auto spi = SpiDevice::getHandler();
 
 	pinCS->clear();
 	pinDC->clear();
@@ -352,7 +363,7 @@ void DisplayDriver_SSD1306::writeData(
 
 	auto pinCS = PinCS::getHandler();
 	auto pinDC = PinDC::getHandler();
-	auto spi = Spi::getHandler();
+	auto spi = SpiDevice::getHandler();
 
 	pinCS->clear();
 	pinDC->set();

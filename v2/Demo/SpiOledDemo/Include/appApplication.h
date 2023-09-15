@@ -6,7 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosApplication.h"
+#include "System/eosRTOSApplication.h"
 
 
 namespace app {
@@ -14,7 +14,7 @@ namespace app {
 	class LedService;
 	class DisplayService;
 
-	class MyApplication: public eos::Application {
+	class MyApplication: public eos::RTOSApplication {
 		private:
 			LedService *_ledService;
 			DisplayService *_displayService;

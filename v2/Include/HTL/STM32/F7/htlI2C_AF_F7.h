@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_htlI2C_AF_F7__
-#define __STM32_htlI2C_AF_F7__
+#ifndef __STM32_F7_htlI2C_AF_F7__
+#define __STM32_F7_htlI2C_AF_F7__
 
 
 // EOS includes
@@ -44,4 +44,4 @@ namespace htl {
 #endif // EOS_PLATFORM_STM32G031
 
 
-#endif // __STM32_htlI2C_AF_F7__
+#endif // __STM32_F7_htlI2C_AF_F7__

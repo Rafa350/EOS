@@ -21,14 +21,14 @@ DisplayService::DisplayService() {
 /// ----------------------------------------------------------------------
 /// \brief    : Inicialitza el servei.
 ///
-void DisplayService::onSetup() {
+void DisplayService::onInitialize() {
 
 	FrameBuffer *frameBuffer = new MonoFrameBuffer(
 		_displayWidth,
 		_displayHeight,
+		_displayWidth,
 		DisplayOrientation::normal,
-		(void*) _displayBuffer,
-		_displayWidth);
+		reinterpret_cast<uint8_t*>(_displayBuffer));
 
 	_driver = new DisplayDriver_SSD1306(frameBuffer);
 	_driver->initialize();
@@ -42,7 +42,7 @@ void DisplayService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio del servei.
 ///
-void DisplayService::onLoop() {
+void DisplayService::onTask() {
 
 	static int count = 0;
 

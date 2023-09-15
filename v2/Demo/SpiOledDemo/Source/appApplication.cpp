@@ -12,7 +12,7 @@ using namespace app;
 ///
 MyApplication::MyApplication():
 
-	eos::Application() {
+	eos::RTOSApplication() {
 
 	_ledService = new LedService();
 	addService(_ledService, eos::Task::Priority::normal, 128, "LED");

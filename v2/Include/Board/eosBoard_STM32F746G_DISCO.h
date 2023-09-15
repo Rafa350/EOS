@@ -36,9 +36,12 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_Pin              htl::GPIO_I11
-#define SW1_StateON          htl::GPIOState::set
-#define SW1_StateOFF         htl::GPIOState::clear
+#define SW1_Pin              htl::gpio::PinI11
+#define SW1_PortID           SW1_Pin::portID
+#define SW1_PinID            SW1_Pin::pinID
+#define SW1_PinInterrupt     htl::gpio::PinInterrupX<SW1_Pin::portID, SW1_Pin::pinID>
+#define SW1_StateON          htl::gpio::PinState::set
+#define SW1_StateOFF         htl::gpio::PinState::clear
 
 #endif // SW1
 
@@ -113,7 +116,7 @@
 #define TOUCHPAD_SDA_Pin     htl::gpio::PinH8
 #define TOUCHPAD_INT_Pin     htl::gpio::PinI13
 #define TOUCHPAD_INT_PinInterrupt      htl::gpio::PinInterruptX<htl::gpio::PortID::I, htl::gpio::PinID::_13>
-#define TOUCHPAD_INT_IntVector  htl::irq::VectorID::exti13
+#define TOUCHPAD_INT_IntVector         htl::irq::VectorID::exti13
 
 #define TOUCHPAD_I2C_Device  htl::i2c::I2CSlaveDevice3
 #define TOUCHPAD_I2C_ADDR    0x70
@@ -132,35 +135,35 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-#define ARDUINO_D0_GPIO      htl::GPIO_C7
-#define ARDUINO_D1_GPIO      htl::GPIO_C6
-#define ARDUINO_D2_GPIO      htl::GPIO_G6
-#define ARDUINO_D3_GPIO      htl::GPIO_B4
-#define ARDUINO_D4_GPIO      htl::GPIO_G7
-#define ARDUINO_D5_GPIO      htl::GPIO_I0
-#define ARDUINO_D6_GPIO      htl::GPIO_H6
-#define ARDUINO_D7_GPIO      htl::GPIO_I3
-#define ARDUINO_D8_GPIO      htl::GPIO_I2
-#define ARDUINO_D9_GPIO      htl::GPIO_A15
-#define ARDUINO_D10_GPIO     htl::GPIO_A8
-#define ARDUINO_D11_GPIO     htl::GPIO_B15
-#define ARDUINO_D12_GPIO     htl::GPIO_B14
-#define ARDUINO_D13_GPIO     htl::GPIO_I1
-#define ARDUINO_D14_GPIO     htl::GPIO_B9
-#define ARDUINO_D15_GPIO     htl::GPIO_B8
+#define ARDUINO_D0_Pin       htl::gpio::PinC7
+#define ARDUINO_D1_Pin       htl::gpio::PinC6
+#define ARDUINO_D2_Pin       htl::gpio::PinG6
+#define ARDUINO_D3_Pin       htl::gpio::PinB4
+#define ARDUINO_D4_Pin       htl::gpio::PinG7
+#define ARDUINO_D5_Pin       htl::gpio::PinI0
+#define ARDUINO_D6_Pin       htl::gpio::PinH6
+#define ARDUINO_D7_Pin       htl::gpio::PinI3
+#define ARDUINO_D8_Pin       htl::gpio::PinI2
+#define ARDUINO_D9_Pin       htl::gpio::PinA15
+#define ARDUINO_D10_Pin      htl::gpio::PinA8
+#define ARDUINO_D11_Pin      htl::gpio::PinB15
+#define ARDUINO_D12_Pin      htl::gpio::PinB14
+#define ARDUINO_D13_Pin      htl::gpio::PinI1
+#define ARDUINO_D14_Pin      htl::gpio::PinB9
+#define ARDUINO_D15_Pin      htl::gpio::PinB8
 
-#define ARDUINO_UART         htl::UART_6
-#define ARDUINO_RX_GPIO      htl::GPIO_C7
-#define ARDUINO_TX_GPIO      htl::GPIO_C6
+#define ARDUINO_UART_Device  htl::uart::UARTDevice6
+#define ARDUINO_RX_Pin       htl::gpio::PinC7
+#define ARDUINO_TX_Pin       htl::gpio::PinC6
 
-#define ARDUINO_I2C          htl::I2CMaster_1
-#define ARDUINO_SCL_GPIO     htl::GPIO_B8
-#define ARDUINO_SDA_GPIO     htl::GPIO_B9
+#define ARDUINO_I2C_Device   htl::i2c::I2CMasterDevice1
+#define ARDUINO_SCL_Pin      htl::gpio::PinB8
+#define ARDUINO_SDA_Pin      htl::gpio::PinB9
 
-#define ARDUINO_SPI          htl::SPI_2
-#define ARDUINO_SCK_GPIO     htl::GPIO_I1
-#define ARDUINO_MISO_GPIO    htl::GPIO_B14
-#define ARDUINO_MOSI_GPIO    htl::GPIO_B15
+#define ARDUINO_SPI_Device   htl::spi::SPIDevice2
+#define ARDUINO_SCK_Pin      htl::gpio::PinI1
+#define ARDUINO_MISO_Pin     htl::gpio::PinB14
+#define ARDUINO_MOSI_Pin     htl::gpio::PinB15
 
 #endif // USE_ARDUINO
 

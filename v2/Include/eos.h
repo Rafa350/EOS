@@ -30,7 +30,8 @@
 
 // Platform includes
 //
-#if defined(EOS_PLATFORM_PIC32MX) || defined(EOS_PLATFORM_PIC32MZ)
+#if defined(EOS_PLATFORM_PIC32MX) || \
+	defined(EOS_PLATFORM_PIC32MZ)
 	#include "xc.h"
 
 #elif defined(EOS_PLATFORM_STM32F0)
@@ -54,7 +55,8 @@
 #elif defined(EOS_PLATFORM_MSP432)
     #include "msp.h"
 
-#elif defined(EOS_PLATFORM_DOS) || defined(EOS_PLATFORM_WINDOWS)
+#elif defined(EOS_PLATFORM_DOS) || \
+	defined(EOS_PLATFORM_WINDOWS)
 #endif
 
 

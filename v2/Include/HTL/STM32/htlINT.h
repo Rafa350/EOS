@@ -5,7 +5,7 @@
 
 // HAL includes
 //
-#include "HTL/htl.h"
+#include "HTL/STM32/htl.h"
 
 
 namespace htl {
@@ -187,6 +187,8 @@ namespace htl {
 					tmr14 = TIM14_IRQn,
 				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 					tmr14 = TIM8_TRG_COM_TIM14_IRQn,
+				#elif defined(EOS_PLATFORM_STM32G0)
+					tmr14 = TIM14_IRQn,
 				#endif
 			#endif
 			#ifdef HTL_UART1_EXIST
