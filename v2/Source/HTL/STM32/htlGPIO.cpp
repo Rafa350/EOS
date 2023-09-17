@@ -382,6 +382,8 @@ void PinInterrupt::enableInterruptPin(
 	tmp |= (_portNum << (EXTI_EXTICR1_EXTI1_Pos * (_pinNum & 0x03u)));
 	EXTI->EXTICR[_pinNum >> 2u] = tmp;
 
+	// Obte la mascara del pin
+	//
 	uint32_t mask = 1 << _pinNum;
 
 	// Configura en modus interrupcio

@@ -45,11 +45,13 @@ bool CommandLineProcessor::process(
 
 
 CommandDefinition::CommandDefinition(
+	uint32_t id,
 	const char *cmd,
 	const char *shortDescription,
 	const char *longDescription,
 	ICommandEvent &event) :
 
+	_id {id},
 	_cmd {cmd},
 	_shortDescription {shortDescription},
 	_longDescription {longDescription},
