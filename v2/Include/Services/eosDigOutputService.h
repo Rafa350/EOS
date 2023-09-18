@@ -6,7 +6,6 @@
 //
 #include "eos.h"
 #include "Controllers/Pin/eosPinDriver.h"
-#include "HTL/htlGPIO.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosList.h"
 #include "System/Core/eosQueue.h"

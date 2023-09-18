@@ -6,7 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HTL/htlGPIO.h"
+#include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosList.h"
@@ -48,7 +48,7 @@ namespace eos {
             void removeInput(DigInput *input);
             void removeInputs();
 
-            htl::gpio::PinState read(const DigInput *input) const;
+            bool read(const DigInput *input) const;
 
             void tmrInterruptFunction();
     };
@@ -58,7 +58,7 @@ namespace eos {
     class DigInput final {
         public:
             struct ChangedEventArgs {
-                htl::gpio::PinState pinState;
+                bool pinState;
             };
         	using IChangedEvent = ICallbackP2<DigInput*, ChangedEventArgs&>;
         	template <typename instance_> using ChangedEvent = CallbackP2<instance_, DigInput*, ChangedEventArgs&>;
@@ -70,23 +70,24 @@ namespace eos {
 
         private:
             DigInputService *_service;
+            PinDriver _*pin;
             const htl::gpio::PinHandler _pin;
             ScanMode _scanMode;
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
             uint32_t _pattern;
-            htl::gpio::PinState _pinState;
+            bool _pinState;
             bool _edge;
 
         public:
-            DigInput(DigInputService *service, htl::gpio::PinHandler pin);
+            DigInput(DigInputService *service, PinDriver *drv);
             ~DigInput();
 
             inline DigInputService* getService() const {
                 return _service;
             }
 
-            inline htl::gpio::PinState read() const {
+            inline bool read() const {
                 return _service->read(this);
             }
 

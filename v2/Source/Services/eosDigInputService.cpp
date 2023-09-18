@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HTL/htlGPIO.h"
 #include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
@@ -113,9 +112,9 @@ void DigInputService::onInitialize() {
     // Inicialitza les entrades al valor actual
     //
     for (auto input: _inputs) {
-        input->_pinState = input->_pin->read();
+        input->_pinState = input->_drv->read();
         input->_edge = false;
-        input->_pattern = input->_pinState == gpio::PinState::set ? PATTERN_ON : PATTERN_OFF;
+        input->_pattern = input->_pinState ? PATTERN_ON : PATTERN_OFF;
     }
 
     // Inicialitza el servei base
@@ -193,13 +192,13 @@ bool DigInputService::scanInputs() {
             // Actualitza el patro
             //
             input->_pattern <<= 1;
-            if (input->_pin->read() == gpio::PinState::set)
+            if (input->_drv->read())
                 input->_pattern |= 1;
 
             // Analitza el patro per detectar un flanc positiu
             //
             if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-                input->_pinState = gpio::PinState::set;
+                input->_pinState = true;
                 input->_edge = 1;
                 changed = true;
             }
@@ -207,7 +206,7 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc negatiu
             //
             else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-                input->_pinState = gpio::PinState::clear;
+                input->_pinState = false;
                 input->_edge = 1;
                 changed = true;
             }
@@ -230,7 +229,7 @@ htl::gpio::PinState DigInputService::read(
     eosAssert(input->_service == this);
 
     bool state = irq::disableInterrupts();
-    htl::gpio::PinState pinState = input->_pinState;
+    bool pinState = input->_pinState;
     irq::restoreInterrupts(state);
     return pinState;
 }
@@ -255,14 +254,14 @@ void DigInputService::tmrInterruptFunction() {
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: The service.
-/// \param    gpio: El GPIO
+/// \param    drv: El driver del pin
 ///
 DigInput::DigInput(
     DigInputService *service,
-    htl::gpio::PinHandler pin):
+    PinDriver *drv):
 
 	_service {nullptr},
-    _pin {pin},
+    _drv {drv},
     _scanMode {ScanMode::polling},
     _changedEvent {nullptr},
 	_changedEventEnabled {false} {
