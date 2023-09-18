@@ -71,7 +71,7 @@ namespace htl {
 
 		class LTDCDevice final {
 			private:
-				static LTDCDevice _device;
+				static LTDCDevice _instance;
 			private:
 				LTDCDevice(const LTDCDevice &) = delete;
 				LTDCDevice & operator = (const LTDCDevice &) = delete;
@@ -188,7 +188,7 @@ namespace htl {
 				void reload();
 				void interruptService();
 				static constexpr LTDCDevice * getHandler() {
-					return &_device;
+					return &_instance;
 				}
                 inline static void interruptHandler() {
                     getHandler()->interruptService();
@@ -233,18 +233,18 @@ namespace htl {
 				using HI = internal::LayerHardwareInfo<layerID_>;
 			private:
 				static constexpr uint32_t _layerAddr = HI::layerAddr;
-				static LTDCLayerDeviceX _device;
+				static LTDCLayerDeviceX _instance;
 			private:
 				LTDCLayerDeviceX():
 					LTDCLayerDevice(reinterpret_cast<LTDC_Layer_TypeDef*>(_layerAddr)) {
 				}
 			public:
 				static LTDCLayerDeviceX * getHandler() {
-					return &_device;
+					return &_instance;
 				}
 		};
 		template <LayerID layerID_>
-		LTDCLayerDeviceX<layerID_> LTDCLayerDeviceX<layerID_>::_device;
+		LTDCLayerDeviceX<layerID_> LTDCLayerDeviceX<layerID_>::_instance;
 
 		typedef LTDCLayerDeviceX<LayerID::_1> LTDCLayerDevice1;
 		typedef LTDCLayerDeviceX<LayerID::_2> LTDCLayerDevice2;

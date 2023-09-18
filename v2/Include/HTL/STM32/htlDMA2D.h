@@ -44,7 +44,7 @@ namespace htl {
 
         class DMA2DDevice final {
             private:
-                static DMA2DDevice _device;
+                static DMA2DDevice _instance;
             private:
                 DMA2DDevice();
                 DMA2DDevice(const DMA2DDevice &) = delete;
@@ -61,7 +61,7 @@ namespace htl {
                 bool waitForFinish();
 				void interruptService();
 				static constexpr DMA2DDevice * getHandler() {
-					return &_device;
+					return &_instance;
 				}
                 inline static void interruptHandler() {
                     getHandler()->interruptService();

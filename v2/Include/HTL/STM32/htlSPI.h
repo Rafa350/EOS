@@ -162,7 +162,7 @@ namespace htl {
 				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
 				static constexpr uint32_t _rccResetAddr = HI::rccResetAddr;
 				static constexpr uint32_t _rccResetPos = HI::rccResetPos;
-				static SPIDeviceX _device;
+				static SPIDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
@@ -204,7 +204,7 @@ namespace htl {
 		};
 
 		template <DeviceID deviceID_>
-		SPIDeviceX<deviceID_> SPIDeviceX<deviceID_>::_device;
+		SPIDeviceX<deviceID_> SPIDeviceX<deviceID_>::_instance;
 
 		#ifdef HTL_SPI1_EXIST
 		typedef SPIDeviceX<DeviceID::_1> SPIDevice1;
