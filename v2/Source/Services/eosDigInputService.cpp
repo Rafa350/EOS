@@ -112,9 +112,16 @@ void DigInputService::onInitialize() {
     // Inicialitza les entrades al valor actual
     //
     for (auto input: _inputs) {
-        input->_pinState = input->_drv->read();
+        if (input->_drv->read()) {
+            input->_pinState = true;
+            input->_pattern = PATTERN_ON;
+        }
+        else {
+            input->_pinState = false
+            input->_pattern = PATTERN_OFF;
+        }
+        input->_pinPulses = 0;
         input->_edge = false;
-        input->_pattern = input->_pinState ? PATTERN_ON : PATTERN_OFF;
     }
 
     // Inicialitza el servei base
@@ -142,17 +149,18 @@ void DigInputService::onTask() {
 
                 if (input->_changedEventEnabled) {
 
-                    bool state = irq::disableInterrupts();
+                    bool saveIrq = irq::disableInterrupts();
 
                     bool edge = input->_edge;
                     input->_edge = false;
 
-                    irq::restoreInterrupts(state);
+                    irq::restoreInterrupts(saveIrq);
 
                     if (edge) {
 
                         DigInput::ChangedEventArgs args = {
-                        	.pinState = input->_pinState
+                        	.state = input->_pinState,
+                            .pulses = input->_pinPulses
                         };
 
                         input->_changedEvent->execute(input, args);
@@ -207,6 +215,7 @@ bool DigInputService::scanInputs() {
             //
             else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
                 input->_pinState = false;
+                input->_pinPulses += 1;
                 input->_edge = 1;
                 changed = true;
             }
@@ -228,9 +237,9 @@ htl::gpio::PinState DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    bool state = irq::disableInterrupts();
+    bool saveIrq = irq::disableInterrupts();
     bool pinState = input->_pinState;
-    irq::restoreInterrupts(state);
+    irq::restoreInterrupts(saveIrq);
     return pinState;
 }
 

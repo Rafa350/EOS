@@ -58,7 +58,8 @@ namespace eos {
     class DigInput final {
         public:
             struct ChangedEventArgs {
-                bool pinState;
+                bool state;
+                uint32_t pulses;
             };
         	using IChangedEvent = ICallbackP2<DigInput*, ChangedEventArgs&>;
         	template <typename instance_> using ChangedEvent = CallbackP2<instance_, DigInput*, ChangedEventArgs&>;
@@ -70,13 +71,13 @@ namespace eos {
 
         private:
             DigInputService *_service;
-            PinDriver _*pin;
-            const htl::gpio::PinHandler _pin;
+            PinDriver *_drv;
             ScanMode _scanMode;
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
             uint32_t _pattern;
             bool _pinState;
+            uint32_t _pinPulses;
             bool _edge;
 
         public:
