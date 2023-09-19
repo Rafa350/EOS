@@ -117,7 +117,7 @@ void DigInputService::onInitialize() {
             input->_pattern = PATTERN_ON;
         }
         else {
-            input->_pinState = false
+            input->_pinState = false;
             input->_pattern = PATTERN_OFF;
         }
         input->_pinPulses = 0;
@@ -231,7 +231,7 @@ bool DigInputService::scanInputs() {
 /// \param    input: La entrada.
 /// \return   El estat.
 ///
-htl::gpio::PinState DigInputService::read(
+bool DigInputService::read(
     const DigInput *input) const {
 
     eosAssert(input != nullptr);

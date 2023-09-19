@@ -5,7 +5,7 @@
 using namespace htl::ltdc;
 
 
-LTDCDevice LTDCDevice::_device;
+LTDCDevice LTDCDevice::_instance;
 
 
 /// ----------------------------------------------------------------------

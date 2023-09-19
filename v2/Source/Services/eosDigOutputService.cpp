@@ -12,8 +12,6 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    application: The application.
-/// \param    settings: Configuration parameters.
 ///
 DigOutputService::DigOutputService():
 	_timeCounter {0},
@@ -75,7 +73,7 @@ void DigOutputService::removeOutput(
     Task::enterCriticalSection();
 
     if (output->_service == this) {
-        //_outputs.removeAt(_outputs.indexOf(output));
+        _outputs.remove(output);
         output->_service = nullptr;
     }
 
@@ -97,8 +95,8 @@ void DigOutputService::removeOutputs() {
     Task::enterCriticalSection();
 
     while (!_outputs.isEmpty()) {
-        DigOutput *output = _outputs.peekBack();
-        _outputs.popBack();
+        DigOutput *output = _outputs.peekFront();
+        _outputs.remove(output);
         output->_service = nullptr;
     }
 

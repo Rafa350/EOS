@@ -49,6 +49,7 @@ namespace eos {
             void removeInputs();
 
             bool read(const DigInput *input) const;
+            uint32_t readPulses(const DigInput *input, bool clear = true) const;
 
             void tmrInterruptFunction();
     };
@@ -90,6 +91,10 @@ namespace eos {
 
             inline bool read() const {
                 return _service->read(this);
+            }
+
+            inline uint32_t readPulses(bool clear = false) const {
+                return _service->readPulses(this, clear);
             }
 
             inline void setScanMode(ScanMode scanMode) {

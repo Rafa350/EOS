@@ -5,7 +5,7 @@
 using namespace htl::dma2d;
 
 
-DMA2DDevice DMA2DDevice::_device;
+DMA2DDevice DMA2DDevice::_instance;
 
 
 /// ----------------------------------------------------------------------

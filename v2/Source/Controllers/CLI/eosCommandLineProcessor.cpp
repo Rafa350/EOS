@@ -35,7 +35,13 @@ bool CommandLineProcessor::process(
 	for (auto command: _commands) {
 
 		if (strcmp(text, command->getCmd()) == 0) {
-			command->invoke(text);
+			if (_commandEventEnabled) {
+				CommandEventArgs args = {
+					.command = command,
+					.text = text
+				};
+				_commandEvent->execute(this, args);
+			}
 			return true;
 		}
 	}
@@ -48,24 +54,12 @@ CommandDefinition::CommandDefinition(
 	uint32_t id,
 	const char *cmd,
 	const char *shortDescription,
-	const char *longDescription,
-	ICommandEvent &event) :
+	const char *longDescription) :
 
 	_id {id},
 	_cmd {cmd},
 	_shortDescription {shortDescription},
-	_longDescription {longDescription},
-	_commandEvent {&event} {
+	_longDescription {longDescription} {
 
 }
 
-
-void CommandDefinition::invoke(
-	const char *text) {
-
-	CommandDefinition::CommandEventArgs args = {
-		.command {this},
-		.text {text}
-	};
-	_commandEvent->execute(args);
-}

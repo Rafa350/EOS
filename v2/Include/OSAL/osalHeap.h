@@ -19,6 +19,8 @@ typedef struct {
 	unsigned length;
 	unsigned allocated;
 	unsigned available;
+	unsigned allocCount;
+	unsigned freeCount;
 } HeapInformation;
 
 HHeap osalHeapCreate(void);

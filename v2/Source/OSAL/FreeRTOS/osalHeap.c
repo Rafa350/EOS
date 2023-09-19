@@ -8,6 +8,8 @@
 
 
 static HHeap defaultHeap = NULL;
+static unsigned __allocCount = 0;
+static unsigned __freeCount = 0;
 
 
 #ifdef SAFE_MODE
@@ -49,6 +51,8 @@ void* osalHeapAlloc(
     eosAssert(hHeap == NULL);
     eosAssert(size > 0);
 
+    __allocCount++;
+
 #ifdef SAFE_MODE
     void *block = pvPortMalloc(size + sizeof(signature));
 #else
@@ -76,6 +80,8 @@ void osalHeapFree(
 
     eosAssert(hHeap == NULL);
     eosAssert(block != NULL);
+
+    __freeCount++;
 
 #ifdef SAFE_MODE
     block = (char*)block - sizeof(signature);
@@ -120,6 +126,8 @@ void osalHeapGetInfo(
 	info->length = configTOTAL_HEAP_SIZE;
 	info->available = xPortGetFreeHeapSize();
 	info->allocated = info->length - info->available;
+	info->allocCount = __allocCount;
+	info->freeCount = __freeCount;
 }
 
 

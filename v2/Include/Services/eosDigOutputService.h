@@ -126,9 +126,9 @@ namespace eos {
             DigOutputService *_service;
             PinDriver *_drv;
             State _state;
-            uint16_t _timeCnt;
-            uint16_t _time1;
-            uint16_t _time2;
+            unsigned _timeCnt;
+            unsigned _time1;
+            unsigned _time2;
 
         public:
             DigOutput(DigOutputService *service, PinDriver *drv);

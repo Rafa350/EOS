@@ -15,45 +15,53 @@ namespace eos {
 	class CommandLineProcessor final {
 		private:
     		using CommandList = eos::List<CommandDefinition*>;
+		public:
+			struct CommandEventArgs {
+				const CommandDefinition *command;
+				const char *text;
+			};
+			using ICommandEvent = eos::ICallbackP2<CommandLineProcessor *, const CommandEventArgs&>;
+			template <typename Instance_> using CommandEvent = eos::CallbackP2<Instance_, CommandLineProcessor*, const CommandEventArgs&>;
 
 		private:
     		CommandList _commands;
+    		ICommandEvent *_commandEvent;
+    		bool _commandEventEnabled;
 
 		public:
     		CommandLineProcessor();
+    		void setCommandEvent(ICommandEvent &event, bool enabled = true) {
+    			_commandEvent = &event;
+    			_commandEventEnabled = enabled;
+    		}
+    		void enableCommandEvent() {
+    			_commandEventEnabled = _commandEvent != nullptr;
+    		}
+    		void disableCommandEvent() {
+    			_commandEventEnabled = false;
+    		}
     		void addCommand(CommandDefinition *definition);
     		bool process(const char *buffer);
 	};
 
 	class CommandDefinition final {
-		public:
-			struct CommandEventArgs {
-				const CommandDefinition *command;
-				const char *text;
-				uint32_t id;
-			};
-			using ICommandEvent = eos::ICallbackP1<const CommandEventArgs&>;
-			template <typename _instance> using CommandEvent = eos::CallbackP1<_instance, const CommandEventArgs&>;
-
 		private:
+			uint32_t _id;
 			const char *_cmd;
 			const char *_shortDescription;
 			const char *_longDescription;
-			uint32_t _id;
-			ICommandEvent *_commandEvent;
 
 		private:
     		CommandDefinition(const CommandDefinition&) = delete;
     		CommandDefinition& operator = (const CommandDefinition&) = delete;
 
 		public:
-			CommandDefinition(uint32_t id, const char *cmd, const char *shortDescription, const char *longDescription, ICommandEvent &event);
+			CommandDefinition(uint32_t id, const char *cmd, const char *shortDescription, const char *longDescription);
 
 			inline uint32_t getID() const { return _id; }
 			inline const char *getCmd() const { return _cmd; }
 			inline const char *getShortDescription() const { return _shortDescription; }
 			inline const char *getLongDescription() const { return _longDescription; }
-			void invoke(const char *text);
 	};
 
 }
