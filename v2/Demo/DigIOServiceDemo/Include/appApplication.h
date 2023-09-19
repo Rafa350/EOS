@@ -62,13 +62,13 @@ namespace app {
             void onInitialize();
             void messageBusEventHandler(const ButtonMessage &args);
             #ifdef EXIST_SW1
-                void sw1ChangedEventHandler(const eos::DigInput::ChangedEventArgs &args);
+                void sw1ChangedEventHandler(eos::DigInput *sender, eos::DigInput::ChangedEventArgs &args);
             #endif
             #ifdef EXIST_SW2
-                void sw2ChangedEventHandler(const eos::DigInput::ChangedEventArgs &args);
+                void sw2ChangedEventHandler(eos::DigInput *sender, eos::DigInput::ChangedEventArgs &args);
             #endif
             #ifdef EXIST_SW3
-                void sw3ChangedEventHandler(const eos::DigInput::ChangedEventArgs &args);
+                void sw3ChangedEventHandler(eos::DigInput *sender, eos::DigInput::ChangedEventArgs &args);
             #endif
             static void digInputServiceTMRInterruptFunction(htl::TMRInterruptParam);
             static void digOutputServiceTMRInterruptFunction(htl::TMRInterruptParam);

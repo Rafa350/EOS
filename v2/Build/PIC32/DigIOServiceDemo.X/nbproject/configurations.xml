@@ -95,6 +95,11 @@
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
+          <logicalFolder name="f7" displayName="Controllers" projectFiles="true">
+            <logicalFolder name="f1" displayName="Pin" projectFiles="true">
+              <itemPath>../../../Source/Controllers/Pin/eosPinDriver_GPIO.cpp</itemPath>
+            </logicalFolder>
+          </logicalFolder>
           <logicalFolder name="f1" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
@@ -182,6 +187,7 @@
     <Elem>.</Elem>
     <Elem>../../../Source/HAL2/PIC32</Elem>
     <Elem>../../../Source/HTL/PIC32</Elem>
+    <Elem>../../../Source/Controllers/Pin</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

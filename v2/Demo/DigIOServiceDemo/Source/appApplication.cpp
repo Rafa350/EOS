@@ -54,7 +54,7 @@ void MyApplication::onInitialize() {
     //
     auto pinSW1 = SW1_Pin::getHandler();
     pinSW1->initInput(gpio::PullUp::up);
-    _sw1 = new DigInput(_digInputService, pinSW1);
+    _sw1 = new DigInput(_digInputService, new PinDriver_GPIO(pinSW1));
     _sw1->setChangedEvent(_sw1ChangedEvent);
 
     // Configura la entrada corresponent al switch SW2
@@ -62,7 +62,7 @@ void MyApplication::onInitialize() {
     #ifdef EXIST_SW2
     auto pinSW2 = SW2_Pin::getHandler();
     pinSW2->initInput(gpio::PullUp::up);
-    _sw2 = new DigInput(_digInputService, pinSW2);
+    _sw2 = new DigInput(_digInputService, new PinDriver_GPIO(pinSW2));
     _sw2->setChangedEvent(_sw2ChangedEvent);
     #endif
 
@@ -71,7 +71,7 @@ void MyApplication::onInitialize() {
     #ifdef EXIST_SW3
     auto pinSW3 = SW3_Pin::getHandler();
     pinSW3->initInput(gpio::PullUp::up);
-    _sw3 = new DigInput(_digInputService, pinSW3);
+    _sw3 = new DigInput(_digInputService, new PinDriver_GPIO(pinSW3));
     _sw3->setChangedEvent(_sw3ChangedEvent);
     #endif
 
@@ -165,7 +165,8 @@ void MyApplication::messageBusEventHandler(
 /// \param    args: Parametres del event.
 ///
 void MyApplication::sw1ChangedEventHandler(
-    const DigInput::ChangedEventArgs &args) {
+    eos::DigInput *sender,
+    DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW1_StateON) {
 
@@ -188,7 +189,8 @@ void MyApplication::sw1ChangedEventHandler(
 ///
 #ifdef EXIST_SW2
 void MyApplication::sw2ChangedEventHandler(
-    const DigInput::ChangedEventArgs &args) {
+    eos::DigInput *sender,
+    DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW2_StateON) {
 
@@ -214,7 +216,8 @@ void MyApplication::sw2ChangedEventHandler(
 ///
 #ifdef EXIST_SW3
 void MyApplication::sw3ChangedEventHandler(
-    const DigInput::ChangedEventArgs &args) {
+    eos::DigInput *sender,
+    DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW3_StateON) {
 

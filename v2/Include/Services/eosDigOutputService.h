@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "HTL/htlGPIO.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosList.h"
@@ -95,7 +96,7 @@ namespace eos {
 
             void set(DigOutput *output);
             void clear(DigOutput *output);
-            void write(DigOutput *output, bool value);
+            void write(DigOutput *output, htl::gpio::PinState pinState);
             void toggle(DigOutput *output);
             void pulse(DigOutput *output, unsigned width);
             void delayedSet(DigOutput *output, unsigned delay);
@@ -146,8 +147,8 @@ namespace eos {
                 _service->clear(this);
             }
 
-            inline void write(bool value) {
-                _service->write(this, value);
+            inline void write(htl::gpio::PinState state) {
+                _service->write(this, state);
             }
 
             inline void toggle() {

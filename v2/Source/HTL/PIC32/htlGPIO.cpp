@@ -114,8 +114,20 @@ void Pin::initInput(
 ///
 void Pin::initOutput(
     OutDriver driver,
-    Speed speed,
-    InitPinState pinState) {
+    Speed speed) {
 
+    initializeOutput(_gpio, _pinMask, driver, speed);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el pin copm a sortida.
+///
+void Pin::initOutput(
+    OutDriver driver,
+    Speed speed,
+    PinState state) {
+
+    write(state);
     initializeOutput(_gpio, _pinMask, driver, speed);
 }

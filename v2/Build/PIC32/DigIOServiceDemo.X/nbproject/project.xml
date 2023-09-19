@@ -26,6 +26,7 @@
                 <sourceRootElem>.</sourceRootElem>
                 <sourceRootElem>../../../Source/HAL2/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/HTL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/Pin</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

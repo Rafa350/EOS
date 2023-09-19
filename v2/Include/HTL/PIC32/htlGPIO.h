@@ -87,12 +87,6 @@ namespace htl {
             fast
         };
 
-        enum class InitPinState {
-            noChange,
-            clear,
-            set
-        };
-
         enum class PinState {
             clear,
             set
@@ -243,7 +237,8 @@ namespace htl {
                 Pin(internal::GPIORegisters *gpio, PinID pinID);
             public :
                 void initInput(PullUp pullUp = PullUp::noChange);
-                void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium, InitPinState state = InitPinState::noChange);
+                void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
+                void initOutput(OutDriver driver, Speed speed, PinState state);
                 inline void set() {
                     _gpio->LATxSET = _pinMask;
                 }

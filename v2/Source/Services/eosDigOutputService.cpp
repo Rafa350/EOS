@@ -167,13 +167,13 @@ void DigOutputService::toggle(
 ///
 void DigOutputService::write(
     DigOutput *output,
-    bool value) {
+    htl::gpio::PinState pinState) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = value ? OpCode::set : OpCode::clear,
+        .opCode = pinState == htl::gpio::PinState::set ? OpCode::set : OpCode::clear,
         .output = output
     };
     _commandQueue.push(cmd, unsigned(-1));

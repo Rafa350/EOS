@@ -113,11 +113,11 @@ void DigInputService::onInitialize() {
     //
     for (auto input: _inputs) {
         if (input->_drv->read()) {
-            input->_pinState = true;
+            input->_pinState = htl::gpio::PinState::set;
             input->_pattern = PATTERN_ON;
         }
         else {
-            input->_pinState = false;
+            input->_pinState = htl::gpio::PinState::clear;
             input->_pattern = PATTERN_OFF;
         }
         input->_pinPulses = 0;
@@ -159,8 +159,8 @@ void DigInputService::onTask() {
                     if (edge) {
 
                         DigInput::ChangedEventArgs args = {
-                        	.state = input->_pinState,
-                            .pulses = input->_pinPulses
+                        	.pinState = input->_pinState,
+                            .pinPulses = input->_pinPulses
                         };
 
                         input->_changedEvent->execute(input, args);
@@ -206,7 +206,7 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc positiu
             //
             if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-                input->_pinState = true;
+                input->_pinState = htl::gpio::PinState::set;;
                 input->_edge = 1;
                 changed = true;
             }
@@ -214,7 +214,7 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc negatiu
             //
             else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-                input->_pinState = false;
+                input->_pinState = htl::gpio::PinState::clear;
                 input->_pinPulses += 1;
                 input->_edge = 1;
                 changed = true;
@@ -231,14 +231,14 @@ bool DigInputService::scanInputs() {
 /// \param    input: La entrada.
 /// \return   El estat.
 ///
-bool DigInputService::read(
+htl::gpio::PinState DigInputService::read(
     const DigInput *input) const {
 
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
     bool saveIrq = irq::disableInterrupts();
-    bool pinState = input->_pinState;
+    htl::gpio::PinState pinState = input->_pinState;
     irq::restoreInterrupts(saveIrq);
     return pinState;
 }
