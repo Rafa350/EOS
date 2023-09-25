@@ -33,23 +33,23 @@ void Driver_ISO808::initialize() {
 
 
 void Driver_ISO808::set(
-	uint8_t pinNumber) {
+	uint8_t pinState) {
 
-	_pinState |= 1 << pinNumber;
+	_pinState |= pinState;
 }
 
 
 void Driver_ISO808::clear(
-	uint8_t pinNumber) {
+	uint8_t pinState) {
 
-	_pinState &= ~(1 << pinNumber);
+	_pinState &= ~pinState);
 }
 
 
 void Driver_ISO808::toggle(
-	uint8_t pinNumber) {
+	uint8_t pinState) {
 
-	_pinState ^= 1 << pinNumber;
+	_pinState ^= pinState;
 }
 
 
@@ -92,3 +92,22 @@ PinDriver_ISO808::PinDriver_ISO808(
 }
 
 
+void PinDriver_ISO808::set() {
+    
+    _driver->set(1 << _pinNumber);
+    _driver->refresh();
+}
+
+
+void PinDriver_ISO808::clear() {
+    
+    _driver->clear(1 << _pinNumber);
+    _driver->refresh();
+}
+
+
+void PinDriver_ISO808::toggle() {
+    
+    _driver->toggle(1 << _pinNumber);
+    _driver->refresh();
+}

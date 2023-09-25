@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosPinDriver__
 #define	__eosPinDriver__
 

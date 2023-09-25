@@ -45,9 +45,9 @@ namespace eos {
 		public:
 			Driver_ISO808();
 			void initialize();
-			void set(uint8_t pinNumber);
-			void clear(uint8_t pinNumber);
-			void toggle(uint8_t pinNumber);
+			void set(uint8_t pinState);
+			void clear(uint8_t pinState);
+			void toggle(uint8_t pinState);
 			void refresh();
 			void outputEnable();
 			void outputDisable();
@@ -67,5 +67,6 @@ namespace eos {
 			bool read() const override;
 	};
 }
+
 
 #endif // __eosPinDriver__ISO808__
