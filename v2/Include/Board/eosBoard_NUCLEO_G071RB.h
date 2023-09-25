@@ -142,6 +142,13 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
+#define ARDUINO_A0_Pin
+#define ARDUINO_A1_Pin
+#define ARDUINO_A2_Pin
+#define ARDUINO_A3_Pin
+#define ARDUINO_A4_Pin
+#define ARDUINO_A5_Pin
+
 #define ARDUINO_D0_Pin       htl::gpio::PinC5
 #define ARDUINO_D1_Pin       htl::gpio::PinC4
 #define ARDUINO_D2_Pin       htl::gpio::PinA10
@@ -150,6 +157,7 @@
 #define ARDUINO_D5_Pin       htl::gpio::PinB4
 #define ARDUINO_D6_Pin       htl::gpio::PinB14
 #define ARDUINO_D7_Pin       htl::gpio::PinA8
+
 #define ARDUINO_D8_Pin       htl::gpio::PinA9
 #define ARDUINO_D9_Pin       htl::gpio::PinC7
 #define ARDUINO_D10_Pin      htl::gpio::PinB0
