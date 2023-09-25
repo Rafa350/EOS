@@ -29,27 +29,8 @@ void Driver_ISO808::initialize() {
 	_pinFAULT->initInput(gpio::PullUpDn::up);
 
 	_pinState = 0;
-}
-
-
-void Driver_ISO808::set(
-	uint8_t pinState) {
-
-	_pinState |= pinState;
-}
-
-
-void Driver_ISO808::clear(
-	uint8_t pinState) {
-
-	_pinState &= ~pinState);
-}
-
-
-void Driver_ISO808::toggle(
-	uint8_t pinState) {
-
-	_pinState ^= pinState;
+    
+    refresh();
 }
 
 
@@ -70,18 +51,6 @@ void Driver_ISO808::refresh() {
 }
 
 
-void Driver_ISO808::outputEnable() {
-
-	_pinOUTEN->set();
-}
-
-
-void Driver_ISO808::outputDisable() {
-
-	_pinOUTEN->clear();
-}
-
-
 PinDriver_ISO808::PinDriver_ISO808(
 	Driver_ISO808 *driver,
 	uint8_t pinNumber):
@@ -95,19 +64,16 @@ PinDriver_ISO808::PinDriver_ISO808(
 void PinDriver_ISO808::set() {
     
     _driver->set(1 << _pinNumber);
-    _driver->refresh();
 }
 
 
 void PinDriver_ISO808::clear() {
     
     _driver->clear(1 << _pinNumber);
-    _driver->refresh();
 }
 
 
 void PinDriver_ISO808::toggle() {
     
     _driver->toggle(1 << _pinNumber);
-    _driver->refresh();
 }
