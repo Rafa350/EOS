@@ -231,7 +231,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	// Inicialitza el pin CS
 	//
 	auto pinCS = PinCS::getHandler();
-	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::PinState::set);
+	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, true);
 
 	// Inicialitza el pin DC
 	//
@@ -242,7 +242,7 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	//
 	#ifdef DISPLAY_RST_Pin
 	auto pinRST = PinRST::getHandler();
-	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::PinState::clear);
+	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, false);
 	#endif
 
 	// Inicialitza el modul SPI

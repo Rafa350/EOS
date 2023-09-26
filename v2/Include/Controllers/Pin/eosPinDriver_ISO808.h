@@ -16,7 +16,7 @@ namespace eos {
               typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_, 
               typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_,
               typename PinOUTEN_, typename PinFAULT_>
-	class Driver_ISO808 final {
+	class Device_ISO808 final {
 		private:
 			static constexpr htl::gpio::PinHandler _pinSYNC = PinSYNC_::getHandler();
 			static constexpr htl::gpio::PinHandler _pinLOAD = PinLOAD_::getHandler();
@@ -33,7 +33,8 @@ namespace eos {
 			static uint8_t _pinState;
             
         private:
-            Driver_ISO808(const Driver_ISO808&) = delete;
+            Device_ISO808(const Device_ISO808&) = delete;
+			Device_ISO808 & operator = (const Device_ISO808 &) = delete;
             
 			static void refresh() {
                 _pinLOAD->clear();
@@ -49,24 +50,19 @@ namespace eos {
             }
 
 		public:
-			Driver_ISO808(): 
-                _pinState {0} {
-                
-            }
-            
 			static void initialize() {
-                _pinSYNC->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium, gpio::PinState::set);
-                _pinLOAD->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium, gpio::PinState::set);
-                _pinIN1->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinIN2->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinIN3->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinIN4->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinIN5->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinIN6->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinIN7->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinIN8->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium);
-                _pinOUTEN->initOutput(gpio::OutDriver::pushPull, gpio::Speed::medium, gpio::PinState::clear);
-                _pinFAULT->initInput(gpio::PullUpDn::up);
+                _pinSYNC->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium, true);
+                _pinLOAD->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium, true);
+                _pinIN1->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinIN2->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinIN3->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinIN4->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinIN5->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinIN6->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinIN7->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinIN8->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
+                _pinOUTEN->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium, false);
+                _pinFAULT->initInput(htl::gpio::PullUpDn::up);
             }
 			
             inline static void set(uint8_t pinMask) {
@@ -75,13 +71,22 @@ namespace eos {
             }
 			
             inline static void clear(uint8_t pinMask) {
-                _pinPinState &= ~pinMask);
+                _pinState &= ~pinMask;
                 refresh();
             }
 			
             inline static void toggle(uint8_t pinMask) {
                 _pinState ^= pinMask;
                 refresh();
+            }
+
+            inline static void write(uint8_t pinState) {
+            	_pinState = pinState;
+            	refresh();
+            }
+
+            inline static uint8_t read() {
+            	return _pinState;
             }
 			
             inline static void outputEnable() {
@@ -97,31 +102,10 @@ namespace eos {
               typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_, 
               typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_,
               typename PinOUTEN_, typename PinFAULT_>
-    uint8_t Driver_ISO808<PinSYNC_, PinLOAD_, 
+    uint8_t Device_ISO808<PinSYNC_, PinLOAD_,
         PinIN1_, PinIN2_, PinIN3_, PinIN4_, 
         PinIN5_, PinIN6_, PinIN7_, PinIN8_,
-        PinOUTEN_, PinFAULT_>::_pinState;
-        
-        
-    template <typename Driver_>
-	class PinDriver_Generic final: public PinDriver {
-		private:
-			Driver_ *_driver;
-			uint8_t _pinNumber;
-		public:
-			PinDriver_ISO808(Driver_ *driver, uint8_t pinNumber);
-			void set() override {
-                _driver->set(1 << _pinNumber);
-            }
-			void clear() override {
-                _driver->clear(1 << _pinNumber);
-            }
-			void toggle() override {
-                _driver->toggle(1 << _pinNumber);
-            }
-			void write(bool state) override;
-			bool read() const override;
-	};
+        PinOUTEN_, PinFAULT_>::_pinState = 0;
 }
 
 

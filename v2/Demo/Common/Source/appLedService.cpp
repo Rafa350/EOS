@@ -24,12 +24,12 @@ void LedService::onInitialize() {
 
 	#ifdef EXIST_LED1
 		auto pinLED1 = LED1_Pin::getHandler();
-		pinLED1->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::PinState::set);
+		pinLED1->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, LED1_StateON);
 	#endif
 
 	#ifdef EXIST_LED2
 		auto pinLED2 = LED2_Pin::getHandler();
-		pinLED2->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, gpio::PinState::clear);
+		pinLED2->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, LED1_StateOFF);
 	#endif
 }
 

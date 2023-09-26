@@ -181,7 +181,7 @@ namespace htl {
 				}
 			public:
 				static constexpr SPIDeviceX * getHandler() {
-					return &_device;
+					return &_instance;
 				}
 				inline static void interruptHandler() {
 					getHandler()->interruptService();

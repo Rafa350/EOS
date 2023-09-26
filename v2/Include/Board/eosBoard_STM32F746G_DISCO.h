@@ -23,8 +23,8 @@
 #define LED1_Pin             htl::gpio::PinI1
 #define LED1_PortID          LED1_Pin::portID
 #define LED1_PinID           LED1_Pin::pinID
-#define LED1_StateON         htl::gpio::PinState::set
-#define LED1_StateOFF        htl::gpio::PinState::clear
+#define LED1_StateON         true
+#define LED1_StateOFF        false
 
 #endif // USE_LED1
 
@@ -40,8 +40,8 @@
 #define SW1_PortID           SW1_Pin::portID
 #define SW1_PinID            SW1_Pin::pinID
 #define SW1_PinInterrupt     htl::gpio::PinInterrupX<SW1_Pin::portID, SW1_Pin::pinID>
-#define SW1_StateON          htl::gpio::PinState::set
-#define SW1_StateOFF         htl::gpio::PinState::clear
+#define SW1_StateON          true
+#define SW1_StateOFF         false
 
 #endif // SW1
 

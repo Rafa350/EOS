@@ -49,8 +49,8 @@ namespace eos {
             void removeInput(DigInput *input);
             void removeInputs();
 
-            htl::gpio::PinState read(const DigInput *input) const;
-            uint32_t readPulses(const DigInput *input, bool clear = true) const;
+            bool read(const DigInput *input) const;
+            uint32_t readPulses(DigInput *input, bool clear = true) const;
 
             void tmrInterruptFunction();
     };
@@ -60,7 +60,7 @@ namespace eos {
     class DigInput final {
         public:
             struct ChangedEventArgs {
-                htl::gpio::PinState pinState;
+                bool pinState;
                 uint32_t pinPulses;
             };
         	using IChangedEvent = ICallbackP2<DigInput*, ChangedEventArgs&>;
@@ -78,7 +78,7 @@ namespace eos {
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
             uint32_t _pattern;
-            htl::gpio::PinState _pinState;
+            bool _pinState;
             uint32_t _pinPulses;
             bool _edge;
 
@@ -90,11 +90,11 @@ namespace eos {
                 return _service;
             }
 
-            inline htl::gpio::PinState read() const {
+            inline bool read() const {
                 return _service->read(this);
             }
 
-            inline uint32_t readPulses(bool clear = false) const {
+            inline uint32_t readPulses(bool clear = false) {
                 return _service->readPulses(this, clear);
             }
 

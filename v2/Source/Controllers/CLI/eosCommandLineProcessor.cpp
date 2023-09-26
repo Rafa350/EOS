@@ -34,11 +34,14 @@ bool CommandLineProcessor::process(
 
 	for (auto command: _commands) {
 
-		if (strcmp(text, command->getCmd()) == 0) {
+		const char *cmd = command->getCmd();
+		size_t len = strlen(cmd);
+
+		if (strncmp(text, cmd, len) == 0) {
 			if (_commandEventEnabled) {
 				CommandEventArgs args = {
 					.command = command,
-					.text = text
+					.text = &text[len]
 				};
 				_commandEvent->execute(this, args);
 			}

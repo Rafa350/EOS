@@ -96,7 +96,7 @@ namespace eos {
 
             void set(DigOutput *output);
             void clear(DigOutput *output);
-            void write(DigOutput *output, htl::gpio::PinState pinState);
+            void write(DigOutput *output, bool pinState);
             void toggle(DigOutput *output);
             void pulse(DigOutput *output, unsigned width);
             void delayedSet(DigOutput *output, unsigned delay);
@@ -104,6 +104,7 @@ namespace eos {
             void delayedToggle(DigOutput *output, unsigned delay);
             void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
             void repeatPulse(DigOutput *output, unsigned width, unsigned space);
+            bool read(DigOutput *ouput);
 
             void tmrInterruptFunction();
     };
@@ -147,8 +148,12 @@ namespace eos {
                 _service->clear(this);
             }
 
-            inline void write(htl::gpio::PinState state) {
-                _service->write(this, state);
+            inline void write(bool pinState) {
+                _service->write(this, pinState);
+            }
+
+            inline bool read() {
+            	return _service->read(this);
             }
 
             inline void toggle() {

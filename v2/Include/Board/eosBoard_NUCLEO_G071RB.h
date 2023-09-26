@@ -22,8 +22,8 @@
 #define EXIST_LED1
 
 #define LED1_Pin             htl::gpio::PinA5
-#define LED1_StateON         htl::gpio::PinState::set
-#define LED1_StateOFF        htl::gpio::PinState::clear
+#define LED1_StateON         true
+#define LED1_StateOFF        false
 
 #define LED1_Initialize()    LED1_Pin::getHandler()->initOutput(htl::gpio::OutDriver::pushPull)
 #define LED1_On()            LED1_Pin::getHandler()->set()
@@ -42,8 +42,8 @@
 
 #define SW1_Pin              htl::gpio::PinX<htl::gpio::PortID::C, htl::gpio::PinID::_13>
 #define SW1_PinInterrupt     htl::gpio::PinInterruptX<htl::gpio::PortID::C, htl::gpio::PinID::_13>
-#define SW1_StateON          htl::GPIOState::set
-#define SW1_StateOF          htl::GPIOState::clear
+#define SW1_StateON          true
+#define SW1_StateOF          false
 
 #endif // USE_SW1
 
@@ -142,12 +142,12 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-#define ARDUINO_A0_Pin
-#define ARDUINO_A1_Pin
-#define ARDUINO_A2_Pin
-#define ARDUINO_A3_Pin
-#define ARDUINO_A4_Pin
-#define ARDUINO_A5_Pin
+#define ARDUINO_A0_Pin       htl::gpio::PinA0
+#define ARDUINO_A1_Pin       htl::gpio::PinA1
+#define ARDUINO_A2_Pin       htl::gpio::PinA4
+#define ARDUINO_A3_Pin       htl::gpio::PinB1
+#define ARDUINO_A4_Pin       htl::gpio::PinB11
+#define ARDUINO_A5_Pin       htl::gpio::PinB12
 
 #define ARDUINO_D0_Pin       htl::gpio::PinC5
 #define ARDUINO_D1_Pin       htl::gpio::PinC4

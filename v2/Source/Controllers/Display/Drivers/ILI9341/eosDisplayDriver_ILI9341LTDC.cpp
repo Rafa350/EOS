@@ -227,16 +227,16 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	// Inicialitza el pin CS
 	//
 	auto pinCS(PinCS::getHandler());
-	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, true);
 
 	// Inicialitza el piun RS
 	auto pinRS(PinRS::getHandler());
-	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, false);
 
 	// Inicialitza el pin RST
 	#ifdef DISPLAY_RTS_Pin
 	auto pinRST(PinRST::getHandler());
-	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, false);
 	#endif
 
 	// Inicialitza el modul SPI

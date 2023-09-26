@@ -13,8 +13,8 @@
 #define LED1_Pin             htl::gpio::PinG13
 #define LED1_PortID          LED1_Pin::portID
 #define LED1_PinID           LED1_Pin::PinID
-#define LED1_StateON         htl::gpio::PinState::set
-#define LED1_StateOFF        htl::gpio::PinState::clear
+#define LED1_StateON         true
+#define LED1_StateOFF        false
 
 #endif // USE_LED1
 
@@ -29,8 +29,8 @@
 #define LED2_Pin             htl::gpio::PinG14
 #define LED2_PortID          LED2_Pin::portID
 #define LED2_PinID           LED2_Pin::PinID
-#define LED2_StateON         htl::gpio::PinState::set
-#define LED2_StateOFF        htl::gpio::PinState::clear
+#define LED2_StateON         true
+#define LED2_StateOFF        false
 
 #endif // USE_LED2
 

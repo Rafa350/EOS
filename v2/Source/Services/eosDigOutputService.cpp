@@ -8,6 +8,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -161,19 +162,19 @@ void DigOutputService::toggle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna un valor a la sortida.
+/// \brief    Asigna l'estat de la sortida.
 /// \param    output: La sortida.
-/// \param    value: El valor a asignar.
+/// \param    state: L'estat a asignar.
 ///
 void DigOutputService::write(
     DigOutput *output,
-    htl::gpio::PinState pinState) {
+    bool state) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = pinState == htl::gpio::PinState::set ? OpCode::set : OpCode::clear,
+        .opCode = state ? OpCode::set : OpCode::clear,
         .output = output
     };
     _commandQueue.push(cmd, unsigned(-1));
@@ -246,6 +247,25 @@ void DigOutputService::repeatPulse(
         .time2 = Math::max(space, _minWidth)
     };
     _commandQueue.push(cmd, unsigned(-1));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix l'estat actual d'una sortida.
+/// \param    output: La sortida.
+/// \return   L'estat de la sortida.
+///
+bool DigOutputService::read(
+	DigOutput *output) {
+
+    eosAssert(output != nullptr);
+    eosAssert(output->_service == this);
+
+    bool saveIrq = irq::disableInterrupts();
+    bool pinState = output->_drv->read();
+    irq::restoreInterrupts(saveIrq);
+
+    return pinState;
 }
 
 

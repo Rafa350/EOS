@@ -47,9 +47,9 @@ void PinDriver_GPIO::toggle() {
 /// \brief    Escriu l'estat del pin.
 /// \param    state: L'estat///
 void PinDriver_GPIO::write(
-	bool state) {
+	bool pinState) {
 
-	_pin->write(state ? htl::gpio::PinState::set : htl::gpio::PinState::clear);
+	_pin->write(pinState);
 }
 
 
@@ -59,5 +59,5 @@ void PinDriver_GPIO::write(
 ///
 bool PinDriver_GPIO::read() const {
 
-	return _pin->read() == htl::gpio::PinState::set;
+	return _pin->read();
 }

@@ -127,13 +127,6 @@ namespace htl {
 			high,
 			fast
 		};
-
-		/// \brief Pin state.
-		enum class PinState {
-			clear,
-			set
-		};
-
         
         /// \brief Edge interrupcion selection
 		enum class Edge {
@@ -179,8 +172,8 @@ namespace htl {
 				inline PinMask read() {
 					return _gpio->IDR;
 				}
-				inline PinState read(PinID pinID) {
-					return (_gpio->IDR & (1 << uint32_t(pinID))) ? PinState::set : PinState::clear;
+				inline bool read(PinID pinID) {
+					return (_gpio->IDR & (1 << uint32_t(pinID))) ? true : false;
 				}
 				inline void write(PinMask mask) {
 					_gpio->ODR = mask;
@@ -191,8 +184,8 @@ namespace htl {
 					r |= setMask;
 					_gpio->ODR = r;
 				}
-				inline void write(PinID pinID, PinState state) {
-					if (state == PinState::set)
+				inline void write(PinID pinID, bool state) {
+					if (state)
 						_gpio->BSRR = 1 << uint32_t(pinID);
 					else
 						_gpio->BSRR = 1 << (uint32_t(pinID) + 16);
@@ -217,7 +210,7 @@ namespace htl {
 			public:
 				void initInput(PullUpDn pull);
 				void initOutput(OutDriver driver, Speed speed);
-				void initOutput(OutDriver driver, Speed speed, PinState state);
+				void initOutput(OutDriver driver, Speed speed, bool state);
 				void initAnalogic();
 				void initAlt(OutDriver driver, Speed speed, PinFunctionID pinFunctionID);
 				inline void set() {
@@ -229,14 +222,11 @@ namespace htl {
 				inline void toggle() {
 					_gpio->ODR ^= _mask;
 				}
-				inline void write(PinState state) {
-					if (state == PinState::set)
-						_gpio->BSRR = _mask;
-					else 
-						_gpio->BSRR = _mask << 16;
+				inline void write(bool state) {
+					_gpio->BSRR = _mask << (state ? 0 : 16);
 				}
-				inline PinState read() {
-					return (_gpio->IDR & _mask) ? PinState::set : PinState::clear;
+				inline bool read() {
+					return (_gpio->IDR & _mask) != 0;
 				}
 		};
 
@@ -393,6 +383,7 @@ namespace htl {
 			public:
 				static constexpr PortID portID = portID_;
 				static constexpr PinID pinID = pinID_;
+				static constexpr PinMask pinMask = 1 << uint32_t(pinID_);
 			private:
 				PinX():
 					Pin(reinterpret_cast<GPIO_TypeDef *>(_gpioAddr), pinID_) {

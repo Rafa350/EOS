@@ -257,20 +257,14 @@ void Pin::initOutput(
 void Pin::initOutput(
 	OutDriver driver,
 	Speed speed,
-	PinState state) {
+	bool state) {
 
 	activate();
 
-	switch (state) {
-		case PinState::set:
-			set();
-			break;
-		case PinState::clear:
-			clear();
-			break;
-		default:
-			break;
-	}
+	if (state)
+		set();
+	else
+		clear();
 
 	setMode(_gpio, _mask, 1);
 	setDriver(_gpio, _mask, driver);

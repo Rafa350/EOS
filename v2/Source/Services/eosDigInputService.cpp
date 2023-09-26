@@ -113,11 +113,11 @@ void DigInputService::onInitialize() {
     //
     for (auto input: _inputs) {
         if (input->_drv->read()) {
-            input->_pinState = htl::gpio::PinState::set;
+            input->_pinState = true;
             input->_pattern = PATTERN_ON;
         }
         else {
-            input->_pinState = htl::gpio::PinState::clear;
+            input->_pinState = false;
             input->_pattern = PATTERN_OFF;
         }
         input->_pinPulses = 0;
@@ -206,7 +206,7 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc positiu
             //
             if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-                input->_pinState = htl::gpio::PinState::set;;
+                input->_pinState = true;
                 input->_edge = 1;
                 changed = true;
             }
@@ -214,7 +214,7 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc negatiu
             //
             else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-                input->_pinState = htl::gpio::PinState::clear;
+                input->_pinState = false;
                 input->_pinPulses += 1;
                 input->_edge = 1;
                 changed = true;
@@ -231,16 +231,38 @@ bool DigInputService::scanInputs() {
 /// \param    input: La entrada.
 /// \return   El estat.
 ///
-htl::gpio::PinState DigInputService::read(
+bool DigInputService::read(
     const DigInput *input) const {
 
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
     bool saveIrq = irq::disableInterrupts();
-    htl::gpio::PinState pinState = input->_pinState;
+    bool pinState = input->_pinState;
     irq::restoreInterrupts(saveIrq);
     return pinState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el contador de pulsos de l'entrada.
+/// \param    input: La entrada.
+/// \param    clear: Indica si cal borrar el contador.
+/// \return   El nombre de pulsos fins al moment de la lectura.
+///
+uint32_t DigInputService::readPulses(
+	DigInput *input,
+	bool clear) const {
+
+    eosAssert(input != nullptr);
+    eosAssert(input->_service == this);
+
+    bool saveIrq = irq::disableInterrupts();
+    uint32_t pinPulses = input->_pinPulses;
+    if (clear)
+    	input->_pinPulses = 0;
+    irq::restoreInterrupts(saveIrq);
+    return pinPulses;
 }
 
 
