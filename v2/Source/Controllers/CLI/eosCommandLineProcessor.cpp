@@ -34,14 +34,23 @@ bool CommandLineProcessor::process(
 
 	for (auto command: _commands) {
 
-		const char *cmd = command->getCmd();
-		size_t len = strlen(cmd);
+		const char *pc = command->getCmd();
+		const char *pt = text;
 
-		if (strncmp(text, cmd, len) == 0) {
+		while ((*pc == *pt) && (*pc != '\0') && (*pt != '\0')) {
+			pc++;
+			pt++;
+		}
+		if ((*pc == '\0') && ((*pt == '\0') || (*pt == ' ') || (*pt == '\t'))) {
+
 			if (_commandEventEnabled) {
+
+				while ((*pt == ' ') || (*pt == '\t'))
+					pt++;
+
 				CommandEventArgs args = {
 					.command = command,
-					.text = &text[len]
+					.text = pt
 				};
 				_commandEvent->execute(this, args);
 			}
@@ -53,6 +62,13 @@ bool CommandLineProcessor::process(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    id: Identificador de la comanda.
+/// \param    cmd: Text de la comanda.
+/// \param    shortDescription: Descripcio curta.
+/// \param    longDescription: Descripcio llarga.
+///
 CommandDefinition::CommandDefinition(
 	uint32_t id,
 	const char *cmd,

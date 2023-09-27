@@ -13,7 +13,7 @@ namespace eos {
 	class CommandDefinition;
 
 	class CommandLineProcessor final {
-		private:
+		public:
     		using CommandList = eos::List<CommandDefinition*>;
 		public:
 			struct CommandEventArgs {
@@ -42,6 +42,9 @@ namespace eos {
     		}
     		void addCommand(CommandDefinition *definition);
     		bool process(const char *buffer);
+    		CommandList& getCommands() {
+    			return _commands;
+    		}
 	};
 
 	class CommandDefinition final {
@@ -56,7 +59,7 @@ namespace eos {
     		CommandDefinition& operator = (const CommandDefinition&) = delete;
 
 		public:
-			CommandDefinition(uint32_t id, const char *cmd, const char *shortDescription, const char *longDescription);
+			CommandDefinition(uint32_t id, const char *cmd, const char *shortDescription = nullptr, const char *longDescription = nullptr);
 
 			inline uint32_t getID() const { return _id; }
 			inline const char *getCmd() const { return _cmd; }
