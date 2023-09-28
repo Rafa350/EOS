@@ -9,6 +9,9 @@
 extern void xPortSysTickHandler(void);
 
 
+static bool __schedulerActive = false;;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Entra en una seccio critica.
 ///
@@ -32,7 +35,21 @@ void osalExitCritical() {
 ///
 void osalStartScheduler() {
 
-	vTaskStartScheduler();
+	if (!__schedulerActive) {
+		__schedulerActive = true;
+
+		vTaskStartScheduler();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Indica si el planificador esta actiu.
+/// \return   True si esta actiu.
+///
+bool osalIsSchedulerActive() {
+
+	return __schedulerActive;
 }
 
 
@@ -41,7 +58,11 @@ void osalStartScheduler() {
 ///
 void osalStopScheduler() {
 
-	vTaskEndScheduler();
+	if (__schedulerActive) {
+		__schedulerActive = false;
+
+		vTaskEndScheduler();
+	}
 }
 
 

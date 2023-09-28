@@ -17,6 +17,7 @@ void osalExitCritical();
 
 void osalStartScheduler();
 void osalStopScheduler();
+bool osalIsSchedulerActive();
 
 void osalSuspendAll();
 void osalResumeAll();

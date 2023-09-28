@@ -21,8 +21,8 @@ MonoFrameBuffer::MonoFrameBuffer(
 	uint8_t *buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer(reinterpret_cast<uint8_t*>(buffer)),
-	_framePitch(framePitch) {
+	_buffer {reinterpret_cast<uint8_t*>(buffer)},
+	_framePitch {framePitch} {
 }
 
 

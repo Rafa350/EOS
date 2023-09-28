@@ -18,7 +18,6 @@ static void setMode(
 
 	for (PinNumber pn = 0; pn < 15; pn++) {
 		if ((mask & (1 << pn)) != 0) {
-
 			uint32_t tmp = gpio->MODER;
 			tmp &= ~(0b11 << (pn * 2));
 			tmp |= (mode & 0b11) << (pn * 2);

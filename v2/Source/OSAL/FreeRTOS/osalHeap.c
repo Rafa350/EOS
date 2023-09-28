@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalHeap.h"
+#include "OSAL/osalKernel.h"
 
 #include "FreeRTOS.h"
 
@@ -48,7 +49,7 @@ void* osalHeapAlloc(
     HHeap hHeap,
 	unsigned size) {
 
-    eosAssert(hHeap == NULL);
+	eosAssert(hHeap == NULL);
     eosAssert(size > 0);
 
     __allocCount++;
@@ -65,7 +66,10 @@ void* osalHeapAlloc(
     block = (char*)block + sizeof(signature);
 #endif
 
-    return block;
+    if (!osalIsSchedulerActive())
+    	__enable_irq(); // Bug en FreeRTOS al sortir d'una regio critica
+
+	return block;
 }
 
 

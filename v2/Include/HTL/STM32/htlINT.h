@@ -258,7 +258,7 @@ namespace htl {
 		};
 
 
-		void setInterruptVectorPriority(VectorID vector, Priority priority, SubPriority subPriority);
+		void setInterruptVectorPriority(VectorID vector, Priority priority, SubPriority subPriority = SubPriority::_0);
 
 		inline void enableInterrupts() {
 			__enable_irq();

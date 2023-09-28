@@ -1,5 +1,5 @@
 #include "HTL/htl.h"
-#include "HTL/htlTMR.h"
+#include "HTL/STM32/htlTMR.h"
 
 
 using namespace htl::tmr;

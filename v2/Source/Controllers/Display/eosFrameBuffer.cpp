@@ -18,11 +18,11 @@ FrameBuffer::FrameBuffer(
 	int16_t frameHeight,
 	DisplayOrientation orientation) :
 
-	_frameWidth(frameWidth),
-	_frameHeight(frameHeight),
-	_maxX(frameWidth - 1),
-	_maxY(frameHeight - 1),
-	_orientation(DisplayOrientation::normal) {
+	_frameWidth {frameWidth},
+	_frameHeight {frameHeight},
+	_maxX {frameWidth - 1},
+	_maxY {frameHeight - 1},
+	_orientation {DisplayOrientation::normal} {
 }
 
 

@@ -1,15 +1,16 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HTL/htlTick.h"
+#include "HTL/htlINT.h"
 #include "Controllers/Display/eosMonoFrameBuffer.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
-
+#include "System/Core/eosTask.h"
 
 using namespace eos;
 using namespace htl;
 
 
-static void __delay(
+static void delay(
 	uint32_t time) {
 
 	if (time > 0) {
@@ -267,9 +268,9 @@ void DisplayDriver_SSD1306::initializeController() {
 	#ifdef DISPLAY_RST_Pin
 	auto pinRST = PinRST::getHandler();
 	pinRST->clear();
-	__delay(10);
+	delay(100);
 	pinRST->set();
-	__delay(150);
+	delay(300);
 	#endif
 
     // Inicialitza el controlador

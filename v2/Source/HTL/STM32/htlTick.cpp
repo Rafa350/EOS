@@ -1,5 +1,5 @@
 #include "HTL/htlTick.h"
-#include "htl/STM32/htlClock.h"
+#include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlTMR.h"
 #include "HTL/STM32/HtlINT.h"
 #include "HTL/STM32/HtlGPIO.h"
@@ -37,7 +37,8 @@ void Tick::initialize() {
 	tmr->startInterrupt();
 
 	irq::enableInterruptVector(irq::VectorID::tmr14);
-	irq::setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::_0, irq::SubPriority::_0);
+	irq::setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::_7);
+
 }
 
 
@@ -71,11 +72,8 @@ uint32_t Tick::getTickCount() {
 void Tick::wait(
 	uint32_t time) {
 
-	return;
-
-	uint32_t startTime = _tickCounter;
-
-	while (_tickCounter - startTime < time)
+	uint32_t startTime = getTickCount();
+	while (getTickCount() - startTime < time)
 		continue;
 }
 

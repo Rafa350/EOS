@@ -1,5 +1,5 @@
 #include "HTL/htl.h"
-#include "HTL/htlI2C.h"
+#include "HTL/STM32/htlI2C.h"
 
 
 using namespace htl::i2c;

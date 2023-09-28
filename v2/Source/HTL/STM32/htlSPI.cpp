@@ -1,6 +1,6 @@
 #include "HTL/htl.h"
-#include "HAL/STM32/halSYS.h"
 #include "HTL/STM32/htlSPI.h"
+#include "HAL/STM32/halSYS.h"
 
 
 using namespace htl::spi;
