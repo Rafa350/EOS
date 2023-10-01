@@ -85,7 +85,7 @@
 #define CN7_38_Pin  		 htl::gpio::PinB12
 #endif
 
-#endif
+#endif // USE_CN7
 
 
 // -----------------------------------------------------------------------
@@ -132,7 +132,7 @@
 #define CN10_37_Pin  		 htl::gpio::PinC5
 #endif
 
-#endif
+#endif // USE_CN10
 
 
 // -----------------------------------------------------------------------
@@ -167,18 +167,15 @@
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
-#define ARDUINO_UART_Device  htl::UART_2
-#define ARDUINO_RX_Pin       ARDUINO_D0_GPIO
-#define ARDUINO_TX_Pin       ARDUINO_D1_GPIO
+#define ARDUINO_RX_Pin       ARDUINO_D0_Pin
+#define ARDUINO_TX_Pin       ARDUINO_D1_Pin
 
-#define ARDUINO_I2C_Device   htl::I2CMaster_1
-#define ARDUINO_SCL_Pin      ARDUINO_D15_GPIO
-#define ARDUINO_SDA_Pin      ARDUINO_D14_GPIO
+#define ARDUINO_SCL_Pin      ARDUINO_D15_Pin
+#define ARDUINO_SDA_Pin      ARDUINO_D14_Pin
 
-#define ARDUINO_SPI_Device   htl::SPI_1
-#define ARDUINO_SCK_Pin      ARDUINO_D13_GPIO
-#define ARDUINO_MISO_Pin     ARDUINO_D12_GPIO
-#define ARDUINO_MOSI_Pin     ARDUINO_D11_GPIO
+#define ARDUINO_SCK_Pin      ARDUINO_D13_Pin
+#define ARDUINO_MISO_Pin     ARDUINO_D12_Pin
+#define ARDUINO_MOSI_Pin     ARDUINO_D11_Pin
 
 #endif // USE_ARDUINO
 

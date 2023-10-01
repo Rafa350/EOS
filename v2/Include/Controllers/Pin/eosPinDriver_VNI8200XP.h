@@ -4,7 +4,7 @@
 
 
 #include "eos.h"
-#include "Controllers/Pin/eosîonDriver.h"
+#include "Controllers/Pin/eosPinDriver.h"
 #include "HTL/htlGPIO.h"
 
 

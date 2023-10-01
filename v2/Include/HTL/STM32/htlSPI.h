@@ -187,17 +187,17 @@ namespace htl {
 					getHandler()->interruptService();
 				}
 				template <typename pin_>
-				void initSCKPin() {
+				void initPinSCK() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::sck, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
-				void initMOSIPin() {
+				void initPinMOSI() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::mosi, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
-				void initMISOPin() {
+				void initPinMISO() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::miso, pin_>::alt;
 					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
@@ -327,6 +327,9 @@ namespace htl {
 
 #elif defined(EOS_PLATFORM_STM32G031)
     #include "htl/STM32/G0/htlSPI_AF_G031.h"
+
+#elif defined(EOS_PLATFORM_STM32G071)
+    #include "htl/STM32/G0/htlSPI_AF_G071.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlSPI_AF_F030.h"
