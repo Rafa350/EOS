@@ -16,10 +16,10 @@ namespace eos {
     ///
     class PinDriver_GPIO final: public PinDriver {
         private:
-            const htl::gpio::PinHandler _pin;
+            const htl::gpio::PinHandler _hPin;
             
         public:
-            PinDriver_GPIO(const htl::gpio::PinHandler pin);
+            PinDriver_GPIO(const htl::gpio::PinHandler hPin);
             void set() override;
             void clear() override;
             void toggle() override;

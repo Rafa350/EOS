@@ -12,100 +12,148 @@
 
 namespace eos {
 
+	class ISO808Device {
+		public:
+			virtual ~ISO808Device() = default;
+			virtual void set(uint8_t pinMask) = 0;
+			virtual void clear(uint8_t pinMask) = 0;
+			virtual void toggle(uint8_t pinMask) = 0;
+			virtual void write(uint8_t pinMask, bool pinState) = 0;
+			virtual bool read(uint8_t pinMask) = 0;
+	};
+
+	typedef ISO808Device *ISO808DeviceHandler;
+
+
     template <typename PinSYNC_, typename PinLOAD_,
               typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_, 
               typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_,
               typename PinOUTEN_, typename PinFAULT_>
-	class Device_ISO808 final {
+	class ISO808DeviceX final: public ISO808Device {
 		private:
-			static constexpr htl::gpio::PinHandler _pinSYNC = PinSYNC_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinLOAD = PinLOAD_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN1 = PinIN1_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN2 = PinIN2_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN3 = PinIN3_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN4 = PinIN4_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN5 = PinIN5_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN6 = PinIN6_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN7 = PinIN7_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinIN8 = PinIN8_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinOUTEN = PinOUTEN_::getHandler();
-			static constexpr htl::gpio::PinHandler _pinFAULT = PinFAULT_::getHandler();
-			static uint8_t _pinState;
+			static constexpr htl::gpio::PinHandler _hSYNC = PinSYNC_::getHandler();
+			static constexpr htl::gpio::PinHandler _hLOAD = PinLOAD_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN1 = PinIN1_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN2 = PinIN2_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN3 = PinIN3_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN4 = PinIN4_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN5 = PinIN5_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN6 = PinIN6_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN7 = PinIN7_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN8 = PinIN8_::getHandler();
+			static constexpr htl::gpio::PinHandler _hOUTEN = PinOUTEN_::getHandler();
+			static constexpr htl::gpio::PinHandler _hFAULT = PinFAULT_::getHandler();
+			uint8_t _pinState;
+
+		private:
+			static ISO808DeviceX _instance;
             
         private:
-            Device_ISO808(const Device_ISO808&) = delete;
-			Device_ISO808 & operator = (const Device_ISO808 &) = delete;
+			ISO808DeviceX():
+				_pinState {0} {
+
+			}
+            ISO808DeviceX(const ISO808DeviceX&) = delete;
+			ISO808DeviceX & operator = (const ISO808DeviceX&) = delete;
             
-			static void refresh() {
-                _pinLOAD->clear();
-                if ((_pinState & 0x01) == 0) _pinIN1->clear(); else _pinIN1->set();
-                if ((_pinState & 0x02) == 0) _pinIN2->clear(); else _pinIN2->set();
-                if ((_pinState & 0x04) == 0) _pinIN3->clear(); else _pinIN3->set();
-                if ((_pinState & 0x08) == 0) _pinIN4->clear(); else _pinIN4->set();
-                if ((_pinState & 0x10) == 0) _pinIN5->clear(); else _pinIN5->set();
-                if ((_pinState & 0x20) == 0) _pinIN6->clear(); else _pinIN6->set();
-                if ((_pinState & 0x40) == 0) _pinIN7->clear(); else _pinIN7->set();
-                if ((_pinState & 0x80) == 0) _pinIN8->clear(); else _pinIN8->set();
-                _pinLOAD->set();
+			void refresh() {
+                _hLOAD->clear();
+                if ((_pinState & 0x01) == 0) _hIN1->clear(); else _hIN1->set();
+                if ((_pinState & 0x02) == 0) _hIN2->clear(); else _hIN2->set();
+                if ((_pinState & 0x04) == 0) _hIN3->clear(); else _hIN3->set();
+                if ((_pinState & 0x08) == 0) _hIN4->clear(); else _hIN4->set();
+                if ((_pinState & 0x10) == 0) _hIN5->clear(); else _hIN5->set();
+                if ((_pinState & 0x20) == 0) _hIN6->clear(); else _hIN6->set();
+                if ((_pinState & 0x40) == 0) _hIN7->clear(); else _hIN7->set();
+                if ((_pinState & 0x80) == 0) _hIN8->clear(); else _hIN8->set();
+                _hLOAD->set();
             }
 
+			void sync() {
+				_hSYNC->clear();
+				_hSYNC->set();
+			}
+
 		public:
-			static void initialize() {
-                _pinSYNC->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium, true);
-                _pinLOAD->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium, true);
-                _pinIN1->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinIN2->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinIN3->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinIN4->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinIN5->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinIN6->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinIN7->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinIN8->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium);
-                _pinOUTEN->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::medium, false);
-                _pinFAULT->initInput(htl::gpio::PullUpDn::up);
+			static constexpr ISO808DeviceX * getHandler() {
+				return &_instance;
+			}
+
+			void initialize() {
+                _hSYNC->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, true);
+                _hLOAD->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, true);
+                _hIN1->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hIN2->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hIN3->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hIN4->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hIN5->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hIN6->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hIN7->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hIN8->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
+                _hOUTEN->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
+                _hFAULT->initInput(htl::gpio::PullUpDn::up);
             }
 			
-            inline static void set(uint8_t pinMask) {
+            void set(uint8_t pinMask) override {
                 _pinState |= pinMask;
                 refresh();
             }
 			
-            inline static void clear(uint8_t pinMask) {
+            void clear(uint8_t pinMask) override {
                 _pinState &= ~pinMask;
                 refresh();
             }
 			
-            inline static void toggle(uint8_t pinMask) {
+            void toggle(uint8_t pinMask) override {
                 _pinState ^= pinMask;
                 refresh();
             }
 
-            inline static void write(uint8_t pinState) {
+            void write(uint8_t pinState) override {
             	_pinState = pinState;
             	refresh();
             }
 
-            inline static uint8_t read() {
+            uint8_t read() override {
             	return _pinState;
             }
 			
-            inline static void outputEnable() {
-                _pinOUTEN->set();
+            inline void outputEnable() {
+                _hOUTEN->set();
             }
 			
-            inline static void outputDisable() {
-                _pinOUTEN->clear();
+            inline void outputDisable() {
+                _hOUTEN->clear();
             }
 	};
     
     template <typename PinSYNC_, typename PinLOAD_,
-              typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_, 
+              typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_,
               typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_,
               typename PinOUTEN_, typename PinFAULT_>
-    uint8_t Device_ISO808<PinSYNC_, PinLOAD_,
-        PinIN1_, PinIN2_, PinIN3_, PinIN4_, 
+    ISO808DeviceX<PinSYNC_, PinLOAD_,
+        PinIN1_, PinIN2_, PinIN3_, PinIN4_,
         PinIN5_, PinIN6_, PinIN7_, PinIN8_,
-        PinOUTEN_, PinFAULT_>::_pinState = 0;
+        PinOUTEN_, PinFAULT_>
+    ISO808DeviceX<PinSYNC_, PinLOAD_,
+        PinIN1_, PinIN2_, PinIN3_, PinIN4_,
+        PinIN5_, PinIN6_, PinIN7_, PinIN8_,
+        PinOUTEN_, PinFAULT_>::_instance = 0;
+
+
+    class PinDriver_ISO808 final: public PinDriver {
+		private:
+			ISO808DeviceHandler _hDevice;
+			uint8_t _pinNumber;
+		public:
+			PinDriver_ISO808(ISO808DeviceHandler hDevice, uint8_t pinNumber);
+			void set() override;
+			void clear() override;
+			void toggle() override;
+			void write(bool state) override;
+			bool read() const override;
+    };
+
 }
 
 
