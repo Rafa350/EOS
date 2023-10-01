@@ -24,7 +24,7 @@ namespace eos {
     //
     class DigInputService final: public Service {
     	public:
-    		static constexpr uint32_t minStackSize = 100;
+    		static constexpr uint32_t minStackSize = 128;
 
         private:
             typedef List<DigInput*> DigInputList;
@@ -88,6 +88,10 @@ namespace eos {
 
             inline DigInputService* getService() const {
                 return _service;
+            }
+
+            inline PinDriver *getPinDriver() const {
+            	return _drv;
             }
 
             inline bool read() const {

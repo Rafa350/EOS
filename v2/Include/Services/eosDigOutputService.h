@@ -14,7 +14,7 @@
 
 // Numero maxim d'elements en la cua de comandes
 #ifndef DigOutputService_CommandQueueSize
-    #define DigOutputService_CommandQueueSize 5
+    #define DigOutputService_CommandQueueSize 10
 #endif
 
 // Retard minim en ms
@@ -94,16 +94,16 @@ namespace eos {
             void removeOutput(DigOutput *output);
             void removeOutputs();
 
-            void set(DigOutput *output);
-            void clear(DigOutput *output);
-            void write(DigOutput *output, bool pinState);
-            void toggle(DigOutput *output);
-            void pulse(DigOutput *output, unsigned width);
-            void delayedSet(DigOutput *output, unsigned delay);
-            void delayedClear(DigOutput *output, unsigned delay);
-            void delayedToggle(DigOutput *output, unsigned delay);
-            void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
-            void repeatPulse(DigOutput *output, unsigned width, unsigned space);
+            void set(DigOutput *output, bool fromISR = false);
+            void clear(DigOutput *output, bool fromISR = false);
+            void write(DigOutput *output, bool pinState, bool fromISR = false);
+            void toggle(DigOutput *output, bool fromISR = false);
+            void pulse(DigOutput *output, unsigned width, bool fromISR = false);
+            void delayedSet(DigOutput *output, unsigned delay, bool fromISR = false);
+            void delayedClear(DigOutput *output, unsigned delay, bool fromISR = false);
+            void delayedToggle(DigOutput *output, unsigned delay, bool fromISR = false);
+            void delayedPulse(DigOutput *output, unsigned delay, unsigned width, bool fromISR = false);
+            void repeatPulse(DigOutput *output, unsigned width, unsigned space, bool fromISR = false);
             bool read(DigOutput *ouput);
 
             void tmrInterruptFunction();
@@ -140,48 +140,52 @@ namespace eos {
                 return _service;
             }
 
-            inline void set() {
-                _service->set(this);
+            inline PinDriver *getPinDriver() const {
+            	return _drv;
             }
 
-            inline void clear() {
-                _service->clear(this);
+            inline void set(bool fromISR = false) {
+                _service->set(this, fromISR);
             }
 
-            inline void write(bool pinState) {
-                _service->write(this, pinState);
+            inline void clear(bool fromISR = false) {
+                _service->clear(this, fromISR);
+            }
+
+            inline void write(bool pinState, bool fromISR = false) {
+                _service->write(this, pinState, fromISR);
             }
 
             inline bool read() {
             	return _service->read(this);
             }
 
-            inline void toggle() {
-                _service->toggle(this);
+            inline void toggle(bool fromISR = false) {
+                _service->toggle(this, fromISR);
             }
 
-            inline void pulse(unsigned width) {
-                _service->pulse(this, width);
+            inline void pulse(unsigned width, bool fromISR = false) {
+                _service->pulse(this, width, fromISR);
             }
 
-            inline void delayedSet(unsigned delay) {
-                _service->delayedSet(this, delay);
+            inline void delayedSet(unsigned delay, bool fromISR = false) {
+                _service->delayedSet(this, delay, fromISR);
             }
 
-            inline void delayedClear(unsigned delay) {
-                _service->delayedClear(this, delay);
+            inline void delayedClear(unsigned delay, bool fromISR = false) {
+                _service->delayedClear(this, delay, fromISR);
             }
 
-            inline void delayedToggle(unsigned delay) {
-                _service->delayedToggle(this, delay);
+            inline void delayedToggle(unsigned delay, bool fromISR = false) {
+                _service->delayedToggle(this, delay, fromISR);
             }
 
-            inline void delayedPulse(unsigned delay, unsigned width) {
-                _service->delayedPulse(this, delay, width);
+            inline void delayedPulse(unsigned delay, unsigned width, bool fromISR = false) {
+                _service->delayedPulse(this, delay, width, fromISR);
             }
             
-            inline void repeatPulse(unsigned width, unsigned space) {
-                _service->repeatPulse(this, width, space);
+            inline void repeatPulse(unsigned width, unsigned space, bool fromISR = false) {
+                _service->repeatPulse(this, width, space, fromISR);
             }
 
             friend DigOutputService;

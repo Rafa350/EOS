@@ -110,9 +110,11 @@ void DigOutputService::removeOutputs() {
 /// ----------------------------------------------------------------------
 /// \brief    Posa la sortida en estat ON
 /// \param    output: La sortida.
+/// \param    fromISR: Indica si es crida desde una funcio ISR
 ///
 void DigOutputService::set(
-    DigOutput *output) {
+    DigOutput *output,
+	bool fromISR) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -121,16 +123,21 @@ void DigOutputService::set(
         .opCode = OpCode::set,
         .output = output
     };
-    _commandQueue.push(cmd, unsigned(-1));
+    if (fromISR)
+        _commandQueue.pushISR(cmd);
+    else
+    	_commandQueue.push(cmd, unsigned(-1));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Posa la sortida en estat OFF
 /// \param    output: La sortida.
+/// \param    fromISR: Indica si es crida desde una funcio ISR
 ///
 void DigOutputService::clear(
-    DigOutput *output) {
+    DigOutput *output,
+	bool fromISR) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -139,16 +146,21 @@ void DigOutputService::clear(
         .opCode = OpCode::clear,
         .output = output
     };
-    _commandQueue.push(cmd, unsigned(-1));
+    if (fromISR)
+        _commandQueue.pushISR(cmd);
+    else
+    	_commandQueue.push(cmd, unsigned(-1));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Conmuta l'estat de la sortida.
 /// \param    output: La sortida.
+/// \param    fromISR: Indica si es crida desde una funcio ISR
 ///
 void DigOutputService::toggle(
-    DigOutput *output) {
+    DigOutput *output,
+	bool fromISR) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -157,7 +169,10 @@ void DigOutputService::toggle(
         .opCode = OpCode::toggle,
         .output = output
     };
-    _commandQueue.push(cmd, unsigned(-1));
+    if (fromISR)
+        _commandQueue.pushISR(cmd);
+    else
+    	_commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -165,10 +180,12 @@ void DigOutputService::toggle(
 /// \brief    Asigna l'estat de la sortida.
 /// \param    output: La sortida.
 /// \param    state: L'estat a asignar.
+/// \param    fromISR: Indica si es crida desde una funcio ISR
 ///
 void DigOutputService::write(
     DigOutput *output,
-    bool state) {
+    bool state,
+	bool fromISR) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -177,7 +194,10 @@ void DigOutputService::write(
         .opCode = state ? OpCode::set : OpCode::clear,
         .output = output
     };
-    _commandQueue.push(cmd, unsigned(-1));
+    if (fromISR)
+        _commandQueue.pushISR(cmd);
+    else
+    	_commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -185,10 +205,12 @@ void DigOutputService::write(
 /// \brief    Genera un puls de conmutacio.
 /// \param    output: La sortida.
 /// \param    width: L'amplada del puls.
+/// \param    fromISR: Indica si es crida desde una funcio ISR
 ///
 void DigOutputService::pulse(
     DigOutput *output,
-    unsigned width) {
+    unsigned width,
+	bool fromISR) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -198,7 +220,10 @@ void DigOutputService::pulse(
         .output = output,
         .time1 = Math::max(width, _minWidth)
     };
-    _commandQueue.push(cmd, unsigned(-1));
+    if (fromISR)
+        _commandQueue.pushISR(cmd);
+    else
+    	_commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -207,11 +232,13 @@ void DigOutputService::pulse(
 /// \param    output: La sortida.
 /// \param    delay: El retard del puls.
 /// \param    width: L'amplada del puls.
+/// \param    fromISR: Indica si es crida desde una funcio ISR
 ///
 void DigOutputService::delayedPulse(
     DigOutput *output,
     unsigned delay,
-    unsigned width) {
+    unsigned width,
+	bool fromISR) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -222,7 +249,10 @@ void DigOutputService::delayedPulse(
         .time1 = Math::max(delay, _minDelay),
         .time2 = Math::max(width, _minWidth)
     };
-    _commandQueue.push(cmd, unsigned(-1));
+    if (fromISR)
+        _commandQueue.pushISR(cmd);
+    else
+    	_commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -231,11 +261,13 @@ void DigOutputService::delayedPulse(
 /// \param    output: La sortida.
 /// \param    width: L'amplada del puls.
 /// \param    space: L'amplada del espai. 
+/// \param    fromISR: Indica si es crida desde una funcio ISR
 ///
 void DigOutputService::repeatPulse(
     DigOutput *output,
     unsigned width,
-    unsigned space) {
+    unsigned space,
+	bool fromISR) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -246,7 +278,10 @@ void DigOutputService::repeatPulse(
         .time1 = Math::max(width, _minWidth),
         .time2 = Math::max(space, _minWidth)
     };
-    _commandQueue.push(cmd, unsigned(-1));
+    if (fromISR)
+        _commandQueue.pushISR(cmd);
+    else
+    	_commandQueue.push(cmd, unsigned(-1));
 }
 
 
