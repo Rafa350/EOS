@@ -126,8 +126,8 @@ void Pin::initOutput(
 void Pin::initOutput(
     OutDriver driver,
     Speed speed,
-    PinState state) {
+    bool pinState) {
 
-    write(state);
+    write(pinState);
     initializeOutput(_gpio, _pinMask, driver, speed);
 }

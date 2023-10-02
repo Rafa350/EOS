@@ -18,8 +18,8 @@
 #define EXIST_LED1
 
 #define LED1_Pin             htl::gpio::PinD0
-#define LED1_StateON         htl::gpio::PinState::set
-#define LED1_StateOFF        htl::gpio::PinState::clear
+#define LED1_StateON         true
+#define LED1_StateOFF        false
 
 #endif // USE_LED1
 
@@ -32,8 +32,8 @@
 #define EXIST_LED2
 
 #define LED2_Pin             htl::gpio::PinD1
-#define LED2_StateON         htl::gpio::PinState::set
-#define LED2_StateOFF        htl::gpio::PinState::clear
+#define LED2_StateON         true
+#define LED2_StateOFF        false
 
 #endif // USE_LED2
 
@@ -46,8 +46,8 @@
 #define EXIST_LED3
 
 #define LED3_Pin             htl::gpio::PinD2
-#define LED3_StateON         htl::gpio::PinState::set
-#define LED3_StateOFF        htl::gpio::PinState::clear
+#define LED3_StateON         true
+#define LED3_StateOFF        false
 
 #endif // USE_LED1
 
@@ -61,8 +61,8 @@
 #define EXIST_SW1
 
 #define SW1_Pin              htl::gpio::PinD6
-#define SW1_StateON          htl::gpio::PinState::clear
-#define SW1_StateOFF         htl::gpio::PinState::set
+#define SW1_StateON          false
+#define SW1_StateOFF         true
 
 #endif // USE_SW1
 
@@ -75,8 +75,8 @@
 #define EXIST_SW2
 
 #define SW2_Pin              htl::gpio::PinD7
-#define SW2_StateON          htl::gpio::PinState::clear
-#define SW2_StateOFF         htl::gpio::PinState::set
+#define SW2_StateON          false
+#define SW2_StateOFF         true
 
 #endif // USE_SW2
 
@@ -89,8 +89,8 @@
 #define EXIST_SW3
 
 #define SW3_Pin              htl::gpio::PinD13
-#define SW3_StateON          htl::gpio::PinState::clear
-#define SW3_StateOFF         htl::gpio::PinState::set
+#define SW3_StateON          false
+#define SW3_StateOFF         true
 
 #endif // USE_SW3
 

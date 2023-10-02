@@ -87,11 +87,6 @@ namespace htl {
             fast
         };
 
-        enum class PinState {
-            clear,
-            set
-        };
-
 
         namespace internal {
 
@@ -149,8 +144,8 @@ namespace htl {
                 inline PinMask read() {
                     return _gpio->PORTx;
                 }
-                inline PinState read(PinID pinID) {
-                    return (_gpio->PORTx & (1 << (int)pinID)) ? PinState::set : PinState::clear;
+                inline bool read(PinID pinID) {
+                    return (_gpio->PORTx & (1 << (int)pinID)) ? true : false;
                 }
                 inline void write(PinMask mask) {
                     _gpio->LATx = mask;
@@ -161,8 +156,8 @@ namespace htl {
                     r |= setMask;
                     _gpio->LATx = r;
                 }
-                inline void write(PinID pinID, PinState state) {
-                    if (state == PinState::set)
+                inline void write(PinID pinID, bool pinState) {
+                    if (pinState)
                         _gpio->LATxSET = 1 << (int) pinID;
                     else
                         _gpio->LATxCLR = 1 << (int) pinID;
@@ -238,7 +233,7 @@ namespace htl {
             public :
                 void initInput(PullUp pullUp = PullUp::noChange);
                 void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
-                void initOutput(OutDriver driver, Speed speed, PinState state);
+                void initOutput(OutDriver driver, Speed speed, bool pinState);
                 inline void set() {
                     _gpio->LATxSET = _pinMask;
                 }
@@ -248,11 +243,11 @@ namespace htl {
                 inline void toggle() {
                     _gpio->LATxINV = _pinMask;
                 }
-                inline PinState read() {
-                    return _gpio->PORTx & _pinMask ? PinState::set : PinState::clear;
+                inline bool read() {
+                    return _gpio->PORTx & _pinMask ? true : false;
                 }
-                inline void write(PinState state) {
-                    if (state == PinState::set)
+                inline void write(bool pinState) {
+                    if (pinState)
                         _gpio->LATxSET = _pinMask;
                     else
                         _gpio->LATxCLR = _pinMask;
