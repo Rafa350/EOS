@@ -56,24 +56,6 @@ namespace eos {
             ISO808DeviceX(const ISO808DeviceX&) = delete;
 			ISO808DeviceX & operator = (const ISO808DeviceX&) = delete;
             
-			void refresh() {
-                _hLOAD->clear();
-                if ((_pinState & 0x01) == 0) _hIN1->clear(); else _hIN1->set();
-                if ((_pinState & 0x02) == 0) _hIN2->clear(); else _hIN2->set();
-                if ((_pinState & 0x04) == 0) _hIN3->clear(); else _hIN3->set();
-                if ((_pinState & 0x08) == 0) _hIN4->clear(); else _hIN4->set();
-                if ((_pinState & 0x10) == 0) _hIN5->clear(); else _hIN5->set();
-                if ((_pinState & 0x20) == 0) _hIN6->clear(); else _hIN6->set();
-                if ((_pinState & 0x40) == 0) _hIN7->clear(); else _hIN7->set();
-                if ((_pinState & 0x80) == 0) _hIN8->clear(); else _hIN8->set();
-                _hLOAD->set();
-            }
-
-			void sync() {
-				_hSYNC->clear();
-				_hSYNC->set();
-			}
-
 		public:
 			static constexpr ISO808DeviceX * getHandler() {
 				return &_instance;
@@ -94,24 +76,38 @@ namespace eos {
                 _hFAULT->initInput(htl::gpio::PullUpDn::up);
             }
 			
+			void refresh() {
+                _hLOAD->clear();
+                if ((_pinState & 0x01) == 0) _hIN1->clear(); else _hIN1->set();
+                if ((_pinState & 0x02) == 0) _hIN2->clear(); else _hIN2->set();
+                if ((_pinState & 0x04) == 0) _hIN3->clear(); else _hIN3->set();
+                if ((_pinState & 0x08) == 0) _hIN4->clear(); else _hIN4->set();
+                if ((_pinState & 0x10) == 0) _hIN5->clear(); else _hIN5->set();
+                if ((_pinState & 0x20) == 0) _hIN6->clear(); else _hIN6->set();
+                if ((_pinState & 0x40) == 0) _hIN7->clear(); else _hIN7->set();
+                if ((_pinState & 0x80) == 0) _hIN8->clear(); else _hIN8->set();
+                _hLOAD->set();
+            }
+
+			void sync() {
+				_hSYNC->clear();
+				_hSYNC->set();
+			}
+
             void set(uint8_t pinMask) override {
                 _pinState |= pinMask;
-                refresh();
             }
 			
             void clear(uint8_t pinMask) override {
                 _pinState &= ~pinMask;
-                refresh();
             }
 			
             void toggle(uint8_t pinMask) override {
                 _pinState ^= pinMask;
-                refresh();
             }
 
             void write(uint8_t pinState) override {
             	_pinState = pinState;
-            	refresh();
             }
 
             uint8_t read() override {
@@ -138,23 +134,23 @@ namespace eos {
     ISO808DeviceX<PinSYNC_, PinLOAD_,
         PinIN1_, PinIN2_, PinIN3_, PinIN4_,
         PinIN5_, PinIN6_, PinIN7_, PinIN8_,
-        PinOUTEN_, PinFAULT_>::_instance = 0;
+        PinOUTEN_, PinFAULT_>::_instance;
 
 
     class PinDriver_ISO808 final: public PinDriver {
 		private:
 			ISO808DeviceHandler _hDevice;
-			uint8_t _pinNumber;
+			uint8_t _pinMask;
 		public:
 			PinDriver_ISO808(ISO808DeviceHandler hDevice, uint8_t pinNumber);
 			void set() override;
 			void clear() override;
 			void toggle() override;
-			void write(bool state) override;
+			void write(bool pinState) override;
 			bool read() const override;
     };
 
 }
 
 
-#endif // __eosPinDriver__ISO808__
+#endif // __eosPinDriver_ISO808__
