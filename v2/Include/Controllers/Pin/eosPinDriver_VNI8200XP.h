@@ -27,9 +27,9 @@ namespace eos {
     template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
     class VNI8200XPSerialDevice final: public VNI8200XPDevice {
         private:
-    		constexpr htl::spi::SPIDeviceHandler _hSPI = SPIDevice::getHandler();
-            constexpr htl::gpio::PinHandler _hSS = PinSS_::getHandler();
-            constexpr htl::gpio::PinHandler _hOUTEN = PinOUTEN_::getHandler();
+    		static constexpr htl::spi::SPIDeviceHandler _hSPI = SPIDevice_::getHandler();
+            static constexpr htl::gpio::PinHandler _hSS = PinSS_::getHandler();
+            static constexpr htl::gpio::PinHandler _hOUTEN = PinOUTEN_::getHandler();
 
         private:
             static VNI8200XPSerialDevice _instance;
@@ -48,21 +48,21 @@ namespace eos {
             void toggle(uint8_t pinState) override;
     };
     template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
-	VNI8200XPSerialDevice<SPIDevice_, PinSS_, PinOUTEN> VNI8200XPSerialDevice<SPIDevice_, PinSS_, PinOUTEN_>::_instance;
+	VNI8200XPSerialDevice<SPIDevice_, PinSS_, PinOUTEN_> VNI8200XPSerialDevice<SPIDevice_, PinSS_, PinOUTEN_>::_instance;
     
 
     template <typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_,
               typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_>
     class VNI8200XPParalelDevice final: public VNI8200XPDevice {
         private:
-			constexpr htl::gpio::PinHandler _hIN1 = PinIN1_::getHandler();
-			constexpr htl::gpio::PinHandler _hIN2 = PinIN2_::getHandler();
-			constexpr htl::gpio::PinHandler _hIN3 = PinIN3_::getHandler();
-			constexpr htl::gpio::PinHandler _hIN4 = PinIN4_::getHandler();
-			constexpr htl::gpio::PinHandler _hIN5 = PinIN5_::getHandler();
-			constexpr htl::gpio::PinHandler _hIN6 = PinIN6_::getHandler();
-			constexpr htl::gpio::PinHandler _hIN7 = PinIN7_::getHandler();
-			constexpr htl::gpio::PinHandler _hIN8 = PinIN8_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN1 = PinIN1_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN2 = PinIN2_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN3 = PinIN3_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN4 = PinIN4_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN5 = PinIN5_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN6 = PinIN6_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN7 = PinIN7_::getHandler();
+			static constexpr htl::gpio::PinHandler _hIN8 = PinIN8_::getHandler();
 
         private:
             static VNI8200XPParalelDevice _instance;

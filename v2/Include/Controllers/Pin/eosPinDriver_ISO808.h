@@ -15,6 +15,9 @@ namespace eos {
 	class ISO808Device {
 		public:
 			virtual ~ISO808Device() = default;
+			virtual void initialize() = 0;
+			virtual void load() = 0;
+			virtual void sync() = 0;
 			virtual void set(uint8_t pinMask) = 0;
 			virtual void clear(uint8_t pinMask) = 0;
 			virtual void toggle(uint8_t pinMask) = 0;
@@ -55,13 +58,13 @@ namespace eos {
 			}
             ISO808DeviceX(const ISO808DeviceX&) = delete;
 			ISO808DeviceX & operator = (const ISO808DeviceX&) = delete;
-            
+
 		public:
 			static constexpr ISO808DeviceX * getHandler() {
 				return &_instance;
 			}
 
-			void initialize() {
+			void initialize() override {
                 _hSYNC->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, true);
                 _hLOAD->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, true);
                 _hIN1->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high);
@@ -76,7 +79,7 @@ namespace eos {
                 _hFAULT->initInput(htl::gpio::PullUpDn::up);
             }
 			
-			void refresh() {
+   			void load() override {
                 _hLOAD->clear();
                 if ((_pinState & 0x01) == 0) _hIN1->clear(); else _hIN1->set();
                 if ((_pinState & 0x02) == 0) _hIN2->clear(); else _hIN2->set();
@@ -89,7 +92,7 @@ namespace eos {
                 _hLOAD->set();
             }
 
-			void sync() {
+			void sync() override {
 				_hSYNC->clear();
 				_hSYNC->set();
 			}
