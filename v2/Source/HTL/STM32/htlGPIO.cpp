@@ -5,6 +5,14 @@
 using namespace htl::gpio;
 
 
+enum class Mode {
+	input = 0b00,
+	output = 0b01,
+	alternate = 0b10,
+	analogic = 0b11
+};
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el modus de treball dels pins.
 /// \param    gpio: Registres hardware del modul GPIO.
@@ -14,13 +22,13 @@ using namespace htl::gpio;
 static void setMode(
 	GPIO_TypeDef *gpio,
 	PinMask mask,
-	uint8_t mode) {
+	Mode mode) {
 
 	for (PinNumber pn = 0; pn < 15; pn++) {
 		if ((mask & (1 << pn)) != 0) {
 			uint32_t tmp = gpio->MODER;
 			tmp &= ~(0b11 << (pn * 2));
-			tmp |= (mode & 0b11) << (pn * 2);
+			tmp |= uint32_t(mode) << (pn * 2);
 			gpio->MODER = tmp;
 		}
 	}
@@ -177,7 +185,7 @@ void Port::initInput(
 
 	activate(mask);
 
-    setMode(_gpio, mask, 0);
+    setMode(_gpio, mask, Mode::input);
     setPull(_gpio, mask, pull);
 }
 
@@ -195,7 +203,7 @@ void Port::initOutput(
 
 	activate(mask);
 
-	setMode(_gpio, mask, 1);
+	setMode(_gpio, mask, Mode::output);
 	setDriver(_gpio, mask, driver);
 	setSpeed(_gpio, mask, speed);
 }
@@ -225,7 +233,7 @@ void Pin::initInput(
 
 	activate();
 
-    setMode(_gpio, _mask, 0);
+    setMode(_gpio, _mask, Mode::input);
     setPull(_gpio, _mask, pull);
 }
 
@@ -241,7 +249,7 @@ void Pin::initOutput(
 
 	activate();
 
-	setMode(_gpio, _mask, 1);
+	setMode(_gpio, _mask, Mode::output);
 	setDriver(_gpio, _mask, driver);
 	setSpeed(_gpio, _mask, speed);
 }
@@ -265,7 +273,7 @@ void Pin::initOutput(
 	else
 		clear();
 
-	setMode(_gpio, _mask, 1);
+	setMode(_gpio, _mask, Mode::output);
 	setDriver(_gpio, _mask, driver);
 	setSpeed(_gpio, _mask, speed);
 }
@@ -286,7 +294,7 @@ void Pin::initAlt(
 
 	activate();
 
-    setMode(_gpio, _mask, 2);
+    setMode(_gpio, _mask, Mode::alternate);
     setDriver(_gpio, _mask, driver);
     setSpeed(_gpio, _mask, speed);
     setPinFunction(_gpio, _mask, pinFunctionID);
@@ -302,7 +310,51 @@ void Pin::initAnalogic() {
 
 	activate();
 
-	setMode(_gpio, _mask, 3);
+	setMode(_gpio, _mask, Mode::analogic);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el pin i el deixa als valor per defecte.
+///
+void Pin::deinitialize() {
+
+#ifdef EOS_PLATFORM_STM32G0
+
+	// El port A es especial
+	//
+	if (_gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) {
+		if ((_mask & 0x6000) != 0)
+			setMode(_gpio, _mask, Mode::alternate);
+		else
+			setMode(_gpio, _mask, Mode::analogic);
+
+		if ((_mask & 0x8000) != 0)
+			setSpeed(_gpio, _mask, Speed::fast);
+		else
+			setSpeed(_gpio, _mask, Speed::low);
+
+		setDriver(_gpio, _mask, OutDriver::pushPull);
+
+		if ((_mask & 0x4000) != 0)
+			setPull(_gpio, _mask, PullUpDn::down);
+		else if ((_mask & 0x2000) != 0)
+			setPull(_gpio, _mask, PullUpDn::up);
+		else
+			setPull(_gpio, _mask, PullUpDn::none);
+	}
+
+	else {
+		setMode(_gpio, _mask, Mode::analogic);
+		setSpeed(_gpio, _mask, Speed::low);
+		setDriver(_gpio, _mask, OutDriver::pushPull);
+		setPull(_gpio, _mask, PullUpDn::none);
+	}
+
+	setPinFunction(_gpio, _mask, PinFunctionID::_0);
+#else
+#error "Undefined platform"
+#endif
 }
 
 
