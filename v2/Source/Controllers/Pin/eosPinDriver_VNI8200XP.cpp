@@ -11,10 +11,11 @@ VNI8200XP_SerialDevice::VNI8200XP_SerialDevice(
 	gpio::PinHandler hSS,
 	gpio::PinHandler hOUTEN) :
 
+    _newState {0},
+    _oldState {0},
 	_hSPI {hSPI},
 	_hSS {hSS},
-	_hOUTEN {hOUTEN},
-	_outReg {0} {
+	_hOUTEN {hOUTEN} {
 
 }
 
@@ -43,7 +44,8 @@ uint8_t VNI8200XP_SerialDevice::calcParity(
 }
 
 
-uint8_t VNI8200XP_SerialDevice::transmit(uint8_t data) {
+uint8_t VNI8200XP_SerialDevice::transmit(
+    uint8_t data) {
 
 	uint8_t txData[2], rxData[2];
 
@@ -58,42 +60,47 @@ uint8_t VNI8200XP_SerialDevice::transmit(uint8_t data) {
 }
 
 
-void VNI8200XP_SerialDevice::outputEnable() {
+void VNI8200XP_SerialDevice::enable() {
 
 	_hOUTEN->set();
 }
 
 
-void VNI8200XP_SerialDevice::outputDisable() {
+void VNI8200XP_SerialDevice::disable() {
 
 	_hOUTEN->clear();
 }
 
 
-void VNI8200XP_SerialDevice::sync() {
+void VNI8200XP_SerialDevice::update() {
     
-    transmit(_outReg);
+    if (_newState != _oldState) {
+    
+        transmit(_newState);
+        
+        _oldState = _newState;
+    }
 }
 
 
 void VNI8200XP_SerialDevice::set(
 	uint8_t pinMask) {
 
-	_outReg |= pinMask;
+	_newState |= pinMask;
 }
 
 
 void VNI8200XP_SerialDevice::clear(
 	uint8_t pinMask) {
 
-	_outReg &= ~pinMask;
+	_newState &= ~pinMask;
 }
 
 
 void VNI8200XP_SerialDevice::toggle(
 	uint8_t pinMask) {
 
-	_outReg ^= pinMask;
+	_newState ^= pinMask;
 }
 
 
@@ -101,14 +108,14 @@ void VNI8200XP_SerialDevice::write(
 	uint8_t pinMask,
 	bool pinState) {
 
-	_outReg = (_outReg & ~pinMask) | pinMask;
+	_newState = (_mewState & ~pinMask) | pinMask;
 }
 
 
 bool VNI8200XP_SerialDevice::read(
 	uint8_t pinMask) {
 
-	return false;
+	return _newState & pinMask;
 }
 
 

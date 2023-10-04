@@ -14,38 +14,43 @@ namespace eos {
     class VNI8200XP_Device {
         public:
     		virtual ~VNI8200XP_Device() = default;
+            virtual void initialize() = 0;
             virtual void set(uint8_t pinMask) = 0;
             virtual void clear(uint8_t pinMask) = 0;
             virtual void toggle(uint8_t pinMask) = 0;
 			virtual void write(uint8_t pinMask, bool pinState) = 0;
 			virtual bool read(uint8_t pinMask) = 0;
-			virtual void outputEnable() = 0;
-			virtual void outputDisable() = 0;
-            virtual void sync() = 0;
+			virtual void enable() = 0;
+			virtual void disable() = 0;
+            virtual void update() = 0;
+            virtual bool isOK() = 0;
     };
 
     typedef VNI8200XP_Device *VNI8200XP_DeviceHandler;
 
     class VNI8200XP_SerialDevice: public VNI8200XP_Device {
     	private:
-    		htl::spi::SPIDeviceHandler _hSPI;
-    		htl::gpio::PinHandler _hSS;
-    		htl::gpio::PinHandler _hOUTEN;
-    		uint8_t _outReg;
+    		uint8_t _newState;
+            uint8_t _oldState
+    		htl::spi::SPIDeviceHandler const _hSPI;
+    		htl::gpio::PinHandler const _hSS;
+    		htl::gpio::PinHandler const _hOUTEN;
     	private:
     		uint8_t calcParity(uint8_t data);
     		uint8_t transmit(uint8_t data);
     	protected:
     		VNI8200XP_SerialDevice(htl::spi::SPIDeviceHandler hSPI,  htl::gpio::PinHandler hSS, htl::gpio::PinHandler hOUTEN);
     	public:
+            void initialize() override;
         	void set(uint8_t pinMask) override;
 			void clear(uint8_t pinMask) override;
 			void toggle(uint8_t pinMask) override;
 			void write(uint8_t pinMask, bool pinState) override;
 			bool read(uint8_t pinMask) override;
-			void outputEnable() override;
-			void outputDisable() override;
-            void sync() override;
+			void enable() override;
+			void disable() override;
+            void update() override;
+            bool isOK() override;
     };
     
     template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
@@ -69,8 +74,8 @@ namespace eos {
     
     class PinDriver_VNI8200XP final: public PinDriver {
 		private:
-			VNI8200XP_DeviceHandler _hDevice;
-			uint8_t _pinNumber;
+			VNI8200XP_DeviceHandler const _hDevice;
+			uint8_t const _pinNumber;
 		public:
 			PinDriver_VNI8200XP(VNI8200XP_DeviceHandler hDevice, uint8_t pinNumber);
 			void set() override;

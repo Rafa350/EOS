@@ -13,13 +13,15 @@ namespace eos {
 
 	class CLT0138SQ7_Device {
 		protected:
-			htl::spi::SPIDeviceHandler _hSPI;
-			htl::gpio::PinHandler _hSS;
+			htl::spi::SPIDeviceHandler const _hSPI;
+			htl::gpio::PinHandler const _hSS;
 		protected:
 			CLT0138SQ7_Device(htl::spi::SPIDeviceHandler hSPI, htl::gpio::PinHandler hSS);
 		public:
-			virtual ~CLT0138SQ7_Device() = default;
-			virtual uint8_t read() = 0;
+            void initialize();
+			uint8_t read();
+            void update();
+            
 	};
 
 	typedef CLT0138SQ7_Device *CLT0138SQ7_DeviceHandlewr;
