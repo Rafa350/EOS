@@ -70,6 +70,12 @@ void VNI8200XP_SerialDevice::outputDisable() {
 }
 
 
+void VNI8200XP_SerialDevice::sync() {
+    
+    transmit(_outReg);
+}
+
+
 void VNI8200XP_SerialDevice::set(
 	uint8_t pinMask) {
 

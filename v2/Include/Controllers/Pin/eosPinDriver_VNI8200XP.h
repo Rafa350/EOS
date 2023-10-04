@@ -21,6 +21,7 @@ namespace eos {
 			virtual bool read(uint8_t pinMask) = 0;
 			virtual void outputEnable() = 0;
 			virtual void outputDisable() = 0;
+            virtual void sync() = 0;
     };
 
     typedef VNI8200XP_Device *VNI8200XP_DeviceHandler;
@@ -44,6 +45,7 @@ namespace eos {
 			bool read(uint8_t pinMask) override;
 			void outputEnable() override;
 			void outputDisable() override;
+            void sync() override;
     };
     
     template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
@@ -64,39 +66,6 @@ namespace eos {
     template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
 	VNI8200XP_SerialDeviceX<SPIDevice_, PinSS_, PinOUTEN_> VNI8200XP_SerialDeviceX<SPIDevice_, PinSS_, PinOUTEN_>::_instance;
     
-/*
-    template <typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_,
-              typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_>
-    class VNI8200XPParalelDeviceX final: public VNI8200XPDevice {
-        private:
-			static constexpr htl::gpio::PinHandler _hIN1 = PinIN1_::getHandler();
-			static constexpr htl::gpio::PinHandler _hIN2 = PinIN2_::getHandler();
-			static constexpr htl::gpio::PinHandler _hIN3 = PinIN3_::getHandler();
-			static constexpr htl::gpio::PinHandler _hIN4 = PinIN4_::getHandler();
-			static constexpr htl::gpio::PinHandler _hIN5 = PinIN5_::getHandler();
-			static constexpr htl::gpio::PinHandler _hIN6 = PinIN6_::getHandler();
-			static constexpr htl::gpio::PinHandler _hIN7 = PinIN7_::getHandler();
-			static constexpr htl::gpio::PinHandler _hIN8 = PinIN8_::getHandler();
-
-        private:
-            static VNI8200XPParalelDeviceX _instance;
-
-        private:
-            VNI8200XPParalelDeviceX() = default;
-            VNI8200XPParalelDeviceX(const VNI8200XPParalelDeviceX&) = delete;
-            VNI8200XPParalelDeviceX operator = (const VNI8200XPParalelDeviceX&) = delete;
-
-        public:
-			static constexpr VNI8200XPParalelDeviceX * getHandler() {
-				return &_instance;
-			}
-            void set(uint8_t pinMask) override;
-            void clear(uint8_t pinMask) override;
-            void toggle(uint8_t pinMask) override;
-			void write(uint8_t pinMask, bool pinState) override;
-			bool read(uint8_t pinMask) override;
-    };
-*/
     
     class PinDriver_VNI8200XP final: public PinDriver {
 		private:
