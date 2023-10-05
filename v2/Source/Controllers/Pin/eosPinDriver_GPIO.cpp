@@ -57,7 +57,7 @@ void PinDriver_GPIO::write(
 /// \brief    Llegeix l'eatat del pin.
 /// \return   L'estat
 ///
-bool PinDriver_GPIO::read() const {
+bool PinDriver_GPIO::read() {
 
 	return _hPin->read();
 }

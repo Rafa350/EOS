@@ -19,11 +19,11 @@ namespace eos {
             virtual void clear(uint8_t pinMask) = 0;
             virtual void toggle(uint8_t pinMask) = 0;
 			virtual void write(uint8_t pinMask, bool pinState) = 0;
-			virtual bool read(uint8_t pinMask) = 0;
-			virtual void enable() = 0;
-			virtual void disable() = 0;
+			virtual uint8_t read() const = 0;
+			virtual void enable() const = 0;
+			virtual void disable() const = 0;
             virtual void update() = 0;
-            virtual bool isOK() = 0;
+            virtual bool isOK() const = 0;
     };
 
     typedef VNI8200XP_Device *VNI8200XP_DeviceHandler;
@@ -31,7 +31,7 @@ namespace eos {
     class VNI8200XP_SerialDevice: public VNI8200XP_Device {
     	private:
     		uint8_t _newState;
-            uint8_t _oldState
+            uint8_t _oldState;
     		htl::spi::SPIDeviceHandler const _hSPI;
     		htl::gpio::PinHandler const _hSS;
     		htl::gpio::PinHandler const _hOUTEN;
@@ -46,11 +46,11 @@ namespace eos {
 			void clear(uint8_t pinMask) override;
 			void toggle(uint8_t pinMask) override;
 			void write(uint8_t pinMask, bool pinState) override;
-			bool read(uint8_t pinMask) override;
-			void enable() override;
-			void disable() override;
+			uint8_t read() const override;
+			void enable() const override;
+			void disable() const override;
             void update() override;
-            bool isOK() override;
+            bool isOK() const override;
     };
     
     template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
@@ -75,14 +75,14 @@ namespace eos {
     class PinDriver_VNI8200XP final: public PinDriver {
 		private:
 			VNI8200XP_DeviceHandler const _hDevice;
-			uint8_t const _pinNumber;
+			uint8_t const _pinMask;
 		public:
 			PinDriver_VNI8200XP(VNI8200XP_DeviceHandler hDevice, uint8_t pinNumber);
 			void set() override;
 			void clear() override;
 			void toggle() override;
 			void write(bool pinState) override;
-			bool read() const override;
+			bool read() override;
     };
 }
 

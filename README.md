@@ -5,7 +5,7 @@
 * FreeRTOS scheduler.
 * HAL module.
   * Independent HAL C bare metal library. C99
-  * Independent HTL (HAL Template Library) with zero overload. C++17
+  * Independent HTL (HAL Template Library) with minimal overload. C++17
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
   * Color displays: ARGB8888, RGB888, RGB565, L8 (Optional CLUT) color scheme.

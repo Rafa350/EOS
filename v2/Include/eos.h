@@ -50,6 +50,13 @@
 	#include "stm32f7xx.h"
 
 #elif defined(EOS_PLATFORM_STM32G0)
+	#if defined(EOS_PLATFORM_STM32G031)
+		#define STM32G031xx
+	#elif defined(EOS_PLATFORM_STM32G051)
+		#define STM32G051xx
+	#elif defined(EOS_PLATFORM_STM32G071)
+		#define STM32G071xx
+	#endif
 	#include "stm32g0xx.h"
 
 #elif defined(EOS_PLATFORM_MSP432)
@@ -69,8 +76,12 @@
 
 // EOS includes
 //
+#ifndef EOS_NO_INCLUDE_CONFIG
 #include "eosConfig.h"
+#endif
+#ifndef EOS_NO_INCLUDE_BOARD
 #include "Board/eosBoard.h"
+#endif
 
 
 // Application entry point

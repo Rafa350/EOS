@@ -29,7 +29,7 @@ namespace eos {
 			htl::gpio::PinHandler const _hOUTEN;
 			htl::gpio::PinHandler const _hFAULT;
         protected:
-            ISO808_Device(htl::gpio::PinHandler _hSYNC, htl::gpio::PinHandler _hLOAD, 
+            ISO808_Device(htl::gpio::PinHandler const _hSYNC, htl::gpio::PinHandler const _hLOAD,
                 htl::gpio::PinHandler _hIN1, htl::gpio::PinHandler _hIN2, htl::gpio::PinHandler _hIN3, htl::gpio::PinHandler _hIN4,
                 htl::gpio::PinHandler _hIN5, htl::gpio::PinHandler _hIN6, htl::gpio::PinHandler _hIN7, htl::gpio::PinHandler _hIN8,
                 htl::gpio::PinHandler _hOUTEN,
@@ -48,21 +48,21 @@ namespace eos {
                 _newState ^= pinMask;
             }
 
-            inline void write(uint8_t pinState) {
-            	_newState = pinState;
+            inline void write(uint8_t pinMask) {
+            	_newState = pinMask;
             }
-            inline uint8_t read() override {
+            inline uint8_t read() const {
             	return _newState;
             }
-			inline void enable() {
+			inline void enable() const {
                 _hOUTEN->set();
             }
-			inline void disable() {
+			inline void disable() const {
                 _hOUTEN->clear();
                 
             }
             void update();
-            bool isOk();
+            bool isOK();
 	};
 
 
@@ -79,7 +79,7 @@ namespace eos {
             
         private:
 			ISO808_DeviceX():
-                ISO808_Device(PinSINC_::getHandler(), PinLOAD_::getHandler(), 
+                ISO808_Device(PinSYNC_::getHandler(), PinLOAD_::getHandler(),
                 PinIN1_::getHandler(), PinIN2_::getHandler(), PinIN3_::getHandler(), PinIN4_::getHandler(),
                 PinIN5_::getHandler(), PinIN6_::getHandler(), PinIN7_::getHandler(), PinIN8_::getHandler(),
                 PinOUTEN_::getHandler(), PinFAULT_::getHandler()) {
@@ -118,7 +118,7 @@ namespace eos {
 			void clear() override;
 			void toggle() override;
 			void write(bool pinState) override;
-			bool read() const override;
+			bool read() override;
     };
 
 }

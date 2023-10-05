@@ -20,7 +20,7 @@ namespace eos {
             virtual void clear() = 0;
             virtual void toggle() = 0;
             virtual void write(bool state) = 0;
-            virtual bool read() const = 0;
+            virtual bool read() = 0;
     };
 
 }

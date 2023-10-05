@@ -20,6 +20,11 @@ VNI8200XP_SerialDevice::VNI8200XP_SerialDevice(
 }
 
 
+void VNI8200XP_SerialDevice::initialize() {
+
+}
+
+
 uint8_t VNI8200XP_SerialDevice::calcParity(
 	uint8_t data) {
 
@@ -60,13 +65,13 @@ uint8_t VNI8200XP_SerialDevice::transmit(
 }
 
 
-void VNI8200XP_SerialDevice::enable() {
+void VNI8200XP_SerialDevice::enable() const {
 
 	_hOUTEN->set();
 }
 
 
-void VNI8200XP_SerialDevice::disable() {
+void VNI8200XP_SerialDevice::disable() const {
 
 	_hOUTEN->clear();
 }
@@ -108,14 +113,23 @@ void VNI8200XP_SerialDevice::write(
 	uint8_t pinMask,
 	bool pinState) {
 
-	_newState = (_mewState & ~pinMask) | pinMask;
+	if (pinState)
+		_newState |= pinMask;
+	else
+		_newState &= ~pinMask;
+
 }
 
 
-bool VNI8200XP_SerialDevice::read(
-	uint8_t pinMask) {
+uint8_t VNI8200XP_SerialDevice::read() const {
 
-	return _newState & pinMask;
+	return _newState;
+}
+
+
+bool VNI8200XP_SerialDevice::isOK() const {
+
+	return true;
 }
 
 
@@ -125,37 +139,38 @@ PinDriver_VNI8200XP::PinDriver_VNI8200XP(
 	uint8_t pinNumber):
 
 	_hDevice {hDevice},
-	_pinNumber {pinNumber} {
+	_pinMask {uint8_t(1 << pinNumber)} {
 
 }
 
 
 void PinDriver_VNI8200XP::set() {
 
-	_hDevice->set(_pinNumber);
+	_hDevice->set(_pinMask);
 }
 
 
 void PinDriver_VNI8200XP::clear() {
 
-	_hDevice->clear(_pinNumber);
+	_hDevice->clear(_pinMask);
 }
 
 
 void PinDriver_VNI8200XP::toggle() {
 
-	_hDevice->toggle(_pinNumber);
+	_hDevice->toggle(_pinMask);
 }
+
 
 void PinDriver_VNI8200XP::write(
 	bool pinState) {
 
-	_hDevice->write(_pinNumber, pinState);
+	_hDevice->write(_pinMask, pinState);
 }
 
 
-bool PinDriver_VNI8200XP::read() const {
+bool PinDriver_VNI8200XP::read() {
 
-	return _hDevice->read(_pinNumber);
+	return (_hDevice->read() & _pinMask) != 0;
 }
 

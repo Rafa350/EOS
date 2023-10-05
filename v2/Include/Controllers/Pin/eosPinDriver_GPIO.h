@@ -16,7 +16,7 @@ namespace eos {
     ///
     class PinDriver_GPIO final: public PinDriver {
         private:
-            const htl::gpio::PinHandler _hPin;
+            htl::gpio::PinHandler const _hPin;
             
         public:
             PinDriver_GPIO(const htl::gpio::PinHandler hPin);
@@ -24,7 +24,7 @@ namespace eos {
             void clear() override;
             void toggle() override;
             void write(bool state) override;
-            bool read() const override;
+            bool read() override;
     };
     
 }

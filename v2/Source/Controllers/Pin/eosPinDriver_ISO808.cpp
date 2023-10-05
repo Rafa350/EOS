@@ -22,18 +22,18 @@ using namespace htl;
 /// \param    hFAULT: Handler del pin FAULT.
 ///
 ISO808_Device::ISO808_Device(
-    htl::gpio::PinHandler _hSYNC,
-    htl::gpio::PinHandler _hLOAD,
-    htl::gpio::PinHandler _hIN1,
-    htl::gpio::PinHandler _hIN2,
-    htl::gpio::PinHandler _hIN3,
-    htl::gpio::PinHandler _hIN4,
-    htl::gpio::PinHandler _hIN5,
-    htl::gpio::PinHandler _hIN6,
-    htl::gpio::PinHandler _hIN7,
-    htl::gpio::PinHandler _hIN8,
-    htl::gpio::PinHandler _hOUTEN,
-    htl::gpio::PinHandler _hFAULT):
+    htl::gpio::PinHandler hSYNC,
+    htl::gpio::PinHandler hLOAD,
+    htl::gpio::PinHandler hIN1,
+    htl::gpio::PinHandler hIN2,
+    htl::gpio::PinHandler hIN3,
+    htl::gpio::PinHandler hIN4,
+    htl::gpio::PinHandler hIN5,
+    htl::gpio::PinHandler hIN6,
+    htl::gpio::PinHandler hIN7,
+    htl::gpio::PinHandler hIN8,
+    htl::gpio::PinHandler hOUTEN,
+    htl::gpio::PinHandler hFAULT):
 
     _oldState {0},
     _newState {0},
@@ -46,7 +46,7 @@ ISO808_Device::ISO808_Device(
     _hIN5 {hIN5},
     _hIN6 {hIN6},
     _hIN7 {hIN7},
-    _hIN9 {hIN8},
+    _hIN8 {hIN8},
     _hOUTEN {hOUTEN},
     _hFAULT {hFAULT} {
 
@@ -76,7 +76,7 @@ void ISO808_Device::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Sincronitza les sortides fisiques amb l'estat actual.
 ///
-void ISO808::update() {
+void ISO808_Device::update() {
 
     if (_newState != _oldState) {
 
@@ -167,7 +167,7 @@ void PinDriver_ISO808::write(
 /// \brief    Llegeix el pin.
 /// \return   L0estat del pin.
 ///
-bool PinDriver_ISO808::read() const {
+bool PinDriver_ISO808::read() {
 
-    return _hDevice->read(_pinMask) != 0;
+    return (_hDevice->read() & _pinMask) != 0;
 }

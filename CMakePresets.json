@@ -1,0 +1,28 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 27,
+      "patch": 0
+    },    
+    "configurePresets": [
+        {
+            "name": "STM32Base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/CMake/Builds/${presetName}",
+            "toolchainFile": "${sourceDir}/CMake/gcc-arm-none-eabi.cmake",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "STM32G071",
+            "inherits": "STM32Base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+
+    ]
+}
