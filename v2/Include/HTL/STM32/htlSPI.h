@@ -96,8 +96,20 @@ namespace htl {
 
 
 		class SPIDevice {
+			public:
+				enum class State {
+					reset,
+					ready
+				};
+				enum class Result {
+					ok,
+					error,
+					busy,
+					timeout
+				};
 			private:
 				SPI_TypeDef * const _spi;
+				State _state;
 			private:
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
@@ -113,31 +125,17 @@ namespace htl {
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 			public:
-				void initialize(SPIMode mode, ClkPolarity clkPolarity, ClkPhase clkPhase, WordSize size, FirstBit firstBit, ClockDivider clkDivider);
-				void deinitialize();
+				Result initialize(SPIMode mode, ClkPolarity clkPolarity, ClkPhase clkPhase, WordSize size, FirstBit firstBit, ClockDivider clkDivider);
+				Result deinitialize();
 				inline void enable() {
 					_spi->CR1 |= SPI_CR1_SPE;
 				}
 				inline void disable() {
 					_spi->CR1 &= ~SPI_CR1_SPE;
 				}
-				inline void write8(uint8_t data) {
-					*((volatile uint8_t*)&_spi->DR) = data;
-				}
-				inline void write16(uint16_t data) {
-					*((volatile uint16_t*)&_spi->DR) = data;
-				}
-				inline bool isTxEmpty() const {
-					return (_spi->SR & SPI_SR_TXE) != 0;
-				}
-				inline bool isRxNotEmpty() const {
-					return (_spi->SR & SPI_SR_RXNE) != 0;
-				};
-				inline bool isBusy() const {
-					return (_spi->SR & SPI_SR_BSY) != 0;
-				}
-				uint16_t transmit(const uint8_t *buffer, uint16_t size);
-				uint16_t receive(uint8_t *buffer, uint16_t size);
+				Result transmit(const uint8_t *txBuffer, uint16_t size);
+				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer, uint16_t size);
+				Result receive(uint8_t *rxBuffer, uint16_t size);
 		};
 
 		typedef SPIDevice * SPIDeviceHandler;
@@ -189,17 +187,17 @@ namespace htl {
 				template <typename pin_>
 				void initPinSCK() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinMISO() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 		};
 

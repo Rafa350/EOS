@@ -252,22 +252,22 @@ namespace htl {
 				template <typename pin_>
 				void initPinTX() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::tx, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinRX() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::rx, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinCTS() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::cts, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinRTS() {
 					gpio::PinFunctionID pinFunctionID = internal::UARTPinFunctionID<deviceID_, PinFunction::rts, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				void setRxTimeout(uint32_t lostBits) {
 					if constexpr(HI::supportedRxTimeout) {

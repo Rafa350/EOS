@@ -167,15 +167,15 @@
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
-#define ARDUINO_RX_Pin       ARDUINO_D0_Pin
-#define ARDUINO_TX_Pin       ARDUINO_D1_Pin
+#define ARDUINO_RX_Pin       htl::gpio::PinC5 // ARDUINO_D0
+#define ARDUINO_TX_Pin       htl::gpio::PinC4 // ARDUINO_D1
 
-#define ARDUINO_SCL_Pin      ARDUINO_D15_Pin
-#define ARDUINO_SDA_Pin      ARDUINO_D14_Pin
+#define ARDUINO_SCL_Pin      htl::gpio::PinB8 // ARDUINO_D15
+#define ARDUINO_SDA_Pin      htl::gpio::PinB9 // ARDUINO_D14
 
-#define ARDUINO_SCK_Pin      ARDUINO_D13_Pin
-#define ARDUINO_MISO_Pin     ARDUINO_D12_Pin
-#define ARDUINO_MOSI_Pin     ARDUINO_D11_Pin
+#define ARDUINO_SCK_Pin      htl::gpio::PinA5 // ARDUINO_D13
+#define ARDUINO_MISO_Pin     htl::gpio::PinA6 // ARDUINO_D12
+#define ARDUINO_MOSI_Pin     htl::gpio::PinA7 // ARDUINO_D11
 
 #endif // USE_ARDUINO
 

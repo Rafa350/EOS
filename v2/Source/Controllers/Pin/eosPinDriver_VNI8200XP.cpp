@@ -6,6 +6,15 @@ using namespace eos;
 using namespace htl;
 
 
+static uint8_t calcParity(uint8_t data);
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    hSPI: Handler del dispositiu SPI de comunicacions.
+/// \param    hSS: Handler del pin SS
+/// \param    hOUTEN: Handler del pin OUTEN
+///
 VNI8200XP_SerialDevice::VNI8200XP_SerialDevice(
 	spi::SPIDeviceHandler hSPI,
 	gpio::PinHandler hSS,
@@ -20,48 +29,11 @@ VNI8200XP_SerialDevice::VNI8200XP_SerialDevice(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el dispositiu.
+///
 void VNI8200XP_SerialDevice::initialize() {
 
-}
-
-
-uint8_t VNI8200XP_SerialDevice::calcParity(
-	uint8_t data) {
-
-	uint8_t p0, p1, p2, np0;
-
-	p0 = data ^ (data >> 1);
-	p0 = p0 ^ (p0 >> 2);
-	p0 = p0 ^ (p0 >> 4);
-	p0 = p0 & 0x01;
-
-	p1 = data ^ (data >> 2);
-	p1 = p1 ^ (p1 >> 4);
-
-	p2 = p1 & 0x01;
-
-	p1 = p1 & 0x02;
-	p1 = p1 >> 1;
-
-	np0 = (~p0) & 0x01;
-
-	return (p2 << 3) | (p1 << 2) | (p0 << 1) | np0;
-}
-
-
-uint8_t VNI8200XP_SerialDevice::transmit(
-    uint8_t data) {
-
-	uint8_t txData[2], rxData[2];
-
-	txData[0] = calcParity(data);
-	txData[1] = data;
-
-	_hSS->clear();
-	_hSPI->transmit(txData,  sizeof(txData));
-	_hSS->set();
-
-	return rxData[0];
 }
 
 
@@ -77,11 +49,21 @@ void VNI8200XP_SerialDevice::disable() const {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Actualitza les sortides en funcio del estat intern.
+///
 void VNI8200XP_SerialDevice::update() {
     
     if (_newState != _oldState) {
     
-        transmit(_newState);
+    	uint8_t txData[2], rxData[2];
+
+    	txData[0] = _newState;
+    	txData[1] = calcParity(_newState);
+
+    	_hSS->clear();
+    	_hSPI->transmit(txData, rxData, sizeof(txData));
+    	_hSS->set();
         
         _oldState = _newState;
     }
@@ -132,6 +114,34 @@ bool VNI8200XP_SerialDevice::isOK() const {
 	return true;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Calcula la paritat de les dades.
+/// \param    data: Les dades sobre les que es calcula la paritat.
+/// \return   La paritat calculada.
+///
+static uint8_t calcParity(
+	uint8_t data) {
+
+	uint8_t p0, p1, p2, np0;
+
+	p0 = data ^ (data >> 1);
+	p0 = p0 ^ (p0 >> 2);
+	p0 = p0 ^ (p0 >> 4);
+	p0 = p0 & 0x01;
+
+	p1 = data ^ (data >> 2);
+	p1 = p1 ^ (p1 >> 4);
+
+	p2 = p1 & 0x01;
+
+	p1 = p1 & 0x02;
+	p1 = p1 >> 1;
+
+	np0 = (~p0) & 0x01;
+
+	return (p2 << 3) | (p1 << 2) | (p0 << 1) | np0;
+}
 
 
 PinDriver_VNI8200XP::PinDriver_VNI8200XP(

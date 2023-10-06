@@ -226,7 +226,7 @@ Pin::Pin(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com entrada.
-/// \param    pull: Opcions pull up/down.
+/// \param    pull: Opcions pull.
 ///
 void Pin::initInput(
     PullUpDn pull) {
@@ -241,16 +241,19 @@ void Pin::initInput(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com sortida.
 /// \param    driver: Opcions de driver.
+/// \param    pull: Opcions de pull.
 /// \param    speed: Opcions de velocitat.
 ///
 void Pin::initOutput(
 	OutDriver driver,
+	PullUpDn pull,
 	Speed speed) {
 
 	activate();
 
 	setMode(_gpio, _mask, Mode::output);
 	setDriver(_gpio, _mask, driver);
+	setPull(_gpio, _mask, pull);
 	setSpeed(_gpio, _mask, speed);
 }
 
@@ -258,11 +261,13 @@ void Pin::initOutput(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com sortida.
 /// \param    driver: Opcions de driver.
+/// \param    pull: Opcions de pull.
 /// \param    speed: Opcions de velocitat.
 /// \param    state: Estat inicial.
 ///
 void Pin::initOutput(
 	OutDriver driver,
+	PullUpDn pull,
 	Speed speed,
 	bool state) {
 
@@ -275,20 +280,21 @@ void Pin::initOutput(
 
 	setMode(_gpio, _mask, Mode::output);
 	setDriver(_gpio, _mask, driver);
+	setPull(_gpio, _mask, pull);
 	setSpeed(_gpio, _mask, speed);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza un pin com a sortida alternativa.
-/// \param    regs: Bloc de registres.
-/// \param    pn: Numero de pin.
 /// \param    driver: Opcions del driver de sortida.
+/// \param    pull: Opcions de pull.
 /// \param    speed: Opcions de velocitat.
 /// \param    pinFunctionID: Funcio alternativa.
 ///
 void Pin::initAlt(
     OutDriver driver,
+	PullUpDn pull,
     Speed speed,
     PinFunctionID pinFunctionID) {
 
@@ -296,6 +302,7 @@ void Pin::initAlt(
 
     setMode(_gpio, _mask, Mode::alternate);
     setDriver(_gpio, _mask, driver);
+	setPull(_gpio, _mask, pull);
     setSpeed(_gpio, _mask, speed);
     setPinFunction(_gpio, _mask, pinFunctionID);
 }
@@ -353,7 +360,7 @@ void Pin::deinitialize() {
 
 	setPinFunction(_gpio, _mask, PinFunctionID::_0);
 #else
-#error "Undefined platform"
+//#error "Undefined platform"
 #endif
 }
 

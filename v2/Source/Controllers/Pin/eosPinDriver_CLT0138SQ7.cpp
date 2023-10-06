@@ -30,6 +30,16 @@ uint8_t CLT0138SQ7_Device::read() {
 
 void CLT0138SQ7_Device::update() {
 
+	// NO UTILITZAR INTERRUPCIONS. Per evitar bloqueig si es crida
+	// desde un altre interrupcio amb prioritat inferior o igual a la del SPI
+
+	uint8_t buffer[2];
+
+	_hSS->clear();
+	_hSPI->receive(buffer, sizeof(buffer));
+	_hSS->set();
+
+	_state = buffer[1];
 }
 
 

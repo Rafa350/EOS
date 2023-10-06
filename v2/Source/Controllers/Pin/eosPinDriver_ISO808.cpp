@@ -58,17 +58,17 @@ ISO808_Device::ISO808_Device(
 ///
 void ISO808_Device::initialize() {
 
-    _hSYNC->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, true);
-    _hLOAD->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, true);
-    _hIN1->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hIN2->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hIN3->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hIN4->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hIN5->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hIN6->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hIN7->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hIN8->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
-    _hOUTEN->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::Speed::high, false);
+    _hSYNC->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, true);
+    _hLOAD->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, true);
+    _hIN1->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hIN2->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hIN3->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hIN4->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hIN5->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hIN6->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hIN7->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hIN8->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
+    _hOUTEN->initOutput(htl::gpio::OutDriver::pushPull, htl::gpio::PullUpDn::none, htl::gpio::Speed::high, false);
     _hFAULT->initInput(htl::gpio::PullUpDn::up);
 }
 

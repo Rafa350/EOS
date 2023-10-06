@@ -209,10 +209,10 @@ namespace htl {
 				virtual void deactivate() = 0;
 			public:
 				void initInput(PullUpDn pull);
-				void initOutput(OutDriver driver, Speed speed);
-				void initOutput(OutDriver driver, Speed speed, bool state);
+				void initOutput(OutDriver driver, PullUpDn pull, Speed speed);
+				void initOutput(OutDriver driver, PullUpDn pull, Speed speed, bool state);
 				void initAnalogic();
-				void initAlt(OutDriver driver, Speed speed, PinFunctionID pinFunctionID);
+				void initAlt(OutDriver driver, PullUpDn pull, Speed speed, PinFunctionID pinFunctionID);
 				void deinitialize();
 				inline void set() {
 					_gpio->BSRR = _mask;

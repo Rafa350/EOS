@@ -35,9 +35,6 @@ namespace eos {
     		htl::spi::SPIDeviceHandler const _hSPI;
     		htl::gpio::PinHandler const _hSS;
     		htl::gpio::PinHandler const _hOUTEN;
-    	private:
-    		uint8_t calcParity(uint8_t data);
-    		uint8_t transmit(uint8_t data);
     	protected:
     		VNI8200XP_SerialDevice(htl::spi::SPIDeviceHandler hSPI,  htl::gpio::PinHandler hSS, htl::gpio::PinHandler hOUTEN);
     	public:

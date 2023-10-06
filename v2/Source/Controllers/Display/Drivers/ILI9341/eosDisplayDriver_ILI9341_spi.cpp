@@ -29,24 +29,24 @@ void DisplayDriver_ILI9341::initializeInterface() {
 	//
 	#ifdef DISPLAY_RST_GPIO
 	auto pinRST = PinRST::getHandler();
-	pinRST.initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+	pinRST.initOutput(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, false);
 	#endif
 
 	// Inicialitza el pin CS
 	//
 	auto pinCS = PinCS::getHandler();
-	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::set);
+	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, true);
 
 	// Inicialitza el pin RS
 	//
 	auto pinRS = PinRS::getHandler();
-	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, gpio::InitPinState::clear);
+	pinRS->initOutput(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, false);
 
 	// Inicialitza el modul SPI
     //
 	auto spi = Spi::getHandler();
-	spi->initSCKPin<PinSCK>();
-	spi->initMOSIPin<PinMOSI>();
+	spi->initPinSCK<PinSCK>();
+	spi->initPinMOSI<PinMOSI>();
 	spi->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
 	spi->enable();
 }
@@ -186,12 +186,7 @@ void DisplayDriver_ILI9341::writeCommand(
 	auto spi = Spi::getHandler();
 
 	pinRS->clear();
-
-	spi->write8(cmd);
-	while (!spi->isTxEmpty())
-		continue;
-	while (spi->isBusy())
-		continue;
+	spi->transmit(&cmd, 1);
 }
 
 
@@ -206,11 +201,7 @@ void DisplayDriver_ILI9341::writeData(
 	auto spi = Spi::getHandler();
 
 	pinRS->set();
-	spi->write8(data);
-	while (!spi->isTxEmpty())
-		continue;
-	while (spi->isBusy())
-		continue;
+	spi->transmit(&data, 1);
 }
 
 
@@ -227,13 +218,6 @@ void DisplayDriver_ILI9341::writeData(
 	auto spi = Spi::getHandler();
 
 	pinRS->set();
-
-	while (length--) {
-		spi->write8(*data++);
-		while (!spi->isTxEmpty())
-			continue;
-	}
-	while (spi->isBusy())
-		continue;
+    spi->transmit(data, length);
 }
 

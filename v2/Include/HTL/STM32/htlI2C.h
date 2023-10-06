@@ -212,17 +212,17 @@ namespace htl {
 				template <typename pin_>
 				void initPinSCL() {
 					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinSDA() {
 					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinALERT() {
 					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::alert, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
 				}
 		};
 
