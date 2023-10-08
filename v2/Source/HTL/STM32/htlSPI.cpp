@@ -6,34 +6,39 @@
 using namespace htl::spi;
 
 
-#define SPI_CR1_BR_DIV2         (0 << SPI_CR1_BR_Pos)
-#define SPI_CR1_BR_DIV4         (1 << SPI_CR1_BR_Pos)
-#define SPI_CR1_BR_DIV8         (2 << SPI_CR1_BR_Pos)
-#define SPI_CR1_BR_DIV16        (3 << SPI_CR1_BR_Pos)
-#define SPI_CR1_BR_DIV32        (4 << SPI_CR1_BR_Pos)
-#define SPI_CR1_BR_DIV64        (5 << SPI_CR1_BR_Pos)
-#define SPI_CR1_BR_DIV128       (6 << SPI_CR1_BR_Pos)
-#define SPI_CR1_BR_DIV256       (7 << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV2      (0UL << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV4      (1UL << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV8      (2UL << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV16     (3UL << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV32     (4UL << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV64     (5UL << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV128    (6UL << SPI_CR1_BR_Pos)
+#define SPI_CR1_BR_DIV256    (7UL << SPI_CR1_BR_Pos)
 
-#define SPI_CR2_DS_LEN8         (7 << SPI_CR2_DS_Pos)
-#define SPI_CR2_DS_LEN16        (15 << SPI_CR2_DS_Pos)
+#if defined(EOS_PLATFORM_STM32G0)
+#define SPI_CR2_DS_LEN8      (7UL << SPI_CR2_DS_Pos)
+#define SPI_CR2_DS_LEN16     (15UL << SPI_CR2_DS_Pos)
+#elif defined(EOS_PLATFORM_STM32F4)
+#else
+#error "Undefined platform"
+#endif
 
 
-static void setClockDivider(SPI_TypeDef * const spi, ClockDivider clkDivider);
-static void setMode(SPI_TypeDef * const spi, SPIMode mode);
-static void setClkPolarity(SPI_TypeDef * const spi, ClkPolarity polarity);
-static void setClkPhase(SPI_TypeDef * const spi, ClkPhase phase);
-static void setSize(SPI_TypeDef * const spi, WordSize size);
-static void setFirstBit(SPI_TypeDef * const spi, FirstBit firstBit);
+static void spiSetClockDivider(SPI_TypeDef * const spi, ClockDivider clkDivider);
+static void spiSetMode(SPI_TypeDef * const spi, SPIMode mode);
+static void spiSetClkPolarity(SPI_TypeDef * const spi, ClkPolarity polarity);
+static void spiSetClkPhase(SPI_TypeDef * const spi, ClkPhase phase);
+static void spiSetWordSize(SPI_TypeDef * const spi, WordSize size);
+static void spiSetFirstBit(SPI_TypeDef * const spi, FirstBit firstBit);
 
-static void write8(SPI_TypeDef * const spi, uint8_t data);
-static void write16(SPI_TypeDef * const spi, uint16_t data);
-static uint8_t read8(SPI_TypeDef * const spi);
-static uint16_t read16(SPI_TypeDef * const spi);
+static void spiWrite8(SPI_TypeDef * const spi, uint8_t data);
+static void spiWrite16(SPI_TypeDef * const spi, uint16_t data);
+static uint8_t spiRead8(SPI_TypeDef * const spi);
+static uint16_t spiRead16(SPI_TypeDef * const spi);
 
-static bool isTxEmpty(SPI_TypeDef * const spi);
-static bool isRxNotEmpty(SPI_TypeDef * const spi);
-static bool isBusy(SPI_TypeDef * const spi);
+static bool spiTxEmpty(SPI_TypeDef * const spi);
+static bool spiRxNotEmpty(SPI_TypeDef * const spi);
+static bool spiBusy(SPI_TypeDef * const spi);
 
 
 /// ----------------------------------------------------------------------
@@ -134,12 +139,12 @@ SPIDevice::Result SPIDevice::initialize(
 		activate();
 		disable();
 
-		setClockDivider(_spi, clkDivider);
-		setMode(_spi, mode);
-		setClkPolarity(_spi, clkPolarity);
-		setClkPhase(_spi, clkPhase);
-		setSize(_spi, size);
-		setFirstBit(_spi, firstBit);
+		spiSetClockDivider(_spi, clkDivider);
+		spiSetMode(_spi, mode);
+		spiSetClkPolarity(_spi, clkPolarity);
+		spiSetClkPhase(_spi, clkPhase);
+		spiSetWordSize(_spi, size);
+		spiSetFirstBit(_spi, firstBit);
 
 		_state = State::ready;
 
@@ -173,38 +178,8 @@ SPIDevice::Result SPIDevice::deinitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
 /// \param    txBuffer: El buffer de transmissio.
-/// \param    size: Tamany del buffer.
-/// \return   El resultat de l'operacio
-///
-SPIDevice::Result SPIDevice::transmit(
-	const uint8_t *txBuffer,
-	uint16_t size) {
-
-	if (_state == State::ready) {
-
-		uint16_t count = 0;
-
-		while (count < size) {
-			write8(_spi, txBuffer[count++]);
-			while (!isTxEmpty(_spi))
-				continue;
-		}
-		while (isBusy(_spi))
-			continue;
-
-		return Result::ok;
-	}
-
-	else
-		return Result::busy;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Transmiteix un bloc de dades.
-/// \param    txBuffer: El buffer de transmissio.
 /// \param    rxBuffer: El buffer de recepcio.
-/// \param    size: Tamany del buffer.
+/// \param    size: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio.
 ///
 SPIDevice::Result SPIDevice::transmit(
@@ -217,44 +192,21 @@ SPIDevice::Result SPIDevice::transmit(
 		uint16_t count = 0;
 
 		while (count < size) {
-			write8(_spi, txBuffer[count]);
-			while (!isTxEmpty(_spi))
+
+			while (!spiTxEmpty(_spi))
 				continue;
-			rxBuffer[count] = read8(_spi);
+			spiWrite8(_spi, txBuffer == nullptr ? 0x00 : txBuffer[count]);
+
+			if (rxBuffer != nullptr) {
+				while (!spiRxNotEmpty(_spi))
+					continue;
+				rxBuffer[count] = spiRead8(_spi);
+			}
+
 			count++;
 		}
-		while (isBusy(_spi))
-			continue;
 
-		return Result::ok;
-	}
-
-	else
-		return Result::busy;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Reb un bloc de dades.
-/// \param    rxBuffer: El buffer de recepcio.
-/// \param    size: Tamany del buffer.
-/// \return   El resultat de l'operacio
-///
-SPIDevice::Result SPIDevice::receive(
-	uint8_t *rxBuffer,
-	uint16_t size) {
-
-	if (_state == State::ready) {
-
-		uint16_t count = 0;
-
-		while (count < size) {
-			write8(_spi, 0x00);
-			while (!isTxEmpty(_spi))
-				continue;
-			rxBuffer[count++] = read8(_spi);
-		}
-		while (isBusy(_spi))
+		while (spiBusy(_spi))
 			continue;
 
 		return Result::ok;
@@ -332,45 +284,17 @@ void SPIBase_x::send(
 /// \param    clkDivider: El valor del divisor.
 /// \remarks  La frequencia resultant es PCLK/clkDivider
 ///
-static void setClockDivider(
+static void spiSetClockDivider(
 	SPI_TypeDef *spi,
 	ClockDivider clkDivider) {
 
+	static const uint32_t clkDividerTbl[] = { SPI_CR1_BR_DIV2, SPI_CR1_BR_DIV4,
+		SPI_CR1_BR_DIV8, SPI_CR1_BR_DIV16, SPI_CR1_BR_DIV32, SPI_CR1_BR_DIV64,
+		SPI_CR1_BR_DIV128, SPI_CR1_BR_DIV256 };
+
 	uint32_t tmp = spi->CR1;
 	tmp &= ~SPI_CR1_BR_Msk;
-	switch (clkDivider) {
-		case ClockDivider::_2:
-			tmp |= SPI_CR1_BR_DIV2;
-			break;
-
-		case ClockDivider::_4:
-			tmp |= SPI_CR1_BR_DIV4;
-			break;
-
-		case ClockDivider::_8:
-			tmp |= SPI_CR1_BR_DIV8;
-			break;
-
-		case ClockDivider::_16:
-			tmp |= SPI_CR1_BR_DIV16;
-			break;
-
-		case ClockDivider::_32:
-			tmp |= SPI_CR1_BR_DIV32;
-			break;
-
-		case ClockDivider::_64:
-			tmp |= SPI_CR1_BR_DIV64;
-			break;
-
-		case ClockDivider::_128:
-			tmp |= SPI_CR1_BR_DIV128;
-			break;
-
-		case ClockDivider::_256:
-			tmp |= SPI_CR1_BR_DIV256;
-			break;
-	}
+	tmp |= clkDividerTbl[uint8_t(clkDivider)];
 	spi->CR1 = tmp;
 }
 
@@ -380,16 +304,22 @@ static void setClockDivider(
 /// \param    spi: Els registres de hardware del dispositiu SPI
 /// \param    mode: El modus de treball.
 ///
-static void setMode(
+static void spiSetMode(
 	SPI_TypeDef *spi,
 	SPIMode mode) {
 
+	uint32_t tmp = spi->CR1;
+
+	tmp &= ~SPI_CR1_CRCEN;
+
 	if (mode == SPIMode::master)
-		spi->CR1 |= SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM;
+		tmp |= (SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM);
 
 	// Per defecte Full-duplex
 	//
-	spi->CR1 &= ~(SPI_CR1_BIDIMODE | SPI_CR1_RXONLY);
+	tmp &= ~(SPI_CR1_BIDIMODE | SPI_CR1_RXONLY);
+
+	spi->CR1 = tmp;
 };
 
 
@@ -398,7 +328,7 @@ static void setMode(
 /// \param    spi: Els registres de hardware del dispositiu SPI.
 /// \param    polarity: La polaritat.
 ///
-static void setClkPolarity(
+static void spiSetClkPolarity(
 	SPI_TypeDef *spi,
 	ClkPolarity polarity) {
 
@@ -414,7 +344,7 @@ static void setClkPolarity(
 /// \param    regs: Els regiostres de hardware del dispositiu SPI.
 /// \param    polarity: La fase.
 ///
-static void setClkPhase(
+static void spiSetClkPhase(
 	SPI_TypeDef *spi,
 	ClkPhase phase) {
 
@@ -430,7 +360,7 @@ static void setClkPhase(
 /// \param    spi: Els registres de hardware del dispositiu SPI..
 /// \param    size: El tamany.
 ///
-static void setSize(
+static void spiSetWordSize(
 	SPI_TypeDef *spi,
 	WordSize size) {
 
@@ -457,14 +387,13 @@ static void setSize(
 	#elif defined(EOS_PLATFORM_STM32G0)
 	uint32_t tmp = spi->CR2;
 	tmp &= ~SPI_CR2_DS_Msk;
-	switch (size) {
-		case WordSize::_8:
-			tmp |= SPI_CR2_DS_LEN8;
-			break;
-
-		case WordSize::_16:
-			tmp |= SPI_CR2_DS_LEN16;
-			break;
+	if (size == WordSize::_8) {
+		tmp |= SPI_CR2_DS_LEN8;
+		tmp |= SPI_CR2_FRXTH;
+	}
+	else {
+		tmp |= SPI_CR2_DS_LEN16;
+		tmp &= ~SPI_CR2_FRXTH;
 	}
 	spi->CR2 = tmp;
 	#endif
@@ -476,7 +405,7 @@ static void setSize(
 /// \param    spi: Els registres de hardware del dispositiu SPI.
 /// \param    firstBit: Quin bit es el primer.
 ///
-static void setFirstBit(
+static void spiSetFirstBit(
 	SPI_TypeDef * const spi,
 	FirstBit firstBit) {
 
@@ -493,7 +422,7 @@ static void setFirstBit(
 /// \param    spi: Els registres de hardware del dispositiu SPI
 /// \param    data: Les dades a transmetre.
 ///
-static void write8(
+static void spiWrite8(
 	SPI_TypeDef * const spi,
 	uint8_t data) {
 
@@ -507,7 +436,7 @@ static void write8(
 /// \param    spi: Els registre de hardware del dispositiu SPI
 /// \param    data: Les dades a transmetre.
 ///
-static void write16(
+static void spiWrite16(
 	SPI_TypeDef * const spi,
 	uint16_t data) {
 
@@ -515,35 +444,60 @@ static void write16(
 }
 
 
-static uint8_t read8(
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix una paraula de 8 bits.
+/// \param    spi: Els registres de hardware del dispositiu SPI.
+/// \return   El valor de la lectura.
+///
+static uint8_t spiRead8(
 	SPI_TypeDef * const spi) {
 
 	return *((volatile uint8_t*)&spi->DR);
 }
 
 
-static uint16_t read16(
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix una paraula de 16 bits.
+/// \param    spi: Els registres de hardware del dispositiu SPI.
+/// \return   El valor de la lectura.
+///
+static uint16_t spiRead16(
 	SPI_TypeDef * const spi) {
 
 	return *((volatile uint16_t*)&spi->DR);
 }
 
 
-static bool isTxEmpty(
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el registre de sortida es buit.
+/// \param    spi: Els registres de hardware del dispoositiu SPI.
+/// \return   True si el registre de sortida es buit.
+///
+static bool spiTxEmpty(
 	SPI_TypeDef * const spi) {
 
 	return (spi->SR & SPI_SR_TXE) != 0;
 }
 
 
-static bool isRxNotEmpty(
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el registre d'entrada no es buit.
+/// \param    spi: Els registres de hardware del dispoositiu SPI.
+/// \return   True si el registre d'entrada no es buit.
+///
+static bool spiRxNotEmpty(
 	SPI_TypeDef * const spi) {
 
 	return (spi->SR & SPI_SR_RXNE) != 0;
 };
 
 
-static bool isBusy(
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si encara hi ha una transmissio pendent.
+/// \param    spi: Els registres de hardware del dispoositiu SPI.
+/// \return   True si hi ha una transmissio pendent.
+///
+static bool spiBusy(
 	SPI_TypeDef * const spi) {
 
 	return (spi->SR & SPI_SR_BSY) != 0;

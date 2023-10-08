@@ -104,6 +104,24 @@ namespace htl {
 			_15
 		};
 
+		enum class InputMode {
+			floating,
+			pullUp,
+			pullDown
+		};
+
+		enum class OutputMode {
+			pushPull,
+			openDrain,
+			openDrainPullUp
+		};
+
+		enum class AlternateMode {
+			pushPull,
+			openDrain,
+			openDrainPullUp
+		};
+
 		/// \brief Pull up/down mode configuration.
 		enum class PullUpDn {
 			noChange,
@@ -121,7 +139,6 @@ namespace htl {
 
 		/// \brief Speed configuration.
 		enum class Speed {
-			noChange,
 			low,
 			medium,
 			high,
@@ -208,11 +225,11 @@ namespace htl {
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;
 			public:
-				void initInput(PullUpDn pull);
-				void initOutput(OutDriver driver, PullUpDn pull, Speed speed);
-				void initOutput(OutDriver driver, PullUpDn pull, Speed speed, bool state);
+				void initInput(InputMode mode);
+				void initOutput(OutputMode mode, Speed speed, bool state);
 				void initAnalogic();
 				void initAlt(OutDriver driver, PullUpDn pull, Speed speed, PinFunctionID pinFunctionID);
+				void initAlternate(AlternateMode mode, Speed speed, PinFunctionID pinFunctionID);
 				void deinitialize();
 				inline void set() {
 					_gpio->BSRR = _mask;

@@ -56,7 +56,7 @@ namespace eos {
             static VNI8200XP_SerialDeviceX _instance;
         private:
             VNI8200XP_SerialDeviceX():
-            	VNI8200XP_SerialDevice( SPIDevice_::getHandler(), PinSS_::getHandler(), PinOUTEN_::getHandler()) {
+            	VNI8200XP_SerialDevice(SPIDevice_::getHandler(), PinSS_::getHandler(), PinOUTEN_::getHandler()) {
             }
             VNI8200XP_SerialDeviceX(const VNI8200XP_SerialDeviceX&) = delete;
             VNI8200XP_SerialDeviceX operator = (const VNI8200XP_SerialDeviceX&) = delete;

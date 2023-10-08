@@ -133,9 +133,13 @@ namespace htl {
 				inline void disable() {
 					_spi->CR1 &= ~SPI_CR1_SPE;
 				}
-				Result transmit(const uint8_t *txBuffer, uint16_t size);
+				inline Result transmit(const uint8_t *txBuffer, uint16_t size) {
+					return transmit(txBuffer, nullptr, size);
+				}
 				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer, uint16_t size);
-				Result receive(uint8_t *rxBuffer, uint16_t size);
+				inline Result receive(uint8_t *rxBuffer, uint16_t size)  {
+					return transmit(nullptr, rxBuffer, size);
+				}
 		};
 
 		typedef SPIDevice * SPIDeviceHandler;
@@ -187,17 +191,17 @@ namespace htl {
 				template <typename pin_>
 				void initPinSCK() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 				template <typename pin_>
 				void initPinMISO() {
 					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunctionID);
 				}
 		};
 

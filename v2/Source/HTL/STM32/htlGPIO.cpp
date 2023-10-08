@@ -5,12 +5,39 @@
 using namespace htl::gpio;
 
 
+#define MODER_Mask           0b11
+#define MODER_INPUT          0b00
+#define MODER_OUTPUT         0b01
+#define MODER_ALTERNATE      0b10
+#define MODER_ANALOGIC       0b11
+
+#define PUPDR_Mask           0b11
+#define PUPDR_NONE           0b00
+#define PUPDR_UP             0b01
+#define PUPDR_DOWN           0b10
+
+#define OTYPER_Mask          0b1
+#define OTYPER_PP            0b0
+#define OTYPER_OD            0b1
+
+#define OSPEEDR_Mask         0b11
+#define OSPEEDR_LOW          0b00
+#define OSPEEDR_MEDIUM       0b01
+#define OSPEEDR_HIGH         0b10
+#define OSPEEDR_FAST         0b11
+
+
 enum class Mode {
 	input = 0b00,
 	output = 0b01,
 	alternate = 0b10,
 	analogic = 0b11
 };
+
+
+static void gpioInitInput(GPIO_TypeDef * const gpio, uint16_t mask, InputMode mode);
+static void gpioInitOutput(GPIO_TypeDef * const gpio, uint16_t mask, OutputMode mode, Speed speed, bool state);
+static void gpioInitAlternate(GPIO_TypeDef * const gpio, uint16_t mask, AlternateMode mode, Speed speed, PinFunctionID pinFuntionId);
 
 
 /// ----------------------------------------------------------------------
@@ -72,8 +99,6 @@ static void setSpeed(
 	PinMask mask,
 	Speed speed) {
 
-	if (speed != Speed::noChange) {
-
 		uint32_t value = 1; // Per defecte medium
 
 		switch (speed) {
@@ -98,7 +123,6 @@ static void setSpeed(
 				gpio->OSPEEDR = tmp;
 			}
 		}
-	}
 }
 
 
@@ -225,64 +249,48 @@ Pin::Pin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio com entrada.
-/// \param    pull: Opcions pull.
+/// \brief    Inicialitza el pin en modun entrada digital.
+/// \param    mode: El tipus d'entrada.
 ///
 void Pin::initInput(
-    PullUpDn pull) {
+	InputMode mode)  {
 
 	activate();
-
-    setMode(_gpio, _mask, Mode::input);
-    setPull(_gpio, _mask, pull);
+	gpioInitInput(_gpio, _mask, mode);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio com sortida.
-/// \param    driver: Opcions de driver.
-/// \param    pull: Opcions de pull.
-/// \param    speed: Opcions de velocitat.
+/// \brief    Inicialitza un pin en modus soirtida digital.
+/// \parAM    mode: El tipus de sortida.
+/// \param    speed: Velocitat de conmutacio.
+/// \param    state: L'estat inicial de la sortida.
 ///
 void Pin::initOutput(
-	OutDriver driver,
-	PullUpDn pull,
-	Speed speed) {
-
-	activate();
-
-	setMode(_gpio, _mask, Mode::output);
-	setDriver(_gpio, _mask, driver);
-	setPull(_gpio, _mask, pull);
-	setSpeed(_gpio, _mask, speed);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio com sortida.
-/// \param    driver: Opcions de driver.
-/// \param    pull: Opcions de pull.
-/// \param    speed: Opcions de velocitat.
-/// \param    state: Estat inicial.
-///
-void Pin::initOutput(
-	OutDriver driver,
-	PullUpDn pull,
+	OutputMode mode,
 	Speed speed,
 	bool state) {
 
 	activate();
-
-	if (state)
-		set();
-	else
-		clear();
-
-	setMode(_gpio, _mask, Mode::output);
-	setDriver(_gpio, _mask, driver);
-	setPull(_gpio, _mask, pull);
-	setSpeed(_gpio, _mask, speed);
+	gpioInitOutput(_gpio, _mask, mode, speed, state);
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza un pin en modus alternatiu.
+/// \param    mode: El tipus de entrada/sortida
+/// \param    speed: Velocitat de conmutacio.
+/// \param    pinFunctionID: Funcio alternativa.
+///
+void Pin::initAlternate(
+	AlternateMode mode,
+	Speed speed,
+	PinFunctionID pinFunctionID) {
+
+	activate();
+	gpioInitAlternate(_gpio, _mask, mode, speed, pinFunctionID);
+}
+
 
 
 /// ----------------------------------------------------------------------
@@ -310,8 +318,6 @@ void Pin::initAlt(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com a entrada/sortida analogica.
-/// \param    regs: Bloc de registres.
-/// \param    pn: Numero de pin.
 ///
 void Pin::initAnalogic() {
 
@@ -574,3 +580,164 @@ void PinInterrupt::notifyFallingEdge() {
 	}
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza els pins com a entrades.
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    mask: Mascara dels pins a inicialitzar.
+/// \param    node: Tipus d'entrada.
+///
+static void gpioInitInput(
+	GPIO_TypeDef * const gpio,
+	uint16_t mask,
+	InputMode mode) {
+
+	for (PinNumber pn = 0; pn < 15; pn++) {
+		if ((mask & (1 << pn)) != 0) {
+
+			uint32_t tmp;
+
+			// Configura el piun com a entrada digital
+			//
+			tmp = gpio->MODER;
+			tmp &= ~(MODER_Mask << (pn * 2));
+			tmp |= MODER_INPUT << (pn * 2);
+			gpio->MODER = tmp;
+
+			// Configura les resistencies pull UP/DOWN
+			//
+			tmp = gpio->PUPDR;
+			tmp &= ~(PUPDR_Mask << (pn * 2));
+			switch (mode) {
+				case InputMode::pullUp:
+					tmp |= PUPDR_UP << (pn * 2);
+					break;
+
+				case InputMode::pullDown:
+					tmp |= PUPDR_DOWN << (pn * 2);
+					break;
+
+				default:
+					break;
+			}
+			gpio->PUPDR = tmp;
+
+		}
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza els pins com sortides.
+/// \param    gpio: Els registres de hardware del GPIO.
+/// \param    mask: Mascara dels pins a inicialitzar.
+/// \param    mode: Tipus de sortida.
+/// \param    speed: Velocitat de conmutacio.
+/// \param    state: L'estat inicial del pin.
+///
+static void gpioInitOutput(
+	GPIO_TypeDef * const gpio,
+	uint16_t mask,
+	OutputMode mode,
+	Speed speed,
+	bool state) {
+
+	static const uint32_t speedTbl[] = {OSPEEDR_LOW, OSPEEDR_MEDIUM,
+		OSPEEDR_HIGH, OSPEEDR_FAST};
+
+	for (PinNumber pn = 0; pn < 15; pn++) {
+		if ((mask & (1 << pn)) != 0) {
+
+			uint32_t tmp;
+
+			// Configura el pin com sortida digital
+			//
+			tmp = gpio->MODER;
+			tmp &= ~(MODER_Mask << (pn * 2));
+			tmp |= MODER_OUTPUT << (pn * 2);
+			gpio->MODER = tmp;
+
+			// Configura el driver de sortida
+			//
+			tmp = gpio->OTYPER;
+			tmp &= ~(OTYPER_Mask << pn);
+			if (mode == OutputMode::openDrain ||
+				mode == OutputMode::openDrainPullUp)
+				tmp |= OTYPER_OD << pn;
+			gpio->OTYPER = tmp;
+
+			// Configura la resistencia pull UP
+			//
+			tmp = gpio->PUPDR;
+			tmp &= ~(PUPDR_Mask << (pn * 2));
+			if (mode == OutputMode::openDrainPullUp)
+				tmp |= PUPDR_UP << (pn * 2);
+			gpio->PUPDR = tmp;
+
+			// Configura la velocitat de conmutacio
+			//
+			tmp = gpio->OSPEEDR;
+			tmp &= ~(OSPEEDR_Mask << (pn * 2));
+			tmp |= speedTbl[uint8_t(speed)] << (pn * 2);
+			gpio->OSPEEDR = tmp;
+		}
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza els pins com entrades/sortides alternatives.
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    mask: Mascara del pins a inicialitzar.
+/// \param    mode: Tipus de entrada/sortida.
+/// \param    speed: Velocitat de conmutacio.
+/// \param    pinFunctionID: Identificador de la funcio alternativa.
+///
+static void gpioInitAlternate(
+	GPIO_TypeDef * const gpio,
+	uint16_t mask,
+	AlternateMode mode,
+	Speed speed,
+	PinFunctionID pinFuntionId) {
+
+	static const uint32_t speedTbl[] = {OSPEEDR_LOW, OSPEEDR_MEDIUM,
+		OSPEEDR_HIGH, OSPEEDR_FAST};
+
+	for (PinNumber pn = 0; pn < 15; pn++) {
+		if ((mask & (1 << pn)) != 0) {
+
+			uint32_t tmp;
+
+			// Configura el pin com entrada/sortida alternativa
+			//
+			tmp = gpio->MODER;
+			tmp &= ~(MODER_Mask << (pn * 2));
+			tmp |= MODER_ALTERNATE << (pn * 2);
+			gpio->MODER = tmp;
+
+			// Configura el driver de sortida
+			//
+			tmp = gpio->OTYPER;
+			tmp &= ~(OTYPER_Mask << pn);
+			if (mode == AlternateMode::openDrain ||
+				mode == AlternateMode::openDrainPullUp)
+				tmp |= OTYPER_OD << pn;
+			gpio->OTYPER = tmp;
+
+			// Configura la resistencia pull UP
+			//
+			tmp = gpio->PUPDR;
+			tmp &= ~(PUPDR_Mask << (pn * 2));
+			if (mode == AlternateMode::openDrainPullUp)
+				tmp |= PUPDR_UP << (pn * 2);
+			gpio->PUPDR = tmp;
+
+			// Configura la velocitat de conmutacio
+			//
+			tmp = gpio->OSPEEDR;
+			tmp &= ~(OSPEEDR_Mask << (pn * 2));
+			tmp |= speedTbl[uint8_t(speed)] << (pn * 2);
+			gpio->OSPEEDR = tmp;
+		}
+	}
+}

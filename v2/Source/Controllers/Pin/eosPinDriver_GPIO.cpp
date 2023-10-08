@@ -11,6 +11,7 @@ using namespace eos;
 ///
 PinDriver_GPIO::PinDriver_GPIO(
 	htl::gpio::PinHandler hPin):
+
 	_hPin {hPin} {
 
 }
