@@ -164,6 +164,51 @@
 #endif
 
 
+#ifdef DMA1_Channel1
+#define HTL_DMA1_CHANNEL1_EXISTS
+#endif
+#ifdef DMA1_Channel2
+#define HTL_DMA1_CHANNEL2_EXISTS
+#endif
+#ifdef DMA1_Channel3
+#define HTL_DMA1_CHANNEL3_EXISTS
+#endif
+#ifdef DMA1_Channel4
+#define HTL_DMA1_CHANNEL4_EXISTS
+#endif
+#ifdef DMA1_Channel5
+#define HTL_DMA1_CHANNEL5_EXISTS
+#endif
+#ifdef DMA1_Channel6
+#define HTL_DMA1_CHANNEL6_EXISTS
+#endif
+#ifdef DMA1_Channel7
+#define HTL_DMA1_CHANNEL7_EXISTS
+#endif
+#ifdef DMA2_Channel1
+#define HTL_DMA2_CHANNEL1_EXISTS
+#endif
+#ifdef DMA2_Channel2
+#define HTL_DMA2_CHANNEL2_EXISTS
+#endif
+#ifdef DMA2_Channel3
+#define HTL_DMA2_CHANNEL3_EXISTS
+#endif
+#ifdef DMA2_Channel4
+#define HTL_DMA2_CHANNEL4_EXISTS
+#endif
+#ifdef DMA2_Channel5
+#define HTL_DMA2_CHANNEL5_EXISTS
+#endif
+#ifdef DMA2_Channel6
+#define HTL_DMA2_CHANNEL6_EXISTS
+#endif
+#ifdef DMA2_Channel7
+#define HTL_DMA2_CHANNEL7_EXISTS
+#endif
+
+
+
 // Comprova l'existencia del modul LTDC
 //
 #ifdef LTDC_BASE

@@ -247,11 +247,11 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	auto pinBKE(PinBKE::getHandler());
-	pinBKE->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low);
+	auto hPinBKE = PinBKE::getHandler();
+	hPinBKE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
 
-	auto pinLCDE(PinLCDE::getHandler());
-	pinLCDE->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low);
+	auto hPinLCDE = PinLCDE::getHandler();
+	hPinLCDE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
 }
 
 
@@ -264,16 +264,16 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	auto ltdc(ltdc::LTDCDevice::getHandler());
-	ltdc->initPinPC<DISPLAY_PC_Pin, _pcPol>();
-	ltdc->initPinHSYNC<DISPLAY_HSYNC_Pin, _hSyncPol>();
-	ltdc->initPinVSYNC<DISPLAY_VSYNC_Pin, _vSyncPol>();
-	ltdc->initPinDE<DISPLAY_DE_Pin, _dePol>();
-	ltdc->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	ltdc->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	ltdc->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	ltdc->initialize(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	ltdc->setBackgroundColor(0x0000FF);
+	auto hLTDC = ltdc::LTDCDevice::getHandler();
+	hLTDC->initPinPC<DISPLAY_PC_Pin, _pcPol>();
+	hLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, _hSyncPol>();
+	hLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, _vSyncPol>();
+	hLTDC->initPinDE<DISPLAY_DE_Pin, _dePol>();
+	hLTDC->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	hLTDC->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	hLTDC->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	hLTDC->initialize(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	hLTDC->setBackgroundColor(0x0000FF);
 
 	// Inicialitza la capa 1
 	// La capa ocupa tota la superficie de la pantalla
@@ -288,25 +288,25 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
 				ltdc::PixelFormat::rgb565;
 
-	auto layer(ltdc::LTDCLayerDevice1::getHandler());
-	layer->setWindow(0, 0, _displayWidth, _displayHeight);
-	layer->setFrameFormat(
+	auto hLayer = ltdc::LTDCLayerDevice1::getHandler();
+	hLayer->setWindow(0, 0, _displayWidth, _displayHeight);
+	hLayer->setFrameFormat(
 		pixelFormat,
 		_displayWidth * Color::bytes,
 		((_displayWidth * Color::bytes) + 63) & 0xFFFFFFC0,
 		_displayHeight);
-	layer->setConstantAlpha(255);
-	layer->setDefaultColor(0x000000);
+	hLayer->setConstantAlpha(255);
+	hLayer->setDefaultColor(0x000000);
 
 	if (Color::format == ColorFormat::l8) {
 		static uint32_t clut[256];
 		for (unsigned i = 0; i < (sizeof(clut) / sizeof(clut[0])); i++)
 			clut[i] = i << 8;
-		layer->setCLUTTable(clut);
+		hLayer->setCLUTTable(clut);
 	}
 
-	layer->setFrameBuffer(_displayFrameBuffer->getBuffer());
-	layer->enable();
+	hLayer->setFrameBuffer(_displayFrameBuffer->getBuffer());
+	hLayer->enable();
 
-	ltdc->reload();
+	hLTDC->reload();
 }

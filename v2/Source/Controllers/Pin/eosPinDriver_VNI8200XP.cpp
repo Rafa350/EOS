@@ -17,14 +17,14 @@ static uint8_t calcParity(uint8_t data);
 ///
 VNI8200XP_SerialDevice::VNI8200XP_SerialDevice(
 	spi::SPIDeviceHandler hSPI,
-	gpio::PinHandler hSS,
-	gpio::PinHandler hOUTEN) :
+	gpio::PinHandler hPinSS,
+	gpio::PinHandler hPinOUTEN) :
 
     _newState {0},
     _oldState {0},
 	_hSPI {hSPI},
-	_hSS {hSS},
-	_hOUTEN {hOUTEN} {
+	_hPinSS {hPinSS},
+	_hPinOUTEN {hPinOUTEN} {
 
 }
 
@@ -39,13 +39,13 @@ void VNI8200XP_SerialDevice::initialize() {
 
 void VNI8200XP_SerialDevice::enable() const {
 
-	_hOUTEN->set();
+	_hPinOUTEN->set();
 }
 
 
 void VNI8200XP_SerialDevice::disable() const {
 
-	_hOUTEN->clear();
+	_hPinOUTEN->clear();
 }
 
 
@@ -61,9 +61,9 @@ void VNI8200XP_SerialDevice::update() {
     	txData[0] = _newState;
     	txData[1] = calcParity(_newState);
 
-    	_hSS->clear();
+    	_hPinSS->clear();
     	_hSPI->transmit(txData, rxData, sizeof(txData));
-    	_hSS->set();
+    	_hPinSS->set();
         
         _oldState = _newState;
     }

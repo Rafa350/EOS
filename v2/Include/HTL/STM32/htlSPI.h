@@ -133,12 +133,12 @@ namespace htl {
 				inline void disable() {
 					_spi->CR1 &= ~SPI_CR1_SPE;
 				}
-				inline Result transmit(const uint8_t *txBuffer, uint16_t size) {
-					return transmit(txBuffer, nullptr, size);
+				inline Result transmit(const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF) {
+					return transmit(txBuffer, nullptr, size, timeout);
 				}
-				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer, uint16_t size);
-				inline Result receive(uint8_t *rxBuffer, uint16_t size)  {
-					return transmit(nullptr, rxBuffer, size);
+				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer, uint16_t size, uint16_t timeout = 0xFFFF);
+				inline Result receive(uint8_t *rxBuffer, uint16_t size, uint16_t timeout = 0xFFFF)  {
+					return transmit(nullptr, rxBuffer, size, timeout);
 				}
 		};
 

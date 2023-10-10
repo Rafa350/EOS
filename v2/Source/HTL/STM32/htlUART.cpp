@@ -391,20 +391,20 @@ void UARTDevice::setNotifyEvent(
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
-/// \param    data: Buffer de dades.
-/// \param    dataLength: El nombre de bytes en el buffer.
+/// \param    buffer: Buffer de dades.
+/// \param    size: El nombre de bytes en el buffer.
 /// \return   El resultat de l'operacio
 ///
-UARTDevice::Result UARTDevice::transmit(
-	const uint8_t *data,
-	uint16_t dataLength) {
+UARTDevice::Result UARTDevice::transmit_IRQ(
+	const uint8_t *buffer,
+	uint16_t size) {
 
 	if (_state == State::ready) {
 
 		_state = State::transmiting;
 
-		_txBuffer = data;
-		_txSize = dataLength;
+		_txBuffer = buffer;
+		_txSize = size;
 		_txCount = 0;
 
 		_usart->CR1 |= USART_CR1_TXEIE_TXFNFIE;
@@ -422,21 +422,21 @@ UARTDevice::Result UARTDevice::transmit(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Reb un bloc de dades.
-/// \param    data: Buffer de dades.
-/// \param    dataSize: Tamany del buffer en bytes.
+/// \brief    Reb un bloc de dades per
+/// \param    buffer: Buffer de dades.
+/// \param    size: Tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::receive(
-	uint8_t *data,
-	uint16_t dataSize) {
+UARTDevice::Result UARTDevice::receive_IRQ(
+	uint8_t *buffer,
+	uint16_t size) {
 
 	if (_state == State::ready) {
 
 		_state = State::receiving;
 
-		_rxBuffer = data;
-		_rxSize = dataSize;
+		_rxBuffer = buffer;
+		_rxSize = size;
 		_rxCount = 0;
 
 		_usart->CR1 |= USART_CR1_RXNEIE_RXFNEIE;
@@ -452,6 +452,21 @@ UARTDevice::Result UARTDevice::receive(
 		return Result::error;
 }
 
+
+UARTDevice::Result UARTDevice::transmit_DMA(
+	const uint8_t *buffer,
+	uint16_t size) {
+
+	return Result::error;
+}
+
+
+UARTDevice::Result UARTDevice::receive_DMA(
+	uint8_t *buffer,
+	uint16_t size) {
+
+	return Result::error;
+}
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.

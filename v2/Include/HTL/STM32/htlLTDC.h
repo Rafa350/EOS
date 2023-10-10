@@ -169,14 +169,14 @@ namespace htl {
 				}
 				template <typename pinB0_, typename pinB1_, typename pinB2_, typename pinB3_, typename pinB4_, typename pinB5_, typename pinB6_, typename pinB7_>
 				void initPinBX() {
-					pinB0_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b0, pinB0_>::alt);
-					pinB1_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b1, pinB1_>::alt);
-					pinB2_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b2, pinB2_>::alt);
-					pinB3_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b3, pinB3_>::alt);
-					pinB4_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b4, pinB4_>::alt);
-					pinB5_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b5, pinB5_>::alt);
-					pinB6_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b6, pinB6_>::alt);
-					pinB7_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b7, pinB7_>::alt);
+					pinB0_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b0, pinB0_>::alt);
+					pinB1_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b1, pinB1_>::alt);
+					pinB2_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b2, pinB2_>::alt);
+					pinB3_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b3, pinB3_>::alt);
+					pinB4_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b4, pinB4_>::alt);
+					pinB5_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b5, pinB5_>::alt);
+					pinB6_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b6, pinB6_>::alt);
+					pinB7_::getHandler()->initAlt(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, internal::LTDCPinFunctionID<PinFunction::b7, pinB7_>::alt);
 				}
 				inline void enable() {
 					LTDC->GCR |= LTDC_GCR_LTDCEN;

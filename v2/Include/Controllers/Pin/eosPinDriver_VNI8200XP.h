@@ -33,10 +33,10 @@ namespace eos {
     		uint8_t _newState;
             uint8_t _oldState;
     		htl::spi::SPIDeviceHandler const _hSPI;
-    		htl::gpio::PinHandler const _hSS;
-    		htl::gpio::PinHandler const _hOUTEN;
+    		htl::gpio::PinHandler const _hPinSS;
+    		htl::gpio::PinHandler const _hPinOUTEN;
     	protected:
-    		VNI8200XP_SerialDevice(htl::spi::SPIDeviceHandler hSPI,  htl::gpio::PinHandler hSS, htl::gpio::PinHandler hOUTEN);
+    		VNI8200XP_SerialDevice(htl::spi::SPIDeviceHandler hSPI,  htl::gpio::PinHandler hPinSS, htl::gpio::PinHandler hPinOUTEN);
     	public:
             void initialize() override;
         	void set(uint8_t pinMask) override;

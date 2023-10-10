@@ -207,8 +207,12 @@ namespace htl {
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
-				Result transmit(const uint8_t *data, uint16_t dataLength);
-				Result receive(uint8_t *data, uint16_t dataSize);
+				Result transmit(const uint8_t *buffer, uint16_t size, uint32_t timeout);
+				Result receive(uint8_t *buffer, uint16_t size, uint32_t timeout);
+				Result transmit_IRQ(const uint8_t *buffer, uint16_t size);
+				Result receive_IRQ(uint8_t *buffer, uint16_t size);
+				Result transmit_DMA(const uint8_t *buffer, uint16_t size);
+				Result receive_DMA(uint8_t *buffer, uint16_t size);
 				State getState() const {
 					return _state;
 				}

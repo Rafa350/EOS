@@ -6,25 +6,26 @@ using namespace eos;
 using namespace htl;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Contructor.
+/// \param    hSPI: Handler del dispositiu SPI per la comunicacio.
+/// \param    hSS: Handler del pin pel chip select.
+///
 CLT0138SQ7_Device::CLT0138SQ7_Device(
 	htl::spi::SPIDeviceHandler hSPI,
-	htl::gpio::PinHandler hSS):
+	htl::gpio::PinHandler hPinSS):
 
 	_hSPI {hSPI},
-	_hSS {hSS},
-	_state {0} {
+	_hPinSS {hPinSS},
+	_state {0},
+	_underVoltage {false},
+	_overTemperature {false} {
 
 }
 
 
 void CLT0138SQ7_Device::initialize() {
 
-}
-
-
-uint8_t CLT0138SQ7_Device::read() {
-
-	return _state;
 }
 
 
@@ -35,11 +36,14 @@ void CLT0138SQ7_Device::update() {
 
 	uint8_t rxBuffer[2];
 
-	_hSS->clear();
+	_hPinSS->clear();
 	_hSPI->transmit(nullptr, rxBuffer, sizeof(rxBuffer));
-	_hSS->set();
+	_hPinSS->set();
 
-	_state = rxBuffer[1];
+	_underVoltage = (rxBuffer[1] & 0x02) == 0;
+	_overTemperature = (rxBuffer[1] & 0x01) == 0;
+
+	_state = rxBuffer[0];
 }
 
 

@@ -16,24 +16,24 @@ namespace eos {
         private:
             uint8_t _oldState;
 			uint8_t _newState;
-			htl::gpio::PinHandler const _hSYNC;
-			htl::gpio::PinHandler const _hLOAD;
-			htl::gpio::PinHandler const _hIN1;
-			htl::gpio::PinHandler const _hIN2;
-			htl::gpio::PinHandler const _hIN3;
-			htl::gpio::PinHandler const _hIN4;
-			htl::gpio::PinHandler const _hIN5;
-			htl::gpio::PinHandler const _hIN6;
-			htl::gpio::PinHandler const _hIN7;
-			htl::gpio::PinHandler const _hIN8;
-			htl::gpio::PinHandler const _hOUTEN;
-			htl::gpio::PinHandler const _hFAULT;
+			htl::gpio::PinHandler const _hPinSYNC;
+			htl::gpio::PinHandler const _hPinLOAD;
+			htl::gpio::PinHandler const _hPinIN1;
+			htl::gpio::PinHandler const _hPinIN2;
+			htl::gpio::PinHandler const _hPinIN3;
+			htl::gpio::PinHandler const _hPinIN4;
+			htl::gpio::PinHandler const _hPinIN5;
+			htl::gpio::PinHandler const _hPinIN6;
+			htl::gpio::PinHandler const _hPinIN7;
+			htl::gpio::PinHandler const _hPinIN8;
+			htl::gpio::PinHandler const _hPinOUTEN;
+			htl::gpio::PinHandler const _hPinFAULT;
         protected:
-            ISO808_Device(htl::gpio::PinHandler const _hSYNC, htl::gpio::PinHandler const _hLOAD,
-                htl::gpio::PinHandler _hIN1, htl::gpio::PinHandler _hIN2, htl::gpio::PinHandler _hIN3, htl::gpio::PinHandler _hIN4,
-                htl::gpio::PinHandler _hIN5, htl::gpio::PinHandler _hIN6, htl::gpio::PinHandler _hIN7, htl::gpio::PinHandler _hIN8,
-                htl::gpio::PinHandler _hOUTEN,
-                htl::gpio::PinHandler _hFAULT);
+            ISO808_Device(htl::gpio::PinHandler const _hPinSYNC, htl::gpio::PinHandler const _hPinLOAD,
+                htl::gpio::PinHandler _hPinIN1, htl::gpio::PinHandler _hPinIN2, htl::gpio::PinHandler _hPinIN3,
+				htl::gpio::PinHandler _hPinIN4, htl::gpio::PinHandler _hPinIN5, htl::gpio::PinHandler _hPinIN6,
+				htl::gpio::PinHandler _hPinIN7, htl::gpio::PinHandler _hPinIN8, htl::gpio::PinHandler _hPinOUTEN,
+                htl::gpio::PinHandler _hPinFAULT);
 		public:
 			void initialize();
             inline void set(uint8_t pinMask) {
@@ -55,10 +55,10 @@ namespace eos {
             	return _newState;
             }
 			inline void enable() const {
-                _hOUTEN->set();
+                _hPinOUTEN->set();
             }
 			inline void disable() const {
-                _hOUTEN->clear();
+                _hPinOUTEN->clear();
                 
             }
             void update();

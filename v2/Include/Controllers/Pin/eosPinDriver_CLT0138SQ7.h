@@ -14,14 +14,18 @@ namespace eos {
 	class CLT0138SQ7_Device {
 		protected:
 			htl::spi::SPIDeviceHandler const _hSPI;
-			htl::gpio::PinHandler const _hSS;
+			htl::gpio::PinHandler const _hPinSS;
 			uint8_t _state;
+			bool _underVoltage;
+			bool _overTemperature;
 		protected:
-			CLT0138SQ7_Device(htl::spi::SPIDeviceHandler hSPI, htl::gpio::PinHandler hSS);
+			CLT0138SQ7_Device(htl::spi::SPIDeviceHandler hSPI, htl::gpio::PinHandler hPinSS);
 		public:
             void initialize();
-			uint8_t read();
+			inline uint8_t read() const { return _state; }
             void update();
+            inline bool isUnderVoltage() const { return _underVoltage; }
+            inline bool isOverTemperature() const { return _overTemperature; }
             
 	};
 

@@ -22,33 +22,33 @@ using namespace htl;
 /// \param    hFAULT: Handler del pin FAULT.
 ///
 ISO808_Device::ISO808_Device(
-    htl::gpio::PinHandler hSYNC,
-    htl::gpio::PinHandler hLOAD,
-    htl::gpio::PinHandler hIN1,
-    htl::gpio::PinHandler hIN2,
-    htl::gpio::PinHandler hIN3,
-    htl::gpio::PinHandler hIN4,
-    htl::gpio::PinHandler hIN5,
-    htl::gpio::PinHandler hIN6,
-    htl::gpio::PinHandler hIN7,
-    htl::gpio::PinHandler hIN8,
-    htl::gpio::PinHandler hOUTEN,
-    htl::gpio::PinHandler hFAULT):
+    htl::gpio::PinHandler hPinSYNC,
+    htl::gpio::PinHandler hPinLOAD,
+    htl::gpio::PinHandler hPinIN1,
+    htl::gpio::PinHandler hPinIN2,
+    htl::gpio::PinHandler hPinIN3,
+    htl::gpio::PinHandler hPinIN4,
+    htl::gpio::PinHandler hPinIN5,
+    htl::gpio::PinHandler hPinIN6,
+    htl::gpio::PinHandler hPinIN7,
+    htl::gpio::PinHandler hPinIN8,
+    htl::gpio::PinHandler hPinOUTEN,
+    htl::gpio::PinHandler hPinFAULT):
 
     _oldState {0},
     _newState {0},
-    _hSYNC {hSYNC},
-    _hLOAD {hLOAD},
-    _hIN1 {hIN1},
-    _hIN2 {hIN2},
-    _hIN3 {hIN3},
-    _hIN4 {hIN4},
-    _hIN5 {hIN5},
-    _hIN6 {hIN6},
-    _hIN7 {hIN7},
-    _hIN8 {hIN8},
-    _hOUTEN {hOUTEN},
-    _hFAULT {hFAULT} {
+    _hPinSYNC {hPinSYNC},
+    _hPinLOAD {hPinLOAD},
+    _hPinIN1 {hPinIN1},
+    _hPinIN2 {hPinIN2},
+    _hPinIN3 {hPinIN3},
+    _hPinIN4 {hPinIN4},
+    _hPinIN5 {hPinIN5},
+    _hPinIN6 {hPinIN6},
+    _hPinIN7 {hPinIN7},
+    _hPinIN8 {hPinIN8},
+    _hPinOUTEN {hPinOUTEN},
+    _hPinFAULT {hPinFAULT} {
 
 }
 
@@ -58,18 +58,18 @@ ISO808_Device::ISO808_Device(
 ///
 void ISO808_Device::initialize() {
 
-    _hSYNC->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, true);
-    _hLOAD->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, true);
-    _hIN1->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hIN2->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hIN3->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hIN4->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hIN5->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hIN6->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hIN7->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hIN8->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hOUTEN->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hFAULT->initInput(htl::gpio::InputMode::pullUp);
+    _hPinSYNC->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, true);
+    _hPinLOAD->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, true);
+    _hPinIN1->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinIN2->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinIN3->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinIN4->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinIN5->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinIN6->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinIN7->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinIN8->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinOUTEN->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+    _hPinFAULT->initInput(htl::gpio::InputMode::pullUp);
 }
 
 
@@ -80,18 +80,18 @@ void ISO808_Device::update() {
 
     if (_newState != _oldState) {
 
-        _hLOAD->clear();
-        _hSYNC->clear();
-        if ((_newState & 0x01) == 0) _hIN1->clear(); else _hIN1->set();
-        if ((_newState & 0x02) == 0) _hIN2->clear(); else _hIN2->set();
-        if ((_newState & 0x04) == 0) _hIN3->clear(); else _hIN3->set();
-        if ((_newState & 0x08) == 0) _hIN4->clear(); else _hIN4->set();
-        if ((_newState & 0x10) == 0) _hIN5->clear(); else _hIN5->set();
-        if ((_newState & 0x20) == 0) _hIN6->clear(); else _hIN6->set();
-        if ((_newState & 0x40) == 0) _hIN7->clear(); else _hIN7->set();
-        if ((_newState & 0x80) == 0) _hIN8->clear(); else _hIN8->set();
-        _hLOAD->set(); // Carrega en el latch
-        _hSYNC->set(); // Transfereix a les sortides
+        _hPinLOAD->clear();
+        _hPinSYNC->clear();
+        if ((_newState & 0x01) == 0) _hPinIN1->clear(); else _hPinIN1->set();
+        if ((_newState & 0x02) == 0) _hPinIN2->clear(); else _hPinIN2->set();
+        if ((_newState & 0x04) == 0) _hPinIN3->clear(); else _hPinIN3->set();
+        if ((_newState & 0x08) == 0) _hPinIN4->clear(); else _hPinIN4->set();
+        if ((_newState & 0x10) == 0) _hPinIN5->clear(); else _hPinIN5->set();
+        if ((_newState & 0x20) == 0) _hPinIN6->clear(); else _hPinIN6->set();
+        if ((_newState & 0x40) == 0) _hPinIN7->clear(); else _hPinIN7->set();
+        if ((_newState & 0x80) == 0) _hPinIN8->clear(); else _hPinIN8->set();
+        _hPinLOAD->set(); // Carrega en el latch
+        _hPinSYNC->set(); // Transfereix a les sortides
 
         _oldState = _newState;
     }
@@ -104,7 +104,7 @@ void ISO808_Device::update() {
 ///
 bool ISO808_Device::isOK() {
     
-    return _hFAULT->read();
+    return _hPinFAULT->read();
 }
 
 

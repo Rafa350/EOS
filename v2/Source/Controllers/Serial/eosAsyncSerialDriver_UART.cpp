@@ -62,7 +62,7 @@ bool AsyncSerialDriver_UART::transmitImpl(
 	else {
 		notifyTxStart();
 
-		_uart->transmit(data,  dataLength);
+		_uart->transmit_IRQ(data,  dataLength);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
@@ -91,7 +91,7 @@ bool AsyncSerialDriver_UART::receiveImpl(
 	else {
 		notifyRxStart();
 
-		_uart->receive(data, dataSize);
+		_uart->receive_IRQ(data, dataSize);
 
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles en la UART.
