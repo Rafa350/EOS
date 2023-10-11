@@ -12,9 +12,17 @@
 namespace eos {
     
     class VNI8200XP_Device {
+		public:
+			enum class State {
+				reset,
+				ready
+			};
+			enum class Result {
+				ok,
+				error
+			};
         public:
     		virtual ~VNI8200XP_Device() = default;
-            virtual void initialize() = 0;
             virtual void set(uint8_t pinMask) = 0;
             virtual void clear(uint8_t pinMask) = 0;
             virtual void toggle(uint8_t pinMask) = 0;
@@ -23,22 +31,22 @@ namespace eos {
 			virtual void enable() const = 0;
 			virtual void disable() const = 0;
             virtual void update() = 0;
-            virtual bool isOK() const = 0;
     };
 
     typedef VNI8200XP_Device *VNI8200XP_DeviceHandler;
 
     class VNI8200XP_SerialDevice: public VNI8200XP_Device {
     	private:
-    		uint8_t _newState;
-            uint8_t _oldState;
-    		htl::spi::SPIDeviceHandler const _hSPI;
-    		htl::gpio::PinHandler const _hPinSS;
-    		htl::gpio::PinHandler const _hPinOUTEN;
+    		State _state;
+    		uint8_t _curPinState;
+            uint8_t _oldPinState;
+    		htl::spi::SPIDeviceHandler _hSPI;
+    		htl::gpio::PinHandler _hPinSS;
+    		htl::gpio::PinHandler _hPinOUTEN;
     	protected:
-    		VNI8200XP_SerialDevice(htl::spi::SPIDeviceHandler hSPI,  htl::gpio::PinHandler hPinSS, htl::gpio::PinHandler hPinOUTEN);
+    		VNI8200XP_SerialDevice();
     	public:
-            void initialize() override;
+            Result initialize(htl::spi::SPIDeviceHandler hSPI, htl::gpio::PinHandler hPinSS, htl::gpio::PinHandler hPinOUTEN = nullptr);
         	void set(uint8_t pinMask) override;
 			void clear(uint8_t pinMask) override;
 			void toggle(uint8_t pinMask) override;
@@ -47,16 +55,17 @@ namespace eos {
 			void enable() const override;
 			void disable() const override;
             void update() override;
-            bool isOK() const override;
     };
     
-    template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
+    template <uint8_t id_>
     class VNI8200XP_SerialDeviceX final: public VNI8200XP_SerialDevice {
         private:
             static VNI8200XP_SerialDeviceX _instance;
+        public:
+            static constexpr uint8_t id = id_;
         private:
             VNI8200XP_SerialDeviceX():
-            	VNI8200XP_SerialDevice(SPIDevice_::getHandler(), PinSS_::getHandler(), PinOUTEN_::getHandler()) {
+            	VNI8200XP_SerialDevice() {
             }
             VNI8200XP_SerialDeviceX(const VNI8200XP_SerialDeviceX&) = delete;
             VNI8200XP_SerialDeviceX operator = (const VNI8200XP_SerialDeviceX&) = delete;
@@ -65,8 +74,8 @@ namespace eos {
 				return &_instance;
 			}
     };
-    template <typename SPIDevice_, typename PinSS_, typename PinOUTEN_>
-	VNI8200XP_SerialDeviceX<SPIDevice_, PinSS_, PinOUTEN_> VNI8200XP_SerialDeviceX<SPIDevice_, PinSS_, PinOUTEN_>::_instance;
+    template <uint8_t id_>
+	VNI8200XP_SerialDeviceX<id_> VNI8200XP_SerialDeviceX<id_>::_instance;
     
     
     class PinDriver_VNI8200XP final: public PinDriver {

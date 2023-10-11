@@ -15,37 +15,60 @@ static uint8_t calcParity(uint8_t data);
 /// \param    hSS: Handler del pin SS
 /// \param    hOUTEN: Handler del pin OUTEN
 ///
-VNI8200XP_SerialDevice::VNI8200XP_SerialDevice(
-	spi::SPIDeviceHandler hSPI,
-	gpio::PinHandler hPinSS,
-	gpio::PinHandler hPinOUTEN) :
+VNI8200XP_SerialDevice::VNI8200XP_SerialDevice() :
 
-    _newState {0},
-    _oldState {0},
-	_hSPI {hSPI},
-	_hPinSS {hPinSS},
-	_hPinOUTEN {hPinOUTEN} {
+	_state { State::reset},
+    _curPinState {0},
+    _oldPinState {0},
+	_hSPI {nullptr},
+	_hPinSS {nullptr},
+	_hPinOUTEN {nullptr} {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
+/// \param    hSPI: Handler del dispositiu SPI
+/// \param    hPinSS: Handler del pin de seleccio.
+/// \param    hPinOUTEN: Handler del pin de seleccio de les sortides.
 ///
-void VNI8200XP_SerialDevice::initialize() {
+VNI8200XP_Device::Result VNI8200XP_SerialDevice::initialize(
+	htl::spi::SPIDeviceHandler hSPI,
+	htl::gpio::PinHandler hPinSS,
+	htl::gpio::PinHandler hPinOUTEN) {
 
+	if (_state == State::reset) {
+		_hSPI = hSPI;
+		_hPinSS = hPinSS;
+		_hPinOUTEN = hPinOUTEN;
+
+		_state = State::ready;
+
+		return Result::ok;
+	}
+	else
+		return Result::error;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Habilita les sortides.
+///
 void VNI8200XP_SerialDevice::enable() const {
 
-	_hPinOUTEN->set();
+	if (_hPinOUTEN != nullptr)
+		_hPinOUTEN->set();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita les sortides.
+///
 void VNI8200XP_SerialDevice::disable() const {
 
-	_hPinOUTEN->clear();
+	if (_hPinOUTEN != nullptr)
+		_hPinOUTEN->clear();
 }
 
 
@@ -54,65 +77,77 @@ void VNI8200XP_SerialDevice::disable() const {
 ///
 void VNI8200XP_SerialDevice::update() {
     
-    if (_newState != _oldState) {
+    if (_curPinState != _oldPinState) {
     
     	uint8_t txData[2], rxData[2];
 
-    	txData[0] = _newState;
-    	txData[1] = calcParity(_newState);
+    	txData[0] = _curPinState;
+    	txData[1] = calcParity(_curPinState);
 
     	_hPinSS->clear();
     	_hSPI->transmit(txData, rxData, sizeof(txData));
     	_hPinSS->set();
         
-        _oldState = _newState;
+        _oldPinState = _curPinState;
     }
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Activa els pins especificats.
+/// \param    pinMask: Mascara dels pins a activar.
+///
 void VNI8200XP_SerialDevice::set(
 	uint8_t pinMask) {
 
-	_newState |= pinMask;
+	_curPinState |= pinMask;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva els pins especificats.
+/// \param    pinMask: Mascara dels pins a desactivar.
+///
 void VNI8200XP_SerialDevice::clear(
 	uint8_t pinMask) {
 
-	_newState &= ~pinMask;
+	_curPinState &= ~pinMask;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inverteix els pins especificats.
+/// \param    pinMask: Mascara dels pins a invertir.
+///
 void VNI8200XP_SerialDevice::toggle(
 	uint8_t pinMask) {
 
-	_newState ^= pinMask;
+	_curPinState ^= pinMask;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Escriu els pins.
+/// \param    pinMask: Mascara dels pins a escriure.
+/// \param    pinState: El estat a escriure.
+///
 void VNI8200XP_SerialDevice::write(
 	uint8_t pinMask,
 	bool pinState) {
 
 	if (pinState)
-		_newState |= pinMask;
+		_curPinState |= pinMask;
 	else
-		_newState &= ~pinMask;
+		_curPinState &= ~pinMask;
 
 }
 
 
 uint8_t VNI8200XP_SerialDevice::read() const {
 
-	return _newState;
+	return _curPinState;
 }
 
-
-bool VNI8200XP_SerialDevice::isOK() const {
-
-	return true;
-}
 
 
 /// ----------------------------------------------------------------------

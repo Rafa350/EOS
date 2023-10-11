@@ -8,24 +8,39 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
-/// \param    hSPI: Handler del dispositiu SPI per la comunicacio.
-/// \param    hSS: Handler del pin pel chip select.
 ///
-CLT0138SQ7_Device::CLT0138SQ7_Device(
-	htl::spi::SPIDeviceHandler hSPI,
-	htl::gpio::PinHandler hPinSS):
+CLT0138SQ7_Device::CLT0138SQ7_Device():
 
-	_hSPI {hSPI},
-	_hPinSS {hPinSS},
-	_state {0},
+	_state { State::reset},
+	_pinState {0},
 	_underVoltage {false},
-	_overTemperature {false} {
+	_overTemperature {false},
+	_hSPI {nullptr},
+	_hPinSS {nullptr} {
 
 }
 
 
-void CLT0138SQ7_Device::initialize() {
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio.
+/// \param    hSPI: Handler del dispositiu SPI per la comunicacio.
+/// \param    hSS: Handler del pin pel chip select.
+///
+CLT0138SQ7_Device::Result CLT0138SQ7_Device::initialize(
+	htl::spi::SPIDeviceHandler hSPI,
+	htl::gpio::PinHandler hPinSS) {
 
+	if (_state == State::reset) {
+		_hSPI = hSPI;
+		_hPinSS = hPinSS;
+
+		_state = State::ready;
+
+		return Result::ok;
+	}
+
+	else
+		return Result::error;
 }
 
 
@@ -37,13 +52,13 @@ void CLT0138SQ7_Device::update() {
 	uint8_t rxBuffer[2];
 
 	_hPinSS->clear();
-	_hSPI->transmit(nullptr, rxBuffer, sizeof(rxBuffer));
+	_hSPI->receive(rxBuffer, sizeof(rxBuffer));
 	_hPinSS->set();
 
 	_underVoltage = (rxBuffer[1] & 0x02) == 0;
 	_overTemperature = (rxBuffer[1] & 0x01) == 0;
 
-	_state = rxBuffer[0];
+	_pinState = rxBuffer[0];
 }
 
 
