@@ -231,29 +231,29 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza el pin CS
 	//
-	auto pinCS = PinCS::getHandler();
-	pinCS->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast, true);
+	auto hPinCS = PinCS::getHandler();
+	hPinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
 	// Inicialitza el pin DC
 	//
-	auto pinDC = PinDC::getHandler();
-	pinDC->initOutput(gpio::OutDriver::pushPull, gpio::Speed::fast);
+	auto hPinDC = PinDC::getHandler();
+	hPinDC->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 
 	// Inicialitza el pin RST
 	//
 	#ifdef DISPLAY_RST_Pin
-	auto pinRST = PinRST::getHandler();
-	pinRST->initOutput(gpio::OutDriver::pushPull, gpio::Speed::low, false);
+	auto hPinRST = PinRST::getHandler();
+	hPinRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
 	#endif
 
 	// Inicialitza el modul SPI
 	//
-	auto spi = SpiDevice::getHandler();
-	spi->initSCKPin<PinSCK>();
-	spi->initMOSIPin<PinMOSI>();
-	spi->initialize(spi::SPIMode::master, _spiClkPolarity, _spiClkPhase,
+	auto hSPI = SpiDevice::getHandler();
+	hSPI->initPinSCK<PinSCK>();
+	hSPI->initPinMOSI<PinMOSI>();
+	hSPI->initialize(spi::SPIMode::master, _spiClkPolarity, _spiClkPhase,
 		spi::WordSize::_8, spi::FirstBit::msb, _spiClockDivider);
-	spi->enable();
+	hSPI->enable();
 }
 #endif
 
@@ -338,16 +338,16 @@ void DisplayDriver_SSD1306::initializeController() {
 void DisplayDriver_SSD1306::writeCommand(
     uint8_t cmd) {
 
-	auto pinCS = PinCS::getHandler();
-	auto pinDC = PinDC::getHandler();
-	auto spi = SpiDevice::getHandler();
+	auto hPinCS = PinCS::getHandler();
+	auto hPinDC = PinDC::getHandler();
+	auto hSPI = SpiDevice::getHandler();
 
-	pinCS->clear();
-	pinDC->clear();
+	hPinCS->clear();
+	hPinDC->clear();
 
-	spi->transmit(&cmd, 1);
+	hSPI->transmit(&cmd, 1);
 
-	pinCS->set();
+	hPinCS->set();
 }
 #endif
 
@@ -362,16 +362,16 @@ void DisplayDriver_SSD1306::writeData(
     const uint8_t* data,
 	int length) {
 
-	auto pinCS = PinCS::getHandler();
-	auto pinDC = PinDC::getHandler();
-	auto spi = SpiDevice::getHandler();
+	auto hPinCS = PinCS::getHandler();
+	auto hPinDC = PinDC::getHandler();
+	auto hSPI = SpiDevice::getHandler();
 
-	pinCS->clear();
-	pinDC->set();
+	hPinCS->clear();
+	hPinDC->set();
 
-	spi->transmit(data, length);
+	hSPI->transmit(data, length);
 
-	pinCS->clear();
+	hPinCS->clear();
 }
 #endif
 

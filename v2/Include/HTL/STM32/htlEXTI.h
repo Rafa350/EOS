@@ -224,7 +224,10 @@ namespace htl {
 
 			class Activator final {
 				private:
-					#if defined(EOS_PLATFORM_STM32G0)
+					#if defined(EOS_PLATFORM_STM32F7)
+					static constexpr uint32_t _rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+					static constexpr uint32_t _rccEnablePos = RCC_APB2ENR_SYSCFGEN_Pos;
+					#elif defined(EOS_PLATFORM_STM32G0)
 					static constexpr uint32_t _rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 					static constexpr uint32_t _rccEnablePos = RCC_APBENR2_SYSCFGEN_Pos;
 					#endif

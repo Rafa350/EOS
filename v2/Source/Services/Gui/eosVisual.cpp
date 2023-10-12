@@ -19,7 +19,7 @@ Visual::Visual():
 	_visibility(Visibility::visible),
 	_size(0, 0),
 	_minSize(0, 0),
-	_maxSize(INT32_MAX, INT32_MAX),
+	_maxSize(INT16_MAX, INT16_MAX),
 	_bounds(0, 0, 0, 0),
 	_margin(0),
 	_horizontalAlignment(HorizontalAlignment::stretch),

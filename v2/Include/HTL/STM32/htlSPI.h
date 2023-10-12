@@ -94,7 +94,6 @@ namespace htl {
 		using SPIInterruptParam = void*;
 		using SPIInterruptFunction = void (*)(SPIInterruptParam);
 
-
 		class SPIDevice {
 			public:
 				enum class State {
@@ -151,7 +150,7 @@ namespace htl {
 			struct HardwareInfo;
 
 			template <DeviceID, PinFunction, typename>
-			struct SPIPinFunctionID;
+			struct PinFunctionInfo;
 		}
 
 		template <DeviceID deviceID_>
@@ -190,18 +189,18 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initPinSCK() {
-					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunctionID);
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
-					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunctionID);
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinMISO() {
-					gpio::PinFunctionID pinFunctionID = internal::SPIPinFunctionID<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunctionID);
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 		};
 

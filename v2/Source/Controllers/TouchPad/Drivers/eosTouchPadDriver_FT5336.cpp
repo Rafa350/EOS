@@ -271,12 +271,12 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el pin d'interrupcio
 	//
-	auto pinINT = PinINT::getHandler();
-	pinINT->initInput(gpio::PullUpDn::up);
+	auto hPinINT = PinINT::getHandler();
+	hPinINT->initInput(gpio::InputMode::pullUp);
 
-	auto pinInterruptINT = PinInterruptINT::getHandler();
-	pinInterruptINT->enableInterruptPin(htl::gpio::Edge::rising);
-	pinInterruptINT->setRisingEdgeEvent(_intRisingEdgeEvent);
+	auto hPinInterruptINT = PinInterruptINT::getHandler();
+	hPinInterruptINT->enableInterruptPin(htl::gpio::Edge::rising);
+	hPinInterruptINT->setNotifyEvent(_intNotifyEvent);
 
 	irq::setInterruptVectorPriority(_vector, _priority, _subPriority);
 	irq::enableInterruptVector(_vector);
@@ -284,7 +284,7 @@ void TouchPadDriver_FT5336::initializeInterface() {
 	// Inicialitza el canal I2C
 	//
 	auto hI2C = I2C::getHandler();
-	hI2C->initMaster();
+	hI2C->initialize(0x0B, 0x04, 0x02, 0x0F, 0x13);
 	hI2C->initPinSCL<PinSCL>();
 	hI2C->initPinSDA<PinSDA>();
 }
@@ -322,7 +322,7 @@ uint8_t TouchPadDriver_FT5336::readRegister(
 
 	auto hI2C = I2C::getHandler();
 	hI2C->send(_i2cAddr, &reg, 1);
-	nI2C->receive(_i2cAddr, &value, sizeof(value));
+	hI2C->receive(_i2cAddr, &value, sizeof(value));
 
 	return value;
 }

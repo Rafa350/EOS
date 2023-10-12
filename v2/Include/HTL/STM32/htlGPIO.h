@@ -84,8 +84,8 @@ namespace htl {
         /// \brief Mask for pin position
 		typedef uint16_t PinMask;
 
-		/// \brief Alternate function identifiers
-		enum class PinFunctionID {
+		/// \brief Alternate function
+		enum class PinFunction {
 			_0,
 			_1,
 			_2,
@@ -104,37 +104,25 @@ namespace htl {
 			_15
 		};
 
+		/// \bried Input mode
 		enum class InputMode {
 			floating,
 			pullUp,
 			pullDown
 		};
 
+		/// \bried Output mode
 		enum class OutputMode {
 			pushPull,
 			openDrain,
 			openDrainPullUp
 		};
 
+		/// \bried Alternate mode
 		enum class AlternateMode {
 			pushPull,
 			openDrain,
 			openDrainPullUp
-		};
-
-		/// \brief Pull up/down mode configuration.
-		enum class PullUpDn {
-			noChange,
-			none,
-			up,
-			down
-		};
-
-		/// \brief Driver type configuration.
-		enum class OutDriver {
-			noChange,
-			pushPull,
-			openDrain
 		};
 
 		/// \brief Speed configuration.
@@ -166,42 +154,43 @@ namespace htl {
 				virtual void deactivate(PinMask mask) = 0;
 				virtual void reset() = 0;
 			public:
-				void initInput(PinMask mask, PullUpDn pull);
-				void initOutput(PinMask mask, OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
-				inline void set(PinMask mask) {
+				void initInput(PinMask mask, InputMode mode);
+				void initOutput(PinMask mask, OutputMode mode, Speed speed = Speed::medium);
+				void deinitialize();
+				inline void set(PinMask mask) const {
 					_gpio->BSRR = mask;
 				}
-				inline void set(PinID pinID) {
+				inline void set(PinID pinID) const {
 					_gpio->BSRR = 1 << uint32_t(pinID);
 				}
-				inline void clear(PinMask mask) {
+				inline void clear(PinMask mask) const {
 					_gpio->BSRR = mask << 16;
 				}
-				inline void clear(PinID pinID) {
+				inline void clear(PinID pinID) const {
 					_gpio->BSRR = 1 << (uint32_t(pinID) + 16);
 				}
-				inline void toggle(PinMask mask) {
+				inline void toggle(PinMask mask) const {
 					_gpio->ODR ^= mask;
 				}
-				inline void toggle(PinID pinID) {
+				inline void toggle(PinID pinID) const {
 					_gpio->ODR ^= 1 << uint32_t(pinID);
 				}
-				inline PinMask read() {
+				inline PinMask read() const {
 					return _gpio->IDR;
 				}
-				inline bool read(PinID pinID) {
+				inline bool read(PinID pinID) const {
 					return (_gpio->IDR & (1 << uint32_t(pinID))) ? true : false;
 				}
-				inline void write(PinMask mask) {
+				inline void write(PinMask mask) const {
 					_gpio->ODR = mask;
 				}
-				inline void write(PinMask clearMask, PinMask setMask) {
+				inline void write(PinMask clearMask, PinMask setMask) const {
 					uint16_t r = _gpio->ODR;
 					r &= ~clearMask;
 					r |= setMask;
 					_gpio->ODR = r;
 				}
-				inline void write(PinID pinID, bool state) {
+				inline void write(PinID pinID, bool state) const {
 					if (state)
 						_gpio->BSRR = 1 << uint32_t(pinID);
 					else
@@ -228,22 +217,21 @@ namespace htl {
 				void initInput(InputMode mode);
 				void initOutput(OutputMode mode, Speed speed, bool state);
 				void initAnalogic();
-				void initAlt(OutDriver driver, PullUpDn pull, Speed speed, PinFunctionID pinFunctionID);
-				void initAlternate(AlternateMode mode, Speed speed, PinFunctionID pinFunctionID);
+				void initAlternate(AlternateMode mode, Speed speed, PinFunction pinFunction);
 				void deinitialize();
-				inline void set() {
+				inline void set() const {
 					_gpio->BSRR = _mask;
 				}
-				inline void clear() {
+				inline void clear() const {
 					_gpio->BSRR = _mask << 16;
 				}
-				inline void toggle() {
+				inline void toggle() const {
 					_gpio->ODR ^= _mask;
 				}
-				inline void write(bool state) {
+				inline void write(bool state) const {
 					_gpio->BSRR = _mask << (state ? 0 : 16);
 				}
-				inline bool read() {
+				inline bool read() const {
 					return (_gpio->IDR & _mask) != 0;
 				}
 		};
@@ -277,8 +265,8 @@ namespace htl {
 
 		class PinInterrupt {
 			private:
-				uint32_t _portNum;
-				uint32_t _pinNum;
+				uint32_t const _portNum;
+				uint32_t const _pinNum;
 				INotifyEvent *_notifyEvent;
 				bool _notifyEventEnabled;
 			private:

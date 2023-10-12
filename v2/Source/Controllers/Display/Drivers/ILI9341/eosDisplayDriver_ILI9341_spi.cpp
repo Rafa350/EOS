@@ -23,24 +23,24 @@ void DisplayDriver_ILI9341::initializeInterface() {
 	// Inicialitza el pin TE
 	//
 	auto hTE = PinTE::getHandler();
-	hTE->initInput(gpio::PullUpDn::up);
+	hTE->initInput(gpio::InputMode::pullUp);
 
 	// Inicialitza el pin RST
 	//
 	#ifdef DISPLAY_RST_GPIO
 	auto hRST = PinRST::getHandler();
-	hRST->initOutput(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, false);
+	hRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 	#endif
 
 	// Inicialitza el pin CS
 	//
 	auto hCS = PinCS::getHandler();
-	hCS->initOutput(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, true);
+	hCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
 	// Inicialitza el pin RS
 	//
 	auto hRS = PinRS::getHandler();
-	hRS->initOutput(gpio::OutDriver::pushPull, gpio::PullUpDn::none, gpio::Speed::fast, false);
+	hRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 
 	// Inicialitza el modul SPI
     //

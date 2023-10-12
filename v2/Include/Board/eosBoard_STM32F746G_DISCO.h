@@ -118,7 +118,7 @@
 #define TOUCHPAD_INT_PinInterrupt      htl::gpio::PinInterruptX<htl::gpio::PortID::I, htl::gpio::PinID::_13>
 #define TOUCHPAD_INT_IntVector         htl::irq::VectorID::exti13
 
-#define TOUCHPAD_I2C_Device  htl::i2c::I2CSlaveDevice3
+#define TOUCHPAD_I2C_Device  htl::i2c::I2CMasterDevice3
 #define TOUCHPAD_I2C_ADDR    0x70
 
 #define TOUCHPAD_WIDTH       DISPLAY_WIDTH

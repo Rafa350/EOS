@@ -158,13 +158,31 @@ namespace htl {
 
 
 		class I2CMasterDevice: public I2CDevice {
+			public:
+				enum class State {
+					reset,
+					ready
+				};
+				enum class Result {
+					ok,
+					error,
+					busy
+				};
 			private:
 				I2C_TypeDef * const _i2c;
+				State _state;
 			private:
 				I2CMasterDevice(const I2C_TypeDef&) = delete;
 				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
 			protected:
 				I2CMasterDevice(I2C_TypeDef *i2c);
+				void interruptService();
+			public:
+				Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
+					uint8_t sclh, uint8_t scll);
+				Result deinitialize();
+				Result send(uint16_t addr, const uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
+				Result receive(uint16_t addr, uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
 		};
 
 
@@ -174,7 +192,7 @@ namespace htl {
 			class HardwareInfo;
 
 			template <DeviceID, PinFunction, typename>
-			struct I2CPinFunctionID;
+			struct PinFunctionInfo;
 		}
 
 		template <DeviceID deviceID_>
@@ -211,18 +229,18 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initPinSCL() {
-					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinSDA() {
-					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
-				void initPinALERT() {
-					gpio::PinFunctionID pinFunctionID = internal::I2CPinFunctionID<deviceID_, PinFunction::alert, pin_>::alt;
-					pin_::getHandler()->initAlt(gpio::OutDriver::openDrain, gpio::PullUpDn::none, gpio::Speed::fast, pinFunctionID);
+				void initPinSMBA() {
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
 				}
 		};
 
@@ -241,6 +259,68 @@ namespace htl {
 		#endif
 		#ifdef HTL_I2C4_EXIST
 		typedef I2CSlaveDeviceX<DeviceID::_4> I2CSlaveDevice4;
+		#endif
+
+
+		template <DeviceID deviceID_>
+		class I2CMasterDeviceX final: public I2CMasterDevice {
+			private:
+				using HI = internal::HardwareInfo<deviceID_>;
+			private:
+				static constexpr uint32_t _i2cAddr = HI::i2cAddr;
+				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
+				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
+				static I2CMasterDeviceX _instance;
+			public:
+				static constexpr DeviceID deviceID = deviceID_;
+			private:
+				I2CMasterDeviceX() :
+					I2CMasterDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
+				}
+			protected:
+				void activate() override {
+					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					*p |= 1 << _rccEnablePos;
+					__DSB();
+				}
+				void deactivate() override {
+					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					*p &= ~(1 << _rccEnablePos);
+				}
+			public:
+				static constexpr I2CMasterDeviceX * getHandler() {
+					return &_instance;
+				}
+				inline static void interruptHandler() {
+					getHandler()->interruptService();
+				}
+				template <typename pin_>
+				void initPinSCL() {
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+				}
+				template <typename pin_>
+				void initPinSDA() {
+					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+				}
+		};
+
+		template <DeviceID deviceID_>
+		I2CMasterDeviceX<deviceID_> I2CMasterDeviceX<deviceID_>::_instance;
+
+
+		#ifdef HTL_I2C1_EXIST
+		typedef I2CMasterDeviceX<DeviceID::_1> I2CMasterDevice1;
+		#endif
+		#ifdef HTL_I2C2_EXIST
+		typedef I2CMasterDeviceX<DeviceID::_2> I2CMasterDevice2;
+		#endif
+		#ifdef HTL_I2C3_EXIST
+		typedef I2CMasterDeviceX<DeviceID::_3> I2CMasterDevice3;
+		#endif
+		#ifdef HTL_I2C4_EXIST
+		typedef I2CMasterDeviceX<DeviceID::_4> I2CMasterDevice4;
 		#endif
 
 

@@ -26,164 +26,14 @@ using namespace htl::gpio;
 #define OSPEEDR_HIGH         0b10
 #define OSPEEDR_FAST         0b11
 
-
-enum class Mode {
-	input = 0b00,
-	output = 0b01,
-	alternate = 0b10,
-	analogic = 0b11
-};
+#define AFR_Mask             0b1111
 
 
-static void gpioInitInput(GPIO_TypeDef * const gpio, uint16_t mask, InputMode mode);
-static void gpioInitOutput(GPIO_TypeDef * const gpio, uint16_t mask, OutputMode mode, Speed speed, bool state);
-static void gpioInitAlternate(GPIO_TypeDef * const gpio, uint16_t mask, AlternateMode mode, Speed speed, PinFunctionID pinFuntionId);
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona el modus de treball dels pins.
-/// \param    gpio: Registres hardware del modul GPIO.
-/// \param    mask: Mascara de pins.
-/// \param    mode: Opcions del modus de treball.
-///
-static void setMode(
-	GPIO_TypeDef *gpio,
-	PinMask mask,
-	Mode mode) {
-
-	for (PinNumber pn = 0; pn < 15; pn++) {
-		if ((mask & (1 << pn)) != 0) {
-			uint32_t tmp = gpio->MODER;
-			tmp &= ~(0b11 << (pn * 2));
-			tmp |= uint32_t(mode) << (pn * 2);
-			gpio->MODER = tmp;
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona el driver de sortida.
-/// \param    gpio: Registres hardware del modul GPIO
-/// \param    mask: Mascara de pins.
-/// \param    driver: Opcions de driver.
-///
-static void setDriver(
-	GPIO_TypeDef *gpio,
-	PinMask mask,
-	OutDriver driver) {
-
-	if (driver != OutDriver::noChange) {
-
-		for (PinNumber pn = 0; pn < 15; pn++) {
-			if ((mask & (1 << pn)) != 0) {
-				uint32_t tmp = gpio->OTYPER;
-				tmp &= ~(1 << pn);
-				if (driver == OutDriver::openDrain)
-					tmp |= 1 << pn;
-				gpio->OTYPER = tmp;
-			}
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona la velocitat de sortida.
-/// \param    gpio: Registres de hardware del modul.
-/// \param    mask: Mascara de pins.
-/// \param    speed: Opcions de velocitat.
-///
-static void setSpeed(
-	GPIO_TypeDef *gpio,
-	PinMask mask,
-	Speed speed) {
-
-		uint32_t value = 1; // Per defecte medium
-
-		switch (speed) {
-			case Speed::low:
-				value = 0;
-				break;
-			case Speed::high:
-				value = 2;
-				break;
-			case Speed::fast:
-				value = 3;
-				break;
-			default:
-				break;
-		}
-
-		for (PinNumber pn = 0; pn < 15; pn++) {
-			if ((mask & (1 << pn)) != 0) {
-				uint32_t tmp = gpio->OSPEEDR;
-				tmp &= ~(0b11 << (pn * 2));
-				tmp |= value << (pn * 2);
-				gpio->OSPEEDR = tmp;
-			}
-		}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona la opcio pull.
-/// \param    gpio: Els registres hardware del modul GPIO
-/// \param    mask: La mascara de pins.
-/// \param    pull: Les opcions pull.
-///
-static void setPull(
-	GPIO_TypeDef *gpio,
-	PinMask mask,
-	PullUpDn pull) {
-
-	if (pull != PullUpDn::noChange) {
-
-		uint32_t value = 0; // Per defecte sense PU/PD
-
-		switch (pull) {
-			case PullUpDn::down:
-				value = 2;
-				break;
-			case PullUpDn::up:
-				value = 1;
-				break;
-			default:
-				break;
-		}
-
-		for (PinNumber pn = 0; pn < 15; pn++) {
-			if ((mask & (1 << pn)) != 0) {
-				uint32_t tmp = gpio->PUPDR;
-				tmp &= ~(0b11 << (pn * 2));
-				tmp |= value << (pn * 2);
-				gpio->PUPDR = tmp;
-			}
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona la funcio alternativa del pin.
-/// \param    gpio: Els registres hardware del modul GPIO.
-/// \param    mask: La mascara de pins
-/// \param    pinFunctionID: Identificador de la funcio alternativa.
-///
-static void setPinFunction(
-	GPIO_TypeDef *gpio,
-	PinMask mask,
-	PinFunctionID pinFunctionID) {
-
-	for (PinNumber pn = 0; pn < 15; pn++) {
-		if ((mask & (1 << pn)) != 0) {
-			uint32_t tmp = gpio->AFR[pn >> 3];
-			tmp &= ~(0b1111 << ((pn & 0x07) * 4)) ;
-			tmp |= (uint32_t(pinFunctionID) & 0b1111) << ((pn & 0x07) * 4);
-			gpio->AFR[pn >> 3] = tmp;
-		}
-	}
-}
+static void gpioInitInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode);
+static void gpioInitOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputMode mode, Speed speed, bool state);
+static void gpioInitAlternate(GPIO_TypeDef * const gpio, PinMask mask, AlternateMode mode, Speed speed, PinFunction pinFuntion);
+static void gpioInitAnalogic(GPIO_TypeDef * const gpio, PinMask mask);
+static void gpioDeinitialize(GPIO_TypeDef * const gpio, PinMask mask);
 
 
 /// ----------------------------------------------------------------------
@@ -191,9 +41,9 @@ static void setPinFunction(
 /// \param    gpio: Registres hardware del modul GPIO.
 ///
 Port::Port(
-	GPIO_TypeDef *regs):
+	GPIO_TypeDef *gpio):
 
-	_gpio {regs} {
+	_gpio {gpio} {
 
 }
 
@@ -201,35 +51,30 @@ Port::Port(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com entrades.
 /// \param    mask: Mascara de pins a configurar.
-/// \param    pull: Opcions de pull up-down
+/// \param    mode: Tipus d'entrada.
 ///
 void Port::initInput(
 	PinMask mask,
-	PullUpDn pull) {
+	InputMode mode) {
 
 	activate(mask);
-
-    setMode(_gpio, mask, Mode::input);
-    setPull(_gpio, mask, pull);
+	gpioInitInput(_gpio, mask, mode);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com sortides.
 /// \param    mask: Mascara de pins a configurar.
-/// \param    driver: Opcions de driver.
+/// \param    mode: El tipus de sortida.
 /// \param    speed: Opcions de velocitat.
 ///
 void Port::initOutput(
 	PinMask mask,
-	OutDriver driver,
+	OutputMode mode,
 	Speed speed) {
 
 	activate(mask);
-
-	setMode(_gpio, mask, Mode::output);
-	setDriver(_gpio, mask, driver);
-	setSpeed(_gpio, mask, speed);
+	gpioInitOutput(_gpio, mask, mode, speed, false);
 }
 
 
@@ -243,7 +88,7 @@ Pin::Pin(
 	PinID pinID) :
 
 	_gpio {gpio},
-	_mask {uint16_t(1 << uint16_t(pinID))} {
+	_mask {PinMask(1 << uint32_t(pinID))} {
 
 }
 
@@ -285,34 +130,10 @@ void Pin::initOutput(
 void Pin::initAlternate(
 	AlternateMode mode,
 	Speed speed,
-	PinFunctionID pinFunctionID) {
+	PinFunction pinFunction) {
 
 	activate();
-	gpioInitAlternate(_gpio, _mask, mode, speed, pinFunctionID);
-}
-
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com a sortida alternativa.
-/// \param    driver: Opcions del driver de sortida.
-/// \param    pull: Opcions de pull.
-/// \param    speed: Opcions de velocitat.
-/// \param    pinFunctionID: Funcio alternativa.
-///
-void Pin::initAlt(
-    OutDriver driver,
-	PullUpDn pull,
-    Speed speed,
-    PinFunctionID pinFunctionID) {
-
-	activate();
-
-    setMode(_gpio, _mask, Mode::alternate);
-    setDriver(_gpio, _mask, driver);
-	setPull(_gpio, _mask, pull);
-    setSpeed(_gpio, _mask, speed);
-    setPinFunction(_gpio, _mask, pinFunctionID);
+	gpioInitAlternate(_gpio, _mask, mode, speed, pinFunction);
 }
 
 
@@ -322,8 +143,7 @@ void Pin::initAlt(
 void Pin::initAnalogic() {
 
 	activate();
-
-	setMode(_gpio, _mask, Mode::analogic);
+	gpioInitAnalogic(_gpio, _mask);
 }
 
 
@@ -332,42 +152,7 @@ void Pin::initAnalogic() {
 ///
 void Pin::deinitialize() {
 
-#ifdef EOS_PLATFORM_STM32G0
-
-	// El port A es especial
-	//
-	if (_gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) {
-		if ((_mask & 0x6000) != 0)
-			setMode(_gpio, _mask, Mode::alternate);
-		else
-			setMode(_gpio, _mask, Mode::analogic);
-
-		if ((_mask & 0x8000) != 0)
-			setSpeed(_gpio, _mask, Speed::fast);
-		else
-			setSpeed(_gpio, _mask, Speed::low);
-
-		setDriver(_gpio, _mask, OutDriver::pushPull);
-
-		if ((_mask & 0x4000) != 0)
-			setPull(_gpio, _mask, PullUpDn::down);
-		else if ((_mask & 0x2000) != 0)
-			setPull(_gpio, _mask, PullUpDn::up);
-		else
-			setPull(_gpio, _mask, PullUpDn::none);
-	}
-
-	else {
-		setMode(_gpio, _mask, Mode::analogic);
-		setSpeed(_gpio, _mask, Speed::low);
-		setDriver(_gpio, _mask, OutDriver::pushPull);
-		setPull(_gpio, _mask, PullUpDn::none);
-	}
-
-	setPinFunction(_gpio, _mask, PinFunctionID::_0);
-#else
-//#error "Undefined platform"
-#endif
+	gpioDeinitialize(_gpio, _mask);
 }
 
 
@@ -589,7 +374,7 @@ void PinInterrupt::notifyFallingEdge() {
 ///
 static void gpioInitInput(
 	GPIO_TypeDef * const gpio,
-	uint16_t mask,
+	PinMask mask,
 	InputMode mode) {
 
 	for (PinNumber pn = 0; pn < 15; pn++) {
@@ -637,7 +422,7 @@ static void gpioInitInput(
 ///
 static void gpioInitOutput(
 	GPIO_TypeDef * const gpio,
-	uint16_t mask,
+	PinMask mask,
 	OutputMode mode,
 	Speed speed,
 	bool state) {
@@ -680,6 +465,8 @@ static void gpioInitOutput(
 			tmp &= ~(OSPEEDR_Mask << (pn * 2));
 			tmp |= speedTbl[uint8_t(speed)] << (pn * 2);
 			gpio->OSPEEDR = tmp;
+
+			gpio->ODR |= (state ? 1 : 0) << pn;
 		}
 	}
 }
@@ -691,14 +478,14 @@ static void gpioInitOutput(
 /// \param    mask: Mascara del pins a inicialitzar.
 /// \param    mode: Tipus de entrada/sortida.
 /// \param    speed: Velocitat de conmutacio.
-/// \param    pinFunctionID: Identificador de la funcio alternativa.
+/// \param    pinFunction: La funcio alternativa.
 ///
 static void gpioInitAlternate(
 	GPIO_TypeDef * const gpio,
-	uint16_t mask,
+	PinMask mask,
 	AlternateMode mode,
 	Speed speed,
-	PinFunctionID pinFuntionId) {
+	PinFunction pinFunction) {
 
 	static const uint32_t speedTbl[] = {OSPEEDR_LOW, OSPEEDR_MEDIUM,
 		OSPEEDR_HIGH, OSPEEDR_FAST};
@@ -738,6 +525,73 @@ static void gpioInitAlternate(
 			tmp &= ~(OSPEEDR_Mask << (pn * 2));
 			tmp |= speedTbl[uint8_t(speed)] << (pn * 2);
 			gpio->OSPEEDR = tmp;
+
+			// Selecciona la funcio alternativa
+			//
+			tmp = gpio->AFR[pn >> 3];
+			tmp &= ~(AFR_Mask << ((pn & 0x07) * 4)) ;
+			tmp |= (uint32_t(pinFunction) & AFR_Mask) << ((pn & 0x07) * 4);
+			gpio->AFR[pn >> 3] = tmp;
 		}
 	}
+}
+
+
+static void gpioInitAnalogic(
+	GPIO_TypeDef * const gpio,
+	PinMask mask) {
+
+}
+
+
+static void gpioDeinitialize(
+	GPIO_TypeDef * const gpio,
+	PinMask mask) {
+/*
+	for (PinNumber pn = 0; pn < 15; pn++) {
+		if ((mask & (1 << pn)) != 0) {
+
+			uint32_t tmp;
+
+			tmp = gpio->MODER;
+			#if defined(EOS_PLATFORM_STM32F4)
+			tmp |= MODER_ANALOGIC << pn;
+			#elif defined(EOS_PLATFORM_STM32G0)
+			tmp &= MODER_Mask << pn;
+			if ((gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) && ((pn == 13 || pn == 14)))
+				tmp |= MODER_ALTERNATE << pn;
+			else
+				tmp |= MODER_ANALOGIC << pn;
+			#else
+			#error "Undefined platform"
+			#endif
+			gpio->MODER = tmp;
+
+			tmp = gpio->OTYPER;
+			tmp &= OTYPER_Mask << pn;
+			tmp |= OTYPER_PP << pn;
+			gpio->OTYPER = tmp;
+
+			tmp = gpio->PUPDR;
+			tmp &= PUPDR_Mask << pn;
+			#if defined(EOS_PLATFORM_STM32F4)
+			tmp |=  PUPDR_NONE << pn;
+			#elif defined(EOS_PLATFORM_STM32G0)
+			if ((gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) && (pn == 14))
+				tmp |= PUPDR_DOWN << pn;
+			else if ((gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) && (pn == 13))
+				tmp |= PUPDR_UP << pn;
+			else
+				tmp |=  PUPDR_NONE << pn;
+			#else
+			#error "Undefined platform"
+			#endif
+			gpio->PUPDR = tmp;
+
+			gpio->ODR = 0 << pn;
+
+			gpio->AFR[pn >> 3] &= ~(AFR_Mask << ((pn & 0x07) * 4)) ;
+		}
+	}
+	*/
 }

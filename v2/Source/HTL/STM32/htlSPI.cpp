@@ -136,11 +136,17 @@ SPIDevice::Result SPIDevice::transmit(
 
 		// Transmissio en format 8 bits
 		//
-		if ((_spi->CR2 & SPI_CR2_DS_Msk) ==  SPI_CR2_DS_LEN8) {
+		#if defined(EOS_PLATFORM_STM32G0)
+		if ((_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8) {
+		#else
+		if ((_spi->CR1 & SPI_CR1_DFF_Msk) == 0) {
+		#endif
 
 			// Prepara el threshold del fifo per a 8 bits
 			//
+			#if defined(EOS_PLATFORM_STM32G0)
 			_spi->CR2 |= SPI_CR2_FRXTH;
+			#endif
 
 			while (count < size) {
 
@@ -161,7 +167,9 @@ SPIDevice::Result SPIDevice::transmit(
 
 			// Prepara el threshold del fifo per a 16 bits
 			//
+			#if defined(EOS_PLATFORM_STM32G0)
 			_spi->CR2 &= ~SPI_CR2_FRXTH;
+			#endif
 
 		}
 
