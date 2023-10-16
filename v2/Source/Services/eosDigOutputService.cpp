@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HTL/htlGPIO.h"
 #include "HTL/htlINT.h"
 #include "Services/eosDigOutputService.h"
 #include "System/eosMath.h"
@@ -18,7 +17,7 @@ DigOutputService::DigOutputService():
 	_outputChangedEvent {nullptr},
 	_outputChangedEventEnabled {false},
 	_timeCounter {0},
-	_commandQueue(_commandQueueSize) {
+	_commandQueue {_commandQueueSize} {
 
 }
 
@@ -125,7 +124,7 @@ void DigOutputService::setOutputChangedEvent(
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica un canvi en l'estat d'una sortida.
-/// \param    outptut: La sortida.
+/// \param    output: La sortida.
 ///
 void DigOutputService::notifyChanged(
 	DigOutput *output) {
@@ -146,8 +145,10 @@ void DigOutputService::notifyChanged(
 void DigOutputService::setOutput(
 	DigOutput *output) {
 
-    if (output->_drv->read() == false) {
-    	output->_drv->set();
+	auto drv = output->_drv;
+
+    if (drv->read() == false) {
+    	drv->set();
     	notifyChanged(output);
     }
 }
@@ -160,8 +161,10 @@ void DigOutputService::setOutput(
 void DigOutputService::clearOutput(
 	DigOutput *output) {
 
-    if (output->_drv->read() == true) {
-    	output->_drv->clear();
+	auto drv = output->_drv;
+
+	if (drv->read() == true) {
+    	drv->clear();
     	notifyChanged(output);
     }
 }
@@ -174,7 +177,9 @@ void DigOutputService::clearOutput(
 void DigOutputService::toggleOutput(
 	DigOutput *output) {
 
-   	output->_drv->toggle();
+	auto drv = output->_drv;
+
+	drv->toggle();
    	notifyChanged(output);
 }
 
@@ -221,7 +226,7 @@ void DigOutputService::clear(
 /// \brief    Inverteix l'estat de la sortida.
 /// \param    output: La sortida.
 ///
-voic DigOutputService::toggle(
+void DigOutputService::toggle(
     DigOutput *output) {
 
     eosAssert(output != nullptr);
@@ -285,7 +290,7 @@ void DigOutputService::pulse(
 /// \param    delay: El retard del puls.
 /// \param    pulseWidth: L'amplada del puls.
 ///
-bool DigOutputService::delayedPulse(
+void DigOutputService::delayedPulse(
     DigOutput *output,
     unsigned delay,
     unsigned pulseWidth) {
@@ -310,7 +315,7 @@ bool DigOutputService::delayedPulse(
 /// \param    pulseWidth: L'amplada del puls.
 /// \param    spaceWidth: L'amplada del espai. 
 ///
-bool DigOutputService::repeatPulse(
+void DigOutputService::repeatPulse(
     DigOutput *output,
     unsigned pulseWidth,
     unsigned spaceWidth) {
@@ -322,7 +327,7 @@ bool DigOutputService::repeatPulse(
         .opCode = OpCode::repeatPulse,
         .output = output,
         .time1 = math::max(pulseWidth, minPulseWidth),
-        .time2 = math::max(spaceWisth, minPulseWidth)
+        .time2 = math::max(spaceWidth, minPulseWidth)
     };
 
     _commandQueue.push(cmd, unsigned(-1));
@@ -366,56 +371,9 @@ void DigOutputService::onTask() {
 
     while (true) {
 
-        Command cmd;
-
-        // Espera que arribi una comanda
-        //
-        while (_commandQueue.pop(cmd, unsigned(-1))) {
-
-            // Procesa la comanda
-            //
-            switch (cmd.opCode) {
-                case OpCode::set:
-                    processSet(cmd.output);
-                    break;
-
-                case OpCode::clear:
-                    processClear(cmd.output);
-                    break;
-
-                case OpCode::toggle:
-                    processToggle(cmd.output);
-                    break;
-
-                case OpCode::pulse:
-                    processPulse(cmd.output, cmd.time1);
-                    break;
-
-                case OpCode::delayedSet:
-                    processDelayedSet(cmd.output, cmd.time1);
-                    break;
-
-                case OpCode::delayedClear:
-                    processDelayedClear(cmd.output, cmd.time1);
-                    break;
-
-                case OpCode::delayedToggle:
-                    processDelayedToggle(cmd.output, cmd.time1);
-                    break;
-
-                case OpCode::delayedPulse:
-                    processDelayedPulse(cmd.output, cmd.time1, cmd.time2);
-                    break;
-
-                case OpCode::repeatPulse:
-                    processRepeatPulse(cmd.output, cmd.time1, cmd.time2);
-                    break;
-
-                case OpCode::tick:
-                    processTick(cmd.time1);
-                    break;
-            }
-        }
+        Command command;
+        while (_commandQueue.pop(command, unsigned(-1)))
+        	processCommand(command);
     }
 }
 
@@ -429,6 +387,57 @@ void DigOutputService::onTick() {
 
 }
 #endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una comanda.
+/// \param    command: La comanda.
+///
+void DigOutputService::processCommand(
+	const Command &command) {
+
+    switch (command.opCode) {
+        case OpCode::set:
+            processSet(command.output);
+            break;
+
+        case OpCode::clear:
+            processClear(command.output);
+            break;
+
+        case OpCode::toggle:
+            processToggle(command.output);
+            break;
+
+        case OpCode::pulse:
+            processPulse(command.output, command.time1);
+            break;
+
+        case OpCode::delayedSet:
+            processDelayedSet(command.output, command.time1);
+            break;
+
+        case OpCode::delayedClear:
+            processDelayedClear(command.output, command.time1);
+            break;
+
+        case OpCode::delayedToggle:
+            processDelayedToggle(command.output, command.time1);
+            break;
+
+        case OpCode::delayedPulse:
+            processDelayedPulse(command.output, command.time1, command.time2);
+            break;
+
+        case OpCode::repeatPulse:
+            processRepeatPulse(command.output, command.time1, command.time2);
+            break;
+
+        case OpCode::tick:
+            processTick(command.time1);
+            break;
+    }
+}
 
 
 /// ----------------------------------------------------------------------
@@ -548,7 +557,7 @@ void DigOutputService::processDelayedToggle(
 void DigOutputService::processDelayedPulse(
     DigOutput *output,
     unsigned delay,
-    unsigned width) {
+    unsigned pulseWidth) {
 
     eosAssert(output != nullptr);
 

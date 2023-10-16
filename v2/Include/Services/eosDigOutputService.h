@@ -73,9 +73,10 @@ namespace eos {
             using DigOutputList = List<DigOutput*>;
             using DigOutputIterator = DigOutputList::Iterator;
 
+		private:
+            static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
     	public:
     		static constexpr unsigned minStackSize = 128;
-            static constexpr unsigned commandQueueSize = DigOutputService_CommandQueueSize;
             static constexpr unsigned minDelay = DigOutputService_MinDelay;
             static constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
 
@@ -89,6 +90,7 @@ namespace eos {
         private:
             DigOutputService(const DigOutputService&) = delete;
 
+            void processCommand(const Command &command);
             void processClear(DigOutput *output);
             void processSet(DigOutput *output);
             void processToggle(DigOutput *output);
@@ -133,9 +135,9 @@ namespace eos {
             void delayedSet(DigOutput *output, unsigned delay);
             void delayedClear(DigOutput *output, unsigned delay);
             void delayedToggle(DigOutput *output, unsigned delay);
-            void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
-            void repeatPulse(DigOutput *output, unsigned width, unsigned space);
-            void read(DigOutput *ouput);
+            void delayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
+            void repeatPulse(DigOutput *output, unsigned pulseWidth, unsigned spaceWidth);
+            bool read(DigOutput *ouput);
 
             void tmrInterruptFunction();
     };

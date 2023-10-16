@@ -33,10 +33,10 @@ namespace eos {
                 return osalQueueSpaceAvailable(_hQueue);
             }
             inline unsigned elementsWaiting() {
-                return osalQueueElementsWaiting();
+                return osalQueueElementsWaiting(_hQueue);
             }
             inline unsigned elementsWaitingISR() {
-                return osalQueueElementsWaitingISR();
+                return osalQueueElementsWaitingISR(_hQueue);
             }
             inline bool isEmpty() const {
             	return osalQueueIsEmpty(_hQueue);

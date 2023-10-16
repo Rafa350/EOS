@@ -19,7 +19,7 @@ static uint8_t calcParity(uint8_t data);
 ///
 VNI8200XP_SerialDevice::VNI8200XP_SerialDevice() :
 
-	_state { State::reset},
+	_state {State::reset},
     _curPinState {0},
     _oldPinState {0},
 	_hSPI {nullptr},
@@ -104,7 +104,7 @@ void VNI8200XP_SerialDevice::update() {
 			txData[1] = calcParity(_curPinState);
 
 			_hPinSS->clear();
-			eosAssert(_hSPI->transmit(txData, rxData, sizeof(txData)) == spi::SPIDevice::Result::ok);
+			_hSPI->transmit(txData, rxData, sizeof(txData));
 			_hPinSS->set();
 
 			_oldPinState = _curPinState;
