@@ -376,43 +376,43 @@ void DigOutputService::onTask() {
             //
             switch (cmd.opCode) {
                 case OpCode::set:
-                    cmdSet(cmd.output);
+                    processSet(cmd.output);
                     break;
 
                 case OpCode::clear:
-                    cmdClear(cmd.output);
+                    processClear(cmd.output);
                     break;
 
                 case OpCode::toggle:
-                    cmdToggle(cmd.output);
+                    processToggle(cmd.output);
                     break;
 
                 case OpCode::pulse:
-                    cmdPulse(cmd.output, cmd.time1);
+                    processPulse(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedSet:
-                    cmdDelayedSet(cmd.output, cmd.time1);
+                    processDelayedSet(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedClear:
-                    cmdDelayedClear(cmd.output, cmd.time1);
+                    processDelayedClear(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedToggle:
-                    cmdDelayedToggle(cmd.output, cmd.time1);
+                    processDelayedToggle(cmd.output, cmd.time1);
                     break;
 
                 case OpCode::delayedPulse:
-                    cmdDelayedPulse(cmd.output, cmd.time1, cmd.time2);
+                    processDelayedPulse(cmd.output, cmd.time1, cmd.time2);
                     break;
 
                 case OpCode::repeatPulse:
-                    cmdRepeatPulse(cmd.output, cmd.time1, cmd.time2);
+                    processRepeatPulse(cmd.output, cmd.time1, cmd.time2);
                     break;
 
-                case OpCode::timeOut:
-                    cmdTimeOut(cmd.time1);
+                case OpCode::tick:
+                    processTick(cmd.time1);
                     break;
             }
         }
@@ -435,7 +435,7 @@ void DigOutputService::onTick() {
 /// \brief    Procesa la comanda 'clear'
 /// \param    output: La sortida.
 ///
-void DigOutputService::cmdClear(
+void DigOutputService::processClear(
     DigOutput *output) {
 
     eosAssert(output != nullptr);
@@ -449,7 +449,7 @@ void DigOutputService::cmdClear(
 /// \brief    Procesa la comanda 'set'
 /// \param    output: La sortida.
 ///
-void DigOutputService::cmdSet(
+void DigOutputService::processSet(
     DigOutput *output) {
 
     eosAssert(output != nullptr);
@@ -463,7 +463,7 @@ void DigOutputService::cmdSet(
 /// \brief    Procesa la comanda 'toggle'
 /// \param    output: La sortida.
 ///
-void DigOutputService::cmdToggle(
+void DigOutputService::processToggle(
     DigOutput *output) {
 
     eosAssert(output != nullptr);
@@ -478,7 +478,7 @@ void DigOutputService::cmdToggle(
 /// \param    output: La sortida.
 /// \param    pulseWidth: L'amplada del puls.
 ///
-void DigOutputService::cmdPulse(
+void DigOutputService::processPulse(
     DigOutput *output,
     unsigned pulseWidth) {
 
@@ -496,7 +496,7 @@ void DigOutputService::cmdPulse(
 /// \param    output: La sortida.
 /// \param    delay: El retard.
 ///
-void DigOutputService::cmdDelayedSet(
+void DigOutputService::processDelayedSet(
     DigOutput *output,
     unsigned delay) {
 
@@ -512,7 +512,7 @@ void DigOutputService::cmdDelayedSet(
 /// \param    output: La sortida.
 /// \param    delay: El retard.
 ///
-void DigOutputService::cmdDelayedClear(
+void DigOutputService::processDelayedClear(
     DigOutput *output,
     unsigned delay) {
 
@@ -528,7 +528,7 @@ void DigOutputService::cmdDelayedClear(
 /// \param    output: La sortida.
 /// \param    delay: El retard.
 ///
-void DigOutputService::cmdDelayedToggle(
+void DigOutputService::processDelayedToggle(
     DigOutput *output,
     unsigned delay) {
 
@@ -545,7 +545,7 @@ void DigOutputService::cmdDelayedToggle(
 /// \param    delay: El retard del puls.
 /// \param    pulseWidth: L'amplada del puls.
 ///
-void DigOutputService::cmdDelayedPulse(
+void DigOutputService::processDelayedPulse(
     DigOutput *output,
     unsigned delay,
     unsigned width) {
@@ -564,7 +564,7 @@ void DigOutputService::cmdDelayedPulse(
 /// \param    pulseWidth: L'amplada del puls.
 /// \param    spaceWidth: L'amplada del espai.
 ///
-void DigOutputService::cmdRepeatPulse(
+void DigOutputService::processRepeatPulse(
     DigOutput *output,
     unsigned pulseWidth,
     unsigned spaceWidth) {
@@ -583,10 +583,10 @@ void DigOutputService::cmdRepeatPulse(
 
 
 /// ---------------------------------------------------------------------
-/// \brief    Procesa la comanda 'timeOut'
+/// \brief    Procesa la comanda 'tick'
 /// \param    time: El interval de temps.
 ///
-void DigOutputService::cmdTimeOut(
+void DigOutputService::processTick(
     unsigned time) {
 
     for (auto output: _outputs) {
@@ -675,7 +675,7 @@ void DigOutputService::tmrInterruptFunction() {
 	_timeCounter++;
 
     Command cmd = {
-        .opCode = OpCode::timeOut,
+        .opCode = OpCode::tick,
         .time1 = 1
     };
 

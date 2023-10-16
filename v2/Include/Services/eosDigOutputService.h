@@ -60,7 +60,7 @@ namespace eos {
                 delayedToggle,
                 delayedPulse,
                 repeatPulse,
-                timeOut
+                tick
             };
             struct Command {
                 OpCode opCode;
@@ -89,16 +89,16 @@ namespace eos {
         private:
             DigOutputService(const DigOutputService&) = delete;
 
-            void cmdClear(DigOutput *output);
-            void cmdSet(DigOutput *output);
-            void cmdToggle(DigOutput *output);
-            void cmdPulse(DigOutput *output, unsigned pulseWidth);
-            void cmdDelayedSet(DigOutput *output, unsigned delay);
-            void cmdDelayedClear(DigOutput *output, unsigned delay);
-            void cmdDelayedToggle(DigOutput *output, unsigned delay);
-            void cmdDelayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
-            void cmdRepeatPulse(DigOutput *output, unsigned pulseWidth, unsigned spaceWidth);
-            void cmdTimeOut(unsigned time);
+            void processClear(DigOutput *output);
+            void processSet(DigOutput *output);
+            void processToggle(DigOutput *output);
+            void processPulse(DigOutput *output, unsigned pulseWidth);
+            void processDelayedSet(DigOutput *output, unsigned delay);
+            void processDelayedClear(DigOutput *output, unsigned delay);
+            void processDelayedToggle(DigOutput *output, unsigned delay);
+            void processDelayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
+            void processRepeatPulse(DigOutput *output, unsigned pulseWidth, unsigned spaceWidth);
+            void processTick(unsigned time);
 
             void setOutput(DigOutput *output);
             void clearOutput(DigOutput *output);
