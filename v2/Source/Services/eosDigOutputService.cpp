@@ -18,7 +18,7 @@ DigOutputService::DigOutputService():
 	_outputChangedEvent {nullptr},
 	_outputChangedEventEnabled {false},
 	_timeCounter {0},
-	_commandQueue {_commandQueueSize} {
+	_commandQueue(_commandQueueSize) {
 
 }
 
@@ -140,23 +140,6 @@ void DigOutputService::notifyChanged(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inserta una comanda a la cua
-/// \param    cmd: La comanda.
-/// \param    fromISR: Indica si es crida desde una funcio ISR.
-/// \return   True si tot es correcte.
-///
-bool DigOutputService::enqueueCommand(
-	Command &cmd,
-	bool fromISR) {
-
-    if (fromISR)
-        return _commandQueue.pushISR(cmd);
-    else
-    	return _commandQueue.push(cmd, unsigned(-1));
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Posa l'estat d'una sortida set.
 /// \param    output: La sortida.
 ///
@@ -199,12 +182,9 @@ void DigOutputService::toggleOutput(
 /// ----------------------------------------------------------------------
 /// \brief    Posa la sortida en estat ON.
 /// \param    output: La sortida.
-/// \param    fromISR: Indica si es crida desde una funcio ISR.
-/// \return   True si l'operacio finalitza correctament.
 ///
-bool DigOutputService::set(
-    DigOutput *output,
-	bool fromISR) {
+void DigOutputService::set(
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -214,19 +194,16 @@ bool DigOutputService::set(
         .output = output
     };
 
-    return enqueueCommand(cmd, fromISR);
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Posa la sortida en estat OFF.
 /// \param    output: La sortida.
-/// \param    fromISR: Indica si es crida desde una funcio ISR.
-/// \return   True si l'operacio finalitza correctament.
 ///
-bool DigOutputService::clear(
-    DigOutput *output,
-	bool fromISR) {
+void DigOutputService::clear(
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -236,19 +213,16 @@ bool DigOutputService::clear(
         .output = output
     };
 
-    return enqueueCommand(cmd, fromISR);
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inverteix l'estat de la sortida.
 /// \param    output: La sortida.
-/// \param    fromISR: Indica si es crida desde una funcio ISR.
-/// \return   True si l'operacio finalitza correctament.
 ///
-bool DigOutputService::toggle(
-    DigOutput *output,
-	bool fromISR) {
+voic DigOutputService::toggle(
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -258,7 +232,7 @@ bool DigOutputService::toggle(
         .output = output
     };
 
-    return enqueueCommand(cmd, fromISR);
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -266,13 +240,10 @@ bool DigOutputService::toggle(
 /// \brief    Asigna l'estat de la sortida.
 /// \param    output: La sortida.
 /// \param    state: L'estat a asignar.
-/// \param    fromISR: Indica si es crida desde una funcio ISR.
-/// \return   True si l'operacio finalitza correctament.
 ///
-bool DigOutputService::write(
+void DigOutputService::write(
     DigOutput *output,
-    bool state,
-	bool fromISR) {
+    bool state) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -282,21 +253,18 @@ bool DigOutputService::write(
         .output = output
     };
 
-    return enqueueCommand(cmd, fromISR);
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Genera un puls de conmutacio.
 /// \param    output: La sortida.
-/// \param    width: L'amplada del puls.
-/// \param    fromISR: Indica si es crida desde una funcio ISR.
-/// \return   True si l'operacio finalitza correctament.
+/// \param    pulseWidth: L'amplada del puls.
 ///
-bool DigOutputService::pulse(
+void DigOutputService::pulse(
     DigOutput *output,
-    unsigned width,
-	bool fromISR) {
+    unsigned pulseWidth) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -304,10 +272,10 @@ bool DigOutputService::pulse(
     Command cmd = {
         .opCode = OpCode::pulse,
         .output = output,
-        .time1 = math::max(width, _minWidth)
+        .time1 = math::max(pulseWidth, minPulseWidth)
     };
 
-    return enqueueCommand(cmd, fromISR);
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -315,15 +283,12 @@ bool DigOutputService::pulse(
 /// \brief    Genera un puls de conmutacio retardat.
 /// \param    output: La sortida.
 /// \param    delay: El retard del puls.
-/// \param    width: L'amplada del puls.
-/// \param    fromISR: Indica si es crida desde una funcio ISR
-/// \return   True si l'operacio finalitza correctament.
+/// \param    pulseWidth: L'amplada del puls.
 ///
 bool DigOutputService::delayedPulse(
     DigOutput *output,
     unsigned delay,
-    unsigned width,
-	bool fromISR) {
+    unsigned pulseWidth) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -331,27 +296,24 @@ bool DigOutputService::delayedPulse(
     Command cmd = {
         .opCode = OpCode::delayedPulse,
         .output = output,
-        .time1 = math::max(delay, _minDelay),
-        .time2 = math::max(width, _minWidth)
+        .time1 = math::max(delay, minDelay),
+        .time2 = math::max(pulseWidth, minPulseWidth)
     };
 
-    return enqueueCommand(cmd, fromISR);
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Genera un puls de conmutacio ciclic.
 /// \param    output: La sortida.
-/// \param    width: L'amplada del puls.
-/// \param    space: L'amplada del espai. 
-/// \param    fromISR: Indica si es crida desde una funcio ISR
-/// \return   True si l'operacio finalitza correctament.
+/// \param    pulseWidth: L'amplada del puls.
+/// \param    spaceWidth: L'amplada del espai. 
 ///
 bool DigOutputService::repeatPulse(
     DigOutput *output,
-    unsigned width,
-    unsigned space,
-	bool fromISR) {
+    unsigned pulseWidth,
+    unsigned spaceWidth) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -359,11 +321,11 @@ bool DigOutputService::repeatPulse(
     Command cmd = {
         .opCode = OpCode::repeatPulse,
         .output = output,
-        .time1 = math::max(width, _minWidth),
-        .time2 = math::max(space, _minWidth)
+        .time1 = math::max(pulseWidth, minPulseWidth),
+        .time2 = math::max(spaceWisth, minPulseWidth)
     };
 
-    return enqueueCommand(cmd, fromISR);
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -514,18 +476,18 @@ void DigOutputService::cmdToggle(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'pulse'.
 /// \param    output: La sortida.
-/// \param    width: L'amplada del puls.
+/// \param    pulseWidth: L'amplada del puls.
 ///
 void DigOutputService::cmdPulse(
     DigOutput *output,
-    unsigned width) {
+    unsigned pulseWidth) {
 
     eosAssert(output != nullptr);
 
     if (output->_state == DigOutput::State::idle)
     	toggleOutput(output);
     output->_state = DigOutput::State::singlePulse;
-    output->_timeCnt = width;
+    output->_timeCnt = pulseWidth;
 }
 
 
@@ -581,7 +543,7 @@ void DigOutputService::cmdDelayedToggle(
 /// \brief    Procesa la comanda 'delayedPulse'.
 /// \param    output: La sortida.
 /// \param    delay: El retard del puls.
-/// \param    width: L'amplada del puls.
+/// \param    pulseWidth: L'amplada del puls.
 ///
 void DigOutputService::cmdDelayedPulse(
     DigOutput *output,
@@ -592,20 +554,20 @@ void DigOutputService::cmdDelayedPulse(
 
     output->_state = DigOutput::State::delayedPulse;
     output->_timeCnt = delay;
-    output->_time1 = width;
+    output->_time1 = pulseWidth;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'repeatPulse'.
 /// \param    output: La sortida.
-/// \param    width: L'amplada del puls.
-/// \param    space: L'amplada del espai.
+/// \param    pulseWidth: L'amplada del puls.
+/// \param    spaceWidth: L'amplada del espai.
 ///
 void DigOutputService::cmdRepeatPulse(
     DigOutput *output,
-    unsigned width,
-    unsigned space) {
+    unsigned pulseWidth,
+    unsigned spaceWidth) {
     
     eosAssert(output != nullptr);
 
@@ -614,9 +576,9 @@ void DigOutputService::cmdRepeatPulse(
     	toggleOutput(output);
     }
     output->_state = DigOutput::State::repeatPulse;
-    output->_timeCnt = width;
-    output->_time1 = width;
-    output->_time2 = space;
+    output->_timeCnt = pulseWidth;
+    output->_time1 = pulseWidth;
+    output->_time2 = spaceWidth;
 }
 
 

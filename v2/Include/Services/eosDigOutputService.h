@@ -5,7 +5,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
@@ -18,14 +17,20 @@
     #define DigOutputService_CommandQueueSize 10
 #endif
 
-// Retard minim en ms
+// Retard minim/maxim en ms
 #ifndef DigOutputService_MinDelay
     #define DigOutputService_MinDelay 50
 #endif
+#ifndef DigOutputService_MaxDelay
+    #define DigOutputService_MaxDelay 1000000
+#endif
 
-// Amplada minima en ms
-#ifndef DigOutputService_MinWidth
-#define DigOutputService_MinWidth 50
+// Amplada minima/maxima en ms
+#ifndef DigOutputService_MinPulseWidth
+#   define DigOutputService_MinPulseWidth 50
+#endif
+#ifndef DigOutputService_MinPulseWidth
+#   define DigOutputService_MaxPulseWidth 1000000
 #endif
 
 
@@ -69,12 +74,12 @@ namespace eos {
             using DigOutputIterator = DigOutputList::Iterator;
 
     	public:
-    		static constexpr uint32_t minStackSize = 128;
+    		static constexpr unsigned minStackSize = 128;
+            static constexpr unsigned commandQueueSize = DigOutputService_CommandQueueSize;
+            static constexpr unsigned minDelay = DigOutputService_MinDelay;
+            static constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
 
     	private:
-            static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
-            static constexpr unsigned _minDelay = DigOutputService_MinDelay;
-            static constexpr unsigned _minWidth = DigOutputService_MinWidth;
             IOutputChangedEvent * _outputChangedEvent;
             bool _outputChangedEventEnabled;
             unsigned _timeCounter;
@@ -87,19 +92,18 @@ namespace eos {
             void cmdClear(DigOutput *output);
             void cmdSet(DigOutput *output);
             void cmdToggle(DigOutput *output);
-            void cmdPulse(DigOutput *output, unsigned width);
+            void cmdPulse(DigOutput *output, unsigned pulseWidth);
             void cmdDelayedSet(DigOutput *output, unsigned delay);
             void cmdDelayedClear(DigOutput *output, unsigned delay);
             void cmdDelayedToggle(DigOutput *output, unsigned delay);
-            void cmdDelayedPulse(DigOutput *output, unsigned delay, unsigned width);
-            void cmdRepeatPulse(DigOutput *output, unsigned width, unsigned space);
+            void cmdDelayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
+            void cmdRepeatPulse(DigOutput *output, unsigned pulseWidth, unsigned spaceWidth);
             void cmdTimeOut(unsigned time);
 
             void setOutput(DigOutput *output);
             void clearOutput(DigOutput *output);
             void toggleOutput(DigOutput *output);
             void notifyChanged(DigOutput *output);
-            bool enqueueCommand(Command &cmd, bool fromISR);
 
         protected:
             void onInitialize() override;
@@ -121,17 +125,17 @@ namespace eos {
             	_outputChangedEventEnabled = false;
             }
 
-            bool set(DigOutput *output, bool fromISR = false);
-            bool clear(DigOutput *output, bool fromISR = false);
-            bool write(DigOutput *output, bool pinState, bool fromISR = false);
-            bool toggle(DigOutput *output, bool fromISR = false);
-            bool pulse(DigOutput *output, unsigned width, bool fromISR = false);
-            bool delayedSet(DigOutput *output, unsigned delay, bool fromISR = false);
-            bool delayedClear(DigOutput *output, unsigned delay, bool fromISR = false);
-            bool delayedToggle(DigOutput *output, unsigned delay, bool fromISR = false);
-            bool delayedPulse(DigOutput *output, unsigned delay, unsigned width, bool fromISR = false);
-            bool repeatPulse(DigOutput *output, unsigned width, unsigned space, bool fromISR = false);
-            bool read(DigOutput *ouput);
+            void set(DigOutput *output);
+            void clear(DigOutput *output);
+            void write(DigOutput *output, bool pinState);
+            void toggle(DigOutput *output);
+            void pulse(DigOutput *output, unsigned width);
+            void delayedSet(DigOutput *output, unsigned delay);
+            void delayedClear(DigOutput *output, unsigned delay);
+            void delayedToggle(DigOutput *output, unsigned delay);
+            void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
+            void repeatPulse(DigOutput *output, unsigned width, unsigned space);
+            void read(DigOutput *ouput);
 
             void tmrInterruptFunction();
     };
@@ -171,44 +175,44 @@ namespace eos {
             	return _drv;
             }
 
-            inline bool set(bool fromISR = false) {
-                return _service->set(this, fromISR);
+            inline void set() {
+                _service->set(this);
             }
 
-            inline bool clear(bool fromISR = false) {
-                return _service->clear(this, fromISR);
+            inline void clear() {
+                _service->clear(this);
             }
 
-            inline bool write(bool pinState, bool fromISR = false) {
-                return _service->write(this, pinState, fromISR);
+            inline void write(bool pinState) {
+                _service->write(this, pinState);
             }
 
-            inline bool toggle(bool fromISR = false) {
-                return _service->toggle(this, fromISR);
+            inline void toggle() {
+                _service->toggle(this);
             }
 
-            inline bool pulse(unsigned width, bool fromISR = false) {
-                return _service->pulse(this, width, fromISR);
+            inline void pulse(unsigned width) {
+                _service->pulse(this, width);
             }
 
-            inline bool delayedSet(unsigned delay, bool fromISR = false) {
-                return _service->delayedSet(this, delay, fromISR);
+            inline void delayedSet(unsigned delay) {
+                _service->delayedSet(this, delay);
             }
 
-            inline bool delayedClear(unsigned delay, bool fromISR = false) {
-                return _service->delayedClear(this, delay, fromISR);
+            inline void delayedClear(unsigned delay) {
+                _service->delayedClear(this, delay);
             }
 
-            inline bool delayedToggle(unsigned delay, bool fromISR = false) {
-                return _service->delayedToggle(this, delay, fromISR);
+            inline void delayedToggle(unsigned delay) {
+                _service->delayedToggle(this, delay);
             }
 
-            inline bool delayedPulse(unsigned delay, unsigned width, bool fromISR = false) {
-                return _service->delayedPulse(this, delay, width, fromISR);
+            inline void delayedPulse(unsigned delay, unsigned width) {
+                _service->delayedPulse(this, delay, width);
             }
 
-            inline bool repeatPulse(unsigned width, unsigned space, bool fromISR = false) {
-                return _service->repeatPulse(this, width, space, fromISR);
+            inline void repeatPulse(unsigned width, unsigned space) {
+                _service->repeatPulse(this, width, space);
             }
 
             inline bool read() {
