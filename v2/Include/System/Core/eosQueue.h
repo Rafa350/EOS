@@ -28,10 +28,20 @@ namespace eos {
             bool genericPutISR(void *element);
             bool genericGetISR(void *element);
             bool genericPeekISR(void *element);
-            bool genericIsEmpty() const {
+        public:
+            inline unsigned spaceAvailable() {
+                return osalQueueSpaceAvailable(_hQueue);
+            }
+            inline unsigned elementsWaiting() {
+                return osalQueueElementsWaiting();
+            }
+            inline unsigned elementsWaitingISR() {
+                return osalQueueElementsWaitingISR();
+            }
+            inline bool isEmpty() const {
             	return osalQueueIsEmpty(_hQueue);
             }
-            bool genericIsEmptyISR() const {
+            inline bool isEmptyISR() const {
             	return osalQueueIsEmptyISR(_hQueue);
             }
     };
@@ -39,7 +49,7 @@ namespace eos {
     /// \brief Cua personalitzada amb plantilla.
     ///
     template <typename T>
-    class Queue: private GenericQueue {
+    class Queue: public GenericQueue {
         public:
             /// \brief Constructor.
             /// \param: capacity: Nombre d'elements que pot contindre la cua.
@@ -81,13 +91,6 @@ namespace eos {
             ///
             inline bool peek(T& element,  unsigned blockTime) {
                 return genericPeek((void*) &element, blockTime);
-            }
-
-            /// \brief Indica si la cua es buida
-            /// \truen True si es buida
-            //
-            inline bool isEmpty() const {
-            	return genericIsEmpty();
             }
     };
 

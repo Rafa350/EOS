@@ -29,6 +29,9 @@ bool osalQueuePeekISR(HQueue hQueue, void *element);
 
 bool osalQueueIsEmpty(HQueue hQueue);
 bool osalQueueIsEmptyISR(HQueue hQueue);
+unsigned osalQueueSpaceAvailable(HQieie hQueue);
+unsigned osalQueueElementsWaiting(HQueue hQueue);
+unsigned osalQueueElementsWaitingISR(HQueue hQueue);
 
 
 #ifdef	__cplusplus
