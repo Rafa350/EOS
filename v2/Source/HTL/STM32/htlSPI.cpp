@@ -1,8 +1,8 @@
 #include "HTL/htl.h"
 #include "HTL/STM32/htlSPI.h"
-#include "HAL/STM32/halSYS.h"
 
 
+using namespace htl;
 using namespace htl::spi;
 
 
@@ -132,6 +132,8 @@ SPIDevice::Result SPIDevice::transmit(
 
 	if (_state == State::ready) {
 
+		_state = State::transmiting;
+
 		uint16_t count = 0;
 
 		// Transmissio en format 8 bits
@@ -145,7 +147,7 @@ SPIDevice::Result SPIDevice::transmit(
 			// Prepara el threshold del fifo per a 8 bits
 			//
 			#if defined(EOS_PLATFORM_STM32G0)
-			_spi->CR2 |= SPI_CR2_FRXTH;
+			setMask(_spi->CR2, SPI_CR2_FRXTH);
 			#endif
 
 			while (count < size) {
@@ -168,13 +170,15 @@ SPIDevice::Result SPIDevice::transmit(
 			// Prepara el threshold del fifo per a 16 bits
 			//
 			#if defined(EOS_PLATFORM_STM32G0)
-			_spi->CR2 &= ~SPI_CR2_FRXTH;
+			clrMask(_spi->CR2, SPI_CR2_FRXTH);
 			#endif
 
 		}
 
 		while (spiBusy(_spi))
 			continue;
+
+		_state = State::ready;
 
 		return Result::ok;
 	}
@@ -352,13 +356,7 @@ static void spiSetWordSize(
 	regs->CR2 = tmp;
 
 	#elif defined(EOS_PLATFORM_STM32G0)
-	uint32_t tmp = spi->CR2;
-	tmp &= ~SPI_CR2_DS_Msk;
-	if (size == WordSize::_8)
-		tmp |= SPI_CR2_DS_LEN8;
-	else
-		tmp |= SPI_CR2_DS_LEN16;
-	spi->CR2 = tmp;
+	wrtMask(spi->CR2, SPI_CR2_DS_Msk, size == WordSize::_8 ? SPI_CR2_DS_LEN8 : SPI_CR2_DS_LEN16);
 	#endif
 }
 
@@ -373,9 +371,9 @@ static void spiSetFirstBit(
 	FirstBit firstBit) {
 
 	if (firstBit == FirstBit::lsb)
-		spi->CR1 |= SPI_CR1_LSBFIRST;
+		setMask(spi->CR1, SPI_CR1_LSBFIRST);
 	else
-		spi->CR1 &= ~SPI_CR1_LSBFIRST;
+		clrMask(spi->CR1, SPI_CR1_LSBFIRST);
 }
 
 
@@ -507,7 +505,7 @@ static void waitTxFifoEmpty(
 /// \param    start: Temps del inici de les operacions
 /// \param    timeout: Temps maxim de bloqueig.
 ///
-static bool waitBusy(
+/*static bool waitBusy(
 	SPI_TypeDef * const spi,
 	uint32_t start,
 	uint16_t timeout) {
@@ -517,5 +515,5 @@ static bool waitBusy(
 			return false;
 	}
 	return true;
-}
+}*/
 

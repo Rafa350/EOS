@@ -29,13 +29,13 @@ namespace eos {
     			Task *task;
     		};
     		typedef List<ServiceInfo*> ServiceInfoList;
-            typedef CallbackP1<RTOSApplication, const Task::EventArgs&> TaskEventCallback;
+            using MyTaskCallback = TaskCallback<RTOSApplication>;
 #if Eos_ApplicationTickEnabled
             typedef CallbackP1<RTOSApplication, const Timer::EventArgs&> TimerEventCallback;
 #endif
         private:
             ServiceInfoList _serviceInfoList;
-            TaskEventCallback _taskEventCallback;
+            MyTaskCallback _taskCallback;
 #if Eos_ApplicationTickEnabled
             TimerEventCallback _timerEventCallback;
             Timer timer;
@@ -47,7 +47,7 @@ namespace eos {
             void initializeServices() override;
             void terminateServices() override;
             void runServices() override;
-            void taskEventHandler(const Task::EventArgs &args);
+            void taskCallbackHandler(const TaskCallbackArgs &args);
 #if Eos_ApplicationTickEnabled
             void timerEventHandler(const Timer::EventArgs &args);
 #endif

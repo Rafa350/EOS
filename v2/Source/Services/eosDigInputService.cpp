@@ -43,6 +43,7 @@ void DigInputService::addInput(
     DigInput *input) {
 
     eosAssert(input != nullptr);
+    eosAssert(input->_service == nullptr);
 
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
@@ -67,6 +68,7 @@ void DigInputService::removeInput(
     DigInput *input) {
 
     eosAssert(input != nullptr);
+    eosAssert(input->_service == this);
 
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //

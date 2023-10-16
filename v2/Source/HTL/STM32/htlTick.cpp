@@ -26,19 +26,17 @@ Tick::Tick():
 ///
 void Tick::initialize() {
 
-	auto tmr = tmr::TMRDevice14::getHandler();
-
 	uint32_t period = 1000;
 	uint32_t prescaler = (clock::getClockFrequency(clock::ClockID::pclk) / 1000000) - 1;
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
+	auto tmr = tmr::TMRDevice14::getHandler();
 	tmr->initBase(clkDiv, prescaler, period);
 	tmr->setNotifyEvent(_tmrNotifyEvent, true);
-	tmr->startInterrupt();
+	tmr->start_IRQ();
 
 	irq::enableInterruptVector(irq::VectorID::tmr14);
 	irq::setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::_7);
-
 }
 
 
@@ -47,11 +45,28 @@ void Tick::initialize() {
 ///
 void Tick::deinitialize() {
 
-	auto tmr = htl::tmr::TMRDevice14::getHandler();
-	tmr->stopInterrupt();
-	tmr->disableNotifyEvent();
+	stop();
+
+	auto hTMR = htl::tmr::TMRDevice14::getHandler();
+	hTMR->stop();
+	hTMR->disableNotifyEvent();
 
 	irq::disableInterruptVector(irq::VectorID::tmr14);
+}
+
+
+void Tick::start() {
+
+	auto hTMR = htl::tmr::TMRDevice14::getHandler();
+	hTMR->setNotifyEvent(_tmrNotifyEvent, true);
+	hTMR->start_IRQ();
+}
+
+
+void Tick::stop() {
+
+	auto hTMR = htl::tmr::TMRDevice14::getHandler();
+	hTMR->stop();
 }
 
 
@@ -102,6 +117,6 @@ void Tick::tmrNotifyEventHandler(
 ///
 extern "C" void TIM14_IRQHandler() {
 
-	auto tmr = htl::tmr::TMRDevice14::getHandler();
-	tmr->interruptHandler();
+	auto hTMR = htl::tmr::TMRDevice14::getHandler();
+	hTMR->interruptHandler();
 }

@@ -11,17 +11,19 @@
 
 namespace eos {
 
+	class Task;
+
+    struct TaskCallbackArgs {
+        Task *task;
+        void *params;
+    };
+    using ITaskCallback = ICallbackP1<const TaskCallbackArgs&>;
+    template <typename Instance_> using TaskCallback = CallbackP1<Instance_, const TaskCallbackArgs&>;
+
+
     /// \brief Clase que implementa una tasca.
     ///
     class Task {
-        public:
-            struct EventArgs {
-                Task *task;
-                void *params;
-            };
-
-            typedef ICallbackP1<const EventArgs&> IEventCallback;
-
         public:
             enum class Priority {
                 idle,
@@ -30,7 +32,7 @@ namespace eos {
                 high
             };
 
-            Task(unsigned stackSize, Priority priority, const char *name, IEventCallback *eventCallback, void *eventParams);
+            Task(unsigned stackSize, Priority priority, const char *name, ITaskCallback *taskCallback, void *taskParams);
             virtual ~Task();
 
             static void delay(unsigned time);
@@ -49,8 +51,8 @@ namespace eos {
 
         private:
             HTask _hTask;
-            IEventCallback *_eventCallback;
-            void *_eventParams;
+            ITaskCallback *_taskCallback;
+            void *_taskParams;
             unsigned _weakTime;
 
             static void function(void *params);

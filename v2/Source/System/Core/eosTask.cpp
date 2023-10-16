@@ -23,14 +23,14 @@ Task::Task(
     unsigned stackSize,
     Priority priority,
     const char *name,
-    IEventCallback *eventCallback,
-    void *eventParams):
+    ITaskCallback *taskCallback,
+    void *taskParams):
 
-    _eventCallback(eventCallback),
-    _eventParams(eventParams),
-	_weakTime(0) {
+    _taskCallback {taskCallback},
+    _taskParams {taskParams},
+	_weakTime {0} {
 
-    eosAssert(eventCallback != nullptr);
+    eosAssert(taskCallback != nullptr);
 
     TaskInitializeInfo info;
 
@@ -85,17 +85,17 @@ void Task::function(
     void *params) {
 
     Task *task = reinterpret_cast<Task*>(params);
-    if (task && task->_eventCallback) {
+    if (task && task->_taskCallback) {
 
         task->_weakTime = osalGetTickCount();
 
-        EventArgs args;
+        TaskCallbackArgs args;
         args.task = task;
-        args.params = task->_eventParams;
+        args.params = task->_taskParams;
 
         // Executa la funcio callback
         //
-        task->_eventCallback->execute(args);
+        task->_taskCallback->execute(args);
     }
 
     // Destrueix la propia tasca perque no s'executi mes

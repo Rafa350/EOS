@@ -1,5 +1,7 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Pin/eosPinDriver_VNI8200XP.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -38,7 +40,10 @@ VNI8200XP_Device::Result VNI8200XP_SerialDevice::initialize(
 	htl::gpio::PinHandler hPinSS,
 	htl::gpio::PinHandler hPinOUTEN) {
 
+	eosAssert(_state == State::reset);
+
 	if (_state == State::reset) {
+
 		_hSPI = hSPI;
 		_hPinSS = hPinSS;
 		_hPinOUTEN = hPinOUTEN;
@@ -57,8 +62,12 @@ VNI8200XP_Device::Result VNI8200XP_SerialDevice::initialize(
 ///
 void VNI8200XP_SerialDevice::enable() const {
 
-	if (_hPinOUTEN != nullptr)
-		_hPinOUTEN->set();
+	eosAssert(_state == State::ready);
+
+	if (_state == State::ready) {
+		if (_hPinOUTEN != nullptr)
+			_hPinOUTEN->set();
+	}
 }
 
 
@@ -67,8 +76,12 @@ void VNI8200XP_SerialDevice::enable() const {
 ///
 void VNI8200XP_SerialDevice::disable() const {
 
-	if (_hPinOUTEN != nullptr)
-		_hPinOUTEN->clear();
+	eosAssert(_state == State::ready);
+
+	if (_state == State::ready) {
+		if (_hPinOUTEN != nullptr)
+			_hPinOUTEN->clear();
+	}
 }
 
 
@@ -76,20 +89,29 @@ void VNI8200XP_SerialDevice::disable() const {
 /// \brief    Actualitza les sortides en funcio del estat intern.
 ///
 void VNI8200XP_SerialDevice::update() {
-    
-    if (_curPinState != _oldPinState) {
-    
-    	uint8_t txData[2], rxData[2];
 
-    	txData[0] = _curPinState;
-    	txData[1] = calcParity(_curPinState);
+	eosAssert(_state == State::ready);
+    
+	if (_state == State::ready) {
 
-    	_hPinSS->clear();
-    	_hSPI->transmit(txData, rxData, sizeof(txData));
-    	_hPinSS->set();
-        
-        _oldPinState = _curPinState;
-    }
+		_state = State::updating;
+
+		if (_curPinState != _oldPinState) {
+
+			uint8_t txData[2], rxData[2];
+
+			txData[0] = _curPinState;
+			txData[1] = calcParity(_curPinState);
+
+			_hPinSS->clear();
+			eosAssert(_hSPI->transmit(txData, rxData, sizeof(txData)) == spi::SPIDevice::Result::ok);
+			_hPinSS->set();
+
+			_oldPinState = _curPinState;
+		}
+
+		_state = State::ready;
+	}
 }
 
 
@@ -143,11 +165,14 @@ void VNI8200XP_SerialDevice::write(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estat dels pins.
+/// \return   El estat.
+///
 uint8_t VNI8200XP_SerialDevice::read() const {
 
 	return _curPinState;
 }
-
 
 
 /// ----------------------------------------------------------------------
@@ -186,6 +211,8 @@ PinDriver_VNI8200XP::PinDriver_VNI8200XP(
 	_hDevice {hDevice},
 	_pinMask {uint8_t(1 << pinNumber)} {
 
+	eosAssert(hDevice != nullptr);
+	eosAssert(pinNumber < 8);
 }
 
 

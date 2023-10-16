@@ -11,11 +11,14 @@
 
 namespace eos {
     
+	/// \brief Clase que implementa del driver del chip VNI8200XP
+	///
     class VNI8200XP_Device {
 		public:
 			enum class State {
 				reset,
-				ready
+				ready,
+				updating
 			};
 			enum class Result {
 				ok,
@@ -35,6 +38,9 @@ namespace eos {
 
     typedef VNI8200XP_Device *VNI8200XP_DeviceHandler;
 
+	/// \brief Clase que implementa del driver del chip VNI8200XP
+    ///        amb interficie SPI
+	///
     class VNI8200XP_SerialDevice: public VNI8200XP_Device {
     	private:
     		State _state;
@@ -78,6 +84,8 @@ namespace eos {
 	VNI8200XP_SerialDeviceX<id_> VNI8200XP_SerialDeviceX<id_>::_instance;
     
     
+    /// \brief Clase que implementa del driver del pin amb el chip VNI8200XP
+    ///
     class PinDriver_VNI8200XP final: public PinDriver {
 		private:
 			VNI8200XP_DeviceHandler const _hDevice;

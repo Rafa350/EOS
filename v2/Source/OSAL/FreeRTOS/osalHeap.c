@@ -66,8 +66,10 @@ void* osalHeapAlloc(
     block = (char*)block + sizeof(signature);
 #endif
 
+#ifdef EOS_PLATFORM_STM32
     if (!osalIsSchedulerActive())
     	__enable_irq(); // Bug en FreeRTOS al sortir d'una regio critica
+#endif
 
 	return block;
 }

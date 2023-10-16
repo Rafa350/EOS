@@ -15,7 +15,7 @@
 
 namespace eos {
 
-    namespace Math {
+    namespace math {
 
 		template <typename T_>
 		inline T_ min(T_ a, T_ b) {

@@ -13,7 +13,7 @@ using namespace eos;
 ///
 RTOSApplication::RTOSApplication():
 
-    _taskEventCallback(*this, &RTOSApplication::taskEventHandler)
+    _taskCallback(*this, &RTOSApplication::taskCallbackHandler)
 #if Eos_ApplicationTickEnabled
     ,timerEventCallback(this, &RTOSApplication::timerEventHandler),
     timer(true, &timerEventCallback, this)
@@ -26,8 +26,8 @@ RTOSApplication::RTOSApplication():
 /// \brief    Procesa el event d'inici de la tasca del servei.
 /// \param    args: Parametres del event.
 ///
-void RTOSApplication::taskEventHandler(
-    const Task::EventArgs &args) {
+void RTOSApplication::taskCallbackHandler(
+    const TaskCallbackArgs &args) {
 
     Service *service = static_cast<Service*>(args.params);
     if (service != nullptr)
@@ -110,7 +110,7 @@ void RTOSApplication::runServices() {
 				si->stackSize,
 				si->priority,
 				si->name ? si->name : "SERVICE",
-				&_taskEventCallback,
+				&_taskCallback,
 				static_cast<void*>(si->service));
     	}
     }

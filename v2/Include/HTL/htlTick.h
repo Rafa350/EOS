@@ -23,12 +23,16 @@ namespace htl {
 			public:
 				void initialize();
 				void deinitialize();
+				void start();
+				void stop();
 				uint32_t getTickCount();
 				void wait(uint32_t time);
 				static constexpr Tick* getHandler() {
 					return &_instance;
 				}
 		};
+        
+        typedef Tick * TickHandler;
 
 	}
 }

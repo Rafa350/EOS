@@ -123,7 +123,9 @@ namespace htl {
 				enum class State {
 					reset,
 					ready,
-					busy
+					busy,
+					busyIRQ,
+					busyDMA
 				};
 				enum class Result {
 					ok,
@@ -158,9 +160,8 @@ namespace htl {
 					_notifyEventEnabled = false;
 				}
 				Result start();
-				Result startInterrupt();
+				Result start_IRQ();
 				Result stop();
-				Result stopInterrupt();
 		};
 
 		typedef TMRDevice *TMRDeviceHandler;

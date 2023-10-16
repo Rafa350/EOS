@@ -70,35 +70,19 @@ namespace htl {
 			_256
 		};
 
-		enum class SPIInterrupt {
-			txEmpty,
-			rxNotEmpty,
-			error
-		};
-
-		enum class SPIFlag {
-			txEmpty,
-			rxNotEmpty,
-			busy,
-			fault,
-			crc,
-			overrun
-		};
-
 		enum class PinFunction {
 			sck,
 			miso,
 			mosi
 		};
 
-		using SPIInterruptParam = void*;
-		using SPIInterruptFunction = void (*)(SPIInterruptParam);
 
 		class SPIDevice {
 			public:
 				enum class State {
 					reset,
-					ready
+					ready,
+					transmiting
 				};
 				enum class Result {
 					ok,
@@ -127,10 +111,10 @@ namespace htl {
 				Result initialize(SPIMode mode, ClkPolarity clkPolarity, ClkPhase clkPhase, WordSize size, FirstBit firstBit, ClockDivider clkDivider);
 				Result deinitialize();
 				inline void enable() {
-					_spi->CR1 |= SPI_CR1_SPE;
+					setMask(_spi->CR1, SPI_CR1_SPE);
 				}
 				inline void disable() {
-					_spi->CR1 &= ~SPI_CR1_SPE;
+					clrMask(_spi->CR1, SPI_CR1_SPE);
 				}
 				inline Result transmit(const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF) {
 					return transmit(txBuffer, nullptr, size, timeout);

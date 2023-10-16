@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Controllers/Pin/eosPinDriver_CLT0138SQ7.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -11,7 +12,7 @@ using namespace htl;
 ///
 CLT0138SQ7_Device::CLT0138SQ7_Device():
 
-	_state { State::reset},
+	_state {State::reset},
 	_pinState {0},
 	_underVoltage {false},
 	_overTemperature {false},
@@ -31,6 +32,7 @@ CLT0138SQ7_Device::Result CLT0138SQ7_Device::initialize(
 	htl::gpio::PinHandler hPinSS) {
 
 	if (_state == State::reset) {
+
 		_hSPI = hSPI;
 		_hPinSS = hPinSS;
 
@@ -44,21 +46,27 @@ CLT0138SQ7_Device::Result CLT0138SQ7_Device::initialize(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Actualitza l'estat del driver en funcio del les entrades.
+///
 void CLT0138SQ7_Device::update() {
 
 	// NO UTILITZAR INTERRUPCIONS. Per evitar bloqueig si es crida
 	// desde un altre interrupcio amb prioritat inferior o igual a la del SPI
 
-	uint8_t rxBuffer[2];
+	if (_state == State::ready) {
 
-	_hPinSS->clear();
-	_hSPI->receive(rxBuffer, sizeof(rxBuffer));
-	_hPinSS->set();
+		uint8_t rxBuffer[2];
 
-	_underVoltage = (rxBuffer[1] & 0x02) == 0;
-	_overTemperature = (rxBuffer[1] & 0x01) == 0;
+		_hPinSS->clear();
+		_hSPI->receive(rxBuffer, sizeof(rxBuffer));
+		_hPinSS->set();
 
-	_pinState = rxBuffer[0];
+		_underVoltage = (rxBuffer[1] & 0x80) == 0;
+		_overTemperature = (rxBuffer[1] & 0x40) == 0;
+
+		_pinState = rxBuffer[0];
+	}
 }
 
 

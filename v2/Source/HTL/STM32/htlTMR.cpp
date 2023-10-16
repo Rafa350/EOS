@@ -175,7 +175,7 @@ TMRDevice::Result TMRDevice::start() {
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el contador en modus interrupcio
 ///
-TMRDevice::Result TMRDevice::startInterrupt() {
+TMRDevice::Result TMRDevice::start_IRQ() {
 
 	if (_state == State::ready) {
 
@@ -195,30 +195,13 @@ TMRDevice::Result TMRDevice::startInterrupt() {
 ///
 TMRDevice::Result TMRDevice::stop() {
 
-	if (_state == State::busy) {
+	if ((_state == State::busy) || (_state == State::busyIRQ)) {
+
+		if (_state == State::busyIRQ)
+			_tim->DIER &= ~TIM_DIER_UIE;  // Deshabilita la interrupcio.
 
 		_tim->CR1 &= ~TIM_CR1_CEN;  // Deixa de contar.
 		_tim->SR &= ~TIM_SR_UIF;    // Borra el flag.
-
-		_state = State::ready;
-
-		return Result::ok;
-	}
-	else
-		return Result::error;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Finalitza el contador en modus interrupcio.
-///
-TMRDevice::Result TMRDevice::stopInterrupt() {
-
-	if (_state == State::busy) {
-
-		_tim->CR1 &= ~TIM_CR1_CEN;    // Deixa de contar
-		_tim->DIER &= ~TIM_DIER_UIE;  // Deshabilita la interrupcio.
-		_tim->SR &= ~TIM_SR_UIF;      // Borra el flag.
 
 		_state = State::ready;
 

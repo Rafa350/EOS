@@ -81,7 +81,7 @@ void clock::setHsisysPrescaler(
 
 	uint32_t tmp = RCC->CR;
 	tmp &= ~RCC_CR_HSIDIV;
-	tmp  |= ((uint32_t) value) << RCC_CR_HSIDIV_Pos;
+	tmp |= ((uint32_t) value) << RCC_CR_HSIDIV_Pos;
 	RCC->CR = tmp;
 }
 
