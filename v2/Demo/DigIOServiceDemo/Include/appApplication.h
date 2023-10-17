@@ -7,7 +7,6 @@
 #include "HTL/htlTMR.h"
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
-#include "Services/eosMessengerService.h"
 #include "System/eosRTOSApplication.h"
 #include "System/eosCallbacks.h"
 
@@ -26,15 +25,10 @@ namespace app {
             using OUTSRV_TMR = config::digOutputService::TMR;
 
             using DigInputChangedEvent = eos::DigInput::ChangedEvent<MyApplication>;
-            using MessageBusCallback = eos::CallbackP1<MyApplication, const ButtonMessage&>;
 
         private:
             eos::DigOutputService *_digOutputService;
             eos::DigInputService *_digInputService;
-            eos::MessengerService *_messengerService;
-            eos::MessageBus<ButtonMessage> *_messageBus;
-
-            MessageBusCallback _messageBusEventCallback;
 
             #ifdef EXIST_LED1
                 eos::DigOutput *_led1;
@@ -60,7 +54,6 @@ namespace app {
 
         protected:
             void onInitialize();
-            void messageBusEventHandler(const ButtonMessage &args);
             #ifdef EXIST_SW1
                 void sw1ChangedEventHandler(eos::DigInput *sender, eos::DigInput::ChangedEventArgs &args);
             #endif

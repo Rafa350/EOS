@@ -70,8 +70,8 @@ Size Size::inflated(
 	int16_t v) const {
 
 	return Size(
-		Math::max(0, _width + h),
-		Math::max(0, _height + v));
+		math::max(0, _width + h),
+		math::max(0, _height + v));
 }
 
 
@@ -89,8 +89,8 @@ Size Size::inflated(
 	int16_t bottom) const {
 
 	return Size(
-		Math::max(0, _width + left + right),
-		Math::max(0, _height + top + bottom));
+		math::max(0, _width + left + right),
+		math::max(0, _height + top + bottom));
 }
 
 
@@ -102,8 +102,8 @@ Size Size::constrained(
 	const Size &s) const {
 
 	return Size(
-		Math::min(_width, s._width),
-		Math::min(_height, s._height));
+		math::min(_width, s._width),
+		math::min(_height, s._height));
 }
 
 

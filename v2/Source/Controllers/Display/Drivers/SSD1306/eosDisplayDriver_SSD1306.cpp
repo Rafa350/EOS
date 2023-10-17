@@ -266,10 +266,10 @@ void DisplayDriver_SSD1306::initializeController() {
 	// Reseteja el controlador
 	//
 	#ifdef DISPLAY_RST_Pin
-	auto pinRST = PinRST::getHandler();
-	pinRST->clear();
+	auto hRST = PinRST::getHandler();
+	hRST->clear();
 	delay(100);
-	pinRST->set();
+	hRST->set();
 	delay(300);
 	#endif
 

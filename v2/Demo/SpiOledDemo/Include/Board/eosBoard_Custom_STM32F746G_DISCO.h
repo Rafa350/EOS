@@ -14,8 +14,8 @@
 #define EXIST_LED1
 
 #define LED1_Pin             ARDUINO_D3_Pin
-#define LED1_StateON         htl::GPIOState::set
-#define LED1_StateOFF        htl::GPIOState::clear
+#define LED1_StateON         true
+#define LED1_StateOFF        false
 
 #endif // USE_CUSTOM_LED1
 
@@ -28,8 +28,8 @@
 #define EXIST_LED2
 
 #define LED2_Pin             ARDUINO_D2_Pin
-#define LED2_StateON         htl::GPIOState::set
-#define LED2_StateOFF        htl::GPIOState::clear
+#define LED2_StateON         true
+#define LED2_StateOFF        false
 
 #endif // USE_CUSTOM_LED2
 

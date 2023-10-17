@@ -111,10 +111,10 @@ namespace htl {
 				Result initialize(SPIMode mode, ClkPolarity clkPolarity, ClkPhase clkPhase, WordSize size, FirstBit firstBit, ClockDivider clkDivider);
 				Result deinitialize();
 				inline void enable() {
-					setMask(_spi->CR1, SPI_CR1_SPE);
+					_spi->CR1 |= SPI_CR1_SPE;
 				}
 				inline void disable() {
-					clrMask(_spi->CR1, SPI_CR1_SPE);
+					_spi->CR1 &= ~SPI_CR1_SPE;
 				}
 				inline Result transmit(const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF) {
 					return transmit(txBuffer, nullptr, size, timeout);

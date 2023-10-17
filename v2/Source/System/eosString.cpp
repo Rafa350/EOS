@@ -363,7 +363,7 @@ void String::create(
 	int totalLength = (int)strlen(cstr);
 	if (length == -1)
 		length = totalLength;
-	length = Math::min(length - index, totalLength);
+	length = math::min(length - index, totalLength);
 
 	if (isRomPointer(cstr) && (index == 0) && (length == totalLength)) {
 

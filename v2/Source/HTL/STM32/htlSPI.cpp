@@ -20,6 +20,8 @@ using namespace htl::spi;
 #define SPI_CR2_DS_LEN16     (0xFUL << SPI_CR2_DS_Pos)
 #elif defined(EOS_PLATFORM_STM32F4)
 #elif defined(EOS_PLATFORM_STM32F7)
+#define SPI_CR2_DS_LEN8      (7UL << SPI_CR2_DS_Pos)
+#define SPI_CR2_DS_LEN16     (0xF << SPI_CR2_DS_Pos)
 #else
 #error "Undefined platform"
 #endif
@@ -40,8 +42,6 @@ static uint16_t spiRead16(SPI_TypeDef * const spi);
 static bool spiTxEmpty(SPI_TypeDef * const spi);
 static bool spiRxNotEmpty(SPI_TypeDef * const spi);
 static bool spiBusy(SPI_TypeDef * const spi);
-
-static bool spiWaitBusy(SPI_TypeDef * const spi, uint32_t start, uint16_t timeout);
 
 
 /// ----------------------------------------------------------------------
@@ -134,49 +134,59 @@ SPIDevice::Result SPIDevice::transmit(
 
 		_state = State::transmiting;
 
+		bool error = false;
+		uint16_t startTime = 0;
 		uint16_t count = 0;
-
-		// Transmissio en format 8 bits
-		//
 		#if defined(EOS_PLATFORM_STM32G0)
-		if ((_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8) {
-		#else
-		if ((_spi->CR1 & SPI_CR1_DFF_Msk) == 0) {
+		bool len8 = (_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8;
+		#elif defined(EOS_PLATFORM_STM32F4)
+		bool len8 = (_spi->CR1 & SPI_CR1_DFF_Msk) == 0;
+		#elif defined(EOS_PLATFORM_STM32F7)
+		bool len8 = (_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8;
 		#endif
 
-			// Prepara el threshold del fifo per a 8 bits
+		// Bucle per transmetre i/o rebre
+		//
+		while ((count < size) && !error) {
+
+			// Espera que el buffer de transmissio estigui buit
 			//
-			#if defined(EOS_PLATFORM_STM32G0)
-			setMask(_spi->CR2, SPI_CR2_FRXTH);
-			#endif
-
-			while (count < size) {
-
-				while (!spiTxEmpty(_spi))
-					continue;
-				spiWrite8(_spi, txBuffer == nullptr ? 0x00 : txBuffer[count]);
-
-				if (rxBuffer != nullptr) {
-					while (!spiRxNotEmpty(_spi))
-						continue;
-					rxBuffer[count] = spiRead8(_spi);
-				}
-
-				count++;
+			while (!spiTxEmpty(_spi) && !error) {
 			}
-		}
-		else {
+			if (error)
+				continue;
 
-			// Prepara el threshold del fifo per a 16 bits
+			// Transmiteix les dades
 			//
-			#if defined(EOS_PLATFORM_STM32G0)
-			clrMask(_spi->CR2, SPI_CR2_FRXTH);
-			#endif
+			if (len8)
+				spiWrite8(_spi, txBuffer == nullptr ? 0x00 : txBuffer[count]);
+			else
+				spiWrite16(_spi, txBuffer == nullptr ? 0x0000 : ((const uint16_t*)txBuffer)[count]);
 
+			if (rxBuffer != nullptr) {
+
+				// Espera que el buffer de recepcio no estigui buit
+				//
+				while (!spiRxNotEmpty(_spi) && !error) {
+				}
+				if (error)
+					continue;
+
+				// Reb les dades
+				//
+				if (len8)
+					rxBuffer[count] = spiRead8(_spi);
+				else
+					((uint16_t*)rxBuffer)[count] = spiRead16(_spi);
+			}
+
+			count += len8 ? 1 : 2;
 		}
 
-		while (spiBusy(_spi))
-			continue;
+		// Espera wue finalitzon totes les operacions pendents
+		//
+		while (spiBusy(_spi) && !error) {
+		}
 
 		_state = State::ready;
 
@@ -342,21 +352,26 @@ static void spiSetWordSize(
 		spi->CR1 &= ~SPI_CR1_DFF;
 
 	#elif defined(EOS_PLATFORM_STM32F7)
-	uint32_t tmp = regs->CR2;
-	tmp &= ~(SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
+	uint32_t tmp = spi->CR2;
+	tmp &= ~(SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
 	switch (size) {
 		case WordSize::_8:
-			tmp |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
+			tmp |= SPI_CR2_DS_LEN8;
 			break;
 
 		case WordSize::_16:
-			tmp |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
+			tmp |= SPI_CR2_DS_LEN16;
 			break;
 	}
-	regs->CR2 = tmp;
+	spi->CR2 = tmp;
 
 	#elif defined(EOS_PLATFORM_STM32G0)
-	wrtMask(spi->CR2, SPI_CR2_DS_Msk, size == WordSize::_8 ? SPI_CR2_DS_LEN8 : SPI_CR2_DS_LEN16);
+	uint32_t tmp = spi->CR2;
+	tmp &= (SPI_CR2_DS_Msk | SPI_CR2_FRXTH_Msk);
+	tmp |= size == WordSize::_8 ?
+		SPI_CR2_DS_LEN8 | SPI_CR2_FRXTH :
+		SPI_CR2_DS_LEN16;
+	spi->CR2 = tmp;
 	#endif
 }
 
@@ -371,9 +386,9 @@ static void spiSetFirstBit(
 	FirstBit firstBit) {
 
 	if (firstBit == FirstBit::lsb)
-		setMask(spi->CR1, SPI_CR1_LSBFIRST);
+		spi->CR1 |= SPI_CR1_LSBFIRST;
 	else
-		clrMask(spi->CR1, SPI_CR1_LSBFIRST);
+		spi->CR1 &= ~SPI_CR1_LSBFIRST;
 }
 
 
@@ -434,7 +449,7 @@ static uint16_t spiRead16(
 /// \param    spi: Els registres de hardware del dispoositiu SPI.
 /// \return   True si el registre de sortida es buit.
 ///
-static bool spiTxEmpty(
+static inline bool spiTxEmpty(
 	SPI_TypeDef * const spi) {
 
 	return (spi->SR & SPI_SR_TXE) != 0;
@@ -446,7 +461,7 @@ static bool spiTxEmpty(
 /// \param    spi: Els registres de hardware del dispoositiu SPI.
 /// \return   True si el registre d'entrada no es buit.
 ///
-static bool spiRxNotEmpty(
+static inline bool spiRxNotEmpty(
 	SPI_TypeDef * const spi) {
 
 	return (spi->SR & SPI_SR_RXNE) != 0;
@@ -458,7 +473,7 @@ static bool spiRxNotEmpty(
 /// \param    spi: Els registres de hardware del dispoositiu SPI.
 /// \return   True si hi ha una transmissio pendent.
 ///
-static bool spiBusy(
+static inline bool spiBusy(
 	SPI_TypeDef * const spi) {
 
 	return (spi->SR & SPI_SR_BSY) != 0;
@@ -473,47 +488,23 @@ static bool spiBusy(
 ///
 #ifdef EOS_PLATFORM_STM32F7
 static void waitRxFifoEmpty(
-	SPI_TypeDef *regs,
+	SPI_TypeDef *spi,
 	unsigned startTime,
 	unsigned timeout) {
 
-	while ((regs->SR & SPI_SR_FRLVL) != 0) {
-		if (halSYSCheckTimeout(startTime, timeout)) {
+	while ((spi->SR & SPI_SR_FRLVL) != 0) {
 
-		}
-
-		uint8_t dummy = *((__IO uint8_t *)&regs->DR);
+		uint8_t dummy = *((volatile uint8_t *)&spi->DR);
 	}
 }
+
+
 static void waitTxFifoEmpty(
-	SPI_TypeDef *regs,
+	SPI_TypeDef *spi,
 	unsigned startTime,
 	unsigned timeout) {
 
-	while ((regs->SR & SPI_SR_FTLVL) != 0) {
-		if (halSYSCheckTimeout(startTime, timeout)) {
-
-		}
+	while ((spi->SR & SPI_SR_FTLVL) != 0) {
 	}
 }
 #endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Espera que el dispositiu estigui lliure.
-/// \param    spi: Els registres de hardware del dispoositiu SPI.
-/// \param    start: Temps del inici de les operacions
-/// \param    timeout: Temps maxim de bloqueig.
-///
-/*static bool waitBusy(
-	SPI_TypeDef * const spi,
-	uint32_t start,
-	uint16_t timeout) {
-
-	while (spiBusy(spi)) {
-		if (halSYSCheckTimeout(start, timeout))
-			return false;
-	}
-	return true;
-}*/
-

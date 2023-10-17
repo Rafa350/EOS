@@ -77,9 +77,9 @@ void Graphics::drawRoundedRectangle(
 		// Normalitza les coordinades
 		//
 		if (x1 > x2)
-			Math::swap(x1, x2);
+			math::swap(x1, x2);
 		if (y1 > y2)
-			Math::swap(y1, y2);
+			math::swap(y1, y2);
 
 		// Precalcula els factors constants
 		//
@@ -243,9 +243,9 @@ void Graphics::fillRoundedRectangle(
 		// Normalitza les coordinades
 		//
 		if (x1 > x2)
-			Math::swap(x1, x2);
+			math::swap(x1, x2);
 		if (y1 > y2)
-			Math::swap(y1, y2);
+			math::swap(y1, y2);
 
 		// Precalcula els factors constants
 		//

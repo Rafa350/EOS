@@ -84,10 +84,10 @@ Rect::Rect(
 	const Point &p1,
 	const Point &p2):
 
-	_x(Math::min(p1.getX(), p2.getX())),
-	_y(Math::min(p1.getY(), p2.getY())),
-	_width(Math::abs(p2.getX() - p1.getX()) + 1),
-	_height(Math::abs(p2.getY() - p1.getY()) + 1) {
+	_x(math::min(p1.getX(), p2.getX())),
+	_y(math::min(p1.getY(), p2.getY())),
+	_width(math::abs(p2.getX() - p1.getX()) + 1),
+	_height(math::abs(p2.getY() - p1.getY()) + 1) {
 
 	eosAssert(_width >= 0);
 	eosAssert(_height >= 0);
@@ -140,8 +140,8 @@ Rect Rect::inflated(
 	return Rect(
 		_x - left,
 		_y - top,
-		Math::max(0, _width + left + right),
-		Math::max(0, _height + top + bottom));
+		math::max(0, _width + left + right),
+		math::max(0, _height + top + bottom));
 }
 
 
@@ -167,15 +167,15 @@ Rect Rect::translated(
 Rect Rect::intersected(
 	const Rect &r) const {
 
-	int x1 = Math::max(_x, r._x);
-	int y1 = Math::max(_y, r._y);
-	int x2 = Math::min(getMaxX(), r.getMaxX());
-	int y2 = Math::min(getMaxY(), r.getMaxY());
+	int x1 = math::max(_x, r._x);
+	int y1 = math::max(_y, r._y);
+	int x2 = math::min(getMaxX(), r.getMaxX());
+	int y2 = math::min(getMaxY(), r.getMaxY());
 
 	if (x1 > x2)
-		Math::swap(x1, x2);
+		math::swap(x1, x2);
 	if (y1 > y2)
-		Math::swap(y1, y2);
+		math::swap(y1, y2);
 
 	if ((x2 < x1) || (y2 < y1))
 		return Rect(x1, y1, 0, 0); // Rectangle buit

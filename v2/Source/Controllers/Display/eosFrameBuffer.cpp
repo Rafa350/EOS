@@ -144,10 +144,10 @@ void FrameBuffer::transform(
 
 	// Normalitza el resultat
 	//
-	x1 = Math::min(xx1, xx2);
-	y1 = Math::min(yy1, yy2);
-	x2 = Math::max(xx1, xx2);
-	y2 = Math::max(yy1, yy2);
+	x1 = math::min(xx1, xx2);
+	y1 = math::min(yy1, yy2);
+	x2 = math::max(xx1, xx2);
+	y2 = math::max(yy1, yy2);
 }
 
 
@@ -202,10 +202,10 @@ void FrameBuffer::setPixels(
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = Math::max(x1, (int16_t)0);
-	y1 = Math::max(y1, (int16_t)0);
-	x2 = Math::min(x2, _maxX);
-	y2 = Math::min(y2, _maxY);
+	x1 = math::max(x1, (int16_t)0);
+	y1 = math::max(y1, (int16_t)0);
+	x2 = math::min(x2, _maxX);
+	y2 = math::min(y2, _maxY);
 
 	// Cas que nomes sigui un pixel
 	//
@@ -272,10 +272,10 @@ void FrameBuffer::setPixels(
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = Math::max(x1, (int16_t)0);
-	y1 = Math::max(y1, (int16_t)0);
-	x2 = Math::min(x2, _maxX);
-	y2 = Math::min(y2, _maxY);
+	x1 = math::max(x1, (int16_t)0);
+	y1 = math::max(y1, (int16_t)0);
+	x2 = math::min(x2, _maxX);
+	y2 = math::min(y2, _maxY);
 
 	if ((x1 <= x2) && (y1 <= y2)) {
 		transform(x1, y1, x2, y2);

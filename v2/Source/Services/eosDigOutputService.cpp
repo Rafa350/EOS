@@ -14,8 +14,8 @@ using namespace htl;
 /// \brief    Constructor.
 ///
 DigOutputService::DigOutputService():
-	_outputChangedEvent {nullptr},
-	_outputChangedEventEnabled {false},
+	_changedEvent {nullptr},
+	_changedEventEnabled {false},
 	_timeCounter {0},
 	_commandQueue {_commandQueueSize} {
 
@@ -111,14 +111,32 @@ void DigOutputService::removeOutputs() {
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el event 'Changed'
 /// \param    event: El event.
-/// \param    enabled: True si esta habilitat.
+/// \param    enabled: True per habilitar.
 ///
-void DigOutputService::setOutputChangedEvent(
-	IOutputChangedEvent &event,
+void DigOutputService::setChangedEvent(
+	IChangedEvent &event,
 	bool enabled) {
 
-	_outputChangedEvent = &event;
-	_outputChangedEventEnabled = enabled;
+	_changedEvent = &event;
+	_changedEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita l'event 'Changed'
+///
+void DigOutputService::enableChangedEvent() {
+
+	_changedEventEnabled = _changedEvent != nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita l'event 'Changed'
+///
+void DigOutputService::disableChangedEvent() {
+
+	_changedEventEnabled = false;
 }
 
 
@@ -129,11 +147,11 @@ void DigOutputService::setOutputChangedEvent(
 void DigOutputService::notifyChanged(
 	DigOutput *output) {
 
-	if (_outputChangedEventEnabled) {
-		OutputChangedEventArgs args = {
+	if (_changedEventEnabled) {
+		ChangedEventArgs args = {
 			.output = output
 		};
-		_outputChangedEvent->execute(this, args);
+		_changedEvent->execute(this, args);
 	}
 }
 
@@ -146,7 +164,6 @@ void DigOutputService::setOutput(
 	DigOutput *output) {
 
 	auto drv = output->_drv;
-
     if (drv->read() == false) {
     	drv->set();
     	notifyChanged(output);
@@ -162,7 +179,6 @@ void DigOutputService::clearOutput(
 	DigOutput *output) {
 
 	auto drv = output->_drv;
-
 	if (drv->read() == true) {
     	drv->clear();
     	notifyChanged(output);
@@ -178,7 +194,6 @@ void DigOutputService::toggleOutput(
 	DigOutput *output) {
 
 	auto drv = output->_drv;
-
 	drv->toggle();
    	notifyChanged(output);
 }
@@ -195,7 +210,7 @@ void DigOutputService::set(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = OpCode::set,
+        .id = CommandID::set,
         .output = output
     };
 
@@ -214,7 +229,7 @@ void DigOutputService::clear(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = OpCode::clear,
+        .id = CommandID::clear,
         .output = output
     };
 
@@ -233,7 +248,7 @@ void DigOutputService::toggle(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = OpCode::toggle,
+        .id = CommandID::toggle,
         .output = output
     };
 
@@ -254,7 +269,7 @@ void DigOutputService::write(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = state ? OpCode::set : OpCode::clear,
+        .id = state ? CommandID::set : CommandID::clear,
         .output = output
     };
 
@@ -275,7 +290,7 @@ void DigOutputService::pulse(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = OpCode::pulse,
+        .id = CommandID::pulse,
         .output = output,
         .time1 = math::max(pulseWidth, minPulseWidth)
     };
@@ -299,7 +314,7 @@ void DigOutputService::delayedPulse(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = OpCode::delayedPulse,
+        .id = CommandID::delayedPulse,
         .output = output,
         .time1 = math::max(delay, minDelay),
         .time2 = math::max(pulseWidth, minPulseWidth)
@@ -324,7 +339,7 @@ void DigOutputService::repeatPulse(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .opCode = OpCode::repeatPulse,
+        .id = CommandID::repeatPulse,
         .output = output,
         .time1 = math::max(pulseWidth, minPulseWidth),
         .time2 = math::max(spaceWidth, minPulseWidth)
@@ -370,7 +385,6 @@ void DigOutputService::onInitialize() {
 void DigOutputService::onTask() {
 
     while (true) {
-
         Command command;
         while (_commandQueue.pop(command, unsigned(-1)))
         	processCommand(command);
@@ -396,44 +410,44 @@ void DigOutputService::onTick() {
 void DigOutputService::processCommand(
 	const Command &command) {
 
-    switch (command.opCode) {
-        case OpCode::set:
+    switch (command.id) {
+        case CommandID::set:
             processSet(command.output);
             break;
 
-        case OpCode::clear:
+        case CommandID::clear:
             processClear(command.output);
             break;
 
-        case OpCode::toggle:
+        case CommandID::toggle:
             processToggle(command.output);
             break;
 
-        case OpCode::pulse:
+        case CommandID::pulse:
             processPulse(command.output, command.time1);
             break;
 
-        case OpCode::delayedSet:
+        case CommandID::delayedSet:
             processDelayedSet(command.output, command.time1);
             break;
 
-        case OpCode::delayedClear:
+        case CommandID::delayedClear:
             processDelayedClear(command.output, command.time1);
             break;
 
-        case OpCode::delayedToggle:
+        case CommandID::delayedToggle:
             processDelayedToggle(command.output, command.time1);
             break;
 
-        case OpCode::delayedPulse:
+        case CommandID::delayedPulse:
             processDelayedPulse(command.output, command.time1, command.time2);
             break;
 
-        case OpCode::repeatPulse:
+        case CommandID::repeatPulse:
             processRepeatPulse(command.output, command.time1, command.time2);
             break;
 
-        case OpCode::tick:
+        case CommandID::tick:
             processTick(command.time1);
             break;
     }
@@ -684,7 +698,7 @@ void DigOutputService::tmrInterruptFunction() {
 	_timeCounter++;
 
     Command cmd = {
-        .opCode = OpCode::tick,
+        .id = CommandID::tick,
         .time1 = 1
     };
 

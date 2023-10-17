@@ -229,7 +229,7 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Intercanvia els buffers
 		//
-		Math::swap(_displayFrameBuffer, _workFrameBuffer);
+		math::swap(_displayFrameBuffer, _workFrameBuffer);
 
 		// Asigna l'adresa de la capa
 		//

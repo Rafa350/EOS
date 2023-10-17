@@ -16,17 +16,18 @@ namespace eos {
 			virtual void execute() const = 0;
 	};
 
-	template <typename instance_>
+	template <typename Instance_>
 	class CallbackP0: public ICallbackP0 {
 		public:
-			using Method = void (instance_::*)();
+			using RInstance = Instance_ &;
+			using Method = void (Instance_::*)();
 		private:
-			instance_ &_instance;
-			Method _method;
+			RInstance const _instance;
+			Method const _method;
 		public:
-			inline CallbackP0(instance_ &instance, Method method):
-				_instance(instance),
-				_method(method) {
+			inline CallbackP0(RInstance instance, Method method):
+				_instance {instance},
+				_method {method} {
 			}
 			void execute() const override {
 				if (_method != nullptr)
@@ -43,17 +44,18 @@ namespace eos {
             virtual void execute(param1_ p1) const = 0;
     };
 
-    template <typename instance_, typename param1_>
+    template <typename Instance_, typename param1_>
     class CallbackP1: public ICallbackP1<param1_> {
         public:
-            using Method = void (instance_::*)(param1_);
+			using RInstance = Instance_ &;
+            using Method = void (Instance_::*)(param1_);
         private:
-            instance_ &_instance;
-            Method _method;
+            RInstance const _instance;
+            Method const _method;
         public:
-            inline CallbackP1(instance_ &instance, Method method):
-            	_instance(instance),
-				_method(method) {
+            inline CallbackP1(RInstance instance, Method method):
+            	_instance {instance},
+				_method {method} {
             }
             void execute(param1_ p1) const override {
                 if (_method != nullptr)
@@ -70,17 +72,18 @@ namespace eos {
             virtual void execute(param1_ p1, param2_ p2) const = 0;
     };
 
-    template <typename instance_, typename param1_, typename param2_>
+    template <typename Instance_, typename param1_, typename param2_>
     class CallbackP2: public ICallbackP2<param1_, param2_> {
         public:
-    	    using Method = void (instance_::*)(param1_, param2_);
+			using RInstance = Instance_ &;
+    	    using Method = void (Instance_::*)(param1_, param2_);
         private:
-            instance_ &_instance;
-            Method _method;
+            RInstance const _instance;
+            Method const _method;
         public:
-            inline CallbackP2(instance_ &instance, Method method):
-            	_instance(instance),
-				_method(method) {
+            inline CallbackP2(RInstance instance, Method method):
+            	_instance {instance},
+				_method {method} {
             }
             void execute(param1_ p1, param2_ p2) const override {
                 if (_method != nullptr)
@@ -97,15 +100,16 @@ namespace eos {
             virtual void execute(param1_ p1, param2_ p2, param3_ p3) const = 0;
     };
 
-    template <typename instance_, typename param1_, typename param2_, typename param3_>
+    template <typename Instance_, typename param1_, typename param2_, typename param3_>
     class CallbackP3: public ICallbackP3<param1_, param2_, param3_> {
         public:
-    	    using Method = void (instance_::*)(param1_, param2_, param3_);
+			using RInstance = Instance_ &;
+    	    using Method = void (Instance_::*)(param1_, param2_, param3_);
         private:
-            instance_ &_instance;
-            Method _method;
+            RInstance const _instance;
+            Method const _method;
         public:
-            inline CallbackP3(instance_ &instance, Method method):
+            inline CallbackP3(RInstance instance, Method method):
             	_instance(instance),
 				_method(method) {
             }
@@ -124,15 +128,16 @@ namespace eos {
             virtual void execute(param1_ p1, param2_ p2, param3_ p3, param4_ p4) const = 0;
     };
 
-    template <typename instance_, typename param1_, typename param2_, typename param3_, typename param4_>
+    template <typename Instance_, typename param1_, typename param2_, typename param3_, typename param4_>
     class CallbackP4: public ICallbackP4<param1_, param2_, param3_, param4_> {
         public:
-    	    using Method = void (instance_::*)(param1_, param2_, param3_, param4_);
+			using RInstance = Instance_ &;
+    	    using Method = void (Instance_::*)(param1_, param2_, param3_, param4_);
         private:
-            instance_ &_instance;
-            Method _method;
+            RInstance const _instance;
+            Method const _method;
         public:
-            inline CallbackP4(instance_ &instance, Method method):
+            inline CallbackP4(RInstance instance, Method method):
             	_instance(instance),
 				_method(method) {
             }

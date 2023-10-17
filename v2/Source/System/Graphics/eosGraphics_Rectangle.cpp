@@ -38,7 +38,7 @@ void Graphics::paintRectangle(
 		if (penVisible) {
 			Color color = pen.getColor();
 			int16_t thickness = pen.getThickness();
-			if (thickness < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
+			if (thickness < math::min(math::abs(x2 - x1), math::abs(y2 - y1)) / 2) {
 				if (thickness > 1) {
 					fillRectangle(x1, y1, x2, y1 + thickness, color);
 					fillRectangle(x1, y2 - thickness, x2, y2, color);
@@ -76,9 +76,9 @@ void Graphics::drawRectangle(
 	// Normalitza les coordinades.
 	//
     if (x1 > x2)
-        Math::swap(x1, x2);
+        math::swap(x1, x2);
     if (y1 > y2)
-        Math::swap(y1, y2);
+        math::swap(y1, y2);
 
     int16_t xx1, xx2, yy1, yy2;
 
@@ -131,9 +131,9 @@ void Graphics::fillRectangle(
 	// Normalitza les coordinades.
 	//
     if (x1 > x2)
-        Math::swap(x1, x2);
+        math::swap(x1, x2);
     if (y1 > y2)
-        Math::swap(y1, y2);
+        math::swap(y1, y2);
 
     // Dibuixa el rectangle si es visible
     //

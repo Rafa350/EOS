@@ -64,9 +64,9 @@ void Graphics::drawEllipse(
 	// Normalitza les coordinades
 	//
 	if (x1 > x2)
-		Math::swap(x1, x2);
+		math::swap(x1, x2);
 	if (y1 > y2)
-		Math::swap(y1, y2);
+		math::swap(y1, y2);
 
 	// Cas que nomes sigui un punt
 	//
@@ -209,9 +209,9 @@ void Graphics::fillEllipse(
 	// Normalitza les coordinades
 	//
 	if (x1 > x2)
-		Math::swap(x1, x2);
+		math::swap(x1, x2);
 	if (y1 > y2)
-		Math::swap(y1, y2);
+		math::swap(y1, y2);
 
 	// Cas que nomes sigui un punt
 	//

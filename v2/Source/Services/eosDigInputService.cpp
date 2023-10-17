@@ -312,3 +312,35 @@ DigInput::~DigInput() {
     if (_service != nullptr)
         _service->removeInput(this);
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el event 'Changed'
+/// \param    event: El event.
+/// \param    enabled: True si es vol habilitar.
+///
+void DigInput::setChangedEvent(
+	IChangedEvent &event,
+	bool enabled) {
+
+    _changedEvent = &event;
+    _changedEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita l'event 'Changed'
+///
+void DigInput::enableChangedEvent() {
+
+	_changedEventEnabled = _changedEvent != nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita l'event 'Changed'
+///
+void DigInput::disableChangedEvent() {
+
+	_changedEventEnabled = false;
+}

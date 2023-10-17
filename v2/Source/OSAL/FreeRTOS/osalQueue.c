@@ -151,7 +151,7 @@ bool osalQueuePeek(
 	eosAssert(element != NULL);
 
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xQueueReceive((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
+    return xQueuePeek((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
 }
 
 
@@ -170,9 +170,7 @@ bool osalQueuePeekISR(
 	eosAssert(element != NULL);
 
     BaseType_t taskWoken = pdFALSE;
-    bool result = xQueueReceiveFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
-    if (result)
-    	portEND_SWITCHING_ISR(taskWoken);
+    bool result = xQueuePeekFromISR((QueueHandle_t) hQueue, element) == pdPASS;
     return result;
 }
 

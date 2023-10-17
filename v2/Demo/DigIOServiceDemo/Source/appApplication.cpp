@@ -19,7 +19,6 @@ using namespace app;
 /// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication():
-    _messageBusEventCallback(*this, &MyApplication::messageBusEventHandler),
     _sw1ChangedEvent(*this, &MyApplication::sw1ChangedEventHandler)
     #ifdef EXIST_SW2
         , _sw2ChangedEvent(*this, &MyApplication::sw2ChangedEventHandler)
@@ -35,15 +34,6 @@ MyApplication::MyApplication():
 /// \brief    Inicialitza l'aplicacio.
 ///
 void MyApplication::onInitialize() {
-
-    // Configura el servei de missatgeria
-    //
-    _messengerService = new MessengerService();
-    addService(_messengerService, Task::Priority::normal, 512, "MESSENGER");
-
-    _messageBus = new MessageBus<ButtonMessage>(10);
-    _messageBus->subscribe(_messageBusEventCallback);
-    _messengerService->addMessageBus(_messageBus);
 
     // Configura el servei d'entrades digitals
 	//
@@ -150,16 +140,6 @@ void MyApplication::onInitialize() {
 }
 
 
-/// -------------------------------------------------------------------
-/// \brief    Procesa els events de MessageBus
-// \param     args: Parametres del event.
-///
-void MyApplication::messageBusEventHandler(
-    const ButtonMessage &args) {
-
-}
-
-
 /// --------------------------------------------------------------------
 /// \brief    Procesa els events del switch 1.
 /// \param    args: Parametres del event.
@@ -169,10 +149,6 @@ void MyApplication::sw1ChangedEventHandler(
     DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW1_StateON) {
-
-        ButtonMessage msg;
-        msg.id = 1;
-        _messageBus->send(msg, 1000);
 
         _led1->pulse(500);
         _led2->delayedPulse(250, 500);
@@ -193,10 +169,6 @@ void MyApplication::sw2ChangedEventHandler(
     DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW2_StateON) {
-
-        ButtonMessage msg;
-        msg.id = 2;
-        _messageBus->send(msg, 1000);
 
         #ifdef EXIST_LED3
             _led3->pulse(500);
@@ -220,10 +192,6 @@ void MyApplication::sw3ChangedEventHandler(
     DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW3_StateON) {
-
-        ButtonMessage msg;
-        msg.id = 3;
-        _messageBus->send(msg, 1000);
 
         _led1->pulse(1000);
         #ifdef EXIST_LED2

@@ -142,8 +142,8 @@ static void initializeGlobalEdges(
 			    edge.step = x1 <= x2 ? -1 : 1;
 			}
 
-			edge.dx = Math::abs(x2 - x1);
-		    edge.dy = Math::abs(y2 - y1);
+			edge.dx = math::abs(x2 - x1);
+		    edge.dy = math::abs(y2 - y1);
 			edge.sum = 0;
 
 			globalEdges.pushBack(edge);

@@ -42,15 +42,15 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
 		public:
-			struct OutputChangedEventArgs {
+			struct ChangedEventArgs {
 				DigOutput *output;
 				bool pinState;
 			};
-			using IOutputChangedEvent = ICallbackP2<DigOutputService*, OutputChangedEventArgs&>;
-			template <typename instance_> using OutputChangedEvent = CallbackP2<instance_, DigOutputService*, OutputChangedEventArgs&>;
+			using IChangedEvent = ICallbackP2<DigOutputService*, ChangedEventArgs&>;
+			template <typename instance_> using ChangedEvent = CallbackP2<instance_, DigOutputService*, ChangedEventArgs&>;
 
 		private:
-            enum class OpCode {
+            enum class CommandID {
                 set,
                 clear,
                 toggle,
@@ -63,15 +63,15 @@ namespace eos {
                 tick
             };
             struct Command {
-                OpCode opCode;
+                CommandID id;
                 DigOutput *output;
                 unsigned time1;
                 unsigned time2;
             };
 
             using CommandQueue = Queue<Command>;
-            using DigOutputList = List<DigOutput*>;
-            using DigOutputIterator = DigOutputList::Iterator;
+            using OutputList = List<DigOutput*>;
+            using OutputIterator = OutputList::Iterator;
 
 		private:
             static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
@@ -81,11 +81,11 @@ namespace eos {
             static constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
 
     	private:
-            IOutputChangedEvent * _outputChangedEvent;
-            bool _outputChangedEventEnabled;
+            IChangedEvent *_changedEvent;
+            bool _changedEventEnabled;
             unsigned _timeCounter;
             CommandQueue _commandQueue;
-            DigOutputList _outputs;
+            OutputList _outputs;
 
         private:
             DigOutputService(const DigOutputService&) = delete;
@@ -105,6 +105,7 @@ namespace eos {
             void setOutput(DigOutput *output);
             void clearOutput(DigOutput *output);
             void toggleOutput(DigOutput *output);
+
             void notifyChanged(DigOutput *output);
 
         protected:
@@ -119,13 +120,9 @@ namespace eos {
             void removeOutput(DigOutput *output);
             void removeOutputs();
 
-            void setOutputChangedEvent(IOutputChangedEvent &event, bool enabled = true);
-            inline void enableOutputChangedEvent() {
-            	_outputChangedEventEnabled = _outputChangedEvent != nullptr;
-            }
-            inline void disableOutputChangedEvent() {
-            	_outputChangedEventEnabled = false;
-            }
+            void setChangedEvent(IChangedEvent &event, bool enabled = true);
+            void enableChangedEvent();
+            void disableChangedEvent();
 
             void set(DigOutput *output);
             void clear(DigOutput *output);

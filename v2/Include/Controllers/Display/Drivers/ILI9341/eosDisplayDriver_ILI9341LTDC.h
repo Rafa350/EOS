@@ -60,7 +60,7 @@ namespace eos {
 			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;
 
         private:
-            FrameBuffer *_frameBuffer;
+            FrameBuffer * const _frameBuffer;
 
         public:
             DisplayDriver_ILI9341LTDC(FrameBuffer *frameBuffer);

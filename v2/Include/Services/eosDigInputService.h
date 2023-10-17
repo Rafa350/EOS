@@ -6,7 +6,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
@@ -27,12 +26,12 @@ namespace eos {
     		static constexpr uint32_t minStackSize = 128;
 
         private:
-            typedef List<DigInput*> DigInputList;
-            typedef DigInputList::Iterator DigInputIterator;
+            typedef List<DigInput*> InputList;
+            typedef InputList::Iterator InputIterator;
 
         private:
             Semaphore _changes;
-            DigInputList _inputs;
+            InputList _inputs;
 
         private:
             bool scanInputs();
@@ -106,18 +105,9 @@ namespace eos {
                 _scanMode = scanMode;
             }
 
-            inline void setChangedEvent(IChangedEvent &event, bool enabled = true) {
-                _changedEvent = &event;
-                _changedEventEnabled = enabled;
-            }
-
-            inline void enableChangeEvent() {
-                _changedEventEnabled = _changedEvent != nullptr;
-            }
-
-            inline void disableChangeEvent() {
-                _changedEventEnabled = false;
-            }
+            void setChangedEvent(IChangedEvent &event, bool enabled = true);
+            void enableChangedEvent();
+            void disableChangedEvent();
 
         friend DigInputService;
     };

@@ -52,7 +52,7 @@ namespace eos {
     	private:
 			static constexpr int16_t _displayWidth  = DISPLAY_WIDTH;
 			static constexpr int16_t _displayHeight = DISPLAY_HEIGHT;
-			static constexpr htl::spi::ClockDivider _spiClockDivider = DISPLAY_SPI_ClockDivider;
+			static constexpr htl::spi::ClockDivider _spiClockDivider = htl::spi::ClockDivider::_32;
 			static constexpr htl::spi::ClkPolarity _spiClkPolarity = htl::spi::ClkPolarity::low;
 			static constexpr htl::spi::ClkPhase _spiClkPhase = htl::spi::ClkPhase::edge1;
 
