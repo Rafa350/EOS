@@ -84,6 +84,7 @@ namespace eos {
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
             unsigned _timeCounter;
+            unsigned _timeMinLimit;
             CommandQueue _commandQueue;
             OutputList _outputs;
 
@@ -107,6 +108,8 @@ namespace eos {
             void toggleOutput(DigOutput *output);
 
             void notifyChanged(DigOutput *output);
+            
+            bool hasExpired(unsigned timeLimit) const;
 
         protected:
             void onInitialize() override;

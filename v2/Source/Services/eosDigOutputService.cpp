@@ -17,6 +17,7 @@ DigOutputService::DigOutputService():
 	_changedEvent {nullptr},
 	_changedEventEnabled {false},
 	_timeCounter {0},
+    _timeMinLimit {0},
 	_commandQueue {_commandQueueSize} {
 
 }
@@ -153,6 +154,19 @@ void DigOutputService::notifyChanged(
 		};
 		_changedEvent->execute(this, args);
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Coproca si ha expirat el temps.
+/// \param    timeLimit: El temps limit.
+/// \return   True si ha sobrepasat el temps.
+///
+bool DigOutputService::hasExpired(
+    unsigned timeLimit) const {
+    
+    auto delta = timeLimit - _timeCounter;
+    return static_cast<int>(delta) <= 0;
 }
 
 
