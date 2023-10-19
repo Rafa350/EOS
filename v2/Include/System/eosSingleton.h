@@ -4,6 +4,7 @@
 
 namespace eos {
 
+    // TODO: Revisar la utilitat
 
 	template <typename T_>
 	class Singleton {

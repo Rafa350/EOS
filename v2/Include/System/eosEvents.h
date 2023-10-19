@@ -9,15 +9,20 @@
 
 
 namespace eos {
+    
+    // TODO: Revisar la utilitat
 
 	template <typename Sender_>
-	struct EventArgs {
+	class EventArgs {
+        private:
+            Sender_ * const _sender;
 
-		Sender_* sender;
-
-		EventArgs(Sender_* sender):
-			sender(sender) {
-		}
+        public:
+            EventArgs(Sender_ * sender):
+                _sender {sender} {
+            }
+            
+            inline Sender_ *getSender() const { return _sender; }
 	};
 }
 
