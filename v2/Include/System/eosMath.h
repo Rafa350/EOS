@@ -32,7 +32,8 @@ namespace eos {
 			return std::abs(a);
 		}
 
-		inline int32_t abs(int32_t val) {
+        template <>
+		inline int32_t abs<int32_t>(int32_t val) {
 			uint32_t temp = val >> 31;
 			val ^= temp;
 			val += temp & 1;

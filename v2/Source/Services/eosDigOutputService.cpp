@@ -157,6 +157,19 @@ void DigOutputService::notifyChanged(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Coproca si ha expirat el temps.
+/// \param    timeLimit: El temps limit.
+/// \return   True si ha sobrepasat el temps.
+///
+bool DigOutputService::hasExpired(
+    unsigned timeLimit) const {
+    
+    auto delta = timeLimit - _timeCounter;
+    return static_cast<int>(delta) <= 0;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Posa l'estat d'una sortida set.
 /// \param    output: La sortida.
 ///
@@ -196,19 +209,6 @@ void DigOutputService::toggleOutput(
 	auto drv = output->_drv;
 	drv->toggle();
    	notifyChanged(output);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si ha expirat el temps.
-/// \param    timeLimit: El limit de temps.
-/// \return   True si ha expirat.
-///
-bool DigOutputService::hasExpired(
-	unsigned timeLimit) const {
-
-	auto delta = timeLimit - _timeCounter;
-	return static_cast<int>(delta) <= 0;
 }
 
 

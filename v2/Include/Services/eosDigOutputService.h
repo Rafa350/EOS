@@ -106,7 +106,7 @@ namespace eos {
             void toggleOutput(DigOutput *output);
 
             void notifyChanged(DigOutput *output);
-
+            
             bool hasExpired(unsigned timeLimit) const;
 
         protected:
