@@ -200,6 +200,19 @@ void DigOutputService::toggleOutput(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Comprova si ha expirat el temps.
+/// \param    timeLimit: El limit de temps.
+/// \return   True si ha expirat.
+///
+bool DigOutputService::hasExpired(
+	unsigned timeLimit) const {
+
+	auto delta = timeLimit - _timeCounter;
+	return static_cast<int>(delta) <= 0;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Posa la sortida en estat ON.
 /// \param    output: La sortida.
 ///
@@ -325,31 +338,6 @@ void DigOutputService::delayedPulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un puls de conmutacio ciclic.
-/// \param    output: La sortida.
-/// \param    pulseWidth: L'amplada del puls.
-/// \param    spaceWidth: L'amplada del espai. 
-///
-void DigOutputService::repeatPulse(
-    DigOutput *output,
-    unsigned pulseWidth,
-    unsigned spaceWidth) {
-
-    eosAssert(output != nullptr);
-    eosAssert(output->_service == this);
-
-    Command cmd = {
-        .id = CommandID::repeatPulse,
-        .output = output,
-        .time1 = math::max(pulseWidth, minPulseWidth),
-        .time2 = math::max(spaceWidth, minPulseWidth)
-    };
-
-    _commandQueue.push(cmd, unsigned(-1));
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Llegeix l'estat actual d'una sortida.
 /// \param    output: La sortida.
 /// \return   L'estat de la sortida.
@@ -443,12 +431,8 @@ void DigOutputService::processCommand(
             processDelayedPulse(command.output, command.time1, command.time2);
             break;
 
-        case CommandID::repeatPulse:
-            processRepeatPulse(command.output, command.time1, command.time2);
-            break;
-
         case CommandID::tick:
-            processTick(command.time1);
+            processTick();
             break;
     }
 }
@@ -509,8 +493,8 @@ void DigOutputService::processPulse(
 
     if (output->_state == DigOutput::State::idle)
     	toggleOutput(output);
-    output->_state = DigOutput::State::singlePulse;
-    output->_timeCnt = pulseWidth;
+    output->_state = DigOutput::State::pulse;
+    output->_timeLimit = _timeCounter + pulseWidth;
 }
 
 
@@ -526,7 +510,7 @@ void DigOutputService::processDelayedSet(
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedSet;
-    output->_timeCnt = delay;
+    output->_timeLimit = _timeCounter + delay;
 }
 
 
@@ -542,7 +526,7 @@ void DigOutputService::processDelayedClear(
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedClear;
-    output->_timeCnt = delay;
+    output->_timeLimit = _timeCounter + delay;
 }
 
 
@@ -558,7 +542,7 @@ void DigOutputService::processDelayedToggle(
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedToggle;
-    output->_timeCnt = delay;
+    output->_timeLimit = _timeCounter + delay;
 }
 
 
@@ -576,112 +560,46 @@ void DigOutputService::processDelayedPulse(
     eosAssert(output != nullptr);
 
     output->_state = DigOutput::State::delayedPulse;
-    output->_timeCnt = delay;
-    output->_time1 = pulseWidth;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'repeatPulse'.
-/// \param    output: La sortida.
-/// \param    pulseWidth: L'amplada del puls.
-/// \param    spaceWidth: L'amplada del espai.
-///
-void DigOutputService::processRepeatPulse(
-    DigOutput *output,
-    unsigned pulseWidth,
-    unsigned spaceWidth) {
-    
-    eosAssert(output != nullptr);
-
-    if ((output->_state == DigOutput::State::idle) ||
-        (output->_state == DigOutput::State::repeatInterval)) {
-    	toggleOutput(output);
-    }
-    output->_state = DigOutput::State::repeatPulse;
-    output->_timeCnt = pulseWidth;
-    output->_time1 = pulseWidth;
-    output->_time2 = spaceWidth;
+    auto tc = _timeCounter;
+    output->_timeLimit = tc + delay;
+    output->_timeLimit2 = tc + delay + pulseWidth;
 }
 
 
 /// ---------------------------------------------------------------------
 /// \brief    Procesa la comanda 'tick'
-/// \param    time: El interval de temps.
 ///
-void DigOutputService::processTick(
-    unsigned time) {
+void DigOutputService::processTick() {
 
     for (auto output: _outputs) {
-
-		switch (output->_state) {
-			case DigOutput::State::singlePulse:
-				if (output->_timeCnt <= time) {
+		if (hasExpired(output->_timeLimit))
+			switch (output->_state) {
+				case DigOutput::State::pulse:
 					toggleOutput(output);
 					output->_state = DigOutput::State::idle;
-				}
-				else
-					output->_timeCnt -= time;
-				break;
+					break;
 
-			case DigOutput::State::delayedSet:
-			case DigOutput::State::delayedClear:
-			case DigOutput::State::delayedToggle:
-			case DigOutput::State::delayedPulse:
-				if (output->_timeCnt <= time) {
-					switch (output->_state) {
-						case DigOutput::State::delayedSet:
-							setOutput(output);
-							output->_state = DigOutput::State::idle;
-							break;
+				case DigOutput::State::delayedSet:
+					setOutput(output);
+					output->_state = DigOutput::State::idle;
+					break;
 
-						case DigOutput::State::delayedClear:
-							clearOutput(output);
-							output->_state = DigOutput::State::idle;
-							break;
+				case DigOutput::State::delayedClear:
+					clearOutput(output);
+					output->_state = DigOutput::State::idle;
+					break;
 
-						case DigOutput::State::delayedToggle:
-							toggleOutput(output);
-							output->_state = DigOutput::State::idle;
-							break;
+				case DigOutput::State::delayedToggle:
+					toggleOutput(output);
+					output->_state = DigOutput::State::idle;
+					break;
 
-						case DigOutput::State::delayedPulse:
-							toggleOutput(output);
-							output->_timeCnt = output->_time1;
-							output->_state = DigOutput::State::singlePulse;
-							break;
-
-						default:
-							break;
-					}
-				}
-				else
-					output->_timeCnt -= time;
-				break;
-                
-            case DigOutput::State::repeatPulse:
-            	if (output->_timeCnt <= time) {
-            		toggleOutput(output);
-            		output->_timeCnt = output->_time2;
-            		output->_state = DigOutput::State::repeatInterval;
-            	}
-            	else
-            		output->_timeCnt -= time;
-                break;
-
-            case DigOutput::State::repeatInterval:
-            	if (output->_timeCnt <= time) {
-            		toggleOutput(output);
-            		output->_timeCnt = output->_time1;
-            		output->_state = DigOutput::State::repeatPulse;
-            	}
-            	else
-            		output->_timeCnt -= time;
-                break;
-                    
-			default:
-				break;
-		}
+				case DigOutput::State::delayedPulse:
+					toggleOutput(output);
+					output->_timeLimit = output->_timeLimit2;
+					output->_state = DigOutput::State::pulse;
+					break;
+			}
     }
 }
 
@@ -698,8 +616,7 @@ void DigOutputService::tmrInterruptFunction() {
 	_timeCounter++;
 
     Command cmd = {
-        .id = CommandID::tick,
-        .time1 = 1
+        .id = CommandID::tick
     };
 
     _commandQueue.pushISR(cmd);
@@ -717,10 +634,7 @@ DigOutput::DigOutput(
 
     _service {nullptr},
     _drv {drv},
-    _state {State::idle},
-	_timeCnt {0},
-	_time1 {0},
-	_time2 {0} {
+    _state {State::idle} {
 
     if (service != nullptr)
         service->addOutput(this);

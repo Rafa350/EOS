@@ -59,7 +59,6 @@ namespace eos {
                 delayedClear,
                 delayedToggle,
                 delayedPulse,
-                repeatPulse,
                 tick
             };
             struct Command {
@@ -75,6 +74,7 @@ namespace eos {
 
 		private:
             static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
+
     	public:
     		static constexpr unsigned minStackSize = 128;
             static constexpr unsigned minDelay = DigOutputService_MinDelay;
@@ -83,7 +83,7 @@ namespace eos {
     	private:
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
-            unsigned _timeCounter;
+            volatile unsigned _timeCounter;
             CommandQueue _commandQueue;
             OutputList _outputs;
 
@@ -99,14 +99,15 @@ namespace eos {
             void processDelayedClear(DigOutput *output, unsigned delay);
             void processDelayedToggle(DigOutput *output, unsigned delay);
             void processDelayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
-            void processRepeatPulse(DigOutput *output, unsigned pulseWidth, unsigned spaceWidth);
-            void processTick(unsigned time);
+            void processTick();
 
             void setOutput(DigOutput *output);
             void clearOutput(DigOutput *output);
             void toggleOutput(DigOutput *output);
 
             void notifyChanged(DigOutput *output);
+
+            bool hasExpired(unsigned timeLimit) const;
 
         protected:
             void onInitialize() override;
@@ -133,7 +134,6 @@ namespace eos {
             void delayedClear(DigOutput *output, unsigned delay);
             void delayedToggle(DigOutput *output, unsigned delay);
             void delayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
-            void repeatPulse(DigOutput *output, unsigned pulseWidth, unsigned spaceWidth);
             bool read(DigOutput *ouput);
 
             void tmrInterruptFunction();
@@ -145,22 +145,19 @@ namespace eos {
         private:
             enum class State {
                 idle,
+                pulse,
                 delayedSet,
                 delayedClear,
                 delayedToggle,
                 delayedPulse,
-                singlePulse,
-                repeatPulse,
-                repeatInterval
             };
 
         public:
             DigOutputService *_service;
             PinDriver *_drv;
             State _state;
-            unsigned _timeCnt;
-            unsigned _time1;
-            unsigned _time2;
+            unsigned _timeLimit;
+            unsigned _timeLimit2;
 
         public:
             DigOutput(DigOutputService *service, PinDriver *drv);
@@ -208,10 +205,6 @@ namespace eos {
 
             inline void delayedPulse(unsigned delay, unsigned width) {
                 _service->delayedPulse(this, delay, width);
-            }
-
-            inline void repeatPulse(unsigned width, unsigned space) {
-                _service->repeatPulse(this, width, space);
             }
 
             inline bool read() {
