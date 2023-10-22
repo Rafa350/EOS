@@ -67,7 +67,7 @@ SPIDevice::SPIDevice(
 /// \param    clkDivider: Divisor de frequencia.
 /// \return   El resultst de l'operacio.
 ///
-SPIDevice::Result SPIDevice::initialize(
+Result SPIDevice::initialize(
 	SPIMode mode,
 	ClkPolarity clkPolarity,
 	ClkPhase clkPhase,
@@ -89,10 +89,10 @@ SPIDevice::Result SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ok;
+		return Result::success();
 	}
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
@@ -100,7 +100,7 @@ SPIDevice::Result SPIDevice::initialize(
 /// \brief    Desinicialitza el modul SPI.
 /// \return   El resultat de l'operacio.
 ///
-SPIDevice::Result SPIDevice::deinitialize() {
+Result SPIDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -109,10 +109,10 @@ SPIDevice::Result SPIDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::ok;
+		return Result::success();
 	}
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
@@ -124,7 +124,7 @@ SPIDevice::Result SPIDevice::deinitialize() {
 /// \param    timeout: Temps maxim d'espera en ms.
 /// \return   El resultat de l'operacio.
 ///
-SPIDevice::Result SPIDevice::transmit(
+Result SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
 	uint16_t size,
@@ -183,18 +183,18 @@ SPIDevice::Result SPIDevice::transmit(
 			count += len8 ? 1 : 2;
 		}
 
-		// Espera wue finalitzon totes les operacions pendents
+		// Espera wue finalitzin totes les operacions pendents
 		//
 		while (spiBusy(_spi) && !error) {
 		}
 
 		_state = State::ready;
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else
-		return Result::busy;
+		return Result::busy();
 }
 
 

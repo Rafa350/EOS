@@ -27,7 +27,7 @@ I2CSlaveDevice::I2CSlaveDevice(
 /// \brief    Inicialitza el modul com esclau.
 /// \param    addr: Adressa I2C.
 ///
-I2CSlaveDevice::Result I2CSlaveDevice::initialize(
+Result I2CSlaveDevice::initialize(
 	uint16_t addr,
 	uint8_t prescaler,
 	uint8_t scldel,
@@ -68,18 +68,18 @@ I2CSlaveDevice::Result I2CSlaveDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el modul.
 ///
-I2CSlaveDevice::Result I2CSlaveDevice::deinitialize() {
+Result I2CSlaveDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -93,11 +93,11 @@ I2CSlaveDevice::Result I2CSlaveDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
@@ -106,7 +106,7 @@ I2CSlaveDevice::Result I2CSlaveDevice::deinitialize() {
 /// \param    buffer: Buffer de dades.
 /// \param    bufferSize: Tamany del buffer de dades.
 ///
-I2CSlaveDevice::Result I2CSlaveDevice::listen(
+Result I2CSlaveDevice::listen(
 	uint8_t *buffer,
 	uint16_t bufferSize) {
 
@@ -120,11 +120,11 @@ I2CSlaveDevice::Result I2CSlaveDevice::listen(
 		//
 		_i2c->CR1 |= I2C_CR1_PE | I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE;
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 

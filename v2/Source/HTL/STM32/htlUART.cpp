@@ -121,7 +121,7 @@ UARTDevice::UARTDevice(
 /// \brief    Inicialitza el modul UART.
 /// \return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::initialize() {
+Result UARTDevice::initialize() {
 
 	if (_state == State::reset) {
 
@@ -133,11 +133,11 @@ UARTDevice::Result UARTDevice::initialize() {
 		_usart->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
 		_state = State::ready;
-		return Result::ok;
+		return Result::success();
 	}
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
@@ -145,7 +145,7 @@ UARTDevice::Result UARTDevice::initialize() {
 /// \brief    Desinicialitza el modul.
 /// \return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::deinitialize() {
+Result UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -154,11 +154,11 @@ UARTDevice::Result UARTDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
@@ -395,7 +395,7 @@ void UARTDevice::setNotifyEvent(
 /// \param    size: El nombre de bytes en el buffer.
 /// \return   El resultat de l'operacio
 ///
-UARTDevice::Result UARTDevice::transmit_IRQ(
+Result UARTDevice::transmit_IRQ(
 	const uint8_t *buffer,
 	uint16_t size) {
 
@@ -410,14 +410,14 @@ UARTDevice::Result UARTDevice::transmit_IRQ(
 		_usart->CR1 |= USART_CR1_TXEIE_TXFNFIE;
 		enableTX();
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Result::busy;
+		return Result::busy();
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
@@ -427,7 +427,7 @@ UARTDevice::Result UARTDevice::transmit_IRQ(
 /// \param    size: Tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::receive_IRQ(
+Result UARTDevice::receive_IRQ(
 	uint8_t *buffer,
 	uint16_t size) {
 
@@ -442,31 +442,32 @@ UARTDevice::Result UARTDevice::receive_IRQ(
 		_usart->CR1 |= USART_CR1_RXNEIE_RXFNEIE;
 		enableRX();
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Result::busy;
+		return Result::busy();
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
-UARTDevice::Result UARTDevice::transmit_DMA(
+Result UARTDevice::transmit_DMA(
 	const uint8_t *buffer,
 	uint16_t size) {
 
-	return Result::error;
+	return Result::error();
 }
 
 
-UARTDevice::Result UARTDevice::receive_DMA(
+Result UARTDevice::receive_DMA(
 	uint8_t *buffer,
 	uint16_t size) {
 
-	return Result::error;
+	return Result::error();
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.

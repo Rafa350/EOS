@@ -7,6 +7,7 @@
 //
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "System/eosResults.h"
 
 
 namespace htl {
@@ -80,6 +81,14 @@ namespace htl {
             };
         };
 
+        enum class Results {
+            success,
+            busy,
+            timeout,
+            error
+        };
+        using Result = eos::SimpleResult<Results>;
+
 
 		class I2CSlaveDevice;
         using ISlaveNotifyEvent = eos::ICallbackP2<I2CSlaveDevice*, NotifyEventArgs&>;
@@ -105,11 +114,6 @@ namespace htl {
 					listen,
 					listenRx,
 					listenTx
-				};
-				enum class Result {
-					ok,
-					error,
-					busy
 				};
 			private:
 				I2C_TypeDef * const _i2c;

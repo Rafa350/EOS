@@ -18,6 +18,14 @@ I2CMasterDevice::I2CMasterDevice(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el dispositiu.
+/// \param    prescaler: Divisor del rellotge.
+/// \param    scldel:
+/// \param    sdadel:
+/// \param    sclh
+/// \param    scll:
+///
 I2CMasterDevice::Result I2CMasterDevice::initialize(
 	uint8_t prescaler,
 	uint8_t scldel,
@@ -51,6 +59,9 @@ I2CMasterDevice::Result I2CMasterDevice::initialize(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza elñ dispositiu.
+///
 I2CMasterDevice::Result I2CMasterDevice::deinitialize() {
 
 	if (_state == State::ready) {
@@ -67,6 +78,13 @@ I2CMasterDevice::Result I2CMasterDevice::deinitialize() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteis un bloc de dades en modus polling
+/// \param    addr: L'adressa del esclau.
+/// \param    buffer: Les dades a transmetre.
+/// \param    size: El nom,bre de bytes a transmetre.
+/// \param    timeout: El temps maxim en ms.
+///
 I2CMasterDevice::Result I2CMasterDevice::send(
 	uint16_t addr,
 	const uint8_t *buffer,

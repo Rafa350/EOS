@@ -7,6 +7,7 @@
 //
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "System/eosResults.h"
 
 
 namespace htl {
@@ -76,6 +77,13 @@ namespace htl {
 			mosi
 		};
 
+		enum class Results {
+		    success,
+		    busy,
+		    timeout,
+		    error
+		};
+		using Result = eos::SimpleResult<Results>;
 
 		class SPIDevice {
 			public:
@@ -83,12 +91,6 @@ namespace htl {
 					reset,
 					ready,
 					transmiting
-				};
-				enum class Result {
-					ok,
-					error,
-					busy,
-					timeout
 				};
 			private:
 				SPI_TypeDef * const _spi;

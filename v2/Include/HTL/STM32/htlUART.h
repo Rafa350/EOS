@@ -7,6 +7,7 @@
 //
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "System/eosResults.h"
 
 
 namespace htl {
@@ -142,6 +143,15 @@ namespace htl {
 			struct PinFunctionInfo;
 		}
 
+		enum class Results {
+		    success,
+		    busy,
+		    timeout,
+		    error
+		};
+
+		using Result = eos::SimpleResult<Results>;
+
 
 		class UARTDevice {
 			public:
@@ -150,11 +160,6 @@ namespace htl {
 					ready,
 					transmiting,
 					receiving
-				};
-				enum class Result {
-					ok,
-					error,
-					busy
 				};
 			private:
 				USART_TypeDef * const _usart;
