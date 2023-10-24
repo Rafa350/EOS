@@ -7,14 +7,11 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief   Constructor.
-/// \param   application: Aplicacio on afeigir el servei.
-/// \param   sm: La maquina d'estat a procesar.
 ///
-FsmService::FsmService(
-    Application* application) :
+FsmService::FsmService() :
 
-    Service(application),
-    eventCallback(nullptr) {
+    _event {nullptr},
+    _eventEnabled {false} {
 
 }
 
@@ -27,10 +24,10 @@ void FsmService::addMachine(
     FsmMachine *machine) {
 
     eosAssert(machine != nullptr);
-    eosAssert(machine->service == nullptr);
+    eosAssert(machine->_service == nullptr);
 
-    machines.pushBack(machine);
-    machine->service = this;
+    _machines.pushBack(machine);
+    machine->_service = this;
 }
 
 
@@ -42,10 +39,19 @@ void FsmService::removeMachine(
     FsmMachine* machine) {
 
     eosAssert(machine != nullptr);
-    eosAssert(machine->service == this);
+    eosAssert(machine->_service == this);
 
-    machines.removeAt(machines.indexOf(machine));
-    machine->service = nullptr;
+    _machines.remove(machine);
+    machine->_service = nullptr;
+}
+
+
+void FsmService::setEvent(
+    IEvent &event,
+    bool enabled) {
+
+    _event = &event;
+    _eventEnabled = enabled;
 }
 
 
@@ -54,28 +60,22 @@ void FsmService::removeMachine(
 ///
 void FsmService::onInitialize() {
 
-    for (auto it = machines.begin(); it != machines.end(); it++) {
-        FsmMachine* machine = *it;
+    for (auto machine: _machines)
         machine->initialize();
-    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa les tasques del servei.
 ///
-void FsmService::onTask(
-    Task *task) {
+void FsmService::onTask() {
 
     // Repeteix indefinidament
     //
     while (true) {
         
-        for (auto it = machines.begin(); it != machines.end(); it++) {
-            FsmMachine* machine = *it;
+        for (auto machine: _machines)
             machine->task();
-        }
-        
     }
 }
 
@@ -84,6 +84,6 @@ void FsmService::onTask(
 /// \brief   Constructor.
 ///
 FsmMachine::FsmMachine() :
-    service(nullptr) {
+    _service(nullptr) {
 
 }

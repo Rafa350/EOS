@@ -62,8 +62,8 @@ namespace eos {
                 bool pinState;
                 uint32_t pinPulses;
             };
-        	using IChangedEvent = ICallbackP2<DigInput*, ChangedEventArgs&>;
-        	template <typename instance_> using ChangedEvent = CallbackP2<instance_, DigInput*, ChangedEventArgs&>;
+        	using IChangedEvent = ICallbackP2<const DigInput*, const ChangedEventArgs&>;
+        	template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigInput*, const ChangedEventArgs&>;
 
             enum class ScanMode {    // Modus d'exploracio de la entrada
                 polling,             // -Polling

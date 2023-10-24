@@ -27,8 +27,8 @@ Size StackPanel::measureOverride(
 	bool isHorizontal = _orientation == Orientation::horizontal;
 
 	Size childAvailableSize(
-	    isHorizontal ? INT32_MAX : availableSize.getWidth(),
-	    isHorizontal ? availableSize.getHeight() : INT32_MAX);
+	    isHorizontal ? Size::absoluteMaxWidth : availableSize.getWidth(),
+	    isHorizontal ? availableSize.getHeight() : Size::absoluteMaxHeight);
 
 	int width = 0;
 	int height = 0;
@@ -48,10 +48,10 @@ Size StackPanel::measureOverride(
 
 			if (isHorizontal) {
 				width += childDesiredWidth;
-				height = Math::max(height, childDesiredHeight);
+				height = math::max(height, childDesiredHeight);
 			}
 			else {
-				width = Math::max(width, childDesiredWidth);
+				width = math::max(width, childDesiredWidth);
 				height += childDesiredHeight;
 			}
 		}

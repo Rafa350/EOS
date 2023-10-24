@@ -6,6 +6,8 @@
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosSize.h"
 
+#include <limits>
+
 
 namespace eos {
 
@@ -17,6 +19,12 @@ namespace eos {
 			int16_t _y;
 			int16_t _width;
 			int16_t _height;
+
+		public:
+			static constexpr int16_t absoluteMaxWidth = std::numeric_limits<int16_t>::max();
+            static constexpr int16_t absoluteMaxHeight = std::numeric_limits<int16_t>::max();
+            static constexpr int16_t absoluteMinWidth = 0;
+            static constexpr int16_t absoluteMinHeight = 0;
 
         public:
 			Rect();

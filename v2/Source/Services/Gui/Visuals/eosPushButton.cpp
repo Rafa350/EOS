@@ -48,7 +48,7 @@ void PushButton::onRender(
 	//
 	const Size s = getBounds().getSize();
 	const Rect r(0, 0, s.getWidth(), s.getHeight());
-	const int radius = Math::min(s.getWidth(), s.getHeight()) / 3;
+	const int radius = math::min(s.getWidth(), s.getHeight()) / 3;
 
 	// Dibuixa el boto
 	//

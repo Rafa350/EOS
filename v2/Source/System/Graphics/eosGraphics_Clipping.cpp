@@ -34,8 +34,8 @@ void Graphics::setClip(
 
     // Asigna la nova area de retall
     //
-	_state.clipX1 = math::max((int16_t)0, x1);
-	_state.clipY1 = math::max((int16_t)0, y1);
+	_state.clipX1 = math::max((typeof(x1))0, x1);
+	_state.clipY1 = math::max((typeof(y1))0, y1);
 	_state.clipX2 = math::min(x2, _driver->getMaxX());
 	_state.clipY2 = math::min(y2, _driver->getMaxY());
 }

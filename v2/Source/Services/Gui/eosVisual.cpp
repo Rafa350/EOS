@@ -19,7 +19,7 @@ Visual::Visual():
 	_visibility(Visibility::visible),
 	_size(0, 0),
 	_minSize(0, 0),
-	_maxSize(INT16_MAX, INT16_MAX),
+	_maxSize(Size::absoluteMaxWidth, Size::absoluteMaxHeight),
 	_bounds(0, 0, 0, 0),
 	_margin(0),
 	_horizontalAlignment(HorizontalAlignment::stretch),
@@ -217,13 +217,13 @@ void Visual::measure(
 
 		// Ajusta l'amplada als limits
 		//
-		width = Math::max(_minSize.getWidth(), width);
-		width = Math::min(_maxSize.getWidth(), width);
+		width = math::max(_minSize.getWidth(), width);
+		width = math::min(_maxSize.getWidth(), width);
 
 		// Ajusta l'alçada als limits
 		//
-		height = Math::max(_minSize.getHeight(), height);
-		height = Math::min(_maxSize.getHeight(), height);
+		height = math::max(_minSize.getHeight(), height);
+		height = math::min(_maxSize.getHeight(), height);
 
 		_desiredSize = _margin.inflate(Size(width, height));
 	}
@@ -250,11 +250,11 @@ void Visual::arrange(
 
 		int availableWidth = deflatedFinalWidth;
         if (_horizontalAlignment != HorizontalAlignment::stretch)
-            availableWidth = Math::max(0, Math::min(availableWidth, _desiredSize.getWidth() - _margin.getLeft() - _margin.getRight()));
+            availableWidth = math::max(0, math::min(availableWidth, _desiredSize.getWidth() - _margin.getLeft() - _margin.getRight()));
 
 		int availableHeight = deflatedFinalHeight;
         if (_verticalAlignment != VerticalAlignment::stretch)
-            availableHeight = Math::max(0, Math::min(availableHeight, _desiredSize.getHeight() - _margin.getTop() - _margin.getBottom()));
+            availableHeight = math::max(0, math::min(availableHeight, _desiredSize.getHeight() - _margin.getTop() - _margin.getBottom()));
 
         // Obte el tamany definitiu
 		//
@@ -324,8 +324,8 @@ Size Visual::measureOverride(
 			child->measure(availableSize);
 			const Size& childDesiredSize = child->getDesiredSize();
 
-			width = Math::max(width, childDesiredSize.getWidth());
-			height = Math::max(height, childDesiredSize.getHeight());
+			width = math::max(width, childDesiredSize.getWidth());
+			height = math::max(height, childDesiredSize.getHeight());
 		}
 	}
 

@@ -97,7 +97,7 @@ bool TouchPadDriver_FT5336::getState(
 	if (state.numPoints > state.maxPoints)
 		state.numPoints = 0;
 
-	uint8_t cMax = Math::min((uint8_t) TOUCHPAD_MAX_POINTS, state.numPoints);
+	uint8_t cMax = math::min((uint8_t) TOUCHPAD_MAX_POINTS, state.numPoints);
 	for (uint8_t c = 0; c < cMax; c++) {
 
 		volatile uint8_t readData = 0;

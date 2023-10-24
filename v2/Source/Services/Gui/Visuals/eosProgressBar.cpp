@@ -104,7 +104,7 @@ void ProgressBar::onRender(
 	int width = r.getWidth();
 	int height = r.getHeight();
 
-	int w = value * width / (Math::max(1, maxValue - minValue));
+	int w = value * width / (math::max(1, maxValue - minValue));
 
 	g.fillRectangle(w, 0, width - 1, height - 1, backgroundColor);
 	g.fillRectangle(0, 0, w, height - 1, barColor);

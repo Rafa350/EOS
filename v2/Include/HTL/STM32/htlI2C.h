@@ -167,11 +167,6 @@ namespace htl {
 					reset,
 					ready
 				};
-				enum class Result {
-					ok,
-					error,
-					busy
-				};
 			private:
 				I2C_TypeDef * const _i2c;
 				State _state;

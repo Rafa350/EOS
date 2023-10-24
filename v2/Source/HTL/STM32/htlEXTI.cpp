@@ -63,6 +63,8 @@ void EXTILine::interruptService() {
 
 	uint32_t mask = 1 << _lineNum;
 
+    #if defined(EOS_PLATFORM_STM32G0)
+
 	// Procesa la interrupcio del flanc negatiu
 	//
 	if (EXTI->FPR1 & mask) {
@@ -74,6 +76,10 @@ void EXTILine::interruptService() {
 	if (EXTI->RPR1 & mask) {
 		EXTI->RPR1 = mask;
 	}
+
+    #else
+    #error "Unknown platform"
+    #endif
 }
 
 

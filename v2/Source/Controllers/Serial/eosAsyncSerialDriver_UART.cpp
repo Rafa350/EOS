@@ -116,8 +116,8 @@ void AsyncSerialDriver_UART::taskCallbackHandler(
 /// \param    args: Parametres de la notificacio.
 ///
 void AsyncSerialDriver_UART::uartNotifyEventHandler(
-	htl::uart::UARTDevice *sender,
-	htl::uart::NotifyEventArgs &args) {
+	const htl::uart::UARTDevice *sender,
+	const htl::uart::NotifyEventArgs &args) {
 
 	switch (args.id) {
 		case htl::uart::NotifyID::txCompleted:

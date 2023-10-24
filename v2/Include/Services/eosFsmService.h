@@ -7,16 +7,12 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosList.h"
 
 
 namespace eos {
 
-    class Application;
     class FsmMachine;
-    class Task;
-
-    typedef unsigned Message;
 
     class FsmService final: public Service {
         public:
@@ -25,36 +21,41 @@ namespace eos {
             };
 			struct EventArgs {
                 EventType type;
-                FsmService* service;
                 FsmMachine* machine;
 			};
 
         private:
-            typedef DynamicArray<FsmMachine*> MachineList;
-            typedef DynamicArray<FsmMachine*>::Iterator MachineListIterator;
-			typedef ICallbackP1<const EventArgs&> IEventCallback;
+            using MachineList = List<FsmMachine*>;
+            using MachineIterator = MachineList::Iterator;
+			using IEvent = ICallbackP2<const FsmService*, const EventArgs&>;
+			using Event = CallbackP2<FsmService, const FsmService*, const EventArgs&>;
 
-            MachineList machines;
-            IEventCallback* eventCallback;
+            MachineList _machines;
+            IEvent* _event;
+            bool _eventEnabled;
 
         protected:
             void onInitialize() override;
-            void onTask(Task *task) override;
+            void onTask() override;
 
         public:
-            FsmService(Application* application);
+            FsmService();
 
-            inline void setEventCallback(IEventCallback* callback) {
-                eventCallback = callback;
+            void setEvent(IEvent &event, bool enabled = true);
+            inline void enableEvent() {
+                _eventEnabled = _event != nullptr;
+            }
+            void disableEvent() {
+                _eventEnabled = false;
             }
 
-            void addMachine(FsmMachine* machine);
+            void addMachine(FsmMachine *machine);
             void removeMachine(FsmMachine *machine);
     };
 
     class FsmMachine {
         private:
-            FsmService* service;
+            FsmService *_service;
 
         protected:
             FsmMachine();
@@ -62,7 +63,7 @@ namespace eos {
             virtual void task() = 0;
         public:
             inline FsmService* getService() const {
-                return service;
+                return _service;
             }
 
         friend FsmService;

@@ -130,8 +130,8 @@ namespace htl {
 		};
 
 		class UARTDevice;
-		using INotifyEvent = eos::ICallbackP2<UARTDevice*, NotifyEventArgs&>;
-		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, UARTDevice*, NotifyEventArgs&>;
+		using INotifyEvent = eos::ICallbackP2<const UARTDevice*, const NotifyEventArgs&>;
+		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, const UARTDevice*, const NotifyEventArgs&>;
 
 
 		namespace internal {
@@ -183,22 +183,22 @@ namespace htl {
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;
 			public:
-				inline void enable() {
+				inline void enable() const {
 					_usart->CR1 |= USART_CR1_UE;
 				}
-				inline void disable() {
+				inline void disable() const {
 					_usart->CR1 &= ~USART_CR1_UE;
 				}
-				inline void enableTX() {
+				inline void enableTX() const {
 					ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
 				}
-				inline void enableRX() {
+				inline void enableRX() const {
 					ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RE);
 				}
-				inline void disableTX() {
+				inline void disableTX() const {
 					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TE);
 				}
-				inline void disableRX() {
+				inline void disableRX() const {
 					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RE);
 				}
 				Result initialize();

@@ -180,7 +180,7 @@ void MyApplication::touchPadNotifyEventHandler(
 void MyApplication::buttonEventHandler(
 	const ButtonEventArgs& args) {
 
-	args.sender->setVisibility(Visibility::hidden);
+	args.getSender()->setVisibility(Visibility::hidden);
 }
 
 

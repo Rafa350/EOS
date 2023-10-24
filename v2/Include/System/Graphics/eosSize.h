@@ -4,6 +4,8 @@
 
 #include "eos.h"
 
+#include <limits>
+
 
 namespace eos {
 
@@ -13,6 +15,12 @@ namespace eos {
 		private:
 			int16_t _width;
 			int16_t _height;
+
+		public:
+			static constexpr int16_t absoluteMaxWidth = std::numeric_limits<int16_t>::max();
+            static constexpr int16_t absoluteMaxHeight = std::numeric_limits<int16_t>::max();
+            static constexpr int16_t absoluteMinWidth = 0;
+            static constexpr int16_t absoluteMinHeight = 0;
 
 		public:
 			Size();

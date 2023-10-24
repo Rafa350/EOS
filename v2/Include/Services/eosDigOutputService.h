@@ -46,8 +46,8 @@ namespace eos {
 				DigOutput *output;
 				bool pinState;
 			};
-			using IChangedEvent = ICallbackP2<DigOutputService*, ChangedEventArgs&>;
-			template <typename instance_> using ChangedEvent = CallbackP2<instance_, DigOutputService*, ChangedEventArgs&>;
+			using IChangedEvent = ICallbackP2<const DigOutputService*, const ChangedEventArgs&>;
+			template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigOutputService*, const ChangedEventArgs&>;
 
 		private:
             enum class CommandID {

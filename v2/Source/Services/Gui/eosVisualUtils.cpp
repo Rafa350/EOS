@@ -40,7 +40,7 @@ Point VisualUtils::getPosition(
 Rect VisualUtils::getClip(
 	Visual *visual) {
 
-	Rect clip(0, 0, INT32_MAX, INT32_MAX);
+	Rect clip(0, 0, INT16_MAX, INT16_MAX);
 
 #if 0
 	while (visual != nullptr) {

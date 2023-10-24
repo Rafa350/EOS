@@ -4,6 +4,8 @@
 
 #include "eos.h"
 
+#include <limits>
+
 
 namespace eos {
 
@@ -13,6 +15,12 @@ namespace eos {
 		private:
 			int16_t _x;
 			int16_t _y;
+
+		public:
+			static constexpr int16_t absoluteMaxX = std::numeric_limits<int16_t>::max();
+            static constexpr int16_t absoluteMaxY = std::numeric_limits<int16_t>::max();
+            static constexpr int16_t absoluteMinX = std::numeric_limits<int16_t>::min();
+            static constexpr int16_t absoluteMinY = std::numeric_limits<int16_t>::min();
 
         public:
 			Point();

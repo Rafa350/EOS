@@ -23,7 +23,7 @@ namespace eos {
 			void deinitializeImpl() override;
 			bool transmitImpl(const uint8_t *data, int dataLength) override;
 			bool receiveImpl(uint8_t *data, int dataSize) override;
-			void uartNotifyEventHandler(htl::uart::UARTDevice *sender, htl::uart::NotifyEventArgs &args);
+			void uartNotifyEventHandler(const htl::uart::UARTDevice *sender, const htl::uart::NotifyEventArgs &args);
 			void taskCallbackHandler(const TaskCallbackArgs &args);
 
 		public:
