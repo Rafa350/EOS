@@ -67,6 +67,19 @@ namespace htl {
         typedef uint8_t PinNumber;
         typedef uint16_t PinMask;
 
+        /// \bried Input mode
+        enum class InputMode {
+			floating,
+			pullUp
+        };
+
+		/// \bried Output mode
+		enum class OutputMode {
+			pushPull,
+			openDrain,
+			openDrainPullUp
+		};
+
         enum class PullUp {
             noChange,
             none,
@@ -114,7 +127,7 @@ namespace htl {
 
         class Port {
             private:
-                internal::GPIORegisters *_gpio;
+                internal::GPIORegisters * const _gpio;
             protected:
                 Port(internal::GPIORegisters *gpio);
             public:
@@ -188,7 +201,7 @@ namespace htl {
                     Port(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr)) {
                 }
             public:
-                inline static PortX * getHandler() {
+                static constexpr PortX * getHandler() {
                     return &_port;
                 }
         };
@@ -226,8 +239,8 @@ namespace htl {
 
         class Pin {
             private:
-                internal::GPIORegisters *_gpio;
-                PinMask _pinMask;
+                internal::GPIORegisters * const _gpio;
+                PinMask const _pinMask;
             protected:
                 Pin(internal::GPIORegisters *gpio, PinID pinID);
             public :
@@ -271,7 +284,7 @@ namespace htl {
                     Pin(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr), pinID_) {
                 }
             public:
-                inline static PinX * getHandler() {
+                static constexpr PinX * getHandler() {
                     return &_pin;
                 }
         };

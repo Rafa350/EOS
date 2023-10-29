@@ -145,8 +145,8 @@ void MyApplication::onInitialize() {
 /// \param    args: Parametres del event.
 ///
 void MyApplication::sw1ChangedEventHandler(
-    eos::DigInput *sender,
-    DigInput::ChangedEventArgs &args) {
+    const eos::DigInput *sender,
+    const DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW1_StateON) {
 
@@ -165,8 +165,8 @@ void MyApplication::sw1ChangedEventHandler(
 ///
 #ifdef EXIST_SW2
 void MyApplication::sw2ChangedEventHandler(
-    eos::DigInput *sender,
-    DigInput::ChangedEventArgs &args) {
+    const eos::DigInput *sender,
+    const DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW2_StateON) {
 
@@ -188,8 +188,8 @@ void MyApplication::sw2ChangedEventHandler(
 ///
 #ifdef EXIST_SW3
 void MyApplication::sw3ChangedEventHandler(
-    eos::DigInput *sender,
-    DigInput::ChangedEventArgs &args) {
+    const eos::DigInput *sender,
+    const DigInput::ChangedEventArgs &args) {
 
     if (args.pinState == SW3_StateON) {
 

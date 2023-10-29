@@ -206,7 +206,7 @@ namespace htl {
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
 			private:
-				I2CSlaveDeviceX() :
+				constexpr I2CSlaveDeviceX() :
 					I2CSlaveDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
 				}
 			protected:
@@ -228,18 +228,18 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initPinSCL() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinSDA() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinSMBA() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
+					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 		};
 
