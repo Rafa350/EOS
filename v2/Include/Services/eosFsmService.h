@@ -24,6 +24,10 @@ namespace eos {
                 FsmMachine* machine;
 			};
 
+        public:
+            static constexpr uint32_t stackSize = 128;
+            static constexpr const char *serviceName = "FSM";
+
         private:
             using MachineList = List<FsmMachine*>;
             using MachineIterator = MachineList::Iterator;
