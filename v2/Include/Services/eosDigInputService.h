@@ -22,7 +22,14 @@ namespace eos {
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
     class DigInputService final: public Service {
-    	public:
+        public:
+            struct ChangedEventArgs {
+                DigInput *input;
+            };
+            using IChangedEvent = ICallbackP2<const DigInputService*, const ChangedEventArgs&>;
+            template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigInputService*, const ChangedEventArgs&>;
+
+        public:
     		static constexpr uint32_t minStackSize = 128;
 
         private:
@@ -30,11 +37,14 @@ namespace eos {
             typedef InputList::Iterator InputIterator;
 
         private:
+            IChangedEvent *_changedEvent;
+            bool _changedEventEnabled;
             Semaphore _changes;
             InputList _inputs;
 
         private:
             bool scanInputs();
+            void notifyChanged(DigInput *input);
 
         protected:
             void onInitialize() override;
@@ -50,6 +60,10 @@ namespace eos {
 
             bool read(const DigInput *input) const;
             uint32_t readPulses(DigInput *input, bool clear = true) const;
+
+            void setChangedEvent(IChangedEvent &event, bool enabled = true);
+            void enableChangedEvent();
+            void disableChangedEvent();
 
             void tmrInterruptFunction();
     };

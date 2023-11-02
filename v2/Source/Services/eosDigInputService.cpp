@@ -22,7 +22,9 @@ using namespace htl;
 /// \params   settings: Conmfigurationparameters.
 ///
 DigInputService::DigInputService():
-	Service() {
+    Service(),
+    _changedEvent {nullptr},
+    _changedEventEnabled {false} {
 }
 
 
@@ -32,6 +34,62 @@ DigInputService::DigInputService():
 DigInputService::~DigInputService() {
 
 	_inputs.clear();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el event 'Changed'
+/// \param    event: El event.
+/// \param    enabled: True si es vol habilitar.
+///
+void DigInputService::setChangedEvent(
+    IChangedEvent &event,
+    bool enabled) {
+
+    _changedEvent = &event;
+    _changedEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita l'event 'Changed'
+///
+void DigInputService::enableChangedEvent() {
+
+    _changedEventEnabled = _changedEvent != nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita l'event 'Changed'
+///
+void DigInputService::disableChangedEvent() {
+
+    _changedEventEnabled = false;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica un canvi en l'estat d'una entrada.
+/// \param    input: L'entrada.
+///
+void DigInputService::notifyChanged(
+    DigInput *input) {
+
+    if (_changedEventEnabled) {
+        ChangedEventArgs args = {
+            .input = input
+        };
+        _changedEvent->execute(this, args);
+    }
+
+    if (input->_changedEventEnabled) {
+        DigInput::ChangedEventArgs args = {
+            .pinState = input->_pinState,
+            .pinPulses = input->_pinPulses
+        };
+        input->_changedEvent->execute(input, args);
+    }
 }
 
 
@@ -149,25 +207,15 @@ void DigInputService::onTask() {
             //
             for (auto input: _inputs) {
 
-                if (input->_changedEventEnabled) {
+                bool saveIrq = irq::disableInterrupts();
 
-                    bool saveIrq = irq::disableInterrupts();
+                bool edge = input->_edge;
+                input->_edge = false;
 
-                    bool edge = input->_edge;
-                    input->_edge = false;
+                irq::restoreInterrupts(saveIrq);
 
-                    irq::restoreInterrupts(saveIrq);
-
-                    if (edge) {
-
-                        DigInput::ChangedEventArgs args = {
-                        	.pinState = input->_pinState,
-                            .pinPulses = input->_pinPulses
-                        };
-
-                        input->_changedEvent->execute(input, args);
-                    }
-                }
+                if (edge)
+                    notifyChanged(input);
             }
         }
     }
