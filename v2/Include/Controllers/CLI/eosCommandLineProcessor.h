@@ -3,9 +3,14 @@
 #define __eosCommandLineProcessor__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosList.h"
+
+// STL includes
+//
+#include <forward_list>
 
 
 namespace eos {
@@ -14,7 +19,7 @@ namespace eos {
 
 	class CommandLineProcessor final {
 		public:
-    		using CommandList = eos::List<CommandDefinition*>;
+    		using CommandList = std::forward_list<CommandDefinition*>;
 		public:
 			struct CommandEventArgs {
 				const CommandDefinition *command;

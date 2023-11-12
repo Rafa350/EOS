@@ -1,7 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosGraphics.h"
+
+#include <cmath>
 
 
 using namespace eos;

@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosMath.h"
 #include "System/eosString.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
@@ -28,16 +27,16 @@ void Graphics::setClip(
 	// Normalitzacio de coordinades
 	//
     if (x1 > x2)
-        math::swap(x1, x2);
+        std::swap(x1, x2);
     if (y1 > y2)
-        math::swap(y1, y2);
+        std::swap(y1, y2);
 
     // Asigna la nova area de retall
     //
-	_state.clipX1 = math::max((typeof(x1))0, x1);
-	_state.clipY1 = math::max((typeof(y1))0, y1);
-	_state.clipX2 = math::min(x2, _driver->getMaxX());
-	_state.clipY2 = math::min(y2, _driver->getMaxY());
+	_state.clipX1 = std::max((typeof(x1))0, x1);
+	_state.clipY1 = std::max((typeof(y1))0, y1);
+	_state.clipX2 = std::min(x2, _driver->getMaxX());
+	_state.clipY2 = std::min(y2, _driver->getMaxY());
 }
 
 
@@ -89,12 +88,12 @@ bool Graphics::clipHLine(
 	// Normalitza les coordinades
 	//
 	if (x1 > x2)
-		math::swap(x1, x2);
+		std::swap(x1, x2);
 
 	// Ajusta els punts d'interseccio
 	//
-	x1 = math::max(_state.clipX1, x1);
-	x2 = math::min(x2, _state.clipX2);
+	x1 = std::max(_state.clipX1, x1);
+	x2 = std::min(x2, _state.clipX2);
 
 	return x1 <= x2;
 }
@@ -120,12 +119,12 @@ bool Graphics::clipVLine(
 	// Normalitza les coordinades
 	//
 	if (y1 > y2)
-		math::swap(y1, y2);
+		std::swap(y1, y2);
 
 	// Ajusta els punts d'interseccio
 	//
-	y1 = math::max(_state.clipY1, y1);
-	y2 = math::min(y2, _state.clipY2);
+	y1 = std::max(_state.clipY1, y1);
+	y2 = std::min(y2, _state.clipY2);
 
 	return y1 <= y2;
 }
@@ -172,16 +171,16 @@ bool Graphics::clipLine(
     // evita els errors d'arrodoniment.
     //
     if (t2 < (1 << 16)) {
-        x2 = math::min(_state.clipX2, (int16_t)(x1 + ((t2 * dx) >> 16)));
-        y2 = math::min(_state.clipY2, (int16_t)(y1 + ((t2 * dy) >> 16)));
+        x2 = std::min(_state.clipX2, (int16_t)(x1 + ((t2 * dx) >> 16)));
+        y2 = std::min(_state.clipY2, (int16_t)(y1 + ((t2 * dy) >> 16)));
     }
 
     // Ajusta el punt d'interseccio x1, y1. La funcio max
     // evita els errors d'errodoniment.
     //
     if (t1 > 0) {
-        x1 = math::max(_state.clipX1, (int16_t)(x1 + ((t1 * dx) >> 16)));
-        y1 = math::max(_state.clipY1, (int16_t)(y1 + ((t1 * dy) >> 16)));
+        x1 = std::max(_state.clipX1, (int16_t)(x1 + ((t1 * dx) >> 16)));
+        y1 = std::max(_state.clipY1, (int16_t)(y1 + ((t1 * dy) >> 16)));
     }
 
     return true;
@@ -247,16 +246,16 @@ bool Graphics::clipRectangle(
 	// Normalitza les coordinades
 	//
 	if (x1 > x2)
-		math::swap(x1, x2);
+		std::swap(x1, x2);
 	if (y1 > y2)
-		math::swap(y1, y2);
+		std::swap(y1, y2);
 
 	// Calcula la interseccio
 	//
-	x1 = math::max(x1, _state.clipX1);
-	y1 = math::max(y1, _state.clipY1);
-	x2 = math::min(x2, _state.clipX2);
-	y2 = math::min(y2, _state.clipY2);
+	x1 = std::max(x1, _state.clipX1);
+	y1 = std::max(y1, _state.clipY1);
+	x2 = std::min(x2, _state.clipX2);
+	y2 = std::min(y2, _state.clipY2);
 
 	return (x1 <= x2) && (y1 <= y2);
 }

@@ -4,17 +4,21 @@
 
 #include "eos.h"
 #include "Services/Gui/Visuals/eosControl.h"
-#include "Services/Gui/Visuals/eosControlItem.h"
+#include "System/Collections/eosIntrusiveList.h"
 
 
 namespace eos {
 
-	class ItemsControl: public Control {
-		private:
-			typedef Vector<ControlItem*> ItemList;
+    class ControlItem;
+    using ControlItemList = IndirectIntrusiveForwardList<ControlItem, 0>;
+    using ControlItemListNode = IndirectIntrusiveForwardListNode<ControlItem, 0>;
 
+    class ControlItem: public ControlItemListNode {
+    };
+
+    class ItemsControl: public Control {
 		private:
-			ItemList _items;
+			ControlItemList _items;
             Thickness _padding;
             ControlItem* _activeItem;
 

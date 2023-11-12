@@ -2,8 +2,10 @@
 #include "eosAssert.h"
 #include "HTL/htlINT.h"
 #include "Services/eosDigOutputService.h"
-#include "System/eosMath.h"
 #include "System/Core/eosTask.h"
+
+#include <cmath>
+#include <limits>
 
 
 using namespace eos;
@@ -47,9 +49,11 @@ void DigOutputService::addOutput(
     //
     Task::enterCriticalSection();
 
+    // Afegeix la sortida a la llista
+    //
     if (output->_service == nullptr) {
-        _outputs.pushBack(output);
         output->_service = this;
+        _outputs.push_front(output);
     }
 
     // Fi de la seccio critica
@@ -74,9 +78,11 @@ void DigOutputService::removeOutput(
     //
     Task::enterCriticalSection();
 
+    // Elimina la sortida de la llista
+    //
     if (output->_service == this) {
-        _outputs.remove(output);
         output->_service = nullptr;
+        _outputs.pop(output);
     }
 
     // Fi de la seccio critica
@@ -96,11 +102,18 @@ void DigOutputService::removeOutputs() {
     //
     Task::enterCriticalSection();
 
-    while (!_outputs.isEmpty()) {
-        DigOutput *output = _outputs.peekFront();
-        _outputs.remove(output);
+    // Elimina totes les entrades de la llista
+    //
+    /*auto c = _first;
+    while (c != nullptr) {
+        auto output = c;
+
+        c = c->_next;
+
+        output->_next = nullptr;
         output->_service = nullptr;
-    }
+    }*/
+
 
     // Fi de la seccio critica
     //
@@ -157,7 +170,26 @@ void DigOutputService::notifyChanged(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Coproca si ha expirat el temps.
+/// \brief    Actualitza el proper temps limit
+/// \return   El resultat.
+///
+void DigOutputService::updateNextTimeLimit() {
+
+    unsigned timeLimit = std::numeric_limits<unsigned>::max();
+
+    for (auto output: _outputs) {
+        if ((output->_state != DigOutput::State::idle) &&
+            (output->_timeLimit < timeLimit))
+            timeLimit = output->_timeLimit;
+    }
+
+    if (timeLimit < std::numeric_limits<unsigned>::max())
+        _nextTimeLimit = timeLimit;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si ha expirat el temps.
 /// \param    timeLimit: El temps limit.
 /// \return   True si ha sobrepasat el temps.
 ///
@@ -305,7 +337,7 @@ void DigOutputService::pulse(
     Command cmd = {
         .id = CommandID::pulse,
         .output = output,
-        .time1 = math::max(pulseWidth, minPulseWidth)
+        .time1 = std::max(pulseWidth, minPulseWidth)
     };
 
     _commandQueue.push(cmd, unsigned(-1));
@@ -329,8 +361,8 @@ void DigOutputService::delayedPulse(
     Command cmd = {
         .id = CommandID::delayedPulse,
         .output = output,
-        .time1 = math::max(delay, minDelay),
-        .time2 = math::max(pulseWidth, minPulseWidth)
+        .time1 = std::max(delay, minDelay),
+        .time2 = std::max(pulseWidth, minPulseWidth)
     };
 
     _commandQueue.push(cmd, unsigned(-1));
@@ -599,6 +631,9 @@ void DigOutputService::processTick() {
 					output->_timeLimit = output->_timeLimit2;
 					output->_state = DigOutput::State::pulse;
 					break;
+
+				default:
+				    break;
 			}
     }
 }

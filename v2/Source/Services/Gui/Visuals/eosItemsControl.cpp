@@ -24,7 +24,7 @@ void ItemsControl::addItem(
 
 	eosAssert(item != nullptr);
 
-	_items.pushBack(item);
+	_items.push_front(item);
 	onItemAdded(item);
 }
 

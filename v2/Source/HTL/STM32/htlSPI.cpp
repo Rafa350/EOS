@@ -16,12 +16,12 @@ using namespace htl::spi;
 #define SPI_CR1_BR_DIV256    (7UL << SPI_CR1_BR_Pos)
 
 #if defined(EOS_PLATFORM_STM32G0)
-#define SPI_CR2_DS_LEN8      (0x7UL << SPI_CR2_DS_Pos)
-#define SPI_CR2_DS_LEN16     (0xFUL << SPI_CR2_DS_Pos)
+#define SPI_CR2_DS_LEN8      (7UL << SPI_CR2_DS_Pos)
+#define SPI_CR2_DS_LEN16     (15UL << SPI_CR2_DS_Pos)
 #elif defined(EOS_PLATFORM_STM32F4)
 #elif defined(EOS_PLATFORM_STM32F7)
 #define SPI_CR2_DS_LEN8      (7UL << SPI_CR2_DS_Pos)
-#define SPI_CR2_DS_LEN16     (0xF << SPI_CR2_DS_Pos)
+#define SPI_CR2_DS_LEN16     (15UL << SPI_CR2_DS_Pos)
 #else
 #error "Undefined platform"
 #endif

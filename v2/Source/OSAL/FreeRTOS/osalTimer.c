@@ -6,15 +6,6 @@
 #include "timers.h"
 
 
-static int inISR() {
-#ifdef STM32
-	return __get_IPSR() != 0;
-#else
-    return 0;
-#endif
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Crea un temporitzador.
 /// \param    info: Parametres d'inicialitzacio.
@@ -80,29 +71,37 @@ bool osalTimerStart(
 
 	eosAssert(hTimer != NULL);
 
-	// Comprova si es dins d'una interrupcio
-	//
-	if (inISR())  {
+    TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    if (time == 0)
+        return xTimerStart((TimerHandle_t)hTimer, blockTicks) == pdPASS;
+    else
+        return xTimerChangePeriod((TimerHandle_t)hTimer, time / portTICK_PERIOD_MS, blockTicks) == pdPASS;
+}
 
-		bool result;
 
-		portBASE_TYPE task = pdFALSE;
-		if (time == 0)
-			result = xTimerStartFromISR((TimerHandle_t)hTimer, &task) == pdPASS;
-		else
-			result = xTimerChangePeriodFromISR((TimerHandle_t)hTimer, time / portTICK_PERIOD_MS, &task) == pdPASS;
-	    portEND_SWITCHING_ISR(task);
+/// ----------------------------------------------------------------------
+/// \brief    Inicia el temporitzador.
+/// \param    hTimer: El handler del temporitzador.
+/// \param    time: El temps del temporitzador. Si es zero, el temps es el
+///           mateix que tenia en el cicle anterior.
+/// \return   True si tot es correcte. False en cas contrari.
+///
+bool osalTimerStartISR(
+    HTimer hTimer,
+    unsigned time) {
 
-	    return result;
-	}
+    eosAssert(hTimer != NULL);
 
-	else {
-        TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-		if (time == 0)
-			return xTimerStart((TimerHandle_t)hTimer, blockTicks) == pdPASS;
-		else
-			return xTimerChangePeriod((TimerHandle_t)hTimer, time / portTICK_PERIOD_MS, blockTicks) == pdPASS;
-	}
+    bool result;
+
+    portBASE_TYPE task = pdFALSE;
+    if (time == 0)
+        result = xTimerStartFromISR((TimerHandle_t)hTimer, &task) == pdPASS;
+    else
+        result = xTimerChangePeriodFromISR((TimerHandle_t)hTimer, time / portTICK_PERIOD_MS, &task) == pdPASS;
+    portEND_SWITCHING_ISR(task);
+
+    return result;
 }
 
 

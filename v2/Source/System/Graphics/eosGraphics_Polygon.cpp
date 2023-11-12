@@ -1,10 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosMath.h"
-#include "System/Collections/eosVector.h"
 #include "System/Graphics/eosGraphics.h"
 
 
+#include <forward_list>
 #include <algorithm>
 
 
@@ -23,8 +22,7 @@ struct Edge {
     int16_t step;
 };
 
-typedef Vector<Edge, MAX_POINTS, true> EdgeList;
-typedef typename EdgeList::Iterator EdgeIterator;
+typedef std::forward_list<Edge> EdgeList;
 
 static EdgeList __global;
 static EdgeList __active;
@@ -142,18 +140,18 @@ static void initializeGlobalEdges(
 			    edge.step = x1 <= x2 ? -1 : 1;
 			}
 
-			edge.dx = math::abs(x2 - x1);
-		    edge.dy = math::abs(y2 - y1);
+			edge.dx = std::abs(x2 - x1);
+		    edge.dy = std::abs(y2 - y1);
 			edge.sum = 0;
 
-			globalEdges.pushBack(edge);
+			globalEdges.push_front(edge);
 		}
 
 		x1 = x2;
 		y1 = y2;
 	}
 
-	std::sort(globalEdges.begin(), globalEdges.end(), compareGlobalEdges);
+//	std::sort(globalEdges.begin(), globalEdges.end(), compareGlobalEdges);
 }
 
 
@@ -169,16 +167,17 @@ static void addActiveEdges(
 	EdgeList &globalEdges,
 	int16_t yScan) {
 
-	auto it = globalEdges.begin();
+	/*auto it = globalEdges.begin();
 	while (it != globalEdges.end()) {
 		if ((*it).yMin == yScan) {
-			activeEdges.pushBack(*it);
-			it = globalEdges.remove(it);
+			activeEdges.push_front(*it);
+			// TODO: Arreglar aixo
+			//it = globalEdges.remove(it);
 		}
 		else
 			++it;
 	}
-	std::sort(activeEdges.begin(), activeEdges.end(), compareActiveEdges);
+	std::sort(activeEdges.begin(), activeEdges.end(), compareActiveEdges);*/
 }
 
 
@@ -191,13 +190,15 @@ static void removeActiveEdges(
 	EdgeList &edges,
 	int16_t yScan) {
 
+    // TODO: arreglar aixo
+/*
 	auto it = edges.begin();
 	while (it != edges.end()) {
 		if ((*it).yMax == yScan)
 			it = edges.remove(it);
 		else
 			++it;
-	}
+	}*/
 }
 
 
@@ -208,7 +209,7 @@ static void removeActiveEdges(
 static void updateActiveEdges(
 	EdgeList &activeEdges) {
 
-	for (auto &edge: activeEdges) {
+	/*for (auto &edge: activeEdges) {
 		if (edge.dx != 0) {
 			edge.sum += edge.dx;
 			while (edge.sum >= edge.dy) {
@@ -217,7 +218,7 @@ static void updateActiveEdges(
 			}
 		}
 	}
-	std::sort(activeEdges.begin(), activeEdges.end(), compareActiveEdges);
+	std::sort(activeEdges.begin(), activeEdges.end(), compareActiveEdges);*/
 }
 
 
@@ -234,7 +235,7 @@ static void drawScanLine(
 	Graphics *g,
 	Color color) {
 
-	if (!activeEdges.isEmpty()) {
+	if (!activeEdges.empty()) {
 
 		bool parity = true;
 
@@ -270,7 +271,7 @@ static void fillPolygonAlgorithm(
 
 	// Obte la primera linia per procesar
 	//
-	int16_t yScan = globalEdges.peekFront().yMin;
+	int16_t yScan = globalEdges.front().yMin;
 
 	do {
 		// Elimina els segment que ja s'ha procesat
@@ -290,5 +291,5 @@ static void fillPolygonAlgorithm(
 		yScan++;
 		updateActiveEdges(activeEdges);
 
-	} while (!activeEdges.isEmpty());
+	} while (!activeEdges.empty());
 }

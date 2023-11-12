@@ -20,7 +20,7 @@ CommandLineProcessor::CommandLineProcessor() {
 void CommandLineProcessor::addCommand(
 	CommandDefinition *command) {
 
-	_commands.pushBack(command);
+	_commands.push_front(command);
 }
 
 

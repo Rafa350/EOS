@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosMessengerService__
 #define __eosMessengerService__
 
@@ -7,72 +8,74 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
+#include "System/Collections/eosIntrusiveList.h"
 #include "System/Core/eosQueue.h"
-#include "System/Collections/eosVector.h"
 
 
 namespace eos {
 
-	class IMessageBus {
+    class Publisher;
+    using PublisherList = IndirectIntrusiveForwardList<Publisher, 0>;
+    using PublisherListNode = IndirectIntrusiveForwardListNode<Publisher, 0>;
+
+    template <typename Message_>
+    class Subscription;
+
+    template <typename Message_>
+    using SubscriptionList = IndirectIntrusiveForwardList<Subscription<Message_>, 0>;
+
+    template <typename Message_>
+    using SubscriptionListNode = IndirectIntrusiveForwardListNode<Subscription<Message_>, 0>;
+
+    class Publisher: public PublisherListNode {
         protected:
-            virtual ~IMessageBus() = default;
-		public:
-			virtual void processLoop() = 0;
+            Publisher() = default;
 	};
 
-	template <typename message_>
-	class MessageBus final: public IMessageBus {
-		private:
-			using IMessageBusCallback = ICallbackP1<const message_&>;
-			using CallbackList = Vector<const IMessageBusCallback*>;
-			using MessageQueue = Queue<message_>;
-
-		private:
-			CallbackList _callbacks;
-			MessageQueue _messages;
-
-		protected:
-			void processLoop() override {
-                while (true) {
-                    message_ message;
-                    if (_messages.pop(message, (unsigned)-1))
-                        for (auto callback: _callbacks)
-                            callback->execute(message);
-                }
-			}
-
-		public:
-			MessageBus(int capacity) :
-				_messages(capacity) {
-
-			}
-
-			bool send(const message_ &message, unsigned blockTime) {
-				return _messages.push(message, blockTime);
-			}
-
-            void subscribe(const IMessageBusCallback &callback) {
-                _callbacks.pushBack(&callback);
+    template <typename Message_>
+    class PublisherX final: public Publisher {
+        private:
+            using MessageQueue = Queue<Message_>;
+        private:
+            SubscriptionList<Message_> _subscriptions;
+            MessageQueue _messageQueue;
+        public:
+            PublisherX(unsigned capacity):
+                _messageQueue {capacity} {
             }
-	};
+            inline void pusblish(const Message_ &message, unsigned blockTime) {
+                _messageQueue.push(message, blockTime);
+            }
+            inline void pusblishISR(const Message_ &message) {
+                _messageQueue.pushISR(message);
+            }
+            void subscribe(Subscription<Message_> *subscription) {
+                _subscriptions.push_front(subscription);
+            }
+            void unsubscribe(Subscription<Message_> *subscription) {
+            }
+    };
+
+    template <typename Message_>
+    class Subscription: public SubscriptionListNode<Message_> {
+        private:
+            Publisher *_publisher;
+    };
 
     class MessengerService final: public Service {
     	private:
-			using MessageBusList = Vector<IMessageBus*>;
-            using BusTaskEventCallback = CallbackP1<MessengerService, const Task::EventArgs&>;
-
-    	private:
-			MessageBusList _busses;
-            BusTaskEventCallback _busTaskEventCallback;
+			PublisherList _publishers;
 
     	protected:
             void onInitialize() override;
-            void busTaskEventHandler(const Task::EventArgs&);
+            void onTask() override;
+
         public:
             MessengerService();
-            void addMessageBus(IMessageBus *bus);
+            void addPublisher(Publisher *publisher);
+            void removePublisher(Publisher *publisher);
     };
 }
 
 
-#endif // __eosMessangerService__
+#endif // __eosMessengerService__

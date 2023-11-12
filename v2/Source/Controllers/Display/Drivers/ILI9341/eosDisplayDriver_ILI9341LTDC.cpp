@@ -3,10 +3,8 @@
 #include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HAL/halINT.h"
-#include "HAL/halTMR.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "System/eosMath.h"
 
 
 // Codis d'operacio

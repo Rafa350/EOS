@@ -9,7 +9,7 @@
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosIntrusiveList.h"
 #include "System/Core/eosSemaphore.h"
 
 
@@ -18,6 +18,9 @@ namespace eos {
     class DigInputService;
     class DigInput;
     class DigInputDriver;
+
+    using DigInputList = IndirectIntrusiveForwardList<DigInput, 0>;
+    using DigInputListNode = IndirectIntrusiveForwardListNode<DigInput, 0>;
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
@@ -33,14 +36,11 @@ namespace eos {
     		static constexpr uint32_t minStackSize = 128;
 
         private:
-            typedef List<DigInput*> InputList;
-            typedef InputList::Iterator InputIterator;
+    		DigInputList _inputs;
 
-        private:
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
             Semaphore _changes;
-            InputList _inputs;
 
         private:
             bool scanInputs();
@@ -70,7 +70,7 @@ namespace eos {
 
     /// \brief Clase que implementa una entrada digital
     ///
-    class DigInput final {
+    class DigInput final: public DigInputListNode {
         public:
             struct ChangedEventArgs {
                 bool pinState;

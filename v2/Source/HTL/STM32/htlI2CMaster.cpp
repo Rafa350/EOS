@@ -1,6 +1,7 @@
 #include "HTL/htl.h"
 #include "HTL/STM32/htlI2C.h"
-#include "System/eosMath.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -127,7 +128,7 @@ Result I2CMasterDevice::send(
 	_i2c->CR1 |= I2C_CR1_PE;    // Habilita el dispositiu.
 	_i2c->CR2 |= I2C_CR2_START; // Inicia la sequencia START, ADDR
 
-	uint16_t blockSize = math::min(size, (typeof(size)) 255);
+	uint16_t blockSize = std::min(size, (typeof(size)) 255);
 	while (size > 0) {
 
 		while ((_i2c->ISR & I2C_ISR_TXIS) == 0)
@@ -147,7 +148,7 @@ Result I2CMasterDevice::send(
 
 			// TODO: Preparar el seguent bloc
 
-			blockSize = math::min(size, (typeof(size)) 255);
+			blockSize = std::min(size, (typeof(size)) 255);
 		}
 	}
 
@@ -210,7 +211,7 @@ Result I2CMasterDevice::receive(
     _i2c->CR2 |= I2C_CR2_START; // Inicia la sequencia START, ADDR
 
 
-    uint32_t blockSize = math::min(size, (typeof(size)) 255);
+    uint32_t blockSize = std::min(size, (typeof(size)) 255);
     while (size > 0) {
 
         while ((_i2c->ISR & I2C_ISR_RXNE) == 0)

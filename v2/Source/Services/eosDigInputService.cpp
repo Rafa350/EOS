@@ -33,7 +33,6 @@ DigInputService::DigInputService():
 ///
 DigInputService::~DigInputService() {
 
-	_inputs.clear();
 }
 
 
@@ -107,9 +106,11 @@ void DigInputService::addInput(
     //
     Task::enterCriticalSection();
 
+    // Afegeix l'entrada a la llista
+    //
     if (input->_service == nullptr) {
-        _inputs.pushBack(input);
         input->_service = this;
+        _inputs.push_front(input);
     }
 
     // Fi de la seccio critica
@@ -133,8 +134,8 @@ void DigInputService::removeInput(
     Task::enterCriticalSection();
 
     if (input->_service == this) {
+        _inputs.pop(input);
         input->_service = nullptr;
-        //_inputs.removeAt(_inputs.indexOf(input));
     }
 
     // Fi de la seccio critica
@@ -151,12 +152,6 @@ void DigInputService::removeInputs() {
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-
-    while (!_inputs.isEmpty()) {
-        DigInput *input = _inputs.peekBack();
-        //_inputs.popBack();
-        input->_service = nullptr;
-    }
 
     // Fi de la seccio critica
     //

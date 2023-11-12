@@ -1,11 +1,13 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPen.h"
 #include "System/Graphics/eosPoint.h"
-#include <math.h>
+
+
+#include <cmath>
+
 
 using namespace eos;
 
@@ -62,7 +64,7 @@ void Graphics::drawLine(
 		//
 		if (x1 == x2) {
 			if (y1 > y2)
-				math::swap(y1, y2);
+				std::swap(y1, y2);
 			_driver->setVPixels(x1, y1, y2 - y1 + 1, color);
 		}
 
@@ -70,7 +72,7 @@ void Graphics::drawLine(
 		//
 		else if (y1 == y2) {
 			if (x1 > x2)
-				math::swap(x1, x2);
+				std::swap(x1, x2);
 			_driver->setHPixels(x1, y1, x2 - x1 + 1, color);
 		}
 
@@ -179,9 +181,9 @@ void Graphics::drawLine(
 
 		int16_t e2, x2, y2;
 
-		int16_t dx = math::abs(x1 - x0);
+		int16_t dx = std::abs(x1 - x0);
 		int16_t sx = x0 < x1 ? 1 : -1;
-		int16_t dy = math::abs(y1 - y0);
+		int16_t dy = std::abs(y1 - y0);
 		int16_t sy = y0 < y1 ? 1 : -1;
 
 		int16_t err = dx - dy;
@@ -195,7 +197,7 @@ void Graphics::drawLine(
 
 			Color c;
 			if constexpr (Color::type == ColorType::rgb) {
-				uint8_t alpha = 255 - (uint8_t)math::max(0.0f, 255.0f * (math::abs(err - dx + dy) / ed - wd + 1.0f));
+				uint8_t alpha = 255 - (uint8_t)std::max(0.0f, 255.0f * (std::abs(err - dx + dy) / ed - wd + 1.0f));
 				c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
 			}
 			else
@@ -212,7 +214,7 @@ void Graphics::drawLine(
 
 					Color c;
 					if constexpr (Color::type == ColorType::rgb) {
-						uint8_t alpha = 255 - (uint8_t)math::max(0.0f, 255.0f * (math::abs(e2) / ed - wd + 1.0f));
+						uint8_t alpha = 255 - (uint8_t)std::max(0.0f, 255.0f * (std::abs(e2) / ed - wd + 1.0f));
 						c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
 					}
 					else
@@ -234,7 +236,7 @@ void Graphics::drawLine(
 
 					Color c;
 					if constexpr (Color::type == ColorType::rgb) {
-						uint8_t alpha = 255 - (uint8_t)math::max(0.0f, 255.0f * (math::abs(e2) / ed - wd + 1.0f));
+						uint8_t alpha = 255 - (uint8_t)std::max(0.0f, 255.0f * (std::abs(e2) / ed - wd + 1.0f));
 						c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
 					}
 					else
@@ -274,7 +276,7 @@ void Graphics::drawHLine(
 	if (clipHLine(x1, x2, y)) {
 
 		if (x1 > x2)
-			math::swap(x1, x2);
+			std::swap(x1, x2);
 
 		_driver->setHPixels(x1, y, x2 - x1 + 1, color);
 	}
@@ -303,7 +305,7 @@ void Graphics::drawVLine(
 	if (clipVLine(x, y1, y2)) {
 
 		if (y1 > y2)
-			math::swap(y1, y2);
+			std::swap(y1, y2);
 
 		_driver->setVPixels(x, y1, y2 - y1 + 1, color);
 	}

@@ -5,8 +5,9 @@
 #include "eosAssert.h"
 #include "HAL/halINT.h"
 #include "OSAL/osalHeap.h"
-#include "System/eosMath.h"
 #include "System/eosString.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -363,7 +364,7 @@ void String::create(
 	int totalLength = (int)strlen(cstr);
 	if (length == -1)
 		length = totalLength;
-	length = math::min(length - index, totalLength);
+	length = std::min(length - index, totalLength);
 
 	if (isRomPointer(cstr) && (index == 0) && (length == totalLength)) {
 

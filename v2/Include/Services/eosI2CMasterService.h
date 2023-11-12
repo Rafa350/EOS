@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosI2CMasterService__
 #define __eosI2CMasterService__
 

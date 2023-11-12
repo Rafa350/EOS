@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -77,9 +76,9 @@ void Graphics::drawRoundedRectangle(
 		// Normalitza les coordinades
 		//
 		if (x1 > x2)
-			math::swap(x1, x2);
+			std::swap(x1, x2);
 		if (y1 > y2)
-			math::swap(y1, y2);
+			std::swap(y1, y2);
 
 		// Precalcula els factors constants
 		//
@@ -243,9 +242,9 @@ void Graphics::fillRoundedRectangle(
 		// Normalitza les coordinades
 		//
 		if (x1 > x2)
-			math::swap(x1, x2);
+			std::swap(x1, x2);
 		if (y1 > y2)
-			math::swap(y1, y2);
+			std::swap(y1, y2);
 
 		// Precalcula els factors constants
 		//

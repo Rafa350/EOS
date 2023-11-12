@@ -401,6 +401,9 @@ static void gpioInitInput(
 				case InputMode::pullDown:
 					tmp |= PUPDR_DOWN << (pn * 2);
 					break;
+
+				default:
+				    break;
 			}
 			gpio->PUPDR = tmp;
 

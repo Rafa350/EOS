@@ -82,7 +82,28 @@ namespace htl {
 		typedef uint8_t PinNumber;
         
         /// \brief Mask for pin position
+#if 0
 		typedef uint16_t PinMask;
+#else
+		class PinMask {
+		    private:
+		        uint16_t _mask;
+		    public:
+		        constexpr explicit PinMask(uint16_t mask): _mask {mask} {}
+		        inline operator uint16_t () const { return _mask; }
+		        inline PinMask operator ~() const {
+		            return PinMask(~_mask);
+		        }
+		        inline PinMask operator |= (PinMask other) {
+		            _mask |= other._mask;
+		            return *this;
+		        }
+                inline PinMask operator &= (PinMask other) {
+                    _mask &= other._mask;
+                    return *this;
+                }
+		};
+#endif
 
 		/// \brief Alternate function
 		enum class PinFunction {
@@ -176,7 +197,7 @@ namespace htl {
 					_gpio->ODR ^= 1 << uint32_t(pinID);
 				}
 				inline PinMask read() const {
-					return _gpio->IDR;
+					return PinMask(_gpio->IDR);
 				}
 				inline bool read(PinID pinID) const {
 					return (_gpio->IDR & (1 << uint32_t(pinID))) ? true : false;
@@ -185,10 +206,7 @@ namespace htl {
 					_gpio->ODR = mask;
 				}
 				inline void write(PinMask clearMask, PinMask setMask) const {
-					uint16_t r = _gpio->ODR;
-					r &= ~clearMask;
-					r |= setMask;
-					_gpio->ODR = r;
+				    _gpio->BSRR = (clearMask << 16) | setMask;
 				}
 				inline void write(PinID pinID, bool state) const {
 					if (state)
@@ -396,10 +414,10 @@ namespace htl {
 				}
 			protected:
 				void activate() override {
-					Activator::activate(1 << uint32_t(pinID_));
+					Activator::activate(PinMask(1 << uint32_t(pinID_)));
 				}
 				void deactivate() override {
-					Activator::activate(1 << uint32_t(pinID_));
+					Activator::activate(PinMask(1 << uint32_t(pinID_)));
 				}
 			public:
 				static constexpr PinX * getHandler() {
@@ -706,7 +724,7 @@ namespace htl {
 			};
 
 			template <PortID portId_>
-			PinMask PortActivator<portId_>::_activated = 0;
+			PinMask PortActivator<portId_>::_activated = PinMask(0);
 
 
 			#ifdef HTL_GPIOA_EXIST

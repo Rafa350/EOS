@@ -7,7 +7,6 @@
 //
 #include "eos.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosList.h"
 
 
 namespace eos {

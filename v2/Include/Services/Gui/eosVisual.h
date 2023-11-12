@@ -9,7 +9,7 @@
 #include "Services/Gui/eosThickness.h"
 #include "System/eosCallbacks.h"
 #include "System/eosEvents.h"
-#include "System/Collections/eosVector.h"
+#include "System/Collections/eosIntrusiveList.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
@@ -149,13 +149,13 @@ namespace eos {
 		bottom
 	};
 
-	/// \brief Clase base que representa tots els elements visuals.
-	///
-    class Visual {
-    	public:
-			typedef Vector<Visual*> VisualList;
-			typedef typename VisualList::Iterator VisualIterator;
+	class Visual;
+    using VisualList = IndirectIntrusiveForwardList<Visual, 0>;
+    using VisualListNode = IndirectIntrusiveForwardListNode<Visual, 0>;
 
+    /// \brief Clase base que representa tots els elements visuals.
+	///
+    class Visual: public VisualListNode {
       	private:
 			MsgQueue& _msgQueue;
     		Visual* _parent;

@@ -1,10 +1,11 @@
 #include "eos.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosProgressBar.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosRect.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -104,7 +105,7 @@ void ProgressBar::onRender(
 	int width = r.getWidth();
 	int height = r.getHeight();
 
-	int w = value * width / (math::max(1, maxValue - minValue));
+	int w = value * width / (std::max(1, maxValue - minValue));
 
 	g.fillRectangle(w, 0, width - 1, height - 1, backgroundColor);
 	g.fillRectangle(0, 0, w, height - 1, barColor);

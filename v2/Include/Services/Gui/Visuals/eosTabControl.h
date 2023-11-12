@@ -6,7 +6,6 @@
 #include "Services/Gui/Visuals/eosContentControl.h"
 #include "Services/Gui/Visuals/eosItemsControl.h"
 #include "Services/Gui/Visuals/eosPanel.h"
-#include "System/Collections/eosVector.h"
 
 
 namespace eos {

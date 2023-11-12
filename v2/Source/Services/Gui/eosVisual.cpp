@@ -2,8 +2,9 @@
 #include "eosAssert.h"
 #include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosVisual.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosGraphics.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -48,8 +49,10 @@ Visual::~Visual() {
 	if (_parent != nullptr)
 		_parent->removeVisual(this);
 
-	while (!_childs.isEmpty())
-		delete _childs.peekBack();
+	while (!_childs.empty()) {
+	    auto child = _childs.front();
+	    _childs.pop_front();
+	}
 }
 
 
@@ -166,7 +169,7 @@ void Visual::addVisual(
 	eosAssert(visual != nullptr);
 	eosAssert(visual->_parent == nullptr);
 
-	_childs.pushBack(visual);
+	_childs.push_front(visual);
 	visual->_parent = this;
 
 	invalidateLayout();
@@ -183,8 +186,9 @@ void Visual::removeVisual(
 	eosAssert(visual != nullptr);
 	eosAssert(visual->_parent != nullptr);
 
+    // TODO: ERRROR
 	visual->_parent = nullptr;
-	_childs.removeAt(_childs.indexOf(visual));
+	//_childs.removeAt(_childs.indexOf(visual));
 
 	invalidateLayout();
 }
@@ -195,8 +199,9 @@ void Visual::removeVisual(
 ///
 void Visual::removeVisuals() {
 
-	while (!_childs.isEmpty())
-        removeVisual(_childs.peekBack());
+    // TODO: ERRROR
+	//while (!_childs.empty())
+    //    removeVisual(_childs.peekBack());
 }
 
 
@@ -217,13 +222,13 @@ void Visual::measure(
 
 		// Ajusta l'amplada als limits
 		//
-		width = math::max(_minSize.getWidth(), width);
-		width = math::min(_maxSize.getWidth(), width);
+		width = std::max(_minSize.getWidth(), width);
+		width = std::min(_maxSize.getWidth(), width);
 
 		// Ajusta l'alçada als limits
 		//
-		height = math::max(_minSize.getHeight(), height);
-		height = math::min(_maxSize.getHeight(), height);
+		height = std::max(_minSize.getHeight(), height);
+		height = std::min(_maxSize.getHeight(), height);
 
 		_desiredSize = _margin.inflate(Size(width, height));
 	}
@@ -250,11 +255,11 @@ void Visual::arrange(
 
 		int availableWidth = deflatedFinalWidth;
         if (_horizontalAlignment != HorizontalAlignment::stretch)
-            availableWidth = math::max(0, math::min(availableWidth, _desiredSize.getWidth() - _margin.getLeft() - _margin.getRight()));
+            availableWidth = std::max(0, std::min(availableWidth, _desiredSize.getWidth() - _margin.getLeft() - _margin.getRight()));
 
 		int availableHeight = deflatedFinalHeight;
         if (_verticalAlignment != VerticalAlignment::stretch)
-            availableHeight = math::max(0, math::min(availableHeight, _desiredSize.getHeight() - _margin.getTop() - _margin.getBottom()));
+            availableHeight = std::max(0, std::min(availableHeight, _desiredSize.getHeight() - _margin.getTop() - _margin.getBottom()));
 
         // Obte el tamany definitiu
 		//
@@ -324,8 +329,8 @@ Size Visual::measureOverride(
 			child->measure(availableSize);
 			const Size& childDesiredSize = child->getDesiredSize();
 
-			width = math::max(width, childDesiredSize.getWidth());
-			height = math::max(height, childDesiredSize.getHeight());
+			width = std::max(width, childDesiredSize.getWidth());
+			height = std::max(height, childDesiredSize.getHeight());
 		}
 	}
 

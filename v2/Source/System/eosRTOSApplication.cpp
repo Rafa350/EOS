@@ -146,7 +146,7 @@ void RTOSApplication::addService(
 	si->name = name;
 	si->task = nullptr;
 
-	_serviceInfoList.pushBack(si);
+	_serviceInfoList.push_front(si);
 }
 
 
@@ -159,12 +159,12 @@ void RTOSApplication::removeService(
 
     eosAssert(service != nullptr);
 
-    for (auto si: _serviceInfoList) {
+    /*for (auto si: _serviceInfoList) {
     	if (si->service == service) {
         	_serviceInfoList.remove(si);
     		break;
     	}
-    }
+    }*/
 }
 
 
@@ -173,5 +173,5 @@ void RTOSApplication::removeService(
 ///
 void RTOSApplication::removeServices() {
 
-	_serviceInfoList.clear();
+	//_serviceInfoList.clear();
 }

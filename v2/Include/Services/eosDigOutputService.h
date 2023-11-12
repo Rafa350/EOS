@@ -8,7 +8,7 @@
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosIntrusiveList.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -37,6 +37,12 @@
 namespace eos {
 
     class DigOutput;
+
+    using DigOutputList1 = IndirectIntrusiveForwardList<DigOutput, 1>;
+    using DigOutputListNode1 = IndirectIntrusiveForwardListNode<DigOutput, 1>;
+
+    using DigOutputList2 = IndirectIntrusiveForwardList<DigOutput, 2>;
+    using DigOutputListNode2 = IndirectIntrusiveForwardListNode<DigOutput, 2>;
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
@@ -69,8 +75,6 @@ namespace eos {
             };
 
             using CommandQueue = Queue<Command>;
-            using OutputList = List<DigOutput*>;
-            using OutputIterator = OutputList::Iterator;
 
 		private:
             static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
@@ -81,11 +85,14 @@ namespace eos {
             static constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
 
     	private:
+            DigOutputList1 _outputs;
+            DigOutputList2 _pending;
+
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
             volatile unsigned _timeCounter;
+            unsigned _nextTimeLimit;
             CommandQueue _commandQueue;
-            OutputList _outputs;
 
         private:
             DigOutputService(const DigOutputService&) = delete;
@@ -107,6 +114,7 @@ namespace eos {
 
             void notifyChanged(DigOutput *output);
             
+            void updateNextTimeLimit();
             bool hasExpired(unsigned timeLimit) const;
 
         protected:
@@ -141,7 +149,7 @@ namespace eos {
 
     /// \brief Clase que implementa una sortida digital.
     ///
-    class DigOutput final {
+    class DigOutput final: public DigOutputListNode1, public DigOutputListNode2 {
         private:
             enum class State {
                 idle,
@@ -153,7 +161,7 @@ namespace eos {
             };
 
         public:
-            DigOutputService *_service;
+            DigOutputService *_service;  // El servei al que pertany
             PinDriver *_drv;
             State _state;
             unsigned _timeLimit;

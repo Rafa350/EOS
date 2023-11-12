@@ -37,6 +37,7 @@ HTimer osalTimerCreate(const TimerInitializeInfo *info);
 bool osalTimerDestroy(HTimer hTimer, unsigned blockTime);
 
 bool osalTimerStart(HTimer hTimer, unsigned time, unsigned blockTime);
+bool osalTimerStartISR(HTimer hTimer, unsigned time);
 bool osalTimerStop(HTimer hTimer, unsigned blockTime);
 
 bool osalTimerIsActive(HTimer hTimer);

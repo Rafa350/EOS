@@ -8,9 +8,10 @@
 #include "eos.h"
 #include "System/eosApplicationBase.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosIntrusiveList.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosTimer.h"
+
 
 
 namespace eos {
@@ -21,14 +22,16 @@ namespace eos {
     ///
     class RTOSApplication: public ApplicationBase {
         private:
-    		struct ServiceInfo {
+            struct ServiceInfo;
+            using ServiceInfoList = IndirectIntrusiveForwardList<ServiceInfo, 0>;
+            using ServiceInfoListNode = IndirectIntrusiveForwardListNode<ServiceInfo, 0>;
+            struct ServiceInfo: ServiceInfoListNode {
     			Service *service;
     			Task::Priority priority;
     			unsigned stackSize;
     			const char *name;
     			Task *task;
     		};
-    		typedef List<ServiceInfo*> ServiceInfoList;
             using MyTaskCallback = TaskCallback<RTOSApplication>;
 #if Eos_ApplicationTickEnabled
             typedef CallbackP1<RTOSApplication, const Timer::EventArgs&> TimerEventCallback;

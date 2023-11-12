@@ -794,6 +794,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosWindow.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Collections/eosIntrusiveList.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosIntrusiveList.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Collections/eosPriorityQueue.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosPriorityQueue.h</locationURI>
@@ -812,11 +817,6 @@
 			<name>inc/Framework/EOS/System/Collections/eosStdHeapAllocator.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosStdHeapAllocator.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Collections/eosVector.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosVector.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
@@ -1272,11 +1272,6 @@
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosControl.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosControl.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/Gui/Visuals/eosControlItem.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosControlItem.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosDecorator.h</name>

@@ -1,7 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Display/eosFrameBuffer.h"
-#include "System/eosMath.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -144,10 +145,10 @@ void FrameBuffer::transform(
 
 	// Normalitza el resultat
 	//
-	x1 = math::min(xx1, xx2);
-	y1 = math::min(yy1, yy2);
-	x2 = math::max(xx1, xx2);
-	y2 = math::max(yy1, yy2);
+	x1 = std::min(xx1, xx2);
+	y1 = std::min(yy1, yy2);
+	x2 = std::max(xx1, xx2);
+	y2 = std::max(yy1, yy2);
 }
 
 
@@ -202,10 +203,10 @@ void FrameBuffer::setPixels(
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = math::max(x1, (int16_t)0);
-	y1 = math::max(y1, (int16_t)0);
-	x2 = math::min(x2, _maxX);
-	y2 = math::min(y2, _maxY);
+	x1 = std::max(x1, (int16_t)0);
+	y1 = std::max(y1, (int16_t)0);
+	x2 = std::min(x2, _maxX);
+	y2 = std::min(y2, _maxY);
 
 	// Cas que nomes sigui un pixel
 	//
@@ -272,10 +273,10 @@ void FrameBuffer::setPixels(
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = math::max(x1, (int16_t)0);
-	y1 = math::max(y1, (int16_t)0);
-	x2 = math::min(x2, _maxX);
-	y2 = math::min(y2, _maxY);
+	x1 = std::max(x1, (int16_t)0);
+	y1 = std::max(y1, (int16_t)0);
+	x2 = std::min(x2, _maxX);
+	y2 = std::min(y2, _maxY);
 
 	if ((x1 <= x2) && (y1 <= y2)) {
 		transform(x1, y1, x2, y2);

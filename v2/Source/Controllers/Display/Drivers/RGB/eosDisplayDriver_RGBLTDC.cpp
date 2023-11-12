@@ -4,8 +4,9 @@
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HTL/STM32/htlGPIO.h"
 #include "HTL/STM32/htlLTDC.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
+
+#include <cmath>
 
 
 #ifndef HTL_LTDC_EXIST
@@ -229,7 +230,7 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Intercanvia els buffers
 		//
-		math::swap(_displayFrameBuffer, _workFrameBuffer);
+		std::swap(_displayFrameBuffer, _workFrameBuffer);
 
 		// Asigna l'adresa de la capa
 		//

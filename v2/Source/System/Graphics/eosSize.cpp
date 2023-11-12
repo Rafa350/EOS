@@ -1,7 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosSize.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -70,8 +71,8 @@ Size Size::inflated(
 	int16_t v) const {
 
 	return Size(
-		math::max(0, _width + h),
-		math::max(0, _height + v));
+		std::max(0, _width + h),
+		std::max(0, _height + v));
 }
 
 
@@ -89,8 +90,8 @@ Size Size::inflated(
 	int16_t bottom) const {
 
 	return Size(
-		math::max(0, _width + left + right),
-		math::max(0, _height + top + bottom));
+		std::max(0, _width + left + right),
+		std::max(0, _height + top + bottom));
 }
 
 
@@ -102,8 +103,8 @@ Size Size::constrained(
 	const Size &s) const {
 
 	return Size(
-		math::min(_width, s._width),
-		math::min(_height, s._height));
+		std::min(_width, s._width),
+		std::min(_height, s._height));
 }
 
 

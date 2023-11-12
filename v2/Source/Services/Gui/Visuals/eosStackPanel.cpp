@@ -1,7 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/Visuals/eosStackPanel.h"
-#include "System/eosMath.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -48,10 +49,10 @@ Size StackPanel::measureOverride(
 
 			if (isHorizontal) {
 				width += childDesiredWidth;
-				height = math::max(height, childDesiredHeight);
+				height = std::max(height, childDesiredHeight);
 			}
 			else {
-				width = math::max(width, childDesiredWidth);
+				width = std::max(width, childDesiredWidth);
 				height += childDesiredHeight;
 			}
 		}

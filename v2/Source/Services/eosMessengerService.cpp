@@ -11,9 +11,7 @@ using namespace eos;
 /// \param    application: L'aplicacio.
 ///
 MessengerService::MessengerService():
-	Service(),
-    _busTaskEventCallback(*this, &MessengerService::busTaskEventHandler) {
-
+	Service() {
 }
 
 
@@ -21,10 +19,10 @@ MessengerService::MessengerService():
 /// \brief    Afegeix un bus al servei.
 /// \param    bus: El bus a afeigir.
 ///
-void MessengerService::addMessageBus(
-	IMessageBus *bus) {
+void MessengerService::addPublisher(
+    Publisher *publisher) {
 
-	_busses.pushBack(bus);
+    _publishers.push_front(publisher);
 }
 
 
@@ -33,9 +31,9 @@ void MessengerService::addMessageBus(
 ///
 void MessengerService::onInitialize() {
 
-    // Crea una tasca per cada bus
+    // Crea una tasca per cada publicador
     //
-    for (auto bus: _busses) {
+    for (auto publisher: _publishers) {
 
 /*        Task *task = new Task(
             getStackSize(),
@@ -47,13 +45,8 @@ void MessengerService::onInitialize() {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Handler del event de la tasca
-/// \param    args: Parametres.
-///
-void MessengerService::busTaskEventHandler(
-    const Task::EventArgs &args) {
+void MessengerService::onTask() {
 
-    IMessageBus *bus = static_cast<IMessageBus*>(args.params);
-    bus->processLoop();
+    while (true)
+        Task::delay(1000);
 }

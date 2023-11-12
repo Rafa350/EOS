@@ -11,12 +11,27 @@ using namespace eos;
 /// \brief    Constructor.
 /// \param    autoreload: Indica si repeteix el cicle continuament.
 ///
+Timer::Timer() :
+
+    _hTimer {nullptr},
+    _autoreload {false},
+    _timerEvent {nullptr},
+    _timerEventEnabled {false},
+    _param {nullptr} {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    autoreload: Indica si repeteix el cicle continuament.
+///
 Timer::Timer(
     bool autoreload) :
 
     _hTimer {nullptr},
     _autoreload {autoreload},
     _timerEvent {nullptr},
+    _timerEventEnabled {false},
     _param {nullptr} {
 }
 
@@ -33,6 +48,7 @@ Timer::Timer(
     _hTimer {nullptr},
     _autoreload {autoreload},
     _timerEvent {&event},
+    _timerEventEnabled {true},
     _param {param} {
 }
 
@@ -44,6 +60,15 @@ Timer::~Timer() {
 
     if (_hTimer != nullptr)
         osalTimerDestroy(_hTimer, 10);
+}
+
+
+void Timer::setTimerEvent(
+    ITimerEvent &event,
+    bool enabled) {
+
+    _timerEvent = &event;
+    _timerEventEnabled = enabled;
 }
 
 
@@ -103,14 +128,13 @@ void Timer::timerFunction(
     HTimer hTimer) {
 
     Timer *timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
-    if ((timer != nullptr) && (timer->_timerEvent != nullptr)) {
+    if ((timer != nullptr) && (timer->_timerEvent != nullptr) && timer->_timerEventEnabled) {
 
         TimerEventArgs args {
-        	.timer = timer,
         	.param = timer->_param
         };
 
-        timer->_timerEvent->execute(args);
+        timer->_timerEvent->execute(timer, args);
     }
 }
 

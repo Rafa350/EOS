@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "Services/Gui/eosVisual.h"
-#include "Services/Gui/Visuals/eosControlItem.h"
+#include "Services/Gui/Visuals/eosItemsControl.h"
 
 
 namespace eos {
