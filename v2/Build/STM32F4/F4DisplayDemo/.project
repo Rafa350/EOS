@@ -344,6 +344,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlSPI.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/htlTick.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlTick.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalHeap.h</locationURI>
@@ -654,6 +659,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htl.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlClock.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlClock.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D.h</locationURI>
@@ -679,9 +689,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlSPI.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosDynamicArray.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosStack.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/System/Collections/eosDynamicArray.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosStack.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
@@ -789,6 +799,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HTL/STM32/F4</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D.cpp</locationURI>
@@ -807,6 +822,11 @@
 			<name>src/Framework/EOS/HTL/STM32/htlSPI.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlSPI.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlTick.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTick.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
@@ -969,6 +989,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F4/htlClock.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlClock.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F4/htlLTDC_AF_F4.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlLTDC_AF_F4.h</locationURI>
@@ -987,6 +1012,11 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers/SSD1306</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/F4/htlClock.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F4/htlClock.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>

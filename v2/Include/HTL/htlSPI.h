@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __htlSPI__
-#define	__htlSPI__
 
 
 // EOS includes
@@ -23,7 +21,4 @@
     #include "HTL/MSP432/htlSPI.h"
 
 #endif
-
-
-#endif // __htlSPI__
 

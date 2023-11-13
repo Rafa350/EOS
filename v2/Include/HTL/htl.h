@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __htl__
-#define __htl__
 
 
 #include "eos.h"
@@ -33,5 +31,3 @@ namespace htl {
 	void waitTicks(uint32_t ticks);
 }
 
-
-#endif // __htl__

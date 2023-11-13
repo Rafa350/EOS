@@ -1,4 +1,6 @@
 #pragma once
+
+
 /// \file      htlGPIO.h
 /// \author    Rafael Serrano (rsr.openware@gmail.com)
 /// \brief     GPIO module manager.
@@ -8,8 +10,6 @@
 /// @{
 /// \defgroup HTL_STM32_GPIO GPIO
 /// @{
-#ifndef __STM32_htlGPIO__
-#define __STM32_htlGPIO__
 
 
 // EOS includes
@@ -94,6 +94,10 @@ namespace htl {
 		        inline PinMask operator ~() const {
 		            return PinMask(~_mask);
 		        }
+                inline PinMask operator = (PinMask other) {
+                    _mask = other._mask;
+                    return *this;
+                }
 		        inline PinMask operator |= (PinMask other) {
 		            _mask |= other._mask;
 		            return *this;
@@ -901,8 +905,6 @@ namespace htl {
 	}
 }
 
-
-#endif // __STM32_htlGPIO__
 
 /// @}
 /// @}

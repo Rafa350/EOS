@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __STM32_htlINT__
-#define __STM32_htlINT__
 
 
 // HAL includes
@@ -290,6 +288,3 @@ namespace htl {
 		}
 	}
 }
-
-
-#endif // __STM32_htlINT__

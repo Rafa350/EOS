@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __STM32_htlClock__
-#define __STM32_htlClock__
 
 
 #include "HTL/STM32/htl.h"
@@ -24,7 +22,3 @@
 #else
 	#error "Unknown platform"
 #endif
-
-
-
-#endif // __STM32_htlClock__

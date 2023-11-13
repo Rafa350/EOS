@@ -38,11 +38,11 @@ namespace eos {
 
     class DigOutput;
 
-    using DigOutputList1 = IndirectIntrusiveForwardList<DigOutput, 1>;
-    using DigOutputListNode1 = IndirectIntrusiveForwardListNode<DigOutput, 1>;
+    using DigOutputList1 = IntrusiveForwardList<DigOutput, 1>;
+    using DigOutputListNode1 = IntrusiveForwardListNode<DigOutput, 1>;
 
-    using DigOutputList2 = IndirectIntrusiveForwardList<DigOutput, 2>;
-    using DigOutputListNode2 = IndirectIntrusiveForwardListNode<DigOutput, 2>;
+    using DigOutputList2 = IntrusiveForwardList<DigOutput, 2>;
+    using DigOutputListNode2 = IntrusiveForwardListNode<DigOutput, 2>;
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///

@@ -1,5 +1,4 @@
-#ifndef __eosPen__
-#define __eosPen__
+#pragma once
 
 
 // EOS includes
@@ -45,6 +44,3 @@ namespace eos {
 			inline bool isNull() const { return _style == PenStyle::null; }
 	};
 }
-
-
-#endif // __eosPen__

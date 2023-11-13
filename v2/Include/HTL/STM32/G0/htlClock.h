@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __STM32_G0_htlClock__
-#define __STM32_G0_htlClock__
 
 
 #include "HTL/STM32/htl.h"
@@ -142,6 +140,3 @@ namespace htl {
 		unsigned getClockFrequency(ClockID clockId);
 	}
 }
-
-
-#endif // __STM32_G0_htlClock__

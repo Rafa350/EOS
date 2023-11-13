@@ -1,15 +1,9 @@
-#ifndef __eosStack__
-#define	__eosStack__
-
+#pragma once
 
 // EOS includes
 //
 #include "eos.h"
 #include "eosAssert.h"
-
-// Std includes
-//
-#include <vector>
 
 
 namespace eos {
@@ -18,111 +12,121 @@ namespace eos {
         namespace collections {
 #endif
 
-            /// \brief Implementa un contenidos FIFO de tamany fix o variable.
+
+            /// \brief Implementa un contenidor FIFO.
         	/// \remarks El contenidor enmagatzema copies del element.
             ///
-			template <typename Element_, unsigned initialCapacity_ = 0, bool fixedCapacity_ = false>
-			class Stack {
-				private:
-					using Container = std::vector<Element_>;
-
+			template <typename T_>
+			class StackBase {
 				public:
-					using Value = typename Container::value_type;
-					using Reference = typename Container::reference;
-					using CReference = typename Container::const_reference;
+					using Type = T_;
+                    using Pointer = Type*;
+                    using CPointer = const Type*;
+					using Reference = Type&;
+					using CReference = const Type&;
 
 				private:
-					Container _c;
+                    Pointer _container;
+                    Pointer _ptr;
+                    Pointer _end;
+                    
+                private:
+					StackBase(const StackBase &) = delete;
+                    StackBase & operator = (const StackBase &) = delete;
 
 				public:
 
 					/// \brief Contructor per defecte
 					///
-					Stack() {
-						if constexpr (initialCapacity_ > 0)
-							_c.reserve(initialCapacity_);
+					StackBase(Pointer container, unsigned capacity):
+                        _container {container},
+                        _ptr {container},
+                        _end {container + capacity} {
+                            
+                        eosAssert(container != nullptr);
+                        eosAssert(capacity > 1);
 					}
-
-					/// \brief Constructor copia
-					///
-					Stack(const Stack &other) = delete;
 
 					/// \brief Afegeix un element a la pila.
 					/// \param element: L'element a afeigir.
 					//
 					inline void push(CReference element) {
-						eosAssert((fixedCapacity_ && (_c.size() < _c.capacity())) || !fixedCapacity_);
-						_c.push_back(element);
+                        eosAssert(!full());
+                        *_ptr++ = element;
 					}
 
 					/// \brief Elimina un element de la pila.
 					///
 					inline void pop() {
-						eosAssert(_c.size() > 0);
-						_c.pop_back();
+                        eosAssert(!empty());
+						_ptr--;
 					}
 
 					/// \brief: Obte el primer element de la pila.
 					/// \return: El primer element.
 					///
 					inline Reference peek() {
-						eosAssert(_c.size() > 0);
-						return _c.back();
+                        eosAssert(!empty());
+						return *(_ptr - 1); // Sempre apunta al seguent
 					}
 
 					/// \brief: Obte el primer element de la pila.
 					/// \return: El primer element.
 					///
 					inline CReference peek() const {
-						eosAssert(_c.size() > 0);
-						return _c.back();
+                        eosAssert(!empty());
+						return *(_ptr - 1);
 					}
 
 					/// \brief Buida la pila.
 					///
 					inline void clear() {
-						_c.clear();
+						_ptr = _container;
 					}
 
 					/// \brief: Indica si la pila es buida.
 					/// \return: True si es buida.
 					///
-					inline bool isEmpty() const {
-						return _c.empty();
+					inline bool empty() const {
+						return _ptr == _container;
 					}
 
 					/// \brief: Indica si la pila es plena
 					/// \return: True si es plena.
 					///
-					inline bool isFull() const {
-						if constexpr (fixedCapacity_)
-							return _c.size() == _c.capacity();
-						else
-							return false;
+					inline bool full() const {
+                        return _ptr == _end;
 					}
 
 					/// \brief Obte el tamany de la pila.
 					/// \return El valor.
 					///
-					inline unsigned getSize() const {
-						return _c.size();
+					inline unsigned size() const {
+						return _ptr - _container;
 					}
 
 					/// \brief Obte capacitat actual de la pila.
 					/// \return El valor.
 					///
-					inline unsigned getCapacity() const {
-						return _c.capacity();
+					inline unsigned capacity() const {
+						return _end - _container;
 					}
 			};
+            
+            
+            template <typename T_, unsigned capacity_>
+            class FixedCapacityStack: public StackBase<T_> {
+                private:
+                    T_ _container[capacity_];
+                public:
+                    FixedCapacityStack() :
+                        StackBase<T_>(_container, capacity_) {                            
+                        }
+            };
+            
 
 #ifdef EOS_USE_FULL_NAMESPACE
         }
     }
 #endif
 }
-
-
-#endif // __eosStack__
-
-

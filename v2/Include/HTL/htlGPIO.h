@@ -1,11 +1,10 @@
 #pragma once
-#ifndef __htlGPIO__
-#define	__htlGPIO__
 
 
 // EOS includes
 //
 #include "HTL/htl.h"
+
 
 #if defined(EOS_PLATFORM_PIC32MX) || \
 	defined(EOS_PLATFORM_PIC32MZ)
@@ -25,7 +24,4 @@
 	#error "Unknown platform"
 
 #endif
-
-
-#endif // __htlGPIO__
 

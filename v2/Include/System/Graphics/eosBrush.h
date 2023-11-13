@@ -1,5 +1,4 @@
-#ifndef __eosBrush__
-#define __eosBrush__
+#pragma once
 
 
 // EOS includes
@@ -38,6 +37,3 @@ namespace eos {
 	};
 
 }
-
-
-#endif // __eosBrush__

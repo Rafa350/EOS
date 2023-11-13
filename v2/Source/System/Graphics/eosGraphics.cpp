@@ -61,7 +61,7 @@ void Graphics::resetTransformation() {
 ///
 void Graphics::push() {
 
-	//if (!stack.isFull())
+	if (!_stack.full())
 		_stack.push(_state);
 }
 
@@ -71,7 +71,7 @@ void Graphics::push() {
 ///
 void Graphics::pop() {
 
-	if (!_stack.isEmpty()) {
+	if (!_stack.empty()) {
 		_state = _stack.peek();
 		_stack.pop();
 	}

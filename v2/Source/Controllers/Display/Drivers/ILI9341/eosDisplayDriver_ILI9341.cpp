@@ -2,8 +2,7 @@
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
 #include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
-#include "HAL/halTMR.h"
-#include "System/eosMath.h"
+#include "HTL/htlTick.h"
 
 
 #if !defined(DISPLAY_ER_TFT028_4) && \
@@ -13,6 +12,16 @@
 
 
 using namespace eos;
+
+
+static void delay(
+    uint32_t time) {
+
+    if (time > 0) {
+        auto tick = htl::tick::Tick::getHandler();
+        tick->wait(time);
+    }
+}
 
 
 /// ----------------------------------------------------------------------
@@ -245,7 +254,7 @@ void DisplayDriver_ILI9341::enable() {
 	writeCommand(CMD_SLEEP_OUT);
 	close();
 
-	halTMRDelay(120);
+	delay(120);
 
 	open();
 	writeCommand(CMD_DISPLAY_ON);
@@ -263,7 +272,7 @@ void DisplayDriver_ILI9341::disable() {
 	writeCommand(CMD_ENTER_SLEEP_MODE);
 	close();
 
-	halTMRDelay(120);
+	delay(120);
 }
 
 

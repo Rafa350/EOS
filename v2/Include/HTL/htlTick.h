@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __htlTick__
-#define __htlTick__
 
 
 #include "HTL/htl.h"
@@ -36,6 +34,4 @@ namespace htl {
 
 	}
 }
-
-#endif // __htlTick__
 

@@ -6,6 +6,8 @@
 #include "System/Graphics/eosFont.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
+#include <cmath>
+
 
 using namespace eos;
 

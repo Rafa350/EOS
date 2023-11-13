@@ -31,7 +31,7 @@ namespace eos {
     			int16_t clipY2;
     			Transformation ct;
     		};
-    		typedef Stack<State> StateStack;
+    		using StateStack = FixedCapacityStack<State, 10>;
 
         private:
             IDisplayDriver *_driver;

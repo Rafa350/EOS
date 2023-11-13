@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __htlINT__
-#define __htlINT__
 
 
 // EOS includes
@@ -23,6 +21,3 @@
 	#error "Unknown platform"
 
 #endif
-
-
-#endif // __htlINT__

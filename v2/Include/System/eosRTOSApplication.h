@@ -23,8 +23,8 @@ namespace eos {
     class RTOSApplication: public ApplicationBase {
         private:
             struct ServiceInfo;
-            using ServiceInfoList = IndirectIntrusiveForwardList<ServiceInfo, 0>;
-            using ServiceInfoListNode = IndirectIntrusiveForwardListNode<ServiceInfo, 0>;
+            using ServiceInfoList = IntrusiveForwardList<ServiceInfo, 0>;
+            using ServiceInfoListNode = IntrusiveForwardListNode<ServiceInfo, 0>;
             struct ServiceInfo: ServiceInfoListNode {
     			Service *service;
     			Task::Priority priority;

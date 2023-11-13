@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __htlUART__
-#define	__htlUART__
 
 
 // EOS includes
@@ -23,7 +21,3 @@
     #include "HTL/MSP432/htlUART.h"
 
 #endif
-
-
-#endif // __htlUART__
-

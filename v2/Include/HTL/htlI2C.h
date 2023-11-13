@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __htlI2C__
-#define	__htlI2C__
 
 
 // EOS includes
@@ -26,8 +24,5 @@
 	#error "Unknown platform"
 
 #endif
-
-
-#endif // __htlI2C__
 
 

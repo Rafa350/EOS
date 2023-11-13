@@ -1,8 +1,8 @@
 #include "HTL/htlTick.h"
 #include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlTMR.h"
-#include "HTL/STM32/HtlINT.h"
-#include "HTL/STM32/HtlGPIO.h"
+#include "HTL/STM32/htlINT.h"
+#include "HTL/STM32/htlGPIO.h"
 
 
 using namespace htl::tick;

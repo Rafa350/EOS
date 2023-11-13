@@ -19,8 +19,8 @@ namespace eos {
     class DigInput;
     class DigInputDriver;
 
-    using DigInputList = IndirectIntrusiveForwardList<DigInput, 0>;
-    using DigInputListNode = IndirectIntrusiveForwardListNode<DigInput, 0>;
+    using DigInputList = IntrusiveForwardList<DigInput, 0>;
+    using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
