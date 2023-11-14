@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosPinDriver_GPIO__
-#define	__eosPinDriver_GPIO__
 
 
 // EOS includes
@@ -16,10 +14,9 @@ namespace eos {
     ///
     class PinDriver_GPIO final: public PinDriver {
         private:
-            htl::gpio::PinHandler const _hPin;
-            
+            htl::gpio::Pin * const _pin;
         public:
-            PinDriver_GPIO(const htl::gpio::PinHandler hPin);
+            PinDriver_GPIO(htl::gpio::Pin *pin);
             void set() override;
             void clear() override;
             void toggle() override;
@@ -28,6 +25,3 @@ namespace eos {
     };
     
 }
-
-
-#endif // __eosPinDriver_GPIO__

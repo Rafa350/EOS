@@ -21,33 +21,28 @@ void DisplayDriver_ILI9341::initializeInterface() {
 
 	// Inicialitza el pin TE
 	//
-	auto hTE = PinTE::getHandler();
-	hTE->initInput(gpio::InputMode::pullUp);
+	PinTE::pInst->initInput(gpio::InputMode::pullUp);
 
 	// Inicialitza el pin RST
 	//
 	#ifdef DISPLAY_RST_GPIO
-	auto hRST = PinRST::getHandler();
-	hRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+	PinRST::pInst->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 	#endif
 
 	// Inicialitza el pin CS
 	//
-	auto hCS = PinCS::getHandler();
-	hCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
+	_pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
 	// Inicialitza el pin RS
 	//
-	auto hRS = PinRS::getHandler();
-	hRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+	_pinRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 
 	// Inicialitza el modul SPI
     //
-	auto hSPI = Spi::getHandler();
-	hSPI->initPinSCK<PinSCK>();
-	hSPI->initPinMOSI<PinMOSI>();
-	hSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
-	hSPI->enable();
+	_devSPI->initPinSCK<PinSCK>();
+	_devSPI->initPinMOSI<PinMOSI>();
+	_devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
+	_devSPI->enable();
 }
 
 
@@ -128,7 +123,7 @@ void DisplayDriver_ILI9341::initializeController() {
     while ((c = *p++) != OP_END) {
         switch (c) {
             case OP_DELAY:
-                halTMRDelay(*p++);
+                delay(*p++);
                 break;
 
             default:
@@ -157,8 +152,7 @@ void DisplayDriver_ILI9341::initializeController() {
 ///
 void DisplayDriver_ILI9341::open() {
 
-	auto hCS = PinCS::getHandler();
-	hCS->clear();
+	PinCS::pInst->clear();
 }
 
 
@@ -167,8 +161,7 @@ void DisplayDriver_ILI9341::open() {
 ///
 void DisplayDriver_ILI9341::close() {
 
-	auto hCS = PinCS::getHandler();
-	hCS->set();
+	PinCS::pInst->set();
 }
 
 
@@ -179,11 +172,8 @@ void DisplayDriver_ILI9341::close() {
 void DisplayDriver_ILI9341::writeCommand(
     uint8_t cmd) {
 
-	auto hRS = PinRS::getHandler();
-	hRS->clear();
-
-	auto hSPI = Spi::getHandler();
-	hSPI->transmit(&cmd, 1);
+	_pinRS->clear();
+	_devSPI->transmit(&cmd, 1);
 }
 
 
@@ -194,11 +184,8 @@ void DisplayDriver_ILI9341::writeCommand(
 void DisplayDriver_ILI9341::writeData(
     uint8_t data) {
 
-	auto hRS = PinRS::getHandler();
-	hRS->set();
-
-	auto hSPI = Spi::getHandler();
-	hSPI->transmit(&data, 1);
+	_pinRS->set();
+	_devSPI->transmit(&data, 1);
 }
 
 
@@ -211,10 +198,14 @@ void DisplayDriver_ILI9341::writeData(
 	const uint8_t *data,
 	int32_t length) {
 
-	auto hRS = PinRS::getHandler();
-	hRS->set();
+	_pinRS->set();
+	_devSPI->transmit(data, length);
+}
 
-	auto hSPI = Spi::getHandler();
-    hSPI->transmit(data, length);
+
+void DisplayDriver_ILI9341::delay(
+    unsigned time) {
+
+    HAL_Delay(time);
 }
 

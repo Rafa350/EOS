@@ -1,5 +1,4 @@
-#ifndef __eosService__
-#define	__eosService__
+#pragma once
 
 
 // EOS includes
@@ -56,6 +55,3 @@ namespace eos {
     };
 
 }
-
-
-#endif	// __eosService__

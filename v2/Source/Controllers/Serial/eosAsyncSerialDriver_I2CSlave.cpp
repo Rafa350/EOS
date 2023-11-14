@@ -9,13 +9,13 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    hI2C: El modul I2C a utilitzar.
+/// \param    devI2C: El dispositiu I2C a utilitzar.
 ///
 AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
-	i2c::I2CSlaveDeviceHandler i2c) :
+	i2c::I2CSlaveDevice *devI2C) :
 
-	_i2c(i2c),
-	_i2cNotifyEvent(*this, &AsyncSerialDriver_I2CSlave::i2cNotifyEventHandler) {
+	_devI2C {devI2C},
+	_i2cNotifyEvent {*this, &AsyncSerialDriver_I2CSlave::i2cNotifyEventHandler} {
 
 }
 
@@ -27,7 +27,7 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 
 	AsyncSerialDriver::initializeImpl();
 
-	_i2c->setNotifyEvent(_i2cNotifyEvent);
+	_devI2C->setNotifyEvent(_i2cNotifyEvent);
 }
 
 
@@ -36,7 +36,7 @@ void AsyncSerialDriver_I2CSlave::initializeImpl() {
 ///
 void AsyncSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_i2c->disableNotifyEvent();
+	_devI2C->disableNotifyEvent();
 
 	AsyncSerialDriver::deinitializeImpl();
 }
@@ -89,7 +89,7 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 
 		////************************************
 		/// PROVISIONAL fins implementar receive
-		_i2c->listen(data, dataSize);
+		_devI2C->listen(data, dataSize);
 
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles.

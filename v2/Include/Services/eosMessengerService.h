@@ -15,17 +15,17 @@
 namespace eos {
 
     class Publisher;
-    using PublisherList = IndirectIntrusiveForwardList<Publisher, 0>;
-    using PublisherListNode = IndirectIntrusiveForwardListNode<Publisher, 0>;
+    using PublisherList = IntrusiveForwardList<Publisher, 0>;
+    using PublisherListNode = IntrusiveForwardListNode<Publisher, 0>;
 
     template <typename Message_>
     class Subscription;
 
     template <typename Message_>
-    using SubscriptionList = IndirectIntrusiveForwardList<Subscription<Message_>, 0>;
+    using SubscriptionList = IntrusiveForwardList<Subscription<Message_>, 0>;
 
     template <typename Message_>
-    using SubscriptionListNode = IndirectIntrusiveForwardListNode<Subscription<Message_>, 0>;
+    using SubscriptionListNode = IntrusiveForwardListNode<Subscription<Message_>, 0>;
 
     class Publisher: public PublisherListNode {
         protected:

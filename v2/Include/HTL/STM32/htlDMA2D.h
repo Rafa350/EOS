@@ -43,6 +43,9 @@ namespace htl {
         class DMA2DDevice final {
             private:
                 static DMA2DDevice _instance;
+            public:
+                static constexpr DMA2DDevice *pInst = &_instance;
+                static constexpr DMA2DDevice &rInst = _instance;
             private:
                 DMA2DDevice();
                 DMA2DDevice(const DMA2DDevice &) = delete;
@@ -58,15 +61,10 @@ namespace htl {
                 void startCopy(void *ptr, uint16_t width, uint16_t height, uint16_t pitch, OutputColorMode colorMode, const void *src, uint16_t srcPitch, InputColorMode srcColorMode);
                 bool waitForFinish();
 				void interruptService();
-				static constexpr DMA2DDevice * getHandler() {
-					return &_instance;
-				}
                 inline static void interruptHandler() {
-                    getHandler()->interruptService();
+                    _instance.interruptService();
                 }
         };
-
-        typedef DMA2DDevice *DMA2DDeviceHandler;
 
     }
 }

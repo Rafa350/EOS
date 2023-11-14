@@ -60,14 +60,9 @@ void DisplayDriver_RGBLTDC::deinitialize() {
 ///
 void DisplayDriver_RGBLTDC::enable() {
 
-	auto ltdc(ltdc::LTDCDevice::getHandler());
-	ltdc->enable();
-
-	auto pinLCDE(PinLCDE::getHandler());
-	pinLCDE->set();
-
-	auto pinBKE(PinBKE::getHandler());
-	pinBKE->set();
+	_devLTDC->enable();
+	_pinLCDE->set();
+	_pinBKE->set();
 }
 
 
@@ -76,14 +71,9 @@ void DisplayDriver_RGBLTDC::enable() {
 ///
 void DisplayDriver_RGBLTDC::disable() {
 
-	auto pinLCDE(PinLCDE::getHandler());
-	pinLCDE->clear();
-
-	auto pinBKE(PinBKE::getHandler());
-	pinBKE->clear();
-
-	auto ltdc(ltdc::LTDCDevice::getHandler());
-	ltdc->disable();
+	_pinLCDE->clear();
+	_pinBKE->clear();
+	_devLTDC->disable();
 }
 
 
@@ -234,11 +224,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Asigna l'adresa de la capa
 		//
-		auto layer(ltdc::LTDCLayerDevice1::getHandler());
-		layer->setFrameBuffer(_displayFrameBuffer->getBuffer());
-
-		auto ltdc(ltdc::LTDCDevice::getHandler());
-		ltdc->reload();
+		_devLTDCLayer->setFrameBuffer(_displayFrameBuffer->getBuffer());
+		_devLTDC->reload();
 	}
 }
 
@@ -248,11 +235,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	auto hPinBKE = PinBKE::getHandler();
-	hPinBKE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
-
-	auto hPinLCDE = PinLCDE::getHandler();
-	hPinLCDE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
+	_pinBKE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
+	_pinLCDE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
 }
 
 
@@ -265,16 +249,15 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	auto hLTDC = ltdc::LTDCDevice::getHandler();
-	hLTDC->initPinPC<DISPLAY_PC_Pin, _pcPol>();
-	hLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, _hSyncPol>();
-	hLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, _vSyncPol>();
-	hLTDC->initPinDE<DISPLAY_DE_Pin, _dePol>();
-	hLTDC->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	hLTDC->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	hLTDC->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	hLTDC->initialize(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	hLTDC->setBackgroundColor(0x0000FF);
+	_devLTDC->initPinPC<DISPLAY_PC_Pin, _pcPol>();
+	_devLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, _hSyncPol>();
+	_devLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, _vSyncPol>();
+	_devLTDC->initPinDE<DISPLAY_DE_Pin, _dePol>();
+	_devLTDC->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	_devLTDC->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	_devLTDC->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	_devLTDC->initialize(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	_devLTDC->setBackgroundColor(0x0000FF);
 
 	// Inicialitza la capa 1
 	// La capa ocupa tota la superficie de la pantalla
@@ -289,25 +272,24 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
 				ltdc::PixelFormat::rgb565;
 
-	auto hLayer = ltdc::LTDCLayerDevice1::getHandler();
-	hLayer->setWindow(0, 0, _displayWidth, _displayHeight);
-	hLayer->setFrameFormat(
+	_devLTDCLayer->setWindow(0, 0, _displayWidth, _displayHeight);
+	_devLTDCLayer->setFrameFormat(
 		pixelFormat,
 		_displayWidth * Color::bytes,
 		((_displayWidth * Color::bytes) + 63) & 0xFFFFFFC0,
 		_displayHeight);
-	hLayer->setConstantAlpha(255);
-	hLayer->setDefaultColor(0x000000);
+	_devLTDCLayer->setConstantAlpha(255);
+	_devLTDCLayer->setDefaultColor(0x000000);
 
 	if (Color::format == ColorFormat::l8) {
 		static uint32_t clut[256];
 		for (unsigned i = 0; i < (sizeof(clut) / sizeof(clut[0])); i++)
 			clut[i] = i << 8;
-		hLayer->setCLUTTable(clut);
+		_devLTDCLayer->setCLUTTable(clut);
 	}
 
-	hLayer->setFrameBuffer(_displayFrameBuffer->getBuffer());
-	hLayer->enable();
+	_devLTDCLayer->setFrameBuffer(_displayFrameBuffer->getBuffer());
+	_devLTDCLayer->enable();
 
-	hLTDC->reload();
+	_devLTDC->reload();
 }

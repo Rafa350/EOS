@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosApplicationBase__
-#define	__eosApplicationBase__
 
 
 // EOS includes
@@ -35,8 +33,5 @@ namespace eos {
             void run();
     };
 }
-
-
-#endif // __eosApplicationBase__
 
 

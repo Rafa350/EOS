@@ -14,7 +14,7 @@ namespace eos {
 		private:
 			using MyTaskCallback = TaskCallback<AsyncSerialDriver_UART>;
 		private:
-			htl::uart::UARTDeviceHandler _hUART;
+			htl::uart::UARTDevice *_devUART;
 			htl::uart::NotifyEvent<AsyncSerialDriver_UART> _uartNotifyEvent;
 			MyTaskCallback _taskCallback;
 			//Task _task;
@@ -27,7 +27,7 @@ namespace eos {
 			void taskCallbackHandler(const TaskCallbackArgs &args);
 
 		public:
-			AsyncSerialDriver_UART(htl::uart::UARTDeviceHandler hUART);
+			AsyncSerialDriver_UART(htl::uart::UARTDevice *devUART);
 	};
 }
 

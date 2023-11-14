@@ -22,31 +22,31 @@ VNI8200XP_SerialDevice::VNI8200XP_SerialDevice() :
 	_state {State::reset},
     _curPinState {0},
     _oldPinState {0},
-	_hSPI {nullptr},
-	_hPinSS {nullptr},
-	_hPinOUTEN {nullptr} {
+	_spi {nullptr},
+	_pinSS {nullptr},
+	_pinOUTEN {nullptr} {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
-/// \param    hSPI: Handler del dispositiu SPI
-/// \param    hPinSS: Handler del pin de seleccio.
-/// \param    hPinOUTEN: Handler del pin de seleccio de les sortides.
+/// \param    spi: El dispositiu SPI
+/// \param    pinSS: El pin de seleccio.
+/// \param    pinOUTEN: El pin de seleccio de les sortides.
 ///
 VNI8200XP_Device::Result VNI8200XP_SerialDevice::initialize(
-	htl::spi::SPIDeviceHandler hSPI,
-	htl::gpio::PinHandler hPinSS,
-	htl::gpio::PinHandler hPinOUTEN) {
+	htl::spi::SPIDevice *spi,
+	htl::gpio::Pin *pinSS,
+	htl::gpio::Pin *pinOUTEN) {
 
 	eosAssert(_state == State::reset);
 
 	if (_state == State::reset) {
 
-		_hSPI = hSPI;
-		_hPinSS = hPinSS;
-		_hPinOUTEN = hPinOUTEN;
+		_spi = spi;
+		_pinSS = pinSS;
+		_pinOUTEN = pinOUTEN;
 
 		_state = State::ready;
 
@@ -65,8 +65,8 @@ void VNI8200XP_SerialDevice::enable() const {
 	eosAssert(_state == State::ready);
 
 	if (_state == State::ready) {
-		if (_hPinOUTEN != nullptr)
-			_hPinOUTEN->set();
+		if (_pinOUTEN != nullptr)
+			_pinOUTEN->set();
 	}
 }
 
@@ -79,8 +79,8 @@ void VNI8200XP_SerialDevice::disable() const {
 	eosAssert(_state == State::ready);
 
 	if (_state == State::ready) {
-		if (_hPinOUTEN != nullptr)
-			_hPinOUTEN->clear();
+		if (_pinOUTEN != nullptr)
+			_pinOUTEN->clear();
 	}
 }
 
@@ -103,9 +103,9 @@ void VNI8200XP_SerialDevice::update() {
 			txData[0] = _curPinState;
 			txData[1] = calcParity(_curPinState);
 
-			_hPinSS->clear();
-			_hSPI->transmit(txData, rxData, sizeof(txData));
-			_hPinSS->set();
+			_pinSS->clear();
+			_spi->transmit(txData, rxData, sizeof(txData));
+			_pinSS->set();
 
 			_oldPinState = _curPinState;
 		}
@@ -205,10 +205,10 @@ static uint8_t calcParity(
 
 
 PinDriver_VNI8200XP::PinDriver_VNI8200XP(
-	VNI8200XP_DeviceHandler hDevice,
+	VNI8200XP_Device *dev,
 	uint8_t pinNumber):
 
-	_hDevice {hDevice},
+	_dev {dev},
 	_pinMask {uint8_t(1 << pinNumber)} {
 
 	eosAssert(hDevice != nullptr);
@@ -218,31 +218,31 @@ PinDriver_VNI8200XP::PinDriver_VNI8200XP(
 
 void PinDriver_VNI8200XP::set() {
 
-	_hDevice->set(_pinMask);
+	_dev->set(_pinMask);
 }
 
 
 void PinDriver_VNI8200XP::clear() {
 
-	_hDevice->clear(_pinMask);
+	_dev->clear(_pinMask);
 }
 
 
 void PinDriver_VNI8200XP::toggle() {
 
-	_hDevice->toggle(_pinMask);
+	_dev->toggle(_pinMask);
 }
 
 
 void PinDriver_VNI8200XP::write(
 	bool pinState) {
 
-	_hDevice->write(_pinMask, pinState);
+	_dev->write(_pinMask, pinState);
 }
 
 
 bool PinDriver_VNI8200XP::read() {
 
-	return (_hDevice->read() & _pinMask) != 0;
+	return (_dev->read() & _pinMask) != 0;
 }
 

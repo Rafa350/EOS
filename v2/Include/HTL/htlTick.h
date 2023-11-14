@@ -9,28 +9,36 @@ namespace htl {
 
 	namespace tick {
 
-		class Tick {
+		class TickGenerator {
 			private:
-				static Tick _instance;
+				static TickGenerator _instance;
 				volatile uint32_t _tickCounter;
-				htl::tmr::NotifyEvent<Tick> _tmrNotifyEvent;
+				htl::tmr::NotifyEvent<TickGenerator> _tmrNotifyEvent;
+			public:
+				static constexpr TickGenerator* pInst = &_instance;
+                static constexpr TickGenerator& rInst = _instance;
 			private:
-				Tick();
-				Tick(const Tick&) = delete;
+				TickGenerator();
+				TickGenerator(const TickGenerator&) = delete;
 				void tmrNotifyEventHandler(htl::tmr::TMRDevice *sender, htl::tmr::NotifyEventArgs &args);
 			public:
-				void initialize();
+				void initialize(uint32_t frequency);
 				void deinitialize();
 				void start();
 				void stop();
 				uint32_t getTickCount();
-				void wait(uint32_t time);
-				static constexpr Tick* getHandler() {
+				void wait(uint32_t ticks);
+				static constexpr TickGenerator* getHandler() {
 					return &_instance;
 				}
 		};
         
-        typedef Tick * TickHandler;
+        typedef TickGenerator * TickGeneratorHandler;
+
+
+        inline void delay(uint32_t time) {
+            TickGenerator::getHandler()->wait(time);
+        }
 
 	}
 }

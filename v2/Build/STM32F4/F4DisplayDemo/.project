@@ -344,11 +344,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlSPI.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/htlTick.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlTick.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalHeap.h</locationURI>
@@ -824,9 +819,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlSPI.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlTick.cpp</name>
+			<name>src/Framework/EOS/HTL/STM32/htlTMR.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTick.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

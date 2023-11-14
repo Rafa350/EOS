@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosPinDriver_ISO808__
-#define	__eosPinDriver_ISO808__
 
 
 // EOS includes
@@ -16,38 +14,35 @@ namespace eos {
         private:
             uint8_t _oldState;
 			uint8_t _newState;
-			htl::gpio::PinHandler const _hPinSYNC;
-			htl::gpio::PinHandler const _hPinLOAD;
-			htl::gpio::PinHandler const _hPinIN1;
-			htl::gpio::PinHandler const _hPinIN2;
-			htl::gpio::PinHandler const _hPinIN3;
-			htl::gpio::PinHandler const _hPinIN4;
-			htl::gpio::PinHandler const _hPinIN5;
-			htl::gpio::PinHandler const _hPinIN6;
-			htl::gpio::PinHandler const _hPinIN7;
-			htl::gpio::PinHandler const _hPinIN8;
-			htl::gpio::PinHandler const _hPinOUTEN;
-			htl::gpio::PinHandler const _hPinFAULT;
+			htl::gpio::Pin *_pinSYNC;
+			htl::gpio::Pin *_pinLOAD;
+			htl::gpio::Pin *_pinIN1;
+			htl::gpio::Pin *_pinIN2;
+			htl::gpio::Pin *_pinIN3;
+			htl::gpio::Pin *_pinIN4;
+			htl::gpio::Pin *_pinIN5;
+			htl::gpio::Pin *_pinIN6;
+			htl::gpio::Pin *_pinIN7;
+			htl::gpio::Pin *_pinIN8;
+			htl::gpio::Pin *_pinOUTEN;
+			htl::gpio::Pin *_pinFAULT;
         protected:
-            ISO808_Device(htl::gpio::PinHandler const _hPinSYNC, htl::gpio::PinHandler const _hPinLOAD,
-                htl::gpio::PinHandler _hPinIN1, htl::gpio::PinHandler _hPinIN2, htl::gpio::PinHandler _hPinIN3,
-				htl::gpio::PinHandler _hPinIN4, htl::gpio::PinHandler _hPinIN5, htl::gpio::PinHandler _hPinIN6,
-				htl::gpio::PinHandler _hPinIN7, htl::gpio::PinHandler _hPinIN8, htl::gpio::PinHandler _hPinOUTEN,
-                htl::gpio::PinHandler _hPinFAULT);
+            ISO808_Device();
 		public:
-			void initialize();
+			void initialize(htl::gpio::Pin *pinSYNC, htl::gpio::Pin *pinLOAD,
+	                htl::gpio::Pin *pinIN1, htl::gpio::Pin *pinIN2, htl::gpio::Pin *pinIN3,
+	                htl::gpio::Pin *pinIN4, htl::gpio::Pin *pinIN5, htl::gpio::Pin *pinIN6,
+	                htl::gpio::Pin *pinIN7, htl::gpio::Pin *pinIN8, htl::gpio::Pin *pinOUTEN,
+	                htl::gpio::Pin *pinFAULT);
             inline void set(uint8_t pinMask) {
                 _newState |= pinMask;
             }
-			
             inline void clear(uint8_t pinMask) {
                 _newState &= ~pinMask;
             }
-			
             inline void toggle(uint8_t pinMask) {
                 _newState ^= pinMask;
             }
-
             inline void write(uint8_t pinMask) {
             	_newState = pinMask;
             }
@@ -55,65 +50,38 @@ namespace eos {
             	return _newState;
             }
 			inline void enable() const {
-                _hPinOUTEN->set();
+                _pinOUTEN->set();
             }
 			inline void disable() const {
-                _hPinOUTEN->clear();
+                _pinOUTEN->clear();
                 
             }
             void update();
             bool isOK();
 	};
 
-
-	typedef ISO808_Device *ISO808_DeviceHandler;
-
-
-    template <typename PinSYNC_, typename PinLOAD_,
-              typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_, 
-              typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_,
-              typename PinOUTEN_, typename PinFAULT_>
+    template <uint8_t id_>
 	class ISO808_DeviceX final: public ISO808_Device {
 		private:
 			static ISO808_DeviceX _instance;
-            
+		public:
+			static constexpr ISO808_DeviceX *pInst = &_instance;
+			static constexpr ISO808_DeviceX &rInst = _instance;
         private:
-			ISO808_DeviceX():
-                ISO808_Device(PinSYNC_::getHandler(), PinLOAD_::getHandler(),
-                PinIN1_::getHandler(), PinIN2_::getHandler(), PinIN3_::getHandler(), PinIN4_::getHandler(),
-                PinIN5_::getHandler(), PinIN6_::getHandler(), PinIN7_::getHandler(), PinIN8_::getHandler(),
-                PinOUTEN_::getHandler(), PinFAULT_::getHandler()) {
-			}
             ISO808_DeviceX(const ISO808_DeviceX&) = delete;
 			ISO808_DeviceX & operator = (const ISO808_DeviceX&) = delete;
-
-		public:
-			static constexpr ISO808_DeviceX * getHandler() {
-				return &_instance;
-			}
-			
 	};
     
-    template <typename PinSYNC_, typename PinLOAD_,
-              typename PinIN1_, typename PinIN2_, typename PinIN3_, typename PinIN4_,
-              typename PinIN5_, typename PinIN6_, typename PinIN7_, typename PinIN8_,
-              typename PinOUTEN_, typename PinFAULT_>
-    ISO808_DeviceX<PinSYNC_, PinLOAD_,
-        PinIN1_, PinIN2_, PinIN3_, PinIN4_,
-        PinIN5_, PinIN6_, PinIN7_, PinIN8_,
-        PinOUTEN_, PinFAULT_>
-    ISO808_DeviceX<PinSYNC_, PinLOAD_,
-        PinIN1_, PinIN2_, PinIN3_, PinIN4_,
-        PinIN5_, PinIN6_, PinIN7_, PinIN8_,
-        PinOUTEN_, PinFAULT_>::_instance;
+    template <uint8_t id_>
+    ISO808_DeviceX<id_> ISO808_DeviceX<id_>::_instance;
 
 
     class PinDriver_ISO808 final: public PinDriver {
 		private:
-			ISO808_DeviceHandler const _hDevice;
+			ISO808_Device * const _dev;
 			uint8_t const _pinMask;
 		public:
-			PinDriver_ISO808(ISO808_DeviceHandler hDevice, uint8_t pinNumber);
+			PinDriver_ISO808(ISO808_Device *dev, uint8_t pinNumber);
 			void set() override;
 			void clear() override;
 			void toggle() override;
@@ -122,6 +90,3 @@ namespace eos {
     };
 
 }
-
-
-#endif // __eosPinDriver_ISO808__

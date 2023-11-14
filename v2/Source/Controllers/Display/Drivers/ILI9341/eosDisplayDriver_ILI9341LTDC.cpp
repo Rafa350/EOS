@@ -15,6 +15,7 @@
 
 using namespace eos;
 using namespace htl;
+using namespace htl::ltdc;
 
 
 /// ----------------------------------------------------------------------
@@ -50,12 +51,11 @@ void DisplayDriver_ILI9341LTDC::deinitialize() {
 ///
 void DisplayDriver_ILI9341LTDC::enable() {
 
-	auto hLTDC = ltdc::LTDCDevice::getHandler();
-	hLTDC->enable();
+	LTDCDevice::pInst->enable();
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
-	halTMRDelay(120);
+	delay(120);
 	writeCommand(CMD_DISPLAY_ON);
 	close();
 }
@@ -69,11 +69,10 @@ void DisplayDriver_ILI9341LTDC::disable() {
 	open();
 	writeCommand(CMD_DISPLAY_OFF);
 	writeCommand(CMD_ENTER_SLEEP_MODE);
-	halTMRDelay(120);
+	delay(120);
 	close();
 
-	auto hLTDC = ltdc::LTDCDevice::getHandler();
-	hLTDC->disable();
+	_ltdc->disable();
 }
 
 
@@ -222,39 +221,34 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el pin CS
 	//
-	auto hCS(PinCS::getHandler());
-	hCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
+	_pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
 	// Inicialitza el piun RS
-	auto hRS(PinRS::getHandler());
-	hRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+	_pinRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 
 	// Inicialitza el pin RST
 	#ifdef DISPLAY_RTS_Pin
-	auto hRST(PinRST::getHandler());
-	hRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+	_pinRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 	#endif
 
 	// Inicialitza el modul SPI
 	//
-	auto hSPI(Spi::getHandler());
-	hSPI->initPinSCK<PinSCK>();
-	hSPI->initPinMOSI<PinMOSI>();
-	hSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
-	hSPI->enable();
+	_devSPI->initPinSCK<PinSCK>();
+	_devSPI->initPinMOSI<PinMOSI>();
+	_devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
+	_devSPI->enable();
 
 	// Inicialitza el modul LTDC
 	//
-	auto hLTDC = ltdc::LTDCDevice::getHandler();
-	hLTDC->initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	hLTDC->initPinDE<PinDE, _dePol>();
-	hLTDC->initPinHSYNC<PinHSYNC, _hSyncPol>();
-	hLTDC->initPinVSYNC<PinVSYNC,_vSyncPol>();
-	hLTDC->initPinPC<PinPC, _pcPol>();
-	hLTDC->initPinRX<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	hLTDC->initPinGX<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	hLTDC->initPinBX<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	hLTDC->setBackgroundColor(RGB(0, 0, 255));
+	_ltdc->initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	_ltdc->initPinDE<PinDE, _dePol>();
+	_ltdc->initPinHSYNC<PinHSYNC, _hSyncPol>();
+	_ltdc->initPinVSYNC<PinVSYNC,_vSyncPol>();
+	_ltdc->initPinPC<PinPC, _pcPol>();
+	_ltdc->initPinRX<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	_ltdc->initPinGX<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	_ltdc->initPinBX<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	_ltdc->setBackgroundColor(RGB(0, 0, 255));
 
 	// Inicialitza la capa 1 del modul LTDC
 	//
@@ -267,17 +261,16 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 		Color::format == ColorFormat::al44 ? ltdc::PixelFormat::al44 :
 		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
         ltdc::PixelFormat::rgb565;
-	auto hLayer = ltdc::LTDCLayerDevice1::getHandler();
-	hLayer->setWindow(0, 0, _width, _height);
-	hLayer->setFrameFormat(
+	_ltdcLayer->setWindow(0, 0, _width, _height);
+	_ltdcLayer->setFrameFormat(
 		pixelFormat,
 		_width * Color::bytes,
 		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
 		_height);
-	hLayer->setFrameBuffer(reinterpret_cast<void*>(_buffer));
-	hLayer->enable();
+	_ltdcLayer->setFrameBuffer(reinterpret_cast<void*>(_buffer));
+	_ltdcLayer->enable();
 
-	hLTDC->reload();
+	_ltdc->reload();
 }
 
 
@@ -336,7 +329,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
     while ((c = *p++) != OP_END) {
         switch (c) {
             case OP_DELAY:
-                halTMRDelay(*p++);
+                delay(*p++);
                 break;
 
             default:
@@ -355,8 +348,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 ///
 void DisplayDriver_ILI9341LTDC::open() {
 
-	auto hCS(PinCS::getHandler());
-	hCS->clear();
+	_pinCS->clear();
 }
 
 
@@ -365,8 +357,7 @@ void DisplayDriver_ILI9341LTDC::open() {
 ///
 void DisplayDriver_ILI9341LTDC::close() {
 
-	auto hCS(PinCS::getHandler());
-	hCS->set();
+	_pinCS->set();
 }
 
 
@@ -377,11 +368,8 @@ void DisplayDriver_ILI9341LTDC::close() {
 void DisplayDriver_ILI9341LTDC::writeCommand(
 	uint8_t cmd) {
 
-	auto hRS(PinRS::getHandler());
-	hRS->clear();
-
-	auto hSPI = Spi::getHandler();
-	hSPI->transmit(&cmd, 1);
+	_pinRS->clear();
+	_devSPI->transmit(&cmd, 1);
 }
 
 
@@ -392,9 +380,13 @@ void DisplayDriver_ILI9341LTDC::writeCommand(
 void DisplayDriver_ILI9341LTDC::writeData(
 	uint8_t data) {
 
-	auto hRS(PinRS::getHandler());
-	hRS->set();
+	_pinRS->set();
+	_devSPI->transmit(&data, 1);
+}
 
-	auto hSPI(Spi::getHandler());
-	hSPI->transmit(&data, 1);
+
+void DisplayDriver_ILI9341LTDC::delay(
+    unsigned time) {
+
+    HAL_Delay(time);
 }

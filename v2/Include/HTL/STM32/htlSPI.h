@@ -125,8 +125,6 @@ namespace htl {
 				}
 		};
 
-		typedef SPIDevice * SPIDeviceHandler;
-
 
 		namespace internal {
 
@@ -150,6 +148,8 @@ namespace htl {
 				static SPIDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr SPIDeviceX *pInst = &_instance;
+				static constexpr SPIDeviceX &rInst = _instance;
 			private:
 				SPIDeviceX() :
 					SPIDevice(reinterpret_cast<SPI_TypeDef *>(_spiAddr)) {
@@ -165,26 +165,23 @@ namespace htl {
 					*p &= ~(1 << _rccEnablePos);
 				}
 			public:
-				static constexpr SPIDeviceX * getHandler() {
-					return &_instance;
-				}
 				inline static void interruptHandler() {
-					getHandler()->interruptService();
+					_instance.interruptService();
 				}
 				template <typename pin_>
 				void initPinSCK() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinMISO() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 		};
 

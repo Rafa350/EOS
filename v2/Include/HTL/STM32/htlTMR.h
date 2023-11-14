@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __STM32_htlTMR__
-#define __STM32_htlTMR__
 
 
 // EOS includes
@@ -164,8 +162,6 @@ namespace htl {
 				Result stop();
 		};
 
-		typedef TMRDevice *TMRDeviceHandler;
-
 
 		template <DeviceID deviceID_>
 		class TMRDeviceX final: public TMRDevice {
@@ -177,6 +173,8 @@ namespace htl {
 				static TMRDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr TMRDeviceX *pInst = &_instance;
+				static constexpr TMRDeviceX &rInst = _instance;
 			private:
 				TMRDeviceX() :
 					TMRDevice(reinterpret_cast<TIM_TypeDef*>(_timAddr)) {
@@ -192,11 +190,8 @@ namespace htl {
 					*p &= ~(1 << _enablePos);
 				}
 			public:
-				static constexpr TMRDeviceX * getHandler() {
-					return &_instance;
-				}
 				inline static void interruptHandler() {
-					getHandler()->interruptService();
+					_instance.interruptService();
 				}
 		};
 
@@ -444,6 +439,3 @@ namespace htl {
 		}
 	}
 }
-
-
-#endif // __STM32_htlTMR__

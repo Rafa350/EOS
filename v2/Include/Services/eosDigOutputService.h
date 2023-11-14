@@ -1,5 +1,4 @@
-#ifndef __eosDigOutput__
-#define	__eosDigOutput__
+#pragma once
 
 
 // EOS includes
@@ -223,6 +222,3 @@ namespace eos {
     };
     
 }
-
-
-#endif // __eosDigOutput__

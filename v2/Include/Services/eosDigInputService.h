@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosDigInputService__
-#define	__eosDigInputService__
 
 
 // EOS includes
@@ -127,7 +125,3 @@ namespace eos {
     };
 
 }
-
-
-#endif	// __eosDigInputService__
-

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosRTOSApplication__
-#define	__eosRTOSApplication__
 
 
 // EOS includes
@@ -64,8 +62,5 @@ namespace eos {
             void removeServices();
     };
 }
-
-
-#endif // __eosRTOSApplication__
 
 

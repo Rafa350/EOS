@@ -8,68 +8,67 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    hSYNC: Handler del pin SYNC.
-/// \param    hLOAD: Handler del pin LOAD.
-/// \param    hIN1: Handler del pin IN1.
-/// \param    hIN2: Handler del pin IN2.
-/// \param    hIN3: Handler del pin IN3.
-/// \param    hIN4: Handler del pin IN4.
-/// \param    hIN5: Handler del pin IN5.
-/// \param    hIN6: Handler del pin IN6.
-/// \param    hIN7: Handler del pin IN7.
-/// \param    hIN7: Handler del pin IN8.
-/// \param    hOUTEN: Handler del pin OUTEN.
-/// \param    hFAULT: Handler del pin FAULT.
 ///
-ISO808_Device::ISO808_Device(
-    htl::gpio::PinHandler hPinSYNC,
-    htl::gpio::PinHandler hPinLOAD,
-    htl::gpio::PinHandler hPinIN1,
-    htl::gpio::PinHandler hPinIN2,
-    htl::gpio::PinHandler hPinIN3,
-    htl::gpio::PinHandler hPinIN4,
-    htl::gpio::PinHandler hPinIN5,
-    htl::gpio::PinHandler hPinIN6,
-    htl::gpio::PinHandler hPinIN7,
-    htl::gpio::PinHandler hPinIN8,
-    htl::gpio::PinHandler hPinOUTEN,
-    htl::gpio::PinHandler hPinFAULT):
-
+ISO808_Device::ISO808_Device():
     _oldState {0},
     _newState {0},
-    _hPinSYNC {hPinSYNC},
-    _hPinLOAD {hPinLOAD},
-    _hPinIN1 {hPinIN1},
-    _hPinIN2 {hPinIN2},
-    _hPinIN3 {hPinIN3},
-    _hPinIN4 {hPinIN4},
-    _hPinIN5 {hPinIN5},
-    _hPinIN6 {hPinIN6},
-    _hPinIN7 {hPinIN7},
-    _hPinIN8 {hPinIN8},
-    _hPinOUTEN {hPinOUTEN},
-    _hPinFAULT {hPinFAULT} {
+    _pinSYNC {nullptr},
+    _pinLOAD {nullptr},
+    _pinIN1 {nullptr},
+    _pinIN2 {nullptr},
+    _pinIN3 {nullptr},
+    _pinIN4 {nullptr},
+    _pinIN5 {nullptr},
+    _pinIN6 {nullptr},
+    _pinIN7 {nullptr},
+    _pinIN8 {nullptr},
+    _pinOUTEN {nullptr},
+    _pinFAULT {nullptr} {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
+/// \param    pinSYNC: Handler del pin SYNC.
+/// \param    pinLOAD: Handler del pin LOAD.
+/// \param    pinIN1: Handler del pin IN1.
+/// \param    pinIN2: Handler del pin IN2.
+/// \param    pinIN3: Handler del pin IN3.
+/// \param    pinIN4: Handler del pin IN4.
+/// \param    pinIN5: Handler del pin IN5.
+/// \param    pinIN6: Handler del pin IN6.
+/// \param    pinIN7: Handler del pin IN7.
+/// \param    pinIN7: Handler del pin IN8.
+/// \param    pinOUTEN: Handler del pin OUTEN.
+/// \param    pinFAULT: Handler del pin FAULT.
 ///
-void ISO808_Device::initialize() {
+void ISO808_Device::initialize(
+    htl::gpio::Pin *pinSYNC,
+    htl::gpio::Pin *pinLOAD,
+    htl::gpio::Pin *pinIN1,
+    htl::gpio::Pin *pinIN2,
+    htl::gpio::Pin *pinIN3,
+    htl::gpio::Pin *pinIN4,
+    htl::gpio::Pin *pinIN5,
+    htl::gpio::Pin *pinIN6,
+    htl::gpio::Pin *pinIN7,
+    htl::gpio::Pin *pinIN8,
+    htl::gpio::Pin *pinOUTEN,
+    htl::gpio::Pin *pinFAULT) {
 
-    _hPinSYNC->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, true);
-    _hPinLOAD->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, true);
-    _hPinIN1->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinIN2->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinIN3->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinIN4->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinIN5->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinIN6->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinIN7->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinIN8->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinOUTEN->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
-    _hPinFAULT->initInput(htl::gpio::InputMode::pullUp);
+    _pinSYNC = pinSYNC;
+    _pinLOAD = pinLOAD;
+    _pinIN1 = pinIN1;
+    _pinIN2 = pinIN2;
+    _pinIN3 = pinIN3;
+    _pinIN4 = pinIN4;
+    _pinIN5 = pinIN5;
+    _pinIN6 = pinIN6;
+    _pinIN7 = pinIN7;
+    _pinIN8 = pinIN8;
+    _pinOUTEN = pinOUTEN;
+    _pinFAULT = pinFAULT;
 }
 
 
@@ -80,18 +79,18 @@ void ISO808_Device::update() {
 
     if (_newState != _oldState) {
 
-        _hPinLOAD->clear();
-        _hPinSYNC->clear();
-        if ((_newState & 0x01) == 0) _hPinIN1->clear(); else _hPinIN1->set();
-        if ((_newState & 0x02) == 0) _hPinIN2->clear(); else _hPinIN2->set();
-        if ((_newState & 0x04) == 0) _hPinIN3->clear(); else _hPinIN3->set();
-        if ((_newState & 0x08) == 0) _hPinIN4->clear(); else _hPinIN4->set();
-        if ((_newState & 0x10) == 0) _hPinIN5->clear(); else _hPinIN5->set();
-        if ((_newState & 0x20) == 0) _hPinIN6->clear(); else _hPinIN6->set();
-        if ((_newState & 0x40) == 0) _hPinIN7->clear(); else _hPinIN7->set();
-        if ((_newState & 0x80) == 0) _hPinIN8->clear(); else _hPinIN8->set();
-        _hPinLOAD->set(); // Carrega en el latch
-        _hPinSYNC->set(); // Transfereix a les sortides
+        _pinLOAD->clear();
+        _pinSYNC->clear();
+        if ((_newState & 0x01) == 0) _pinIN1->clear(); else _pinIN1->set();
+        if ((_newState & 0x02) == 0) _pinIN2->clear(); else _pinIN2->set();
+        if ((_newState & 0x04) == 0) _pinIN3->clear(); else _pinIN3->set();
+        if ((_newState & 0x08) == 0) _pinIN4->clear(); else _pinIN4->set();
+        if ((_newState & 0x10) == 0) _pinIN5->clear(); else _pinIN5->set();
+        if ((_newState & 0x20) == 0) _pinIN6->clear(); else _pinIN6->set();
+        if ((_newState & 0x40) == 0) _pinIN7->clear(); else _pinIN7->set();
+        if ((_newState & 0x80) == 0) _pinIN8->clear(); else _pinIN8->set();
+        _pinLOAD->set(); // Carrega en el latch
+        _pinSYNC->set(); // Transfereix a les sortides
 
         _oldState = _newState;
     }
@@ -104,20 +103,20 @@ void ISO808_Device::update() {
 ///
 bool ISO808_Device::isOK() {
     
-    return _hPinFAULT->read();
+    return _pinFAULT->read();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    hDevice: El dispositiu.
+/// \param    del: El dispositiu.
 /// \param    pinNumber: El numero de pin.
 ///
 PinDriver_ISO808::PinDriver_ISO808(
-    ISO808_DeviceHandler hDevice,
+    ISO808_Device *dev,
     uint8_t pinNumber) :
 
-    _hDevice {hDevice},
+    _dev {dev},
     _pinMask {uint8_t(1 << pinNumber)} {
 }
 
@@ -127,7 +126,7 @@ PinDriver_ISO808::PinDriver_ISO808(
 ///
 void PinDriver_ISO808::set() {
 
-    _hDevice->set(_pinMask);
+    _dev->set(_pinMask);
 }
 
 
@@ -136,7 +135,7 @@ void PinDriver_ISO808::set() {
 ///
 void PinDriver_ISO808::clear() {
 
-    _hDevice->clear(_pinMask);
+    _dev->clear(_pinMask);
 }
 
 
@@ -145,7 +144,7 @@ void PinDriver_ISO808::clear() {
 ///
 void PinDriver_ISO808::toggle() {
 
-    _hDevice->toggle(_pinMask);
+    _dev->toggle(_pinMask);
 }
 
 
@@ -157,9 +156,9 @@ void PinDriver_ISO808::write(
     bool pinState) {
 
     if (pinState)
-        _hDevice->set(_pinMask);
+        _dev->set(_pinMask);
     else
-        _hDevice->clear(_pinMask);
+        _dev->clear(_pinMask);
 }
 
 
@@ -169,5 +168,5 @@ void PinDriver_ISO808::write(
 ///
 bool PinDriver_ISO808::read() {
 
-    return (_hDevice->read() & _pinMask) != 0;
+    return (_dev->read() & _pinMask) != 0;
 }

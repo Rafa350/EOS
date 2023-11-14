@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosPinDriver__
-#define	__eosPinDriver__
 
 
 // EOS includes
@@ -24,6 +22,3 @@ namespace eos {
     };
 
 }
-
-
-#endif // __eosPinDriver__

@@ -40,13 +40,16 @@ namespace eos {
     			using PinTE = DISPLAY_TE_Pin;
 				using PinSCK = DISPLAY_SCK_Pin;
 				using PinMOSI = DISPLAY_MOSI_Pin;
-				using Spi = DISPLAY_SPI;
+				using DevSPI = DISPLAY_SPI;
+				static constexpr DevSPI *_devSPI = DevSPI::pInst;
 			#endif
 			#if defined(DISPLAY_RST_GPIO)
     			using PinRST = DISPLAY_RST_GPIO;
 			#endif
     		using PinCS = DISPLAY_CS_Pin;
     		using PinRS = DISPLAY_RS_Pin;
+            static constexpr PinCS *_pinCS = PinCS::pInst;
+            static constexpr PinRS *_pinRS = PinRS::pInst;
 
     	private:
     		constexpr static int16_t _displayWidth = DISPLAY_WIDTH;
@@ -92,6 +95,7 @@ namespace eos {
             void initializeInterface();
             void initializeController();
 
+            void delay(unsigned time);
             void open();
             void close();
             void writeCommand(uint8_t cmd);

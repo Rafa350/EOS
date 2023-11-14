@@ -13,17 +13,17 @@ using namespace htl;
 /// \param    txBufferSize: Tamany del buffer de transmissio.
 /// \param    rxBuffer: Buffer de recepcio.
 /// \param    rxBufferSize: Tamany del buffer de recepcio.
-/// \param    i2c: Handler del modul I2C.
+/// \param    dev: El dispositiu I2C.
 ///
 CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 	uint8_t *txBuffer,
 	uint16_t txBufferSize,
 	uint8_t *rxBuffer,
 	uint8_t rxBufferSize,
-	htl::i2c::I2CSlaveDeviceHandler i2c) :
+	htl::i2c::I2CSlaveDevice *dev) :
 
 	CircularSerialDriver(txBuffer, txBufferSize, rxBuffer, rxBufferSize),
-	_i2c(i2c),
+	_dev(dev),
 	_i2cNotifyEvent(*this, &CircularSerialDriver_I2CSlave::i2cNotifyEventHandler) {
 
 }
@@ -34,8 +34,8 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 ///
 void CircularSerialDriver_I2CSlave::initializeImpl() {
 
-	_i2c->setNotifyEvent(_i2cNotifyEvent, true);
-	_i2c->listen(_buffer, sizeof(_buffer));
+	_dev->setNotifyEvent(_i2cNotifyEvent, true);
+	_dev->listen(_buffer, sizeof(_buffer));
 }
 
 
@@ -44,8 +44,8 @@ void CircularSerialDriver_I2CSlave::initializeImpl() {
 ///
 void CircularSerialDriver_I2CSlave::deinitializeImpl() {
 
-	_i2c->endListen();
-	_i2c->disableNotifyEvent();
+	_dev->endListen();
+	_dev->disableNotifyEvent();
 }
 
 

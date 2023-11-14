@@ -15,10 +15,12 @@ namespace eos {
 
     class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
     	private:
-    		using PinCS = DISPLAY_CS_Pin;
-    		using PinRS = DISPLAY_RS_Pin;
     		using PinSCK = DISPLAY_SCK_Pin;
     		using PinMOSI = DISPLAY_MOSI_Pin;
+    		using DevSPI = DISPLAY_SPI;
+
+    		using PinCS = DISPLAY_CS_Pin;
+    		using PinRS = DISPLAY_RS_Pin;
 
 			using PinDE = DISPLAY_DE_Pin;
 			using PinHSYNC = DISPLAY_HSYNC_Pin;
@@ -43,8 +45,6 @@ namespace eos {
 			using PinB6 = DISPLAY_B6_Pin;
 			using PinB7 = DISPLAY_B7_Pin;
 
-			using Spi = DISPLAY_SPI;
-
 			static constexpr uint16_t _hSync       = DISPLAY_HSYNC;
 			static constexpr uint16_t _vSync       = DISPLAY_VSYNC;
 			static constexpr uint16_t _hBP         = DISPLAY_HBP;
@@ -58,6 +58,12 @@ namespace eos {
 			static constexpr uint16_t _width       = DISPLAY_WIDTH;
 			static constexpr uint16_t _height      = DISPLAY_HEIGHT;
 			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;
+
+			static constexpr htl::ltdc::LTDCDevice *_ltdc = htl::ltdc::LTDCDevice::pInst;
+            static constexpr htl::ltdc::LTDCLayerDevice1 *_ltdcLayer = htl::ltdc::LTDCLayerDevice1::pInst;
+            static constexpr PinCS *_pinCS = PinCS::pInst;
+            static constexpr PinRS *_pinRS = PinRS::pInst;
+            static constexpr DevSPI *_devSPI = DevSPI::pInst;
 
         private:
             FrameBuffer * const _frameBuffer;
@@ -91,6 +97,7 @@ namespace eos {
             void initializeInterface();
             void initializeController();
 
+            void delay(unsigned time);
             void open();
             void close();
             void writeCommand(uint8_t cmd);

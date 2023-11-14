@@ -16,8 +16,8 @@ CLT0138SQ7_Device::CLT0138SQ7_Device():
 	_pinState {0},
 	_underVoltage {false},
 	_overTemperature {false},
-	_hSPI {nullptr},
-	_hPinSS {nullptr} {
+	_spi {nullptr},
+	_pinSS {nullptr} {
 
 }
 
@@ -25,16 +25,16 @@ CLT0138SQ7_Device::CLT0138SQ7_Device():
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
 /// \param    hSPI: Handler del dispositiu SPI per la comunicacio.
-/// \param    hSS: Handler del pin pel chip select.
+/// \param    pinSS: El pin pel chip select.
 ///
 CLT0138SQ7_Device::Result CLT0138SQ7_Device::initialize(
-	htl::spi::SPIDeviceHandler hSPI,
-	htl::gpio::PinHandler hPinSS) {
+	htl::spi::SPIDevice *spi,
+	htl::gpio::Pin *pinSS) {
 
 	if (_state == State::reset) {
 
-		_hSPI = hSPI;
-		_hPinSS = hPinSS;
+		_spi = spi;
+		_pinSS = pinSS;
 
 		_state = State::ready;
 
@@ -58,9 +58,9 @@ void CLT0138SQ7_Device::update() {
 
 		uint8_t rxBuffer[2];
 
-		_hPinSS->clear();
-		_hSPI->receive(rxBuffer, sizeof(rxBuffer));
-		_hPinSS->set();
+		_pinSS->clear();
+		_spi->receive(rxBuffer, sizeof(rxBuffer));
+		_pinSS->set();
 
 		_underVoltage = (rxBuffer[1] & 0x80) == 0;
 		_overTemperature = (rxBuffer[1] & 0x40) == 0;
@@ -70,11 +70,16 @@ void CLT0138SQ7_Device::update() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    hDevice: Handler del dispositiu CTL0138SQ7
+/// \param    pinNumber: El numero de pin.
+///
 PinDriver_CLT0138SQ7::PinDriver_CLT0138SQ7(
-	CLT0138SQ7_DeviceHandler hDevice,
+	CLT0138SQ7_Device *dev,
 	uint8_t pinNumber):
 
-	_hDevice {hDevice},
+	_dev {dev},
 	_pinMask {uint8_t(1 << pinNumber)} {
 
 }
@@ -103,7 +108,7 @@ void PinDriver_CLT0138SQ7::write(
 
 bool PinDriver_CLT0138SQ7::read() {
 
-	return (_hDevice->read() & _pinMask) != 0;
+	return (_dev->read() & _pinMask) != 0;
 }
 
 

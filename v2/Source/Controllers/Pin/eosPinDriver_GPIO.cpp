@@ -7,12 +7,12 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
-/// \param    pin: Handler del pin.
+/// \param    pin: El pin.
 ///
 PinDriver_GPIO::PinDriver_GPIO(
-	htl::gpio::PinHandler hPin):
+	htl::gpio::Pin *pin):
 
-	_hPin {hPin} {
+	_pin {pin} {
 
 }
 
@@ -22,7 +22,7 @@ PinDriver_GPIO::PinDriver_GPIO(
 ///
 void PinDriver_GPIO::set() {
 
-	_hPin->set();
+	_pin->set();
 }
 
 
@@ -31,7 +31,7 @@ void PinDriver_GPIO::set() {
 ///
 void PinDriver_GPIO::clear() {
 
-	_hPin->clear();
+	_pin->clear();
 }
 
 
@@ -40,7 +40,7 @@ void PinDriver_GPIO::clear() {
 ///
 void PinDriver_GPIO::toggle() {
 
-	_hPin->toggle();
+	_pin->toggle();
 }
 
 
@@ -50,7 +50,7 @@ void PinDriver_GPIO::toggle() {
 void PinDriver_GPIO::write(
 	bool pinState) {
 
-	_hPin->write(pinState);
+	_pin->write(pinState);
 }
 
 
@@ -60,5 +60,5 @@ void PinDriver_GPIO::write(
 ///
 bool PinDriver_GPIO::read() {
 
-	return _hPin->read();
+	return _pin->read();
 }

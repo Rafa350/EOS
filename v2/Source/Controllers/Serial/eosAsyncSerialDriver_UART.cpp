@@ -9,12 +9,12 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    uart: El modul uart a utilitzar.
+/// \param    devUART: El dispositiu uart a utilitzar.
 ///
 AsyncSerialDriver_UART::AsyncSerialDriver_UART(
-	uart::UARTDeviceHandler hUART):
+	uart::UARTDevice *devUART):
 
-	_hUART {hUART},
+	_devUART {devUART},
 	_uartNotifyEvent {*this, &AsyncSerialDriver_UART::uartNotifyEventHandler},
 	_taskCallback {*this, &AsyncSerialDriver_UART::taskCallbackHandler} {
 	//_task {100, Task::Priority::normal, "", &_taskCallback, nullptr} {
@@ -28,8 +28,8 @@ void AsyncSerialDriver_UART::initializeImpl() {
 
     AsyncSerialDriver::initializeImpl();
 
-	_hUART->setNotifyEvent(_uartNotifyEvent);
-	_hUART->enable();
+	_devUART->setNotifyEvent(_uartNotifyEvent);
+	_devUART->enable();
 }
 
 
@@ -38,8 +38,8 @@ void AsyncSerialDriver_UART::initializeImpl() {
 ///
 void AsyncSerialDriver_UART::deinitializeImpl() {
 
-	_hUART->disable();
-	_hUART->disableNotifyEvent();
+	_devUART->disable();
+	_devUART->disableNotifyEvent();
 
     AsyncSerialDriver::deinitializeImpl();
 }
@@ -64,7 +64,7 @@ bool AsyncSerialDriver_UART::transmitImpl(
 	else {
 		notifyTxStart();
 
-		_hUART->transmit_IRQ(data,  dataLength);
+		_devUART->transmit_IRQ(data,  dataLength);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
@@ -93,7 +93,7 @@ bool AsyncSerialDriver_UART::receiveImpl(
 	else {
 		notifyRxStart();
 
-		_hUART->receive_IRQ(data, dataSize);
+		_devUART->receive_IRQ(data, dataSize);
 
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles en la UART.

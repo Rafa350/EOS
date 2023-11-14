@@ -59,12 +59,16 @@ namespace eos {
 			#if defined(DISPLAY_INTERFACE_SPI)
 			using PinCS = DISPLAY_CS_Pin;
 			using PinDC = DISPLAY_DC_Pin;
+			static constexpr PinCS *_pinCS = PinCS::pInst;
+			static constexpr PinDC *_pinDC = PinDC::pInst;
 			#ifdef DISPLAY_RST_Pin
 			using PinRST = DISPLAY_RST_Pin;
+            static constexpr PinRST *_pinRST = PinRST::pInst;
 			#endif
 			using PinSCK = DISPLAY_SCK_Pin;
 			using PinMOSI = DISPLAY_MOSI_Pin;
-			using SpiDevice = DISPLAY_SPI_Device;
+			using DevSPI = DISPLAY_SPI_Device;
+			static constexpr DevSPI *_devSPI = DevSPI::pInst;
 			#endif
 
 			FrameBuffer *_frameBuffer;

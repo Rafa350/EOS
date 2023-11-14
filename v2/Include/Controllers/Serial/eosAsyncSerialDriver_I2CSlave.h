@@ -14,7 +14,7 @@ namespace eos {
 			using I2CNotifyEvent = htl::i2c::SlaveNotifyEvent<AsyncSerialDriver_I2CSlave>;
 
 		private:
-			htl::i2c::I2CSlaveDeviceHandler _i2c;
+			htl::i2c::I2CSlaveDevice *_devI2C;
 			I2CNotifyEvent _i2cNotifyEvent;
 			const uint8_t *_txData;
 			int _txLength;
@@ -30,7 +30,7 @@ namespace eos {
 			bool receiveImpl(uint8_t *data, int dataSize) override;
 
 		public:
-			AsyncSerialDriver_I2CSlave(htl::i2c::I2CSlaveDeviceHandler i2c);
+			AsyncSerialDriver_I2CSlave(htl::i2c::I2CSlaveDevice *devI2C);
 	};
 }
 

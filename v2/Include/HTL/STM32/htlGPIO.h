@@ -220,8 +220,6 @@ namespace htl {
 				}
 		};
 
-		typedef Port *PortHandler;
-
 
         /// brief Class form access to GPIO individual pin functions
 		class Pin {
@@ -257,8 +255,6 @@ namespace htl {
 					return (_gpio->IDR & _mask) != 0;
 				}
 		};
-
-		typedef Pin *PinHandler;
 
 
 		enum class NotifyID {
@@ -334,6 +330,8 @@ namespace htl {
 				static PortX _instance;
 			public:
 				static constexpr PortID portID = portID_;
+				static constexpr PortX *pInst = &_instance;
+                static constexpr PortX &rInst = _instance;
 			private:
 				PortX():
 					Port(reinterpret_cast<GPIO_TypeDef *>(_gpioAddr)) {
@@ -348,21 +346,13 @@ namespace htl {
 				void reset() override {
 				}
 			public:
-				static constexpr PortX * getHandler() {
-					return &_instance;
-				}
 				inline static void interruptHandler() {
-					getHandler()->interruptService();
+					_instance.interruptService();
 				}
 		};
 
 		template <PortID portID_>
 		PortX<portID_> PortX<portID_>::_instance;
-
-		template <PortID portID_>
-		inline PortHandler getPortHandler() {
-			return PortX<portID_>::getHandler();
-		}
 
 
 		#ifdef HTL_GPIOA_EXIST
@@ -412,6 +402,8 @@ namespace htl {
 				static constexpr PortID portID = portID_;
 				static constexpr PinID pinID = pinID_;
 				static constexpr PinMask pinMask = 1 << uint32_t(pinID_);
+                static constexpr PinX *pInst = &_instance;
+                static constexpr PinX &rInst = _instance;
 			private:
 				PinX():
 					Pin(reinterpret_cast<GPIO_TypeDef *>(_gpioAddr), pinID_) {
@@ -423,19 +415,11 @@ namespace htl {
 				void deactivate() override {
 					Activator::activate(PinMask(1 << uint32_t(pinID_)));
 				}
-			public:
-				static constexpr PinX * getHandler() {
-					return &_instance;
-				}
 		};
 
 		template <PortID portID_, PinID pinID_>
 		PinX<portID_, pinID_> PinX<portID_, pinID_>::_instance;
 
-		template <PortID portID_, PinID pinID_>
-		inline PinX<portID_, pinID_> * getPinHandler() {
-			return PinX<portID_, pinID_>::getHandler();
-		}
 
 		#ifdef HTL_GPIOA_EXIST
 		typedef PinX<PortID::A, PinID::_0> PinA0;

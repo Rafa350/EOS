@@ -23,13 +23,11 @@ LedService::LedService() :
 void LedService::onInitialize() {
 
 	#ifdef EXIST_LED1
-		auto hPinLED1 = LED1_Pin::getHandler();
-		hPinLED1->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, LED1_StateON);
+		LED1_Pin::pInst->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, LED1_StateON);
 	#endif
 
 	#ifdef EXIST_LED2
-		auto hPinLED2 = LED2_Pin::getHandler();
-		hPinLED2->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, LED1_StateOFF);
+		LED2_Pin::pInst->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, LED1_StateOFF);
 	#endif
 }
 
@@ -42,11 +40,9 @@ void LedService::onTask() {
 	Task::delay(500);
 
 	#ifdef EXIST_LED1
-	auto hPinLED1 = LED1_Pin::getHandler();
-	hPinLED1->toggle();
+	LED1_Pin::pInst->toggle();
 	#endif
 	#ifdef EXIST_LED2
-	auto hPinLED2 = LED2_Pin::getHandler();
-	hPinLED2->toggle();
+	LED2_Pin::pInst->toggle();
 	#endif
 }

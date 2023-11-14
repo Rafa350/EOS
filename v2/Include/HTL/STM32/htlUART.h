@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __STM32_htlUART__
-#define __STM32_htlUART__
 
 
 // EOS includes
@@ -223,8 +221,6 @@ namespace htl {
 				}
 		};
 
-		typedef UARTDevice *UARTDeviceHandler;
-
 
 		template <DeviceID deviceID_>
 		class UARTDeviceX final: public UARTDevice {
@@ -237,6 +233,8 @@ namespace htl {
 				static UARTDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr UARTDeviceX *pInst = &_instance;
+				static constexpr UARTDeviceX &rInst = _instance;
 			private:
 				UARTDeviceX() :
 					UARTDevice {reinterpret_cast<USART_TypeDef*>(_usartAddr)} {
@@ -252,31 +250,28 @@ namespace htl {
 					*p &= ~(1 << _rccEnablePos);
 				}
 			public:
-				static constexpr UARTDeviceX * getHandler() {
-					return &_instance;
-				}
 				inline static void interruptHandler() {
-					getHandler()->interruptService();
+					_instance.interruptService();
 				}
 				template <typename pin_>
 				void initPinTX() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinRX() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinCTS() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::cts, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinRTS() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
 				}
 				void setRxTimeout(uint32_t lostBits) {
 					if constexpr(HI::supportedRxTimeout) {
@@ -445,7 +440,3 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
-
-
-#endif // __STM32_htlUART__
-

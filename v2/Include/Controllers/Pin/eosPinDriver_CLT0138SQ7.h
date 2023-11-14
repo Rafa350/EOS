@@ -26,12 +26,12 @@ namespace eos {
 			uint8_t _pinState;
 			bool _underVoltage;
 			bool _overTemperature;
-			htl::spi::SPIDeviceHandler _hSPI;
-			htl::gpio::PinHandler _hPinSS;
+			htl::spi::SPIDevice *_spi;
+			htl::gpio::Pin* _pinSS;
 		protected:
 			CLT0138SQ7_Device();
 		public:
-            Result initialize(htl::spi::SPIDeviceHandler hSPI, htl::gpio::PinHandler hPinSS);
+            Result initialize(htl::spi::SPIDevice *spi, htl::gpio::Pin *pinSS);
 			inline uint8_t read() const { return _pinState; }
             void update();
             inline bool isUnderVoltage() const { return _underVoltage; }
@@ -39,22 +39,19 @@ namespace eos {
             
 	};
 
-	typedef CLT0138SQ7_Device *CLT0138SQ7_DeviceHandler;
-
 	template <uint8_t id_>
 	class CLT0138SQ7_DeviceX final: public CLT0138SQ7_Device {
 		private:
 			static CLT0138SQ7_DeviceX _instance;
+		public:
+			static constexpr CLT0138SQ7_DeviceX *pInst = &_instance;
+            static constexpr CLT0138SQ7_DeviceX &rInst = _instance;
 		private:
 			CLT0138SQ7_DeviceX():
 				CLT0138SQ7_Device() {
 			}
 			CLT0138SQ7_DeviceX(const CLT0138SQ7_DeviceX&) = delete;
 			CLT0138SQ7_DeviceX operator = (const CLT0138SQ7_DeviceX&) = delete;
-		public:
-			static constexpr CLT0138SQ7_DeviceX * getHandler() {
-				return &_instance;
-			}
 	};
     template <uint8_t id_>
     CLT0138SQ7_DeviceX<id_> CLT0138SQ7_DeviceX<id_>::_instance;
@@ -62,10 +59,10 @@ namespace eos {
 
     class PinDriver_CLT0138SQ7 final: public PinDriver {
     	private:
-    		CLT0138SQ7_DeviceHandler const _hDevice;
+    		CLT0138SQ7_Device * const _dev;
     		uint8_t const _pinMask;
     	public:
-    		PinDriver_CLT0138SQ7(CLT0138SQ7_DeviceHandler hDevice, uint8_t pinNumber);
+    		PinDriver_CLT0138SQ7(CLT0138SQ7_Device *dev, uint8_t pinNumber);
             void set() override;
             void clear() override;
             void toggle() override;

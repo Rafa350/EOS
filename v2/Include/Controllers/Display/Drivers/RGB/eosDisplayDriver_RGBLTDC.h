@@ -43,6 +43,14 @@ namespace eos {
 			using PinB7 = DISPLAY_B7_Pin;
 			using PinLCDE = DISPLAY_LCDE_Pin;
 			using PinBKE = DISPLAY_BKE_Pin;
+			using DevLTDC = htl::ltdc::LTDCDevice;
+			using DevLTDCLayer = htl::ltdc::LTDCLayerDevice1;
+
+			static constexpr PinLCDE *_pinLCDE = PinLCDE::pInst;
+            static constexpr PinBKE *_pinBKE = PinBKE::pInst;
+
+            static constexpr DevLTDC *_devLTDC = DevLTDC::pInst;
+			static constexpr DevLTDCLayer *_devLTDCLayer = DevLTDCLayer::pInst;
 
 			static constexpr uint16_t _hSync       = DISPLAY_HSYNC;
 			static constexpr uint16_t _vSync       = DISPLAY_VSYNC;

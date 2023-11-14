@@ -254,7 +254,7 @@
 
 
 #ifndef HTL_TICK_TIMER
-#define HTL_TICK_TIMER htl::trm::TMR14Device
+    #define HTL_TICK_TIMER htl::tmr::TMRDevice14
 #endif
 
 

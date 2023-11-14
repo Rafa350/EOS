@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __STM32_htlI2C__
-#define __STM32_htlI2C__
 
 
 // EOS includes
@@ -158,9 +156,6 @@ namespace htl {
 				}
 		};
 
-		typedef I2CSlaveDevice *I2CSlaveDeviceHandler;
-
-
 		class I2CMasterDevice: public I2CDevice {
 			public:
 				enum class State {
@@ -205,6 +200,8 @@ namespace htl {
 				static I2CSlaveDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr I2CSlaveDeviceX *pInst = &_instance;
+				static constexpr I2CSlaveDeviceX &rInst = _instance;
 			private:
 				constexpr I2CSlaveDeviceX() :
 					I2CSlaveDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
@@ -220,26 +217,23 @@ namespace htl {
 					*p &= ~(1 << _rccEnablePos);
 				}
 			public:
-				static constexpr I2CSlaveDeviceX * getHandler() {
-					return &_instance;
-				}
 				inline static void interruptHandler() {
-					getHandler()->interruptService();
+					_instance.interruptService();
 				}
 				template <typename pin_>
 				void initPinSCL() {
 					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
+					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinSDA() {
 					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
+					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinSMBA() {
 					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
+					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 		};
 
@@ -272,6 +266,8 @@ namespace htl {
 				static I2CMasterDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
+                static constexpr I2CMasterDeviceX *pInst = &_instance;
+                static constexpr I2CMasterDeviceX &rInst = _instance;
 			private:
 				I2CMasterDeviceX() :
 					I2CMasterDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
@@ -287,21 +283,18 @@ namespace htl {
 					*p &= ~(1 << _rccEnablePos);
 				}
 			public:
-				static constexpr I2CMasterDeviceX * getHandler() {
-					return &_instance;
-				}
 				inline static void interruptHandler() {
-					getHandler()->interruptService();
+					_instance.interruptService();
 				}
 				template <typename pin_>
 				void initPinSCL() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
 				}
 				template <typename pin_>
 				void initPinSDA() {
 					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::getHandler()->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
 				}
 		};
 
@@ -410,7 +403,3 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
-
-
-#endif // __STM32_htlI2C__
-

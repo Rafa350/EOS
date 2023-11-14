@@ -14,7 +14,7 @@ namespace eos {
 			using I2CNotifyEvent = htl::i2c::SlaveNotifyEvent<CircularSerialDriver_I2CSlave>;
 
 		private:
-			htl::i2c::I2CSlaveDeviceHandler _i2c;
+			htl::i2c::I2CSlaveDevice *_dev;
 			uint8_t _buffer[10];
 			I2CNotifyEvent _i2cNotifyEvent;
 
@@ -29,7 +29,7 @@ namespace eos {
 
 		public:
 			CircularSerialDriver_I2CSlave(uint8_t *txBuffer, uint16_t txBufferSize,
-				uint8_t *rxBuffer, uint8_t rxBufferSize, htl::i2c::I2CSlaveDeviceHandler i2c);
+				uint8_t *rxBuffer, uint8_t rxBufferSize, htl::i2c::I2CSlaveDevice *dev);
 
 			void initialize();
 			void deinitialize();

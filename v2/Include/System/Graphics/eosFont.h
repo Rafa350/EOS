@@ -1,5 +1,4 @@
-#ifndef __eosFont__
-#define __eosFont__
+#pragma once
 
 
 // EOS includes
@@ -75,7 +74,4 @@ namespace eos {
             static const uint8_t* getFontResource(const char *name, int height, FontStyle style);
     };
 }
-
-
-#endif // __eosFont__
 

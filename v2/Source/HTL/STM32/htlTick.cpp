@@ -8,65 +8,71 @@
 using namespace htl::tick;
 
 
-Tick Tick::_instance;
+using TMRTick = HTL_TICK_TIMER;
+
+
+TickGenerator TickGenerator::_instance;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 ///
-Tick::Tick():
+TickGenerator::TickGenerator():
 	_tickCounter {0},
-	_tmrNotifyEvent {*this, &Tick::tmrNotifyEventHandler} {
+	_tmrNotifyEvent {*this, &TickGenerator::tmrNotifyEventHandler} {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
+/// \param    frequanry: Frequencia.
 ///
-void Tick::initialize() {
+void TickGenerator::initialize(
+    uint32_t frequency) {
 
 	uint32_t period = 1000;
-	uint32_t prescaler = (clock::getClockFrequency(clock::ClockID::pclk) / 1000000) - 1;
+	uint32_t prescaler = (clock::getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
-	auto tmr = tmr::TMRDevice14::getHandler();
-	tmr->initBase(clkDiv, prescaler, period);
-	tmr->setNotifyEvent(_tmrNotifyEvent, true);
-	tmr->start_IRQ();
+	TMRTick::pInst->initBase(clkDiv, prescaler, period);
+	TMRTick::pInst->setNotifyEvent(_tmrNotifyEvent, true);
 
 	irq::enableInterruptVector(irq::VectorID::tmr14);
 	irq::setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::_7);
+
+	start();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitzacio.
 ///
-void Tick::deinitialize() {
+void TickGenerator::deinitialize() {
 
-	stop();
+    stop();
 
-	auto hTMR = htl::tmr::TMRDevice14::getHandler();
-	hTMR->stop();
-	hTMR->disableNotifyEvent();
+	TMRTick::pInst->disableNotifyEvent();
 
 	irq::disableInterruptVector(irq::VectorID::tmr14);
 }
 
 
-void Tick::start() {
+/// ----------------------------------------------------------------------
+/// \brief    Inicia el contador.
+///
+void TickGenerator::start() {
 
-	auto hTMR = htl::tmr::TMRDevice14::getHandler();
-	hTMR->setNotifyEvent(_tmrNotifyEvent, true);
-	hTMR->start_IRQ();
+    TMRTick::pInst->start_IRQ();
 }
 
 
-void Tick::stop() {
+/// ----------------------------------------------------------------------
+/// \brief    Para el contador.
+///
+void TickGenerator::stop() {
 
-	auto hTMR = htl::tmr::TMRDevice14::getHandler();
-	hTMR->stop();
+	TMRTick::pInst->stop();
 }
 
 
@@ -74,7 +80,7 @@ void Tick::stop() {
 /// \brief    Obte el valor del contador de ticks
 /// \return   El valor del contador
 //
-uint32_t Tick::getTickCount() {
+uint32_t TickGenerator::getTickCount() {
 
 	return _tickCounter;
 }
@@ -82,13 +88,13 @@ uint32_t Tick::getTickCount() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera un nombre determinat de ticks
-/// \param    time: El nombre de tics
+/// \param    ticks: El nombre de tics
 ///
-void Tick::wait(
-	uint32_t time) {
+void TickGenerator::wait(
+	uint32_t ticks) {
 
-	uint32_t startTime = getTickCount();
-	while (getTickCount() - startTime < time)
+	auto lastTick = getTickCount() + ticks;
+	while (static_cast<int>(lastTick - getTickCount()) > 0)
 		continue;
 }
 
@@ -98,7 +104,7 @@ void Tick::wait(
 /// \param    sender: El temporitzadort que envia la noptificacio.
 /// \param    args: Parametres de la notificacio.
 ///
-void Tick::tmrNotifyEventHandler(
+void TickGenerator::tmrNotifyEventHandler(
 	htl::tmr::TMRDevice *sender,
 	htl::tmr::NotifyEventArgs &args) {
 
@@ -106,8 +112,7 @@ void Tick::tmrNotifyEventHandler(
 		_tickCounter++;
 
 	#ifdef DBG_Pin
-	auto dbgPin = DBG_Pin::getHandler();
-	dbgPin->toggle();
+	DBG_Pin::pInst->toggle();
 	#endif
 }
 
@@ -117,6 +122,5 @@ void Tick::tmrNotifyEventHandler(
 ///
 extern "C" void TIM14_IRQHandler() {
 
-	auto hTMR = htl::tmr::TMRDevice14::getHandler();
-	hTMR->interruptHandler();
+    TMRTick::interruptHandler();
 }
