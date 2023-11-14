@@ -42,26 +42,23 @@ void MyApplication::onInitialize() {
 
     // Configura la entrada corresponent al switch SW1
     //
-    auto pinSW1 = SW1_Pin::getHandler();
-    pinSW1->initInput(gpio::PullUp::up);
-    _sw1 = new DigInput(_digInputService, new PinDriver_GPIO(pinSW1));
+    _pinSW1->initInput(gpio::PullUp::up);
+    _sw1 = new DigInput(_digInputService, new PinDriver_GPIO(_pinSW1));
     _sw1->setChangedEvent(_sw1ChangedEvent);
 
     // Configura la entrada corresponent al switch SW2
     //
     #ifdef EXIST_SW2
-    auto pinSW2 = SW2_Pin::getHandler();
-    pinSW2->initInput(gpio::PullUp::up);
-    _sw2 = new DigInput(_digInputService, new PinDriver_GPIO(pinSW2));
+    _pinSW2->initInput(gpio::PullUp::up);
+    _sw2 = new DigInput(_digInputService, new PinDriver_GPIO(_pinSW2));
     _sw2->setChangedEvent(_sw2ChangedEvent);
     #endif
 
     // Configure la entrada corresponent al switch SW3
     //
     #ifdef EXIST_SW3
-    auto pinSW3 = SW3_Pin::getHandler();
-    pinSW3->initInput(gpio::PullUp::up);
-    _sw3 = new DigInput(_digInputService, new PinDriver_GPIO(pinSW3));
+    _pinSW3->initInput(gpio::PullUp::up);
+    _sw3 = new DigInput(_digInputService, new PinDriver_GPIO(_pinSW3));
     _sw3->setChangedEvent(_sw3ChangedEvent);
     #endif
 
@@ -89,27 +86,24 @@ void MyApplication::onInitialize() {
 
     // Configura la sortida corresponent al led LED1
     //
-    auto pinLED1 = LED1_Pin::getHandler();
-    pinLED1->initOutput(gpio::OutDriver::pushPull);
-    pinLED1->clear();
-    _led1 = new DigOutput(_digOutputService, new PinDriver_GPIO(pinLED1));
+    _pinLED1->initOutput(gpio::OutDriver::pushPull);
+    _pinLED1->clear();
+    _led1 = new DigOutput(_digOutputService, new PinDriver_GPIO(_pinLED1));
 
     // Configura la sortida corresponent al led LED2
     //
     #ifdef EXIST_LED2
-    auto pinLED2 = LED2_Pin::getHandler();
-    pinLED2->initOutput(gpio::OutDriver::pushPull);
-    pinLED2->clear();
-    _led2 = new DigOutput(_digOutputService, new PinDriver_GPIO(pinLED2));
+    _pinLED2->initOutput(gpio::OutDriver::pushPull);
+    _pinLED2->clear();
+    _led2 = new DigOutput(_digOutputService, new PinDriver_GPIO(_pinLED2));
     #endif
 
     // Configura la sortida corresponent al led LED3
     //
     #ifdef EXIST_LED3
-    auto pinLED3 = LED3_Pin::getHandler();
-    pinLED3->initOutput(gpio::OutDriver::pushPull);
-    pinLED3->clear();
-    _led3 = new DigOutput(_digOutputService, new PinDriver_GPIO(pinLED3));
+    _pinLED3->initOutput(gpio::OutDriver::pushPull);
+    _pinLED3->clear();
+    _led3 = new DigOutput(_digOutputService, new PinDriver_GPIO(_pinLED3));
     #endif
 
     // Configura el temporitzador pel servei de sortides digitals

@@ -177,8 +177,6 @@ namespace htl {
                 }
         };
 
-        typedef Port * PortHandler;
-
 
         namespace internal {
 
@@ -193,26 +191,19 @@ namespace htl {
                 using HI = internal::HardwareInfo<portID_>;
             private:
                 static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-                static PortX _port;
+                static PortX _instance;
 			public:
 				static constexpr PortID portID = portID_;
+                static constexpr PortX *pInst = &_instance;
+                static constexpr PortX &rInst = _instance;
             protected:
                 PortX():
                     Port(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr)) {
                 }
-            public:
-                static constexpr PortX * getHandler() {
-                    return &_port;
-                }
         };
 
 		template <PortID portID_>
-		PortX<portID_> PortX<portID_>::_port;
-
-		template <PortID portID_>
-		inline PortHandler getPortHandler() {
-			return PortX<portID_>::getHandler();
-		}
+		PortX<portID_> PortX<portID_>::_instance;
 
         #ifdef HTL_GPIOA_EXIST
         typedef PortX<PortID::A> PortA;
@@ -267,35 +258,27 @@ namespace htl {
                 }
         };
 
-        typedef Pin * PinHandler;
-
         template <PortID portID_, PinID pinID_>
         class PinX final: public Pin {
             private:
                 using HI = internal::HardwareInfo<portID_>;
             private:
                 static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-                static PinX _pin;
+                static PinX _instance;
             public:
                 static constexpr PortID portID = portID_;
                 static constexpr PinID pinID = pinID_;
+                static constexpr PinX *pInst = &_instance;
+                static constexpr PinX &rInst = _instance;
             protected:
                 PinX():
                     Pin(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr), pinID_) {
                 }
-            public:
-                static constexpr PinX * getHandler() {
-                    return &_pin;
-                }
         };
 
 		template <PortID portID_, PinID pinID_>
-		PinX<portID_, pinID_> PinX<portID_, pinID_>::_pin;
+		PinX<portID_, pinID_> PinX<portID_, pinID_>::_instance;
 
-		template <PortID portID_, PinID pinID_>
-		inline PinHandler getPinHandler() {
-			return PinX<portID_, pinID_>::getHandler();
-		}
 
         #ifdef HTL_GPIOA_EXIST
         typedef PinX<PortID::A, PinID::_0> PinA0;
