@@ -24,6 +24,8 @@
 
 namespace htl {
 
+    using Ticks = uint32_t;
+
 	void initialize();
 	void deinitialize();
 

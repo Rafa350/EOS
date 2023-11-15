@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosFrameBuffer__
-#define __eosFrameBuffer__
 
 
 #include "eos.h"
@@ -50,6 +48,3 @@ namespace eos {
             void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch);
 	};
 }
-
-
-#endif // __eosFrameBuffer__

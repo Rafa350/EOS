@@ -85,8 +85,8 @@ namespace htl {
 				void deinitialize();
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinHSYNC() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<PinFunction::hsync, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					auto pf = internal::PinFunctionInfo<PinFunction::hsync, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_HSPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)
@@ -94,8 +94,8 @@ namespace htl {
 				}
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinVSYNC() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<PinFunction::vsync, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+				    auto pf = internal::PinFunctionInfo<PinFunction::vsync, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_VSPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)
@@ -103,8 +103,8 @@ namespace htl {
 				}
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinPC() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<PinFunction::pc, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+				    auto pf = internal::PinFunctionInfo<PinFunction::pc, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_PCPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)
@@ -112,8 +112,8 @@ namespace htl {
 				}
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinDE() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<PinFunction::de, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+				    auto pf = internal::PinFunctionInfo<PinFunction::de, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_DEPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)

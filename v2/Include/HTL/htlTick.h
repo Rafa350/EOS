@@ -12,7 +12,7 @@ namespace htl {
 		class TickGenerator {
 			private:
 				static TickGenerator _instance;
-				volatile uint32_t _tickCounter;
+				volatile Ticks _tickCounter;
 				htl::tmr::NotifyEvent<TickGenerator> _tmrNotifyEvent;
 			public:
 				static constexpr TickGenerator* pInst = &_instance;
@@ -26,19 +26,9 @@ namespace htl {
 				void deinitialize();
 				void start();
 				void stop();
-				uint32_t getTickCount();
-				void wait(uint32_t ticks);
-				static constexpr TickGenerator* getHandler() {
-					return &_instance;
-				}
+				Ticks getTick();
+				void wait(Ticks ticks);
 		};
-        
-        typedef TickGenerator * TickGeneratorHandler;
-
-
-        inline void delay(uint32_t time) {
-            TickGenerator::getHandler()->wait(time);
-        }
 
 	}
 }

@@ -79,8 +79,7 @@ Visual *VisualUtils::getVisual(
 		Point testPoint = p.translated(-bounds.getX(), -bounds.getY());
 
 		if (testRect.contains(testPoint)) {
-			const Visual::VisualList& childs = visual->getChilds();
-			for (auto child: childs) {
+			for (auto child: visual->getChilds()) {
 				Visual *result = getVisual(child, testPoint);
 				if (result != nullptr)
 					return result;
@@ -101,8 +100,7 @@ Visual *VisualUtils::getVisual(
 		return visual;
 
 	else {
-		const Visual::VisualList& childs = visual->getChilds();
-		for (auto child: childs) {
+		for (auto child: visual->getChilds()) {
 			Visual* result = VisualUtils::getVisual(child, id);
 			if (result != nullptr)
 				return result;

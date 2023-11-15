@@ -20,7 +20,7 @@ namespace eos {
 
     class TextBlock: public Control {
     	private:
-    		Text _ft;
+    		Text _text;
 
     	protected:
     		void onRender(RenderContext* context) override;
@@ -29,15 +29,15 @@ namespace eos {
         public:
     		TextBlock();
 
-            void setTextForeground(const Brush& value);
-            void setTextBackground(const Brush& value);
-            void setFont(const Font& value);
-            void setText(const String& value);
+            void setTextForeground(const Brush &value);
+            void setTextBackground(const Brush &value);
+            void setFont(const Font &value);
+            void setText(const String &value);
             void setTextAlign(TextAlign value);
 
-            inline const Brush& getForeground() const { return _ft.getForeground(); }
-            inline const Font& getFont() const { return _ft.getFont(); }
-            inline const String& getText() const { return _ft.getText(); }
+            inline const Brush & getForeground() const { return _text.getForeground(); }
+            inline const Font & getFont() const { return _text.getFont(); }
+            inline const String & getText() const { return _text.getText(); }
     };
 }
 

@@ -10,8 +10,8 @@
 namespace eos {
 
     class ControlItem;
-    using ControlItemList = IndirectIntrusiveForwardList<ControlItem, 0>;
-    using ControlItemListNode = IndirectIntrusiveForwardListNode<ControlItem, 0>;
+    using ControlItemList = IntrusiveForwardList<ControlItem, 0>;
+    using ControlItemListNode = IntrusiveForwardListNode<ControlItem, 0>;
 
     class ControlItem: public ControlItemListNode {
     };

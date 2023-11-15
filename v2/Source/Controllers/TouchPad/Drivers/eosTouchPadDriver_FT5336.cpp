@@ -5,7 +5,8 @@
 #include "HTL/htlI2C.h"
 #include "HTL/htlINT.h"
 #include "HTL/STM32/htlINT.h"
-#include "System/eosMath.h"
+
+#include <cmath>
 
 
 using namespace eos;
@@ -97,7 +98,7 @@ bool TouchPadDriver_FT5336::getState(
 	if (state.numPoints > state.maxPoints)
 		state.numPoints = 0;
 
-	uint8_t cMax = math::min((uint8_t) TOUCHPAD_MAX_POINTS, state.numPoints);
+	uint8_t cMax = std::min((uint8_t) TOUCHPAD_MAX_POINTS, state.numPoints);
 	for (uint8_t c = 0; c < cMax; c++) {
 
 		volatile uint8_t readData = 0;
@@ -271,8 +272,7 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el pin d'interrupcio
 	//
-	auto hPinINT = PinINT::getHandler();
-	hPinINT->initInput(gpio::InputMode::pullUp);
+	PinINT::pInst->initInput(gpio::InputMode::pullUp);
 
 	auto hPinInterruptINT = PinInterruptINT::getHandler();
 	hPinInterruptINT->enableInterruptPin(htl::gpio::Edge::rising);
@@ -283,10 +283,9 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el canal I2C
 	//
-	auto hI2C = I2C::getHandler();
-	hI2C->initialize(0x0B, 0x04, 0x02, 0x0F, 0x13);
-	hI2C->initPinSCL<PinSCL>();
-	hI2C->initPinSDA<PinSDA>();
+	DevI2C::pInst->initialize(0x0B, 0x04, 0x02, 0x0F, 0x13);
+	DevI2C::pInst->initPinSCL<PinSCL>();
+	DevI2C::pInst->initPinSDA<PinSDA>();
 }
 
 
@@ -304,8 +303,7 @@ void TouchPadDriver_FT5336::writeRegister(
 	data[0] = reg;
 	data[1] = value;
 
-	auto hI2C = I2C::getHandler();
-	hI2C->send(_i2cAddr, data, sizeof(data));
+	DevI2C::pInst->send(_i2cAddr, data, sizeof(data));
 }
 
 
@@ -320,9 +318,8 @@ uint8_t TouchPadDriver_FT5336::readRegister(
 
 	uint8_t value;
 
-	auto hI2C = I2C::getHandler();
-	hI2C->send(_i2cAddr, &reg, 1);
-	hI2C->receive(_i2cAddr, &value, sizeof(value));
+	DevI2C::pInst->send(_i2cAddr, &reg, 1);
+	DevI2C::pInst->receive(_i2cAddr, &value, sizeof(value));
 
 	return value;
 }

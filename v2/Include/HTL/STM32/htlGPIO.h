@@ -663,7 +663,7 @@ namespace htl {
 					return &_instance;
 				}
 				inline static void interruptHandler() {
-					getHandler()->interruptService();
+					_instance.interruptService();
 				}
 		};
 

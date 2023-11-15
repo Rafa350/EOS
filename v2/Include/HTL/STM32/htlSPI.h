@@ -170,18 +170,18 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initPinSCK() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinMISO() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pinFunction);
+					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
 				}
 		};
 

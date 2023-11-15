@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosColorFrameBuffer_DMA2D__
-#define __eosColorFrameBuffer_DMA2D__
 
 
 #include "eos.h"
@@ -31,6 +29,3 @@ namespace eos {
             uint8_t *getBuffer() const override;
 	};
 }
-
-
-#endif // __eosFrameBuffer_DMA2D__

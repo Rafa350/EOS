@@ -1,5 +1,4 @@
-#ifndef __eosVisual__
-#define __eosVisual__
+#pragma once
 
 
 // EOS includes
@@ -150,8 +149,8 @@ namespace eos {
 	};
 
 	class Visual;
-    using VisualList = IndirectIntrusiveForwardList<Visual, 0>;
-    using VisualListNode = IndirectIntrusiveForwardListNode<Visual, 0>;
+    using VisualList = IntrusiveForwardList<Visual, 0>;
+    using VisualListNode = IntrusiveForwardListNode<Visual, 0>;
 
     /// \brief Clase base que representa tots els elements visuals.
 	///
@@ -272,6 +271,3 @@ namespace eos {
     };
 
 }
-
-
-#endif // __eosVisual__

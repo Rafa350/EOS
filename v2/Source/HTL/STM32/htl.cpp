@@ -3,6 +3,7 @@
 
 
 using namespace htl;
+using namespace htl::tick;
 
 
 
@@ -11,8 +12,7 @@ using namespace htl;
 ///
 void htl::initialize() {
 
-	auto hTick = tick::TickGenerator::getHandler();
-	hTick->initialize(1000000);
+	TickGenerator::pInst->initialize(1000000);
 }
 
 
@@ -21,8 +21,7 @@ void htl::initialize() {
 ///
 void htl::deinitialize() {
 
-	auto hTick = tick::TickGenerator::getHandler();
-	hTick->deinitialize();
+	TickGenerator::pInst->deinitialize();
 }
 
 
@@ -32,8 +31,7 @@ void htl::deinitialize() {
 ///
 uint32_t htl::getTick() {
 
-	auto hTick = tick::TickGenerator::getHandler();
-	return hTick->getTickCount();
+	return TickGenerator::pInst->getTick();
 }
 
 
@@ -45,7 +43,6 @@ uint32_t htl::getTick() {
 void htl::waitTicks(
 	uint32_t ticks) {
 
-	auto hTick = tick::TickGenerator::getHandler();
-	hTick->wait(ticks);
+    TickGenerator::pInst->wait(ticks);
 }
 

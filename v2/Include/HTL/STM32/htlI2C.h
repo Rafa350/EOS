@@ -222,17 +222,17 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initPinSCL() {
-					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
 					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinSDA() {
-					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
 					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinSMBA() {
-					gpio::PinFunction pf = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
+					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
 					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 		};

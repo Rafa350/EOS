@@ -79,6 +79,14 @@ void Port::initOutput(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el dispositiu.
+///
+void Port::deinitialize() {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    gpio: Registres harware del modul GPIO.
 /// \param    pinID: Identificador del pin.

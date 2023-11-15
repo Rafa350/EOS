@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosDisplayDriver_RGBLTDC__
-#define	__eosDisplayDriver_RGBLTDC__
 
 
 // EOS includes
@@ -98,5 +96,3 @@ namespace eos {
             void refresh() override;
     };
 }
-
-#endif // __eosDisplayDriver_RGBLTDC__

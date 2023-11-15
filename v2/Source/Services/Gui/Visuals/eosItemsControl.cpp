@@ -38,13 +38,10 @@ void ItemsControl::removeItem(
 
 	eosAssert(item != nullptr);
 
-	int index = _items.indexOf(item);
-	if (index >= 0) {
-		if (item == _activeItem)
-			_activeItem = nullptr;
-		_items.removeAt(index);
-		onItemRemoved(item);
-	}
+	if (item == _activeItem)
+		_activeItem = nullptr;
+	_items.pop(item);
+	onItemRemoved(item);
 }
 
 

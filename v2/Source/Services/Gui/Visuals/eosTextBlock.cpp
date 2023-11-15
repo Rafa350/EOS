@@ -38,7 +38,7 @@ static const TextBlockStyle *pStyle = &style;
 ///
 TextBlock::TextBlock():
 
-	_ft(Font(String(pStyle->fontName), pStyle->fontHeight, pStyle->fontStyle), TextAlign::center) {
+	_text(Font(String(pStyle->fontName), pStyle->fontHeight, pStyle->fontStyle), TextAlign::center) {
 
 	setHorizontalAlignment(HorizontalAlignment::center);
 	setVerticalAlignment(VerticalAlignment::center);
@@ -52,7 +52,7 @@ TextBlock::TextBlock():
 Size TextBlock::measureOverride(
 	const Size& availableSize) const {
 
-	return _ft.getBounds();
+	return _text.getBounds();
 }
 
 
@@ -63,8 +63,8 @@ Size TextBlock::measureOverride(
 void TextBlock::setFont(
 	const Font& value) {
 
-	if (_ft.getFont() != value)
-		_ft.setFont(value);
+	if (_text.getFont() != value)
+		_text.setFont(value);
 }
 
 
@@ -75,8 +75,8 @@ void TextBlock::setFont(
 void TextBlock::setTextForeground(
 	const Brush& value) {
 
-	if (_ft.getForeground() != value) {
-		_ft.setForeground(value);
+	if (_text.getForeground() != value) {
+		_text.setForeground(value);
 		invalidate();
 	}
 }
@@ -89,8 +89,8 @@ void TextBlock::setTextForeground(
 void TextBlock::setTextBackground(
 	const Brush& value) {
 
-	if (_ft.getBackground() != value) {
-		_ft.setBackground(value);
+	if (_text.getBackground() != value) {
+		_text.setBackground(value);
 		invalidate();
 	}
 }
@@ -103,8 +103,8 @@ void TextBlock::setTextBackground(
 void TextBlock::setTextAlign(
 	TextAlign value) {
 
-	if (_ft.getAlign() != value) {
-		_ft.setAlign(value);
+	if (_text.getAlign() != value) {
+		_text.setAlign(value);
 		invalidate();
 	}
 }
@@ -117,8 +117,8 @@ void TextBlock::setTextAlign(
 void TextBlock::setText(
 	const String& value) {
 
-	if (_ft.getText() != value) {
-		_ft.setText(value);
+	if (_text.getText() != value) {
+		_text.setText(value);
 		invalidate();
 	}
 }
@@ -148,15 +148,15 @@ void TextBlock::onRender(
 	#pragma GCC diagnostic ignored "-Wswitch-default"
 	switch (getVerticalAlignment()) {
 		case VerticalAlignment::center:
-			y = (getBounds().getHeight() - _ft.getBounds().getHeight()) / 2;
+			y = (getBounds().getHeight() - _text.getBounds().getHeight()) / 2;
 			break;
 
 		case VerticalAlignment::bottom:
-			y = getBounds().getHeight() - _ft.getBounds().getHeight();
+			y = getBounds().getHeight() - _text.getBounds().getHeight();
 			break;
 	}
 	#pragma GCC diagnostic pop
-	g.paintText(Point(x, y), _ft);
+	g.paintText(Point(x, y), _text);
 
 	// Finalitza el renderitzat.
 	//

@@ -255,7 +255,7 @@ namespace eos {
 	    	using PinInterruptINT = TOUCHPAD_INT_PinInterrupt;
 			using PinSCL = TOUCHPAD_SCL_Pin;
 			using PinSDA = TOUCHPAD_SDA_Pin;
-			using I2C = TOUCHPAD_I2C_Device;
+			using DevI2C = TOUCHPAD_I2C_Device;
 
 			using IntNotifyEvent = htl::gpio::NotifyEvent<TouchPadDriver_FT5336>;
 
