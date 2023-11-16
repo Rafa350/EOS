@@ -15,7 +15,7 @@ namespace eos {
 
 
             /// \brief Implementa un contenidor FIFO.
-        	/// \remarks El contenidor enmagatzema copies del element.
+        	/// \remarks El contenidor enmagatzema copies del element en un buffer extern.
             ///
 			template <typename T_>
 			class StackBase {
@@ -27,9 +27,9 @@ namespace eos {
 					using CReference = const ValueType&;
 
 				private:
-                    Pointer _container;
-                    Pointer _ptr;
+                    Pointer _begin;
                     Pointer _end;
+                    Pointer _sp;
                     
                 private:
 					StackBase(const StackBase &) = delete;
@@ -40,9 +40,9 @@ namespace eos {
 					/// \brief Constructor per defecte
 					///
 					StackBase(Pointer container, unsigned capacity):
-                        _container {container},
-                        _ptr {container},
-                        _end {container + capacity} {
+                        _begin {container},
+                        _end {container + capacity},
+                        _sp {container} {
                             
                         eosAssert(container != nullptr);
                         eosAssert(capacity > 1);
@@ -53,14 +53,14 @@ namespace eos {
 					//
 					inline void push(CReference element) {
                         eosAssert(!full());
-                        *_ptr++ = element;
+                        *_sp++ = element;
 					}
 
 					/// \brief Elimina un element de la pila.
 					///
 					inline void pop() {
                         eosAssert(!empty());
-						_ptr--;
+						_sp--;
 					}
 
 					/// \brief: Obte el primer element de la pila.
@@ -68,7 +68,7 @@ namespace eos {
 					///
 					inline Reference peek() {
                         eosAssert(!empty());
-						return *(_ptr - 1); // Sempre apunta al seguent
+						return *(_sp - 1); // Sempre apunta al seguent
 					}
 
 					/// \brief: Obte el primer element de la pila.
@@ -76,41 +76,41 @@ namespace eos {
 					///
 					inline CReference peek() const {
                         eosAssert(!empty());
-						return *(_ptr - 1);
+						return *(_sp - 1);
 					}
 
 					/// \brief Buida la pila.
 					///
 					inline void clear() {
-						_ptr = _container;
+						_sp = _begin;
 					}
 
 					/// \brief: Indica si la pila es buida.
 					/// \return: True si es buida.
 					///
 					inline bool empty() const {
-						return _ptr == _container;
+						return _sp == _begin;
 					}
 
 					/// \brief: Indica si la pila es plena
 					/// \return: True si es plena.
 					///
 					inline bool full() const {
-                        return _ptr == _end;
+                        return _sp == _end;
 					}
 
 					/// \brief Obte el tamany de la pila.
 					/// \return El valor.
 					///
 					inline unsigned size() const {
-						return _ptr - _container;
+						return _sp - _begin;
 					}
 
 					/// \brief Obte capacitat actual de la pila.
 					/// \return El valor.
 					///
 					inline unsigned capacity() const {
-						return _end - _container;
+						return _end - _begin;
 					}
 			};
             

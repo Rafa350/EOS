@@ -1,6 +1,7 @@
 #pragma once
 
 
+
 // EOS includes
 //
 #include "eos.h"
@@ -14,49 +15,51 @@ namespace eos {
 #endif
 
             template <typename T_, int tag_>
-            class IntrusiveForwardList;
+            class IntrusiveList;
 
             template <typename T_, int tag_>
-            class IntrusiveForwardListIterator;
+            class IntrusiveListIterator;
 
             template <typename T_, int tag_>
-            class IntrusiveForwardListNode {
+            class IntrusiveListNode {
                 public:
-                    using Type = IntrusiveForwardListNode<T_, tag_>*;
+                    using NodeType = IntrusiveListNode<T_, tag_>*;
 
                 private:
-                    Type _next;
+                    NodeType _next;
+                    NodeType _prev;
 
                 public:
-                    inline IntrusiveForwardListNode() :
-                        _next {nullptr} {
+                    inline IntrusiveListNode() :
+                        _next {nullptr},
+                        _prev {nullptr} {
                     }
 
-                friend IntrusiveForwardList<T_, tag_>;
-                friend IntrusiveForwardListIterator<T_, tag_>;
+                friend IntrusiveList<T_, tag_>;
+                friend IntrusiveListIterator<T_, tag_>;
             };
 
             template <typename T_, int tag_>
-            class IntrusiveForwardListIterator {
+            class IntrusiveListIterator {
                 public:
-                    using ValueType = T_*;
-                    using NodeType = IntrusiveForwardListNode<T_, tag_>*;
+                    using ValueType ? T_*;
+                    using NodeType = IntrusiveListNode<T_, tag_>*;
 
                 private:
                     NodeType _node;
 
                 public:
-                    inline IntrusiveForwardListIterator(NodeType node) :
+                    inline IntrusiveListIterator(NodeType node) :
                         _node {node} {
                     }
 
-                    inline IntrusiveForwardListIterator& operator ++ () {
+                    inline IntrusiveListIterator& operator ++ () {
                         _node = _node->_next;
                         return *this;
                     }
 
-                    inline IntrusiveForwardListIterator operator ++ (int) {
-                        IntrusiveForwardListIterator iterator(_node);
+                    inline IntrusiveListIterator operator ++ (int) {
+                        IntrusiveListIterator iterator(_node);
                         _node = _node->_next;
                         return iterator;
                     }
@@ -65,28 +68,30 @@ namespace eos {
                         return static_cast<ValueType>(_node);
                     }
 
-                friend bool operator == (const IntrusiveForwardListIterator &a, const IntrusiveForwardListIterator &b) {
+                friend bool operator == (const IntrusiveListIterator &a, const IntrusiveListIterator &b) {
                     return a._node == b._node;
                 }
-                friend bool operator != (const IntrusiveForwardListIterator &a, const IntrusiveForwardListIterator &b) {
+                friend bool operator != (const IntrusiveListIterator &a, const IntrusiveListIterator &b) {
                     return a._node != b._node;
                 }
             };
 
             template <typename T_, int tag_>
-            class IntrusiveForwardList {
+            class IntrusiveList {
                 public:
                     using ValueType = T_*;
-                    using NodeType = IntrusiveForwardListNode<T_, tag_>*;
-                    using Iterator = IntrusiveForwardListIterator<T_, tag_>;
-                    using CIterator = const IntrusiveForwardListIterator<T_, tag_>;
+                    using NodeType = IntrusiveListNode<T_, tag_>*;
+                    using Iterator = IntrusiveListIterator<T_, tag_>;
+                    using CIterator = const IntrusiveListIterator<T_, tag_>;
 
                 private:
                     NodeType _first;
+                    NodeType _last;
 
                 public:
                     inline IntrusiveForwardList() :
-                        _first {nullptr} {
+                        _first {nullptr},
+                        _last {nullptr} {
                     }
 
                     void clear() {
@@ -100,29 +105,27 @@ namespace eos {
                         _first = n;
                     }
 
+                    void pushBack(ValueType element) {
+                    }
+
                     void popFront() {
                        auto n = _first;
                        _first = _first->_next;
                        n->_next = nullptr;
                     }
 
-                    void remove(ValueType element) {
-                        NodeType p = nullptr;
-                        for (auto n = _first; n != nullptr; n = n->_next) {
-                            if (n == static_cast<Type>(element)) {
-                                if (p == nullptr)
-                                    _first = n->_next;
-                                else
-                                    p->_next = n->_next;
-                                n->_next = nullptr;
-                                return;
-                            }
-                            p = n;
-                        }
+                    void popBack() {
+                    }
+
+                    void remove(ValueType node) {
                     }
 
                     inline ValueType front() const {
                         return static_cast<ValueType>(_first);
+                    }
+
+                    inline ValueType back() const {
+                        return static_cast<ValueType>(_last);
                     }
 
                     inline bool empty() const {
