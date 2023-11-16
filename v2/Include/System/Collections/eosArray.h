@@ -29,6 +29,10 @@ namespace eos {
                 private:
                     Pointer _begin;
                     Pointer _end;
+
+                private:
+					ArrayBase(const ArrayBase &) = delete;
+                    ArrayBase & operator = (const ArrayBase &) = delete;
                     
                 public:
                     /// \brief Constructor.
