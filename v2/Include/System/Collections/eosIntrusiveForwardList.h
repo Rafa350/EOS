@@ -75,12 +75,13 @@ namespace eos {
             template <typename T_, int tag_>
             class IntrusiveForwardList {
                 public:
-                    using Type = IntrusiveForwardListNode<T_, tag_>*;
+                    using ValueType = T_*;
+                    using NodeType = IntrusiveForwardListNode<T_, tag_>*;
                     using Iterator = IntrusiveForwardListIterator<T_, tag_>;
                     using CIterator = const IntrusiveForwardListIterator<T_, tag_>;
 
                 private:
-                    Type _first;
+                    NodeType _first;
 
                 public:
                     inline IntrusiveForwardList() :
@@ -92,8 +93,8 @@ namespace eos {
                             pop_front();
                     }
 
-                    void push_front(T_ *node) {
-                        auto n = static_cast<Type>(node);
+                    void push_front(ValueType node) {
+                        auto n = static_cast<NodeType>(node);
                         n->_next = _first;
                         _first = n;
                     }
@@ -104,8 +105,8 @@ namespace eos {
                        n->_next = nullptr;
                     }
 
-                    void pop(T_ *node) {
-                        Type p = nullptr;
+                    void remove(ValueType node) {
+                        NodeType p = nullptr;
                         for (auto n = _first; n != nullptr; n = n->_next) {
                             if (n == static_cast<Type>(node)) {
                                 if (p == nullptr)
@@ -119,8 +120,8 @@ namespace eos {
                         }
                     }
 
-                    inline T_ *front() const {
-                        return static_cast<T_*>(_first);
+                    inline ValueType front() const {
+                        return static_cast<ValueType>(_first);
                     }
 
                     inline bool empty() const {
@@ -132,19 +133,19 @@ namespace eos {
                     }
 
                     inline Iterator begin() {
-                        return IntrusiveForwardListIterator(_first);
+                        return Interator(_first);
                     }
 
                     inline CIterator begin() const {
-                        return IntrusiveForwardListIterator(_first);
+                        return CIterator(_first);
                     }
 
-                    inline Iterator end() {
-                        return IntrusiveForwardListIterator<T_, tag_>(nullptr);
+                    constexpr Iterator end() {
+                        return Iterator(nullptr);
                     }
 
-                    inline CIterator end() const {
-                        return IntrusiveForwardListIterator<T_, tag_>(nullptr);
+                    constexpr CIterator end() const {
+                        return CIterator(nullptr);
                     }
             };
 
@@ -153,5 +154,4 @@ namespace eos {
         }
     }
 #endif
-
 }

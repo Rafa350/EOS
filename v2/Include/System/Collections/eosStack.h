@@ -1,5 +1,6 @@
 #pragma once
 
+
 // EOS includes
 //
 #include "eos.h"
@@ -19,11 +20,11 @@ namespace eos {
 			template <typename T_>
 			class StackBase {
 				public:
-					using Type = T_;
-                    using Pointer = Type*;
-                    using CPointer = const Type*;
-					using Reference = Type&;
-					using CReference = const Type&;
+					using ValueType = T_;
+                    using Pointer = ValueType*;
+                    using CPointer = const ValueType*;
+					using Reference = ValueType&;
+					using CReference = const ValueType&;
 
 				private:
                     Pointer _container;
@@ -36,7 +37,7 @@ namespace eos {
 
 				public:
 
-					/// \brief Contructor per defecte
+					/// \brief Constructor per defecte
 					///
 					StackBase(Pointer container, unsigned capacity):
                         _container {container},

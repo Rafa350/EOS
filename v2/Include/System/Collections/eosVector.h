@@ -1,5 +1,4 @@
-#ifndef __eosVector__
-#define __eosVector__
+#pragma once
 
 
 // EOS includes
@@ -281,15 +280,3 @@ namespace eos {
     }
 #endif    
 }
-
-
-
-
-
-
-
-
-
-
-
-#endif // __eosVector__
