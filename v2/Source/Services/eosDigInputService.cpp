@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 
@@ -13,7 +12,6 @@
 
 
 using namespace eos;
-using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -110,7 +108,7 @@ void DigInputService::addInput(
     //
     if (input->_service == nullptr) {
         input->_service = this;
-        _inputs.push_front(input);
+        _inputs.pushFront(input);
     }
 
     // Fi de la seccio critica
@@ -134,7 +132,7 @@ void DigInputService::removeInput(
     Task::enterCriticalSection();
 
     if (input->_service == this) {
-        _inputs.pop(input);
+        _inputs.remove(input);
         input->_service = nullptr;
     }
 
@@ -202,12 +200,12 @@ void DigInputService::onTask() {
             //
             for (auto input: _inputs) {
 
-                bool saveIrq = irq::disableInterrupts();
+                __disable_irq();
 
                 bool edge = input->_edge;
                 input->_edge = false;
 
-                irq::restoreInterrupts(saveIrq);
+                __enable_irq();
 
                 if (edge)
                     notifyChanged(input);
@@ -282,9 +280,10 @@ bool DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    bool saveIrq = irq::disableInterrupts();
+    __disable_irq();
     bool pinState = input->_pinState;
-    irq::restoreInterrupts(saveIrq);
+    __enable_irq();
+
     return pinState;
 }
 
@@ -302,11 +301,11 @@ uint32_t DigInputService::readPulses(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    bool saveIrq = irq::disableInterrupts();
+    __disable_irq();
     uint32_t pinPulses = input->_pinPulses;
     if (clear)
     	input->_pinPulses = 0;
-    irq::restoreInterrupts(saveIrq);
+    __enable_irq();
     return pinPulses;
 }
 

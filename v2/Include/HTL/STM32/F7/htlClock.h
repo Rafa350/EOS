@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __STM32F7_htlClock__
-#define __STM32F7_htlClock__
 
 
 #include "HTL/htl.h"
@@ -13,115 +11,112 @@
 
 namespace htl {
 
-	enum class ClockId {
-		sysclk,
-		pclk,
-		pclk2,
-		hclk,
-		hse,
-		hsi,
-		lse,
-		lsi
-	};
+    namespace clock {
 
-	enum class HseBypassMode {
-		on,
-		off,
-		unchanged
-	};
+        enum class ClockID {
+            sysclk,
+            pclk,
+            pclk2,
+            hclk,
+            hse,
+            hsi,
+            lse,
+            lsi
+        };
 
-	enum class PllSource {
-		hsi,
-		hse
-	};
+        enum class HseBypassMode {
+            on,
+            off,
+            unchanged
+        };
 
-	enum class PllHseDivider {
-		_1,
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		_9,
-		_10,
-		_11,
-		_12,
-		_13,
-		_14,
-		_15,
-		_16
-	};
+        enum class PllSource {
+            hsi,
+            hse
+        };
 
-	enum class PllMultiplier {
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		_9,
-		_10,
-		_11,
-		_12,
-		_13,
-		_14,
-		_15,
-		_16
-	};
+        enum class PllHseDivider {
+            _1,
+            _2,
+            _3,
+            _4,
+            _5,
+            _6,
+            _7,
+            _8,
+            _9,
+            _10,
+            _11,
+            _12,
+            _13,
+            _14,
+            _15,
+            _16
+        };
 
-	enum class SysClkSource {
-		hsi,
-		hse,
-		pll
-	};
+        enum class PllMultiplier {
+            _2,
+            _3,
+            _4,
+            _5,
+            _6,
+            _7,
+            _8,
+            _9,
+            _10,
+            _11,
+            _12,
+            _13,
+            _14,
+            _15,
+            _16
+        };
 
-	enum class HClkPrescaler {
-		_1,
-		_2,
-		_4,
-		_8,
-		_16,
-		_64,
-		_128,
-		_256,
-		_512
-	};
+        enum class SysClkSource {
+            hsi,
+            hse,
+            pll
+        };
 
-	enum class PClkPrescaler {
-		_1,
-		_2,
-		_4,
-		_8,
-		_16
-	};
+        enum class HClkPrescaler {
+            _1,
+            _2,
+            _4,
+            _8,
+            _16,
+            _64,
+            _128,
+            _256,
+            _512
+        };
 
-	class Clock {
-		public:
-			static void hsiEnable();
-			static void hsiDisable();
-            static bool isHsiEnabled();
+        enum class PClkPrescaler {
+            _1,
+            _2,
+            _4,
+            _8,
+            _16
+        };
 
-			static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
-			static void hseDisable();
-            static bool isHseEnabled();
+        void hsiEnable();
+        void hsiDisable();
+        bool isHsiEnabled();
 
-			static void pllEnable();
-			static void pllDisable();
-            static bool isPllEnabled();
-			static bool setPllSource(PllSource value);
-			static void setPllMultiplier(PllMultiplier value);
-			static void setPllHseDivider(PllHseDivider value);
+        void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+        void hseDisable();
+        bool isHseEnabled();
 
-			static bool setSysClkSource(SysClkSource source);
-			static void setHClkPrescaler(HClkPrescaler value);
-			static void setPClkPrescaler(PClkPrescaler value);
+        void pllEnable();
+        void pllDisable();
+        bool isPllEnabled();
+        bool setPllSource(PllSource value);
+        void setPllMultiplier(PllMultiplier value);
+        void setPllHseDivider(PllHseDivider value);
 
-			static unsigned getClockFrequency(ClockId clockId);
-	};
+        bool setSysClkSource(SysClkSource source);
+        void setHClkPrescaler(HClkPrescaler value);
+        void setPClkPrescaler(PClkPrescaler value);
+
+        unsigned getClockFrequency(ClockID clockId);
+    }
 }
-
-
-#endif // __STM32F7_htlClock__

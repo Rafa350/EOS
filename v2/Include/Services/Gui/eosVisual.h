@@ -8,7 +8,7 @@
 #include "Services/Gui/eosThickness.h"
 #include "System/eosCallbacks.h"
 #include "System/eosEvents.h"
-#include "System/Collections/eosIntrusiveList.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"

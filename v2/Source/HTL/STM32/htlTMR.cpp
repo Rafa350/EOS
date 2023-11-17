@@ -2,6 +2,7 @@
 #include "HTL/STM32/htlTMR.h"
 
 
+using namespace htl;
 using namespace htl::tmr;
 
 

@@ -5,7 +5,6 @@
 //
 #include "HTL/htl.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "HTL/STM32/htlINT.h"
 
 
 namespace htl {
@@ -82,6 +81,7 @@ namespace htl {
 			private:
 				uint32_t const _lineNum;
 			protected:
+                EXTILine(LineID lineID);
 				inline void activate() {
 					Activator::activate();
 				}
@@ -90,23 +90,24 @@ namespace htl {
 				}
 				void interruptService();
 			public:
-				EXTILine(LineID lineID);
 				void initialize(htl::gpio::PortID portID, Mode mode, Edge edge);
 				void deinitialize();
 		};
-		typedef EXTILine * EXTILineHandler;
 
 		template <LineID lineID_>
 		class EXTILineX final: public EXTILine {
 			private:
 				static EXTILineX _instance;
 			public:
-				EXTILineX(): EXTILine(lineID_) {}
-				inline static void interruptHandler() {
-					getHandler()->interruptService();
+				static constexpr EXTILineX *pInst = &_instance;
+				static constexpr EXTILineX &rInst = _instance;
+			private:
+				EXTILineX():
+				    EXTILine(lineID_) {
 				}
-				static constexpr EXTILineX * getHandler() {
-					return &_instance;
+			public:
+				inline static void interruptHandler() {
+					_instance.interruptService();
 				}
 		};
 

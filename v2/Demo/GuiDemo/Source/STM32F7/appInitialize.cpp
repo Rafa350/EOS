@@ -102,6 +102,8 @@ void appInitialize() {
 	initializeCLK();
 	initializeSDRAM();
 
+	htl::initialize();
+
 #ifdef EOS_DEBUG
 	__HAL_FREEZE_TIM6_DBGMCU();
 #endif

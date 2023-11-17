@@ -5,6 +5,7 @@
 
 
 namespace htl {
+
 	namespace dma {
 
 		enum class Channel {

@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HTL/htlINT.h"
 #include "Services/eosDigOutputService.h"
 #include "System/Core/eosTask.h"
 
@@ -9,7 +8,6 @@
 
 
 using namespace eos;
-using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -53,7 +51,7 @@ void DigOutputService::addOutput(
     //
     if (output->_service == nullptr) {
         output->_service = this;
-        _outputs.push_front(output);
+        _outputs.pushFront(output);
     }
 
     // Fi de la seccio critica
@@ -82,7 +80,7 @@ void DigOutputService::removeOutput(
     //
     if (output->_service == this) {
         output->_service = nullptr;
-        _outputs.pop(output);
+        _outputs.remove(output);
     }
 
     // Fi de la seccio critica
@@ -380,9 +378,9 @@ bool DigOutputService::read(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    bool saveIrq = irq::disableInterrupts();
+    __disable_irq();
     bool pinState = output->_drv->read();
-    irq::restoreInterrupts(saveIrq);
+    __enable_irq();
 
     return pinState;
 }

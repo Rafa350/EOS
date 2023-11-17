@@ -307,8 +307,6 @@ namespace htl {
 				}
 		};
 
-		typedef PinInterrupt *PinInterruptHandler;
-
 
 		namespace internal {
 
@@ -654,14 +652,13 @@ namespace htl {
 			public:
 				static constexpr PortID portID = portID_;
 				static constexpr PinID pinID = pinID_;
+				static constexpr PinInterruptX *pInst = &_instance;
+                static constexpr PinInterruptX &rInst = _instance;
 			private:
 				PinInterruptX():
 					PinInterrupt(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), pinID_) {
 				}
 			public:
-				static constexpr PinInterruptX * getHandler() {
-					return &_instance;
-				}
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
@@ -669,11 +666,6 @@ namespace htl {
 
 		template <PortID portID_, PinID pinID_>
 		PinInterruptX<portID_, pinID_> PinInterruptX<portID_, pinID_>::_instance;
-
-		template <PortID portID_, PinID pinID_>
-		inline PinInterruptX<portID_, pinID_> * getPinInterruptHandler() {
-			return PinInterruptX<portID_, pinID_>::getHandler();
-		}
 
 
 		namespace internal {

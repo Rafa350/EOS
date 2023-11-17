@@ -214,6 +214,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
 		</link>
 		<link>
+			<name>src/App/STM32F7/system_stm32f7xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -559,11 +564,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/STM32/System/system_stm32f7xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -792,6 +792,11 @@
 			<name>src/Framework/EOS/HTL/STM32/htlLTDC_IRQ.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC_IRQ.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlTick.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTick.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

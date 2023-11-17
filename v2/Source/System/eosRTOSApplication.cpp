@@ -146,7 +146,7 @@ void RTOSApplication::addService(
 	si->name = name;
 	si->task = nullptr;
 
-	_serviceInfoList.push_front(si);
+	_serviceInfoList.pushFront(si);
 }
 
 

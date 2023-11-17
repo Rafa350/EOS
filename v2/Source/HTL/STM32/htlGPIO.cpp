@@ -2,6 +2,7 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
+using namespace htl;
 using namespace htl::gpio;
 
 

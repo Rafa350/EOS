@@ -135,7 +135,7 @@ Result SPIDevice::transmit(
 		_state = State::transmiting;
 
 		bool error = false;
-		uint16_t startTime = 0;
+		uint16_t startTime = getTick();
 		uint16_t count = 0;
 		#if defined(EOS_PLATFORM_STM32G0)
 		bool len8 = (_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8;

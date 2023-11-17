@@ -253,9 +253,9 @@ void DisplayDriver_SSD1306::initializeController() {
 	//
 	#ifdef DISPLAY_RST_Pin
 	_pinRST->clear();
-	htl::tick::delay(100);
+	htl::waitTicks(100);
 	_pinRST->set();
-	htl::tick::delay(300);
+	htl::waitTicks(300);
 	#endif
 
     // Inicialitza el controlador

@@ -256,35 +256,27 @@ namespace htl {
 		};
 
 
-		void setInterruptVectorPriority(VectorID vector, Priority priority, SubPriority subPriority = SubPriority::_0);
-
-		inline void enableInterrupts() {
-			__enable_irq();
-		}
-
-		inline bool disableInterrupts() {
-			bool state = __get_PRIMASK() == 0;
-			__disable_irq();
-			return state;
-		}
-
-		inline void restoreInterrupts(
-			bool state) {
-
-			if (state)
-				enableInterrupts();
-		}
+		void setInterruptVectorPriority(VectorID vector, Priority priority,
+		        SubPriority subPriority = SubPriority::_0);
 
 		inline void enableInterruptVector(
 			VectorID vector) {
 
-			NVIC_EnableIRQ((IRQn_Type) vector);
+			NVIC_EnableIRQ(static_cast<IRQn_Type>(vector));
 		}
 
 		inline void disableInterruptVector(
 			VectorID vector) {
 
-			NVIC_DisableIRQ((IRQn_Type) vector);
+			NVIC_DisableIRQ(static_cast<IRQn_Type>(vector));
 		}
+
+		inline void enableInterrupts() {
+            __enable_irq();
+        }
+
+        inline void disableInterrupts() {
+            __disable_irq();
+        }
 	}
 }

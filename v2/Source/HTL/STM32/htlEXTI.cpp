@@ -23,7 +23,7 @@ static void extiSetEdge(uint32_t lineNum, Edge edge);
 EXTILine::EXTILine(
 	LineID lineID) :
 
-	_lineNum {uint32_t(lineID)} {
+	_lineNum {static_cast<uint32_t>(lineID)} {
 
 }
 

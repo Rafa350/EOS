@@ -27,7 +27,7 @@ TickGenerator::TickGenerator():
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
-/// \param    frequanry: Frequencia.
+/// \param    frequency: Frequencia.
 ///
 void TickGenerator::initialize(
     uint32_t frequency) {

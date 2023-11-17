@@ -6,7 +6,7 @@
 #include "eos.h"
 #include "System/eosApplicationBase.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosIntrusiveList.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosTimer.h"
 

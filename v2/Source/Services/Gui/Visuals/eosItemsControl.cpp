@@ -24,7 +24,7 @@ void ItemsControl::addItem(
 
 	eosAssert(item != nullptr);
 
-	_items.push_front(item);
+	_items.pushFront(item);
 	onItemAdded(item);
 }
 
@@ -40,7 +40,7 @@ void ItemsControl::removeItem(
 
 	if (item == _activeItem)
 		_activeItem = nullptr;
-	_items.pop(item);
+	_items.remove(item);
 	onItemRemoved(item);
 }
 

@@ -179,6 +179,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/eosPlatform.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosPlatform.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosToolchain.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosToolchain.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/FreeRTOS/FreeRTOS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/include/FreeRTOS.h</locationURI>
@@ -427,11 +437,6 @@
 			<name>inc/Framework/EOS/System/eosEvents.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosEvents.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/eosMath.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosMath.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/eosPointers.h</name>
@@ -794,9 +799,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosWindow.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosIntrusiveList.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosIntrusiveForwardList.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosIntrusiveList.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosIntrusiveForwardList.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections/eosPriorityQueue.h</name>
@@ -949,6 +954,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HTL/STM32/F7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htl.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htl.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D.cpp</locationURI>
@@ -992,6 +1007,11 @@
 			<name>src/Framework/EOS/HTL/STM32/htlTMR_IRQ.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR_IRQ.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlTick.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTick.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
@@ -1234,6 +1254,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/htlClock.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlClock.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F7/htlI2C_AF_F7.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlI2C_AF_F7.h</locationURI>
@@ -1372,6 +1397,11 @@
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/F7/htlClock.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F7/htlClock.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosBorder.cpp</name>

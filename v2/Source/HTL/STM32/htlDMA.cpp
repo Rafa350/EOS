@@ -2,7 +2,7 @@
 #include "HTL/STM32/htlDMA.h"
 
 
-
+using namespace htl;
 using namespace htl::dma;
 
 

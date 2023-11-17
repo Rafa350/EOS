@@ -7,7 +7,7 @@
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosIntrusiveList.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Core/eosQueue.h"
 
 

@@ -47,6 +47,9 @@
 	#include "stm32f4xx.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
+    #if defined(EOS_PLATFORM_STM32F746)
+        #define STM32F746xx
+    #endif
 	#include "stm32f7xx.h"
 
 #elif defined(EOS_PLATFORM_STM32G0)

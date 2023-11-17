@@ -105,8 +105,9 @@
 
 	#elif defined(STM32F7)
 		#define EOS_PLATFORM_STM32F7
-		#if defined(STM32F746xx)
+		#if defined(STM32F746NG)
 			#define EOS_PLATFORM_STM32F746
+            #define EOS_PLATFORM_STM32F746NG
 		#elif defined(STM32F769xx)
 			#define EOS_PLATFORM_STM32F769
 		#else

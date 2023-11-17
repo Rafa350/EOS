@@ -22,10 +22,10 @@ namespace eos {
             template <typename T_, int tag_>
             class IntrusiveForwardListNode {
                 public:
-                    using Type = IntrusiveForwardListNode<T_, tag_>*;
+                    using NodeType = IntrusiveForwardListNode<T_, tag_>*;
 
                 private:
-                    Type _next;
+                    NodeType _next;
 
                 public:
                     inline IntrusiveForwardListNode() :
@@ -91,7 +91,7 @@ namespace eos {
 
                     void clear() {
                         while (!empty())
-                            pop_front();
+                            popFront();
                     }
 
                     void pushFront(ValueType element) {
@@ -109,7 +109,7 @@ namespace eos {
                     void remove(ValueType element) {
                         NodeType p = nullptr;
                         for (auto n = _first; n != nullptr; n = n->_next) {
-                            if (n == static_cast<Type>(element)) {
+                            if (n == static_cast<ValueType>(element)) {
                                 if (p == nullptr)
                                     _first = n->_next;
                                 else
@@ -134,7 +134,7 @@ namespace eos {
                     }
 
                     inline Iterator begin() {
-                        return Interator(_first);
+                        return Iterator(_first);
                     }
 
                     inline CIterator begin() const {

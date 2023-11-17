@@ -2,6 +2,7 @@
 #include "HTL/STM32/htlI2C.h"
 
 
+using namespace htl;
 using namespace htl::i2c;
 
 

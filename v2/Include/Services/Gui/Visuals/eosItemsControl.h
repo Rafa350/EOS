@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "Services/Gui/Visuals/eosControl.h"
-#include "System/Collections/eosIntrusiveList.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
 
 
 namespace eos {

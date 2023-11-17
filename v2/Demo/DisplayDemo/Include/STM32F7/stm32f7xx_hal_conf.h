@@ -1,4 +1,4 @@
-/**
+ /**
   ******************************************************************************
   * @file    stm32f7xx_hal_conf_template.h
   * @author  MCD Application Team
@@ -23,6 +23,8 @@
 #ifndef __STM32F7xx_HAL_CONF_H
 #define __STM32F7xx_HAL_CONF_H
 
+#include "eos.h"
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -35,51 +37,51 @@
   * @brief This is the list of modules to be used in the HAL driver 
   */
 #define HAL_MODULE_ENABLED  
-#define HAL_ADC_MODULE_ENABLED  
-#define HAL_CAN_MODULE_ENABLED
-/* #define HAL_CAN_LEGACY_MODULE_ENABLED */
-#define HAL_CEC_MODULE_ENABLED  
-#define HAL_CRC_MODULE_ENABLED  
-#define HAL_CRYP_MODULE_ENABLED  
-#define HAL_DAC_MODULE_ENABLED  
-#define HAL_DCMI_MODULE_ENABLED 
+//#define HAL_ADC_MODULE_ENABLED
+//#define HAL_CAN_MODULE_ENABLED
+//#define HAL_CAN_LEGACY_MODULE_ENABLED
+//#define HAL_CEC_MODULE_ENABLED
+//#define HAL_CRC_MODULE_ENABLED
+//#define HAL_CRYP_MODULE_ENABLED
+//#define HAL_DAC_MODULE_ENABLED
+//#define HAL_DCMI_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_DMA2D_MODULE_ENABLED 
-#define HAL_ETH_MODULE_ENABLED 
+//#define HAL_ETH_MODULE_ENABLED
 #define HAL_EXTI_MODULE_ENABLED 
-#define HAL_FLASH_MODULE_ENABLED 
-#define HAL_NAND_MODULE_ENABLED
-#define HAL_NOR_MODULE_ENABLED
+#define HAL_FLASH_MODULE_ENABLED
+//#define HAL_NAND_MODULE_ENABLED
+//#define HAL_NOR_MODULE_ENABLED
 #define HAL_SRAM_MODULE_ENABLED
 #define HAL_SDRAM_MODULE_ENABLED
 #define HAL_HASH_MODULE_ENABLED  
 #define HAL_GPIO_MODULE_ENABLED
 #define HAL_I2C_MODULE_ENABLED
-#define HAL_I2S_MODULE_ENABLED   
+//#define HAL_I2S_MODULE_ENABLED
 #define HAL_IWDG_MODULE_ENABLED 
-#define HAL_LPTIM_MODULE_ENABLED
+//#define HAL_LPTIM_MODULE_ENABLED
 #define HAL_LTDC_MODULE_ENABLED 
 #define HAL_PWR_MODULE_ENABLED
-#define HAL_QSPI_MODULE_ENABLED   
+//#define HAL_QSPI_MODULE_ENABLED
 #define HAL_RCC_MODULE_ENABLED 
-#define HAL_RNG_MODULE_ENABLED   
-#define HAL_RTC_MODULE_ENABLED
-#define HAL_SAI_MODULE_ENABLED   
-#define HAL_SD_MODULE_ENABLED  
-#define HAL_SPDIFRX_MODULE_ENABLED
+#define HAL_RNG_MODULE_ENABLED
+//#define HAL_RTC_MODULE_ENABLED
+//#define HAL_SAI_MODULE_ENABLED
+//#define HAL_SD_MODULE_ENABLED
+//#define HAL_SPDIFRX_MODULE_ENABLED
 #define HAL_SPI_MODULE_ENABLED   
 #define HAL_TIM_MODULE_ENABLED   
 #define HAL_UART_MODULE_ENABLED 
 #define HAL_USART_MODULE_ENABLED 
-#define HAL_IRDA_MODULE_ENABLED 
-#define HAL_SMARTCARD_MODULE_ENABLED 
-#define HAL_WWDG_MODULE_ENABLED  
+//#define HAL_IRDA_MODULE_ENABLED
+//#define HAL_SMARTCARD_MODULE_ENABLED
+//#define HAL_WWDG_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
-#define HAL_PCD_MODULE_ENABLED
-#define HAL_HCD_MODULE_ENABLED
-#define HAL_DFSDM_MODULE_ENABLED
-#define HAL_DSI_MODULE_ENABLED
-#define HAL_JPEG_MODULE_ENABLED
+//#define HAL_PCD_MODULE_ENABLED
+//#define HAL_HCD_MODULE_ENABLED
+//#define HAL_DFSDM_MODULE_ENABLED
+//#define HAL_DSI_MODULE_ENABLED
+//#define HAL_JPEG_MODULE_ENABLED
 #define HAL_MDIOS_MODULE_ENABLED
 #define HAL_SMBUS_MODULE_ENABLED
 #define HAL_MMC_MODULE_ENABLED
@@ -147,7 +149,7 @@
 #define  TICK_INT_PRIORITY            0x0FU /*!< tick interrupt priority */
 #define  USE_RTOS                     0U
 #define  PREFETCH_ENABLE              1U /* To enable prefetch */
-#define  ART_ACCLERATOR_ENABLE        1U /* To enable ART Accelerator */
+//#define  ART_ACCLERATOR_ENABLE        1U /* To enable ART Accelerator */
 
 #define  USE_HAL_ADC_REGISTER_CALLBACKS         0U /* ADC register callback disabled       */
 #define  USE_HAL_CAN_REGISTER_CALLBACKS         0U /* CAN register callback disabled       */

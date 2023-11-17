@@ -42,7 +42,7 @@ namespace eos {
             template <typename T_, int tag_>
             class IntrusiveListIterator {
                 public:
-                    using ValueType ? T_*;
+                    using ValueType = T_*;
                     using NodeType = IntrusiveListNode<T_, tag_>*;
 
                 private:

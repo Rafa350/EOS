@@ -51,7 +51,8 @@ Visual::~Visual() {
 
 	while (!_childs.empty()) {
 	    auto child = _childs.front();
-	    _childs.pop_front();
+	    child->_parent = nullptr;
+	    _childs.popFront();
 	}
 }
 
@@ -169,7 +170,7 @@ void Visual::addVisual(
 	eosAssert(visual != nullptr);
 	eosAssert(visual->_parent == nullptr);
 
-	_childs.push_front(visual);
+	_childs.pushFront(visual);
 	visual->_parent = this;
 
 	invalidateLayout();
