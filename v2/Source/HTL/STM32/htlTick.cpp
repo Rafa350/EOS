@@ -4,6 +4,8 @@
 #include "HTL/STM32/htlINT.h"
 #include "HTL/STM32/htlGPIO.h"
 
+#include <atomic>
+
 
 using namespace htl;
 using namespace htl::tick;
@@ -81,9 +83,13 @@ void TickGenerator::stop() {
 /// \brief    Obte el valor del contador de ticks
 /// \return   El valor del contador
 //
-Ticks TickGenerator::getTick() {
+Tick TickGenerator::getTick() {
 
-	return _tickCounter;
+    __disable_irq();
+	auto tick = _tickCounter;
+	__enable_irq();
+
+	return tick;
 }
 
 
@@ -92,7 +98,7 @@ Ticks TickGenerator::getTick() {
 /// \param    ticks: El nombre de tics
 ///
 void TickGenerator::wait(
-	Ticks ticks) {
+	Tick ticks) {
 
 	auto lastTick = getTick() + ticks;
 	while (static_cast<int>(lastTick - getTick()) > 0)

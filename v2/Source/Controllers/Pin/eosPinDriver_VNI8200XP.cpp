@@ -211,7 +211,7 @@ PinDriver_VNI8200XP::PinDriver_VNI8200XP(
 	_dev {dev},
 	_pinMask {uint8_t(1 << pinNumber)} {
 
-	eosAssert(hDevice != nullptr);
+	eosAssert(dev != nullptr);
 	eosAssert(pinNumber < 8);
 }
 

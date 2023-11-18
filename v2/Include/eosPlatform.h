@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosPlatform__
-#define __eosPlatform__
 
 
 #ifndef EOS_TOOLCHAIN_DETECTED
@@ -209,6 +207,3 @@ namespace eos {
 	}
 }
 #endif
-
-
-#endif // __eosPlatform__

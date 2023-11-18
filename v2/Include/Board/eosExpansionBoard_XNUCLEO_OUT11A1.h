@@ -1,6 +1,8 @@
 #pragma once
-#ifndef __eosExpansionBoard_XNUCLEO_OUT11A1__
-#define __eosExpansionBoard_XNUCLEO_OUT11A1__
+
+
+#if defined(USE_XNUCLEO_OUT11A1)
+#define EXIST_XNUCLEO_OUT11A1
 
 
 #define OUT11A1_SYNC_Pin     ARDUINO_A2_Pin
@@ -17,4 +19,4 @@
 #define OUT11A1_FAULT_Pin    ARDUINO_D15_Pin
 
 
-#endif // __eosExpansionBoard_XNUCLEO_OUT11A1
+#endif // USE_XNUCLEO_OUT11A1

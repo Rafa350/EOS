@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eos__
-#define	__eos__
 
 
 // Environment detection includes
@@ -44,7 +42,10 @@
 	#include "stm32f1xx.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)
-	#include "stm32f4xx.h"
+    #if defined(EOS_PLATFORM_STM32F429)
+        #define STM32F429xx
+    #endif
+    #include "stm32f4xx.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
     #if defined(EOS_PLATFORM_STM32F746)
@@ -91,7 +92,3 @@
 //
 void appMain();
 void appInitialize();
-
-
-#endif // __eos__
-

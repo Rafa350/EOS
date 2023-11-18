@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosToolchain__
-#define __eosToolchain__
 
 
 // Microchip XC32 compiler
@@ -65,6 +63,3 @@ namespace eos {
 	}
 }
 #endif
-
-
-#endif // __eosToolchain__

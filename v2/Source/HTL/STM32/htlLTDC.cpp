@@ -2,6 +2,7 @@
 #include "HTL/STM32/htlLTDC.h"
 
 
+using namespace htl;
 using namespace htl::ltdc;
 
 

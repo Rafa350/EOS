@@ -1,17 +1,18 @@
 #pragma once
-#ifndef __eosBoard_NUCLEO_G071RB__
-#define __eosBoard_NUCLEO_G071RB__
+
+
+#define EOS_HARDWARE_NUCLEO_G071RB
 
 
 // -----------------------------------------------------------------------
 // External oscilator parameters
 // -----------------------------------------------------------------------
 
-#define CLOCK_HSE_FREQUENCY        8000000 // Hz
-#define CLOCK_HSE_STARTUP          100     // ms
-#define CLOCK_HSE_BYPASS           1       // Bypass enabled
-#define CLOCK_LSE_FREQUENCY        32768   // Hz
-#define CLOCK_LSE_STARTUP          5000    // ms
+#define CLOCK_HSE_FREQUENCY       8000000 // Hz
+#define CLOCK_HSE_STARTUP         100     // ms
+#define CLOCK_HSE_BYPASS          1       // Bypass enabled
+#define CLOCK_LSE_FREQUENCY       32768   // Hz
+#define CLOCK_LSE_STARTUP         5000    // ms
 
 
 // -----------------------------------------------------------------------
@@ -25,10 +26,10 @@
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_Pin::getHandler()->initOutput(htl::gpio::OutDriver::pushPull)
-#define LED1_On()            LED1_Pin::getHandler()->set()
-#define LED1_Off()           LED1_Pin::getHandler()->clear()
-#define LED1_Toggle()        LED1_Pin::getHandler()->toggle()
+#define LED1_Initialize()    LED1_Pin::pInst->initOutput(htl::gpio::OutDriver::pushPull)
+#define LED1_On()            LED1_Pin::pInst->set()
+#define LED1_Off()           LED1_Pin::pInst->clear()
+#define LED1_Toggle()        LED1_Pin::pInst->toggle()
 
 #endif // USE_LED1
 
@@ -178,7 +179,3 @@
 #define ARDUINO_MOSI_Pin     htl::gpio::PinA7 // ARDUINO_D11
 
 #endif // USE_ARDUINO
-
-
-#endif // __eosBoard_NUCLERO_G071RB__
-

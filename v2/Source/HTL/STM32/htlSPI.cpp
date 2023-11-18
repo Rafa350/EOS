@@ -135,7 +135,8 @@ Result SPIDevice::transmit(
 		_state = State::transmiting;
 
 		bool error = false;
-		uint16_t startTime = getTick();
+		auto expireTime = htl::getTick() + timeout;
+
 		uint16_t count = 0;
 		#if defined(EOS_PLATFORM_STM32G0)
 		bool len8 = (_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8;
@@ -152,6 +153,7 @@ Result SPIDevice::transmit(
 			// Espera que el buffer de transmissio estigui buit
 			//
 			while (!spiTxEmpty(_spi) && !error) {
+			    hasTickExpired(expireTime);
 			}
 			if (error)
 				continue;

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosVersion__
-#define __eosVersion__
 
 
 #define EOS_HI_VERSION       2
@@ -25,6 +23,3 @@ namespace eos {
 	}
 }
 #endif
-
-
-#endif // __eosVersion__

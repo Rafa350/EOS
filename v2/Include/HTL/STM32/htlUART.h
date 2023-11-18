@@ -85,10 +85,17 @@ namespace htl {
 		};
 
 		enum class ClockSource {
+            #if defined(EOS_PLATFORM_STM32F4)
 			pclk,
 			sysclk,
 			hsi,
 			lse,
+            #elif defined(EOS_PLATFORM_STM32G0)
+			pclk,
+			sysclk,
+			hsi16,
+			lse,
+            #endif
 			automatic
 		};
 

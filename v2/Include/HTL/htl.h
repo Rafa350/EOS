@@ -24,12 +24,13 @@
 
 namespace htl {
 
-    using Ticks = uint32_t;
+    using Tick = uint32_t;
 
 	void initialize();
 	void deinitialize();
 
-	uint32_t getTick();
-	void waitTicks(uint32_t ticks);
+	Tick getTick();
+	void waitTicks(Tick ticks);
+	bool hasTickExpired(Tick tick);
 }
 

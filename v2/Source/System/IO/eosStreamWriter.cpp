@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "System/IO/eosStream.h"
 #include "System/IO/eosStreamWriter.h"
 
 
@@ -10,9 +9,12 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 StreamWriter::StreamWriter(
-    Stream &stream):
+    uint8_t *buffer,
+    unsigned size):
 
-    stream(stream) {
+    _begin {buffer},
+    _end {buffer + size},
+    _ptr {buffer} {
     
 }
 
@@ -20,44 +22,67 @@ StreamWriter::StreamWriter(
 /// ----------------------------------------------------------------------
 /// \brief    Escriu un valor de tipus uint8_t.
 /// \param    data: El valor a escriure.
+/// \return   True si tot es correcte.
 ///
-void StreamWriter::write(
-    uint8_t data) {
-    
-    stream.write((uint8_t*)&data, sizeof(uint8_t));
+bool StreamWriter::write(
+    uint8_t value) {
+
+    if (_ptr + sizeof(value) < _end) {
+        *_ptr++ = value;
+        return true;
+    }
+    else
+        return false;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Escriu un valor de tipus uint16_t.
 /// \param    data: El valor a escriure.
+/// \return   True si tot es correcte.
 ///
-void StreamWriter::write(
-    uint16_t data) {
+bool StreamWriter::write(
+    uint16_t value) {
     
-    stream.write((uint8_t*)&data, sizeof(uint16_t));
+    if (_ptr + sizeof(value) < _end) {
+        *_ptr++ = value >> 8;
+        *_ptr++ = value;
+        return true;
+    }
+    else
+        return false;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Escriu un valor de tipus uint32_t.
 /// \param    data: El valor a escriure.
+/// \return   True si tot es correcte.
 ///
-void StreamWriter::write(
-    uint32_t data) {
+bool StreamWriter::write(
+    uint32_t value) {
     
-    stream.write((uint8_t*)&data, sizeof(uint32_t));
+    if (_ptr + sizeof(value) < _end) {
+        *_ptr++ = value >> 24;
+        *_ptr++ = value >> 16;
+        *_ptr++ = value >> 8;
+        *_ptr++ = value;
+        return true;
+    }
+    else
+        return false;
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un bloc de memoria
-/// \param    data: Punter al bloc de memoria.
-/// \param    size: El tamany en bytes del bloc de memoria.
-///
-void StreamWriter::write(
-    const void *data, 
-    int size) {
-    
-    stream.write(data, size);
+bool StreamWriter::write(
+    const uint8_t *data,
+    unsigned size) {
+
+    if ((_ptr + size ) < _end) {
+        memcpy(_ptr, data, size);
+        _ptr += size;
+        return true;
+    }
+    else
+        return false;
 }

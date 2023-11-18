@@ -1,9 +1,7 @@
-#ifndef __eosStreamWriter__
-#define __eosStreamWriter__
+#pragma once
 
 
 #include "eos.h"
-#include "System/IO/eosStream.h"
 
 
 namespace eos {
@@ -12,20 +10,33 @@ namespace eos {
     ///
     class StreamWriter {
         private:
-            Stream &stream;
+            uint8_t * const _begin;
+            uint8_t * const _end;
+            uint8_t * _ptr;
             
         public:
-            StreamWriter(Stream &stream);
+            StreamWriter(uint8_t *buffer, unsigned size);
             
-            void write(uint8_t data);
-            void write(uint16_t data);
-            void write(uint32_t data);
-            void write(const void *data, int size);
-            
-            inline Stream& getStream() const { return stream; }
+            bool write(uint8_t data);
+            bool write(uint16_t data);
+            bool write(uint32_t data);
+            bool write(const uint8_t *data, unsigned size);
+
+            inline unsigned length() const {
+                return _ptr - _begin;
+            }
+
+            inline uint8_t *data() const {
+                return _begin;
+            }
+
+            inline const uint8_t* begin() const {
+                return _begin;
+            }
+
+            inline const uint8_t* end() const {
+                return _end;
+            }
     };
     
 }
-
-
-#endif // __eosStreamWriter__

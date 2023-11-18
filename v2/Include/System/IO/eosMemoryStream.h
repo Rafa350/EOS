@@ -1,5 +1,4 @@
-#ifndef __eosMemoryStream__
-#define	__eosMemoryStream__
+#pragma once
 
 
 #include "eos.h"
@@ -25,7 +24,3 @@ namespace eos {
     };
 
 }
-
-
-#endif // __eosMemoryStream__
-

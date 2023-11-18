@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosAssert__
-#define	__eosAssert__
 
 
 #include "eos.h"
@@ -37,7 +35,3 @@ void eosErrorHandler(const char *file, unsigned line, const char *message);
 }
 #endif
 #endif
-
-
-#endif // __eosAssert__
-

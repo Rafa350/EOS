@@ -6,6 +6,12 @@ using namespace htl;
 using namespace htl::i2c;
 
 
+static void i2cSetTimming(I2C_TypeDef *i2c, uint8_t prescaler, uint8_t scldel,
+        uint8_t sdadel, uint8_t sclh, uint8_t scll);
+static void i2cSetClockSource(I2C_TypeDef *i2c, ClockSource clockSource);
+static ClockSource i2cGetClockSource(I2C_TypeDef *i2c);
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    i2c: Registres hardware del modul I2C.
@@ -48,12 +54,7 @@ Result I2CSlaveDevice::initialize(
 
 		// Configura els parametres de timing
 		//
-		_i2c->TIMINGR =
-			((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
-			((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
-			((sdadel << I2C_TIMINGR_SDADEL_Pos) & I2C_TIMINGR_SDADEL_Msk) |
-			((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
-			((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
+		i2cSetTimming(_i2c, prescaler, scldel, sdadel, sclh, scll);
 
 		// Configura l'adressa I2C
 		//
@@ -113,7 +114,7 @@ Result I2CSlaveDevice::listen(
 
 	if (_state == State::ready) {
 
-		_buffer = buffer;
+        _buffer = buffer;
 		_bufferSize = bufferSize;
 		_state = State::listen;
 
@@ -421,4 +422,84 @@ void I2CSlaveDevice::notifyTxCompleted() {
         };
         _notifyEvent->execute(this, args);
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el rellotge.
+/// \param    i2c: Els registres de hardware del dispositiu.
+/// \param    clockSource: El rellotge.
+///
+static void i2cSetClockSource(
+    I2C_TypeDef *i2c,
+    ClockSource clockSource) {
+
+#if defined(EOS_PLATFORM_STM32G0)
+
+    uint32_t pos;
+    uint32_t msk;
+
+    switch (reinterpret_cast<uint32_t>(i2c)) {
+        #if defined(HTL_I2C1_EXIST)
+        case I2C1_BASE:
+            pos = RCC_CCIPR_I2C1SEL_Pos;
+            msk = RCC_CCIPR_I2C1SEL_Msk;
+            break;
+        #endif
+
+        #if defined(HTL_I2C2_EXIST) && defined(RCC_CCIPR_ISC2SEL_Pos)
+        case I2C2_BASE:
+            pos = RCC_CCIPR_I2C2SEL_Pos;
+            msk = RCC_CCIPR_I2C2SEL_Msk;
+            break;
+        #endif
+
+        default:
+            return;
+    }
+
+    uint32_t tmp = RCC->CCIPR;
+    tmp &= ~msk;
+    switch (clockSource) {
+        case ClockSource::sysclk:
+            tmp |= (1 << pos) & msk;
+            break;
+
+        case ClockSource::hsi16:
+            tmp |= (2 << pos) & msk;
+            break;
+
+        default:
+            return;
+    }
+    RCC->CCIPR = tmp;
+#else
+#error "Unknown platform"
+#endif
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura els parametres de temporitzacio.
+/// \param    i2c: Els registres de hardware del dispositiu.
+/// \param    prescaler: Divisor del rellotge.
+/// \param    scldel:
+/// \param    sdadel:
+/// \param    sclh:
+/// \param    scll:
+///
+static void i2cSetTimming(
+    I2C_TypeDef *i2c,
+    uint8_t prescaler,
+    uint8_t scldel,
+    uint8_t sdadel,
+    uint8_t sclh,
+    uint8_t scll) {
+
+    i2c->TIMINGR =
+        ((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
+        ((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
+        ((sdadel << I2C_TIMINGR_SDADEL_Pos) & I2C_TIMINGR_SDADEL_Msk) |
+        ((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
+        ((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
 }

@@ -28,14 +28,16 @@ namespace htl {
 		};
 
 		enum class ClockSource {
-			sysclk,
 			#if defined(EOS_PLATFORM_STM32F4)
-			hsi,
 			pclk1,
+			sysclk,
+			hsi,
 			#elif defined(EOS_PLATFORM_STM32G0)
-			hsi16,
 			pclk,
+			sysclk,
+			hsi16,
 			#endif
+			automatic
 		};
 
 		enum class PinFunction {
@@ -231,7 +233,7 @@ namespace htl {
 					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
-				void initPinSMBA() {
+				void initPinALERT() {
 					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
 					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
 				}
