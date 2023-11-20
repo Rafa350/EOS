@@ -30,7 +30,6 @@
               <itemPath>../../../Include/HTL/PIC32/htlCN.h</itemPath>
               <itemPath>../../../Include/HTL/PIC32/htlTMR.h</itemPath>
               <itemPath>../../../Include/HTL/PIC32/htlINT.h</itemPath>
-              <itemPath>../../../Include/HTL/PIC32/htlRegisters.h</itemPath>
               <itemPath>../../../Include/HTL/PIC32/htl.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HTL/htlGPIO.h</itemPath>

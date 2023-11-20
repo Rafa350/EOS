@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __htlTMR__
+#define __htlTMR__
 
 
 // EOS includes
@@ -21,3 +23,6 @@
     #include "HTL/MSP432/htlTMR.h"
 
 #endif
+
+
+#endif // __htlTMR__

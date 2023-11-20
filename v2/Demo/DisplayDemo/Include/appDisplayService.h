@@ -1,5 +1,4 @@
-#ifndef __appDisplayService__
-#define __appDisplayService__
+#pragma once
 
 
 // EOS includes
@@ -65,6 +64,3 @@ namespace app {
 	};
 
 }
-
-
-#endif // __appDisplayService__

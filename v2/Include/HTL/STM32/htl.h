@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htl__
+#define __STM32_htl__
 
 
 #include "HTL/htl.h"
@@ -261,3 +263,6 @@
 namespace htl {
 
 }
+
+
+#endif // __STM32_htl__

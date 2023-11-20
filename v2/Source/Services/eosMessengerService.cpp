@@ -22,7 +22,7 @@ MessengerService::MessengerService():
 void MessengerService::addPublisher(
     Publisher *publisher) {
 
-    _publishers.push_front(publisher);
+    _publishers.pushFront(publisher);
 }
 
 

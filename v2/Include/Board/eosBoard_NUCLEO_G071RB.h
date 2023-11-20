@@ -46,6 +46,9 @@
 #define SW1_StateON          true
 #define SW1_StateOF          false
 
+#define SW1_Initialize()
+#define SW1_Read()
+
 #endif // USE_SW1
 
 

@@ -20,7 +20,20 @@ namespace eos {
             bool write(uint8_t data);
             bool write(uint16_t data);
             bool write(uint32_t data);
+            inline bool write(int8_t data) {
+                return write(static_cast<uint8_t>(data));
+            }
+            inline bool write(int16_t data) {
+                return write(static_cast<uint16_t>(data));
+            }
+            inline bool write(int32_t data) {
+                return write(static_cast<uint32_t>(data));
+            }
             bool write(const uint8_t *data, unsigned size);
+            bool write(const char *fmt, ...);
+            inline bool write(bool data) {
+                return write(static_cast<uint8_t>(data));
+            }
 
             inline unsigned length() const {
                 return _ptr - _begin;

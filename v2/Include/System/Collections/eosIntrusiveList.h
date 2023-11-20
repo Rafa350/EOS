@@ -89,14 +89,14 @@ namespace eos {
                     NodeType _last;
 
                 public:
-                    inline IntrusiveForwardList() :
+                    inline IntrusiveList() :
                         _first {nullptr},
                         _last {nullptr} {
                     }
 
                     void clear() {
                         while (!empty())
-                            pop_front();
+                            popFront();
                     }
 
                     void pushFront(ValueType element) {

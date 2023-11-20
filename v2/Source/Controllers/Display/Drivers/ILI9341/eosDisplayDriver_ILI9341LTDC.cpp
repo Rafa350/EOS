@@ -51,7 +51,7 @@ void DisplayDriver_ILI9341LTDC::deinitialize() {
 ///
 void DisplayDriver_ILI9341LTDC::enable() {
 
-	LTDCDevice::pInst->enable();
+	_ltdc->enable();
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
@@ -281,7 +281,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 
 	// Inicialitza el controlador del display
 	//
-#if defined(STM32F429I_DISC1)
+#if defined(HARDWARE_STM32F429I_DISC1)
     static const uint8_t initCommands[] = {
         __SOFTWARE_RESET,
         OP_DELAY, 250,
@@ -311,15 +311,14 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
         OP_END
     };
 
-#elif
+#else
 #error "Display no soportado"
 #endif
 
 	#ifdef DISPLAY_RST_Pin
-    	halTMRDelay(10);
-    	auto hRST = PinRST::getHandler();
-    	hRST->set();
-    	halTMRDelay(120);
+    	delay(10);
+    	_pinRST->set();
+    	delay(120);
 	#endif
 
     uint8_t c;

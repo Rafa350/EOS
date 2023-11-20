@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosMessengerService__
-#define __eosMessengerService__
 
 
 // EOS includes
@@ -8,7 +6,7 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosIntrusiveList.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -76,6 +74,3 @@ namespace eos {
             void removePublisher(Publisher *publisher);
     };
 }
-
-
-#endif // __eosMessengerService__

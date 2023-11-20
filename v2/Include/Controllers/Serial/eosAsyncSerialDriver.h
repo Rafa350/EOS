@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosAsyncSerialDriver__
-#define __eosAsyncSerialDriver__
 
 
 #include "eos.h"
@@ -30,18 +28,24 @@ namespace eos {
 			struct AbortedEventArgs {
 				AsyncSerialDriver *driver;
 			};
+
     		using ITxCompletedEvent = ICallbackP1<const TxCompletedEventArgs&>;
     		using IRxCompletedEvent = ICallbackP1<const RxCompletedEventArgs&>;
     		using IAbortedEvent = ICallbackP1<const AbortedEventArgs&>;
+
     		template <typename instance_> using TxCompletedEvent = CallbackP1<instance_, const TxCompletedEventArgs&>;
     		template <typename instance_> using RxCompletedEvent = CallbackP1<instance_, const RxCompletedEventArgs&>;
     		template <typename instance_> using AbortedEvent = CallbackP1<instance_, const AbortedEventArgs&>;
 
 		private:
 			State _state;
+
             const ITxCompletedEvent *_txCompletedEvent;
             const IRxCompletedEvent *_rxCompletedEvent;
             const IAbortedEvent *_abortedEvent;
+            bool _txCompletedEventEnabled;
+            bool _rxCompletedEventEnabled;
+            bool _abortedEventEnabled;
 
 		protected:
             void notifyTxStart();
@@ -71,17 +75,19 @@ namespace eos {
 			inline bool isBusy() const { return getState() != State::ready; }
 			inline bool isReady() const { return getState() == State::ready; }
 
-			void enableTxCompletedEvent(const ITxCompletedEvent &event);
-			void disableTxCompletedEvent() { _txCompletedEvent = nullptr; }
-			void enableRxCompletedEvent(const IRxCompletedEvent &event);
-			void disableRxCompletedEvent() { _rxCompletedEvent = nullptr; }
-			void enableAbortedEvent(const IAbortedEvent &event);
-			void disableAbortedEvent() { _abortedEvent = nullptr; }
+			void setTxCompletedEvent(const ITxCompletedEvent &event, bool enabled = true);
+			void enableTxCompletedEvent() { _txCompletedEventEnabled = _txCompletedEvent != nullptr; }
+			void disableTxCompletedEvent() { _txCompletedEventEnabled = false; }
+
+			void setRxCompletedEvent(const IRxCompletedEvent &event, bool enabled = true);
+            void enableRxCompletedEvent() { _rxCompletedEventEnabled = _rxCompletedEvent != nullptr; }
+			void disableRxCompletedEvent() { _rxCompletedEventEnabled = false; }
+
+			void setAbortedEvent(const IAbortedEvent &event, bool enabled = true);
+            void enableAbortedEvent() { _abortedEventEnabled = _abortedEvent != nullptr; }
+			void disableAbortedEvent() { _abortedEventEnabled = false; }
 
 			bool transmit(const uint8_t *data, int dataLength);
 			bool receive(uint8_t *data, int dataSize);
 	};
 }
-
-
-#endif // eosAsyncSerialDriver__

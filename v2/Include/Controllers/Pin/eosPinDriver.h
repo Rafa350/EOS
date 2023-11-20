@@ -7,7 +7,6 @@
 
 
 namespace eos {
-
     
     /// \brief Clase abstracta que implementa del driver del pin
     ///

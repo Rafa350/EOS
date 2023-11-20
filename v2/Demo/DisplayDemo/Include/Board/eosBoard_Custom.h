@@ -1,5 +1,4 @@
-#ifndef __eosBoard_Custom__
-#define __eosBoard_Custom__
+#pragma once
 
 
 #if defined(HARDWARE_CUSTOM_PIC32_USB_STARTER_KIT_I)
@@ -15,6 +14,3 @@
     #include "Board/eosBoard_Custom_PINGUINO.h"
 
 #endif
-
-
-#endif // __eosBoard_Custom__

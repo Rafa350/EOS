@@ -1,5 +1,4 @@
-#ifndef __board_Custom_SMT32F429I_DISC1__
-#define __board_Custom_SMT32F429I_DISC1__
+#pragma once
 
 
 #include "Board/eosBoard_STM32F429I_DISC1.h"
@@ -34,7 +33,3 @@
 
 
 #endif
-
-
-#endif // __board_Custom_STM32F429I_DISC1__
-

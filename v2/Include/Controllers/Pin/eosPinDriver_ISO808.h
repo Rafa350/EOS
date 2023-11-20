@@ -26,8 +26,10 @@ namespace eos {
 			htl::gpio::Pin *_pinIN8;
 			htl::gpio::Pin *_pinOUTEN;
 			htl::gpio::Pin *_pinFAULT;
+
         protected:
             ISO808_Device();
+
 		public:
 			void initialize(htl::gpio::Pin *pinSYNC, htl::gpio::Pin *pinLOAD,
 	                htl::gpio::Pin *pinIN1, htl::gpio::Pin *pinIN2, htl::gpio::Pin *pinIN3,
@@ -60,13 +62,16 @@ namespace eos {
             bool isOK();
 	};
 
+
     template <uint8_t id_>
 	class ISO808_DeviceX final: public ISO808_Device {
 		private:
 			static ISO808_DeviceX _instance;
+
 		public:
 			static constexpr ISO808_DeviceX *pInst = &_instance;
 			static constexpr ISO808_DeviceX &rInst = _instance;
+
         private:
             ISO808_DeviceX(const ISO808_DeviceX&) = delete;
 			ISO808_DeviceX & operator = (const ISO808_DeviceX&) = delete;
@@ -80,6 +85,7 @@ namespace eos {
 		private:
 			ISO808_Device * const _dev;
 			uint8_t const _pinMask;
+
 		public:
 			PinDriver_ISO808(ISO808_Device *dev, uint8_t pinNumber);
 			void set() override;

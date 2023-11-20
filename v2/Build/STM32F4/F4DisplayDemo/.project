@@ -49,11 +49,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/App/Board</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>inc/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -122,16 +117,6 @@
 			<name>src/Framework/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/App/Board/eosBoard_Custom.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/Board/eosBoard_Custom.h</locationURI>
-		</link>
-		<link>
-			<name>inc/App/Board/eosBoard_Custom_STM32F429I_DISC1.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/Board/eosBoard_Custom_STM32F429I_DISC1.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F4/FreeRTOSConfig.h</name>
@@ -222,6 +207,11 @@
 			<name>src/App/STM32F4/stm32f7xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F4/system_stm32f4xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/system_stm32f4xx.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -599,11 +589,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/system/Src/syscalls.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/STM32/System/system_stm32f4xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/system/Src/system_stm32f4xx.c</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -784,11 +769,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosMonoFrameBuffer.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosMonoFrameBuffer.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
@@ -797,6 +777,11 @@
 			<name>src/Framework/EOS/HTL/STM32/F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htl.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htl.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
@@ -822,6 +807,11 @@
 			<name>src/Framework/EOS/HTL/STM32/htlTMR.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlTick.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTick.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
@@ -1004,11 +994,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/SSD1306</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HTL/STM32/F4/htlClock.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F4/htlClock.cpp</locationURI>
@@ -1097,11 +1082,6 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

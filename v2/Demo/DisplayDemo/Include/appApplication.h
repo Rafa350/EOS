@@ -1,5 +1,4 @@
-#ifndef __appApplication__
-#define __appApplication__
+#pragma once
 
 
 // EOS includes
@@ -26,5 +25,3 @@ namespace app {
 	};
 
 }
-
-#endif

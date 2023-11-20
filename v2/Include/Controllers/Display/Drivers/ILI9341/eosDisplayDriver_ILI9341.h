@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosDisplayDriver_ILI9341__
-#define	__eosDisplayDriver_ILI9341__
 
 
 #include "eos.h"
@@ -28,23 +26,24 @@ namespace eos {
     class DisplayDriver_ILI9341: public IDisplayDriver {
     	private:
 			#if defined(DISPLAY_INTERFACE_8080)
-				using PinRDX = DISPLAY_RDX_GPIO;
-				using PinWRX = DISPLAY_WRX_GPIO;
-    			using PinTE = DISPLAY_TE_GPIO;
+				using PinRDX = DISPLAY_RDX_Pin;
+				using PinWRX = DISPLAY_WRX_Pin;
+    			using PinTE = DISPLAY_TE_Pin;
 			#endif
 			#if defined (DISPLAY_INTERFACE_6800)
-				using PinTE = DISPLAY_TE_GPIO;
+				using PinTE = DISPLAY_TE_Pin;
 			#endif
 			#if defined(DISPLAY_INTERFACE_SPI) || \
 			    defined(DISPLAY_INTERFACE_RGB)
     			using PinTE = DISPLAY_TE_Pin;
 				using PinSCK = DISPLAY_SCK_Pin;
 				using PinMOSI = DISPLAY_MOSI_Pin;
-				using DevSPI = DISPLAY_SPI;
+				using DevSPI = DISPLAY_SPI_Device;
 				static constexpr DevSPI *_devSPI = DevSPI::pInst;
 			#endif
-			#if defined(DISPLAY_RST_GPIO)
-    			using PinRST = DISPLAY_RST_GPIO;
+			#if defined(DISPLAY_RST_Pin)
+    			using PinRST = DISPLAY_RST_Pin;
+    			static constexpr PinRST *_pinRST = PinRST::pInst;
 			#endif
     		using PinCS = DISPLAY_CS_Pin;
     		using PinRS = DISPLAY_RS_Pin;
@@ -103,7 +102,4 @@ namespace eos {
             void writeData(const uint8_t *data, int32_t length);
     };
 }
-
-
-#endif // __eosDisplayDriver_ILI9341__
 

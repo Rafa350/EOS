@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosCommandLineProcessor__
-#define __eosCommandLineProcessor__
 
 
 // EOS includes
@@ -20,6 +18,7 @@ namespace eos {
 	class CommandLineProcessor final {
 		public:
     		using CommandList = std::forward_list<CommandDefinition*>;
+
 		public:
 			struct CommandEventArgs {
 				const CommandDefinition *command;
@@ -73,7 +72,3 @@ namespace eos {
 	};
 
 }
-
-
-#endif // __eosCOmmandLineProcessor__
-

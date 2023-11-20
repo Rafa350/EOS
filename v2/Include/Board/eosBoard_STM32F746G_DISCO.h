@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosBoard_SMT32F746G_DISCO__
-#define __eosBoard_SMT32F746G_DISCO__
 
 
 // -----------------------------------------------------------------------
@@ -256,7 +254,3 @@
 #define SD_MODULE                 SDMMC1
 
 #endif // USE_SD
-
-
-
-#endif // __eosBoard_SMT32F746G_DISCO__

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosPinDriver_CLT0138SQ7__
-#define __eosPinDriver_CLT0138SQ7__
 
 
 #include "eos.h"
@@ -70,6 +68,3 @@ namespace eos {
             bool read() override;
     };
 }
-
-
-#endif // __eosPinDriver_CLT0138SQ7__

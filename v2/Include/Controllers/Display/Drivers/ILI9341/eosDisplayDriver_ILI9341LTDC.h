@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosDisplayDriver_ILI9341LTDC__
-#define	__eosDisplayDriver_ILI9341LTDC__
 
 
 #include "eos.h"
@@ -17,7 +15,7 @@ namespace eos {
     	private:
     		using PinSCK = DISPLAY_SCK_Pin;
     		using PinMOSI = DISPLAY_MOSI_Pin;
-    		using DevSPI = DISPLAY_SPI;
+    		using DevSPI = DISPLAY_SPI_Device;
 
     		using PinCS = DISPLAY_CS_Pin;
     		using PinRS = DISPLAY_RS_Pin;
@@ -104,6 +102,3 @@ namespace eos {
             void writeData(uint8_t data);
     };
 }
-
-
-#endif // __eosDisplayDriver_ILI9341LTDC__

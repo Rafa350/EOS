@@ -25,8 +25,8 @@ void DisplayDriver_ILI9341::initializeInterface() {
 
 	// Inicialitza el pin RST
 	//
-	#ifdef DISPLAY_RST_GPIO
-	PinRST::pInst->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+	#ifdef DISPLAY_RST_Pin
+	_pinRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
 	#endif
 
 	// Inicialitza el pin CS
@@ -81,7 +81,7 @@ void DisplayDriver_ILI9341::initializeController() {
         OP_END
     };
 
-#elif defined(STM32F429I_DISC1)
+#elif defined(HARDWARE_STM32F429I_DISC1)
     static const uint8_t initCommands[] = {
         __SOFTWARE_RESET,
         OP_DELAY, 250,
@@ -110,9 +110,9 @@ void DisplayDriver_ILI9341::initializeController() {
     };
 #endif
 
-	#ifdef DISPLAY_RST_PORT
+	#ifdef DISPLAY_RST_Pin
     	halTMRDelay(10);
-    	CPIO_RST::set();
+    	_pinRST->set();
     	halTMRDelay(120);
 	#endif
 

@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Serial/eosAsyncSerialDriver_UART.h"
 #include "HTL/htlUART.h"
 
@@ -12,12 +13,10 @@ using namespace htl;
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
 AsyncSerialDriver_UART::AsyncSerialDriver_UART(
-	uart::UARTDevice *devUART):
+	DevUART *devUART):
 
 	_devUART {devUART},
-	_uartNotifyEvent {*this, &AsyncSerialDriver_UART::uartNotifyEventHandler},
-	_taskCallback {*this, &AsyncSerialDriver_UART::taskCallbackHandler} {
-	//_task {100, Task::Priority::normal, "", &_taskCallback, nullptr} {
+	_uartNotifyEvent {*this, &AsyncSerialDriver_UART::uartNotifyEventHandler} {
 }
 
 
@@ -55,10 +54,10 @@ bool AsyncSerialDriver_UART::transmitImpl(
 	const uint8_t *data,
 	int dataLength) {
 
-	if ((data == nullptr) || (dataLength == 0))
-		return false;
+    eosAssert(data != nullptr);
+    eosAssert(dataLength > 0);
 
-	else if (isBusy())
+	if (isBusy())
 		return false;
 
 	else {
@@ -84,10 +83,10 @@ bool AsyncSerialDriver_UART::receiveImpl(
 	uint8_t *data,
 	int dataSize) {
 
-	if ((data == nullptr) || (dataSize == 0))
-		return false;
+    eosAssert(data != nullptr);
+    eosAssert(dataLength > 0);
 
-	else if (isBusy())
+	if (isBusy())
 		return false;
 
 	else {
@@ -103,21 +102,14 @@ bool AsyncSerialDriver_UART::receiveImpl(
 }
 
 
-void AsyncSerialDriver_UART::taskCallbackHandler(
-	const TaskCallbackArgs &args) {
-
-	Task::delay(1000000);
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant hi ha una notificacio del UART
 /// \param    sender: L'objecte que genera el event.
 /// \param    args: Parametres de la notificacio.
 ///
 void AsyncSerialDriver_UART::uartNotifyEventHandler(
-	const htl::uart::UARTDevice *sender,
-	const htl::uart::NotifyEventArgs &args) {
+	const DevUART *sender,
+	const UARTNotifyEventArgs &args) {
 
 	switch (args.id) {
 		case htl::uart::NotifyID::txCompleted:

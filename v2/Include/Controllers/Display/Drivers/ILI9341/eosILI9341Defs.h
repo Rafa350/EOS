@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __eosILI9341Defs__
-#define __eosILI9341Defs__
 
 
 // Comandes del controlador
@@ -253,5 +251,3 @@
 #define __PUMP_RATIO_CONTROL(a) \
 	2, CMD_PUMP_RATIO_CONTROL, a
 
-
-#endif

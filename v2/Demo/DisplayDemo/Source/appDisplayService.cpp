@@ -13,8 +13,6 @@
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
 #elif defined(DISPLAY_DRV_RGBLTDC)
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
-#elif defined(DISPLAY_DRV_SSD1306)
-#include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 #else
 #error No se especifico DISPLAY_DRV_XXXX
 #endif
@@ -126,9 +124,6 @@ void DisplayService::onInitialize() {
 		reinterpret_cast<void*>(_displayBuffer));
 
 	_driver = new DisplayDriver_RGBLTDC(frameBuffer);
-
-#elif defined(DISPLAY_DRV_SSD1306)
-	_driver = new  DisplayDriver_SSD1306();
 
 #else
 	#error No se especifico DISPLAY_DRV_XXXX

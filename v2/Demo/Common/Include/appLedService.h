@@ -1,13 +1,10 @@
 #pragma once
-#ifndef __appLedService__
-#define __appLedService__
 
 
 // EOS includes
 //
 #include "eos.h"
 #include "Services/eosService.h"
-#include "HTL/htlGPIO.h"
 
 
 namespace app {
@@ -26,6 +23,3 @@ namespace app {
 	};
 
 }
-
-
-#endif // __appLedService__

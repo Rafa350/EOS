@@ -10,10 +10,13 @@ using namespace eos;
 ///
 AsyncSerialDriver::AsyncSerialDriver() :
 
-	_state(State::reset),
-	_txCompletedEvent(nullptr),
-	_rxCompletedEvent(nullptr),
-	_abortedEvent(nullptr) {
+	_state {State::reset},
+	_txCompletedEvent {nullptr},
+	_rxCompletedEvent {nullptr},
+	_abortedEvent {nullptr},
+	_txCompletedEventEnabled {false},
+	_rxCompletedEventEnabled {false},
+	_abortedEventEnabled {false} {
 }
 
 
@@ -38,7 +41,7 @@ void AsyncSerialDriver::deinitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
 /// \param    data: El buffer de dades.
-/// \param    dataLength: Longitut del buffer en bytes.
+/// \param    dataLength: Longitut de les dades en bytes.
 /// \return   True si tot es correcte.
 ///
 bool AsyncSerialDriver::transmit(
@@ -88,15 +91,6 @@ void AsyncSerialDriver::deinitializeImpl() {
 AsyncSerialDriver::State AsyncSerialDriver::getState() const {
 
 	return _state;
-/*
-	if constexpr(sizeof(_state) == sizeof(uint32_t))
-		return (AsyncSerialDriver::State) __LDREXW((volatile uint32_t*)&_state);
-
-	if constexpr(sizeof(_state) == sizeof(uint16_t))
-		return (AsyncSerialDriver::State) __LDREXH((volatile uint16_t*)&_state);
-
-	if constexpr(sizeof(_state) == sizeof(uint8_t))
-		return (AsyncSerialDriver::State) __LDREXB((volatile uint8_t*)&_state);*/
 }
 
 
@@ -104,10 +98,12 @@ AsyncSerialDriver::State AsyncSerialDriver::getState() const {
 /// \brief    Habilita l'event 'TxCompleted'
 /// \param    event: L'event
 ///
-void AsyncSerialDriver::enableTxCompletedEvent(
-	const ITxCompletedEvent &event) {
+void AsyncSerialDriver::setTxCompletedEvent(
+	const ITxCompletedEvent &event,
+	bool enabled) {
 
 	_txCompletedEvent = &event;
+	_txCompletedEventEnabled = enabled;
 }
 
 
@@ -115,10 +111,12 @@ void AsyncSerialDriver::enableTxCompletedEvent(
 /// \brief    Habilita l'event 'RxCompleted'
 /// \param    event: L'event
 ///
-void AsyncSerialDriver::enableRxCompletedEvent(
-	const IRxCompletedEvent &event) {
+void AsyncSerialDriver::setRxCompletedEvent(
+	const IRxCompletedEvent &event,
+	bool enabled) {
 
 	_rxCompletedEvent = &event;
+	_rxCompletedEventEnabled = enabled;
 }
 
 
@@ -149,7 +147,7 @@ void AsyncSerialDriver::notifyTxCompleted(
 
 	_state = State::ready;
 
-	if (_txCompletedEvent != nullptr) {
+	if (_txCompletedEventEnabled) {
 
 		TxCompletedEventArgs args;
 		args.count = count;
@@ -168,7 +166,7 @@ void AsyncSerialDriver::notifyRxCompleted(
 
 	_state = State::ready;
 
-	if (_rxCompletedEvent != nullptr) {
+	if (_rxCompletedEventEnabled) {
 
 		RxCompletedEventArgs args;
 		args.count = count;

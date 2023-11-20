@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __htlGPIO__
+#define __htlGPIO__
 
 
 // EOS includes
@@ -25,3 +27,5 @@
 
 #endif
 
+
+#endif // __htlGPIO__

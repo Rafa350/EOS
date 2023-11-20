@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __htlSPI__
+#define __htlSPI__
 
 
 // EOS includes
@@ -22,3 +24,5 @@
 
 #endif
 
+
+#endif // __htlSPI__

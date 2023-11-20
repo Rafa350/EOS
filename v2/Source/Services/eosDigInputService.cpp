@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 
@@ -12,6 +13,7 @@
 
 
 using namespace eos;
+using namespace htl::irq;
 
 
 /// ----------------------------------------------------------------------
@@ -200,12 +202,12 @@ void DigInputService::onTask() {
             //
             for (auto input: _inputs) {
 
-                __disable_irq();
+                disableInterrupts();
 
                 bool edge = input->_edge;
                 input->_edge = false;
 
-                __enable_irq();
+                enableInterrupts();
 
                 if (edge)
                     notifyChanged(input);
@@ -280,9 +282,9 @@ bool DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    __disable_irq();
+    disableInterrupts();
     bool pinState = input->_pinState;
-    __enable_irq();
+    enableInterrupts();
 
     return pinState;
 }
@@ -301,11 +303,11 @@ uint32_t DigInputService::readPulses(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    __disable_irq();
+    disableInterrupts();
     uint32_t pinPulses = input->_pinPulses;
     if (clear)
     	input->_pinPulses = 0;
-    __enable_irq();
+    enableInterrupts();
     return pinPulses;
 }
 

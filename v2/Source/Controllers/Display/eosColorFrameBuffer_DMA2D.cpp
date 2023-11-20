@@ -287,8 +287,8 @@ void ColorFrameBuffer_DMA2D::copy(
 		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 		// les opcions.
 		//
-		dma2d::OutputColorMode dstColorMode = getOutputColorMode(Color::format);
-		dma2d::InputColorMode srcColorMode = getInputColorMode(Color::format);
+		auto dstColorMode = getOutputColorMode(Color::format);
+		auto srcColorMode = getInputColorMode(Color::format);
 		_devDMA2D->startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
 		_devDMA2D->waitForFinish();
 	}
@@ -330,8 +330,8 @@ void ColorFrameBuffer_DMA2D::copy(
 		// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 		// les opcions. No cal cridar a 'toPixel()'
 		//
-		dma2d::OutputColorMode dstColorMode = getOutputColorMode(Color::format);
-		dma2d::InputColorMode srcColorMode = getInputColorMode(colorFormat);
+		auto dstColorMode = getOutputColorMode(Color::format);
+		auto srcColorMode = getInputColorMode(colorFormat);
 		_devDMA2D->startCopy(ptr, width, height, _framePitch, dstColorMode, colors, colorPitch, srcColorMode);
 		_devDMA2D->waitForFinish();
 	}

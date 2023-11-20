@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Serial/eosAsyncSerialDriver_I2CSlave.h"
 #include "HTL/htlI2C.h"
 
@@ -12,7 +13,7 @@ using namespace htl;
 /// \param    devI2C: El dispositiu I2C a utilitzar.
 ///
 AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
-	i2c::I2CSlaveDevice *devI2C) :
+	DevI2C *devI2C) :
 
 	_devI2C {devI2C},
 	_i2cNotifyEvent {*this, &AsyncSerialDriver_I2CSlave::i2cNotifyEventHandler} {
@@ -51,6 +52,9 @@ bool AsyncSerialDriver_I2CSlave::transmitImpl(
 	const uint8_t *data,
 	int dataLength) {
 
+    eosAssert(data != nullptr);
+    eosAssert(dataLength > 0);
+
 	if ((data == nullptr) || (dataLength == 0))
 		return false;
 
@@ -81,18 +85,19 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 	uint8_t *data,
 	int dataSize) {
 
-	if ((data == nullptr) || (dataSize == 0))
+    eosAssert(data != nullptr);
+    eosAssert(dataLength > 0);
+
+    if ((data == nullptr) || (dataSize == 0))
 		return false;
 
 	else {
 		notifyRxStart();
 
-		////************************************
-		/// PROVISIONAL fins implementar receive
+        // A partir d'aqui, es generen interrupcions
+        // cada cop que hi han dades disposibles.
+		//
 		_devI2C->listen(data, dataSize);
-
-		// En aquest moment, es generen interrupcions
-		// cada cop que hi han dades disposibles.
 
 		return true;
 	}
@@ -105,8 +110,8 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 /// \param    args: Parametres del event
 ///
 void AsyncSerialDriver_I2CSlave::i2cNotifyEventHandler(
-	htl::i2c::I2CSlaveDevice *sender,
-	htl::i2c::NotifyEventArgs &args) {
+	DevI2C *sender,
+	I2CNotifyEventArgs &args) {
 
 	switch (args.id) {
 		case htl::i2c::NotifyID::txCompleted:

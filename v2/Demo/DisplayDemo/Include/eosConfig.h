@@ -1,84 +1,51 @@
 #pragma once
-#ifndef __eosConfig__
-#define __eosConfig__
 
-#if defined(BUILD_ILI9341_SPI)
-    #if defined(EOS_PLATFORM_STM32F4)
-        #define HARDWARE_STM32F429I_DISC1
-    #elif defined(EOS_PLATFORM_STM32F7)
-        #define HARDWARE_STM32F746G_DISCO
-    #elif defined(EOS_PLATFORM_PIC32)
-        #define HARDWARE_CUSTOM
-        #define HARDWARE_CUSTOM_PIC32_USB_STARTER_KIT_I
-        #define DISPLAY_ER_TFT028_4
-		#define USE_CUSTOM_DISPLAY
-    #else
-        #error "Hardware no soportado para ILI9341-SPI "
-    #endif
+
+#if defined(HARDWARE_STM32F429I_DISC1)
+
+    #define USE_LED1
+    #define USE_LED2
+    #define USE_SW1
     #define USE_DISPLAY
-    #define DISPLAY_DRV_ILI9341
-	#define DISPLAY_INTERFACE_SPI
-    #define EOS_COLOR_FORMAT ColorFormat::rgb565
 
-#elif defined(BUILD_ILI9341_LTDC)
-    #if defined(EOS_PLATFORM_STM32F4)
-        #define HARDWARE_STM32F429I_DISC1
-    #elif defined(EOS_PLATFORM_STM32F7)
-        #define HARDWARE_STM32F746G_DISCO
-    #else
-        #error "Hardware no soportado para ILI9341-LTDC "
-    #endif
-    #define USE_DISPLAY
-    #define DISPLAY_DRV_ILI9341LTDC
-	#define DISPLAY_INTERFACE_RGB
-    //#define EOS_COLOR_FORMAT ColorFormat::l8
-    #define EOS_COLOR_FORMAT ColorFormat::rgb565
+    #if defined(BUILD_ILI9341_SPI)
 
-#elif defined(BUILD_RGBLTDC)
-    #if defined(EOS_PLATFORM_STM32F4)
-        #define HARDWARE_STM32F429I_DISC1
-    #elif defined(EOS_PLATFORM_STM32F7)
-        #define HARDWARE_STM32F746G_DISCO
-    #else
-        #error "Hardware no soportado para RGBLTDC "
+        //#define DISPLAY_ER_TFT028_4
+        #define DISPLAY_DRV_ILI9341
+	    #define DISPLAY_INTERFACE_SPI
+        #define EOS_COLOR_FORMAT ColorFormat::rgb565
+
+    #elif defined(BUILD_ILI9341_LTDC)
+
+        //#define DISPLAY_ER_TFT028_4
+        #define DISPLAY_DRV_ILI9341LTDC
+	    #define DISPLAY_INTERFACE_RGB
+        #define EOS_COLOR_FORMAT ColorFormat::rgb565
+
     #endif
+
+#elif defined(HARDWARE_STM32F746G_DISCO)
+
+    #define USE_LED1
+    #define USE_SW1
     #define USE_DISPLAY
 	#define DISPLAY_DRV_RGBLTDC
     #define DISPLAY_DOUBLEBUFFER false
     #define EOS_COLOR_FORMAT ColorFormat::argb8888
     //#define EOS_COLOR_FORMAT ColorFormat::rgb565
     //#define EOS_COLOR_FORMAT ColorFormat::l8
-	#define FONT_USE_Consolas8pt
-	#define FONT_USE_Consolas10pt
-	#define FONT_USE_Consolas12pt
-	#define FONT_USE_Consolas14pt
-	#define FONT_USE_Consolas18pt
-	#define FONT_USE_Consolas24pt
-	#define FONT_USE_Tahoma10pt
-	#define FONT_USE_Tahoma12pt
-
-#elif defined(BUILD_SSD1306)
-    #define HARDWARE_CUSTOM
-    #if defined(EOS_PLATFORM_STM32F4)
-        #define HARDWARE_CUSTOM_STM32F429I_DISC1
-        #define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
-    #elif defined(EOS_PLATFORM_STM32F7)
-        #define HARDWARE_CUSTOM_STM32F746G_DISCO
-    #elif defined(EOS_PLATFORM_PIC32)
-        #define HARDWARE_CUSTOM_PIC32_USB_STARTER_KIT_I
-        #define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
-    #else
-        #error "Hardware no soportado para SSD1306"
-    #endif
-    #define DISPLAY_DRV_SSD1306
 
 #else
-    #error "No se especifico el producto"
+    #error "Undefined HARDWARE_XXXX"
 #endif
 
-#define USE_LED1
-#define USE_LED2
-#define USE_SW1
 
+#define FONT_USE_Consolas8pt
+#define FONT_USE_Consolas10pt
+#define FONT_USE_Consolas12pt
+#define FONT_USE_Consolas14pt
+#define FONT_USE_Consolas18pt
+#define FONT_USE_Consolas24pt
+#define FONT_USE_Tahoma12pt
+#define FONT_USE_Tahoma14pt
 
-#endif // __eosConfig__

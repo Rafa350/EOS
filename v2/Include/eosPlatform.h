@@ -95,8 +95,9 @@
 
 	#elif defined(STM32F4)
 		#define EOS_PLATFORM_STM32F4
-		#if defined(STM32F429xx)
+		#if defined(STM32F429ZI)
 			#define EOS_PLATFORM_STM32F429
+            #define EOS_PLATFORM_STM32F429ZI
 		#else
 			#error "Unknown processor STM32F4"
 		#endif

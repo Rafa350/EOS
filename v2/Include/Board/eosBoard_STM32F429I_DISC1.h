@@ -1,7 +1,4 @@
 #pragma once
-#ifndef __eosBoard_SMT32F429I_DISC1__
-#define __eosBoard_SMT32F429I_DISC1__
-
 
 
 // -----------------------------------------------------------------------
@@ -124,39 +121,30 @@
 #ifdef USE_DISPLAY
 #define EXIST_DISPLAY
 
-#define FONT_USE_Consolas8pt
-#define FONT_USE_Consolas10pt
-#define FONT_USE_Consolas12pt
-#define FONT_USE_Consolas14pt
-#define FONT_USE_Consolas18pt
-#define FONT_USE_Consolas24pt
-#define FONT_USE_Tahoma12pt
-#define FONT_USE_Tahoma14pt
-
-#define DISPLAY_IM0_GPIO          htl::GPIO_D2
-#define DISPLAY_IM1_GPIO          htl::GPIO_D4
-#define DISPLAY_IM2_GPIO          htl::GPIO_D5
-#define DISPLAY_IM3_GPIO          htl::GPIO_D7
+#define DISPLAY_IM0_Pin           htl::gpio::PinD2
+#define DISPLAY_IM1_Pin           htl::gpio::PinD4
+#define DISPLAY_IM2_Pin           htl::gpio::PinD5
+#define DISPLAY_IM3_Pin           htl::gpio::PinD7
 
 // SPI interface
 #if defined(DISPLAY_INTERFACE_SPI) || \
 	defined(DISPLAY_INTERFACE_RGB)
-#define DISPLAY_CS_Pin           htl::gpio::PinC2
-#define DISPLAY_RS_Pin           htl::gpio::PinD13
-#define DISPLAY_SCK_Pin          htl::gpio::PinF7
-#define DISPLAY_MOSI_Pin         htl::gpio::PinF9
-#define DISPLAY_SPI              htl::spi::SPIDevice5
+#define DISPLAY_CS_Pin            htl::gpio::PinC2
+#define DISPLAY_RS_Pin            htl::gpio::PinD13
+#define DISPLAY_SCK_Pin           htl::gpio::PinF7
+#define DISPLAY_MOSI_Pin          htl::gpio::PinF9
+#define DISPLAY_SPI_Device        htl::spi::SPIDevice5
 #endif
 #if defined(DISPLAY_INTERFACE_SPI)
-#define DISPLAY_TE_Pin           htl::gpio::PinD11
+#define DISPLAY_TE_Pin            htl::gpio::PinD11
 #endif
 
 // 8080 interface
 #if defined(DISPLAY_INTERFACE_8080)
-#define DISPLAY_TE_GPIO           htl::GPIO_D11
-#define DISPLAY_RD_GPIO	          htl::GPIO_D12
-#define DISPLAY_WR_GPIO           htl::GPIO_D13
-#define DISPLAY_TE_GPIO           htl::GPIO_D11
+#define DISPLAY_TE_PIn            htl::GPIO_D11
+#define DISPLAY_RD_Pin            htl::GPIO_D12
+#define DISPLAY_WR_Pin            htl::GPIO_D13
+#define DISPLAY_TE_Pin            htl::GPIO_D11
 #endif
 
 // RGB interface
@@ -202,7 +190,3 @@
 #define DISPLAY_BUFFER            0xD0000000;
 
 #endif // USE_DISPLAY
-
-
-#endif // __eosBoard_SMT32F429I_DISC1__
-

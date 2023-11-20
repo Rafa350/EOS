@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "HTL/htlINT.h"
 #include "Services/eosDigOutputService.h"
 #include "System/Core/eosTask.h"
 
@@ -8,6 +9,7 @@
 
 
 using namespace eos;
+using namespace htl::irq;
 
 
 /// ----------------------------------------------------------------------
@@ -193,7 +195,7 @@ void DigOutputService::updateNextTimeLimit() {
 ///
 bool DigOutputService::hasExpired(
     unsigned timeLimit) const {
-    
+
     auto delta = timeLimit - _timeCounter;
     return static_cast<int>(delta) <= 0;
 }
@@ -378,9 +380,9 @@ bool DigOutputService::read(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    __disable_irq();
+    disableInterrupts();
     bool pinState = output->_drv->read();
-    __enable_irq();
+    enableInterrupts();
 
     return pinState;
 }
