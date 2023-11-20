@@ -40,9 +40,11 @@
 #if defined(DISPLAY_INTERFACE_SPI)
 #include "HTL/htlSPI.h"
 #include "HTL/htlGPIO.h"
+#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
 #elif defined(DISPLAY_INTERFACE_I2C)
 #include "HTL/htlI2C.h"
 #include "HTL/htlGPIO.h"
+#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
 #endif
 
 
@@ -68,15 +70,12 @@ namespace eos {
 			using PinSCK = DISPLAY_SCK_Pin;
 			using PinMOSI = DISPLAY_MOSI_Pin;
 			using DevSPI = DISPLAY_SPI_Device;
+			using DevSSD1306 = SSD1306_SPI_Device;
 			static constexpr DevSPI *_devSPI = DevSPI::pInst;
 			#endif
 
 			FrameBuffer *_frameBuffer;
-
-            void initializeInterface();
-            void initializeController();
-            void writeCommand(uint8_t cmd);
-            void writeData(const uint8_t *data, int length);
+			DevSSD1306 _device;
 
     	public:
             DisplayDriver_SSD1306(FrameBuffer *frameBuffer);

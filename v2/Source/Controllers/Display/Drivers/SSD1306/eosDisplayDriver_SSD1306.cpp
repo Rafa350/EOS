@@ -25,8 +25,90 @@ DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 ///
 void DisplayDriver_SSD1306::initialize() {
 
-	initializeInterface();
-	initializeController();
+    #if defined(DISPLAY_INTERFACE_SPI)
+
+    // Inicialitza els pins
+    //
+    _pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
+    _pinDC->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+    #ifdef DISPLAY_RST_Pin
+    _pinRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
+    #endif
+
+    // Inicialitza el dispositiu SPI
+    //
+    _devSPI->initPinSCK<PinSCK>();
+    _devSPI->initPinMOSI<PinMOSI>();
+    _devSPI->initialize(spi::SPIMode::master, _spiClkPolarity, _spiClkPhase,
+        spi::WordSize::_8, spi::FirstBit::msb, _spiClockDivider);
+    _devSPI->enable();
+
+    // Reseteja el controlador
+    //
+    #ifdef DISPLAY_RST_Pin
+    _pinRST->clear();
+    htl::waitTicks(100);
+    _pinRST->set();
+    htl::waitTicks(300);
+    #endif
+
+    // Inicialitza el controlador
+    //
+    _device.initialize(_pinCS, _pinDC, _devSPI);
+
+    #endif
+
+    static const uint8_t initScript[] = {
+        // Turn off display
+        0xAE,
+
+        // Set addrerssing mode
+        0x20, 0x00,
+
+        // Set display clock divider
+        0xD5, 0x80,
+
+        // Set multiplex ratio
+        0xA8, 0x3F,
+
+        // Set charge pump
+        0x8D, 0x14,
+
+        // Set start line address
+        0x40,
+
+        // Set display offset
+        0xD3, 0x00,
+
+        // Set normal/inverted display
+        0xA6,
+
+        // Set entire display enable
+        0xA4,
+
+        // Set column address remap
+        //
+        0xA1,
+
+        // Set COM Output Scan Direction 64 to 0
+        0xC8,
+
+        // Set com pins hardware configuration
+        0xDA, 0x12,
+
+        // Set contrast control register
+        0x81, 0xCF,
+
+        // Set pre-charge period
+        0xD9, 0xF1,
+
+        // Set VCOMH
+        0xDB, 0x40,
+
+        // Turn ON display
+        0xAF
+    };
+    _device.writeScript(initScript, sizeof(initScript));
 }
 
 
@@ -36,6 +118,7 @@ void DisplayDriver_SSD1306::initialize() {
 void DisplayDriver_SSD1306::deinitialize() {
 
 	disable();
+	_device.deinitialize();
 }
 
 
@@ -44,7 +127,7 @@ void DisplayDriver_SSD1306::deinitialize() {
 ///
 void DisplayDriver_SSD1306::enable() {
 
-	writeCommand(0xAF);
+	_device.writeCommand(0xAF);
 }
 
 
@@ -53,7 +136,7 @@ void DisplayDriver_SSD1306::enable() {
 ///
 void DisplayDriver_SSD1306::disable() {
 
-	writeCommand(0xAE);
+    _device.writeCommand(0xAE);
 }
 
 
@@ -202,149 +285,12 @@ void DisplayDriver_SSD1306::refresh() {
     constexpr int8_t pages = _displayHeight / 8;
 	const uint8_t *buffer = _frameBuffer->getBuffer();
 
-    for (int8_t page = 0; page < pages; page++) {
+    for (uint8_t page = 0; page < pages; page++) {
 
-    	writeCommand(0xB0 + page); // Set the current page.
-        writeCommand(0x00);        // Set first column (LO nibble)
-        writeCommand(0x10);        // Set first column (HI nibble)
+    	_device.writeCommand(0xB0 + page); // Set the current page.
+        _device.writeCommand(0x00);        // Set first column (LO nibble)
+        _device.writeCommand(0x10);        // Set first column (HI nibble)
 
-        writeData(&buffer[page * _displayWidth], _displayWidth);
+        _device.writeData(&buffer[page * _displayWidth], _displayWidth);
     }
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief     Inicialitza l'interficie amb el controlador.
-///
-#ifdef DISPLAY_INTERFACE_SPI
-void DisplayDriver_SSD1306::initializeInterface() {
-
-	// Inicialitza el pin CS
-	//
-	_pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
-
-	// Inicialitza el pin DC
-	//
-	_pinDC->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
-
-	// Inicialitza el pin RST
-	//
-	#ifdef DISPLAY_RST_Pin
-	_pinRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
-	#endif
-
-	// Inicialitza el modul SPI
-	//
-	_devSPI->initPinSCK<PinSCK>();
-	_devSPI->initPinMOSI<PinMOSI>();
-	_devSPI->initialize(spi::SPIMode::master, _spiClkPolarity, _spiClkPhase,
-		spi::WordSize::_8, spi::FirstBit::msb, _spiClockDivider);
-	_devSPI->enable();
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el controlador.
-///
-void DisplayDriver_SSD1306::initializeController() {
-
-	// Reseteja el controlador
-	//
-	#ifdef DISPLAY_RST_Pin
-	_pinRST->clear();
-	htl::waitTicks(100);
-	_pinRST->set();
-	htl::waitTicks(300);
-	#endif
-
-    // Inicialitza el controlador
-    //
-    static const uint8_t initSequence[] = {
-		// Turn off display
-		0xAE,
-
-		// Set addrerssing mode
-		0x20, 0x00,
-
-		// Set display clock divider
-		0xD5, 0x80,
-
-		// Set multiplex ratio
-		0xA8, 0x3F,
-
-		// Set charge pump
-		0x8D, 0x14,
-
-		// Set start line address
-		0x40,
-
-		// Set display offset
-		0xD3, 0x00,
-
-		// Set normal/inverted display
-		0xA6,
-
-		// Set entire display enable
-		0xA4,
-
-		// Set column address remap
-		//
-		0xA1,
-
-		// Set COM Output Scan Direction 64 to 0
-		0xC8,
-
-		// Set com pins hardware configuration
-		0xDA, 0x12,
-
-		// Set contrast control register
-		0x81, 0xCF,
-
-		// Set pre-charge period
-		0xD9, 0xF1,
-
-		// Set VCOMH
-		0xDB, 0x40,
-
-		// Turn ON display
-		0xAF
-	};
-	for (int i = 0; i < (int)(sizeof(initSequence) / sizeof(initSequence[0])); i++)
-		writeCommand(initSequence[i]);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un byte de comanda en el display.
-/// \param    cmd: La comanda.
-///
-#ifdef DISPLAY_INTERFACE_SPI
-void DisplayDriver_SSD1306::writeCommand(
-    uint8_t cmd) {
-
-	_pinCS->clear();
-	_pinDC->clear();
-	_devSPI->transmit(&cmd, 1);
-	_pinCS->set();
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu una sequencia de bytes de dades en el display.
-/// \param    data: Buffer de dades.
-/// \param    length: Longitut de les dades en bytes.
-///
-#ifdef DISPLAY_INTERFACE_SPI
-void DisplayDriver_SSD1306::writeData(
-    const uint8_t* data,
-	int length) {
-
-	_pinCS->clear();
-	_pinDC->set();
-	_devSPI->transmit(data, length);
-	_pinCS->clear();
-}
-#endif
-
