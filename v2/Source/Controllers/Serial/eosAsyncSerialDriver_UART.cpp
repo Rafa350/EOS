@@ -84,7 +84,7 @@ bool AsyncSerialDriver_UART::receiveImpl(
 	int dataSize) {
 
     eosAssert(data != nullptr);
-    eosAssert(dataLength > 0);
+    eosAssert(dataSize > 0);
 
 	if (isBusy())
 		return false;

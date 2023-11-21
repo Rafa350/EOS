@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver_GPIO.h"
+#include "Controllers/Pin/Drivers/GPIO/eosPinDriver_GPIO.h"
 
 
 using namespace eos;

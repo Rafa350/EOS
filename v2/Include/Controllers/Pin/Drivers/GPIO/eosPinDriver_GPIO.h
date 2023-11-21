@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosPinDriver_GPIO__
+#define __eosPinDriver_GPIO__
 
 
 // EOS includes
@@ -25,3 +27,6 @@ namespace eos {
     };
     
 }
+
+
+#endif // __eosPinDriver_GPIO__

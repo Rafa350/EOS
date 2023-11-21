@@ -1,6 +1,5 @@
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver_CLT0138SQ7.h"
-#include "System/Core/eosTask.h"
+#include "Controllers/Pin/Drivers/CLT0138SQ7/eosPinDriver_CLT0138SQ7.h"
 
 
 using namespace eos;
@@ -10,7 +9,7 @@ using namespace htl;
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
 ///
-CLT0138SQ7_Device::CLT0138SQ7_Device():
+Device_CLT0138SQ7::Device_CLT0138SQ7():
 
 	_state {State::reset},
 	_pinState {0},
@@ -27,7 +26,7 @@ CLT0138SQ7_Device::CLT0138SQ7_Device():
 /// \param    hSPI: Handler del dispositiu SPI per la comunicacio.
 /// \param    pinSS: El pin pel chip select.
 ///
-CLT0138SQ7_Device::Result CLT0138SQ7_Device::initialize(
+Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize(
 	htl::spi::SPIDevice *spi,
 	htl::gpio::Pin *pinSS) {
 
@@ -49,7 +48,7 @@ CLT0138SQ7_Device::Result CLT0138SQ7_Device::initialize(
 /// ----------------------------------------------------------------------
 /// \brief    Actualitza l'estat del driver en funcio del les entrades.
 ///
-void CLT0138SQ7_Device::update() {
+void Device_CLT0138SQ7::update() {
 
 	// NO UTILITZAR INTERRUPCIONS. Per evitar bloqueig si es crida
 	// desde un altre interrupcio amb prioritat inferior o igual a la del SPI
@@ -68,47 +67,3 @@ void CLT0138SQ7_Device::update() {
 		_pinState = rxBuffer[0];
 	}
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    hDevice: Handler del dispositiu CTL0138SQ7
-/// \param    pinNumber: El numero de pin.
-///
-PinDriver_CLT0138SQ7::PinDriver_CLT0138SQ7(
-	CLT0138SQ7_Device *dev,
-	uint8_t pinNumber):
-
-	_dev {dev},
-	_pinMask {uint8_t(1 << pinNumber)} {
-
-}
-
-
-void PinDriver_CLT0138SQ7::set() {
-
-}
-
-
-void PinDriver_CLT0138SQ7::clear() {
-
-}
-
-
-void PinDriver_CLT0138SQ7::toggle() {
-
-}
-
-
-void PinDriver_CLT0138SQ7::write(
-	bool state) {
-
-}
-
-
-bool PinDriver_CLT0138SQ7::read() {
-
-	return (_dev->read() & _pinMask) != 0;
-}
-
-

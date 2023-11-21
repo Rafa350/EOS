@@ -86,7 +86,7 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
 	int dataSize) {
 
     eosAssert(data != nullptr);
-    eosAssert(dataLength > 0);
+    eosAssert(dataSize > 0);
 
     if ((data == nullptr) || (dataSize == 0))
 		return false;

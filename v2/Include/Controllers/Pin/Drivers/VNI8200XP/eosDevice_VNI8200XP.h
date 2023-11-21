@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosDevice_VNI8200XP__
+#define __eosDevice_VNI8200XP__
 
 
 #include "eos.h"
@@ -11,7 +13,7 @@ namespace eos {
     
 	/// \brief Clase que implementa del driver del chip VNI8200XP
 	///
-    class VNI8200XP_Device {
+    class Device_VNI8200XP {
 		public:
 			enum class State {
 				reset,
@@ -24,7 +26,7 @@ namespace eos {
 			};
 
         public:
-    		virtual ~VNI8200XP_Device() = default;
+    		virtual ~Device_VNI8200XP() = default;
             virtual void set(uint8_t pinMask) = 0;
             virtual void clear(uint8_t pinMask) = 0;
             virtual void toggle(uint8_t pinMask) = 0;
@@ -39,7 +41,7 @@ namespace eos {
 	/// \brief Clase que implementa del driver del chip VNI8200XP
     ///        amb interficie SPI
 	///
-    class VNI8200XP_SerialDevice: public VNI8200XP_Device {
+    class Device_VNI8200XP_SPI: public Device_VNI8200XP {
     	private:
     		State _state;
     		uint8_t _curPinState;
@@ -49,7 +51,7 @@ namespace eos {
     		htl::gpio::Pin *_pinOUTEN;
 
     	protected:
-    		VNI8200XP_SerialDevice();
+    		Device_VNI8200XP_SPI();
 
     	public:
             Result initialize(htl::spi::SPIDevice *spi, htl::gpio::Pin *pinSS, htl::gpio::Pin *pinOUTEN = nullptr);
@@ -65,40 +67,27 @@ namespace eos {
     
 
     template <uint8_t id_>
-    class VNI8200XP_SerialDeviceX final: public VNI8200XP_SerialDevice {
+    class DeviceX_VNI8200XP_SPI final: public Device_VNI8200XP_SPI {
         private:
-            static VNI8200XP_SerialDeviceX _instance;
+            static DeviceX_VNI8200XP_SPI _instance;
 
         public:
             static constexpr uint8_t id = id_;
-            static constexpr VNI8200XP_SerialDeviceX *pInst = &_instance;
-            static constexpr VNI8200XP_SerialDeviceX &rInst = _instance;
+            static constexpr DeviceX_VNI8200XP_SPI *pInst = &_instance;
+            static constexpr DeviceX_VNI8200XP_SPI &rInst = _instance;
 
         private:
-            VNI8200XP_SerialDeviceX():
-            	VNI8200XP_SerialDevice() {
+            DeviceX_VNI8200XP_SPI():
+            	Device_VNI8200XP_SPI() {
             }
-            VNI8200XP_SerialDeviceX(const VNI8200XP_SerialDeviceX&) = delete;
-            VNI8200XP_SerialDeviceX operator = (const VNI8200XP_SerialDeviceX&) = delete;
+            DeviceX_VNI8200XP_SPI(const DeviceX_VNI8200XP_SPI&) = delete;
+            DeviceX_VNI8200XP_SPI operator = (const DeviceX_VNI8200XP_SPI&) = delete;
     };
 
     template <uint8_t id_>
-	VNI8200XP_SerialDeviceX<id_> VNI8200XP_SerialDeviceX<id_>::_instance;
-    
-    
-    /// \brief Clase que implementa del driver del pin amb el chip VNI8200XP
-    ///
-    class PinDriver_VNI8200XP final: public PinDriver {
-		private:
-			VNI8200XP_Device * const _dev;
-			uint8_t const _pinMask;
+	DeviceX_VNI8200XP_SPI<id_> DeviceX_VNI8200XP_SPI<id_>::_instance;
 
-		public:
-			PinDriver_VNI8200XP(VNI8200XP_Device *dev, uint8_t pinNumber);
-			void set() override;
-			void clear() override;
-			void toggle() override;
-			void write(bool pinState) override;
-			bool read() override;
-    };
 }
+
+
+#endif // __eosDevice_VNI8200XP__

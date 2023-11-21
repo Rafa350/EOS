@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver_ISO808.h"
+#include "Controllers/Pin/Drivers/ISO808/eosPinDriver_ISO808.h"
 
 
 using namespace eos;
