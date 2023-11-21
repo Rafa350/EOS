@@ -25,7 +25,7 @@ DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 ///
 void DisplayDriver_SSD1306::initialize() {
 
-    #if defined(DISPLAY_INTERFACE_SPI)
+    #ifdef DISPLAY_INTERFACE_SPI
 
     // Inicialitza els pins
     //
@@ -43,20 +43,16 @@ void DisplayDriver_SSD1306::initialize() {
         spi::WordSize::_8, spi::FirstBit::msb, _spiClockDivider);
     _devSPI->enable();
 
-    // Reseteja el controlador
-    //
-    #ifdef DISPLAY_RST_Pin
-    _pinRST->clear();
-    htl::waitTicks(100);
-    _pinRST->set();
-    htl::waitTicks(300);
-    #endif
-
     // Inicialitza el controlador
     //
+    #ifdef DISPLAY_RST_Pin
+    _device.initialize(_pinCS, _pinDC, _devSPI, _pinRST);
+    _device.hardwareReset();
+    #else
     _device.initialize(_pinCS, _pinDC, _devSPI);
-
     #endif
+
+    #endif // DISPLAY_INTERFACE_SPI
 
     static const uint8_t initScript[] = {
         // Turn off display

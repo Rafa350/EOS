@@ -12,6 +12,7 @@ using namespace eos;
 SSD1306_SPI_Device::SSD1306_SPI_Device() :
     _pinCS {nullptr}, 
     _pinDC {nullptr},
+    _pinRST {nullptr},
     _devSPI {nullptr} {
     
 }
@@ -31,17 +32,22 @@ SSD1306_SPI_Device::~SSD1306_SPI_Device() {
 /// \param    pinCS: El pin CS (Chip Select)
 /// \param    pinDC: El pin DC (Data/Command)
 /// \param    devSPI: El dispositiu SPI
+/// \param    pinRST: El pin RST (Hardware reset)
 ///
 void SSD1306_SPI_Device::initialize(
     htl::gpio::Pin *pinCS, 
     htl::gpio::Pin *pinDC,
-    htl::spi::SPIDevice *devSPI) {
+    htl::spi::SPIDevice *devSPI,
+    htl::gpio::Pin *pinRST) {
 
     _pinCS = pinCS;
     _pinDC = pinDC;
+    _pinRST = pinRST;
     _devSPI = devSPI;
     
     _pinCS->set();
+    if (_pinRST != nullptr)
+        _pinRST->set();
 }
 
 
@@ -51,6 +57,20 @@ void SSD1306_SPI_Device::initialize(
 void SSD1306_SPI_Device::deinitialize() {
     
     _pinCS->set();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Reseteja el dispoditiu.
+///
+void SSD1306_SPI_Device::hardwareReset() {
+
+    if (_pinRST != nullptr) {
+        _pinRST->clear();
+        htl::waitTicks(100);
+        _pinRST->set();
+        htl::waitTicks(300);
+    }
 }
 
 
