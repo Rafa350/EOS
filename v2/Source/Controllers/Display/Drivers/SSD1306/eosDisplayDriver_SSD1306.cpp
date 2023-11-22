@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HTL/htlTick.h"
-#include "HTL/htlINT.h"
 #include "Controllers/Display/eosMonoFrameBuffer.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 
@@ -14,9 +13,11 @@ using namespace htl;
 /// \brief    Constructor
 ///
 DisplayDriver_SSD1306::DisplayDriver_SSD1306(
+    Device_SSD1306 *device,
 	FrameBuffer *frameBuffer):
 
-	_frameBuffer(frameBuffer) {
+    _device {device},
+	_frameBuffer {frameBuffer} {
 }
 
 
@@ -24,35 +25,6 @@ DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 /// \brief    Inicialitza el driver.
 ///
 void DisplayDriver_SSD1306::initialize() {
-
-    #ifdef DISPLAY_INTERFACE_SPI
-
-    // Inicialitza els pins
-    //
-    _pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
-    _pinDC->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
-    #ifdef DISPLAY_RST_Pin
-    _pinRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
-    #endif
-
-    // Inicialitza el dispositiu SPI
-    //
-    _devSPI->initPinSCK<PinSCK>();
-    _devSPI->initPinMOSI<PinMOSI>();
-    _devSPI->initialize(spi::SPIMode::master, _spiClkPolarity, _spiClkPhase,
-        spi::WordSize::_8, spi::FirstBit::msb, _spiClockDivider);
-    _devSPI->enable();
-
-    // Inicialitza el controlador
-    //
-    #ifdef DISPLAY_RST_Pin
-    _device.initialize(_pinCS, _pinDC, _devSPI, _pinRST);
-    _device.hardwareReset();
-    #else
-    _device.initialize(_pinCS, _pinDC, _devSPI);
-    #endif
-
-    #endif // DISPLAY_INTERFACE_SPI
 
     static const uint8_t initScript[] = {
         // Turn off display
@@ -104,7 +76,7 @@ void DisplayDriver_SSD1306::initialize() {
         // Turn ON display
         0xAF
     };
-    _device.writeScript(initScript, sizeof(initScript));
+    _device->writeScript(initScript, sizeof(initScript));
 }
 
 
@@ -114,7 +86,6 @@ void DisplayDriver_SSD1306::initialize() {
 void DisplayDriver_SSD1306::deinitialize() {
 
 	disable();
-	_device.deinitialize();
 }
 
 
@@ -123,7 +94,7 @@ void DisplayDriver_SSD1306::deinitialize() {
 ///
 void DisplayDriver_SSD1306::enable() {
 
-	_device.writeCommand(0xAF);
+	_device->writeCommand(0xAF);
 }
 
 
@@ -132,7 +103,7 @@ void DisplayDriver_SSD1306::enable() {
 ///
 void DisplayDriver_SSD1306::disable() {
 
-    _device.writeCommand(0xAE);
+    _device->writeCommand(0xAE);
 }
 
 
@@ -283,10 +254,10 @@ void DisplayDriver_SSD1306::refresh() {
 
     for (uint8_t page = 0; page < pages; page++) {
 
-    	_device.writeCommand(0xB0 + page); // Set the current page.
-        _device.writeCommand(0x00);        // Set first column (LO nibble)
-        _device.writeCommand(0x10);        // Set first column (HI nibble)
+    	_device->writeCommand(0xB0 + page); // Set the current page.
+        _device->writeCommand(0x00);        // Set first column (LO nibble)
+        _device->writeCommand(0x10);        // Set first column (HI nibble)
 
-        _device.writeData(&buffer[page * _displayWidth], _displayWidth);
+        _device->writeData(&buffer[page * _displayWidth], _displayWidth);
     }
 }

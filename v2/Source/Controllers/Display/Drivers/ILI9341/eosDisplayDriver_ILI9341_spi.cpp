@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
-#include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
+#include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
 #include "System/Graphics/eosColor.h"
 
 

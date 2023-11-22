@@ -1,9 +1,9 @@
+#pragma once
 #ifndef __eosDisplayDriver_ST7565__
 #define	__eosDisplayDriver_ST7565__
 
 
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 
 
 // Amplada del display
@@ -28,18 +28,9 @@
 #endif
 
 
-// Tipus d'interficie amb el controlador
-//
-#if !defined(DISPLAY_INTERFACE_SPI) && \
-    !defined(DISPLAY_INTERFACE_I2C) && \
-    !defined(DISPLAY_INTERFACE_8080) && \
-    !defined(DISPLAY_INTERFACE_6800)
-#error "Undefined DISPLAY_INTERFACE_xxxx"
-#endif
-
-
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosFrameBuffer.h"
+#include "Controllers/Display/Drivers/ST7565/eosDevice_ST7565.h"
 #include "System/Graphics/eosColor.h"
 
 
@@ -49,15 +40,9 @@ namespace eos {
     	private:
             static constexpr int _displayWidth = DISPLAY_WIDTH;
             static constexpr int _displayHeight = DISPLAY_HEIGHT;
-			#if defined(DISPLAY_INTERFACE_8080)
-				#if defined(DISPLAY_CS_GPIO)
-            		using PinCS = DISPLAY_CS_GPIO;
-				#endif
-            	using PinRD = DISPLAY_RD_GPIO;
-            	using PinWR = DISPLAY_WR_GPIO;
-            	using PinA0 = DISPLAY_A0_GPIO;
-			#endif
 
+    	private:
+            Device_ST7565 *_device;
             FrameBuffer *_frameBuffer;
 
         private:
@@ -71,14 +56,13 @@ namespace eos {
             void setPage(uint8_t page);
             void setColumn(uint8_t column);
 
-
             void initializeInterface();
             void writeDataRegister(uint8_t data);
             void writeCtrlRegister(uint8_t data);
             void writeRegister(uint8_t data);
 
         public:
-            DisplayDriver_ST7565(FrameBuffer *frameBuffer);
+            DisplayDriver_ST7565(Device_ST7565 *device, FrameBuffer *frameBuffer);
 
             void initialize() override;
             void deinitialize() override;

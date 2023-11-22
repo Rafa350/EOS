@@ -1,4 +1,11 @@
 #pragma once
+#ifndef __eosDevice_ILI9341__
+#define __eosDevice_ILI9341__
+
+
+#include "eos.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlSPI.h"
 
 
 // Comandes del controlador
@@ -251,3 +258,36 @@
 #define __PUMP_RATIO_CONTROL(a) \
 	2, CMD_PUMP_RATIO_CONTROL, a
 
+
+namespace eos {
+
+    class Device_ILI9341 {
+        public:
+            virtual ~Device_ILI9341() = default;
+            virtual void hardwareReset() = 0;
+            virtual void writeCommand(uint8_t cmd) = 0;
+            virtual void writeData(uint8_t data) = 0;
+            virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
+            void writeScript(const uint8_t *script, uint16_t scriptSize);
+    };
+
+    class Device_ILI9341_SPI final: public Device_ILI9341 {
+        private:
+            htl::gpio::Pin *__pinCS;
+            htl::gpio::Pin *__pinRS;
+            htl::gpio::Pin *__pinRST;
+            htl::spi::SPIDevice *__devSPI;
+
+        public:
+            Device_ILI9341_SPI();
+            void initialize(htl::gpio::Pin pinCS, htl::gpio::Pin pinRS,
+                htl::spi::SPIDevice *devSPI, htl::gpio::Pin *pinRST = nullptr);
+            void deinitialize();
+            void hardwareReset() override;
+            void writeCommand(uint8_t cmd) override;
+            void writeData(uint8_t data) override;
+            void writeData(const uint8_t *data, uint16_t dataSize) override;
+    };
+}
+
+#endif // __eosDevice_ILI9341__

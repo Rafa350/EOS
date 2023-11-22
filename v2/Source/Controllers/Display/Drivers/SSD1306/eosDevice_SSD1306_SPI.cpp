@@ -9,7 +9,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-SSD1306_SPI_Device::SSD1306_SPI_Device() :
+Device_SSD1306_SPI::Device_SSD1306_SPI() :
     _pinCS {nullptr}, 
     _pinDC {nullptr},
     _pinRST {nullptr},
@@ -21,7 +21,7 @@ SSD1306_SPI_Device::SSD1306_SPI_Device() :
 /// ----------------------------------------------------------------------
 /// \brief    Destructor.
 ///
-SSD1306_SPI_Device::~SSD1306_SPI_Device() {
+Device_SSD1306_SPI::~Device_SSD1306_SPI() {
     
     deinitialize();               
 }
@@ -34,7 +34,7 @@ SSD1306_SPI_Device::~SSD1306_SPI_Device() {
 /// \param    devSPI: El dispositiu SPI
 /// \param    pinRST: El pin RST (Hardware reset)
 ///
-void SSD1306_SPI_Device::initialize(
+void Device_SSD1306_SPI::initialize(
     htl::gpio::Pin *pinCS, 
     htl::gpio::Pin *pinDC,
     htl::spi::SPIDevice *devSPI,
@@ -54,7 +54,7 @@ void SSD1306_SPI_Device::initialize(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitzacio.
 ///
-void SSD1306_SPI_Device::deinitialize() {
+void Device_SSD1306_SPI::deinitialize() {
     
     _pinCS->set();
 }
@@ -63,7 +63,7 @@ void SSD1306_SPI_Device::deinitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Reseteja el dispoditiu.
 ///
-void SSD1306_SPI_Device::hardwareReset() {
+void Device_SSD1306_SPI::hardwareReset() {
 
     if (_pinRST != nullptr) {
         _pinRST->clear();
@@ -78,7 +78,7 @@ void SSD1306_SPI_Device::hardwareReset() {
 /// \brief    Escriu en el registre de comandes
 /// \param    cmd: La comanda.
 ///
-void SSD1306_SPI_Device::writeCommand(
+void Device_SSD1306_SPI::writeCommand(
     uint8_t cmd) {
 
     _pinDC->clear();
@@ -92,7 +92,7 @@ void SSD1306_SPI_Device::writeCommand(
 /// \brief    Escriu en el registre de dades.
 /// \brief    data: Les dades.
 ///
-void SSD1306_SPI_Device::writeData(
+void Device_SSD1306_SPI::writeData(
     uint8_t data) {
 
     _pinDC->set();
@@ -107,7 +107,7 @@ void SSD1306_SPI_Device::writeData(
 /// \brief    data: Les dades.
 /// \param    dataSize: El tasmany de les dades.
 ///
-void SSD1306_SPI_Device::writeData(
+void Device_SSD1306_SPI::writeData(
     const uint8_t *data, 
     uint16_t dataSize) {
     

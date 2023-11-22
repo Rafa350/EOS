@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosDisplayDriver_SSD1306__
 #define __eosDisplayDriver_SSD1306__
 
@@ -26,26 +27,11 @@
 #error "Invalid DISPLAY_HEIGHT"
 #endif
 
-// Tipus d'interficie amb el controlador
-//
-#if !defined(DISPLAY_INTERFACE_SPI) && \
-    !defined(DISPLAY_INTERFACE_I2C)
-#error "Undefined DISPLAY_INTERFACE_xxxx"
-#endif
-
 
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosFrameBuffer.h"
+#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
 #include "System/Graphics/eosColor.h"
-#if defined(DISPLAY_INTERFACE_SPI)
-#include "HTL/htlSPI.h"
-#include "HTL/htlGPIO.h"
-#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
-#elif defined(DISPLAY_INTERFACE_I2C)
-#include "HTL/htlI2C.h"
-#include "HTL/htlGPIO.h"
-#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
-#endif
 
 
 namespace eos {
@@ -54,31 +40,13 @@ namespace eos {
     	private:
 			static constexpr int16_t _displayWidth  = DISPLAY_WIDTH;
 			static constexpr int16_t _displayHeight = DISPLAY_HEIGHT;
-			static constexpr htl::spi::ClockDivider _spiClockDivider = htl::spi::ClockDivider::_32;
-			static constexpr htl::spi::ClkPolarity _spiClkPolarity = htl::spi::ClkPolarity::low;
-			static constexpr htl::spi::ClkPhase _spiClkPhase = htl::spi::ClkPhase::edge1;
 
-			#if defined(DISPLAY_INTERFACE_SPI)
-			using PinCS = DISPLAY_CS_Pin;
-			using PinDC = DISPLAY_DC_Pin;
-			static constexpr PinCS *_pinCS = PinCS::pInst;
-			static constexpr PinDC *_pinDC = PinDC::pInst;
-			#ifdef DISPLAY_RST_Pin
-			using PinRST = DISPLAY_RST_Pin;
-            static constexpr PinRST *_pinRST = PinRST::pInst;
-			#endif
-			using PinSCK = DISPLAY_SCK_Pin;
-			using PinMOSI = DISPLAY_MOSI_Pin;
-			using DevSPI = DISPLAY_SPI_Device;
-			using DevSSD1306 = SSD1306_SPI_Device;
-			static constexpr DevSPI *_devSPI = DevSPI::pInst;
-			#endif
-
+    	private:
+            Device_SSD1306 *_device;
 			FrameBuffer *_frameBuffer;
-			DevSSD1306 _device;
 
     	public:
-            DisplayDriver_SSD1306(FrameBuffer *frameBuffer);
+            DisplayDriver_SSD1306(Device_SSD1306 *device, FrameBuffer *frameBuffer);
 
             void initialize() override;
             void deinitialize() override;

@@ -1,8 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/ST7565/eosDisplayDriver_ST7565.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosColor.h"
-#include "HAL/halGPIO.h"
 
 
 // Comandes de control del controlador
@@ -26,8 +24,11 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 DisplayDriver_ST7565::DisplayDriver_ST7565(
+    Device_ST7565 *device,
 	FrameBuffer *frameBuffer):
-	_frameBuffer(frameBuffer) {
+
+    _device {device},
+	_frameBuffer {frameBuffer} {
 }
 
 

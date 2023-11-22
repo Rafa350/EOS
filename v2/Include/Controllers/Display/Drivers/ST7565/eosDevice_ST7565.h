@@ -1,5 +1,5 @@
 #pragma once
-#igndef __eosDevice_ST7565__
+#ifndef __eosDevice_ST7565__
 #define __eosDevice_ST7565__
 
 
@@ -12,12 +12,13 @@ namespace eos {
     
     class Device_ST7565 {
         public:
-            virtual ~Device_ST7565() ) default;
+            virtual ~Device_ST7565() = default;
+
             virtual void writeCommand(uint8_t cmd) = 0;
             virtual void writeData(uint8_t data) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
             void writeScript(const uint8_t *script, uint16_t scriptSize);
-    }
+    };
     
     class Device_ST7565_SPI final: public Device_ST7565 {
         private:
@@ -35,7 +36,7 @@ namespace eos {
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
-    }
+    };
     
     class Device_ST7565_8080_Port final: public Device_ST7565 {
         private:
@@ -56,7 +57,7 @@ namespace eos {
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
-    }
+    };
 
     class Device_ST7565_8080_Pin final: public Device_ST7565 {
         private:
@@ -86,7 +87,7 @@ namespace eos {
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
-    }
+    };
 }
 
 

@@ -11,7 +11,7 @@ using namespace eos;
 /// \param    script: EL escript.
 /// \param    scriptSize: El tmany del script.
 ///
-void SSD1306_Device::writeScript(
+void Device_SSD1306::writeScript(
     const uint8_t *script,
     uint16_t scriptSize) {
 

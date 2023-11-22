@@ -273,12 +273,21 @@ namespace htl {
 			NVIC_DisableIRQ(static_cast<IRQn_Type>(vector));
 		}
 
-		inline void enableInterrupts() {
+        inline bool getInterruptState() {
+            return __get_PRIMASK() == 0;
+        }
+
+        inline void enableInterrupts() {
             __enable_irq();
         }
 
-        inline void disableInterrupts() {
+        inline bool disableInterrupts() {
             __disable_irq();
+        }
+
+        inline void restoreInterrupts(bool state) {
+            if (state)
+                __enable_irq();
         }
 	}
 }
