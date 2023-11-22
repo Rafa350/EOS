@@ -1,11 +1,12 @@
 #include "eos.h"
-#include "Controllers/Display/eos7565_Device.h"
+#include "eosAssert.h"
+#include "Controllers/Display/eosDevice_7565_SPI.h"
 
 
 namespace eos;
 
 
-ST7565_SPI_Device::ST7565_SPI_Device():
+Device_ST7565_SPI::Device_ST7565_SPI():
     _pinCS {nullptr},
     _pinDC {nullptr},
     _pinRST {nullptr},
@@ -14,7 +15,7 @@ ST7565_SPI_Device::ST7565_SPI_Device():
 }
 
 
-void ST7565_SPI_Device::initialize(
+void Device_ST7565_SPI::initialize(
     htl::gpio::Pin *pinCS,
     htl::gpio::Pin *pinDC,
     htl::gpio::Pin *pinRST,
@@ -33,14 +34,14 @@ void ST7565_SPI_Device::initialize(
 }
 
 
-void ST7565_SPI_Device::deinitialize() {
+void Device_ST7565_SPI::deinitialize() {
 
     _pinCS->set();
 }
 
 
 
-void ST7565_SPI_Device::writeCommand(
+void Device_ST7565_SPI::writeCommand(
     uint8_t cmd) {
     
     _pinDC->clear();
@@ -50,7 +51,7 @@ void ST7565_SPI_Device::writeCommand(
 }
 
 
-void ST7565_SPI_Device::writeData(
+void Device_ST7565_SPI::writeData(
     uint8_t data) {
     
     _pinDC->set();
@@ -60,7 +61,7 @@ void ST7565_SPI_Device::writeData(
 }
 
 
-void ST7565_SPI_Device::writeData(
+void Device_ST7565_SPI::writeData(
     const uint8_t *data, 
     uint16_t dataSize) {
     
