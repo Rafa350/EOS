@@ -42,8 +42,8 @@ namespace eos {
 			static constexpr int16_t _displayHeight = DISPLAY_HEIGHT;
 
     	private:
-            Device_SSD1306 *_device;
-			FrameBuffer *_frameBuffer;
+            Device_SSD1306 * const _device;
+			FrameBuffer * const _frameBuffer;
 
     	public:
             DisplayDriver_SSD1306(Device_SSD1306 *device, FrameBuffer *frameBuffer);

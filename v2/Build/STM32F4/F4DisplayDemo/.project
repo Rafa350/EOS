@@ -1054,6 +1054,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341_SPI.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341_SPI.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp</locationURI>

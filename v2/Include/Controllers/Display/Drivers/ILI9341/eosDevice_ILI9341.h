@@ -264,26 +264,32 @@ namespace eos {
     class Device_ILI9341 {
         public:
             virtual ~Device_ILI9341() = default;
+
             virtual void hardwareReset() = 0;
             virtual void writeCommand(uint8_t cmd) = 0;
             virtual void writeData(uint8_t data) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
+
             void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
 
+
     class Device_ILI9341_SPI final: public Device_ILI9341 {
         private:
-            htl::gpio::Pin *__pinCS;
-            htl::gpio::Pin *__pinRS;
-            htl::gpio::Pin *__pinRST;
-            htl::spi::SPIDevice *__devSPI;
+            htl::gpio::Pin *_pinCS;
+            htl::gpio::Pin *_pinRS;
+            htl::gpio::Pin *_pinRST;
+            htl::spi::SPIDevice *_devSPI;
 
         public:
             Device_ILI9341_SPI();
-            void initialize(htl::gpio::Pin pinCS, htl::gpio::Pin pinRS,
+
+            void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinRS,
                 htl::spi::SPIDevice *devSPI, htl::gpio::Pin *pinRST = nullptr);
             void deinitialize();
+
             void hardwareReset() override;
+
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;

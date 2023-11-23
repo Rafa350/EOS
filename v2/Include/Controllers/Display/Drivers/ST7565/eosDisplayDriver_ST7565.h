@@ -42,8 +42,8 @@ namespace eos {
             static constexpr int _displayHeight = DISPLAY_HEIGHT;
 
     	private:
-            Device_ST7565 *_device;
-            FrameBuffer *_frameBuffer;
+            Device_ST7565 * const _device;
+            FrameBuffer * const _frameBuffer;
 
         private:
             void initializeController();
