@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosStreamReader__
+#define __eosStreamReader__
 
 
 // EOS includes
@@ -32,22 +34,9 @@ namespace eos {
             inline bool eof() const {
                 return _ptr == _end;
             }
-
-            inline unsigned length() const {
-                return _ptr - _begin;
-            }
-
-            inline const uint8_t * data() const {
-                return _begin;
-            }
-
-            inline const uint8_t* begin() const {
-                return _begin;
-            }
-
-            inline const uint8_t* end() const {
-                return _end;
-            }
     };
 
 }
+
+
+#endif // __eosStreamReader__
