@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Pin/Drivers/VNI8200XP/eosPinDriver_VNI8200XP.h"
+#include "Controllers/Pin/Drivers/VNI8200XP/eosDevice_VNI8200XP.h"
 
 
 using namespace eos;
@@ -16,8 +16,7 @@ static uint8_t calcParity(uint8_t data);
 /// \param    hSS: Handler del pin SS
 /// \param    hOUTEN: Handler del pin OUTEN
 ///
-Device_VNI8200XP_SPI::Device_VNI8200XP_SPI() :
-
+Device_VNI8200XP_SPI::Device_VNI8200XP_SPI():
     _state {State::reset},
     _curPinState {0},
     _oldPinState {0},
@@ -160,7 +159,6 @@ void Device_VNI8200XP_SPI::write(
         _curPinState |= pinMask;
     else
         _curPinState &= ~pinMask;
-
 }
 
 

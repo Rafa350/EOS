@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Pin/Drivers/VNI8200XP/eosPinDriver_VNI8200XP.h"
+#include "Controllers/Pin/Drivers/VNI8200XP/eosDevice_VNI8200XP.h"
 
 
 using namespace eos;

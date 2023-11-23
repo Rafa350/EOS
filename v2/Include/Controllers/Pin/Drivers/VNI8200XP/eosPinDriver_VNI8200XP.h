@@ -5,10 +5,11 @@
 
 #include "eos.h"
 #include "Controllers/Pin/eosPinDriver.h"
-#include "Controllers/Pin/Drivers/VNI8200XP/eosDevice_VNI8200XP.h"
 
 
 namespace eos {
+    
+    class Device_VNI8200XP;
 
     /// \brief Clase que implementa del driver del pin amb el chip VNI8200XP
     ///

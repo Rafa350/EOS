@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Controllers/Pin/Drivers/CLT0138SQ7/eosPinDriver_CLT0138SQ7.h"
+#include "Controllers/Pin/Drivers/CLT0138SQ7/eosDevice_CLT0138SQ7.h"
 
 
 using namespace eos;

@@ -262,10 +262,15 @@
 namespace eos {
 
     class Device_ILI9341 {
+        private:
+            Device_ILI9341(const Device_ILI9341 &) = delete;
+            Device_ILI9341 & operator =(const Device_ILI9341 &) = delete;
+            
         public:
             virtual ~Device_ILI9341() = default;
-
+            
             virtual void hardwareReset() = 0;
+            
             virtual void writeCommand(uint8_t cmd) = 0;
             virtual void writeData(uint8_t data) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
@@ -273,16 +278,17 @@ namespace eos {
             void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
 
-
-    class Device_ILI9341_SPI final: public Device_ILI9341 {
+    class Device_ILI9341_SPI: public Device_ILI9341 {
         private:
             htl::gpio::Pin *_pinCS;
             htl::gpio::Pin *_pinRS;
             htl::gpio::Pin *_pinRST;
             htl::spi::SPIDevice *_devSPI;
 
-        public:
+        protected:
             Device_ILI9341_SPI();
+            
+        public:
 
             void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinRS,
                 htl::spi::SPIDevice *devSPI, htl::gpio::Pin *pinRST = nullptr);
@@ -294,6 +300,26 @@ namespace eos {
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
+    
+    template <uint8_t id_>
+    class DeviceX_ILI9341_SPI final: public Device_ILI9341 {
+        private:
+            static DeviceX_ILI9341_SPI _instance;
+            
+        public:
+            static constexpr uint8_t id = id_;
+            static constexpr DeviceX_ILI9341_SPI  *pInst = &_instance;
+            static constexpr DeviceX_ILI9341_SPI  &rInst = _instance;
+            
+        private:
+            DeviceX_ILI9341_SPI() :
+                Device_ILI9341_SPI() {
+}
+    }
+
+    template <uint8_t id_>
+	DeviceX_ILI9341_SPI<id_> DeviceX_ILI9341_SPI<id_>::_instance;
+    
 }
 
 #endif // __eosDevice_ILI9341__

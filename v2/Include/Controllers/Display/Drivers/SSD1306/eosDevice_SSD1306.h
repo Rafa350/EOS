@@ -12,6 +12,10 @@
 namespace eos {
 
     class Device_SSD1306 {
+        private:
+            Device_SSD1306(const Device_SSD1306 &) = delete;
+            Device_SSD1306 & operator = (const DeviceX_SSD1306 &) = delete;
+            
         public:
             virtual ~Device_SSD1306() = default;
 
@@ -23,31 +27,49 @@ namespace eos {
     };
     
 
-    class Device_SSD1306_SPI final: public Device_SSD1306 {
+    class Device_SSD1306_SPI: public Device_SSD1306 {
         private:
             htl::gpio::Pin *_pinCS;
             htl::gpio::Pin *_pinDC;
             htl::gpio::Pin *_pinRST;
             htl::spi::SPIDevice *_devSPI;
             
-        public:
+        protected:
             Device_SSD1306_SPI();
+            
+        public:
             ~Device_SSD1306_SPI();
             
             void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinDC, htl::spi::SPIDevice *devSPI, htl::gpio::Pin *pinRST = nullptr);
             void deinitialize();
             
             void hardwareReset() override;
-
+            
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
+    
+    template <uint8_t id_>
+    class DeviceX_SSD1306_SPI final: public Device_SSD1306_SPI {
+        private:
+            static DeviceX_SSD1306_SPI _instance;
+            
+        public:
+            static constexpr uint8_t id = id_;
+            static constexpr DeviceX_SSD1306_SPI *pInst = &_instance;
+            static constexpr DeviceX_SSD1306_SPI &rInst = _instance;
+            
+        private:
+            DeviceX_SSD1306_SPI() :
+                Device_SSD1306_SPI() {
+                        
+            }
+    }
 
+    template <uint8_t id_>
+	DeviceX_SSD1306_SPI<id_> DeviceX_SSD1306_SPI<id_>::_instance;
 
-    class Device_SSD1306_I2C final: public Device_SSD1306 {
-
-    };
 }
 
 

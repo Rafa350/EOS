@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosDispleyDriver_ILI9341__
+#define __eosDisplayDriver_ILI9341__
 
 
 #include "eos.h"
@@ -22,6 +24,8 @@
 
 
 namespace eos {
+    
+    class Device_ILI9451;
 
     class DisplayDriver_ILI9341: public IDisplayDriver {
     	private:
@@ -103,3 +107,5 @@ namespace eos {
     };
 }
 
+
+#endif // __eosDisplayDriver_ILI9341__

@@ -30,11 +30,12 @@
 
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosFrameBuffer.h"
-#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
 #include "System/Graphics/eosColor.h"
 
 
 namespace eos {
+    
+    class Device_SSD1306;
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:

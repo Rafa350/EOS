@@ -11,6 +11,10 @@
 namespace eos {
     
     class Device_ST7565 {
+        private:
+            Device_ST7565(const Device_ST7565 &) = delete;
+            Device_ST7565 & operator = (const Device_ST7565 &) = delete;
+        
         public:
             virtual ~Device_ST7565() = default;
 
@@ -20,6 +24,7 @@ namespace eos {
             void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
     
+    
     class Device_ST7565_SPI final: public Device_ST7565 {
         private:
             htl::gpio::Pin *_pinCS;
@@ -27,9 +32,10 @@ namespace eos {
             htl::gpio::Pin *_pinRST;
             htl::spi::SPIDevice *_devSPI;
             
-        public:
+        protected:
             Device_ST7565_SPI();
 
+        public:
             void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinA0, htl::gpio::Pin *pinRST, htl::spi::SPIDevice *devSPI);
             void deinitialize() override;
 
@@ -38,7 +44,8 @@ namespace eos {
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
     
-    class Device_ST7565_8080_Port final: public Device_ST7565 {
+    
+    class Device_ST7565_8080_Port: public Device_ST7565 {
         private:
             htl::gpio::Pin *_pinCS;
             htl::gpio::Pin *_pinA0;
@@ -47,9 +54,10 @@ namespace eos {
             htl::gpio::Pin *_pinWR;
             htl::gpio::Pin *_pinRD;
             
-        public:
+        protected:
             Device_ST7565_8080_Port();
         
+        public:
             void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinA0, htl::gpio::Pin *pinRST, 
                 htl::gpio::Port *portD, htl::gpio::Pin *pinWR, htl::gpio::Pin *pinRD);
             void deinitialize() override;
@@ -59,7 +67,8 @@ namespace eos {
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
 
-    class Device_ST7565_8080_Pin final: public Device_ST7565 {
+
+    class Device_ST7565_8080_Pin: public Device_ST7565 {
         private:
             htl::gpio::Pin *_pinCS;
             htl::gpio::Pin *_pinA0;
@@ -75,9 +84,10 @@ namespace eos {
             htl::gpio::Pin *_pinWR;
             htl::gpio::Pin *_pinRD;
             
-        public:
+        protected:
             Device_ST7565_8080_Pin();
         
+        public:
             void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinA0, htl::gpio::Pin *pinRST, 
                 htl::gpio::Pin *pinD0, htl::gpio::Pin *pinD1, htl::gpio::Pin *pinD2, htl::gpio::Pin *pinD3, 
                 htl::gpio::Pin *pinD4, htl::gpio::Pin *pinD5, htl::gpio::Pin *pinD6, htl::gpio::Pin *pinD7, 

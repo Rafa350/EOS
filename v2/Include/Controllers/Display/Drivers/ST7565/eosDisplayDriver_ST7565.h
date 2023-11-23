@@ -30,11 +30,12 @@
 
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosFrameBuffer.h"
-#include "Controllers/Display/Drivers/ST7565/eosDevice_ST7565.h"
 #include "System/Graphics/eosColor.h"
 
 
 namespace eos {
+    
+    class Device_ST7565;
 
     class DisplayDriver_ST7565: public IDisplayDriver {
     	private:

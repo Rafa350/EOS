@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosStreamWriter__
+#define __eosStreamWriter__
 
 
 #include "eos.h"
@@ -35,21 +37,16 @@ namespace eos {
                 return write(static_cast<uint8_t>(data));
             }
 
-            inline unsigned length() const {
+            inline const uint8_t * data() const {
+                return _begin;
+            }
+
+            inline uint16_t length() const {
                 return _ptr - _begin;
-            }
-
-            inline uint8_t *data() const {
-                return _begin;
-            }
-
-            inline const uint8_t* begin() const {
-                return _begin;
-            }
-
-            inline const uint8_t* end() const {
-                return _end;
             }
     };
     
 }
+
+
+#endif // __eosStreamWriter__

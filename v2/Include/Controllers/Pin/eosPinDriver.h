@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosPinDriver__
+#define __eosPinDriver__
 
 
 // EOS includes
@@ -13,6 +15,7 @@ namespace eos {
     class PinDriver {
         public:
             virtual ~PinDriver() = default;
+
             virtual void set() = 0;
             virtual void clear() = 0;
             virtual void toggle() = 0;
@@ -21,3 +24,6 @@ namespace eos {
     };
 
 }
+
+
+#endif // __eosPinDriver__

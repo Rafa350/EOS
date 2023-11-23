@@ -281,7 +281,7 @@ namespace htl {
             __enable_irq();
         }
 
-        inline bool disableInterrupts() {
+        inline void disableInterrupts() {
             __disable_irq();
         }
 
