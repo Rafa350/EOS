@@ -10,6 +10,8 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 Device_SSD1306_SPI::Device_SSD1306_SPI() :
+    Device_SSD1306(),
+
     _pinCS {nullptr}, 
     _pinDC {nullptr},
     _pinRST {nullptr},

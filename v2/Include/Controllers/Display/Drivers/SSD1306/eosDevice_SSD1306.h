@@ -14,8 +14,11 @@ namespace eos {
     class Device_SSD1306 {
         private:
             Device_SSD1306(const Device_SSD1306 &) = delete;
-            Device_SSD1306 & operator = (const DeviceX_SSD1306 &) = delete;
+            Device_SSD1306 & operator = (const Device_SSD1306 &) = delete;
             
+        protected:
+            Device_SSD1306() = default;
+
         public:
             virtual ~Device_SSD1306() = default;
 
@@ -65,7 +68,7 @@ namespace eos {
                 Device_SSD1306_SPI() {
                         
             }
-    }
+    };
 
     template <uint8_t id_>
 	DeviceX_SSD1306_SPI<id_> DeviceX_SSD1306_SPI<id_>::_instance;
