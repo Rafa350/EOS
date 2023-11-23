@@ -25,14 +25,20 @@ namespace eos {
 				error
 			};
 
+        private:
+            Device_VNI8200XP(const DeviceX_VNI8200XP&) = delete;
+            Device_VNI8200XP operator = (const DeviceX_VNI8200XP&) = delete;
+
         public:
     		virtual ~Device_VNI8200XP() = default;
+            
             virtual void set(uint8_t pinMask) = 0;
             virtual void clear(uint8_t pinMask) = 0;
             virtual void toggle(uint8_t pinMask) = 0;
 			virtual void write(uint8_t pinMask, bool pinState) = 0;
 			virtual uint8_t read() const = 0;
-			virtual void enable() const = 0;
+			
+            virtual void enable() const = 0;
 			virtual void disable() const = 0;
             virtual void update() = 0;
     };
@@ -55,12 +61,14 @@ namespace eos {
 
     	public:
             Result initialize(htl::spi::SPIDevice *spi, htl::gpio::Pin *pinSS, htl::gpio::Pin *pinOUTEN = nullptr);
-        	void set(uint8_t pinMask) override;
+        	
+            void set(uint8_t pinMask) override;
 			void clear(uint8_t pinMask) override;
 			void toggle(uint8_t pinMask) override;
 			void write(uint8_t pinMask, bool pinState) override;
 			uint8_t read() const override;
-			void enable() const override;
+			
+            void enable() const override;
 			void disable() const override;
             void update() override;
     };
@@ -80,8 +88,6 @@ namespace eos {
             DeviceX_VNI8200XP_SPI():
             	Device_VNI8200XP_SPI() {
             }
-            DeviceX_VNI8200XP_SPI(const DeviceX_VNI8200XP_SPI&) = delete;
-            DeviceX_VNI8200XP_SPI operator = (const DeviceX_VNI8200XP_SPI&) = delete;
     };
 
     template <uint8_t id_>
