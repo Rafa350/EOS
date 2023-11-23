@@ -4,7 +4,6 @@
 
 
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
 
@@ -27,7 +26,7 @@ namespace eos {
 
         private:
             Device_VNI8200XP(const DeviceX_VNI8200XP&) = delete;
-            Device_VNI8200XP operator = (const DeviceX_VNI8200XP&) = delete;
+            Device_VNI8200XP & operator = (const DeviceX_VNI8200XP&) = delete;
 
         public:
     		virtual ~Device_VNI8200XP() = default;

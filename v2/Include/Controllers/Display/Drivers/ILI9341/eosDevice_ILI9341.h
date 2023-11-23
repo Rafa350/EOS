@@ -263,8 +263,8 @@ namespace eos {
 
     class Device_ILI9341 {
         private:
-            Device_ILI9341(const Device_INI9341 &) = delete;
-            Device_ILI9341 operator =(const Device_ILI9341 &) = delete;
+            Device_ILI9341(const Device_ILI9341 &) = delete;
+            Device_ILI9341 & operator =(const Device_ILI9341 &) = delete;
             
         public:
             virtual ~Device_ILI9341() = default;

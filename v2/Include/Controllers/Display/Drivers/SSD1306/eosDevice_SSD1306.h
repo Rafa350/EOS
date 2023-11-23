@@ -14,7 +14,7 @@ namespace eos {
     class Device_SSD1306 {
         private:
             Device_SSD1306(const Device_SSD1306 &) = delete;
-            Device_SSD1306 operator = (const DeviceX_SSD1306 &) = delete;
+            Device_SSD1306 & operator = (const DeviceX_SSD1306 &) = delete;
             
         public:
             virtual ~Device_SSD1306() = default;

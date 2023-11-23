@@ -5,10 +5,11 @@
 
 #include "eos.h"
 #include "Controllers/Pin/eosPinDriver.h"
-#include "Controllers/Pin/Drivers/CLT0138SQ7/eosDevice_CLT0138SQ7.h"
 
 
 namespace eos {
+    
+    class Device_CLT0138SQ7;
 
     class PinDriver_CLT0138SQ7 final: public PinDriver {
     	private:

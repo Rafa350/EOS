@@ -4,7 +4,6 @@
 
 
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
 
@@ -24,7 +23,7 @@ namespace eos {
 
         private:
 			Device_CLT0138SQ7(const Device_CLT0138SQ7&) = delete;
-			Device_CLT0138SQ7 operator = (const Device_CLT0138SQ7&) = delete;
+			Device_CLT0138SQ7 & operator = (const Device_CLT0138SQ7&) = delete;
 
 		protected:
 			State _state;
@@ -61,6 +60,7 @@ namespace eos {
 				Device_CLT0138SQ7() {
 			}
 	};
+    
     template <uint8_t id_>
     DeviceX_CLT0138SQ7<id_> DeviceX_CLT0138SQ7<id_>::_instance;
 }
