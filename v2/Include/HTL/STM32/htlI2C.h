@@ -290,13 +290,13 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initPinSCL() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+					auto af= internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinSDA() {
-					gpio::PinFunction pinFunction = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pinFunction);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 		};
 

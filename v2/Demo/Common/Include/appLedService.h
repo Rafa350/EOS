@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __appLedService__
+#define __appLedService__
 
 
 // EOS includes
@@ -23,3 +25,6 @@ namespace app {
 	};
 
 }
+
+
+#endif // __appLedService__

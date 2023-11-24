@@ -15,7 +15,7 @@ Device_CLT0138SQ7::Device_CLT0138SQ7():
 	_pinState {0},
 	_underVoltage {false},
 	_overTemperature {false},
-	_spi {nullptr},
+	_devSPI {nullptr},
 	_pinSS {nullptr} {
 
 }
@@ -23,16 +23,16 @@ Device_CLT0138SQ7::Device_CLT0138SQ7():
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
-/// \param    hSPI: Handler del dispositiu SPI per la comunicacio.
+/// \param    devSPI: El dispositiu SPI per la comunicacio.
 /// \param    pinSS: El pin pel chip select.
 ///
 Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize(
-	htl::spi::SPIDevice *spi,
-	htl::gpio::Pin *pinSS) {
+	DevSPI *devSPI,
+	Pin *pinSS) {
 
 	if (_state == State::reset) {
 
-		_spi = spi;
+		_devSPI = devSPI;
 		_pinSS = pinSS;
 
 		_state = State::ready;
@@ -58,7 +58,7 @@ void Device_CLT0138SQ7::update() {
 		uint8_t rxBuffer[2];
 
 		_pinSS->clear();
-		_spi->receive(rxBuffer, sizeof(rxBuffer));
+		_devSPI->receive(rxBuffer, sizeof(rxBuffer));
 		_pinSS->set();
 
 		_underVoltage = (rxBuffer[1] & 0x80) == 0;

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosTouchPadService__
 #define __eosTouchPadService__
 

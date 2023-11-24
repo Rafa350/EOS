@@ -23,19 +23,23 @@ namespace eos {
             virtual ~Device_SSD1306() = default;
 
             virtual void hardwareReset() = 0;
+
             virtual void writeCommand(uint8_t cmd) = 0;
-            virtual void writeData(uint8_t data) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
             void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
     
 
     class Device_SSD1306_SPI: public Device_SSD1306 {
+        public:
+            using Pin = htl::gpio::Pin;
+            using DevSPI = htl::spi::SPIDevice;
+
         private:
-            htl::gpio::Pin *_pinCS;
-            htl::gpio::Pin *_pinDC;
-            htl::gpio::Pin *_pinRST;
-            htl::spi::SPIDevice *_devSPI;
+            Pin const * _pinCS;
+            Pin const * _pinDC;
+            Pin const * _pinRST;
+            DevSPI *_devSPI;
             
         protected:
             Device_SSD1306_SPI();
@@ -43,13 +47,12 @@ namespace eos {
         public:
             ~Device_SSD1306_SPI();
             
-            void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinDC, htl::spi::SPIDevice *devSPI, htl::gpio::Pin *pinRST = nullptr);
+            void initialize(Pin *pinCS, Pin *pinDC, DevSPI *devSPI, Pin *pinRST = nullptr);
             void deinitialize();
             
             void hardwareReset() override;
             
             void writeCommand(uint8_t cmd) override;
-            void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
     
@@ -66,7 +69,6 @@ namespace eos {
         private:
             DeviceX_SSD1306_SPI() :
                 Device_SSD1306_SPI() {
-                        
             }
     };
 

@@ -4,66 +4,26 @@
 
 
 #include "eos.h"
-
-
-#if !defined(DISPLAY_INTERFACE_SPI) && \
-    !defined(DISPLAY_INTERFACE_8080) && \
-    !defined(DISPLAY_INTERFACE_6800) && \
-    !defined(DISPLAY_INTERFACE_RGB)
-    #error "Undefined DISPLAY_INTERFACE_xxxx"
-#endif
-
-
-#if defined(DISPLAY_INTERFACE_SPI) || \
-    defined(DISPLAY_INTERFACE_RGB)
-    #include "HTL/htlSPI.h"
-#endif
-#include "HTL/htlGPIO.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "System/Graphics/eosColor.h"
 
 
 namespace eos {
     
-    class Device_ILI9451;
+    class Device_ILI9341;
 
     class DisplayDriver_ILI9341: public IDisplayDriver {
-    	private:
-			#if defined(DISPLAY_INTERFACE_8080)
-				using PinRDX = DISPLAY_RDX_Pin;
-				using PinWRX = DISPLAY_WRX_Pin;
-    			using PinTE = DISPLAY_TE_Pin;
-			#endif
-			#if defined (DISPLAY_INTERFACE_6800)
-				using PinTE = DISPLAY_TE_Pin;
-			#endif
-			#if defined(DISPLAY_INTERFACE_SPI) || \
-			    defined(DISPLAY_INTERFACE_RGB)
-    			using PinTE = DISPLAY_TE_Pin;
-				using PinSCK = DISPLAY_SCK_Pin;
-				using PinMOSI = DISPLAY_MOSI_Pin;
-				using DevSPI = DISPLAY_SPI_Device;
-				static constexpr DevSPI *_devSPI = DevSPI::pInst;
-			#endif
-			#if defined(DISPLAY_RST_Pin)
-    			using PinRST = DISPLAY_RST_Pin;
-    			static constexpr PinRST *_pinRST = PinRST::pInst;
-			#endif
-    		using PinCS = DISPLAY_CS_Pin;
-    		using PinRS = DISPLAY_RS_Pin;
-            static constexpr PinCS *_pinCS = PinCS::pInst;
-            static constexpr PinRS *_pinRS = PinRS::pInst;
-
     	private:
     		constexpr static int16_t _displayWidth = DISPLAY_WIDTH;
     		constexpr static int16_t _displayHeight = DISPLAY_HEIGHT;
 
     	private:
+            Device_ILI9341 * const _device;
     		int16_t _maxX;
     		int16_t _maxY;
 
         public:
-            DisplayDriver_ILI9341();
+            DisplayDriver_ILI9341(Device_ILI9341 *device);
 
             void initialize() override;
             void deinitialize() override;
@@ -94,16 +54,6 @@ namespace eos {
             void writeRegion(const Color *colors, int32_t count);
             void readRegion(Color *colors, int32_t count);
             void selectRegion(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-
-            void initializeInterface();
-            void initializeController();
-
-            void delay(unsigned time);
-            void open();
-            void close();
-            void writeCommand(uint8_t cmd);
-            void writeData(uint8_t data);
-            void writeData(const uint8_t *data, int32_t length);
     };
 }
 

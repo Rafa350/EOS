@@ -719,11 +719,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D_IRQ.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlGPIO.h</locationURI>
@@ -744,19 +739,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlLTDC_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC_IRQ.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlTMR.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlTMR_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals</name>
@@ -969,11 +954,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlDMA2D_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D_IRQ.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
@@ -994,19 +974,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlLTDC_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC_IRQ.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlTMR.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlTMR_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlTick.cpp</name>
@@ -1244,9 +1214,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosDisplayDriver_RGBLTDC.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</locationURI>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/RGB</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h</name>
@@ -1557,6 +1527,11 @@
 			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma12pt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.cpp</name>

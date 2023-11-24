@@ -37,10 +37,10 @@ Device_SSD1306_SPI::~Device_SSD1306_SPI() {
 /// \param    pinRST: El pin RST (Hardware reset)
 ///
 void Device_SSD1306_SPI::initialize(
-    htl::gpio::Pin *pinCS, 
-    htl::gpio::Pin *pinDC,
-    htl::spi::SPIDevice *devSPI,
-    htl::gpio::Pin *pinRST) {
+    Pin *pinCS,
+    Pin *pinDC,
+    DevSPI *devSPI,
+    Pin *pinRST) {
 
     _pinCS = pinCS;
     _pinDC = pinDC;
@@ -93,21 +93,7 @@ void Device_SSD1306_SPI::writeCommand(
 /// ----------------------------------------------------------------------
 /// \brief    Escriu en el registre de dades.
 /// \brief    data: Les dades.
-///
-void Device_SSD1306_SPI::writeData(
-    uint8_t data) {
-
-    _pinDC->set();
-    _pinCS->clear();
-    _devSPI->transmit(&data, 1);
-    _pinCS->set();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu en el registre de dades.
-/// \brief    data: Les dades.
-/// \param    dataSize: El tasmany de les dades.
+/// \param    dataSize: Tamany de les dades en bytes.
 ///
 void Device_SSD1306_SPI::writeData(
     const uint8_t *data, 

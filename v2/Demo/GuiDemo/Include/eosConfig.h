@@ -34,7 +34,7 @@
 
 // Opcions del touchpad integrat
 //
-#define USE_TOUCHPAD
+//#define USE_TOUCHPAD
 
 
 // Opcions del servei GUI

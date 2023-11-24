@@ -1,9 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Display/eosDevice_7565_SPI.h"
+#include "Controllers/Display/Drivers/ST7565/eosDevice_ST7565.h"
 
 
-namespace eos;
+using namespace eos;
 
 
 Device_ST7565_SPI::Device_ST7565_SPI():
@@ -38,7 +38,6 @@ void Device_ST7565_SPI::deinitialize() {
 
     _pinCS->set();
 }
-
 
 
 void Device_ST7565_SPI::writeCommand(

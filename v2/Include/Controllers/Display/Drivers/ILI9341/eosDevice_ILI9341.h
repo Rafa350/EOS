@@ -266,6 +266,9 @@ namespace eos {
             Device_ILI9341(const Device_ILI9341 &) = delete;
             Device_ILI9341 & operator =(const Device_ILI9341 &) = delete;
             
+        protected:
+            Device_ILI9341() = default;
+
         public:
             virtual ~Device_ILI9341() = default;
             
@@ -279,19 +282,22 @@ namespace eos {
     };
 
     class Device_ILI9341_SPI: public Device_ILI9341 {
+        public:
+            using Pin = htl::gpio::Pin;
+            using DevSPI = htl::spi::SPIDevice;
+
         private:
-            htl::gpio::Pin *_pinCS;
-            htl::gpio::Pin *_pinRS;
-            htl::gpio::Pin *_pinRST;
-            htl::spi::SPIDevice *_devSPI;
+            Pin const * _pinCS;
+            Pin const *_pinRS;
+            Pin const *_pinRST;
+            DevSPI *_devSPI;
 
         protected:
             Device_ILI9341_SPI();
             
         public:
 
-            void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinRS,
-                htl::spi::SPIDevice *devSPI, htl::gpio::Pin *pinRST = nullptr);
+            void initialize(Pin *pinCS, Pin *pinRS, DevSPI *devSPI, Pin *pinRST = nullptr);
             void deinitialize();
 
             void hardwareReset() override;
@@ -302,7 +308,7 @@ namespace eos {
     };
     
     template <uint8_t id_>
-    class DeviceX_ILI9341_SPI final: public Device_ILI9341 {
+    class DeviceX_ILI9341_SPI final: public Device_ILI9341_SPI {
         private:
             static DeviceX_ILI9341_SPI _instance;
             
@@ -314,8 +320,8 @@ namespace eos {
         private:
             DeviceX_ILI9341_SPI() :
                 Device_ILI9341_SPI() {
-}
-    }
+            }
+    };
 
     template <uint8_t id_>
 	DeviceX_ILI9341_SPI<id_> DeviceX_ILI9341_SPI<id_>::_instance;

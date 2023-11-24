@@ -7,7 +7,9 @@
 #include "eos.h"
 #include "System/eosRTOSApplication.h"
 #include "System/eosCallbacks.h"
+#if eosGuiService_TouchpadEnabled
 #include "Services/eosTouchpadService.h"
+#endif
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 

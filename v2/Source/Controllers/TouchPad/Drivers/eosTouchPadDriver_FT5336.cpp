@@ -1,4 +1,8 @@
 #include "eos.h"
+
+#ifdef USE_TOUCHPAD
+
+
 #include "Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h"
 #include "HTL/htlTMR.h"
 #include "HTL/htlGPIO.h"
@@ -274,9 +278,9 @@ void TouchPadDriver_FT5336::initializeInterface() {
 	//
 	PinINT::pInst->initInput(gpio::InputMode::pullUp);
 
-	auto hPinInterruptINT = PinInterruptINT::getHandler();
-	hPinInterruptINT->enableInterruptPin(htl::gpio::Edge::rising);
-	hPinInterruptINT->setNotifyEvent(_intNotifyEvent);
+	auto pinINT = PinInterruptINT::pInst;
+	pinINT->enableInterruptPin(htl::gpio::Edge::rising);
+	pinINT->setNotifyEvent(_intNotifyEvent);
 
 	irq::setInterruptVectorPriority(_vector, _priority, _subPriority);
 	irq::enableInterruptVector(_vector);
@@ -323,4 +327,7 @@ uint8_t TouchPadDriver_FT5336::readRegister(
 
 	return value;
 }
+
+
+#endif // USE_TOUCHPAD
 

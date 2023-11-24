@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosTouchPadDriver_FT5336__
 #define __eosTouchPadDriver_FT5336__
 
@@ -5,6 +6,10 @@
 // EOS includes
 //
 #include "eos.h"
+
+#ifdef USE_TOUCHPAD
+
+
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "HTL/htlI2C.h"
 #include "HTL/htlGPIO.h"
@@ -299,6 +304,9 @@ namespace eos {
 			void clearInt();
 	};
 }
+
+
+#endif // USE_TOUCHPAD
 
 
 #endif // __eosTouchPadDriver_FT5336Driver__

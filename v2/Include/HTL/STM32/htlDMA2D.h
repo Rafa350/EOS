@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlDMA2D__
+#define __STM32_htlDMA2D__
 
 
 // EOS includes
@@ -68,3 +70,6 @@ namespace htl {
 
     }
 }
+
+
+#endif // __STM32_htlDMA2D__

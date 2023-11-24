@@ -2,8 +2,9 @@
 #include "HTL/htlGPIO.h"
 
 
-extern "C" void EXTI15_10_IRQHandler() {
+extern "C" void EXTI15_10_IRQHandler(void) {
 
-	auto hPinInterrupt = TOUCHPAD_INT_PinInterrupt::getHandler();
-	hPinInterrupt->interruptHandler();
+#if eosGuiService_TouchpadEnabled
+	TOUCHPAD_INT_PinInterrupt::pInst->interruptHandler();
+#endif
 }

@@ -12,15 +12,12 @@ static uint8_t calcParity(uint8_t data);
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    hSPI: Handler del dispositiu SPI de comunicacions.
-/// \param    hSS: Handler del pin SS
-/// \param    hOUTEN: Handler del pin OUTEN
 ///
 Device_VNI8200XP_SPI::Device_VNI8200XP_SPI():
     _state {State::reset},
     _curPinState {0},
     _oldPinState {0},
-    _spi {nullptr},
+    _devSPI {nullptr},
     _pinSS {nullptr},
     _pinOUTEN {nullptr} {
 
@@ -29,20 +26,20 @@ Device_VNI8200XP_SPI::Device_VNI8200XP_SPI():
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
-/// \param    spi: El dispositiu SPI
+/// \param    devSPI: El dispositiu SPI
 /// \param    pinSS: El pin de seleccio.
 /// \param    pinOUTEN: El pin de seleccio de les sortides.
 ///
 Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize(
-    htl::spi::SPIDevice *spi,
-    htl::gpio::Pin *pinSS,
-    htl::gpio::Pin *pinOUTEN) {
+    DevSPI *devSPI,
+    Pin *pinSS,
+    Pin *pinOUTEN) {
 
     eosAssert(_state == State::reset);
 
     if (_state == State::reset) {
 
-        _spi = spi;
+        _devSPI = devSPI;
         _pinSS = pinSS;
         _pinOUTEN = pinOUTEN;
 
@@ -102,7 +99,7 @@ void Device_VNI8200XP_SPI::update() {
             txData[1] = calcParity(_curPinState);
 
             _pinSS->clear();
-            _spi->transmit(txData, rxData, sizeof(txData));
+            _devSPI->transmit(txData, rxData, sizeof(txData));
             _pinSS->set();
 
             _oldPinState = _curPinState;

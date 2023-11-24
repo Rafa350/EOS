@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlLTDC__
+#define __STM32_htlLTDC__
 
 
 // EOS includes
@@ -266,3 +268,6 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
+
+
+#endif // __STM32_htlLTDC__

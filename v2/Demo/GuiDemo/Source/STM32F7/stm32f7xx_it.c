@@ -37,4 +37,14 @@ void DebugMon_Handler(void) {
 
 }
 
+void WWDG_IRQHandler(void) {
 
+}
+
+void USART3_IRQHandler(void) {
+
+}
+
+void USART6_IRQHandler(void) {
+
+}

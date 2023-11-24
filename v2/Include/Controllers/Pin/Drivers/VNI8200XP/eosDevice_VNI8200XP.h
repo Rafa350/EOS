@@ -50,19 +50,23 @@ namespace eos {
     ///        amb interficie SPI
 	///
     class Device_VNI8200XP_SPI: public Device_VNI8200XP {
+        public:
+            using Pin = htl::gpio::Pin;
+            using DevSPI = htl::spi::SPIDevice;
+
     	private:
     		State _state;
     		uint8_t _curPinState;
             uint8_t _oldPinState;
-    		htl::spi::SPIDevice *_spi;
-    		htl::gpio::Pin *_pinSS;
-    		htl::gpio::Pin *_pinOUTEN;
+    		DevSPI *_devSPI;
+    		Pin const *_pinSS;
+    		Pin const *_pinOUTEN;
 
     	protected:
     		Device_VNI8200XP_SPI();
 
     	public:
-            Result initialize(htl::spi::SPIDevice *spi, htl::gpio::Pin *pinSS, htl::gpio::Pin *pinOUTEN = nullptr);
+            Result initialize(DevSPI *devSPI, Pin *pinSS, Pin *pinOUTEN = nullptr);
         	
             void set(uint8_t pinMask) override;
 			void clear(uint8_t pinMask) override;

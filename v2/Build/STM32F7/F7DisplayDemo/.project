@@ -589,19 +589,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halRNG.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halRNG.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F7</name>
@@ -619,29 +609,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA2D_IRQ.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlI2C.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlI2C.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlLTDC.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlLTDC_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections/eosStack.h</name>
@@ -779,11 +754,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlDMA2D_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlDMA2D_IRQ.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
@@ -792,11 +762,6 @@
 			<name>src/Framework/EOS/HTL/STM32/htlLTDC.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlLTDC_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlTMR.cpp</name>

@@ -6,6 +6,7 @@ using namespace eos;
 
 
 Device_ILI9341_SPI::Device_ILI9341_SPI():
+    Device_ILI9341(),
 
     _pinCS {nullptr},
     _pinRS {nullptr},
@@ -16,10 +17,10 @@ Device_ILI9341_SPI::Device_ILI9341_SPI():
 
 
 void Device_ILI9341_SPI::initialize(
-    htl::gpio::Pin *pinCS,
-    htl::gpio::Pin *pinRS,
-    htl::spi::SPIDevice *devSPI,
-    htl::gpio::Pin *pinRST) {
+    Pin *pinCS,
+    Pin *pinRS,
+    DevSPI *devSPI,
+    Pin *pinRST) {
 
     _pinCS = pinCS;
     _pinRS = pinRS;

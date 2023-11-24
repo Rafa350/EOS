@@ -1,4 +1,7 @@
 #include "eos.h"
+
+#ifdef USE_TOUCHPAD
+
 #include "HTL/STM32/htlEXTI.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h"
@@ -132,3 +135,6 @@ void TouchPadService::touchPadEventHandler(
 
 	_lock.releaseISR();
 }
+
+
+#endif

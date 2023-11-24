@@ -64,8 +64,8 @@ static void initializeCLK() {
 	pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
 	HAL_RCCEx_PeriphCLKConfig(&pclkInit);
 #else
-	auto hLTDC = htl::ltdc::LTDDevice::getHandler();
-	hLTDC->initClock(192, DISPLAY_CLK_FDIV, htl::LTDCClockDivider::_4);
+	auto devLTDC = htl::ltdc::LTDDevice::pInst();
+	devLTDC->initClock(192, DISPLAY_CLK_FDIV, htl::LTDCClockDivider::_4);
 #endif
 }
 

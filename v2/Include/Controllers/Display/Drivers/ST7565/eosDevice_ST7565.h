@@ -26,17 +26,21 @@ namespace eos {
     
     
     class Device_ST7565_SPI final: public Device_ST7565 {
+        public:
+            using Pin = htl::gpio::Pin;
+            using DevSPI = htl::spi::SPIDevice;
+
         private:
-            htl::gpio::Pin *_pinCS;
-            htl::gpio::Pin *_pinA0;
-            htl::gpio::Pin *_pinRST;
-            htl::spi::SPIDevice *_devSPI;
+            Pin const * _pinCS;
+            Pin const * _pinA0;
+            Pin const * _pinRST;
+            DevSPI * _devSPI;
             
         protected:
             Device_ST7565_SPI();
 
         public:
-            void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinA0, htl::gpio::Pin *pinRST, htl::spi::SPIDevice *devSPI);
+            void initialize(Pin *pinCS, Pin *pinA0, in *pinRST, DevSPI *devSPI);
             void deinitialize() override;
 
             void writeCommand(uint8_t cmd) override;
@@ -46,20 +50,24 @@ namespace eos {
     
     
     class Device_ST7565_8080_Port: public Device_ST7565 {
+        public:
+            using Pin = htl::gpio::Pin;
+            using Port = htl::gpio::Port;
+
         private:
-            htl::gpio::Pin *_pinCS;
-            htl::gpio::Pin *_pinA0;
-            htl::gpio::Pin *_pinRST;
-            htl::gpio::Port *_portD;
-            htl::gpio::Pin *_pinWR;
-            htl::gpio::Pin *_pinRD;
+            Pin const * _pinCS;
+            Pin const * _pinA0;
+            Pin const * _pinRST;
+            Port const * _portD;
+            Pin const * _pinWR;
+            Pin const * _pinRD;
             
         protected:
             Device_ST7565_8080_Port();
         
         public:
-            void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinA0, htl::gpio::Pin *pinRST, 
-                htl::gpio::Port *portD, htl::gpio::Pin *pinWR, htl::gpio::Pin *pinRD);
+            void initialize(Pin *pinCS, Pin *pinA0, Pin *pinRST,
+                Port *portD, Pin *pinWR, Pin *pinRD);
             void deinitialize() override;
         
             void writeCommand(uint8_t cmd) override;
@@ -69,29 +77,32 @@ namespace eos {
 
 
     class Device_ST7565_8080_Pin: public Device_ST7565 {
+        public:
+            using Pin = htl::gpio::Pin;
+
         private:
-            htl::gpio::Pin *_pinCS;
-            htl::gpio::Pin *_pinA0;
-            htl::gpio::Pin *_pinRST;
-            htl::gpio::Pin *_pinD0;
-            htl::gpio::Pin *_pinD1;
-            htl::gpio::Pin *_pinD2;
-            htl::gpio::Pin *_pinD3;
-            htl::gpio::Pin *_pinD4;
-            htl::gpio::Pin *_pinD5;
-            htl::gpio::Pin *_pinD6;
-            htl::gpio::Pin *_pinD7;
-            htl::gpio::Pin *_pinWR;
-            htl::gpio::Pin *_pinRD;
+            Pin * _pinCS;
+            Pin * _pinA0;
+            Pin * _pinRST;
+            Pin * _pinD0;
+            Pin * _pinD1;
+            Pin * _pinD2;
+            Pin * _pinD3;
+            Pin * _pinD4;
+            Pin * _pinD5;
+            Pin * _pinD6;
+            Pin * _pinD7;
+            Pin * _pinWR;
+            Pin * _pinRD;
             
         protected:
             Device_ST7565_8080_Pin();
         
         public:
-            void initialize(htl::gpio::Pin *pinCS, htl::gpio::Pin *pinA0, htl::gpio::Pin *pinRST, 
-                htl::gpio::Pin *pinD0, htl::gpio::Pin *pinD1, htl::gpio::Pin *pinD2, htl::gpio::Pin *pinD3, 
-                htl::gpio::Pin *pinD4, htl::gpio::Pin *pinD5, htl::gpio::Pin *pinD6, htl::gpio::Pin *pinD7, 
-                htl::gpio::Pin *pinWR, htl::gpio::Pin *pinRD);
+            void initialize(Pin *pinCS, Pin *pinA0, Pin *pinRST,
+                Pin *pinD0, Pin *pinD1, Pin *pinD2, Pin *pinD3,
+                Pin *pinD4, Pin *pinD5, Pin *pinD6, Pin *pinD7,
+                Pin *pinWR, Pin *pinRD);
             void deinitialize() override;
         
             void writeCommand(uint8_t cmd) override;

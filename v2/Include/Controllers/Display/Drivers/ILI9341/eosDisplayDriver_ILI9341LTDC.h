@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosDisplayDriver_ILI9341__
+#define __eosDisplayDriver_ILI9341__
 
 
 #include "eos.h"
@@ -11,15 +13,10 @@
 
 namespace eos {
 
+    class Device_ILI9341;
+
     class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
     	private:
-    		using PinSCK = DISPLAY_SCK_Pin;
-    		using PinMOSI = DISPLAY_MOSI_Pin;
-    		using DevSPI = DISPLAY_SPI_Device;
-
-    		using PinCS = DISPLAY_CS_Pin;
-    		using PinRS = DISPLAY_RS_Pin;
-
 			using PinDE = DISPLAY_DE_Pin;
 			using PinHSYNC = DISPLAY_HSYNC_Pin;
 			using PinVSYNC = DISPLAY_VSYNC_Pin;
@@ -59,15 +56,13 @@ namespace eos {
 
 			static constexpr htl::ltdc::LTDCDevice *_ltdc = htl::ltdc::LTDCDevice::pInst;
             static constexpr htl::ltdc::LTDCLayerDevice1 *_ltdcLayer = htl::ltdc::LTDCLayerDevice1::pInst;
-            static constexpr PinCS *_pinCS = PinCS::pInst;
-            static constexpr PinRS *_pinRS = PinRS::pInst;
-            static constexpr DevSPI *_devSPI = DevSPI::pInst;
 
         private:
+            Device_ILI9341 * const _device;
             FrameBuffer * const _frameBuffer;
 
         public:
-            DisplayDriver_ILI9341LTDC(FrameBuffer *frameBuffer);
+            DisplayDriver_ILI9341LTDC(Device_ILI9341 *device, FrameBuffer *frameBuffer);
 
             void initialize() override;
             void deinitialize() override;
@@ -96,9 +91,8 @@ namespace eos {
             void initializeController();
 
             void delay(unsigned time);
-            void open();
-            void close();
-            void writeCommand(uint8_t cmd);
-            void writeData(uint8_t data);
     };
 }
+
+
+#endif // __eosDisplayDriver_ILI9341__

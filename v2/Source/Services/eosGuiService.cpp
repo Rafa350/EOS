@@ -41,7 +41,9 @@ GuiService::GuiService():
 	_focus(nullptr),
 	_msgQueue(MessageQueue::instance()) {
 
+#if eosGuiService_TouchpadEnabled
 	_touchpadTarget = nullptr;
+#endif
 }
 
 

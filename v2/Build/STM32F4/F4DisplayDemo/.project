@@ -1073,10 +1073,5 @@
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp</locationURI>
 		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</locationURI>
-		</link>
 	</linkedResources>
 </projectDescription>

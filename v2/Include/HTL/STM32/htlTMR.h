@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlTMR__
+#define __STM32_htlTMR__
 
 
 // EOS includes
@@ -439,3 +441,6 @@ namespace htl {
 		}
 	}
 }
+
+
+#endif // __STM32_htlTMR__

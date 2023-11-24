@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "Controllers/Display/Drivers/ST7565/eosDevice_ST7565.h"
 #include "Controllers/Display/Drivers/ST7565/eosDisplayDriver_ST7565.h"
 #include "System/Graphics/eosColor.h"
 
@@ -56,7 +57,8 @@ void DisplayDriver_ST7565::deinitialize() {
 ///
 void DisplayDriver_ST7565::enable() {
 
-    writeCtrlRegister(CMD_DISPLAY_ON);
+    //writeCtrlRegister(CMD_DISPLAY_ON);
+    _device->writeCommand(CMD_DISPLAY_ON);
 }
 
 
@@ -65,8 +67,10 @@ void DisplayDriver_ST7565::enable() {
 ///
 void DisplayDriver_ST7565::disable() {
 
-    writeCtrlRegister(CMD_DISPLAY_OFF);
-    writeCtrlRegister(CMD_ALL_ON);
+    //writeCtrlRegister(CMD_DISPLAY_OFF);
+    //writeCtrlRegister(CMD_ALL_ON);
+    _device->writeCommand(CMD_DISPLAY_OFF);
+    _device->writeCommand(CMD_ALL_ON);
 }
 
 
@@ -180,18 +184,16 @@ void DisplayDriver_ST7565::setPixels(
 
 void DisplayDriver_ST7565::refresh() {
 
-	constexpr int pages = _displayHeight / 8;
-	uint8_t *vRam = reinterpret_cast<uint8_t*>(_frameBuffer->getBuffer());
+	uint8_t *buffer = reinterpret_cast<uint8_t*>(_frameBuffer->getBuffer());
 
-    // Transfereix les pagines modificades
-    //
-    for (int page = 0; page < pages; page++) {
+    for (uint16_t page = 0, pages = _displayHeight / 8; page < pages; page++) {
 		setPage(page);
-		int offset = _displayWidth * page;
-		for (int j = 0; j < _displayWidth; j += 16) {
+		uint16_t offset = _displayWidth * page;
+		for (uint16_t j = 0; j < _displayWidth; j += 16) {
 			setColumn(j);
-			for (int i = 0; i < 16; i++)
-				writeDataRegister(vRam[offset + j + i]);
+			for (uint16_t i = 0; i < 16; i++)
+				//writeDataRegister(buffer[offset + j + i]);
+			    _device->writeData(buffer[offset + j + i]);
 		}
     }
 }
@@ -219,7 +221,8 @@ void DisplayDriver_ST7565::initializeController() {
     // Envia la sequencia d'inicialitzacio al display
     //
     for (unsigned i = 0; i < sizeof(initTab) / sizeof(initTab[0]); i++)
-        writeCtrlRegister(initTab[i]);
+        //writeCtrlRegister(initTab[i]);
+        writeCommand(initTab[i]);
 }
 
 
@@ -230,7 +233,8 @@ void DisplayDriver_ST7565::initializeController() {
 void DisplayDriver_ST7565::setPage(
     uint8_t page) {
 
-    writeCtrlRegister((page & 0x07) | CMD_SET_PAGE);
+    //writeCtrlRegister((page & 0x07) | CMD_SET_PAGE);
+    _device->writeCommand((page & 0x07) | CMD_SET_PAGE);
 }
 
 
@@ -241,8 +245,9 @@ void DisplayDriver_ST7565::setPage(
 void DisplayDriver_ST7565::setColumn(
     uint8_t column) {
 
-    writeCtrlRegister((column & 0x0F) | CMD_SET_COLUMN_L);
-    writeCtrlRegister((column >> 4) | CMD_SET_COLUMN_H);
-}
+    //writeCtrlRegister((column & 0x0F) | CMD_SET_COLUMN_L);
+    //writeCtrlRegister((column >> 4) | CMD_SET_COLUMN_H);
+    _device->writeCommand((column & 0x0F) | CMD_SET_COLUMN_L);
+    _device->writeCommand((column >> 4) | CMD_SET_COLUMN_H);
 
 

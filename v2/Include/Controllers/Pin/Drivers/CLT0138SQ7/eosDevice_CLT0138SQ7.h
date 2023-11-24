@@ -12,6 +12,8 @@ namespace eos {
 
 	class Device_CLT0138SQ7 {
 		public:
+	        using Pin = htl::gpio::Pin;
+	        using DevSPI = htl::spi::SPIDevice;
 			enum class State {
 				reset,
 				ready
@@ -30,14 +32,14 @@ namespace eos {
 			uint8_t _pinState;
 			bool _underVoltage;
 			bool _overTemperature;
-			htl::spi::SPIDevice *_spi;
-			htl::gpio::Pin* _pinSS;
+			DevSPI *_devSPI;
+			Pin const * _pinSS;
             
 		protected:
 			Device_CLT0138SQ7();
             
 		public:
-            Result initialize(htl::spi::SPIDevice *spi, htl::gpio::Pin *pinSS);
+            Result initialize(DevSPI *devSPI, Pin *pinSS);
 			
             inline uint8_t read() const { return _pinState; }
             void update();

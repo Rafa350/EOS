@@ -15,7 +15,9 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 TabControl::TabControl():
+#if eosGuiService_TouchpadEnabled
     _touchpadPressEventCallback(*this, &TabControl::touchpadPressEventHandler),
+#endif
 	_panel(nullptr),
 	_header(nullptr),
 	_content(nullptr) {
@@ -27,6 +29,7 @@ TabControl::TabControl():
 /// \brief    Handler del event 'TouchpadPress'
 /// \param    args: Parametres del event.
 ///
+#if eosGuiService_TouchpadEnabled
 void TabControl::touchpadPressEventHandler(
 	const TouchpadPressEventArgs& args) {
 
@@ -35,6 +38,7 @@ void TabControl::touchpadPressEventHandler(
 		visual = nullptr;
 	}
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -63,7 +67,9 @@ void TabControl::onItemAdded(
 	// Afegeix l'element de la capcelera del item
 	//
 	Visual* headerItem = tabItem->getHeader();
+#if eosGuiService_TouchpadEnabled
 	headerItem->setTouchpadPressEventCallback(&_touchpadPressEventCallback);
+#endif
 	_header->addChild(headerItem);
 
 	// Afegeix l'element del contingut del item

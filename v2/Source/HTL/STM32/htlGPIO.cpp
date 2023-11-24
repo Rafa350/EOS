@@ -32,7 +32,7 @@ using namespace htl::gpio;
 
 static void gpioInitInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode);
 static void gpioInitOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputMode mode, Speed speed, bool state);
-static void gpioInitAlternate(GPIO_TypeDef * const gpio, PinMask mask, AlternateMode mode, Speed speed, PinFunction pinFuntion);
+static void gpioInitAlternate(GPIO_TypeDef * const gpio, PinMask mask, AlternateMode mode, Speed speed, AlternateFunction af);
 static void gpioInitAnalogic(GPIO_TypeDef * const gpio, PinMask mask);
 static void gpioDeinitialize(GPIO_TypeDef * const gpio, PinMask mask);
 
@@ -134,15 +134,15 @@ void Pin::initOutput(
 /// \brief    Inicialitza un pin en modus alternatiu.
 /// \param    mode: El tipus de entrada/sortida
 /// \param    speed: Velocitat de conmutacio.
-/// \param    pinFunctionID: Funcio alternativa.
+/// \param    af: Funcio alternativa.
 ///
 void Pin::initAlternate(
 	AlternateMode mode,
 	Speed speed,
-	PinFunction pinFunction) {
+	AlternateFunction af) {
 
 	activate();
-	gpioInitAlternate(_gpio, _mask, mode, speed, pinFunction);
+	gpioInitAlternate(_gpio, _mask, mode, speed, af);
 }
 
 
@@ -316,7 +316,7 @@ void PinInterrupt::interruptService() {
 	if (EXTI->PR & mask) {
 		EXTI->PR = mask;
 
-		GPIO_TypeDef *gpio = reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE + (_portNum * 0x400));
+		auto gpio = reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE + (_portNum * 0x400));
 
 		// Si la entrada es 1, es un flanc ascendent
 		//
@@ -494,7 +494,7 @@ static void gpioInitAlternate(
 	PinMask mask,
 	AlternateMode mode,
 	Speed speed,
-	PinFunction pinFunction) {
+	AlternateFunction af) {
 
 	static const uint32_t speedTbl[] = {OSPEEDR_LOW, OSPEEDR_MEDIUM,
 		OSPEEDR_HIGH, OSPEEDR_FAST};
@@ -539,7 +539,7 @@ static void gpioInitAlternate(
 			//
 			tmp = gpio->AFR[pn >> 3];
 			tmp &= ~(AFR_Mask << ((pn & 0x07) * 4)) ;
-			tmp |= (uint32_t(pinFunction) & AFR_Mask) << ((pn & 0x07) * 4);
+			tmp |= (uint32_t(af) & AFR_Mask) << ((pn & 0x07) * 4);
 			gpio->AFR[pn >> 3] = tmp;
 		}
 	}

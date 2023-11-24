@@ -126,7 +126,7 @@ void TickGenerator::tmrNotifyEventHandler(
 /// ----------------------------------------------------------------------
 /// \brief    Vector d'interrupcio
 ///
-extern "C" void TIM14_IRQHandler() {
+extern "C" void TIM14_IRQHandler(void) {
 
     __devTMR->interruptHandler();
 }

@@ -45,7 +45,7 @@ void MyApplication::onInitialize() {
 	//
 	_ledService = new LedService();
 	addService(_ledService, eos::Task::Priority::normal, 128, "LED");
-
+return;
 	// Inicialitza el servei Touchpad
 	//
 	#if eosGuiService_TouchpadEnabled

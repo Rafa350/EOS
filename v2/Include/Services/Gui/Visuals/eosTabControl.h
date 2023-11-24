@@ -14,7 +14,9 @@ namespace eos {
 
 	class TabControl: public ItemsControl {
 		private:
+#ifdef USE_TOUCHPAD
 			TouchpadPressEventCallback<TabControl> _touchpadPressEventCallback;
+#endif
 		    Panel* _panel;
 			Panel* _header;
 			ContentControl* _content;
@@ -22,7 +24,9 @@ namespace eos {
 		private:
 			Panel* createPanel();
 			Panel* createHeaderPanel();
+#ifdef USE_TOUCHPAD
 			void touchpadPressEventHandler(const TouchpadPressEventArgs& args);
+#endif
 
 		protected:
 			void onItemAdded(ControlItem* item) override;

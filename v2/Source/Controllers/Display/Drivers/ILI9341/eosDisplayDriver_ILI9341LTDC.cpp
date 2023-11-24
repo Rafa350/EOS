@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
-#include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
+#include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HAL/halINT.h"
 #include "HTL/STM32/htlLTDC.h"
@@ -22,8 +22,11 @@ using namespace htl::ltdc;
 /// \brief    Constructor.
 ///
 DisplayDriver_ILI9341LTDC::DisplayDriver_ILI9341LTDC(
+    Device_ILI9341 *device,
 	FrameBuffer *frameBuffer):
-	_frameBuffer(frameBuffer) {
+
+    _device {device},
+	_frameBuffer {frameBuffer} {
 }
 
 
@@ -52,12 +55,9 @@ void DisplayDriver_ILI9341LTDC::deinitialize() {
 void DisplayDriver_ILI9341LTDC::enable() {
 
 	_ltdc->enable();
-
-	open();
-	writeCommand(CMD_SLEEP_OUT);
+	_device->writeCommand(CMD_SLEEP_OUT);
 	delay(120);
-	writeCommand(CMD_DISPLAY_ON);
-	close();
+	_device->writeCommand(CMD_DISPLAY_ON);
 }
 
 
@@ -66,12 +66,9 @@ void DisplayDriver_ILI9341LTDC::enable() {
 ///
 void DisplayDriver_ILI9341LTDC::disable() {
 
-	open();
-	writeCommand(CMD_DISPLAY_OFF);
-	writeCommand(CMD_ENTER_SLEEP_MODE);
+	_device->writeCommand(CMD_DISPLAY_OFF);
+	_device->writeCommand(CMD_ENTER_SLEEP_MODE);
 	delay(120);
-	close();
-
 	_ltdc->disable();
 }
 
@@ -219,25 +216,6 @@ void DisplayDriver_ILI9341LTDC::refresh() {
 ///
 void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
-	// Inicialitza el pin CS
-	//
-	_pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
-
-	// Inicialitza el piun RS
-	_pinRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
-
-	// Inicialitza el pin RST
-	#ifdef DISPLAY_RTS_Pin
-	_pinRST->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
-	#endif
-
-	// Inicialitza el modul SPI
-	//
-	_devSPI->initPinSCK<PinSCK>();
-	_devSPI->initPinMOSI<PinMOSI>();
-	_devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
-	_devSPI->enable();
-
 	// Inicialitza el modul LTDC
 	//
 	_ltdc->initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
@@ -315,16 +293,9 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 #error "Display no soportado"
 #endif
 
-	#ifdef DISPLAY_RST_Pin
-    	delay(10);
-    	_pinRST->set();
-    	delay(120);
-	#endif
-
     uint8_t c;
     const uint8_t *p = initCommands;
 
-    open();
     while ((c = *p++) != OP_END) {
         switch (c) {
             case OP_DELAY:
@@ -332,55 +303,12 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
                 break;
 
             default:
-                writeCommand(*p++);
+                _device->writeCommand(*p++);
                 while (--c != 0)
-                    writeData(*p++);
+                    _device->writeData(*p++);
                 break;
         }
     }
-    close();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicia la comunicacio amb el controlador.
-///
-void DisplayDriver_ILI9341LTDC::open() {
-
-	_pinCS->clear();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Finalitza la comunicacio amb el controlador.
-///
-void DisplayDriver_ILI9341LTDC::close() {
-
-	_pinCS->set();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un byte de comanda en el controlador
-/// \param    cmd: El byte de comanda.
-///
-void DisplayDriver_ILI9341LTDC::writeCommand(
-	uint8_t cmd) {
-
-	_pinRS->clear();
-	_devSPI->transmit(&cmd, 1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un byte de dades en el controlador
-/// \param    data: El byte de dades.
-///
-void DisplayDriver_ILI9341LTDC::writeData(
-	uint8_t data) {
-
-	_pinRS->set();
-	_devSPI->transmit(&data, 1);
 }
 
 

@@ -8,8 +8,14 @@
 #include "System/Graphics/eosGraphics.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
+#include "HTL/htlGPIO.h"
+#include "HTL/htlSPI.h"
+#include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #elif defined(DISPLAY_DRV_ILI9341)
+#include "HTL/htlGPIO.h"
+#include "HTL/htlSPI.h"
+#include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
 #elif defined(DISPLAY_DRV_RGBLTDC)
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
@@ -21,6 +27,7 @@
 
 
 using namespace eos;
+using namespace htl;
 using namespace app;
 
 
@@ -105,11 +112,41 @@ void DisplayService::onInitialize() {
 		DisplayOrientation::normal,
 		reinterpret_cast<void*>(_displayBuffer));
 
-	_driver = new DisplayDriver_ILI9341LTDC(frameBuffer);
+    auto pinCS = DISPLAY_CS_Pin::pInst;
+    pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
+
+    auto pinRS = DISPLAY_RS_Pin::pInst;
+    pinRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+
+    auto devSPI = DISPLAY_SPI_Device::pInst;
+    devSPI->initPinSCK<DISPLAY_SCK_Pin>();
+    devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
+    devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
+    devSPI->enable();
+
+    auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
+    device->initialize(pinCS, pinRS, devSPI);
+
+	_driver = new DisplayDriver_ILI9341LTDC(device, frameBuffer);
 
 #elif defined(DISPLAY_DRV_ILI9341)
 
-	_driver = new DisplayDriver_ILI9341();
+	auto pinCS = DISPLAY_CS_Pin::pInst;
+    pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
+
+	auto pinRS = DISPLAY_RS_Pin::pInst;
+    pinRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+
+	auto devSPI = DISPLAY_SPI_Device::pInst;
+    devSPI->initPinSCK<DISPLAY_SCK_Pin>();
+    devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
+    devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
+    devSPI->enable();
+
+	auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
+	device->initialize(pinCS, pinRS, devSPI);
+
+	_driver = new DisplayDriver_ILI9341(device);
 
 #elif defined(DISPLAY_DRV_RGBLTDC)
 

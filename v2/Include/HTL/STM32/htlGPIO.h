@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlGPIO__
+#define __STM32_htlGPIO__
 
 
 /// \file      htlGPIO.h
@@ -110,7 +112,7 @@ namespace htl {
 #endif
 
 		/// \brief Alternate function
-		enum class PinFunction {
+		enum class AlternateFunction {
 			_0,
 			_1,
 			_2,
@@ -237,7 +239,7 @@ namespace htl {
 				void initInput(InputMode mode);
 				void initOutput(OutputMode mode, Speed speed, bool state);
 				void initAnalogic();
-				void initAlternate(AlternateMode mode, Speed speed, PinFunction pinFunction);
+				void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af);
 				void deinitialize();
 				inline void set() const {
 					_gpio->BSRR = _mask;
@@ -886,3 +888,5 @@ namespace htl {
 /// @}
 /// @}
 
+
+#endif // __STM32_htlGPIO__
