@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eosStreamWriter__
-#define __eosStreamWriter__
+#ifndef __eosBinaryStreamWriter__
+#define __eosBinaryStreamWriter__
 
 
 #include "eos.h"
@@ -10,14 +10,14 @@ namespace eos {
     
     /// \brief Objecte per escriure en un stream.
     ///
-    class StreamWriter {
+    class BinaryStreamWriter {
         private:
             uint8_t * const _begin;
             uint8_t * const _end;
             uint8_t * _ptr;
             
         public:
-            StreamWriter(uint8_t *buffer, unsigned size);
+            BinaryStreamWriter(uint8_t *buffer, unsigned size);
             
             bool write(uint8_t data);
             bool write(uint16_t data);
@@ -49,4 +49,4 @@ namespace eos {
 }
 
 
-#endif // __eosStreamWriter__
+#endif // __eosBinaryStreamWriter__

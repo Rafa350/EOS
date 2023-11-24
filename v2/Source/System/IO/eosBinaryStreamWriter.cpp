@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/IO/eosStreamWriter.h"
+#include "System/IO/eosBinaryStreamWriter.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-StreamWriter::StreamWriter(
+BinaryStreamWriter::BinaryStreamWriter(
     uint8_t *buffer,
     unsigned size):
 
@@ -28,7 +28,7 @@ StreamWriter::StreamWriter(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool StreamWriter::write(
+bool BinaryStreamWriter::write(
     uint8_t value) {
 
     if (_ptr + sizeof(value) < _end) {
@@ -45,7 +45,7 @@ bool StreamWriter::write(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool StreamWriter::write(
+bool BinaryStreamWriter::write(
     uint16_t value) {
     
     if (_ptr + sizeof(value) < _end) {
@@ -63,7 +63,7 @@ bool StreamWriter::write(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool StreamWriter::write(
+bool BinaryStreamWriter::write(
     uint32_t value) {
     
     if (_ptr + sizeof(value) < _end) {
@@ -84,7 +84,7 @@ bool StreamWriter::write(
 /// \param    size: El nombre de bytes.
 /// \return   True si tot es correcte.
 ///
-bool StreamWriter::write(
+bool BinaryStreamWriter::write(
     const uint8_t *data,
     unsigned size) {
 
@@ -101,7 +101,7 @@ bool StreamWriter::write(
 }
 
 
-bool StreamWriter::write(
+bool BinaryStreamWriter::write(
     const char *fmt,
     ...) {
 

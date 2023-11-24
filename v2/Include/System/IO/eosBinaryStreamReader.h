@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eosStreamReader__
-#define __eosStreamReader__
+#ifndef __eosBinaryStreamReader__
+#define __eosBinaryStreamReader__
 
 
 // EOS includes
@@ -10,14 +10,14 @@
 
 namespace eos {
 
-    class StreamReader {
+    class BinaryStreamReader {
         private:
             const uint8_t * const _begin;
             const uint8_t * const _end;
             const uint8_t * _ptr;
 
         public:
-            StreamReader(const uint8_t *buffer, uint32_t size);
+            BinaryStreamReader(const uint8_t *buffer, uint32_t size);
 
             inline uint8_t peek() const {
                 return *_ptr;
@@ -47,4 +47,4 @@ namespace eos {
 }
 
 
-#endif // __eosStreamReader__
+#endif // __eosBinaryStreamReader__

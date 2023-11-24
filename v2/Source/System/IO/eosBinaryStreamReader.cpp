@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "System/IO/eosStreamReader.h"
+#include "System/IO/eosBinaryStreamReader.h"
 
 
 using namespace eos;
@@ -10,7 +10,7 @@ using namespace eos;
 /// \param    buffer: Buffer de dades.
 /// \param    size: Tamany del buffer de dades.
 ///
-StreamReader::StreamReader(
+BinaryStreamReader::BinaryStreamReader(
     const uint8_t *buffer,
     uint32_t size):
 
@@ -26,7 +26,7 @@ StreamReader::StreamReader(
 /// \param    value: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool StreamReader::read(
+bool BinaryStreamReader::read(
     uint8_t &value) {
 
     if (_ptr + sizeof(uint8_t) < _end) {
@@ -44,7 +44,7 @@ bool StreamReader::read(
 /// \param    value: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool StreamReader::read(
+bool BinaryStreamReader::read(
     uint16_t &value) {
 
     if (_ptr + sizeof(uint8_t) < _end) {
@@ -63,7 +63,7 @@ bool StreamReader::read(
 /// \param    value: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool StreamReader::read(
+bool BinaryStreamReader::read(
     uint32_t &value) {
 
     if (_ptr + sizeof(uint8_t) < _end) {
@@ -84,7 +84,7 @@ bool StreamReader::read(
 /// \param    value: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool StreamReader::read(
+bool BinaryStreamReader::read(
     int8_t &value) {
 
     uint8_t v;
@@ -102,7 +102,7 @@ bool StreamReader::read(
 /// \param    value: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool StreamReader::read(
+bool BinaryStreamReader::read(
     int16_t &value) {
 
     uint16_t v;
@@ -120,7 +120,7 @@ bool StreamReader::read(
 /// \param    value: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool StreamReader::read(
+bool BinaryStreamReader::read(
     int32_t &value) {
 
     uint32_t v;
