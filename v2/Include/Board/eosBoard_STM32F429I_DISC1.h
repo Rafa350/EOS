@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosBoard_STM32F429I_DISC1__
+#define __eosBoard_STM32F429I_DISC1__
 
 
 // -----------------------------------------------------------------------
@@ -190,3 +192,6 @@
 #define DISPLAY_BUFFER            0xD0000000;
 
 #endif // USE_DISPLAY
+
+
+#endif / __eosBoard_STM32F429I_DISC1__

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosCOnfig__
+#define __eosConfig__
 
 
 #if defined(HARDWARE_STM32F429I_DISC1)
@@ -49,3 +51,5 @@
 #define FONT_USE_Tahoma12pt
 #define FONT_USE_Tahoma14pt
 
+
+#endif // __eosConfig__

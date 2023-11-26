@@ -7,14 +7,19 @@
 #include "System/eosRTOSApplication.h"
 
 
+namespace eos {
+
+    class LedService;
+}
+
+
 namespace app {
 
-	class LedService;
 	class DisplayService;
 
 	class MyApplication: public eos::RTOSApplication {
 		private:
-			LedService *_ledService;
+			eos::LedService *_ledService;
 			DisplayService *_displayService;
 
 		protected:

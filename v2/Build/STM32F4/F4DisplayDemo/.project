@@ -64,11 +64,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appDisplayService.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/appLedService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Include/appLedService.h</locationURI>
-		</link>
-		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/eosConfig.h</locationURI>
@@ -97,11 +92,6 @@
 			<name>src/App/appDisplayService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appDisplayService.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/App/appLedService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Source/appLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appMain.cpp</name>
@@ -359,6 +349,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigOutputService.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/eosLedService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosLedService.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
@@ -427,6 +422,11 @@
 			<name>src/Framework/EOS/OSAL/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosLedService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>

@@ -1,6 +1,6 @@
 #include "eos.h"
+#include "Services/eosLedService.h"
 #include "appApplication.h"
-#include "appLedService.h"
 #include "appDisplayService.h"
 
 
@@ -19,7 +19,18 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
-	_ledService = new LedService();
+    #ifdef EXIST_LED1
+    constexpr htl::gpio::Pin *pinLED1 = LED1_Pin::pInst;
+    #else
+    constexpr htl::gpio::Pin *pinLED1 = nullptr;
+    #endif
+    #ifdef EXIST_LED2
+    constexpr htl::gpio::Pin *pinLED2 = LED2_Pin::pInst;
+    #else
+    constexpr htl::gpio::Pin *pinLED2 = nullptr;
+    #endif
+
+	_ledService = new eos::LedService(pinLED1, pinLED2);
 	addService(_ledService, eos::Task::Priority::normal, 128);
 
 	_displayService = new DisplayService();
