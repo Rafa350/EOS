@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosBoard__
+#define __eosBoard__
 
 
 #if defined(HARDWARE_CUSTOM)
@@ -40,3 +42,6 @@
     #error "Undefined HARDWARE_XXXX"
 
 #endif
+
+
+#endif // __eosBoard__

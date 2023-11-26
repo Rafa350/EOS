@@ -68,6 +68,7 @@ void Device_SSD1306_SPI::deinitialize() {
 void Device_SSD1306_SPI::hardwareReset() {
 
     if (_pinRST != nullptr) {
+        _pinCS->set();
         _pinRST->clear();
         htl::waitTicks(100);
         _pinRST->set();

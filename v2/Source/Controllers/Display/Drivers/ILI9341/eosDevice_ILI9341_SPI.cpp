@@ -41,10 +41,13 @@ void Device_ILI9341_SPI::deinitialize() {
 
 void Device_ILI9341_SPI::hardwareReset() {
 
-    _pinRST->clear();
-    htl::waitTicks(10);
-    _pinRST->set();
-    htl::waitTicks(120);
+    if (_pinRST != nullptr) {
+        _pinCS->set();
+        _pinRST->clear();
+        htl::waitTicks(10);
+        _pinRST->set();
+        htl::waitTicks(120);
+    }
 }
 
 

@@ -17,6 +17,15 @@
             <itemPath>../../../Include/Board/eosBoard.h</itemPath>
             <itemPath>../../../Include/Board/eosBoard_PIC32_USB_STARTER_KIT_I.h</itemPath>
           </logicalFolder>
+          <logicalFolder name="f6" displayName="Controllers" projectFiles="true">
+            <logicalFolder name="f1" displayName="Pin" projectFiles="true">
+              <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
+                <logicalFolder name="f1" displayName="GPIO" projectFiles="true">
+                  <itemPath>../../../Include/Controllers/Pin/Drivers/GPIO/eosPinDriver_GPIO.h</itemPath>
+                </logicalFolder>
+              </logicalFolder>
+            </logicalFolder>
+          </logicalFolder>
           <logicalFolder name="f1" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
@@ -94,7 +103,11 @@
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
           <logicalFolder name="f7" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Pin" projectFiles="true">
-              <itemPath>../../../Source/Controllers/Pin/eosPinDriver_GPIO.cpp</itemPath>
+              <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
+                <logicalFolder name="f1" displayName="GPIO" projectFiles="true">
+                  <itemPath>../../../Source/Controllers/Pin/Drivers/GPIO/eosPinDriver_GPIO.cpp</itemPath>
+                </logicalFolder>
+              </logicalFolder>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f1" displayName="HAL" projectFiles="true">
@@ -103,7 +116,7 @@
               <itemPath>../../../Source/HAL/PIC32/halINT.c</itemPath>
             </logicalFolder>
           </logicalFolder>
-          <logicalFolder name="f6" displayName="HTM" projectFiles="true">
+          <logicalFolder name="f6" displayName="HTL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HTL/PIC32/htlCN_InterruptVector.S</itemPath>
               <itemPath>../../../Source/HTL/PIC32/htlTMR_InterruptVector.S</itemPath>

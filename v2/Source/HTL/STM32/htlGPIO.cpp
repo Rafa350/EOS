@@ -56,7 +56,7 @@ Port::Port(
 ///
 void Port::initInput(
 	PinMask mask,
-	InputMode mode) {
+	InputMode mode) const {
 
 	activate(mask);
 	gpioInitInput(_gpio, mask, mode);
@@ -72,7 +72,7 @@ void Port::initInput(
 void Port::initOutput(
 	PinMask mask,
 	OutputMode mode,
-	Speed speed) {
+	Speed speed) const {
 
 	activate(mask);
 	gpioInitOutput(_gpio, mask, mode, speed, false);
@@ -82,7 +82,7 @@ void Port::initOutput(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el dispositiu.
 ///
-void Port::deinitialize() {
+void Port::deinitialize() const {
 
 }
 
@@ -107,7 +107,7 @@ Pin::Pin(
 /// \param    mode: El tipus d'entrada.
 ///
 void Pin::initInput(
-	InputMode mode)  {
+	InputMode mode) const {
 
 	activate();
 	gpioInitInput(_gpio, _mask, mode);
@@ -123,7 +123,7 @@ void Pin::initInput(
 void Pin::initOutput(
 	OutputMode mode,
 	Speed speed,
-	bool state) {
+	bool state) const {
 
 	activate();
 	gpioInitOutput(_gpio, _mask, mode, speed, state);
@@ -139,7 +139,7 @@ void Pin::initOutput(
 void Pin::initAlternate(
 	AlternateMode mode,
 	Speed speed,
-	AlternateFunction af) {
+	AlternateFunction af) const {
 
 	activate();
 	gpioInitAlternate(_gpio, _mask, mode, speed, af);
@@ -149,7 +149,7 @@ void Pin::initAlternate(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com a entrada/sortida analogica.
 ///
-void Pin::initAnalogic() {
+void Pin::initAnalogic() const {
 
 	activate();
 	gpioInitAnalogic(_gpio, _mask);
@@ -159,7 +159,7 @@ void Pin::initAnalogic() {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el pin i el deixa als valor per defecte.
 ///
-void Pin::deinitialize() {
+void Pin::deinitialize() const {
 
 	gpioDeinitialize(_gpio, _mask);
 }
@@ -188,7 +188,7 @@ PinInterrupt::PinInterrupt(
 /// \remarks  Hi han limitavcions en funcio del hardware.
 ///
 void PinInterrupt::enableInterruptPin(
-	Edge edge) {
+	Edge edge) const {
 
 	#if defined(EOS_PLATFORM_STM32F4) || \
 	    defined(EOS_PLATFORM_STM32F7)
@@ -266,7 +266,7 @@ void PinInterrupt::enableInterruptPin(
 /// ----------------------------------------------------------------------
 /// \brief    Deshabilita la interrupcio del pin.
 ///
-void PinInterrupt::disableInterruptPin() {
+void PinInterrupt::disableInterruptPin() const {
 
 	#if defined(EOS_PLATFORM_STM32F4) || \
 	    defined(EOS_PLATFORM_STM32F7)
@@ -304,7 +304,7 @@ void PinInterrupt::setNotifyEvent(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interupcions.
 ///
-void PinInterrupt::interruptService() {
+void PinInterrupt::interruptService() const {
 
 	// Revisar per que els flags son per tots els ports
 
@@ -348,7 +348,7 @@ void PinInterrupt::interruptService() {
 /// ----------------------------------------------------------------------
 /// \brief    Invoca l'event de notificacio RisingEdge
 ///
-void PinInterrupt::notifyRisingEdge() {
+void PinInterrupt::notifyRisingEdge() const {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
@@ -363,7 +363,7 @@ void PinInterrupt::notifyRisingEdge() {
 /// ----------------------------------------------------------------------
 /// \brief    Invoca l'event de notificacio FallingEdge
 ///
-void PinInterrupt::notifyFallingEdge() {
+void PinInterrupt::notifyFallingEdge() const {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {

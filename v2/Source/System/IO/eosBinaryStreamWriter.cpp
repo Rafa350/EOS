@@ -2,9 +2,6 @@
 #include "eosAssert.h"
 #include "System/IO/eosBinaryStreamWriter.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-
 
 using namespace eos;
 
@@ -94,26 +91,6 @@ bool BinaryStreamWriter::write(
     if ((_ptr + size ) < _end) {
         memcpy(_ptr, data, size);
         _ptr += size;
-        return true;
-    }
-    else
-        return false;
-}
-
-
-bool BinaryStreamWriter::write(
-    const char *fmt,
-    ...) {
-
-    eosAssert(fmt != nullptr);
-
-    va_list args;
-    va_start(args, fmt);
-    int len = snprintf(reinterpret_cast<char*>(_ptr), _end - _ptr, fmt, args);
-    va_end(args);
-
-    if (len > 0) {
-        _ptr += len;
         return true;
     }
     else

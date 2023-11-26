@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosBoard_XNUCLEO_OUT11A1__
+#define __eosBoard_XNUCLEO_OUT11A1__
 
 
 #if defined(USE_XNUCLEO_OUT11A1)
@@ -20,3 +22,6 @@
 
 
 #endif // USE_XNUCLEO_OUT11A1
+
+
+#endif // __eosBoard_XNUCLEO_OUT11A1__

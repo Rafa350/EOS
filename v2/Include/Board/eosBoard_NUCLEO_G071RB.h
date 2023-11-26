@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosBoard_NUCLEO_G071R8__
+#define __eosBoard_NUCLEO_G071R8__
 
 
 #define EOS_HARDWARE_NUCLEO_G071RB
@@ -182,3 +184,6 @@
 #define ARDUINO_MOSI_Pin     htl::gpio::PinA7 // ARDUINO_D11
 
 #endif // USE_ARDUINO
+
+
+#endif // __eosBoard_NUCLEO_G071R8__

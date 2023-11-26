@@ -15,6 +15,7 @@ namespace eos {
     	private:
     		Device_CLT0138SQ7 * const _dev;
     		uint8_t const _pinMask;
+
     	public:
     		PinDriver_CLT0138SQ7(Device_CLT0138SQ7 *dev, uint8_t pinNumber);
             void set() override;

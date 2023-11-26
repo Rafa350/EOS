@@ -177,13 +177,13 @@ namespace htl {
 				Port & operator = (const Port &) = delete;
 			protected:
 				Port(GPIO_TypeDef *gpio);
-				virtual void activate(PinMask mask) = 0;
-				virtual void deactivate(PinMask mask) = 0;
-				virtual void reset() = 0;
+				virtual void activate(PinMask mask) const = 0;
+				virtual void deactivate(PinMask mask) const = 0;
+				virtual void reset() const = 0;
 			public:
-				void initInput(PinMask mask, InputMode mode);
-				void initOutput(PinMask mask, OutputMode mode, Speed speed = Speed::medium);
-				void deinitialize();
+				void initInput(PinMask mask, InputMode mode) const;
+				void initOutput(PinMask mask, OutputMode mode, Speed speed = Speed::medium) const;
+				void deinitialize() const;
 				inline void set(PinMask mask) const {
 					_gpio->BSRR = mask;
 				}
@@ -233,14 +233,14 @@ namespace htl {
 				Pin & operator = (const Pin &) = delete;
 			protected:
 				Pin(GPIO_TypeDef *gpio, PinID pinID);
-				virtual void activate() = 0;
-				virtual void deactivate() = 0;
+				virtual void activate() const = 0;
+				virtual void deactivate() const = 0;
 			public:
-				void initInput(InputMode mode);
-				void initOutput(OutputMode mode, Speed speed, bool state);
-				void initAnalogic();
-				void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af);
-				void deinitialize();
+				void initInput(InputMode mode) const;
+				void initOutput(OutputMode mode, Speed speed, bool state) const;
+				void initAnalogic() const;
+				void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af) const;
+				void deinitialize() const;
 				inline void set() const {
 					_gpio->BSRR = _mask;
 				}
@@ -279,8 +279,8 @@ namespace htl {
 		};
 
 		class PinInterrupt;
-		using INotifyEvent = eos::ICallbackP2<PinInterrupt*, NotifyEventArgs&>;
-		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, PinInterrupt*, NotifyEventArgs&>;
+		using INotifyEvent = eos::ICallbackP2<const PinInterrupt*, NotifyEventArgs&>;
+		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, const PinInterrupt*, NotifyEventArgs&>;
 
 
 		class PinInterrupt {
@@ -292,14 +292,14 @@ namespace htl {
 			private:
 				PinInterrupt(const PinInterrupt &) = delete;
 				PinInterrupt & operator = (const PinInterrupt &) = delete;
-				void notifyRisingEdge();
-				void notifyFallingEdge();
+				void notifyRisingEdge() const;
+				void notifyFallingEdge() const;
 			protected:
 				PinInterrupt(GPIO_TypeDef *gpio, PinID pinID);
-				void interruptService();
+				void interruptService() const;
 			public:
-				void enableInterruptPin(Edge edge);
-				void disableInterruptPin();
+				void enableInterruptPin(Edge edge) const;
+				void disableInterruptPin() const;
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
@@ -337,13 +337,13 @@ namespace htl {
 					Port(reinterpret_cast<GPIO_TypeDef *>(_gpioAddr)) {
 				}
 			protected:
-				void activate(PinMask mask) override {
+				void activate(PinMask mask) const override {
 					Activator::activate(mask);
 				}
-				void deactivate(PinMask mask) override {
+				void deactivate(PinMask mask) const override {
 					Activator::activate(mask);
 				}
-				void reset() override {
+				void reset() const override {
 				}
 			public:
 				inline static void interruptHandler() {
@@ -405,14 +405,14 @@ namespace htl {
                 static constexpr PinX *pInst = &_instance;
                 static constexpr PinX &rInst = _instance;
 			private:
-				PinX():
+				inline PinX():
 					Pin(reinterpret_cast<GPIO_TypeDef *>(_gpioAddr), pinID_) {
 				}
 			protected:
-				void activate() override {
+				void activate() const override {
 					Activator::activate(PinMask(1 << uint32_t(pinID_)));
 				}
-				void deactivate() override {
+				void deactivate() const override {
 					Activator::activate(PinMask(1 << uint32_t(pinID_)));
 				}
 		};

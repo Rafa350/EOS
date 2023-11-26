@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosBoard_XNUCLEO_PLC01A1__
+#define __eosBoard_XNUCLEO_PLC01A1__
 
 
 #if defined(USE_XNUCLEO_PLC01A1)
@@ -13,3 +15,5 @@
 
 #endif // USE_XNUCLEO_PLC01A1
 
+
+#endif // __eosBoard_XNUCLEO_PLC01A1__

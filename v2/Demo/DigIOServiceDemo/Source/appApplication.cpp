@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver_GPIO.h"
+#include "Controllers/Pin/Drivers/GPIO/eosPinDriver_GPIO.h"
 #include "HAL/halSYS.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlTMR.h"
