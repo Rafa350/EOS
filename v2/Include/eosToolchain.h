@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosToolchain__
+#define __eosToolchain__
 
 
 // Microchip XC32 compiler
@@ -8,9 +10,9 @@
 	#define EOS_TOOLCHAIN_DETECTED 1
 
 
-// GNU CPP compiler
+// GNU CPP ARM compiler
 //
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && defined(__arm__)
     #define EOS_TOOLCHAIN_GNU
 	#define EOS_TOOLCHAIN_DETECTED 1
 
@@ -42,10 +44,10 @@ namespace eos {
 	namespace build {
 
 		struct Toolchain {
-			#ifdef EOS_TOOLCHAIN_XC8
-			static constexpr bool is_XC8_Toolchain = true;
+			#ifdef EOS_TOOLCHAIN_XC32
+			static constexpr bool is_XC32_Toolchain = true;
 			#else
-			static constexpr bool is_XC8_Toolchain = false;
+			static constexpr bool is_XC32_Toolchain = false;
 			#endif
 
 			#ifdef EOS_TOOLCHAIN_GNU
@@ -63,3 +65,6 @@ namespace eos {
 	}
 }
 #endif
+
+
+#endf // __eosToolchain__

@@ -139,37 +139,37 @@ namespace htl {
                 inline void set(PinMask mask) {
                     _gpio->LATxSET = mask;
                 }
-                inline void set(PinID pinID) {
+                inline void set(PinID pinID) const {
                     _gpio->LATxSET = 1 << (int)pinID;
                 }
-                inline void clear(PinMask mask) {
+                inline void clear(PinMask mask) const {
                     _gpio->LATxCLR = mask;
                 }
-                inline void clear(PinID pinID) {
+                inline void clear(PinID pinID) const {
                     _gpio->LATxCLR = 1 << (int)pinID;
                 }
-                inline void toggle(PinMask mask) {
+                inline void toggle(PinMask mask) const {
                     _gpio->LATxINV = mask;
                 }
-                inline void toggle(PinID pinID) {
+                inline void toggle(PinID pinID) const {
                     _gpio->LATxINV = 1 << (int)pinID;
                 }
-                inline PinMask read() {
+                inline PinMask read() const {
                     return _gpio->PORTx;
                 }
-                inline bool read(PinID pinID) {
+                inline bool read(PinID pinID) const {
                     return (_gpio->PORTx & (1 << (int)pinID)) ? true : false;
                 }
-                inline void write(PinMask mask) {
+                inline void write(PinMask mask) const {
                     _gpio->LATx = mask;
                 }
-                inline void write(PinMask clearMask, PinMask setMask) {
+                inline void write(PinMask clearMask, PinMask setMask) const {
                     uint16_t r = _gpio->PORTx;
                     r &= ~clearMask;
                     r |= setMask;
                     _gpio->LATx = r;
                 }
-                inline void write(PinID pinID, bool pinState) {
+                inline void write(PinID pinID, bool pinState) const {
                     if (pinState)
                         _gpio->LATxSET = 1 << (int) pinID;
                     else
@@ -238,19 +238,19 @@ namespace htl {
                 void initInput(PullUp pullUp = PullUp::noChange);
                 void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
                 void initOutput(OutDriver driver, Speed speed, bool pinState);
-                inline void set() {
+                inline void set() const {
                     _gpio->LATxSET = _pinMask;
                 }
-                inline void clear() {
+                inline void clear() const {
                     _gpio->LATxCLR = _pinMask;
                 }
-                inline void toggle() {
+                inline void toggle() const {
                     _gpio->LATxINV = _pinMask;
                 }
-                inline bool read() {
+                inline bool read() const {
                     return _gpio->PORTx & _pinMask ? true : false;
                 }
-                inline void write(bool pinState) {
+                inline void write(bool pinState) const {
                     if (pinState)
                         _gpio->LATxSET = _pinMask;
                     else
