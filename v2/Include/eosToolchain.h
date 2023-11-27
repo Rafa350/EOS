@@ -12,7 +12,7 @@
 
 // GNU CPP ARM compiler
 //
-#elif defined(__GNUC__) && defined(__arm__)
+#elif defined(__GNUC__)
     #define EOS_TOOLCHAIN_GNU
 	#define EOS_TOOLCHAIN_DETECTED 1
 

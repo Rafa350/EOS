@@ -2,6 +2,9 @@
 #define __eosBoard_PIC32_ETH_STARTER_KIT__
 
 
+#define EOS_HARDWARE_PIC32_ETH_STARTER_KIT
+
+
 // -----------------------------------------------------------------------
 // Configuracio del sistema
 //
@@ -10,24 +13,47 @@
 
 
 // -----------------------------------------------------------------------
-// LEDS
+// LED1
+// -----------------------------------------------------------------------
 //
-#ifdef USE_LEDS_LED1
-#define EXIST_LEDS_LED1
-#define LEDS_LED1_PORT       HAL_GPIO_PORT_D
-#define LEDS_LED1_PIN        HAL_GPIO_PIN_0
+#ifdef USE_LED1
+#define EXIST_LED1
+
+#define LED1_Pin             htl::gpio::PinD0
+
+#define LED1_StateON         true
+#define LED1_StateOFF        false
+
 #endif
 
-#ifdef USE_LEDS_LED2
-#define EXIST_LEDS_LED2
-#define LEDS_LED2_PORT       HAL_GPIO_PORT_D
-#define LEDS_LED2_PIN        HAL_GPIO_PIN_1
+
+// -----------------------------------------------------------------------
+// LED2
+// -----------------------------------------------------------------------
+//
+#ifdef USE_LED2
+#define EXIST_LED2
+
+#define LED2_Pin             htl::gpio::PinD1
+
+#define LED1_StateON         true
+#define LED1_StateOFF        false
+
 #endif
 
-#ifdef USE_LEDS_LED3
-#define EXIST_LEDS_LED3
-#define LEDS_LED3_PORT       HAL_GPIO_PORT_D
-#define LEDS_LED3_PIN        HAL_GPIO_PIN_2
+
+// -----------------------------------------------------------------------
+// LED3
+// -----------------------------------------------------------------------
+//
+#ifdef USE_LED3
+#define EXIST_LED3
+
+#define LED3_Pin             htl::gpio::PinD3
+
+#define LED1_StateON         true
+#define LED1_StateOFF        false
+
 #endif
 
 

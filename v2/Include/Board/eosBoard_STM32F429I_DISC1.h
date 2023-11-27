@@ -143,10 +143,10 @@
 
 // 8080 interface
 #if defined(DISPLAY_INTERFACE_8080)
-#define DISPLAY_TE_PIn            htl::GPIO_D11
-#define DISPLAY_RD_Pin            htl::GPIO_D12
-#define DISPLAY_WR_Pin            htl::GPIO_D13
-#define DISPLAY_TE_Pin            htl::GPIO_D11
+#define DISPLAY_TE_PIn            htl::gpio::PinD11
+#define DISPLAY_RD_Pin            htl::gpio::PinD12
+#define DISPLAY_WR_Pin            htl::gpio::PinD13
+#define DISPLAY_TE_Pin            htl::gpio::PinD11
 #endif
 
 // RGB interface

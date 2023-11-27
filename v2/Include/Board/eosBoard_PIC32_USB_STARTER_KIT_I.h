@@ -2,6 +2,9 @@
 #define __eosBoard_PIC32_USB_STARTER_KIT_I__
 
 
+#define EOS_HARDWARE_PIC32_USB_STARTER_KIT_I
+
+
 // -----------------------------------------------------------------------
 // Configuracio del sistema
 //

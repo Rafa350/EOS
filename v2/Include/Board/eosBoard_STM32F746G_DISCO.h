@@ -12,7 +12,7 @@
 
 
 // -----------------------------------------------------------------------
-// Green led 1
+// LED1 (Green)
 // -----------------------------------------------------------------------
 //
 #ifdef USE_LED1
@@ -28,7 +28,7 @@
 
 
 // -----------------------------------------------------------------------
-// Blue switch 1
+// SW1 (Blue)
 // -----------------------------------------------------------------------
 //
 #ifdef USE_SW1
@@ -41,7 +41,7 @@
 #define SW1_StateON          true
 #define SW1_StateOFF         false
 
-#endif // SW1
+#endif // USE_SW1
 
 
 // -----------------------------------------------------------------------
@@ -107,7 +107,7 @@
 // Integrated display capacitative touchpad
 // -----------------------------------------------------------------------
 //
-#if defined(USE_TOUCHPAD) & defined(USE_DISPLAY)
+#if defined(USE_TOUCHPAD) && defined(USE_DISPLAY)
 #define EXIST_TOUCHPAD
 
 #define TOUCHPAD_SCL_Pin     htl::gpio::PinH7
