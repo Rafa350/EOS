@@ -67,4 +67,4 @@ namespace eos {
 #endif
 
 
-#endf // __eosToolchain__
+#endif // __eosToolchain__

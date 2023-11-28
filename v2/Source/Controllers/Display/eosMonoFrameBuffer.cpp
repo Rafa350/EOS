@@ -45,6 +45,14 @@ void MonoFrameBuffer::put(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Ompla una regio amb el color indicat.
+/// \param    x: Coordinada X de la posisio de la regio.
+/// \param    y: Coordinada y de la posicio de la regio
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    color: Color.
+///
 void MonoFrameBuffer::fill(
 	int16_t x,
 	int16_t y,
