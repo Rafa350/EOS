@@ -6,7 +6,6 @@
 #include "eos.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
-#include "HTL/htlI2C.h"
 
 
 namespace eos {
@@ -56,6 +55,7 @@ namespace eos {
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
     
+    
     template <uint8_t id_>
     class DeviceX_SSD1306_SPI final: public Device_SSD1306_SPI {
         private:
@@ -67,7 +67,7 @@ namespace eos {
             static constexpr DeviceX_SSD1306_SPI &rInst = _instance;
             
         private:
-            DeviceX_SSD1306_SPI() :
+            inline DeviceX_SSD1306_SPI() :
                 Device_SSD1306_SPI() {
             }
     };

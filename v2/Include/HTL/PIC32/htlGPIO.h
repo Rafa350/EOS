@@ -122,6 +122,9 @@ namespace htl {
                 volatile uint32_t ODCxINV;
             };
 
+            template <PortID>
+            struct HardwareInfo;
+
         }
 
 
@@ -177,13 +180,6 @@ namespace htl {
                 }
         };
 
-
-        namespace internal {
-
-            template <PortID>
-            struct HardwareInfo;
-
-        }
 
         template <PortID portID_>
         class PortX final: public Port {
@@ -257,6 +253,7 @@ namespace htl {
                         _gpio->LATxCLR = _pinMask;
                 }
         };
+
 
         template <PortID portID_, PinID pinID_>
         class PinX final: public Pin {
@@ -355,6 +352,7 @@ namespace htl {
         typedef PinX<PortID::D, PinID::_14> PiBD14;
         typedef PinX<PortID::D, PinID::_15> PiBD15;
         #endif
+
 
         namespace internal {
 

@@ -252,14 +252,13 @@ void DisplayDriver_SSD1306::refresh() {
 
     uint8_t *buffer = _frameBuffer->getBuffer();
 
-    for (uint8_t page = 0, pages = _displayHeight / 8; page < pages; page++) {
+    for (uint8_t page = 0, pages = _displayHeight / 8; 
+         page < pages; 
+         page++, buffer += _displayWidth) {
 
         _device->writeCommand(0xB0 + page); // Set the current page.
         _device->writeCommand(0x00);        // Set first column (LO nibble)
         _device->writeCommand(0x10);        // Set first column (HI nibble)
-
         _device->writeData(buffer, _displayWidth);
-
-        buffer += _displayWidth;
     }
 }
