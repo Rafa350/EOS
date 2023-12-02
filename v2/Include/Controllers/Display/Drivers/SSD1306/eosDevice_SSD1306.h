@@ -23,7 +23,7 @@ namespace eos {
 
             virtual void hardwareReset() = 0;
 
-            virtual void writeCommand(uint8_t cmd) = 0;
+            virtual void writeCommand(const uint8_t *data, uint16_t dataSize) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
             void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
@@ -51,7 +51,7 @@ namespace eos {
             
             void hardwareReset() override;
             
-            void writeCommand(uint8_t cmd) override;
+            void writeCommand(const uint8_t *data, uint16_t dataSize) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
     

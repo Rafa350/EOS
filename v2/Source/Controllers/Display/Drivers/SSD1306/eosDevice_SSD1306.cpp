@@ -16,5 +16,5 @@ void Device_SSD1306::writeScript(
     uint16_t scriptSize) {
 
     for (decltype(scriptSize) i = 0; i < scriptSize; i++)
-        writeCommand(script[i]);
+        writeCommand(&script[i], 1);
 }

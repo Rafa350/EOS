@@ -95,7 +95,8 @@ void DisplayDriver_SSD1306::deinitialize() {
 ///
 void DisplayDriver_SSD1306::enable() {
 
-	_device->writeCommand(0xAF);
+    uint8_t command = 0xAF;
+	_device->writeCommand(&command, sizeof(command));
 }
 
 
@@ -104,7 +105,8 @@ void DisplayDriver_SSD1306::enable() {
 ///
 void DisplayDriver_SSD1306::disable() {
 
-    _device->writeCommand(0xAE);
+    uint8_t command = 0xAE;
+    _device->writeCommand(&command, sizeof(command));
 }
 
 
@@ -252,13 +254,20 @@ void DisplayDriver_SSD1306::refresh() {
 
     uint8_t *buffer = _frameBuffer->getBuffer();
 
-    for (uint8_t page = 0, pages = _displayHeight / 8; 
-         page < pages; 
-         page++, buffer += _displayWidth) {
+    uint8_t command[3];
+    command[0] = 0x0B;
+    command[1] = 0x00;
+    command[2] = 0x10;
 
-        _device->writeCommand(0xB0 + page); // Set the current page.
-        _device->writeCommand(0x00);        // Set first column (LO nibble)
-        _device->writeCommand(0x10);        // Set first column (HI nibble)
+
+    for (uint8_t i = 0, ii = _displayHeight / 8; i < ii; i++) {
+
+        _device->writeCommand(command, sizeof(command));
         _device->writeData(buffer, _displayWidth);
+
+        // Pasa a la seguent pagina
+        //
+        command[0] += 1;
+        buffer += _displayWidth;
     }
 }

@@ -84,9 +84,9 @@ void TickGenerator::stop() {
 //
 Tick TickGenerator::getTick() {
 
-    disableInterrupts();
+    //disableInterrupts();
 	auto tick = _tickCounter;
-	enableInterrupts();
+	//enableInterrupts();
 
 	return tick;
 }

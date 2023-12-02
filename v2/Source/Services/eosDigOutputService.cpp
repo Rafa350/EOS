@@ -654,6 +654,9 @@ void DigOutputService::tmrInterruptFunction() {
         .id = CommandID::tick
     };
 
+    // Es porta el missatge en la cua, per procesar-l'ho en la tasca,
+    // fora de la interrupcio.
+    //
     _commandQueue.pushISR(cmd);
 }
 

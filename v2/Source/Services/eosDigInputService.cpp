@@ -282,9 +282,11 @@ bool DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    disableInterrupts();
+    Task::enterCriticalSection();
+
     bool pinState = input->_pinState;
-    enableInterrupts();
+
+    Task::exitCriticalSection();
 
     return pinState;
 }
@@ -303,11 +305,14 @@ uint32_t DigInputService::readPulses(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    disableInterrupts();
+    Task::enterCriticalSection();
+
     uint32_t pinPulses = input->_pinPulses;
     if (clear)
     	input->_pinPulses = 0;
-    enableInterrupts();
+
+    Task::exitCriticalSection();
+
     return pinPulses;
 }
 

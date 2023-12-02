@@ -48,8 +48,6 @@ void Device_SSD1306_SPI::initialize(
     _devSPI = devSPI;
     
     _pinCS->set();
-    if (_pinRST != nullptr)
-        _pinRST->set();
 }
 
 
@@ -78,21 +76,23 @@ void Device_SSD1306_SPI::hardwareReset() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu en el registre de comandes
-/// \param    cmd: La comanda.
+/// \brief    Escriu un bloc de dades en el registre de comanda.
+/// \brief    data: Les dades.
+/// \param    dataSize: Tamany de les dades en bytes.
 ///
 void Device_SSD1306_SPI::writeCommand(
-    uint8_t cmd) {
+    const uint8_t *data,
+    uint16_t dataSize) {
 
     _pinDC->clear();
     _pinCS->clear();
-    _devSPI->transmit(&cmd, 1);
+    _devSPI->transmit(data, dataSize);
     _pinCS->set();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu en el registre de dades.
+/// \brief    Escriu un bloc de dades en el registre de dades.
 /// \brief    data: Les dades.
 /// \param    dataSize: Tamany de les dades en bytes.
 ///

@@ -113,15 +113,16 @@ namespace htl {
 				inline void enable() {
 					_spi->CR1 |= SPI_CR1_SPE;
 				}
-				inline void disable() {
-					_spi->CR1 &= ~SPI_CR1_SPE;
-				}
+				void disable();
 				inline Result transmit(const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF) {
 					return transmit(txBuffer, nullptr, size, timeout);
 				}
 				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer, uint16_t size, uint16_t timeout = 0xFFFF);
 				inline Result receive(uint8_t *rxBuffer, uint16_t size, uint16_t timeout = 0xFFFF)  {
 					return transmit(nullptr, rxBuffer, size, timeout);
+				}
+				inline State getState() const {
+				    return _state;
 				}
 		};
 

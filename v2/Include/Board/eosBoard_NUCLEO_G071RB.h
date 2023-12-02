@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eosBoard_NUCLEO_G071R8__
-#define __eosBoard_NUCLEO_G071R8__
+#ifndef __eosBoard_NUCLEO_G071RB__
+#define __eosBoard_NUCLEO_G071RB__
 
 
 #define EOS_HARDWARE_NUCLEO_G071RB
@@ -186,4 +186,4 @@
 #endif // USE_ARDUINO
 
 
-#endif // __eosBoard_NUCLEO_G071R8__
+#endif // __eosBoard_NUCLEO_G071RB__
