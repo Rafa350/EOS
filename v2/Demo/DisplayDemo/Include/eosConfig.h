@@ -1,5 +1,5 @@
 #pragma once
-#ifndef __eosCOnfig__
+#ifndef __eosConfig__
 #define __eosConfig__
 
 

@@ -43,9 +43,11 @@ static bool isTxEmpty(SPI_TypeDef * const spi);
 static bool isRxNotEmpty(SPI_TypeDef * const spi);
 static bool isBusy(SPI_TypeDef * const spi);
 
-static bool waitNotBusy(SPI_TypeDef * const spi, uint32_t expireTime);
+#if defined(EOS_PLATFORM_STM32G0)
 static bool waitRxFifoEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
 static bool waitTxFifoEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
+#endif
+static bool waitNotBusy(SPI_TypeDef * const spi, uint32_t expireTime);
 static bool waitRxNotEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
 static bool waitTxEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
 
@@ -129,6 +131,7 @@ Result SPIDevice::deinitialize() {
 ///
 void SPIDevice::disable() {
 
+    #if defined(EOS_PLATFORM_STM32G0)
     while ((_spi->SR & SPI_SR_FTLVL) != 0)
         continue;
 
@@ -139,6 +142,7 @@ void SPIDevice::disable() {
 
     while ((_spi->SR & SPI_SR_FRLVL) != 0)
         read8(_spi);
+    #endif
 }
 
 
@@ -227,12 +231,17 @@ Result SPIDevice::transmit(
 		}
 
 		if (!error) {
+            #if defined(EOS_PLATFORM_STM32G0)
 		    if (!waitTxFifoEmpty(_spi, expireTime))
 		        error = true;
 		    else if (!waitNotBusy(_spi, expireTime))
 		        error = true;
 		    else if (!waitRxFifoEmpty(_spi, expireTime))
 		        error = true;
+            #else
+            if (!waitNotBusy(_spi, expireTime))
+                error = true;
+            #endif
 		}
 
 		_state = State::ready;
@@ -288,7 +297,10 @@ static void setMode(
 	// Configura el registre CR2
 	//
 	tmp = spi->CR2;
-	tmp &= ~(SPI_CR2_SSOE | SPI_CR2_FRF | SPI_CR2_NSSP);
+	tmp &= ~(SPI_CR2_SSOE | SPI_CR2_FRF);
+    #if defined(EOS_PLATFORM_STM32G0)
+	tmp &= ~SPI_CR2_NSSP;
+    #endif
 	spi->CR2 = tmp;
 };
 
@@ -506,6 +518,7 @@ static bool waitTxFifoEmpty(
 
 	return true;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -526,7 +539,6 @@ static bool waitNotBusy(
 
     return true;
 }
-#endif
 
 
 /// ----------------------------------------------------------------------

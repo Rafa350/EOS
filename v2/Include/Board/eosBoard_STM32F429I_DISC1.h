@@ -3,6 +3,9 @@
 #define __eosBoard_STM32F429I_DISC1__
 
 
+#define EOS_HARDWARE_STM32F429I_DISC1
+
+
 // -----------------------------------------------------------------------
 // External oscilator parameters
 // -----------------------------------------------------------------------
@@ -55,9 +58,9 @@
 
 #define SW1_Pin              htl::gpio::PinA0
 #define SW1_PortID           SW1_Pin::portID
-#define SW1_PinID            SW!_Pin::pinID
-#define SW1_StateON          htl::gpio::PinState::set
-#define SW1_StateOFF         htl::gpio::PinState::clear
+#define SW1_PinID            SW1_Pin::pinID
+#define SW1_StateON          true
+#define SW1_StateOFF         false
 
 #endif // USE_SW1
 
@@ -194,4 +197,4 @@
 #endif // USE_DISPLAY
 
 
-#endif / __eosBoard_STM32F429I_DISC1__
+#endif // __eosBoard_STM32F429I_DISC1__
