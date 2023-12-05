@@ -30,11 +30,16 @@ using namespace htl::gpio;
 #define AFR_Mask             0b1111
 
 
-static void gpioInitInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode);
-static void gpioInitOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputMode mode, Speed speed, bool state);
-static void gpioInitAlternate(GPIO_TypeDef * const gpio, PinMask mask, AlternateMode mode, Speed speed, AlternateFunction af);
+static void gpioInitInput(GPIO_TypeDef * const gpio, PinMask mask,
+        InputMode mode);
+static void gpioInitOutput(GPIO_TypeDef * const gpio, PinMask mask,
+        OutputMode mode, Speed speed, bool state);
+static void gpioInitAlternate(GPIO_TypeDef * const gpio, PinMask mask,
+        AlternateMode mode, Speed speed, AlternateFunction af);
 static void gpioInitAnalogic(GPIO_TypeDef * const gpio, PinMask mask);
 static void gpioDeinitialize(GPIO_TypeDef * const gpio, PinMask mask);
+
+
 
 
 /// ----------------------------------------------------------------------
@@ -99,6 +104,35 @@ Pin::Pin(
 	_gpio {gpio},
 	_mask {PinMask(1 << uint32_t(pinID))} {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio.
+/// \param    info: Parametres d'inicialitzacio.
+///
+void Pin::initialize(const InitInfo &info) {
+
+    activate();
+
+    switch(info.mode) {
+        case InitMode::input:
+            gpioInitInput(_gpio, _mask, info.input.mode);
+            break;
+
+        case InitMode::output:
+            gpioInitOutput(_gpio, _mask, info.output.mode, info.output.speed,
+                    info.output.state);
+            break;
+
+        case InitMode::alternate:
+            gpioInitAlternate(_gpio, _mask, info.alternate.mode,
+                    info.alternate.speed, info.alternate.function);
+            break;
+
+        case InitMode::analogic:
+            break;
+    }
 }
 
 

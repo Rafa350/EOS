@@ -108,17 +108,22 @@ namespace htl {
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 			public:
-				Result initialize(SPIMode mode, ClkPolarity clkPolarity, ClkPhase clkPhase, WordSize size, FirstBit firstBit, ClockDivider clkDivider);
+				Result initialize(SPIMode mode, ClkPolarity clkPolarity,
+				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
+				        ClockDivider clkDivider);
 				Result deinitialize();
 				inline void enable() {
 					_spi->CR1 |= SPI_CR1_SPE;
 				}
 				void disable();
-				inline Result transmit(const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF) {
+				inline Result transmit(const uint8_t *txBuffer, uint16_t size,
+				        uint16_t timeout = 0xFFFF) {
 					return transmit(txBuffer, nullptr, size, timeout);
 				}
-				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer, uint16_t size, uint16_t timeout = 0xFFFF);
-				inline Result receive(uint8_t *rxBuffer, uint16_t size, uint16_t timeout = 0xFFFF)  {
+				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
+				        uint16_t size, uint16_t timeout = 0xFFFF);
+				inline Result receive(uint8_t *rxBuffer, uint16_t size,
+				        uint16_t timeout = 0xFFFF)  {
 					return transmit(nullptr, rxBuffer, size, timeout);
 				}
 				inline State getState() const {
@@ -172,17 +177,20 @@ namespace htl {
 				template <typename pin_>
 				void initPinSCK() {
 					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull,
+					        gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
 					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull,
+					        gpio::Speed::fast, pf);
 				}
 				template <typename pin_>
 				void initPinMISO() {
 					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, pf);
+					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull,
+					        gpio::Speed::fast, pf);
 				}
 		};
 
@@ -216,13 +224,16 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_1> {
 				static constexpr uint32_t spiAddr = SPI1_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR2_SPI1EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F4)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI1EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI1EN_Pos;
 				#endif
 			};
@@ -233,13 +244,16 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_2> {
 				static constexpr uint32_t spiAddr = SPI2_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI2EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F4)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI2EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI2EN_Pos;
 				#endif
 			};
@@ -250,10 +264,12 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_3> {
 				static constexpr uint32_t spiAddr = SPI3_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI3EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_SPI3EN_Pos;
 				#endif
 			};
@@ -264,10 +280,12 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_4> {
 				static constexpr uint32_t spiAddr = SPI4_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI4EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI4EN_Pos;
 				#endif
 			};
@@ -278,10 +296,12 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_5> {
 				static constexpr uint32_t spiAddr = SPI5_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI5EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI5EN_Pos;
 				#endif
 			};
@@ -292,10 +312,12 @@ namespace htl {
 			struct HardwareInfo<DeviceID::_6> {
 				static constexpr uint32_t spiAddr = SPI6_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI6EN_Pos;
 				#elif defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t rccEnableAddr =
+				        RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB2ENR_SPI6EN_Pos;
 				#endif
 			};

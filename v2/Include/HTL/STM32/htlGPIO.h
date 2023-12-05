@@ -160,6 +160,36 @@ namespace htl {
 			fast
 		};
         
+		/// \brief Init mode
+        enum class InitMode {
+            input,
+            output,
+            alternate,
+            analogic
+        };
+
+        /// \brief Initialization parameters.
+        struct InitInfo {
+            InitMode mode;
+            union {
+                struct {
+                    InputMode mode;
+                } input;
+                struct {
+                    OutputMode mode;
+                    Speed speed;
+                    bool state;
+                } output;
+                struct {
+                    AlternateMode mode;
+                    Speed speed;
+                    AlternateFunction function;
+                } alternate;
+                struct {
+                } analogic;
+            };
+        };
+
         /// \brief Edge interrupcion selection
 		enum class Edge {
             none,
@@ -240,6 +270,7 @@ namespace htl {
 				void initOutput(OutputMode mode, Speed speed, bool state) const;
 				void initAnalogic() const;
 				void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af) const;
+				void initialize(const InitInfo &info);
 				void deinitialize() const;
 				inline void set() const {
 					_gpio->BSRR = _mask;

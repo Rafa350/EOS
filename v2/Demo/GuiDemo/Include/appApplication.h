@@ -16,6 +16,7 @@
 
 namespace eos {
 
+    class LedService;
 	class GuiService;
 	class Visual;
 	class Panel;
@@ -24,8 +25,6 @@ namespace eos {
 
 namespace app {
 
-	class LedService;
-
 	class MyApplication: public eos::RTOSApplication {
 		private:
 			#if eosGuiService_TouchpadEnabled
@@ -33,7 +32,7 @@ namespace app {
 			#endif
 
 		private:
-			LedService *_ledService;
+			eos::LedService *_ledService;
 			eos::GuiService *_guiService;
 			#if eosGuiService_KeyboardEnabled
 				KeyboardService* _keyboardService;

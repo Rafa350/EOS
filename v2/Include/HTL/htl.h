@@ -33,6 +33,7 @@ namespace htl {
 
 	Tick getTick();
 	void waitTicks(Tick ticks);
+	void waitToTick(Tick tick);
 	bool hasTickExpired(Tick tick);
 }
 

@@ -15,7 +15,7 @@
 #define ALT_FUNCTION(id, fn, pin, af)                 \
 	template <>                                       \
 	struct PinFunctionInfo<DeviceID::_##id, fn, pin> { \
-		static constexpr gpio::PinFunction alt = af;      \
+		static constexpr gpio::AlternateFunction alt = af;      \
 	};
 
 
@@ -30,8 +30,8 @@ namespace htl {
             #endif // HTL_I2C2_EXIST
 
             #ifdef HTL_I2C3_EXIST
-            ALT_FUNCTION(3, PinFunction::scl, gpio::PinH7, gpio::PinFunction::_4)
-            ALT_FUNCTION(3, PinFunction::sda, gpio::PinH8, gpio::PinFunction::_4)
+            ALT_FUNCTION(3, PinFunction::scl, gpio::PinH7, gpio::AlternateFunction::_4)
+            ALT_FUNCTION(3, PinFunction::sda, gpio::PinH8, gpio::AlternateFunction::_4)
             #endif // HTL_I2C3_EXIST
         }
     }

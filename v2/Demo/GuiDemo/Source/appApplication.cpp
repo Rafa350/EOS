@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "Services/eosLedService.h"
 #include "Services/eosGuiService.h"
 #include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/eosThickness.h"
@@ -16,7 +17,6 @@
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "appApplication.h"
-#include "appLedService.h"
 #include "appDROForm.h"
 
 
@@ -43,7 +43,7 @@ void MyApplication::onInitialize() {
 
 	// Inicialitza el servei LED
 	//
-	_ledService = new LedService();
+	_ledService = new eos::LedService();
 	addService(_ledService, eos::Task::Priority::normal, 128, "LED");
 return;
 	// Inicialitza el servei Touchpad

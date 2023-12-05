@@ -64,11 +64,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/appDROForm.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/appLedService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Include/appLedService.h</locationURI>
-		</link>
-		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/eosConfig.h</locationURI>
@@ -99,11 +94,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appDROForm.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/appLedService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Source/appLedService.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/App/appMain.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appMain.cpp</locationURI>
@@ -132,6 +122,11 @@
 			<name>inc/App/STM32F7/stm32746g_discovery_sdram.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F7/stm32f7xx_hal_conf.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/STM32F7/stm32f7xx_hal_conf.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>
@@ -394,6 +389,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosGuiService.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/eosLedService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosLedService.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
@@ -497,6 +497,11 @@
 			<name>src/Framework/EOS/Services/eosGuiService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosGuiService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosLedService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
@@ -661,7 +666,7 @@
 		<link>
 			<name>src/Framework/STM32/System/system_stm32f7xx.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
