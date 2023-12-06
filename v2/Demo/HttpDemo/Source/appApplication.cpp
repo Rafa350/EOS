@@ -1,13 +1,15 @@
 #include "eos.h"
+#include "Services/eosHTTPService.h"
+#ifdef EXIST_LED1
+#include "Services/eosLedService.h"
+#endif
 #include "appApplication.h"
-#include "appLedService.h"
+
 #ifdef USE_DISPLAY
 #include "appDisplayService.h"
 #endif
-#include "Services/eosHTTPService.h"
 
 
-using namespace eos;
 using namespace app;
 
 
@@ -16,9 +18,17 @@ using namespace app;
 ///
 MyApplication::MyApplication() {
 
-	_ledService = new LedService(this);
-	#ifdef USE_DISPLAY
-		_displayService = new DisplayService(this);
+    #ifdef EXIST_LED1
+	_ledService = new eos::LedService(LED1_Pin::pInst);
+	addService(_ledService, eos::Task::Priority::normal,
+	        eos::LedService::stackSize, eos::LedService::serviceName);
+    #endif
+	#ifdef EXIST_DISPLAY
+	_displayService = new DisplayService();
+    addService(_displayService, eos::Task::Priority::normal,
+            DisplayService::stackSize, DisplayService::serviceName);
 	#endif
-	_httpService = new HTTPService(this);
+	_httpService = new eos::HTTPService();
+	addService(_httpService, eos::Task::Priority::normal,
+	        eos::HTTPService::stackSize, eos::HTTPService::serviceName);
 }

@@ -35,6 +35,8 @@ Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize(
     Pin *pinSS,
     Pin *pinOUTEN) {
 
+    eosAssert(devSPI != nullptr);
+    eosAssert(pinSS != nullptr);
     eosAssert(_state == State::reset);
 
     if (_state == State::reset) {
@@ -42,6 +44,10 @@ Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize(
         _devSPI = devSPI;
         _pinSS = pinSS;
         _pinOUTEN = pinOUTEN;
+
+        _pinSS->set();
+        if (_pinOUTEN != nullptr)
+            _pinOUTEN->clear();
 
         _state = State::ready;
 

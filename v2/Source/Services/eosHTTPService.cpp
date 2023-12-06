@@ -9,11 +9,9 @@ using namespace eos;
 /// \brief    Contructor del objecte.
 /// \param    application: L'aplicacio.
 ///
-HTTPService::HTTPService(
-	Application *application):
+HTTPService::HTTPService():
 
-	Service(application),
-	httpServer(eosHTTPService_Port) {
+    httpServer(eosHTTPService_Port) {
 
 }
 
@@ -23,8 +21,6 @@ HTTPService::HTTPService(
 ///
 void HTTPService::onInitialize() {
 
-	setPriority(Task::Priority::high);
-
 	httpServer.initialize();
 
 }
@@ -33,8 +29,7 @@ void HTTPService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    : Procesa la tasca del servei.
 ///
-void HTTPService::onTask(
-	Task *task) {
+void HTTPService::onTask() {
 
     while (true) 
         httpServer.run();

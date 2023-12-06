@@ -20,6 +20,29 @@ namespace htl {
 			dma1_7
 		};
 
+		enum class TransferMode {
+		    normal,
+		    circular
+		};
+
+		enum class AddressIncrement {
+            none,
+            inc
+		};
+
+		enum class Align {
+		    byte,
+		    half,
+		    word
+		};
+
+		enum class Priority {
+            low,
+            medium,
+            hight,
+            veryHight
+		};
+
 		class DMAChannel {
 			private:
 				DMA_TypeDef * const _dma;
@@ -27,6 +50,16 @@ namespace htl {
 			protected:
 				DMAChannel(DMA_TypeDef * const dma, DMA_Channel_TypeDef * const channel);
 			public:
+				void initM2M(uint32_t srcAddr, uint32_t dstAddr, uint16_t length);
+                void initM2P();
+                void initP2M();
+				void deinitialize();
+				inline void enable() {
+				    _channel->CCR |= DMA_CCR_EN;
+				}
+				inline void disable() {
+                    _channel->CCR &= ~DMA_CCR_EN;
+				}
 				void Start(uint32_t startAddr, uint32_t dstAddr, uint32_t size);
 				void Start_IRQ(uint32_t startAddr, uint32_t dstAddr, uint32_t size);
 		};

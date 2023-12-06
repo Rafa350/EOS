@@ -43,7 +43,7 @@ static bool isTxEmpty(SPI_TypeDef * const spi);
 static bool isRxNotEmpty(SPI_TypeDef * const spi);
 static bool isBusy(SPI_TypeDef * const spi);
 
-#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 static bool waitRxFifoEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
 static bool waitTxFifoEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
 #endif
@@ -231,7 +231,7 @@ Result SPIDevice::transmit(
 		}
 
 		if (!error) {
-            #if defined(EOS_PLATFORM_STM32G0)
+            #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 		    if (!waitTxFifoEmpty(_spi, expireTime))
 		        error = true;
 		    else if (!waitNotBusy(_spi, expireTime))

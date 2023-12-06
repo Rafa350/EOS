@@ -30,10 +30,15 @@ Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize(
 	DevSPI *devSPI,
 	Pin *pinSS) {
 
+    eosAssert(devSPI != nullptr);
+    eosAssert(pinSS != nullptr);
+
 	if (_state == State::reset) {
 
 		_devSPI = devSPI;
 		_pinSS = pinSS;
+
+		_pinSS->clear();
 
 		_state = State::ready;
 

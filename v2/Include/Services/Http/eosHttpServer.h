@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosHttpServer__
 #define __eosHttpServer__
 

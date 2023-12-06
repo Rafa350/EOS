@@ -72,11 +72,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/appDisplayService.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/appLedService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Include/appLedService.h</locationURI>
-		</link>
-		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/eosConfig.h</locationURI>
@@ -100,11 +95,6 @@
 			<name>src/App/appDisplayService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Source/appDisplayService.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/App/appLedService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Source/appLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appMain.cpp</name>
@@ -210,6 +200,11 @@
 			<name>src/App/STM32F7/stm32f7xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/system_stm32f7xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -552,11 +547,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/STM32/System/system_stm32f7xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -665,11 +655,6 @@
 			<name>src/Framework/EOS/HLT/STM32/htlSPI.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlSPI.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HLT/STM32/htlSPI_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlSPI_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
@@ -790,6 +775,16 @@
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Driver/SSD1306/eosDevice_SSD1306.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Driver/SSD1306/eosDevice_SSD1306_SPI.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306_SPI.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Driver/SSD1306/eosDisplayDriver_SSD1306.cpp</name>

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eos__
+#define __eos__
 
 
 // Environment detection includes
@@ -92,3 +94,6 @@
 //
 void appMain();
 void appInitialize();
+
+
+#endif // __eos__

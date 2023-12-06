@@ -64,11 +64,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Include/appDisplayService.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/appLedService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Include/appLedService.h</locationURI>
-		</link>
-		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Include/eosConfig.h</locationURI>
@@ -97,11 +92,6 @@
 			<name>src/App/appDisplayService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/appDisplayService.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/App/appLedService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/Common/Source/appLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appMain.cpp</name>
@@ -184,6 +174,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/eosPlatform.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosPlatform.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosToolchain.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosToolchain.h</locationURI>
+		</link>
+		<link>
 			<name>src/App/STM32F7/appInitialize.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/appInitialize.cpp</locationURI>
@@ -202,6 +202,11 @@
 			<name>src/App/STM32F7/stm32f7xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/system_stm32f7xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -284,11 +289,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/TouchPad</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -302,11 +302,6 @@
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halTMR.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32</name>
@@ -327,6 +322,11 @@
 			<name>inc/Framework/EOS/HTL/htlI2C.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlI2C.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htlTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
@@ -364,14 +364,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoopService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Services/eosHTTPService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosHTTPService.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/eosLedService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosLedService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
@@ -394,9 +394,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/eosApplication.h</name>
+			<name>inc/Framework/EOS/System/eosApplicationBase.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplicationBase.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/eosCallbacks.h</name>
@@ -404,9 +404,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosCallbacks.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/eosMath.h</name>
+			<name>inc/Framework/EOS/System/eosRTOSApplication.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosMath.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosRTOSApplication.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/eosString.h</name>
@@ -415,11 +415,6 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/TouchPad</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -444,14 +439,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Services/eosHTTPService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosHTTPService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosLedService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
@@ -479,9 +474,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/eosApplication.cpp</name>
+			<name>src/Framework/EOS/System/eosApplicationBase.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplicationBase.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosRTOSApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRTOSApplication.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/eosString.cpp</name>
@@ -634,11 +634,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/STM32/System/system_stm32f7xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -659,29 +654,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPad.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPad.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPadDriver.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/htl.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htl.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D.h</name>
@@ -702,6 +682,11 @@
 			<name>inc/Framework/EOS/HTL/STM32/htlLTDC.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Http/eosHttpServer.h</name>
@@ -794,19 +779,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/TouchPad/Drivers</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
@@ -817,6 +792,16 @@
 			<name>src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlLTDC.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlTMR.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
@@ -1159,19 +1144,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/Drivers/eosFT5336.h</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>

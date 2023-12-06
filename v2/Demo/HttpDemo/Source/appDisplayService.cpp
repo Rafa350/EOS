@@ -14,10 +14,8 @@ using namespace app;
 /// \brief Constructor de l'objecte
 /// \param application: Aplicacio a la que pertany el servei.
 ///
-DisplayService::DisplayService(
-	eos::Application *application):
+DisplayService::DisplayService():
 
-	eos::AppLoopService(application),
 	_driver(nullptr),
 	_graphics(nullptr) {
 }
@@ -26,7 +24,7 @@ DisplayService::DisplayService(
 ///-----------------------------------------------------------------------
 /// \brief Process la inicialitzacio de la tasca.
 ///
-void DisplayService::onSetup() {
+void DisplayService::onInitialize() {
 
 	constexpr int frameBufferLineBytes = (DISPLAY_WIDTH * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
@@ -49,7 +47,7 @@ void DisplayService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void DisplayService::onLoop() {
+void DisplayService::onTask() {
 
     Task::delay(5000);
 }

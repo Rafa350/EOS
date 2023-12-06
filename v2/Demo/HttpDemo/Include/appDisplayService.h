@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __appDisplayService__
 #define __appDisplayService__
 
@@ -5,7 +6,7 @@
 /// EOS includes
 //
 #include "eos.h"
-#include "Services/eosAppLoopService.h"
+#include "Services/eosService.h"
 
 
 namespace eos {
@@ -18,17 +19,21 @@ namespace eos {
 
 namespace app {
 
-	class DisplayService: public eos::AppLoopService {
+	class DisplayService: public eos::Service {
+        public:
+            static constexpr uint32_t stackSize = 200;
+            static constexpr const char *serviceName = "DISPLAY";
+
 		private:
 			eos::IDisplayDriver *_driver;
 			eos::Graphics *_graphics;
 
 		public:
-			DisplayService(eos::Application *application);
+			DisplayService();
 
 		protected:
-			void onSetup();
-			void onLoop();
+			void onInitialize() override;
+			void onTask() override;
 	};
 
 }

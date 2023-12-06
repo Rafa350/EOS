@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosHTTPService__
 #define __eosHTTPService__
 
@@ -10,19 +11,19 @@
 namespace eos {
     
     class HTTPService: public Service {
-    	public:
-    		struct InitParams {
-    		};
+        public:
+            static constexpr uint32_t stackSize = 256;
+            static constexpr const char *serviceName = "HTTPS";
 
     	private:
     		HttpServer httpServer;
 
 		protected:
 			void onInitialize() override;
-			void onTask(Task* task) override;
+			void onTask() override;
 
 		public:
-            HTTPService(Application* application);
+            HTTPService();
     };
     
 }
