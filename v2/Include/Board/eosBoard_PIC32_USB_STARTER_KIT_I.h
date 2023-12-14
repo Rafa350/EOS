@@ -1,3 +1,4 @@
+#pragma oncd
 #ifndef __eosBoard_PIC32_USB_STARTER_KIT_I__
 #define __eosBoard_PIC32_USB_STARTER_KIT_I__
 

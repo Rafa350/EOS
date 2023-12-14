@@ -421,12 +421,13 @@ void DisplayDriver_ILI9341::writeRegion(
 			_device->writeData(data, sizeof(data));
 	}
 
-	/*else if constexpr (CI::format == ColorFormat::rgb666) {
+/*	else if constexpr (Color::format == ColorFormat::rgb888) {
 
+        // TODO: Revisar la conversio que esta malament
 		uint8_t data[3];
-		data[0] = (uint32_t)(c & 0x00FC0000) >> 16;
-		data[1] = (uint32_t)(c & 0x0000FC00) >> 8;
-		data[2] = (uint32_t)(c & 0x000000FC);
+		data[0] = (c >> 16) & 0xFC;
+		data[1] = (c >> 8) & 0xFC;
+		data[2] = c & 0xFC;
 
 		_device->writeCommand(CMD_MEMORY_WRITE);
 		while (count--)

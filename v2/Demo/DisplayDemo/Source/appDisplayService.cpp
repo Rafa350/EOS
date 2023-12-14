@@ -94,13 +94,13 @@ void DisplayService::onInitialize() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
-#if defined(EOS_PLATFORM_STM32F7)
+    #if defined(EOS_PLATFORM_STM32F7)
 	//halRNGInitialize();
-#endif
+    #endif
 
 	// Crea el driver de pantalla
 	//
-#if defined(DISPLAY_DRV_ILI9341LTDC)
+    #if defined(DISPLAY_DRV_ILI9341LTDC)
 
 	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
@@ -129,7 +129,7 @@ void DisplayService::onInitialize() {
 
 	_driver = new DisplayDriver_ILI9341LTDC(device, frameBuffer);
 
-#elif defined(DISPLAY_DRV_ILI9341)
+    #elif defined(DISPLAY_DRV_ILI9341)
 
 	auto pinCS = DISPLAY_CS_Pin::pInst;
     pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
@@ -148,7 +148,7 @@ void DisplayService::onInitialize() {
 
 	_driver = new DisplayDriver_ILI9341(device);
 
-#elif defined(DISPLAY_DRV_RGBLTDC)
+    #elif defined(DISPLAY_DRV_RGBLTDC)
 
 	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
@@ -162,10 +162,11 @@ void DisplayService::onInitialize() {
 
 	_driver = new DisplayDriver_RGBLTDC(frameBuffer);
 
-#else
-	#error No se especifico DISPLAY_DRV_XXXX
-#endif
-    _driver->initialize();
+    #else
+        #error No se especifico DISPLAY_DRV_XXXX
+    #endif
+
+	_driver->initialize();
 	_driver->enable();
 
     // Crea el controlador de grafics
@@ -189,82 +190,82 @@ void DisplayService::onTask() {
     _filledEllipsesTicks = 0;
 
 	#ifdef TEST_ORIENTATION
-    	_driver->setOrientation(DisplayOrientation((_orientation++) & 0b11));
+    _driver->setOrientation(DisplayOrientation((_orientation++) & 0b11));
 	#endif
 
     _maxX = _graphics->getMaxX();
     _maxY = _graphics->getMaxY();
 
 	#ifdef TEST_COLORS
-		testColors();
+	testColors();
 	#endif
 	#ifdef TEST_OPACITY
-		testOpacity();
+	testOpacity();
 	#endif
 	#ifdef TEST_POINTS
-		testPoints();
+	testPoints();
 	#endif
 	#ifdef TEST_LINES
-		testLines();
+	testLines();
 	#endif
 	#ifdef TEST_THICKLINES
-		testThickLines();
+	testThickLines();
 	#endif
 	#ifdef TEST_RECTANGLES
-		testRectangles();
+	testRectangles();
 	#endif
 	#ifdef TEST_ELLIPSES
-		testEllipses();
+	testEllipses();
 	#endif
 	#ifdef TEST_POLYGONS
-		testPolygons();
+	testPolygons();
 	#endif
 	#ifdef TEST_BITMAPS
-		testBitmaps();
+	testBitmaps();
 	#endif
 
 	#ifdef SHOW_RESULTS
-		// Show results
-		//
-		drawBackground("Results");
-		Task::delay(250);
+    // Show results
+    //
+    drawBackground("Results");
+    Task::delay(250);
 
-		char lineBuffer[30];
-		int y = 35;
+    char lineBuffer[30];
+    int y = 35;
 
-		sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
-		_text.setText(lineBuffer);
-		_graphics->paintText(Point(10, y), _text); y += 20;
+    sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
-		Task::delay(5000);
+    Task::delay(5000);
 	#endif
 }
 

@@ -146,6 +146,9 @@ namespace htl {
 
 			template <DeviceID, PinFunction, typename>
 			struct PinFunctionInfo;
+
+			template <DeviceID, PinFunction, gpio::PortID, gpio::PinID>
+            struct PinFunctionInfo2;
 		}
 
 		enum class Results {
@@ -261,24 +264,28 @@ namespace htl {
 					_instance.interruptService();
 				}
 				template <typename pin_>
-				void initPinTX() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+				inline void initPinTX() {
+					auto af = internal::PinFunctionInfo2<deviceID_, PinFunction::tx, pin_::portID, pin_::pinID>::alt;
+					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
+					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
-				void initPinRX() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+				inline void initPinRX() {
+					auto af = internal::PinFunctionInfo2<deviceID_, PinFunction::rx, pin_::portID, pin_::pinID>::alt;
+					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
+					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
-				void initPinCTS() {
+				inline void initPinCTS() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::cts, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
+					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
-				void initPinRTS() {
+				inline void initPinRTS() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
+					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				void setRxTimeout(uint32_t lostBits) {
 					if constexpr(HI::supportedRxTimeout) {

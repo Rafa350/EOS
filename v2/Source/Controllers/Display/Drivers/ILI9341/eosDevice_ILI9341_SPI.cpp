@@ -5,6 +5,9 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+///
 Device_ILI9341_SPI::Device_ILI9341_SPI():
     Device_ILI9341(),
 
@@ -16,6 +19,13 @@ Device_ILI9341_SPI::Device_ILI9341_SPI():
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio.
+/// \param    pinCS: Pin CS.
+/// \param    pinRS: Pin RS.
+/// \param    defSPI: Dispositiu SPI.
+/// \param    pinRST: Pin RST
+///
 void Device_ILI9341_SPI::initialize(
     Pin *pinCS,
     Pin *pinRS,
@@ -33,12 +43,18 @@ void Device_ILI9341_SPI::initialize(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitzacio.
+///
 void Device_ILI9341_SPI::deinitialize() {
 
     _pinCS->set();
 }
 
 
+/// -----------------------------------------------------------------------
+/// \brief    Reset de hardware.
+///
 void Device_ILI9341_SPI::hardwareReset() {
 
     if (_pinRST != nullptr) {
@@ -51,6 +67,10 @@ void Device_ILI9341_SPI::hardwareReset() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Escriu en el registrte de control.
+/// \param    cmd: La comanda a escriure.
+///
 void Device_ILI9341_SPI::writeCommand(
     uint8_t cmd) {
 

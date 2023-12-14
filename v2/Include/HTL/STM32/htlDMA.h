@@ -50,7 +50,7 @@ namespace htl {
 			protected:
 				DMAChannel(DMA_TypeDef * const dma, DMA_Channel_TypeDef * const channel);
 			public:
-				void initM2M(uint32_t srcAddr, uint32_t dstAddr, uint16_t length);
+				void initM2M();
                 void initM2P();
                 void initP2M();
 				void deinitialize();
@@ -60,8 +60,8 @@ namespace htl {
 				inline void disable() {
                     _channel->CCR &= ~DMA_CCR_EN;
 				}
-				void Start(uint32_t startAddr, uint32_t dstAddr, uint32_t size);
-				void Start_IRQ(uint32_t startAddr, uint32_t dstAddr, uint32_t size);
+				void Start(const uint8_t *src, uint8_t *dst, uint32_t size);
+				void Start_IRQ(const uint8_t *src, uint8_t *dst, uint32_t size);
 		};
 
 	}

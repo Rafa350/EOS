@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlSPI__
+#define __STM32_htlSPI__
 
 
 // EOS includes
@@ -90,9 +92,11 @@ namespace htl {
 					ready,
 					transmiting
 				};
+
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
+
 			private:
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
@@ -102,11 +106,13 @@ namespace htl {
 				inline void deactivate() {
 					activateImpl();
 				}
+
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
 				void interruptService();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
+
 			public:
 				Result initialize(SPIMode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
@@ -116,16 +122,18 @@ namespace htl {
 					_spi->CR1 |= SPI_CR1_SPE;
 				}
 				void disable();
-				inline Result transmit(const uint8_t *txBuffer, uint16_t size,
-				        uint16_t timeout = 0xFFFF) {
-					return transmit(txBuffer, nullptr, size, timeout);
-				}
 				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        uint16_t size, uint16_t timeout = 0xFFFF);
 				inline Result receive(uint8_t *rxBuffer, uint16_t size,
 				        uint16_t timeout = 0xFFFF)  {
 					return transmit(nullptr, rxBuffer, size, timeout);
 				}
+                inline Result transmit(const uint8_t *txBuffer, uint16_t size,
+                        uint16_t timeout = 0xFFFF) {
+                    return transmit(txBuffer, nullptr, size, timeout);
+                }
+                Result transmitDMA(const uint8_t *txBuffer, uint8_t *rxBuffer,
+                        uint16_t size);
 				inline State getState() const {
 				    return _state;
 				}
@@ -135,7 +143,7 @@ namespace htl {
 		namespace internal {
 
 			template <DeviceID>
-			struct HardwareInfo;
+			struct SPITraits;
 
 			template <DeviceID, PinFunction, typename>
 			struct PinFunctionInfo;
@@ -144,13 +152,13 @@ namespace htl {
 		template <DeviceID deviceID_>
 		class SPIDeviceX final: public SPIDevice {
 			private:
-				using HI = internal::HardwareInfo<deviceID_>;
+				using SPITraits = internal::SPITraits<deviceID_>;
 			private:
-				static constexpr uint32_t _spiAddr = HI::spiAddr;
-				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
-				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
-				static constexpr uint32_t _rccResetAddr = HI::rccResetAddr;
-				static constexpr uint32_t _rccResetPos = HI::rccResetPos;
+				static constexpr uint32_t _spiAddr = SPITraits::spiAddr;
+				static constexpr uint32_t _rccEnableAddr = SPITraits::rccEnableAddr;
+				static constexpr uint32_t _rccEnablePos = SPITraits::rccEnablePos;
+				static constexpr uint32_t _rccResetAddr = SPITraits::rccResetAddr;
+				static constexpr uint32_t _rccResetPos = SPITraits::rccResetPos;
 				static SPIDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
@@ -161,12 +169,12 @@ namespace htl {
 					SPIDevice(reinterpret_cast<SPI_TypeDef *>(_spiAddr)) {
 				}
 			protected:
-				void activateImpl() {
+				void activateImpl() override {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
-				void deactivateImpl() {
+				void deactivateImpl() override {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
@@ -176,21 +184,27 @@ namespace htl {
 				}
 				template <typename pin_>
 				void initPinSCK() {
-					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull,
-					        gpio::Speed::fast, pf);
+				    using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>;
+				    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    FP::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, PFI::alt);
 				}
+				/*template <gpio::PortID portID_, gpio::PinID pinID_>
+                void initPinSCK() {
+                    using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>;
+                    using FP = gpio::FastPinX<portID_, pinID_>;
+                    FP::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, PFI::alt);
+                }*/
 				template <typename pin_>
 				void initPinMOSI() {
-					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull,
-					        gpio::Speed::fast, pf);
+					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>;
+                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    FP::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, PFI::alt);
 				}
 				template <typename pin_>
 				void initPinMISO() {
-					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::pushPull,
-					        gpio::Speed::fast, pf);
+					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>;
+                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    FP::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, PFI::alt);
 				}
 		};
 
@@ -221,7 +235,7 @@ namespace htl {
 
 			#ifdef HTL_SPI1_EXIST
 			template<>
-			struct HardwareInfo<DeviceID::_1> {
+			struct SPITraits<DeviceID::_1> {
 				static constexpr uint32_t spiAddr = SPI1_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr =
@@ -241,7 +255,7 @@ namespace htl {
 
 			#ifdef HTL_SPI2_EXIST
 			template<>
-			struct HardwareInfo<DeviceID::_2> {
+			struct SPITraits<DeviceID::_2> {
 				static constexpr uint32_t spiAddr = SPI2_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr =
@@ -261,7 +275,7 @@ namespace htl {
 
 			#ifdef HTL_SPI3_EXIST
 			template<>
-			struct HardwareInfo<DeviceID::_3> {
+			struct SPITraits<DeviceID::_3> {
 				static constexpr uint32_t spiAddr = SPI3_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr =
@@ -277,7 +291,7 @@ namespace htl {
 
 			#ifdef HTL_SPI4_EXIST
 			template<>
-			struct HardwareInfo<DeviceID::_4> {
+			struct SPITraits<DeviceID::_4> {
 				static constexpr uint32_t spiAddr = SPI4_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr =
@@ -293,7 +307,7 @@ namespace htl {
 
 			#ifdef HTL_SPI5_EXIST
 			template<>
-			struct HardwareInfo<DeviceID::_5> {
+			struct SPITraits<DeviceID::_5> {
 				static constexpr uint32_t spiAddr = SPI5_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr =
@@ -309,7 +323,7 @@ namespace htl {
 
 			#ifdef HTL_SPI6_EXIST
 			template<>
-			struct HardwareInfo<DeviceID::_6> {
+			struct SPITraits<DeviceID::_6> {
 				static constexpr uint32_t spiAddr = SPI6_BASE;
 				#if defined(EOS_PLATFORM_STM32F4)
 				static constexpr uint32_t rccEnableAddr =
@@ -348,3 +362,6 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
+
+
+#endif // __STM32_htlSPI__

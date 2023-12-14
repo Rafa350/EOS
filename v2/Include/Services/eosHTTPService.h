@@ -12,7 +12,7 @@ namespace eos {
     
     class HTTPService: public Service {
         public:
-            static constexpr uint32_t stackSize = 256;
+            static constexpr uint32_t stackSize = 300;
             static constexpr const char *serviceName = "HTTPS";
 
     	private:

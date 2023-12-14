@@ -25,6 +25,33 @@ namespace eos {
             void write(bool state) override;
             bool read() override;
     };
+
+
+    /// \brief Clase que implementa el driver del pin
+    ///
+    template <typename pin_>
+    class FastPinDriver_GPIO final: public PinDriver {
+        public:
+            void set() override {
+                pin_::set();
+            }
+
+            void clear() override {
+                pin_::clear();
+            }
+
+            void toggle() override {
+                pin_::toggle();
+            }
+
+            void write(bool state) override {
+                pin_::write(state);
+            }
+
+            bool read() override {
+                return pin_::read();
+            }
+    };
     
 }
 

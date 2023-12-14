@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosBoard_STM32F746G_DISCO__
+#define __eosBoard_STM32F746G_DISCO__
 
 
 // -----------------------------------------------------------------------
@@ -19,10 +21,14 @@
 #define EXIST_LED1
 
 #define LED1_Pin             htl::gpio::PinI1
-#define LED1_PortID          LED1_Pin::portID
-#define LED1_PinID           LED1_Pin::pinID
+#define LED1_Instance        LED1_Pin::pInst
 #define LED1_StateON         true
 #define LED1_StateOFF        false
+
+#define LED1_Initialize()    LED1_Instance->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::low, false)
+#define LED1_On()            LED1_Instance->set()
+#define LED1_Off()           LED1_Instance->clear()
+#define LED1_Toggle()        LED1_Instance->toggle()
 
 #endif // USE_LED1
 
@@ -35,8 +41,6 @@
 #define EXIST_SW1
 
 #define SW1_Pin              htl::gpio::PinI11
-#define SW1_PortID           SW1_Pin::portID
-#define SW1_PinID            SW1_Pin::pinID
 #define SW1_PinInterrupt     htl::gpio::PinInterrupX<SW1_Pin::portID, SW1_Pin::pinID>
 #define SW1_StateON          true
 #define SW1_StateOFF         false
@@ -53,6 +57,7 @@
 
 #define DISPLAY_BKE_Pin      htl::gpio::PinK3
 #define DISPLAY_LCDE_Pin     htl::gpio::PinI12
+
 #define DISPLAY_PC_Pin       htl::gpio::PinI14
 #define DISPLAY_HSYNC_Pin    htl::gpio::PinI10
 #define DISPLAY_VSYNC_Pin    htl::gpio::PinI9
@@ -254,3 +259,6 @@
 #define SD_MODULE                 SDMMC1
 
 #endif // USE_SD
+
+
+#endif // __eosBoard_STM32F746G_DISCO__

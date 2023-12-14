@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Pin/Drivers/CLT0138SQ7/eosDevice_CLT0138SQ7.h"
 
 

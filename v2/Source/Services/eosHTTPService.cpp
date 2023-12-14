@@ -21,8 +21,6 @@ HTTPService::HTTPService():
 ///
 void HTTPService::onInitialize() {
 
-	httpServer.initialize();
-
 }
 
 
@@ -31,6 +29,7 @@ void HTTPService::onInitialize() {
 ///
 void HTTPService::onTask() {
 
+    httpServer.initialize();
     while (true) 
         httpServer.run();
 }

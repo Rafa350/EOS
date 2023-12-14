@@ -49,5 +49,5 @@ void DisplayService::onInitialize() {
 ///
 void DisplayService::onTask() {
 
-    Task::delay(5000);
+    Task::delay(1000);
 }

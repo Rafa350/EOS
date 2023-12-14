@@ -17,6 +17,11 @@ namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
 		private:
+	        using PinPC = DISPLAY_PC_Pin;
+	        using PinHSYNC = DISPLAY_HSYNC_Pin;
+            using PinVSYNC = DISPLAY_VSYNC_Pin;
+            using PinDE = DISPLAY_DE_Pin;
+
 			using PinR0 = DISPLAY_R0_Pin;
 			using PinR1 = DISPLAY_R1_Pin;
 			using PinR2 = DISPLAY_R2_Pin;

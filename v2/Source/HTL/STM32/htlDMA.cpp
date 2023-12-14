@@ -21,10 +21,7 @@ DMAChannel::DMAChannel(
 }
 
 
-void DMAChannel::initM2M(
-    uint32_t srcAddr,
-    uint32_t dstAddr,
-    uint16_t length) {
+void DMAChannel::initM2M() {
 
     uint32_t tmp;
 
@@ -35,10 +32,6 @@ void DMAChannel::initM2M(
     tmp |= DMA_CCR_MEM2MEM;      // Memoria a memoria
     _channel->CCR = tmp;
 
-    _channel->CPAR = srcAddr;    // Adressa d'origen.
-    _channel->CMAR = dstAddr;    // Adressa de destinacio.
-    _channel->CNDTR = length;    // Nombre de bytes a moure.
-
     enable();
 }
 
@@ -46,4 +39,21 @@ void DMAChannel::initM2M(
 void DMAChannel::deinitialize() {
 
     disable();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicia la transferencia en modus polling.
+/// \param    startAddr: Adressa inicial.
+/// \param    dstAddr: Adressa final;
+/// \param    size: El nombre de bytes a transfderir.
+///
+void DMAChannel::Start(
+    const uint8_t *src,
+    uint8_t *dst,
+    uint32_t size) {
+
+    _channel->CPAR = reinterpret_cast<uint32_t>(src);    // Adressa d'origen.
+    _channel->CMAR = reinterpret_cast<uint32_t>(dst);    // Adressa de destinacio.
+    _channel->CNDTR = size;      // Nombre de bytes a moure.
 }

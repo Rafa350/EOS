@@ -55,9 +55,12 @@ void HttpServer::initialize() {
 	ip_addr_set_zero_ip4(&mask);
 	ip_addr_set_zero_ip4(&gw);
 #else
-	IP_ADDR4(&addr, eosHTTPService_Addr0, eosHTTPService_Addr1, eosHTTPService_Addr2, eosHTTPService_Addr3);
-	IP_ADDR4(&mask, eosHTTPService_Mask0, eosHTTPService_Mask1, eosHTTPService_Mask2, eosHTTPService_Mask3);
-	IP_ADDR4(&gw, eosHTTPService_Gateway0, eosHTTPService_Gateway1, eosHTTPService_Gateway2, eosHTTPService_Gateway3);
+	IP_ADDR4(&addr, eosHTTPService_Addr0, eosHTTPService_Addr1,
+	        eosHTTPService_Addr2, eosHTTPService_Addr3);
+	IP_ADDR4(&mask, eosHTTPService_Mask0, eosHTTPService_Mask1,
+	        eosHTTPService_Mask2, eosHTTPService_Mask3);
+	IP_ADDR4(&gw, eosHTTPService_Gateway0, eosHTTPService_Gateway1,
+	        eosHTTPService_Gateway2, eosHTTPService_Gateway3);
 #endif
 
 	netif_add(&gnetif, &addr, &mask, &gw, NULL, &ethernetif_init, &tcpip_input);
@@ -81,23 +84,23 @@ void HttpServer::run() {
 
 	// Create a new TCP connection handle
 	//
-	HConnection hListenConnection = netconn_new(NETCONN_TCP);
-	if (hListenConnection != NULL) {
+	auto listener = netconn_new(NETCONN_TCP);
+	if (listener != NULL) {
 
 		// Bind to port (HTTP) with default IP address
 		//
-		if (netconn_bind(hListenConnection, NULL, _port) == ERR_OK) {
+		if (netconn_bind(listener, NULL, _port) == ERR_OK) {
 
 			// Put the connection into LISTEN state
 			//
-			netconn_listen(hListenConnection);
+			netconn_listen(listener);
 
 			while (true) {
 
 				// Accept any icoming connection
 				//
 				HConnection hConnection;
-				if (netconn_accept(hListenConnection, &hConnection) == ERR_OK) {
+				if (netconn_accept(listener, &hConnection) == ERR_OK) {
 
 					// Serve connection
 					//
@@ -144,21 +147,21 @@ void HttpServer::run() {
 
 
 HttpResponse HttpServer::getHandler(
-	const HttpRequest& request) {
+	const HttpRequest &request) {
 
 	return HttpResponse(200, "OK", "Hola capullo");
 }
 
 
 HttpResponse HttpServer::headHandler(
-	const HttpRequest& request) {
+	const HttpRequest &request) {
 
 	return HttpResponse(400, String(""), String(""));
 }
 
 
 HttpResponse HttpServer::postHandler(
-	const HttpRequest& request) {
+	const HttpRequest &request) {
 
 	return HttpResponse(400, "", "");
 }

@@ -249,10 +249,10 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	_devLTDC->initPinPC<DISPLAY_PC_Pin, _pcPol>();
-	_devLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, _hSyncPol>();
-	_devLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, _vSyncPol>();
-	_devLTDC->initPinDE<DISPLAY_DE_Pin, _dePol>();
+	_devLTDC->initPinPC<PinPC, _pcPol>();
+	_devLTDC->initPinHSYNC<PinHSYNC, _hSyncPol>();
+	_devLTDC->initPinVSYNC<PinVSYNC, _vSyncPol>();
+	_devLTDC->initPinDE<PinDE, _dePol>();
 	_devLTDC->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
 	_devLTDC->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
 	_devLTDC->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();

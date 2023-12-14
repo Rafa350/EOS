@@ -185,7 +185,7 @@ namespace htl {
 		namespace internal {
 
 			template <DeviceID>
-			class HardwareInfo;
+			class I2CTraits;
 
 			template <DeviceID, PinFunction, typename>
 			struct PinFunctionInfo;
@@ -194,11 +194,11 @@ namespace htl {
 		template <DeviceID deviceID_>
 		class I2CSlaveDeviceX final: public I2CSlaveDevice {
 			private:
-				using HI = internal::HardwareInfo<deviceID_>;
+				using I2CTraits = internal::I2CTraits<deviceID_>;
 			private:
-				static constexpr uint32_t _i2cAddr = HI::i2cAddr;
-				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
-				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
+				static constexpr uint32_t _i2cAddr = I2CTraits::i2cAddr;
+				static constexpr uint32_t _rccEnableAddr = I2CTraits::rccEnableAddr;
+				static constexpr uint32_t _rccEnablePos = I2CTraits::rccEnablePos;
 				static I2CSlaveDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
@@ -223,19 +223,22 @@ namespace htl {
 					_instance.interruptService();
 				}
 				template <typename pin_>
-				void initPinSCL() {
-					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
+				void inline initPinSCL() {
+					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>;
+                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 				template <typename pin_>
-				void initPinSDA() {
-					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
+				void inline initPinSDA() {
+					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>;
+                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 				template <typename pin_>
-				void initPinALERT() {
-					auto pf = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, pf);
+				void inline initPinALERT() {
+					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>;
+                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 		};
 
@@ -260,11 +263,11 @@ namespace htl {
 		template <DeviceID deviceID_>
 		class I2CMasterDeviceX final: public I2CMasterDevice {
 			private:
-				using HI = internal::HardwareInfo<deviceID_>;
+				using I2CTraits = internal::I2CTraits<deviceID_>;
 			private:
-				static constexpr uint32_t _i2cAddr = HI::i2cAddr;
-				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
-				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
+				static constexpr uint32_t _i2cAddr = I2CTraits::i2cAddr;
+				static constexpr uint32_t _rccEnableAddr = I2CTraits::rccEnableAddr;
+				static constexpr uint32_t _rccEnablePos = I2CTraits::rccEnablePos;
 				static I2CMasterDeviceX _instance;
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
@@ -289,14 +292,16 @@ namespace htl {
 					_instance.interruptService();
 				}
 				template <typename pin_>
-				void initPinSCL() {
-					auto af= internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
+				void inline initPinSCL() {
+					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>;
+                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 				template <typename pin_>
-				void initPinSDA() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
-					pin_::pInst->initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
+				void inline initPinSDA() {
+					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>;
+                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 		};
 
@@ -322,7 +327,7 @@ namespace htl {
 
 			#ifdef HTL_I2C1_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_1> {
+			struct I2CTraits<DeviceID::_1> {
 				static constexpr uint32_t i2cAddr = I2C1_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -339,7 +344,7 @@ namespace htl {
 
 			#ifdef HTL_I2C2_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_2> {
+			struct I2CTraits<DeviceID::_2> {
 				static constexpr uint32_t i2cAddr = I2C2_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -356,7 +361,7 @@ namespace htl {
 
 			#ifdef HTL_I2C3_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_3> {
+			struct I2CTraits<DeviceID::_3> {
 				static constexpr uint32_t i2cAddr = I2C3_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -367,7 +372,7 @@ namespace htl {
 
 			#ifdef HTL_I2C4_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_4> {
+			struct I2CTraits<DeviceID::_4> {
 				static constexpr uint32_t i2cAddr = I2C4_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);

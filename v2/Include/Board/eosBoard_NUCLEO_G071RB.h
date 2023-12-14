@@ -24,7 +24,9 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_Pin             htl::gpio::PinA5
+#define LED1_PortID          htl::gpio::PortID::A
+#define LED1_PinID           htl::gpio::PinID::_5
+#define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
@@ -43,8 +45,11 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_Pin              htl::gpio::PinC13;
-#define SW1_PinInterrupt     htl::gpio::PinInterruptX<SW1_Pin::portID, SW1_Pin::pinID>
+#define SW1_PortID           htl::gpio::PortID::C
+#define SW1_PinID            htl::gpio::PinID::_13
+#define SW1_Pin              htl::gpio::PinX<SW1_PortID, SW1_PinID>
+#define SW1_FastPin          htl::gpio::FastPinX<SW1_PortID, SW1_PinID>
+#define SW1_PinInterrupt     htl::gpio::PinInterruptX<SW1_PortID, SW1_PinID>
 #define SW1_StateON          true
 #define SW1_StateOF          false
 

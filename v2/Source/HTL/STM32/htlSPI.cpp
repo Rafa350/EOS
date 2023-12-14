@@ -254,6 +254,22 @@ Result SPIDevice::transmit(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades en modus DMA
+/// \param    txBuffer: El buffer de transmissio.
+/// \param    rxBuffer: El buffer de recepcio.
+/// \param    size: El nombre de bytes a transmetre.
+/// \return   El resultat de l'operacio.
+///
+Result SPIDevice::transmitDMA(
+    const uint8_t *txBuffer,
+    uint8_t *rxBuffer,
+    uint16_t size) {
+
+    return Result::success();
+}
+
+
 /// -------------------------------------------------------------------------
 /// \brief    Asigna el divisor del rellotge.
 /// \param    spi: Els registres de hardware del dispositiu SPI.
