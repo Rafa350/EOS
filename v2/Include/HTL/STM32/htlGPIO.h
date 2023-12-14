@@ -779,7 +779,13 @@ namespace htl {
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     return (gpio->IDR & uint16_t(_mask)) != 0;
                 }
+                
+                static constexpr Pin *instance() {
+                    
+                    return PinX<portID_, pinID_>::pÌnst;
+                }
 		};
+
 
 		namespace internal {
 
@@ -787,8 +793,12 @@ namespace htl {
 			class Activator final {
 				private:
 					using PortTraits = internal::PortTraits<portId_>;
+                    
+                private:
 					static constexpr uint32_t _rccEnableAddr = PortTraits::rccEnableAddr;
 					static constexpr uint32_t _rccEnablePos = PortTraits::rccEnablePos;
+                    
+                private:
 					static PinMask _mask;
 
 				public:
@@ -974,6 +984,7 @@ namespace htl {
 				#endif
 			};
 			#endif
+
 
 			template <>
 			struct PinTraits<PinID::_0> {
