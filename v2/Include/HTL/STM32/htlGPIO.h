@@ -80,14 +80,18 @@ namespace htl {
 			_15
 		};
 
-		class PinNumber final {
+        /// \brief Pin bit position.
+        ///
+		class PinBit final {
 		    private:
 		        uint8_t _value;
             public:
-                constexpr explicit PinNumber(uint8_t value) : _value {value} {}
+                constexpr explicit PinBit(uint8_t value) : _value {value} {}
                 constexpr explicit operator uint8_t () const { return _value; }
 		};
 
+        /// \brief Mask of pin bits.
+        ///
         class PinMask final {
             private:
                 uint16_t _value;
@@ -96,7 +100,7 @@ namespace htl {
                 constexpr explicit operator uint16_t () const { return _value; }
         };
 
-		/// \brief Alternate function
+		/// \brief Alternate function.
 		enum class AlternateFunction {
 			_0,
 			_1,
@@ -116,21 +120,21 @@ namespace htl {
 			_15
 		};
 
-		/// \bried Input mode
+		/// \bried Input mode.
 		enum class InputMode {
 			floating,
 			pullUp,
 			pullDown
 		};
 
-		/// \bried Output mode
+		/// \bried Output mode.
 		enum class OutputMode {
 			pushPull,
 			openDrain,
 			openDrainPullUp
 		};
 
-		/// \bried Alternate mode
+		/// \bried Alternate mode.
 		enum class AlternateMode {
 			pushPull,
 			openDrain,
@@ -145,7 +149,7 @@ namespace htl {
 			fast
 		};
         
-		/// \brief Init mode
+		/// \brief Init mode.
         enum class InitMode {
             input,
             output,
@@ -155,6 +159,7 @@ namespace htl {
 
         /// \brief Initialization parameters.
         struct InitInfo {
+            PinMask mask;
             InitMode mode;
             union {
                 struct {
@@ -187,8 +192,7 @@ namespace htl {
 
 		    /// \brief Initialize pins
 		    ///
-            void initialize(GPIO_TypeDef * const gpio, PinMask mask,
-                    const InitInfo *info);
+            void initialize(GPIO_TypeDef * const gpio, const InitInfo *info);
 
 		    /// \brief Initialize pins as digital input
 		    ///
@@ -197,7 +201,7 @@ namespace htl {
 
             /// \brief Initialize pins as digital input
             ///
-            void initInput(GPIO_TypeDef * const gpio, PinNumber number,
+            void initInput(GPIO_TypeDef * const gpio, PinBit bit,
                     InputMode mode);
 
             /// \brief Initialize pins as digital output
@@ -207,7 +211,7 @@ namespace htl {
 
             /// \brief Initialize pins as digital output
             ///
-            void initOutput(GPIO_TypeDef * const gpio, PinNumber number,
+            void initOutput(GPIO_TypeDef * const gpio, PinBit bit,
                     OutputMode mode, Speed speed, bool state);
 
             /// \brief Initialize pins as alternate pin function
@@ -217,7 +221,7 @@ namespace htl {
 
             /// \brief Initialize pins as alternate pin function
             ///
-            void initAlternate(GPIO_TypeDef * const gpio, PinNumber number,
+            void initAlternate(GPIO_TypeDef * const gpio, PinBit bit,
                     AlternateMode mode, Speed speed, AlternateFunction af);
 
             /// \brief Initialize pins as analogic I/O
@@ -226,7 +230,7 @@ namespace htl {
 
             /// \brief Initialize pins as analogic I/O
             ///
-            void initAnalogic(GPIO_TypeDef * const gpio, PinNumber number);
+            void initAnalogic(GPIO_TypeDef * const gpio, PinBit bit);
 
             /// \brief Deinitialize pins
 		    ///
@@ -251,26 +255,26 @@ namespace htl {
 				inline void set(PinMask mask) const {
 					_gpio->BSRR = uint16_t(mask);
 				}
-				inline void set(PinID pinID) const {
-					_gpio->BSRR = 1 << uint32_t(pinID);
+				inline void set(PinBit bit) const {
+					_gpio->BSRR = 1 << bit);
 				}
 				inline void clear(PinMask mask) const {
 					_gpio->BSRR = uint16_t(mask) << 16;
 				}
-				inline void clear(PinID pinID) const {
-					_gpio->BSRR = 1 << (uint32_t(pinID) + 16);
+				inline void clear(PinBit bit) const {
+					_gpio->BSRR = 1 << bit) + 16);
 				}
 				inline void toggle(PinMask mask) const {
 					_gpio->ODR ^= uint16_t(mask);
 				}
-				inline void toggle(PinID pinID) const {
-					_gpio->ODR ^= 1 << uint32_t(pinID);
+				inline void toggle(PinBit bit) const {
+					_gpio->ODR ^= 1 << bit;
 				}
 				inline PinMask read() const {
 					return PinMask(uint16_t(_gpio->IDR));
 				}
-				inline bool read(PinID pinID) const {
-					return (_gpio->IDR & (1 << uint32_t(pinID))) ? true : false;
+				inline bool read(PinBit bit) const {
+					return (_gpio->IDR & (1 << bit)) ? true : false;
 				}
 				inline void write(PinMask mask) const {
 					_gpio->ODR = uint16_t(mask);
@@ -278,11 +282,11 @@ namespace htl {
 				inline void write(PinMask clearMask, PinMask setMask) const {
 				    _gpio->BSRR = (uint16_t(clearMask) << 16) | uint16_t(setMask);
 				}
-				inline void write(PinID pinID, bool state) const {
+				inline void write(PinBit bit, bool state) const {
 					if (state)
-						_gpio->BSRR = 1 << uint32_t(pinID);
+						_gpio->BSRR = 1 << bit;
 					else
-						_gpio->BSRR = 1 << (uint32_t(pinID) + 16);
+						_gpio->BSRR = 1 << bit) + 16);
 				}
 		};
 
@@ -296,7 +300,7 @@ namespace htl {
 				Pin(const Pin &) = delete;
 				Pin & operator = (const Pin &) = delete;
 			protected:
-                Pin(GPIO_TypeDef *gpio, PinNumber pinNumber);
+                Pin(GPIO_TypeDef *gpio, PinBit pinNumber);
 				virtual void activate() const = 0;
 				virtual void deactivate() const = 0;
 			public:
@@ -468,7 +472,7 @@ namespace htl {
                 static constexpr PinX &rInst = _instance;
 			private:
 				inline PinX():
-                    Pin(reinterpret_cast<GPIO_TypeDef*>(PortTraits::gpioAddr), PinTraits::number) {
+                    Pin(reinterpret_cast<GPIO_TypeDef*>(PortTraits::gpioAddr), PinTraits::bit) {
 				}
 			protected:
 				void activate() const override {
@@ -718,31 +722,31 @@ namespace htl {
 		    private:
                 static constexpr auto _gpioAddr = PortTraits::gpioAddr;
                 static constexpr auto _mask = PinTraits::mask;
-                static constexpr auto _number = PinTraits::number;
+                static constexpr auto _bit = PinTraits::bit;
 
 		    public:
                 static void initInput(InputMode mode) {
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     Activator::activate(_mask);
-                    internal::initInput(gpio, _number, mode);
+                    internal::initInput(gpio, _bit, mode);
                 }
 
                 static void initOutput(OutputMode mode, Speed speed, bool state) {
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     Activator::activate(_mask);
-                    internal::initOutput(gpio, _number, mode, speed, state);
+                    internal::initOutput(gpio, _bit, mode, speed, state);
                 }
 
                 static void initAnalogic() {
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     Activator::activate(_mask);
-                    internal::initAnalogic(gpio, _number);
+                    internal::initAnalogic(gpio, _bit);
                 }
 
                 static void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af) {
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     Activator::activate(_mask);
-                    internal::initAlternate(gpio, _number, mode, speed, af);
+                    internal::initAlternate(gpio, _bit, mode, speed, af);
                 }
 
                 static void deinitialize() {
@@ -974,97 +978,97 @@ namespace htl {
 			template <>
 			struct PinTraits<PinID::_0> {
 		        static constexpr PinMask mask {1 << 0};
-		        static constexpr PinNumber number {0};
+		        static constexpr PinBit bit {0};
 			};
 
             template <>
 			struct PinTraits<PinID::_1> {
                 static constexpr PinMask mask {1 << 1};
-                static constexpr PinNumber number {1};
+                static constexpr PinBit bit {1};
             };
 
             template <>
             struct PinTraits<PinID::_2> {
                 static constexpr PinMask mask {1 << 2};
-                static constexpr PinNumber number {2};
+                static constexpr PinBit bit {2};
             };
 
             template <>
             struct PinTraits<PinID::_3> {
                 static constexpr PinMask mask {1 << 3};
-                static constexpr PinNumber number {3};
+                static constexpr PinBit bit {3};
             };
 
             template <>
             struct PinTraits<PinID::_4> {
                 static constexpr PinMask mask {1 << 4};
-                static constexpr PinNumber number {4};
+                static constexpr PinBit bit {4};
             };
 
             template <>
             struct PinTraits<PinID::_5> {
                 static constexpr PinMask mask {1 << 5};
-                static constexpr PinNumber number {5};
+                static constexpr PinBit bit {5};
             };
 
             template <>
             struct PinTraits<PinID::_6> {
                 static constexpr PinMask mask {1 << 6};
-                static constexpr PinNumber number {6};
+                static constexpr PinBit bit {6};
             };
 
             template <>
             struct PinTraits<PinID::_7> {
                 static constexpr PinMask mask {1 << 7};
-                static constexpr PinNumber number {7};
+                static constexpr PinBit bit {7};
             };
 
             template <>
             struct PinTraits<PinID::_8> {
                 static constexpr PinMask mask {1 << 8};
-                static constexpr PinNumber number {8};
+                static constexpr PinBit bit {8};
             };
 
             template <>
             struct PinTraits<PinID::_9> {
                 static constexpr PinMask mask {1 << 9};
-                static constexpr PinNumber number {9};
+                static constexpr PinBit bit {9};
             };
 
             template <>
             struct PinTraits<PinID::_10> {
                 static constexpr PinMask mask {1 << 10};
-                static constexpr PinNumber number {10};
+                static constexpr PinBit bit {10};
             };
 
             template <>
             struct PinTraits<PinID::_11> {
                 static constexpr PinMask mask {1 << 11};
-                static constexpr PinNumber number {11};
+                static constexpr PinBit bit {11};
             };
 
             template <>
             struct PinTraits<PinID::_12> {
                 static constexpr PinMask mask {1 << 12};
-                static constexpr PinNumber number {12};
+                static constexpr PinBit bit {12};
             };
 
             template <>
             struct PinTraits<PinID::_13> {
                 static constexpr PinMask mask {1 << 13};
-                static constexpr PinNumber number {13};
+                static constexpr PinBit bit {13};
             };
 
             template <>
             struct PinTraits<PinID::_14> {
                 static constexpr PinMask mask {1 << 14};
-                static constexpr PinNumber number {14};
+                static constexpr PinBit bit {14};
             };
 
             template <>
             struct PinTraits<PinID::_15> {
                 static constexpr PinMask mask {1 << 15};
-                static constexpr PinNumber number {15};
+                static constexpr PinBit bit {15};
             };
 		}
 	}

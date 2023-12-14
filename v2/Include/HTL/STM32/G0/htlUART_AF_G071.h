@@ -17,15 +17,19 @@
 	};
 
 
-#define DEF(deviceID, pf, portID, pinID, af)                    \
-    template <>                                          \
+#define DEF(deviceID, pf, portID, pinID, af)               \
+    template <>                                            \
     struct PinFunctionInfo2<deviceID, pf, portID, pinID> { \
-        static constexpr gpio::AlternateFunction alt = af;   \
+        static constexpr gpio::AlternateFunction alt = af; \
     };
 
+
 namespace htl {
+    
 	namespace uart {
+        
 		namespace internal {
+            
 			#ifdef HTL_UART1_EXIST
 				ALT_FUNCTION(1, PinFunction::tx,  gpio::PinA9,  gpio::AlternateFunction::_1)
     			ALT_FUNCTION(1, PinFunction::tx,  gpio::PinB6,  gpio::AlternateFunction::_0)
@@ -122,6 +126,7 @@ namespace htl {
 
             #ifdef HTL_UART4_EXISTS
             #endif // HTL_UART4_EXISTS
+            
 		}
 	}
 }
