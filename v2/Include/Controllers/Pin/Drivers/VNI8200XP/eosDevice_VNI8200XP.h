@@ -51,7 +51,7 @@ namespace eos {
 	///
     class Device_VNI8200XP_SPI: public Device_VNI8200XP {
         public:
-            using Pin = htl::gpio::Pin;
+            using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
 
     	private:

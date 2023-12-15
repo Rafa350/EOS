@@ -265,27 +265,23 @@ namespace htl {
 				}
 				template <typename pin_>
 				inline void initPinTX() {
-					auto af = internal::PinFunctionInfo2<deviceID_, PinFunction::tx, pin_::portID, pin_::pinID>::alt;
-					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
-					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_>::alt;
+					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				inline void initPinRX() {
-					auto af = internal::PinFunctionInfo2<deviceID_, PinFunction::rx, pin_::portID, pin_::pinID>::alt;
-					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
-					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_>::alt;
+					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				inline void initPinCTS() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::cts, pin_>::alt;
-					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
-					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				inline void initPinRTS() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_>::alt;
-					gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(
-					        gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					pin_:initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				void setRxTimeout(uint32_t lostBits) {
 					if constexpr(HI::supportedRxTimeout) {

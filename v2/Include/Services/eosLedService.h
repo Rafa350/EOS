@@ -14,7 +14,7 @@ namespace eos {
 
 	class LedService: public Service {
 	    public:
-	        using Pin = htl::gpio::Pin;
+	        using Pin = htl::gpio::PinDevice;
 
 	    private:
 	        Pin *_pinLED1;

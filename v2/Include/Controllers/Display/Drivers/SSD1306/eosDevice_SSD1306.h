@@ -31,7 +31,7 @@ namespace eos {
 
     class Device_SSD1306_SPI: public Device_SSD1306 {
         public:
-            using Pin = htl::gpio::Pin;
+            using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
 
         private:

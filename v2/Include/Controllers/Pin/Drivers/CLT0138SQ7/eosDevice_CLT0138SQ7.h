@@ -12,7 +12,7 @@ namespace eos {
 
 	class Device_CLT0138SQ7 {
 		public:
-	        using Pin = htl::gpio::Pin;
+	        using Pin = htl::gpio::PinDevice;
 	        using DevSPI = htl::spi::SPIDevice;
 			enum class State {
 				reset,

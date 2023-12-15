@@ -10,7 +10,7 @@ using namespace eos;
 /// \param    pin: El pin.
 ///
 PinDriver_GPIO::PinDriver_GPIO(
-	htl::gpio::Pin *pin):
+	Pin *pin):
 
 	_pin {pin} {
 

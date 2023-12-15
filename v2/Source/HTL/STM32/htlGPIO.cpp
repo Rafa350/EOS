@@ -41,7 +41,7 @@ static const uint32_t __speedTbl[] = {
 /// \brief    Constructor.
 /// \param    gpio: Registres hardware del modul GPIO.
 ///
-Port::Port(
+PortDevice::PortDevice(
 	GPIO_TypeDef *gpio):
 
 	_gpio {gpio} {
@@ -53,7 +53,7 @@ Port::Port(
 /// \param    mask: Mascara de pins a configurar.
 /// \param    mode: Tipus d'entrada.
 ///
-void Port::initInput(
+void PortDevice::initInput(
 	PinMask mask,
 	InputMode mode) const {
 
@@ -68,7 +68,7 @@ void Port::initInput(
 /// \param    mode: El tipus de sortida.
 /// \param    speed: Opcions de velocitat.
 ///
-void Port::initOutput(
+void PortDevice::initOutput(
 	PinMask mask,
 	OutputMode mode,
 	Speed speed) const {
@@ -81,7 +81,7 @@ void Port::initOutput(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el dispositiu.
 ///
-void Port::deinitialize() const {
+void PortDevice::deinitialize() const {
 
 }
 
@@ -91,12 +91,12 @@ void Port::deinitialize() const {
 /// \param    gpio: Registres de hardware
 /// \param    bit: El bit del pin.
 ///
-Pin::Pin(
+PinDevice::PinDevice(
     GPIO_TypeDef *gpio,
     PinBit bit):
 
     _gpio {gpio},
-    _mask {1 << uint8_t(bit)} {
+    _mask {uint16_t(1 << bit)} {
 
 }
 
@@ -105,11 +105,11 @@ Pin::Pin(
 /// \brief    Inicialitzacio.
 /// \param    info: Parametres d'inicialitzacio.
 ///
-void Pin::initialize(
+void PinDevice::initialize(
     const InitInfo &info) const {
 
     activate();
-    internal::initialize(_gpio, _mask, &info);
+    internal::initialize(_gpio, &info);
 }
 
 
@@ -117,7 +117,7 @@ void Pin::initialize(
 /// \brief    Inicialitza el pin en modun entrada digital.
 /// \param    mode: El tipus d'entrada.
 ///
-void Pin::initInput(
+void PinDevice::initInput(
 	InputMode mode) const {
 
 	activate();
@@ -131,7 +131,7 @@ void Pin::initInput(
 /// \param    speed: Velocitat de conmutacio.
 /// \param    state: L'estat inicial de la sortida.
 ///
-void Pin::initOutput(
+void PinDevice::initOutput(
 	OutputMode mode,
 	Speed speed,
 	bool state) const {
@@ -147,7 +147,7 @@ void Pin::initOutput(
 /// \param    speed: Velocitat de conmutacio.
 /// \param    af: Funcio alternativa.
 ///
-void Pin::initAlternate(
+void PinDevice::initAlternate(
 	AlternateMode mode,
 	Speed speed,
 	AlternateFunction af) const {
@@ -160,7 +160,7 @@ void Pin::initAlternate(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com a entrada/sortida analogica.
 ///
-void Pin::initAnalogic() const {
+void PinDevice::initAnalogic() const {
 
     activate();
 	internal::initAnalogic(_gpio, _mask);
@@ -170,7 +170,7 @@ void Pin::initAnalogic() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el pin i el deixa als valor per defecte.
 ///
-void Pin::deinitialize() const {
+void PinDevice::deinitialize() const {
 
 	internal::deinitialize(_gpio, _mask);
     deactivate();
@@ -503,9 +503,9 @@ void internal::initOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pins com sortida.
+/// \brief    Inicialitza un pin com sortida.
 /// \param    gpio: Els registres de hardware del GPIO.
-/// \param    number: El numero del pin a inicialitzar.
+/// \param    bit: El bit del pin a inicialitzar.
 /// \param    mode: Tipus de sortida.
 /// \param    speed: Velocitat de conmutacio.
 /// \param    state: L'estat inicial del pin.
@@ -552,7 +552,7 @@ void internal::initOutput(
     tmp |= __speedTbl[uint8_t(speed)] << (b * 2);
     gpio->OSPEEDR = tmp;
 
-    gpio->ODR |= (state ? 1 : 0) << pn;
+    gpio->ODR |= (state ? 1 : 0) << b;
 }
 
 
@@ -632,9 +632,9 @@ void internal::initAlternate(
     // Selecciona la funcio alternativa
     //
     tmp = gpio->AFR[b >> 3];
-    tmp &= ~(AFR_Mask << ((pn & 0x07) * 4)) ;
+    tmp &= ~(AFR_Mask << ((b & 0x07) * 4)) ;
     tmp |= (uint32_t(af) & AFR_Mask) << ((b & 0x07) * 4);
-    gpio->AFR[pn >> 3] = tmp;
+    gpio->AFR[b >> 3] = tmp;
 }
 
 
@@ -680,13 +680,13 @@ void internal::deinitialize(
     auto m = uint16_t(mask);
     for (uint8_t b = 0; b < 15; b++) {
         if ((m & (1 << b)) != 0)
-            deinitialize(gpio, PinBit(b));
+            deinitialize(gpio, PinMask(1 << b));
     }
 }
     
 
 /// ----------------------------------------------------------------------
-/// \brief    Desinicialitza un pins. El el deixa en la seva configuracio 
+/// \brief    Desinicialitza un pin. El deixa en la seva configuracio
 ///           per defecte.
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    bit: El bit del pin a desinicialitzar.

@@ -28,10 +28,10 @@
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_Pin::pInst->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::medium, false)
-#define LED1_On()            LED1_Pin::pInst->set()
-#define LED1_Off()           LED1_Pin::pInst->clear()
-#define LED1_Toggle()        LED1_Pin::pInst->toggle()
+#define LED1_Initialize()    LED1_Pin::initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::medium, false)
+#define LED1_On()            LED1_Pin::set()
+#define LED1_Off()           LED1_Pin::clear()
+#define LED1_Toggle()        LED1_Pin::toggle()
 
 #endif // USE_LED1
 
@@ -47,8 +47,8 @@
 #define SW1_StateON          true
 #define SW1_StateOFF         false
 
-#define SW1_Initialize()     SW1_Pin::getandler()->initInput()
-#define SW1_Read()           SW1_Pin::getHandler()->read()
+#define SW1_Initialize()     SW1_Pin::initInput(htl::gpio::InputMode::pullUp)
+#define SW1_Read()           SW1_Pin::read()
 
 #endif // USE_SW1
 

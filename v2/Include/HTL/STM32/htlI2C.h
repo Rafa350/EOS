@@ -225,19 +225,19 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>;
-                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
 					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
 					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>;
-                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
 					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 				template <typename pin_>
 				void inline initPinALERT() {
 					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>;
-                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
 					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 		};
@@ -294,13 +294,13 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>;
-                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
 					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
 					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>;
-                    using FP = gpio::FastPinX<pin_::portID, pin_::pinID>;
+                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
 					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
 				}
 		};
