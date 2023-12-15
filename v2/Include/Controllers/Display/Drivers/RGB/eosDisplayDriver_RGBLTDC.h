@@ -51,8 +51,8 @@ namespace eos {
 			using DevLTDC = htl::ltdc::LTDCDevice;
 			using DevLTDCLayer = htl::ltdc::LTDCLayerDevice1;
 
-			static constexpr PinLCDE *_pinLCDE = PinLCDE::pInst;
-            static constexpr PinBKE *_pinBKE = PinBKE::pInst;
+			static constexpr auto _pinLCDE = PinLCDE::pInst;
+            static constexpr auto _pinBKE = PinBKE::pInst;
 
             static constexpr DevLTDC *_devLTDC = DevLTDC::pInst;
 			static constexpr DevLTDCLayer *_devLTDCLayer = DevLTDCLayer::pInst;

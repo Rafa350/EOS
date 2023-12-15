@@ -17,8 +17,8 @@ namespace eos {
 	        using Pin = htl::gpio::PinDevice;
 
 	    private:
-	        Pin *_pinLED1;
-	        Pin *_pinLED2;
+	        Pin * const _pinLED1;
+	        Pin * const _pinLED2;
 
 		public:
 			static constexpr uint32_t stackSize = 128;
@@ -28,7 +28,7 @@ namespace eos {
 			LedService(Pin *pinLED1, Pin *pinLED2 = nullptr);
 
 		protected:
-			void onInitialize() override;
+            void onTaskStart() override;
 			void onTask() override;
 	};
 

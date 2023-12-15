@@ -22,7 +22,7 @@ void Service::initialize() {
 
 	if (_state == State::created) {
 		onInitialize();
-        _state = State::ready;
+        _state = State::initialized;
 	}
 }
 
@@ -32,9 +32,9 @@ void Service::initialize() {
 ///
 void Service::terminate() {
 
-    if (_state == State::ready) {
+    if ((_state == State::stopped) || (_state == State::started)) {
         onTerminate();
-        _state = State::finished;
+        _state = State::terminated;
     }
 }
 
@@ -42,12 +42,25 @@ void Service::terminate() {
 /// ----------------------------------------------------------------------
 /// \brief    Executa les operacions del servei.
 ///
-void Service::task() {
+void Service::taskStart() {
 
-    if (_state == State::ready) {
-    	_state = State::running;
+    if (_state == State::initialized) {
+        _state = State::running;
+        onTaskStart();
+        _state = State::started;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Executa les operacions del servei.
+///
+void Service::taskRun() {
+
+    if (_state == State::started) {
+        _state = State::running;
         onTask();
-        _state = State::ready;
+        _state = State::started;
     }
 }
 
@@ -64,6 +77,15 @@ void Service::onInitialize() {
 /// \brief    Procesa la finalitzacio del servei
 ///
 void Service::onTerminate() {
+
+}
+
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el inici de les operacions del servei.
+///
+void Service::onTaskStart() {
 
 }
 

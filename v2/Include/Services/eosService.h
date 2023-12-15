@@ -27,9 +27,11 @@ namespace eos {
     	public:
 			enum class State {
 				created,
-				ready,
+				initialized,
+				started,
 				running,
-				finished
+				stopped,
+				terminated
 			};
 
     	private:
@@ -42,6 +44,7 @@ namespace eos {
 
             virtual void onInitialize();
             virtual void onTerminate();
+            virtual void onTaskStart();
             virtual void onTask();
 
         public:
@@ -49,7 +52,8 @@ namespace eos {
 
             void initialize();
             void terminate();
-            void task();
+            void taskStart();
+            void taskRun();
 
             inline State getState() const {
             	return _state;

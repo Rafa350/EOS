@@ -29,12 +29,14 @@ RTOSApplication::RTOSApplication():
 void RTOSApplication::taskCallbackHandler(
     const TaskCallbackArgs &args) {
 
-    Service *service = static_cast<Service*>(args.params);
-    if (service != nullptr)
+    auto service = static_cast<Service*>(args.params);
+    if (service != nullptr) {
 
         // TODO: Trobar un mecanisme per finalitzar el bucle
+        service->taskStart();
     	while (true)
-    		service->task();
+    		service->taskRun();
+    }
 }
 
 
@@ -105,7 +107,13 @@ void RTOSApplication::runServices() {
     // Crea una tasca per executar cada servei
     //
     for (auto si: _serviceInfoList) {
-    	if (si->service->getState() == Service::State::ready) {
+
+        // Comprova si el servei esta inicialitzat
+        //
+    	if (si->service->getState() == Service::State::initialized) {
+
+    	    // Crea la tasca del servei.
+    	    //
 			si->task = new Task(
 				si->stackSize,
 				si->priority,
@@ -137,7 +145,7 @@ void RTOSApplication::addService(
 
 	eosAssert(service != nullptr);
 
-	ServiceInfo *si = new ServiceInfo;
+	auto si = new ServiceInfo;
 	eosAssert(si != nullptr);
 
 	si->service = service;

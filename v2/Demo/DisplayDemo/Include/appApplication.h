@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __appApplication__
+#define __appApplication__
 
 
 // EOS includes
@@ -7,26 +9,19 @@
 #include "System/eosRTOSApplication.h"
 
 
-namespace eos {
-
-    class LedService;
-}
-
-
 namespace app {
 
-	class DisplayService;
-
 	class MyApplication: public eos::RTOSApplication {
-		private:
-			eos::LedService *_ledService;
-			DisplayService *_displayService;
-
 		protected:
 			void onInitialize() override;
+			void configureLedService();
+			void configureDisplayService();
 
 		public :
 			MyApplication();
 	};
 
 }
+
+
+#endif // __appApplication__

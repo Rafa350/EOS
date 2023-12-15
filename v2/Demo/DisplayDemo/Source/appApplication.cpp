@@ -1,9 +1,12 @@
 #include "eos.h"
 #include "Services/eosLedService.h"
+
 #include "appApplication.h"
 #include "appDisplayService.h"
 
 
+using namespace eos;
+using namespace htl;
 using namespace app;
 
 
@@ -19,30 +22,42 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
-    #if defined(EXIST_LED1) || defined(EXIST_LED2)
-    #ifdef EXIST_LED1
-    constexpr htl::gpio::Pin *pinLED1 = LED1_Instance;
-    #else
-    constexpr htl::gpio::Pin *pinLED1 = nullptr;
-    #endif
-    #ifdef EXIST_LED2
-    constexpr htl::gpio::Pin *pinLED2 = LED2_Instance;
-    #else
-    constexpr htl::gpio::Pin *pinLED2 = nullptr;
-    #endif
-
     #ifdef EXIST_LED1
     LED1_Initialize();
     #endif
     #ifdef EXIST_LED2
     LED2_Initialize();
-    LED2_Toggle();
     #endif
 
-	_ledService = new eos::LedService(pinLED1, pinLED2);
-	addService(_ledService, eos::Task::Priority::normal, 128);
+    #if defined(EXIST_LED1) || defined(EXIST_LED2)
+    configureLedService();
+    #endif
+    configureDisplayService();
+}
+
+
+#if defined(EXIST_LED1) || defined(EXIST_LED2)
+void MyApplication::configureLedService() {
+
+    #ifdef EXIST_LED1
+    constexpr auto pinLED1 = LED1_Instance;
+    #else
+    constexpr gpio::PinDevice *pinLED1 = nullptr;
+    #endif
+    #ifdef EXIST_LED2
+    constexpr auto pinLED2 = LED2_Instance;
+    #else
+    constexpr gpio::PinDevice *pinLED2 = nullptr;
     #endif
 
-	_displayService = new DisplayService();
-	addService(_displayService, eos::Task::Priority::normal, 512);
+    auto ledService = new LedService(pinLED1, pinLED2);
+    addService(ledService, Task::Priority::normal, 128);
+}
+#endif
+
+
+void MyApplication::configureDisplayService() {
+
+    auto displayService = new DisplayService();
+    addService(displayService, Task::Priority::normal, 512);
 }

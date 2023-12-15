@@ -283,7 +283,7 @@ namespace eos {
 
     class Device_ILI9341_SPI: public Device_ILI9341 {
         public:
-            using Pin = htl::gpio::Pin;
+            using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
 
         private:

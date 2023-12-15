@@ -89,7 +89,7 @@ namespace htl {
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinHSYNC() {
 					auto af = internal::PinFunctionInfo<PinFunction::hsync, pin_>::alt;
-                    gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+                    pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_HSPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)
@@ -98,7 +98,7 @@ namespace htl {
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinVSYNC() {
 				    auto af = internal::PinFunctionInfo<PinFunction::vsync, pin_>::alt;
-				    gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+				    pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_VSPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)
@@ -107,7 +107,7 @@ namespace htl {
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinPC() {
 				    auto af = internal::PinFunctionInfo<PinFunction::pc, pin_>::alt;
-                    gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+                    pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_PCPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)
@@ -116,7 +116,7 @@ namespace htl {
 				template <typename pin_, PinPolarity polarity_ = PinPolarity::noChange>
 				void initPinDE() {
 				    auto af = internal::PinFunctionInfo<PinFunction::de, pin_>::alt;
-                    gpio::FastPinX<pin_::portID, pin_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+                    pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 					if constexpr (polarity_ == PinPolarity::activeHigh)
 						LTDC->GCR |= LTDC_GCR_DEPOL;
 					else if constexpr (polarity_ == PinPolarity::activeLow)
@@ -124,63 +124,63 @@ namespace htl {
 				}
 				template <typename pinR2_, typename pinR3_, typename pinR4_, typename pinR5_, typename pinR6_, typename pinR7_>
 				void initPinRX() {
-					gpio::FastPinX<pinR2_::portID, pinR2_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r2, pinR2_>::alt);
-					gpio::FastPinX<pinR3_::portID, pinR3_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r3, pinR3_>::alt);
-					gpio::FastPinX<pinR4_::portID, pinR4_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r4, pinR4_>::alt);
-					gpio::FastPinX<pinR5_::portID, pinR5_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r5, pinR5_>::alt);
-					gpio::FastPinX<pinR6_::portID, pinR6_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r6, pinR6_>::alt);
-					gpio::FastPinX<pinR7_::portID, pinR7_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r7, pinR7_>::alt);
+					pinR2_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r2, pinR2_>::alt);
+					pinR3_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r3, pinR3_>::alt);
+					pinR4_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r4, pinR4_>::alt);
+					pinR5_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r5, pinR5_>::alt);
+					pinR6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r6, pinR6_>::alt);
+					pinR7_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r7, pinR7_>::alt);
 				}
 				template <typename pinR0_, typename pinR1_, typename pinR2_, typename pinR3_, typename pinR4_, typename pinR5_, typename pinR6_, typename pinR7_>
 				void initPinRX() {
-				    gpio::FastPinX<pinR0_::portID, pinR0_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r0, pinR0_>::alt);
-				    gpio::FastPinX<pinR1_::portID, pinR1_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r1, pinR1_>::alt);
-				    gpio::FastPinX<pinR2_::portID, pinR2_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r2, pinR2_>::alt);
-				    gpio::FastPinX<pinR3_::portID, pinR3_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r3, pinR3_>::alt);
-				    gpio::FastPinX<pinR4_::portID, pinR4_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r4, pinR4_>::alt);
-				    gpio::FastPinX<pinR5_::portID, pinR5_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r5, pinR5_>::alt);
-				    gpio::FastPinX<pinR6_::portID, pinR6_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r6, pinR6_>::alt);
-				    gpio::FastPinX<pinR7_::portID, pinR7_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r7, pinR7_>::alt);
+				    pinR0_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r0, pinR0_>::alt);
+				    pinR1_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r1, pinR1_>::alt);
+				    pinR2_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r2, pinR2_>::alt);
+				    pinR3_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r3, pinR3_>::alt);
+				    pinR4_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r4, pinR4_>::alt);
+				    pinR5_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r5, pinR5_>::alt);
+				    pinR6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r6, pinR6_>::alt);
+				    pinR7_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::r7, pinR7_>::alt);
 				}
 				template <typename pinG2_, typename pinG3_, typename pinG4_, typename pinG5_, typename pinG6_, typename pinG7_>
 				void initPinGX() {
-				    gpio::FastPinX<pinG2_::portID, pinG2_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g2, pinG2_>::alt);
-				    gpio::FastPinX<pinG3_::portID, pinG3_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g3, pinG3_>::alt);
-				    gpio::FastPinX<pinG4_::portID, pinG4_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g4, pinG4_>::alt);
-				    gpio::FastPinX<pinG5_::portID, pinG5_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g5, pinG5_>::alt);
-				    gpio::FastPinX<pinG6_::portID, pinG6_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g6, pinG6_>::alt);
-				    gpio::FastPinX<pinG7_::portID, pinG7_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g7, pinG7_>::alt);
+				    pinG2_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g2, pinG2_>::alt);
+				    pinG3_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g3, pinG3_>::alt);
+				    pinG4_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g4, pinG4_>::alt);
+				    pinG5_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g5, pinG5_>::alt);
+				    pinG6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g6, pinG6_>::alt);
+				    pinG7_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g7, pinG7_>::alt);
 				}
 				template <typename pinG0_, typename pinG1_, typename pinG2_, typename pinG3_, typename pinG4_, typename pinG5_, typename pinG6_, typename pinG7_>
 				void initPinGX() {
-				    gpio::FastPinX<pinG0_::portID, pinG0_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g0, pinG0_>::alt);
-				    gpio::FastPinX<pinG1_::portID, pinG1_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g1, pinG1_>::alt);
-				    gpio::FastPinX<pinG2_::portID, pinG2_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g2, pinG2_>::alt);
-				    gpio::FastPinX<pinG3_::portID, pinG3_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g3, pinG3_>::alt);
-				    gpio::FastPinX<pinG4_::portID, pinG4_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g4, pinG4_>::alt);
-				    gpio::FastPinX<pinG5_::portID, pinG5_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g5, pinG5_>::alt);
-				    gpio::FastPinX<pinG6_::portID, pinG6_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g6, pinG6_>::alt);
-				    gpio::FastPinX<pinG7_::portID, pinG7_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g7, pinG7_>::alt);
+				    pinG0_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g0, pinG0_>::alt);
+				    pinG1_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g1, pinG1_>::alt);
+				    pinG2_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g2, pinG2_>::alt);
+				    pinG3_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g3, pinG3_>::alt);
+				    pinG4_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g4, pinG4_>::alt);
+				    pinG5_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g5, pinG5_>::alt);
+				    pinG6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g6, pinG6_>::alt);
+				    pinG7_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::g7, pinG7_>::alt);
 				}
 				template <typename pinB2_, typename pinB3_, typename pinB4_, typename pinB5_, typename pinB6_, typename pinB7_>
 				void initPinBX() {
-				    gpio::FastPinX<pinB2_::portID, pinB2_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b2, pinB2_>::alt);
-				    gpio::FastPinX<pinB3_::portID, pinB3_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b3, pinB3_>::alt);
-				    gpio::FastPinX<pinB4_::portID, pinB4_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b4, pinB4_>::alt);
-				    gpio::FastPinX<pinB5_::portID, pinB5_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b5, pinB5_>::alt);
-				    gpio::FastPinX<pinB6_::portID, pinB6_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b6, pinB6_>::alt);
-				    gpio::FastPinX<pinB7_::portID, pinB7_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b7, pinB7_>::alt);
+				    pinB2_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b2, pinB2_>::alt);
+				    pinB3_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b3, pinB3_>::alt);
+				    pinB4_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b4, pinB4_>::alt);
+				    pinB5_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b5, pinB5_>::alt);
+				    pinB6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b6, pinB6_>::alt);
+				    pinB7_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b7, pinB7_>::alt);
 				}
 				template <typename pinB0_, typename pinB1_, typename pinB2_, typename pinB3_, typename pinB4_, typename pinB5_, typename pinB6_, typename pinB7_>
 				void initPinBX() {
-				    gpio::FastPinX<pinB0_::portID, pinB0_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b0, pinB0_>::alt);
-				    gpio::FastPinX<pinB1_::portID, pinB1_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b1, pinB1_>::alt);
-				    gpio::FastPinX<pinB2_::portID, pinB2_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b2, pinB2_>::alt);
-				    gpio::FastPinX<pinB3_::portID, pinB3_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b3, pinB3_>::alt);
-				    gpio::FastPinX<pinB4_::portID, pinB4_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b4, pinB4_>::alt);
-				    gpio::FastPinX<pinB5_::portID, pinB5_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b5, pinB5_>::alt);
-				    gpio::FastPinX<pinB6_::portID, pinB6_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b6, pinB6_>::alt);
-				    gpio::FastPinX<pinB7_::portID, pinB7_::pinID>::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b7, pinB7_>::alt);
+				    pinB0_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b0, pinB0_>::alt);
+				    pinB1_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b1, pinB1_>::alt);
+				    pinB2_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b2, pinB2_>::alt);
+				    pinB3_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b3, pinB3_>::alt);
+				    pinB4_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b4, pinB4_>::alt);
+				    pinB5_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b5, pinB5_>::alt);
+				    pinB6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b6, pinB6_>::alt);
+				    pinB7_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<PinFunction::b7, pinB7_>::alt);
 				}
 				inline void enable() {
 					LTDC->GCR |= LTDC_GCR_LTDCEN;
