@@ -17,13 +17,6 @@
 	};
 
 
-#define DEF(deviceID, pf, portID, pinID, af)               \
-    template <>                                            \
-    struct PinFunctionInfo2<deviceID, pf, portID, pinID> { \
-        static constexpr gpio::AlternateFunction alt = af; \
-    };
-
-
 namespace htl {
     
 	namespace uart {
@@ -77,62 +70,11 @@ namespace htl {
             
             #ifdef HTL_UART4_EXISTS
             #endif // HTL_UART4_EXISTS
-
-
-            #ifdef HTL_UART1_EXIST
-                DEF(DeviceID::_1, PinFunction::tx,  gpio::PortID::A, gpio::PinID::_9,  gpio::AlternateFunction::_1)
-                DEF(DeviceID::_1, PinFunction::tx,  gpio::PortID::B, gpio::PinID::_6,  gpio::AlternateFunction::_0)
-
-                DEF(DeviceID::_1, PinFunction::rx,  gpio::PortID::A, gpio::PinID::_10, gpio::AlternateFunction::_1)
-                DEF(DeviceID::_1, PinFunction::rx,  gpio::PortID::B, gpio::PinID::_7,  gpio::AlternateFunction::_0)
-
-                DEF(DeviceID::_1, PinFunction::cts, gpio::PortID::A, gpio::PinID::_11, gpio::AlternateFunction::_1)
-                DEF(DeviceID::_1, PinFunction::cts, gpio::PortID::B, gpio::PinID::_4,  gpio::AlternateFunction::_4)
-
-                DEF(DeviceID::_1, PinFunction::rts, gpio::PortID::A, gpio::PinID::_12, gpio::AlternateFunction::_1)
-                DEF(DeviceID::_1, PinFunction::rts, gpio::PortID::B, gpio::PinID::_3,  gpio::AlternateFunction::_4)
-            #endif // HTL_UART1_EXIST
-
-            #ifdef HTL_UART2_EXIST
-                DEF(DeviceID::_2, PinFunction::tx,  gpio::PortID::A, gpio::PinID::_2,  gpio::AlternateFunction::_1)
-                DEF(DeviceID::_2, PinFunction::tx,  gpio::PortID::A, gpio::PinID::_14, gpio::AlternateFunction::_1)
-
-                DEF(DeviceID::_2, PinFunction::rx,  gpio::PortID::A, gpio::PinID::_3,  gpio::AlternateFunction::_1)
-                DEF(DeviceID::_2, PinFunction::rx,  gpio::PortID::A, gpio::PinID::_15, gpio::AlternateFunction::_1)
-
-                DEF(DeviceID::_2, PinFunction::cts, gpio::PortID::A, gpio::PinID::_0,  gpio::AlternateFunction::_1)
-                DEF(DeviceID::_2, PinFunction::cts, gpio::PortID::D, gpio::PinID::_3,  gpio::AlternateFunction::_0)
-
-                DEF(DeviceID::_2, PinFunction::rts, gpio::PortID::A, gpio::PinID::_1,  gpio::AlternateFunction::_1)
-            #endif // HTL_UART2_EXIST
-
-            #ifdef HTL_UART3_EXIST
-                DEF(DeviceID::_2, PinFunction::tx,  gpio::PortID::A, gpio::PinID::_5,  gpio::AlternateFunction::_4)
-                DEF(DeviceID::_2, PinFunction::tx,  gpio::PortID::B, gpio::PinID::_2,  gpio::AlternateFunction::_4)
-                DEF(DeviceID::_2, PinFunction::tx,  gpio::PortID::B, gpio::PinID::_8,  gpio::AlternateFunction::_4)
-                DEF(DeviceID::_2, PinFunction::tx,  gpio::PortID::B, gpio::PinID::_10, gpio::AlternateFunction::_4)
-
-                DEF(DeviceID::_2, PinFunction::rx,  gpio::PortID::B, gpio::PinID::_0,  gpio::AlternateFunction::_4)
-                DEF(DeviceID::_2, PinFunction::rx,  gpio::PortID::B, gpio::PinID::_9,  gpio::AlternateFunction::_4)
-                DEF(DeviceID::_2, PinFunction::rx,  gpio::PortID::B, gpio::PinID::_11, gpio::AlternateFunction::_4)
-
-                DEF(DeviceID::_2, PinFunction::cts, gpio::PortID::A, gpio::PinID::_6,  gpio::AlternateFunction::_4)
-                DEF(DeviceID::_2, PinFunction::cts, gpio::PortID::B, gpio::PinID::_13, gpio::AlternateFunction::_4)
-
-                DEF(DeviceID::_2, PinFunction::rts, gpio::PortID::A, gpio::PinID::_15, gpio::AlternateFunction::_5)
-                DEF(DeviceID::_2, PinFunction::rts, gpio::PortID::B, gpio::PinID::_1,  gpio::AlternateFunction::_4)
-                DEF(DeviceID::_2, PinFunction::rts, gpio::PortID::B, gpio::PinID::_14, gpio::AlternateFunction::_4)
-            #endif // HTL_UART3_EXIST
-
-            #ifdef HTL_UART4_EXISTS
-            #endif // HTL_UART4_EXISTS
-            
 		}
 	}
 }
 
 
-#undef DEF
 #undef ALT_FUNCTION
 
 

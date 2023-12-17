@@ -248,7 +248,7 @@ namespace htl {
 				void initOutput(PinMask mask, OutputMode mode, Speed speed = Speed::medium) const;
 				void deinitialize() const;
 				inline void set(PinMask mask) const {
-					_gpio->BSRR = uint16_t(mask);
+					_gpio->BSRR = mask;
 				}
 				inline void set(PinBit bit) const {
 					_gpio->BSRR = 1 << bit;
@@ -292,7 +292,7 @@ namespace htl {
             private:
                 static PortDeviceX _instance;
             public:
-                static constexpr PortID portID = portID_;
+                static constexpr auto portID = portID_;
                 static constexpr PortDeviceX *pInst = &_instance;
                 static constexpr PortDeviceX &rInst = _instance;
             private:
@@ -368,8 +368,8 @@ namespace htl {
                 static PinDeviceX _instance;
 
             public:
-                static constexpr PortID portID = portID_;
-                static constexpr PinID pinID = pinID_;
+                static constexpr auto portID = portID_;
+                static constexpr auto pinID = pinID_;
                 static constexpr PinDeviceX *pInst = &_instance;
                 static constexpr PinDeviceX &rInst = _instance;
 
@@ -407,39 +407,49 @@ namespace htl {
                 static constexpr auto _bit = PinTraits::bit;
 
             public:
-                static constexpr PortID portID = portID_;
-                static constexpr PinID pinID = pinID_;
+                static constexpr auto portID = portID_;
+                static constexpr auto pinID = pinID_;
                 static constexpr auto pInst = PinDeviceX<portID_, pinID_>::pInst;
 
             public:
                 static void initInput(InputMode mode) {
+                    auto mask = PinMask(_mask);
+                    Activator::activate(mask);
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                    Activator::activate(PinMask(_mask));
-                    internal::initInput(gpio, PinBit(_bit), mode);
+                    auto bit = PinBit(_bit);
+                    internal::initInput(gpio, bit, mode);
                 }
 
                 static void initOutput(OutputMode mode, Speed speed, bool state) {
+                    auto mask = PinMask(_mask);
+                    Activator::activate(mask);
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                    Activator::activate(PinMask(_mask));
-                    internal::initOutput(gpio, PinBit(_bit), mode, speed, state);
+                    auto bit = PinBit(_bit);
+                    internal::initOutput(gpio, bit, mode, speed, state);
                 }
 
                 static void initAnalogic() {
+                    auto mask = PinMask(_mask);
+                    Activator::activate(mask);
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                    Activator::activate(PinMask(_mask));
-                    internal::initAnalogic(gpio, PinBit(_bit));
+                    auto bit = PinBit(_bit);
+                    internal::initAnalogic(gpio, bit);
                 }
 
                 static void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af) {
+                    auto mask = PinMask(_mask);
+                    Activator::activate(PinMask(mask));
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                    Activator::activate(PinMask(_mask));
-                    internal::initAlternate(gpio, PinBit(_bit), mode, speed, af);
+                    auto bit = PinBit(_bit);
+                    internal::initAlternate(gpio, bit, mode, speed, af);
                 }
 
-                static void deinitialize() {
+                static constexpr void deinitialize() {
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                    internal::deinitialize(gpio, PinMask(_mask));
-                    Activator::deactivate(PinMask(_mask));
+                    auto bit = PinBit(_bit);
+                    internal::deinitialize(gpio, bit);
+                    auto mask = PinMask(_mask);
+                    Activator::deactivate(mask);
                 }
 
                 static constexpr void set() {
