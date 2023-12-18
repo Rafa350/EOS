@@ -389,26 +389,16 @@ bool DigOutputService::read(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el servei.
-///
-void DigOutputService::onInitialize() {
-
-    // Inicialitza el servei base.
-    //
-    Service::onInitialize();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Bucle de proces del servei.
+/// \return   True per continuar, false per finalitzar el proces.
 ///
-void DigOutputService::onTask() {
+bool DigOutputService::onTask() {
 
-    while (true) {
-        Command command;
-        while (_commandQueue.pop(command, unsigned(-1)))
-        	processCommand(command);
-    }
+    Command command;
+    while (_commandQueue.pop(command, unsigned(-1)))
+        processCommand(command);
+
+    return true;
 }
 
 

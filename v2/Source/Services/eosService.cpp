@@ -40,28 +40,34 @@ void Service::terminate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Executa les operacions del servei.
+/// \brief    Executa les operacions del inici servei.
+/// \return   True si es correcte i es pot continuar, false en cas d'error
+///           i es vol finalitzar el proces.
 ///
-void Service::taskStart() {
+bool Service::taskStart() {
 
+    bool result = false;
     if (_state == State::initialized) {
         _state = State::running;
-        onTaskStart();
+        result = onTaskStart();
         _state = State::started;
     }
+    return result;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa les operacions del servei.
 ///
-void Service::taskRun() {
+bool Service::taskRun() {
 
+    bool result = false;
     if (_state == State::started) {
         _state = State::running;
-        onTask();
+        result = onTask();
         _state = State::started;
     }
+    return result;
 }
 
 
@@ -85,14 +91,16 @@ void Service::onTerminate() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el inici de les operacions del servei.
 ///
-void Service::onTaskStart() {
+bool Service::onTaskStart() {
 
+    return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les operacions del servei.
 ///
-void Service::onTask() {
+bool Service::onTask() {
 
+    return true;
 }

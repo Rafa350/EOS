@@ -160,60 +160,31 @@ void DigInputService::removeInputs() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio del servei.
+/// \brief    Bucle d'execucio. Es crida repetidament.
+/// \return   True per continuar el bucle, false per finalitzar.
 ///
-void DigInputService::onInitialize() {
+bool DigInputService::onTask() {
 
-    // Inicialitza les entrades al valor actual
-    //
-    for (auto input: _inputs) {
-        if (input->_drv->read()) {
-            input->_pinState = true;
-            input->_pattern = PATTERN_ON;
-        }
-        else {
-            input->_pinState = false;
-            input->_pattern = PATTERN_OFF;
-        }
-        input->_pinPulses = 0;
-        input->_edge = false;
-    }
+    while (_changes.wait(unsigned(-1))) {
 
-    // Inicialitza el servei base
-    //
-    Service::onInitialize();
-}
+        for (auto input: _inputs) {
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Bucle d'execucio.
-///
-void DigInputService::onTask() {
-
-    // Repeteix indefinidament
-    //
-    while (true) {
-
-        // Espera que es notifiquin canvis en les entrades
-        //
-        if (_changes.wait(unsigned(-1))) {
-
-            // Procesa les entrades
-            //
-            for (auto input: _inputs) {
-
+            bool ie = getInterruptState();
+            if (ie)
                 disableInterrupts();
 
-                bool edge = input->_edge;
-                input->_edge = false;
+            bool edge = input->_edge;
+            input->_edge = false;
 
+            if (ie)
                 enableInterrupts();
 
-                if (edge)
-                    notifyChanged(input);
-            }
+            if (edge)
+                notifyChanged(input);
         }
     }
+
+    return true;
 }
 
 
@@ -347,6 +318,17 @@ DigInput::DigInput(
     _scanMode {ScanMode::polling},
     _changedEvent {nullptr},
 	_changedEventEnabled {false} {
+
+    if (_drv->read()) {
+        _pinState = true;
+        _pattern = PATTERN_ON;
+    }
+    else {
+        _pinState = false;
+        _pattern = PATTERN_OFF;
+    }
+    _pinPulses = 0;
+    _edge = false;
 
     if (service != nullptr)
         service->addInput(this);

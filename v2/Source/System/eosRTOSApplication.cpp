@@ -31,11 +31,10 @@ void RTOSApplication::taskCallbackHandler(
 
     auto service = static_cast<Service*>(args.params);
     if (service != nullptr) {
-
-        // TODO: Trobar un mecanisme per finalitzar el bucle
-        service->taskStart();
-    	while (true)
-    		service->taskRun();
+        if (service->taskStart()) {
+            while (service->taskRun())
+                continue;
+        }
     }
 }
 

@@ -44,16 +44,16 @@ namespace eos {
 
             virtual void onInitialize();
             virtual void onTerminate();
-            virtual void onTaskStart();
-            virtual void onTask();
+            virtual bool onTaskStart();
+            virtual bool onTask();
 
         public:
             virtual ~Service() = default;
 
             void initialize();
             void terminate();
-            void taskStart();
-            void taskRun();
+            bool taskStart();
+            bool taskRun();
 
             inline State getState() const {
             	return _state;

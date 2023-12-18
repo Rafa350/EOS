@@ -45,8 +45,7 @@ namespace eos {
             void notifyChanged(DigInput *input);
 
         protected:
-            void onInitialize() override;
-            void onTask() override;
+            bool onTask() override;
 
         public:
             DigInputService();

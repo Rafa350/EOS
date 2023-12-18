@@ -119,8 +119,7 @@ namespace eos {
             bool hasExpired(unsigned timeLimit) const;
 
         protected:
-            void onInitialize() override;
-            void onTask() override;
+            bool onTask() override;
 
         public:
             DigOutputService();

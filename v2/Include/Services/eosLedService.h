@@ -28,8 +28,8 @@ namespace eos {
 			LedService(Pin *pinLED1, Pin *pinLED2 = nullptr);
 
 		protected:
-            void onTaskStart() override;
-			void onTask() override;
+            bool onTaskStart() override;
+			bool onTask() override;
 	};
 
 }

@@ -24,19 +24,21 @@ LedService::LedService(
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'inici d'execucio de la tasca.
 ///
-void LedService::onTaskStart() {
+bool LedService::onTaskStart() {
 
     if (_pinLED1 != nullptr)
         _pinLED1->set();
     if (_pinLED2 != nullptr)
         _pinLED2->clear();
+
+    return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void LedService::onTask() {
+bool LedService::onTask() {
 
     if (_pinLED1 != nullptr)
         _pinLED1->toggle();
@@ -45,4 +47,6 @@ void LedService::onTask() {
         _pinLED2->toggle();
 
     Task::delay(500);
+
+    return true;
 }
