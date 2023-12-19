@@ -34,7 +34,7 @@ namespace eos {
     /// \brief Clase que implementa el driver del pin
     ///
     template <typename pin_>
-    class FastPinDriver_GPIO final: public PinDriver {
+    class PinDriverX_GPIO final: public PinDriver {
         public:
             void set() override {
                 pin_::set();

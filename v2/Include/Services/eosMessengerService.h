@@ -65,8 +65,8 @@ namespace eos {
 			PublisherList _publishers;
 
     	protected:
-            void onInitialize() override;
-            void onTask() override;
+            bool onTaskStart() override;
+            bool onTask() override;
 
         public:
             MessengerService();

@@ -29,7 +29,7 @@ void MessengerService::addPublisher(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el servei.
 ///
-void MessengerService::onInitialize() {
+bool MessengerService::onTaskStart() {
 
     // Crea una tasca per cada publicador
     //
@@ -42,11 +42,15 @@ void MessengerService::onInitialize() {
             &_busTaskEventCallback,
             static_cast<void*>(bus));*/
     }
+
+    return true;
 }
 
 
-void MessengerService::onTask() {
+bool MessengerService::onTask() {
 
     while (true)
         Task::delay(1000);
+
+    return true;
 }

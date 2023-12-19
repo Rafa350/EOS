@@ -154,14 +154,12 @@ namespace htl {
 			private:
 				using SPITraits = internal::SPITraits<deviceID_>;
 			private:
-				static constexpr uint32_t _spiAddr = SPITraits::spiAddr;
-				static constexpr uint32_t _rccEnableAddr = SPITraits::rccEnableAddr;
-				static constexpr uint32_t _rccEnablePos = SPITraits::rccEnablePos;
-				static constexpr uint32_t _rccResetAddr = SPITraits::rccResetAddr;
-				static constexpr uint32_t _rccResetPos = SPITraits::rccResetPos;
+				static constexpr auto _spiAddr = SPITraits::spiAddr;
+				static constexpr auto _rccEnableAddr = SPITraits::rccEnableAddr;
+				static constexpr auto _rccEnablePos = SPITraits::rccEnablePos;
 				static SPIDeviceX _instance;
 			public:
-				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr auto deviceID = deviceID_;
 				static constexpr SPIDeviceX *pInst = &_instance;
 				static constexpr SPIDeviceX &rInst = _instance;
 			private:
@@ -170,12 +168,12 @@ namespace htl {
 				}
 			protected:
 				void activateImpl() override {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
 				void deactivateImpl() override {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
 			public:

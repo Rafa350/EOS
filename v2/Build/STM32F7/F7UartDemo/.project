@@ -558,7 +558,7 @@
 		<link>
 			<name>Src/Framework/STM32/System/system_stm32f7xx.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/Controllers/Serial/eosAsyncSerialDriver.h</name>
@@ -686,19 +686,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlTMR_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR_IRQ.cpp</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htlUART.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlUART.cpp</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlUART_IRQ.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlUART_IRQ.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

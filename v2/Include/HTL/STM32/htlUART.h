@@ -237,12 +237,12 @@ namespace htl {
 			private:
 				using HI = internal::HardwareInfo<deviceID_>;
 			private:
-				static constexpr uint32_t _usartAddr = HI::usartAddr;
-				static constexpr uint32_t _rccEnableAddr = HI::rccEnableAddr;
-				static constexpr uint32_t _rccEnablePos = HI::rccEnablePos;
+				static constexpr auto _usartAddr = HI::usartAddr;
+				static constexpr auto _rccEnableAddr = HI::rccEnableAddr;
+				static constexpr auto _rccEnablePos = HI::rccEnablePos;
 				static UARTDeviceX _instance;
 			public:
-				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr auto deviceID = deviceID_;
 				static constexpr UARTDeviceX *pInst = &_instance;
 				static constexpr UARTDeviceX &rInst = _instance;
 			private:
@@ -251,12 +251,12 @@ namespace htl {
 				}
 			protected:
 				void activate() override {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
 				void deactivate() override{
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
 			public:

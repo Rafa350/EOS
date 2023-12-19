@@ -23,6 +23,8 @@
 #ifndef __STM32F7xx_HAL_CONF_H
 #define __STM32F7xx_HAL_CONF_H
 
+#include "eos.h"
+
 #ifdef __cplusplus
  extern "C" {
 #endif

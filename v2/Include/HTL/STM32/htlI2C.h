@@ -105,7 +105,6 @@ namespace htl {
 				virtual void deactivate() = 0;
 		};
 
-
 		class I2CSlaveDevice: public I2CDevice {
 			public:
 				enum class State {
@@ -196,12 +195,12 @@ namespace htl {
 			private:
 				using I2CTraits = internal::I2CTraits<deviceID_>;
 			private:
-				static constexpr uint32_t _i2cAddr = I2CTraits::i2cAddr;
-				static constexpr uint32_t _rccEnableAddr = I2CTraits::rccEnableAddr;
-				static constexpr uint32_t _rccEnablePos = I2CTraits::rccEnablePos;
+				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
+				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
+				static constexpr auto _rccEnablePos = I2CTraits::rccEnablePos;
 				static I2CSlaveDeviceX _instance;
 			public:
-				static constexpr DeviceID deviceID = deviceID_;
+				static constexpr auto deviceID = deviceID_;
 				static constexpr I2CSlaveDeviceX *pInst = &_instance;
 				static constexpr I2CSlaveDeviceX &rInst = _instance;
 			private:
@@ -210,12 +209,12 @@ namespace htl {
 				}
 			protected:
 				void activate() override {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
 				void deactivate() override {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
+					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
 			public:
@@ -224,21 +223,18 @@ namespace htl {
 				}
 				template <typename pin_>
 				void inline initPinSCL() {
-					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>;
-                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
-					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
-					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>;
-                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
-					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinALERT() {
-					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>;
-                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
-					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
+					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 		};
 
@@ -293,15 +289,13 @@ namespace htl {
 				}
 				template <typename pin_>
 				void inline initPinSCL() {
-					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>;
-                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
-					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
-					using PFI = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>;
-                    using FP = gpio::PinX<pin_::portID, pin_::pinID>;
-					FP::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, PFI::alt);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 		};
 
