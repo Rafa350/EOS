@@ -150,7 +150,7 @@ namespace htl {
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
-				Result listen(uint8_t *buffer, uint16_t bufferSize);
+				Result listen_IRQ(uint8_t *buffer, uint16_t bufferSize);
 				void endListen();
 				inline State getState() const {
 					return _state;

@@ -1,5 +1,5 @@
-#ifndef __appLoop__
-#define __appLoop__
+#ifndef __appMainService__
+#define __appMainService__
 
 
 #include "eos.h"
@@ -7,16 +7,17 @@
 #include "HTL/htlGPIO.h"
 #include "HTL/htlUART.h"
 #include "HTL/htlINT.h"
+#include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 
 
 namespace app {
 
-	class MyAppLoopService: public eos::Service {
+	class MainService: public eos::Service {
 		private:
-        	using TxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::TxCompletedEventArgs&>;
-        	using RxCompletedEventCallback = eos::CallbackP1<MyAppLoopService, const eos::AsyncSerialDriver::RxCompletedEventArgs&>;
+        	using TxCompletedEvent = eos::CallbackP1<MainService, const eos::AsyncSerialDriver::TxCompletedEventArgs&>;
+        	using RxCompletedEvent = eos::CallbackP1<MainService, const eos::AsyncSerialDriver::RxCompletedEventArgs&>;
 
         	static constexpr htl::UARTWordBits _wordBits = htl::UARTWordBits::_8;
         	static constexpr htl::UARTStopBits _stopBits = htl::UARTStopBits::_1;
@@ -30,10 +31,10 @@ namespace app {
 		private:
 			eos::AsyncSerialDriver *_serial;
 
-			TxCompletedEventCallback _txCompletedCallback;
+			TxCompletedEvent _txCompletedEvent;
 			eos::Semaphore _txCompleted;
 
-			RxCompletedEventCallback _rxCompletedCallback;
+			RxCompletedEvent _rxCompletedEvent;
 			eos::Semaphore _rxCompleted;
 			unsigned _rxDataCount;
 
@@ -42,14 +43,14 @@ namespace app {
             void rxCompletedEventHandler(const eos::AsyncSerialDriver::RxCompletedEventArgs &args);
 
 		protected:
-			void onInitialize() override;
-			void onTask() override;
+			bool onTaskStart() override;
+			bool onTask() override;
 
 		public:
-			MyAppLoopService();
+			MainService();
 	};
 }
 
 
-#endif // __appLoop__
+#endif // __appMainService__
 

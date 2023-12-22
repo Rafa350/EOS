@@ -1,44 +1,66 @@
-#include "Services/eosSelector.h"
-#include "Services/eosI2CMaster.h"
-#include "../../../MD-SEL01/SEL01Messages.h"
+#include "Services/eosSelectorService.h"
 
 
 using namespace eos;
 
 
-static const char *serviceName = "SelectorService";
-static const unsigned taskStackSize = 512;
-static const unsigned taskLoopDelay = 25;
-static const TaskPriority taskPriority = TaskPriority::normal;
+#define PATTERN_MASK    0b00001111
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
-/// \param application: Aplicacio a la que pertany.
-/// \param i2cService: El servei de comunicacions I2C
-/// \param addr: Adressa I2C del selector
 ///
 SelectorService::SelectorService(
-    Application *application,
-    I2CMasterService *_i2cService,
-    uint8_t addr):
+    PinDriver *drvINA,
+    PinDriver *drvINB,
+    PinDriver *drvSW) :
     
-    Service(application, serviceName, taskStackSize, taskPriority),
-    i2cService(_i2cService),
-    addr(addr),
-    evNotify(nullptr),
-    state(0),
-    position(0) {
+    _drvINA {drvINA},
+    _drvINB {drvINB},
+    _drvSW {drvSW},
+    _position {0},
+    _button {false},
+    _patternA {0},
+    _patternB{0},
+    _patternSW {0},
+    _shiftA {0},
+    _shiftB {0},
+    _shiftSW {0},
+    _transition {0},
+    _changedEvent {nullptr},
+    _changedEventEnabled {false} {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief    Configura el event 'Changed'
+/// \param    event: El event.
+/// \param    enabled: True si es vol habilitar.
 ///
-SelectorService::~SelectorService() {
-    
-    if (evNotify != nullptr)
-        delete evNotify;
+void SelectorService::setChangedEvent(
+    IChangedEvent &event,
+    bool enabled) {
+
+    _changedEvent = &event;
+    _changedEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita l'event 'Changed'
+///
+void SelectorService::enableChangedEvent() {
+
+    _changedEventEnabled = _changedEvent != nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita l'event 'Changed'
+///
+void SelectorService::disableChangedEvent() {
+
+    _changedEventEnabled = false;
 }
 
 
@@ -46,44 +68,82 @@ SelectorService::~SelectorService() {
 /// \brief Procesa les tasques del servei
 /// \param task: La tasca actual.
 ///
-void SelectorService::run(
-    Task *task) {
+bool SelectorService::onTask() {
 
-    // Repeteix indefinidament
-    //
-    while (true) {
-        
-        SelGetStateMessage query;
-        query.cmd = SEL_CMD_GETSTATE;
-        
-        SelGetStateResponse response;
-        
-        BinarySemaphore endTransactionNotify;
-
-        while (true) {
-            
-            Task::delay(taskLoopDelay);
-            
-            if (i2cService->startTransaction(
-                addr, 
-                &query, sizeof(query), 
-                &response, sizeof(response), 
-                (unsigned) -1,
-                &endTransactionNotify)) {
-                
-                if (endTransactionNotify.take((unsigned) - 1)) {
-                    
-                    if (response.cmd == SEL_CMD_GETSTATE) {
-
-                        if ((state != response.state) || (position != response.position)) {
-                            position = response.position;
-                            state = response.state;
-                            if (evNotify != nullptr)
-                                evNotify->execute(position, state);
-                        }
-                    }
-                }
-            }
+    if (scanEncoder()) {
+        if (_changedEventEnabled) {
+            ChangedEventArgs args = {
+                .position = _position,
+                .button = _button
+            };
+            _changedEvent->execute(this, args);
         }
     }
+
+    Task::delay(50);
+
+    return true;
+}
+
+
+uint8_t SelectorService::getINA() const {
+
+    return _drvINA->read() ? 0x01 : 0x00;
+}
+
+
+uint8_t SelectorService::getINB() const {
+
+    return _drvINB->read() ? 0x01 : 0x00;
+}
+
+
+uint8_t SelectorService::getSW() const {
+
+    return _drvSW->read() ? 0x01 : 0x00;
+}
+
+
+bool SelectorService::scanEncoder() {
+
+    bool moved = false;
+    bool pressed = false;
+
+    // Comprova la entrada INA
+    //
+    _shiftA = ((_shiftA << 1) | getINA()) & PATTERN_MASK;
+    if (_shiftA == _patternA) {
+        _transition = (uint8_t)((_transition << 2) | ((_shiftA & 1) ? 0x00 : 0x01));
+        _patternA = ~_patternA & PATTERN_MASK;
+        moved = true;
+    }
+
+    // Comprova la entrada INB
+    //
+    _shiftB = ((_shiftB << 1) | getINB()) & PATTERN_MASK;
+    if (_shiftB == _patternB) {
+        _transition = (uint8_t)((_transition << 2) | ((_shiftB & 1) ? 0x02 : 0x03));
+        _patternB = ~_patternB & PATTERN_MASK;
+        moved = true;
+    }
+
+    // Procesa les transicions per detectar el patro de moviment
+    //
+    if (moved) {
+        if (_transition == 0b01110010)
+            _position++;
+        else if (_transition == 0b11011000)
+            _position--;
+    }
+
+    // Comprova la entrada SW
+    //
+    _shiftSW = ((_shiftSW << 1) | getSW()) & PATTERN_MASK;
+    if (_shiftSW == _patternSW) {
+        _button = (_shiftSW & 1) == 0;
+        _patternSW = ~_patternSW & PATTERN_MASK;
+        pressed = true;
+    }
+
+    return moved || pressed;
 }

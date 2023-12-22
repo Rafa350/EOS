@@ -61,9 +61,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/appApplication.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/App/appLoopService.h</name>
+			<name>Inc/App/appConfig.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/appLoopService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/appConfig.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/App/appMainService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/appMainService.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/App/eosConfig.h</name>
@@ -86,14 +91,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appApplication.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/App/appLoopService.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appLoopService.cpp</locationURI>
-		</link>
-		<link>
 			<name>Src/App/appMain.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appMain.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/App/appMainService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appMainService.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS</name>
@@ -109,11 +114,6 @@
 			<name>Inc/App/STM32F7/FreeRTOSConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/STM32F7/FreeRTOSConfig.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/App/STM32F7/eosConfig.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/STM32F7/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/App/STM32F7/stm32f7xx_hal_conf.h</name>
@@ -279,11 +279,6 @@
 			<name>Inc/Framework/EOS/HAL/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/Framework/EOS/HAL/halTMR.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32</name>
@@ -616,19 +611,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HTL/STM32/htlTMR_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR_IRQ.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/htlUART.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART.h</locationURI>
-		</link>
-		<link>
-			<name>Inc/Framework/EOS/HTL/STM32/htlUART_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART_IRQ.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/System/Collections/eosFIFOContainer.h</name>
@@ -669,11 +654,6 @@
 			<name>Src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HAL/STM32/halTMR.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32/F7</name>

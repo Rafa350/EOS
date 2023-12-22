@@ -1,44 +1,60 @@
+#pragma once
 #ifndef __eosSelectorService__
 #define __eosSelectorService__
 
 
 #include "eos.h"
-#include "System/Core/eosCallbacks.h"
+#include "Controllers/Pin/Drivers/GPIO/eosPinDriver_GPIO.h"
+#include "System/eosCallbacks.h"
 #include "Services/eosService.h"
 
 
 namespace eos {
 
-    class Application;
-    class I2CMasterService;
+    class SelectorService final: public Service {
+        public:
+            struct ChangedEventArgs {
+                int16_t position;
+                bool button;
+            };
+            using IChangedEvent = ICallbackP2<const SelectorService*, const ChangedEventArgs&>;
+            template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const SelectorService*, const ChangedEventArgs&>;
 
-    typedef int16_t SelectorPosition;
-    typedef uint8_t SelectorState;
-
-    class SelectorService: public Service {
         private:
-            typedef ICallbackP2<SelectorPosition, SelectorState> ISelectorServiceEvent;
+            PinDriver * const _drvINA;
+            PinDriver * const _drvINB;
+            PinDriver * const _drvSW;
+
+            int16_t _position;
+            bool _button;
+
+            uint8_t _patternA;
+            uint8_t _patternB;
+            uint8_t _patternSW;
+            uint8_t _shiftA;
+            uint8_t _shiftB;
+            uint8_t _shiftSW;
+            uint8_t _transition;
+
+            IChangedEvent *_changedEvent;
+            bool _changedEventEnabled;
 
         private:
-            uint8_t addr;
-            I2CMasterService *i2cService;
-            SelectorPosition position;
-            SelectorState state;
-            ISelectorServiceEvent *evNotify;
+            bool scanEncoder();
+            uint8_t getINA() const;
+            uint8_t getINB() const;
+            uint8_t getSW() const;
+
+        protected:
+            bool onTaskStart() override;
+            bool onTask() override;
 
         public:
-            SelectorService(Application *application, I2CMasterService *i2cService, uint8_t addr);
-            ~SelectorService();
+            SelectorService(PinDriver *drvINA, PinDriver *drvINB, PinDriver *drvSW);
 
-            template <class cls>
-            void setNotifyEventHandler(cls *instance, void (cls::*method)(SelectorPosition, SelectorState)) {
-                if (evNotify != nullptr)
-                    delete evNotify;
-                evNotify = new CallbackP2<cls, SelectorPosition, SelectorState>(instance, method);
-            }
-
-        private:
-            void run(Task *task);
+            void setChangedEvent(IChangedEvent &event, bool enabled);
+            void enableChangedEvent();
+            void disableChangedEvent();
     };
 }
 

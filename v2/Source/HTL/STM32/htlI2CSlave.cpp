@@ -6,10 +6,10 @@ using namespace htl;
 using namespace htl::i2c;
 
 
-static void i2cSetTimming(I2C_TypeDef *i2c, uint8_t prescaler, uint8_t scldel,
+static void setTimming(I2C_TypeDef *i2c, uint8_t prescaler, uint8_t scldel,
         uint8_t sdadel, uint8_t sclh, uint8_t scll);
-static void i2cSetClockSource(I2C_TypeDef *i2c, ClockSource clockSource);
-static ClockSource i2cGetClockSource(I2C_TypeDef *i2c);
+static void setClockSource(I2C_TypeDef *i2c, ClockSource clockSource);
+static ClockSource getClockSource(I2C_TypeDef *i2c);
 
 
 /// ----------------------------------------------------------------------
@@ -54,7 +54,7 @@ Result I2CSlaveDevice::initialize(
 
 		// Configura els parametres de timing
 		//
-		i2cSetTimming(_i2c, prescaler, scldel, sdadel, sclh, scll);
+		setTimming(_i2c, prescaler, scldel, sdadel, sclh, scll);
 
 		// Configura l'adressa I2C
 		//
@@ -108,7 +108,7 @@ Result I2CSlaveDevice::deinitialize() {
 /// \param    buffer: Buffer de dades.
 /// \param    bufferSize: Tamany del buffer de dades.
 ///
-Result I2CSlaveDevice::listen(
+Result I2CSlaveDevice::listen_IRQ(
 	uint8_t *buffer,
 	uint16_t bufferSize) {
 
@@ -430,7 +430,7 @@ void I2CSlaveDevice::notifyTxCompleted() {
 /// \param    i2c: Els registres de hardware del dispositiu.
 /// \param    clockSource: El rellotge.
 ///
-static void i2cSetClockSource(
+static void setClockSource(
     I2C_TypeDef *i2c,
     ClockSource clockSource) {
 
@@ -488,7 +488,7 @@ static void i2cSetClockSource(
 /// \param    sclh:
 /// \param    scll:
 ///
-static void i2cSetTimming(
+static void setTimming(
     I2C_TypeDef *i2c,
     uint8_t prescaler,
     uint8_t scldel,

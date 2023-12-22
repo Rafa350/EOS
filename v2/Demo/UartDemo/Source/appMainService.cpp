@@ -1,7 +1,8 @@
 #include "eos.h"
 #include "Controllers/Serial/eosAsyncSerialDriver_UART.h"
+
 #include "appApplication.h"
-#include "appLoopService.h"
+#include "appMainService.h"
 
 
 using namespace eos;
@@ -12,10 +13,10 @@ using namespace app;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-MyAppLoopService::MyAppLoopService():
+MainService::MainService():
 	_serial(nullptr),
-	_txCompletedCallback(*this, &MyAppLoopService::txCompletedEventHandler),
-	_rxCompletedCallback(*this, &MyAppLoopService::rxCompletedEventHandler) {
+	_txCompletedEvent(*this, &MainService::txCompletedEventHandler),
+	_rxCompletedEvent(*this, &MainService::rxCompletedEventHandler) {
 
 }
 
@@ -23,12 +24,12 @@ MyAppLoopService::MyAppLoopService():
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
 ///
-void MyAppLoopService::onInitialize() {
+bool MainService::onTaskStart() {
 
 	// Inicialitza el LED
 	//
-	LED_GPIO::initOutput(GPIODriver::pushPull);
-	LED_GPIO::clear();
+	LED1_Initialize();
+	LED1_Off();
 
     // Inicialitza la UART
 	//
@@ -51,21 +52,23 @@ void MyAppLoopService::onInitialize() {
 	//
 	_serial = new AsyncSerialDriver_UART(htl::getUART<COM_UART>());
 	_serial->initialize();
-	_serial->enableTxCompletedCallback(_txCompletedCallback);
-	_serial->enableRxCompletedCallback(_rxCompletedCallback);
+	_serial->setTxCompletedEvent(_txCompletedEvent);
+	_serial->setRxCompletedEvent(_rxCompletedEvent);
+
+	return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio.
 ///
-void MyAppLoopService::onTask() {
+bool MainService::onTask() {
 
 	uint8_t buffer[10];
 
 	while (true) {
 		if (_serial->receive(buffer, sizeof(buffer))) {
-			LED_GPIO::toggle();
+			LED1_Toggle();
 			if (_rxCompleted.wait(unsigned(-1))) {
 				if (_rxDataCount > 0) {
 					if (_serial->transmit(buffer, _rxDataCount))
@@ -74,6 +77,8 @@ void MyAppLoopService::onTask() {
 			}
 		}
 	}
+
+	return true;
 }
 
 
@@ -81,7 +86,7 @@ void MyAppLoopService::onTask() {
 /// \brief    : Procesa l'event del UART txCompleted
 /// \params   : args : Parametres del event.
 ///
-void MyAppLoopService::txCompletedEventHandler(
+void MainService::txCompletedEventHandler(
 	const AsyncSerialDriver::TxCompletedEventArgs &args) {
 
 	_txCompleted.releaseISR();
@@ -92,7 +97,7 @@ void MyAppLoopService::txCompletedEventHandler(
 /// \brief    : Procesa l'event del UART rxCompleted
 /// \params   : args : Parametres del event.
 ///
-void MyAppLoopService::rxCompletedEventHandler(
+void MainService::rxCompletedEventHandler(
 	const AsyncSerialDriver::RxCompletedEventArgs &args) {
 
 	_rxDataCount = args.count;

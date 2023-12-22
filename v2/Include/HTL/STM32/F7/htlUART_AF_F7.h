@@ -12,56 +12,53 @@
 #if defined(EOS_PLATFORM_STM32F7)
 
 
+#define ALT_FUNCTION(id, fn, pin, af)                    \
+    template <>                                          \
+    struct PinFunctionInfo<DeviceID::_##id, fn, pin> { \
+        static constexpr gpio::AlternateFunction alt = af;   \
+    };
+
+
 namespace htl {
 
-	#ifdef HTL_UART1_EXIST
-		template <>
-		struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
-		template <>
-		struct UARTPinTrait<UARTChannel::_1, GPIO_B7, UARTPin::RX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
-	#endif
+    namespace uart {
 
-	#ifdef HTL_UART2_EXIST
-		template <>
-		struct UARTPinTrait<UARTChannel::_2, GPIO_A9, UARTPin::TX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
-		template <>
-		struct UARTPinTrait<UARTChannel::_2, GPIO_B7, UARTPin::RX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
-	#endif
+        namespace internal {
 
-	#ifdef HTL_UART3_EXIST
-	#endif
+            #ifdef HTL_UART1_EXIST
+            ALT_FUNCTION(1, PinFunction::tx,  gpio::PinA9,  gpio::AlternateFunction::_8)
 
-	#ifdef HTL_UART4_EXIST
-	#endif
+            ALT_FUNCTION(1, PinFunction::rx,  gpio::PinB7,  gpio::AlternateFunction::_8)
+            #endif
 
-	#ifdef HTL_UART5_EXIST
-	#endif
+            #ifdef HTL_UART2_EXIST
+            ALT_FUNCTION(2, PinFunction::tx,  gpio::PinA9,  gpio::AlternateFunction::_8)
 
-	#ifdef HTL_UART6_EXIST
-		template <>
-		struct UARTPinTrait<UARTChannel::_6, GPIO_C6, UARTPin::TX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
+            ALT_FUNCTION(2, PinFunction::rx,  gpio::PinB7,  gpio::AlternateFunction::_8)
+            #endif
 
-		template <>
-		struct UARTPinTrait<UARTChannel::_6, GPIO_C7, UARTPin::RX> {
-			static constexpr GPIOAlt alt = GPIOAlt::_8;
-		};
-	#endif
+            #ifdef HTL_UART3_EXIST
+            #endif
 
-	#ifdef HTL_UART7_EXIST
-	#endif
+            #ifdef HTL_UART4_EXIST
+            #endif
 
-	#ifdef HTL_UART8_EXIST
-	#endif
+            #ifdef HTL_UART5_EXIST
+            #endif
+
+            #ifdef HTL_UART6_EXIST
+            ALT_FUNCTION(6, PinFunction::tx,  gpio::PinC6,  gpio::AlternateFunction::_8)
+
+            ALT_FUNCTION(2, PinFunction::rx,  gpio::PinC7,  gpio::AlternateFunction::_8)
+            #endif
+
+            #ifdef HTL_UART7_EXIST
+            #endif
+
+            #ifdef HTL_UART8_EXIST
+            #endif
+        }
+    }
 }
 
 

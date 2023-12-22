@@ -90,6 +90,11 @@ namespace htl {
 			sysclk,
 			hsi,
 			lse,
+            #elif defined(EOS_PLATFORM_STM32F7)
+            pclk,
+            sysclk,
+            hsi,
+            lse,
             #elif defined(EOS_PLATFORM_STM32G0)
 			pclk,
 			sysclk,
@@ -147,8 +152,6 @@ namespace htl {
 			template <DeviceID, PinFunction, typename>
 			struct PinFunctionInfo;
 
-			template <DeviceID, PinFunction, gpio::PortID, gpio::PinID>
-            struct PinFunctionInfo2;
 		}
 
 		enum class Results {
@@ -319,10 +322,10 @@ namespace htl {
 			using UARTDevice6 = UARTDeviceX<DeviceID::_6>;
 		#endif
 		#ifdef HTL_UART7_EXIST
-			using UARTDevice7 = UART_x<UARTChannel::_7>;
+			using UARTDevice7 = UARTDeviceX<DeviceID::_7>;
 		#endif
 		#ifdef HTL_UART8_EXIST
-			using UARTDevice8 = UART_x<UARTChannel::_8>;
+			using UARTDevice8 = UARTDeviceX<DeviceID::_8>;
 		#endif
 
 		namespace internal {
@@ -390,8 +393,12 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_5> {
 				static constexpr uint32_t usartAddr = UART5_BASE;
-				static constexpr INTVector vector = INTVector::uart5;
 				static constexpr bool supportedRxTimeout = true;
+                #if defined(EOS_PLATFORM_STM32F4)
+                #elif defined(EOS_PLATFORM_STM32F7)
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART5EN_Pos;
+                #endif
 			};
 			#endif
 
@@ -399,8 +406,12 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_6> {
 				static constexpr uint32_t usartAddr = USART6_BASE;
-				static constexpr INTVector vector = INTVector::uart6;
 				static constexpr bool supportedRxTimeout = true;
+                #if defined(EOS_PLATFORM_STM32F4)
+                #elif defined(EOS_PLATFORM_STM32F7)
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+                static constexpr uint32_t rccEnablePos = RCC_APB2ENR_USART6EN_Pos;
+                #endif
 			};
 			#endif
 
@@ -408,8 +419,12 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_7> {
 				static constexpr uint32_t usartAddr = UART7_BASE;
-				static constexpr INTVector vector = INTVector::uart7;
 				static constexpr bool supportedRxTimeout = true;
+                #if defined(EOS_PLATFORM_STM32F4)
+                #elif defined(EOS_PLATFORM_STM32F7)
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART7EN_Pos;
+                #endif
 			};
 			#endif
 
@@ -417,8 +432,12 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_8> {
 				static constexpr uint32_t usartAddr = UART8_BASE;
-				static constexpr INTVector vector = INTVector::uart8;
 				static constexpr bool supportedRxTimeout = true;
+                #if defined(EOS_PLATFORM_STM32F4)
+                #elif defined(EOS_PLATFORM_STM32F7)
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART8EN_Pos;
+                #endif
 			};
 			#endif
 		}

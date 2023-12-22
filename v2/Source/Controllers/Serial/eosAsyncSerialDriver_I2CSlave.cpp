@@ -97,7 +97,7 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
         // A partir d'aqui, es generen interrupcions
         // cada cop que hi han dades disposibles.
 		//
-		_devI2C->listen(data, dataSize);
+		_devI2C->listen_IRQ(data, dataSize);
 
 		return true;
 	}

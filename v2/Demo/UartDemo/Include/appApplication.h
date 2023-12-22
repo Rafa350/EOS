@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __appApplication__
 #define __appApplication__
 
@@ -6,21 +7,9 @@
 #include "System/eosRTOSApplication.h"
 
 
-namespace eos {
-
-	class MessengerService;
-}
-
-
 namespace app {
 
-    class MyAppLoopService;
-
     class MyApplication: public eos::RTOSApplication {
-        private:
-            MyAppLoopService *_loopService;
-            eos::MessengerService *_messengerService;
-
         public:
             MyApplication();
 

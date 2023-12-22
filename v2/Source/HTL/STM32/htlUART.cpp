@@ -7,7 +7,8 @@ using namespace htl;
 using namespace htl::uart;
 
 
-static ClockSource uartGetClockSource(USART_TypeDef *usart);
+static ClockSource getClockSource(USART_TypeDef *usart);
+static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
 
 
 /// ----------------------------------------------------------------------
@@ -236,37 +237,10 @@ void UARTDevice::setTimming(
     		break;
     }
 
-    uint32_t fclk;
     if (clockSource == ClockSource::automatic)
-    	clockSource = uartGetClockSource(_usart);
-    switch (clockSource) {
-    	default:
-    	case ClockSource::pclk:
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-    		if ((uint32_t(_usart) == USART1_BASE) ||
-    			(uint32_t(_usart) == USART6_BASE))
-    			fclk =  clock::getClockFrequency(clock::ClockID::pclk2);
-    		else
-			#endif
-    			fclk = clock::getClockFrequency(clock::ClockID::pclk);
-    		break;
+    	clockSource = getClockSource(_usart);
 
-    	case ClockSource::sysclk:
-    		fclk = clock::getClockFrequency(clock::ClockID::sysclk);
-    		break;
-
-		case ClockSource::hsi16:
-			#if defined(EOS_PLATFORM_STM32G0)
-			fclk = clock::getClockFrequency(clock::ClockID::hsi16);
-			#else
-			fclk = clock::getClockFrequency(clock::ClockID::hsi);
-			#endif
-			break;
-
-		case ClockSource::lse:
-    		fclk = clock::getClockFrequency(clock::ClockID::lse);
-    		break;
-    }
+    uint32_t fclk = getClockFrequency(_usart, clockSource);
 
     uint32_t div;
     if (baudMode == BaudMode::div)
@@ -487,7 +461,7 @@ void UARTDevice::notifyRxCompleted(
 /// \param    regs: El bloc de registres
 /// \return   La opcio corresponent al rellotge.
 ///
-static ClockSource uartGetClockSource(
+static ClockSource getClockSource(
     USART_TypeDef *usart) {
 
     uint8_t sclk = 0;
@@ -568,12 +542,71 @@ static ClockSource uartGetClockSource(
     }
 
 #if defined(EOS_PLATFORM_STM32F4)
-    static const ClockSource csTbl[4] = {ClockSource::pclk1, ClockSource::sysclk, ClockSource::hsi, ClockSource::lse};
+    static const ClockSource csTbl[4] = {
+        ClockSource::pclk1,
+        ClockSource::sysclk,
+        ClockSource::hsi,
+        ClockSource::lse
+    };
+#elif defined(EOS_PLATFORM_STM32F7)
+    static const ClockSource csTbl[4] = {
+        ClockSource::pclk,
+        ClockSource::sysclk,
+        ClockSource::hsi,
+        ClockSource::lse
+    };
 #elif defined(EOS_PLATFORM_STM32G0)
-    static const ClockSource csTbl[4] = {ClockSource::pclk, ClockSource::sysclk, ClockSource::hsi16, ClockSource::lse};
+    static const ClockSource csTbl[4] = {
+        ClockSource::pclk,
+        ClockSource::sysclk,
+        ClockSource::hsi16,
+        ClockSource::lse
+    };
 #else
     #error "Unknown platform"
 #endif
 
     return csTbl[sclk];
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte la frequencia del rellotge de la uart.
+/// \param    usart: El bloc de registres del dispositiu.
+/// \param    clockSource: El rellotge asignat.
+/// \return   La frequencia del rellotge.Zero en cas d'error.
+///
+static unsigned getClockFrequency(
+    USART_TypeDef *usart,
+    ClockSource clockSource) {
+
+    switch (clockSource) {
+        case ClockSource::pclk:
+            #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+            if ((uint32_t(_usart) == USART1_BASE) ||
+                (uint32_t(_usart) == USART6_BASE))
+                return clock::getClockFrequency(clock::ClockID::pclk2);
+            else
+            #endif
+                return clock::getClockFrequency(clock::ClockID::pclk);
+
+        case ClockSource::sysclk:
+            return clock::getClockFrequency(clock::ClockID::sysclk);
+
+        #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+        case ClockSource::hsi:
+            return clock::getClockFrequency(clock::ClockID::hsi);
+        #endif
+
+        #if defined(EOS_PLATFORM_STM32G0)
+        case ClockSource::hsi16:
+            return clock::getClockFrequency(clock::ClockID::hsi16);
+        #endif
+
+        case ClockSource::lse:
+            return clock::getClockFrequency(clock::ClockID::lse);
+
+        default:
+            return 0;
+    }
 }

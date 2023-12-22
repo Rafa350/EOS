@@ -1,33 +1,35 @@
 #include "eos.h"
-#include "HTL/STM32/htlTMR_IRQ.h"
-#include "HTL/STM32/htlUART_IRQ.h"
+#include "HTL/STM32/htlTMR.h"
+#include "HTL/STM32/htlUART.h"
 
 
 using namespace htl;
+using namespace htl::uart;
+using namespace htl::tmr;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el vector d'interrupcio TIM3_IRQn
+/// \brief    Procesa la interrupcio
 ///
 extern "C" void USART6_IRQHandler() {
 
-	UART_6_InterruptHandler();
+	UARTDevice6::interruptHandler();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el vector d'interrupcio TIM2_IRQn
+/// \brief    Procesa la interrupcio
 ///
 extern "C" void TIM2_IRQHandler() {
 
-	TMR_2_InterruptHandler();
+	TMRDevice2::interruptHandler();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el vector d'interrupcio TIM3_IRQn
+/// \brief    Procesa la interrupcio
 ///
 extern "C" void TIM3_IRQHandler() {
 
-	TMR_3_InterruptHandler();
+	TMRDevice3::interruptHandler();
 }
