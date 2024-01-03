@@ -14,11 +14,11 @@ namespace eos {
 
 	/// \brief Interficie del driver del display.
 	///
-    class IDisplayDriver {
+    class DisplayDriver {
         public:
 			/// \brief Destructor
 			///
-    		virtual ~IDisplayDriver() = default;
+    		virtual ~DisplayDriver() = default;
 
     		/// \brief Inicialitza el driver.
     		///

@@ -15,10 +15,6 @@ namespace app {
 
         protected:
             void onInitialize();
-
-        private:
-            void initializeHardware();
-            void initializeServices();
     };
 }
 

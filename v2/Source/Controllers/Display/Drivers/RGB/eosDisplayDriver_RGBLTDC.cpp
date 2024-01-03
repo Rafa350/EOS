@@ -247,6 +247,9 @@ void DisplayDriver_RGBLTDC::initializeGPIO() {
 ///
 void DisplayDriver_RGBLTDC::initializeLTDC() {
 
+    auto width = getWidth();
+    auto height = getHeight();
+
 	// Inicialitza el modul LTDC
 	//
 	_devLTDC->initPinPC<PinPC, _pcPol>();
@@ -256,7 +259,7 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	_devLTDC->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
 	_devLTDC->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
 	_devLTDC->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	_devLTDC->initialize(_displayWidth, _displayHeight, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	_devLTDC->initialize(width, height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	_devLTDC->setBackgroundColor(0x0000FF);
 
 	// Inicialitza la capa 1
@@ -272,12 +275,12 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
 				ltdc::PixelFormat::rgb565;
 
-	_devLTDCLayer->setWindow(0, 0, _displayWidth, _displayHeight);
+	_devLTDCLayer->setWindow(0, 0, width, height);
 	_devLTDCLayer->setFrameFormat(
 		pixelFormat,
-		_displayWidth * Color::bytes,
-		((_displayWidth * Color::bytes) + 63) & 0xFFFFFFC0,
-		_displayHeight);
+		width * Color::bytes,
+		((width * Color::bytes) + 63) & 0xFFFFFFC0,
+		height);
 	_devLTDCLayer->setConstantAlpha(255);
 	_devLTDCLayer->setDefaultColor(0x000000);
 

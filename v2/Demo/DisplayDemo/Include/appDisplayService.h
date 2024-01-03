@@ -10,7 +10,7 @@
 
 namespace eos {
 
-	class IDisplayDriver;
+	class DisplayDriver;
 	class Graphics;
 }
 
@@ -23,7 +23,7 @@ namespace app {
 			static constexpr uint32_t _displayHeight = DISPLAY_HEIGHT;
 			static constexpr uint32_t _displayBuffer = DISPLAY_BUFFER;
 
-			eos::IDisplayDriver *_driver;
+			eos::DisplayDriver *_driver;
 	        eos::Graphics *_graphics;
 	        eos::Text _text;
 	        int _maxX;
@@ -47,8 +47,8 @@ namespace app {
 	        DisplayService();
 
 	    protected:
-	        void onInitialize();
-	        void onTask();
+	        bool onTaskStart();
+	        bool onTask();
 
 	    private:
 	        void drawBackground(const char *title);

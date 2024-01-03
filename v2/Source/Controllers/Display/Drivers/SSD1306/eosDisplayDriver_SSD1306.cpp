@@ -252,22 +252,23 @@ void DisplayDriver_SSD1306::setPixels(
 ///
 void DisplayDriver_SSD1306::refresh() {
 
-    uint8_t *buffer = _frameBuffer->getBuffer();
+    auto buffer = _frameBuffer->getBuffer();
+    auto width = _frameBuffer->getWidth();
+    auto height = _frameBuffer->getHeight();
 
     uint8_t command[3];
     command[0] = 0x0B;
     command[1] = 0x00;
     command[2] = 0x10;
 
-
-    for (uint8_t i = 0, ii = _displayHeight / 8; i < ii; i++) {
+    for (uint8_t i = 0, ii = height / 8; i < ii; i++) {
 
         _device->writeCommand(command, sizeof(command));
-        _device->writeData(buffer, _displayWidth);
+        _device->writeData(buffer, width);
 
         // Pasa a la seguent pagina
         //
         command[0] += 1;
-        buffer += _displayWidth;
+        buffer += width;
     }
 }

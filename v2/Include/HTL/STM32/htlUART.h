@@ -55,7 +55,8 @@ namespace htl {
 			    defined(EOS_PLATFORM_STM32F7)
 				_7,
 			#endif
-			_8
+			_8,
+			_9
 		};
 
 		enum class StopBits {
@@ -334,7 +335,10 @@ namespace htl {
 			template <>
 			struct HardwareInfo<DeviceID::_1> {
 				static constexpr uint32_t usartAddr = USART1_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
+                #if defined(EOS_PLATFORM_STM32F7)
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+                static constexpr uint32_t rccEnablePos = RCC_APB2ENR_USART1EN_Pos;
+				#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR2_USART1EN_Pos;
 				#endif

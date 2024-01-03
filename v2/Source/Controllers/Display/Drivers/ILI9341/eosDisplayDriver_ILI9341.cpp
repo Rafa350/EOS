@@ -11,11 +11,15 @@ using namespace eos;
 /// \brief    Contructor.
 ///
 DisplayDriver_ILI9341::DisplayDriver_ILI9341(
-    Device_ILI9341 *device):
+    Device_ILI9341 *device,
+    int16_t displayWidth,
+    int16_t displayHeight):
 
     _device {device},
-	_maxX(_displayWidth - 1),
-	_maxY(_displayHeight - 1) {
+    _displayWidth {displayWidth},
+    _displayHeight {displayHeight},
+	_maxX {displayWidth - 1},
+	_maxY {displayHeight - 1} {
 }
 
 

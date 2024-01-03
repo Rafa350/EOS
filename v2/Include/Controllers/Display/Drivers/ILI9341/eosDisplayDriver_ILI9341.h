@@ -12,18 +12,16 @@ namespace eos {
     
     class Device_ILI9341;
 
-    class DisplayDriver_ILI9341: public IDisplayDriver {
-    	private:
-    		constexpr static int16_t _displayWidth = DISPLAY_WIDTH;
-    		constexpr static int16_t _displayHeight = DISPLAY_HEIGHT;
-
+    class DisplayDriver_ILI9341: public DisplayDriver {
     	private:
             Device_ILI9341 * const _device;
+            int16_t _displayWidth;
+            int16_t _displayHeight;
     		int16_t _maxX;
     		int16_t _maxY;
 
         public:
-            DisplayDriver_ILI9341(Device_ILI9341 *device);
+            DisplayDriver_ILI9341(Device_ILI9341 *device, int16_t displayWidth, int16_t displayHeight);
 
             void initialize() override;
             void deinitialize() override;

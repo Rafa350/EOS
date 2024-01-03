@@ -15,7 +15,7 @@ namespace eos {
 
     class Device_ILI9341;
 
-    class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
+    class DisplayDriver_ILI9341LTDC: public DisplayDriver {
     	private:
 			using PinDE = DISPLAY_DE_Pin;
 			using PinHSYNC = DISPLAY_HSYNC_Pin;
@@ -50,10 +50,6 @@ namespace eos {
 			static constexpr htl::ltdc::PinPolarity _vSyncPol = DISPLAY_VSYNC_POL;
 			static constexpr htl::ltdc::PinPolarity _dePol    = DISPLAY_DE_POL;
 			static constexpr htl::ltdc::PinPolarity _pcPol    = DISPLAY_PC_POL;
-			static constexpr uint16_t _width       = DISPLAY_WIDTH;
-			static constexpr uint16_t _height      = DISPLAY_HEIGHT;
-			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;
-
 			static constexpr htl::ltdc::LTDCDevice *_ltdc = htl::ltdc::LTDCDevice::pInst;
             static constexpr htl::ltdc::LTDCLayerDevice1 *_ltdcLayer = htl::ltdc::LTDCLayerDevice1::pInst;
 
@@ -73,8 +69,8 @@ namespace eos {
             void setOrientation(DisplayOrientation orientation) override;
             int16_t getMaxX() const override { return _frameBuffer->getMaxX(); }
             int16_t getMaxY() const override { return _frameBuffer->getMaxY(); }
-            int16_t getWidth() const override { return _width; }
-            int16_t getHeight() const override { return _height; }
+            int16_t getWidth() const override { return _frameBuffer->getWidth(); }
+            int16_t getHeight() const override { return _frameBuffer->getHeight(); }
 
             void clear(Color color) override;
             void setPixel(int16_t x, int16_t y, Color color) override;

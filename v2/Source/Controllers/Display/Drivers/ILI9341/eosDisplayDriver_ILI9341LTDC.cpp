@@ -216,9 +216,12 @@ void DisplayDriver_ILI9341LTDC::refresh() {
 ///
 void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
+    auto width = _frameBuffer->getWidth();
+    auto height = _frameBuffer->getHeight();
+
 	// Inicialitza el modul LTDC
 	//
-	_ltdc->initialize(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
+	_ltdc->initialize(width, height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	_ltdc->initPinDE<PinDE, _dePol>();
 	_ltdc->initPinHSYNC<PinHSYNC, _hSyncPol>();
 	_ltdc->initPinVSYNC<PinVSYNC,_vSyncPol>();
@@ -239,13 +242,13 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 		Color::format == ColorFormat::al44 ? ltdc::PixelFormat::al44 :
 		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
         ltdc::PixelFormat::rgb565;
-	_ltdcLayer->setWindow(0, 0, _width, _height);
+	_ltdcLayer->setWindow(0, 0, width, height);
 	_ltdcLayer->setFrameFormat(
 		pixelFormat,
-		_width * Color::bytes,
-		((_width * Color::bytes) + 63) & 0xFFFFFFC0,
-		_height);
-	_ltdcLayer->setFrameBuffer(reinterpret_cast<void*>(_buffer));
+		width * Color::bytes,
+		((width * Color::bytes) + 63) & 0xFFFFFFC0,
+		height);
+    _ltdcLayer->setFrameBuffer(reinterpret_cast<void*>(_frameBuffer->getBuffer()));
 	_ltdcLayer->enable();
 
 	_ltdc->reload();

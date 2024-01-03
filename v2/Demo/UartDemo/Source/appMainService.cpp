@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "Controllers/Serial/eosAsyncSerialDriver_UART.h"
 
+#include "appConfig.h"
 #include "appApplication.h"
 #include "appMainService.h"
 
@@ -14,9 +15,7 @@ using namespace app;
 /// \brief    Constructor.
 ///
 MainService::MainService():
-	_serial(nullptr),
-	_txCompletedEvent(*this, &MainService::txCompletedEventHandler),
-	_rxCompletedEvent(*this, &MainService::rxCompletedEventHandler) {
+	_uartNotifyEvent {*this, &MainService::uartNotifyEventHandler} {
 
 }
 
@@ -33,27 +32,24 @@ bool MainService::onTaskStart() {
 
     // Inicialitza la UART
 	//
-	COM_UART::initialize();
-	COM_UART::initTXPin<COM_TX_GPIO>();
-	COM_UART::initRXPin<COM_RX_GPIO>();
-	COM_UART::setProtocol(_wordBits, _parity, _stopBits);
+	hw::devUART->initPinTX<hw::PinTX>();
+	hw::devUART->initPinRX<hw::PinRX>();
+	hw::devUART->initialize();
+
+	hw::devUART->setProtocol(htl::uart::WordBits::_8, htl::uart::Parity::none,
+	        htl::uart::StopBits::_1, htl::uart::Handsake::none);
 #if defined( EOS_PLATFORM_STM32)
-	COM_UART::setTimming(_baudMode, UARTClockSource::automatic, 0, UARTOverSampling::_16);
+	hw::devUART->setTimming(htl::uart::BaudMode::_19200,
+	        htl::uart::ClockSource::automatic, 0, htl::uart::OverSampling::_16);
 #elif defined(EOS_PLATFORM_PIC32)
-	COM_UART::setTimming(_baudMode);
+	hw::devUART->setTimming(_baudMode);
 #else
 #error "Undefined EOS_PLATFORM_XXX"
 #endif
-	INT_1::setInterruptVectorPriority(_vector,	_priority, _subPriority);
-	INT_1::enableInterruptVector(_vector);
-	COM_UART::enable();
-
-	// Configura el driver de comunicacio serie
-	//
-	_serial = new AsyncSerialDriver_UART(htl::getUART<COM_UART>());
-	_serial->initialize();
-	_serial->setTxCompletedEvent(_txCompletedEvent);
-	_serial->setRxCompletedEvent(_rxCompletedEvent);
+	irq::setInterruptVectorPriority(irq::VectorID::uart1, irq::Priority::_5);
+	irq::enableInterruptVector(irq::VectorID::uart1);
+	hw::devUART->setNotifyEvent(_uartNotifyEvent, true);
+	hw::devUART->enable();
 
 	return true;
 }
@@ -64,32 +60,13 @@ bool MainService::onTaskStart() {
 ///
 bool MainService::onTask() {
 
-	uint8_t buffer[10];
+	const char *txBuffer = "Hello world!\r\n";
 
-	while (true) {
-		if (_serial->receive(buffer, sizeof(buffer))) {
-			LED1_Toggle();
-			if (_rxCompleted.wait(unsigned(-1))) {
-				if (_rxDataCount > 0) {
-					if (_serial->transmit(buffer, _rxDataCount))
-						_txCompleted.wait(unsigned(-1));
-				}
-			}
-		}
-	}
+	hw::devUART->transmit_IRQ((const uint8_t*)txBuffer, strlen(txBuffer));
+
+	Task::delay(100);
 
 	return true;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    : Procesa l'event del UART txCompleted
-/// \params   : args : Parametres del event.
-///
-void MainService::txCompletedEventHandler(
-	const AsyncSerialDriver::TxCompletedEventArgs &args) {
-
-	_txCompleted.releaseISR();
 }
 
 
@@ -97,10 +74,20 @@ void MainService::txCompletedEventHandler(
 /// \brief    : Procesa l'event del UART rxCompleted
 /// \params   : args : Parametres del event.
 ///
-void MainService::rxCompletedEventHandler(
-	const AsyncSerialDriver::RxCompletedEventArgs &args) {
+void MainService::uartNotifyEventHandler(
+    const htl::uart::UARTDevice *uart,
+	const htl::uart::NotifyEventArgs &args) {
 
-	_rxDataCount = args.count;
-	_rxCompleted.releaseISR();
+    switch (args.id) {
+        case uart::NotifyID::txCompleted:
+            break;
+
+        case uart::NotifyID::rxCompleted:
+            break;
+
+        default:
+            break;
+
+    }
 }
 

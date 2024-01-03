@@ -34,15 +34,15 @@ namespace eos {
     		using StateStack = FixedCapacityStack<State, 10>;
 
         private:
-            IDisplayDriver *_driver;
+            DisplayDriver *_driver;
             StateStack _stack;
             State _state;
 
         public:
-            Graphics(IDisplayDriver *driver);
+            Graphics(DisplayDriver *driver);
             ~Graphics();
 
-            inline IDisplayDriver* getDriver() const { return _driver; }
+            inline DisplayDriver* getDriver() const { return _driver; }
             inline int16_t getMaxX() const { return _driver->getMaxX(); }
             inline int16_t getMaxY() const { return _driver->getMaxY(); }
             void clear(Color color) const;

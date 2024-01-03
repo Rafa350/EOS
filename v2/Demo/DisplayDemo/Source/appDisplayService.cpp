@@ -90,7 +90,7 @@ DisplayService::DisplayService():
 ///-----------------------------------------------------------------------
 /// \brief Process la inicialitzacio de la tasca.
 ///
-void DisplayService::onInitialize() {
+bool DisplayService::onTaskStart() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
@@ -146,7 +146,7 @@ void DisplayService::onInitialize() {
 	auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
 	device->initialize(pinCS, pinRS, devSPI);
 
-	_driver = new DisplayDriver_ILI9341(device);
+	_driver = new DisplayDriver_ILI9341(device, _displayWidth, _displayHeight);
 
     #elif defined(DISPLAY_DRV_RGBLTDC)
 
@@ -172,13 +172,15 @@ void DisplayService::onInitialize() {
     // Crea el controlador de grafics
     //
     _graphics = new eos::Graphics(_driver);
+
+    return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void DisplayService::onTask() {
+bool DisplayService::onTask() {
 
     _pointsTicks = 0;
     _horizontalLinesTicks = 0;
@@ -267,6 +269,8 @@ void DisplayService::onTask() {
 
     Task::delay(5000);
 	#endif
+
+    return true;
 }
 
 

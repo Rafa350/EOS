@@ -15,7 +15,7 @@ using namespace eos;
 /// \param    driver: Driver del display
 ///
 Graphics::Graphics(
-    IDisplayDriver *driver) :
+    DisplayDriver *driver) :
 
     _driver(driver) {
 

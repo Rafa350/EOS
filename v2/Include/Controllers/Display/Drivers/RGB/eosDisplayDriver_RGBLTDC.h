@@ -15,7 +15,7 @@
 
 namespace eos {
 
-	class DisplayDriver_RGBLTDC: public IDisplayDriver {
+	class DisplayDriver_RGBLTDC: public DisplayDriver {
 		private:
 	        using PinPC = DISPLAY_PC_Pin;
 	        using PinHSYNC = DISPLAY_HSYNC_Pin;
@@ -67,9 +67,6 @@ namespace eos {
 			static constexpr htl::ltdc::PinPolarity _vSyncPol = DISPLAY_VSYNC_POL;
 			static constexpr htl::ltdc::PinPolarity _dePol    = DISPLAY_DE_POL;
 			static constexpr htl::ltdc::PinPolarity _pcPol    = DISPLAY_PC_POL;
-			static constexpr int16_t _displayWidth = DISPLAY_WIDTH;
-			static constexpr int16_t _displayHeight= DISPLAY_HEIGHT;
-			static constexpr uint32_t _buffer      = DISPLAY_BUFFER;
 
     		FrameBuffer *_displayFrameBuffer;
     		FrameBuffer *_workFrameBuffer;
@@ -87,8 +84,8 @@ namespace eos {
             void disable() override;
 
             void setOrientation(DisplayOrientation orientation) override;
-            inline int16_t getWidth() const override { return _displayWidth; }
-            inline int16_t getHeight() const override { return _displayHeight; }
+            inline int16_t getWidth() const override { return _displayFrameBuffer->getWidth(); }
+            inline int16_t getHeight() const override { return _displayFrameBuffer->getHeight(); }
             inline int16_t getMaxX() const override { return _displayFrameBuffer->getMaxX(); }
             inline int16_t getMaxY() const override { return _displayFrameBuffer->getMaxY(); }
 
