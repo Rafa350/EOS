@@ -221,7 +221,6 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul LTDC
 	//
-	_ltdc->initialize(width, height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	_ltdc->initPinDE<PinDE, _dePol>();
 	_ltdc->initPinHSYNC<PinHSYNC, _hSyncPol>();
 	_ltdc->initPinVSYNC<PinVSYNC,_vSyncPol>();
@@ -229,6 +228,7 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	_ltdc->initPinRX<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
 	_ltdc->initPinGX<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
 	_ltdc->initPinBX<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+    _ltdc->initialize(width, height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	_ltdc->setBackgroundColor(RGB(0, 0, 255));
 
 	// Inicialitza la capa 1 del modul LTDC

@@ -296,7 +296,6 @@ namespace eos {
             Device_ILI9341_SPI();
             
         public:
-
             void initialize(Pin *pinCS, Pin *pinRS, DevSPI *devSPI, Pin *pinRST = nullptr);
             void deinitialize();
 
