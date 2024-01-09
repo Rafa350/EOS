@@ -98,13 +98,13 @@ bool DisplayService::onTaskStart() {
 	//halRNGInitialize();
     #endif
 
-	// Crea el driver de pantalla
-	//
     #if defined(DISPLAY_DRV_ILI9341LTDC)
 
 	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
+    // Inicialitza el buffer del display
+    //
 	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
 		_displayWidth,
 		_displayHeight,
@@ -112,6 +112,8 @@ bool DisplayService::onTaskStart() {
 		DisplayOrientation::normal,
 		reinterpret_cast<void*>(_displayBuffer));
 
+    // Inicialitza el dispositiu ILI9341 en modus SPI
+    // 
     auto pinCS = DISPLAY_CS_Pin::pInst;
     pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
@@ -124,13 +126,22 @@ bool DisplayService::onTaskStart() {
     devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
     devSPI->enable();
 
-    auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
-    device->initialize(pinCS, pinRS, devSPI);
+    auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, devSPI);
+     device->initialize(initScript, sizeof(initScript));
 
+    //auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
+    //device->initialize(pinCS, pinRS, devSPI);
+    //device->hardwareReset();
+    //device->writeScript(initScript);
+
+    // Inicialitza el driver de pantalla
+    //
 	_driver = new DisplayDriver_ILI9341LTDC(device, frameBuffer);
 
     #elif defined(DISPLAY_DRV_ILI9341)
 
+    // Inicialitza el dispositiu ILI9341 en modus SPI
+    // 
 	auto pinCS = DISPLAY_CS_Pin::pInst;
     pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
@@ -145,7 +156,11 @@ bool DisplayService::onTaskStart() {
 
 	auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
 	device->initialize(pinCS, pinRS, devSPI);
+    device->hardwareReset();
+    device->writeScript(initScript);
 
+    // Inicialitza el driver de pantalla
+    //
 	_driver = new DisplayDriver_ILI9341(device, _displayWidth, _displayHeight);
 
     #elif defined(DISPLAY_DRV_RGBLTDC)
@@ -169,7 +184,7 @@ bool DisplayService::onTaskStart() {
 	_driver->initialize();
 	_driver->enable();
 
-    // Crea el controlador de grafics
+    // Inicialitza el controlador de grafics
     //
     _graphics = new eos::Graphics(_driver);
 

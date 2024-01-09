@@ -7,39 +7,46 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
+/// \param    pinCS: El pin CS.
+/// \param    pinRS: El pin RS.
+/// param     pinRST: eE pin RST.
+/// \param    devSPI: El dispositiu SPI
 ///
-Device_ILI9341_SPI::Device_ILI9341_SPI():
+Device_ILI9341_SPI::Device_ILI9341_SPI(
+    Pin *pinCS, 
+    Pin *pinRS, 
+    Pin *pinRST,
+    DevSPI *devSPI):
+    
     Device_ILI9341(),
 
-    _pinCS {nullptr},
-    _pinRS {nullptr},
-    _pinRST {nullptr},
-    _devSPI {nullptr} {
+    _pinCS {pinCS},
+    _pinRS {pinRS},
+    _pinRST {pinRST},
+    _devSPI {pinSPI} {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
-/// \param    pinCS: Pin CS.
-/// \param    pinRS: Pin RS.
-/// \param    defSPI: Dispositiu SPI.
-/// \param    pinRST: Pin RST
+/// \param    script: Script d'inicialitzacio.
+/// \param    scriptSize: Tamany del script en bytes.
 ///
 void Device_ILI9341_SPI::initialize(
-    Pin *pinCS,
-    Pin *pinRS,
-    DevSPI *devSPI,
-    Pin *pinRST) {
-
-    _pinCS = pinCS;
-    _pinRS = pinRS;
-    _devSPI = devSPI;
-    _pinRST = pinRST;
+    const uint8_t *script, 
+    uint16_t scriptSize) {
 
     _pinCS->set();
     if (_pinRST != nullptr)
+        _pinRST->clear();
+        htl::waitTicks(10);
         _pinRST->set();
+        htl::waitTicks(120);
+        _pinRST->set();
+    }
+    
+    writeScript(script, scriptSize);
 }
 
 
@@ -49,21 +56,6 @@ void Device_ILI9341_SPI::initialize(
 void Device_ILI9341_SPI::deinitialize() {
 
     _pinCS->set();
-}
-
-
-/// -----------------------------------------------------------------------
-/// \brief    Reset de hardware.
-///
-void Device_ILI9341_SPI::hardwareReset() {
-
-    if (_pinRST != nullptr) {
-        _pinCS->set();
-        _pinRST->clear();
-        htl::waitTicks(10);
-        _pinRST->set();
-        htl::waitTicks(120);
-    }
 }
 
 

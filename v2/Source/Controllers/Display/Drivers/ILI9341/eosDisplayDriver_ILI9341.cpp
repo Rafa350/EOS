@@ -8,7 +8,10 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Contructor.
+/// \brief    Contructor. 
+/// \param    device: El dispositiu fisic.
+/// \param    displayWidth: Amplada del display.
+/// \param    displayeight: Alçada del display.
 ///
 DisplayDriver_ILI9341::DisplayDriver_ILI9341(
     Device_ILI9341 *device,

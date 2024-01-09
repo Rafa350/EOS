@@ -187,6 +187,16 @@ void DisplayDriver_ILI9341LTDC::setPixels(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Copia una regio rectangular de pixels.
+/// \param    x: Posicio x.
+/// \param    y: Posicio y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    pixels: Array de pixels.
+/// \param    format: El format de color dels pixels.
+/// \param    pitch: Pitch dels colors.
+///
 void DisplayDriver_ILI9341LTDC::setPixels(
 	int16_t x,
 	int16_t y,
@@ -262,7 +272,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 
 	// Inicialitza el controlador del display
 	//
-#if defined(HARDWARE_STM32F429I_DISC1)
+    #if defined(HARDWARE_STM32F429I_DISC1)
     static const uint8_t initCommands[] = {
         __SOFTWARE_RESET,
         OP_DELAY, 250,
@@ -292,9 +302,9 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
         OP_END
     };
 
-#else
-#error "Display no soportado"
-#endif
+    #else
+    #error "Display no soportado"
+    #endif
 
     uint8_t c;
     const uint8_t *p = initCommands;

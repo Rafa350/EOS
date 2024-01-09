@@ -17,10 +17,13 @@ namespace eos {
         
         public:
             virtual ~Device_ST7565() = default;
+            
+            virtual void hardwareReset() = 0;
 
             virtual void writeCommand(uint8_t cmd) = 0;
             virtual void writeData(uint8_t data) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
+
             void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
     
@@ -43,6 +46,8 @@ namespace eos {
             void initialize(Pin *pinCS, Pin *pinA0, in *pinRST, DevSPI *devSPI);
             void deinitialize() override;
 
+            void hardwareReset() override;
+            
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
@@ -70,6 +75,8 @@ namespace eos {
                 Port *portD, Pin *pinWR, Pin *pinRD);
             void deinitialize() override;
         
+            void hardwareReset() override;
+
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
@@ -104,7 +111,9 @@ namespace eos {
                 Pin *pinD4, Pin *pinD5, Pin *pinD6, Pin *pinD7,
                 Pin *pinWR, Pin *pinRD);
             void deinitialize() override;
-        
+
+            void hardwareReset() override;
+
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;

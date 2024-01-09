@@ -4,6 +4,7 @@
 
 
 #include "eos.h"
+#include "Controllers/Display/eosFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "System/Graphics/eosColor.h"
 

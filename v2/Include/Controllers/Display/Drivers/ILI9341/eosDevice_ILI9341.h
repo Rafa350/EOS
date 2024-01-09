@@ -268,17 +268,14 @@ namespace eos {
             
         protected:
             Device_ILI9341() = default;
+            void writeScript(const uint8_t *script, uint16_t scriptSize);
 
         public:
             virtual ~Device_ILI9341() = default;
             
-            virtual void hardwareReset() = 0;
-            
             virtual void writeCommand(uint8_t cmd) = 0;
             virtual void writeData(uint8_t data) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
-
-            void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
 
     class Device_ILI9341_SPI: public Device_ILI9341 {
@@ -287,43 +284,21 @@ namespace eos {
             using DevSPI = htl::spi::SPIDevice;
 
         private:
-            Pin const * _pinCS;
-            Pin const *_pinRS;
-            Pin const *_pinRST;
-            DevSPI *_devSPI;
+            Pin const * const _pinCS;
+            Pin const * const _pinRS;
+            Pin const * const _pinRST;
+            DevSPI * const _devSPI;
 
-        protected:
-            Device_ILI9341_SPI();
-            
         public:
-            void initialize(Pin *pinCS, Pin *pinRS, DevSPI *devSPI, Pin *pinRST = nullptr);
+            Device_ILI9341_SPI(Pin *pinCS, Pin *pinRS, Pin *pinRST, DevSPI *devSPI);
+            
+            void initialize(const uint8_t *script, uint16_t scriptSize);
             void deinitialize();
-
-            void hardwareReset() override;
 
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
-    
-    template <uint8_t id_>
-    class DeviceX_ILI9341_SPI final: public Device_ILI9341_SPI {
-        private:
-            static DeviceX_ILI9341_SPI _instance;
-            
-        public:
-            static constexpr uint8_t id = id_;
-            static constexpr DeviceX_ILI9341_SPI  *pInst = &_instance;
-            static constexpr DeviceX_ILI9341_SPI  &rInst = _instance;
-            
-        private:
-            DeviceX_ILI9341_SPI() :
-                Device_ILI9341_SPI() {
-            }
-    };
-
-    template <uint8_t id_>
-	DeviceX_ILI9341_SPI<id_> DeviceX_ILI9341_SPI<id_>::_instance;
     
 }
 
