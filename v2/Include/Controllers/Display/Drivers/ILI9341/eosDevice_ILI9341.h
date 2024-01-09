@@ -267,7 +267,8 @@ namespace eos {
             Device_ILI9341 & operator =(const Device_ILI9341 &) = delete;
             
         protected:
-            Device_ILI9341() = default;
+            Device_ILI9341();
+
             void writeScript(const uint8_t *script, uint16_t scriptSize);
 
         public:
@@ -301,5 +302,6 @@ namespace eos {
     };
     
 }
+
 
 #endif // __eosDevice_ILI9341__

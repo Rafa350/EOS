@@ -7,6 +7,14 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Constructor.
+///
+Device_SSD1306::Device_SSD1306() {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa un script
 /// \param    script: EL escript.
 /// \param    scriptSize: El tmany del script.

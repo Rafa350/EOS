@@ -126,13 +126,8 @@ bool DisplayService::onTaskStart() {
     devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
     devSPI->enable();
 
-    auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, devSPI);
-     device->initialize(initScript, sizeof(initScript));
-
-    //auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
-    //device->initialize(pinCS, pinRS, devSPI);
-    //device->hardwareReset();
-    //device->writeScript(initScript);
+    auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
+    device->initialize(nullptr, 0);
 
     // Inicialitza el driver de pantalla
     //
@@ -154,10 +149,8 @@ bool DisplayService::onTaskStart() {
     devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
     devSPI->enable();
 
-	auto device = eos::DeviceX_ILI9341_SPI<1>::pInst;
-	device->initialize(pinCS, pinRS, devSPI);
-    device->hardwareReset();
-    device->writeScript(initScript);
+	auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
+	device->initialize(nullptr, 0);
 
     // Inicialitza el driver de pantalla
     //

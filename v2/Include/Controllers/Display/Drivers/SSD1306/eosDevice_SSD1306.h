@@ -10,70 +10,50 @@
 
 namespace eos {
 
+    /// \brief Clase que representa un dispositiu SSD1306 generic
+    //
     class Device_SSD1306 {
         private:
             Device_SSD1306(const Device_SSD1306 &) = delete;
             Device_SSD1306 & operator = (const Device_SSD1306 &) = delete;
             
         protected:
-            Device_SSD1306() = default;
+            Device_SSD1306();
+
+            void writeScript(const uint8_t *script, uint16_t scriptSize);
 
         public:
             virtual ~Device_SSD1306() = default;
 
-            virtual void hardwareReset() = 0;
-
             virtual void writeCommand(const uint8_t *data, uint16_t dataSize) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
-            void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
     
 
+    /// \brief Clase que representa un dispositiu SSD1306 amb
+    //         interficie SPI
+    //
     class Device_SSD1306_SPI: public Device_SSD1306 {
         public:
             using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
 
         private:
-            Pin const * _pinCS;
-            Pin const * _pinDC;
-            Pin const * _pinRST;
-            DevSPI *_devSPI;
-            
-        protected:
-            Device_SSD1306_SPI();
+            Pin const * const _pinCS;
+            Pin const * const _pinDC;
+            Pin const * const _pinRST;
+            DevSPI * const _devSPI;
             
         public:
+            Device_SSD1306_SPI(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI);
             ~Device_SSD1306_SPI();
-            
-            void initialize(Pin *pinCS, Pin *pinDC, DevSPI *devSPI, Pin *pinRST = nullptr);
+
+            void initialize(const uint8_t *script, uint16_t scriptSize);
             void deinitialize();
-            
-            void hardwareReset() override;
             
             void writeCommand(const uint8_t *data, uint16_t dataSize) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
-    
-    
-    template <uint8_t id_>
-    class DeviceX_SSD1306_SPI final: public Device_SSD1306_SPI {
-        private:
-            static DeviceX_SSD1306_SPI _instance;
-            
-        public:
-            static constexpr uint8_t id = id_;
-            static constexpr DeviceX_SSD1306_SPI *pInst = &_instance;
-            static constexpr DeviceX_SSD1306_SPI &rInst = _instance;
-            
-        private:
-            inline DeviceX_SSD1306_SPI() :
-                Device_SSD1306_SPI() {
-            }
-    };
-
-    template <uint8_t id_>
-	DeviceX_SSD1306_SPI<id_> DeviceX_SSD1306_SPI<id_>::_instance;
 
 }
 

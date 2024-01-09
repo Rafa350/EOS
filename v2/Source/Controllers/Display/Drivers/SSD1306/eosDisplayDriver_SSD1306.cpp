@@ -27,57 +27,7 @@ DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 ///
 void DisplayDriver_SSD1306::initialize() {
 
-    static const uint8_t initScript[] = {
-        // Turn off display
-        0xAE,
-
-        // Set addrerssing mode
-        0x20, 0x00,
-
-        // Set display clock divider
-        0xD5, 0x80,
-
-        // Set multiplex ratio
-        0xA8, 0x3F,
-
-        // Set charge pump
-        0x8D, 0x14,
-
-        // Set start line address
-        0x40,
-
-        // Set display offset
-        0xD3, 0x00,
-
-        // Set normal/inverted display
-        0xA6,
-
-        // Set entire display enable
-        0xA4,
-
-        // Set column address remap
-        //
-        0xA1,
-
-        // Set COM Output Scan Direction 64 to 0
-        0xC8,
-
-        // Set com pins hardware configuration
-        0xDA, 0x12,
-
-        // Set contrast control register
-        0x81, 0xCF,
-
-        // Set pre-charge period
-        0xD9, 0xF1,
-
-        // Set VCOMH
-        0xDB, 0x40,
-
-        // Turn ON display
-        0xAF
-    };
-    _device->writeScript(initScript, sizeof(initScript));
+    enable();
 }
 
 

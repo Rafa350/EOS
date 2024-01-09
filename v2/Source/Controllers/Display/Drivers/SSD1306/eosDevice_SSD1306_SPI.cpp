@@ -9,13 +9,18 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-Device_SSD1306_SPI::Device_SSD1306_SPI() :
+Device_SSD1306_SPI::Device_SSD1306_SPI(
+    Pin *pinCS,
+    Pin *pinDC,
+    Pin *pinRST,
+    DevSPI *devSPI) :
+
     Device_SSD1306(),
 
-    _pinCS {nullptr}, 
-    _pinDC {nullptr},
-    _pinRST {nullptr},
-    _devSPI {nullptr} {
+    _pinCS {pinCS},
+    _pinDC {pinDC},
+    _pinRST {pinRST},
+    _devSPI {devSPI} {
     
 }
 
@@ -37,17 +42,18 @@ Device_SSD1306_SPI::~Device_SSD1306_SPI() {
 /// \param    pinRST: El pin RST (Hardware reset)
 ///
 void Device_SSD1306_SPI::initialize(
-    Pin *pinCS,
-    Pin *pinDC,
-    DevSPI *devSPI,
-    Pin *pinRST) {
+    const uint8_t *script,
+    uint16_t scriptSize) {
 
-    _pinCS = pinCS;
-    _pinDC = pinDC;
-    _pinRST = pinRST;
-    _devSPI = devSPI;
-    
     _pinCS->set();
+    if (_pinRST != nullptr) {
+        _pinRST->clear();
+        htl::waitTicks(100);
+        _pinRST->set();
+        htl::waitTicks(300);
+    }
+
+    writeScript(script, scriptSize);
 }
 
 
@@ -57,21 +63,6 @@ void Device_SSD1306_SPI::initialize(
 void Device_SSD1306_SPI::deinitialize() {
     
     _pinCS->set();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Reseteja el dispoditiu.
-///
-void Device_SSD1306_SPI::hardwareReset() {
-
-    if (_pinRST != nullptr) {
-        _pinCS->set();
-        _pinRST->clear();
-        htl::waitTicks(100);
-        _pinRST->set();
-        htl::waitTicks(300);
-    }
 }
 
 

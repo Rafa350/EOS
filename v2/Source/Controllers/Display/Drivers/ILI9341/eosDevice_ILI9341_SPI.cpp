@@ -23,7 +23,7 @@ Device_ILI9341_SPI::Device_ILI9341_SPI(
     _pinCS {pinCS},
     _pinRS {pinRS},
     _pinRST {pinRST},
-    _devSPI {pinSPI} {
+    _devSPI {devSPI} {
 
 }
 
@@ -38,7 +38,7 @@ void Device_ILI9341_SPI::initialize(
     uint16_t scriptSize) {
 
     _pinCS->set();
-    if (_pinRST != nullptr)
+    if (_pinRST != nullptr) {
         _pinRST->clear();
         htl::waitTicks(10);
         _pinRST->set();
