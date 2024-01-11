@@ -12,39 +12,34 @@ static uint8_t calcParity(uint8_t data);
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
+/// \param    devSPI: El dispositiu SPI
+/// \param    pinSS: El pin SS
+/// \param    pinOUTEN: El pin OUTEN
 ///
-Device_VNI8200XP_SPI::Device_VNI8200XP_SPI():
+Device_VNI8200XP_SPI::Device_VNI8200XP_SPI(
+    DevSPI *devSPI, 
+    Pin *pinSS, 
+    Pin *pinOUTEN):
+    
+    Device_VNI8200XP(),   
     _state {State::reset},
     _curPinState {0},
     _oldPinState {0},
-    _devSPI {nullptr},
-    _pinSS {nullptr},
-    _pinOUTEN {nullptr} {
+    _devSPI {devSPI},
+    _pinSS {pinSS},
+    _pinOUTEN {pinOUTEN} {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
-/// \param    devSPI: El dispositiu SPI
-/// \param    pinSS: El pin de seleccio.
-/// \param    pinOUTEN: El pin de seleccio de les sortides.
+/// \return   El resultat de l'operacio.
 ///
-Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize(
-    DevSPI *devSPI,
-    Pin *pinSS,
-    Pin *pinOUTEN) {
-
-    eosAssert(devSPI != nullptr);
-    eosAssert(pinSS != nullptr);
-    eosAssert(_state == State::reset);
+Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize() {
 
     if (_state == State::reset) {
-
-        _devSPI = devSPI;
-        _pinSS = pinSS;
-        _pinOUTEN = pinOUTEN;
-
+        
         _pinSS->set();
         if (_pinOUTEN != nullptr)
             _pinOUTEN->clear();
@@ -59,6 +54,18 @@ Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize(
 
 
 /// ----------------------------------------------------------------------
+/// \brieg    Desinicialitza el dispositiu.
+///
+void Device_VNI8200XP_SPI::deinitialize() {
+    
+    if (_pinOUTEN != nullptr)
+        _pinOUTEN->clear();
+    _pinSS->set();
+    _state = State::reset;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Habilita les sortides.
 ///
 void Device_VNI8200XP_SPI::enable() const {
@@ -66,6 +73,7 @@ void Device_VNI8200XP_SPI::enable() const {
     eosAssert(_state == State::ready);
 
     if (_state == State::ready) {
+        
         if (_pinOUTEN != nullptr)
             _pinOUTEN->set();
     }
@@ -80,6 +88,7 @@ void Device_VNI8200XP_SPI::disable() const {
     eosAssert(_state == State::ready);
 
     if (_state == State::ready) {
+        
         if (_pinOUTEN != nullptr)
             _pinOUTEN->clear();
     }

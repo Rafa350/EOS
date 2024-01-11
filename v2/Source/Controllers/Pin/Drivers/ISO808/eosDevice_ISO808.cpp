@@ -8,67 +8,68 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
+/// \param    pinSYNC: El pin SYNC.
+/// \param    pinLOAD: El pin LOAD.
+/// \param    pinIN1: El pin IN1.
+/// \param    pinIN2: El pin IN2.
+/// \param    pinIN3: El pin IN3.
+/// \param    pinIN4: El pin IN4.
+/// \param    pinIN5: El pin IN5.
+/// \param    pinIN6: El pin IN6.
+/// \param    pinIN7: El pin IN7.
+/// \param    pinIN7: El pin IN8.
+/// \param    pinOUTEN: El pin OUTEN.
+/// \param    pinFAULT: El pin FAULT.
 ///
-Device_ISO808::Device_ISO808():
+Device_ISO808::Device_ISO808(
+    Pin *pinSYNC,
+    Pin *pinLOAD,
+    Pin *pinIN1,
+    Pin *pinIN2,
+    Pin *pinIN3,
+    Pin *pinIN4,
+    Pin *pinIN5,
+    Pin *pinIN6,
+    Pin *pinIN7,
+    Pin *pinIN8,
+    Pin *pinOUTEN,
+    Pin *pinFAULT):
+
     _oldState {0},
     _newState {0},
-    _pinSYNC {nullptr},
-    _pinLOAD {nullptr},
-    _pinIN1 {nullptr},
-    _pinIN2 {nullptr},
-    _pinIN3 {nullptr},
-    _pinIN4 {nullptr},
-    _pinIN5 {nullptr},
-    _pinIN6 {nullptr},
-    _pinIN7 {nullptr},
-    _pinIN8 {nullptr},
-    _pinOUTEN {nullptr},
-    _pinFAULT {nullptr} {
+    _pinSYNC {pinSYNC},
+    _pinLOAD {pinLOAD},
+    _pinIN1 {pinINI1},
+    _pinIN2 {pinINI2},
+    _pinIN3 {pinINI3},
+    _pinIN4 {pinINI4},
+    _pinIN5 {pinINI5},
+    _pinIN6 {pinINI6},
+    _pinIN7 {pinINI7},
+    _pinIN8 {pinINI8},
+    _pinOUTEN {pinOUTEN},
+    _pinFAULT {pinFAULT} {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio.
-/// \param    pinSYNC: Handler del pin SYNC.
-/// \param    pinLOAD: Handler del pin LOAD.
-/// \param    pinIN1: Handler del pin IN1.
-/// \param    pinIN2: Handler del pin IN2.
-/// \param    pinIN3: Handler del pin IN3.
-/// \param    pinIN4: Handler del pin IN4.
-/// \param    pinIN5: Handler del pin IN5.
-/// \param    pinIN6: Handler del pin IN6.
-/// \param    pinIN7: Handler del pin IN7.
-/// \param    pinIN7: Handler del pin IN8.
-/// \param    pinOUTEN: Handler del pin OUTEN.
-/// \param    pinFAULT: Handler del pin FAULT.
+/// \brief    Inicialitza el dispositiu.
 ///
-void Device_ISO808::initialize(
-    htl::gpio::Pin *pinSYNC,
-    htl::gpio::Pin *pinLOAD,
-    htl::gpio::Pin *pinIN1,
-    htl::gpio::Pin *pinIN2,
-    htl::gpio::Pin *pinIN3,
-    htl::gpio::Pin *pinIN4,
-    htl::gpio::Pin *pinIN5,
-    htl::gpio::Pin *pinIN6,
-    htl::gpio::Pin *pinIN7,
-    htl::gpio::Pin *pinIN8,
-    htl::gpio::Pin *pinOUTEN,
-    htl::gpio::Pin *pinFAULT) {
+void Device_ISO808::initialize() {
 
-    _pinSYNC = pinSYNC;
-    _pinLOAD = pinLOAD;
-    _pinIN1 = pinIN1;
-    _pinIN2 = pinIN2;
-    _pinIN3 = pinIN3;
-    _pinIN4 = pinIN4;
-    _pinIN5 = pinIN5;
-    _pinIN6 = pinIN6;
-    _pinIN7 = pinIN7;
-    _pinIN8 = pinIN8;
-    _pinOUTEN = pinOUTEN;
-    _pinFAULT = pinFAULT;
+    if (_pinOUTEN == nullptr)
+        _pinOUTEN->clear();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el dispositiu.
+///
+void Device_ISO808::deinitialize() {
+    
+    if (_pinOUTEN == nullptr)
+        _pinOUTEN->clear();
 }
 
 

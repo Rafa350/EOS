@@ -49,7 +49,7 @@ namespace eos {
 	/// \brief Clase que implementa del driver del chip VNI8200XP
     ///        amb interficie SPI
 	///
-    class Device_VNI8200XP_SPI: public Device_VNI8200XP {
+    class Device_VNI8200XP_SPI final: public Device_VNI8200XP {
         public:
             using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
@@ -59,14 +59,14 @@ namespace eos {
     		uint8_t _curPinState;
             uint8_t _oldPinState;
     		DevSPI *_devSPI;
-    		Pin const *_pinSS;
-    		Pin const *_pinOUTEN;
-
-    	protected:
-    		Device_VNI8200XP_SPI();
+    		Pin const * const _pinSS;
+    		Pin const * const _pinOUTEN;
 
     	public:
-            Result initialize(DevSPI *devSPI, Pin *pinSS, Pin *pinOUTEN = nullptr);
+    		Device_VNI8200XP_SPI(DevSPI *devSPI, Pin *pinSS, Pin *pinOUTEN = nullptr);
+            
+            Result initialize();
+            void deinitialize();
         	
             void set(uint8_t pinMask) override;
 			void clear(uint8_t pinMask) override;
@@ -78,26 +78,6 @@ namespace eos {
 			void disable() const override;
             void update() override;
     };
-    
-
-    template <uint8_t id_>
-    class DeviceX_VNI8200XP_SPI final: public Device_VNI8200XP_SPI {
-        private:
-            static DeviceX_VNI8200XP_SPI _instance;
-
-        public:
-            static constexpr uint8_t id = id_;
-            static constexpr DeviceX_VNI8200XP_SPI *pInst = &_instance;
-            static constexpr DeviceX_VNI8200XP_SPI &rInst = _instance;
-
-        private:
-            DeviceX_VNI8200XP_SPI():
-            	Device_VNI8200XP_SPI() {
-            }
-    };
-
-    template <uint8_t id_>
-	DeviceX_VNI8200XP_SPI<id_> DeviceX_VNI8200XP_SPI<id_>::_instance;
 
 }
 
