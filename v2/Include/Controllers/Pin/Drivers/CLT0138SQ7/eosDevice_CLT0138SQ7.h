@@ -10,7 +10,7 @@
 
 namespace eos {
 
-	class Device_CLT0138SQ7 {
+	class Device_CLT0138SQ7 final {
 		public:
 	        using Pin = htl::gpio::PinDevice;
 	        using DevSPI = htl::spi::SPIDevice;
@@ -33,13 +33,13 @@ namespace eos {
 			bool _underVoltage;
 			bool _overTemperature;
 			DevSPI *_devSPI;
-			Pin const * _pinSS;
-            
-		protected:
-			Device_CLT0138SQ7();
-            
+			const Pin * const _pinSS;
+
 		public:
-            Result initialize(DevSPI *devSPI, Pin *pinSS);
+            Device_CLT0138SQ7(DevSPI *devSPI, Pin *pinSS);
+
+            Result initialize();
+            void deinitialize();
 			
             inline uint8_t read() const { return _pinState; }
             void update();
@@ -47,24 +47,6 @@ namespace eos {
             inline bool isOverTemperature() const { return _overTemperature; }
             
 	};
-
-	template <uint8_t id_>
-	class DeviceX_CLT0138SQ7 final: public Device_CLT0138SQ7 {
-		private:
-			static DeviceX_CLT0138SQ7 _instance;
-            
-		public:
-			static constexpr DeviceX_CLT0138SQ7 *pInst = &_instance;
-            static constexpr DeviceX_CLT0138SQ7 &rInst = _instance;
-            
-		private:
-			DeviceX_CLT0138SQ7():
-				Device_CLT0138SQ7() {
-			}
-	};
-    
-    template <uint8_t id_>
-    DeviceX_CLT0138SQ7<id_> DeviceX_CLT0138SQ7<id_>::_instance;
 }
 
 

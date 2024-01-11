@@ -9,35 +9,29 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
+/// \param    devSPI: El dispositiu SPI per la comunicacio.
+/// \param    pinSS: El pin pel chip select.
 ///
-Device_CLT0138SQ7::Device_CLT0138SQ7():
+Device_CLT0138SQ7::Device_CLT0138SQ7(
+    DevSPI *devSPI,
+    Pin *pinSS):
 
 	_state {State::reset},
 	_pinState {0},
 	_underVoltage {false},
 	_overTemperature {false},
-	_devSPI {nullptr},
-	_pinSS {nullptr} {
+	_devSPI {devSPI},
+	_pinSS {pinSS} {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
-/// \param    devSPI: El dispositiu SPI per la comunicacio.
-/// \param    pinSS: El pin pel chip select.
 ///
-Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize(
-	DevSPI *devSPI,
-	Pin *pinSS) {
-
-    eosAssert(devSPI != nullptr);
-    eosAssert(pinSS != nullptr);
+Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize() {
 
 	if (_state == State::reset) {
-
-		_devSPI = devSPI;
-		_pinSS = pinSS;
 
 		_pinSS->clear();
 

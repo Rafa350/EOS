@@ -33,6 +33,9 @@ namespace eos {
 
         public:
     		virtual ~Device_VNI8200XP() = default;
+
+    		virtual Result initialize() = 0;
+    		virtual void deinitialize() = 0;
             
             virtual void set(uint8_t pinMask) = 0;
             virtual void clear(uint8_t pinMask) = 0;
@@ -65,8 +68,8 @@ namespace eos {
     	public:
     		Device_VNI8200XP_SPI(DevSPI *devSPI, Pin *pinSS, Pin *pinOUTEN = nullptr);
             
-            Result initialize();
-            void deinitialize();
+            Result initialize() override;
+            void deinitialize() override;
         	
             void set(uint8_t pinMask) override;
 			void clear(uint8_t pinMask) override;
@@ -77,6 +80,8 @@ namespace eos {
             void enable() const override;
 			void disable() const override;
             void update() override;
+
+            State getState() const { return _state; }
     };
 
 }

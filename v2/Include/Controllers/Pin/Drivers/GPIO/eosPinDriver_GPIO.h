@@ -19,7 +19,7 @@ namespace eos {
             using Pin = htl::gpio::PinDevice;
 
         private:
-            Pin * const _pin;
+            const Pin * const _pin;
 
         public:
             PinDriver_GPIO(Pin *pin);
