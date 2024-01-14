@@ -6,6 +6,7 @@
 #include "eos.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
+#include "System/eosResults.h"
 
 
 namespace eos {
@@ -14,13 +15,14 @@ namespace eos {
 		public:
 	        using Pin = htl::gpio::PinDevice;
 	        using DevSPI = htl::spi::SPIDevice;
+            using Result = SimpleResult<BasicResults>;
 			enum class State {
 				reset,
 				ready
 			};
-			enum class Result {
-				ok,
-				error
+			struct CreateParams {
+			    Pin *pinSS;
+			    DevSPI *devSPI;
 			};
 
         private:
@@ -37,15 +39,18 @@ namespace eos {
 
 		public:
             Device_CLT0138SQ7(DevSPI *devSPI, Pin *pinSS);
+            Device_CLT0138SQ7(const CreateParams *params);
 
             Result initialize();
             void deinitialize();
 			
             inline uint8_t read() const { return _pinState; }
-            void update();
+            Result update();
             inline bool isUnderVoltage() const { return _underVoltage; }
             inline bool isOverTemperature() const { return _overTemperature; }
-            
+
+            inline State getState() const { return _state; }
+            inline bool isReady() const { return _state == State::ready; }
 	};
 }
 

@@ -168,7 +168,7 @@ bool DisplayService::onTaskStart() {
 		DisplayOrientation::normal,
 		reinterpret_cast<void*>(_displayBuffer));
 
-	_driver = new DisplayDriver_RGBLTDC(frameBuffer);
+	_driver = new DisplayDriver_RGBLTDC(frameBuffer, nullptr);
 
     #else
         #error No se especifico DISPLAY_DRV_XXXX

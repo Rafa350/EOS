@@ -27,7 +27,25 @@ Device_CLT0138SQ7::Device_CLT0138SQ7(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Contructor.
+/// \param    params: Parametres de configuracio.
+///
+Device_CLT0138SQ7::Device_CLT0138SQ7(
+    const CreateParams *params) :
+
+    _state {State::reset},
+    _pinState {0},
+    _underVoltage {false},
+    _overTemperature {false},
+    _devSPI {params->devSPI},
+    _pinSS {params->pinSS} {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
+/// \return   El resultat de l'operacio.
 ///
 Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize() {
 
@@ -37,18 +55,19 @@ Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize() {
 
 		_state = State::ready;
 
-		return Result::ok;
+		return Result::success();
 	}
 
 	else
-		return Result::error;
+		return Result::error();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Actualitza l'estat del driver en funcio del les entrades.
+/// \return   El resultat de l'operacio.
 ///
-void Device_CLT0138SQ7::update() {
+Device_CLT0138SQ7::Result Device_CLT0138SQ7::update() {
 
 	// NO UTILITZAR INTERRUPCIONS. Per evitar bloqueig si es crida
 	// desde un altre interrupcio amb prioritat inferior o igual a la del SPI
@@ -65,5 +84,10 @@ void Device_CLT0138SQ7::update() {
 		_overTemperature = (rxBuffer[1] & 0x40) == 0;
 
 		_pinState = rxBuffer[0];
+
+		return Result::success();
 	}
+
+	else
+	    return Result::error();
 }

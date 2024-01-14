@@ -33,6 +33,24 @@ Device_VNI8200XP_SPI::Device_VNI8200XP_SPI(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \params   params: Parametres de configuracio.
+///
+Device_VNI8200XP_SPI::Device_VNI8200XP_SPI(
+    const CreateParams *params):
+
+    Device_VNI8200XP(),
+    _state {State::reset},
+    _curPinState {0},
+    _oldPinState {0},
+    _devSPI {params->devSPI},
+    _pinSS {params->pinSS},
+    _pinOUTEN {params->pinOUTEN} {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
 /// \return   El resultat de l'operacio.
 ///
@@ -46,10 +64,10 @@ Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize() {
 
         _state = State::ready;
 
-        return Result::ok;
+        return Result::success();
     }
     else
-        return Result::error;
+        return Result::error();
 }
 
 
@@ -97,8 +115,9 @@ void Device_VNI8200XP_SPI::disable() const {
 
 /// ----------------------------------------------------------------------
 /// \brief    Actualitza les sortides en funcio del estat intern.
+/// \return   El resultat de l'operacio.
 ///
-void Device_VNI8200XP_SPI::update() {
+Device_VNI8200XP::Result Device_VNI8200XP_SPI::update() {
 
     eosAssert(_state == State::ready);
     
@@ -121,7 +140,12 @@ void Device_VNI8200XP_SPI::update() {
         }
 
         _state = State::ready;
+
+        return Result::success();
     }
+
+    else
+        return Result::error();
 }
 
 

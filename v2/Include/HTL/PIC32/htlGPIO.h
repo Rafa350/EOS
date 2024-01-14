@@ -64,8 +64,26 @@ namespace htl {
             _15
         };
 
-        typedef uint8_t PinNumber;
-        typedef uint16_t PinMask;
+        /// \brief Bit del pin
+        ///
+		class PinBit final {
+		    private:
+		        uint8_t _value;
+            public:
+                constexpr explicit PinBit(uint8_t value) : _value {value} {}
+                constexpr operator uint8_t () const { return _value; }
+		};
+
+        /// \brief Mascara de pins
+        ///
+        class PinMask final {
+            private:
+                uint16_t _value;
+            public:
+                constexpr explicit PinMask(uint16_t value) : _value {value} {}
+                constexpr operator uint16_t () const { return _value; }
+        };
+
 
         /// \bried Input mode
         enum class InputMode {
@@ -128,11 +146,11 @@ namespace htl {
         }
 
 
-        class Port {
+        class PortDevice {
             private:
                 internal::GPIORegisters * const _gpio;
             protected:
-                Port(internal::GPIORegisters *gpio);
+                PortDevice(internal::GPIORegisters *gpio);
             public:
                 void activate();
                 void deactivate();
@@ -182,54 +200,54 @@ namespace htl {
 
 
         template <PortID portID_>
-        class PortX final: public Port {
+        class PortDeviceX final: public PortDevice {
             private:
                 using HI = internal::HardwareInfo<portID_>;
             private:
                 static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-                static PortX _instance;
+                static PortDeviceX _instance;
 			public:
 				static constexpr PortID portID = portID_;
-                static constexpr PortX *pInst = &_instance;
-                static constexpr PortX &rInst = _instance;
+                static constexpr PortDeviceX *pInst = &_instance;
+                static constexpr PortDeviceX &rInst = _instance;
             protected:
-                PortX():
-                    Port(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr)) {
+                PortDeviceX():
+                    PortDevice(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr)) {
                 }
         };
 
 		template <PortID portID_>
-		PortX<portID_> PortX<portID_>::_instance;
+		PortDeviceX<portID_> PortDeviceX<portID_>::_instance;
 
         #ifdef HTL_GPIOA_EXIST
-        typedef PortX<PortID::A> PortA;
+        typedef PortDeviceX<PortID::A> PortA;
         #endif
         #ifdef HTL_GPIOB_EXIST
-        typedef PortX<PortID::B> PortB;
+        typedef PortDeviceX<PortID::B> PortB;
         #endif
         #ifdef HTL_GPIOC_EXIST
-        typedef PortX<PortID::C> PortC;
+        typedef PortDeviceX<PortID::C> PortC;
         #endif
         #ifdef HTL_GPIOD_EXIST
-        typedef PortX<PortID::D> PortD;
+        typedef PortDeviceX<PortID::D> PortD;
         #endif
         #ifdef HTL_GPIOE_EXIST
-        typedef PortX<PortID::E> PortE;
+        typedef PortDeviceX<PortID::E> PortE;
         #endif
         #ifdef HTL_GPIOF_EXIST
-        typedef PortX<PortID::F> PortF;
+        typedef PortDeviceX<PortID::F> PortF;
         #endif
         #ifdef HTL_GPIOG_EXIST
-        typedef PortX<PortID::G> PortG;
+        typedef PortDeviceX<PortID::G> PortG;
         #endif
 
 
-        class Pin {
+        class PinDevice {
             private:
                 internal::GPIORegisters * const _gpio;
                 PinMask const _pinMask;
             protected:
-                Pin(internal::GPIORegisters *gpio, PinID pinID);
+                PinDevice(internal::GPIORegisters *gpio, PinID pinID);
             public :
                 void initInput(PullUp pullUp = PullUp::noChange);
                 void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
@@ -256,25 +274,25 @@ namespace htl {
 
 
         template <PortID portID_, PinID pinID_>
-        class PinX final: public Pin {
+        class PinDeviceX final: public PinDevice {
             private:
                 using HI = internal::HardwareInfo<portID_>;
             private:
                 static constexpr uint32_t _gpioAddr = HI::gpioAddr;
-                static PinX _instance;
+                static PinDeviceX _instance;
             public:
                 static constexpr PortID portID = portID_;
                 static constexpr PinID pinID = pinID_;
-                static constexpr PinX *pInst = &_instance;
-                static constexpr PinX &rInst = _instance;
+                static constexpr PinDeviceX *pInst = &_instance;
+                static constexpr PinDeviceX &rInst = _instance;
             protected:
-                PinX():
-                    Pin(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr), pinID_) {
+                PinDeviceX():
+                    PinDevice(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr), pinID_) {
                 }
         };
 
 		template <PortID portID_, PinID pinID_>
-		PinX<portID_, pinID_> PinX<portID_, pinID_>::_instance;
+		PinDeviceX<portID_, pinID_> PinDeviceX<portID_, pinID_>::_instance;
 
 
         #ifdef HTL_GPIOA_EXIST

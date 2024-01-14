@@ -75,7 +75,6 @@ namespace eos {
             void initializeLTDC();
 
 		public:
-    		DisplayDriver_RGBLTDC(FrameBuffer *frameBuffer);
     		DisplayDriver_RGBLTDC(FrameBuffer *frameBuffer1, FrameBuffer *frameBuffer2);
 
             void initialize() override;

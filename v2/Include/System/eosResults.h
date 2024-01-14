@@ -1,3 +1,5 @@
+#ifndef __eosResult__
+#define __eosResult__
 #pragma once
 
 
@@ -99,3 +101,6 @@ namespace eos {
         return !result.isSuccess();
     }
 }
+
+
+#endif // __eosResult__

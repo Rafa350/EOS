@@ -35,7 +35,7 @@ CircularSerialDriver_I2CSlave::CircularSerialDriver_I2CSlave(
 void CircularSerialDriver_I2CSlave::initializeImpl() {
 
 	_dev->setNotifyEvent(_i2cNotifyEvent, true);
-	_dev->listen(_buffer, sizeof(_buffer));
+	_dev->listen_IRQ(_buffer, sizeof(_buffer));
 }
 
 

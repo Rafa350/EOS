@@ -6,6 +6,7 @@
 #include "eos.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
+#include "System/eosResults.h"
 
 
 namespace eos {
@@ -14,14 +15,11 @@ namespace eos {
 	///
     class Device_VNI8200XP {
 		public:
+            using Result = SimpleResult<BasicResults>;
 			enum class State {
 				reset,
 				ready,
 				updating
-			};
-			enum class Result {
-				ok,
-				error
 			};
 
         private:
@@ -45,7 +43,7 @@ namespace eos {
 			
             virtual void enable() const = 0;
 			virtual void disable() const = 0;
-            virtual void update() = 0;
+            virtual Result update() = 0;
     };
 
 
@@ -56,6 +54,11 @@ namespace eos {
         public:
             using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
+            struct CreateParams {
+                DevSPI *devSPI;
+                Pin *pinSS;
+                Pin *pinOUTEN;
+            };
 
     	private:
     		State _state;
@@ -67,6 +70,7 @@ namespace eos {
 
     	public:
     		Device_VNI8200XP_SPI(DevSPI *devSPI, Pin *pinSS, Pin *pinOUTEN = nullptr);
+            Device_VNI8200XP_SPI(const CreateParams *params);
             
             Result initialize() override;
             void deinitialize() override;
@@ -79,9 +83,10 @@ namespace eos {
 			
             void enable() const override;
 			void disable() const override;
-            void update() override;
+            Result update() override;
 
-            State getState() const { return _state; }
+            inline State getState() const { return _state; }
+            inline bool isReady() const { return _state == State::ready; }
     };
 
 }
