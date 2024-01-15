@@ -41,7 +41,7 @@ namespace eos {
                 Pin *pinCS;
                 Pin *pinDC;
                 Pin *pinRST;
-                DevSPI devSPI;
+                DevSPI *devSPI;
             };
 
         private:
