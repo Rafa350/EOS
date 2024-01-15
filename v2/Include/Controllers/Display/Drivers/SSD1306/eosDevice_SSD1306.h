@@ -37,6 +37,12 @@ namespace eos {
         public:
             using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
+            struct CreateParams {
+                Pin *pinCS;
+                Pin *pinDC;
+                Pin *pinRST;
+                DevSPI devSPI;
+            };
 
         private:
             Pin const * const _pinCS;
@@ -46,6 +52,7 @@ namespace eos {
             
         public:
             Device_SSD1306_SPI(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI);
+            Device_SSD1306_SPI(const CreateParams *params);
             ~Device_SSD1306_SPI();
 
             void initialize(const uint8_t *script, uint16_t scriptSize);

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosTouchPadDriver__
 #define __eosTouchPadDriver__
 
@@ -39,9 +40,9 @@ namespace eos {
 		int16_t y[TOUCHPAD_MAX_POINTS];
 	};
 
-	class ITouchPadDriver {
+	class TouchPadDriver {
 		public:
-			virtual ~ITouchPadDriver() = default;
+			virtual ~TouchPadDriver() = default;
 
 			virtual void initialize() = 0;
 			virtual void deinitialize() = 0;

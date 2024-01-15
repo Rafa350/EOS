@@ -14,6 +14,21 @@ namespace eos {
 	class Device_ISO808 final {
         public:
             using Pin = htl::gpio::Pin;
+            using Result = SimpleResult<BasicResults>;
+            struct CreateParams {
+                Pin *pinSYNC;
+                Pin *pinLOAD;
+                Pin *pinIN1;
+                Pin *pinIN1;
+                Pin *pinIN1;
+                Pin *pinIN1;
+                Pin *pinIN1;
+                Pin *pinIN1;
+                Pin *pinIN1;
+                Pin *pinIN1;
+                Pin *pinOUTEN;
+                Pin *pinFAULT;
+            };
             
         private:
             uint8_t _oldState;
@@ -39,8 +54,9 @@ namespace eos {
             Device_ISO808(Pin *pinSYNC, Pin *pinLOAD, Pin *pinIN1, Pin *pinIN2, 
                 Pin *pinIN3, Pin *pinIN4, Pin *pinIN5, Pin *pinIN6, Pin *pinIN7, 
                 Pin *pinIN8, Pin *pinOUTEN, Pin *pinFAULT);
+            Device_ISO808(const CreateParams *params);
 
-			void initialize();
+			Result initialize();
             void deinitialize();
                     
             inline void set(uint8_t pinMask) {
@@ -62,8 +78,7 @@ namespace eos {
                 _pinOUTEN->set();
             }
 			inline void disable() const {
-                _pinOUTEN->clear();
-                
+                _pinOUTEN->clear();                
             }
             
             void update();

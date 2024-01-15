@@ -283,7 +283,7 @@ namespace eos {
         public:
             using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
-            struct InitInfo {
+            struct CreateParams {
                 Pin *pinCS;
                 Pin *pinRS;
                 Pin *pinRST;
@@ -298,7 +298,7 @@ namespace eos {
 
         public:
             Device_ILI9341_SPI(Pin *pinCS, Pin *pinRS, Pin *pinRST, DevSPI *devSPI);
-            Device_ILI9341_SPI(const InitInfo *initInfo);
+            Device_ILI9341_SPI(const CreateParams *params);
             
             void initialize(const uint8_t *script, uint16_t scriptSize);
             void deinitialize();

@@ -254,7 +254,7 @@ namespace eos {
 	using TouchPadEvent = CallbackP1<instance_, TouchPadDriver_FT5336*>;
 
 
-	class TouchPadDriver_FT5336: public ITouchPadDriver {
+	class TouchPadDriver_FT5336: public TouchPadDriver {
 		private:
 	    	using PinINT = TOUCHPAD_INT_Pin;
 	    	using PinInterruptINT = TOUCHPAD_INT_PinInterrupt;

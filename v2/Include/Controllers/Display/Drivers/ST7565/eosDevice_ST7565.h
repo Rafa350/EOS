@@ -14,17 +14,15 @@ namespace eos {
         private:
             Device_ST7565(const Device_ST7565 &) = delete;
             Device_ST7565 & operator = (const Device_ST7565 &) = delete;
-        
+
+        protected:
+            void writeScript(const uint8_t *script, uint16_t scriptSize);
+            
         public:
             virtual ~Device_ST7565() = default;
             
-            virtual void hardwareReset() = 0;
-
-            virtual void writeCommand(uint8_t cmd) = 0;
-            virtual void writeData(uint8_t data) = 0;
+            virtual void writeCommand(const uint8_t *cmd, uint16_t cmdSize) = 0;
             virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
-
-            void writeScript(const uint8_t *script, uint16_t scriptSize);
     };
     
     
@@ -32,24 +30,27 @@ namespace eos {
         public:
             using Pin = htl::gpio::Pin;
             using DevSPI = htl::spi::SPIDevice;
+            struct CreateParams {
+                Pin *pinCS;
+                Pin *pinA0;
+                Pin *pinRST;
+                DevSPI devSPI;
+            };
 
         private:
-            Pin const * _pinCS;
-            Pin const * _pinA0;
-            Pin const * _pinRST;
-            DevSPI * _devSPI;
+            const Pin * const _pinCS;
+            const Pin * const _pinA0;
+            const Pin * const _pinRST;
+            DevSPI * const _devSPI;
             
-        protected:
-            Device_ST7565_SPI();
-
         public:
-            void initialize(Pin *pinCS, Pin *pinA0, in *pinRST, DevSPI *devSPI);
-            void deinitialize() override;
+            Device_ST7565_SPI(Pin *pinCS, Pin *pinA0, in *pinRST, DevSPI *devSPI);
+            Device_ST7565_SPI(const CreateParams *params);
 
-            void hardwareReset() override;
-            
-            void writeCommand(uint8_t cmd) override;
-            void writeData(uint8_t data) override;
+            void initialize(const uint8_t *script, uint16_t scriptSize);
+            void deinitialize();
+
+            void writeCommand(const uint8_t *cmd, uint16_t cmdSize) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
     
@@ -60,25 +61,21 @@ namespace eos {
             using Port = htl::gpio::Port;
 
         private:
-            Pin const * _pinCS;
-            Pin const * _pinA0;
-            Pin const * _pinRST;
-            Port const * _portD;
-            Pin const * _pinWR;
-            Pin const * _pinRD;
+            const Pin * const _pinCS;
+            const Pin * const _pinA0;
+            const Pin * const _pinRST;
+            const Port * const _portData;
+            const Pin * const _pinWR;
+            const Pin * const _pinRD;
             
-        protected:
-            Device_ST7565_8080_Port();
-        
         public:
-            void initialize(Pin *pinCS, Pin *pinA0, Pin *pinRST,
-                Port *portD, Pin *pinWR, Pin *pinRD);
-            void deinitialize() override;
+            Device_ST7565_8080_Port(Pin *pinCS, Pin *pinA0, Pin *pinRST,
+                Port *portData, Pin *pinWR, Pin *pinRD);
         
-            void hardwareReset() override;
-
-            void writeCommand(uint8_t cmd) override;
-            void writeData(uint8_t data) override;
+            void initialize(const uint8_t *script, uint16_t scriptSize);
+            void deinitialize();
+        
+            void writeCommand(const uint8_t *cmd, uint16_t cmdSize) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
 
@@ -88,34 +85,30 @@ namespace eos {
             using Pin = htl::gpio::Pin;
 
         private:
-            Pin * _pinCS;
-            Pin * _pinA0;
-            Pin * _pinRST;
-            Pin * _pinD0;
-            Pin * _pinD1;
-            Pin * _pinD2;
-            Pin * _pinD3;
-            Pin * _pinD4;
-            Pin * _pinD5;
-            Pin * _pinD6;
-            Pin * _pinD7;
-            Pin * _pinWR;
-            Pin * _pinRD;
+            const Pin * const _pinCS;
+            const Pin * const _pinA0;
+            const Pin * const _pinRST;
+            const Pin * const _pinD0;
+            const Pin * const _pinD1;
+            const Pin * const _pinD2;
+            const Pin * const _pinD3;
+            const Pin * const _pinD4;
+            const Pin * const _pinD5;
+            const Pin * const _pinD6;
+            const Pin * const _pinD7;
+            const Pin * const _pinWR;
+            const Pin * const _pinRD;
             
-        protected:
-            Device_ST7565_8080_Pin();
-        
         public:
-            void initialize(Pin *pinCS, Pin *pinA0, Pin *pinRST,
+            Device_ST7565_8080_Pin(Pin *pinCS, Pin *pinA0, Pin *pinRST,
                 Pin *pinD0, Pin *pinD1, Pin *pinD2, Pin *pinD3,
                 Pin *pinD4, Pin *pinD5, Pin *pinD6, Pin *pinD7,
                 Pin *pinWR, Pin *pinRD);
-            void deinitialize() override;
+        
+            void initialize(const uint8_t *script, uint16_t scriptSize);
+            void deinitialize();
 
-            void hardwareReset() override;
-
-            void writeCommand(uint8_t cmd) override;
-            void writeData(uint8_t data) override;
+            void writeCommand(const uint8_t *cmd, uint16_t cmdSize) override;
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
 }
