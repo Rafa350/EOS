@@ -31,6 +31,8 @@ bool LedService::onTaskStart() {
     if (_pinLED2 != nullptr)
         _pinLED2->clear();
 
+    _weakTime = Task::getTickCount();
+
     return true;
 }
 
@@ -46,7 +48,7 @@ bool LedService::onTask() {
     if (_pinLED2 != nullptr)
         _pinLED2->toggle();
 
-    Task::delay(500);
+    Task::delay(500, _weakTime);
 
     return true;
 }

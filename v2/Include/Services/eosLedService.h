@@ -19,6 +19,7 @@ namespace eos {
 	    private:
 	        Pin * const _pinLED1;
 	        Pin * const _pinLED2;
+	        unsigned _weakTime;
 
 		public:
 			static constexpr uint32_t stackSize = 128;

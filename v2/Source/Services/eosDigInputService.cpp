@@ -4,6 +4,8 @@
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 
+#include <cmath>
+
 
 #define PATTERN_MASK     0x0FFF
 #define PATTERN_POSEDGE  0x07FF
@@ -24,7 +26,10 @@ using namespace htl::irq;
 DigInputService::DigInputService():
     Service(),
     _changedEvent {nullptr},
-    _changedEventEnabled {false} {
+    _changedEventEnabled {false},
+    _beforeScanEvent {nullptr},
+    _beforeScanEventEnabled {false},
+    _scanPeriod {minScanPeriod} {
 }
 
 
@@ -33,6 +38,17 @@ DigInputService::DigInputService():
 ///
 DigInputService::~DigInputService() {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el periode d'escaneig.
+/// \param    scanPeriod: El period en milisegons.
+///
+void DigInputService::setScanPeriod(
+    unsigned scanPeriod) {
+
+    _scanPeriod = std::max(scanPeriod, minScanPeriod);
 }
 
 
@@ -47,6 +63,20 @@ void DigInputService::setChangedEvent(
 
     _changedEvent = &event;
     _changedEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el event 'BeforeScan'
+/// \param    event: El event.
+/// \param    enabled: True si es vol habilitar.
+///
+void DigInputService::setBeforeScanEvent(
+    IBeforeScanEvent &event,
+    bool enabled) {
+
+    _beforeScanEvent = &event;
+    _beforeScanEventEnabled = enabled;
 }
 
 
@@ -89,6 +119,16 @@ void DigInputService::notifyChanged(
         };
         input->_changedEvent->execute(input, args);
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica el inici del scaneig de les entrades.
+///
+void DigInputService::notifyBeforeScan() {
+
+    if (_beforeScanEventEnabled)
+        _beforeScanEvent->execute(this);
 }
 
 
@@ -160,13 +200,28 @@ void DigInputService::removeInputs() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Inicialitza el bucle d'execucio.
+/// \return   True si cal continuar amb el bucle
+///
+bool DigInputService::onTaskStart() {
+
+    _weakTime = Task::getTickCount();
+
+    return true;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio. Es crida repetidament.
 /// \return   True per continuar el bucle, false per finalitzar.
 ///
 bool DigInputService::onTask() {
 
-    while (_changes.wait(unsigned(-1))) {
+    Task::delay(_scanPeriod, _weakTime);
 
+    notifyBeforeScan();
+
+    if (scanInputs()) {
         for (auto input: _inputs) {
 
             bool ie = getInterruptState();
@@ -285,22 +340,6 @@ uint32_t DigInputService::readPulses(
     Task::exitCriticalSection();
 
     return pinPulses;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio del temporitzador.
-/// \param    event: L'event que ha generat la interrupcio.
-/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
-///
-void DigInputService::tmrInterruptFunction() {
-
-	if (scanInputs()) {
-
-		// Notifica a la tasca que hi han canvis pendents per procesar
-		//
-        _changes.releaseISR();
-	}
 }
 
 

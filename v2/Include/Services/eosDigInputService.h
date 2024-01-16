@@ -8,14 +8,12 @@
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
-#include "System/Core/eosSemaphore.h"
 
 
 namespace eos {
 
     class DigInputService;
     class DigInput;
-    class DigInputDriver;
 
     using DigInputList = IntrusiveForwardList<DigInput, 0>;
     using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
@@ -29,27 +27,37 @@ namespace eos {
             };
             using IChangedEvent = ICallbackP2<const DigInputService*, const ChangedEventArgs&>;
             template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigInputService*, const ChangedEventArgs&>;
+            using IBeforeScanEvent = ICallbackP1<const DigInputService*>;
+            template <typename Instance_> using BeforeScanEvent = CallbackP1<Instance_, const DigInputService*>;
 
         public:
     		static constexpr uint32_t minStackSize = 128;
+            static constexpr unsigned minScanPeriod = 5;
 
         private:
     		DigInputList _inputs;
 
             IChangedEvent *_changedEvent;
             bool _changedEventEnabled;
-            Semaphore _changes;
+            IBeforeScanEvent *_beforeScanEvent;
+            bool _beforeScanEventEnabled;
+            unsigned _scanPeriod;
+            unsigned _weakTime;
 
         private:
             bool scanInputs();
             void notifyChanged(DigInput *input);
+            void notifyBeforeScan();
 
         protected:
+            bool onTaskStart() override;
             bool onTask() override;
 
         public:
             DigInputService();
             ~DigInputService();
+
+            void setScanPeriod(unsigned scanPeriod);
 
             void addInput(DigInput *input);
             void removeInput(DigInput *input);
@@ -62,7 +70,9 @@ namespace eos {
             void enableChangedEvent();
             void disableChangedEvent();
 
-            void tmrInterruptFunction();
+            void setBeforeScanEvent(IBeforeScanEvent &event, bool enabled = true);
+            void enableBeforeScanEvent();
+            void disableBeforeScanEvent();
     };
 
     /// \brief Clase que implementa una entrada digital
