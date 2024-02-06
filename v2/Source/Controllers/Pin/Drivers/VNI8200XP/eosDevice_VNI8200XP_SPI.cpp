@@ -127,13 +127,14 @@ Device_VNI8200XP::Result Device_VNI8200XP_SPI::update() {
 
         if (_curPinState != _oldPinState) {
 
-            uint8_t txData[2], rxData[2];
+            constexpr unsigned dataSize = 2;
+            uint8_t txData[dataSize], rxData[dataSize];
 
             txData[0] = _curPinState;
             txData[1] = calcParity(_curPinState);
 
             _pinSS->clear();
-            _devSPI->transmit(txData, rxData, sizeof(txData));
+            _devSPI->transmit(txData, rxData, dataSize);
             _pinSS->set();
 
             _oldPinState = _curPinState;

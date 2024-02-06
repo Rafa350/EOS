@@ -195,7 +195,6 @@ Result SPIDevice::transmit(
                 }
             }
 
-
             // Espera que el buffer de recepcio no estigui buit
             //
             if (!waitRxNotEmpty(_spi, expireTime)) {
