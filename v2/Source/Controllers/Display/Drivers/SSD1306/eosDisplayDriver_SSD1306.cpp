@@ -211,8 +211,12 @@ void DisplayDriver_SSD1306::refresh() {
     command[1] = 0x00;
     command[2] = 0x10;
 
+    // Bucle per procesat totes les pagines
+    //
     for (uint8_t i = 0, ii = height / 8; i < ii; i++) {
 
+        // Transfereix una pagina
+        //
         _device->writeCommand(command, sizeof(command));
         _device->writeData(buffer, width);
 

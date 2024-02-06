@@ -27,7 +27,7 @@
 using namespace eos;
 
 
-static IDisplayDriver *displayDriver;
+static DisplayDriver *displayDriver;
 static Graphics *graphics;
 static RenderContext *context;
 
@@ -92,7 +92,7 @@ Visual* GuiService::getVisualAt(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio del servei.
 ///
-void GuiService::onInitialize() {
+bool GuiService::onTaskStart() {
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 	displayDriver = new ILI9341LTDCDriver();
@@ -139,13 +139,15 @@ void GuiService::onInitialize() {
 
 	_screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
 	_screen->arrange(_screen->getDesiredSize());
+
+	return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
-void GuiService::onTask() {
+bool GuiService::onTask() {
         
     // Repeteix indefinidament
     //
@@ -170,6 +172,8 @@ void GuiService::onTask() {
         }
     
     }
+
+    return true;
 }
 
 

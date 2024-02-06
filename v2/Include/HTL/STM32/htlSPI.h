@@ -7,6 +7,7 @@
 //
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "HTL/STM32/htlDMA.h"
 #include "System/eosResults.h"
 
 
@@ -92,11 +93,9 @@ namespace htl {
 					ready,
 					transmiting
 				};
-
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
-
 			private:
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
@@ -106,22 +105,16 @@ namespace htl {
 				inline void deactivate() {
 					activateImpl();
 				}
-
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
 				void interruptService();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
-
 			public:
 				Result initialize(SPIMode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
 				        ClockDivider clkDivider);
 				Result deinitialize();
-				inline void enable() {
-					_spi->CR1 |= SPI_CR1_SPE;
-				}
-				void disable();
 				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        uint16_t size, uint16_t timeout = 0xFFFF);
 				inline Result receive(uint8_t *rxBuffer, uint16_t size,
@@ -132,8 +125,8 @@ namespace htl {
                         uint16_t timeout = 0xFFFF) {
                     return transmit(txBuffer, nullptr, size, timeout);
                 }
-                Result transmitDMA(const uint8_t *txBuffer, uint8_t *rxBuffer,
-                        uint16_t size);
+                Result transmitDMA(htl::dma::DMADevice *devTxDMA,
+                        const uint8_t *txBuffer, uint16_t size);
 				inline State getState() const {
 				    return _state;
 				}

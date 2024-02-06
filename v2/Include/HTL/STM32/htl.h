@@ -164,47 +164,54 @@
 #endif
 
 
-#ifdef DMA1_Channel1
-#define HTL_DMA1_CHANNEL1_EXISTS
+#ifdef DMA1_BASE
+    #define HTL_DMA1_EXIST
 #endif
-#ifdef DMA1_Channel2
-#define HTL_DMA1_CHANNEL2_EXISTS
+#ifdef DMA2_BASE
+    #define HTL_DMA2_EXIST
 #endif
-#ifdef DMA1_Channel3
-#define HTL_DMA1_CHANNEL3_EXISTS
+
+#ifdef DMA1_Channel1_BASE
+    #define HTL_DMA1_CHANNEL1_EXIST
 #endif
-#ifdef DMA1_Channel4
-#define HTL_DMA1_CHANNEL4_EXISTS
+#ifdef DMA1_Channel2_BASE
+    #define HTL_DMA1_CHANNEL2_EXIST
 #endif
-#ifdef DMA1_Channel5
-#define HTL_DMA1_CHANNEL5_EXISTS
+#ifdef DMA1_Channel3_BASE
+    #define HTL_DMA1_CHANNEL3_EXIST
 #endif
-#ifdef DMA1_Channel6
-#define HTL_DMA1_CHANNEL6_EXISTS
+#ifdef DMA1_Channel4_BASE
+    #define HTL_DMA1_CHANNEL4_EXIST
 #endif
-#ifdef DMA1_Channel7
-#define HTL_DMA1_CHANNEL7_EXISTS
+#ifdef DMA1_Channel5_BASE
+    #define HTL_DMA1_CHANNEL5_EXIST
 #endif
-#ifdef DMA2_Channel1
-#define HTL_DMA2_CHANNEL1_EXISTS
+#ifdef DMA1_Channel6_BASE
+    #define HTL_DMA1_CHANNEL6_EXIST
 #endif
-#ifdef DMA2_Channel2
-#define HTL_DMA2_CHANNEL2_EXISTS
+#ifdef DMA1_Channel7_BASE
+    #define HTL_DMA1_CHANNEL7_EXIST
 #endif
-#ifdef DMA2_Channel3
-#define HTL_DMA2_CHANNEL3_EXISTS
+#ifdef DMA2_Channel1_BASE
+    #define HTL_DMA2_CHANNEL1_EXIST
 #endif
-#ifdef DMA2_Channel4
-#define HTL_DMA2_CHANNEL4_EXISTS
+#ifdef DMA2_Channel2_BASE
+    #define HTL_DMA2_CHANNEL2_EXIST
 #endif
-#ifdef DMA2_Channel5
-#define HTL_DMA2_CHANNEL5_EXISTS
+#ifdef DMA2_Channel3_BASE
+    #define HTL_DMA2_CHANNEL3_EXIST
 #endif
-#ifdef DMA2_Channel6
-#define HTL_DMA2_CHANNEL6_EXISTS
+#ifdef DMA2_Channel4_BASE
+    #define HTL_DMA2_CHANNEL4_EXIST
 #endif
-#ifdef DMA2_Channel7
-#define HTL_DMA2_CHANNEL7_EXISTS
+#ifdef DMA2_Channel5_BASE
+    #define HTL_DMA2_CHANNEL5_EXIST
+#endif
+#ifdef DMA2_Channel6_BASE
+    #define HTL_DMA2_CHANNEL6_EXIST
+#endif
+#ifdef DMA2_Channel7_BASE
+    #define HTL_DMA2_CHANNEL7_EXIST
 #endif
 
 

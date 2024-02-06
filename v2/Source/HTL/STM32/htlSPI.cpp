@@ -1,9 +1,11 @@
 #include "HTL/htl.h"
 #include "HTL/STM32/htlSPI.h"
+#include "HTL/STM32/htlDMA.h"
 
 
 using namespace htl;
 using namespace htl::spi;
+using namespace htl::dma;
 
 
 #define SPI_CR1_BR_DIV2      (0UL << SPI_CR1_BR_Pos)
@@ -33,6 +35,9 @@ static void setClkPolarity(SPI_TypeDef * const spi, ClkPolarity polarity);
 static void setClkPhase(SPI_TypeDef * const spi, ClkPhase phase);
 static void setWordSize(SPI_TypeDef * const spi, WordSize size);
 static void setFirstBit(SPI_TypeDef * const spi, FirstBit firstBit);
+
+static void enable(SPI_TypeDef * const spi);
+static void disable(SPI_TypeDef * const spi);
 
 static void write8(SPI_TypeDef * const spi, uint8_t data);
 static void write16(SPI_TypeDef * const spi, uint16_t data);
@@ -88,7 +93,7 @@ Result SPIDevice::initialize(
 	if (_state == State::reset) {
 
 		activate();
-		disable();
+		disable(_spi);
 
 		setClockDivider(_spi, clkDivider);
 		setMode(_spi, mode);
@@ -114,7 +119,7 @@ Result SPIDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		disable();
+		disable(_spi);
 		deactivate();
 
 		_state = State::reset;
@@ -123,26 +128,6 @@ Result SPIDevice::deinitialize() {
 	}
 	else
 		return Result::error();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desabilita la comunicacio.
-///
-void SPIDevice::disable() {
-
-    #if defined(EOS_PLATFORM_STM32G0)
-    while ((_spi->SR & SPI_SR_FTLVL) != 0)
-        continue;
-
-    while ((_spi->SR & SPI_SR_BSY) != 0)
-        continue;
-
-    _spi->CR1 &= ~SPI_CR1_SPE;
-
-    while ((_spi->SR & SPI_SR_FRLVL) != 0)
-        read8(_spi);
-    #endif
 }
 
 
@@ -173,6 +158,10 @@ Result SPIDevice::transmit(
 		#elif defined(EOS_PLATFORM_STM32F7)
 		bool len8 = (_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8;
 		#endif
+
+		// Habilita la comunicacio
+		//
+		enable(_spi);
 
 		// Bucle per transmetre i/o rebre
 		//
@@ -244,6 +233,10 @@ Result SPIDevice::transmit(
             #endif
 		}
 
+		// Deshabilita la comunicacio
+		//
+		disable(_spi);
+
 		_state = State::ready;
 
 		return error ? Result::error() : Result::success();
@@ -256,15 +249,44 @@ Result SPIDevice::transmit(
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades en modus DMA
+/// \param    devTxDMA: DMA per la transmissio
 /// \param    txBuffer: El buffer de transmissio.
-/// \param    rxBuffer: El buffer de recepcio.
 /// \param    size: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio.
 ///
 Result SPIDevice::transmitDMA(
+    htl::dma::DMADevice *devTxDMA,
     const uint8_t *txBuffer,
-    uint8_t *rxBuffer,
     uint16_t size) {
+
+    // Habilita les transferencies per DMA
+    //
+    _spi->CR2 |= SPI_CR2_TXDMAEN;
+
+    // Habilita la comunicacio
+    //
+    enable(_spi);
+
+    // Inicia la transferencia
+    //
+    devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), size);
+
+    // devTxDMA->waitForFinish(timeout);
+    while ((DMA1->ISR & DMA_ISR_TCIF1) == 0)
+            continue;
+    DMA1->IFCR |= DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1;
+    devTxDMA->finish();
+
+    while (isBusy(_spi))
+        continue;
+
+    // Desabilita la comunicacio
+    //
+    disable(_spi);
+
+    // Deshabilita la transfertencia per DMA
+    //
+    _spi->CR2 &= ~SPI_CR2_TXDMAEN;
 
     return Result::success();
 }
@@ -284,10 +306,10 @@ static void setClockDivider(
 		SPI_CR1_BR_DIV8, SPI_CR1_BR_DIV16, SPI_CR1_BR_DIV32, SPI_CR1_BR_DIV64,
 		SPI_CR1_BR_DIV128, SPI_CR1_BR_DIV256 };
 
-	uint32_t tmp = spi->CR1;
-	tmp &= ~SPI_CR1_BR_Msk;
-	tmp |= clkDividerTbl[uint8_t(clkDivider)];
-	spi->CR1 = tmp;
+	uint32_t CR1 = spi->CR1;
+	CR1 &= ~SPI_CR1_BR_Msk;
+	CR1 |= clkDividerTbl[uint8_t(clkDivider)];
+	spi->CR1 = CR1;
 }
 
 
@@ -302,22 +324,21 @@ static void setMode(
 
     // Configura el registre CR1
     //
-	uint32_t tmp = spi->CR1;
-
-	tmp &= ~SPI_CR1_CRCEN;
+	uint32_t CR1 = spi->CR1;
+	CR1 &= ~SPI_CR1_CRCEN;
 	if (mode == SPIMode::master)
-		tmp |= (SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM);
-	tmp &= ~(SPI_CR1_BIDIMODE | SPI_CR1_RXONLY);
-	spi->CR1 = tmp;
+		CR1 |= (SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM);
+	CR1 &= ~(SPI_CR1_BIDIMODE | SPI_CR1_RXONLY);
+	spi->CR1 = CR1;
 
 	// Configura el registre CR2
 	//
-	tmp = spi->CR2;
-	tmp &= ~(SPI_CR2_SSOE | SPI_CR2_FRF);
+	uint32_t CR2 = spi->CR2;
+	CR2 &= ~(SPI_CR2_SSOE | SPI_CR2_FRF);
     #if defined(EOS_PLATFORM_STM32G0)
-	tmp &= ~SPI_CR2_NSSP;
+	CR2 &= ~SPI_CR2_NSSP;
     #endif
-	spi->CR2 = tmp;
+	spi->CR2 = CR2;
 };
 
 
@@ -408,6 +429,40 @@ static void setFirstBit(
 		spi->CR1 |= SPI_CR1_LSBFIRST;
 	else
 		spi->CR1 &= ~SPI_CR1_LSBFIRST;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita les comunicacions.
+/// \param    spi: Registres de hardware del dispositiu SPI
+///
+static void enable(
+    SPI_TypeDef * const spi) {
+
+    spi->CR1 |= SPI_CR1_SPE;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desabilita les comunicacions.
+/// \param    spi: Registres de hardware del dispositiu SPI
+///
+static void disable(
+    SPI_TypeDef * const spi) {
+
+    #if defined(EOS_PLATFORM_STM32G0)
+    while ((spi->SR & SPI_SR_FTLVL) != 0)
+        continue;
+
+    while ((spi->SR & SPI_SR_BSY) != 0)
+        continue;
+
+    spi->CR1 &= ~SPI_CR1_SPE;
+
+    while ((spi->SR & SPI_SR_FRLVL) != 0)
+        read8(spi);
+    #endif
+
 }
 
 

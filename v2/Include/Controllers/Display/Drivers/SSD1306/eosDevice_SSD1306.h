@@ -6,6 +6,7 @@
 #include "eos.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
+#include "HTL/htlDMA.h"
 
 
 namespace eos {
@@ -37,14 +38,8 @@ namespace eos {
         public:
             using Pin = htl::gpio::PinDevice;
             using DevSPI = htl::spi::SPIDevice;
-            struct CreateParams {
-                Pin *pinCS;
-                Pin *pinDC;
-                Pin *pinRST;
-                DevSPI *devSPI;
-            };
 
-        private:
+        protected:
             Pin const * const _pinCS;
             Pin const * const _pinDC;
             Pin const * const _pinRST;
@@ -52,7 +47,6 @@ namespace eos {
             
         public:
             Device_SSD1306_SPI(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI);
-            Device_SSD1306_SPI(const CreateParams *params);
             ~Device_SSD1306_SPI();
 
             void initialize(const uint8_t *script, uint16_t scriptSize);
@@ -62,6 +56,22 @@ namespace eos {
             void writeData(const uint8_t *data, uint16_t dataSize) override;
     };
 
+
+    /// \brief Clase que representa un dispositiu SSD1306 amb
+    //         interficie SPI-DMA
+    //
+    class Device_SSD1306_SPIDMA: public Device_SSD1306_SPI {
+        public:
+            using DevDMA = htl::dma::DMADevice;
+
+        private:
+            DevDMA * const _devDMA;
+
+        public:
+            Device_SSD1306_SPIDMA(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI, DevDMA *devDMA);
+
+            void writeData(const uint8_t *data, uint16_t dataSize) override;
+    };
 }
 
 
