@@ -29,7 +29,7 @@ I2CMasterDevice::I2CMasterDevice(
 /// \param    sclh
 /// \param    scll:
 ///
-Result I2CMasterDevice::initialize(
+I2CResult I2CMasterDevice::initialize(
 	uint8_t prescaler,
 	uint8_t scldel,
 	uint8_t sdadel,
@@ -55,17 +55,17 @@ Result I2CMasterDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::success();
+		return I2CResult::success();
 	}
 	else
-		return Result::error();
+		return I2CResult::error();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza elñ dispositiu.
 ///
-Result I2CMasterDevice::deinitialize() {
+I2CResult I2CMasterDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -74,10 +74,10 @@ Result I2CMasterDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::success();
+		return I2CResult::success();
 	}
 	else
-		return Result::error();
+		return I2CResult::error();
 }
 
 
@@ -88,7 +88,7 @@ Result I2CMasterDevice::deinitialize() {
 /// \param    size: El nom,bre de bytes a transmetre.
 /// \param    timeout: El temps maxim en ms.
 ///
-Result I2CMasterDevice::send(
+I2CResult I2CMasterDevice::send(
 	uint16_t addr,
 	const uint8_t *buffer,
 	uint16_t size,
@@ -159,7 +159,7 @@ Result I2CMasterDevice::send(
 	//
 	_i2c->CR1 &= ~I2C_CR1_PE;    // Deshabilita el dispositiu.
 
-	return Result::success();
+	return I2CResult::success();
 }
 
 
@@ -170,7 +170,7 @@ Result I2CMasterDevice::send(
 /// \param    size: Tamany del buffer de dades.
 /// \param    timeout: Temps maxim.
 ///
-Result I2CMasterDevice::receive(
+I2CResult I2CMasterDevice::receive(
 	uint16_t addr,
 	uint8_t *buffer,
 	uint16_t size,
@@ -235,7 +235,7 @@ Result I2CMasterDevice::receive(
     //
     _i2c->ICR |= I2C_ISR_STOPF;
 
-    return Result::success();
+    return I2CResult::success();
 }
 
 

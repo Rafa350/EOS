@@ -58,7 +58,7 @@ DMADevice::DMADevice(
 }
 
 
-void DMADevice::initMemoryToMemory() {
+DMAResult DMADevice::initMemoryToMemory() {
 
     auto dmaChannel = getDMAChannel(_channel);
 
@@ -68,6 +68,8 @@ void DMADevice::initMemoryToMemory() {
             DMA_CCR_EN);
     tmp |= DMA_CCR_MEM2MEM;      // Memoria a memoria
     dmaChannel->CCR = tmp;
+
+    return DMAResult::success();
 }
 
 
@@ -80,8 +82,9 @@ void DMADevice::initMemoryToMemory() {
 /// \param    dstInc: Increment de l'adressa del desti.
 /// \param    mode: Tipus de transferencia normal/circular.
 /// \param    requestID: Identificador de la solicitut
+/// \return   El resultat de l'operacio.
 ///
-void DMADevice::initMemoryToPeripheral(
+DMAResult DMADevice::initMemoryToPeripheral(
     Priority priority,
     DataSize srcSize,
     DataSize dstSize,
@@ -90,67 +93,87 @@ void DMADevice::initMemoryToPeripheral(
     TransferMode mode,
     RequestID requestID) {
 
-    uint32_t tmp;
+    if (_state == State::reset) {
 
-    auto dma = getDMA(_channel);
-    auto dmaChannel = getDMAChannel(_channel);
-    auto muxChannel = getDMAMUXChannel(_channel);
+        uint32_t tmp;
 
-    // Activa el dispositiu
-    //
-    activate();
-    disable(dmaChannel);
+        auto dma = getDMA(_channel);
+        auto dmaChannel = getDMAChannel(_channel);
+        auto muxChannel = getDMAMUXChannel(_channel);
 
-    tmp = dmaChannel->CCR;
+        // Activa el dispositiu
+        //
+        activate();
+        disable(dmaChannel);
 
-    // Inicialitza els valor a configurar a zero
-    //
-    tmp = ~(DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
-            DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
-            DMA_CCR_EN);
+        tmp = dmaChannel->CCR;
 
-    // Selecciona la prioritat
-    //
-    tmp |= ((uint32_t)priority << DMA_CCR_PL_Pos) & DMA_CCR_PL_Msk;
+        // Inicialitza els valor a configurar a zero
+        //
+        tmp = ~(DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
+                DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
+                DMA_CCR_EN);
 
-    // Direccio de transferncia de memoria a periferic
-    //
-    tmp |= 1 << DMA_CCR_DIR_Pos;
+        // Selecciona la prioritat
+        //
+        tmp |= ((uint32_t)priority << DMA_CCR_PL_Pos) & DMA_CCR_PL_Msk;
 
-    // Parametres de access a la memoria
-    //
-    if (srcInc == AddressIncrement::inc)
-        tmp |= 1 << DMA_CCR_MINC_Pos;
-    tmp |= (uint32_t(srcSize) << DMA_CCR_MSIZE_Pos) & DMA_CCR_MSIZE_Msk;
+        // Direccio de transferncia de memoria a periferic
+        //
+        tmp |= 1 << DMA_CCR_DIR_Pos;
 
-    // Parametres d'acces al periferic
-    //
-    if (dstInc == AddressIncrement::inc)
-        tmp |= 1 << DMA_CCR_PINC_Pos;
-    tmp |= (uint32_t(dstSize) << DMA_CCR_PSIZE_Pos) & DMA_CCR_PSIZE_Msk;
+        // Parametres de access a la memoria
+        //
+        if (srcInc == AddressIncrement::inc)
+            tmp |= 1 << DMA_CCR_MINC_Pos;
+        tmp |= (uint32_t(srcSize) << DMA_CCR_MSIZE_Pos) & DMA_CCR_MSIZE_Msk;
 
-    dmaChannel->CCR = tmp;
+        // Parametres d'acces al periferic
+        //
+        if (dstInc == AddressIncrement::inc)
+            tmp |= 1 << DMA_CCR_PINC_Pos;
+        tmp |= (uint32_t(dstSize) << DMA_CCR_PSIZE_Pos) & DMA_CCR_PSIZE_Msk;
 
-    // Borra els flags d'interrupcio
-    //
-    dma->IFCR = 0xF << _channel;
+        dmaChannel->CCR = tmp;
 
-    // Configura el multiplexor
-    //
-    tmp = muxChannel->CCR;
-    tmp &= ~(DMAMUX_CxCR_DMAREQ_ID);
-    tmp |= (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos);
-    muxChannel->CCR = tmp;
+        // Borra els flags d'interrupcio
+        //
+        dma->IFCR = 0xF << _channel;
+
+        // Configura el multiplexor
+        //
+        tmp = muxChannel->CCR;
+        tmp &= ~(DMAMUX_CxCR_DMAREQ_ID);
+        tmp |= (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos);
+        muxChannel->CCR = tmp;
+
+        _state = State::ready;
+
+        return DMAResult::success();
+    }
+
+    else
+        return DMAResult::error();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el dispositiu.
+/// \return   El resultat de l'operacio.
 ///
-void DMADevice::deinitialize() {
+DMAResult DMADevice::deinitialize() {
 
-    auto dmaChannel = getDMAChannel(_channel);
-    disable(dmaChannel);
+    if (_state == State::ready) {
+
+        auto dmaChannel = getDMAChannel(_channel);
+        disable(dmaChannel);
+
+        _state = State::reset;
+
+        return DMAResult::success();
+    }
+    else
+        return DMAResult::error();
 }
 
 

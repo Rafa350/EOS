@@ -78,13 +78,13 @@ namespace htl {
 			mosi
 		};
 
-		enum class Results {
+		enum class SPIResults {
 		    success,
 		    busy,
 		    timeout,
 		    error
 		};
-		using Result = eos::SimpleResult<Results>;
+		using SPIResult = eos::SimpleResult<SPIResults>;
 
 		class SPIDevice {
 			public:
@@ -111,21 +111,21 @@ namespace htl {
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 			public:
-				Result initialize(SPIMode mode, ClkPolarity clkPolarity,
+				SPIResult initialize(SPIMode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
 				        ClockDivider clkDivider);
-				Result deinitialize();
-				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
+				SPIResult deinitialize();
+				SPIResult transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        uint16_t size, uint16_t timeout = 0xFFFF);
-				inline Result receive(uint8_t *rxBuffer, uint16_t size,
+				inline SPIResult receive(uint8_t *rxBuffer, uint16_t size,
 				        uint16_t timeout = 0xFFFF)  {
 					return transmit(nullptr, rxBuffer, size, timeout);
 				}
-                inline Result transmit(const uint8_t *txBuffer, uint16_t size,
+                inline SPIResult transmit(const uint8_t *txBuffer, uint16_t size,
                         uint16_t timeout = 0xFFFF) {
                     return transmit(txBuffer, nullptr, size, timeout);
                 }
-                Result transmitDMA(htl::dma::DMADevice *devTxDMA,
+                SPIResult transmitDMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, uint16_t size);
 				inline State getState() const {
 				    return _state;

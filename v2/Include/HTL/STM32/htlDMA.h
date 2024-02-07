@@ -4,6 +4,7 @@
 
 
 #include "htl/STM32/htl.h"
+#include "System/eosResults.h"
 
 
 namespace htl {
@@ -64,6 +65,14 @@ namespace htl {
             veryHight
 		};
 
+		enum class DMAResults {
+            success,
+            busy,
+            timeout,
+            error
+        };
+        using DMAResult = eos::SimpleResult<DMAResults>;
+
 		class DMADevice {
 		    public:
 		        enum class State {
@@ -89,16 +98,16 @@ namespace htl {
                 virtual void activateImpl() = 0;
                 virtual void deactivateImpl() = 0;
 			public:
-				void initMemoryToMemory();
-                void initMemoryToPeripheral(Priority priority,
+				DMAResult initMemoryToMemory();
+                DMAResult initMemoryToPeripheral(Priority priority,
                         DataSize srcSize, DataSize dstSize,
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
-                void initPeripheralToMemory(Priority priority,
+                DMAResult initPeripheralToMemory(Priority priority,
                         DataSize srcSize, DataSize dstSize,
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
-				void deinitialize();
+				DMAResult deinitialize();
 				void start(const uint8_t *src, uint8_t *dst, uint32_t size);
 				void start_IRQ(const uint8_t *src, uint8_t *dst, uint32_t size);
 				bool waitForFinish(uint16_t timeout = 0xFFFF);

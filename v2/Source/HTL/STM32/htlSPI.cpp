@@ -82,7 +82,7 @@ SPIDevice::SPIDevice(
 /// \param    clkDivider: Divisor de frequencia.
 /// \return   El resultst de l'operacio.
 ///
-Result SPIDevice::initialize(
+SPIResult SPIDevice::initialize(
 	SPIMode mode,
 	ClkPolarity clkPolarity,
 	ClkPhase clkPhase,
@@ -104,10 +104,10 @@ Result SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::success();
+		return SPIResult::success();
 	}
 	else
-		return Result::error();
+		return SPIResult::error();
 }
 
 
@@ -115,7 +115,7 @@ Result SPIDevice::initialize(
 /// \brief    Desinicialitza el modul SPI.
 /// \return   El resultat de l'operacio.
 ///
-Result SPIDevice::deinitialize() {
+SPIResult SPIDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -124,10 +124,10 @@ Result SPIDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::success();
+		return SPIResult::success();
 	}
 	else
-		return Result::error();
+		return SPIResult::error();
 }
 
 
@@ -139,7 +139,7 @@ Result SPIDevice::deinitialize() {
 /// \param    timeout: Temps maxim d'espera en ms.
 /// \return   El resultat de l'operacio.
 ///
-Result SPIDevice::transmit(
+SPIResult SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
 	uint16_t size,
@@ -238,11 +238,11 @@ Result SPIDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Result::error() : Result::success();
+		return error ? SPIResult::error() : SPIResult::success();
 	}
 
 	else
-		return Result::busy();
+		return SPIResult::busy();
 }
 
 
@@ -253,7 +253,7 @@ Result SPIDevice::transmit(
 /// \param    size: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio.
 ///
-Result SPIDevice::transmitDMA(
+SPIResult SPIDevice::transmitDMA(
     htl::dma::DMADevice *devTxDMA,
     const uint8_t *txBuffer,
     uint16_t size) {
@@ -287,7 +287,7 @@ Result SPIDevice::transmitDMA(
     //
     _spi->CR2 &= ~SPI_CR2_TXDMAEN;
 
-    return Result::success();
+    return SPIResult::success();
 }
 
 

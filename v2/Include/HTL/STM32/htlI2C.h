@@ -81,13 +81,13 @@ namespace htl {
             };
         };
 
-        enum class Results {
+        enum class I2CResults {
             success,
             busy,
             timeout,
             error
         };
-        using Result = eos::SimpleResult<Results>;
+        using I2CResult = eos::SimpleResult<I2CResults>;
 
 
 		class I2CSlaveDevice;
@@ -138,8 +138,8 @@ namespace htl {
 				I2CSlaveDevice(I2C_TypeDef *gpio);
 				void interruptService();
 			public:
-				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
-				Result deinitialize();
+				I2CResult initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
+				I2CResult deinitialize();
 				inline void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true) {
 					_notifyEvent = &event;
 					_notifyEventEnabled = enabled;
@@ -150,7 +150,7 @@ namespace htl {
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
-				Result listen_IRQ(uint8_t *buffer, uint16_t bufferSize);
+				I2CResult listen_IRQ(uint8_t *buffer, uint16_t bufferSize);
 				void endListen();
 				inline State getState() const {
 					return _state;
@@ -173,11 +173,11 @@ namespace htl {
 				I2CMasterDevice(I2C_TypeDef *i2c);
 				void interruptService();
 			public:
-				Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
+				I2CResult initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
 					uint8_t sclh, uint8_t scll);
-				Result deinitialize();
-				Result send(uint16_t addr, const uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
-				Result receive(uint16_t addr, uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
+				I2CResult deinitialize();
+				I2CResult send(uint16_t addr, const uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
+				I2CResult receive(uint16_t addr, uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
 		};
 
 
