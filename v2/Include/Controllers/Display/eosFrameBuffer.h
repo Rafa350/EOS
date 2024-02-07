@@ -12,8 +12,8 @@ namespace eos {
 	///
 	class FrameBuffer {
 		private:
-			const int16_t _frameWidth;
-			const int16_t _frameHeight;
+			int16_t const _frameWidth;
+			int16_t const _frameHeight;
 			int16_t _maxX;
 			int16_t _maxY;
 			DisplayOrientation _orientation;

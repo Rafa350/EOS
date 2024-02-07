@@ -127,23 +127,23 @@ static constexpr dma2d::InputColorMode getInputColorMode(
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
-/// \param    width: Amplada.
-/// \param    height: Alçada.
-/// \param    pitch: Pitch.
+/// \param    frameWidth: Amplada.
+/// \param    frameHeight: Alçada.
+/// \param    framePitch: Pitch.
 /// \param    orientation: Orientacio.
 /// \param    color: Color inicial.
 /// \param    buffer: Buffer.
 ///
 ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
-	int16_t width,
-	int16_t height,
-	int16_t pitch,
+	int16_t frameWidth,
+	int16_t frameHeight,
+	int16_t framePitch,
 	DisplayOrientation orientation,
 	void *buffer):
 
-	FrameBuffer(width, height, orientation),
+	FrameBuffer(frameWidth, frameHeight, orientation),
 	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
-	_framePitch(pitch) {
+	_framePitch(framePitch) {
 
     htl::dma2d::DMA2DDevice::pInst->initialize();
 }

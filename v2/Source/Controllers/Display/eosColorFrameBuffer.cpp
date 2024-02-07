@@ -27,7 +27,7 @@ ColorFrameBuffer::ColorFrameBuffer(
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
 	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
-	_bufferPitch(framePitch) {
+	_framePitch(framePitch) {
 }
 
 
@@ -47,7 +47,7 @@ void ColorFrameBuffer::put(
 	if (opacity != 0) {
 
 		Color::Pixel c = color;
-		Color::Pixel *ptr = getPixelPtr(_buffer, _bufferPitch, x, y);
+		Color::Pixel *ptr = getPixelPtr(_buffer, _framePitch, x, y);
 
 		*ptr = c; // opacity == 0xFF ? c : combinePixels(c, *ptr, opacity);
 	}
@@ -76,7 +76,7 @@ void ColorFrameBuffer::fill(
 
 		if (opacity == 0xFF) {
 			for (int yy = y; yy < height + y; yy++) {
-				Color::Pixel *ptr = getPixelPtr(_buffer, _bufferPitch, x, yy);
+				Color::Pixel *ptr = getPixelPtr(_buffer, _framePitch, x, yy);
 				for (int xx = x; xx < width + x; xx++) {
 					*ptr = c; // opacity == 0xFF ? c : combinePixels(c, *ptr, opacity);
 					ptr++;

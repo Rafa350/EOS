@@ -255,7 +255,7 @@ void FrameBuffer::setPixels(
 /// \param    height: Alçada de la regio.
 /// \param    colors: Llista de colors.
 /// \param    colorFormat: Format de la llista de colors.
-/// \param    colorPpitch: Pitch de la llista de colors.
+/// \param    colorPitch: Pitch de la llista de colors.
 ///
 void FrameBuffer::setPixels(
 	int16_t x,

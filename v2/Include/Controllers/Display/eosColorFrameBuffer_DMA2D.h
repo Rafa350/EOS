@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosColorFrameBuffer_DMA2D__
+#define __eosColorFrameBuffer_DMA2D__
 
 
 #include "eos.h"
@@ -15,8 +17,8 @@ namespace eos {
 	        using DevDMA2D = htl::dma2d::DMA2DDevice;
             static constexpr DevDMA2D *_devDMA2D = DevDMA2D::pInst;
 		private:
-			Color::Pixel *_buffer;
-			const int16_t _framePitch;
+			Color::Pixel * const _buffer;
+			int16_t const _framePitch;
 		private:
 			inline Color::Pixel *getPixelPtr(int16_t x, int16_t y) const { return &_buffer[(y * _framePitch) + x]; }
 		protected:
@@ -29,3 +31,6 @@ namespace eos {
             uint8_t *getBuffer() const override;
 	};
 }
+
+
+#endif // __eosColorFrameBuffer_DMA2D__
