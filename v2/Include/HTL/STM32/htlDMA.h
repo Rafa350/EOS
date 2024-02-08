@@ -108,7 +108,7 @@ namespace htl {
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
 				DMAResult deinitialize();
-				void start(const uint8_t *src, uint8_t *dst, uint32_t size);
+				DMAResult start(const uint8_t *src, uint8_t *dst, uint32_t size);
 				void start_IRQ(const uint8_t *src, uint8_t *dst, uint32_t size);
 				bool waitForFinish(uint16_t timeout = 0xFFFF);
 				void finish();

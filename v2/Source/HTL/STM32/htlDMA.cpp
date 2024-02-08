@@ -182,36 +182,66 @@ DMAResult DMADevice::deinitialize() {
 /// \param    startAddr: Adressa inicial.
 /// \param    dstAddr: Adressa final;
 /// \param    size: El nombre de bytes a transfderir.
+/// \return   El resultat de l'operacio.
 ///
-void DMADevice::start(
+DMAResult DMADevice::start(
     const uint8_t *src,
     uint8_t *dst,
     uint32_t size) {
 
-    auto dmaChannel = getDMAChannel(_channel);
+    if (_state == State::ready) {
 
-    if (((dmaChannel->CCR & DMA_CCR_MEM2MEM) == 0) &&
-        ((dmaChannel->CCR & DMA_CCR_DIR) != 0)) {
+        auto dmaChannel = getDMAChannel(_channel);
 
-        // Transferencia de memoria a periferic
+        if (((dmaChannel->CCR & DMA_CCR_MEM2MEM) == 0) &&
+            ((dmaChannel->CCR & DMA_CCR_DIR) != 0)) {
+
+            // Transferencia de memoria a periferic
+            //
+            dmaChannel->CMAR = reinterpret_cast<uint32_t>(src);
+            dmaChannel->CPAR = reinterpret_cast<uint32_t>(dst);
+            dmaChannel->CNDTR = size;
+        }
+
+        // Activa el dispositiu
         //
-        dmaChannel->CMAR = reinterpret_cast<uint32_t>(src);
-        dmaChannel->CPAR = reinterpret_cast<uint32_t>(dst);
-        dmaChannel->CNDTR = size;
-    }
+        enable(dmaChannel);
 
-    // Activa el dispositiu
-    //
-    enable(dmaChannel);
+        _state = State::transfering;
+
+        return DMAResult::success();
+    }
+    else
+        return DMAResult::error();
+
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Espera que finalitzi la transferencia.
+/// \param    timeout: Limit de temps.
+///
 bool DMADevice::waitForFinish(
     uint16_t timeout) {
 
-    auto dmaChannel = getDMAChannel(_channel);
+    if (_state == State::transfering) {
 
-    return true;
+        auto dma = getDMA(_channel);
+
+        // Espera flag TCIF o TEIF
+        //
+        while ((dma->ISR & ((DMA_ISR_TCIF1 | DMA_ISR_TEIF1) << (_channel * 4))) == 0)
+            continue;
+
+        // Borra els flags
+        //
+        dma->IFCR |= (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) <<
+                (_channel * 4);
+
+        _state = State::ready;
+
+        return true;
+    }
 }
 
 
