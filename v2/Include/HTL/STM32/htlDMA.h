@@ -13,33 +13,54 @@ namespace htl {
 
 		enum class DeviceID {
             #ifdef HTL_DMA1_CHANNEL1_EXIST
-			dma1_1,
+			_11,
             #endif
             #ifdef HTL_DMA1_CHANNEL2_EXIST
-			dma1_2,
+			_12,
             #endif
             #ifdef HTL_DMA1_CHANNEL3_EXIST
-			dma1_3,
+			_13,
             #endif
             #ifdef HTL_DMA1_CHANNEL4_EXIST
-			dma1_4,
+			_14,
             #endif
             #ifdef HTL_DMA1_CHANNEL5_EXIST
-			dma1_5,
+			_15,
             #endif
             #ifdef HTL_DMA1_CHANNEL6_EXIST
-			dma1_6,
+			_16,
             #endif
             #ifdef HTL_DMA1_CHANNEL7_EXIST
-			dma1_7
+			_17
+            #endif
+            #ifdef HTL_DMA2_CHANNEL1_EXIST
+			_21,
+            #endif
+            #ifdef HTL_DMA3_CHANNEL2_EXIST
+			_22,
+            #endif
+            #ifdef HTL_DMA4_CHANNEL3_EXIST
+			_23,
+            #endif
+            #ifdef HTL_DMA5_CHANNEL4_EXIST
+			_24,
+            #endif
+            #ifdef HTL_DMA6_CHANNEL5_EXIST
+			_25,
+            #endif
+            #ifdef HTL_DMA7_CHANNEL6_EXIST
+			_26,
+            #endif
+            #ifdef HTL_DMA8_CHANNEL7_EXIST
+			_27
             #endif
 		};
 
 		enum class RequestID {
-		    spi1_rx = 16,
-		    spi1_tx = 17,
-		    spi2_rx = 18,
-		    spi2_tx = 19
+		    spi1RX = 16,
+		    spi1TX = 17,
+		    spi2RX = 18,
+		    spi2TX = 19
 		};
 
 		enum class TransferMode {
@@ -80,23 +101,28 @@ namespace htl {
 		            ready,
 		            transfering
 		        };
+                
 			private:
 				uint32_t const _channel;
 				State _state;
+                
             private:
                 DMADevice(const DMADevice &) = delete;
                 DMADevice & operator = (const DMADevice &) = delete;
+                
                 inline void activate() {
                     activateImpl();
                 }
                 inline void deactivate() {
                     activateImpl();
                 }
+                
 			protected:
 				DMADevice(uint32_t channel);
                 void interruptService();
                 virtual void activateImpl() = 0;
                 virtual void deactivateImpl() = 0;
+                
 			public:
 				DMAResult initMemoryToMemory();
                 DMAResult initMemoryToPeripheral(Priority priority,
@@ -108,11 +134,14 @@ namespace htl {
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
 				DMAResult deinitialize();
+                
 				void start(const uint8_t *src, uint8_t *dst, uint32_t size);
 				void start_IRQ(const uint8_t *src, uint8_t *dst, uint32_t size);
+                
 				bool waitForFinish(uint16_t timeout = 0xFFFF);
 				void finish();
-				State getState() const { return _state; }
+                
+				inline State getState() const { return _state; }
 		};
 
 
@@ -127,15 +156,18 @@ namespace htl {
 		class DMADeviceX final: public DMADevice {
             private:
                 using DMATraits = internal::DMATraits<deviceID_>;
+                
             private:
                 static constexpr auto _channel = uint32_t(deviceID_);
                 static constexpr auto _rccEnableAddr = DMATraits::rccEnableAddr;
                 static constexpr auto _rccEnablePos = DMATraits::rccEnablePos;
                 static DMADeviceX _instance;
+                
             private:
                 inline DMADeviceX() :
                     DMADevice(_channel) {
                 }
+                
             protected:
                 void activateImpl() override {
                     auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -146,10 +178,12 @@ namespace htl {
                     auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
                     *p &= ~(1 << _rccEnablePos);
                 }
+                
             public:
                 static constexpr auto deviceID = deviceID_;
                 static constexpr DMADeviceX *pInst = &_instance;
                 static constexpr DMADeviceX &rInst = _instance;
+                
 		    public:
                 inline static void interruptHandler() {
                     _instance.interruptService();

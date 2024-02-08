@@ -77,6 +77,16 @@ namespace htl {
 			miso,
 			mosi
 		};
+        
+        
+        struct NotifyEventArgs {
+            
+        };
+
+		class SPIDevice;
+        using INotifyEvent = eos::ICallbackP2<SPIDevice*, NotifyEventArgs&>;
+        template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, SPIDevice*, NotifyEventArgs&>;
+
 
 		enum class SPIResults {
 		    success,
@@ -86,6 +96,7 @@ namespace htl {
 		};
 		using SPIResult = eos::SimpleResult<SPIResults>;
 
+
 		class SPIDevice {
 			public:
 				enum class State {
@@ -93,9 +104,13 @@ namespace htl {
 					ready,
 					transmiting
 				};
+                
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
+                INotifyEvent *_notifyEvent;
+                bool _notifyEventEnabled;
+                
 			private:
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
@@ -105,16 +120,30 @@ namespace htl {
 				inline void deactivate() {
 					activateImpl();
 				}
+                
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
 				void interruptService();
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
+                
 			public:
 				SPIResult initialize(SPIMode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
 				        ClockDivider clkDivider);
 				SPIResult deinitialize();
+                
+				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+					_notifyEvent = &event;
+					_notifyEventEnabled = enabled;
+				}
+				inline void enableNotifyEvent() {
+					_notifyEventEnabled = _notifyEvent != nullptr;
+				}
+				inline void disableNotifyEvent() {
+					_notifyEventEnabled = false;
+				}
+                               
 				SPIResult transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        uint16_t size, uint16_t timeout = 0xFFFF);
 				inline SPIResult receive(uint8_t *rxBuffer, uint16_t size,
@@ -125,9 +154,13 @@ namespace htl {
                         uint16_t timeout = 0xFFFF) {
                     return transmit(txBuffer, nullptr, size, timeout);
                 }
+                
                 SPIResult transmitDMA(htl::dma::DMADevice *devTxDMA,
+                        const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF);
+                SPIResult transmitDMA_IRQ(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, uint16_t size);
-				inline State getState() const {
+				
+                inline State getState() const {
 				    return _state;
 				}
 		};
@@ -146,19 +179,23 @@ namespace htl {
 		class SPIDeviceX final: public SPIDevice {
 			private:
 				using SPITraits = internal::SPITraits<deviceID_>;
+                
 			private:
 				static constexpr auto _spiAddr = SPITraits::spiAddr;
 				static constexpr auto _rccEnableAddr = SPITraits::rccEnableAddr;
 				static constexpr auto _rccEnablePos = SPITraits::rccEnablePos;
 				static SPIDeviceX _instance;
+                
 			public:
 				static constexpr auto deviceID = deviceID_;
 				static constexpr SPIDeviceX *pInst = &_instance;
 				static constexpr SPIDeviceX &rInst = _instance;
+                
 			private:
 				SPIDeviceX() :
 					SPIDevice(reinterpret_cast<SPI_TypeDef *>(_spiAddr)) {
 				}
+                
 			protected:
 				void activateImpl() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -169,10 +206,12 @@ namespace htl {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
+                
 			public:
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
+                
 				template <typename pin_>
 				void initPinSCK() {
 				    auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
