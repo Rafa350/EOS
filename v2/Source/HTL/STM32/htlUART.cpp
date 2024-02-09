@@ -8,10 +8,10 @@ using namespace htl::uart;
 
 
 static void setParity(USART_TypeDef *usart, Parity parity);
-static void setWordBits(USART_TypeDef *usart, WordBits wordBits, bool parity);
+static void setWordBits(USART_TypeDef *usart, WordBits wordBits, bool useParity);
 static void setStopBits(USART_TypeDef *usart, StopBits stopBits);
 static void setHandsake(USART_TypeDef *usart, Handsake handsake);
-static void setRxTimeout(USART_TypeDef *usart, uint32_t timeout);
+static void setReceiveTimeout(USART_TypeDef *usart, uint32_t timeout);
 
 static ClockSource getClockSource(USART_TypeDef *usart);
 static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
@@ -50,6 +50,7 @@ Result UARTDevice::initialize() {
 		_usart->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
 		_state = State::ready;
+
 		return Result::success();
 	}
 
@@ -92,107 +93,20 @@ void UARTDevice::setProtocol(
 	StopBits stopBits,
 	Handsake handsake) {
 
-	uint32_t tmp;
-
-	// Configura el registre CR1 (Control Register 1)
-	// -Tamany de paraula
-	// -Paritat
-	//
-	tmp = _usart->CR1;
-
-	switch (7 + uint32_t(wordBits) + (parity == Parity::none ? 0 : 1)) {
-		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-		case 7:
-			tmp |= USART_CR1_M1;
-			tmp &= ~USART_CR1_M0;
-			break;
-		#endif
-
-		case 8:
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			tmp &= ~USART_CR1_M1;
-			tmp &= ~USART_CR1_M0;
-			#else
-			tmp &= ~USART_CR1_M;
-			#endif
-			break;
-
-		case 9:
-			#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-			tmp &= ~USART_CR1_M1;
-			tmp |= USART_CR1_M0;
-			#else
-			tmp |= USART_CR1_M;
-			#endif
-			break;
-	}
-
-    switch (parity) {
-    	case Parity::none:
-    		tmp &= ~USART_CR1_PCE;
-    		break;
-
-    	case Parity::even:
-    		tmp |= USART_CR1_PCE;
-    		tmp &= ~USART_CR1_PS;
-    		break;
-
-    	case Parity::odd:
-    		tmp |= USART_CR1_PCE;
-    		tmp |= USART_CR1_PS;
-    		break;
-    }
-	_usart->CR1 = tmp;
-
-	// Configura el registre CR2 (Control Register 2)
-	// -Bits de parada
-	// -Habilita del timeout en recepcio
-	//
-	tmp = _usart->CR2;
-    switch (stopBits) {
-    	case StopBits::_0p5:
-    		tmp &= ~USART_CR2_STOP_1;
-    		tmp |= USART_CR2_STOP_0;
-    		break;
-
-    	case StopBits::_1:
-    		tmp &= ~USART_CR2_STOP_1;
-    		tmp &= ~USART_CR2_STOP_0;
-    		break;
-
-    	case StopBits::_1p5:
-    		tmp |= USART_CR2_STOP_1;
-    		tmp |= USART_CR2_STOP_0;
-    		break;
-
-    	case StopBits::_2:
-    		tmp |= USART_CR2_STOP_1;
-    		tmp &= ~USART_CR2_STOP_0;
-    		break;
-    }
-	tmp |= USART_CR2_RTOEN;
-    _usart->CR2 = tmp;
-
-    // Configura el registre CR3
-    // -Opcions CTS
-    // -Opcions RST
-    //
-    tmp = _usart->CR3;
-    switch (handsake) {
-		case Handsake::none:
-			tmp &= ~(USART_CR3_RTSE | USART_CR3_CTSE);
-			break;
-
-		case Handsake::ctsrts:
-			tmp |= (USART_CR3_RTSE | USART_CR3_CTSE);
-			break;
-	}
-    _usart->CR3 = tmp;
-
-    // El timeout en recepcio
-    //
-    _usart->RTOR = 11 * 100;
+	setParity(_usart, parity);
+	setWordBits(_usart, wordBits, parity != Parity::none);
+	setStopBits(_usart, stopBits);
+	setHandsake(_usart, handsake);
+	setReceiveTimeout(_usart, 11 * 100);
 }
+
+
+void UARTDevice::setRxTimeout(
+    uint32_t timeout) {
+
+    setReceiveTimeout(_usart, timeout);
+}
+
 
 
 /// ----------------------------------------------------------------------
@@ -298,12 +212,10 @@ Result UARTDevice::transmit_IRQ(
 		_txCount = 0;
 
         #if defined(EOS_PLATFORM_STM32F7)
-        _usart->CR1 |= USART_CR1_TXEIE;
+        ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE | USART_CR1_TE);
         #elif defined(EOS_PLATFORM_STM32G0)
-		_usart->CR1 |= USART_CR1_TXEIE_TXFNFIE;
+		ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TE);
         #endif
-
-		enableTX();
 
 		return Result::success();
 	}
@@ -335,12 +247,10 @@ Result UARTDevice::receive_IRQ(
 		_rxCount = 0;
 
         #if defined(EOS_PLATFORM_STM32F7)
-        _usart->CR1 |= USART_CR1_RXNEIE;
+        ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RXNEIE | USART_CR1_RE);
         #elif defined(EOS_PLATFORM_STM32G0)
-		_usart->CR1 |= USART_CR1_RXNEIE_RXFNEIE;
+		ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RE);
         #endif
-
-		enableRX();
 
 		return Result::success();
 	}
@@ -353,17 +263,58 @@ Result UARTDevice::receive_IRQ(
 }
 
 
-Result UARTDevice::transmit_DMA(
-	const uint8_t *buffer,
-	uint16_t size) {
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades per DMA
+/// \param    devDMA: Dispositiu DMA.
+/// \param    buffer: Buffer de dades.
+/// \param    size: El nombre de bytes en el buffer.
+/// \param    timeout: El temps limit.
+/// \return   El resultat de l'operacio
+///
+Result UARTDevice::transmitDMA(
+    dma::DMADevice *devDMA,
+    const uint8_t *buffer,
+    uint16_t size,
+    uint32_t timeout) {
 
-	return Result::error();
+    if (_state == State::ready) {
+
+        ATOMIC_CLEAR_BIT(_usart->ICR, USART_ICR_TCCF);
+        ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
+        _usart->CR3 |= USART_CR3_DMAT;
+
+        // Inicia la transferencia i espera que finalitzi
+        //
+        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), size);
+        devDMA->waitForFinish(timeout);
+
+        // Espera que es complerti la transmissio
+        //
+        while ((_usart->ISR & USART_ISR_TC) == 0)
+            continue;
+        ATOMIC_CLEAR_BIT(_usart->ICR, USART_ICR_TCCF);
+
+        _usart->CR3 &= ~USART_CR3_DMAT;
+        ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TE);
+
+        // Notifica el final de la transmissio
+        //
+        notifyTxCompleted(buffer, size, false);
+
+        return Result::success();
+    }
+
+    else
+        return Result::error();
 }
 
 
-Result UARTDevice::receive_DMA(
-	uint8_t *buffer,
-	uint16_t size) {
+Result UARTDevice::receiveDMA(
+    dma::DMADevice *devDMA,
+    uint8_t *buffer,
+    uint16_t size,
+    uint32_t timeout) {
+
 
 	return Result::error();
 }
@@ -392,7 +343,7 @@ void UARTDevice::interruptService() {
 
         _usart->ICR |= USART_ICR_TCCF;
         ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE | USART_CR1_TCIE | USART_CR1_TE);
-        notifyTxCompleted(_txBuffer, _txCount);
+        notifyTxCompleted(_txBuffer, _txCount, true);
         _state = State::ready;
     }
 
@@ -404,7 +355,7 @@ void UARTDevice::interruptService() {
             _rxBuffer[_rxCount++] = _usart->RDR;
             if (_rxCount == _rxSize) {
                 ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-                notifyRxCompleted(_rxBuffer, _rxCount);
+                notifyRxCompleted(_rxBuffer, _rxCount, true);
                 _state = State::ready;
             }
         }
@@ -416,7 +367,7 @@ void UARTDevice::interruptService() {
 
         _usart->ICR |= USART_ICR_RTOCF;
         ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-        notifyRxCompleted(_rxBuffer, _rxCount);
+        notifyRxCompleted(_rxBuffer, _rxCount, true);
         _state = State::ready;
     }
 }
@@ -447,7 +398,7 @@ void UARTDevice::interruptService() {
 
             _usart->ICR |= USART_ICR_TCCF;
             ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
-            notifyTxCompleted(_txBuffer, _txCount);
+            notifyTxCompleted(_txBuffer, _txCount, true);
             _state = State::ready;
         }
 
@@ -459,7 +410,7 @@ void UARTDevice::interruptService() {
                 _rxBuffer[_rxCount++] = _usart->RDR;
                 if (_rxCount == _rxSize) {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-                    notifyRxCompleted(_rxBuffer, _rxCount);
+                    notifyRxCompleted(_rxBuffer, _rxCount, true);
                     _state = State::ready;
                 }
             }
@@ -471,7 +422,7 @@ void UARTDevice::interruptService() {
 
             _usart->ICR |= USART_ICR_RTOCF;
             ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-            notifyRxCompleted(_rxBuffer, _rxCount);
+            notifyRxCompleted(_rxBuffer, _rxCount, true);
             _state = State::ready;
         }
     }
@@ -486,12 +437,13 @@ void UARTDevice::interruptService() {
 ///
 void UARTDevice::notifyTxCompleted(
 	const uint8_t *buffer,
-	uint16_t count) {
+	uint16_t count,
+	bool irq) {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
 			.id = NotifyID::txCompleted,
-			.irq = true,
+			.irq = irq,
 			.RxCompleted {
 				.buffer = buffer,
 				.length = count
@@ -509,12 +461,13 @@ void UARTDevice::notifyTxCompleted(
 ///
 void UARTDevice::notifyRxCompleted(
 	const uint8_t *buffer,
-	uint16_t count) {
+	uint16_t count,
+	bool irq) {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
 			.id = NotifyID::rxCompleted,
-			.irq = true,
+			.irq = irq,
 			.RxCompleted {
 				.buffer = buffer,
 				.length = count
@@ -749,14 +702,14 @@ static void setStopBits(
 /// \brief    Configura nombre de bits de paraula.
 /// \param    usart: Registres de herdware del dispositiu.
 /// \param    wordBits: Opcions dels bits de paraula.
-/// \params   parity: True si utilitza bit de paritat
+/// \params   useParity: True si utilitza bit de paritat
 ///
 static void setWordBits(
     USART_TypeDef *usart,
     WordBits wordBits,
-    bool parity) {
+    bool useParity) {
 
-    auto numBits = 7 + uint32_t(wordBits) + (parity ? 0 : 1);
+    auto numBits = 7 + uint32_t(wordBits) + (useParity ? 0 : 1);
 
     auto tmp = usart->CR1;
     switch (numBits) {
@@ -817,7 +770,7 @@ static void setHandsake(
 /// \param    usart: Registres de hardware del dispositiu.
 /// \param    timeout: Timeout en temps de bit individual.
 ///
-static void setRxTimeout(
+static void setReceiveTimeout(
     USART_TypeDef *usart,
     uint32_t timeout) {
 

@@ -1,10 +1,13 @@
 #pragma once
+#ifndef __STM32_htlUART__
+#define __STM32_htlUART__
 
 
 // EOS includes
 //
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "HTL/STM32/htlDMA.h"
 #include "System/eosResults.h"
 
 
@@ -173,6 +176,7 @@ namespace htl {
 					transmiting,
 					receiving
 				};
+
 			private:
 				USART_TypeDef * const _usart;
 				State _state;
@@ -184,16 +188,19 @@ namespace htl {
 				uint16_t _txCount;
 				INotifyEvent *_notifyEvent;
 				bool _notifyEventEnabled;
+
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
-				void notifyTxCompleted(const uint8_t *buffer, uint16_t count);
-				void notifyRxCompleted(const uint8_t *buffer, uint16_t count);
+				void notifyTxCompleted(const uint8_t *buffer, uint16_t count, bool irq);
+				void notifyRxCompleted(const uint8_t *buffer, uint16_t count, bool irq);
+
 			protected:
 				UARTDevice(USART_TypeDef *usart);
 				void interruptService();
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;
+
 			public:
 				inline void enable() const {
 					_usart->CR1 |= USART_CR1_UE;
@@ -201,22 +208,13 @@ namespace htl {
 				inline void disable() const {
 					_usart->CR1 &= ~USART_CR1_UE;
 				}
-				inline void enableTX() const {
-					ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
-				}
-				inline void enableRX() const {
-					ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RE);
-				}
-				inline void disableTX() const {
-					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TE);
-				}
-				inline void disableRX() const {
-					ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RE);
-				}
 				Result initialize();
 				Result deinitialize();
+
 				void setProtocol(WordBits wordBits, Parity parity, StopBits stopBits, Handsake handlsake);
 				void setTimming(BaudMode baudMode, ClockSource clockSource, uint32_t rate, OverSampling oversampling);
+				void setRxTimeout(uint32_t timeout);
+
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
@@ -224,12 +222,16 @@ namespace htl {
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
+
 				Result transmit(const uint8_t *buffer, uint16_t size, uint32_t timeout);
 				Result receive(uint8_t *buffer, uint16_t size, uint32_t timeout);
 				Result transmit_IRQ(const uint8_t *buffer, uint16_t size);
 				Result receive_IRQ(uint8_t *buffer, uint16_t size);
-				Result transmit_DMA(const uint8_t *buffer, uint16_t size);
-				Result receive_DMA(uint8_t *buffer, uint16_t size);
+				Result transmitDMA(dma::DMADevice *devDMA, const uint8_t *buffer, uint16_t size, uint32_t timeout = 0xFFFF);
+				Result receiveDMA(dma::DMADevice *devDMA, uint8_t *buffer, uint16_t size, uint32_t timeout = 0xFFFF);
+                Result transmitDMA_IRQ(dma::DMADevice *devDMA, const uint8_t *buffer, uint16_t size);
+                Result receiveDMA_IRQ(dma::DMADevice *devDMA, uint8_t *buffer, uint16_t size);
+
 				State getState() const {
 					return _state;
 				}
@@ -240,19 +242,23 @@ namespace htl {
 		class UARTDeviceX final: public UARTDevice {
 			private:
 				using HI = internal::HardwareInfo<deviceID_>;
+
 			private:
 				static constexpr auto _usartAddr = HI::usartAddr;
 				static constexpr auto _rccEnableAddr = HI::rccEnableAddr;
 				static constexpr auto _rccEnablePos = HI::rccEnablePos;
 				static UARTDeviceX _instance;
+
 			public:
 				static constexpr auto deviceID = deviceID_;
 				static constexpr UARTDeviceX *pInst = &_instance;
 				static constexpr UARTDeviceX &rInst = _instance;
+
 			private:
 				UARTDeviceX() :
 					UARTDevice {reinterpret_cast<USART_TypeDef*>(_usartAddr)} {
 				}
+
 			protected:
 				void activate() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -263,10 +269,12 @@ namespace htl {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
+
 			public:
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
+
 				template <typename pin_>
 				inline void initPinTX() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_>::alt;
@@ -286,17 +294,6 @@ namespace htl {
 				inline void initPinRTS() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_>::alt;
 					pin_:initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
-				}
-				void setRxTimeout(uint32_t lostBits) {
-					if constexpr(HI::supportedRxTimeout) {
-						USART_TypeDef *usart = reinterpret_cast<USART_TypeDef*>(_usartAddr);
-						if (lostBits > 0) {
-							usart->RTOR |= (lostBits << USART_RTOR_RTO_Pos) & USART_RTOR_RTO_Msk;
-							usart->CR2 |= USART_CR2_RTOEN;
-						}
-						else
-							usart->CR2 &= ~USART_CR2_RTOEN;
-					}
 				}
 		};
 
@@ -473,3 +470,6 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
+
+
+#endif // __STM32_htlUART__

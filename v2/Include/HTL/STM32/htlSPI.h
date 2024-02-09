@@ -88,13 +88,13 @@ namespace htl {
         template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, SPIDevice*, NotifyEventArgs&>;
 
 
-		enum class SPIResults {
+		enum class Results {
 		    success,
 		    busy,
 		    timeout,
 		    error
 		};
-		using SPIResult = eos::SimpleResult<SPIResults>;
+		using Result = eos::SimpleResult<Results>;
 
 
 		class SPIDevice {
@@ -128,10 +128,10 @@ namespace htl {
 				virtual void deactivateImpl() = 0;
                 
 			public:
-				SPIResult initialize(SPIMode mode, ClkPolarity clkPolarity,
+				Result initialize(SPIMode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
 				        ClockDivider clkDivider);
-				SPIResult deinitialize();
+				Result deinitialize();
                 
 				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
 					_notifyEvent = &event;
@@ -144,20 +144,20 @@ namespace htl {
 					_notifyEventEnabled = false;
 				}
                                
-				SPIResult transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
+				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        uint16_t size, uint16_t timeout = 0xFFFF);
-				inline SPIResult receive(uint8_t *rxBuffer, uint16_t size,
+				inline Result receive(uint8_t *rxBuffer, uint16_t size,
 				        uint16_t timeout = 0xFFFF)  {
 					return transmit(nullptr, rxBuffer, size, timeout);
 				}
-                inline SPIResult transmit(const uint8_t *txBuffer, uint16_t size,
+                inline Result transmit(const uint8_t *txBuffer, uint16_t size,
                         uint16_t timeout = 0xFFFF) {
                     return transmit(txBuffer, nullptr, size, timeout);
                 }
                 
-                SPIResult transmitDMA(htl::dma::DMADevice *devTxDMA,
+                Result transmitDMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF);
-                SPIResult transmitDMA_IRQ(htl::dma::DMADevice *devTxDMA,
+                Result transmitDMA_IRQ(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, uint16_t size);
 				
                 inline State getState() const {

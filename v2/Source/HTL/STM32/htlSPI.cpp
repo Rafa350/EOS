@@ -5,7 +5,6 @@
 
 using namespace htl;
 using namespace htl::spi;
-using namespace htl::dma;
 
 
 #define SPI_CR1_BR_DIV2      (0UL << SPI_CR1_BR_Pos)
@@ -82,7 +81,7 @@ SPIDevice::SPIDevice(
 /// \param    clkDivider: Divisor de frequencia.
 /// \return   El resultst de l'operacio.
 ///
-SPIResult SPIDevice::initialize(
+Result SPIDevice::initialize(
 	SPIMode mode,
 	ClkPolarity clkPolarity,
 	ClkPhase clkPhase,
@@ -104,10 +103,10 @@ SPIResult SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return SPIResult::success();
+		return Result::success();
 	}
 	else
-		return SPIResult::error();
+		return Result::error();
 }
 
 
@@ -115,7 +114,7 @@ SPIResult SPIDevice::initialize(
 /// \brief    Desinicialitza el modul SPI.
 /// \return   El resultat de l'operacio.
 ///
-SPIResult SPIDevice::deinitialize() {
+Result SPIDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -124,10 +123,10 @@ SPIResult SPIDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return SPIResult::success();
+		return Result::success();
 	}
 	else
-		return SPIResult::error();
+		return Result::error();
 }
 
 
@@ -139,7 +138,7 @@ SPIResult SPIDevice::deinitialize() {
 /// \param    timeout: Temps maxim d'espera en ms.
 /// \return   El resultat de l'operacio.
 ///
-SPIResult SPIDevice::transmit(
+Result SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
 	uint16_t size,
@@ -238,11 +237,11 @@ SPIResult SPIDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? SPIResult::error() : SPIResult::success();
+		return error ? Result::error() : Result::success();
 	}
 
 	else
-		return SPIResult::busy();
+		return Result::busy();
 }
 
 
@@ -254,7 +253,7 @@ SPIResult SPIDevice::transmit(
 /// \param    timeout: Temps limit.
 /// \return   El resultat de l'operacio.
 ///
-SPIResult SPIDevice::transmitDMA(
+Result SPIDevice::transmitDMA(
     htl::dma::DMADevice *devTxDMA,
     const uint8_t *txBuffer,
     uint16_t size,
@@ -286,7 +285,7 @@ SPIResult SPIDevice::transmitDMA(
     //
     _spi->CR2 &= ~SPI_CR2_TXDMAEN;
 
-    return SPIResult::success();
+    return Result::success();
 }
 
 

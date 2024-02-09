@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosAsyncSerialDriver_UART__
+#define __eosAsyncSerialDriver_UART__
 
 
 #include "Controllers/Serial/eosAsyncSerialDriver.h"
@@ -7,7 +9,7 @@
 
 namespace eos {
 
-	class AsyncSerialDriver_UART final: public AsyncSerialDriver {
+	class AsyncSerialDriver_UART: public AsyncSerialDriver {
 	    public:
             using DevUART = htl::uart::UARTDevice;
 
@@ -15,20 +17,26 @@ namespace eos {
 	        using UARTNotifyEvent = htl::uart::NotifyEvent<AsyncSerialDriver_UART>;
 	        using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
 
+		protected:
+			DevUART * const _devUART;
+
 		private:
-			DevUART *_devUART;
 			UARTNotifyEvent _uartNotifyEvent;
 
 		private:
 			void initializeImpl() override;
 			void deinitializeImpl() override;
 
-			bool transmitImpl(const uint8_t *data, int dataLength) override;
-			bool receiveImpl(uint8_t *data, int dataSize) override;
-
 			void uartNotifyEventHandler(const DevUART *sender, const UARTNotifyEventArgs &args);
+
+		protected:
+            bool transmitImpl(const uint8_t *data, int dataLength) override;
+            bool receiveImpl(uint8_t *data, int dataSize) override;
 
 		public:
 			AsyncSerialDriver_UART(DevUART *devUART);
 	};
 }
+
+
+#endif // __eosAsyncSerialDriver_UART__
