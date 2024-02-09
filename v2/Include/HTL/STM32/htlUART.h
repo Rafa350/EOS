@@ -127,7 +127,7 @@ namespace htl {
 
 		struct NotifyEventArgs {
 			NotifyID id;
-			bool isr;
+			bool irq;
 			union {
 				struct {
 					const uint8_t *buffer;

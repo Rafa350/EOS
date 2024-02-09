@@ -491,7 +491,7 @@ void UARTDevice::notifyTxCompleted(
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
 			.id = NotifyID::txCompleted,
-			.isr = true,
+			.irq = true,
 			.RxCompleted {
 				.buffer = buffer,
 				.length = count
@@ -514,7 +514,7 @@ void UARTDevice::notifyRxCompleted(
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
 			.id = NotifyID::rxCompleted,
-			.isr = true,
+			.irq = true,
 			.RxCompleted {
 				.buffer = buffer,
 				.length = count

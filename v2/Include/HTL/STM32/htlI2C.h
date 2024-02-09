@@ -114,6 +114,7 @@ namespace htl {
 					listenRx,
 					listenTx
 				};
+                
 			private:
 				I2C_TypeDef * const _i2c;
 				State _state;
@@ -123,6 +124,7 @@ namespace htl {
 				uint16_t _maxCount;
                 ISlaveNotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
+                
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
@@ -134,12 +136,15 @@ namespace htl {
 				void interruptServiceListen();
 				void interruptServiceListenRx();
 				void interruptServiceListenTx();
+                
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *gpio);
 				void interruptService();
+                
 			public:
 				I2CResult initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				I2CResult deinitialize();
+                
 				inline void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true) {
 					_notifyEvent = &event;
 					_notifyEventEnabled = enabled;
@@ -150,8 +155,10 @@ namespace htl {
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
+                
 				I2CResult listen_IRQ(uint8_t *buffer, uint16_t bufferSize);
 				void endListen();
+                
 				inline State getState() const {
 					return _state;
 				}
@@ -163,19 +170,24 @@ namespace htl {
 					reset,
 					ready
 				};
+                
 			private:
 				I2C_TypeDef * const _i2c;
 				State _state;
+                
 			private:
 				I2CMasterDevice(const I2C_TypeDef&) = delete;
 				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
+                
 			protected:
 				I2CMasterDevice(I2C_TypeDef *i2c);
 				void interruptService();
+                
 			public:
 				I2CResult initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
 					uint8_t sclh, uint8_t scll);
 				I2CResult deinitialize();
+                
 				I2CResult send(uint16_t addr, const uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
 				I2CResult receive(uint16_t addr, uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
 		};
@@ -194,19 +206,23 @@ namespace htl {
 		class I2CSlaveDeviceX final: public I2CSlaveDevice {
 			private:
 				using I2CTraits = internal::I2CTraits<deviceID_>;
+                
 			private:
 				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
 				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
 				static constexpr auto _rccEnablePos = I2CTraits::rccEnablePos;
 				static I2CSlaveDeviceX _instance;
+                
 			public:
 				static constexpr auto deviceID = deviceID_;
 				static constexpr I2CSlaveDeviceX *pInst = &_instance;
 				static constexpr I2CSlaveDeviceX &rInst = _instance;
+                
 			private:
 				constexpr I2CSlaveDeviceX() :
 					I2CSlaveDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
 				}
+                
 			protected:
 				void activate() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -217,15 +233,17 @@ namespace htl {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
+                
 			public:
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
+                
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
-				}
+				}                
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
@@ -260,19 +278,23 @@ namespace htl {
 		class I2CMasterDeviceX final: public I2CMasterDevice {
 			private:
 				using I2CTraits = internal::I2CTraits<deviceID_>;
+                
 			private:
 				static constexpr uint32_t _i2cAddr = I2CTraits::i2cAddr;
 				static constexpr uint32_t _rccEnableAddr = I2CTraits::rccEnableAddr;
 				static constexpr uint32_t _rccEnablePos = I2CTraits::rccEnablePos;
 				static I2CMasterDeviceX _instance;
+                
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
                 static constexpr I2CMasterDeviceX *pInst = &_instance;
                 static constexpr I2CMasterDeviceX &rInst = _instance;
+                
 			private:
 				I2CMasterDeviceX() :
 					I2CMasterDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
 				}
+                
 			protected:
 				void activate() override {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -283,10 +305,12 @@ namespace htl {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
+                
 			public:
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
+                
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;

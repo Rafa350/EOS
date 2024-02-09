@@ -10,29 +10,30 @@ struct DMAAddress {
     uint32_t dmaChannel;
     uint32_t mux;
     uint32_t muxChannel;
+    uint32_t flagOffset;
 };
 
 static DMAAddress __dmaAddressTbl[] = {
     #ifdef HTL_DMA1_CHANNEL1_EXIST
-    { DMA1_BASE, DMA1_Channel1_BASE, DMAMUX1_BASE, DMAMUX1_Channel0_BASE },
+    { DMA1_BASE, DMA1_Channel1_BASE, DMAMUX1_BASE, DMAMUX1_Channel0_BASE, 0 },
     #endif
     #ifdef HTL_DMA1_CHANNEL2_EXIST
-    { DMA1_BASE, DMA1_Channel2_BASE, DMAMUX1_BASE, DMAMUX1_Channel1_BASE },
+    { DMA1_BASE, DMA1_Channel2_BASE, DMAMUX1_BASE, DMAMUX1_Channel1_BASE, 4 },
     #endif
     #ifdef HTL_DMA1_CHANNEL3_EXIST
-    { DMA1_BASE, DMA1_Channel3_BASE, DMAMUX1_BASE, DMAMUX1_Channel2_BASE },
+    { DMA1_BASE, DMA1_Channel3_BASE, DMAMUX1_BASE, DMAMUX1_Channel2_BASE, 8 },
     #endif
     #ifdef HTL_DMA1_CHANNEL4_EXIST
-    { DMA1_BASE, DMA1_Channel4_BASE, DMAMUX1_BASE, DMAMUX1_Channel3_BASE },
+    { DMA1_BASE, DMA1_Channel4_BASE, DMAMUX1_BASE, DMAMUX1_Channel3_BASE, 12 },
     #endif
     #ifdef HTL_DMA1_CHANNEL5_EXIST
-    { DMA1_BASE, DMA1_Channel5_BASE, DMAMUX1_BASE, DMAMUX1_Channel4_BASE },
+    { DMA1_BASE, DMA1_Channel5_BASE, DMAMUX1_BASE, DMAMUX1_Channel4_BASE, 16 },
     #endif
     #ifdef HTL_DMA1_CHANNEL6_EXIST
-    { DMA1_BASE, DMA1_Channel6_BASE, DMAMUX1_BASE, DMAMUX1_Channel5_BASE },
+    { DMA1_BASE, DMA1_Channel6_BASE, DMAMUX1_BASE, DMAMUX1_Channel5_BASE, 20 },
     #endif
     #ifdef HTL_DMA1_CHANNEL7_EXIST
-    { DMA1_BASE, DMA1_Channel7_BASE, DMAMUX1_BASE, DMAMUX1_Channel6_BASE },
+    { DMA1_BASE, DMA1_Channel7_BASE, DMAMUX1_BASE, DMAMUX1_Channel6_BASE, 24 },
     #endif
 };
 
@@ -40,6 +41,7 @@ static DMAAddress __dmaAddressTbl[] = {
 static DMA_TypeDef* getDMA(uint32_t channel);
 static DMA_Channel_TypeDef* getDMAChannel(uint32_t channel);
 static DMAMUX_Channel_TypeDef* getDMAMUXChannel(uint32_t channel);
+static uint32_t getFlagOffset(uint32_t channel);
 
 static void enable(DMA_Channel_TypeDef *dmaChannel);
 static void disable(DMA_Channel_TypeDef *dmaChannel);
@@ -100,6 +102,7 @@ DMAResult DMADevice::initMemoryToPeripheral(
         auto dma = getDMA(_channel);
         auto dmaChannel = getDMAChannel(_channel);
         auto muxChannel = getDMAMUXChannel(_channel);
+        auto flagOffset = getFlagOffset(_channel);
 
         // Activa el dispositiu
         //
@@ -138,7 +141,7 @@ DMAResult DMADevice::initMemoryToPeripheral(
 
         // Borra els flags d'interrupcio
         //
-        dma->IFCR = 0xF << _channel;
+        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
 
         // Configura el multiplexor
         //
@@ -203,7 +206,8 @@ DMAResult DMADevice::start(
             dmaChannel->CNDTR = size;
         }
 
-        // Activa el dispositiu
+        // Habilita el dispositiu i entra en espera de solicituts
+        // de transferencia.
         //
         enable(dmaChannel);
 
@@ -220,35 +224,32 @@ DMAResult DMADevice::start(
 /// ----------------------------------------------------------------------
 /// \brief    Espera que finalitzi la transferencia.
 /// \param    timeout: Limit de temps.
+/// \return   El resultat de l'operacio.
 ///
-bool DMADevice::waitForFinish(
+DMAResult DMADevice::waitForFinish(
     uint16_t timeout) {
 
     if (_state == State::transfering) {
 
         auto dma = getDMA(_channel);
+        auto dmaChannel = getDMAChannel(_channel);
+        auto flagOffset = getFlagOffset(_channel);
 
         // Espera flag TCIF o TEIF
         //
-        while ((dma->ISR & ((DMA_ISR_TCIF1 | DMA_ISR_TEIF1) << (_channel * 4))) == 0)
-            continue;
+        while ((dma->ISR & (DMA_ISR_TCIF1 << flagOffset)) == 0)
+                continue;
+        dma->IFCR |= (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
 
-        // Borra els flags
-        //
-        dma->IFCR |= (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) <<
-                (_channel * 4);
+        disable(dmaChannel);
 
         _state = State::ready;
 
-        return true;
+        return DMAResult::success();
     }
-}
 
-
-void DMADevice::finish() {
-
-    auto dmaChannel = getDMAChannel(_channel);
-    disable(dmaChannel);
+    else
+        return DMAResult::error();
 }
 
 
@@ -265,7 +266,7 @@ void DMADevice::interruptService() {
 /// \param    channel: El numero de canal.
 /// \return   L'adressa.
 ///
-static DMA_TypeDef* getDMA(
+static inline DMA_TypeDef* getDMA(
     uint32_t channel) {
 
     return reinterpret_cast<DMA_TypeDef*>(__dmaAddressTbl[channel].dma);
@@ -277,7 +278,7 @@ static DMA_TypeDef* getDMA(
 /// \param    channel: El numero de canal.
 /// \return   L'adressa.
 ///
-static DMA_Channel_TypeDef* getDMAChannel(
+static inline DMA_Channel_TypeDef* getDMAChannel(
     uint32_t channel) {
 
     return reinterpret_cast<DMA_Channel_TypeDef*>(__dmaAddressTbl[channel].dmaChannel);
@@ -289,21 +290,41 @@ static DMA_Channel_TypeDef* getDMAChannel(
 /// \param    channel: El numero de canal.
 /// \return   L'adressa.
 ///
-static DMAMUX_Channel_TypeDef* getDMAMUXChannel(
+static inline DMAMUX_Channel_TypeDef* getDMAMUXChannel(
     uint32_t channel) {
 
     return reinterpret_cast<DMAMUX_Channel_TypeDef*>(__dmaAddressTbl[channel].muxChannel);
 }
 
 
-static void enable(
+/// ----------------------------------------------------------------------
+/// \brief    Obte els offset dels flags del canal
+/// \param    channel: El numero de canal.
+/// \return   El offset.
+//
+static inline uint32_t getFlagOffset(
+    uint32_t channel) {
+
+    return __dmaAddressTbl[channel].flagOffset;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita un canal.
+/// \param    channel: El numero de canal.
+///
+static inline void enable(
     DMA_Channel_TypeDef *dmaChannel) {
 
     dmaChannel->CCR |= DMA_CCR_EN;
 }
 
 
-static void disable(
+/// ----------------------------------------------------------------------
+/// \brief    Desabilita un canal.
+/// \param    channel: El numero de canal.
+///
+static inline void disable(
     DMA_Channel_TypeDef *dmaChannel) {
 
     dmaChannel->CCR &= ~DMA_CCR_EN;

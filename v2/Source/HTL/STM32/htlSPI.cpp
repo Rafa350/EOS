@@ -251,12 +251,14 @@ SPIResult SPIDevice::transmit(
 /// \param    devTxDMA: DMA per la transmissio
 /// \param    txBuffer: El buffer de transmissio.
 /// \param    size: El nombre de bytes a transmetre.
+/// \param    timeout: Temps limit.
 /// \return   El resultat de l'operacio.
 ///
 SPIResult SPIDevice::transmitDMA(
     htl::dma::DMADevice *devTxDMA,
     const uint8_t *txBuffer,
-    uint16_t size) {
+    uint16_t size,
+    uint16_t timeout) {
 
     // Habilita les transferencies per DMA
     //
@@ -266,16 +268,13 @@ SPIResult SPIDevice::transmitDMA(
     //
     enable(_spi);
 
-    // Inicia la transferencia
+    // Inicia la transferencia i espera que finalitzi
     //
     devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), size);
+    devTxDMA->waitForFinish(timeout);
 
-    // devTxDMA->waitForFinish(timeout);
-    while ((DMA1->ISR & DMA_ISR_TCIF1) == 0)
-            continue;
-    DMA1->IFCR |= DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1;
-    devTxDMA->finish();
-
+    // Espera que el SPI acabi de transferir
+    //
     while (isBusy(_spi))
         continue;
 
