@@ -56,8 +56,8 @@ namespace eos {
 
 			virtual void initializeImpl();
 			virtual void deinitializeImpl();
-			virtual bool transmitImpl(const uint8_t *data, int dataLength) = 0;
-			virtual bool receiveImpl(uint8_t *data, int dataSize) = 0;
+			virtual bool transmitImpl(const uint8_t *buffer, unsigned bufferSize) = 0;
+			virtual bool receiveImpl(uint8_t *buffer, unsigned bufferSize) = 0;
 
 			/// \brief Constructor.
             ///
@@ -87,7 +87,7 @@ namespace eos {
             void enableAbortedEvent() { _abortedEventEnabled = _abortedEvent != nullptr; }
 			void disableAbortedEvent() { _abortedEventEnabled = false; }
 
-			bool transmit(const uint8_t *data, int dataLength);
-			bool receive(uint8_t *data, int dataSize);
+			bool transmit(const uint8_t *buffer, unsigned bufferSize);
+			bool receive(uint8_t *buffer, unsigned bufferSize);
 	};
 }

@@ -36,7 +36,7 @@ namespace htl {
 			#endif
 		};
 
-		enum class SPIMode {
+		enum class Mode {
 			master,
 			slave
 		};
@@ -85,7 +85,8 @@ namespace htl {
 
 		class SPIDevice;
         using INotifyEvent = eos::ICallbackP2<SPIDevice*, NotifyEventArgs&>;
-        template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, SPIDevice*, NotifyEventArgs&>;
+        template <typename Instance_> using NotifyEvent =
+                eos::CallbackP2<Instance_, SPIDevice*, NotifyEventArgs&>;
 
 
 		enum class Results {
@@ -128,15 +129,18 @@ namespace htl {
 				virtual void deactivateImpl() = 0;
                 
 			public:
-				Result initialize(SPIMode mode, ClkPolarity clkPolarity,
+				Result initialize(Mode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
 				        ClockDivider clkDivider);
+				inline Result initMaster(ClkPolarity clkPolarity,
+                        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
+                        ClockDivider clkDivider) {
+				    return initialize(Mode::master, clkPolarity, clkPhase,
+				            size, firstBit, clkDivider);
+				}
 				Result deinitialize();
                 
-				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-					_notifyEvent = &event;
-					_notifyEventEnabled = enabled;
-				}
+				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
@@ -145,20 +149,20 @@ namespace htl {
 				}
                                
 				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
-				        uint16_t size, uint16_t timeout = 0xFFFF);
-				inline Result receive(uint8_t *rxBuffer, uint16_t size,
-				        uint16_t timeout = 0xFFFF)  {
-					return transmit(nullptr, rxBuffer, size, timeout);
+				        unsigned bufferSize, Tick timeout = Tick(-1));
+				inline Result receive(uint8_t *rxBuffer, unsigned bufferSize,
+				        Tick timeout)  {
+					return transmit(nullptr, rxBuffer, bufferSize, timeout);
 				}
-                inline Result transmit(const uint8_t *txBuffer, uint16_t size,
-                        uint16_t timeout = 0xFFFF) {
-                    return transmit(txBuffer, nullptr, size, timeout);
+                inline Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
+                        Tick timeout) {
+                    return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
                 
                 Result transmitDMA(htl::dma::DMADevice *devTxDMA,
-                        const uint8_t *txBuffer, uint16_t size, uint16_t timeout = 0xFFFF);
+                        const uint8_t *txBuffer, unsigned bufferSize, Tick timeout);
                 Result transmitDMA_IRQ(htl::dma::DMADevice *devTxDMA,
-                        const uint8_t *txBuffer, uint16_t size);
+                        const uint8_t *txBuffer, unsigned bufferSize);
 				
                 inline State getState() const {
 				    return _state;

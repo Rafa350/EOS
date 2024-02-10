@@ -27,8 +27,8 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC(
 	FrameBuffer *frameBuffer1,
 	FrameBuffer *frameBuffer2):
 
-	_displayFrameBuffer(frameBuffer1),
-	_workFrameBuffer(frameBuffer2 == nullptr? frameBuffer1 : frameBuffer2) {
+	_displayFrameBuffer {frameBuffer1},
+	_workFrameBuffer {frameBuffer2 == nullptr? frameBuffer1 : frameBuffer2} {
 }
 
 

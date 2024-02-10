@@ -7,22 +7,25 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    frameWidth: Amplada.
-/// \param    frameHeight: Alçada.
-/// \param    framePitch: El pitch
+/// \param    frameWidth: Amplada en pixels
+/// \param    frameHeight: Alçada en pixels
 /// \param    orientation: Orientacio.
 /// \param    buffer: El buffer de memoria.
+/// \param    bufferPitch: Amplada en bytes de cada scanline.
+/// \param    mapping: Mapejat de pixels
 ///
 MonoFrameBuffer::MonoFrameBuffer(
-	int16_t frameWidth,
-	int16_t frameHeight,
-	int16_t framePitch,
-	DisplayOrientation orientation,
-	uint8_t *buffer):
+    int16_t frameWidth,
+    int16_t frameHeight,
+    DisplayOrientation orientation,
+    uint8_t *buffer,
+    unsigned bufferPitch,
+    Mapping mapping):
 
-	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer {reinterpret_cast<uint8_t*>(buffer)},
-	_framePitch {framePitch} {
+    FrameBuffer(frameWidth, frameHeight, orientation),
+    _buffer {buffer},
+    _bufferPitch {bufferPitch},
+    _mapping {mapping} {
 }
 
 
@@ -37,11 +40,11 @@ void MonoFrameBuffer::put(
 	int16_t y,
 	Color color) {
 
-	uint8_t *page = &_buffer[(y >> 3) * getWidth()];
+	uint8_t *byte = reinterpret_cast<uint8_t*>(uint32_t(_buffer) + ((y >> 3) * _bufferPitch) + x);
 	if (color.getL() > 127)
-		page[x] |= 1 << (y & 7);    // L>127 -> Color blanc
+		*byte |= 1 << (y & 7);    // L>127 -> Color blanc
 	else
-		page[x] &= ~(1 << (y & 7)); // L<128 -> Color negre
+		*byte &= ~(1 << (y & 7)); // L<128 -> Color negre
 }
 
 

@@ -103,13 +103,13 @@ namespace htl {
 		};
 
 
-		enum class DMAResults {
+		enum class Results {
             success,
             busy,
             timeout,
             error
         };
-        using DMAResult = eos::SimpleResult<DMAResults>;
+        using Result = eos::SimpleResult<Results>;
 
 
         struct NotifyEventArgs {
@@ -130,7 +130,7 @@ namespace htl {
 		        };
                 
 			private:
-				uint32_t const _channel;
+				unsigned const _channel;
 				State _state;
                 INotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
@@ -147,27 +147,24 @@ namespace htl {
                 }
                 
 			protected:
-				DMADevice(uint32_t channel);
+				DMADevice(unsigned channel);
                 void interruptService();
                 virtual void activateImpl() = 0;
                 virtual void deactivateImpl() = 0;
                 
 			public:
-				DMAResult initMemoryToMemory();
-                DMAResult initMemoryToPeripheral(Priority priority,
+				Result initMemoryToMemory();
+                Result initMemoryToPeripheral(Priority priority,
                         DataSize srcSize, DataSize dstSize,
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
-                DMAResult initPeripheralToMemory(Priority priority,
+                Result initPeripheralToMemory(Priority priority,
                         DataSize srcSize, DataSize dstSize,
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
-				DMAResult deinitialize();
+				Result deinitialize();
 
-                inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-                    _notifyEvent = &event;
-                    _notifyEventEnabled = enabled;
-                }
+                void setNotifyEvent(INotifyEvent &event, bool enabled = true);
                 inline void enableNotifyEvent() {
                     _notifyEventEnabled = _notifyEvent != nullptr;
                 }
@@ -175,10 +172,10 @@ namespace htl {
                     _notifyEventEnabled = false;
                 }
 
-				DMAResult start(const uint8_t *src, uint8_t *dst, uint32_t size);
-				DMAResult start_IRQ(const uint8_t *src, uint8_t *dst, uint32_t size);
+				Result start(const uint8_t *src, uint8_t *dst, unsigned size);
+				Result start_IRQ(const uint8_t *src, uint8_t *dst, unsigned size);
                 
-				DMAResult waitForFinish(uint16_t timeout = 0xFFFF);
+				Result waitForFinish(Tick timeout);
                 
 				inline State getState() const { return _state; }
 		};

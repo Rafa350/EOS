@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlI2C__
+#define __STM32_htlI2C__
 
 
 // EOS includes
@@ -57,7 +59,7 @@ namespace htl {
         
         struct NotifyEventArgs {
             NotifyID id;            
-            bool isr;
+            bool irq;
             union {
                 struct {
                     uint16_t addr;
@@ -81,13 +83,13 @@ namespace htl {
             };
         };
 
-        enum class I2CResults {
+        enum class Results {
             success,
             busy,
             timeout,
             error
         };
-        using I2CResult = eos::SimpleResult<I2CResults>;
+        using Result = eos::SimpleResult<Results>;
 
 
 		class I2CSlaveDevice;
@@ -119,20 +121,20 @@ namespace htl {
 				I2C_TypeDef * const _i2c;
 				State _state;
 				uint8_t *_buffer;
-				uint16_t _bufferSize;
-				uint16_t _count;
-				uint16_t _maxCount;
+				unsigned _bufferSize;
+				unsigned _count;
+				unsigned _maxCount;
                 ISlaveNotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
                 
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
-                void notifyAddressMatch(uint16_t addr);
-                void notifyRxData(const uint8_t *buffer, uint16_t length);
-                void notifyRxCompleted(const uint8_t *buffer, uint16_t length);
-                void notifyTxData(uint8_t *buffer, uint16_t size, uint16_t &length);
-                void notifyTxCompleted();
+                void notifyAddressMatch(uint16_t addr, bool irq);
+                void notifyRxData(const uint8_t *buffer, unsigned length, bool irq);
+                void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
+                void notifyTxData(uint8_t *buffer, unsigned bufferSize, unsigned &length, bool irq);
+                void notifyTxCompleted(bool irq);
 				void interruptServiceListen();
 				void interruptServiceListenRx();
 				void interruptServiceListenTx();
@@ -142,13 +144,10 @@ namespace htl {
 				void interruptService();
                 
 			public:
-				I2CResult initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
-				I2CResult deinitialize();
+				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
+				Result deinitialize();
                 
-				inline void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true) {
-					_notifyEvent = &event;
-					_notifyEventEnabled = enabled;
-				}
+				void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
@@ -156,7 +155,7 @@ namespace htl {
 					_notifyEventEnabled = false;
 				}
                 
-				I2CResult listen_IRQ(uint8_t *buffer, uint16_t bufferSize);
+				Result listen_IRQ(uint8_t *buffer, unsigned bufferSize);
 				void endListen();
                 
 				inline State getState() const {
@@ -184,12 +183,12 @@ namespace htl {
 				void interruptService();
                 
 			public:
-				I2CResult initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
+				Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
 					uint8_t sclh, uint8_t scll);
-				I2CResult deinitialize();
+				Result deinitialize();
                 
-				I2CResult send(uint16_t addr, const uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
-				I2CResult receive(uint16_t addr, uint8_t *buffer, uint16_t size, uint16_t timeout = 0xFFFF);
+				Result send(uint16_t addr, const uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				Result receive(uint16_t addr, uint8_t *buffer, unsigned bufferSize, Tick timeout);
 		};
 
 
@@ -428,3 +427,6 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
+
+
+#endif // __STM32_htlI2C__

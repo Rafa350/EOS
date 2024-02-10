@@ -46,16 +46,16 @@ void AsyncSerialDriver_UART::deinitializeImpl() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades de forma asincrona.
-/// \param    data: El buffer de dades.
-/// \param    dataLength: Nombre de bytes en el buffer de dades..
+/// \param    buffer: El buffer de dades.
+/// \param    bufferSize: Nombre de bytes en el buffer de dades..
 /// \return   True si tot es correcte.
 ///
 bool AsyncSerialDriver_UART::transmitImpl(
-	const uint8_t *data,
-	int dataLength) {
+	const uint8_t *buffer,
+	unsigned bufferSize) {
 
-    eosAssert(data != nullptr);
-    eosAssert(dataLength > 0);
+    eosAssert(buffer != nullptr);
+    eosAssert(bufferSize > 0);
 
 	if (isBusy())
 		return false;
@@ -63,7 +63,7 @@ bool AsyncSerialDriver_UART::transmitImpl(
 	else {
 		notifyTxStart();
 
-		_devUART->transmit_IRQ(data,  dataLength);
+		_devUART->transmit_IRQ(buffer, bufferSize);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
@@ -75,16 +75,16 @@ bool AsyncSerialDriver_UART::transmitImpl(
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades de forma asincrona.
-/// \param    data: El buffer de dades.
-/// \param    dataSize: El tamany en bytes del buffer de dades.
+/// \param    buffer: El buffer de dades.
+/// \param    bufferSize: El tamany en bytes del buffer de dades.
 /// \return   True si tot es correcte.
 ///
 bool AsyncSerialDriver_UART::receiveImpl(
-	uint8_t *data,
-	int dataSize) {
+	uint8_t *buffer,
+	unsigned bufferSize) {
 
-    eosAssert(data != nullptr);
-    eosAssert(dataSize > 0);
+    eosAssert(buffer != nullptr);
+    eosAssert(bufferSize > 0);
 
 	if (isBusy())
 		return false;
@@ -92,7 +92,7 @@ bool AsyncSerialDriver_UART::receiveImpl(
 	else {
 		notifyRxStart();
 
-		_devUART->receive_IRQ(data, dataSize);
+		_devUART->receive_IRQ(buffer, bufferSize);
 
 		// En aquest moment, es generen interrupcions
 		// cada cop que hi han dades disposibles en la UART.

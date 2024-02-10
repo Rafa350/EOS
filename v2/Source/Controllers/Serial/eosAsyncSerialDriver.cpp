@@ -40,29 +40,29 @@ void AsyncSerialDriver::deinitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
-/// \param    data: El buffer de dades.
-/// \param    dataLength: Longitut de les dades en bytes.
+/// \param    buffer: El buffer de dades.
+/// \param    bufferSize: Longitut de les dades en bytes.
 /// \return   True si tot es correcte.
 ///
 bool AsyncSerialDriver::transmit(
-	const uint8_t *data,
-	int dataLength) {
+	const uint8_t *buffer,
+	unsigned bufferSize) {
 
-	return isBusy() ? false : transmitImpl(data, dataLength);
+	return isBusy() ? false : transmitImpl(buffer, bufferSize);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades.
-/// \param    data: El buffer de recepcio.
-/// \param    dataSize: El tasmany del buffer en bytes.
+/// \param    buffer: El buffer de recepcio.
+/// \param    bufferSize: El tasmany del buffer en bytes.
 /// \return   True si tot es correcte.
 ///
 bool AsyncSerialDriver::receive(
-	uint8_t *data,
-	int dataSize) {
+	uint8_t *buffer,
+	unsigned bufferSize) {
 
-	return isBusy() ? false : receiveImpl(data, dataSize);
+	return isBusy() ? false : receiveImpl(buffer, bufferSize);
 }
 
 

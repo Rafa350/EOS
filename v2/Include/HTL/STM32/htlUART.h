@@ -134,24 +134,25 @@ namespace htl {
 			union {
 				struct {
 					const uint8_t *buffer;
-					uint16_t length;
+					unsigned length;
 				} TxCompleted;
 				struct {
 					const uint8_t *buffer;
-					uint16_t length;
+					unsigned length;
 				} RxCompleted;
 			};
 		};
 
 		class UARTDevice;
 		using INotifyEvent = eos::ICallbackP2<const UARTDevice*, const NotifyEventArgs&>;
-		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, const UARTDevice*, const NotifyEventArgs&>;
+		template <typename Instance_> using NotifyEvent =
+		        eos::CallbackP2<Instance_, const UARTDevice*, const NotifyEventArgs&>;
 
 
 		namespace internal {
 
 			template <DeviceID>
-			struct HardwareInfo;
+			struct UARTTraits;
 
 			template <DeviceID, PinFunction, typename>
 			struct PinFunctionInfo;
@@ -181,19 +182,19 @@ namespace htl {
 				USART_TypeDef * const _usart;
 				State _state;
 				uint8_t *_rxBuffer;
-				uint16_t _rxSize;
-				uint16_t _rxCount;
+				unsigned _rxSize;
+				unsigned _rxCount;
 				const uint8_t *_txBuffer;
-				uint16_t _txSize;
-				uint16_t _txCount;
+				unsigned _txSize;
+				unsigned _txCount;
 				INotifyEvent *_notifyEvent;
 				bool _notifyEventEnabled;
 
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
-				void notifyTxCompleted(const uint8_t *buffer, uint16_t count, bool irq);
-				void notifyRxCompleted(const uint8_t *buffer, uint16_t count, bool irq);
+				void notifyTxCompleted(const uint8_t *buffer, unsigned count, bool irq);
+				void notifyRxCompleted(const uint8_t *buffer, unsigned count, bool irq);
 
 			protected:
 				UARTDevice(USART_TypeDef *usart);
@@ -211,8 +212,10 @@ namespace htl {
 				Result initialize();
 				Result deinitialize();
 
-				void setProtocol(WordBits wordBits, Parity parity, StopBits stopBits, Handsake handlsake);
-				void setTimming(BaudMode baudMode, ClockSource clockSource, uint32_t rate, OverSampling oversampling);
+				void setProtocol(WordBits wordBits, Parity parity,
+				        StopBits stopBits, Handsake handlsake);
+				void setTimming(BaudMode baudMode, ClockSource clockSource,
+				        uint32_t rate, OverSampling oversampling);
 				void setRxTimeout(uint32_t timeout);
 
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
@@ -223,30 +226,28 @@ namespace htl {
 					_notifyEventEnabled = false;
 				}
 
-				Result transmit(const uint8_t *buffer, uint16_t size, uint32_t timeout);
-				Result receive(uint8_t *buffer, uint16_t size, uint32_t timeout);
-				Result transmit_IRQ(const uint8_t *buffer, uint16_t size);
-				Result receive_IRQ(uint8_t *buffer, uint16_t size);
-				Result transmitDMA(dma::DMADevice *devDMA, const uint8_t *buffer, uint16_t size, uint32_t timeout = 0xFFFF);
-				Result receiveDMA(dma::DMADevice *devDMA, uint8_t *buffer, uint16_t size, uint32_t timeout = 0xFFFF);
-                Result transmitDMA_IRQ(dma::DMADevice *devDMA, const uint8_t *buffer, uint16_t size);
-                Result receiveDMA_IRQ(dma::DMADevice *devDMA, uint8_t *buffer, uint16_t size);
+				Result transmit(const uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				Result receive(uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				Result transmit_IRQ(const uint8_t *buffer, unsigned bufferSize);
+				Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
+				Result transmitDMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				Result receiveDMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize, Tick timeout);
+                Result transmitDMA_IRQ(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned bufferSize);
+                Result receiveDMA_IRQ(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
 
-				State getState() const {
-					return _state;
-				}
+				State getState() const { return _state; }
 		};
 
 
 		template <DeviceID deviceID_>
 		class UARTDeviceX final: public UARTDevice {
 			private:
-				using HI = internal::HardwareInfo<deviceID_>;
+				using UARTTraits = internal::UARTTraits<deviceID_>;
 
 			private:
-				static constexpr auto _usartAddr = HI::usartAddr;
-				static constexpr auto _rccEnableAddr = HI::rccEnableAddr;
-				static constexpr auto _rccEnablePos = HI::rccEnablePos;
+				static constexpr auto _usartAddr = UARTTraits::usartAddr;
+				static constexpr auto _rccEnableAddr = UARTTraits::rccEnableAddr;
+				static constexpr auto _rccEnablePos = UARTTraits::rccEnablePos;
 				static UARTDeviceX _instance;
 
 			public:
@@ -330,7 +331,7 @@ namespace htl {
 
 			#ifdef HTL_UART1_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_1> {
+			struct UARTTraits<DeviceID::_1> {
 				static constexpr uint32_t usartAddr = USART1_BASE;
                 #if defined(EOS_PLATFORM_STM32F7)
                 static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -344,7 +345,7 @@ namespace htl {
 
 			#ifdef HTL_UART2_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_2> {
+			struct UARTTraits<DeviceID::_2> {
 				static constexpr uint32_t usartAddr = USART2_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -360,7 +361,7 @@ namespace htl {
 
 			#ifdef HTL_UART3_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_3> {
+			struct UARTTraits<DeviceID::_3> {
 				static constexpr uint32_t usartAddr = USART3_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -376,7 +377,7 @@ namespace htl {
 
 			#ifdef HTL_UART4_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_4> {
+			struct UARTTraits<DeviceID::_4> {
 				static constexpr uint32_t usartAddr = USART4_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -392,7 +393,7 @@ namespace htl {
 
 			#ifdef HTL_UART5_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_5> {
+			struct UARTTraits<DeviceID::_5> {
 				static constexpr uint32_t usartAddr = UART5_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
@@ -405,7 +406,7 @@ namespace htl {
 
 			#ifdef HTL_UART6_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_6> {
+			struct UARTTraits<DeviceID::_6> {
 				static constexpr uint32_t usartAddr = USART6_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
@@ -418,7 +419,7 @@ namespace htl {
 
 			#ifdef HTL_UART7_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_7> {
+			struct UARTTraits<DeviceID::_7> {
 				static constexpr uint32_t usartAddr = UART7_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
@@ -431,7 +432,7 @@ namespace htl {
 
 			#ifdef HTL_UART8_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_8> {
+			struct UARTTraits<DeviceID::_8> {
 				static constexpr uint32_t usartAddr = UART8_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)

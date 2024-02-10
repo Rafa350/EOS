@@ -13,7 +13,7 @@ using namespace eos;
 ///
 PinDriver_CLT0138SQ7::PinDriver_CLT0138SQ7(
 	Device_CLT0138SQ7 *dev,
-	uint8_t pinNumber):
+	unsigned pinNumber):
 
 	_dev {dev},
 	_pinMask {uint8_t(1 << pinNumber)} {

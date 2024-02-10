@@ -24,19 +24,19 @@ AsyncSerialDriver_UARTDMA::AsyncSerialDriver_UARTDMA(
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades de forma asincrona.
-/// \param    data: El buffer de dades.
-/// \param    dataLength: Nombre de bytes en el buffer de dades..
+/// \param    buffer: El buffer de dades.
+/// \param    bufferSize: Nombre de bytes en el buffer de dades..
 /// \return   True si tot es correcte.
 ///
 bool AsyncSerialDriver_UARTDMA::transmitImpl(
-	const uint8_t *data,
-	int dataLength) {
+	const uint8_t *buffer,
+	unsigned bufferSize) {
 
-    eosAssert(data != nullptr);
-    eosAssert(dataLength > 0);
+    eosAssert(buffer != nullptr);
+    eosAssert(bufferSize > 0);
 
     if (_devDMAtx == nullptr)
-        return AsyncSerialDriver_UART::transmitImpl(data, dataLength);
+        return AsyncSerialDriver_UART::transmitImpl(buffer, bufferSize);
 
     else {
 
@@ -47,7 +47,7 @@ bool AsyncSerialDriver_UARTDMA::transmitImpl(
             notifyTxStart();
 
             // TODO DMA_IRQ
-            _devUART->transmitDMA(_devDMAtx, data,  dataLength);
+            _devUART->transmitDMA(_devDMAtx, buffer,  bufferSize, Tick(1000));
 
             // En aquest moment es genera una interrupcio txEmpty
             // i comença la transmissio controlada per interrupcions.
@@ -60,19 +60,19 @@ bool AsyncSerialDriver_UARTDMA::transmitImpl(
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades de forma asincrona.
-/// \param    data: El buffer de dades.
-/// \param    dataSize: El tamany en bytes del buffer de dades.
+/// \param    buffer: El buffer de dades.
+/// \param    bufferSize: El tamany en bytes del buffer de dades.
 /// \return   True si tot es correcte.
 ///
 bool AsyncSerialDriver_UARTDMA::receiveImpl(
-	uint8_t *data,
-	int dataSize) {
+	uint8_t *buffer,
+	unsigned bufferSize) {
 
-    eosAssert(data != nullptr);
-    eosAssert(dataSize > 0);
+    eosAssert(buffer != nullptr);
+    eosAssert(bufferSize > 0);
 
     if (_devDMArx == nullptr)
-        return AsyncSerialDriver_UART::receiveImpl(data, dataSize);
+        return AsyncSerialDriver_UART::receiveImpl(buffer, bufferSize);
 
     else {
 
@@ -82,7 +82,7 @@ bool AsyncSerialDriver_UARTDMA::receiveImpl(
         else {
             notifyRxStart();
 
-            _devUART->receive_IRQ(data, dataSize);
+            _devUART->receive_IRQ(buffer, bufferSize);
 
             // En aquest moment, es generen interrupcions
             // cada cop que hi han dades disposibles en la UART.

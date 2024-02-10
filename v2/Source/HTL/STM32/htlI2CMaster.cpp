@@ -29,7 +29,7 @@ I2CMasterDevice::I2CMasterDevice(
 /// \param    sclh
 /// \param    scll:
 ///
-I2CResult I2CMasterDevice::initialize(
+Result I2CMasterDevice::initialize(
 	uint8_t prescaler,
 	uint8_t scldel,
 	uint8_t sdadel,
@@ -55,17 +55,17 @@ I2CResult I2CMasterDevice::initialize(
 
 		_state = State::ready;
 
-		return I2CResult::success();
+		return Result::success();
 	}
 	else
-		return I2CResult::error();
+		return Result::error();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza elñ dispositiu.
 ///
-I2CResult I2CMasterDevice::deinitialize() {
+Result I2CMasterDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -74,25 +74,25 @@ I2CResult I2CMasterDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return I2CResult::success();
+		return Result::success();
 	}
 	else
-		return I2CResult::error();
+		return Result::error();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteis un bloc de dades en modus polling
 /// \param    addr: L'adressa del esclau.
-/// \param    buffer: Les dades a transmetre.
-/// \param    size: El nom,bre de bytes a transmetre.
+/// \param    buffer: El buffer de dades.
+/// \param    bufferSize: El nombre de bytes en el buffer.
 /// \param    timeout: El temps maxim en ms.
 ///
-I2CResult I2CMasterDevice::send(
+Result I2CMasterDevice::send(
 	uint16_t addr,
 	const uint8_t *buffer,
-	uint16_t size,
-	uint16_t timeout) {
+	unsigned bufferSize,
+	Tick timeout) {
 
 	uint32_t tmp;
 
@@ -113,8 +113,8 @@ I2CResult I2CMasterDevice::send(
 	// Configura el nombre de bytes a transmetre
 	//
 	tmp &= ~(I2C_CR2_NBYTES_Msk | I2C_CR2_RELOAD);
-	if (size < 255)
-		tmp |= (size << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
+	if (bufferSize < 255)
+		tmp |= (bufferSize << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
 	else {
 		tmp |= (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
 		tmp |= I2C_CR2_RELOAD;
@@ -128,27 +128,27 @@ I2CResult I2CMasterDevice::send(
 	_i2c->CR1 |= I2C_CR1_PE;    // Habilita el dispositiu.
 	_i2c->CR2 |= I2C_CR2_START; // Inicia la sequencia START, ADDR
 
-	uint16_t blockSize = std::min(size, (typeof(size)) 255);
-	while (size > 0) {
+	unsigned blockSize = std::min(bufferSize, 255u);
+	while (bufferSize > 0) {
 
 		while ((_i2c->ISR & I2C_ISR_TXIS) == 0)
 			continue;
 
 		_i2c->TXDR = *buffer++;
 
-		size--;
+		bufferSize--;
 		blockSize--;
 
 		// Si es necesari prepara un altre bloc
 		//
-		if ((size > 0) && (blockSize == 0)) {
+		if ((bufferSize > 0) && (blockSize == 0)) {
 
 			while ((_i2c->ISR & I2C_ISR_TCR) == 0)
 				continue;
 
 			// TODO: Preparar el seguent bloc
 
-			blockSize = std::min(size, (typeof(size)) 255);
+			blockSize = std::min(bufferSize, 255u);
 		}
 	}
 
@@ -159,7 +159,7 @@ I2CResult I2CMasterDevice::send(
 	//
 	_i2c->CR1 &= ~I2C_CR1_PE;    // Deshabilita el dispositiu.
 
-	return I2CResult::success();
+	return Result::success();
 }
 
 
@@ -167,14 +167,14 @@ I2CResult I2CMasterDevice::send(
 /// \brief    Reb un bloc de dades.
 /// \param    addr: Adresa del escalu.
 /// \param    buffer: Buffer de dades.
-/// \param    size: Tamany del buffer de dades.
+/// \param    size: Tamany en bytes del buffer de dades.
 /// \param    timeout: Temps maxim.
 ///
-I2CResult I2CMasterDevice::receive(
+Result I2CMasterDevice::receive(
 	uint16_t addr,
 	uint8_t *buffer,
-	uint16_t size,
-	uint16_t timeout) {
+	unsigned bufferSize,
+	Tick timeout) {
 
     uint32_t tmp;
 
@@ -196,8 +196,8 @@ I2CResult I2CMasterDevice::receive(
     // Configura el nombre de bytes a rebre
     //
     tmp &= ~(I2C_CR2_NBYTES_Msk | I2C_CR2_RELOAD);
-    if (size < 255)
-        tmp |= (size << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
+    if (bufferSize < 255)
+        tmp |= (bufferSize << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
     else {
         tmp |= (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
         tmp |= I2C_CR2_RELOAD;
@@ -211,15 +211,15 @@ I2CResult I2CMasterDevice::receive(
     _i2c->CR2 |= I2C_CR2_START; // Inicia la sequencia START, ADDR
 
 
-    uint32_t blockSize = std::min(size, (typeof(size)) 255);
-    while (size > 0) {
+    unsigned blockSize = std::min(bufferSize, 255u);
+    while (bufferSize > 0) {
 
         while ((_i2c->ISR & I2C_ISR_RXNE) == 0)
             continue;
 
         *buffer++ = _i2c->RXDR;
 
-        size--;
+        bufferSize--;
         blockSize--;
 
         // si es necesari, prepara un altre bloc
@@ -235,7 +235,7 @@ I2CResult I2CMasterDevice::receive(
     //
     _i2c->ICR |= I2C_ISR_STOPF;
 
-    return I2CResult::success();
+    return Result::success();
 }
 
 

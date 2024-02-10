@@ -9,6 +9,11 @@
 #include "HTL/htlDMA.h"
 
 
+#define SSD1306_CMD_DISPLAY_ON              0xAF
+#define SSD1306_CMD_DISPLAY_OFF             0xAE
+#define SSD1306_CMD_SET_ADDRESSING_MODE     0x20
+
+
 namespace eos {
 
     /// \brief Clase que representa un dispositiu SSD1306 generic
@@ -21,13 +26,13 @@ namespace eos {
         protected:
             Device_SSD1306();
 
-            void writeScript(const uint8_t *script, uint16_t scriptSize);
+            void writeScript(const uint8_t *script, unsigned scriptSize);
 
         public:
             virtual ~Device_SSD1306() = default;
 
-            virtual void writeCommand(const uint8_t *data, uint16_t dataSize) = 0;
-            virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
+            virtual void writeCommand(const uint8_t *data, unsigned dataSize) = 0;
+            virtual void writeData(const uint8_t *data, unsigned dataSize) = 0;
     };
     
 
@@ -49,11 +54,11 @@ namespace eos {
             Device_SSD1306_SPI(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI);
             ~Device_SSD1306_SPI();
 
-            void initialize(const uint8_t *script, uint16_t scriptSize);
+            void initialize(const uint8_t *script, unsigned scriptSize);
             void deinitialize();
             
-            void writeCommand(const uint8_t *data, uint16_t dataSize) override;
-            void writeData(const uint8_t *data, uint16_t dataSize) override;
+            void writeCommand(const uint8_t *data, unsigned dataSize) override;
+            void writeData(const uint8_t *data, unsigned dataSize) override;
     };
 
 
@@ -70,7 +75,7 @@ namespace eos {
         public:
             Device_SSD1306_SPIDMA(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI, DevDMA *devDMA);
 
-            void writeData(const uint8_t *data, uint16_t dataSize) override;
+            void writeData(const uint8_t *data, unsigned dataSize) override;
     };
 }
 

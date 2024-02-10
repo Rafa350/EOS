@@ -38,9 +38,16 @@ UARTDevice::UARTDevice(
 ///
 Result UARTDevice::initialize() {
 
+    // Comprova que l'estat sigui 'reset'
+    //
 	if (_state == State::reset) {
 
+	    // Activa el dispositiu
+	    //
 		activate();
+
+		// Desabilita les comunicacions.
+		//
 		disable();
 
         #if defined(EOS_PLATFORM_STM32G0)
@@ -49,6 +56,8 @@ Result UARTDevice::initialize() {
 	    _usart->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
 		_usart->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
+		// Canvia l'estat a 'ready'
+		//
 		_state = State::ready;
 
 		return Result::success();
@@ -65,11 +74,20 @@ Result UARTDevice::initialize() {
 ///
 Result UARTDevice::deinitialize() {
 
+    // Comprova que l'estat sigui 'ready'
+    //
 	if (_state == State::ready) {
 
+	    // Deshabilita les comunicacions
+	    //
 		disable();
+
+		// Desactiva el dispositiu
+		//
 		deactivate();
 
+		// Canvia l'estat a 'reset'
+		//
 		_state = State::reset;
 
 		return Result::success();
@@ -184,6 +202,11 @@ void UARTDevice::setTimming(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna l'event de notificacio.
+/// \param    event: L'event.
+/// \param    enabled: Indica si l'habilita.
+///
 void UARTDevice::setNotifyEvent(
 	INotifyEvent &event,
 	bool enabled) {
@@ -196,19 +219,19 @@ void UARTDevice::setNotifyEvent(
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
 /// \param    buffer: Buffer de dades.
-/// \param    size: El nombre de bytes en el buffer.
+/// \param    bufferSize: El nombre de bytes en el buffer.
 /// \return   El resultat de l'operacio
 ///
 Result UARTDevice::transmit_IRQ(
 	const uint8_t *buffer,
-	uint16_t size) {
+	unsigned bufferSize) {
 
 	if (_state == State::ready) {
 
 		_state = State::transmiting;
 
 		_txBuffer = buffer;
-		_txSize = size;
+		_txSize = bufferSize;
 		_txCount = 0;
 
         #if defined(EOS_PLATFORM_STM32F7)
@@ -231,19 +254,19 @@ Result UARTDevice::transmit_IRQ(
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades per
 /// \param    buffer: Buffer de dades.
-/// \param    size: Tamany del buffer en bytes.
+/// \param    bufferSize: Tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
 Result UARTDevice::receive_IRQ(
 	uint8_t *buffer,
-	uint16_t size) {
+	unsigned bufferSize) {
 
 	if (_state == State::ready) {
 
 		_state = State::receiving;
 
 		_rxBuffer = buffer;
-		_rxSize = size;
+		_rxSize = bufferSize;
 		_rxCount = 0;
 
         #if defined(EOS_PLATFORM_STM32F7)
@@ -267,15 +290,15 @@ Result UARTDevice::receive_IRQ(
 /// \brief    Transmiteix un bloc de dades per DMA
 /// \param    devDMA: Dispositiu DMA.
 /// \param    buffer: Buffer de dades.
-/// \param    size: El nombre de bytes en el buffer.
+/// \param    bufferSize: El nombre de bytes en el buffer.
 /// \param    timeout: El temps limit.
 /// \return   El resultat de l'operacio
 ///
 Result UARTDevice::transmitDMA(
     dma::DMADevice *devDMA,
     const uint8_t *buffer,
-    uint16_t size,
-    uint32_t timeout) {
+    unsigned bufferSize,
+    Tick timeout) {
 
     if (_state == State::ready) {
 
@@ -285,7 +308,7 @@ Result UARTDevice::transmitDMA(
 
         // Inicia la transferencia i espera que finalitzi
         //
-        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), size);
+        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), bufferSize);
         devDMA->waitForFinish(timeout);
 
         // Espera que es complerti la transmissio
@@ -299,7 +322,7 @@ Result UARTDevice::transmitDMA(
 
         // Notifica el final de la transmissio
         //
-        notifyTxCompleted(buffer, size, false);
+        notifyTxCompleted(buffer, bufferSize, false);
 
         return Result::success();
     }
@@ -312,8 +335,8 @@ Result UARTDevice::transmitDMA(
 Result UARTDevice::receiveDMA(
     dma::DMADevice *devDMA,
     uint8_t *buffer,
-    uint16_t size,
-    uint32_t timeout) {
+    unsigned bufferSize,
+    Tick timeout) {
 
 
 	return Result::error();
@@ -437,7 +460,7 @@ void UARTDevice::interruptService() {
 ///
 void UARTDevice::notifyTxCompleted(
 	const uint8_t *buffer,
-	uint16_t count,
+	unsigned count,
 	bool irq) {
 
 	if (_notifyEventEnabled) {
@@ -461,7 +484,7 @@ void UARTDevice::notifyTxCompleted(
 ///
 void UARTDevice::notifyRxCompleted(
 	const uint8_t *buffer,
-	uint16_t count,
+	unsigned count,
 	bool irq) {
 
 	if (_notifyEventEnabled) {

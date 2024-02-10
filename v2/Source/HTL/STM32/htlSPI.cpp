@@ -29,7 +29,7 @@ using namespace htl::spi;
 
 
 static void setClockDivider(SPI_TypeDef * const spi, ClockDivider clkDivider);
-static void setMode(SPI_TypeDef * const spi, SPIMode mode);
+static void setMode(SPI_TypeDef * const spi, Mode mode);
 static void setClkPolarity(SPI_TypeDef * const spi, ClkPolarity polarity);
 static void setClkPhase(SPI_TypeDef * const spi, ClkPhase phase);
 static void setWordSize(SPI_TypeDef * const spi, WordSize size);
@@ -48,12 +48,12 @@ static bool isRxNotEmpty(SPI_TypeDef * const spi);
 static bool isBusy(SPI_TypeDef * const spi);
 
 #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
-static bool waitRxFifoEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
-static bool waitTxFifoEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
+static bool waitRxFifoEmpty(SPI_TypeDef * const spi, Tick expireTime);
+static bool waitTxFifoEmpty(SPI_TypeDef * const spi, Tick expireTime);
 #endif
-static bool waitNotBusy(SPI_TypeDef * const spi, uint32_t expireTime);
-static bool waitRxNotEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
-static bool waitTxEmpty(SPI_TypeDef * const spi, uint32_t expireTime);
+static bool waitNotBusy(SPI_TypeDef * const spi, Tick expireTime);
+static bool waitRxNotEmpty(SPI_TypeDef * const spi, Tick expireTime);
+static bool waitTxEmpty(SPI_TypeDef * const spi, Tick expireTime);
 
 static void clearOverrunFlag(SPI_TypeDef * const spi);
 
@@ -82,7 +82,7 @@ SPIDevice::SPIDevice(
 /// \return   El resultst de l'operacio.
 ///
 Result SPIDevice::initialize(
-	SPIMode mode,
+	Mode mode,
 	ClkPolarity clkPolarity,
 	ClkPhase clkPhase,
 	WordSize size,
@@ -130,19 +130,28 @@ Result SPIDevice::deinitialize() {
 }
 
 
+void SPIDevice::setNotifyEvent(
+    INotifyEvent &event,
+    bool enabled) {
+
+    _notifyEvent = &event;
+    _notifyEventEnabled = enabled;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
 /// \param    txBuffer: El buffer de transmissio.
 /// \param    rxBuffer: El buffer de recepcio.
-/// \param    size: El nombre de bytes a transmetre.
+/// \param    bufferSize: El nombre de bytes a transmetre.
 /// \param    timeout: Temps maxim d'espera en ms.
 /// \return   El resultat de l'operacio.
 ///
 Result SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
-	uint16_t size,
-	uint16_t timeout) {
+	unsigned bufferSize,
+	Tick timeout) {
 
 	if (_state == State::ready) {
 
@@ -165,8 +174,8 @@ Result SPIDevice::transmit(
 		// Bucle per transmetre i/o rebre
 		//
         bool error = false;
-        uint16_t count = 0;
-		while ((count < size) && !error) {
+        unsigned count = 0;
+		while ((count < bufferSize) && !error) {
 
 			// Espera que el buffer de transmissio estigui buit
 			//
@@ -249,15 +258,15 @@ Result SPIDevice::transmit(
 /// \brief    Transmiteix un bloc de dades en modus DMA
 /// \param    devTxDMA: DMA per la transmissio
 /// \param    txBuffer: El buffer de transmissio.
-/// \param    size: El nombre de bytes a transmetre.
+/// \param    bufferSize: El nombre de bytes a transmetre.
 /// \param    timeout: Temps limit.
 /// \return   El resultat de l'operacio.
 ///
 Result SPIDevice::transmitDMA(
     htl::dma::DMADevice *devTxDMA,
     const uint8_t *txBuffer,
-    uint16_t size,
-    uint16_t timeout) {
+    unsigned bufferSize,
+    Tick timeout) {
 
     // Habilita les transferencies per DMA
     //
@@ -269,7 +278,7 @@ Result SPIDevice::transmitDMA(
 
     // Inicia la transferencia i espera que finalitzi
     //
-    devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), size);
+    devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), bufferSize);
     devTxDMA->waitForFinish(timeout);
 
     // Espera que el SPI acabi de transferir
@@ -317,13 +326,13 @@ static void setClockDivider(
 ///
 static void setMode(
 	SPI_TypeDef *spi,
-	SPIMode mode) {
+	Mode mode) {
 
     // Configura el registre CR1
     //
 	uint32_t CR1 = spi->CR1;
 	CR1 &= ~SPI_CR1_CRCEN;
-	if (mode == SPIMode::master)
+	if (mode == Mode::master)
 		CR1 |= (SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM);
 	CR1 &= ~(SPI_CR1_BIDIMODE | SPI_CR1_RXONLY);
 	spi->CR1 = CR1;
@@ -560,7 +569,7 @@ static inline bool isBusy(
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 static bool waitRxFifoEmpty(
 	SPI_TypeDef *spi,
-	uint32_t expireTime) {
+	Tick expireTime) {
 
 	while ((spi->SR & SPI_SR_FRLVL) != 0) {
 
@@ -579,7 +588,7 @@ static bool waitRxFifoEmpty(
 ///
 static bool waitTxFifoEmpty(
 	SPI_TypeDef *spi,
-	uint32_t expireTime) {
+	Tick expireTime) {
 
 	while ((spi->SR & SPI_SR_FTLVL) != 0) {
 	}
@@ -597,7 +606,7 @@ static bool waitTxFifoEmpty(
 ///
 static bool waitNotBusy(
     SPI_TypeDef * const spi,
-    uint32_t expireTime) {
+    Tick expireTime) {
 
     while (isBusy(spi)) {
         if (hasTickExpired(expireTime)) {
@@ -617,7 +626,7 @@ static bool waitNotBusy(
 ///
 static bool waitTxEmpty(
     SPI_TypeDef * const spi,
-    uint32_t expireTime) {
+    Tick expireTime) {
 
     while (!isTxEmpty(spi)) {
         if (hasTickExpired(expireTime))
@@ -636,7 +645,7 @@ static bool waitTxEmpty(
 ///
 static bool waitRxNotEmpty(
     SPI_TypeDef * const spi,
-    uint32_t expireTime) {
+    Tick expireTime) {
 
     while (!isRxNotEmpty(spi)) {
         if (hasTickExpired(expireTime))

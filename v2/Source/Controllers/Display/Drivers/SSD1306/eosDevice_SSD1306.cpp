@@ -21,8 +21,8 @@ Device_SSD1306::Device_SSD1306() {
 ///
 void Device_SSD1306::writeScript(
     const uint8_t *script,
-    uint16_t scriptSize) {
+    unsigned scriptSize) {
 
-    for (decltype(scriptSize) i = 0; i < scriptSize; i++)
+    for (unsigned i = 0; i < scriptSize; i++)
         writeCommand(&script[i], 1);
 }

@@ -26,8 +26,8 @@ namespace eos {
 			void initializeImpl() override;
 			void deinitializeImpl() override;
 
-			bool transmitImpl(const uint8_t *data, int dataLength) override;
-			bool receiveImpl(uint8_t *data, int dataSize) override;
+			bool transmitImpl(const uint8_t *buffer, unsigned bufferSize) override;
+			bool receiveImpl(uint8_t *data, unsigned bufferSize) override;
 
             void i2cNotifyEventHandler(DevI2C *sender, I2CNotifyEventArgs &args);
 

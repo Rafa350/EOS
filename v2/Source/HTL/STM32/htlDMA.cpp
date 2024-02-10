@@ -11,7 +11,7 @@ struct DMAAddress {
     uint32_t dmaChannel;
     uint32_t mux;
     uint32_t muxChannel;
-    uint32_t flagOffset;
+    unsigned flagOffset;
 };
 
 static DMAAddress __dmaAddressTbl[] = {
@@ -39,13 +39,10 @@ static DMAAddress __dmaAddressTbl[] = {
 };
 
 
-static DMA_TypeDef* getDMA(uint32_t channel);
-static DMA_Channel_TypeDef* getDMAChannel(uint32_t channel);
-static DMAMUX_Channel_TypeDef* getDMAMUXChannel(uint32_t channel);
-static uint32_t getFlagOffset(uint32_t channel);
-
-static void enable(DMA_Channel_TypeDef *dmaChannel);
-static void disable(DMA_Channel_TypeDef *dmaChannel);
+static DMA_TypeDef* getDMA(unsigned channel);
+static DMA_Channel_TypeDef* getDMAChannel(unsigned channel);
+static DMAMUX_Channel_TypeDef* getDMAMUXChannel(unsigned channel);
+static unsigned getFlagOffset(unsigned channel);
 
 
 /// ----------------------------------------------------------------------
@@ -53,7 +50,7 @@ static void disable(DMA_Channel_TypeDef *dmaChannel);
 /// \param    channel: El numero de canal (0..n).
 ///
 DMADevice::DMADevice(
-	uint32_t channel) :
+	unsigned channel) :
 
 	_channel {channel},
 	_state {State::reset} {
@@ -61,7 +58,7 @@ DMADevice::DMADevice(
 }
 
 
-DMAResult DMADevice::initMemoryToMemory() {
+Result DMADevice::initMemoryToMemory() {
 
     auto dmaChannel = getDMAChannel(_channel);
 
@@ -72,7 +69,7 @@ DMAResult DMADevice::initMemoryToMemory() {
     tmp |= DMA_CCR_MEM2MEM;      // Memoria a memoria
     dmaChannel->CCR = tmp;
 
-    return DMAResult::success();
+    return Result::success();
 }
 
 
@@ -87,7 +84,7 @@ DMAResult DMADevice::initMemoryToMemory() {
 /// \param    requestID: Identificador de la solicitut
 /// \return   El resultat de l'operacio.
 ///
-DMAResult DMADevice::initMemoryToPeripheral(
+Result DMADevice::initMemoryToPeripheral(
     Priority priority,
     DataSize srcSize,
     DataSize dstSize,
@@ -108,56 +105,69 @@ DMAResult DMADevice::initMemoryToPeripheral(
         // Activa el dispositiu
         //
         activate();
-        disable(dmaChannel);
 
         tmp = dmaChannel->CCR;
 
-        // Inicialitza els valor a configurar a zero
+        // Transferencia de memoria a periferic
         //
-        tmp = ~(DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
-                DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
-                DMA_CCR_EN);
+        tmp &= ~DMA_CCR_DIR_Msk;
+        tmp |= 1 << DMA_CCR_DIR_Pos;
+        tmp &= ~DMA_CCR_MEM2MEM;
+
+        // Selecciona el modus de transferencia
+        //
+        tmp &= ~DMA_CCR_CIRC_Msk;
+        if (mode == TransferMode::circular)
+            tmp |= 1 << DMA_CCR_CIRC_Pos;
 
         // Selecciona la prioritat
         //
+        tmp &= ~DMA_CCR_PL_Msk;
         tmp |= ((uint32_t)priority << DMA_CCR_PL_Pos) & DMA_CCR_PL_Msk;
-
-        // Direccio de transferncia de memoria a periferic
-        //
-        tmp |= 1 << DMA_CCR_DIR_Pos;
 
         // Parametres de access a la memoria
         //
+        tmp &= ~DMA_CCR_MINC_Msk;
         if (srcInc == AddressIncrement::inc)
             tmp |= 1 << DMA_CCR_MINC_Pos;
+        tmp &= ~DMA_CCR_MSIZE_Msk;
         tmp |= (uint32_t(srcSize) << DMA_CCR_MSIZE_Pos) & DMA_CCR_MSIZE_Msk;
 
         // Parametres d'acces al periferic
         //
+        tmp &= ~DMA_CCR_PINC_Msk;
         if (dstInc == AddressIncrement::inc)
             tmp |= 1 << DMA_CCR_PINC_Pos;
+        tmp &= ~DMA_CCR_PSIZE_Msk;
         tmp |= (uint32_t(dstSize) << DMA_CCR_PSIZE_Pos) & DMA_CCR_PSIZE_Msk;
+
+        // Inicialment el canal queda deshabilitat.
+        //
+        tmp &= ~DMA_CCR_EN;
 
         dmaChannel->CCR = tmp;
 
-        // Borra els flags d'interrupcio
-        //
-        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
 
-        // Configura el multiplexor
+        // Selecciona el dispositiu de fa la solicitut DMA
         //
         tmp = muxChannel->CCR;
-        tmp &= ~(DMAMUX_CxCR_DMAREQ_ID);
+        tmp &= ~DMAMUX_CxCR_DMAREQ_ID;
         tmp |= (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos);
         muxChannel->CCR = tmp;
 
+        // Borra els flags d'interrupcio del canal
+        //
+        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
+
+        // Canvia l'estat a 'ready'
+        //
         _state = State::ready;
 
-        return DMAResult::success();
+        return Result::success();
     }
 
     else
-        return DMAResult::error();
+        return Result::error();
 }
 
 
@@ -165,19 +175,43 @@ DMAResult DMADevice::initMemoryToPeripheral(
 /// \brief    Desinicialitza el dispositiu.
 /// \return   El resultat de l'operacio.
 ///
-DMAResult DMADevice::deinitialize() {
+Result DMADevice::deinitialize() {
 
+    // Comprova si l'estat es 'ready'
+    //
     if (_state == State::ready) {
 
+        // Deshabilita el canal DMA.
+        //
         auto dmaChannel = getDMAChannel(_channel);
-        disable(dmaChannel);
+        dmaChannel->CCR &= ~DMA_CCR_EN;
 
+        // Desactiva el dispositiu
+        //
+        deactivate();
+
+        // Canvia l'estat a 'reset'
+        //
         _state = State::reset;
 
-        return DMAResult::success();
+        return Result::success();
     }
     else
-        return DMAResult::error();
+        return Result::error();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona l'event de notificacio.
+/// \param    event: L'event.
+/// \param    enabled: Indica si esta habilitat.
+//
+void DMADevice::setNotifyEvent(
+    INotifyEvent &event,
+    bool enabled) {
+
+    _notifyEvent = &event;
+    _notifyEventEnabled = enabled;
 }
 
 
@@ -188,19 +222,23 @@ DMAResult DMADevice::deinitialize() {
 /// \param    size: El nombre de bytes a transfderir.
 /// \return   El resultat de l'operacio.
 ///
-DMAResult DMADevice::start(
+Result DMADevice::start(
     const uint8_t *src,
     uint8_t *dst,
-    uint32_t size) {
+    unsigned size) {
 
+    // Comprova si l'estat es 'ready'
+    //
     if (_state == State::ready) {
 
         auto dmaChannel = getDMAChannel(_channel);
 
+        // Comprova si es una transferencua de memoria a periferic
+        //
         if (((dmaChannel->CCR & DMA_CCR_MEM2MEM) == 0) &&
             ((dmaChannel->CCR & DMA_CCR_DIR) != 0)) {
 
-            // Transferencia de memoria a periferic
+            // Inicialitza els parametres de la transferencia
             //
             dmaChannel->CMAR = reinterpret_cast<uint32_t>(src);
             dmaChannel->CPAR = reinterpret_cast<uint32_t>(dst);
@@ -210,14 +248,16 @@ DMAResult DMADevice::start(
         // Habilita el dispositiu i entra en espera de solicituts
         // de transferencia.
         //
-        enable(dmaChannel);
+        dmaChannel->CCR |= DMA_CCR_EN;
 
+        // Canvia l'estat a 'transfering'
+        //
         _state = State::transfering;
 
-        return DMAResult::success();
+        return Result::success();
     }
     else
-        return DMAResult::error();
+        return Result::error();
 
 }
 
@@ -227,30 +267,43 @@ DMAResult DMADevice::start(
 /// \param    timeout: Limit de temps.
 /// \return   El resultat de l'operacio.
 ///
-DMAResult DMADevice::waitForFinish(
-    uint16_t timeout) {
+Result DMADevice::waitForFinish(
+    Tick timeout) {
 
+    // Comprova si l'estat es 'transfering'
+    //
     if (_state == State::transfering) {
 
         auto dma = getDMA(_channel);
         auto dmaChannel = getDMAChannel(_channel);
         auto flagOffset = getFlagOffset(_channel);
 
-        // Espera flag TCIF o TEIF
+        // Espera flag TCIF o TEIF del canal
         //
-        while ((dma->ISR & (DMA_ISR_TCIF1 << flagOffset)) == 0)
-                continue;
+        auto expired = false;
+        auto expireTime = htl::getTick() + timeout;
+        while (((dma->ISR & ((DMA_ISR_TCIF1 | DMA_ISR_TEIF1) << flagOffset)) == 0) &&
+                !expired) {
+            expired = timeout == Tick(-1) ? false : hasTickExpired(expireTime);
+        }
+
+        // Borra els flags d'interrupcio del canal
+        //
         dma->IFCR |= (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
 
-        disable(dmaChannel);
+        // Deshabilita el canal
+        //
+        dmaChannel->CCR &= ~DMA_CCR_EN;
 
+        // Canvia l'estat a 'ready'
+        //
         _state = State::ready;
 
-        return DMAResult::success();
+        return expired ? Result::timeout() : Result::success();
     }
 
     else
-        return DMAResult::error();
+        return Result::error();
 }
 
 
@@ -268,7 +321,7 @@ void DMADevice::interruptService() {
 /// \return   L'adressa.
 ///
 static inline DMA_TypeDef* getDMA(
-    uint32_t channel) {
+    unsigned channel) {
 
     return reinterpret_cast<DMA_TypeDef*>(__dmaAddressTbl[channel].dma);
 }
@@ -280,7 +333,7 @@ static inline DMA_TypeDef* getDMA(
 /// \return   L'adressa.
 ///
 static inline DMA_Channel_TypeDef* getDMAChannel(
-    uint32_t channel) {
+    unsigned channel) {
 
     return reinterpret_cast<DMA_Channel_TypeDef*>(__dmaAddressTbl[channel].dmaChannel);
 }
@@ -292,7 +345,7 @@ static inline DMA_Channel_TypeDef* getDMAChannel(
 /// \return   L'adressa.
 ///
 static inline DMAMUX_Channel_TypeDef* getDMAMUXChannel(
-    uint32_t channel) {
+    unsigned channel) {
 
     return reinterpret_cast<DMAMUX_Channel_TypeDef*>(__dmaAddressTbl[channel].muxChannel);
 }
@@ -303,30 +356,8 @@ static inline DMAMUX_Channel_TypeDef* getDMAMUXChannel(
 /// \param    channel: El numero de canal.
 /// \return   El offset.
 //
-static inline uint32_t getFlagOffset(
-    uint32_t channel) {
+static inline unsigned getFlagOffset(
+    unsigned channel) {
 
     return __dmaAddressTbl[channel].flagOffset;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita un canal.
-/// \param    channel: El numero de canal.
-///
-static inline void enable(
-    DMA_Channel_TypeDef *dmaChannel) {
-
-    dmaChannel->CCR |= DMA_CCR_EN;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desabilita un canal.
-/// \param    channel: El numero de canal.
-///
-static inline void disable(
-    DMA_Channel_TypeDef *dmaChannel) {
-
-    dmaChannel->CCR &= ~DMA_CCR_EN;
 }

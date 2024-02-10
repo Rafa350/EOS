@@ -142,8 +142,8 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	void *buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
-	_framePitch(framePitch) {
+	_buffer {reinterpret_cast<Color::Pixel*>(buffer)},
+	_framePitch {framePitch} {
 
     htl::dma2d::DMA2DDevice::pInst->initialize();
 }

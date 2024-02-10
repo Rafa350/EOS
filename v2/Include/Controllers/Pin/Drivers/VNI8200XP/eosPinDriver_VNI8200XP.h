@@ -19,7 +19,7 @@ namespace eos {
 			uint8_t const _pinMask;
 
 		public:
-			PinDriver_VNI8200XP(Device_VNI8200XP *dev, uint8_t pinNumber);
+			PinDriver_VNI8200XP(Device_VNI8200XP *dev, unsigned pinNumber);
 			void set() override;
 			void clear() override;
 			void toggle() override;

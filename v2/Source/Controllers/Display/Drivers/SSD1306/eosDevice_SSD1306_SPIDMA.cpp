@@ -4,6 +4,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -35,10 +36,10 @@ Device_SSD1306_SPIDMA::Device_SSD1306_SPIDMA(
 ///
 void Device_SSD1306_SPIDMA::writeData(
     const uint8_t *data, 
-    uint16_t dataSize) {
+    unsigned dataSize) {
     
     _pinDC->set();
     _pinCS->clear();
-    _devSPI->transmitDMA(_devDMA, data, dataSize);
+    _devSPI->transmitDMA(_devDMA, data, dataSize, Tick(1000));
     _pinCS->set();
 }

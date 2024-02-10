@@ -4,6 +4,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -43,7 +44,7 @@ Device_SSD1306_SPI::~Device_SSD1306_SPI() {
 ///
 void Device_SSD1306_SPI::initialize(
     const uint8_t *script,
-    uint16_t scriptSize) {
+    unsigned scriptSize) {
 
     _pinCS->set();
     if (_pinRST != nullptr) {
@@ -73,11 +74,11 @@ void Device_SSD1306_SPI::deinitialize() {
 ///
 void Device_SSD1306_SPI::writeCommand(
     const uint8_t *data,
-    uint16_t dataSize) {
+    unsigned dataSize) {
 
     _pinDC->clear();
     _pinCS->clear();
-    _devSPI->transmit(data, dataSize);
+    _devSPI->transmit(data, dataSize, Tick(1000));
     _pinCS->set();
 }
 
@@ -89,10 +90,10 @@ void Device_SSD1306_SPI::writeCommand(
 ///
 void Device_SSD1306_SPI::writeData(
     const uint8_t *data, 
-    uint16_t dataSize) {
+    unsigned dataSize) {
     
     _pinDC->set();
     _pinCS->clear();
-    _devSPI->transmit(data, dataSize);
+    _devSPI->transmit(data, dataSize, Tick(1000));
     _pinCS->set();
 }

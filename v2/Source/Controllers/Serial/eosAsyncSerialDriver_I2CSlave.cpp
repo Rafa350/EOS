@@ -45,24 +45,24 @@ void AsyncSerialDriver_I2CSlave::deinitializeImpl() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmioteix un bloc de dades.
-/// \param    data: El bloc de dades.
-/// \param    dataLength: Longitut del bloc de dades.
+/// \param    buffer: El buffer de dades
+/// \param    bufferSize: El nombre de bytes en el buffer de dades.
 ///
 bool AsyncSerialDriver_I2CSlave::transmitImpl(
-	const uint8_t *data,
-	int dataLength) {
+	const uint8_t *buffer,
+	unsigned bufferSize) {
 
-    eosAssert(data != nullptr);
-    eosAssert(dataLength > 0);
+    eosAssert(buffer != nullptr);
+    eosAssert(bufferSize > 0);
 
-	if ((data == nullptr) || (dataLength == 0))
+	if ((buffer == nullptr) || (bufferSize == 0))
 		return false;
 
 	else {
 		notifyTxStart();
 
-		_txData = data;
-		_txLength = dataLength;
+		_txData = buffer;
+		_txLength = bufferSize;
 		_txCount = 0;
 
 		//_i2c->enable();
@@ -78,17 +78,17 @@ bool AsyncSerialDriver_I2CSlave::transmitImpl(
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades.
-/// \param    data: Buffer de dades.
-/// \param    dataSize: Tamany del buffer de dades.
+/// \param    buffer: Buffer de dades.
+/// \param    bufferSize: Tamany del buffer en bytes.
 ///
 bool AsyncSerialDriver_I2CSlave::receiveImpl(
-	uint8_t *data,
-	int dataSize) {
+	uint8_t *buffer,
+	unsigned bufferSize) {
 
-    eosAssert(data != nullptr);
-    eosAssert(dataSize > 0);
+    eosAssert(buffer != nullptr);
+    eosAssert(bufferSize > 0);
 
-    if ((data == nullptr) || (dataSize == 0))
+    if ((buffer == nullptr) || (bufferSize == 0))
 		return false;
 
 	else {
@@ -97,7 +97,7 @@ bool AsyncSerialDriver_I2CSlave::receiveImpl(
         // A partir d'aqui, es generen interrupcions
         // cada cop que hi han dades disposibles.
 		//
-		_devI2C->listen_IRQ(data, dataSize);
+		_devI2C->listen_IRQ(buffer, bufferSize);
 
 		return true;
 	}

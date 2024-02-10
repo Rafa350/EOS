@@ -77,7 +77,7 @@ Device_CLT0138SQ7::Result Device_CLT0138SQ7::update() {
 		uint8_t rxBuffer[2];
 
 		_pinSS->clear();
-		_devSPI->receive(rxBuffer, sizeof(rxBuffer));
+		_devSPI->receive(rxBuffer, sizeof(rxBuffer), Tick(1000));
 		_pinSS->set();
 
 		_underVoltage = (rxBuffer[1] & 0x80) == 0;

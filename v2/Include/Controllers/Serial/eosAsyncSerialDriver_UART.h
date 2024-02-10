@@ -30,8 +30,8 @@ namespace eos {
 			void uartNotifyEventHandler(const DevUART *sender, const UARTNotifyEventArgs &args);
 
 		protected:
-            bool transmitImpl(const uint8_t *data, int dataLength) override;
-            bool receiveImpl(uint8_t *data, int dataSize) override;
+            bool transmitImpl(const uint8_t *buffer, unsigned bufferSize) override;
+            bool receiveImpl(uint8_t *buffer, unsigned bufferSize) override;
 
 		public:
 			AsyncSerialDriver_UART(DevUART *devUART);
