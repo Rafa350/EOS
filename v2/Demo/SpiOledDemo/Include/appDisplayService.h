@@ -12,7 +12,7 @@
 namespace eos {
 
 	class Application;
-	class IDisplayDriver;
+	class DisplayDriver;
 	class Graphics;
 }
 
@@ -24,12 +24,12 @@ namespace app {
 			static constexpr uint16_t _displayHeight = DISPLAY_HEIGHT;
 			static constexpr uint32_t _displayBuffer = DISPLAY_BUFFER;
 
-			eos::IDisplayDriver *_driver;
+			eos::DisplayDriver *_driver;
 			eos::Graphics *_graphics;
 
 		protected:
-			void onInitialize() override;
-			void onTask() override;
+			bool onTaskStart() override;
+			bool onTask() override;
 
 		public:
 			DisplayService();

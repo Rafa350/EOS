@@ -269,14 +269,14 @@ namespace eos {
         protected:
             Device_ILI9341();
 
-            void writeScript(const uint8_t *script, uint16_t scriptSize);
+            void writeScript(const uint8_t *script, unsigned scriptSize);
 
         public:
             virtual ~Device_ILI9341() = default;
             
             virtual void writeCommand(uint8_t cmd) = 0;
             virtual void writeData(uint8_t data) = 0;
-            virtual void writeData(const uint8_t *data, uint16_t dataSize) = 0;
+            virtual void writeData(const uint8_t *data, unsigned dataSize) = 0;
     };
 
     class Device_ILI9341_SPI: public Device_ILI9341 {
@@ -290,7 +290,7 @@ namespace eos {
                 DevSPI *devSPI;
             };
 
-        private:
+        protected:
             Pin const * const _pinCS;
             Pin const * const _pinRS;
             Pin const * const _pinRST;
@@ -300,14 +300,27 @@ namespace eos {
             Device_ILI9341_SPI(Pin *pinCS, Pin *pinRS, Pin *pinRST, DevSPI *devSPI);
             Device_ILI9341_SPI(const CreateParams *params);
             
-            void initialize(const uint8_t *script, uint16_t scriptSize);
+            void initialize(const uint8_t *script, unsigned scriptSize);
             void deinitialize();
 
             void writeCommand(uint8_t cmd) override;
             void writeData(uint8_t data) override;
-            void writeData(const uint8_t *data, uint16_t dataSize) override;
+            void writeData(const uint8_t *data, unsigned dataSize) override;
     };
     
+    class Device_ILI9341_SPIDMA: public Device_ILI9341_SPI {
+        public:
+            using DevDMA = htl::dma::DMADevice;
+
+        protected:
+            DevDMA * const _devDMA;
+
+        public:
+            Device_ILI9341_SPIDMA(Pin *pinCS, Pin *pinRS, Pin *pinRST, DevSPI *devSPI, DevDMA *devDMA);
+
+            void writeData(const uint8_t *data, unsigned dataSize) override;
+    };
+
 }
 
 

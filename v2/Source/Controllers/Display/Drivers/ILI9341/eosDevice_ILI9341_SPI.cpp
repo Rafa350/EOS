@@ -3,6 +3,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -35,7 +36,7 @@ Device_ILI9341_SPI::Device_ILI9341_SPI(
 ///
 void Device_ILI9341_SPI::initialize(
     const uint8_t *script, 
-    uint16_t scriptSize) {
+    unsigned scriptSize) {
 
     _pinCS->set();
     if (_pinRST != nullptr) {
@@ -68,7 +69,7 @@ void Device_ILI9341_SPI::writeCommand(
 
     _pinCS->clear();
     _pinRS->clear();
-    _devSPI->transmit(&cmd, 1);
+    _devSPI->transmit(&cmd, 1, Tick(1000));
     _pinCS->set();
 }
 
@@ -78,18 +79,18 @@ void Device_ILI9341_SPI::writeData(
 
     _pinCS->clear();
     _pinRS->set();
-    _devSPI->transmit(&data, 1);
+    _devSPI->transmit(&data, 1, Tick(1000));
     _pinCS->set();
 }
 
 
 void Device_ILI9341_SPI::writeData(
     const uint8_t *data,
-    uint16_t dataSize) {
+    unsigned dataSize) {
 
     _pinCS->clear();
     _pinRS->set();
-    _devSPI->transmit(data, dataSize);
+    _devSPI->transmit(data, dataSize, Tick(1000));
     _pinCS->set();
 }
 

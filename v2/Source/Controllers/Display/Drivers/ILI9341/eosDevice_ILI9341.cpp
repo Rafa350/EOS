@@ -21,7 +21,7 @@ Device_ILI9341::Device_ILI9341() {
 ///
 void Device_ILI9341::writeScript(
     const uint8_t *script,
-    uint16_t scriptSize) {
+    unsigned scriptSize) {
 
     eosAssert(script != nullptr);
     eosAssert(scriptSize > 0);

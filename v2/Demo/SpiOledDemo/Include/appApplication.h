@@ -11,14 +11,7 @@
 
 namespace app {
 
-	class LedService;
-	class DisplayService;
-
 	class MyApplication: public eos::RTOSApplication {
-		private:
-			LedService *_ledService;
-			DisplayService *_displayService;
-
 		public :
 			MyApplication();
 	};

@@ -1,6 +1,6 @@
 #include "eos.h"
+#include "Services/eosLedService.h"
 #include "appApplication.h"
-#include "appLedService.h"
 #include "appDisplayService.h"
 
 
@@ -14,9 +14,10 @@ MyApplication::MyApplication():
 
 	eos::RTOSApplication() {
 
-	_ledService = new LedService();
-	addService(_ledService, eos::Task::Priority::normal, 128, "LED");
+    auto pinLED1 = LED1_Pin::pInst;
+	auto ledService = new eos::LedService(pinLED1, nullptr);
+	addService(ledService, eos::Task::Priority::normal, 128, "LED");
 
-	_displayService = new DisplayService();
-	addService(_displayService, eos::Task::Priority::normal, 128, "DISPLAY");
+	auto displayService = new DisplayService();
+	addService(displayService, eos::Task::Priority::normal, 128, "DISPLAY");
 }

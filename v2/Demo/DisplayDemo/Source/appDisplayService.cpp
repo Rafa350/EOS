@@ -123,8 +123,7 @@ bool DisplayService::onTaskStart() {
     auto devSPI = DISPLAY_SPI_Device::pInst;
     devSPI->initPinSCK<DISPLAY_SCK_Pin>();
     devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
-    devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
-    devSPI->enable();
+    devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
 
     auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
     device->initialize(nullptr, 0);
@@ -146,8 +145,7 @@ bool DisplayService::onTaskStart() {
 	auto devSPI = DISPLAY_SPI_Device::pInst;
     devSPI->initPinSCK<DISPLAY_SCK_Pin>();
     devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
-    devSPI->initialize(spi::SPIMode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
-    devSPI->enable();
+    devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
 
 	auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
 	device->initialize(nullptr, 0);
