@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlEXTI__
+#define __STM32_htlEXTI__
 
 
 // EOS includes
@@ -132,3 +134,6 @@ namespace htl {
 		using EXTILine15 = EXTILineX<LineID::_15>;
 	}
 }
+
+
+#endif // __STM32_htlEXT__

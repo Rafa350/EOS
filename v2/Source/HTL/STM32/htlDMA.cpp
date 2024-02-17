@@ -312,6 +312,12 @@ Result DMADevice::waitForFinish(
 ///
 void DMADevice::interruptService() {
 
+    if (_notifyEventEnabled) {
+        NotifyEventArgs args = {
+            .irq = true
+        };
+        _notifyEvent->execute(this, args);
+    }
 }
 
 

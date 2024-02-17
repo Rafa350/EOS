@@ -3,6 +3,11 @@
 #define __STM32_htlUART__
 
 
+/// \file      htlUART.h
+/// \author    Rafael Serrano (rsr.openware@gmail.com)
+/// \brief     UART device manager.
+
+
 // EOS includes
 //
 #include "HTL/STM32/htl.h"
@@ -125,7 +130,8 @@ namespace htl {
 		enum class NotifyID {
 			null,
 			rxCompleted,
-			txCompleted
+			txCompleted,
+			error
 		};
 
 		struct NotifyEventArgs {
@@ -169,26 +175,28 @@ namespace htl {
 		using Result = eos::SimpleResult<Results>;
 
 
+		/// Clase que implementa el dispositiu de comunicacio UART.
 		class UARTDevice {
 			public:
+		        /// Estats en que es troba el dispositiu.
 				enum class State {
-					reset,
-					ready,
-					transmiting,
-					receiving
+					reset,       ///< Creat, pero sense inicialitzar.
+					ready,       ///< Inicialitzat in preparat per operar.
+					transmiting, ///< Transmeten dades.
+					receiving    ///< Rebent dades.
 				};
 
 			private:
-				USART_TypeDef * const _usart;
-				State _state;
-				uint8_t *_rxBuffer;
-				unsigned _rxSize;
-				unsigned _rxCount;
-				const uint8_t *_txBuffer;
-				unsigned _txSize;
-				unsigned _txCount;
-				INotifyEvent *_notifyEvent;
-				bool _notifyEventEnabled;
+				USART_TypeDef * const _usart;  ///< Instancia del dispositiu.
+				State _state;                  ///< Estat actual.
+				uint8_t *_rxBuffer;            ///< Buffer de recepcio.
+				unsigned _rxSize;              ///< Tamany del buffer de recepcio en bytes.
+				unsigned _rxCount;             ///< Contador de bytes en recepcio.
+				const uint8_t *_txBuffer;      ///< Buffer de transmissio.
+				unsigned _txSize;              ///< Tamany del buffer de transmissio en bytes.
+				unsigned _txCount;             ///< Contador de bytes en transmissio.
+				INotifyEvent *_notifyEvent;    ///< Event de notificacio.
+				bool _notifyEventEnabled;      ///< Habilitacio del event de notificacio.
 
 			private:
 				UARTDevice(const UARTDevice &) = delete;

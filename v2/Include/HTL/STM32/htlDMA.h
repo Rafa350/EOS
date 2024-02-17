@@ -112,7 +112,15 @@ namespace htl {
         using Result = eos::SimpleResult<Results>;
 
 
+        enum class NotifyID {
+            null,
+            half,
+            completed,
+            error
+        };
+
         struct NotifyEventArgs {
+            NotifyID id;
             bool irq;
         };
 

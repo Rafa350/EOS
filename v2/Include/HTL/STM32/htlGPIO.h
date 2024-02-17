@@ -5,13 +5,7 @@
 
 /// \file      htlGPIO.h
 /// \author    Rafael Serrano (rsr.openware@gmail.com)
-/// \brief     GPIO module manager.
-/// \addtogroup HTL HAL Template Library
-/// @{
-/// \addtogroup HTL_STM32 STM32
-/// @{
-/// \defgroup HTL_STM32_GPIO GPIO
-/// @{
+/// \brief     GPIO device manager.
 
 
 // EOS includes
@@ -21,7 +15,7 @@
 
 namespace htl {
 
-	namespace gpio {
+    namespace gpio {
 
 		/// \brief Identificador dels ports.
 	    ///
@@ -1083,11 +1077,6 @@ namespace htl {
 		}
 	}
 }
-
-
-/// @}
-/// @}
-/// @}
 
 
 #endif // __STM32_htlGPIO__

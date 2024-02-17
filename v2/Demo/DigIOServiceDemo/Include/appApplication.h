@@ -21,19 +21,14 @@ namespace app {
 
     class MyApplication: public eos::RTOSApplication {
         private:
-            using PinSW1 = SW1_Pin;
-            using PinSW2 = SW2_Pin;
-            using PinSW3 = SW3_Pin;
-            using PinLED1 = LED1_Pin;
-            using PinLED2 = LED2_Pin;
-            using PinLED3 = LED3_Pin;
+            using PinDevice = htl::gpio::PinDevice;
 
-            static constexpr PinSW1 *_pinSW1 = PinSW1::pInst;
-            static constexpr PinSW2 *_pinSW2 = PinSW2::pInst;
-            static constexpr PinSW3 *_pinSW3 = PinSW3::pInst;
-            static constexpr PinLED1 *_pinLED1 = PinLED1::pInst;
-            static constexpr PinLED2 *_pinLED2 = PinLED2::pInst;
-            static constexpr PinLED3 *_pinLED3 = PinLED3::pInst;
+            static constexpr PinDevice *_pinSW1 = SW1_Pin::pInst;
+            static constexpr PinDevice *_pinSW2 = SW2_Pin::pInst;
+            static constexpr PinDevice *_pinSW3 = SW3_Pin::pInst;
+            static constexpr PinDevice *_pinLED1 = LED1_Pin::pInst;
+            static constexpr PinDevice *_pinLED2 = LED2_Pin::pInst;
+            static constexpr PinDevice *_pinLED3 = LED3_Pin::pInst;
 
         private:
             using INPSRV_TMR = config::digInputService::TMR;

@@ -99,19 +99,16 @@ namespace htl {
 		};
 
         enum class PullUp {
-            noChange,
             none,
             up
         };
 
         enum class OutDriver {
-            noChange,
             pushPull,
             openDrain
         };
 
         enum class Speed {
-            noChange,
             low,
             medium,
             hight,
@@ -141,7 +138,7 @@ namespace htl {
             };
 
             template <PortID>
-            struct HardwareInfo;
+            struct PortTraits;
 
         }
 
@@ -152,12 +149,10 @@ namespace htl {
             protected:
                 PortDevice(internal::GPIORegisters *gpio);
             public:
-                void activate();
-                void deactivate();
-                void reset();
-                void initInput(PinMask mask, PullUp pullUp = PullUp::none);
-                void initOutput(PinMask mask, OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
-                inline void set(PinMask mask) {
+                void initInput(PinMask mask, InputMode mode) const;
+                void initOutput(PinMask mask, OutputMode mode, Speed speed = Speed::medium) const;
+                void deinitialize() const;
+                inline void set(PinMask mask) const {
                     _gpio->LATxSET = mask;
                 }
                 inline void set(PinID pinID) const {
@@ -176,7 +171,7 @@ namespace htl {
                     _gpio->LATxINV = 1 << (int)pinID;
                 }
                 inline PinMask read() const {
-                    return _gpio->PORTx;
+                    return PinMask(_gpio->PORTx);
                 }
                 inline bool read(PinID pinID) const {
                     return (_gpio->PORTx & (1 << (int)pinID)) ? true : false;
@@ -202,15 +197,15 @@ namespace htl {
         template <PortID portID_>
         class PortDeviceX final: public PortDevice {
             private:
-                using HI = internal::HardwareInfo<portID_>;
+                using PortTraits = internal::PortTraits<portID_>;
             private:
-                static constexpr uint32_t _gpioAddr = HI::gpioAddr;
+                static constexpr uint32_t _gpioAddr = PortTraits::gpioAddr;
                 static PortDeviceX _instance;
 			public:
 				static constexpr PortID portID = portID_;
                 static constexpr PortDeviceX *pInst = &_instance;
                 static constexpr PortDeviceX &rInst = _instance;
-            protected:
+            private:
                 PortDeviceX():
                     PortDevice(reinterpret_cast<internal::GPIORegisters*>(_gpioAddr)) {
                 }
@@ -249,9 +244,9 @@ namespace htl {
             protected:
                 PinDevice(internal::GPIORegisters *gpio, PinID pinID);
             public :
-                void initInput(PullUp pullUp = PullUp::noChange);
-                void initOutput(OutDriver driver = OutDriver::pushPull, Speed speed = Speed::medium);
-                void initOutput(OutDriver driver, Speed speed, bool pinState);
+                void initInput(InputMode mode) const;
+                void initOutput(OutputMode mode, Speed speed = Speed::medium) const;
+                void deinitialize() const;
                 inline void set() const {
                     _gpio->LATxSET = _pinMask;
                 }
@@ -276,9 +271,9 @@ namespace htl {
         template <PortID portID_, PinID pinID_>
         class PinDeviceX final: public PinDevice {
             private:
-                using HI = internal::HardwareInfo<portID_>;
+                using PortTraits = internal::PortTraits<portID_>;
             private:
-                static constexpr uint32_t _gpioAddr = HI::gpioAddr;
+                static constexpr uint32_t _gpioAddr = PortTraits::gpioAddr;
                 static PinDeviceX _instance;
             public:
                 static constexpr PortID portID = portID_;
@@ -291,8 +286,17 @@ namespace htl {
                 }
         };
 
+
 		template <PortID portID_, PinID pinID_>
 		PinDeviceX<portID_, pinID_> PinDeviceX<portID_, pinID_>::_instance;
+
+        template <PortID portID_, PinID pinID_>
+        class PinX {
+            public:
+                static constexpr auto portID = portID_;
+                static constexpr auto pinID = pinID_;
+                static constexpr auto pInst = PinDeviceX<portID_, pinID_>::pInst;
+        };
 
 
         #ifdef HTL_GPIOA_EXIST
@@ -376,49 +380,49 @@ namespace htl {
 
             #ifdef HTL_GPIOA_EXIST
             template <>
-            struct HardwareInfo<PortID::A> {
+            struct PortTraits<PortID::A> {
                 static constexpr uint32_t gpioAddr = _PORTA_BASE_ADDRESS - 0x10;
             };
             #endif
 
             #ifdef HTL_GPIOB_EXIST
             template <>
-            struct HardwareInfo<PortID::B> {
+            struct PortTraits<PortID::B> {
                 static constexpr uint32_t gpioAddr = _PORTB_BASE_ADDRESS - 0x10;
             };
             #endif
 
             #ifdef HTL_GPIOC_EXIST
             template <>
-            struct HardwareInfo<PortID::C> {
+            struct PortTraits<PortID::C> {
                 static constexpr uint32_t gpioAddr = _PORTC_BASE_ADDRESS - 0x10;
             };
             #endif
 
             #ifdef HTL_GPIOD_EXIST
             template <>
-            struct HardwareInfo<PortID::D> {
+            struct PortTraits<PortID::D> {
                 static constexpr uint32_t gpioAddr = _PORTD_BASE_ADDRESS - 0x10;
             };
             #endif
 
             #ifdef HTL_GPIOE_EXIST
             template <>
-            struct HardwareInfo<PortID::E> {
+            struct PortTraits<PortID::E> {
                 static constexpr uint32_t gpioAddr = _PORTE_BASE_ADDRESS - 0x10;
             };
             #endif
 
             #ifdef HTL_PORTF_EXIST
             template <>
-            struct HardwareInfo<PortID::F> {
+            struct PortTraits<PortID::F> {
                 static constexpr uint32_t gpioAddr = _PORTF_BASE_ADDRESS - 0x10;
             };
             #endif
 
             #ifdef HTL_PORTG_EXIST
             template <>
-            struct HardwareInfo<PortID::G> {
+            struct PortTraits<PortID::G> {
                 static constexpr uint32_t gpioAddr = _PORTG_BASE_ADDRESS - 0x10;
             };
             #endif

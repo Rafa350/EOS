@@ -12,8 +12,8 @@ namespace eos {
     class MonoFrameBuffer final: public FrameBuffer {
         public:
             enum class Mapping {
-                horizontal8BBP,
-                vertical8BPP
+                horizontal,
+                vertical
             };
         private:
             uint8_t * const _buffer;

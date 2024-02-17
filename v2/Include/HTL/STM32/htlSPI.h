@@ -79,7 +79,14 @@ namespace htl {
 		};
         
         
+		enum class NotifyID {
+		    null,
+		    completed,
+		    error
+		};
+
         struct NotifyEventArgs {
+		    NotifyID id;
             bool irq;
         };
 

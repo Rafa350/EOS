@@ -1,6 +1,8 @@
+#include "HTL/htl.h"
 #include "HTL/htlGPIO.h"
 
 
+using namespace htl;
 using namespace htl::gpio;
 
 
@@ -39,7 +41,7 @@ static void initializeOutput(
 /// \brief    Constructor.
 /// \param    gpio: Registres del hardware del dispositiu.
 ///
-Port::Port(
+PortDevice::PortDevice(
     internal::GPIORegisters *gpio) :
 
     _gpio(gpio) {
@@ -48,40 +50,13 @@ Port::Port(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el dispositiu.
-///
-void Port::activate() {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desactiva el dispositiu.
-///
-void Port::deactivate() {
-
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Reseteja el dispositiu.
-///
-void Port::reset() {
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Inicialitza el port com sortides.
 ///
-void Port::initOutput(
+void PortDevice::initOutput(
     PinMask mask,
-    OutDriver driver,
-    Speed speed) {
+    OutputMode mode,
+    Speed speed) const {
 
-    activate();
-    initializeOutput(_gpio, mask, driver, speed);
 }
 
 
@@ -90,7 +65,7 @@ void Port::initOutput(
 /// \param    gpio: Registres de hardware del dispositiu.
 /// \param    pinID: Identificador del pin.
 ///
-Pin::Pin(
+PinDevice::PinDevice(
     internal::GPIORegisters *gpio,
     PinID pinID) :
 
@@ -103,8 +78,8 @@ Pin::Pin(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com entrada.
 ///
-void Pin::initInput(
-    PullUp pullUp) {
+void PinDevice::initInput(
+    InputMode mode) const {
 
 }
 
@@ -112,22 +87,8 @@ void Pin::initInput(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin copm a sortida.
 ///
-void Pin::initOutput(
-    OutDriver driver,
-    Speed speed) {
+void PinDevice::initOutput(
+    OutputMode mode,
+    Speed speed) const {
 
-    initializeOutput(_gpio, _pinMask, driver, speed);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el pin copm a sortida.
-///
-void Pin::initOutput(
-    OutDriver driver,
-    Speed speed,
-    bool pinState) {
-
-    write(pinState);
-    initializeOutput(_gpio, _pinMask, driver, speed);
 }
