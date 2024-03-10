@@ -21,8 +21,8 @@ static bool isTxComplete(USART_TypeDef *usart);
 static bool isRxNotEmptyInterruptEnabled(USART_TypeDef *usart);
 static bool isRxNotEmpty(USART_TypeDef *usart);
 
-static void txWrite8(USART_TypeDef *usart, uint8_t data);
-static uint8_t rxRead8(USART_TypeDef *usart);
+static void write8(USART_TypeDef *usart, uint8_t data);
+static uint8_t read8(USART_TypeDef *usart);
 
 static ClockSource getClockSource(USART_TypeDef *usart);
 static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
@@ -324,7 +324,7 @@ Result UARTDevice::transmitDMA(
 
         // Espera que finalitzi la transmissio
         //
-        while ((_usart->ISR & USART_ISR_TC) == 0)
+        while (!isTxComplete(_usart))
             continue;
         _usart->ICR |= USART_ICR_TCCF;
 
@@ -447,7 +447,7 @@ void UARTDevice::interruptService() {
         //
         if (isTxEmptyInterruptEnabled(_usart) & isTxEmpty(_usart)) {
             if (_txCount < _txSize) {
-                txWrite8(_usart, _txBuffer[_txCount++]);
+                write8(_usart, _txBuffer[_txCount++]);
                 if (_txCount == _txSize)
                     ATOMIC_MODIFY_REG(_usart->CR1, USART_CR1_TXEIE_TXFNFIE, USART_CR1_TCIE);
             }
@@ -466,7 +466,7 @@ void UARTDevice::interruptService() {
         //
         if (isRxNotEmptyInterruptEnabled(_usart) && isRxNotEmpty(_usart)) {
             if (_rxCount < _rxSize) {
-                _rxBuffer[_rxCount++] = rxRead8(_usart);
+                _rxBuffer[_rxCount++] = read8(_usart);
                 if (_rxCount == _rxSize) {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
                     notifyRxCompleted(_rxBuffer, _rxCount, true);
@@ -942,7 +942,7 @@ static bool isRxNotEmpty(
 /// \param    usart: Els registres de hardware del dispositiu.
 /// \param    data: El byte a transmetre.
 ///
-static void txWrite8(
+static void write8(
     USART_TypeDef *usart,
     uint8_t data) {
 
@@ -955,7 +955,7 @@ static void txWrite8(
 /// \param    usart: Els registres de hardware del dispositiu.
 /// \return   El byte rebut.
 ///
-static uint8_t rxRead8(
+static uint8_t read8(
     USART_TypeDef *usart) {
 
     return  usart->RDR;

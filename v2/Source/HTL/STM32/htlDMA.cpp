@@ -39,6 +39,30 @@ static DMAAddress __dmaAddressTbl[] = {
 };
 
 
+static DMA_TypeDef * const __dma[] = {
+    #ifdef HTL_DMA1_CHANNEL1_EXIST
+    DMA1,
+    #endif
+    #ifdef HTL_DMA1_CHANNEL2_EXIST
+    DMA1,
+    #endif
+    #ifdef HTL_DMA1_CHANNEL3_EXIST
+    DMA1,
+    #endif
+    #ifdef HTL_DMA1_CHANNEL4_EXIST
+    DMA1,
+    #endif
+    #ifdef HTL_DMA1_CHANNEL5_EXIST
+    DMA1,
+    #endif
+    #ifdef HTL_DMA1_CHANNEL6_EXIST
+    DMA1,
+    #endif
+    #ifdef HTL_DMA1_CHANNEL7_EXIST
+    DMA1,
+    #endif
+};
+
 static DMA_TypeDef* getDMA(unsigned channel);
 static DMA_Channel_TypeDef* getDMAChannel(unsigned channel);
 static DMAMUX_Channel_TypeDef* getDMAMUXChannel(unsigned channel);

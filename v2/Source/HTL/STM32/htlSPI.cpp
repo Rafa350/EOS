@@ -28,34 +28,34 @@ using namespace htl::spi;
 #endif
 
 
-static void setClockDivider(SPI_TypeDef * const spi, ClockDivider clkDivider);
-static void setMode(SPI_TypeDef * const spi, Mode mode);
-static void setClkPolarity(SPI_TypeDef * const spi, ClkPolarity polarity);
-static void setClkPhase(SPI_TypeDef * const spi, ClkPhase phase);
-static void setWordSize(SPI_TypeDef * const spi, WordSize size);
-static void setFirstBit(SPI_TypeDef * const spi, FirstBit firstBit);
+static void setClockDivider(SPI_TypeDef *spi, ClockDivider clkDivider);
+static void setMode(SPI_TypeDef *spi, Mode mode);
+static void setClkPolarity(SPI_TypeDef *spi, ClkPolarity polarity);
+static void setClkPhase(SPI_TypeDef *spi, ClkPhase phase);
+static void setWordSize(SPI_TypeDef *spi, WordSize size);
+static void setFirstBit(SPI_TypeDef *spi, FirstBit firstBit);
 
-static void enable(SPI_TypeDef * const spi);
-static void disable(SPI_TypeDef * const spi);
+static void enable(SPI_TypeDef *spi);
+static void disable(SPI_TypeDef *spi);
 
-static void write8(SPI_TypeDef * const spi, uint8_t data);
-static void write16(SPI_TypeDef * const spi, uint16_t data);
-static uint8_t read8(SPI_TypeDef * const spi);
-static uint16_t read16(SPI_TypeDef * const spi);
+static void write8(SPI_TypeDef *spi, uint8_t data);
+static void write16(SPI_TypeDef *spi, uint16_t data);
+static uint8_t read8(SPI_TypeDef *spi);
+static uint16_t read16(SPI_TypeDef *spi);
 
-static bool isTxEmpty(SPI_TypeDef * const spi);
-static bool isRxNotEmpty(SPI_TypeDef * const spi);
-static bool isBusy(SPI_TypeDef * const spi);
+static bool isTxEmpty(SPI_TypeDef *spi);
+static bool isRxNotEmpty(SPI_TypeDef *spi);
+static bool isBusy(SPI_TypeDef *spi);
 
 #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
-static bool waitRxFifoEmpty(SPI_TypeDef * const spi, Tick expireTime);
-static bool waitTxFifoEmpty(SPI_TypeDef * const spi, Tick expireTime);
+static bool waitRxFifoEmpty(SPI_TypeDef *spi, Tick expireTime);
+static bool waitTxFifoEmpty(SPI_TypeDef *spi, Tick expireTime);
 #endif
-static bool waitNotBusy(SPI_TypeDef * const spi, Tick expireTime);
-static bool waitRxNotEmpty(SPI_TypeDef * const spi, Tick expireTime);
-static bool waitTxEmpty(SPI_TypeDef * const spi, Tick expireTime);
+static bool waitNotBusy(SPI_TypeDef *spi, Tick expireTime);
+static bool waitRxNotEmpty(SPI_TypeDef *spi, Tick expireTime);
+static bool waitTxEmpty(SPI_TypeDef *spi, Tick expireTime);
 
-static void clearOverrunFlag(SPI_TypeDef * const spi);
+static void clearOverrunFlag(SPI_TypeDef *spi);
 
 
 /// ----------------------------------------------------------------------
@@ -428,7 +428,7 @@ static void setWordSize(
 /// \param    firstBit: Quin bit es el primer.
 ///
 static void setFirstBit(
-	SPI_TypeDef * const spi,
+	SPI_TypeDef *spi,
 	FirstBit firstBit) {
 
 	if (firstBit == FirstBit::lsb)
@@ -443,7 +443,7 @@ static void setFirstBit(
 /// \param    spi: Registres de hardware del dispositiu SPI
 ///
 static void enable(
-    SPI_TypeDef * const spi) {
+    SPI_TypeDef *spi) {
 
     spi->CR1 |= SPI_CR1_SPE;
 }
@@ -454,7 +454,7 @@ static void enable(
 /// \param    spi: Registres de hardware del dispositiu SPI
 ///
 static void disable(
-    SPI_TypeDef * const spi) {
+    SPI_TypeDef *spi) {
 
     #if defined(EOS_PLATFORM_STM32G0)
     while ((spi->SR & SPI_SR_FTLVL) != 0)
@@ -479,7 +479,7 @@ static void disable(
 /// \param    data: Les dades a transmetre.
 ///
 static void write8(
-	SPI_TypeDef * const spi,
+	SPI_TypeDef *spi,
 	uint8_t data) {
 
 	*((volatile uint8_t*)&spi->DR) = data;
@@ -493,7 +493,7 @@ static void write8(
 /// \param    data: Les dades a transmetre.
 ///
 static void write16(
-	SPI_TypeDef * const spi,
+	SPI_TypeDef *spi,
 	uint16_t data) {
 
 	*((volatile uint16_t*)&spi->DR) = data;
@@ -506,7 +506,7 @@ static void write16(
 /// \return   El valor de la lectura.
 ///
 static uint8_t read8(
-	SPI_TypeDef * const spi) {
+	SPI_TypeDef *spi) {
 
 	return *((volatile uint8_t*)&spi->DR);
 }
@@ -518,7 +518,7 @@ static uint8_t read8(
 /// \return   El valor de la lectura.
 ///
 static uint16_t read16(
-	SPI_TypeDef * const spi) {
+	SPI_TypeDef *spi) {
 
 	return *((volatile uint16_t*)&spi->DR);
 }
@@ -530,7 +530,7 @@ static uint16_t read16(
 /// \return   True si el registre de sortida es buit.
 ///
 static inline bool isTxEmpty(
-	SPI_TypeDef * const spi) {
+	SPI_TypeDef *spi) {
 
 	return (spi->SR & SPI_SR_TXE) != 0;
 }
@@ -542,7 +542,7 @@ static inline bool isTxEmpty(
 /// \return   True si el registre d'entrada no es buit.
 ///
 static inline bool isRxNotEmpty(
-	SPI_TypeDef * const spi) {
+	SPI_TypeDef *spi) {
 
 	return (spi->SR & SPI_SR_RXNE) != 0;
 };
@@ -554,7 +554,7 @@ static inline bool isRxNotEmpty(
 /// \return   True si hi ha una transmissio pendent.
 ///
 static inline bool isBusy(
-	SPI_TypeDef * const spi) {
+	SPI_TypeDef *spi) {
 
 	return (spi->SR & SPI_SR_BSY) != 0;
 }
@@ -605,7 +605,7 @@ static bool waitTxFifoEmpty(
 /// \return   True si tot es correcte. False en cas de timeout.
 ///
 static bool waitNotBusy(
-    SPI_TypeDef * const spi,
+    SPI_TypeDef *spi,
     Tick expireTime) {
 
     while (isBusy(spi)) {
@@ -625,7 +625,7 @@ static bool waitNotBusy(
 /// \return   TRue si tot es correcte, false en cas d'error (TimeOut)
 ///
 static bool waitTxEmpty(
-    SPI_TypeDef * const spi,
+    SPI_TypeDef *spi,
     Tick expireTime) {
 
     while (!isTxEmpty(spi)) {
@@ -644,7 +644,7 @@ static bool waitTxEmpty(
 /// \return   TRue si tot es correcte, false en cas d'error (TimeOut)
 ///
 static bool waitRxNotEmpty(
-    SPI_TypeDef * const spi,
+    SPI_TypeDef *spi,
     Tick expireTime) {
 
     while (!isRxNotEmpty(spi)) {
@@ -657,7 +657,7 @@ static bool waitRxNotEmpty(
 
 
 static void clearOverrunFlag(
-    SPI_TypeDef * const spi) {
+    SPI_TypeDef *spi) {
 
     uint32_t volatile tmp;
     tmp = spi->DR;
