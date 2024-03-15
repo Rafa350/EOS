@@ -27,7 +27,7 @@ namespace eos {
 			void initializeImpl() override;
 			void deinitializeImpl() override;
 
-			void uartNotifyEventHandler(const DevUART *sender, const UARTNotifyEventArgs &args);
+			void uartNotifyEventHandler(DevUART *devUART, UARTNotifyEventArgs &args);
 
 		protected:
             bool transmitImpl(const uint8_t *buffer, unsigned bufferSize) override;

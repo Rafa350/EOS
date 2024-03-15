@@ -255,6 +255,14 @@ namespace htl {
 					i2c4 = I2C4_IRQn,
 				#endif
 			#endif
+			dma11 = DMA1_Channel1_IRQn,
+		    dma12 = DMA1_Channel2_3_IRQn,
+            dma13 = DMA1_Channel2_3_IRQn,
+			dma14 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
+            dma15 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
+            dma16 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
+            dma17 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
+            dmamux1 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
 		};
 
 

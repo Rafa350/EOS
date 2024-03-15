@@ -103,13 +103,13 @@ bool AsyncSerialDriver_UART::receiveImpl(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant hi ha una notificacio del UART
-/// \param    sender: L'objecte que genera el event.
-/// \param    args: Parametres de la notificacio.
+/// \brief    Reb les notificacions del UART
+/// \param    devUART: El dispositiu UART que genera el event.
+/// \param    args: Parametres del event.
 ///
 void AsyncSerialDriver_UART::uartNotifyEventHandler(
-	const DevUART *sender,
-	const UARTNotifyEventArgs &args) {
+	DevUART *devUART,
+	UARTNotifyEventArgs &args) {
 
 	switch (args.id) {
 		case htl::uart::NotifyID::txCompleted:

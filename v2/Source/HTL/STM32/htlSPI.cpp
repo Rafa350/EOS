@@ -259,14 +259,12 @@ Result SPIDevice::transmit(
 /// \param    devTxDMA: DMA per la transmissio
 /// \param    txBuffer: El buffer de transmissio.
 /// \param    bufferSize: El nombre de bytes a transmetre.
-/// \param    timeout: Temps limit.
 /// \return   El resultat de l'operacio.
 ///
-Result SPIDevice::transmitDMA(
+Result SPIDevice::transmit_DMA(
     htl::dma::DMADevice *devTxDMA,
     const uint8_t *txBuffer,
-    unsigned bufferSize,
-    Tick timeout) {
+    unsigned bufferSize) {
 
     // Habilita les transferencies per DMA
     //
@@ -279,7 +277,7 @@ Result SPIDevice::transmitDMA(
     // Inicia la transferencia i espera que finalitzi
     //
     devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), bufferSize);
-    devTxDMA->waitForFinish(timeout);
+    devTxDMA->waitForFinish(Tick(1000));
 
     // Espera que el SPI acabi de transferir
     //

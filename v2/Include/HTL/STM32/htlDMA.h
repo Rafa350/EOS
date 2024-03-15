@@ -147,6 +147,8 @@ namespace htl {
                 DMADevice(const DMADevice &) = delete;
                 DMADevice & operator = (const DMADevice &) = delete;
                 
+                void notifyTransferCompleted();
+
                 inline void activate() {
                     activateImpl();
                 }
@@ -181,8 +183,8 @@ namespace htl {
                 }
 
 				Result start(const uint8_t *src, uint8_t *dst, unsigned size);
-				Result start_IRQ(const uint8_t *src, uint8_t *dst, unsigned size);
-                
+
+				// TODO: temporal
 				Result waitForFinish(Tick timeout);
                 
 				inline State getState() const { return _state; }

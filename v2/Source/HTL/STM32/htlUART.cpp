@@ -38,7 +38,8 @@ UARTDevice::UARTDevice(
 	_usart {usart},
 	_state {State::reset},
 	_notifyEvent {nullptr},
-	_notifyEventEnabled {false} {
+	_notifyEventEnabled {false},
+	_dmaNotifyEvent {*this, &UARTDevice::dmaNotifyEventHandler} {
 
 }
 
@@ -245,6 +246,8 @@ Result UARTDevice::transmit_IRQ(
 		_txSize = bufferSize;
 		_txCount = 0;
 
+		// Habilita les interrupcions i activa la transmissio
+		//
         #if defined(EOS_PLATFORM_STM32F7)
         ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE | USART_CR1_TE);
         #elif defined(EOS_PLATFORM_STM32G0)
@@ -302,41 +305,37 @@ Result UARTDevice::receive_IRQ(
 /// \param    devDMA: Dispositiu DMA.
 /// \param    buffer: Buffer de dades.
 /// \param    bufferSize: El nombre de bytes en el buffer.
-/// \param    timeout: El temps limit.
 /// \return   El resultat de l'operacio
 ///
-Result UARTDevice::transmitDMA(
+Result UARTDevice::transmit_DMA(
     dma::DMADevice *devDMA,
     const uint8_t *buffer,
-    unsigned bufferSize,
-    Tick timeout) {
+    unsigned bufferSize) {
 
     if (_state == State::ready) {
 
+        _state = State::transmiting;
+
+        _txBuffer = buffer;
+        _txSize = bufferSize;
+        _txCount = 0;
+
+        // Habilita les interrupciuons i habilita la transmissio per DMA
+        //
         _usart->ICR &= ~USART_ICR_TCCF;
         ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
         ATOMIC_SET_BIT(_usart->CR3, USART_CR3_DMAT);
 
-        // Inicia la transferencia i espera que finalitzi
+        // Inicia la transferencia per DMA
         //
+        devDMA->setNotifyEvent(_dmaNotifyEvent, true);
         devDMA->start(buffer, (uint8_t*)&(_usart->TDR), bufferSize);
-        devDMA->waitForFinish(timeout);
-
-        // Espera que finalitzi la transmissio
-        //
-        while (!isTxComplete(_usart))
-            continue;
-        _usart->ICR |= USART_ICR_TCCF;
-
-        ATOMIC_CLEAR_BIT(_usart->CR3, USART_CR3_DMAT);
-        ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TE);
-
-        // Notifica el final de la transmissio
-        //
-        notifyTxCompleted(buffer, bufferSize, false);
 
         return Result::success();
     }
+
+    else if ((_state == State::transmiting) || (_state == State::receiving))
+        return Result::busy();
 
     else
         return Result::error();
@@ -348,33 +347,14 @@ Result UARTDevice::transmitDMA(
 /// \param    devDMA: El dispositiu DMA.
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: El tamany del buffer en bytes.
-/// \param    timeout: El temps limit.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::receiveDMA(
+Result UARTDevice::receive_DMA(
     dma::DMADevice *devDMA,
     uint8_t *buffer,
-    unsigned bufferSize,
-    Tick timeout) {
-
-	return Result::error();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicia la transmissio d'ub bloc de dades utilitzan DMA
-///           per interrupcions.
-/// \param    devDMA: El dispositiu DMA.
-/// \param    buffer: El buffer de dades.
-/// \param    bufferSize: El tamany del buffer en bytes.
-/// \return   El resultat de l'operacio.
-///
-Result UARTDevice::transmitDMA_IRQ(
-    dma::DMADevice *devDMA,
-    const uint8_t *buffer,
     unsigned bufferSize) {
 
-    return Result::error();
+	return Result::error();
 }
 
 
@@ -439,7 +419,7 @@ void UARTDevice::interruptService() {
 
     }
 
-    // Transmissio abd el FIFO desactivat.
+    // Transmissio amb el FIFO desactivat.
     ///
     else {
 
@@ -458,6 +438,7 @@ void UARTDevice::interruptService() {
         if (isTxCompleteInterruptEnabled(_usart) && isTxComplete(_usart)) {
             _usart->ICR |= USART_ICR_TCCF;
             ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
+            ATOMIC_CLEAR_BIT(_usart->CR3, USART_CR3_DMAT);
             notifyTxCompleted(_txBuffer, _txCount, true);
             _state = State::ready;
         }
@@ -486,6 +467,27 @@ void UARTDevice::interruptService() {
     }
 }
 #endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Reb les notificacions del DMA
+/// \param    devDMA: El dispositiu DMA que genera l'event.
+/// \param    args: Parametres del event.
+///
+void UARTDevice::dmaNotifyEventHandler(
+    DevDMA *devDMA,
+    DMANotifyEventArgs &args) {
+
+    switch (args.id) {
+        case htl::dma::NotifyID::completed:
+            _txCount = _txSize;
+            ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TCIE);
+            break;
+
+        default:
+            break;
+    }
+}
 
 
 /// ----------------------------------------------------------------------

@@ -150,9 +150,9 @@ namespace htl {
 		};
 
 		class UARTDevice;
-		using INotifyEvent = eos::ICallbackP2<const UARTDevice*, const NotifyEventArgs&>;
+		using INotifyEvent = eos::ICallbackP2<UARTDevice*, NotifyEventArgs&>;
 		template <typename Instance_> using NotifyEvent =
-		        eos::CallbackP2<Instance_, const UARTDevice*, const NotifyEventArgs&>;
+		        eos::CallbackP2<Instance_, UARTDevice*, NotifyEventArgs&>;
 
 
 		namespace internal {
@@ -178,13 +178,19 @@ namespace htl {
 		/// Clase que implementa el dispositiu de comunicacio UART.
 		class UARTDevice {
 			public:
-		        /// Estats en que es troba el dispositiu.
+                using DevDMA = htl::dma::DMADevice;
+
+                /// Estats en que es troba el dispositiu.
 				enum class State {
 					reset,       ///< Creat, pero sense inicialitzar.
 					ready,       ///< Inicialitzat in preparat per operar.
 					transmiting, ///< Transmeten dades.
 					receiving    ///< Rebent dades.
 				};
+
+			private:
+				using DMANotifyEvent = htl::dma::NotifyEvent<UARTDevice>;
+				using DMANotifyEventArgs = htl::dma::NotifyEventArgs;
 
 			private:
 				USART_TypeDef * const _usart;  ///< Instancia del dispositiu.
@@ -197,12 +203,14 @@ namespace htl {
 				unsigned _txCount;             ///< Contador de bytes en transmissio.
 				INotifyEvent *_notifyEvent;    ///< Event de notificacio.
 				bool _notifyEventEnabled;      ///< Habilitacio del event de notificacio.
+				DMANotifyEvent _dmaNotifyEvent;
 
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
 				void notifyTxCompleted(const uint8_t *buffer, unsigned count, bool irq);
 				void notifyRxCompleted(const uint8_t *buffer, unsigned count, bool irq);
+				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 
 			protected:
 				UARTDevice(USART_TypeDef *usart);
@@ -238,10 +246,8 @@ namespace htl {
 				Result receive(uint8_t *buffer, unsigned bufferSize, Tick timeout);
 				Result transmit_IRQ(const uint8_t *buffer, unsigned bufferSize);
 				Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
-				Result transmitDMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned bufferSize, Tick timeout);
-				Result receiveDMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize, Tick timeout);
-                Result transmitDMA_IRQ(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned bufferSize);
-                Result receiveDMA_IRQ(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
+				Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned bufferSize);
+				Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
 
 				State getState() const { return _state; }
 		};

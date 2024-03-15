@@ -166,9 +166,7 @@ namespace htl {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
                 
-                Result transmitDMA(htl::dma::DMADevice *devTxDMA,
-                        const uint8_t *txBuffer, unsigned bufferSize, Tick timeout);
-                Result transmitDMA_IRQ(htl::dma::DMADevice *devTxDMA,
+                Result transmit_DMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, unsigned bufferSize);
 				
                 inline State getState() const {

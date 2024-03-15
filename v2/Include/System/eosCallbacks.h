@@ -29,8 +29,7 @@ namespace eos {
 				_method {method} {
 			}
 			void execute() const override {
-				if (_method != nullptr)
-					(_instance.*_method)();
+			    (_instance.*_method)();
 			}
 	};
 
@@ -57,8 +56,7 @@ namespace eos {
 				_method {method} {
             }
             void execute(param1_ p1) const override {
-                if (_method != nullptr)
-                    (_instance.*_method)(p1);
+                (_instance.*_method)(p1);
             }
     };
 
@@ -85,8 +83,7 @@ namespace eos {
 				_method {method} {
             }
             void execute(param1_ p1, param2_ p2) const override {
-                if (_method != nullptr)
-                    (_instance.*_method)(p1, p2);
+                (_instance.*_method)(p1, p2);
             }
     };
 
@@ -109,12 +106,11 @@ namespace eos {
             Method const _method;
         public:
             inline CallbackP3(RInstance instance, Method method):
-            	_instance(instance),
-				_method(method) {
+            	_instance {instance},
+				_method {method} {
             }
             void execute(param1_ p1, param2_ p2, param3_ p3) const override {
-                if (_method != nullptr)
-                    (_instance.*_method)(p1, p2, p3);
+                (_instance.*_method)(p1, p2, p3);
             }
     };
 
@@ -137,12 +133,11 @@ namespace eos {
             Method const _method;
         public:
             inline CallbackP4(RInstance instance, Method method):
-            	_instance(instance),
-				_method(method) {
+            	_instance {instance},
+				_method {method} {
             }
             void execute(param1_ p1, param2_ p2, param3_ p3, param4_ p4) const override {
-                if (_method != nullptr)
-                    (_instance.*_method)(p1, p2, p3, p4);
+                (_instance.*_method)(p1, p2, p3, p4);
             }
     };
 
@@ -164,14 +159,11 @@ namespace eos {
             Method _method;
         public:
             inline CallbackP1R(C_ &instance, Method method):
-            	_instance(instance),
-				_method(method) {
+            	_instance {instance},
+				_method {method} {
             }
             R_ execute(P1_ p1) const override {
-                if (_method != nullptr)
-                    return (_instance.*_method)(p1);
-                else
-                    return R_();
+                return (_instance.*_method)(p1);
             }
     };
 
@@ -193,14 +185,11 @@ namespace eos {
             Method _method;
         public:
             inline CallbackP2R(C_ &instance, Method method):
-            	_instance(instance),
-				_method(method) {
+            	_instance {instance},
+				_method {method} {
             }
             R_ execute(P1_ p1, P2_ p2) const override {
-                if (_method != nullptr)
-                    return (_instance.*_method)(p1, p2);
-                else
-                	return R_();
+                return (_instance.*_method)(p1, p2);
             }
     };
 

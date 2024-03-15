@@ -47,10 +47,10 @@ bool AsyncSerialDriver_UARTDMA::transmitImpl(
             notifyTxStart();
 
             // TODO DMA_IRQ
-            _devUART->transmitDMA(_devDMAtx, buffer,  bufferSize, Tick(1000));
+            _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize);
 
-            // En aquest moment es genera una interrupcio txEmpty
-            // i comença la transmissio controlada per interrupcions.
+            // En aquest moment es genera una comença la transmissio,
+            // fins la interrupcio TX_COMPLETE
 
             return true;
         }
