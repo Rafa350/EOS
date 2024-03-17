@@ -39,7 +39,12 @@ static DMARegisters const __dma[] = {
 
 
 static bool isTransferCompletedInterruptEnabled(unsigned channel);
+static bool isHalfTransferInterruptEnabled(unsigned channel);
+static bool isTransferErrorInterruptEnabled(unsigned channel);
+
 static bool isTransferCompleted(unsigned channel);
+static bool isHalfTransfer(unsigned channel);
+static bool isTransferError(unsigned channel);
 
 
 /// ----------------------------------------------------------------------
@@ -138,12 +143,12 @@ Result DMADevice::initMemoryToPeripheral(
         tmp &= ~DMA_CCR_PSIZE_Msk;
         tmp |= (uint32_t(dstSize) << DMA_CCR_PSIZE_Pos) & DMA_CCR_PSIZE_Msk;
 
-        // Inicialment el canal queda deshabilitat.
+        // El canal queda deshabilitat. Nomes activa duranst les
+        // transferencies.
         //
         tmp &= ~DMA_CCR_EN;
 
         dmaChannel->CCR = tmp;
-
 
         // Selecciona el dispositiu de fa la solicitut DMA
         //
@@ -154,7 +159,7 @@ Result DMADevice::initMemoryToPeripheral(
 
         // Borra els flags d'interrupcio del canal
         //
-        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
+        ATOMIC_CLEAR_BIT(dma->IFCR, (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset);
 
         // Canvia l'estat a 'ready'
         //
@@ -213,7 +218,7 @@ void DMADevice::setNotifyEvent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicia la transferencia en modus polling.
+/// \brief    Inicia la transferencia.
 /// \param    startAddr: Adressa inicial.
 /// \param    dstAddr: Adressa final;
 /// \param    size: El nombre de bytes a transfderir.
@@ -292,6 +297,7 @@ Result DMADevice::waitForFinish(
         //
         dmaChannel->CCR &= ~DMA_CCR_EN;
 
+
         // Canvia l'estat a 'ready'
         //
         _state = State::ready;
@@ -314,25 +320,35 @@ void DMADevice::interruptService() {
         auto dma = __dma[_channel].dma;
         auto dmaChannel = __dma[_channel].dmaChannel;
 
-        dma->IFCR |= DMA_IFCR_CTCIF1 << __dma[_channel].flagOffset;
+        ATOMIC_SET_BIT(dma->IFCR, DMA_IFCR_CTCIF1 << __dma[_channel].flagOffset);
         dmaChannel->CCR &= ~DMA_CCR_EN;
 
-        notifyTransferCompleted();
+        notifyTransferCompleted(true);
 
         _state = State::ready;
+    }
+
+    if (isHalfTransfer(_channel)) {
+
+    }
+
+    if (isTransferError(_channel)) {
+
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica que s'ha completat la transferencia.
+/// \param    irq: True si la notificacio ve d'una interrupcio.
 ///
-void DMADevice::notifyTransferCompleted() {
+void DMADevice::notifyTransferCompleted(
+    bool irq) {
 
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .id = NotifyID::completed,
-            .irq = true
+            .irq = irq
         };
         _notifyEvent->execute(this, args);
     }
@@ -360,5 +376,31 @@ static inline bool isTransferCompleted(
     unsigned channel) {
 
     auto flag = DMA_ISR_TCIF1 << __dma[channel].flagOffset;
+    return (__dma[channel].dma->ISR & ~flag) != 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el flag HT esta actiu.
+/// \param    channel: El numero de canal.
+/// \return   True si esta actiu.
+///
+static inline bool isHalfTransfer(
+    unsigned channel) {
+
+    auto flag = DMA_ISR_HTIF1 << __dma[channel].flagOffset;
+    return (__dma[channel].dma->ISR & ~flag) != 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el flag TH esta actiu.
+/// \param    channel: El numero de canal.
+/// \return   True si esta actiu.
+///
+static inline bool isTransferError(
+    unsigned channel) {
+
+    auto flag = DMA_ISR_TEIF1 << __dma[channel].flagOffset;
     return (__dma[channel].dma->ISR & ~flag) != 0;
 }

@@ -147,7 +147,7 @@ namespace htl {
                 DMADevice(const DMADevice &) = delete;
                 DMADevice & operator = (const DMADevice &) = delete;
                 
-                void notifyTransferCompleted();
+                void notifyTransferCompleted(bool irq);
 
                 inline void activate() {
                     activateImpl();

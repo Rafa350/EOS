@@ -482,6 +482,7 @@ void UARTDevice::dmaNotifyEventHandler(
         case htl::dma::NotifyID::completed:
             _txCount = _txSize;
             ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TCIE);
+            devDMA->disableNotifyEvent();
             break;
 
         default:

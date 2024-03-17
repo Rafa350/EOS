@@ -28,7 +28,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
     AsyncSerialDriver::initializeImpl();
 
 	_devUART->setNotifyEvent(_uartNotifyEvent);
-	_devUART->enable();
+	_devUART->enable(); // TODO: Es necesari????
 }
 
 
