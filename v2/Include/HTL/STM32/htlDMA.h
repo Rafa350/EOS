@@ -248,8 +248,7 @@ namespace htl {
 		    template <>
 		    struct DMATraits<DeviceID::_11> {
                 static constexpr unsigned channel = 0;
-                static constexpr uint32_t rccEnableAddr =
-                        RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
 		    };
             #endif

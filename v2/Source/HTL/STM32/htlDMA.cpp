@@ -52,7 +52,6 @@ static bool isTransferErrorFlagSet(unsigned channel);
 
 static void clearTransferCompletedFlag(unsigned channel);
 static void clearHalfTransferFlag(unsigned channel);
-static void clearTransferErrorFlag(unsigned channel);
 static void clearAllFlags(unsigned channel);
 
 static void enable(unsigned channel);
