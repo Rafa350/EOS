@@ -148,6 +148,7 @@ namespace htl {
                 DMADevice & operator = (const DMADevice &) = delete;
                 
                 void notifyTransferCompleted(bool irq);
+                void notifyHalfTransfer(bool irq);
 
                 inline void activate() {
                     activateImpl();
@@ -188,6 +189,7 @@ namespace htl {
 				Result waitForFinish(Tick timeout);
                 
 				inline State getState() const { return _state; }
+                inline bool isReady() const { return _state == State::ready; }
 		};
 
 
@@ -245,6 +247,7 @@ namespace htl {
             #ifdef HTL_DMA1_CHANNEL1_EXIST
 		    template <>
 		    struct DMATraits<DeviceID::_11> {
+                static constexpr unsigned channel = 0;
                 static constexpr uint32_t rccEnableAddr =
                         RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
@@ -254,6 +257,7 @@ namespace htl {
             #ifdef HTL_DMA1_CHANNEL2_EXIST
 		    template <>
             struct DMATraits<DeviceID::_12> {
+                static constexpr unsigned channel = 1;
                 static constexpr uint32_t rccEnableAddr =
                         RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
@@ -263,6 +267,7 @@ namespace htl {
 		    #ifdef HTL_DMA1_CHANNEL3_EXIST
             template <>
             struct DMATraits<DeviceID::_13> {
+                static constexpr unsigned channel = 2;
                 static constexpr uint32_t rccEnableAddr =
                         RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;

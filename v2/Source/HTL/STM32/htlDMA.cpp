@@ -50,7 +50,10 @@ static bool isTransferCompletedFlagSet(unsigned channel);
 static bool isHalfTransferFlagSet(unsigned channel);
 static bool isTransferErrorFlagSet(unsigned channel);
 
-static bool clearTransferCompletedFlag(unsigned channel);
+static void clearTransferCompletedFlag(unsigned channel);
+static void clearHalfTransferFlag(unsigned channel);
+static void clearTransferErrorFlag(unsigned channel);
+static void clearAllFlags(unsigned channel);
 
 static void enable(unsigned channel);
 static void disable(unsigned channel);
@@ -167,8 +170,7 @@ Result DMADevice::initMemoryToPeripheral(
 
         // Borra els flags d'interrupcio del canal
         //
-        auto flagOffset = __dma[_channel].flagOffset;
-        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
+        clearAllFlags(channel);
 
         // Canvia l'estat a 'ready'
         //
@@ -192,11 +194,11 @@ Result DMADevice::deinitialize() {
     //
     if (_state == State::ready) {
 
-        // Deshabilita el canal DMA.
+        // Deshabilita el canal.
         //
         disable(_channel);
 
-        // Desactiva el dispositiu
+        // Desactiva el dispositiu.
         //
         deactivate();
 
@@ -333,12 +335,17 @@ void DMADevice::interruptService() {
         _state = State::ready;
     }
 
-    if (isHalfTransfer(_channel)) {
+    if (isHalfTransferInterruptEnabled(_channel) && isHalfTransfer(_channel)) {
 
+        clearHalfTransferFlag(channel);
+        
+        notifyHalfTransfer(true);
+        
     }
 
-    if (isTransferError(_channel)) {
+    if (isTransferErrorInterruptEnabled(channel) && isTransferError(_channel)) {
 
+        clearAllFlags(channel);
     }
 }
 
@@ -353,6 +360,23 @@ void DMADevice::notifyTransferCompleted(
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .id = NotifyID::completed,
+            .irq = irq
+        };
+        _notifyEvent->execute(this, args);
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que s'ha completat la mitat de la transferencia.
+/// \param    irq: True si la notificacio ve d'una interrupcio.
+///
+void DMADevice::notifyHalfTransfer(
+    bool irq) {
+    
+    if (_notifyEventEnabled) {
+        NotifyEventArgs args = {
+            .id = NotifyID::half,
             .irq = irq
         };
         _notifyEvent->execute(this, args);
@@ -377,7 +401,7 @@ static inline bool isTransferCompletedInterruptEnabled(
 /// \param    channel: El numero de canal.
 /// \return   True si esta actiu.
 ///
-static inline bool isTransferCompleted(
+static inline bool isTransferCompletedFlagSet(
     unsigned channel) {
 
     auto flag = DMA_ISR_TCIF1 << __dma[channel].flagOffset;
@@ -390,7 +414,7 @@ static inline bool isTransferCompleted(
 /// \param    channel: El numero de canal.
 /// \return   True si esta actiu.
 ///
-static inline bool isHalfTransfer(
+static inline bool isHalfTransferFlagSet(
     unsigned channel) {
 
     auto flag = DMA_ISR_HTIF1 << __dma[channel].flagOffset;
@@ -403,7 +427,7 @@ static inline bool isHalfTransfer(
 /// \param    channel: El numero de canal.
 /// \return   True si esta actiu.
 ///
-static inline bool isTransferError(
+static inline bool isTransferErrorFlagSet(
     unsigned channel) {
 
     auto flag = DMA_ISR_TEIF1 << __dma[channel].flagOffset;
@@ -415,10 +439,18 @@ static inline bool isTransferError(
 /// \brief    Borra el flag TC
 /// \param    channel: El numero de canal.
 ///
-static inline bool clearTransferCompletedFlag(
+static inline void clearTransferCompletedFlag(
     unsigned channel) {
     
     auto flag = DMA_IFCR_CTCIF1 << __dma[_channel].flagOffset;
+    __dma[channel].dma->IFCR = flag;
+}
+
+
+static inline void clearAllFlags(
+    unsigned channel) {
+    
+    auto flag = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_ICFR_CHTIF1 | FMA_ICFR_CTEIF1) << __dma[_channel].flagOffset;
     __dma[channel].dma->IFCR = flag;
 }
 
