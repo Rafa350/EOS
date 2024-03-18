@@ -505,7 +505,7 @@ void UARTDevice::notifyTxCompleted(
 		NotifyEventArgs args = {
 			.id = NotifyID::txCompleted,
 			.irq = irq,
-			.RxCompleted {
+			.TxCompleted {
 				.buffer = buffer,
 				.length = count
 			}

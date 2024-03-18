@@ -42,9 +42,18 @@ static bool isTransferCompletedInterruptEnabled(unsigned channel);
 static bool isHalfTransferInterruptEnabled(unsigned channel);
 static bool isTransferErrorInterruptEnabled(unsigned channel);
 
-static bool isTransferCompleted(unsigned channel);
-static bool isHalfTransfer(unsigned channel);
-static bool isTransferError(unsigned channel);
+static void enableTransferCompletedInterrupt(unsigned channel);
+static void enableHalfTransferInterrupt(unsigned channel);
+static void enableTransferErrorInterrupt(unsigned channel);
+
+static bool isTransferCompletedFlagSet(unsigned channel);
+static bool isHalfTransferFlagSet(unsigned channel);
+static bool isTransferErrorFlagSet(unsigned channel);
+
+static bool clearTransferCompletedFlag(unsigned channel);
+
+static void enable(unsigned channel);
+static void disable(unsigned channel);
 
 
 /// ----------------------------------------------------------------------
@@ -102,7 +111,6 @@ Result DMADevice::initMemoryToPeripheral(
         auto dma = __dma[_channel].dma;
         auto dmaChannel = __dma[_channel].dmaChannel;
         auto muxChannel = __dma[_channel].muxChannel;
-        auto flagOffset = __dma[_channel].flagOffset;
 
         // Activa el dispositiu
         //
@@ -143,7 +151,7 @@ Result DMADevice::initMemoryToPeripheral(
         tmp &= ~DMA_CCR_PSIZE_Msk;
         tmp |= (uint32_t(dstSize) << DMA_CCR_PSIZE_Pos) & DMA_CCR_PSIZE_Msk;
 
-        // El canal queda deshabilitat. Nomes activa duranst les
+        // El canal queda deshabilitat. Nomes activa durant les
         // transferencies.
         //
         tmp &= ~DMA_CCR_EN;
@@ -159,7 +167,8 @@ Result DMADevice::initMemoryToPeripheral(
 
         // Borra els flags d'interrupcio del canal
         //
-        ATOMIC_CLEAR_BIT(dma->IFCR, (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset);
+        auto flagOffset = __dma[_channel].flagOffset;
+        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
 
         // Canvia l'estat a 'ready'
         //
@@ -185,8 +194,7 @@ Result DMADevice::deinitialize() {
 
         // Deshabilita el canal DMA.
         //
-        auto dmaChannel = __dma[_channel].dmaChannel;
-        dmaChannel->CCR &= ~DMA_CCR_EN;
+        disable(_channel);
 
         // Desactiva el dispositiu
         //
@@ -291,11 +299,11 @@ Result DMADevice::waitForFinish(
 
         // Borra els flags d'interrupcio del canal
         //
-        dma->IFCR |= (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
+        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
 
         // Deshabilita el canal
         //
-        dmaChannel->CCR &= ~DMA_CCR_EN;
+        disableChannel(_channel);
 
 
         // Canvia l'estat a 'ready'
@@ -317,11 +325,8 @@ void DMADevice::interruptService() {
 
     if (isTransferCompletedInterruptEnabled(_channel) && isTransferCompleted(_channel)) {
 
-        auto dma = __dma[_channel].dma;
-        auto dmaChannel = __dma[_channel].dmaChannel;
-
-        ATOMIC_SET_BIT(dma->IFCR, DMA_IFCR_CTCIF1 << __dma[_channel].flagOffset);
-        dmaChannel->CCR &= ~DMA_CCR_EN;
+        clearTransferCompletedFlag(_channel);
+        disableChannel(_channel);
 
         notifyTransferCompleted(true);
 
@@ -403,4 +408,40 @@ static inline bool isTransferError(
 
     auto flag = DMA_ISR_TEIF1 << __dma[channel].flagOffset;
     return (__dma[channel].dma->ISR & ~flag) != 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borra el flag TC
+/// \param    channel: El numero de canal.
+///
+static inline bool clearTransferCompletedFlag(
+    unsigned channel) {
+    
+    auto flag = DMA_IFCR_CTCIF1 << __dma[_channel].flagOffset;
+    __dma[channel].dma->IFCR = flag;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita el canal DMA.
+/// \param    channel: El numero de canal.
+/// 
+static inline void enable(
+    unsigned channel) {
+    
+    auto dmaChannel = __dma[channel].dmaChannel;
+    dmaChannel->CCR |= DMA_CCR_EN;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita el canal DMA.
+/// \param    channel: El numero de canal.
+/// 
+static inline void disable(
+    unsigned channel) {
+    
+    auto dmaChannel = __dma[channel].dmaChannel;
+    dmaChannel->CCR &= ~DMA_CCR_EN;
 }
