@@ -38,19 +38,20 @@ static DMARegisters const __dma[] = {
 };
 
 
-static bool isTransferCompletedInterruptEnabled(unsigned channel);
+static bool isTransferCompleteInterruptEnabled(unsigned channel);
 static bool isHalfTransferInterruptEnabled(unsigned channel);
 static bool isTransferErrorInterruptEnabled(unsigned channel);
 
-static void enableTransferCompletedInterrupt(unsigned channel);
+static void enableTransferCompleteInterrupt(unsigned channel);
 static void enableHalfTransferInterrupt(unsigned channel);
 static void enableTransferErrorInterrupt(unsigned channel);
+static void disableAllInterrupts(unsigned channel);
 
-static bool isTransferCompletedFlagSet(unsigned channel);
+static bool isTransferCompleteFlagSet(unsigned channel);
 static bool isHalfTransferFlagSet(unsigned channel);
 static bool isTransferErrorFlagSet(unsigned channel);
 
-static void clearTransferCompletedFlag(unsigned channel);
+static void clearTransferCompleteFlag(unsigned channel);
 static void clearHalfTransferFlag(unsigned channel);
 static void clearAllFlags(unsigned channel);
 
@@ -110,13 +111,13 @@ Result DMADevice::initMemoryToPeripheral(
 
         uint32_t tmp;
 
-        auto dma = __dma[_channel].dma;
         auto dmaChannel = __dma[_channel].dmaChannel;
         auto muxChannel = __dma[_channel].muxChannel;
 
-        // Activa el dispositiu
+        // Activa el dispositiu amb el canakl desactivat.
         //
         activate();
+        disable(_channel);
 
         tmp = dmaChannel->CCR;
 
@@ -153,12 +154,15 @@ Result DMADevice::initMemoryToPeripheral(
         tmp &= ~DMA_CCR_PSIZE_Msk;
         tmp |= (uint32_t(dstSize) << DMA_CCR_PSIZE_Pos) & DMA_CCR_PSIZE_Msk;
 
-        // El canal queda deshabilitat. Nomes activa durant les
-        // transferencies.
+        // Desactiva les interrupcions del canal
         //
-        tmp &= ~DMA_CCR_EN;
+        tmp &= ~(DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
 
         dmaChannel->CCR = tmp;
+
+        // Borra els flags d'interrupcio del canal
+        //
+        clearAllFlags(_channel);
 
         // Selecciona el dispositiu de fa la solicitut DMA
         //
@@ -166,10 +170,6 @@ Result DMADevice::initMemoryToPeripheral(
         tmp &= ~DMAMUX_CxCR_DMAREQ_ID;
         tmp |= (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos);
         muxChannel->CCR = tmp;
-
-        // Borra els flags d'interrupcio del canal
-        //
-        clearAllFlags(channel);
 
         // Canvia l'estat a 'ready'
         //
@@ -193,9 +193,13 @@ Result DMADevice::deinitialize() {
     //
     if (_state == State::ready) {
 
+        _notifyEvent = nullptr;
+        _notifyEventEnabled = false;
+
         // Deshabilita el canal.
         //
         disable(_channel);
+        disableAllInterrupts(_channel);
 
         // Desactiva el dispositiu.
         //
@@ -256,10 +260,11 @@ Result DMADevice::start(
             dmaChannel->CNDTR = size;
         }
 
-        // Habilita el dispositiu, les interrupcions i entra en espera de
-        // solicituts de transferencia.
-        //
-        dmaChannel->CCR |= DMA_CCR_TCIE | DMA_CCR_EN;
+        enableTransferCompleteInterrupt(_channel);
+        enable(_channel);
+
+        // A partir d'aqui, el DMA esta a l'espera de les solicituts
+        // de transferencia.
 
         // Canvia l'estat a 'transfering'
         //
@@ -286,7 +291,6 @@ Result DMADevice::waitForFinish(
     if (_state == State::transfering) {
 
         auto dma = __dma[_channel].dma;
-        auto dmaChannel = __dma[_channel].dmaChannel;
         auto flagOffset = __dma[_channel].flagOffset;
 
         // Espera flag TCIF o TEIF del canal
@@ -300,11 +304,11 @@ Result DMADevice::waitForFinish(
 
         // Borra els flags d'interrupcio del canal
         //
-        dma->IFCR = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_IFCR_CTEIF1 | DMA_IFCR_CHTIF1) << flagOffset;
+        clearAllFlags(_channel);
 
         // Deshabilita el canal
         //
-        disableChannel(_channel);
+        disable(_channel);
 
 
         // Canvia l'estat a 'ready'
@@ -324,27 +328,33 @@ Result DMADevice::waitForFinish(
 ///
 void DMADevice::interruptService() {
 
-    if (isTransferCompletedInterruptEnabled(_channel) && isTransferCompleted(_channel)) {
+    // Comprova si es una interrupcio TC (Transfer Complete)
+    //
+    if (isTransferCompleteInterruptEnabled(_channel) &&
+        isTransferCompleteFlagSet(_channel)) {
 
-        clearTransferCompletedFlag(_channel);
-        disableChannel(_channel);
-
+        clearTransferCompleteFlag(_channel);
+        disable(_channel);
         notifyTransferCompleted(true);
 
         _state = State::ready;
     }
 
-    if (isHalfTransferInterruptEnabled(_channel) && isHalfTransfer(_channel)) {
+    // Comprova si es una interrupcio HT (Half Transfer)
+    //
+    if (isHalfTransferInterruptEnabled(_channel) &&
+        isHalfTransferFlagSet(_channel)) {
 
-        clearHalfTransferFlag(channel);
-        
+        clearHalfTransferFlag(_channel);
         notifyHalfTransfer(true);
-        
     }
 
-    if (isTransferErrorInterruptEnabled(channel) && isTransferError(_channel)) {
+    // Comprova si es una interrupcio TE (Transfer Error)
+    //
+    if (isTransferErrorInterruptEnabled(_channel) &&
+        isTransferErrorFlagSet(_channel)) {
 
-        clearAllFlags(channel);
+        clearAllFlags(_channel);
     }
 }
 
@@ -384,14 +394,82 @@ void DMADevice::notifyHalfTransfer(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Habilita la interrrupcio TC
+/// \param    channel: El numero de canal.
+///
+static inline void enableTransferCompleteInterrupt(
+    unsigned channel) {
+
+    __dma[channel].dmaChannel->CCR |= DMA_CCR_TCIE;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la interrrupcio HT
+/// \param    channel: El numero de canal.
+///
+static inline void enableHalfTransferInterrupt(
+    unsigned channel) {
+
+    __dma[channel].dmaChannel->CCR |= DMA_CCR_HTIE;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la interrrupcio TE
+/// \param    channel: El numero de canal.
+///
+static inline void enableTransferErrorInterrupt(
+    unsigned channel) {
+
+    __dma[channel].dmaChannel->CCR |= DMA_CCR_TEIE;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita totes les interrupcions.
+/// \param    channel: El numero de canal.
+///
+static void disableAllInterrupts(
+    unsigned channel) {
+
+    __dma[channel].dmaChannel->CCR &= ~(DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Comprova si la interrupcio TC esta habilitada.
 /// \param    channel: El numero de canal.
 /// \return   True si esta habilitada.
 ///
-static inline bool isTransferCompletedInterruptEnabled(
+static inline bool isTransferCompleteInterruptEnabled(
     unsigned channel) {
 
     return (__dma[channel].dmaChannel->CCR & DMA_CCR_TCIE) != 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si la interrupcio HT esta habilitada.
+/// \param    channel: El numero de canal.
+/// \return   True si esta habilitada.
+///
+static inline bool isHalfTransferInterruptEnabled(
+    unsigned channel) {
+
+    return (__dma[channel].dmaChannel->CCR & DMA_CCR_HTIE) != 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si la interrupcio TE esta habilitada.
+/// \param    channel: El numero de canal.
+/// \return   True si esta habilitada.
+///
+static inline bool isTransferErrorInterruptEnabled(
+    unsigned channel) {
+
+    return (__dma[channel].dmaChannel->CCR & DMA_CCR_TEIE) != 0;
 }
 
 
@@ -400,7 +478,7 @@ static inline bool isTransferCompletedInterruptEnabled(
 /// \param    channel: El numero de canal.
 /// \return   True si esta actiu.
 ///
-static inline bool isTransferCompletedFlagSet(
+static inline bool isTransferCompleteFlagSet(
     unsigned channel) {
 
     auto flag = DMA_ISR_TCIF1 << __dma[channel].flagOffset;
@@ -438,19 +516,32 @@ static inline bool isTransferErrorFlagSet(
 /// \brief    Borra el flag TC
 /// \param    channel: El numero de canal.
 ///
-static inline void clearTransferCompletedFlag(
+static inline void clearTransferCompleteFlag(
     unsigned channel) {
     
-    auto flag = DMA_IFCR_CTCIF1 << __dma[_channel].flagOffset;
-    __dma[channel].dma->IFCR = flag;
+    __dma[channel].dma->IFCR = DMA_IFCR_CTCIF1 << __dma[channel].flagOffset;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Borra el flag HT
+/// \param    channel: El numero de canal.
+///
+static inline void clearHalfTransferFlag(
+    unsigned channel) {
+
+    __dma[channel].dma->IFCR = DMA_IFCR_CHTIF1 << __dma[channel].flagOffset;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borra tots els flags.
+/// \param    channel: El numero de canal.
+///
 static inline void clearAllFlags(
     unsigned channel) {
     
-    auto flag = (DMA_IFCR_CGIF1 | DMA_IFCR_CTCIF1 | DMA_ICFR_CHTIF1 | FMA_ICFR_CTEIF1) << __dma[_channel].flagOffset;
-    __dma[channel].dma->IFCR = flag;
+    __dma[channel].dma->IFCR = DMA_IFCR_CGIF1 << __dma[channel].flagOffset;
 }
 
 
@@ -461,8 +552,7 @@ static inline void clearAllFlags(
 static inline void enable(
     unsigned channel) {
     
-    auto dmaChannel = __dma[channel].dmaChannel;
-    dmaChannel->CCR |= DMA_CCR_EN;
+    __dma[channel].dmaChannel->CCR |= DMA_CCR_EN;
 }
 
 
@@ -473,6 +563,5 @@ static inline void enable(
 static inline void disable(
     unsigned channel) {
     
-    auto dmaChannel = __dma[channel].dmaChannel;
-    dmaChannel->CCR &= ~DMA_CCR_EN;
+    __dma[channel].dmaChannel->CCR &= ~DMA_CCR_EN;
 }

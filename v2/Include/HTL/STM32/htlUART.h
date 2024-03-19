@@ -129,8 +129,8 @@ namespace htl {
 
 		enum class NotifyID {
 			null,
-			rxCompleted,
-			txCompleted,
+			rxComplete,
+			txComplete,
 			error
 		};
 
@@ -141,11 +141,11 @@ namespace htl {
 				struct {
 					const uint8_t *buffer;
 					unsigned length;
-				} TxCompleted;
+				} TxComplete;
 				struct {
 					const uint8_t *buffer;
 					unsigned length;
-				} RxCompleted;
+				} RxComplete;
 			};
 		};
 
@@ -208,9 +208,130 @@ namespace htl {
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
-				void notifyTxCompleted(const uint8_t *buffer, unsigned count, bool irq);
-				void notifyRxCompleted(const uint8_t *buffer, unsigned count, bool irq);
+				void notifyTxComplete(const uint8_t *buffer, unsigned count, bool irq);
+				void notifyRxComplete(const uint8_t *buffer, unsigned count, bool irq);
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
+
+				inline void enableTx() const {
+				    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
+				}
+                inline void enableRx() const {
+                    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RE);
+                }
+				inline void disableTx() const {
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TE);
+				}
+                inline void disableRx() const {
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RE);
+                }
+
+                inline void enableTxDMA() const {
+                    ATOMIC_SET_BIT(_usart->CR3, USART_CR3_DMAT);
+                }
+                inline void disableTxDMA() const {
+                    ATOMIC_CLEAR_BIT(_usart->CR3, USART_CR3_DMAT);
+                }
+
+				inline void enableTxEmptyInterrupt() const {
+                    #if defined(EOS_PLATFORM_STM32F7)
+                    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE);
+                    #elif defined(EOS_PLATFORM_STM32G0)
+                    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE);
+                    #else
+                    #error "Unknown platform"
+                    #endif
+				}
+				inline void enableTxCompleteInterrupt() const {
+				    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TCIE);
+				}
+				inline void enableRxNoEmptyInterrupt() const {
+                    #if defined(EOS_PLATFORM_STM32F7)
+                    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RXNEIE);
+                    #elif defined(EOS_PLATFORM_STM32G0)
+                    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE);
+                    #else
+                    #error "Unknown platform"
+                    #endif
+				}
+				inline void disableTxEmptyInterrupt() const {
+                    #if defined(EOS_PLATFORM_STM32F7)
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE);
+                    #elif defined(EOS_PLATFORM_STM32G0)
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE);
+                    #else
+                    #error "Unknown platform"
+                    #endif
+				}
+				inline void disableAllTxInterrupts() const {
+                    #if defined(EOS_PLATFORM_STM32F7)
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE | USART_CR1_TCIE);
+                    #elif defined(EOS_PLATFORM_STM32G0)
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE);
+                    #else
+                    #error "Unknown platform"
+                    #endif
+				}
+				inline void disableAllRxInterrupts() const {
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE);
+				}
+
+				inline bool isTxEmptyInterruptEnabled() {
+				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				    return (_usart->CR1 & USART_CR1_TXEIE) != 0;
+				    #elif defined(EOS_PLATFORM_STM32G0)
+				    return (_usart->CR1 & USART_CR1_TXEIE_TXFNFIE) != 0;
+				    #else
+				    #error "Unknown platform"
+				    #endif
+				}
+				inline bool isTxCompleteInterruptEnabled() {
+				    return (_usart->CR1 & USART_CR1_TCIE) != 0;
+				}
+				inline bool isRxNotEmptyInterruptEnabled() {
+				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				    return (_usart->CR1 & USART_CR1_RXNEIE) != 0;
+				    #elif defined(EOS_PLATFORM_STM32G0)
+				    return (_usart->CR1 & USART_CR1_RXNEIE_RXFNEIE) != 0;
+				    #else
+				    #error "Unknown platform"
+				    #endif
+				}
+
+				inline bool isTxEmptyFlagSet() {
+				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				    return (_usart->ISR & USART_ISR_TXE) != 0;
+				    #elif defined(EOS_PLATFORM_STM32G0)
+				    return (_usart->ISR & USART_ISR_TXE_TXFNF) != 0;
+				    #else
+				    #error "Unknown platform"
+				    #endif
+				}
+				inline bool isTxCompleteFlagSet() {
+				    return (_usart->ISR & USART_ISR_TC) != 0;
+				}
+				inline bool isRxNotEmptyFlagSet() {
+				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				    return (_usart->ISR & USART_ISR_RXNE) != 0;
+				    #elif defined(EOS_PLATFORM_STM32G0)
+				    return (_usart->ISR & USART_ISR_RXNE_RXFNE) != 0;
+				    #else
+				    #error "Unknown platform"
+				    #endif
+				}
+
+				inline void clearTxCompleteFlag() const {
+				    _usart->ICR = USART_ICR_TCCF;
+				}
+                inline void clearRxTimeoutFlag() const {
+                    _usart->ICR = USART_ICR_RTOCF;
+                }
+
+				inline void write8(uint8_t data) const {
+				    _usart->TDR = data;
+				}
+				inline uint8_t read8() const {
+				    return _usart->RDR;
+				}
 
 			protected:
 				UARTDevice(USART_TypeDef *usart);
@@ -223,7 +344,7 @@ namespace htl {
 					_usart->CR1 |= USART_CR1_UE;
 				}
 				inline void disable() const {
-					_usart->CR1 &= ~USART_CR1_UE;
+					_usart->CR1 &= ~(USART_CR1_UE | USART_CR1_TE | USART_CR1_RE);
 				}
 				Result initialize();
 				Result deinitialize();

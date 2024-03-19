@@ -13,17 +13,6 @@ static void setStopBits(USART_TypeDef *usart, StopBits stopBits);
 static void setHandsake(USART_TypeDef *usart, Handsake handsake);
 static void setReceiveTimeout(USART_TypeDef *usart, uint32_t timeout);
 
-static bool isTxEmptyInterruptEnabled(USART_TypeDef *usart);
-static bool isTxCompleteInterruptEnabled(USART_TypeDef *usart);
-static bool isTxEmpty(USART_TypeDef *usart);
-static bool isTxComplete(USART_TypeDef *usart);
-
-static bool isRxNotEmptyInterruptEnabled(USART_TypeDef *usart);
-static bool isRxNotEmpty(USART_TypeDef *usart);
-
-static void write8(USART_TypeDef *usart, uint8_t data);
-static uint8_t read8(USART_TypeDef *usart);
-
 static ClockSource getClockSource(USART_TypeDef *usart);
 static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
 
@@ -50,16 +39,9 @@ UARTDevice::UARTDevice(
 ///
 Result UARTDevice::initialize() {
 
-    // Comprova que l'estat sigui 'reset'
-    //
 	if (_state == State::reset) {
 
-	    // Activa el dispositiu
-	    //
 		activate();
-
-		// Desabilita les comunicacions.
-		//
 		disable();
 
         #if defined(EOS_PLATFORM_STM32G0)
@@ -68,8 +50,6 @@ Result UARTDevice::initialize() {
 	    _usart->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
 		_usart->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
-		// Canvia l'estat a 'ready'
-		//
 		_state = State::ready;
 
 		return Result::success();
@@ -86,20 +66,11 @@ Result UARTDevice::initialize() {
 ///
 Result UARTDevice::deinitialize() {
 
-    // Comprova que l'estat sigui 'ready'
-    //
 	if (_state == State::ready) {
 
-	    // Deshabilita les comunicacions
-	    //
 		disable();
-
-		// Desactiva el dispositiu
-		//
 		deactivate();
 
-		// Canvia l'estat a 'reset'
-		//
 		_state = State::reset;
 
 		return Result::success();
@@ -246,13 +217,8 @@ Result UARTDevice::transmit_IRQ(
 		_txSize = bufferSize;
 		_txCount = 0;
 
-		// Habilita les interrupcions i activa la transmissio
-		//
-        #if defined(EOS_PLATFORM_STM32F7)
-        ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE | USART_CR1_TE);
-        #elif defined(EOS_PLATFORM_STM32G0)
-		ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TE);
-        #endif
+		enableTxEmptyInterrupt();
+		enableTx();
 
 		return Result::success();
 	}
@@ -283,11 +249,8 @@ Result UARTDevice::receive_IRQ(
 		_rxSize = bufferSize;
 		_rxCount = 0;
 
-        #if defined(EOS_PLATFORM_STM32F7)
-        ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RXNEIE | USART_CR1_RE);
-        #elif defined(EOS_PLATFORM_STM32G0)
-		ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RE);
-        #endif
+		enableRxNoEmptyInterrupt();
+		enableRx();
 
 		return Result::success();
 	}
@@ -320,11 +283,8 @@ Result UARTDevice::transmit_DMA(
         _txSize = bufferSize;
         _txCount = 0;
 
-        // Habilita les interrupciuons i habilita la transmissio per DMA
-        //
-        _usart->ICR &= ~USART_ICR_TCCF;
-        ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
-        ATOMIC_SET_BIT(_usart->CR3, USART_CR3_DMAT);
+        enableTx();
+        enableTxDMA();
 
         // Inicia la transferencia per DMA
         //
@@ -393,7 +353,7 @@ void UARTDevice::interruptService() {
             _rxBuffer[_rxCount++] = _usart->RDR;
             if (_rxCount == _rxSize) {
                 ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-                notifyRxCompleted(_rxBuffer, _rxCount, true);
+                notifyRxComplete(_rxBuffer, _rxCount, true);
                 _state = State::ready;
             }
         }
@@ -425,32 +385,39 @@ void UARTDevice::interruptService() {
 
         // Interrupcio 'TxEmpty'
         //
-        if (isTxEmptyInterruptEnabled(_usart) & isTxEmpty(_usart)) {
+        if (isTxEmptyInterruptEnabled() && isTxEmptyFlagSet()) {
+
             if (_txCount < _txSize) {
-                write8(_usart, _txBuffer[_txCount++]);
-                if (_txCount == _txSize)
-                    ATOMIC_MODIFY_REG(_usart->CR1, USART_CR1_TXEIE_TXFNFIE, USART_CR1_TCIE);
+                write8(_txBuffer[_txCount++]);
+                if (_txCount == _txSize) {
+                    disableTxEmptyInterrupt();
+                    enableTxCompleteInterrupt();
+                }
             }
         }
 
-        // Interrupcio 'TxComplete'. Nomes en l'ultim caracter transmes
+        // Interrupcio 'TxComplete'. Nomes en l'ultim caracter transmes.
         //
-        if (isTxCompleteInterruptEnabled(_usart) && isTxComplete(_usart)) {
-            _usart->ICR |= USART_ICR_TCCF;
-            ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_TE);
-            ATOMIC_CLEAR_BIT(_usart->CR3, USART_CR3_DMAT);
-            notifyTxCompleted(_txBuffer, _txCount, true);
+        if (isTxCompleteInterruptEnabled() && isTxCompleteFlagSet()) {
+
+            clearTxCompleteFlag();
+            disableAllTxInterrupts();
+            disableTx();
+            disableTxDMA();
+            notifyTxComplete(_txBuffer, _txCount, true);
             _state = State::ready;
         }
 
         /// Interupcio 'RxNotEmpty'
         //
-        if (isRxNotEmptyInterruptEnabled(_usart) && isRxNotEmpty(_usart)) {
+        if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
+
             if (_rxCount < _rxSize) {
-                _rxBuffer[_rxCount++] = read8(_usart);
+                _rxBuffer[_rxCount++] = read8();
                 if (_rxCount == _rxSize) {
-                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-                    notifyRxCompleted(_rxBuffer, _rxCount, true);
+                    disableAllRxInterrupts();
+                    disableRx();
+                    notifyRxComplete(_rxBuffer, _rxCount, true);
                     _state = State::ready;
                 }
             }
@@ -459,9 +426,11 @@ void UARTDevice::interruptService() {
         // Interrupcio 'RxTimeout'
         //
         if ((_usart->CR1 & USART_CR1_RTOIE) && (_usart->ISR & USART_ISR_RTOF)) {
-            _usart->ICR |= USART_ICR_RTOCF;
-            ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-            notifyRxCompleted(_rxBuffer, _rxCount, true);
+
+            clearRxTimeoutFlag();
+            disableAllRxInterrupts();
+            disableRx();
+            notifyRxComplete(_rxBuffer, _rxCount, true);
             _state = State::ready;
         }
     }
@@ -481,7 +450,8 @@ void UARTDevice::dmaNotifyEventHandler(
     switch (args.id) {
         case htl::dma::NotifyID::completed:
             _txCount = _txSize;
-            ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TCIE);
+            clearTxCompleteFlag();
+            enableTxCompleteInterrupt();
             devDMA->disableNotifyEvent();
             break;
 
@@ -496,16 +466,16 @@ void UARTDevice::dmaNotifyEventHandler(
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes de dades.
 ///
-void UARTDevice::notifyTxCompleted(
+void UARTDevice::notifyTxComplete(
 	const uint8_t *buffer,
 	unsigned count,
 	bool irq) {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
-			.id = NotifyID::txCompleted,
+			.id = NotifyID::txComplete,
 			.irq = irq,
-			.TxCompleted {
+			.TxComplete {
 				.buffer = buffer,
 				.length = count
 			}
@@ -520,16 +490,16 @@ void UARTDevice::notifyTxCompleted(
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes de dades.
 ///
-void UARTDevice::notifyRxCompleted(
+void UARTDevice::notifyRxComplete(
 	const uint8_t *buffer,
 	unsigned count,
 	bool irq) {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
-			.id = NotifyID::rxCompleted,
+			.id = NotifyID::rxComplete,
 			.irq = irq,
-			.RxCompleted {
+			.RxComplete {
 				.buffer = buffer,
 				.length = count
 			}
@@ -841,125 +811,4 @@ static void setReceiveTimeout(
         usart->CR2 |= USART_CR2_RTOEN;
         usart->RTOR = timeout;
     }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si esta habilitada la interrupcio TxEmpty
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \return   True si esta habilitada.
-///
-static bool isTxEmptyInterruptEnabled(
-    USART_TypeDef *usart) {
-
-    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-    return (usart->CR1 & USART_CR1_TXEIE) != 0;
-    #elif defined(EOS_PLATFORM_STM32G0)
-    return (usart->CR1 & USART_CR1_TXEIE_TXFNFIE) != 0;
-    #else
-    #error "Unknown platform"
-    #endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si esta habilitada la interrupcio 'TxCompleted'.
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \return   True si esta habilitada.
-///
-static bool isTxCompleteInterruptEnabled(
-    USART_TypeDef *usart) {
-
-    return (usart->CR1 & USART_CR1_TCIE) != 0;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si esta habilitada la interrupcio 'RxNotEmpty'.
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \return   True si esta habilitada.
-///
-static bool isRxNotEmptyInterruptEnabled(
-    USART_TypeDef *usart) {
-
-    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-    return (usart->CR1 & USART_CR1_RXNEIE) != 0;
-    #elif defined(EOS_PLATFORM_STM32G0)
-    return (usart->CR1 & USART_CR1_RXNEIE_RXFNEIE) != 0;
-    #else
-    #error "Unknown platform"
-    #endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si el flag 'TxEmpty' esta actiu.
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \return   True si el flag esta actiu.
-///
-static bool isTxEmpty(
-    USART_TypeDef *usart) {
-
-    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-    return (usart->ISR & USART_ISR_TXE) != 0;
-    #elif defined(EOS_PLATFORM_STM32G0)
-    return (usart->ISR & USART_ISR_TXE_TXFNF) != 0;
-    #else
-    #error "Unknown platform"
-    #endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si el flag 'TxCompleted' esta actiu.
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \return   True si el flag esta actiu.
-///
-static bool isTxComplete(
-    USART_TypeDef *usart) {
-
-    return (usart->ISR & USART_ISR_TC) != 0;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si el flag 'RxNotEmpty' esta actiu.
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \return   True si el flag esta actiu.
-///
-static bool isRxNotEmpty(
-    USART_TypeDef *usart) {
-
-    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-    return (usart->ISR & USART_ISR_RXNE) != 0;
-    #elif defined(EOS_PLATFORM_STM32G0)
-    return (usart->ISR & USART_ISR_RXNE_RXFNE) != 0;
-    #else
-    #error "Unknown platform"
-    #endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Transmiteix un byte.
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \param    data: El byte a transmetre.
-///
-static void write8(
-    USART_TypeDef *usart,
-    uint8_t data) {
-
-    usart->TDR = data;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Reb un byte.
-/// \param    usart: Els registres de hardware del dispositiu.
-/// \return   El byte rebut.
-///
-static uint8_t read8(
-    USART_TypeDef *usart) {
-
-    return  usart->RDR;
 }

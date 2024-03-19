@@ -112,12 +112,12 @@ void AsyncSerialDriver_UART::uartNotifyEventHandler(
 	UARTNotifyEventArgs &args) {
 
 	switch (args.id) {
-		case htl::uart::NotifyID::txCompleted:
-			notifyTxCompleted(args.TxCompleted.length);
+		case htl::uart::NotifyID::txComplete:
+			notifyTxCompleted(args.TxComplete.length);
 			break;
 
-		case htl::uart::NotifyID::rxCompleted:
-			notifyRxCompleted(args.RxCompleted.length);
+		case htl::uart::NotifyID::rxComplete:
+			notifyRxCompleted(args.RxComplete.length);
 			break;
 
 		default:
