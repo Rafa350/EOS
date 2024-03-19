@@ -275,7 +275,7 @@ namespace htl {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE);
 				}
 
-				inline bool isTxEmptyInterruptEnabled() {
+				inline bool isTxEmptyInterruptEnabled() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->CR1 & USART_CR1_TXEIE) != 0;
 				    #elif defined(EOS_PLATFORM_STM32G0)
@@ -284,10 +284,10 @@ namespace htl {
 				    #error "Unknown platform"
 				    #endif
 				}
-				inline bool isTxCompleteInterruptEnabled() {
+				inline bool isTxCompleteInterruptEnabled() const {
 				    return (_usart->CR1 & USART_CR1_TCIE) != 0;
 				}
-				inline bool isRxNotEmptyInterruptEnabled() {
+				inline bool isRxNotEmptyInterruptEnabled() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->CR1 & USART_CR1_RXNEIE) != 0;
 				    #elif defined(EOS_PLATFORM_STM32G0)
@@ -296,8 +296,11 @@ namespace htl {
 				    #error "Unknown platform"
 				    #endif
 				}
+				inline bool isRxTimeoutInterruptEnabled() const {
+				    return (_usart->CR1 & USART_CR1_RTOIE) != 0;
+				}
 
-				inline bool isTxEmptyFlagSet() {
+				inline bool isTxEmptyFlagSet() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->ISR & USART_ISR_TXE) != 0;
 				    #elif defined(EOS_PLATFORM_STM32G0)
@@ -306,10 +309,10 @@ namespace htl {
 				    #error "Unknown platform"
 				    #endif
 				}
-				inline bool isTxCompleteFlagSet() {
+				inline bool isTxCompleteFlagSet() const {
 				    return (_usart->ISR & USART_ISR_TC) != 0;
 				}
-				inline bool isRxNotEmptyFlagSet() {
+				inline bool isRxNotEmptyFlagSet() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->ISR & USART_ISR_RXNE) != 0;
 				    #elif defined(EOS_PLATFORM_STM32G0)
@@ -317,6 +320,9 @@ namespace htl {
 				    #else
 				    #error "Unknown platform"
 				    #endif
+				}
+				inline bool isRxTimeoutFlagSet() const {
+				    return (_usart->ISR & USART_ISR_RTOF) != 0;
 				}
 
 				inline void clearTxCompleteFlag() const {

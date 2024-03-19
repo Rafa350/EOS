@@ -408,7 +408,7 @@ void UARTDevice::interruptService() {
             _state = State::ready;
         }
 
-        /// Interupcio 'RxNotEmpty'
+        /// Interrupcio 'RxNotEmpty'
         //
         if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
 
@@ -425,7 +425,7 @@ void UARTDevice::interruptService() {
 
         // Interrupcio 'RxTimeout'
         //
-        if ((_usart->CR1 & USART_CR1_RTOIE) && (_usart->ISR & USART_ISR_RTOF)) {
+        if (isRxTimeoutInterruptEnabled() && isRxTimeoutFlagSet()) {
 
             clearRxTimeoutFlag();
             disableAllRxInterrupts();
