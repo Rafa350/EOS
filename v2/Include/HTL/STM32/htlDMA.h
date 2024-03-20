@@ -11,6 +11,8 @@ namespace htl {
 
 	namespace dma {
 
+        /// Identificador del dispositiu.
+        ///
 		enum class DeviceID {
             #ifdef HTL_DMA1_CHANNEL1_EXIST
 			_11,

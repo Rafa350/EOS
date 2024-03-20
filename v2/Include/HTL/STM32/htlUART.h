@@ -20,6 +20,8 @@ namespace htl {
 
 	namespace uart {
 
+        /// Identificador del dispositiu.
+        ///
 		enum class DeviceID {
 			#ifdef HTL_UART1_EXIST
 				_1,
@@ -47,17 +49,23 @@ namespace htl {
 			#endif
 		};
 
+        /// Primer bit a transmetre.
+        ///
 		enum class FirstBit {
-			lsb,
-			msb
+			lsb, ///< Primer transmet el bit menys significatiu.
+			msb  ///< Primer transmet el bit mes significatiu.
 		};
 
+        /// Paritat.
+        ///
 		enum class Parity {
 			none,
 			even,
 			odd
 		};
 
+        /// Nombre de bits de paraula.
+        ///
 		enum class WordBits {
 			#if defined(EOS_PLATFORM_STM32F4) || \
 			    defined(EOS_PLATFORM_STM32F7)
@@ -67,6 +75,8 @@ namespace htl {
 			_9
 		};
 
+        /// Nombre de bits de parada.
+        ///
 		enum class StopBits {
 			_0p5,
 			_1,
@@ -74,6 +84,8 @@ namespace htl {
 			_2
 		};
 
+        /// Velocitat de transmissio.
+        ///
 		enum class BaudMode {
 			_1200,
 			_2400,
@@ -88,9 +100,11 @@ namespace htl {
 			automatic
 		};
 
+        /// Protocol de comunicacio
+        ///
 		enum class Handsake {
-			none,
-			ctsrts
+			none,  ///< Cap protocol.
+			ctsrts ///< Protocol CTS/RTS
 		};
 
 		enum class ClockSource {
@@ -176,11 +190,13 @@ namespace htl {
 
 
 		/// Clase que implementa el dispositiu de comunicacio UART.
+        ///
 		class UARTDevice {
 			public:
                 using DevDMA = htl::dma::DMADevice;
 
                 /// Estats en que es troba el dispositiu.
+                ///
 				enum class State {
 					reset,       ///< Creat, pero sense inicialitzar.
 					ready,       ///< Inicialitzat in preparat per operar.
@@ -193,45 +209,80 @@ namespace htl {
 				using DMANotifyEventArgs = htl::dma::NotifyEventArgs;
 
 			private:
-				USART_TypeDef * const _usart;  ///< Instancia del dispositiu.
-				State _state;                  ///< Estat actual.
-				uint8_t *_rxBuffer;            ///< Buffer de recepcio.
-				unsigned _rxSize;              ///< Tamany del buffer de recepcio en bytes.
-				unsigned _rxCount;             ///< Contador de bytes en recepcio.
-				const uint8_t *_txBuffer;      ///< Buffer de transmissio.
-				unsigned _txSize;              ///< Tamany del buffer de transmissio en bytes.
-				unsigned _txCount;             ///< Contador de bytes en transmissio.
-				INotifyEvent *_notifyEvent;    ///< Event de notificacio.
-				bool _notifyEventEnabled;      ///< Habilitacio del event de notificacio.
-				DMANotifyEvent _dmaNotifyEvent;
+				USART_TypeDef * const _usart;   ///< Instancia del dispositiu.
+				State _state;                   ///< Estat actual.
+				uint8_t *_rxBuffer;             ///< Buffer de recepcio.
+				unsigned _rxSize;               ///< Tamany del buffer de recepcio en bytes.
+				unsigned _rxCount;              ///< Contador de bytes en recepcio.
+				const uint8_t *_txBuffer;       ///< Buffer de transmissio.
+				unsigned _txSize;               ///< Tamany del buffer de transmissio en bytes.
+				unsigned _txCount;              ///< Contador de bytes en transmissio.
+				INotifyEvent *_notifyEvent;     ///< Event de notificacio.
+				bool _notifyEventEnabled;       ///< Habilitacio del event de notificacio.
+				DMANotifyEvent _dmaNotifyEvent; ///< Event de notificacio del DMA.
 
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
+                
+                /// Genera la notificacio 'txComplete'.
+                /// \param buffer: El buffer.
+                /// \param count: Nombre de bytes en el buffer.
+                /// \param irq: Indica si s'ha generat des de una interrupcio.
+                ///
 				void notifyTxComplete(const uint8_t *buffer, unsigned count, bool irq);
+                
+                /// Genera la notificacio 'rxComplete'.
+                /// \param buffer: El buffer.
+                /// \param count: Nombre de bytes en el buffer.
+                /// \param irq: Indica si s'ha generat des de una interrupcio.
+                ///
 				void notifyRxComplete(const uint8_t *buffer, unsigned count, bool irq);
+                
+                /// Procesa les notificacions del DMA.
+                /// \param devDMA: El dispositiu DMA.
+                /// \param args: Els parametres de la notificacio.
+                ///
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 
+                /// Habilita la transmissio.
+                ///
 				inline void enableTx() const {
 				    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
 				}
+                
+                /// Habilita la recepcio.
+                ///
                 inline void enableRx() const {
                     ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RE);
                 }
+                
+                /// Deshabilita la transmissio.
+                ///
 				inline void disableTx() const {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TE);
 				}
+                
+                /// Deshabilita la recepcio.
+                ///
                 inline void disableRx() const {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RE);
                 }
 
+                /// Habilita el DMA durant la transmissio.
+                ///
                 inline void enableTxDMA() const {
                     ATOMIC_SET_BIT(_usart->CR3, USART_CR3_DMAT);
                 }
+                
+                /// Deshabilita el DMA durant la recepcio.
+                ///
                 inline void disableTxDMA() const {
                     ATOMIC_CLEAR_BIT(_usart->CR3, USART_CR3_DMAT);
                 }
 
+                /// Habilita la interrupcio 'TxEmpty'.
+                ///
 				inline void enableTxEmptyInterrupt() const {
                     #if defined(EOS_PLATFORM_STM32F7)
                     ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TXEIE);
@@ -241,9 +292,15 @@ namespace htl {
                     #error "Unknown platform"
                     #endif
 				}
+
+                /// Habilita la interrupcio 'TxComplete'.
+                ///
 				inline void enableTxCompleteInterrupt() const {
 				    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TCIE);
 				}
+
+                /// Habilita la interrupcio 'RxNoEmpty'.
+                ///
 				inline void enableRxNoEmptyInterrupt() const {
                     #if defined(EOS_PLATFORM_STM32F7)
                     ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RXNEIE);
@@ -253,6 +310,9 @@ namespace htl {
                     #error "Unknown platform"
                     #endif
 				}
+                
+                /// Deshabilita la interrupcio 'TxEmpty'.
+                ///
 				inline void disableTxEmptyInterrupt() const {
                     #if defined(EOS_PLATFORM_STM32F7)
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE);
@@ -262,6 +322,9 @@ namespace htl {
                     #error "Unknown platform"
                     #endif
 				}
+                
+                /// Deshabilita totes les interrupcions de transmissio.
+                ///
 				inline void disableAllTxInterrupts() const {
                     #if defined(EOS_PLATFORM_STM32F7)
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE | USART_CR1_TCIE);
@@ -271,6 +334,9 @@ namespace htl {
                     #error "Unknown platform"
                     #endif
 				}
+
+                /// Deshabilita totes les interrupcions de recepcio.
+                ///
 				inline void disableAllRxInterrupts() const {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE);
 				}
@@ -376,7 +442,8 @@ namespace htl {
 				Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned bufferSize);
 				Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
 
-				State getState() const { return _state; }
+				inline State getState() const { return _state; }
+                inline bool isReady() const { return _state == State::ready; }
 		};
 
 
