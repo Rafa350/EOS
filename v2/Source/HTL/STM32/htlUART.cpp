@@ -465,6 +465,7 @@ void UARTDevice::dmaNotifyEventHandler(
 /// \brief    Genera un event de notificacio 'TxComplete'
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes de dades.
+/// \param    irq: true si ve d'una interrupcio.
 ///
 void UARTDevice::notifyTxComplete(
 	const uint8_t *buffer,
@@ -489,6 +490,7 @@ void UARTDevice::notifyTxComplete(
 /// \brief    Genera un event de notificacio 'RxComplete'
 /// \param    buffer: El buffer de dades.
 /// \param    count: El nombre de bytes de dades.
+/// \param    irq: true si ve d'una interrupcio.
 ///
 void UARTDevice::notifyRxComplete(
 	const uint8_t *buffer,

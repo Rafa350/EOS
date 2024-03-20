@@ -225,24 +225,8 @@ namespace htl {
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
                 
-                /// Genera la notificacio 'txComplete'.
-                /// \param buffer: El buffer.
-                /// \param count: Nombre de bytes en el buffer.
-                /// \param irq: Indica si s'ha generat des de una interrupcio.
-                ///
 				void notifyTxComplete(const uint8_t *buffer, unsigned count, bool irq);
-                
-                /// Genera la notificacio 'rxComplete'.
-                /// \param buffer: El buffer.
-                /// \param count: Nombre de bytes en el buffer.
-                /// \param irq: Indica si s'ha generat des de una interrupcio.
-                ///
 				void notifyRxComplete(const uint8_t *buffer, unsigned count, bool irq);
-                
-                /// Procesa les notificacions del DMA.
-                /// \param devDMA: El dispositiu DMA.
-                /// \param args: Els parametres de la notificacio.
-                ///
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 
                 /// Habilita la transmissio.
