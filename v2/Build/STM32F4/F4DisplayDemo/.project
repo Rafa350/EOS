@@ -309,6 +309,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htl.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/htlDMA.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlDMA.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>
@@ -642,6 +647,11 @@
 			<name>inc/Framework/EOS/HTL/STM32/htlClock.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlClock.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlDMA.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D.h</name>

@@ -18,8 +18,8 @@ namespace eos {
 	        DevDMA * const _devDMArx;
 
 	    private:
-            bool transmitImpl(const uint8_t *buffer, unsigned bufferSize) override;
-            bool receiveImpl(uint8_t *buffer, unsigned bufferSize) override;
+            bool startTxImpl(const uint8_t *buffer, unsigned length) override;
+            bool startRxImpl(uint8_t *buffer, unsigned bufferSize) override;
 
 	    public:
             AsyncSerialDriver_UARTDMA(DevUART *devUART, DevDMA *devDMAtx, DevDMA *devDMArx);

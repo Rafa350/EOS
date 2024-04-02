@@ -130,6 +130,22 @@ namespace htl {
         using INotifyEvent = eos::ICallbackP2<DMADevice*, NotifyEventArgs&>;
         template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, DMADevice*, NotifyEventArgs&>;
 
+        namespace internal {
+            typedef struct {
+                DMA_TypeDef * const dma;
+                DMA_Channel_TypeDef * const dmac;
+                DMAMUX_Channel_TypeDef * const muxc;
+                unsigned const flagPos;
+            } DMADEV_TypeDef;
+
+            extern const DMADEV_TypeDef __dmadev11;
+            extern const DMADEV_TypeDef __dmadev12;
+            extern const DMADEV_TypeDef __dmadev13;
+            extern const DMADEV_TypeDef __dmadev14;
+            extern const DMADEV_TypeDef __dmadev15;
+            extern const DMADEV_TypeDef __dmadev16;
+            extern const DMADEV_TypeDef __dmadev17;
+        }
 
 		class DMADevice {
 		    public:
@@ -140,7 +156,7 @@ namespace htl {
 		        };
                 
 			private:
-				unsigned const _channel;
+		        const internal::DMADEV_TypeDef * const _dmadev;
 				State _state;
                 INotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
@@ -160,7 +176,7 @@ namespace htl {
                 }
                 
 			protected:
-				DMADevice(unsigned channel);
+				DMADevice(const internal::DMADEV_TypeDef *dmadev);
                 void interruptService();
                 virtual void activateImpl() = 0;
                 virtual void deactivateImpl() = 0;
@@ -208,14 +224,14 @@ namespace htl {
                 using DMATraits = internal::DMATraits<deviceID_>;
                 
             private:
-                static constexpr auto _channel = uint32_t(deviceID_);
+                static constexpr auto dmadev = DMATraits::dmadev;
                 static constexpr auto _rccEnableAddr = DMATraits::rccEnableAddr;
                 static constexpr auto _rccEnablePos = DMATraits::rccEnablePos;
                 static DMADeviceX _instance;
                 
             private:
                 inline DMADeviceX() :
-                    DMADevice(_channel) {
+                    DMADevice(dmadev) {
                 }
                 
             protected:
@@ -249,7 +265,7 @@ namespace htl {
             #ifdef HTL_DMA1_CHANNEL1_EXIST
 		    template <>
 		    struct DMATraits<DeviceID::_11> {
-                static constexpr unsigned channel = 0;
+		        static constexpr const DMADEV_TypeDef *dmadev = &__dmadev11;
                 static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
 		    };
@@ -258,7 +274,7 @@ namespace htl {
             #ifdef HTL_DMA1_CHANNEL2_EXIST
 		    template <>
             struct DMATraits<DeviceID::_12> {
-                static constexpr unsigned channel = 1;
+                static constexpr const DMADEV_TypeDef *dmadev = &__dmadev12;
                 static constexpr uint32_t rccEnableAddr =
                         RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
@@ -268,7 +284,7 @@ namespace htl {
 		    #ifdef HTL_DMA1_CHANNEL3_EXIST
             template <>
             struct DMATraits<DeviceID::_13> {
-                static constexpr unsigned channel = 2;
+                static constexpr const DMADEV_TypeDef *dmadev = &__dmadev13;
                 static constexpr uint32_t rccEnableAddr =
                         RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;

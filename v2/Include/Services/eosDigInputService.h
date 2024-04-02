@@ -25,10 +25,10 @@ namespace eos {
             struct ChangedEventArgs {
                 DigInput *input;
             };
-            using IChangedEvent = ICallbackP2<const DigInputService*, const ChangedEventArgs&>;
-            template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigInputService*, const ChangedEventArgs&>;
             using IBeforeScanEvent = ICallbackP1<const DigInputService*>;
             template <typename Instance_> using BeforeScanEvent = CallbackP1<Instance_, const DigInputService*>;
+            using IChangedEvent = ICallbackP2<const DigInputService*, const ChangedEventArgs&>;
+            template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigInputService*, const ChangedEventArgs&>;
 
         public:
     		static constexpr uint32_t minStackSize = 128;

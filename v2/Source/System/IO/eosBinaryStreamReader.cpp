@@ -23,15 +23,15 @@ BinaryStreamReader::BinaryStreamReader(
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix un valor UINT8
-/// \param    value: El valor a lleigit.
+/// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::read(
-    uint8_t &value) {
+bool BinaryStreamReader::readU8(
+    uint8_t &data) {
 
     if (_ptr + sizeof(uint8_t) < _end) {
         uint8_t a = *_ptr++;
-        value = a;
+        data = a;
         return true;
     }
     else
@@ -41,16 +41,16 @@ bool BinaryStreamReader::read(
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix un valor UINT16
-/// \param    value: El valor a lleigit.
+/// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::read(
-    uint16_t &value) {
+bool BinaryStreamReader::readU16(
+    uint16_t &data) {
 
-    if (_ptr + sizeof(uint8_t) < _end) {
+    if (_ptr + sizeof(uint16_t) < _end) {
         uint8_t a = *_ptr++;
         uint8_t b = *_ptr++;
-        value = (a << 8) | b;
+        data = (a << 8) | b;
         return true;
     }
     else
@@ -60,18 +60,18 @@ bool BinaryStreamReader::read(
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix un valor UINT32
-/// \param    value: El valor a lleigit.
+/// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::read(
-    uint32_t &value) {
+bool BinaryStreamReader::readU32(
+    uint32_t &data) {
 
-    if (_ptr + sizeof(uint8_t) < _end) {
+    if (_ptr + sizeof(uint32_t) < _end) {
         uint8_t a = *_ptr++;
         uint8_t b = *_ptr++;
         uint8_t c = *_ptr++;
         uint8_t d = *_ptr++;
-        value = (a << 24) + (b << 16) + (c << 8) + d;
+        data = (a << 24) + (b << 16) + (c << 8) + d;
         return true;
     }
     else
@@ -81,15 +81,15 @@ bool BinaryStreamReader::read(
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix un valor INT8
-/// \param    value: El valor a lleigit.
+/// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::read(
-    int8_t &value) {
+bool BinaryStreamReader::readI8(
+    int8_t &data) {
 
     uint8_t v;
-    if (read(v)) {
-        value = static_cast<int8_t>(v);
+    if (readU8(v)) {
+        data = static_cast<int8_t>(v);
         return true;
     }
     else
@@ -99,15 +99,15 @@ bool BinaryStreamReader::read(
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix un valor INT16
-/// \param    value: El valor a lleigit.
+/// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::read(
-    int16_t &value) {
+bool BinaryStreamReader::readI16(
+    int16_t &data) {
 
     uint16_t v;
-    if (read(v)) {
-        value = static_cast<int16_t>(v);
+    if (readU16(v)) {
+        data = static_cast<int16_t>(v);
         return true;
     }
     else
@@ -117,15 +117,15 @@ bool BinaryStreamReader::read(
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix un valor INT32
-/// \param    value: El valor a lleigit.
+/// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::read(
-    int32_t &value) {
+bool BinaryStreamReader::readI32(
+    int32_t &data) {
 
     uint32_t v;
-    if (read(v)) {
-        value = static_cast<int32_t>(v);
+    if (readU32(v)) {
+        data = static_cast<int32_t>(v);
         return true;
     }
     else

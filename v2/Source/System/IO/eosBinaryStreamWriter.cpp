@@ -25,10 +25,10 @@ BinaryStreamWriter::BinaryStreamWriter(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamWriter::write(
+bool BinaryStreamWriter::writeU8(
     uint8_t value) {
 
-    if (_ptr + sizeof(value) < _end) {
+    if (_ptr + sizeof(uint8_t) < _end) {
         *_ptr++ = value;
         return true;
     }
@@ -42,10 +42,10 @@ bool BinaryStreamWriter::write(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamWriter::write(
+bool BinaryStreamWriter::writeU16(
     uint16_t value) {
     
-    if (_ptr + sizeof(value) < _end) {
+    if (_ptr + sizeof(uint16_t) < _end) {
         *_ptr++ = value >> 8;
         *_ptr++ = value;
         return true;
@@ -60,10 +60,10 @@ bool BinaryStreamWriter::write(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamWriter::write(
+bool BinaryStreamWriter::writeU32(
     uint32_t value) {
     
-    if (_ptr + sizeof(value) < _end) {
+    if (_ptr + sizeof(uint32_t) < _end) {
         *_ptr++ = value >> 24;
         *_ptr++ = value >> 16;
         *_ptr++ = value >> 8;

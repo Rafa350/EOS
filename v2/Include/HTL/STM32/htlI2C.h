@@ -14,6 +14,13 @@ namespace htl {
 
 	namespace i2c {
 
+	    class I2CDevice;
+	    class I2CMasterDevice;
+	    class I2CSlaveDevice;
+
+
+	    /// Identificador del dispositiu.
+	    ///
 		enum class DeviceID {
 			#ifdef HTL_I2C1_EXIST
 			_1,
@@ -49,15 +56,18 @@ namespace htl {
 		};
         
         
+		/// Identificador de la notificacio.
+		///
         enum class NotifyID {
-            addressMatch,
-            rxData,
-            rxCompleted,
-            txData,
-            txCompleted
+            addressMatch,    ///< Conindicencia en l'adressa.
+            rxDataAvailable, ///< Dades rebudes disponibles.
+            rxCompleted,     ///< Recepcio de dades finalitzada.
+            txDataRequest,   ///< Solicitut de dades per transmetre.
+            txCompleted      ///< Transmissio de dades finalitzada.
         };
         
         struct NotifyEventArgs {
+            I2CDevice * const instance;     ///< La instancia del dispositiu.
             NotifyID id;            
             bool irq;
             union {
@@ -66,19 +76,19 @@ namespace htl {
                 } AddressMatch;
                 struct {
                     const uint8_t *buffer;
-                    uint16_t length;
-                } RxData;
+                    unsigned length;
+                } RxDataAvailable;
                 struct {
                     const uint8_t *buffer;
-                    uint16_t length;
+                    unsigned length;
                 } RxCompleted;
                 struct {
                     uint8_t *buffer;
-                    uint16_t size;
-                    uint16_t length;
-                } TxData;
+                    unsigned bufferSize;
+                    unsigned length;
+                } TxDataRequest;
                 struct {
-                    uint16_t length;
+                    unsigned length;
                 } TxCompleted;
             };
         };
@@ -92,19 +102,165 @@ namespace htl {
         using Result = eos::SimpleResult<Results>;
 
 
-		class I2CSlaveDevice;
-        using ISlaveNotifyEvent = eos::ICallbackP2<I2CSlaveDevice*, NotifyEventArgs&>;
-        template <typename Instance_> using SlaveNotifyEvent = eos::CallbackP2<Instance_, I2CSlaveDevice*, NotifyEventArgs&>;
+        using ISlaveNotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
+        template <typename Instance_> using SlaveNotifyEvent = eos::CallbackP1<Instance_, NotifyEventArgs&>;
 
-		class I2CMasterDevice;
-        using IMasterNotifyEvent = eos::ICallbackP2<I2CMasterDevice*, NotifyEventArgs&>;
-        template <typename Instance_> using MasterNotifyEvent = eos::CallbackP2<Instance_, I2CMasterDevice*, NotifyEventArgs&>;
+        using IMasterNotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
+        template <typename Instance_> using MasterNotifyEvent = eos::CallbackP1<Instance_, NotifyEventArgs&>;
 
 
 		class I2CDevice {
+		    protected:
+                I2C_TypeDef * const _i2c;
+
 			protected:
-				virtual void activate() = 0;
+                I2CDevice(I2C_TypeDef *i2c): _i2c {i2c} {}
+
+                /// Habilita el dispositiu.
+                ///
+                inline void enable() const {
+                    _i2c->CR1 |= I2C_CR1_PE;
+                }
+
+                /// Deshabilita el dispositiu.
+                ///
+                inline void disable() const {
+                    _i2c->CR1 &= ~I2C_CR1_PE;
+                }
+
+                /// Habilita la interrupcio 'AddressMatch'
+                ///
+                inline void enableAddressMatchInterrupt() const {
+                    _i2c->CR1 |= I2C_CR1_ADDRIE;
+                }
+
+                /// Habilita la interrupcio 'RxBufferNotEmpty'
+                ///
+                inline void enableRxBufferNotEmptyInterrupt() const {
+                    _i2c->CR1 |= I2C_CR1_RXIE;
+                }
+
+                /// Habilita la interrupcio 'TxBufferEmpty'
+                ///
+                inline void enableTxBufferEmptyInterrupt() const {
+                    _i2c->CR1 |= I2C_CR1_TXIE;
+                }
+
+                /// Habilita la interrupcio 'StopDetection'
+                ///
+                inline void enableStopDetectionInterrupt() const {
+                    _i2c->CR1 |= I2C_CR1_STOPIE;
+                }
+
+                /// Desabilita la interrupcio 'AddressMatch'.
+                ///
+                inline void disableAddressMatchInterrupt() const {
+                    _i2c->CR1 &= ~I2C_CR1_ADDRIE;
+                }
+
+                /// Desabilita la interrupcio 'RxBufferNotEmpty'
+                ///
+                inline void disableRxBufferNotEmptyInterrupt() const {
+                    _i2c->CR1 &= ~I2C_CR1_RXIE;
+                }
+
+                /// Desabilita la interrupcio 'TxBufferEmpty'
+                ///
+                inline void disableTxBufferEmptyInterrupt() const {
+                    _i2c->CR1 &= ~I2C_CR1_TXIE;
+                }
+
+                /// Desabilita la interrupcio 'StopDetection'
+                ///
+                inline void disableStopDetectionInterrupt() const {
+                    _i2c->CR1 &= ~I2C_CR1_STOPIE;
+                }
+
+                /// Comprova si la interrupcio 'AddressMatch' esta habilitada.
+                /// \return True si esta habilitada.
+                ///
+                inline bool isAddressMatchInterruptEnabled() const {
+                    return (_i2c->CR1 & I2C_CR1_ADDRIE) != 0;
+                }
+
+                /// Comprova si la interrupcio 'RxBufferNotEmpty' esta habilitada.
+                /// \return True si esta habilitada.
+                ///
+                inline bool isRxBufferNotEmptyInterruptEnabled() const {
+                    return (_i2c->CR1 & I2C_CR1_RXIE) != 0;
+                }
+
+                /// Comprova si la interrupcio 'TxBufferEmpty' esta habilitada.
+                /// \return True si esta habilitada.
+                ///
+                inline bool isTxBufferEmptyInterruptEnabled() const {
+                    return (_i2c->CR1 & I2C_CR1_TXIE) != 0;
+                }
+
+                /// Comprova si la interrupcio 'StopDetection' esta habilitada.
+                /// \return True si esta habilitada.
+                ///
+                inline bool isStopDetectionInterruptEnabled() const {
+                    return (_i2c->CR1 & I2C_CR1_STOPIE) != 0;
+                }
+
+                /// Comprova si la interrupcio 'NackDetection' esta habilitada.
+                /// \return True si esta habilitada.
+                ///
+                inline bool isNackDetectionInterruptEnabled() const {
+                    return (_i2c->CR1 & I2C_CR1_NACKIE) != 0;
+                }
+
+                /// Comprova si el flag 'AddressMatch' esta activat.
+                /// \return True si esta activat.
+                ///
+                inline bool isAddressMatchFlagSet() const {
+                    return (_i2c->ISR & I2C_ISR_ADDR) != 0;
+                }
+
+                /// Comprova si el flag 'RxBufferNotEmpty' esta activat.
+                /// \return True si esta activat.
+                ///
+                inline bool isRxBufferNotEmptyFlagSet() const {
+                    return (_i2c->ISR & I2C_ISR_RXNE) != 0;
+                }
+
+                /// Comprova si el flag 'TxBufferEmpty' esta activat.
+                /// \return True si esta activat.
+                ///
+                inline bool isTxBufferEmptyFlagSet() const {
+                    return (_i2c->ISR & I2C_ISR_TXE) != 0;
+                }
+
+                /// Comprova si el flag 'StopDetection' esta activat.
+                /// \return True si esta activat.
+                ///
+                inline bool isStopDetectionFlagSet() const {
+                    return (_i2c->ISR & I2C_ISR_STOPF) != 0;
+                }
+
+                /// Comprova si el flag 'NackDetection' esta activat.
+                /// \return True si esta activat.
+                ///
+                inline bool isNackDetectionFlagSet() const {
+                    return (_i2c->ISR & I2C_ISR_NACKF) != 0;
+                }
+
+                /// Borra el flag 'AddressMatch'
+                ///
+                inline void clearAddressMatchFlag() const {
+                    _i2c->ICR |= I2C_ICR_ADDRCF;
+                }
+
+                /// Borra el flag 'StopDetection'
+                ///
+                inline void clearStopDetectionFlag() const {
+                    _i2c->ICR |= I2C_ICR_STOPCF;
+                }
+
+                virtual void activate() = 0;
 				virtual void deactivate() = 0;
+				virtual void reset() = 0;
 		};
 
 		class I2CSlaveDevice: public I2CDevice {
@@ -118,29 +274,30 @@ namespace htl {
 				};
                 
 			private:
-				I2C_TypeDef * const _i2c;
 				State _state;
 				uint8_t *_buffer;
 				unsigned _bufferSize;
 				unsigned _count;
-				unsigned _maxCount;
+				unsigned _length;
                 ISlaveNotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
                 
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
+
                 void notifyAddressMatch(uint16_t addr, bool irq);
-                void notifyRxData(const uint8_t *buffer, unsigned length, bool irq);
+                void notifyRxDataAvailable(const uint8_t *buffer, unsigned length, bool irq);
                 void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
-                void notifyTxData(uint8_t *buffer, unsigned bufferSize, unsigned &length, bool irq);
+                void notifyTxDataRequest(uint8_t *buffer, unsigned bufferSize, unsigned &length, bool irq);
                 void notifyTxCompleted(bool irq);
+
 				void interruptServiceListen();
 				void interruptServiceListenRx();
 				void interruptServiceListenTx();
                 
 			protected:
-				I2CSlaveDevice(I2C_TypeDef *gpio);
+				I2CSlaveDevice(I2C_TypeDef *i2c);
 				void interruptService();
                 
 			public:
@@ -148,19 +305,30 @@ namespace htl {
 				Result deinitialize();
                 
 				void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
+
+				/// Habilita l'event de notificacio.
+				///
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
+
+				/// Deshabilita l'event de notificacio.
+				///
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
                 
+				Result listem(uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
 				Result listen_IRQ(uint8_t *buffer, unsigned bufferSize);
-				void endListen();
+				Result abortListen();
                 
-				inline State getState() const {
-					return _state;
-				}
+				/// Obte l'estat del dispositiu.
+				///
+				inline State getState() const { return _state; }
+
+				/// Comprova si el dispositiu esta preparat.
+				///
+				inline bool isReady() const { return _state == State::ready; }
 		};
 
 		class I2CMasterDevice: public I2CDevice {
@@ -171,7 +339,6 @@ namespace htl {
 				};
                 
 			private:
-				I2C_TypeDef * const _i2c;
 				State _state;
                 
 			private:
@@ -210,6 +377,8 @@ namespace htl {
 				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
 				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
 				static constexpr auto _rccEnablePos = I2CTraits::rccEnablePos;
+                static constexpr uint32_t _rccResetAddr = I2CTraits::rccResetAddr;
+                static constexpr uint32_t _rccResetPos = I2CTraits::rccResetPos;
 				static I2CSlaveDeviceX _instance;
                 
 			public:
@@ -233,6 +402,16 @@ namespace htl {
 					*p &= ~(1 << _rccEnablePos);
 				}
                 
+                void reset() override {
+                    auto p = reinterpret_cast<uint32_t *>(_rccResetAddr);
+                    *p |= 1 << _rccResetPos;
+                    while ((*p & (1 << _rccResetPos)) == 0)
+                        continue;
+                    *p &= ~(1 << _rccResetPos);
+                    while ((*p & (1 << _rccResetPos)) != 0)
+                        continue;
+                }
+
 			public:
 				inline static void interruptHandler() {
 					_instance.interruptService();
@@ -282,6 +461,8 @@ namespace htl {
 				static constexpr uint32_t _i2cAddr = I2CTraits::i2cAddr;
 				static constexpr uint32_t _rccEnableAddr = I2CTraits::rccEnableAddr;
 				static constexpr uint32_t _rccEnablePos = I2CTraits::rccEnablePos;
+                static constexpr uint32_t _rccResetAddr = I2CTraits::rccResetAddr;
+                static constexpr uint32_t _rccResetPos = I2CTraits::rccResetPos;
 				static I2CMasterDeviceX _instance;
                 
 			public:
@@ -300,9 +481,14 @@ namespace htl {
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
+
 				void deactivate() override {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
+				}
+
+				void reset() override {
+
 				}
                 
 			public:
@@ -349,6 +535,8 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_I2C1EN_Pos;
+                static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR1);
+                static constexpr uint32_t rccResetPos = RCC_APBRSTR1_I2C1RST_Pos;
 				#elif defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C1EN_Pos;
@@ -366,6 +554,8 @@ namespace htl {
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_I2C2EN_Pos;
+                static constexpr uint32_t rccResetAddr = RCC_BASE + offsetof(RCC_TypeDef, APBRSTR1);
+                static constexpr uint32_t rccResetPos = RCC_APBRSTR1_I2C2RST_Pos;
 				#elif defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_APB1ENR_I2C2EN_Pos;

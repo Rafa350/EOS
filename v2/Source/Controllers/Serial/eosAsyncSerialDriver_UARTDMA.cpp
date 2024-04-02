@@ -28,7 +28,7 @@ AsyncSerialDriver_UARTDMA::AsyncSerialDriver_UARTDMA(
 /// \param    bufferSize: Nombre de bytes en el buffer de dades..
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UARTDMA::transmitImpl(
+bool AsyncSerialDriver_UARTDMA::startTxImpl(
 	const uint8_t *buffer,
 	unsigned bufferSize) {
 
@@ -36,7 +36,7 @@ bool AsyncSerialDriver_UARTDMA::transmitImpl(
     eosAssert(bufferSize > 0);
 
     if (_devDMAtx == nullptr)
-        return AsyncSerialDriver_UART::transmitImpl(buffer, bufferSize);
+        return AsyncSerialDriver_UART::startTxImpl(buffer, bufferSize);
 
     else {
 
@@ -64,7 +64,7 @@ bool AsyncSerialDriver_UARTDMA::transmitImpl(
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UARTDMA::receiveImpl(
+bool AsyncSerialDriver_UARTDMA::startRxImpl(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
@@ -72,7 +72,7 @@ bool AsyncSerialDriver_UARTDMA::receiveImpl(
     eosAssert(bufferSize > 0);
 
     if (_devDMArx == nullptr)
-        return AsyncSerialDriver_UART::receiveImpl(buffer, bufferSize);
+        return AsyncSerialDriver_UART::startRxImpl(buffer, bufferSize);
 
     else {
 

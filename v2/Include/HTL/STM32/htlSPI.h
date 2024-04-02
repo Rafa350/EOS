@@ -15,6 +15,8 @@ namespace htl {
 
 	namespace spi {
 
+        class SPIDevice;
+
 		enum class DeviceID {
 			#ifdef HTL_SPI1_EXIST
 			_1,
@@ -79,21 +81,21 @@ namespace htl {
 		};
         
         
-		enum class NotifyID {
+        enum class NotifyID {
 		    null,
 		    completed,
 		    error
 		};
 
         struct NotifyEventArgs {
+            SPIDevice * const instance; ///< La instancia del dispositiu.
 		    NotifyID id;
             bool irq;
         };
 
-		class SPIDevice;
-        using INotifyEvent = eos::ICallbackP2<SPIDevice*, NotifyEventArgs&>;
+        using INotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
         template <typename Instance_> using NotifyEvent =
-                eos::CallbackP2<Instance_, SPIDevice*, NotifyEventArgs&>;
+                eos::CallbackP1<Instance_, NotifyEventArgs&>;
 
 
 		enum class Results {
@@ -122,18 +124,12 @@ namespace htl {
 			private:
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
-				inline void activate() {
-					activateImpl();
-				}
-				inline void deactivate() {
-					activateImpl();
-				}
-                
+
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
 				void interruptService();
-				virtual void activateImpl() = 0;
-				virtual void deactivateImpl() = 0;
+				virtual void activate() = 0;
+				virtual void deactivate() = 0;
                 
 			public:
 				Result initialize(Mode mode, ClkPolarity clkPolarity,
@@ -148,6 +144,7 @@ namespace htl {
 				Result deinitialize();
                 
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
+
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
@@ -169,9 +166,8 @@ namespace htl {
                 Result transmit_DMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, unsigned bufferSize);
 				
-                inline State getState() const {
-				    return _state;
-				}
+                inline State getState() const { return _state; }
+                inline bool isReady() const { return _state == State::ready; }
 		};
 
 
@@ -206,12 +202,12 @@ namespace htl {
 				}
                 
 			protected:
-				void activateImpl() override {
+				void activate() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
-				void deactivateImpl() override {
+				void deactivate() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}

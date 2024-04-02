@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosAsyncSerialDriver_I2CSLAVE__
+#define __eosAsyncSerialDriver_I2CSLAVE__
 
 
 #include "Controllers/Serial/eosAsyncSerialDriver.h"
@@ -16,22 +18,31 @@ namespace eos {
 			using I2CNotifyEventArgs = htl::i2c::NotifyEventArgs;
 
 		private:
-			DevI2C *_devI2C;
+			DevI2C * const _devI2C;
+			uint8_t * const _buffer;
+			unsigned const _bufferSize;
 			I2CNotifyEvent _i2cNotifyEvent;
-			const uint8_t *_txData;
-			int _txLength;
-			int _txCount;
+			uint8_t *_rxBuffer;
+			unsigned _rxBufferSize;
+			unsigned _rxCount;
+			const uint8_t *_txBuffer;
+			unsigned _txBufferSize;
+			unsigned _txCount;
 
 		private:
 			void initializeImpl() override;
 			void deinitializeImpl() override;
 
-			bool transmitImpl(const uint8_t *buffer, unsigned bufferSize) override;
-			bool receiveImpl(uint8_t *data, unsigned bufferSize) override;
+			bool startTxImpl(const uint8_t *buffer, unsigned length) override;
+			bool startRxImpl(uint8_t *buffer, unsigned bufferSize) override;
+			bool abortImpl() override;
 
-            void i2cNotifyEventHandler(DevI2C *sender, I2CNotifyEventArgs &args);
+            void i2cNotifyEventHandler(I2CNotifyEventArgs &args);
 
 		public:
-			AsyncSerialDriver_I2CSlave(DevI2C *devI2C);
+			AsyncSerialDriver_I2CSlave(DevI2C *devI2C, uint8_t *buffer, unsigned bufferSize);
 	};
 }
+
+
+#endif // __eosAsyncSerialDriver_I2CSLAVE__

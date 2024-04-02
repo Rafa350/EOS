@@ -16,7 +16,10 @@ AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 	DevUART *devUART):
 
 	_devUART {devUART},
-	_uartNotifyEvent {*this, &AsyncSerialDriver_UART::uartNotifyEventHandler} {
+	_uartNotifyEvent {*this, &AsyncSerialDriver_UART::uartNotifyEventHandler} /*,
+    _taskEvent {*this, &AsyncSerialDriver_UART::taskEventHandler},
+    _task {128, Task::Priority::normal, nullptr, &_taskEvent, nullptr},
+    _taskLock {} */ {
 }
 
 
@@ -28,7 +31,7 @@ void AsyncSerialDriver_UART::initializeImpl() {
     AsyncSerialDriver::initializeImpl();
 
 	_devUART->setNotifyEvent(_uartNotifyEvent);
-	_devUART->enable(); // TODO: Es necesari????
+	_devUART->enable();
 }
 
 
@@ -43,19 +46,28 @@ void AsyncSerialDriver_UART::deinitializeImpl() {
     AsyncSerialDriver::deinitializeImpl();
 }
 
+/*
+void AsyncSerialDriver_UART::taskEventHandler(
+    const TaskCallbackArgs &args) {
+
+    while (true) {
+        _taskLock.wait(unsigned(-1));
+    }
+}
+*/
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades de forma asincrona.
 /// \param    buffer: El buffer de dades.
-/// \param    bufferSize: Nombre de bytes en el buffer de dades..
+/// \param    length: Nombre de bytes a transmetre.
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UART::transmitImpl(
+bool AsyncSerialDriver_UART::startTxImpl(
 	const uint8_t *buffer,
-	unsigned bufferSize) {
+	unsigned length) {
 
     eosAssert(buffer != nullptr);
-    eosAssert(bufferSize > 0);
+    eosAssert(length > 0);
 
 	if (isBusy())
 		return false;
@@ -63,7 +75,7 @@ bool AsyncSerialDriver_UART::transmitImpl(
 	else {
 		notifyTxStart();
 
-		_devUART->transmit_IRQ(buffer, bufferSize);
+		_devUART->transmit_IRQ(buffer, length);
 
 		// En aquest moment es genera una interrupcio txEmpty
 		// i comença la transmissio controlada per interrupcions.
@@ -79,7 +91,7 @@ bool AsyncSerialDriver_UART::transmitImpl(
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UART::receiveImpl(
+bool AsyncSerialDriver_UART::startRxImpl(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
@@ -104,11 +116,9 @@ bool AsyncSerialDriver_UART::receiveImpl(
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb les notificacions del UART
-/// \param    devUART: El dispositiu UART que genera el event.
 /// \param    args: Parametres del event.
 ///
 void AsyncSerialDriver_UART::uartNotifyEventHandler(
-	DevUART *devUART,
 	UARTNotifyEventArgs &args) {
 
 	switch (args.id) {

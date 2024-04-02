@@ -17,7 +17,7 @@ namespace htl {
 
     namespace gpio {
 
-		/// \brief Identificador dels ports.
+		/// Identificador dels ports.
 	    ///
 		enum class PortID {
 			#ifdef HTL_GPIOA_EXIST
@@ -55,7 +55,7 @@ namespace htl {
 			#endif
 		};
 
-		/// \brief Identificador dels pins.
+		/// Identificador dels pins.
 		///
 		enum class PinID {
 			_0,
@@ -76,7 +76,7 @@ namespace htl {
 			_15
 		};
 
-        /// \brief Bit del pin
+        /// Bit del pin
         ///
 		class PinBit final {
 		    private:
@@ -86,7 +86,7 @@ namespace htl {
                 constexpr operator uint8_t () const { return _value; }
 		};
 
-        /// \brief Mascara de pins
+        /// Mascara de pins
         ///
         class PinMask final {
             private:
@@ -96,7 +96,7 @@ namespace htl {
                 constexpr operator uint16_t () const { return _value; }
         };
 
-		/// \brief Identificador de la funcio alternativa.
+		/// Identificador de la funcio alternativa.
         ///
 		enum class AlternateFunction {
 			_0,
@@ -117,7 +117,7 @@ namespace htl {
 			_15
 		};
 
-		/// \bried Modus d'entrada.
+		/// Modus d'entrada.
 		///
 		enum class InputMode {
 			floating,
@@ -125,7 +125,7 @@ namespace htl {
 			pullDown
 		};
 
-		/// \bried Modus de sortida.
+		/// Modus de sortida.
 		///
 		enum class OutputMode {
 			pushPull,
@@ -133,7 +133,7 @@ namespace htl {
 			openDrainPullUp
 		};
 
-		/// \bried Modus alternatiu
+		/// Modus alternatiu
 		///
 		enum class AlternateMode {
 			pushPull,
@@ -141,7 +141,7 @@ namespace htl {
 			openDrainPullUp
 		};
 
-		/// \brief Opcions de velocitat.
+		/// Opcions de velocitat.
 		///
 		enum class Speed {
 			low,
@@ -150,7 +150,7 @@ namespace htl {
 			fast
 		};
         
-		/// \brief Modus d'inicialitzacio.
+		/// Modus d'inicialitzacio.
 		///
         enum class InitMode {
             input,
@@ -462,7 +462,7 @@ namespace htl {
                 }
 
                 static constexpr void write(bool state) {
-                    GPIO_TypeDef *gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     gpio->BSRR = _mask << (state ? 0 : 16);
                 }
 

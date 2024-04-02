@@ -97,11 +97,11 @@ void CircularSerialDriver_I2CSlave::i2cNotifyEventHandler(
 		case htl::i2c::NotifyID::addressMatch:
 			break;
 
-		case htl::i2c::NotifyID::rxData:
-			if (args.RxData.length > 0) {
+		case htl::i2c::NotifyID::rxDataAvailable:
+			if (args.RxDataAvailable.length > 0) {
 				uint16_t availableSpace = rxAvailableSpace();
-				if (availableSpace >= args.RxData.length)
-					rxPush(args.RxData.buffer, args.RxData.length);
+				if (availableSpace >= args.RxDataAvailable.length)
+					rxPush(args.RxDataAvailable.buffer, args.RxDataAvailable.length);
 			}
 			break;
 
@@ -115,14 +115,14 @@ void CircularSerialDriver_I2CSlave::i2cNotifyEventHandler(
 				notifyRxBufferNotEmpty();
 			break;
 
-		case htl::i2c::NotifyID::txData: {
+		case htl::i2c::NotifyID::txDataRequest: {
 			uint16_t availableData = txAvailableData();
 			uint16_t count = 0;
-			while ((availableData > 0) && (count < args.TxData.size)) {
-				args.TxData.buffer[count++] = txPop();
+			while ((availableData > 0) && (count < args.TxDataRequest.size)) {
+				args.TxDataRequest.buffer[count++] = txPop();
 				availableData--;
 			}
-			args.TxData.length = count;
+			args.TxDataRequest.length = count;
 			break;
 		}
 

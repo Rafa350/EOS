@@ -20,6 +20,8 @@ namespace htl {
 
 	namespace uart {
 
+        class UARTDevice;
+
         /// Identificador del dispositiu.
         ///
 		enum class DeviceID {
@@ -59,9 +61,9 @@ namespace htl {
         /// Paritat.
         ///
 		enum class Parity {
-			none,
-			even,
-			odd
+			none, ///< Sense paritat.
+			even, ///< Parell
+			odd   ///< Senas
 		};
 
         /// Nombre de bits de paraula.
@@ -87,17 +89,17 @@ namespace htl {
         /// Velocitat de transmissio.
         ///
 		enum class BaudMode {
-			_1200,
-			_2400,
-			_4800,
-			_9600,
-			_19200,
-			_38400,
-			_57600,
-			_115200,
-			div,
-			rate,
-			automatic
+			_1200,    ///< 1200 baud.
+			_2400,    ///< 2400 baud.
+			_4800,    ///< 4800 baud.
+			_9600,    ///< 9600 baud.
+			_19200,   ///< 19200 baud.
+			_38400,   ///< 38600 baud.
+			_57600,   ///< 57600 baud.
+			_115200,  ///< 115200 baud.
+			div,      ///< Utilitza el divisor per calcular la velocitat.
+			rate,     ///< Utilitza la velocitat especificada.
+			automatic ///< Deteccio automatica.
 		};
 
         /// Protocol de comunicacio
@@ -140,33 +142,35 @@ namespace htl {
 			de
 		};
 
-
+		/// Identificador de la notificacio
+		///
 		enum class NotifyID {
-			null,
-			rxComplete,
-			txComplete,
-			error
+			rxComplete, ///< Recepcio complerta.
+			txComplete, ///< Transmissio complerta.
+			error       ///< Error de comunicacio.
 		};
 
+		/// Parametres de la notificacio.
+		///
 		struct NotifyEventArgs {
-			NotifyID id;
-			bool irq;
+		    UARTDevice * const instance;   ///< La instancia del dispositiu.
+			NotifyID id;                   ///< Identificador de la notificacio.
+			bool irq;                      ///< Indica si es notifica desde una interrupcio.
 			union {
 				struct {
-					const uint8_t *buffer;
-					unsigned length;
-				} TxComplete;
+					const uint8_t *buffer; ///< Dades transmeses.
+					unsigned length;       ///< Nombre de bytes transmessos.
+				} TxComplete;              ///< Parametres de 'TxComplete'
 				struct {
-					const uint8_t *buffer;
-					unsigned length;
-				} RxComplete;
+					const uint8_t *buffer; ///< Dades rebudes.
+					unsigned length;       ///< Nombre de bytes rebuts.
+				} RxComplete;              ///< Parametres de 'RxComplete'
 			};
 		};
 
-		class UARTDevice;
-		using INotifyEvent = eos::ICallbackP2<UARTDevice*, NotifyEventArgs&>;
+		using INotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
 		template <typename Instance_> using NotifyEvent =
-		        eos::CallbackP2<Instance_, UARTDevice*, NotifyEventArgs&>;
+		        eos::CallbackP1<Instance_, NotifyEventArgs&>;
 
 
 		namespace internal {
@@ -212,11 +216,11 @@ namespace htl {
 				USART_TypeDef * const _usart;   ///< Instancia del dispositiu.
 				State _state;                   ///< Estat actual.
 				uint8_t *_rxBuffer;             ///< Buffer de recepcio.
-				unsigned _rxSize;               ///< Tamany del buffer de recepcio en bytes.
-				unsigned _rxCount;              ///< Contador de bytes en recepcio.
+				unsigned _rxBufferSize;         ///< Tamany del buffer de recepcio en bytes.
+				unsigned _rxCount;              ///< Contador de bytes rebuts.
 				const uint8_t *_txBuffer;       ///< Buffer de transmissio.
-				unsigned _txSize;               ///< Tamany del buffer de transmissio en bytes.
-				unsigned _txCount;              ///< Contador de bytes en transmissio.
+				unsigned _txLength;             ///< Nombre de bytes a transmetre.
+				unsigned _txCount;              ///< Contador de bytes transmesos.
 				INotifyEvent *_notifyEvent;     ///< Event de notificacio.
 				bool _notifyEventEnabled;       ///< Habilitacio del event de notificacio.
 				DMANotifyEvent _dmaNotifyEvent; ///< Event de notificacio del DMA.
@@ -225,8 +229,8 @@ namespace htl {
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
                 
-				void notifyTxComplete(const uint8_t *buffer, unsigned count, bool irq);
-				void notifyRxComplete(const uint8_t *buffer, unsigned count, bool irq);
+				void notifyTxComplete(const uint8_t *buffer, unsigned length, bool irq);
+				void notifyRxComplete(const uint8_t *buffer, unsigned length, bool irq);
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 
                 /// Habilita la transmissio.
@@ -325,6 +329,8 @@ namespace htl {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE);
 				}
 
+                /// Comprova si la interrupcio 'TxEmpty' esta habilitada.
+                ///
 				inline bool isTxEmptyInterruptEnabled() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->CR1 & USART_CR1_TXEIE) != 0;
@@ -334,9 +340,15 @@ namespace htl {
 				    #error "Unknown platform"
 				    #endif
 				}
+
+				/// Comprova si la interrupcio 'TxComplete' esta habilitada.
+				///
 				inline bool isTxCompleteInterruptEnabled() const {
 				    return (_usart->CR1 & USART_CR1_TCIE) != 0;
 				}
+
+                /// Comprova si la interrupcio 'RxNoEmpty' esta habilitada.
+                ///
 				inline bool isRxNotEmptyInterruptEnabled() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->CR1 & USART_CR1_RXNEIE) != 0;
@@ -346,6 +358,9 @@ namespace htl {
 				    #error "Unknown platform"
 				    #endif
 				}
+
+                /// Comprova si la interrupcio 'RxTimeout' esta habilitada.
+                ///
 				inline bool isRxTimeoutInterruptEnabled() const {
 				    return (_usart->CR1 & USART_CR1_RTOIE) != 0;
 				}
@@ -359,9 +374,11 @@ namespace htl {
 				    #error "Unknown platform"
 				    #endif
 				}
+
 				inline bool isTxCompleteFlagSet() const {
 				    return (_usart->ISR & USART_ISR_TC) != 0;
 				}
+
 				inline bool isRxNotEmptyFlagSet() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->ISR & USART_ISR_RXNE) != 0;
@@ -371,6 +388,7 @@ namespace htl {
 				    #error "Unknown platform"
 				    #endif
 				}
+
 				inline bool isRxTimeoutFlagSet() const {
 				    return (_usart->ISR & USART_ISR_RTOF) != 0;
 				}
@@ -378,6 +396,7 @@ namespace htl {
 				inline void clearTxCompleteFlag() const {
 				    _usart->ICR = USART_ICR_TCCF;
 				}
+
                 inline void clearRxTimeoutFlag() const {
                     _usart->ICR = USART_ICR_RTOCF;
                 }
@@ -385,6 +404,7 @@ namespace htl {
 				inline void write8(uint8_t data) const {
 				    _usart->TDR = data;
 				}
+
 				inline uint8_t read8() const {
 				    return _usart->RDR;
 				}
@@ -412,18 +432,24 @@ namespace htl {
 				void setRxTimeout(uint32_t timeout);
 
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
+
+				/// Habilita l'event de notificacio.
+				///
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
+
+				/// Deshabilita l'event de notificacio.
+				///
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
 
-				Result transmit(const uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				Result transmit(const uint8_t *buffer, unsigned length, Tick timeout);
 				Result receive(uint8_t *buffer, unsigned bufferSize, Tick timeout);
-				Result transmit_IRQ(const uint8_t *buffer, unsigned bufferSize);
+				Result transmit_IRQ(const uint8_t *buffer, unsigned length);
 				Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
-				Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned bufferSize);
+				Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned length);
 				Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
 
 				inline State getState() const { return _state; }
@@ -458,7 +484,8 @@ namespace htl {
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
-				void deactivate() override{
+
+				void deactivate() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
@@ -473,16 +500,19 @@ namespace htl {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_>::alt;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
+
 				template <typename pin_>
 				inline void initPinRX() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_>::alt;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
+
 				template <typename pin_>
 				inline void initPinCTS() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::cts, pin_>::alt;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
+
 				template <typename pin_>
 				inline void initPinRTS() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_>::alt;
@@ -586,7 +616,7 @@ namespace htl {
 			#ifdef HTL_UART5_EXIST
 			template <>
 			struct UARTTraits<DeviceID::_5> {
-				static constexpr uint32_t usartAddr = UART5_BASE;
+				static constexpr USART_TypeDef *usart = UART5;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
                 #elif defined(EOS_PLATFORM_STM32F7)
@@ -599,7 +629,7 @@ namespace htl {
 			#ifdef HTL_UART6_EXIST
 			template <>
 			struct UARTTraits<DeviceID::_6> {
-				static constexpr uint32_t usartAddr = USART6_BASE;
+				static constexpr ÛSART_TypeDef *usart = USART6;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
                 #elif defined(EOS_PLATFORM_STM32F7)
@@ -612,7 +642,7 @@ namespace htl {
 			#ifdef HTL_UART7_EXIST
 			template <>
 			struct UARTTraits<DeviceID::_7> {
-				static constexpr uint32_t usartAddr = UART7_BASE;
+				static constexpr USART_TypeDef *usart = UART7;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
                 #elif defined(EOS_PLATFORM_STM32F7)
@@ -625,7 +655,7 @@ namespace htl {
 			#ifdef HTL_UART8_EXIST
 			template <>
 			struct UARTTraits<DeviceID::_8> {
-				static constexpr uint32_t usartAddr = UART8_BASE;
+				static constexpr USART_TypeDef *usart = UART8;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
                 #elif defined(EOS_PLATFORM_STM32F7)

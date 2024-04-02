@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosAsyncSerialDriver__
+#define __eosAsyncSerialDriver__
 
 
 #include "eos.h"
@@ -19,11 +21,11 @@ namespace eos {
 			};
 			struct TxCompletedEventArgs {
 				AsyncSerialDriver *driver;
-				int count;
+				unsigned length;
 			};
 			struct RxCompletedEventArgs {
 				AsyncSerialDriver *driver;
-				int count;
+				unsigned length;
 			};
 			struct AbortedEventArgs {
 				AsyncSerialDriver *driver;
@@ -39,7 +41,6 @@ namespace eos {
 
 		private:
 			State _state;
-
             const ITxCompletedEvent *_txCompletedEvent;
             const IRxCompletedEvent *_rxCompletedEvent;
             const IAbortedEvent *_abortedEvent;
@@ -50,14 +51,15 @@ namespace eos {
 		protected:
             void notifyTxStart();
             void notifyRxStart();
-            void notifyTxCompleted(int count);
-            void notifyRxCompleted(int count);
+            void notifyTxCompleted(unsigned length);
+            void notifyRxCompleted(unsigned length);
             void notifyAborted();
 
 			virtual void initializeImpl();
 			virtual void deinitializeImpl();
-			virtual bool transmitImpl(const uint8_t *buffer, unsigned bufferSize) = 0;
-			virtual bool receiveImpl(uint8_t *buffer, unsigned bufferSize) = 0;
+			virtual bool startTxImpl(const uint8_t *buffer, unsigned length) = 0;
+			virtual bool startRxImpl(uint8_t *buffer, unsigned bufferSize) = 0;
+			virtual bool abortImpl();
 
 			/// \brief Constructor.
             ///
@@ -87,7 +89,11 @@ namespace eos {
             void enableAbortedEvent() { _abortedEventEnabled = _abortedEvent != nullptr; }
 			void disableAbortedEvent() { _abortedEventEnabled = false; }
 
-			bool transmit(const uint8_t *buffer, unsigned bufferSize);
-			bool receive(uint8_t *buffer, unsigned bufferSize);
+			bool startTx(const uint8_t *buffer, unsigned length);
+			bool startRx(uint8_t *buffer, unsigned bufferSize);
+			bool abort();
 	};
 }
+
+
+#endif // __eosAsyncSerialDriver__

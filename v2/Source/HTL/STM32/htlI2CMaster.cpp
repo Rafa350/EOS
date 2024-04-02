@@ -15,7 +15,7 @@ using namespace htl::i2c;
 I2CMasterDevice::I2CMasterDevice(
 	I2C_TypeDef *i2c):
 
-	_i2c {i2c},
+	I2CDevice {i2c},
 	_state {State::reset} {
 
 }

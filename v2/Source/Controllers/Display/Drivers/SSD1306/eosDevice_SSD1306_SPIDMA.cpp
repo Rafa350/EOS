@@ -40,6 +40,6 @@ void Device_SSD1306_SPIDMA::writeData(
     
     _pinDC->set();
     _pinCS->clear();
-    _devSPI->transmitDMA(_devDMA, data, dataSize, Tick(1000));
+    _devSPI->transmit_DMA(_devDMA, data, dataSize);
     _pinCS->set();
 }

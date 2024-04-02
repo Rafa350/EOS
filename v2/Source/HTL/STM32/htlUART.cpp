@@ -202,19 +202,19 @@ void UARTDevice::setNotifyEvent(
 /// ----------------------------------------------------------------------
 /// \brief    Inicia la transmissio d'un bloc de dades per interrupcions.
 /// \param    buffer: Buffer de dades.
-/// \param    bufferSize: El nombre de bytes en el buffer.
+/// \param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
 Result UARTDevice::transmit_IRQ(
 	const uint8_t *buffer,
-	unsigned bufferSize) {
+	unsigned length) {
 
 	if (_state == State::ready) {
 
 		_state = State::transmiting;
 
 		_txBuffer = buffer;
-		_txSize = bufferSize;
+		_txLength = length;
 		_txCount = 0;
 
 		enableTxEmptyInterrupt();
@@ -246,7 +246,7 @@ Result UARTDevice::receive_IRQ(
 		_state = State::receiving;
 
 		_rxBuffer = buffer;
-		_rxSize = bufferSize;
+		_rxBufferSize = bufferSize;
 		_rxCount = 0;
 
 		enableRxNoEmptyInterrupt();
@@ -267,20 +267,20 @@ Result UARTDevice::receive_IRQ(
 /// \brief    Transmiteix un bloc de dades utilitzant DMA.
 /// \param    devDMA: Dispositiu DMA.
 /// \param    buffer: Buffer de dades.
-/// \param    bufferSize: El nombre de bytes en el buffer.
+/// \param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
 Result UARTDevice::transmit_DMA(
     dma::DMADevice *devDMA,
     const uint8_t *buffer,
-    unsigned bufferSize) {
+    unsigned length) {
 
     if (_state == State::ready) {
 
         _state = State::transmiting;
 
         _txBuffer = buffer;
-        _txSize = bufferSize;
+        _txLength = length;
         _txCount = 0;
 
         enableTx();
@@ -289,7 +289,7 @@ Result UARTDevice::transmit_DMA(
         // Inicia la transferencia per DMA
         //
         devDMA->setNotifyEvent(_dmaNotifyEvent, true);
-        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), bufferSize);
+        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txLength);
 
         return Result::success();
     }
@@ -387,9 +387,9 @@ void UARTDevice::interruptService() {
         //
         if (isTxEmptyInterruptEnabled() && isTxEmptyFlagSet()) {
 
-            if (_txCount < _txSize) {
+            if (_txCount < _txLength) {
                 write8(_txBuffer[_txCount++]);
-                if (_txCount == _txSize) {
+                if (_txCount == _txLength) {
                     disableTxEmptyInterrupt();
                     enableTxCompleteInterrupt();
                 }
@@ -399,7 +399,6 @@ void UARTDevice::interruptService() {
         // Interrupcio 'TxComplete'. Nomes en l'ultim caracter transmes.
         //
         if (isTxCompleteInterruptEnabled() && isTxCompleteFlagSet()) {
-
             clearTxCompleteFlag();
             disableAllTxInterrupts();
             disableTx();
@@ -411,10 +410,9 @@ void UARTDevice::interruptService() {
         /// Interrupcio 'RxNotEmpty'
         //
         if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
-
-            if (_rxCount < _rxSize) {
+            if (_rxCount < _rxBufferSize) {
                 _rxBuffer[_rxCount++] = read8();
-                if (_rxCount == _rxSize) {
+                if (_rxCount == _rxBufferSize) {
                     disableAllRxInterrupts();
                     disableRx();
                     notifyRxComplete(_rxBuffer, _rxCount, true);
@@ -426,7 +424,6 @@ void UARTDevice::interruptService() {
         // Interrupcio 'RxTimeout'
         //
         if (isRxTimeoutInterruptEnabled() && isRxTimeoutFlagSet()) {
-
             clearRxTimeoutFlag();
             disableAllRxInterrupts();
             disableRx();
@@ -448,11 +445,19 @@ void UARTDevice::dmaNotifyEventHandler(
     DMANotifyEventArgs &args) {
 
     switch (args.id) {
+
+        // Transmissio complerta de tots els bytes.
+        //
         case htl::dma::NotifyID::completed:
-            _txCount = _txSize;
+            _txCount = _txLength;
             clearTxCompleteFlag();
             enableTxCompleteInterrupt();
             devDMA->disableNotifyEvent();
+            break;
+
+        // Error en la transmissio DMA.
+        //
+        case htl::dma::NotifyID::error:
             break;
 
         default:
@@ -464,24 +469,25 @@ void UARTDevice::dmaNotifyEventHandler(
 /// ----------------------------------------------------------------------
 /// \brief    Genera un event de notificacio 'TxComplete'
 /// \param    buffer: El buffer de dades.
-/// \param    count: El nombre de bytes de dades.
+/// \param    length: El nombre de bytes de dades.
 /// \param    irq: true si ve d'una interrupcio.
 ///
 void UARTDevice::notifyTxComplete(
 	const uint8_t *buffer,
-	unsigned count,
+	unsigned length,
 	bool irq) {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
+		    .instance = this,
 			.id = NotifyID::txComplete,
 			.irq = irq,
 			.TxComplete {
 				.buffer = buffer,
-				.length = count
+				.length = length
 			}
 		};
-		_notifyEvent->execute(this, args);
+		_notifyEvent->execute(args);
 	}
 }
 
@@ -489,24 +495,25 @@ void UARTDevice::notifyTxComplete(
 /// ----------------------------------------------------------------------
 /// \brief    Genera un event de notificacio 'RxComplete'
 /// \param    buffer: El buffer de dades.
-/// \param    count: El nombre de bytes de dades.
+/// \param    length: El nombre de bytes de dades.
 /// \param    irq: true si ve d'una interrupcio.
 ///
 void UARTDevice::notifyRxComplete(
 	const uint8_t *buffer,
-	unsigned count,
+	unsigned length,
 	bool irq) {
 
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
+		    .instance = this,
 			.id = NotifyID::rxComplete,
 			.irq = irq,
 			.RxComplete {
 				.buffer = buffer,
-				.length = count
+				.length = length
 			}
 		};
-		_notifyEvent->execute(this, args);
+		_notifyEvent->execute(args);
 	}
 }
 

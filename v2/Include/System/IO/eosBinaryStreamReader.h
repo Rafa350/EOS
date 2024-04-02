@@ -23,12 +23,12 @@ namespace eos {
                 return *_ptr;
             }
 
-            bool read(uint8_t &data);
-            bool read(uint16_t &data);
-            bool read(uint32_t &data);
-            bool read(int8_t &data);
-            bool read(int16_t &data);
-            bool read(int32_t &data);
+            bool readU8(uint8_t &data);
+            bool readU16(uint16_t &data);
+            bool readU32(uint32_t &data);
+            bool readI8(int8_t &data);
+            bool readI16(int16_t &data);
+            bool readI32(int32_t &data);
             bool read(uint8_t *data, unsigned size);
 
             inline bool eof() const {

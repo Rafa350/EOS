@@ -41,28 +41,38 @@ void AsyncSerialDriver::deinitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
 /// \param    buffer: El buffer de dades.
-/// \param    bufferSize: Longitut de les dades en bytes.
+/// \param    length: El nombre de bytes a transmetre.
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver::transmit(
+bool AsyncSerialDriver::startTx(
 	const uint8_t *buffer,
-	unsigned bufferSize) {
+	unsigned length) {
 
-	return isBusy() ? false : transmitImpl(buffer, bufferSize);
+	return isBusy() ? false : startTxImpl(buffer, length);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades.
 /// \param    buffer: El buffer de recepcio.
-/// \param    bufferSize: El tasmany del buffer en bytes.
+/// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver::receive(
+bool AsyncSerialDriver::startRx(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
-	return isBusy() ? false : receiveImpl(buffer, bufferSize);
+	return isBusy() ? false : startRxImpl(buffer, bufferSize);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Aborta la comunicacio.
+/// \return   True si es correcte.
+///
+bool AsyncSerialDriver::abort() {
+
+    return abortImpl();
 }
 
 
@@ -81,6 +91,17 @@ void AsyncSerialDriver::initializeImpl() {
 void AsyncSerialDriver::deinitializeImpl() {
 
 	_state = State::reset;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Aborta la comunicacio.
+/// \return   True si es correcte.
+///
+bool AsyncSerialDriver::abortImpl() {
+
+    _state = State::ready;
+    return true;
 }
 
 
@@ -140,17 +161,19 @@ void AsyncSerialDriver::notifyRxStart() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de transmissio.
-/// \param    count: Nombre de bytes transmessos.
+/// \param    length: Nombre de bytes transmessos.
 ///
 void AsyncSerialDriver::notifyTxCompleted(
-	int count) {
+	unsigned length) {
 
 	_state = State::ready;
 
 	if (_txCompletedEventEnabled) {
 
-		TxCompletedEventArgs args;
-		args.count = count;
+		TxCompletedEventArgs args = {
+		    .driver = this,
+		    .length = length
+		};
 
 		_txCompletedEvent->execute(args);
 	}
@@ -159,17 +182,19 @@ void AsyncSerialDriver::notifyTxCompleted(
 
 /// ----------------------------------------------------------------------
 /// \brief    Invoca a la funcio callback.
-/// \param    count: Nombre de bytes rebuts
+/// \param    length: Nombre de bytes rebuts
 ///
 void AsyncSerialDriver::notifyRxCompleted(
-	int count) {
+	unsigned length) {
 
 	_state = State::ready;
 
 	if (_rxCompletedEventEnabled) {
 
-		RxCompletedEventArgs args;
-		args.count = count;
+		RxCompletedEventArgs args = {
+		    .driver = this,
+		    .length = length
+		};
 
 		_rxCompletedEvent->execute(args);
 	}
