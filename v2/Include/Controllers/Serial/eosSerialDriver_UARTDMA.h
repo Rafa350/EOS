@@ -1,9 +1,9 @@
 #pragma once
-#ifndef __eosAsyncSerialDriver_UARTDMA__
-#define __eosAsyncSerialDriver_UARTDMA__
+#ifndef __eosSerialDriver_UARTDMA__
+#define __eosSerialDriver_UARTDMA__
 
 
-#include "Controllers/Serial/eosAsyncSerialDriver_UART.h"
+#include "Controllers/Serial/eosSerialDriver_UART.h"
 #include "HTL/htlDMA.h"
 
 
@@ -27,4 +27,4 @@ namespace eos {
 }
 
 
-#endif // __eosAsyncSerialDriver_UARTDMA__
+#endif // __eosSerialDriver_UARTDMA__

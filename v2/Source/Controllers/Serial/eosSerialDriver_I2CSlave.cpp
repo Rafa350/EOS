@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Serial/eosAsyncSerialDriver_I2CSlave.h"
+#include "Controllers/Serial/eosSerialDriver_I2CSlave.h"
 #include "HTL/htlI2C.h"
 
 #include <cmath>
@@ -77,7 +77,7 @@ bool AsyncSerialDriver_I2CSlave::startTxImpl(
 		_txCount = 0;
 
 		if (_devI2C->isReady())
-		    _devI2C->listen_IRQ(_buffer, _bufferSize);
+		    _devI2C->listen_IRQ(_buffer, _bufferSize, _buffer, _bufferSize);
 
 		return true;
 	}
@@ -108,7 +108,7 @@ bool AsyncSerialDriver_I2CSlave::startRxImpl(
 		_rxCount = 0;
 
         if (_devI2C->isReady())
-            _devI2C->listen_IRQ(_buffer, _bufferSize);
+            _devI2C->listen_IRQ(_buffer, _bufferSize, _buffer, _bufferSize);
 
 		return true;
 	}

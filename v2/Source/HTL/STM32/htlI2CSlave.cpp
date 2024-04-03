@@ -21,8 +21,8 @@ I2CSlaveDevice::I2CSlaveDevice(
 
 	I2CDevice {i2c},
 	_state {State::reset},
-	_buffer {nullptr},
-	_bufferSize {0},
+	_rxBuffer {nullptr},
+	_rxBufferSize {0},
 	_count {0},
     _notifyEvent {nullptr},
     _notifyEventEnabled {false} {
@@ -111,12 +111,16 @@ void I2CSlaveDevice::setNotifyEvent(
 
 /// ----------------------------------------------------------------------
 /// \brief    Configura el modul en modus d'escolta.
-/// \param    buffer: Buffer de dades.
-/// \param    bufferSize: Tamany del buffer de dades en bytes.
+/// \param    txBuffer: Buffer de transmissio.
+/// \param    txBufferSize: Tamany del buffer de dades transmissio en bytes.
+/// \param    rxBuffer: Buffer de recepcio.
+/// \param    rxBufferSize: Tamany del buffer de recepcio en bytes.
 ///
 Result I2CSlaveDevice::listen_IRQ(
-	uint8_t *buffer,
-	unsigned bufferSize) {
+	const uint8_t *txBuffer,
+	unsigned txBufferSize,
+	uint8_t *rxBuffer,
+	unsigned rxBufferSize) {
 
     // Comprova si l'estat es 'ready'
     //
@@ -124,10 +128,13 @@ Result I2CSlaveDevice::listen_IRQ(
 
 	    // Prepara les variables per process de comunicacio.
 	    //
-        _buffer = buffer;
-		_bufferSize = bufferSize;
+		_txBuffer = txBuffer;
+		_txBufferSize = txBufferSize;
 
-		// Canvia l'estat a 'listen'
+        _rxBuffer = rxBuffer;
+        _rxBufferSize = rxBufferSize;
+
+        // Canvia l'estat a 'listen'
 		//
 		_state = State::listen;
 
@@ -162,8 +169,8 @@ Result I2CSlaveDevice::abortListen() {
 		//
 		_i2c->CR1 &= ~(I2C_CR1_PE | I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE);
 
-		_buffer = nullptr;
-		_bufferSize = 0;
+		_rxBuffer = nullptr;
+		_rxBufferSize = 0;
 
 		_state = State::ready;
 
@@ -254,15 +261,15 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 
         // Llegeix el byte i el acumula en el buffer
         //
-        _buffer[_count++] = (uint8_t) _i2c->RXDR;
+        _rxBuffer[_count++] = (uint8_t) _i2c->RXDR;
 
         // Comprova si el buffer es ple
         //
-        if (_count == _bufferSize) {
+        if (_count == _rxBufferSize) {
 
             // Notifica que hi han dades disponibles.
             //
-            notifyRxDataAvailable(_buffer, _count, true);
+            notifyRxDataAvailable(_rxBuffer, _count, true);
 
             // Inicialitza el contador per començar de nou
             // a omplir el buffer.
@@ -283,7 +290,7 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 	    // Notifica el final de la recepcio de dades, indicant
 	    // les dades disponibles que resten.
 	    //
-        notifyRxCompleted(_buffer, _count, true);
+        notifyRxCompleted(_rxBuffer, _count, true);
 
         enableAddressMatchInterrupt();
 
@@ -332,16 +339,16 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 		if (_count == _length) {
             _count = 0;
             _length = 0;
-            notifyTxDataRequest(_buffer, _bufferSize, _length, true);
-            if (_length > _bufferSize)
-                _length = _bufferSize;
+            notifyTxDataRequest(_rxBuffer, _rxBufferSize, _length, true);
+            if (_length > _rxBufferSize)
+                _length = _rxBufferSize;
 		}
 
 		// Si hi han dades en el buffer els transmiteix, si no
 		// transmiteix zeros
 		//
 		if (_count < _length)
-		    _i2c->TXDR = _buffer[_count++];
+		    _i2c->TXDR = _rxBuffer[_count++];
 		else
 		    _i2c->TXDR = 0;
 	}

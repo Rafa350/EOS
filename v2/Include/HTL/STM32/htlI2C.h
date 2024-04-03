@@ -275,10 +275,12 @@ namespace htl {
                 
 			private:
 				State _state;
-				uint8_t *_buffer;
-				unsigned _bufferSize;
+				uint8_t *_rxBuffer;
+				unsigned _rxBufferSize;
 				unsigned _count;
 				unsigned _length;
+				const uint8_t *_txBuffer;
+				unsigned _txBufferSize;
                 ISlaveNotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
                 
@@ -318,8 +320,10 @@ namespace htl {
 					_notifyEventEnabled = false;
 				}
                 
-				Result listem(uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
-				Result listen_IRQ(uint8_t *buffer, unsigned bufferSize);
+				Result listem(const uint8_t *txBuffer, unsigned txBufferSize,
+				        uint8_t *rxBuffer, unsigned rxBufferSize, Tick timeout = Tick(-1));
+				Result listen_IRQ(const uint8_t *txBuffer, unsigned txBufferSize,
+				        uint8_t *rxBuffer, unsigned rxBufferSize);
 				Result abortListen();
                 
 				/// Obte l'estat del dispositiu.

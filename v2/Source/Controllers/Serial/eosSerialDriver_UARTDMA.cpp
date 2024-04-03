@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Serial/eosAsyncSerialDriver_UARTDMA.h"
+#include "Controllers/Serial/eosSerialDriver_UARTDMA.h"
 
 
 using namespace eos;

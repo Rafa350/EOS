@@ -1,9 +1,9 @@
 #pragma once
-#ifndef __eosAsyncSerialDriver_I2CSLAVE__
-#define __eosAsyncSerialDriver_I2CSLAVE__
+#ifndef __eosSerialDriver_I2CSLAVE__
+#define __eosSerialDriver_I2CSLAVE__
 
 
-#include "Controllers/Serial/eosAsyncSerialDriver.h"
+#include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlI2C.h"
 
 
@@ -45,4 +45,4 @@ namespace eos {
 }
 
 
-#endif // __eosAsyncSerialDriver_I2CSLAVE__
+#endif // __eosSerialDriver_I2CSLAVE__

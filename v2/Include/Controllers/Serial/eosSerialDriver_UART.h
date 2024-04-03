@@ -3,27 +3,47 @@
 #define __eosSerialDriver_UART__
 
 
-#inclide "Controllers/Serial//eosSerialDriver.h"
+#include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlUART.h"
+#include "System/Core/eosSemaphore.h"
+#include "System/Core/eosTask.h"
 
 
 namespace eos {
 
-	class SerialDriver_UART: public SerialDriver {
+	class AsyncSerialDriver_UART: public AsyncSerialDriver {
+	    public:
+            using DevUART = htl::uart::UARTDevice;
+
+	    private:
+	        using UARTNotifyEvent = htl::uart::NotifyEvent<AsyncSerialDriver_UART>;
+	        using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
+            //using TaskEvent = TaskCallback<AsyncSerialDriver_UART>;
+
+		protected:
+			DevUART * const _devUART;
+
 		private:
-			htl::UARTHandler _hUART;
+			UARTNotifyEvent _uartNotifyEvent;
+            /*TaskEvent _taskEvent;
+            Task _task;
+            Semaphore _taskLock;*/
+
+		private:
+			void initializeImpl() override;
+			void deinitializeImpl() override;
+
+			void uartNotifyEventHandler(UARTNotifyEventArgs &args);
+            void taskEventHandler(const TaskCallbackArgs &args);
+
+		protected:
+            bool startTxImpl(const uint8_t *buffer, unsigned length) override;
+            bool startRxImpl(uint8_t *buffer, unsigned bufferSize) override;
 
 		public:
-			SerialDriver_UART(htl::UARTHandler hUART);
-			~SerialDriver_UART();
-
-			void initialize();
-			void deinitialize();
-
-			bool send(const uint8_t *data, unsigned dataLength, unsigned &dataCount, unsigned timeout);
-			bool receive(uint8_t *data, unsigned dataSize, unsigned &dataCount, unsigned timeout);
+			AsyncSerialDriver_UART(DevUART *devUART);
 	};
 }
 
 
-#endif // eosSerialDriver_UART__
+#endif // __eosSerialDriver_UART__
