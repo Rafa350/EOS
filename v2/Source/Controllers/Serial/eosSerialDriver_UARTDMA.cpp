@@ -11,7 +11,7 @@ using namespace htl;
 /// \brief    Constructor.
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
-AsyncSerialDriver_UARTDMA::AsyncSerialDriver_UARTDMA(
+SerialDriver_UARTDMA::SerialDriver_UARTDMA(
 	DevUART *devUART,
 	DevDMA *devDMAtx,
 	DevDMA *devDMArx):
@@ -28,7 +28,7 @@ AsyncSerialDriver_UARTDMA::AsyncSerialDriver_UARTDMA(
 /// \param    bufferSize: Nombre de bytes en el buffer de dades..
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UARTDMA::startTxImpl(
+bool SerialDriver_UARTDMA::startTxImpl(
 	const uint8_t *buffer,
 	unsigned bufferSize) {
 
@@ -64,7 +64,7 @@ bool AsyncSerialDriver_UARTDMA::startTxImpl(
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
 /// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UARTDMA::startRxImpl(
+bool SerialDriver_UARTDMA::startRxImpl(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 

@@ -14,15 +14,15 @@ namespace eos {
 	class SerialDriverBase {
 		public:
 			struct TxCompletedEventArgs {
-				SerialDriver * const driver;
+				SerialDriverBase * const driver;
 				unsigned length;
 			};
 			struct RxCompletedEventArgs {
-				SerialDriver * const driver;
+				SerialDriverBase * const driver;
 				unsigned length;
 			};
 			struct AbortedEventArgs {
-				SerialDriver * const driver;
+				SerialDriverBase * const driver;
 			};
 
     		using ITxCompletedEvent = ICallbackP1<const TxCompletedEventArgs&>;

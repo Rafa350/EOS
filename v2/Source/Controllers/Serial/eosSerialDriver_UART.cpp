@@ -12,11 +12,11 @@ using namespace htl;
 /// \brief    Constructor.
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
-AsyncSerialDriver_UART::AsyncSerialDriver_UART(
+SerialDriver_UART::SerialDriver_UART(
 	DevUART *devUART):
 
 	_devUART {devUART},
-	_uartNotifyEvent {*this, &AsyncSerialDriver_UART::uartNotifyEventHandler} /*,
+	_uartNotifyEvent {*this, &SerialDriver_UART::uartNotifyEventHandler} /*,
     _taskEvent {*this, &AsyncSerialDriver_UART::taskEventHandler},
     _task {128, Task::Priority::normal, nullptr, &_taskEvent, nullptr},
     _taskLock {} */ {
@@ -26,9 +26,9 @@ AsyncSerialDriver_UART::AsyncSerialDriver_UART(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void AsyncSerialDriver_UART::initializeImpl() {
+void SerialDriver_UART::initializeImpl() {
 
-    AsyncSerialDriver::initializeImpl();
+    SerialDriverBase::initializeImpl();
 
 	_devUART->setNotifyEvent(_uartNotifyEvent);
 	_devUART->enable();
@@ -38,12 +38,12 @@ void AsyncSerialDriver_UART::initializeImpl() {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el driver.
 ///
-void AsyncSerialDriver_UART::deinitializeImpl() {
+void SerialDriver_UART::deinitializeImpl() {
 
 	_devUART->disable();
 	_devUART->disableNotifyEvent();
 
-    AsyncSerialDriver::deinitializeImpl();
+    SerialDriverBase::deinitializeImpl();
 }
 
 /*

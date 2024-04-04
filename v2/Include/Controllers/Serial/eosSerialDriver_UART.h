@@ -16,7 +16,7 @@ namespace eos {
             using DevUART = htl::uart::UARTDevice;
 
 	    private:
-	        using UARTNotifyEvent = htl::uart::NotifyEvent<AsyncSerialDriver_UART>;
+	        using UARTNotifyEvent = htl::uart::NotifyEvent<SerialDriver_UART>;
 	        using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
             //using TaskEvent = TaskCallback<AsyncSerialDriver_UART>;
 

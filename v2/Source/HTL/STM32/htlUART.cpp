@@ -5,6 +5,7 @@
 
 using namespace htl;
 using namespace htl::uart;
+using namespace htl::clock;
 
 
 static void setParity(USART_TypeDef *usart, Parity parity);
@@ -650,23 +651,23 @@ static unsigned getClockFrequency(
                 return clock::getClockFrequency(clock::ClockID::pclk2);
             else
             #endif
-                return clock::getClockFrequency(clock::ClockID::pclk);
+                return Clock::getClockFrequency(clock::ClockID::pclk);
 
         case ClockSource::sysclk:
-            return clock::getClockFrequency(clock::ClockID::sysclk);
+            return Clock::getClockFrequency(clock::ClockID::sysclk);
 
         #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
         case ClockSource::hsi:
-            return clock::getClockFrequency(clock::ClockID::hsi);
+            return Clock::getClockFrequency(clock::ClockID::hsi);
         #endif
 
         #if defined(EOS_PLATFORM_STM32G0)
         case ClockSource::hsi16:
-            return clock::getClockFrequency(clock::ClockID::hsi16);
+            return Clock::getClockFrequency(clock::ClockID::hsi16);
         #endif
 
         case ClockSource::lse:
-            return clock::getClockFrequency(clock::ClockID::lse);
+            return Clock::getClockFrequency(clock::ClockID::lse);
 
         default:
             return 0;

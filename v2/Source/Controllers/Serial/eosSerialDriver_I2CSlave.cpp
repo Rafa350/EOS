@@ -16,7 +16,7 @@ using namespace htl;
 /// \param    buffer: El buffer.
 /// \param    bufferSize: Tamany en bytes del buffer.
 ///
-AsyncSerialDriver_I2CSlave::AsyncSerialDriver_I2CSlave(
+SerialDriver_I2CSlave::SerialDriver_I2CSlave(
 	DevI2C *devI2C,
 	uint8_t *buffer,
 	unsigned bufferSize) :

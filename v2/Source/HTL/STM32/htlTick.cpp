@@ -7,6 +7,7 @@
 
 using namespace htl;
 using namespace htl::tick;
+using namespace htl::clock;
 using namespace htl::irq;
 
 
@@ -34,7 +35,7 @@ void TickGenerator::initialize(
     uint32_t frequency) {
 
 	uint32_t period = 1000;
-	uint32_t prescaler = (clock::getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
+	uint32_t prescaler = (Clock::getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
 	__devTMR->initBase(clkDiv, prescaler, period);
