@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_G0_htlClock__
+#define __STM32_G0_htlClock__
 
 
 #include "HTL/STM32/htl.h"
@@ -106,37 +108,43 @@ namespace htl {
 			_16
 		};
 
-		void hsi16Enable();
-		void hsi16Disable();
-		bool isHsi16Enabled();
+        class Clock {
+            public:
+                static void hsi16Enable();
+                static void hsi16Disable();
+                static bool isHsi16Enabled();
 
-		void hseEnable(HseBypassMode bypass = HseBypassMode::off);
-		void hseDisable();
-		bool isHseEnabled();
+                static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+                static void hseDisable();
+                static bool isHseEnabled();
 
-		void lsiEnable();
-		void lsiDisable();
-		bool isLsiEnabled();
+                static void lsiEnable();
+                static void lsiDisable();
+                static bool isLsiEnabled();
 
-		void lseEnable();
-		void lseDisable();
-		bool isLseEnabled();
+                static void lseEnable();
+                static void lseDisable();
+                static bool isLseEnabled();
 
-		void pllEnable();
-	    void pllDisable();
-		bool isPllEnabled();
-		bool configurePll(PllSource source, int multiplier, int divider);
-		bool configurePllP(int divider);
-		bool configurePllQ(int divider);
-		bool configurePllR(int divider);
+                static void pllEnable();
+                static void pllDisable();
+                static bool isPllEnabled();
+                static bool configurePll(PllSource source, unsigned multiplier, unsigned divider);
+                static bool configurePllP(unsigned divider);
+                static bool configurePllQ(unsigned divider);
+                static bool configurePllR(unsigned divider);
 
-		void configureMCO(MCOOutput output, MCOSource source, MCODivider divider);
+                static void configureMCO(MCOOutput output, MCOSource source, MCODivider divider);
 
-		bool setSysClkSource(SysClkSource source);
-		void setHsisysPrescaler(HsisysPrescaler value);
-		void setHClkPrescaler(HClkPrescaler value);
-		void setPClkPrescaler(PClkPrescaler value);
+                static bool setSysClkSource(SysClkSource source);
+                static void setHsisysPrescaler(HsisysPrescaler value);
+                static void setHClkPrescaler(HClkPrescaler value);
+                static void setPClkPrescaler(PClkPrescaler value);
 
-		unsigned getClockFrequency(ClockID clockId);
+                static unsigned getClockFrequency(ClockID clockId);
+        };
 	}
 }
+
+
+#endif // __STM32_G0_htlClock__
