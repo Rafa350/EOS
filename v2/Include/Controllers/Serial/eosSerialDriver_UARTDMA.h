@@ -9,7 +9,7 @@
 
 namespace eos {
 
-	class AsyncSerialDriver_UARTDMA: public AsyncSerialDriver_UART {
+	class SerialDriver_UARTDMA: public SerialDriver_UART {
 	    private:
 	        using DevDMA = htl::dma::DMADevice;
 

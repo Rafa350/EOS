@@ -11,7 +11,7 @@
 
 namespace eos {
 
-	class AsyncSerialDriver_UART: public AsyncSerialDriver {
+	class SerialDriver_UART: public SerialDriver {
 	    public:
             using DevUART = htl::uart::UARTDevice;
 
@@ -41,7 +41,7 @@ namespace eos {
             bool startRxImpl(uint8_t *buffer, unsigned bufferSize) override;
 
 		public:
-			AsyncSerialDriver_UART(DevUART *devUART);
+			SerialDriver_UART(DevUART *devUART);
 	};
 }
 

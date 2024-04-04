@@ -9,7 +9,7 @@
 
 namespace eos {
 
-	class AsyncSerialDriver_I2CSlave final: public AsyncSerialDriver {
+	class SerialDriver_I2CSlave final: public SerialDriver {
 		public:
 	        using DevI2C = htl::i2c::I2CSlaveDevice;
 
@@ -40,7 +40,7 @@ namespace eos {
             void i2cNotifyEventHandler(I2CNotifyEventArgs &args);
 
 		public:
-			AsyncSerialDriver_I2CSlave(DevI2C *devI2C, uint8_t *buffer, unsigned bufferSize);
+			SerialDriver_I2CSlave(DevI2C *devI2C, uint8_t *buffer, unsigned bufferSize);
 	};
 }
 
