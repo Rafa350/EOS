@@ -18,11 +18,11 @@ namespace eos {
 	        DevDMA * const _devDMArx;
 
 	    private:
-            bool startTxImpl(const uint8_t *buffer, unsigned length) override;
-            bool startRxImpl(uint8_t *buffer, unsigned bufferSize) override;
+            void onTransmit(const uint8_t *buffer, unsigned length) override;
+            void onReceive(uint8_t *buffer, unsigned bufferSize) override;
 
 	    public:
-            AsyncSerialDriver_UARTDMA(DevUART *devUART, DevDMA *devDMAtx, DevDMA *devDMArx);
+            SerialDriver_UARTDMA(DevUART *devUART, DevDMA *devDMAtx, DevDMA *devDMArx);
 	};
 }
 

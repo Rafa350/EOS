@@ -5,8 +5,6 @@
 
 #include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlUART.h"
-#include "System/Core/eosSemaphore.h"
-#include "System/Core/eosTask.h"
 
 
 namespace eos {
@@ -18,27 +16,21 @@ namespace eos {
 	    private:
 	        using UARTNotifyEvent = htl::uart::NotifyEvent<SerialDriver_UART>;
 	        using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
-            //using TaskEvent = TaskCallback<AsyncSerialDriver_UART>;
 
 		protected:
 			DevUART * const _devUART;
 
 		private:
 			UARTNotifyEvent _uartNotifyEvent;
-            /*TaskEvent _taskEvent;
-            Task _task;
-            Semaphore _taskLock;*/
 
 		private:
-			void initializeImpl() override;
-			void deinitializeImpl() override;
-
 			void uartNotifyEventHandler(UARTNotifyEventArgs &args);
-            void taskEventHandler(const TaskCallbackArgs &args);
 
 		protected:
-            bool startTxImpl(const uint8_t *buffer, unsigned length) override;
-            bool startRxImpl(uint8_t *buffer, unsigned bufferSize) override;
+            void onInitialize() override;
+            void onDeinitialize() override;
+            void onTransmit(const uint8_t *buffer, unsigned length) override;
+            void onReceive(uint8_t *buffer, unsigned bufferSize) override;
 
 		public:
 			SerialDriver_UART(DevUART *devUART);

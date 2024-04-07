@@ -16,101 +16,55 @@ SerialDriver_UART::SerialDriver_UART(
 	DevUART *devUART):
 
 	_devUART {devUART},
-	_uartNotifyEvent {*this, &SerialDriver_UART::uartNotifyEventHandler} /*,
-    _taskEvent {*this, &AsyncSerialDriver_UART::taskEventHandler},
-    _task {128, Task::Priority::normal, nullptr, &_taskEvent, nullptr},
-    _taskLock {} */ {
+	_uartNotifyEvent {*this, &SerialDriver_UART::uartNotifyEventHandler} {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el driver.
+/// \brief    Procesa la inicialitzacio del driver.
 ///
-void SerialDriver_UART::initializeImpl() {
+void SerialDriver_UART::onInitialize() {
 
-    SerialDriverBase::initializeImpl();
-
-	_devUART->setNotifyEvent(_uartNotifyEvent);
-	_devUART->enable();
+    _devUART->setNotifyEvent(_uartNotifyEvent);
+    _devUART->enable();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desinicialitza el driver.
+/// \brief    Procesa la desinicialitzacio del driver.
 ///
-void SerialDriver_UART::deinitializeImpl() {
+void SerialDriver_UART::onDeinitialize() {
 
-	_devUART->disable();
-	_devUART->disableNotifyEvent();
-
-    SerialDriverBase::deinitializeImpl();
+    _devUART->disable();
+    _devUART->disableNotifyEvent();
 }
 
-/*
-void AsyncSerialDriver_UART::taskEventHandler(
-    const TaskCallbackArgs &args) {
-
-    while (true) {
-        _taskLock.wait(unsigned(-1));
-    }
-}
-*/
 
 /// ----------------------------------------------------------------------
-/// \brief    Transmiteix un bloc de dades de forma asincrona.
+/// \brief    Procesa la transmissio de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    length: Nombre de bytes a transmetre.
-/// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UART::startTxImpl(
+void SerialDriver_UART::onTransmit(
 	const uint8_t *buffer,
 	unsigned length) {
 
-    eosAssert(buffer != nullptr);
-    eosAssert(length > 0);
-
-	if (isBusy())
-		return false;
-
-	else {
-		notifyTxStart();
-
-		_devUART->transmit_IRQ(buffer, length);
-
-		// En aquest moment es genera una interrupcio txEmpty
-		// i comença la transmissio controlada per interrupcions.
-
-		return true;
-	}
+    // notifyTxStart();
+    _devUART->transmit_IRQ(buffer, length);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Reb un bloc de dades de forma asincrona.
+/// \brief    Procesa la recepcio de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
-/// \return   True si tot es correcte.
 ///
-bool AsyncSerialDriver_UART::startRxImpl(
+void SerialDriver_UART::onReceive(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
-    eosAssert(buffer != nullptr);
-    eosAssert(bufferSize > 0);
-
-	if (isBusy())
-		return false;
-
-	else {
-		notifyRxStart();
-
-		_devUART->receive_IRQ(buffer, bufferSize);
-
-		// En aquest moment, es generen interrupcions
-		// cada cop que hi han dades disposibles en la UART.
-
-		return true;
-	}
+    //notifyRxStart();
+    _devUART->receive_IRQ(buffer, bufferSize);
 }
 
 
@@ -118,19 +72,16 @@ bool AsyncSerialDriver_UART::startRxImpl(
 /// \brief    Reb les notificacions del UART
 /// \param    args: Parametres del event.
 ///
-void AsyncSerialDriver_UART::uartNotifyEventHandler(
+void SerialDriver_UART::uartNotifyEventHandler(
 	UARTNotifyEventArgs &args) {
 
 	switch (args.id) {
 		case htl::uart::NotifyID::txComplete:
-			notifyTxCompleted(args.TxComplete.length);
+		    notifyTxCompleted(args.TxComplete.length);
 			break;
 
 		case htl::uart::NotifyID::rxComplete:
-			notifyRxCompleted(args.RxComplete.length);
-			break;
-
-		default:
+		    notifyRxCompleted(args.RxComplete.length);
 			break;
 	}
 }
