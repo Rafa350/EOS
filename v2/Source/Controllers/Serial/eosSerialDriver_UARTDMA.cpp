@@ -31,7 +31,6 @@ void SerialDriver_UARTDMA::onTransmit(
 	const uint8_t *buffer,
 	unsigned bufferSize) {
 
-    //notifyTxStart();
     _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize);
 }
 
@@ -45,6 +44,5 @@ void SerialDriver_UARTDMA::onReceive(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
-    //notifyRxStart();
     _devUART->receive_IRQ(buffer, bufferSize);
 }

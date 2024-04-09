@@ -60,9 +60,9 @@ namespace htl {
 		///
         enum class NotifyID {
             addressMatch,    ///< Conindicencia en l'adressa.
-            rxDataAvailable, ///< Dades rebudes disponibles.
+            rxStart,         ///< Inici de la recepcio.
             rxCompleted,     ///< Recepcio de dades finalitzada.
-            txDataRequest,   ///< Solicitut de dades per transmetre.
+            txStart,         ///< Inici de la transmissio.
             txCompleted      ///< Transmissio de dades finalitzada.
         };
         
@@ -75,20 +75,18 @@ namespace htl {
                     uint16_t addr;
                 } AddressMatch;
                 struct {
-                    const uint8_t *buffer;
-                    unsigned length;
-                } RxDataAvailable;
+                  uint8_t *data;
+                  unsigned dataSize;
+                } RxStart;
                 struct {
-                    const uint8_t *buffer;
-                    unsigned length;
+                    unsigned dataLength;
                 } RxCompleted;
                 struct {
-                    uint8_t *buffer;
-                    unsigned bufferSize;
-                    unsigned length;
-                } TxDataRequest;
+                    uint8_t *data;
+                    unsigned dataLength;
+                } TxStart;
                 struct {
-                    unsigned length;
+                    unsigned dataLength;
                 } TxCompleted;
             };
         };
@@ -269,18 +267,15 @@ namespace htl {
 					reset,
 					ready,
 					listen,
-					listenRx,
-					listenTx
+					receiving,
+					transmiting
 				};
                 
 			private:
 				State _state;
-				uint8_t *_rxBuffer;
-				unsigned _rxBufferSize;
+				uint8_t *_data;
+				unsigned _maxCount;
 				unsigned _count;
-				unsigned _length;
-				const uint8_t *_txBuffer;
-				unsigned _txBufferSize;
                 ISlaveNotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
                 
@@ -289,14 +284,14 @@ namespace htl {
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 
                 void notifyAddressMatch(uint16_t addr, bool irq);
-                void notifyRxDataAvailable(const uint8_t *buffer, unsigned length, bool irq);
-                void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
-                void notifyTxDataRequest(uint8_t *buffer, unsigned bufferSize, unsigned &length, bool irq);
-                void notifyTxCompleted(bool irq);
+                void notifyRxStart(uint8_t * &data, unsigned &dataSize, bool irq);
+                void notifyRxCompleted(unsigned dataLength, bool irq);
+                void notifyTxStart(uint8_t * &data, unsigned &dataLength, bool irq);
+                void notifyTxCompleted(unsigned dataLength, bool irq);
 
 				void interruptServiceListen();
-				void interruptServiceListenRx();
-				void interruptServiceListenTx();
+				void interruptServiceReceive();
+				void interruptServiceTransmit();
                 
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *i2c);
@@ -320,10 +315,8 @@ namespace htl {
 					_notifyEventEnabled = false;
 				}
                 
-				Result listem(const uint8_t *txBuffer, unsigned txBufferSize,
-				        uint8_t *rxBuffer, unsigned rxBufferSize, Tick timeout = Tick(-1));
-				Result listen_IRQ(const uint8_t *txBuffer, unsigned txBufferSize,
-				        uint8_t *rxBuffer, unsigned rxBufferSize);
+				Result listem(Tick timeout = Tick(-1));
+				Result listen_IRQ();
 				Result abortListen();
                 
 				/// Obte l'estat del dispositiu.

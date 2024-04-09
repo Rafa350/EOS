@@ -9,7 +9,6 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 SerialDriver::SerialDriver() :
-
     _state {State::reset},
 	_txCompletedEvent {nullptr},
 	_rxCompletedEvent {nullptr},

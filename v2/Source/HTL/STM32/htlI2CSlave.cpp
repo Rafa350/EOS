@@ -21,9 +21,6 @@ I2CSlaveDevice::I2CSlaveDevice(
 
 	I2CDevice {i2c},
 	_state {State::reset},
-	_rxBuffer {nullptr},
-	_rxBufferSize {0},
-	_count {0},
     _notifyEvent {nullptr},
     _notifyEventEnabled {false} {
 
@@ -104,35 +101,21 @@ void I2CSlaveDevice::setNotifyEvent(
     ISlaveNotifyEvent &event,
     bool enabled) {
 
-    _notifyEvent = &event;
-    _notifyEventEnabled = enabled;
+    if ((_state == State::reset) || (_state == State::ready)) {
+        _notifyEvent = &event;
+        _notifyEventEnabled = enabled;
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Configura el modul en modus d'escolta.
-/// \param    txBuffer: Buffer de transmissio.
-/// \param    txBufferSize: Tamany del buffer de dades transmissio en bytes.
-/// \param    rxBuffer: Buffer de recepcio.
-/// \param    rxBufferSize: Tamany del buffer de recepcio en bytes.
 ///
-Result I2CSlaveDevice::listen_IRQ(
-	const uint8_t *txBuffer,
-	unsigned txBufferSize,
-	uint8_t *rxBuffer,
-	unsigned rxBufferSize) {
+Result I2CSlaveDevice::listen_IRQ() {
 
     // Comprova si l'estat es 'ready'
     //
 	if (_state == State::ready) {
-
-	    // Prepara les variables per process de comunicacio.
-	    //
-		_txBuffer = txBuffer;
-		_txBufferSize = txBufferSize;
-
-        _rxBuffer = rxBuffer;
-        _rxBufferSize = rxBufferSize;
 
         // Canvia l'estat a 'listen'
 		//
@@ -150,7 +133,7 @@ Result I2CSlaveDevice::listen_IRQ(
 		return Result::success();
 	}
 
-	else if ((_state == State::listen) || (_state == State::listenRx) || (_state == State::listenTx))
+	else if ((_state == State::listen) || (_state == State::receiving) || (_state == State::transmiting))
 	    return Result::busy();
 
 	else
@@ -169,15 +152,12 @@ Result I2CSlaveDevice::abortListen() {
 		//
 		_i2c->CR1 &= ~(I2C_CR1_PE | I2C_CR1_ADDRIE | I2C_CR1_ERRIE | I2C_CR1_NACKIE | I2C_CR1_STOPIE);
 
-		_rxBuffer = nullptr;
-		_rxBufferSize = 0;
-
 		_state = State::ready;
 
 		return Result::success();
 	}
 
-	else if ((_state == State::listenRx) || (_state == State::listenTx))
+	else if ((_state == State::receiving) || (_state == State::transmiting))
 	    return Result::busy();
 
 	else
@@ -195,12 +175,12 @@ void I2CSlaveDevice::interruptService() {
 			interruptServiceListen();
 			break;
 
-		case State::listenRx:
-			interruptServiceListenRx();
+		case State::receiving:
+			interruptServiceReceive();
 			break;
 
-		case State::listenTx:
-			interruptServiceListenTx();
+		case State::transmiting:
+			interruptServiceTransmit();
 			break;
 
 		default:
@@ -222,29 +202,30 @@ void I2CSlaveDevice::interruptServiceListen() {
 	    clearAddressMatchFlag();
 	    disableAddressMatchInterrupt();
 
-    	// Comprova si es una transmissio (S->M)
+    	// Comprova si es una transmissio (Slave -> Master)
     	//
     	if (_i2c->ISR & I2C_ISR_DIR) {
     		enableTxBufferEmptyInterrupt();
             enableStopDetectionInterrupt();
-    		_state = State::listenTx;
+    		_state = State::transmiting;
     	}
 
-    	// En cas contrari, es una recepcio (M->S)
+    	// En cas contrari, es una recepcio (Master -> Slave)
     	//
     	else {
     		enableRxBufferNotEmptyInterrupt();
             enableStopDetectionInterrupt();
-    		_state = State::listenRx;
+    		_state = State::receiving;
     	}
+
+        _data = nullptr;
+        _maxCount = 0;
+        _count = 0;
 
         uint16_t addr = 
             (((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
 			(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0);
         notifyAddressMatch(addr, true);
-
-        _count = 0;
-        _length = 0;
 	}
 }
 
@@ -252,30 +233,25 @@ void I2CSlaveDevice::interruptServiceListen() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions per l'estat 'listenRx'
 ///
-void I2CSlaveDevice::interruptServiceListenRx() {
+void I2CSlaveDevice::interruptServiceReceive() {
 
 	// El registre de recepcio de dades no es buit
 	//
 	if (isRxBufferNotEmptyInterruptEnabled() &&
 	    isRxBufferNotEmptyFlagSet()) {
 
+	    // Notifica l'inici de la recepcio i sol·licita les dades
+	    // i el seu tamany maxim.
+	    //
+	    if ((_data == nullptr) || (_count == _maxCount)) {
+	        notifyRxStart(_data, _maxCount, true);
+	        _count = 0;
+	    }
+
         // Llegeix el byte i el acumula en el buffer
         //
-        _rxBuffer[_count++] = (uint8_t) _i2c->RXDR;
-
-        // Comprova si el buffer es ple
-        //
-        if (_count == _rxBufferSize) {
-
-            // Notifica que hi han dades disponibles.
-            //
-            notifyRxDataAvailable(_rxBuffer, _count, true);
-
-            // Inicialitza el contador per començar de nou
-            // a omplir el buffer.
-            //
-            _count = 0;
-        }
+	    if ((_data != nullptr) && (_count < _maxCount))
+	        _data[_count++] = (uint8_t) _i2c->RXDR;
 	}
 
 	// Deteccio de la condicio STOP
@@ -288,9 +264,9 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 	    disableRxBufferNotEmptyInterrupt();
 
 	    // Notifica el final de la recepcio de dades, indicant
-	    // les dades disponibles que resten.
+	    // el nombre de bytes rebuts.
 	    //
-        notifyRxCompleted(_rxBuffer, _count, true);
+        notifyRxCompleted(_count, true);
 
         enableAddressMatchInterrupt();
 
@@ -302,7 +278,7 @@ void I2CSlaveDevice::interruptServiceListenRx() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions per l'estat 'listenTx'
 ///
-void I2CSlaveDevice::interruptServiceListenTx() {
+void I2CSlaveDevice::interruptServiceTransmit() {
 
 	// S'ha detectat un NACK
 	//
@@ -321,7 +297,7 @@ void I2CSlaveDevice::interruptServiceListenTx() {
     	disableStopDetectionInterrupt();
     	disableTxBufferEmptyInterrupt();
 
-    	notifyTxCompleted(true);
+    	notifyTxCompleted(_count, true);
 
         enableAddressMatchInterrupt();
 
@@ -333,22 +309,16 @@ void I2CSlaveDevice::interruptServiceListenTx() {
 	if (isTxBufferEmptyInterruptEnabled() &&
 	    isTxBufferEmptyFlagSet()) {
 
-		// Si el buffer es buit, o si ja s'ha transmes tot el contingut del
-		// buffer, ho notifica a l'aplicacio perque suministri mes dades.
-		//
-		if (_count == _length) {
+	    if ((_data == nullptr) || (_count == _maxCount)) {
+            notifyTxStart(_data, _maxCount, true);
             _count = 0;
-            _length = 0;
-            notifyTxDataRequest(_rxBuffer, _rxBufferSize, _length, true);
-            if (_length > _rxBufferSize)
-                _length = _rxBufferSize;
 		}
 
 		// Si hi han dades en el buffer els transmiteix, si no
 		// transmiteix zeros
 		//
-		if (_count < _length)
-		    _i2c->TXDR = _rxBuffer[_count++];
+		if (_count < _maxCount)
+		    _i2c->TXDR = _data[_count++];
 		else
 		    _i2c->TXDR = 0;
 	}
@@ -379,40 +349,44 @@ void I2CSlaveDevice::notifyAddressMatch(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica que hi han dades rebudes disposibles.
-/// \param    buffer: Buffer de dades.
-/// \param    length: Tamany de les dades en bytes.
+/// \brief    Notifica el inici de la recepcio d'una trama de dades.
+/// \param    data: El buffer de dades
+/// \param    bufferSize: El tamany del buffer de dades en bytes.
 /// \param    irq: Indica si es genera desde una interrupcio.
 ///
-void I2CSlaveDevice::notifyRxDataAvailable(
-    const uint8_t *buffer, 
-    unsigned length,
+void I2CSlaveDevice::notifyRxStart(
+    uint8_t * &data,
+    unsigned &dataSize,
     bool irq) {
-    
+
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .instance = this,
-            .id = NotifyID::rxDataAvailable,
+            .id = NotifyID::rxStart,
             .irq = irq,
-            .RxDataAvailable {
-                .buffer = buffer,
-                .length = length
+            .RxStart {
+                .data = nullptr,
+                .dataSize = 0
             }
         };
         _notifyEvent->execute(args);
+        data = args.RxStart.data;
+        dataSize = args.RxStart.dataSize;
+    }
+    else {
+        data = nullptr;
+        dataSize = 0;
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica que ha finalitzat la recepcio de dades.
-/// \param    buffer: Buffer de dades.
-/// \param    length: Tamany de dades en bytes.
+/// \param    dataLength: Tamany de dades en bytes.
 /// \param    irq: Indica si es genera desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyRxCompleted(
-    const uint8_t *buffer, 
-    unsigned length,
+    unsigned dataLength,
     bool irq) {
     
     if (_notifyEventEnabled) {
@@ -421,8 +395,7 @@ void I2CSlaveDevice::notifyRxCompleted(
             .id = NotifyID::rxCompleted,
             .irq = irq,
             .RxCompleted {
-                .buffer = buffer,
-                .length = length
+                .dataLength = dataLength
             }
         };
         _notifyEvent->execute(args);
@@ -432,39 +405,43 @@ void I2CSlaveDevice::notifyRxCompleted(
 
 /// ----------------------------------------------------------------------
 /// \brief    Noitifica que falten dades per transmetre.
-/// \param    buffer: Buffer de dades.
-/// \param    bufferSize: Tamany del buffer.
-/// \param    length: Nombre de bytes en el buffer.
+/// \param    data: Buffer de dades.
+/// \param    dataLength: Nombre de bytes en el buffer de dades.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
-void I2CSlaveDevice::notifyTxDataRequest(
-    uint8_t *buffer, 
-    unsigned bufferSize,
-    unsigned &length,
+void I2CSlaveDevice::notifyTxStart(
+    uint8_t * &data,
+    unsigned &dataLength,
     bool irq) {
     
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .instance = this,
-            .id = NotifyID::txDataRequest,
+            .id = NotifyID::txStart,
             .irq = irq,
-            .TxDataRequest {
-                .buffer = buffer,
-                .bufferSize = bufferSize,
-                .length = 0
+            .TxStart {
+                .data = nullptr,
+                .dataLength = 0
             }
         };
         _notifyEvent->execute(args);
-        length = args.TxDataRequest.length;
+        data = args.TxStart.data;
+        dataLength = args.TxStart.dataLength;
+    }
+    else {
+        data = nullptr;
+        dataLength = 0;
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de la transmissio.
+/// \brief    dataLength: Longitut de les dades transmeses.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyTxCompleted(
+    unsigned dataLength,
     bool irq) {
     
     if (_notifyEventEnabled) {
@@ -473,7 +450,7 @@ void I2CSlaveDevice::notifyTxCompleted(
             .id = NotifyID::txCompleted,
             .irq = irq,
             .TxCompleted {
-                .length = 0
+                .dataLength = dataLength
             }
         };
         _notifyEvent->execute(args);

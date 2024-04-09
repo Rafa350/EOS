@@ -22,10 +22,8 @@ namespace eos {
 			I2CNotifyEvent _i2cNotifyEvent;
 			uint8_t *_rxBuffer;
 			unsigned _rxBufferSize;
-			unsigned _rxCount;
 			const uint8_t *_txBuffer;
 			unsigned _txBufferSize;
-			unsigned _txCount;
 
 		private:
 			void onInitialize() override;

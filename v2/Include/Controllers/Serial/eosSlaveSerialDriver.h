@@ -52,7 +52,9 @@ namespace eos {
         protected:
 			SlaveSerialDriver();
 
+			void notifyTxStart();
 			void notifyTxCompleted(unsigned length);
+			void notifyRxStart();
             void notifyRxCompleted(unsigned length);
 
 			virtual void onInitialize() = 0;

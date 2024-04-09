@@ -49,7 +49,6 @@ void SerialDriver_UART::onTransmit(
 	const uint8_t *buffer,
 	unsigned length) {
 
-    // notifyTxStart();
     _devUART->transmit_IRQ(buffer, length);
 }
 
@@ -63,7 +62,6 @@ void SerialDriver_UART::onReceive(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
-    //notifyRxStart();
     _devUART->receive_IRQ(buffer, bufferSize);
 }
 

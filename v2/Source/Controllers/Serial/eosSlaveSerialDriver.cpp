@@ -131,6 +131,15 @@ void SlaveSerialDriver::raiseRxCompleted(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Notifica el inici de la transmissio.
+///
+void SlaveSerialDriver::notifyTxStart() {
+
+    _state = State::transmiting;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Notifica el final de transmissio.
 /// \param    length: Nombre de bytes transmessos.
 ///
@@ -141,6 +150,15 @@ void SlaveSerialDriver::notifyTxCompleted(
         raiseTxCompleted(length);
         _state = State::ready;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica el inici de la recepcio.
+///
+void SlaveSerialDriver::notifyRxStart() {
+
+    _state = State::receiving;
 }
 
 

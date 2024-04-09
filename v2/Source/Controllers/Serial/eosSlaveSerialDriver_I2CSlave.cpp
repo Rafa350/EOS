@@ -3,8 +3,6 @@
 #include "Controllers/Serial/eosSlaveSerialDriver_I2CSlave.h"
 #include "HTL/htlI2C.h"
 
-#include <cmath>
-
 
 using namespace eos;
 using namespace htl;
@@ -47,8 +45,10 @@ void SlaveSerialDriver_I2CSlave::onDeinitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades.
-/// \param    buffer: El buffer de dades
-/// \param    bufferSize: El nombre de bytes en el buffer de dades.
+/// \param    txBuffer: El buffer de tranmissio
+/// \param    txBufferSize: El tamany en bytes del buffer de transmissio..
+/// \param    rxBuffer: El buffer de recepcio.
+/// \param    rxBufferSize: El tamany en bytes del buffer de recepcio.
 ///
 void SlaveSerialDriver_I2CSlave::onListen(
     const uint8_t *txBuffer,
@@ -58,13 +58,11 @@ void SlaveSerialDriver_I2CSlave::onListen(
 
     _txBuffer = txBuffer;
     _txBufferSize = txBufferSize;
-    _txCount = 0;
 
     _rxBuffer = rxBuffer;
     _rxBufferSize = rxBufferSize;
-    _rxCount = 0;
 
-    _devI2C->listen_IRQ(_txBuffer, _txBufferSize, _rxBuffer, _rxBufferSize);
+    _devI2C->listen_IRQ();
 }
 
 
@@ -76,37 +74,35 @@ void SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler(
 	I2CNotifyEventArgs &args) {
 
 	switch (args.id) {
-	    case htl::i2c::NotifyID::txDataRequest: {
-	        if (_txCount < _txBufferSize) {
-                auto count = std::min(args.TxDataRequest.bufferSize, _txBufferSize);
-                if (count > 0) {
-                    memcpy(args.TxDataRequest.buffer, _txBuffer, count);
-                    _txCount += count;
-                }
-                args.TxDataRequest.length = count;
-	        }
-	        else
-                args.TxDataRequest.length = 0;
+
+	    // Inici de la transmissio de dades.
+	    //
+	    case htl::i2c::NotifyID::txStart: {
+            args.TxStart.data = (uint8_t*) _txBuffer;
+            args.TxStart.dataLength = _txBufferSize;
+            notifyTxStart();
 	        break;
 	    }
 
+	    // Transmissio de dades finalitzada
+	    //
 		case htl::i2c::NotifyID::txCompleted:
-			notifyTxCompleted(args.TxCompleted.length);
+			notifyTxCompleted(args.TxCompleted.dataLength);
 			break;
 
-        // Recepcio parcial de dades
+        // Inici de la recepcio de dades.
 	    //
-        case htl::i2c::NotifyID::rxDataAvailable:
+        case htl::i2c::NotifyID::rxStart:
+            args.RxStart.data = _rxBuffer;
+            args.RxStart.dataSize = _rxBufferSize;
+            notifyRxStart();
             break;
 
-        // Recepcio complerta de dades
+        // Recepcio de dades finalitzada.
         //
         case htl::i2c::NotifyID::rxCompleted:
-            notifyRxCompleted(args.RxCompleted.length);
+            notifyRxCompleted(args.RxCompleted.dataLength);
             break;
-
-        default:
-			break;
 	}
 }
 
