@@ -126,9 +126,7 @@ Result I2CSlaveDevice::listen_IRQ() {
 		_i2c->CR1 |=
             I2C_CR1_PE |     // Habilita les comunicacions
             I2C_CR1_ADDRIE | // Habilita la interrupcio ADDR
-            I2C_CR1_ERRIE |  // Habilita la interrupcio ERR
-            I2C_CR1_NACKIE | // Habilita la interrupcio NACK
-            I2C_CR1_STOPIE;  // Habilita la interrupcio STOP
+            I2C_CR1_ERRIE;   // Habilita la interrupcio ERR
 
 		return Result::success();
 	}
@@ -199,14 +197,13 @@ void I2CSlaveDevice::interruptServiceListen() {
 	if (isAddressMatchInterruptEnabled() &&
 	    isAddressMatchFlagSet()) {
 
-	    clearAddressMatchFlag();
 	    disableAddressMatchInterrupt();
 
     	// Comprova si es una transmissio (Slave -> Master)
     	//
     	if (_i2c->ISR & I2C_ISR_DIR) {
     		enableTxBufferEmptyInterrupt();
-            enableStopDetectionInterrupt();
+    		enableNackReceivedInterrupt();
     		_state = State::transmiting;
     	}
 
@@ -214,9 +211,10 @@ void I2CSlaveDevice::interruptServiceListen() {
     	//
     	else {
     		enableRxBufferNotEmptyInterrupt();
-            enableStopDetectionInterrupt();
     		_state = State::receiving;
     	}
+
+    	enableStopDetectionInterrupt();
 
         _data = nullptr;
         _maxCount = 0;
@@ -226,12 +224,16 @@ void I2CSlaveDevice::interruptServiceListen() {
             (((_i2c->ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
 			(((_i2c->ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0);
         notifyAddressMatch(addr, true);
+
+        // Borra el inmdicador aqui per stretch-clock
+        //
+        clearAddressMatchFlag();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa les interrupcions per l'estat 'listenRx'
+/// \brief    Procesa les interrupcions per l'estat 'receiving'
 ///
 void I2CSlaveDevice::interruptServiceReceive() {
 
@@ -276,16 +278,16 @@ void I2CSlaveDevice::interruptServiceReceive() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa les interrupcions per l'estat 'listenTx'
+/// \brief    Procesa les interrupcions per l'estat 'transmiting'
 ///
 void I2CSlaveDevice::interruptServiceTransmit() {
 
 	// S'ha detectat un NACK
 	//
-	if (isNackDetectionInterruptEnabled() &&
-	    isNackDetectionFlagSet()) {
+	if (isNackReceivedInterruptEnabled() &&
+	    isNackReceivedFlagSet()) {
 
-		_i2c->ICR |= I2C_ICR_NACKCF;
+		clearNackReceivedFlag();
 	}
 
 	// S'ha detectat la condicio STOP

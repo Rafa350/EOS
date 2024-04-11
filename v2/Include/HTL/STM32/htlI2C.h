@@ -150,6 +150,12 @@ namespace htl {
                     _i2c->CR1 |= I2C_CR1_STOPIE;
                 }
 
+                /// Habilita la interrupcio 'NackReceived'
+                ///
+                inline void enableNackReceivedInterrupt() const {
+                    _i2c->CR1 |= I2C_CR1_NACKIE;
+                }
+
                 /// Desabilita la interrupcio 'AddressMatch'.
                 ///
                 inline void disableAddressMatchInterrupt() const {
@@ -172,6 +178,12 @@ namespace htl {
                 ///
                 inline void disableStopDetectionInterrupt() const {
                     _i2c->CR1 &= ~I2C_CR1_STOPIE;
+                }
+
+                /// Desabilita la interrupcio 'NackReceived'
+                ///
+                inline void disableNackReceivedInterrupt() const {
+                    _i2c->CR1 &= ~I2C_CR1_NACKIE;
                 }
 
                 /// Comprova si la interrupcio 'AddressMatch' esta habilitada.
@@ -202,10 +214,10 @@ namespace htl {
                     return (_i2c->CR1 & I2C_CR1_STOPIE) != 0;
                 }
 
-                /// Comprova si la interrupcio 'NackDetection' esta habilitada.
+                /// Comprova si la interrupcio 'NackReceived' esta habilitada.
                 /// \return True si esta habilitada.
                 ///
-                inline bool isNackDetectionInterruptEnabled() const {
+                inline bool isNackReceivedInterruptEnabled() const {
                     return (_i2c->CR1 & I2C_CR1_NACKIE) != 0;
                 }
 
@@ -237,10 +249,10 @@ namespace htl {
                     return (_i2c->ISR & I2C_ISR_STOPF) != 0;
                 }
 
-                /// Comprova si el flag 'NackDetection' esta activat.
+                /// Comprova si el flag 'NackReceived' esta activat.
                 /// \return True si esta activat.
                 ///
-                inline bool isNackDetectionFlagSet() const {
+                inline bool isNackReceivedFlagSet() const {
                     return (_i2c->ISR & I2C_ISR_NACKF) != 0;
                 }
 
@@ -254,6 +266,12 @@ namespace htl {
                 ///
                 inline void clearStopDetectionFlag() const {
                     _i2c->ICR |= I2C_ICR_STOPCF;
+                }
+
+                /// Borra el flag 'Nack'
+                ///
+                inline void clearNackReceivedFlag() const {
+                    _i2c->ICR |= I2C_ICR_NACKCF;
                 }
 
                 virtual void activate() = 0;
