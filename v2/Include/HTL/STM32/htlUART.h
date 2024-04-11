@@ -216,11 +216,11 @@ namespace htl {
 				USART_TypeDef * const _usart;   ///< Instancia del dispositiu.
 				State _state;                   ///< Estat actual.
 				uint8_t *_rxBuffer;             ///< Buffer de recepcio.
-				unsigned _rxBufferSize;         ///< Tamany del buffer de recepcio en bytes.
 				unsigned _rxCount;              ///< Contador de bytes rebuts.
+				unsigned _rxMaxCount;           ///< Maxim del contador de bytes rebuts.
 				const uint8_t *_txBuffer;       ///< Buffer de transmissio.
-				unsigned _txLength;             ///< Nombre de bytes a transmetre.
 				unsigned _txCount;              ///< Contador de bytes transmesos.
+				unsigned _txMaxCount;           ///< Maxim del contador de bytes rebuts.
 				INotifyEvent *_notifyEvent;     ///< Event de notificacio.
 				bool _notifyEventEnabled;       ///< Habilitacio del event de notificacio.
 				DMANotifyEvent _dmaNotifyEvent; ///< Event de notificacio del DMA.

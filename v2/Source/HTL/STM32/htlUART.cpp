@@ -84,7 +84,7 @@ Result UARTDevice::deinitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el protocol de comunicacio.
-/// \param    wordBits: Lers opcions de paraula.
+/// \param    wordBits: Les opcions de paraula.
 /// \param    parity: Les opcions de paritat.
 /// \param    stopBits: Les opcions de parada.
 /// \param    handsake: Protocol.
@@ -247,8 +247,8 @@ Result UARTDevice::receive_IRQ(
 		_state = State::receiving;
 
 		_rxBuffer = buffer;
-		_rxBufferSize = bufferSize;
 		_rxCount = 0;
+		_rxMaxCount = bufferSize;
 
 		enableRxNoEmptyInterrupt();
 		enableRx();
@@ -281,8 +281,8 @@ Result UARTDevice::transmit_DMA(
         _state = State::transmiting;
 
         _txBuffer = buffer;
-        _txLength = length;
         _txCount = 0;
+        _txMaxCount = length;
 
         enableTx();
         enableTxDMA();
@@ -329,9 +329,9 @@ void UARTDevice::interruptService() {
     //
     if ((_usart->CR1 & USART_CR1_TXEIE) && (_usart->ISR & USART_ISR_TXE)) {
 
-        if (_txCount < _txSize) {
+        if (_txCount < _txMaxCount) {
             _usart->TDR = _txBuffer[_txCount++];
-            if (_txCount == _txSize)
+            if (_txCount == _txMaxCount)
                 ATOMIC_MODIFY_REG(_usart->CR1, USART_CR1_TXEIE, USART_CR1_TCIE);
         }
     }
@@ -350,9 +350,9 @@ void UARTDevice::interruptService() {
     //
     if ((_usart->CR1 & USART_CR1_RXNEIE) && (_usart->ISR & USART_ISR_RXNE)) {
 
-        if (_rxCount < _rxSize) {
+        if (_rxCount < _rxNaxCount) {
             _rxBuffer[_rxCount++] = _usart->RDR;
-            if (_rxCount == _rxSize) {
+            if (_rxCount == _rxMaxCount) {
                 ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE | USART_CR1_RTOIE | USART_CR1_RE);
                 notifyRxComplete(_rxBuffer, _rxCount, true);
                 _state = State::ready;
@@ -388,9 +388,9 @@ void UARTDevice::interruptService() {
         //
         if (isTxEmptyInterruptEnabled() && isTxEmptyFlagSet()) {
 
-            if (_txCount < _txLength) {
+            if (_txCount < _txMaxCount) {
                 write8(_txBuffer[_txCount++]);
-                if (_txCount == _txLength) {
+                if (_txCount == _txMaxCount) {
                     disableTxEmptyInterrupt();
                     enableTxCompleteInterrupt();
                 }
@@ -413,7 +413,7 @@ void UARTDevice::interruptService() {
         if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
             if (_rxCount < _rxBufferSize) {
                 _rxBuffer[_rxCount++] = read8();
-                if (_rxCount == _rxBufferSize) {
+                if (_rxCount == _rxMaxCount) {
                     disableAllRxInterrupts();
                     disableRx();
                     notifyRxComplete(_rxBuffer, _rxCount, true);
@@ -459,9 +459,6 @@ void UARTDevice::dmaNotifyEventHandler(
         // Error en la transmissio DMA.
         //
         case htl::dma::NotifyID::error:
-            break;
-
-        default:
             break;
     }
 }
