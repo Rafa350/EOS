@@ -39,10 +39,7 @@ Result I2CMasterDevice::initialize(
 	if (_state == State::reset) {
 
 		activate();
-
-		// Deshabilita les comunicacions
-		//
-		_i2c->CR1 &= ~I2C_CR1_PE;
+        disable();
 
 		// Configura els parametres de timing
 		//
@@ -63,13 +60,13 @@ Result I2CMasterDevice::initialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desinicialitza elñ dispositiu.
+/// \brief    Desinicialitza el dispositiu.
 ///
 Result I2CMasterDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		_i2c->CR1 &= ~I2C_CR1_PE;
+        disable();
 		deactivate();
 
 		_state = State::reset;
@@ -88,7 +85,7 @@ Result I2CMasterDevice::deinitialize() {
 /// \param    bufferSize: El nombre de bytes en el buffer.
 /// \param    timeout: El temps maxim en ms.
 ///
-Result I2CMasterDevice::send(
+Result I2CMasterDevice::transmit(
 	uint16_t addr,
 	const uint8_t *buffer,
 	unsigned bufferSize,
@@ -125,7 +122,7 @@ Result I2CMasterDevice::send(
 
 	// Inicia la comunicacio.
 	//
-	_i2c->CR1 |= I2C_CR1_PE;    // Habilita el dispositiu.
+	enable()                    // Habilita el dispositiu.
 	_i2c->CR2 |= I2C_CR2_START; // Inicia la sequencia START, ADDR
 
 	unsigned blockSize = std::min(bufferSize, 255u);
@@ -155,9 +152,7 @@ Result I2CMasterDevice::send(
 	while ((_i2c->ISR & I2C_ISR_STOPF) == 0)
 		continue;
 
-	// Finalitza la comunicacio
-	//
-	_i2c->CR1 &= ~I2C_CR1_PE;    // Deshabilita el dispositiu.
+	disable();
 
 	return Result::success();
 }

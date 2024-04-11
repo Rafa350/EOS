@@ -344,13 +344,19 @@ namespace htl {
 				/// Comprova si el dispositiu esta preparat.
 				///
 				inline bool isReady() const { return _state == State::ready; }
+
+				/// Comprova si el dispositiu esta ocupat.
+				///
+				inline bool isBusy() const { return _state == State::listen || _state == State::receiving || _state == State::transmiting; }
 		};
 
 		class I2CMasterDevice: public I2CDevice {
 			public:
 				enum class State {
 					reset,
-					ready
+					ready,
+                    transmiting,
+                    receiving
 				};
                 
 			private:
@@ -369,8 +375,11 @@ namespace htl {
 					uint8_t sclh, uint8_t scll);
 				Result deinitialize();
                 
-				Result send(uint16_t addr, const uint8_t *buffer, unsigned bufferSize, Tick timeout);
-				Result receive(uint16_t addr, uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				Result transmit(uint16_t addr, const uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
+				Result receive(uint16_t addr, uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
+
+				Result transmit_IRQ(uint16_t addr, const uint8_t *buffer, unsigned bufferSize);
+				Result receive_IRQ(uint16_t addr, uint8_t *buffer, unsigned bufferSize);
 		};
 
 
@@ -392,8 +401,8 @@ namespace htl {
 				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
 				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
 				static constexpr auto _rccEnablePos = I2CTraits::rccEnablePos;
-                static constexpr uint32_t _rccResetAddr = I2CTraits::rccResetAddr;
-                static constexpr uint32_t _rccResetPos = I2CTraits::rccResetPos;
+                static constexpr auto _rccResetAddr = I2CTraits::rccResetAddr;
+                static constexpr auto _rccResetPos = I2CTraits::rccResetPos;
 				static I2CSlaveDeviceX _instance;
                 
 			public:
@@ -473,11 +482,11 @@ namespace htl {
 				using I2CTraits = internal::I2CTraits<deviceID_>;
                 
 			private:
-				static constexpr uint32_t _i2cAddr = I2CTraits::i2cAddr;
-				static constexpr uint32_t _rccEnableAddr = I2CTraits::rccEnableAddr;
-				static constexpr uint32_t _rccEnablePos = I2CTraits::rccEnablePos;
-                static constexpr uint32_t _rccResetAddr = I2CTraits::rccResetAddr;
-                static constexpr uint32_t _rccResetPos = I2CTraits::rccResetPos;
+				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
+				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
+				static constexpr auto _rccEnablePos = I2CTraits::rccEnablePos;
+                static constexpr auto _rccResetAddr = I2CTraits::rccResetAddr;
+                static constexpr auto _rccResetPos = I2CTraits::rccResetPos;
 				static I2CMasterDeviceX _instance;
                 
 			public:

@@ -101,7 +101,7 @@ void I2CSlaveDevice::setNotifyEvent(
     ISlaveNotifyEvent &event,
     bool enabled) {
 
-    if ((_state == State::reset) || (_state == State::ready)) {
+    if ((_state == State::reset) || (_state == State::ready) {
         _notifyEvent = &event;
         _notifyEventEnabled = enabled;
     }
