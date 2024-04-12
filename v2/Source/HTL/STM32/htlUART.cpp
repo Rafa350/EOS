@@ -215,8 +215,8 @@ Result UARTDevice::transmit_IRQ(
 		_state = State::transmiting;
 
 		_txBuffer = buffer;
-		_txLength = length;
 		_txCount = 0;
+        _txMaxCount = length;
 
 		enableTxEmptyInterrupt();
 		enableTx();
@@ -290,7 +290,7 @@ Result UARTDevice::transmit_DMA(
         // Inicia la transferencia per DMA
         //
         devDMA->setNotifyEvent(_dmaNotifyEvent, true);
-        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txLength);
+        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txMaxCount);
 
         return Result::success();
     }
@@ -411,7 +411,7 @@ void UARTDevice::interruptService() {
         /// Interrupcio 'RxNotEmpty'
         //
         if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
-            if (_rxCount < _rxBufferSize) {
+            if (_rxCount < _rxMaxCount) {
                 _rxBuffer[_rxCount++] = read8();
                 if (_rxCount == _rxMaxCount) {
                     disableAllRxInterrupts();
@@ -450,7 +450,7 @@ void UARTDevice::dmaNotifyEventHandler(
         // Transmissio complerta de tots els bytes.
         //
         case htl::dma::NotifyID::completed:
-            _txCount = _txLength;
+            _txCount = _txMaxCount;
             clearTxCompleteFlag();
             enableTxCompleteInterrupt();
             devDMA->disableNotifyEvent();

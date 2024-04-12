@@ -59,34 +59,34 @@ namespace htl {
 		/// Identificador de la notificacio.
 		///
         enum class NotifyID {
-            addressMatch,    ///< Conindicencia en l'adressa.
+            addressMatch,    ///< Coindicencia en l'adressa.
             rxStart,         ///< Inici de la recepcio.
-            rxCompleted,     ///< Recepcio de dades finalitzada.
+            rxCompleted,     ///< Recepcio finalitzada.
             txStart,         ///< Inici de la transmissio.
-            txCompleted      ///< Transmissio de dades finalitzada.
+            txCompleted      ///< Transmissio finalitzada.
         };
         
         struct NotifyEventArgs {
-            I2CDevice * const instance;     ///< La instancia del dispositiu.
-            NotifyID id;            
+            I2CDevice * const instance; ///< La instancia del dispositiu.
+            NotifyID id;                ///< Identificador de la notificacio
             bool irq;
             union {
                 struct {
-                    uint16_t addr;
+                    uint16_t addr;      ///< L'adressa coincident.
                 } AddressMatch;
                 struct {
-                  uint8_t *data;
-                  unsigned dataSize;
+                  uint8_t *buffer;      ///< Buffer de dades.
+                  unsigned bufferSize;  ///< Tamany del buffer de dades.
                 } RxStart;
                 struct {
-                    unsigned dataLength;
+                    unsigned length;    ///< Nombre de bytes rebuts.
                 } RxCompleted;
                 struct {
-                    uint8_t *data;
-                    unsigned dataLength;
+                    uint8_t *buffer;    ///< Buffer de dades
+                    unsigned length;    ///< Nombre de bytes a transmetre.
                 } TxStart;
                 struct {
-                    unsigned dataLength;
+                    unsigned length;    ///< Nombre de bytes transmessos.
                 } TxCompleted;
             };
         };
@@ -291,7 +291,7 @@ namespace htl {
                 
 			private:
 				State _state;
-				uint8_t *_data;
+				uint8_t *_buffer;
 				unsigned _maxCount;
 				unsigned _count;
                 ISlaveNotifyEvent *_notifyEvent;
@@ -302,10 +302,10 @@ namespace htl {
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 
                 void notifyAddressMatch(uint16_t addr, bool irq);
-                void notifyRxStart(uint8_t * &data, unsigned &dataSize, bool irq);
-                void notifyRxCompleted(unsigned dataLength, bool irq);
-                void notifyTxStart(uint8_t * &data, unsigned &dataLength, bool irq);
-                void notifyTxCompleted(unsigned dataLength, bool irq);
+                void notifyRxStart(uint8_t * &buffer, unsigned &bufferSize, bool irq);
+                void notifyRxCompleted(unsigned length, bool irq);
+                void notifyTxStart(uint8_t * &buffer, unsigned &length, bool irq);
+                void notifyTxCompleted(unsigned length, bool irq);
 
 				void interruptServiceListen();
 				void interruptServiceReceive();

@@ -78,8 +78,8 @@ void SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler(
 	    // Inici de la transmissio de dades.
 	    //
 	    case htl::i2c::NotifyID::txStart: {
-            args.TxStart.data = (uint8_t*) _txBuffer;
-            args.TxStart.dataLength = _txBufferSize;
+            args.TxStart.buffer = (uint8_t*) _txBuffer;
+            args.TxStart.length = _txBufferSize;
             notifyTxStart();
 	        break;
 	    }
@@ -87,21 +87,21 @@ void SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler(
 	    // Transmissio de dades finalitzada
 	    //
 		case htl::i2c::NotifyID::txCompleted:
-			notifyTxCompleted(args.TxCompleted.dataLength);
+			notifyTxCompleted(args.TxCompleted.length);
 			break;
 
         // Inici de la recepcio de dades.
 	    //
         case htl::i2c::NotifyID::rxStart:
-            args.RxStart.data = _rxBuffer;
-            args.RxStart.dataSize = _rxBufferSize;
+            args.RxStart.buffer = _rxBuffer;
+            args.RxStart.bufferSize = _rxBufferSize;
             notifyRxStart();
             break;
 
         // Recepcio de dades finalitzada.
         //
         case htl::i2c::NotifyID::rxCompleted:
-            notifyRxCompleted(args.RxCompleted.dataLength);
+            notifyRxCompleted(args.RxCompleted.length);
             break;
 	}
 }

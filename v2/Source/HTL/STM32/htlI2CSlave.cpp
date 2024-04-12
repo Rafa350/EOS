@@ -101,7 +101,7 @@ void I2CSlaveDevice::setNotifyEvent(
     ISlaveNotifyEvent &event,
     bool enabled) {
 
-    if ((_state == State::reset) || (_state == State::ready) {
+    if ((_state == State::reset) || (_state == State::ready)) {
         _notifyEvent = &event;
         _notifyEventEnabled = enabled;
     }
@@ -216,7 +216,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 
     	enableStopDetectionInterrupt();
 
-        _data = nullptr;
+        _buffer = nullptr;
         _maxCount = 0;
         _count = 0;
 
@@ -245,15 +245,15 @@ void I2CSlaveDevice::interruptServiceReceive() {
 	    // Notifica l'inici de la recepcio i sol·licita les dades
 	    // i el seu tamany maxim.
 	    //
-	    if ((_data == nullptr) || (_count == _maxCount)) {
-	        notifyRxStart(_data, _maxCount, true);
+	    if ((_buffer == nullptr) || (_count == _maxCount)) {
+	        notifyRxStart(_buffer, _maxCount, true);
 	        _count = 0;
 	    }
 
         // Llegeix el byte i el acumula en el buffer
         //
-	    if ((_data != nullptr) && (_count < _maxCount))
-	        _data[_count++] = (uint8_t) _i2c->RXDR;
+	    if ((_buffer != nullptr) && (_count < _maxCount))
+	        _buffer[_count++] = (uint8_t) _i2c->RXDR;
 	}
 
 	// Deteccio de la condicio STOP
@@ -311,8 +311,8 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 	if (isTxBufferEmptyInterruptEnabled() &&
 	    isTxBufferEmptyFlagSet()) {
 
-	    if ((_data == nullptr) || (_count == _maxCount)) {
-            notifyTxStart(_data, _maxCount, true);
+	    if ((_buffer == nullptr) || (_count == _maxCount)) {
+            notifyTxStart(_buffer, _maxCount, true);
             _count = 0;
 		}
 
@@ -320,7 +320,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 		// transmiteix zeros
 		//
 		if (_count < _maxCount)
-		    _i2c->TXDR = _data[_count++];
+		    _i2c->TXDR = _buffer[_count++];
 		else
 		    _i2c->TXDR = 0;
 	}
@@ -351,14 +351,14 @@ void I2CSlaveDevice::notifyAddressMatch(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica el inici de la recepcio d'una trama de dades.
-/// \param    data: El buffer de dades
-/// \param    bufferSize: El tamany del buffer de dades en bytes.
+/// \brief    Notifica l'inici de la recepcio de dades.
+/// \param    buffer: El buffer de dades
+/// \param    bufferSize: El tamany del buffer en bytes.
 /// \param    irq: Indica si es genera desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyRxStart(
-    uint8_t * &data,
-    unsigned &dataSize,
+    uint8_t * &buffer,
+    unsigned &bufferSize,
     bool irq) {
 
     if (_notifyEventEnabled) {
@@ -367,28 +367,28 @@ void I2CSlaveDevice::notifyRxStart(
             .id = NotifyID::rxStart,
             .irq = irq,
             .RxStart {
-                .data = nullptr,
-                .dataSize = 0
+                .buffer = nullptr,
+                .bufferSize = 0
             }
         };
         _notifyEvent->execute(args);
-        data = args.RxStart.data;
-        dataSize = args.RxStart.dataSize;
+        buffer = args.RxStart.buffer;
+        bufferSize = args.RxStart.bufferSize;
     }
     else {
-        data = nullptr;
-        dataSize = 0;
+        buffer = nullptr;
+        bufferSize = 0;
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica que ha finalitzat la recepcio de dades.
-/// \param    dataLength: Tamany de dades en bytes.
+/// \param    length: Nombre de bytes rebuts.
 /// \param    irq: Indica si es genera desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyRxCompleted(
-    unsigned dataLength,
+    unsigned length,
     bool irq) {
     
     if (_notifyEventEnabled) {
@@ -397,7 +397,7 @@ void I2CSlaveDevice::notifyRxCompleted(
             .id = NotifyID::rxCompleted,
             .irq = irq,
             .RxCompleted {
-                .dataLength = dataLength
+                .length = length
             }
         };
         _notifyEvent->execute(args);
@@ -406,14 +406,14 @@ void I2CSlaveDevice::notifyRxCompleted(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Noitifica que falten dades per transmetre.
-/// \param    data: Buffer de dades.
-/// \param    dataLength: Nombre de bytes en el buffer de dades.
+/// \brief    Noitifica l'inici de la transmissio de dades.
+/// \param    buffer: Buffer de dades.
+/// \param    length: Nombre de bytes a transmetre.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyTxStart(
-    uint8_t * &data,
-    unsigned &dataLength,
+    uint8_t * &buffer,
+    unsigned &length,
     bool irq) {
     
     if (_notifyEventEnabled) {
@@ -422,28 +422,28 @@ void I2CSlaveDevice::notifyTxStart(
             .id = NotifyID::txStart,
             .irq = irq,
             .TxStart {
-                .data = nullptr,
-                .dataLength = 0
+                .buffer = nullptr,
+                .length = 0
             }
         };
         _notifyEvent->execute(args);
-        data = args.TxStart.data;
-        dataLength = args.TxStart.dataLength;
+        buffer = args.TxStart.buffer;
+        length = args.TxStart.length;
     }
     else {
-        data = nullptr;
-        dataLength = 0;
+        buffer = nullptr;
+        length = 0;
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de la transmissio.
-/// \brief    dataLength: Longitut de les dades transmeses.
+/// \brief    length: Nombre de bytes transmessos.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyTxCompleted(
-    unsigned dataLength,
+    unsigned length,
     bool irq) {
     
     if (_notifyEventEnabled) {
@@ -452,7 +452,7 @@ void I2CSlaveDevice::notifyTxCompleted(
             .id = NotifyID::txCompleted,
             .irq = irq,
             .TxCompleted {
-                .dataLength = dataLength
+                .length = length
             }
         };
         _notifyEvent->execute(args);

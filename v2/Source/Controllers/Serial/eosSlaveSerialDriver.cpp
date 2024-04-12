@@ -10,9 +10,13 @@ using namespace eos;
 ///
 SlaveSerialDriver::SlaveSerialDriver():
     _state {State::reset},
+    _txStartEvent {nullptr},
     _txCompletedEvent {nullptr},
+    _rxStartEvent {nullptr},
     _rxCompletedEvent {nullptr},
+    _txStartEventEnabled {false},
     _txCompletedEventEnabled {false},
+    _rxStartEventEnabled {false},
     _rxCompletedEventEnabled {false} {
 }
 
@@ -68,6 +72,20 @@ bool SlaveSerialDriver::listen(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Habilita l'event 'TxStart'
+/// \param    event: L'event
+/// \param    enabled: Indica si el deixa habilitat
+///
+void SlaveSerialDriver::setTxStartEvent(
+    const ITxStartEvent &event,
+    bool enabled) {
+
+    _txStartEvent = &event;
+    _txStartEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Habilita l'event 'TxCompleted'
 /// \param    event: L'event
 /// \param    enabled: Indica si el deixa habilitat
@@ -78,6 +96,20 @@ void SlaveSerialDriver::setTxCompletedEvent(
 
     _txCompletedEvent = &event;
     _txCompletedEventEnabled = enabled;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita l'event 'RxStart'
+/// \param    event: L'event
+/// \param    enabled: Indica si el deixa habilitat
+///
+void SlaveSerialDriver::setRxStartEvent(
+    const IRxStartEvent &event,
+    bool enabled) {
+
+    _rxStartEvent = &event;
+    _rxStartEventEnabled = enabled;
 }
 
 
@@ -133,7 +165,9 @@ void SlaveSerialDriver::raiseRxCompleted(
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el inici de la transmissio.
 ///
-void SlaveSerialDriver::notifyTxStart() {
+void SlaveSerialDriver::notifyTxStart(
+    uint8_t * &buffer,
+    unsigned &length) {
 
     _state = State::transmiting;
 }
@@ -156,7 +190,9 @@ void SlaveSerialDriver::notifyTxCompleted(
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el inici de la recepcio.
 ///
-void SlaveSerialDriver::notifyRxStart() {
+void SlaveSerialDriver::notifyRxStart(
+    uint8_t * &buffer,
+    unsigned &bufferSize) {
 
     _state = State::receiving;
 }
