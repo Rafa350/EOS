@@ -1,20 +1,20 @@
 #pragma once
-#ifndef __eosSlaveSerialDriver_I2CSlave__
-#define __eosSlaveSerialDriver_I2CSlave__
+#ifndef __eosSerialDriver_I2CSlave__
+#define __eosSerialDriver_I2CSlave__
 
 
-#include "Controllers/Serial/eosSlaveSerialDriver.h"
+#include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlI2C.h"
 
 
 namespace eos {
 
-	class SlaveSerialDriver_I2CSlave final: public SlaveSerialDriver {
+	class SerialDriver_I2CSlave final: public SerialDriver {
 		public:
 	        using DevI2C = htl::i2c::I2CSlaveDevice;
 
 		private:
-			using I2CNotifyEvent = htl::i2c::SlaveNotifyEvent<SlaveSerialDriver_I2CSlave>;
+			using I2CNotifyEvent = htl::i2c::SlaveNotifyEvent<SerialDriver_I2CSlave>;
 			using I2CNotifyEventArgs = htl::i2c::NotifyEventArgs;
 
 		private:
@@ -23,18 +23,18 @@ namespace eos {
 			uint8_t *_rxBuffer;
 			unsigned _rxBufferSize;
 			const uint8_t *_txBuffer;
-			unsigned _txBufferSize;
+			unsigned _txLength;
 
 		private:
 			void onInitialize() override;
 			void onDeinitialize() override;
-			void onListen(const uint8_t *txBuffer, unsigned txBufferSize,
-			        uint8_t *rxBuffer, unsigned rxBufferSize) override;
+            void onTransmit(const uint8_t *buffer, unsigned length) override;
+            void onReceive(uint8_t *buffer, unsigned bufferSize) override;
 
             void i2cNotifyEventHandler(I2CNotifyEventArgs &args);
 
 		public:
-			SlaveSerialDriver_I2CSlave(DevI2C *devI2C);
+			SerialDriver_I2CSlave(DevI2C *devI2C);
 	};
 }
 

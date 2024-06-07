@@ -439,7 +439,7 @@ void I2CSlaveDevice::notifyTxStart(
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de la transmissio.
-/// \brief    length: Nombre de bytes transmessos.
+/// \param    length: Nombre de bytes transmessos.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyTxCompleted(

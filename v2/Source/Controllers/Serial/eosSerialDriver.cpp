@@ -61,15 +61,10 @@ bool SerialDriver::transmit(
     unsigned length) {
 
     if (_state == State::ready) {
-
-        raiseTxStart();
         onTransmit(buffer, length);
-
         _state = State::transmiting;
-
         return true;
     }
-
     else
         return false;
 }
@@ -86,15 +81,10 @@ bool SerialDriver::receive(
     unsigned bufferSize) {
 
     if (_state == State::ready) {
-
-        raiseRxStart();
         onReceive(buffer, bufferSize);
-
         _state = State::receiving;
-
         return true;
     }
-
     else
         return false;
 }
@@ -125,22 +115,6 @@ void SerialDriver::setRxCompletedEvent(
 
 	_rxCompletedEvent = &event;
 	_rxCompletedEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera l'event 'TxStart'.
-///
-void SerialDriver::raiseTxStart() {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera l'event 'RxStart'.
-///
-void SerialDriver::raiseRxStart() {
-
 }
 
 
@@ -195,7 +169,7 @@ void SerialDriver::notifyTxCompleted(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Invoca a la funcio callback.
+/// \brief    Notifica el final de la recepcio.
 /// \param    length: Nombre de bytes rebuts
 ///
 void SerialDriver::notifyRxCompleted(

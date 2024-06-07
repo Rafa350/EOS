@@ -44,8 +44,6 @@ namespace eos {
             bool _rxCompletedEventEnabled;
 
         private:
-            void raiseTxStart();
-            void raiseRxStart();
             void raiseTxCompleted(unsigned length);
             void raiseRxCompleted(unsigned length);
 

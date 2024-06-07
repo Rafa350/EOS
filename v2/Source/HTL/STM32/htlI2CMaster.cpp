@@ -122,7 +122,7 @@ Result I2CMasterDevice::transmit(
 
 	// Inicia la comunicacio.
 	//
-	enable()                    // Habilita el dispositiu.
+	enable();                   // Habilita el dispositiu.
 	_i2c->CR2 |= I2C_CR2_START; // Inicia la sequencia START, ADDR
 
 	unsigned blockSize = std::min(bufferSize, 255u);

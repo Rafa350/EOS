@@ -67,26 +67,26 @@ namespace htl {
         };
         
         struct NotifyEventArgs {
-            I2CDevice * const instance; ///< La instancia del dispositiu.
-            NotifyID id;                ///< Identificador de la notificacio
+            I2CDevice * const instance;  ///< La instancia del dispositiu.
+            NotifyID id;                 ///< Identificador de la notificacio
             bool irq;
             union {
                 struct {
-                    uint16_t addr;      ///< L'adressa coincident.
+                    uint16_t addr;       ///< L'adressa coincident.
                 } AddressMatch;
                 struct {
-                  uint8_t *buffer;      ///< Buffer de dades.
-                  unsigned bufferSize;  ///< Tamany del buffer de dades.
+                    uint8_t *buffer;     ///< Buffer de dades.
+                    unsigned bufferSize; ///< Tamany del buffer de dades.
                 } RxStart;
                 struct {
-                    unsigned length;    ///< Nombre de bytes rebuts.
+                    unsigned length;     ///< Nombre de bytes rebuts.
                 } RxCompleted;
                 struct {
-                    uint8_t *buffer;    ///< Buffer de dades
-                    unsigned length;    ///< Nombre de bytes a transmetre.
+                    uint8_t *buffer;     ///< Buffer de dades
+                    unsigned length;     ///< Nombre de bytes a transmetre.
                 } TxStart;
                 struct {
-                    unsigned length;    ///< Nombre de bytes transmessos.
+                    unsigned length;     ///< Nombre de bytes transmessos.
                 } TxCompleted;
             };
         };
@@ -348,6 +348,18 @@ namespace htl {
 				/// Comprova si el dispositiu esta ocupat.
 				///
 				inline bool isBusy() const { return _state == State::listen || _state == State::receiving || _state == State::transmiting; }
+
+				// Comprova si el dispositiu esta en escolta.
+				//
+				inline bool isListening() const { return _state == State::listen; }
+
+                // Comprova si el dispositiu esta transmetent.
+                //
+				inline bool isTransmiting() const { return _state == State::transmiting; }
+
+				// Comprova si el dispositiu esta rebent.
+                //
+                inline bool isReceiving() const { return _state == State::receiving; }
 		};
 
 		class I2CMasterDevice: public I2CDevice {

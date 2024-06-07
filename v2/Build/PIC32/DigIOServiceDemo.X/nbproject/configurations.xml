@@ -64,7 +64,7 @@
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
               <itemPath>../../../Include/System/Collections/eosPriorityQueue.h</itemPath>
               <itemPath>../../../Include/System/Collections/eosVector.h</itemPath>
-              <itemPath>../../../Include/System/Collections/eosList.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosIntrusiveForwardList.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosHeapAllocator.h</itemPath>
@@ -206,14 +206,16 @@
         <targetDevice>PIC32MX460F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>SKDEPIC32PlatformTool</platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.30</languageToolchainVersion>
+        <languageToolchainVersion>4.40</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.6.369"/>
       </packs>
+      <ScriptingSettings>
+      </ScriptingSettings>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -232,6 +234,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -455,11 +458,21 @@
       <SKDEPIC32PlatformTool>
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
         <property key="lastid" value=""/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
+      <Tool>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="lastid" value=""/>
+        <property key="whatToProgram" value="all"/>
+      </Tool>
     </conf>
     <conf name="PIC32_ETH_STARTER_KIT" type="2">
       <toolsSet>
@@ -467,14 +480,16 @@
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool></platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.30</languageToolchainVersion>
+        <languageToolchainVersion>4.40</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.6.369"/>
       </packs>
+      <ScriptingSettings>
+      </ScriptingSettings>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -493,6 +508,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>

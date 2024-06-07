@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Serial/eosSlaveSerialDriver_I2CSlave.h"
+#include "Controllers/Serial/eosSerialDriver_I2CSlave.h"
 #include "HTL/htlI2C.h"
 
 
@@ -11,58 +11,65 @@ using namespace htl;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    devI2C: El dispositiu I2C a utilitzar.
-/// \param    buffer: El buffer.
-/// \param    bufferSize: Tamany en bytes del buffer.
 ///
-SlaveSerialDriver_I2CSlave::SlaveSerialDriver_I2CSlave(
+SerialDriver_I2CSlave::SerialDriver_I2CSlave(
 	DevI2C *devI2C) :
 
 	_devI2C {devI2C},
-	_i2cNotifyEvent {*this, &SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler} {
+	_i2cNotifyEvent {*this, &SerialDriver_I2CSlave::i2cNotifyEventHandler},
+	_rxBuffer {nullptr},
+	_rxBufferSize {0},
+	_txBuffer {nullptr},
+	_txLength {0} {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el driver.
+/// \brief    Procesas la inicialitzacio del driver.
 ///
-void SlaveSerialDriver_I2CSlave::onInitialize() {
+void SerialDriver_I2CSlave::onInitialize() {
 
     _devI2C->setNotifyEvent(_i2cNotifyEvent);
+    _devI2C->listen_IRQ();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desinicialitza el driver.
+/// \brief    Procesa la desinicialitzacio del driver.
 ///
-void SlaveSerialDriver_I2CSlave::onDeinitialize() {
+void SerialDriver_I2CSlave::onDeinitialize() {
 
-    if (!_devI2C->isReady())
-        _devI2C->abortListen();
+    _devI2C->abortListen();
     _devI2C->disableNotifyEvent();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Transmiteix un bloc de dades.
-/// \param    txBuffer: El buffer de tranmissio
-/// \param    txBufferSize: El tamany en bytes del buffer de transmissio..
-/// \param    rxBuffer: El buffer de recepcio.
-/// \param    rxBufferSize: El tamany en bytes del buffer de recepcio.
+/// \brief    Procesa l'inici de la transmissio de dades.
+/// \param    buffer: El buffer de dades.
+/// \param    length: Nombre de bytes a transmetre.
 ///
-void SlaveSerialDriver_I2CSlave::onListen(
-    const uint8_t *txBuffer,
-    unsigned txBufferSize,
-    uint8_t *rxBuffer,
-    unsigned rxBufferSize) {
+void SerialDriver_I2CSlave::onTransmit(
+    const uint8_t *buffer,
+    unsigned length) {
 
-    _txBuffer = txBuffer;
-    _txBufferSize = txBufferSize;
+    _txBuffer = buffer;
+    _txLength = length;
+}
 
-    _rxBuffer = rxBuffer;
-    _rxBufferSize = rxBufferSize;
 
-    _devI2C->listen_IRQ();
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'inici de la recepcio de dades.
+/// \param    buffer: El buffer de dades.
+/// \param    bufferSize: El tamany en bytes del buffer de dades.
+///
+void SerialDriver_I2CSlave::onReceive(
+    uint8_t *buffer,
+    unsigned bufferSize) {
+
+    _rxBuffer = buffer;
+    _rxBufferSize = bufferSize;
 }
 
 
@@ -70,7 +77,7 @@ void SlaveSerialDriver_I2CSlave::onListen(
 /// \brief    Procesa els events de notificacio.
 /// \param    args: Parametres del event
 ///
-void SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler(
+void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 	I2CNotifyEventArgs &args) {
 
 	switch (args.id) {
@@ -79,8 +86,7 @@ void SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler(
 	    //
 	    case htl::i2c::NotifyID::txStart: {
             args.TxStart.buffer = (uint8_t*) _txBuffer;
-            args.TxStart.length = _txBufferSize;
-            notifyTxStart();
+            args.TxStart.length = _txLength;
 	        break;
 	    }
 
@@ -88,6 +94,8 @@ void SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler(
 	    //
 		case htl::i2c::NotifyID::txCompleted:
 			notifyTxCompleted(args.TxCompleted.length);
+			_txBuffer = nullptr;
+			_txLength = 0;
 			break;
 
         // Inici de la recepcio de dades.
@@ -95,13 +103,14 @@ void SlaveSerialDriver_I2CSlave::i2cNotifyEventHandler(
         case htl::i2c::NotifyID::rxStart:
             args.RxStart.buffer = _rxBuffer;
             args.RxStart.bufferSize = _rxBufferSize;
-            notifyRxStart();
             break;
 
         // Recepcio de dades finalitzada.
         //
         case htl::i2c::NotifyID::rxCompleted:
             notifyRxCompleted(args.RxCompleted.length);
+            _rxBuffer = nullptr;
+            _rxBufferSize = 0;
             break;
 	}
 }
