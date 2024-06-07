@@ -1,11 +1,13 @@
 {
-    "name": "EOS",
-    "version": "2.0.0-beta",
+    "name": "EOS_Core",
+    "version": "2.0.0",
     "description": "EOS enbedded operating system",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Rafa350/EOS/tree/master/v2"
+        "url": "https://github.com/Rafa350/EOS/tree/master/v2/PlatformIO"
     },
+    "frameworks": "*",
+    "platforms": "*",
     "export": {
         "exclude": [
             "Build",
