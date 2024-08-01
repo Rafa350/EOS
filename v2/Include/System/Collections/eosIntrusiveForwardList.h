@@ -9,8 +9,8 @@
 
 namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
-    namespace System {
-        namespace Collections {
+    namespace system {
+        namespace collections {
 #endif
 
             template <typename T_, int tag_>

@@ -23,7 +23,7 @@
         #define EOS_PLATFORM_PIC32MX7
         #define EOS_PLATFORM_PIC32MX795F512L
     #else
-        #error "Unknown processor PIC32"
+        #error "Unknown PIC32 processor"
     #endif
     #define EOS_PLATFORM_DETECTED 1
 
@@ -59,7 +59,7 @@
         #define EOS_PLATFORM_STM32G0
         #define EOS_PLATFORM_STM32G030
         #define EOS_PLATFORM_STM32G030C8
-        
+
     // STM32G031xx
     #elif defined(STM32G031J6)
         #define EOS_PLATFORM_STM32G0
@@ -73,7 +73,7 @@
         #define EOS_PLATFORM_STM32G0
         #define EOS_PLATFORM_STM32G031
         #define EOS_PLATFORM_STM32G031K8
-        
+
     // STM32G051xx
     #elif defined(STM32G051C8)
         #define EOS_PLATFORM_STM32G0
@@ -83,7 +83,7 @@
         #define EOS_PLATFORM_STM32G0
         #define EOS_PLATFORM_STM32G051
         #define EOS_PLATFORM_STM32G051K8
-        
+
     // STM32G071xx
     #elif defined(STM32G071KB)
         #define EOS_PLATFORM_STM32G0
@@ -124,14 +124,14 @@
         #define EOS_PLATFORM_STM32F7
         #define EOS_PLATFORM_STM32F746
         #define EOS_PLATFORM_STM32F746NG
-        
+
     // STM32F769xx
     #elif defined(STM32F769xx)
         #define EOS_PLATFORM_STM32F7
         #define EOS_PLATFORM_STM32F769
-        
+
     #else
-        #error  "Unknown processor STM32"
+        #error  "Unknown STM32 processor"
     #endif
 
 	#define EOS_PLATFORM_DETECTED 1
