@@ -39,14 +39,14 @@ Device_ISO808::Device_ISO808(
     _newState {0},
     _pinSYNC {pinSYNC},
     _pinLOAD {pinLOAD},
-    _pinIN1 {pinINI1},
-    _pinIN2 {pinINI2},
-    _pinIN3 {pinINI3},
-    _pinIN4 {pinINI4},
-    _pinIN5 {pinINI5},
-    _pinIN6 {pinINI6},
-    _pinIN7 {pinINI7},
-    _pinIN8 {pinINI8},
+    _pinIN1 {pinIN1},
+    _pinIN2 {pinIN2},
+    _pinIN3 {pinIN3},
+    _pinIN4 {pinIN4},
+    _pinIN5 {pinIN5},
+    _pinIN6 {pinIN6},
+    _pinIN7 {pinIN7},
+    _pinIN8 {pinIN8},
     _pinOUTEN {pinOUTEN},
     _pinFAULT {pinFAULT} {
 
@@ -56,10 +56,12 @@ Device_ISO808::Device_ISO808(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
 ///
-void Device_ISO808::initialize() {
+Device_ISO808::Result Device_ISO808::initialize() {
 
     if (_pinOUTEN == nullptr)
         _pinOUTEN->clear();
+
+    return Result::success();
 }
 
 
@@ -67,7 +69,7 @@ void Device_ISO808::initialize() {
 /// \brief    Desinicialitza el dispositiu.
 ///
 void Device_ISO808::deinitialize() {
-    
+
     if (_pinOUTEN == nullptr)
         _pinOUTEN->clear();
 }
@@ -103,6 +105,6 @@ void Device_ISO808::update() {
 /// \return   True si tot es correcte.
 ///
 bool Device_ISO808::isOK() {
-    
+
     return _pinFAULT->read();
 }
