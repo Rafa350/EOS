@@ -64,21 +64,11 @@ bool CommandLineProcessor::process(
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    id: Identificador de la comanda.
-/// \param    cmd: Text de la comanda.
-/// \param    shortDescription: Descripcio curta.
-/// \param    longDescription: Descripcio llarga.
+/// \param    info: Definicio de la comanda.
 ///
 CommandDefinition::CommandDefinition(
-	uint32_t id,
-	const char *cmd,
-	const char *shortDescription,
-	const char *longDescription) :
-
-	_id {id},
-	_cmd {cmd},
-	_shortDescription {shortDescription},
-	_longDescription {longDescription} {
+	const CommandDefinitionInfo &info):
+	_info {&info} {
 
 }
 

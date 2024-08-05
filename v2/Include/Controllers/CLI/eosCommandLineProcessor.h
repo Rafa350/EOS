@@ -51,24 +51,28 @@ namespace eos {
     		}
 	};
 
+	struct CommandDefinitionInfo {
+		uint32_t id;
+		const char *cmd;
+		const char *shortDescription;
+		const char *longDescription;
+	};
+
 	class CommandDefinition final {
 		private:
-			uint32_t _id;
-			const char *_cmd;
-			const char *_shortDescription;
-			const char *_longDescription;
+			const CommandDefinitionInfo *_info;
 
 		private:
     		CommandDefinition(const CommandDefinition&) = delete;
     		CommandDefinition& operator = (const CommandDefinition&) = delete;
 
 		public:
-			CommandDefinition(uint32_t id, const char *cmd, const char *shortDescription = nullptr, const char *longDescription = nullptr);
+			CommandDefinition(const CommandDefinitionInfo &info);
 
-			inline uint32_t getID() const { return _id; }
-			inline const char *getCmd() const { return _cmd; }
-			inline const char *getShortDescription() const { return _shortDescription; }
-			inline const char *getLongDescription() const { return _longDescription; }
+			inline uint32_t getID() const { return _info->id; }
+			inline const char *getCmd() const { return _info->cmd; }
+			inline const char *getShortDescription() const { return _info->shortDescription; }
+			inline const char *getLongDescription() const { return _info->longDescription; }
 	};
 
 }
