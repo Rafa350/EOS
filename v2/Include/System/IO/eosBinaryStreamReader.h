@@ -17,7 +17,7 @@ namespace eos {
             const uint8_t * _ptr;
 
         public:
-            BinaryStreamReader(const uint8_t *buffer, uint32_t size);
+            BinaryStreamReader(const uint8_t *buffer, unsigned size);
 
             inline uint8_t peek() const {
                 return *_ptr;
@@ -39,7 +39,7 @@ namespace eos {
                 return _begin;
             }
 
-            inline uint32_t length() const {
+            inline unsigned length() const {
                 return _ptr - _begin;
             }
     };

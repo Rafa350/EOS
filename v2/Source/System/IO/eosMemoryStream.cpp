@@ -7,27 +7,49 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief   Constructor del objecte.
-/// \param   buffer: Buffer de dades del stream.
-/// \param   bufferSize: Tamany del buffer en bytes.
+/// \brief    Construeix l'objecte.
 ///
-MemoryStream::MemoryStream(
-    uint8_t* buffer, 
-    int bufferSize):
+MemoryStream::MemoryStream():
+	_begin {nullptr},
+	_end {nullptr},
+	_ptr {nullptr} {
 
-    buffer(buffer),
-    bufferSize(bufferSize) {
-    
-    eosAssert(buffer != nullptr);
-    eosAssert(buffserSize > 0);    
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Destructor del objecte.
+/// \brief   Construeix l'objecte i l'inicialitza.
+/// \param   buffer: Buffer de dades del stream.
+/// \param   size: Tamany del buffer en bytes.
 ///
-MemoryStream::~MemoryStream() {
-    
+MemoryStream::MemoryStream(
+    uint8_t* buffer,
+    unsigned size):
+
+    _begin {buffer},
+    _end {buffer + size},
+	_ptr {buffer} {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte la posicio actual de lectura/escriptura.
+/// \return   La posicio.
+///
+unsigned MemoryStream::getPosition() const {
+
+	return _ptr - _begin;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la posicio de lectura/escriptura.
+/// \param    position: La nova posicio. No pot sortir dels limits del buffer.
+///
+void MemoryStream::setPosition(
+	unsigned position) {
+
+	if ((_begin + position) < _end)
+		_ptr = _begin + position;
 }
 
 
@@ -37,23 +59,31 @@ MemoryStream::~MemoryStream() {
 /// \param    size: Numero de bytes a escriure.
 /// \return   El numero de bytes escrits.
 ///
-int MemoryStream::write(
-    const void* data, 
-    int size) {
-    
-    eosAssert(data != nullptr);
-    eosAssert(size > 0);
-    
-    if ((bufferSize - writePosition) < size)
-        size = bufferSize - writePosition;
-    
+Stream::Result MemoryStream::write(
+    const uint8_t *data,
+    unsigned size,
+	unsigned *count) {
+
+    if (_ptr + size >= _end)
+        size = _end - _ptr;
+
     if (size > 0) {
-        memcpy(buffer + writePosition, data, size);
-        writePosition += size;
+        memcpy(_ptr, data, size);
+        _ptr += size;
     }
-    
-    if (writePosition > length)
-        length = writePosition;
-    
-    return size;
+
+    if (count != nullptr)
+    	*count = size;
+
+    return Result::success();
 }
+
+
+Stream::Result MemoryStream::read(
+	uint8_t *data,
+	unsigned size,
+	unsigned *count) {
+
+	return Result::success();
+}
+

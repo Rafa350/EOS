@@ -34,6 +34,7 @@ namespace eos {
 
 		public:
     		CommandLineProcessor();
+
     		void setCommandEvent(ICommandEvent &event, bool enabled = true) {
     			_commandEvent = &event;
     			_commandEventEnabled = enabled;
@@ -45,14 +46,14 @@ namespace eos {
     			_commandEventEnabled = false;
     		}
     		void addCommand(CommandDefinition *definition);
+
     		bool process(const char *buffer);
-    		CommandList& getCommands() {
-    			return _commands;
-    		}
+
+    		inline CommandList& getCommands() { return _commands; }
 	};
 
 	struct CommandDefinitionInfo {
-		uint32_t id;
+		unsigned id;
 		const char *cmd;
 		const char *shortDescription;
 		const char *longDescription;
@@ -69,7 +70,7 @@ namespace eos {
 		public:
 			CommandDefinition(const CommandDefinitionInfo &info);
 
-			inline uint32_t getID() const { return _info->id; }
+			inline unsigned getID() const { return _info->id; }
 			inline const char *getCmd() const { return _info->cmd; }
 			inline const char *getShortDescription() const { return _info->shortDescription; }
 			inline const char *getLongDescription() const { return _info->longDescription; }

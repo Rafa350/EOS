@@ -4,40 +4,37 @@
 
 
 #include "eos.h"
+#include "System/IO/eosStream.h"
 
 
 namespace eos {
-    
+
     /// \brief Objecte per escriure en un stream.
     ///
     class TextStreamWriter {
         private:
-            uint8_t * const _begin;
-            uint8_t * const _end;
-            uint8_t * _ptr;
-            
+    		Stream *_stream;
+
         public:
-            TextStreamWriter(uint8_t *buffer, unsigned size);
-            
-            bool write(uint8_t data);
-            bool write(uint16_t data);
-            bool write(uint32_t data);
-            inline bool write(int8_t data) { return write(static_cast<uint8_t>(data)); }
-            inline bool write(int16_t data) { return write(static_cast<uint16_t>(data)); }
-            inline bool write(int32_t data) { return write(static_cast<uint32_t>(data)); }
-            bool write(const uint8_t *data, unsigned size);
-            bool write(const char *fmt, ...);
-            bool write(bool data);
+            TextStreamWriter();
+            TextStreamWriter(Stream *stream);
 
-            inline const uint8_t * data() const {
-                return _begin;
-            }
+            void initialize(Stream *stream);
 
-            inline uint16_t length() const {
-                return _ptr - _begin;
-            }
+            bool writeU8(uint8_t data);
+            bool writeU16(uint16_t data);
+            bool writeU32(uint32_t data);
+            bool writeU8Hex(uint8_t data);
+            bool writeU16Hex(uint16_t data);
+            bool writeU32Hex(uint32_t data);
+            bool writeI8(int8_t data);
+            bool writeI16(int16_t data);
+            bool writeI32(int32_t data);
+            bool writeChar(char data);
+            bool writeString(const char *data);
+            bool writeBool(bool data);
     };
-    
+
 }
 
 

@@ -41,6 +41,7 @@ bool CommandLineProcessor::process(
 			pc++;
 			pt++;
 		}
+
 		if ((*pc == '\0') && ((*pt == '\0') || (*pt == ' ') || (*pt == '\t'))) {
 
 			if (_commandEventEnabled) {
@@ -71,4 +72,3 @@ CommandDefinition::CommandDefinition(
 	_info {&info} {
 
 }
-

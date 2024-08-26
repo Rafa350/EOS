@@ -19,6 +19,8 @@ namespace eos {
         public:
             BinaryStreamWriter(uint8_t *buffer, unsigned size);
 
+            void clear() { _ptr = _begin; }
+
             bool writeU8(uint8_t data);
             bool writeU16(uint16_t data);
             bool writeU32(uint32_t data);
@@ -28,13 +30,8 @@ namespace eos {
             bool write(const uint8_t *data, unsigned size);
             inline bool write(bool data) { return writeU8(static_cast<uint8_t>(data)); }
 
-            inline const uint8_t * data() const {
-                return _begin;
-            }
-
-            inline uint16_t length() const {
-                return _ptr - _begin;
-            }
+            inline const uint8_t * data() const { return _begin; }
+            inline unsigned length() const { return _ptr - _begin; }
     };
 
 }

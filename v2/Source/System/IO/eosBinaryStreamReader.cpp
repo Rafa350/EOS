@@ -12,7 +12,7 @@ using namespace eos;
 ///
 BinaryStreamReader::BinaryStreamReader(
     const uint8_t *buffer,
-    uint32_t size):
+    unsigned size):
 
     _begin {buffer},
     _end {buffer + size},
