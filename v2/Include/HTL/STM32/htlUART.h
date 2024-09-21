@@ -228,7 +228,7 @@ namespace htl {
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
-                
+
 				void notifyTxComplete(const uint8_t *buffer, unsigned length, bool irq);
 				void notifyRxComplete(const uint8_t *buffer, unsigned length, bool irq);
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
@@ -238,19 +238,19 @@ namespace htl {
 				inline void enableTx() const {
 				    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TE);
 				}
-                
+
                 /// Habilita la recepcio.
                 ///
                 inline void enableRx() const {
                     ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RE);
                 }
-                
+
                 /// Deshabilita la transmissio.
                 ///
 				inline void disableTx() const {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TE);
 				}
-                
+
                 /// Deshabilita la recepcio.
                 ///
                 inline void disableRx() const {
@@ -262,7 +262,7 @@ namespace htl {
                 inline void enableTxDMA() const {
                     ATOMIC_SET_BIT(_usart->CR3, USART_CR3_DMAT);
                 }
-                
+
                 /// Deshabilita el DMA durant la recepcio.
                 ///
                 inline void disableTxDMA() const {
@@ -298,7 +298,13 @@ namespace htl {
                     #error "Unknown platform"
                     #endif
 				}
-                
+
+				/// Habilita la interrupcio 'ReceiveTimeout'
+				//
+				inline void enableRxTimeoutInterrupt() const {
+                    ATOMIC_SET_BIT(_usart->CR1, USART_CR1_RTOIE);
+				}
+
                 /// Deshabilita la interrupcio 'TxEmpty'.
                 ///
 				inline void disableTxEmptyInterrupt() const {
@@ -310,20 +316,26 @@ namespace htl {
                     #error "Unknown platform"
                     #endif
 				}
-                
+
                 /// Deshabilita totes les interrupcions de transmissio.
                 ///
 				inline void disableAllTxInterrupts() const {
                     #if defined(EOS_PLATFORM_STM32F7)
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE | USART_CR1_TCIE);
                     #elif defined(EOS_PLATFORM_STM32G0)
-                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE);
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_RTOIE);
                     #else
                     #error "Unknown platform"
                     #endif
 				}
 
-                /// Deshabilita totes les interrupcions de recepcio.
+				/// Habilita la interrupcio 'ReceiveTimeout'
+				//
+				inline void disableRxTimeoutInterrupt() const {
+                    ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RTOIE);
+				}
+
+				/// Deshabilita totes les interrupcions de recepcio.
                 ///
 				inline void disableAllRxInterrupts() const {
                     ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE_RXFNEIE | USART_CR1_RTOIE);
@@ -365,6 +377,12 @@ namespace htl {
 				    return (_usart->CR1 & USART_CR1_RTOIE) != 0;
 				}
 
+                /// Comprova si les interrupcios d'error esta habilitades.
+                ///
+				inline bool isErrorInterruptEnabled() const {
+				    return (_usart->CR3 & USART_CR3_EIE) != 0;
+				}
+
 				inline bool isTxEmptyFlagSet() const {
 				    #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				    return (_usart->ISR & USART_ISR_TXE) != 0;
@@ -393,6 +411,14 @@ namespace htl {
 				    return (_usart->ISR & USART_ISR_RTOF) != 0;
 				}
 
+				inline bool isParityErrorFlagSet() const {
+					return (_usart->ISR & USART_ISR_PE) != 0;
+				}
+
+				inline bool isFrameErrorFlagSet() const {
+					return (_usart->ISR & USART_ISR_FE) != 0;
+				}
+
 				inline void clearTxCompleteFlag() const {
 				    _usart->ICR = USART_ICR_TCCF;
 				}
@@ -401,7 +427,15 @@ namespace htl {
                     _usart->ICR = USART_ICR_RTOCF;
                 }
 
-				inline void write8(uint8_t data) const {
+                inline void clearParityErrorFlag() const {
+        			_usart->ICR = USART_ICR_PECF;
+                }
+
+                inline void clearFrameErrorFlag() const {
+        			_usart->ICR = USART_ICR_FECF;
+                }
+
+                inline void write8(uint8_t data) const {
 				    _usart->TDR = data;
 				}
 
@@ -671,10 +705,10 @@ namespace htl {
 
 #if defined(EOS_PLATFORM_STM32G030)
     #include "htl/STM32/G0/htlUART_AF_G030.h"
-    
+
 #elif defined(EOS_PLATFORM_STM32G031)
     #include "htl/STM32/G0/htlUART_AF_G031.h"
-    
+
 #elif defined(EOS_PLATFORM_STM32G051)
     #include "htl/STM32/G0/htlUART_AF_G051.h"
 
@@ -683,13 +717,13 @@ namespace htl {
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlUART_AF_F030.h"
-    
+
 #elif defined(EOS_PLATFORM_STM32F4)
     #include "htl/STM32/F4/htlUART_AF_F4.h"
-    
+
 #elif defined(EOS_PLATFORM_STM32F7)
     #include "htl/STM32/F7/htlUART_AF_F7.h"
-    
+
 #else
     #error "Unknown platform"
 #endif

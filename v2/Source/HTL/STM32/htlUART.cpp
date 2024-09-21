@@ -103,6 +103,10 @@ void UARTDevice::setProtocol(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el valor del timeout per recepcio.
+/// \param    timeout: El temps.
+///
 void UARTDevice::setRxTimeout(
     uint32_t timeout) {
 
@@ -251,6 +255,9 @@ Result UARTDevice::receive_IRQ(
 		_rxMaxCount = bufferSize;
 
 		enableRxNoEmptyInterrupt();
+		if ((_usart->CR2 & USART_CR2_RTOEN) != 0)
+			enableRxTimeoutInterrupt();
+
 		enableRx();
 
 		return Result::success();
@@ -374,64 +381,104 @@ void UARTDevice::interruptService() {
 #elif defined(EOS_PLATFORM_STM32G0)
 void UARTDevice::interruptService() {
 
-    // Transmissio amb el FIFO activat
-    //
-    if (_usart->CR1 & USART_CR1_FIFOEN) {
+	// Comprova de forma rapida si hi ha errors
+	//
+	if ((_usart->ISR & (USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE)) != 0) {
 
-    }
+		// Comprova si es un error PARITY
+		//
+		if (isParityErrorFlagSet()) {
 
-    // Transmissio amb el FIFO desactivat.
-    ///
-    else {
+			clearParityErrorFlag();
+		}
 
-        // Interrupcio 'TxEmpty'
-        //
-        if (isTxEmptyInterruptEnabled() && isTxEmptyFlagSet()) {
+		// Comprova si hi ha error FRAME
+		//
+	    if (isFrameErrorFlagSet() && isErrorInterruptEnabled()) {
 
-            if (_txCount < _txMaxCount) {
-                write8(_txBuffer[_txCount++]);
-                if (_txCount == _txMaxCount) {
-                    disableTxEmptyInterrupt();
-                    enableTxCompleteInterrupt();
-                }
-            }
-        }
+	    	clearFrameErrorFlag();
+	    }
 
-        // Interrupcio 'TxComplete'. Nomes en l'ultim caracter transmes.
-        //
-        if (isTxCompleteInterruptEnabled() && isTxCompleteFlagSet()) {
-            clearTxCompleteFlag();
-            disableAllTxInterrupts();
-            disableTx();
-            disableTxDMA();
-            notifyTxComplete(_txBuffer, _txCount, true);
-            _state = State::ready;
-        }
+	    // Comprova si es un error NOISE
+	    //
+	    if (((_usart->ISR & USART_ISR_NE) != 0) && isErrorInterruptEnabled()) {
 
-        /// Interrupcio 'RxNotEmpty'
-        //
-        if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
-            if (_rxCount < _rxMaxCount) {
-                _rxBuffer[_rxCount++] = read8();
-                if (_rxCount == _rxMaxCount) {
-                    disableAllRxInterrupts();
-                    disableRx();
-                    notifyRxComplete(_rxBuffer, _rxCount, true);
-                    _state = State::ready;
-                }
-            }
-        }
+	    	_usart->ICR = USART_ICR_NECF;
+	    }
 
-        // Interrupcio 'RxTimeout'
-        //
-        if (isRxTimeoutInterruptEnabled() && isRxTimeoutFlagSet()) {
-            clearRxTimeoutFlag();
-            disableAllRxInterrupts();
-            disableRx();
-            notifyRxComplete(_rxBuffer, _rxCount, true);
-            _state = State::ready;
-        }
-    }
+		// Comprova si es un error OVERRUN
+		//
+		if (((_usart->ISR & USART_ISR_ORE) != 0) &&
+			((_usart->CR1 & USART_CR1_RXNEIE_RXFNEIE) != 0) &&
+			((_usart->CR3 & (USART_CR3_RXFTIE | USART_CR3_EIE)) != 0)) {
+
+			_usart->ICR |= USART_ICR_ORECF;
+		}
+	}
+
+	// No hi han errrors
+	//
+	else {
+
+		// Transmissio amb el FIFO activat
+		//
+		if (_usart->CR1 & USART_CR1_FIFOEN) {
+
+		}
+
+		// Transmissio amb el FIFO desactivat.
+		///
+		else {
+
+			// Interrupcio 'TxEmpty'
+			//
+			if (isTxEmptyInterruptEnabled() && isTxEmptyFlagSet()) {
+
+				if (_txCount < _txMaxCount) {
+					write8(_txBuffer[_txCount++]);
+					if (_txCount == _txMaxCount) {
+						disableTxEmptyInterrupt();
+						enableTxCompleteInterrupt();
+					}
+				}
+			}
+
+			// Interrupcio 'TxComplete'. Nomes en l'ultim caracter transmes.
+			//
+			if (isTxCompleteInterruptEnabled() && isTxCompleteFlagSet()) {
+				clearTxCompleteFlag();
+				disableAllTxInterrupts();
+				disableTx();
+				disableTxDMA();
+				notifyTxComplete(_txBuffer, _txCount, true);
+				_state = State::ready;
+			}
+
+			/// Interrupcio 'RxNotEmpty'
+			//
+			if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
+				if (_rxCount < _rxMaxCount) {
+					_rxBuffer[_rxCount++] = read8();
+					if (_rxCount == _rxMaxCount) {
+						disableAllRxInterrupts();
+						disableRx();
+						notifyRxComplete(_rxBuffer, _rxCount, true);
+						_state = State::ready;
+					}
+				}
+			}
+
+			// Interrupcio 'RxTimeout'
+			//
+			if (isRxTimeoutInterruptEnabled() && isRxTimeoutFlagSet()) {
+				clearRxTimeoutFlag();
+				disableAllRxInterrupts();
+				disableRx();
+				notifyRxComplete(_rxBuffer, _rxCount, true);
+				_state = State::ready;
+			}
+		}
+	}
 }
 #endif
 
