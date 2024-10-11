@@ -1,16 +1,16 @@
 #pragma once
-#ifndef __eosBoard_NUCLEO_G071RB__
-#define __eosBoard_NUCLEO_G071RB__
+#ifndef __eosBoard_NUCLEO_G0B1RE__
+#define __eosBoard_NUCLEO_G0B1RE__
 
 
-#define EOS_HARDWARE_NUCLEO_G071RB
+#define EOS_HARDWARE_NUCLEO_G0B1RE
 
 
 // -----------------------------------------------------------------------
 // Board information
 // -----------------------------------------------------------------------
 
-#define EOS_BOARD_NAME            "NUCLEO G071RB"
+#define EOS_BOARD_NAME            "NUCLEO G0B1RE"
 #define EOS_BOARD_MANUFACTURER    "ST-Microelectronics"
 
 
@@ -200,4 +200,4 @@
 #endif // USE_ARDUINO
 
 
-#endif // __eosBoard_NUCLEO_G071RB__
+#endif // __eosBoard_NUCLEO_G0B1RE__

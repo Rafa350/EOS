@@ -1,34 +1,33 @@
 #pragma once
+#ifndef __eosCommandLineProcessor__
+#define __eosCommandLineProcessor__
 
 
 // EOS includes
 //
 #include "eos.h"
 #include "System/eosCallbacks.h"
-
-// STL includes
-//
-#include <forward_list>
+#include "System/Collections/eosIntrusiveForwardList.h"
 
 
 namespace eos {
 
 	class CommandDefinition;
 
-	class CommandLineProcessor final {
-		public:
-    		using CommandList = std::forward_list<CommandDefinition*>;
+    using CommandDefinitionList = IntrusiveForwardList<CommandDefinition, 1>;
+    using CommandDefinitionListNode = IntrusiveForwardListNode<CommandDefinition, 1>;
 
+	class CommandLineProcessor final {
 		public:
 			struct CommandEventArgs {
 				const CommandDefinition *command;
 				const char *text;
 			};
-			using ICommandEvent = eos::ICallbackP2<CommandLineProcessor *, const CommandEventArgs&>;
-			template <typename Instance_> using CommandEvent = eos::CallbackP2<Instance_, CommandLineProcessor*, const CommandEventArgs&>;
+			using ICommandEvent = eos::ICallbackP2<const CommandLineProcessor *, const CommandEventArgs&>;
+			template <typename Instance_> using CommandEvent = eos::CallbackP2<Instance_, const CommandLineProcessor*, const CommandEventArgs&>;
 
 		private:
-    		CommandList _commands;
+    		CommandDefinitionList _commands;
     		ICommandEvent *_commandEvent;
     		bool _commandEventEnabled;
 
@@ -47,9 +46,9 @@ namespace eos {
     		}
     		void addCommand(CommandDefinition *definition);
 
-    		bool process(const char *buffer);
+    		const CommandDefinition *process(const char *buffer) const;
 
-    		inline CommandList& getCommands() { return _commands; }
+    		inline CommandDefinitionList& getCommands() { return _commands; }
 	};
 
 	struct CommandDefinitionInfo {
@@ -59,7 +58,7 @@ namespace eos {
 		const char *longDescription;
 	};
 
-	class CommandDefinition final {
+	class CommandDefinition final: public CommandDefinitionListNode {
 		private:
 			const CommandDefinitionInfo *_info;
 
@@ -77,3 +76,6 @@ namespace eos {
 	};
 
 }
+
+
+#endif // __eosCOmmandLineProcessor__

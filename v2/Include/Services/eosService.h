@@ -36,6 +36,7 @@ namespace eos {
 
     	private:
     		State _state;
+    		// Task * _task;
 
         protected:
             Service();
@@ -44,6 +45,9 @@ namespace eos {
 
             virtual void onInitialize();
             virtual void onTerminate();
+            virtual void onStart();
+            virtual void onStop();
+            //virtual void onExecute() = 0;
             virtual bool onTaskStart();
             virtual bool onTask();
 
@@ -52,6 +56,8 @@ namespace eos {
 
             void initialize();
             void terminate();
+            void start();
+            void stop();
             bool taskStart();
             bool taskRun();
 

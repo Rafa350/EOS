@@ -8,6 +8,19 @@
 #include "HTL/STM32/htl.h"
 
 
+#if defined(EOS_PLATFORM_STM32G031)
+	#include "G0/htlINT_Vector_G031.h"
+#elif defined(EOS_PLATFORM_STM32G051)
+	#include "G0/htlINT_Vector_G051.h"
+#elif defined(EOS_PLATFORM_STM32G071)
+	#include "G0/htlINT_Vector_G071.h"
+#elif defined(EOS_PLATFORM_STM32G0B1)
+	#include "G0/htlINT_Vector_G0B1.h"
+#else
+	#define NO_VECTORS
+#endif
+
+
 namespace htl {
 
 	namespace irq {
@@ -38,6 +51,7 @@ namespace htl {
 			_3,
 		};
 
+		#ifdef NO_VECTORS
         #if defined(EOS_PLATFORM_STM32G0)
         enum class VectorID {
             exti0 = EXTI0_1_IRQn,
@@ -451,6 +465,7 @@ namespace htl {
 
         #elif defined(EOS_PLATFORM_STM32F7)
         #endif
+		#endif // NO_VECTORS
 
 		void setInterruptVectorPriority(VectorID vector, Priority priority,
 		        SubPriority subPriority = SubPriority::_0);

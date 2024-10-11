@@ -27,16 +27,19 @@
 #elif defined(HARDWARE_NUCLEO_F103RB)
     #include "Board/eosBoard_NUCLEO_F103RB.h"
 
-#elif defined(HARDWARE_NUCLEO_G071RB)
-    #include "Board/eosBoard_NUCLEO_G071RB.h"
-
 #elif defined(HARDWARE_NUCLEO_G031K8)
     #include "Board/eosBoard_NUCLEO_G031K8.h"
 
+#elif defined(HARDWARE_NUCLEO_G071RB)
+    #include "Board/eosBoard_NUCLEO_G071RB.h"
+
+#elif defined(HARDWARE_NUCLEO_G0B1RE)
+    #include "Board/eosBoard_NUCLEO_G0B1RE.h"
+
 #elif defined(HARDWARE_PINGUINO)
     #include "Board/eosBoard_PINGUINO.h"
-    
-#elif defined(HARDWARE_NONE)    
+
+#elif defined(HARDWARE_NONE)
 
 #else
     #error "Undefined HARDWARE_XXXX"

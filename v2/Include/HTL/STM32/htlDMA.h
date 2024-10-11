@@ -33,7 +33,7 @@ namespace htl {
 			_16,
             #endif
             #ifdef HTL_DMA1_CHANNEL7_EXIST
-			_17
+			_17,
             #endif
             #ifdef HTL_DMA2_CHANNEL1_EXIST
 			_21,
@@ -154,17 +154,17 @@ namespace htl {
 		            ready,
 		            transfering
 		        };
-                
+
 			private:
 		        const internal::DMADEV_TypeDef * const _dmadev;
 				State _state;
                 INotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
-                
+
             private:
                 DMADevice(const DMADevice &) = delete;
                 DMADevice & operator = (const DMADevice &) = delete;
-                
+
                 void notifyTransferCompleted(bool irq);
                 void notifyHalfTransfer(bool irq);
 
@@ -174,13 +174,13 @@ namespace htl {
                 inline void deactivate() {
                     activateImpl();
                 }
-                
+
 			protected:
 				DMADevice(const internal::DMADEV_TypeDef *dmadev);
                 void interruptService();
                 virtual void activateImpl() = 0;
                 virtual void deactivateImpl() = 0;
-                
+
 			public:
 				Result initMemoryToMemory();
                 Result initMemoryToPeripheral(Priority priority,
@@ -205,7 +205,7 @@ namespace htl {
 
 				// TODO: temporal
 				Result waitForFinish(Tick timeout);
-                
+
 				inline State getState() const { return _state; }
                 inline bool isReady() const { return _state == State::ready; }
 		};
@@ -222,18 +222,18 @@ namespace htl {
 		class DMADeviceX final: public DMADevice {
             private:
                 using DMATraits = internal::DMATraits<deviceID_>;
-                
+
             private:
                 static constexpr auto dmadev = DMATraits::dmadev;
                 static constexpr auto _rccEnableAddr = DMATraits::rccEnableAddr;
                 static constexpr auto _rccEnablePos = DMATraits::rccEnablePos;
                 static DMADeviceX _instance;
-                
+
             private:
                 inline DMADeviceX() :
                     DMADevice(dmadev) {
                 }
-                
+
             protected:
                 void activateImpl() override {
                     auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -244,12 +244,12 @@ namespace htl {
                     auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
                     *p &= ~(1 << _rccEnablePos);
                 }
-                
+
             public:
                 static constexpr auto deviceID = deviceID_;
                 static constexpr DMADeviceX *pInst = &_instance;
                 static constexpr DMADeviceX &rInst = _instance;
-                
+
 		    public:
                 inline static void interruptHandler() {
                     _instance.interruptService();

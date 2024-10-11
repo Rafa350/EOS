@@ -131,3 +131,17 @@ bool BinaryStreamReader::readI32(
     else
         return false;
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un bloc de dades.
+/// \param    data: El bloc de dades.
+/// \param    size: El tamany del bloc en bytes.
+/// \return   True si tot es correcte.
+///
+bool BinaryStreamReader::read(
+	uint8_t *data,
+	unsigned size) {
+
+	return true;
+}

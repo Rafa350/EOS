@@ -8,7 +8,7 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    hDevice: Handler del dispositiu CTL0138SQ7
+/// \param    dev: Handler del dispositiu CTL0138SQ7
 /// \param    pinNumber: El numero de pin.
 ///
 PinDriver_CLT0138SQ7::PinDriver_CLT0138SQ7(
@@ -42,6 +42,10 @@ void PinDriver_CLT0138SQ7::write(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix l'estat del pin.
+/// \return   L'estat del pin.
+///
 bool PinDriver_CLT0138SQ7::read() {
 
 	return (_dev->read() & _pinMask) != 0;

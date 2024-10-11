@@ -20,17 +20,17 @@ CommandLineProcessor::CommandLineProcessor() {
 void CommandLineProcessor::addCommand(
 	CommandDefinition *command) {
 
-	_commands.push_front(command);
+	_commands.pushFront(command);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la linia de comanda.
 /// \param    text: El text de la linia de comanda.
-/// \return   True si tot es correcte.
+/// \return   La comanda a procesar. nullptr si no hi ha cap.
 ///
-bool CommandLineProcessor::process(
-	const char *text) {
+const CommandDefinition *CommandLineProcessor::process(
+	const char *text) const {
 
 	for (auto command: _commands) {
 
@@ -55,11 +55,11 @@ bool CommandLineProcessor::process(
 				};
 				_commandEvent->execute(this, args);
 			}
-			return true;
+			return command;
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
 

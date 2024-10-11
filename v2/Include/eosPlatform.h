@@ -98,7 +98,13 @@
         #define EOS_PLATFORM_STM32G071
         #define EOS_PLATFORM_STM32G071RB
 
-    // STM32F030xx
+	// STM32G0B1xx
+    #elif defined(STM32G0B1RE)
+        #define EOS_PLATFORM_STM32G0
+        #define EOS_PLATFORM_STM32G0B1
+        #define EOS_PLATFORM_STM32G0B1RE
+
+	// STM32F030xx
 	#elif defined(STM32F030R8)
         #define EOS_PLATFORM_STM32F0
         #define EOS_PLATFORM_STM32F030

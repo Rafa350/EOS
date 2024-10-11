@@ -40,6 +40,24 @@ void Service::terminate() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Inicia el servei.
+///
+void Service::start() {
+
+	onStart();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Atura el servei.
+///
+void Service::stop() {
+
+	onStop();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Executa les operacions del inici servei.
 /// \return   True si es correcte i es pot continuar, false en cas d'error
 ///           i es vol finalitzar el proces.
@@ -86,6 +104,21 @@ void Service::onTerminate() {
 
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'inici del servei.
+///
+void Service::onStart() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'aturada del servei.
+///
+void Service::onStop() {
+
+}
 
 
 /// ----------------------------------------------------------------------

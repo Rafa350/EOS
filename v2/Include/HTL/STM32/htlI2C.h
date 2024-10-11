@@ -54,8 +54,8 @@ namespace htl {
 			sda,
 			alert
 		};
-        
-        
+
+
 		/// Identificador de la notificacio.
 		///
         enum class NotifyID {
@@ -65,7 +65,7 @@ namespace htl {
             txStart,         ///< Inici de la transmissio.
             txCompleted      ///< Transmissio finalitzada.
         };
-        
+
         struct NotifyEventArgs {
             I2CDevice * const instance;  ///< La instancia del dispositiu.
             NotifyID id;                 ///< Identificador de la notificacio
@@ -288,7 +288,7 @@ namespace htl {
 					receiving,
 					transmiting
 				};
-                
+
 			private:
 				State _state;
 				uint8_t *_buffer;
@@ -296,7 +296,7 @@ namespace htl {
 				unsigned _count;
                 ISlaveNotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
-                
+
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
@@ -310,15 +310,15 @@ namespace htl {
 				void interruptServiceListen();
 				void interruptServiceReceive();
 				void interruptServiceTransmit();
-                
+
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *i2c);
 				void interruptService();
-                
+
 			public:
 				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				Result deinitialize();
-                
+
 				void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
 
 				/// Habilita l'event de notificacio.
@@ -332,11 +332,11 @@ namespace htl {
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
-                
+
 				Result listem(Tick timeout = Tick(-1));
 				Result listen_IRQ();
 				Result abortListen();
-                
+
 				/// Obte l'estat del dispositiu.
 				///
 				inline State getState() const { return _state; }
@@ -370,23 +370,23 @@ namespace htl {
                     transmiting,
                     receiving
 				};
-                
+
 			private:
 				State _state;
-                
+
 			private:
 				I2CMasterDevice(const I2C_TypeDef&) = delete;
 				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
-                
+
 			protected:
 				I2CMasterDevice(I2C_TypeDef *i2c);
 				void interruptService();
-                
+
 			public:
 				Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
 					uint8_t sclh, uint8_t scll);
 				Result deinitialize();
-                
+
 				Result transmit(uint16_t addr, const uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
 				Result receive(uint16_t addr, uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
 
@@ -408,7 +408,7 @@ namespace htl {
 		class I2CSlaveDeviceX final: public I2CSlaveDevice {
 			private:
 				using I2CTraits = internal::I2CTraits<deviceID_>;
-                
+
 			private:
 				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
 				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
@@ -416,17 +416,17 @@ namespace htl {
                 static constexpr auto _rccResetAddr = I2CTraits::rccResetAddr;
                 static constexpr auto _rccResetPos = I2CTraits::rccResetPos;
 				static I2CSlaveDeviceX _instance;
-                
+
 			public:
 				static constexpr auto deviceID = deviceID_;
 				static constexpr I2CSlaveDeviceX *pInst = &_instance;
 				static constexpr I2CSlaveDeviceX &rInst = _instance;
-                
+
 			private:
 				constexpr I2CSlaveDeviceX() :
 					I2CSlaveDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
 				}
-                
+
 			protected:
 				void activate() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -437,7 +437,7 @@ namespace htl {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
-                
+
                 void reset() override {
                     auto p = reinterpret_cast<uint32_t *>(_rccResetAddr);
                     *p |= 1 << _rccResetPos;
@@ -452,12 +452,12 @@ namespace htl {
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
-                
+
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
-				}                
+				}
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
@@ -492,7 +492,7 @@ namespace htl {
 		class I2CMasterDeviceX final: public I2CMasterDevice {
 			private:
 				using I2CTraits = internal::I2CTraits<deviceID_>;
-                
+
 			private:
 				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
 				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
@@ -500,17 +500,17 @@ namespace htl {
                 static constexpr auto _rccResetAddr = I2CTraits::rccResetAddr;
                 static constexpr auto _rccResetPos = I2CTraits::rccResetPos;
 				static I2CMasterDeviceX _instance;
-                
+
 			public:
 				static constexpr DeviceID deviceID = deviceID_;
                 static constexpr I2CMasterDeviceX *pInst = &_instance;
                 static constexpr I2CMasterDeviceX &rInst = _instance;
-                
+
 			private:
 				I2CMasterDeviceX() :
 					I2CMasterDevice {reinterpret_cast<I2C_TypeDef *>(_i2cAddr)} {
 				}
-                
+
 			protected:
 				void activate() override {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -526,12 +526,12 @@ namespace htl {
 				void reset() override {
 
 				}
-                
+
 			public:
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
-                
+
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
@@ -640,6 +640,9 @@ namespace htl {
 
 #elif defined(EOS_PLATFORM_STM32G071)
     #include "htl/STM32/G0/htlI2C_AF_G071.h"
+
+#elif defined(EOS_PLATFORM_STM32G0B1)
+    #include "htl/STM32/G0/htlI2C_AF_G0B1.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlI2C_AF_F030.h"

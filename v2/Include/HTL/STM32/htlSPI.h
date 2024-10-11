@@ -79,8 +79,8 @@ namespace htl {
 			miso,
 			mosi
 		};
-        
-        
+
+
         enum class NotifyID {
 		    null,
 		    completed,
@@ -114,13 +114,13 @@ namespace htl {
 					ready,
 					transmiting
 				};
-                
+
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
                 INotifyEvent *_notifyEvent;
                 bool _notifyEventEnabled;
-                
+
 			private:
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
@@ -130,7 +130,7 @@ namespace htl {
 				void interruptService();
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;
-                
+
 			public:
 				Result initialize(Mode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
@@ -142,7 +142,7 @@ namespace htl {
 				            size, firstBit, clkDivider);
 				}
 				Result deinitialize();
-                
+
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
 
 				inline void enableNotifyEvent() {
@@ -151,7 +151,7 @@ namespace htl {
 				inline void disableNotifyEvent() {
 					_notifyEventEnabled = false;
 				}
-                               
+
 				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        unsigned bufferSize, Tick timeout = Tick(-1));
 				inline Result receive(uint8_t *rxBuffer, unsigned bufferSize,
@@ -162,10 +162,10 @@ namespace htl {
                         Tick timeout) {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
-                
+
                 Result transmit_DMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, unsigned bufferSize);
-				
+
                 inline State getState() const { return _state; }
                 inline bool isReady() const { return _state == State::ready; }
 		};
@@ -184,23 +184,23 @@ namespace htl {
 		class SPIDeviceX final: public SPIDevice {
 			private:
 				using SPITraits = internal::SPITraits<deviceID_>;
-                
+
 			private:
 				static constexpr auto _spiAddr = SPITraits::spiAddr;
 				static constexpr auto _rccEnableAddr = SPITraits::rccEnableAddr;
 				static constexpr auto _rccEnablePos = SPITraits::rccEnablePos;
 				static SPIDeviceX _instance;
-                
+
 			public:
 				static constexpr auto deviceID = deviceID_;
 				static constexpr SPIDeviceX *pInst = &_instance;
 				static constexpr SPIDeviceX &rInst = _instance;
-                
+
 			private:
 				SPIDeviceX() :
 					SPIDevice(reinterpret_cast<SPI_TypeDef *>(_spiAddr)) {
 				}
-                
+
 			protected:
 				void activate() override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
@@ -211,12 +211,12 @@ namespace htl {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
-                
+
 			public:
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
-                
+
 				template <typename pin_>
 				void initPinSCK() {
 				    auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
@@ -375,6 +375,9 @@ namespace htl {
 
 #elif defined(EOS_PLATFORM_STM32G071)
     #include "htl/STM32/G0/htlSPI_AF_G071.h"
+
+#elif defined(EOS_PLATFORM_STM32G0B1)
+    #include "htl/STM32/G0/htlSPI_AF_G0B1.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlSPI_AF_F030.h"

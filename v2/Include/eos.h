@@ -62,6 +62,8 @@
 		#define STM32G051xx
 	#elif defined(EOS_PLATFORM_STM32G071)
 		#define STM32G071xx
+	#elif defined(EOS_PLATFORM_STM32G0B1)
+		#define STM32G0B1xx
 	#endif
 	#include "stm32g0xx.h"
 
