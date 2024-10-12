@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_G0_htlClock__
-#define __STM32_G0_htlClock__
+#ifndef __STM32G0_htlClock__
+#define __STM32G0_htlClock__
 
 
 #include "HTL/STM32/htl.h"
@@ -147,4 +147,4 @@ namespace htl {
 }
 
 
-#endif // __STM32_G0_htlClock__
+#endif // __STM32G0_htlClock__

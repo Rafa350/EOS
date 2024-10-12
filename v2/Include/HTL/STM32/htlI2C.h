@@ -639,10 +639,10 @@ namespace htl {
     #include "htl/STM32/G0/htlI2C_AF_G051.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
-    #include "htl/STM32/G0/htlI2C_AF_G071.h"
+    #include "htl/STM32/G0/G071/htlI2C_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32G0B1)
-    #include "htl/STM32/G0/htlI2C_AF_G0B1.h"
+    #include "htl/STM32/G0/G0B1/htlI2C_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlI2C_AF_F030.h"

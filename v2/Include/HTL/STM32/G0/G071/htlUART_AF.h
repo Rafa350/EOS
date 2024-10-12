@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_G0_htlUART_AF_G071__
-#define __STM32_G0_htlUART_AF_G071__
+#ifndef __STM32G071_htlUART_AF__
+#define __STM32G071_htlUART_AF__
 
 
 // EOS includes
@@ -20,11 +20,11 @@
 
 
 namespace htl {
-    
+
 	namespace uart {
-        
+
 		namespace internal {
-            
+
 			#ifdef HTL_UART1_EXIST
 				ALT_FUNCTION(1, PinFunction::tx,  gpio::PinA9,  gpio::AlternateFunction::_1)
     			ALT_FUNCTION(1, PinFunction::tx,  gpio::PinB6,  gpio::AlternateFunction::_0)
@@ -69,7 +69,7 @@ namespace htl {
 				ALT_FUNCTION(2, PinFunction::rts, gpio::PinB1,  gpio::AlternateFunction::_4)
 				ALT_FUNCTION(2, PinFunction::rts, gpio::PinB14, gpio::AlternateFunction::_4)
 			#endif // HTL_UART3_EXIST
-            
+
             #ifdef HTL_UART4_EXISTS
             #endif // HTL_UART4_EXISTS
 		}
@@ -82,4 +82,4 @@ namespace htl {
 
 #endif // EOS_PLATFORM_STM32G071
 
-#endif // __STM32_G0_htlUART_AF_G071__
+#endif // __STM32G071_htlUART_AF__

@@ -69,6 +69,20 @@
 
 
 // -----------------------------------------------------------------------
+// SIO (Comunicacio serie a traver del depurador)
+// -----------------------------------------------------------------------
+//
+#ifdef USE_SIO
+#define EXIST_SIO
+
+#define SIO_UART_Device    htl::uart::UARTDevice2
+#define SIO_TX_Pin         htl::gpio::PinA2
+#define SIO_RX_Pin         htl::gpio::PinA3
+
+#endif // USE_DEBUG_UART
+
+
+// -----------------------------------------------------------------------
 // CN7 expansion connector
 // -----------------------------------------------------------------------
 //
@@ -183,19 +197,25 @@
 #define ARDUINO_D10_Pin      htl::gpio::PinB0
 #define ARDUINO_D11_Pin      htl::gpio::PinA7
 #define ARDUINO_D12_Pin      htl::gpio::PinA6
+#ifndef USE_LED1
 #define ARDUINO_D13_Pin      htl::gpio::PinA5
+#endif
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
-#define ARDUINO_RX_Pin       htl::gpio::PinC5 // ARDUINO_D0 / CN9_1
-#define ARDUINO_TX_Pin       htl::gpio::PinC4 // ARDUINO_D1 / CN9_2
+#define ARTUINO_UART_Device  htl::uart::UARTDevice1
+#define ARDUINO_RX_Pin       htl::gpio::PinC5    // CN9_1
+#define ARDUINO_TX_Pin       htl::gpio::PinC4    // CN9_2
 
-#define ARDUINO_SCL_Pin      htl::gpio::PinB8 // ARDUINO_D15 / CN5_10
-#define ARDUINO_SDA_Pin      htl::gpio::PinB9 // ARDUINO_D14 / CN5_9
+#define ARDUINO_I2C_SlaveDevice   htl::i2c::I2CSlaveDevice1
+#define ARDUINO_I2C_MasterDevice  htl::i2c::I2CMasterDevice1
+#define ARDUINO_SCL_Pin      htl::gpio::PinB8    // CN5_10
+#define ARDUINO_SDA_Pin      htl::gpio::PinB9    // CN5_9
 
-#define ARDUINO_SCK_Pin      htl::gpio::PinA5 // ARDUINO_D13 / CN5_6
-#define ARDUINO_MISO_Pin     htl::gpio::PinA6 // ARDUINO_D12 / CN5_5
-#define ARDUINO_MOSI_Pin     htl::gpio::PinA7 // ARDUINO_D11 / CN5_4
+#define ARDUINO_SPI_Device   htl::spi::SPIDevice1
+#define ARDUINO_SCK_Pin      htl::gpio::PinA5    // CN5_6
+#define ARDUINO_MISO_Pin     htl::gpio::PinA6    // CN5_5
+#define ARDUINO_MOSI_Pin     htl::gpio::PinA7    // CN5_4
 
 #endif // USE_ARDUINO
 

@@ -374,10 +374,10 @@ namespace htl {
     #include "htl/STM32/G0/htlSPI_AF_G031.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
-    #include "htl/STM32/G0/htlSPI_AF_G071.h"
+    #include "htl/STM32/G0/G071/htlSPI_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32G0B1)
-    #include "htl/STM32/G0/htlSPI_AF_G0B1.h"
+    #include "htl/STM32/G0/G0B1/htlSPI_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlSPI_AF_F030.h"

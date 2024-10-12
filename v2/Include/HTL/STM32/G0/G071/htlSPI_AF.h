@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32G071_htlSPI_AF__
+#define __STM32G071_htlSPI_AF__
 
 
 // EOS includes
@@ -63,3 +65,6 @@ namespace htl {
 
 
 #endif // EOS_PLATFORM_STM32G071
+
+
+#endif // __STM32G071_htlSPI_AF__

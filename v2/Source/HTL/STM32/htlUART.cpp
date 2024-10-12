@@ -616,7 +616,7 @@ static ClockSource getClockSource(
         #endif
 
         #ifdef HTL_UART5_EXIST
-            case UART5_BASE:
+            case USART5_BASE:
                 #if defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART5SEL) >> RCC_DCKCFGR2_UART5SEL_Pos;
                 #endif

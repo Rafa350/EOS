@@ -22,7 +22,7 @@ namespace eos {
 	        unsigned _weakTime;
 
 		public:
-			static constexpr uint32_t stackSize = 128;
+			static constexpr uint32_t minStackSize = 128;
 			static constexpr const char *serviceName = "LED";
 
 		public:

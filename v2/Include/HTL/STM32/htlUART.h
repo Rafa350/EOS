@@ -650,7 +650,7 @@ namespace htl {
 			#ifdef HTL_UART5_EXIST
 			template <>
 			struct UARTTraits<DeviceID::_5> {
-				static constexpr USART_TypeDef *usart = UART5;
+				static constexpr uint32_t usartAddr = USART5_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
                 #elif defined(EOS_PLATFORM_STM32F7)
@@ -663,7 +663,7 @@ namespace htl {
 			#ifdef HTL_UART6_EXIST
 			template <>
 			struct UARTTraits<DeviceID::_6> {
-				static constexpr ÛSART_TypeDef *usart = USART6;
+				static constexpr uint32_t usartAddr = USART6_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
                 #elif defined(EOS_PLATFORM_STM32F7)
@@ -713,7 +713,10 @@ namespace htl {
     #include "htl/STM32/G0/htlUART_AF_G051.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
-    #include "htl/STM32/G0/htlUART_AF_G071.h"
+    #include "htl/STM32/G0/G071/htlUART_AF.h"
+
+#elif defined(EOS_PLATFORM_STM32G0B1)
+    #include "htl/STM32/G0/G0B1/htlUART_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/htlUART_AF_F030.h"

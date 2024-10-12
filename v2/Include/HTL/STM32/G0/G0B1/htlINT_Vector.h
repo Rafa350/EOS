@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_G0_htlINT_Vector_G0B1__
-#define __STM32_G0_htlINT_Vector_G0B1__
+#ifndef __STM32G0B1_htlINT_Vector__
+#define __STM32G0B1_htlINT_Vector__
 
 
 // HAL includes
@@ -47,9 +47,7 @@ namespace htl {
             uart2 = USART2_LPUART2_IRQn,
             uart3 = USART3_4_5_6_LPUART1_IRQn,
             uart4 = USART3_4_5_6_LPUART1_IRQn,
-            #ifdef HTL_UART5_EXIST
-            uart5 = UART3_4_5_6_IRQn,
-            #endif
+            uart5 = USART3_4_5_6_LPUART1_IRQn,
             uart6 = USART3_4_5_6_LPUART1_IRQn,
 
             i2c1 = I2C1_IRQn,
@@ -59,27 +57,15 @@ namespace htl {
             dma11 = DMA1_Channel1_IRQn,
             dma12 = DMA1_Channel2_3_IRQn,
             dma13 = DMA1_Channel2_3_IRQn,
-            #ifdef HTL_DMA1_CHANNEL4_EXIST
-            	dma14 = DMA1_Ch4_5_DMAMUX1_OVR_IRQn,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL5_EXIST
-                dma15 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL6_EXIST
-            dma16 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL7_EXIST
-            dma17 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
-            #endif
+			dma14 = DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn,
+			dma15 = DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn,
+			dma16 = DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn,
+			dma17 = DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn,
 
-            #if defined(EOS_PLATFORM_STM32G031)
-            dmamux1 = DMA1_Ch4_5_DMAMUX1_OVR_IRQn,
-            #elif defined(EOS_PLATFORM_STM32G071)
-            dmamux1 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
-            #endif
+            dmamux1 = DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn
         };
 	}
 }
 
 
-#endif // __STM32_G0_htlINT_Vector_G0B1__
+#endif // __STM32G0B1_htlINT_Vector__

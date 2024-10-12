@@ -138,28 +138,28 @@
 
 // Comprova l'existencia dels moduls UART/USART
 //
-#ifdef USART1_BASE
+#if defined(USART1_BASE) || defined(UART1_BASE)
 	#define HTL_UART1_EXIST
 #endif
-#ifdef USART2_BASE
+#if defined(USART2_BASE) || defined(UART2_BASE)
 	#define HTL_UART2_EXIST
 #endif
-#ifdef USART3_BASE
+#if defined(USART3_BASE) || defined(UART3_BASE)
 	#define HTL_UART3_EXIST
 #endif
-#ifdef USART4_BASE
+#if defined(USART4_BASE) || defined(UART4_BASE)
 	#define HTL_UART4_EXIST
 #endif
-#ifdef UART5_BASE
+#if defined(USART5_BASE) || defined(UART5_BASE)
 	#define HTL_UART5_EXIST
 #endif
-#ifdef USART6_BASE
+#if defined(USART6_BASE) || defined(UART6_BASE)
 	#define HTL_UART6_EXIST
 #endif
-#ifdef UART7_BASE
+#if defined(USART7_BASE) || defined(UART7_BASE)
 	#define HTL_UART7_EXIST
 #endif
-#ifdef UART8_BASE
+#if defined(USART8_BASE) || defined(UART8_BASE)
 	#define HTL_UART8_EXIST
 #endif
 

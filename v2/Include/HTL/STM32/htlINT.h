@@ -13,11 +13,11 @@
 #elif defined(EOS_PLATFORM_STM32G051)
 	#include "G0/htlINT_Vector_G051.h"
 #elif defined(EOS_PLATFORM_STM32G071)
-	#include "G0/htlINT_Vector_G071.h"
+	#include "G0/G071/htlINT_Vector.h"
 #elif defined(EOS_PLATFORM_STM32G0B1)
-	#include "G0/htlINT_Vector_G0B1.h"
+	#include "G0/G0B1/htlINT_Vector.h"
 #else
-	#define NO_VECTORS
+	#define UNDEFINED_VectorID
 #endif
 
 
@@ -51,7 +51,7 @@ namespace htl {
 			_3,
 		};
 
-		#ifdef NO_VECTORS
+		#ifdef UNDEFINED_VectorID
         #if defined(EOS_PLATFORM_STM32G0)
         enum class VectorID {
             exti0 = EXTI0_1_IRQn,

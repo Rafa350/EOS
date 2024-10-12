@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32G0B1_htlSPI_AF__
+#define __STM32G0B1_htlSPI_AF__
 
 
 // EOS includes
@@ -7,7 +9,7 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32G071)
+#if defined(EOS_PLATFORM_STM32G0B1)
 
 
 #define ALT_FUNCTION(id, fn, pin, af)                 \
@@ -62,4 +64,7 @@ namespace htl {
 #undef ALT_FUNCTION
 
 
-#endif // EOS_PLATFORM_STM32G071
+#endif // EOS_PLATFORM_STM32G0B1
+
+
+#endif // __STM32G0B1_htlSPI_AF__
