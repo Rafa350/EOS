@@ -40,7 +40,7 @@ void Service::terminate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicia el servei.
+/// \brief    Inicia l'execucio del servei.
 ///
 void Service::start() {
 
@@ -49,11 +49,17 @@ void Service::start() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Atura el servei.
+/// \brief    Atura l'execucio del servei.
 ///
 void Service::stop() {
 
 	onStop();
+}
+
+
+bool Service::stopSignal() const {
+
+	return false;
 }
 
 

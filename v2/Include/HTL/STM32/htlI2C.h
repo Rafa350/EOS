@@ -18,6 +18,9 @@ namespace htl {
 	    class I2CMasterDevice;
 	    class I2CSlaveDevice;
 
+	    // Adressa I2C
+	    //
+	    typedef uint16_t I2CAddr;
 
 	    /// Identificador del dispositiu.
 	    ///
@@ -72,7 +75,7 @@ namespace htl {
             bool irq;
             union {
                 struct {
-                    uint16_t addr;       ///< L'adressa coincident.
+                    I2CAddr addr;       ///< L'adressa coincident.
                 } AddressMatch;
                 struct {
                     uint8_t *buffer;     ///< Buffer de dades.
@@ -114,166 +117,6 @@ namespace htl {
 			protected:
                 I2CDevice(I2C_TypeDef *i2c): _i2c {i2c} {}
 
-                /// Habilita el dispositiu.
-                ///
-                inline void enable() const {
-                    _i2c->CR1 |= I2C_CR1_PE;
-                }
-
-                /// Deshabilita el dispositiu.
-                ///
-                inline void disable() const {
-                    _i2c->CR1 &= ~I2C_CR1_PE;
-                }
-
-                /// Habilita la interrupcio 'AddressMatch'
-                ///
-                inline void enableAddressMatchInterrupt() const {
-                    _i2c->CR1 |= I2C_CR1_ADDRIE;
-                }
-
-                /// Habilita la interrupcio 'RxBufferNotEmpty'
-                ///
-                inline void enableRxBufferNotEmptyInterrupt() const {
-                    _i2c->CR1 |= I2C_CR1_RXIE;
-                }
-
-                /// Habilita la interrupcio 'TxBufferEmpty'
-                ///
-                inline void enableTxBufferEmptyInterrupt() const {
-                    _i2c->CR1 |= I2C_CR1_TXIE;
-                }
-
-                /// Habilita la interrupcio 'StopDetection'
-                ///
-                inline void enableStopDetectionInterrupt() const {
-                    _i2c->CR1 |= I2C_CR1_STOPIE;
-                }
-
-                /// Habilita la interrupcio 'NackReceived'
-                ///
-                inline void enableNackReceivedInterrupt() const {
-                    _i2c->CR1 |= I2C_CR1_NACKIE;
-                }
-
-                /// Desabilita la interrupcio 'AddressMatch'.
-                ///
-                inline void disableAddressMatchInterrupt() const {
-                    _i2c->CR1 &= ~I2C_CR1_ADDRIE;
-                }
-
-                /// Desabilita la interrupcio 'RxBufferNotEmpty'
-                ///
-                inline void disableRxBufferNotEmptyInterrupt() const {
-                    _i2c->CR1 &= ~I2C_CR1_RXIE;
-                }
-
-                /// Desabilita la interrupcio 'TxBufferEmpty'
-                ///
-                inline void disableTxBufferEmptyInterrupt() const {
-                    _i2c->CR1 &= ~I2C_CR1_TXIE;
-                }
-
-                /// Desabilita la interrupcio 'StopDetection'
-                ///
-                inline void disableStopDetectionInterrupt() const {
-                    _i2c->CR1 &= ~I2C_CR1_STOPIE;
-                }
-
-                /// Desabilita la interrupcio 'NackReceived'
-                ///
-                inline void disableNackReceivedInterrupt() const {
-                    _i2c->CR1 &= ~I2C_CR1_NACKIE;
-                }
-
-                /// Comprova si la interrupcio 'AddressMatch' esta habilitada.
-                /// \return True si esta habilitada.
-                ///
-                inline bool isAddressMatchInterruptEnabled() const {
-                    return (_i2c->CR1 & I2C_CR1_ADDRIE) != 0;
-                }
-
-                /// Comprova si la interrupcio 'RxBufferNotEmpty' esta habilitada.
-                /// \return True si esta habilitada.
-                ///
-                inline bool isRxBufferNotEmptyInterruptEnabled() const {
-                    return (_i2c->CR1 & I2C_CR1_RXIE) != 0;
-                }
-
-                /// Comprova si la interrupcio 'TxBufferEmpty' esta habilitada.
-                /// \return True si esta habilitada.
-                ///
-                inline bool isTxBufferEmptyInterruptEnabled() const {
-                    return (_i2c->CR1 & I2C_CR1_TXIE) != 0;
-                }
-
-                /// Comprova si la interrupcio 'StopDetection' esta habilitada.
-                /// \return True si esta habilitada.
-                ///
-                inline bool isStopDetectionInterruptEnabled() const {
-                    return (_i2c->CR1 & I2C_CR1_STOPIE) != 0;
-                }
-
-                /// Comprova si la interrupcio 'NackReceived' esta habilitada.
-                /// \return True si esta habilitada.
-                ///
-                inline bool isNackReceivedInterruptEnabled() const {
-                    return (_i2c->CR1 & I2C_CR1_NACKIE) != 0;
-                }
-
-                /// Comprova si el flag 'AddressMatch' esta activat.
-                /// \return True si esta activat.
-                ///
-                inline bool isAddressMatchFlagSet() const {
-                    return (_i2c->ISR & I2C_ISR_ADDR) != 0;
-                }
-
-                /// Comprova si el flag 'RxBufferNotEmpty' esta activat.
-                /// \return True si esta activat.
-                ///
-                inline bool isRxBufferNotEmptyFlagSet() const {
-                    return (_i2c->ISR & I2C_ISR_RXNE) != 0;
-                }
-
-                /// Comprova si el flag 'TxBufferEmpty' esta activat.
-                /// \return True si esta activat.
-                ///
-                inline bool isTxBufferEmptyFlagSet() const {
-                    return (_i2c->ISR & I2C_ISR_TXE) != 0;
-                }
-
-                /// Comprova si el flag 'StopDetection' esta activat.
-                /// \return True si esta activat.
-                ///
-                inline bool isStopDetectionFlagSet() const {
-                    return (_i2c->ISR & I2C_ISR_STOPF) != 0;
-                }
-
-                /// Comprova si el flag 'NackReceived' esta activat.
-                /// \return True si esta activat.
-                ///
-                inline bool isNackReceivedFlagSet() const {
-                    return (_i2c->ISR & I2C_ISR_NACKF) != 0;
-                }
-
-                /// Borra el flag 'AddressMatch'
-                ///
-                inline void clearAddressMatchFlag() const {
-                    _i2c->ICR |= I2C_ICR_ADDRCF;
-                }
-
-                /// Borra el flag 'StopDetection'
-                ///
-                inline void clearStopDetectionFlag() const {
-                    _i2c->ICR |= I2C_ICR_STOPCF;
-                }
-
-                /// Borra el flag 'Nack'
-                ///
-                inline void clearNackReceivedFlag() const {
-                    _i2c->ICR |= I2C_ICR_NACKCF;
-                }
-
                 virtual void activate() = 0;
 				virtual void deactivate() = 0;
 				virtual void reset() = 0;
@@ -301,7 +144,7 @@ namespace htl {
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 
-                void notifyAddressMatch(uint16_t addr, bool irq);
+                void notifyAddressMatch(I2CAddr addr, bool irq);
                 void notifyRxStart(uint8_t * &buffer, unsigned &bufferSize, bool irq);
                 void notifyRxCompleted(unsigned length, bool irq);
                 void notifyTxStart(uint8_t * &buffer, unsigned &length, bool irq);
@@ -316,7 +159,7 @@ namespace htl {
 				void interruptService();
 
 			public:
-				Result initialize(uint16_t addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
+				Result initialize(I2CAddr addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 				Result deinitialize();
 
 				void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
@@ -373,10 +216,21 @@ namespace htl {
 
 			private:
 				State _state;
+                IMasterNotifyEvent *_notifyEvent;
+                bool _notifyEventEnabled;
+                uint8_t *_buffer;
+                unsigned _maxCount;
+                unsigned _count;
 
 			private:
 				I2CMasterDevice(const I2C_TypeDef&) = delete;
 				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
+
+				void notifyTxCompleted(unsigned length, bool irq);
+
+				inline void start() const {
+					_i2c->CR2 |= I2C_CR2_START;
+				}
 
 			protected:
 				I2CMasterDevice(I2C_TypeDef *i2c);
@@ -387,11 +241,25 @@ namespace htl {
 					uint8_t sclh, uint8_t scll);
 				Result deinitialize();
 
-				Result transmit(uint16_t addr, const uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
-				Result receive(uint16_t addr, uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
+				void setNotifyEvent(IMasterNotifyEvent &event, bool enabled = true);
 
-				Result transmit_IRQ(uint16_t addr, const uint8_t *buffer, unsigned bufferSize);
-				Result receive_IRQ(uint16_t addr, uint8_t *buffer, unsigned bufferSize);
+				/// Habilita l'event de notificacio.
+				///
+				inline void enableNotifyEvent() {
+					_notifyEventEnabled = _notifyEvent != nullptr;
+				}
+
+				/// Deshabilita l'event de notificacio.
+				///
+				inline void disableNotifyEvent() {
+					_notifyEventEnabled = false;
+				}
+
+				Result transmit(I2CAddr addr, const uint8_t *buffer, unsigned length, Tick timeout = Tick(-1));
+				Result receive(I2CAddr addr, uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
+
+				Result transmit_IRQ(I2CAddr addr, const uint8_t *buffer, unsigned length);
+				Result receive_IRQ(I2CAddr addr, uint8_t *buffer, unsigned bufferSize);
 		};
 
 

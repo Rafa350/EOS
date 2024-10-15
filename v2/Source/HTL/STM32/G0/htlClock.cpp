@@ -13,12 +13,6 @@
 #define RCC_CFGR_SW_LSI           (3 << RCC_CFGR_SW_Pos)
 #define RCC_CFGR_SW_LSE           (4 << RCC_CFGR_SW_Pos)
 
-#define RCC_CFGR_SWS_HSISYS       (0 << RCC_CFGR_SWS_Pos)
-#define RCC_CFGR_SWS_HSE          (1 << RCC_CFGR_SWS_Pos)
-#define RCC_CFGR_SWS_PLLRCLK      (2 << RCC_CFGR_SWS_Pos)
-#define RCC_CFGR_SWS_LSI          (3 << RCC_CFGR_SWS_Pos)
-#define RCC_CFGR_SWS_LSE          (4 << RCC_CFGR_SWS_Pos)
-
 
 using namespace htl;
 using namespace htl::clock;
@@ -101,35 +95,35 @@ void Clock::setHClkPrescaler(
         case HClkPrescaler::_1:
             tmp |= 0b0000 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_2:
             tmp |= 0b1000 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_4:
             tmp |= 0b1001 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_8:
             tmp |= 0b1010 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_16:
             tmp |= 0b1011 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_64:
             tmp |= 0b1100 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_128:
             tmp |= 0b1101 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_256:
             tmp |= 0b1110 << RCC_CFGR_HPRE_Pos;
             break;
-            
+
         case HClkPrescaler::_512:
             tmp |= 0b1111 << RCC_CFGR_HPRE_Pos;
             break;
@@ -160,7 +154,7 @@ void Clock::setPClkPrescaler(
 /// \brief    Activa el rellotge HSI
 ///
 void Clock::hsi16Enable() {
-    
+
 	RCC->CR |= RCC_CR_HSION;
 	while ((RCC->CR & RCC_CR_HSION) == 0)
 		continue;
@@ -171,7 +165,7 @@ void Clock::hsi16Enable() {
 /// \brief    Desactiva el rellotge HSI
 ///
 void Clock::hsi16Disable() {
-    
+
 	RCC->CR &= ~RCC_CR_HSION;
 	while ((RCC->CR & RCC_CR_HSION) != 0)
 		continue;
@@ -183,7 +177,7 @@ void Clock::hsi16Disable() {
 /// \return   True si esta actiu, false en cas contrari.
 ///
 bool Clock::isHsi16Enabled() {
-    
+
     return (RCC->CR & RCC_CR_HSION) != 0;
 }
 
@@ -226,7 +220,7 @@ bool Clock::isLsiEnabled() {
 ///
 void Clock::hseEnable(
 	HseBypassMode bypass) {
-    
+
 	switch (bypass) {
 		case HseBypassMode::on:
 			RCC->CR |= RCC_CR_HSEBYP;
@@ -249,7 +243,7 @@ void Clock::hseEnable(
 /// \brief   Desactiva el rellotge HSE.
 ///
 void Clock::hseDisable() {
-    
+
 	RCC->CR &= ~RCC_CR_HSEON;
 	while ((RCC->CR & RCC_CR_HSERDY) != 0)
 		continue;
@@ -261,7 +255,7 @@ void Clock::hseDisable() {
 /// \return   True si esta actiu, false en cas contrari.
 ///
 bool Clock::isHseEnabled() {
-    
+
     return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
 
@@ -281,7 +275,7 @@ void Clock::lseEnable() {
 /// \brief   Desactiva el rellotge LSE.
 ///
 void Clock::lseDisable() {
-    
+
 	RCC->BDCR &= ~RCC_BDCR_LSEON;
 	while ((RCC->BDCR & RCC_BDCR_LSERDY) != 0)
 		continue;
@@ -293,7 +287,7 @@ void Clock::lseDisable() {
 /// \return   True si esta actiu, false en cas contrari.
 ///
 bool Clock::isLseEnabled() {
-    
+
     return (RCC->BDCR & RCC_BDCR_LSERDY) != 0;
 }
 
@@ -331,7 +325,7 @@ void Clock::pllDisable() {
 /// \return   True si esta activat, false en cas contrari.
 ///
 bool Clock::isPllEnabled() {
-   
+
     return ((RCC->CR & RCC_CR_PLLON) != 0) && ((RCC->CR & RCC_CR_PLLRDY) != 0);
 }
 

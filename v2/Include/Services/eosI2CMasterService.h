@@ -3,139 +3,66 @@
 #define __eosI2CMasterService__
 
 
+// EOS includes
+//
 #include "eos.h"
-#include "HAL/halI2C.h"
+#include "HTL/htlI2C.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Core/eosPoolAllocator.h"
 #include "System/Core/eosQueue.h"
 #include "System/Core/eosSemaphore.h"
 
 
-// Numero maxim de transaccions en la cua
-#ifndef eosI2CMasterService_TransactionQueueSize
-#define eosI2CMasterService_TransactionQueueSize 10
-#endif
-
-// Modul de comunicacio I2C a gestionar
-#ifndef eosI2CMasterService_I2CModule
-#define eosI2CMasterService_I2CModule HAL_I2C_CHANNEL_2
-#endif
-
-// Velocitat de comunicacio I2C
-#ifndef eosI2CMasterService_I2CBaudRate
-#define eosI2CMasterService_I2CBaudRate 100000
-#endif
-
-
 namespace eos {
 
-    class Application;
+	class I2CMasterService final: public Service {
+		public:
+			struct TransactionEventArgs {
 
-    /// \brief Clase que gestiona el servei de comunicacions I2C
-    ///
-    class I2CMasterService: public Service {
-        public:
-            struct Settings {
-                I2CHandler hI2C;
-            };
+			};
+            using ITransactionEvent = ICallbackP2<const I2CMasterService*, const TransactionEventArgs&>;
+            template <typename Instance_> using TransactionEvent = CallbackP2<Instance_, const I2CMasterService*, const TransactionEventArgs&>;
+            using DevI2C = htl::i2c::I2CMasterDevice;
+            using NotifyEvent = htl::i2c::MasterNotifyEvent<I2CMasterService>;
 
-            /// \brief Protocol a utilitzar en la transaccio.
-            ///
-            enum class TransactionProtocol {
-                raw,
-                packet
-            };
+		private:
+			struct Transaction {
+				htl::i2c::I2CAddr addr;
+				const uint8_t *txBuffer;
+				unsigned txLength;
+				uint8_t *rxBuffer;
+				unsigned rxBufferSize;
+				unsigned rxLength;
+				const ITransactionEvent *event;
+			};
+			using TransactionQueue = Queue<Transaction>;
 
-            /// \brief Resultat de la transaccio.
-            ///
-            enum class TransactionResult {
-                ok,
-                error
-            };
+		private:
+			DevI2C *_devI2C;
+			TransactionQueue _transactionQueue;
+			Semaphore _finishedTransaction;
+			NotifyEvent _notifyEvent;
 
-            /// \brief Parametres del event.
-            ///
-            struct TransactionEventArgs {
-                void *txBuffer;
-                int txCount;
-                void *rxBuffer;
-                int rxCount;
-                TransactionResult result;
-            };
+		private:
+			static constexpr unsigned _transactionQueueSize = 10;
 
-        private:
-            /// \brief Estats de la maquina d'estats que procesa la transaccio
-            enum class State {
-                idle,                   // -En espera de iniciar
-                sendAddress,            // -Transmeteix l'adressa
-                sendLength,             // -Transmeteix el byte de longitut
-                sendData,               // -Transmeteix un byte de dades
-                sendCheck,              // -Transmeteix el byte de verificacio
-                sendFinished,           // -Ha finalitzat la transmissio
-                startReceive,           // -Inicia la recepcio de dades
-                receiveLength,          // -Rebent un byte de longitut
-                receiveData,            // -Rebent un byte de dades
-                receiveCheck,           // -Rebent un byte de verificacio
-                ack,                    // -ACK transmitit
-                nak,                    // -NAK transmitit
-                waitStop,               // -Esperant STOP
-                finished                // -Finalitzada
-            };
+		public:
+    		static constexpr uint32_t minStackSize = 256;
 
-            typedef ICallbackP1<const TransactionEventArgs&> ITransactionEventCallback;
+		private:
+    		void notifyEventHandler(htl::i2c::NotifyEventArgs &args);
 
-            /// \brief Estructura per gestionar les transaccions.
-            ///
-            struct Transaction {
-                uint8_t addr;
-                const uint8_t *txBuffer;
-                uint8_t *rxBuffer;
-                int txCount;
-                int rxCount;
-                int rxSize;
-                TransactionProtocol protocol;
-                ITransactionEventCallback *callback;
-            };
+		protected:
+			bool onTask() override;
 
-            typedef PoolAllocator<Transaction, 20> TransactionAllocator;
-            typedef Queue<Transaction*> TransactionQueue;
+		public:
+			I2CMasterService(DevI2C *devI2C);
 
-        private:
-            I2CHandler hI2C;
-            TransactionAllocator transactionAllocator;
-            TransactionQueue transactionQueue;
-            Transaction *transaction;
-            Semaphore semaphore;
-            int index;
-            int maxIndex;
-            uint8_t check;
-            uint8_t error;
-            bool waitingSlaveACK;
-            bool writeMode;
-            State state;
-
-        public:
-            I2CMasterService(Application* application, const Settings &settings);
-            ~I2CMasterService();
-
-            bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, ITransactionEventCallback *callback);
-            bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, void *rxBuffer, int rxSize, ITransactionEventCallback *callback);
-
-        protected:
-            void onInitialize() override;
-            void onTerminate() override;
-            void onTask(Task *task) override;
-
-        private:
-            void initializeHardware(const Settings &settings);
-            void deinitializeHardware();
-            static void i2cInterruptFunction(I2CHandler handler, void* params);
-            void stateMachine();
-    };
+			bool startTransaction(htl::i2c::I2CAddr addr, const uint8_t *txBuffer, unsigned txLength, ITransactionEvent &event, unsigned blockTime = -1);
+            bool startTransaction(htl::i2c::I2CAddr addr, const uint8_t *txBuffer, unsigned txLength, uint8_t *rxBuffer, unsigned rxBufferSize, ITransactionEvent &event, unsigned blockTime = -1);
+	};
 
 }
 
 
 #endif // __eosI2CMasterService__
-

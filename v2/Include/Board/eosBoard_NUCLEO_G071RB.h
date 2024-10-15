@@ -136,7 +136,9 @@
 #ifndef USE_ARDUINO
 #define CN10_3_Pin  		 htl::gpio::PinB8
 #define CN10_5_Pin  		 htl::gpio::PinB9
+#ifndef USE_LED1
 #define CN10_11_Pin  		 htl::gpio::PinA5
+#endif
 #define CN10_13_Pin  		 htl::gpio::PinA6
 #define CN10_15_Pin  		 htl::gpio::PinA7
 #define CN10_17_Pin  		 htl::gpio::PinB0
@@ -183,19 +185,23 @@
 #define ARDUINO_D10_Pin      htl::gpio::PinB0
 #define ARDUINO_D11_Pin      htl::gpio::PinA7
 #define ARDUINO_D12_Pin      htl::gpio::PinA6
+#ifndef USE_LED1
 #define ARDUINO_D13_Pin      htl::gpio::PinA5
+#endif
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
-#define ARDUINO_RX_Pin       htl::gpio::PinC5 // ARDUINO_D0 / CN9_1
-#define ARDUINO_TX_Pin       htl::gpio::PinC4 // ARDUINO_D1 / CN9_2
+#define ARDUINO_RX_Pin       htl::gpio::PinC5
+#define ARDUINO_TX_Pin       htl::gpio::PinC4
 
-#define ARDUINO_SCL_Pin      htl::gpio::PinB8 // ARDUINO_D15 / CN5_10
-#define ARDUINO_SDA_Pin      htl::gpio::PinB9 // ARDUINO_D14 / CN5_9
+#define ARDUINO_SCL_Pin      htl::gpio::PinB8
+#define ARDUINO_SDA_Pin      htl::gpio::PinB9
 
-#define ARDUINO_SCK_Pin      htl::gpio::PinA5 // ARDUINO_D13 / CN5_6
-#define ARDUINO_MISO_Pin     htl::gpio::PinA6 // ARDUINO_D12 / CN5_5
-#define ARDUINO_MOSI_Pin     htl::gpio::PinA7 // ARDUINO_D11 / CN5_4
+#ifndef USE_LED1
+#define ARDUINO_SCK_Pin      htl::gpio::PinA5
+#endif
+#define ARDUINO_MISO_Pin     htl::gpio::PinA6
+#define ARDUINO_MOSI_Pin     htl::gpio::PinA7
 
 #endif // USE_ARDUINO
 

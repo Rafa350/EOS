@@ -51,6 +51,8 @@ namespace eos {
             virtual bool onTaskStart();
             virtual bool onTask();
 
+            bool stopSignal() const;
+
         public:
             virtual ~Service() = default;
 
