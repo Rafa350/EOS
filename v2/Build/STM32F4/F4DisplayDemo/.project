@@ -469,11 +469,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRTOSApplication.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/eosString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/STM32/BSP/stm32f429i_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery.c</locationURI>
@@ -482,6 +477,11 @@
 			<name>src/Framework/STM32/BSP/stm32f429i_discovery_sdram.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery_sdram.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/FreeRTOS/cmsis_os.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/CMSIS_RTOS/cmsis_os.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/heap_4.c</name>
@@ -594,6 +594,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/system/Src/syscalls.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/STM32/System/system_stm32f4xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/system_stm32f4xx.c</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -647,11 +652,6 @@
 			<name>inc/Framework/EOS/HTL/STM32/htlClock.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlClock.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlDMA.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlDMA.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/htlDMA2D.h</name>
@@ -984,14 +984,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlClock.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F4/htlLTDC_AF_F4.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/F4/htlLTDC_AF.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlLTDC_AF_F4.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlLTDC_AF.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F4/htlSPI_AF_F4.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/F4/htlSPI_AF.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlSPI_AF_F4.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlSPI_AF.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>

@@ -260,10 +260,10 @@ namespace htl {
 
 
 #if defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/F4/htlLTDC_AF_F4.h"
+    #include "htl/STM32/F4/htlLTDC_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
-    #include "htl/STM32/F7/htlLTDC_AF_F7.h"
+    #include "htl/STM32/F7/htlLTDC_AF.h"
 
 #else
     #error "Unknown platform"

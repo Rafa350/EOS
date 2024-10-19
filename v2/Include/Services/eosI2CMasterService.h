@@ -18,12 +18,15 @@ namespace eos {
 	class I2CMasterService final: public Service {
 		public:
 			struct TransactionEventArgs {
-
+				uint8_t *txData;
+				unsigned txDataLength;
+				uint8_t *rxData;
+				unsigned rxDataLength;
 			};
             using ITransactionEvent = ICallbackP2<const I2CMasterService*, const TransactionEventArgs&>;
             template <typename Instance_> using TransactionEvent = CallbackP2<Instance_, const I2CMasterService*, const TransactionEventArgs&>;
             using DevI2C = htl::i2c::I2CMasterDevice;
-            using NotifyEvent = htl::i2c::MasterNotifyEvent<I2CMasterService>;
+            using DevI2CNotifyEvent = htl::i2c::MasterNotifyEvent<I2CMasterService>;
 
 		private:
 			struct Transaction {
@@ -39,9 +42,12 @@ namespace eos {
 
 		private:
 			DevI2C *_devI2C;
+			DevI2CNotifyEvent _devI2CNotifyEvent;
 			TransactionQueue _transactionQueue;
-			Semaphore _finishedTransaction;
-			NotifyEvent _notifyEvent;
+			Semaphore _txFinished;
+			unsigned _txFinishedLength
+			Semaphore _rxFinished;
+			unsigned _rxFinishedLength;
 
 		private:
 			static constexpr unsigned _transactionQueueSize = 10;
@@ -50,7 +56,7 @@ namespace eos {
     		static constexpr uint32_t minStackSize = 256;
 
 		private:
-    		void notifyEventHandler(htl::i2c::NotifyEventArgs &args);
+    		void devI2CNotifyEventHandler(htl::i2c::NotifyEventArgs &args);
 
 		protected:
 			bool onTask() override;

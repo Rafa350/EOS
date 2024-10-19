@@ -261,16 +261,16 @@ void I2CSlaveDevice::interruptServiceReceive() {
 		//
 		_i2c->ICR |= I2C_ICR_STOPCF;
 
-	    // Notifica el final de la recepcio de dades, indicant
-	    // el nombre de bytes rebuts.
-	    //
-        notifyRxCompleted(_count, true);
-
         // Torna a activar el modus listen
         //
         disableInterrupts(_i2c);
         enableListenInterrupts(_i2c);
         _state = State::listen;
+
+        // Notifica el final de la recepcio de dades, indicant
+	    // el nombre de bytes rebuts.
+	    //
+        notifyRxCompleted(_count, true);
 	}
 }
 
@@ -300,15 +300,15 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 		//
 		_i2c->ICR |= I2C_ICR_STOPCF;
 
-		// Notifica el final de la transmissio
-		//
-    	notifyTxCompleted(_count, true);
-
     	// Torna a activar el modus listen
     	//
     	disableInterrupts(_i2c);
     	enableListenInterrupts(_i2c);
         _state = State::listen;
+
+        // Notifica el final de la transmissio
+		//
+    	notifyTxCompleted(_count, true);
     }
 
 	// El registre de transmissio de dades es buit
@@ -345,7 +345,7 @@ void I2CSlaveDevice::notifyAddressMatch(
             .instance = this,
             .id = NotifyID::addressMatch,
             .irq = irq,
-            .AddressMatch {
+            .addressMatch {
                 .addr = addr
             }
         };
@@ -370,14 +370,14 @@ void I2CSlaveDevice::notifyRxStart(
             .instance = this,
             .id = NotifyID::rxStart,
             .irq = irq,
-            .RxStart {
+            .rxStart {
                 .buffer = nullptr,
                 .bufferSize = 0
             }
         };
         _notifyEvent->execute(args);
-        buffer = args.RxStart.buffer;
-        bufferSize = args.RxStart.bufferSize;
+        buffer = args.rxStart.buffer;
+        bufferSize = args.rxStart.bufferSize;
     }
     else {
         buffer = nullptr;
@@ -400,7 +400,7 @@ void I2CSlaveDevice::notifyRxCompleted(
             .instance = this,
             .id = NotifyID::rxCompleted,
             .irq = irq,
-            .RxCompleted {
+            .rxCompleted {
                 .length = length
             }
         };
@@ -425,14 +425,14 @@ void I2CSlaveDevice::notifyTxStart(
             .instance = this,
             .id = NotifyID::txStart,
             .irq = irq,
-            .TxStart {
+            .txStart {
                 .buffer = nullptr,
                 .length = 0
             }
         };
         _notifyEvent->execute(args);
-        buffer = args.TxStart.buffer;
-        length = args.TxStart.length;
+        buffer = args.txStart.buffer;
+        length = args.txStart.length;
     }
     else {
         buffer = nullptr;
@@ -455,7 +455,7 @@ void I2CSlaveDevice::notifyTxCompleted(
             .instance = this,
             .id = NotifyID::txCompleted,
             .irq = irq,
-            .TxCompleted {
+            .txCompleted {
                 .length = length
             }
         };

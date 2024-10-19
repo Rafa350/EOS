@@ -9,13 +9,13 @@
 
 
 #if defined(EOS_PLATFORM_STM32G031)
-	#include "G0/G031/htlINT_Vector.h"
+	#include "G0/G031/htlINT_Vectors.h"
 #elif defined(EOS_PLATFORM_STM32G051)
-	#include "G0/G051/htlINT_Vector.h"
+	#include "G0/G051/htlINT_Vectors.h"
 #elif defined(EOS_PLATFORM_STM32G071)
-	#include "G0/G071/htlINT_Vector.h"
+	#include "G0/G071/htlINT_Vectors.h"
 #elif defined(EOS_PLATFORM_STM32G0B1)
-	#include "G0/G0B1/htlINT_Vector.h"
+	#include "G0/G0B1/htlINT_Vectors.h"
 #else
 	#define UNDEFINED_VectorID
 #endif

@@ -26,7 +26,6 @@ SerialDriver_UART::SerialDriver_UART(
 void SerialDriver_UART::onInitialize() {
 
     _devUART->setNotifyEvent(_uartNotifyEvent);
-    _devUART->enable();
 }
 
 
@@ -35,7 +34,6 @@ void SerialDriver_UART::onInitialize() {
 ///
 void SerialDriver_UART::onDeinitialize() {
 
-    _devUART->disable();
     _devUART->disableNotifyEvent();
 }
 

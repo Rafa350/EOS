@@ -43,13 +43,22 @@ Result UARTDevice::initialize() {
 	if (_state == State::reset) {
 
 		activate();
-		disable();
 
-        #if defined(EOS_PLATFORM_STM32G0)
-		_usart->CR1 &= ~USART_CR1_FIFOEN;
-        #endif
-	    _usart->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
-		_usart->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
+		_usart->CR1 &= ~(
+			#if defined(EOS_PLATFORM_STM32G0)
+			USART_CR1_FIFOEN | // Deshabilita el FIFO
+			#endif
+			USART_CR1_UE |     // Desabilita el dispositiu
+			USART_CR1_TE |     // Desabilita la transmissio
+			USART_CR1_RE);     // Deshabilita la recepcio
+	    _usart->CR2 &= ~(
+	    	USART_CR2_LINEN |  // Modus sincron, deshabilita LIN
+			USART_CR2_CLKEN);  // ;odus sincron, desabilita CLK
+		_usart->CR3 &= ~(
+			USART_CR3_SCEN |   // Desabilita smartcad
+			USART_CR3_HDSEL |  // Desabilita half-duplex
+			USART_CR3_IREN);   // Desabilita IRDA
+		_usart->CR1 |= USART_CR1_UE; // Habilita el dispositiu de nou
 
 		_state = State::ready;
 
@@ -69,7 +78,10 @@ Result UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		disable();
+		_usart->CR1 = 0;
+		_usart->CR2 = 0;
+		_usart->CR3 = 0;
+
 		deactivate();
 
 		_state = State::reset;
@@ -95,11 +107,13 @@ void UARTDevice::setProtocol(
 	StopBits stopBits,
 	Handsake handsake) {
 
-	setParity(_usart, parity);
-	setWordBits(_usart, wordBits, parity != Parity::none);
-	setStopBits(_usart, stopBits);
-	setHandsake(_usart, handsake);
-	setReceiveTimeout(_usart, 11 * 100);
+	if (_state == State::ready) {
+		setParity(_usart, parity);
+		setWordBits(_usart, wordBits, parity != Parity::none);
+		setStopBits(_usart, stopBits);
+		setHandsake(_usart, handsake);
+		setReceiveTimeout(_usart, 11 * 100);
+	}
 }
 
 
@@ -110,7 +124,8 @@ void UARTDevice::setProtocol(
 void UARTDevice::setRxTimeout(
     uint32_t timeout) {
 
-    setReceiveTimeout(_usart, timeout);
+	if (_state == State::ready)
+		setReceiveTimeout(_usart, timeout);
 }
 
 
@@ -128,65 +143,67 @@ void UARTDevice::setTimming(
 	uint32_t rate,
 	OverSampling overSampling) {
 
-	switch (baudMode) {
-    	case BaudMode::_1200:
-    		rate = 1200;
-    		break;
+	if (_state == State::ready) {
+		switch (baudMode) {
+			case BaudMode::_1200:
+				rate = 1200;
+				break;
 
-    	case BaudMode::_2400:
-    		rate = 2400;
-    		break;
+			case BaudMode::_2400:
+				rate = 2400;
+				break;
 
-    	case BaudMode::_4800:
-    		rate = 4800;
-    		break;
+			case BaudMode::_4800:
+				rate = 4800;
+				break;
 
-    	case BaudMode::_9600:
-    		rate = 9600;
-    		break;
+			case BaudMode::_9600:
+				rate = 9600;
+				break;
 
-    	case BaudMode::_19200:
-    		rate = 19200;
-    		break;
+			case BaudMode::_19200:
+				rate = 19200;
+				break;
 
-    	case BaudMode::_38400:
-    		rate = 38400;
-    		break;
+			case BaudMode::_38400:
+				rate = 38400;
+				break;
 
-    	case BaudMode::_57600:
-    		rate = 57600;
-    		break;
+			case BaudMode::_57600:
+				rate = 57600;
+				break;
 
-    	case BaudMode::_115200:
-    		rate = 115200;
-    		break;
+			case BaudMode::_115200:
+				rate = 115200;
+				break;
 
-    	default:
-    		break;
-    }
+			default:
+				break;
+		}
 
-    if (clockSource == ClockSource::automatic)
-    	clockSource = getClockSource(_usart);
+		if (clockSource == ClockSource::automatic)
+			clockSource = getClockSource(_usart);
 
-    uint32_t fclk = getClockFrequency(_usart, clockSource);
+		uint32_t fclk = getClockFrequency(_usart, clockSource);
 
-    uint32_t div;
-    if (baudMode == BaudMode::div)
-    	div = rate;
-    else {
-        if (overSampling == OverSampling::_8)
-        	div = (fclk + fclk + (rate / 2)) / rate;
-        else
-           	div = (fclk + (rate / 2)) / rate;
-    }
+		uint32_t div;
+		if (baudMode == BaudMode::div)
+			div = rate;
+		else {
+			if (overSampling == OverSampling::_8)
+				div = (fclk + fclk + (rate / 2)) / rate;
+			else
+				div = (fclk + (rate / 2)) / rate;
+		}
 
-    if (overSampling == OverSampling::_8) {
-        uint32_t temp = (uint16_t)(div & 0xFFF0U);
-        temp |= (uint16_t)((div & (uint16_t)0x000FU) >> 1U);
-        _usart->BRR = temp;
-    }
-    else
-    	_usart->BRR = div;
+		if (overSampling == OverSampling::_8) {
+			uint32_t temp = (uint16_t)(div & 0xFFF0U);
+			temp |= (uint16_t)((div & (uint16_t)0x000FU) >> 1U);
+			_usart->BRR = temp;
+		}
+		else
+			_usart->BRR = div;
+	}
 }
 
 
@@ -199,8 +216,10 @@ void UARTDevice::setNotifyEvent(
 	INotifyEvent &event,
 	bool enabled) {
 
-	_notifyEvent = &event;
-	_notifyEventEnabled = enabled;
+	if (_state == State::ready) {
+		_notifyEvent = &event;
+		_notifyEventEnabled = enabled;
+	}
 }
 
 
@@ -222,8 +241,11 @@ Result UARTDevice::transmit_IRQ(
 		_txCount = 0;
         _txMaxCount = length;
 
-		enableTxEmptyInterrupt();
-		enableTx();
+        // Habilita comunicacio, interrupcions, rtc
+        //
+		_usart->CR1 |=
+			USART_CR1_TE |            // Habilita la transmissio
+			USART_CR1_TXEIE_TXFNFIE;  // Habilita interrupcio TXE
 
 		return Result::success();
 	}
@@ -254,11 +276,10 @@ Result UARTDevice::receive_IRQ(
 		_rxCount = 0;
 		_rxMaxCount = bufferSize;
 
-		enableRxNoEmptyInterrupt();
-		if ((_usart->CR2 & USART_CR2_RTOEN) != 0)
-			enableRxTimeoutInterrupt();
-
-		enableRx();
+		_usart->CR1 |=
+			USART_CR1_RE |              // Habilita la recepcio
+			USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
+			USART_CR1_RTOIE;            // Habilita interrupcio RTO
 
 		return Result::success();
 	}
@@ -291,8 +312,12 @@ Result UARTDevice::transmit_DMA(
         _txCount = 0;
         _txMaxCount = length;
 
-        enableTx();
-        enableTxDMA();
+        // Habilita comunicacio, transmissio i DMA
+        //
+        _usart->CR1 |=
+			USART_CR1_TE;   // Habilita transmissio
+        _usart->CR3 |=
+			USART_CR3_DMAT; // Habilita DMA
 
         // Inicia la transferencia per DMA
         //
@@ -381,38 +406,50 @@ void UARTDevice::interruptService() {
 #elif defined(EOS_PLATFORM_STM32G0)
 void UARTDevice::interruptService() {
 
+	auto CR1 = _usart->CR1;
+	auto CR3 = _usart->CR3;
+	auto ISR = _usart->ISR;
+
 	// Comprova de forma rapida si hi ha errors
 	//
-	if ((_usart->ISR & (USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE)) != 0) {
+	if (ISR & (USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE)) {
 
 		// Comprova si es un error PARITY
 		//
-		if (isParityErrorFlagSet()) {
+		if (ISR & USART_ISR_PE) {
 
-			clearParityErrorFlag();
+			// Borra el flag
+			//
+			_usart->ICR = USART_ICR_FECF;
 		}
 
 		// Comprova si hi ha error FRAME
 		//
-	    if (isFrameErrorFlagSet() && isErrorInterruptEnabled()) {
+	    if ((ISR & USART_ISR_FE) && (CR3 & USART_CR3_EIE)) {
 
-	    	clearFrameErrorFlag();
+			// Borra el flag
+			//
+	    	_usart->ICR = USART_ICR_FECF;
 	    }
 
 	    // Comprova si es un error NOISE
 	    //
-	    if (((_usart->ISR & USART_ISR_NE) != 0) && isErrorInterruptEnabled()) {
+	    if ((ISR & USART_ISR_NE) && (CR3 & USART_CR3_EIE)) {
 
+			// Borra el flag
+			//
 	    	_usart->ICR = USART_ICR_NECF;
 	    }
 
 		// Comprova si es un error OVERRUN
 		//
-		if (((_usart->ISR & USART_ISR_ORE) != 0) &&
-			((_usart->CR1 & USART_CR1_RXNEIE_RXFNEIE) != 0) &&
-			((_usart->CR3 & (USART_CR3_RXFTIE | USART_CR3_EIE)) != 0)) {
+		if ((ISR & USART_ISR_ORE) &&
+			(CR1 & USART_CR1_RXNEIE_RXFNEIE) &&
+			(CR3 & (USART_CR3_RXFTIE | USART_CR3_EIE))) {
 
-			_usart->ICR |= USART_ICR_ORECF;
+			// Borra el flag
+			//
+			_usart->ICR = USART_ICR_ORECF;
 		}
 	}
 
@@ -422,7 +459,7 @@ void UARTDevice::interruptService() {
 
 		// Transmissio amb el FIFO activat
 		//
-		if (_usart->CR1 & USART_CR1_FIFOEN) {
+		if (CR1 & USART_CR1_FIFOEN) {
 
 		}
 
@@ -430,51 +467,93 @@ void UARTDevice::interruptService() {
 		///
 		else {
 
-			// Interrupcio 'TxEmpty'
+			// Interrupcio 'TXE'
 			//
-			if (isTxEmptyInterruptEnabled() && isTxEmptyFlagSet()) {
+			if ((CR1 & USART_CR1_TXEIE_TXFNFIE) && (ISR & USART_ISR_TXE_TXFNF)) {
 
 				if (_txCount < _txMaxCount) {
-					write8(_txBuffer[_txCount++]);
+					_usart->TDR = _txBuffer[_txCount++];
 					if (_txCount == _txMaxCount) {
-						disableTxEmptyInterrupt();
-						enableTxCompleteInterrupt();
+
+						ATOMIC_CLEAR_BIT(_usart->CR1,
+							USART_CR1_TXEIE_TXFNFIE); // Deshabilita interrupcio TXE
+						ATOMIC_SET_BIT(_usart->CR1,
+							USART_CR1_TCIE);          // Habilita interrupcio TC
 					}
 				}
 			}
 
-			// Interrupcio 'TxComplete'. Nomes en l'ultim caracter transmes.
+			// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
 			//
-			if (isTxCompleteInterruptEnabled() && isTxCompleteFlagSet()) {
-				clearTxCompleteFlag();
-				disableAllTxInterrupts();
-				disableTx();
-				disableTxDMA();
+			if ((CR1 & USART_CR1_TCIE) && (CR1 & USART_CR1_TCIE)) {
+
+				// Borra el flag
+				//
+				_usart->ICR = USART_ICR_TCCF;
+
+				// Desabilita interrupcions, cominicacions, DMA, etc
+				//
+				ATOMIC_CLEAR_BIT(_usart->CR1,
+					USART_CR1_TXEIE_TXFNFIE | // Deshabilita interrupcio TXE
+					USART_CR1_TCIE |          // Deshabilita interrupcio TC
+					USART_CR1_RTOIE |         // Deshabilita intterrupcio RTO
+					USART_CR1_TE);            // Desabilita transmissio
+				ATOMIC_CLEAR_BIT(_usart->CR3,
+					USART_CR3_DMAT);          // Desabilita DMA
+
+				// Notifica final de transmissio
+				//
 				notifyTxComplete(_txBuffer, _txCount, true);
+
 				_state = State::ready;
 			}
 
-			/// Interrupcio 'RxNotEmpty'
+			/// Interrupcio 'RXNE'
 			//
-			if (isRxNotEmptyInterruptEnabled() && isRxNotEmptyFlagSet()) {
+			if ((CR1 & USART_CR1_RXNEIE_RXFNEIE) && (ISR & USART_ISR_RXNE_RXFNE)) {
 				if (_rxCount < _rxMaxCount) {
-					_rxBuffer[_rxCount++] = read8();
+					_rxBuffer[_rxCount++] = _usart->RDR;
 					if (_rxCount == _rxMaxCount) {
-						disableAllRxInterrupts();
-						disableRx();
+
+						// Deshabilita interrrupcions, comunicacio, etc.
+						//
+						ATOMIC_CLEAR_BIT(_usart->CR1,
+							USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
+							USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
+							USART_CR1_RE);             // Deshabilita recepcio
+
+						// Notifica el final de recepcio
+						//
 						notifyRxComplete(_rxBuffer, _rxCount, true);
+
+						// Canvia l'estat
+						//
 						_state = State::ready;
 					}
 				}
 			}
 
-			// Interrupcio 'RxTimeout'
+			// Interrupcio 'TIMEOUT'
 			//
-			if (isRxTimeoutInterruptEnabled() && isRxTimeoutFlagSet()) {
-				clearRxTimeoutFlag();
-				disableAllRxInterrupts();
-				disableRx();
+			if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
+
+				// Borra el flag
+				//
+				_usart->ICR = USART_ICR_RTOCF;
+
+				// Deshabilita interrrupcions, comunicacio, etc.
+				//
+				ATOMIC_CLEAR_BIT(_usart->CR1,
+					USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
+					USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
+					USART_CR1_RE);             // Deshabilita recepcio
+
+				// Notifica final de recepcio
+				//
 				notifyRxComplete(_rxBuffer, _rxCount, true);
+
+				// Canvia d'estat
+				//
 				_state = State::ready;
 			}
 		}
@@ -498,8 +577,8 @@ void UARTDevice::dmaNotifyEventHandler(
         //
         case htl::dma::NotifyID::completed:
             _txCount = _txMaxCount;
-            clearTxCompleteFlag();
-            enableTxCompleteInterrupt();
+            _usart->ICR = USART_ICR_TCCF;
+            ATOMIC_SET_BIT(_usart->CR1, USART_CR1_TCIE);
             devDMA->disableNotifyEvent();
             break;
 
@@ -507,6 +586,9 @@ void UARTDevice::dmaNotifyEventHandler(
         //
         case htl::dma::NotifyID::error:
             break;
+
+        default:
+        	break;
     }
 }
 

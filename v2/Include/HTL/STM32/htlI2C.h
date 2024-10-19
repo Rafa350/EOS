@@ -76,21 +76,21 @@ namespace htl {
             union {
                 struct {
                     I2CAddr addr;       ///< L'adressa coincident.
-                } AddressMatch;
+                } addressMatch;
                 struct {
                     uint8_t *buffer;     ///< Buffer de dades.
                     unsigned bufferSize; ///< Tamany del buffer de dades.
-                } RxStart;
+                } rxStart;
                 struct {
                     unsigned length;     ///< Nombre de bytes rebuts.
-                } RxCompleted;
+                } rxCompleted;
                 struct {
                     uint8_t *buffer;     ///< Buffer de dades
                     unsigned length;     ///< Nombre de bytes a transmetre.
-                } TxStart;
+                } txStart;
                 struct {
                     unsigned length;     ///< Nombre de bytes transmessos.
-                } TxCompleted;
+                } txCompleted;
             };
         };
 
@@ -227,14 +227,13 @@ namespace htl {
 				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
 
 				void notifyTxCompleted(unsigned length, bool irq);
-
-				inline void start() const {
-					_i2c->CR2 |= I2C_CR2_START;
-				}
+				void notifyRxCompleted(unsigned length, bool irq);
 
 			protected:
 				I2CMasterDevice(I2C_TypeDef *i2c);
 				void interruptService();
+				void interruptServiceTransmit();
+				void interruptServiceReceive();
 
 			public:
 				Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
@@ -430,6 +429,7 @@ namespace htl {
 		#endif
 
 
+#ifndef STM32G0
 		namespace internal {
 
 			#ifdef HTL_I2C1_EXIST
@@ -493,33 +493,41 @@ namespace htl {
 			#endif
 
 		}
+
+		#endif
 	}
 }
 
 
 #if defined(EOS_PLATFORM_STM32G030)
-    #include "htl/STM32/G0/htlI2C_AF_G030.h"
+	#include "htl/STM32/G0/htlI2C_Traits.h"
+    #include "htl/STM32/G0/G030/htlI2C_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32G031)
-    #include "htl/STM32/G0/htlI2C_AF_G031.h"
+	#include "htl/STM32/G0/htlI2C_Traits.h"
+    #include "htl/STM32/G0/G031/htlI2C_AF.h"
 
 #elif defined(EOS_PLATFORM_STM32G051)
-    #include "htl/STM32/G0/htlI2C_AF_G051.h"
+	#include "htl/STM32/G0/htlI2C_Traits.h"
+    #include "htl/STM32/G0/G051/htlI2C_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
-    #include "htl/STM32/G0/G071/htlI2C_AF.h"
+	#include "htl/STM32/G0/htlI2C_Traits.h"
+    #include "htl/STM32/G0/G071/htlI2C_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G0B1)
-    #include "htl/STM32/G0/G0B1/htlI2C_AF.h"
+    #include "htl/STM32/G0/htlI2C_Traits.h"
+    #include "htl/STM32/G0/G0B1/htlI2C_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
-    #include "htl/STM32/F0/htlI2C_AF_F030.h"
+	#include "htl/STM32/G0/htlI2C_Traits.h"
+    #include "htl/STM32/F0/F030/htlI2C_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/F4/htlI2C_AF_F4.h"
+    #include "htl/STM32/F4/htlI2C_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
-    #include "htl/STM32/F7/htlI2C_AF_F7.h"
+    #include "htl/STM32/F7/htlI2C_Pins.h"
 
 #else
     #error "Unknown platform"
