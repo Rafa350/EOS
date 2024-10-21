@@ -79,7 +79,7 @@ bool I2CMasterService::startTransaction(
 /// ----------------------------------------------------------------------
 /// \brief    Executa les tasques del servei.
 ///
-bool I2CMasterService::onTask() {
+void I2CMasterService::onExecute() {
 
 	_devI2C->setNotifyEvent(_devI2CNotifyEvent);
 
@@ -131,10 +131,10 @@ bool I2CMasterService::onTask() {
 
 			if (transaction.event != nullptr) {
 				TransactionEventArgs args = {
-					txData = transaction.txBuffer,
-					txDataLength = _txFinishedLength,
-					rxData = transaction.rxBuffer,
-					rxDataLength = _rxFinishedLength
+					.txData = (uint8_t*) transaction.txBuffer,
+					.txDataLength = _txFinishedLength,
+					.rxData = transaction.rxBuffer,
+					.rxDataLength = _rxFinishedLength
 				};
 				transaction.event->execute(this, args);
 			}
@@ -143,8 +143,6 @@ bool I2CMasterService::onTask() {
 	}
 
 	_devI2C->disableNotifyEvent();
-
-	return true;
 }
 
 
@@ -156,7 +154,7 @@ void I2CMasterService::devI2CNotifyEventHandler(
 	htl::i2c::NotifyEventArgs &args) {
 
 	switch (args.id) {
-		case htl::i2c::NotifyID::txCompleted:
+		case htl::i2c::NotifyId::txCompleted:
 			if (args.irq)
 				_txFinished.releaseISR();
 			else
@@ -164,7 +162,7 @@ void I2CMasterService::devI2CNotifyEventHandler(
 			_txFinishedLength = args.txCompleted.length;
 			break;
 
-		case htl::i2c::NotifyID::rxCompleted:
+		case htl::i2c::NotifyId::rxCompleted:
 			if (args.irq)
 				_rxFinished.releaseISR();
 			else

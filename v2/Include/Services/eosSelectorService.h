@@ -46,8 +46,7 @@ namespace eos {
             uint8_t getSW() const;
 
         protected:
-            bool onTaskStart() override;
-            bool onTask() override;
+            void onExecute() override;
 
         public:
             SelectorService(PinDriver *drvINA, PinDriver *drvINB, PinDriver *drvSW);

@@ -22,15 +22,11 @@ namespace eos {
 	        unsigned _weakTime;
 
 		public:
-			static constexpr uint32_t minStackSize = 128;
-			static constexpr const char *serviceName = "LED";
-
-		public:
 			LedService(Pin *pinLED1, Pin *pinLED2 = nullptr);
 
 		protected:
-            bool onTaskStart() override;
-			bool onTask() override;
+			void initService(ServiceParams &params) override;
+			void onExecute() override;
 	};
 
 }

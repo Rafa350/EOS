@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosCallbacks__
+#define __eosCallbacks__
 
 
 // EOS includes
@@ -195,3 +197,5 @@ namespace eos {
 
 }
 
+
+#endif // __eosCallbacks__

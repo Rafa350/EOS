@@ -130,6 +130,11 @@ Result SPIDevice::deinitialize() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna l'event de notificacio.
+/// \param    event: L'event.
+/// \param    enabled: True per habilitar l'event.
+///
 void SPIDevice::setNotifyEvent(
     INotifyEvent &event,
     bool enabled) {

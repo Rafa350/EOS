@@ -222,7 +222,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 
         // Borra el flag aqui per stretch-clock
         //
-        _i2c->ICR |= I2C_ICR_ADDRCF;
+        _i2c->ICR = I2C_ICR_ADDRCF;
 	}
 }
 
@@ -259,7 +259,7 @@ void I2CSlaveDevice::interruptServiceReceive() {
 
 		// Borra el flag STOP
 		//
-		_i2c->ICR |= I2C_ICR_STOPCF;
+		_i2c->ICR = I2C_ICR_STOPCF;
 
         // Torna a activar el modus listen
         //
@@ -289,7 +289,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 
 		// Borra el flag NACK
 		//
-		_i2c->ICR |= I2C_ICR_NACKCF;
+		_i2c->ICR = I2C_ICR_NACKCF;
 	}
 
 	// S'ha detectat la condicio STOP
@@ -298,7 +298,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 
 		// Borra el flag STOP
 		//
-		_i2c->ICR |= I2C_ICR_STOPCF;
+		_i2c->ICR = I2C_ICR_STOPCF;
 
     	// Torna a activar el modus listen
     	//
@@ -343,7 +343,7 @@ void I2CSlaveDevice::notifyAddressMatch(
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .instance = this,
-            .id = NotifyID::addressMatch,
+            .id = NotifyId::addressMatch,
             .irq = irq,
             .addressMatch {
                 .addr = addr
@@ -368,7 +368,7 @@ void I2CSlaveDevice::notifyRxStart(
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .instance = this,
-            .id = NotifyID::rxStart,
+            .id = NotifyId::rxStart,
             .irq = irq,
             .rxStart {
                 .buffer = nullptr,
@@ -398,7 +398,7 @@ void I2CSlaveDevice::notifyRxCompleted(
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .instance = this,
-            .id = NotifyID::rxCompleted,
+            .id = NotifyId::rxCompleted,
             .irq = irq,
             .rxCompleted {
                 .length = length
@@ -423,7 +423,7 @@ void I2CSlaveDevice::notifyTxStart(
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .instance = this,
-            .id = NotifyID::txStart,
+            .id = NotifyId::txStart,
             .irq = irq,
             .txStart {
                 .buffer = nullptr,
@@ -453,7 +453,7 @@ void I2CSlaveDevice::notifyTxCompleted(
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .instance = this,
-            .id = NotifyID::txCompleted,
+            .id = NotifyId::txCompleted,
             .irq = irq,
             .txCompleted {
                 .length = length

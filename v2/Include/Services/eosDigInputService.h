@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosDigInputService__
+#define __eosDigInputService__
 
 
 // EOS includes
@@ -6,7 +8,7 @@
 #include "eos.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
-#include "System/eosCallbacks.h"
+#include "System/eosEvents.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 
 
@@ -15,32 +17,36 @@ namespace eos {
     class DigInputService;
     class DigInput;
 
+
     using DigInputList = IntrusiveForwardList<DigInput, 0>;
     using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
+
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
     class DigInputService final: public Service {
-        public:
-            struct ChangedEventArgs {
-                DigInput *input;
-            };
-            using IBeforeScanEvent = ICallbackP1<const DigInputService*>;
-            template <typename Instance_> using BeforeScanEvent = CallbackP1<Instance_, const DigInputService*>;
-            using IChangedEvent = ICallbackP2<const DigInputService*, const ChangedEventArgs&>;
-            template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigInputService*, const ChangedEventArgs&>;
-
-        public:
-    		static constexpr uint32_t minStackSize = 128;
-            static constexpr unsigned minScanPeriod = 5;
+    	public:
+			enum class NotifyId {
+				beforeScan,
+				changed
+			};
+			struct NotifyEventArgs {
+				DigInputService * const service;
+				NotifyId id;
+				union {
+					struct {
+						DigInput * const input;
+					} changed;
+				};
+			};
+			using NotifyEventRaiser = EventRaiser<NotifyId, NotifyEventArgs>;
+			using INotifyEvent = NotifyEventRaiser::IEvent;
+			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
         private:
     		DigInputList _inputs;
 
-            IChangedEvent *_changedEvent;
-            bool _changedEventEnabled;
-            IBeforeScanEvent *_beforeScanEvent;
-            bool _beforeScanEventEnabled;
+    		NotifyEventRaiser _evRaiser;
             unsigned _scanPeriod;
             unsigned _weakTime;
 
@@ -50,8 +56,8 @@ namespace eos {
             void notifyBeforeScan();
 
         protected:
-            bool onTaskStart() override;
-            bool onTask() override;
+            void initService(ServiceParams &params) override;
+            void onExecute() override;
 
         public:
             DigInputService();
@@ -66,13 +72,21 @@ namespace eos {
             bool read(const DigInput *input) const;
             uint32_t readPulses(DigInput *input, bool clear = true) const;
 
-            void setChangedEvent(IChangedEvent &event, bool enabled = true);
-            void enableChangedEvent();
-            void disableChangedEvent();
-
-            void setBeforeScanEvent(IBeforeScanEvent &event, bool enabled = true);
-            void enableBeforeScanEvent();
-            void disableBeforeScanEvent();
+            inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+            	_evRaiser.set(event, enabled);
+            }
+            inline void enableNotifyEvent() {
+            	_evRaiser.enable();
+            }
+            inline void disableNotifyEvent() {
+            	_evRaiser.disable();
+            }
+            inline void enableNotifyId(NotifyId id) {
+            	_evRaiser.enable(id);
+            }
+            inline void disableNotifyId(NotifyId id) {
+            	_evRaiser.disable(id);
+            }
     };
 
     /// \brief Clase que implementa una entrada digital
@@ -134,3 +148,6 @@ namespace eos {
     };
 
 }
+
+
+#endif // __eosDigInputService__

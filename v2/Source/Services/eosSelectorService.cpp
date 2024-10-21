@@ -14,7 +14,7 @@ SelectorService::SelectorService(
     PinDriver *drvINA,
     PinDriver *drvINB,
     PinDriver *drvSW) :
-    
+
     _drvINA {drvINA},
     _drvINB {drvINB},
     _drvSW {drvSW},
@@ -68,21 +68,22 @@ void SelectorService::disableChangedEvent() {
 /// \brief Procesa les tasques del servei
 /// \param task: La tasca actual.
 ///
-bool SelectorService::onTask() {
+void SelectorService::onExecute() {
 
-    if (scanEncoder()) {
-        if (_changedEventEnabled) {
-            ChangedEventArgs args = {
-                .position = _position,
-                .button = _button
-            };
-            _changedEvent->execute(this, args);
-        }
-    }
+	while (!stopSignal()) {
 
-    Task::delay(50);
+		if (scanEncoder()) {
+			if (_changedEventEnabled) {
+				ChangedEventArgs args = {
+					.position = _position,
+					.button = _button
+				};
+				_changedEvent->execute(this, args);
+			}
+		}
 
-    return true;
+		Task::delay(50);
+	}
 }
 
 

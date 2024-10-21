@@ -25,39 +25,35 @@ namespace eos {
             using ServiceInfoListNode = IntrusiveForwardListNode<ServiceInfo, 0>;
             struct ServiceInfo: ServiceInfoListNode {
     			Service *service;
-    			Task::Priority priority;
-    			unsigned stackSize;
-    			const char *name;
-    			Task *task;
     		};
-            using MyTaskCallback = TaskCallback<RTOSApplication>;
-#if Eos_ApplicationTickEnabled
-            typedef CallbackP1<RTOSApplication, const Timer::EventArgs&> TimerEventCallback;
-#endif
+
+        protected:
+            struct ApplicationParams {
+            	unsigned stackSize;
+            	Task::Priority priority;
+            };
+
         private:
             ServiceInfoList _serviceInfoList;
-            MyTaskCallback _taskCallback;
-#if Eos_ApplicationTickEnabled
-            TimerEventCallback _timerEventCallback;
-            Timer timer;
-#endif
+            bool _running;
+            Task *_appTask;
+            TaskCallback<RTOSApplication> _appTaskCallback;
 
+        private:
             RTOSApplication(const RTOSApplication&) = delete;
             RTOSApplication& operator=(const RTOSApplication&) = delete;
 
-            void initializeServices() override;
-            void terminateServices() override;
-            void runServices() override;
-            void taskCallbackHandler(const TaskCallbackArgs &args);
-#if Eos_ApplicationTickEnabled
-            void timerEventHandler(const Timer::EventArgs &args);
-#endif
+            void appTaskCallbackHandler(const TaskCallbackArgs &args);
+            void onRun() override;
 
         protected:
             RTOSApplication();
 
+            virtual void onExecute() = 0;
+            virtual void initApplication(ApplicationParams &params);
+
         public:
-            void addService(Service *service, Task::Priority priority, unsigned stackSize, const char *name = nullptr);
+            void addService(Service *service);
             void removeService(Service *service);
             void removeServices();
     };

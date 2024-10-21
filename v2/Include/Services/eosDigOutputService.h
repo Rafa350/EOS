@@ -8,7 +8,7 @@
 #include "eos.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
-#include "System/eosCallbacks.h"
+#include "System/eosEvents.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Core/eosQueue.h"
 
@@ -39,25 +39,37 @@ namespace eos {
 
     class DigOutput;
 
+
     using DigOutputList1 = IntrusiveForwardList<DigOutput, 1>;
     using DigOutputListNode1 = IntrusiveForwardListNode<DigOutput, 1>;
 
     using DigOutputList2 = IntrusiveForwardList<DigOutput, 2>;
     using DigOutputListNode2 = IntrusiveForwardListNode<DigOutput, 2>;
 
+
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
     class DigOutputService final: public Service {
 		public:
-			struct ChangedEventArgs {
-				DigOutput *output;
-				bool pinState;
+    		enum class NotifyId {
+    			changed
+    		};
+			struct NotifyEventArgs {
+    			DigOutputService * const service;
+    			NotifyId id;
+    			union {
+    				struct {
+    					DigOutput * const output;
+    					bool pinState;
+    				} changed;
+    			};
 			};
-			using IChangedEvent = ICallbackP2<const DigOutputService*, const ChangedEventArgs&>;
-			template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigOutputService*, const ChangedEventArgs&>;
+			using NotifyEventRaiser = EventRaiser<NotifyId, NotifyEventArgs>;
+			using INotifyEvent = NotifyEventRaiser::IEvent;
+			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
 		private:
-            enum class CommandID {
+            enum class CommandId {
                 set,
                 clear,
                 toggle,
@@ -69,7 +81,7 @@ namespace eos {
                 tick
             };
             struct Command {
-                CommandID id;
+                CommandId id;
                 DigOutput *output;
                 unsigned time1;
                 unsigned time2;
@@ -80,17 +92,11 @@ namespace eos {
 		private:
             static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
 
-    	public:
-    		static constexpr unsigned minStackSize = 128;
-            static constexpr unsigned minDelay = DigOutputService_MinDelay;
-            static constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
-
     	private:
             DigOutputList1 _outputs;
             DigOutputList2 _pending;
 
-            IChangedEvent *_changedEvent;
-            bool _changedEventEnabled;
+            NotifyEventRaiser _evRaiser;
             volatile unsigned _timeCounter;
             unsigned _nextTimeLimit;
             CommandQueue _commandQueue;
@@ -114,12 +120,13 @@ namespace eos {
             void toggleOutput(DigOutput *output);
 
             void notifyChanged(DigOutput *output);
-            
+
             void updateNextTimeLimit();
             bool hasExpired(unsigned timeLimit) const;
 
         protected:
-            bool onTask() override;
+            void initService(ServiceParams &params) override;
+            void onExecute() override;
 
         public:
             DigOutputService();
@@ -129,9 +136,15 @@ namespace eos {
             void removeOutput(DigOutput *output);
             void removeOutputs();
 
-            void setChangedEvent(IChangedEvent &event, bool enabled = true);
-            void enableChangedEvent();
-            void disableChangedEvent();
+            inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+            	_evRaiser.set(event, enabled);
+            }
+            inline void enableNotifyEvent() {
+            	_evRaiser.enable();
+            }
+            inline void disableNotifyEvent() {
+            	_evRaiser.disable();
+            }
 
             void set(DigOutput *output);
             void clear(DigOutput *output);
@@ -221,7 +234,7 @@ namespace eos {
 
             friend DigOutputService;
     };
-    
+
 }
 
 

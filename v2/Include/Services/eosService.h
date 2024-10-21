@@ -12,56 +12,50 @@
 
 namespace eos {
 
-    class Service;
-
-    struct ServiceEventArgs: public EventArgs<Service> {
-
-    	inline ServiceEventArgs(Service *service):
-    		EventArgs(service) {
-    	}
-    };
-
     /// \brief Clase que representa un servei.
     ///
     class Service {
     	public:
 			enum class State {
-				created,
-				initialized,
-				started,
-				running,
-				stopped,
-				terminated
+				stop,
+				run
+			};
+
+    	protected:
+			struct ServiceParams {
+				const char *name;
+				Task::Priority priority;
+				unsigned stackSize;
 			};
 
     	private:
     		State _state;
-    		// Task * _task;
+    		Task * _task;
+    		TaskCallback<Service> _taskCallback;
+    		bool _stopSignal;
+
+    	private:
+    		void taskCallbackHandler(const TaskCallbackArgs &args);
 
         protected:
             Service();
             Service(const Service&) = delete;
             Service& operator=(const Service&) = delete;
 
-            virtual void onInitialize();
-            virtual void onTerminate();
             virtual void onStart();
+            virtual void onStarted();
             virtual void onStop();
-            //virtual void onExecute() = 0;
-            virtual bool onTaskStart();
-            virtual bool onTask();
+            virtual void onStopped();
+            virtual void onExecute() = 0;
+            virtual void initService(ServiceParams &params);
 
             bool stopSignal() const;
 
         public:
             virtual ~Service() = default;
 
-            void initialize();
-            void terminate();
             void start();
             void stop();
-            bool taskStart();
-            bool taskRun();
 
             inline State getState() const {
             	return _state;

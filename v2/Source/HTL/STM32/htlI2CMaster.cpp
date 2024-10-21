@@ -115,7 +115,7 @@ void I2CMasterDevice::notifyTxCompleted(
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
 			.instance = this,
-			.id = NotifyID::txCompleted,
+			.id = NotifyId::txCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length
@@ -138,7 +138,7 @@ void I2CMasterDevice::notifyRxCompleted(
 	if (_notifyEventEnabled) {
 		NotifyEventArgs args = {
 			.instance = this,
-			.id = NotifyID::rxCompleted,
+			.id = NotifyId::rxCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length

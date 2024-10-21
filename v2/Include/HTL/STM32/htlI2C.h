@@ -7,7 +7,6 @@
 //
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "System/eosResults.h"
 
 
 namespace htl {
@@ -61,7 +60,7 @@ namespace htl {
 
 		/// Identificador de la notificacio.
 		///
-        enum class NotifyID {
+        enum class NotifyId {
             addressMatch,    ///< Coindicencia en l'adressa.
             rxStart,         ///< Inici de la recepcio.
             rxCompleted,     ///< Recepcio finalitzada.
@@ -71,7 +70,7 @@ namespace htl {
 
         struct NotifyEventArgs {
             I2CDevice * const instance;  ///< La instancia del dispositiu.
-            NotifyID id;                 ///< Identificador de la notificacio
+            NotifyId id;                 ///< Identificador de la notificacio
             bool irq;
             union {
                 struct {
@@ -183,26 +182,6 @@ namespace htl {
 				/// Obte l'estat del dispositiu.
 				///
 				inline State getState() const { return _state; }
-
-				/// Comprova si el dispositiu esta preparat.
-				///
-				inline bool isReady() const { return _state == State::ready; }
-
-				/// Comprova si el dispositiu esta ocupat.
-				///
-				inline bool isBusy() const { return _state == State::listen || _state == State::receiving || _state == State::transmiting; }
-
-				// Comprova si el dispositiu esta en escolta.
-				//
-				inline bool isListening() const { return _state == State::listen; }
-
-                // Comprova si el dispositiu esta transmetent.
-                //
-				inline bool isTransmiting() const { return _state == State::transmiting; }
-
-				// Comprova si el dispositiu esta rebent.
-                //
-                inline bool isReceiving() const { return _state == State::receiving; }
 		};
 
 		class I2CMasterDevice: public I2CDevice {
@@ -259,6 +238,10 @@ namespace htl {
 
 				Result transmit_IRQ(I2CAddr addr, const uint8_t *buffer, unsigned length);
 				Result receive_IRQ(I2CAddr addr, uint8_t *buffer, unsigned bufferSize);
+
+				/// Obte l'estat del dispositiu.
+				///
+				inline State getState() const { return _state; }
 		};
 
 

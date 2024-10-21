@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "HTL/htl.h"
-#include "HTL/htlTMR.h"
+#include "HTL/STM32/htl.h"
+#include "HTL/STM32/htlTMR.h"
 
 
 namespace htl {

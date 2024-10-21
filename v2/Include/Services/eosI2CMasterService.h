@@ -45,7 +45,7 @@ namespace eos {
 			DevI2CNotifyEvent _devI2CNotifyEvent;
 			TransactionQueue _transactionQueue;
 			Semaphore _txFinished;
-			unsigned _txFinishedLength
+			unsigned _txFinishedLength;
 			Semaphore _rxFinished;
 			unsigned _rxFinishedLength;
 
@@ -59,7 +59,7 @@ namespace eos {
     		void devI2CNotifyEventHandler(htl::i2c::NotifyEventArgs &args);
 
 		protected:
-			bool onTask() override;
+			void onExecute() override;
 
 		public:
 			I2CMasterService(DevI2C *devI2C);

@@ -8,6 +8,11 @@ using namespace eos;
 using namespace htl;
 
 
+constexpr const char *serviceName = "Led";
+constexpr unsigned serviceStackSize = 96;
+constexpr Task::Priority servicePriority = Task::Priority::low;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Contructor de l'objecte.
 ///
@@ -22,9 +27,21 @@ LedService::LedService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa l'inici d'execucio de la tasca.
+/// \brief    Inicialitza els parametres del servei.
 ///
-bool LedService::onTaskStart() {
+void LedService::initService(
+	ServiceParams &params) {
+
+	params.name = serviceName;
+	params.stackSize = serviceStackSize;
+	params.priority = servicePriority;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief 	  Tasca del servei.
+///
+void LedService::onExecute() {
 
     if (_pinLED1 != nullptr)
         _pinLED1->set();
@@ -33,22 +50,14 @@ bool LedService::onTaskStart() {
 
     _weakTime = Task::getTickCount();
 
-    return true;
-}
+    while (!stopSignal()) {
 
+		if (_pinLED1 != nullptr)
+			_pinLED1->toggle();
 
-/// ----------------------------------------------------------------------
-/// \brief Procesa l'execucio de la tasca.
-///
-bool LedService::onTask() {
+		if (_pinLED2 != nullptr)
+			_pinLED2->toggle();
 
-    if (_pinLED1 != nullptr)
-        _pinLED1->toggle();
-
-    if (_pinLED2 != nullptr)
-        _pinLED2->toggle();
-
-    Task::delay(500, _weakTime);
-
-    return true;
+		Task::delay(500, _weakTime);
+	}
 }

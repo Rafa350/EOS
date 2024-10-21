@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32G071_htlINT_Vector__
-#define __STM32G071_htlINT_Vector__
+#ifndef __STM32G071_htlINT_Vectors__
+#define __STM32G071_htlINT_Vectors__
 
 
 // HAL includes
@@ -102,4 +102,4 @@ namespace htl {
 }
 
 
-#endif // __STM32G071_htlINT_Vector__
+#endif // __STM32G071_htlINT_Vectors__

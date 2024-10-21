@@ -27,20 +27,10 @@ ApplicationBase::~ApplicationBase() {
 ///
 void ApplicationBase::run() {
 
-    // Inicialitza els serveis
-    //
     onInitialize();
-    initializeServices();
-
-    // Executa els serveis fins que finalitzi l'aplicacio.
-    //
     onStart();
-    runServices();
+    onRun();
     onStop();
-
-    // Finalitza els serveis
-    //
-    terminateServices();
     onTerminate();
 }
 
@@ -81,6 +71,11 @@ void ApplicationBase::onStart() {
 /// \brief    Notifica el final de l'execucio de l'aplicacio.
 ///
 void ApplicationBase::onStop() {
+
+}
+
+
+void ApplicationBase::onRun() {
 
 }
 

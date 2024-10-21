@@ -8,7 +8,6 @@
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
 #include "HTL/STM32/htlDMA.h"
-#include "System/eosResults.h"
 
 
 namespace htl {

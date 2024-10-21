@@ -17,16 +17,14 @@ namespace eos {
         private:
             ApplicationBase(const ApplicationBase&) = delete;
             ApplicationBase& operator=(const ApplicationBase&) = delete;
-            virtual void initializeServices() = 0;
-            virtual void terminateServices() = 0;
-            virtual void runServices() = 0;
 
         protected:
             ApplicationBase();
             virtual void onInitialize();
+            virtual void onTerminate();
             virtual void onStart();
             virtual void onStop();
-            virtual void onTerminate();
+            virtual void onRun();
 
         public:
             virtual ~ApplicationBase();

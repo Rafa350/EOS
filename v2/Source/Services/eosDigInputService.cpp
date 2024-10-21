@@ -18,6 +18,13 @@ using namespace eos;
 using namespace htl::irq;
 
 
+constexpr const char *serviceName = "DigInput";
+constexpr Task::Priority servicePriority = Task::Priority::normal;
+constexpr unsigned serviceStackSize = 128;
+
+constexpr unsigned minScanPeriod = 5;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: The application.
@@ -25,10 +32,6 @@ using namespace htl::irq;
 ///
 DigInputService::DigInputService():
     Service(),
-    _changedEvent {nullptr},
-    _changedEventEnabled {false},
-    _beforeScanEvent {nullptr},
-    _beforeScanEventEnabled {false},
     _scanPeriod {minScanPeriod} {
 }
 
@@ -53,71 +56,30 @@ void DigInputService::setScanPeriod(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura el event 'Changed'
-/// \param    event: El event.
-/// \param    enabled: True si es vol habilitar.
-///
-void DigInputService::setChangedEvent(
-    IChangedEvent &event,
-    bool enabled) {
-
-    _changedEvent = &event;
-    _changedEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura el event 'BeforeScan'
-/// \param    event: El event.
-/// \param    enabled: True si es vol habilitar.
-///
-void DigInputService::setBeforeScanEvent(
-    IBeforeScanEvent &event,
-    bool enabled) {
-
-    _beforeScanEvent = &event;
-    _beforeScanEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita l'event 'Changed'
-///
-void DigInputService::enableChangedEvent() {
-
-    _changedEventEnabled = _changedEvent != nullptr;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Deshabilita l'event 'Changed'
-///
-void DigInputService::disableChangedEvent() {
-
-    _changedEventEnabled = false;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Notifica un canvi en l'estat d'una entrada.
 /// \param    input: L'entrada.
 ///
 void DigInputService::notifyChanged(
     DigInput *input) {
 
-    if (_changedEventEnabled) {
-        ChangedEventArgs args = {
-            .input = input
-        };
-        _changedEvent->execute(this, args);
-    }
-
     if (input->_changedEventEnabled) {
+
         DigInput::ChangedEventArgs args = {
             .pinState = input->_pinState,
             .pinPulses = input->_pinPulses
         };
         input->_changedEvent->execute(input, args);
+    }
+
+    if (_evRaiser.isEnabled(NotifyId::changed)) {
+    	NotifyEventArgs args = {
+    		.service = this,
+			.id = NotifyId::changed,
+    		.changed {
+    			.input = input
+    		}
+    	};
+    	_evRaiser.raise(NotifyId::changed, args);
     }
 }
 
@@ -127,8 +89,13 @@ void DigInputService::notifyChanged(
 ///
 void DigInputService::notifyBeforeScan() {
 
-    if (_beforeScanEventEnabled)
-        _beforeScanEvent->execute(this);
+	if (_evRaiser.isEnabled(NotifyId::beforeScan)) {
+    	NotifyEventArgs args = {
+    		.service = this,
+			.id = NotifyId::beforeScan
+    	};
+    	_evRaiser.raise(NotifyId::beforeScan, args);
+    }
 }
 
 
@@ -200,46 +167,49 @@ void DigInputService::removeInputs() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el bucle d'execucio.
-/// \return   True si cal continuar amb el bucle
+/// \brief    Inicialitza els parametres del servei.
+/// \param    params: Els parametres.
 ///
-bool DigInputService::onTaskStart() {
+void DigInputService::initService(
+	ServiceParams &params) {
 
-    _weakTime = Task::getTickCount();
-
-    return true;
+	params.name = serviceName;
+	params.stackSize = serviceStackSize;
+	params.priority = servicePriority;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Bucle d'execucio. Es crida repetidament.
-/// \return   True per continuar el bucle, false per finalitzar.
+/// \brief    Tasca del servei
 ///
-bool DigInputService::onTask() {
+void DigInputService::onExecute() {
 
-    Task::delay(_scanPeriod, _weakTime);
+    _weakTime = Task::getTickCount();
 
-    notifyBeforeScan();
+    while (!stopSignal()) {
 
-    if (scanInputs()) {
-        for (auto input: _inputs) {
+		Task::delay(_scanPeriod, _weakTime);
 
-            bool ie = getInterruptState();
-            if (ie)
-                disableInterrupts();
+		notifyBeforeScan();
 
-            bool edge = input->_edge;
-            input->_edge = false;
+		if (scanInputs()) {
+			for (auto input: _inputs) {
 
-            if (ie)
-                enableInterrupts();
+				bool ie = getInterruptState();
+				if (ie)
+					disableInterrupts();
 
-            if (edge)
-                notifyChanged(input);
-        }
-    }
+				bool edge = input->_edge;
+				input->_edge = false;
 
-    return true;
+				if (ie)
+					enableInterrupts();
+
+				if (edge)
+					notifyChanged(input);
+			}
+		}
+	}
 }
 
 

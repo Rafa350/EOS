@@ -4,7 +4,6 @@
 
 
 #include "htl/STM32/htl.h"
-#include "System/eosResults.h"
 
 
 namespace htl {

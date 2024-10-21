@@ -8,124 +8,71 @@
 using namespace eos;
 
 
+constexpr const char *applicationName = "Application";
+constexpr unsigned applicationStackSize = 256;
+constexpr Task::Priority applicationPriority = Task::Priority::normal;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-RTOSApplication::RTOSApplication():
-
-    _taskCallback(*this, &RTOSApplication::taskCallbackHandler)
-#if Eos_ApplicationTickEnabled
-    ,timerEventCallback(this, &RTOSApplication::timerEventHandler),
-    timer(true, &timerEventCallback, this)
-#endif
-{
+RTOSApplication::RTOSApplication() :
+	_running {false},
+	_appTask {nullptr},
+	_appTaskCallback (*this, &RTOSApplication::appTaskCallbackHandler) {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el event d'inici de la tasca del servei.
-/// \param    args: Parametres del event.
+/// \brief    Hander de la tasca.
 ///
-void RTOSApplication::taskCallbackHandler(
-    const TaskCallbackArgs &args) {
+void RTOSApplication::appTaskCallbackHandler(
+	const TaskCallbackArgs &args) {
 
-    auto service = static_cast<Service*>(args.params);
-    if (service != nullptr) {
-        if (service->taskStart()) {
-            while (service->taskRun())
-                continue;
-        }
-    }
+	onExecute();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el event del temporitzador TICK.
-/// \param    args: Parametres del event.
+/// \brief    Inicialitza els parametres de l'aplicacio.
+/// \param    params: Els parametres.
 ///
-#if Eos_ApplicationTickEnabled
-void RTOSApplication::timerEventHandler(
-    const Timer::EventArgs &args) {
+void RTOSApplication::initApplication(
+	ApplicationParams &params) {
 
-    tick();
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la senyal tick del sistema
-///
-#if Eos_ApplicationTickEnabled
-void RTOSApplication::tick() {
-
-	onTick();
-
-	// Notifica la senyal tick a tots els serveis.
-    //
-    for (auto si: _serviceInfoList)
-		si->service->tick();
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els serveis.
-///
-void RTOSApplication::initializeServices() {
-
-    // Inicialitza els serveis de la llista, un a un.
-    //
-    for (auto si: _serviceInfoList)
-        si->service->initialize();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Finalitza els serveis.
-///
-void RTOSApplication::terminateServices() {
-
-    // Finalitza els serveis de la llista, un a un.
-    //
-    for (auto si: _serviceInfoList)
-  		si->service->terminate();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Posa els serveix en en execucio.
 ///
-void RTOSApplication::runServices() {
+void RTOSApplication::onRun() {
 
-    // Inicialitza el temporitzador tick
+	ApplicationParams params = {
+		.stackSize = applicationStackSize,
+		.priority = applicationPriority
+	};
+
+	initApplication(params);
+
+	_appTask = new Task(
+		params.stackSize,
+		params.priority,
+		applicationName,
+		&_appTaskCallback,
+		nullptr);
+
+    // Inicia els serveis que s'hagin afeigit abans del inici del
+	// planificador.
     //
-#if Eos_ApplicationTickEnabled
-    timer.start(APPLICATION_TICK_PERIOD, 0);
-#endif
+    for (auto si: _serviceInfoList)
+    	si->service->start();
 
-    // Crea una tasca per executar cada servei
+    // Inicia el planificador i totes les tasques
     //
-    for (auto si: _serviceInfoList) {
-
-        // Comprova si el servei esta inicialitzat
-        //
-    	if (si->service->getState() == Service::State::initialized) {
-
-    	    // Crea la tasca del servei.
-    	    //
-			si->task = new Task(
-				si->stackSize,
-				si->priority,
-				si->name ? si->name : "SERVICE",
-				&_taskCallback,
-				static_cast<void*>(si->service));
-    	}
-    }
-
-    // Inicia el planificador i executa les tasques. No retorna fins
-    // que finalitzon totes les tasques
-    //
+    _running = true;
     Task::startAll();
+    _running = false;
 }
 
 
@@ -137,10 +84,7 @@ void RTOSApplication::runServices() {
 /// \param    name: Nom del servei.
 ///
 void RTOSApplication::addService(
-	Service *service,
-	Task::Priority priority,
-	unsigned stackSize,
-	const char *name) {
+	Service *service) {
 
 	eosAssert(service != nullptr);
 
@@ -148,12 +92,10 @@ void RTOSApplication::addService(
 	eosAssert(si != nullptr);
 
 	si->service = service;
-	si->priority = priority;
-	si->stackSize = stackSize;
-	si->name = name;
-	si->task = nullptr;
 
 	_serviceInfoList.pushFront(si);
+	if (_running)
+		service->start();
 }
 
 

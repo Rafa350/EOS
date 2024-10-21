@@ -2,40 +2,33 @@
 #include "eosAssert.h"
 #include "Services/eosService.h"
 #include "System/eosRTOSApplication.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
+
+
+constexpr const char *serviceName = "Service";
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
 Service::Service():
-	_state(State::created) {
+	_state {State::stop},
+	_task {nullptr},
+	_taskCallback {*this, &Service::taskCallbackHandler},
+	_stopSignal {false} {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el servei.
+/// \brief    Inicialitza els parametres del servei.
+/// \param    params: Els parametres del servei.
 ///
-void Service::initialize() {
+void Service::initService(
+	ServiceParams &paramms) {
 
-	if (_state == State::created) {
-		onInitialize();
-        _state = State::initialized;
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Finalitza el servei.
-///
-void Service::terminate() {
-
-    if ((_state == State::stopped) || (_state == State::started)) {
-        onTerminate();
-        _state = State::terminated;
-    }
 }
 
 
@@ -44,7 +37,25 @@ void Service::terminate() {
 ///
 void Service::start() {
 
-	onStart();
+	if (_state == State::stop) {
+
+		ServiceParams params = {
+			.name = serviceName,
+			.priority = Task::Priority::normal,
+			.stackSize = 256
+		};
+
+		initService(params);
+
+		onStart();
+		_task = new Task(
+				params.stackSize,
+				params.priority,
+				params.name,
+				&_taskCallback,
+				nullptr);
+		_state = State::run;
+	}
 }
 
 
@@ -53,66 +64,39 @@ void Service::start() {
 ///
 void Service::stop() {
 
-	onStop();
+	if (_state == State::run) {
+		onStop();
+		_stopSignal = true;
+	}
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si cal aturar el servei.
+/// \return   True en cas afirmatiu.
+///
 bool Service::stopSignal() const {
 
-	return false;
+	return _stopSignal;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Executa les operacions del inici servei.
-/// \return   True si es correcte i es pot continuar, false en cas d'error
-///           i es vol finalitzar el proces.
+/// \brief    Handler de la tasca.
+/// \params   args: Parametres.
 ///
-bool Service::taskStart() {
+void Service::taskCallbackHandler(
+	const TaskCallbackArgs &args) {
 
-    bool result = false;
-    if (_state == State::initialized) {
-        _state = State::running;
-        result = onTaskStart();
-        _state = State::started;
-    }
-    return result;
+	onStarted();
+	onExecute();
+	_state = State::stop;
+	onStopped();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Executa les operacions del servei.
-///
-bool Service::taskRun() {
-
-    bool result = false;
-    if (_state == State::started) {
-        _state = State::running;
-        result = onTask();
-        _state = State::started;
-    }
-    return result;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la inicialitzacio del servei
-///
-void Service::onInitialize() {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la finalitzacio del servei
-///
-void Service::onTerminate() {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa l'inici del servei.
+/// \brief    Proces al inici del servei.
 ///
 void Service::onStart() {
 
@@ -120,7 +104,15 @@ void Service::onStart() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa l'aturada del servei.
+/// \brief    Proces un cop iniciat el servei.
+///
+void Service::onStarted() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Proces al aturar el servei.
 ///
 void Service::onStop() {
 
@@ -128,18 +120,8 @@ void Service::onStop() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el inici de les operacions del servei.
+/// \brief    Proces un cop aturar el servei.
 ///
-bool Service::onTaskStart() {
+void Service::onStopped() {
 
-    return true;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa les operacions del servei.
-///
-bool Service::onTask() {
-
-    return true;
 }

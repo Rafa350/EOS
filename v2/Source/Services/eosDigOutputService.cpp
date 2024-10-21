@@ -12,12 +12,18 @@ using namespace eos;
 using namespace htl::irq;
 
 
+constexpr const char *serviceName = "DigOutput";
+constexpr Task::Priority servicePriority = Task::Priority::normal;
+constexpr unsigned serviceStackSize = 128;
+
+constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
+constexpr unsigned minDelay = DigOutputService_MinDelay;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
 DigOutputService::DigOutputService():
-	_changedEvent {nullptr},
-	_changedEventEnabled {false},
 	_timeCounter {0},
 	_commandQueue {_commandQueueSize} {
 
@@ -122,49 +128,22 @@ void DigOutputService::removeOutputs() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el event 'Changed'
-/// \param    event: El event.
-/// \param    enabled: True per habilitar.
-///
-void DigOutputService::setChangedEvent(
-	IChangedEvent &event,
-	bool enabled) {
-
-	_changedEvent = &event;
-	_changedEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita l'event 'Changed'
-///
-void DigOutputService::enableChangedEvent() {
-
-	_changedEventEnabled = _changedEvent != nullptr;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Deshabilita l'event 'Changed'
-///
-void DigOutputService::disableChangedEvent() {
-
-	_changedEventEnabled = false;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Notifica un canvi en l'estat d'una sortida.
 /// \param    output: La sortida.
 ///
 void DigOutputService::notifyChanged(
 	DigOutput *output) {
 
-	if (_changedEventEnabled) {
-		ChangedEventArgs args = {
-			.output = output
+	if (_evRaiser.isEnabled(NotifyId::changed)) {
+		NotifyEventArgs args = {
+			.service = this,
+			.id = NotifyId::changed,
+			.changed = {
+				.output = output,
+				.pinState = output->read()
+			}
 		};
-		_changedEvent->execute(this, args);
+		_evRaiser.raise(NotifyId::changed, args);
 	}
 }
 
@@ -255,7 +234,7 @@ void DigOutputService::set(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .id = CommandID::set,
+        .id = CommandId::set,
         .output = output
     };
 
@@ -274,7 +253,7 @@ void DigOutputService::clear(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .id = CommandID::clear,
+        .id = CommandId::clear,
         .output = output
     };
 
@@ -293,7 +272,7 @@ void DigOutputService::toggle(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .id = CommandID::toggle,
+        .id = CommandId::toggle,
         .output = output
     };
 
@@ -314,7 +293,7 @@ void DigOutputService::write(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .id = state ? CommandID::set : CommandID::clear,
+        .id = state ? CommandId::set : CommandId::clear,
         .output = output
     };
 
@@ -335,7 +314,7 @@ void DigOutputService::pulse(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .id = CommandID::pulse,
+        .id = CommandId::pulse,
         .output = output,
         .time1 = std::max(pulseWidth, minPulseWidth)
     };
@@ -359,7 +338,7 @@ void DigOutputService::delayedPulse(
     eosAssert(output->_service == this);
 
     Command cmd = {
-        .id = CommandID::delayedPulse,
+        .id = CommandId::delayedPulse,
         .output = output,
         .time1 = std::max(delay, minDelay),
         .time2 = std::max(pulseWidth, minPulseWidth)
@@ -389,16 +368,29 @@ bool DigOutputService::read(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Bucle de proces del servei.
-/// \return   True per continuar, false per finalitzar el proces.
+/// \brief    Inicialitza els parametres del servei.
+/// \param    params: Els parametres.
 ///
-bool DigOutputService::onTask() {
+void DigOutputService::initService(
+	ServiceParams &params) {
 
-    Command command;
-    while (_commandQueue.pop(command, unsigned(-1)))
-        processCommand(command);
+	params.name = serviceName;
+	params.stackSize = serviceStackSize;
+	params.priority = servicePriority;
+}
 
-    return true;
+
+/// ----------------------------------------------------------------------
+/// \brief    Tasca del servei.
+///
+void DigOutputService::onExecute() {
+
+	while (!stopSignal()) {
+
+		Command command;
+		while (_commandQueue.pop(command, unsigned(-1)))
+			processCommand(command);
+	}
 }
 
 
@@ -421,39 +413,39 @@ void DigOutputService::processCommand(
 	const Command &command) {
 
     switch (command.id) {
-        case CommandID::set:
+        case CommandId::set:
             processSet(command.output);
             break;
 
-        case CommandID::clear:
+        case CommandId::clear:
             processClear(command.output);
             break;
 
-        case CommandID::toggle:
+        case CommandId::toggle:
             processToggle(command.output);
             break;
 
-        case CommandID::pulse:
+        case CommandId::pulse:
             processPulse(command.output, command.time1);
             break;
 
-        case CommandID::delayedSet:
+        case CommandId::delayedSet:
             processDelayedSet(command.output, command.time1);
             break;
 
-        case CommandID::delayedClear:
+        case CommandId::delayedClear:
             processDelayedClear(command.output, command.time1);
             break;
 
-        case CommandID::delayedToggle:
+        case CommandId::delayedToggle:
             processDelayedToggle(command.output, command.time1);
             break;
 
-        case CommandID::delayedPulse:
+        case CommandId::delayedPulse:
             processDelayedPulse(command.output, command.time1, command.time2);
             break;
 
-        case CommandID::tick:
+        case CommandId::tick:
             processTick();
             break;
     }
@@ -641,7 +633,7 @@ void DigOutputService::tmrInterruptFunction() {
 	_timeCounter++;
 
     Command cmd = {
-        .id = CommandID::tick
+        .id = CommandId::tick
     };
 
     // Es porta el missatge en la cua, per procesar-l'ho en la tasca,

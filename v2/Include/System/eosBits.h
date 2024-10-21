@@ -107,4 +107,4 @@ namespace eos {
 
 
 
-#endof // __eosBits__
+#endif // __eosBits__

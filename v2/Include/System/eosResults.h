@@ -1,6 +1,11 @@
-#ifndef __eosResult__
-#define __eosResult__
 #pragma once
+#ifndef __eosResults__
+#define __eosResults__
+
+
+// STD includes
+//
+#include <type_traits>
 
 
 namespace eos {
@@ -14,13 +19,16 @@ namespace eos {
 
     template <typename Enum_>
     class ResultBase {
+
+		static_assert(std::is_enum_v<Enum_>);
+
         private:
             Enum_ const _result;
 
         protected:
             constexpr ResultBase(Enum_ result) :
                 _result {result} {
-            }        
+            }
 
         public:
             constexpr bool isSuccess() const {
@@ -66,36 +74,36 @@ namespace eos {
     class ComplexResult: public ResultBase<Enum_> {
         private:
             Value_ const _value;
-            
+
         private:
             constexpr ComplexResult(Enum_ status, Value_ value = {}) :
                 ResultBase<Enum_> {status},
                 _value {value} {
-            }        
-            
+            }
+
         public:
             constexpr Value_ getValue() const {
-                return _value; 
+                return _value;
             }
     };
 
-    
+
     template <typename Enum_>
     constexpr bool isSuccess(Enum_ status) {
         return status == Enum_::success;
     }
-    
+
     template <typename Enum_>
     constexpr bool hasError(Enum_ status) {
         return status != Enum_::success;
     }
 
-    
+
     template <typename Enum_, typename Value_>
     constexpr bool isSuccess(const ComplexResult<Enum_, Value_> &result) {
         return result.isSuccess();
     }
-    
+
     template <typename Enum_, typename Value_>
     constexpr bool hasError(const ComplexResult<Enum_, Value_> &result) {
         return !result.isSuccess();
@@ -103,4 +111,4 @@ namespace eos {
 }
 
 
-#endif // __eosResult__
+#endif // __eosResults__

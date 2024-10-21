@@ -26,31 +26,8 @@ void MessengerService::addPublisher(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el servei.
-///
-bool MessengerService::onTaskStart() {
+void MessengerService::onExecute() {
 
-    // Crea una tasca per cada publicador
-    //
-    for (auto publisher: _publishers) {
-
-/*        Task *task = new Task(
-            getStackSize(),
-            getPriority(),
-            getName(),
-            &_busTaskEventCallback,
-            static_cast<void*>(bus));*/
-    }
-
-    return true;
-}
-
-
-bool MessengerService::onTask() {
-
-    while (true)
+    while (!stopSignal())
         Task::delay(1000);
-
-    return true;
 }
