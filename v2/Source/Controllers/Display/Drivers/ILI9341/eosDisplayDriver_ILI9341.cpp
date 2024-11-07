@@ -8,7 +8,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Contructor. 
+/// \brief    Contructor.
 /// \param    device: El dispositiu fisic.
 /// \param    displayWidth: Amplada del display.
 /// \param    displayeight: Alçada del display.
@@ -33,6 +33,8 @@ DisplayDriver_ILI9341::DisplayDriver_ILI9341(
 ///
 void DisplayDriver_ILI9341::initialize() {
 
+	enable();
+	return; /***********************************************************/
     // Inicialitza el controlador del display
     //
 #if defined(DISPLAY_ER_TFT028_4)

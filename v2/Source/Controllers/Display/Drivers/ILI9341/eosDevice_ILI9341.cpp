@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/Core/eosTask.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
 
 
@@ -25,5 +26,22 @@ void Device_ILI9341::writeScript(
 
     eosAssert(script != nullptr);
     eosAssert(scriptSize > 0);
+
+    uint8_t c;
+    const uint8_t *p = script;
+
+    while ((c = *p++) != OP_END) {
+        switch (c) {
+            case OP_DELAY:
+                Task::delay(*p++);
+                break;
+
+            default:
+                writeCommand(*p++);
+                while (--c != 0)
+                    writeData(*p++);
+                break;
+        }
+    }
 }
 

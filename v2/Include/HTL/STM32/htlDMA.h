@@ -132,8 +132,10 @@ namespace htl {
         namespace internal {
             typedef struct {
                 DMA_TypeDef * const dma;
+#if defined(EOS_PLATFORM_STM32G0)
                 DMA_Channel_TypeDef * const dmac;
                 DMAMUX_Channel_TypeDef * const muxc;
+#endif
                 unsigned const flagPos;
             } DMADEV_TypeDef;
 

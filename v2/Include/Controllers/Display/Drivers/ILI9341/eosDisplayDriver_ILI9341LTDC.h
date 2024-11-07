@@ -81,12 +81,6 @@ namespace eos {
             void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const void *pixels, ColorFormat format, int16_t pitch) override;
 
             void refresh() override;
-
-        private:
-            void initializeInterface();
-            void initializeController();
-
-            void delay(unsigned time);
     };
 }
 

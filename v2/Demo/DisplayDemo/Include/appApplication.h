@@ -13,12 +13,13 @@ namespace app {
 
 	class MyApplication: public eos::RTOSApplication {
 		protected:
-			void onInitialize() override;
-			void configureLedService();
-			void configureDisplayService();
+			void initializeLedService();
+			void initializeDisplayService();
 
 		public :
 			MyApplication();
+
+			void onExecute() override;
 	};
 
 }

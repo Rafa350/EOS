@@ -62,24 +62,13 @@ void DigInputService::setScanPeriod(
 void DigInputService::notifyChanged(
     DigInput *input) {
 
-    if (input->_changedEventEnabled) {
-
-        DigInput::ChangedEventArgs args = {
-            .pinState = input->_pinState,
-            .pinPulses = input->_pinPulses
-        };
-        input->_changedEvent->execute(input, args);
-    }
-
-    if (_evRaiser.isEnabled(NotifyId::changed)) {
+    if (_erNotify.isEnabled(NotifyID::changed)) {
     	NotifyEventArgs args = {
-    		.service = this,
-			.id = NotifyId::changed,
     		.changed {
     			.input = input
     		}
     	};
-    	_evRaiser.raise(NotifyId::changed, args);
+    	_erNotify.raise(NotifyID::changed, &args);
     }
 }
 
@@ -89,13 +78,26 @@ void DigInputService::notifyChanged(
 ///
 void DigInputService::notifyBeforeScan() {
 
-	if (_evRaiser.isEnabled(NotifyId::beforeScan)) {
-    	NotifyEventArgs args = {
-    		.service = this,
-			.id = NotifyId::beforeScan
-    	};
-    	_evRaiser.raise(NotifyId::beforeScan, args);
-    }
+	if (_erNotify.isEnabled(NotifyID::beforeScan))
+    	_erNotify.raise(NotifyID::beforeScan);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica la inicialitzacio del servei.
+/// \param    args: Parametres d'inicialitzacio.
+///
+void DigInputService::notifyInitialize(
+	ServiceParams *params) {
+
+	if (_erNotify.isEnabled(NotifyID::initialize)) {
+		NotifyEventArgs args = {
+			.initialize {
+				.params = params
+			}
+		};
+		_erNotify.raise(NotifyID::initialize, &args);
+	}
 }
 
 
@@ -174,8 +176,10 @@ void DigInputService::initService(
 	ServiceParams &params) {
 
 	params.name = serviceName;
-	params.stackSize = serviceStackSize;
 	params.priority = servicePriority;
+	params.stackSize = serviceStackSize;
+
+	notifyInitialize(&params);
 }
 
 
@@ -211,17 +215,6 @@ void DigInputService::onExecute() {
 		}
 	}
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio 'tick'.
-/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
-///
-#if Eos_ApplicationmTickEnabled
-void DigInputService::onTick() {
-
-}
-#endif
 
 
 /// ---------------------------------------------------------------------
@@ -324,9 +317,7 @@ DigInput::DigInput(
 
 	_service {nullptr},
     _drv {drv},
-    _scanMode {ScanMode::polling},
-    _changedEvent {nullptr},
-	_changedEventEnabled {false} {
+    _scanMode {ScanMode::polling} {
 
     if (_drv->read()) {
         _pinState = true;
@@ -351,36 +342,4 @@ DigInput::~DigInput() {
 
     if (_service != nullptr)
         _service->removeInput(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura el event 'Changed'
-/// \param    event: El event.
-/// \param    enabled: True si es vol habilitar.
-///
-void DigInput::setChangedEvent(
-	IChangedEvent &event,
-	bool enabled) {
-
-    _changedEvent = &event;
-    _changedEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita l'event 'Changed'
-///
-void DigInput::enableChangedEvent() {
-
-	_changedEventEnabled = _changedEvent != nullptr;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Deshabilita l'event 'Changed'
-///
-void DigInput::disableChangedEvent() {
-
-	_changedEventEnabled = false;
 }

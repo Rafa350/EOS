@@ -68,6 +68,39 @@ static uint32_t __rand(void) {
 #endif
 
 
+#if defined(HARDWARE_STM32F429I_DISC1)
+static const uint8_t initCommands[] = {
+	__SOFTWARE_RESET,
+	OP_DELAY, 250,
+	OP_DELAY, 250,
+	__PUMP_RATIO_CONTROL(0x20),
+	__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x02),
+	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
+	__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
+	__POWER_CONTROL_1(0x23),
+	__POWER_CONTROL_2(0x10),
+	__FRAME_RATE_CONTROL_1(0x00, 0x18),
+	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
+	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
+	__VCOM_CONTROL_1(0x3E, 0x28),
+	__VCOM_CONTROL_2(0x86),
+	__ENABLE_3G(0x00),
+	__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_OFF | MAC_MY_OFF),
+	__RGB_INTERFACE_SIGNAL_CONTROL(0xC2),
+	__DISPLAY_FUNCTION_CONTROL(0x0A, 0xA7, 0x27, 0x04),
+	__INTERFACE_CONTROL(0x01, 0x00, 0x06),
+	OP_DELAY, 200,
+	__GAMMA_SET(0x01),
+	__POSITIVE_GAMMA_CORRECTION(0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
+		0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
+	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
+		0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
+	OP_END
+};
+#endif
+
+
+
 static inline Color __getRandomColor() {
 
 	uint32_t c = __rand();
@@ -88,9 +121,9 @@ DisplayService::DisplayService():
 
 
 ///-----------------------------------------------------------------------
-/// \brief Process la inicialitzacio de la tasca.
+/// \brief Executa les tasques del servei
 ///
-bool DisplayService::onTaskStart() {
+void DisplayService::onExecute() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
@@ -113,7 +146,7 @@ bool DisplayService::onTaskStart() {
 		reinterpret_cast<void*>(_displayBuffer));
 
     // Inicialitza el dispositiu ILI9341 en modus SPI
-    // 
+    //
     auto pinCS = DISPLAY_CS_Pin::pInst;
     pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
@@ -126,7 +159,7 @@ bool DisplayService::onTaskStart() {
     devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
 
     auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
-    device->initialize(nullptr, 0);
+    device->initialize(initCommands, sizeof(initCommands)/sizeof(initCommands[0]));
 
     // Inicialitza el driver de pantalla
     //
@@ -135,7 +168,7 @@ bool DisplayService::onTaskStart() {
     #elif defined(DISPLAY_DRV_ILI9341)
 
     // Inicialitza el dispositiu ILI9341 en modus SPI
-    // 
+    //
 	auto pinCS = DISPLAY_CS_Pin::pInst;
     pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
 
@@ -179,15 +212,6 @@ bool DisplayService::onTaskStart() {
     //
     _graphics = new eos::Graphics(_driver);
 
-    return true;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa l'execucio de la tasca.
-///
-bool DisplayService::onTask() {
-
     _pointsTicks = 0;
     _horizontalLinesTicks = 0;
     _verticalLinesTicks = 0;
@@ -204,79 +228,81 @@ bool DisplayService::onTask() {
     _maxX = _graphics->getMaxX();
     _maxY = _graphics->getMaxY();
 
-	#ifdef TEST_COLORS
-	testColors();
-	#endif
-	#ifdef TEST_OPACITY
-	testOpacity();
-	#endif
-	#ifdef TEST_POINTS
-	testPoints();
-	#endif
-	#ifdef TEST_LINES
-	testLines();
-	#endif
-	#ifdef TEST_THICKLINES
-	testThickLines();
-	#endif
-	#ifdef TEST_RECTANGLES
-	testRectangles();
-	#endif
-	#ifdef TEST_ELLIPSES
-	testEllipses();
-	#endif
-	#ifdef TEST_POLYGONS
-	testPolygons();
-	#endif
-	#ifdef TEST_BITMAPS
-	testBitmaps();
-	#endif
 
-	#ifdef SHOW_RESULTS
-    // Show results
-    //
-    drawBackground("Results");
-    Task::delay(250);
+    while (!stopSignal()) {
 
-    char lineBuffer[30];
-    int y = 35;
+		#ifdef TEST_COLORS
+		testColors();
+		#endif
+		#ifdef TEST_OPACITY
+		testOpacity();
+		#endif
+		#ifdef TEST_POINTS
+		testPoints();
+		#endif
+		#ifdef TEST_LINES
+		testLines();
+		#endif
+		#ifdef TEST_THICKLINES
+		testThickLines();
+		#endif
+		#ifdef TEST_RECTANGLES
+		testRectangles();
+		#endif
+		#ifdef TEST_ELLIPSES
+		testEllipses();
+		#endif
+		#ifdef TEST_POLYGONS
+		testPolygons();
+		#endif
+		#ifdef TEST_BITMAPS
+		testBitmaps();
+		#endif
 
-    sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		#ifdef SHOW_RESULTS
+		// Show results
+		//
+		drawBackground("Results");
+		Task::delay(250);
 
-    sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		char lineBuffer[30];
+		int y = 35;
 
-    sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
-    _text.setText(lineBuffer);
-    _graphics->paintText(Point(10, y), _text); y += 20;
+		sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    Task::delay(5000);
-	#endif
+		sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
 
-    return true;
+		sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
+		_text.setText(lineBuffer);
+		_graphics->paintText(Point(10, y), _text); y += 20;
+
+		Task::delay(5000);
+		#endif
+    }
 }
 
 

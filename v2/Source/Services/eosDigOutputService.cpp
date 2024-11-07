@@ -134,16 +134,13 @@ void DigOutputService::removeOutputs() {
 void DigOutputService::notifyChanged(
 	DigOutput *output) {
 
-	if (_evRaiser.isEnabled(NotifyId::changed)) {
+	if (_erNotify.isEnabled(NotifyID::changed)) {
 		NotifyEventArgs args = {
-			.service = this,
-			.id = NotifyId::changed,
 			.changed = {
-				.output = output,
-				.pinState = output->read()
+				.output = output
 			}
 		};
-		_evRaiser.raise(NotifyId::changed, args);
+		_erNotify.raise(NotifyID::changed, &args);
 	}
 }
 
@@ -395,17 +392,6 @@ void DigOutputService::onExecute() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio 'tick'.
-/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
-///
-#if Eos_ApplicationTickEnabled
-void DigOutputService::onTick() {
-
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Procesa una comanda.
 /// \param    command: La comanda.
 ///
@@ -626,7 +612,7 @@ void DigOutputService::processTick() {
 /// \param    event: L'event que ha generat la interrupcio.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
-void DigOutputService::tmrInterruptFunction() {
+void DigOutputService::tickInterruptFunction() {
 
 	// Incrementa el contador de temps
 	//

@@ -6,7 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosCallbacks.h"
+#include "System/eosEvents.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 
 
@@ -19,30 +19,32 @@ namespace eos {
 
 	class CommandLineProcessor final {
 		public:
+    		enum class CommandID {
+    			command
+    		};
 			struct CommandEventArgs {
 				const CommandDefinition *command;
 				const char *text;
 			};
-			using ICommandEvent = eos::ICallbackP2<const CommandLineProcessor *, const CommandEventArgs&>;
-			template <typename Instance_> using CommandEvent = eos::CallbackP2<Instance_, const CommandLineProcessor*, const CommandEventArgs&>;
+			using CommandEventRaiser = EventRaiser<CommandID, CommandEventArgs>;
+			using ICommandEvent = CommandEventRaiser::IEvent;
+			template <typename Instance_> using CommandEvent = CommandEventRaiser::Event<Instance_>;
 
 		private:
     		CommandDefinitionList _commands;
-    		ICommandEvent *_commandEvent;
-    		bool _commandEventEnabled;
+    		CommandEventRaiser _erCommand;
 
 		public:
     		CommandLineProcessor();
 
-    		void setCommandEvent(ICommandEvent &event, bool enabled = true) {
-    			_commandEvent = &event;
-    			_commandEventEnabled = enabled;
+    		inline void setCommandEvent(ICommandEvent &event, bool enabled = true) {
+    			_erCommand.set(event, enabled);
     		}
-    		void enableCommandEvent() {
-    			_commandEventEnabled = _commandEvent != nullptr;
+    		inline void enableCommandEvent() {
+    			_erCommand.enable();
     		}
-    		void disableCommandEvent() {
-    			_commandEventEnabled = false;
+    		inline void disableCommandEvent() {
+    			_erCommand.disable();
     		}
     		void addCommand(CommandDefinition *definition);
 

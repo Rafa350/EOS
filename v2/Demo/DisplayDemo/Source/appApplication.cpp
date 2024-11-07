@@ -20,7 +20,7 @@ MyApplication::MyApplication() {
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza l'aplicacio.
 ///
-void MyApplication::onInitialize() {
+void MyApplication::onExecute() {
 
     #ifdef EXIST_LED1
     LED1_Initialize();
@@ -30,14 +30,22 @@ void MyApplication::onInitialize() {
     #endif
 
     #if defined(EXIST_LED1) || defined(EXIST_LED2)
-    configureLedService();
+    initializeLedService();
     #endif
-    configureDisplayService();
+    initializeDisplayService();
+
+    // Executa els serveis indefinidament
+    //
+    while (true)
+    	Task::delay(1000);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el servei de gestio dels leds
+///
 #if defined(EXIST_LED1) || defined(EXIST_LED2)
-void MyApplication::configureLedService() {
+void MyApplication::initializeLedService() {
 
     #ifdef EXIST_LED1
     constexpr auto pinLED1 = LED1_Instance;
@@ -51,13 +59,16 @@ void MyApplication::configureLedService() {
     #endif
 
     auto ledService = new LedService(pinLED1, pinLED2);
-    addService(ledService, Task::Priority::normal, 128);
+    addService(ledService);
 }
 #endif
 
 
-void MyApplication::configureDisplayService() {
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el servei de gestio del display
+///
+void MyApplication::initializeDisplayService() {
 
     auto displayService = new DisplayService();
-    addService(displayService, Task::Priority::normal, 512);
+    addService(displayService);
 }

@@ -419,6 +419,7 @@ static void setWordSize(
 		SPI_CR2_DS_LEN8 | SPI_CR2_FRXTH :
 		SPI_CR2_DS_LEN16;
 	spi->CR2 = tmp;
+
     #else
     #error "Unknown platform"
 	#endif

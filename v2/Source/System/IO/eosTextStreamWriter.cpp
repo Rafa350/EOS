@@ -188,6 +188,11 @@ bool TextStreamWriter::writeI32(int32_t data) {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un caracter.
+/// \param    data: El caracter a escriure.
+/// \return   True si tot es correcte.
+///
 bool TextStreamWriter::writeChar(
 	char data) {
 

@@ -44,7 +44,7 @@ const CommandDefinition *CommandLineProcessor::process(
 
 		if ((*pc == '\0') && ((*pt == '\0') || (*pt == ' ') || (*pt == '\t'))) {
 
-			if (_commandEventEnabled) {
+			if (_erCommand.isEnabled()) {
 
 				while ((*pt == ' ') || (*pt == '\t'))
 					pt++;
@@ -53,7 +53,7 @@ const CommandDefinition *CommandLineProcessor::process(
 					.command = command,
 					.text = pt
 				};
-				_commandEvent->execute(this, args);
+				_erCommand.raise(CommandID::command, &args);
 			}
 			return command;
 		}

@@ -47,8 +47,7 @@ namespace app {
 	        DisplayService();
 
 	    protected:
-	        bool onTaskStart();
-	        bool onTask();
+	        void onExecute() override;
 
 	    private:
 	        void drawBackground(const char *title);

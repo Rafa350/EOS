@@ -21,8 +21,8 @@ namespace eos {
 		static_assert(std::is_enum_v<Id_>);
 
 		public:
-			using IEvent = ICallbackP1<const Args_&>;
-			template <typename Instance_> using Event = CallbackP1<Instance_, const Args_&>;
+			using IEvent = ICallbackP2<Id_, Args_ * const>;
+			template <typename Instance_> using Event = CallbackP2<Instance_, Id_, Args_ * const>;
 
 		private:
 			IEvent *_event;
@@ -34,9 +34,14 @@ namespace eos {
 				_enabled {0} {
 			}
 
-			void raise(Id_ id, const Args_ &args) const {
+			void raise(Id_ id) const {
 				if (isEnabled(id))
-					_event->execute(args);
+					_event->execute(id, nullptr);
+			}
+
+			void raise(Id_ id, Args_ * const args) const {
+				if (isEnabled(id))
+					_event->execute(id, args);
 			}
 
 			inline bool isEnabled() const {
@@ -49,12 +54,12 @@ namespace eos {
 
 			void set(IEvent &event) {
 				_event = &event;
-				_enabled = 0x80000000;
+				_enabled = 0xFFFFFFFF;
 			}
 
 			void set(IEvent &event, bool enabled) {
 				_event = &event;
-				_enabled = enabled ? 0x80000000 : 0x00000000;
+				_enabled = enabled ? 0xFFFFFFFF : 0x00000000;
 			}
 
 			void set(IEvent &event, bool enabled, bool enabledAll) {
@@ -62,29 +67,29 @@ namespace eos {
 				_enabled = enabled ? (enabledAll ? 0xFFFFFFFF : 0x80000000) : 0x00000000;
 			}
 
-			inline void enable() {
+			void enable() {
 				if (_event != nullptr)
 					_enabled |= 0x80000000;
 			}
 
-			inline void enableAll() {
+			void enableAll() {
 				if (_event != nullptr)
 					_enabled = 0xFFFFFFFF;
 			}
 
-			inline void disable() {
-				_enabled &= ~0x80000000;
+			void disable() {
+				_enabled &= 0x7FFFFFFF;
 			}
 
-			inline void disableAll() {
+			void disableAll() {
 				_enabled = 0x00000000;
 			}
 
-			inline void enable(Id_ id) {
+			void enable(Id_ id) {
 				_enabled |= 1 << unsigned(id);
 			}
 
-			inline void disable(Id_ id) {
+			void disable(Id_ id) {
 				_enabled &= ~(1 << unsigned(id));
 			}
 	};

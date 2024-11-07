@@ -167,6 +167,7 @@ namespace htl {
 			};
 		};
 
+		using NotifyEventRaiser = eos::EventRaiser<NotifyID, NotifyEventArgs>;
 		using INotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
 		template <typename Instance_> using NotifyEvent =
 		        eos::CallbackP1<Instance_, NotifyEventArgs&>;

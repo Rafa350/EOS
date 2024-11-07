@@ -51,20 +51,17 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
 		public:
-    		enum class NotifyId {
+    		enum class NotifyID {
     			changed
     		};
 			struct NotifyEventArgs {
-    			DigOutputService * const service;
-    			NotifyId id;
     			union {
     				struct {
     					DigOutput * const output;
-    					bool pinState;
     				} changed;
     			};
 			};
-			using NotifyEventRaiser = EventRaiser<NotifyId, NotifyEventArgs>;
+			using NotifyEventRaiser = EventRaiser<NotifyID, NotifyEventArgs>;
 			using INotifyEvent = NotifyEventRaiser::IEvent;
 			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
@@ -96,7 +93,7 @@ namespace eos {
             DigOutputList1 _outputs;
             DigOutputList2 _pending;
 
-            NotifyEventRaiser _evRaiser;
+            NotifyEventRaiser _erNotify;
             volatile unsigned _timeCounter;
             unsigned _nextTimeLimit;
             CommandQueue _commandQueue;
@@ -137,13 +134,13 @@ namespace eos {
             void removeOutputs();
 
             inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-            	_evRaiser.set(event, enabled);
+            	_erNotify.set(event, enabled);
             }
             inline void enableNotifyEvent() {
-            	_evRaiser.enable();
+            	_erNotify.enable();
             }
             inline void disableNotifyEvent() {
-            	_evRaiser.disable();
+            	_erNotify.disable();
             }
 
             void set(DigOutput *output);
@@ -157,7 +154,7 @@ namespace eos {
             void delayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
             bool read(DigOutput *ouput);
 
-            void tmrInterruptFunction();
+            void tickInterruptFunction();
     };
 
     /// \brief Clase que implementa una sortida digital.

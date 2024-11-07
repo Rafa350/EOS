@@ -26,27 +26,28 @@ namespace eos {
     //
     class DigInputService final: public Service {
     	public:
-			enum class NotifyId {
+			enum class NotifyID {
 				beforeScan,
-				changed
+				changed,
+				initialize
 			};
 			struct NotifyEventArgs {
-				DigInputService * const service;
-				NotifyId id;
 				union {
 					struct {
 						DigInput * const input;
 					} changed;
+					struct {
+						ServiceParams * const params;
+					} initialize;
 				};
 			};
-			using NotifyEventRaiser = EventRaiser<NotifyId, NotifyEventArgs>;
+			using NotifyEventRaiser = EventRaiser<NotifyID, NotifyEventArgs>;
 			using INotifyEvent = NotifyEventRaiser::IEvent;
 			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
         private:
     		DigInputList _inputs;
-
-    		NotifyEventRaiser _evRaiser;
+    		NotifyEventRaiser _erNotify;
             unsigned _scanPeriod;
             unsigned _weakTime;
 
@@ -54,6 +55,7 @@ namespace eos {
             bool scanInputs();
             void notifyChanged(DigInput *input);
             void notifyBeforeScan();
+            void notifyInitialize(ServiceParams *params);
 
         protected:
             void initService(ServiceParams &params) override;
@@ -73,19 +75,19 @@ namespace eos {
             uint32_t readPulses(DigInput *input, bool clear = true) const;
 
             inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-            	_evRaiser.set(event, enabled);
+            	_erNotify.set(event, enabled);
             }
             inline void enableNotifyEvent() {
-            	_evRaiser.enable();
+            	_erNotify.enable();
             }
             inline void disableNotifyEvent() {
-            	_evRaiser.disable();
+            	_erNotify.disable();
             }
-            inline void enableNotifyId(NotifyId id) {
-            	_evRaiser.enable(id);
+            inline void enableNotifyID(NotifyID id) {
+            	_erNotify.enable(id);
             }
-            inline void disableNotifyId(NotifyId id) {
-            	_evRaiser.disable(id);
+            inline void disableNotifyID(NotifyID id) {
+            	_erNotify.disable(id);
             }
     };
 
@@ -93,13 +95,6 @@ namespace eos {
     ///
     class DigInput final: public DigInputListNode {
         public:
-            struct ChangedEventArgs {
-                bool pinState;
-                uint32_t pinPulses;
-            };
-        	using IChangedEvent = ICallbackP2<const DigInput*, const ChangedEventArgs&>;
-        	template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const DigInput*, const ChangedEventArgs&>;
-
             enum class ScanMode {    // Modus d'exploracio de la entrada
                 polling,             // -Polling
                 interrupt            // -Interrupcio
@@ -109,8 +104,6 @@ namespace eos {
             DigInputService *_service;
             PinDriver *_drv;
             ScanMode _scanMode;
-            IChangedEvent *_changedEvent;
-            bool _changedEventEnabled;
             uint32_t _pattern;
             bool _pinState;
             uint32_t _pinPulses;
@@ -139,10 +132,6 @@ namespace eos {
             inline void setScanMode(ScanMode scanMode) {
                 _scanMode = scanMode;
             }
-
-            void setChangedEvent(IChangedEvent &event, bool enabled = true);
-            void enableChangedEvent();
-            void disableChangedEvent();
 
         friend DigInputService;
     };

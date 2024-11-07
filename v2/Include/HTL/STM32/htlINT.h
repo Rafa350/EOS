@@ -8,7 +8,9 @@
 #include "HTL/STM32/htl.h"
 
 
-#if defined(EOS_PLATFORM_STM32G031)
+#if defined(EOS_PLATFORM_STM32F4)
+	#include "F4/htlINT_Vectors.h"
+#elif defined(EOS_PLATFORM_STM32G031)
 	#include "G0/G031/htlINT_Vectors.h"
 #elif defined(EOS_PLATFORM_STM32G051)
 	#include "G0/G051/htlINT_Vectors.h"

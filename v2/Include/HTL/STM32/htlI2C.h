@@ -58,7 +58,18 @@ namespace htl {
 		};
 
 
-		/// Identificador de la notificacio.
+		/// Resultats de les operacions
+		///
+        enum class Results {
+            success,
+            busy,
+            timeout,
+            error
+        };
+        using Result = eos::SimpleResult<Results>;
+
+
+        /// Identificador de la notificacio.
 		///
         enum class NotifyId {
             addressMatch,    ///< Coindicencia en l'adressa.
@@ -92,14 +103,6 @@ namespace htl {
                 } txCompleted;
             };
         };
-
-        enum class Results {
-            success,
-            busy,
-            timeout,
-            error
-        };
-        using Result = eos::SimpleResult<Results>;
 
 
         using ISlaveNotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
