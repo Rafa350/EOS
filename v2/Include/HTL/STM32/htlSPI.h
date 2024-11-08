@@ -256,6 +256,7 @@ namespace htl {
 		#endif
 
 
+#if !defined(STM32G0) && !defined(STM32F4)
 		namespace internal {
 
 			#ifdef HTL_SPI1_EXIST
@@ -362,27 +363,34 @@ namespace htl {
 			};
 			#endif
 		}
+#endif
 	}
 }
 
 
+
 #if defined(EOS_PLATFORM_STM32G030)
     #include "htl/STM32/G0/G030/htlSPI_Pins.h"
+	#include "htl/STM32/G0/htlSPI_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32G031)
     #include "htl/STM32/G0/G031/htlSPI_Pins.h"
+	#include "htl/STM32/G0/htlSPI_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
     #include "htl/STM32/G0/G071/htlSPI_Pins.h"
+	#include "htl/STM32/G0/htlSPI_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32G0B1)
     #include "htl/STM32/G0/G0B1/htlSPI_Pins.h"
+	#include "htl/STM32/G0/htlSPI_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/F030/htlSPI_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)
     #include "htl/STM32/F4/htlSPI_Pins.h"
+	#include "htl/STM32/F4/htlSPI_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
     #include "htl/STM32/F7/htlSPI_Pins.h"

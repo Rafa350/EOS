@@ -39,11 +39,6 @@ void ApplicationBase::run() {
 /// \brief    Notificacio de la initcialitzacio de l'aplicacio.
 ///
 void ApplicationBase::onInitialize() {
-
-#if Eos_UseApplicationInitializeCallback
-    if (initializeEventCallback != nullptr)
-	    initializeEventCallback->execute(this);
-#endif
 }
 
 
@@ -51,11 +46,6 @@ void ApplicationBase::onInitialize() {
 /// \brief    Notificacio la finalitzacio de l'aplicacio.
 ///
 void ApplicationBase::onTerminate() {
-
-#if Eos_UseApplicationTerminateCallback
-	if (terminateEventCallback != nullptr)
-	    terminateEventCallback->execute(this);
-#endif
 }
 
 
@@ -79,12 +69,3 @@ void ApplicationBase::onRun() {
 
 }
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Notificacio del senyal tick
-///
-#if Eos_ApplicationTickEnabled
-void ApplicationBase::onTick() {
-
-}
-#endif

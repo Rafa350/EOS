@@ -1004,6 +1004,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlSPI_Pins.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F4/htlSPI_Traits.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlSPI_Traits.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F4/htlUART_Pins.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlUART_Pins.h</locationURI>

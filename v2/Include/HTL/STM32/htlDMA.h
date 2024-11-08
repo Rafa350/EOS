@@ -318,4 +318,4 @@ namespace htl {
 }
 
 
-#endif // __STM32_htlDMA__
+#endif // __STM32__htlDMA__

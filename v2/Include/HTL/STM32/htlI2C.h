@@ -487,11 +487,11 @@ namespace htl {
 
 #if defined(EOS_PLATFORM_STM32G030)
 	#include "htl/STM32/G0/htlI2C_Traits.h"
-    #include "htl/STM32/G0/G030/htlI2C_AF.h"
+    #include "htl/STM32/G0/G030/htlI2C_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G031)
 	#include "htl/STM32/G0/htlI2C_Traits.h"
-    #include "htl/STM32/G0/G031/htlI2C_AF.h"
+    #include "htl/STM32/G0/G031/htlI2C_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G051)
 	#include "htl/STM32/G0/htlI2C_Traits.h"

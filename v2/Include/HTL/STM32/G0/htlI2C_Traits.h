@@ -46,13 +46,6 @@ namespace htl {
                 static constexpr uint32_t rccResetPos = RCC_APBRSTR1_I2C3RST_Pos;
 			};
 			#endif
-
-			#ifdef HTL_I2C4_EXIST
-			template <>
-			struct I2CTraits<DeviceID::_4> {
-				static constexpr uint32_t i2cAddr = I2C4_BASE;
-			};
-			#endif
 		}
 	}
 }

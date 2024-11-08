@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32F4_htlUART_AF_F4__
-#define __STM32F4_htlUART_AF_F4__
+#ifndef __STM32F4_htlUART_Pins__
+#define __STM32F4_htlUART_Pins__
 
 
 // EOS includes
@@ -14,7 +14,7 @@
 
 namespace htl {
 	#ifdef HTL_UART1_EXIST
-		#if defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			template <>
 			struct UARTPinTrait<UARTChannel::_1, GPIO_A9, UARTPin::TX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
@@ -31,16 +31,10 @@ namespace htl {
 		struct UARTTrait<UARTChannel::_2> {
 			static constexpr uint32_t addr = USART2_BASE;
 			static constexpr INTVector vector = INTVector::uart2;
-			#if defined(EOS_PLATFORM_STM32F0)
-				static constexpr bool supportedRxTimeout = false;
-			#elif defined(EOS_PLATFORM_STM32F4)
-				static constexpr bool supportedRxTimeout = true;
-			#else
-				#error Plataforma no soportada
-			#endif
+			static constexpr bool supportedRxTimeout = true;
 		};
 
-		#if defined(EOD_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+		#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			template <>
 			struct UARTPinTrait<UARTChannel::_2, GPIO_A9, UARTPin::TX> {
 				static constexpr GPIOAlt alt = GPIOAlt::_8;
@@ -84,5 +78,5 @@ namespace htl {
 #endif // EOS_PLATFORM_STM32F4
 
 
-#endif // __STM32F4_htlUART_AF_F7__
+#endif // __STM32F4_htlUART_Pins__
 
