@@ -9,7 +9,11 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32G071)
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32G071)
+	#error "Valid for STM32G071 platform only"
+#endif
 
 
 #define ALT_FUNCTION(id, fn, pin, af)                 \
@@ -24,16 +28,16 @@ namespace htl {
 		namespace internal {
 
 			#ifdef HTL_I2C1_EXIST
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,   gpio::PinA9,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,   gpio::PinB6,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,   gpio::PinB8,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,   gpio::PinB10, gpio::AlternateFunction::_1)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,   gpio::PinA10, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,   gpio::PinB7,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,   gpio::PinB9,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,   gpio::PinB11, gpio::AlternateFunction::_1)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::alert, gpio::PinA1,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::alert, gpio::PinB5,  gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinA9,  gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB6,  gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB8,  gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB10, gpio::AlternateFunction::_1)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinA10, gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB7,  gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB9,  gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB11, gpio::AlternateFunction::_1)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinA1,  gpio::AlternateFunction::_6)
+			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinB5,  gpio::AlternateFunction::_6)
 			#endif // HTL_I2C1_EXIST
 
 			#ifdef HTL_I2C2_EXIST
@@ -50,9 +54,6 @@ namespace htl {
 
 
 #undef ALT_FUNCTION
-
-
-#endif // EOS_PLATFORM_STM32G071
 
 
 #endif // __STM32G071_htlI2C_Pins__

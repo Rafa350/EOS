@@ -604,7 +604,7 @@ static void enableReceiveInterrupts(
 
 	i2c->CR1 |=
 		I2C_CR1_RXIE |   // Habilita RX
-		I2C_CR1_STOPIE | // Hanilita STOP
+		I2C_CR1_STOPIE | // Habilita STOP
 		I2C_CR1_ERRIE;   // Habilita ERR
 }
 

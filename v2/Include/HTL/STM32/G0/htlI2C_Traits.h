@@ -3,15 +3,20 @@
 #define __STM32G0_htlI2C_traits__
 
 
-// HAL includes
+// HTL includes
 //
 #include "HTL/STM32/htl.h"
 
 
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32G0)
+	#error "Valid for STM32G0 platform only"
+#endif
+
+
 namespace htl {
-
 	namespace i2c {
-
 		namespace internal {
 
 			#ifdef HTL_I2C1_EXIST

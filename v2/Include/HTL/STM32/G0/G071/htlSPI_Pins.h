@@ -9,7 +9,11 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32G071)
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32G071)
+	#error "Valid for STM32G071 platform only"
+#endif
 
 
 #define ALT_FUNCTION(id, fn, pin, af)                 \
@@ -62,9 +66,6 @@ namespace htl {
 
 
 #undef ALT_FUNCTION
-
-
-#endif // EOS_PLATFORM_STM32G071
 
 
 #endif // __STM32G071_htlSPI_Pins__

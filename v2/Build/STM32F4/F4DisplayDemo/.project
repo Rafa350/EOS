@@ -149,11 +149,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HTL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -182,6 +177,11 @@
 			<name>inc/Framework/EOS/eosAssert.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosBoard.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosBoard.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/eosPlatform.h</name>
@@ -274,11 +274,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/CMSIS_DEVICE/Source/Templates/gcc/startup_stm32f429xx.s</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Board/eosBoard.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Board/eosBoard_STM32F429I_DISC1.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard_STM32F429I_DISC1.h</locationURI>
@@ -287,26 +282,6 @@
 			<name>inc/Framework/EOS/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/hal.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/hal.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halSYS.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halTMR.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32</name>
@@ -627,16 +602,6 @@
 			<name>inc/Framework/EOS/Controllers/Display/eosMonoFrameBuffer.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosMonoFrameBuffer.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F4</name>

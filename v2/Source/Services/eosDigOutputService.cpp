@@ -221,7 +221,7 @@ void DigOutputService::toggleOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa la sortida en estat ON.
+/// \brief    Posa la sortida en estat ACTIU.
 /// \param    output: La sortida.
 ///
 void DigOutputService::set(
@@ -240,7 +240,7 @@ void DigOutputService::set(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa la sortida en estat OFF.
+/// \brief    Posa la sortida en estat IDLE.
 /// \param    output: La sortida.
 ///
 void DigOutputService::clear(

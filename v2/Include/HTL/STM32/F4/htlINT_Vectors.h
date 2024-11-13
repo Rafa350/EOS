@@ -8,6 +8,13 @@
 #include "HTL/STM32/htl.h"
 
 
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32F4)
+	#error "Valid for STM32F4 platform only"
+#endif
+
+
 namespace htl {
 
 	namespace irq {

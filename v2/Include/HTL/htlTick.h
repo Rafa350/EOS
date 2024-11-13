@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __STM32_htlTick__
+#define __STM32_htlTick__
 
 
 #include "HTL/STM32/htl.h"
@@ -34,3 +36,5 @@ namespace htl {
 	}
 }
 
+
+#endif // __STM32_htlTick__

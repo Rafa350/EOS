@@ -8,10 +8,15 @@
 #include "HTL/STM32/htl.h"
 
 
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32G071)
+	#error "Valid for STM32G071 platform only"
+#endif
+
+
 namespace htl {
-
 	namespace irq {
-
 		enum class VectorID {
 
 			exti0 = EXTI0_1_IRQn,

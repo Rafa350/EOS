@@ -54,7 +54,7 @@ namespace htl {
 		enum class PinFunction {
 			scl,
 			sda,
-			alert
+			smba
 		};
 
 
@@ -317,8 +317,8 @@ namespace htl {
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
-				void inline initPinALERT() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::alert, pin_>::alt;
+				void inline initPinSMBA() {
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_>::alt;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 		};

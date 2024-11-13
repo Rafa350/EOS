@@ -10,7 +10,11 @@
 #include "HTL/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32F4)
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32F4)
+	#error "Valid for STM32F4 platform only"
+#endif
 
 
 #define ALT_FUNCTION(id, fn, pin, af)  \
@@ -72,10 +76,8 @@ namespace htl {
 	}
 }
 
+
 #undef ALT_FUNCTION
-
-
-#endif // EOS_PLATFORM_STM32F4
 
 
 #endif // __STM32F4_htlSPI_Pins__

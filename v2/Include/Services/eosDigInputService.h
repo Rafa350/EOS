@@ -49,7 +49,6 @@ namespace eos {
     		DigInputList _inputs;
     		NotifyEventRaiser _erNotify;
             unsigned _scanPeriod;
-            unsigned _weakTime;
 
         private:
             bool scanInputs();
@@ -72,7 +71,7 @@ namespace eos {
             void removeInputs();
 
             bool read(const DigInput *input) const;
-            uint32_t readPulses(DigInput *input, bool clear = true) const;
+            uint32_t getEdges(DigInput *input, bool clear = true) const;
 
             inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
             	_erNotify.set(event, enabled);
@@ -104,10 +103,12 @@ namespace eos {
             DigInputService *_service;
             PinDriver *_drv;
             ScanMode _scanMode;
-            uint32_t _pattern;
-            bool _pinState;
-            uint32_t _pinPulses;
-            bool _edge;
+            unsigned _pattern;
+            struct {
+            	unsigned state : 1;
+            	unsigned flag : 1;
+            	unsigned edges : 30;
+            } _pinStatus;
 
         public:
             DigInput(DigInputService *service, PinDriver *drv);
@@ -125,8 +126,8 @@ namespace eos {
                 return _service->read(this);
             }
 
-            inline uint32_t readPulses(bool clear = false) {
-                return _service->readPulses(this, clear);
+            inline unsigned getEdges(bool clear = false) {
+                return _service->getEdges(this, clear);
             }
 
             inline void setScanMode(ScanMode scanMode) {

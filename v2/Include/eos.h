@@ -56,13 +56,19 @@
 	#include "stm32f7xx.h"
 
 #elif defined(EOS_PLATFORM_STM32G0)
+	#if !defined(STM32G0)
+		#define STM32G0
+	#endif
+	#if !defined(STM32G0xx)
+		#define STM32G0xx
+	#endif
 	#if defined(EOS_PLATFORM_STM32G031)
 		#define STM32G031xx
 	#elif defined(EOS_PLATFORM_STM32G051)
 		#define STM32G051xx
-	#elif defined(EOS_PLATFORM_STM32G071)
+	#elif defined(EOS_PLATFORM_STM32G071) && !defined(STM32G071xx)
 		#define STM32G071xx
-	#elif defined(EOS_PLATFORM_STM32G0B1)
+	#elif defined(EOS_PLATFORM_STM32G0B1) && !defined(STM32G0B1xx)
 		#define STM32G0B1xx
 	#endif
 	#include "stm32g0xx.h"
@@ -88,7 +94,7 @@
 #include "eosConfig.h"
 #endif
 #ifndef EOS_NO_INCLUDE_BOARD
-#include "Board/eosBoard.h"
+#include "eosBoard.h"
 #endif
 
 

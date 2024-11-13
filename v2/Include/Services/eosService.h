@@ -50,6 +50,7 @@ namespace eos {
             virtual void initService(ServiceParams &params);
 
             bool stopSignal() const;
+            inline Task * getTask() const { return _task; }
 
         public:
             virtual ~Service() = default;
@@ -57,9 +58,7 @@ namespace eos {
             void start();
             void stop();
 
-            inline State getState() const {
-            	return _state;
-            }
+            inline State getState() const { return _state; }
     };
 
 }

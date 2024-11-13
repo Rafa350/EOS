@@ -3,9 +3,13 @@
 #define __STM32G0_htlClock__
 
 
+// HTL includes
+//
 #include "HTL/STM32/htl.h"
 
 
+// Platform check
+//
 #if !defined(EOS_PLATFORM_STM32G0)
 	#error "Valid for STM32G0 platform only"
 #endif

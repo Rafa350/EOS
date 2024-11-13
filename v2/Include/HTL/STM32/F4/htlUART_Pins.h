@@ -9,7 +9,11 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-#if defined(EOS_PLATFORM_STM32F4)
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32F4)
+	#error "Valid for STM32F4 platform only"
+#endif
 
 
 namespace htl {
@@ -73,9 +77,6 @@ namespace htl {
 	#ifdef HTL_UART8_EXIST
 	#endif
 }
-
-
-#endif // EOS_PLATFORM_STM32F4
 
 
 #endif // __STM32F4_htlUART_Pins__

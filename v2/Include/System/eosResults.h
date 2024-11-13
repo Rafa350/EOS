@@ -10,7 +10,6 @@
 
 namespace eos {
 
-
     enum class BasicResults {
         success,
         error

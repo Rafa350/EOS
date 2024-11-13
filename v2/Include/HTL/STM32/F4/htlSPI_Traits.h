@@ -3,6 +3,18 @@
 #define __STM32F4_htlSPI_Traits__
 
 
+// HTL includes
+//
+#include "HTL/STM32/htl.h"
+
+
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32F4)
+	#error "Valid for STM32F4 platform only"
+#endif
+
+
 namespace htl {
 	namespace spi {
 		namespace internal {

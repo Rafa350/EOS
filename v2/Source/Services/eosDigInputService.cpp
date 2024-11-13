@@ -7,11 +7,11 @@
 #include <cmath>
 
 
-#define PATTERN_MASK     0x0FFF
-#define PATTERN_POSEDGE  0x07FF
-#define PATTERN_NEGEDGE  0x0800
-#define PATTERN_ON       0x0FFF
-#define PATTERN_OFF      0x0000
+#define PATTERN_MASK     0x000000FF
+#define PATTERN_POSEDGE  0x0000007F
+#define PATTERN_NEGEDGE  0x00000080
+#define PATTERN_ACTIVE   0x000000FF
+#define PATTERN_IDLE     0x00000000
 
 
 using namespace eos;
@@ -41,6 +41,7 @@ DigInputService::DigInputService():
 ///
 DigInputService::~DigInputService() {
 
+	removeInputs();
 }
 
 
@@ -188,11 +189,11 @@ void DigInputService::initService(
 ///
 void DigInputService::onExecute() {
 
-    _weakTime = Task::getTickCount();
+    unsigned lastWeakTime = Task::getTickCount();
 
     while (!stopSignal()) {
 
-		Task::delay(_scanPeriod, _weakTime);
+		Task::delay(_scanPeriod, lastWeakTime);
 
 		notifyBeforeScan();
 
@@ -203,13 +204,13 @@ void DigInputService::onExecute() {
 				if (ie)
 					disableInterrupts();
 
-				bool edge = input->_edge;
-				input->_edge = false;
+				bool flag = input->_pinStatus.flag;
+				input->_pinStatus.flag = false;
 
 				if (ie)
 					enableInterrupts();
 
-				if (edge)
+				if (flag)
 					notifyChanged(input);
 			}
 		}
@@ -240,17 +241,18 @@ bool DigInputService::scanInputs() {
             // Analitza el patro per detectar un flanc positiu
             //
             if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-                input->_pinState = true;
-                input->_edge = 1;
+                input->_pinStatus.state = 1;
+                input->_pinStatus.edges += 1;
+                input->_pinStatus.flag = 1;
                 changed = true;
             }
 
             // Analitza el patro per detectar un flanc negatiu
             //
             else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-                input->_pinState = false;
-                input->_pinPulses += 1;
-                input->_edge = 1;
+                input->_pinStatus.state = 0;
+                input->_pinStatus.edges += 1;
+                input->_pinStatus.flag = 1;
                 changed = true;
             }
         }
@@ -263,7 +265,7 @@ bool DigInputService::scanInputs() {
 /// ----------------------------------------------------------------------
 /// \brief    Obte l'estat de l'entrada.
 /// \param    input: La entrada.
-/// \return   El estat.
+/// \return   True si esta en estat ACTIVE, false en cas contrari.
 ///
 bool DigInputService::read(
     const DigInput *input) const {
@@ -273,11 +275,11 @@ bool DigInputService::read(
 
     Task::enterCriticalSection();
 
-    bool pinState = input->_pinState;
+    bool value = input->_pinStatus.state == 1;
 
     Task::exitCriticalSection();
 
-    return pinState;
+    return value;
 }
 
 
@@ -287,7 +289,7 @@ bool DigInputService::read(
 /// \param    clear: Indica si cal borrar el contador.
 /// \return   El nombre de pulsos fins al moment de la lectura.
 ///
-uint32_t DigInputService::readPulses(
+uint32_t DigInputService::getEdges(
 	DigInput *input,
 	bool clear) const {
 
@@ -296,13 +298,13 @@ uint32_t DigInputService::readPulses(
 
     Task::enterCriticalSection();
 
-    uint32_t pinPulses = input->_pinPulses;
+    unsigned edges = input->_pinStatus.edges;
     if (clear)
-    	input->_pinPulses = 0;
+    	input->_pinStatus.edges = 0;
 
     Task::exitCriticalSection();
 
-    return pinPulses;
+    return edges;
 }
 
 
@@ -320,15 +322,15 @@ DigInput::DigInput(
     _scanMode {ScanMode::polling} {
 
     if (_drv->read()) {
-        _pinState = true;
-        _pattern = PATTERN_ON;
+        _pinStatus.state = 1;
+        _pattern = PATTERN_ACTIVE;
     }
     else {
-        _pinState = false;
-        _pattern = PATTERN_OFF;
+        _pinStatus.state = 0;
+        _pattern = PATTERN_IDLE;
     }
-    _pinPulses = 0;
-    _edge = false;
+    _pinStatus.edges = 0;
+    _pinStatus.flag = false;
 
     if (service != nullptr)
         service->addInput(this);
