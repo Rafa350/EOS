@@ -185,10 +185,10 @@
 #define DISPLAY_B6_Pin            htl::gpio::PinB8
 #define DISPLAY_B7_Pin            htl::gpio::PinB9
 
-#define DISPLAY_HSYNC_POL         htl::ltdc::PinPolarity::activeLow;   // HSync polarity
-#define DISPLAY_VSYNC_POL         htl::ltdc::PinPolarity::activeLow;   // VSync polarity
-#define DISPLAY_DE_POL            htl::ltdc::PinPolarity::activeLow;   // DE polarity
-#define DISPLAY_PC_POL            htl::ltdc::PinPolarity::activeLow;   // PC polarity
+#define DISPLAY_HSYNC_POL         htl::ltdc::PinPolarity::activeLow  // HSync polarity
+#define DISPLAY_VSYNC_POL         htl::ltdc::PinPolarity::activeLow  // VSync polarity
+#define DISPLAY_DE_POL            htl::ltdc::PinPolarity::activeLow  // DE polarity
+#define DISPLAY_PC_POL            htl::ltdc::PinPolarity::activeLow  // PC polarity
 #endif
 
 #define DISPLAY_WIDTH  		      240            // Amplada fisica de la pantalla

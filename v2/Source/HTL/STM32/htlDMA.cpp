@@ -79,14 +79,24 @@ DMADevice::DMADevice(
 
 Result DMADevice::initMemoryToMemory() {
 
-    uint32_t tmp = _dmadev->dmac->CCR;
-    tmp = ~(DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
-            DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
-            DMA_CCR_EN);
-    tmp |= DMA_CCR_MEM2MEM;      // Memoria a memoria
-    _dmadev->dmac->CCR = tmp;
+	if (_state == State::reset) {
 
-    return Result::success();
+        // Activa el dispositiu amb el canal desactivat.
+        //
+        activate();
+        disable(_dmadev);
+
+		uint32_t tmp = _dmadev->dmac->CCR;
+		tmp = ~(DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
+				DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
+				DMA_CCR_EN);
+		tmp |= DMA_CCR_MEM2MEM;      // Memoria a memoria
+		_dmadev->dmac->CCR = tmp;
+
+		return Result::success();
+	}
+	else
+		return Result::error();
 }
 
 
@@ -114,7 +124,7 @@ Result DMADevice::initMemoryToPeripheral(
 
         uint32_t tmp;
 
-        // Activa el dispositiu amb el canakl desactivat.
+        // Activa el dispositiu amb el canal desactivat.
         //
         activate();
         disable(_dmadev);
@@ -305,7 +315,6 @@ Result DMADevice::waitForFinish(
         //
         disable(_dmadev);
 
-
         // Canvia l'estat a 'ready'
         //
         _state = State::ready;
@@ -322,6 +331,11 @@ Result DMADevice::waitForFinish(
 /// \brief    Procesa les interrupcions.
 ///
 void DMADevice::interruptService() {
+
+	//auto CCR = _dmadev->dmac->CCR;
+	//auto ISR = _dmadev->dma->ISR;
+
+	// TODO: Utilitzar registres directament
 
     // Comprova si es una interrupcio TC (Transfer Complete)
     //
@@ -377,7 +391,7 @@ void DMADevice::notifyTransferCompleted(
 ///
 void DMADevice::notifyHalfTransfer(
     bool irq) {
-    
+
     if (_notifyEventEnabled) {
         NotifyEventArgs args = {
             .id = NotifyID::half,
@@ -513,7 +527,7 @@ static inline bool isTransferErrorFlagSet(
 ///
 static inline void clearTransferCompleteFlag(
     const DMADEV_TypeDef *dmadev) {
-    
+
     dmadev->dma->IFCR = DMA_IFCR_CTCIF1 << dmadev->flagPos;
 }
 
@@ -535,7 +549,7 @@ static inline void clearHalfTransferFlag(
 ///
 static inline void clearAllFlags(
     const DMADEV_TypeDef *dmadev) {
-    
+
     dmadev->dma->IFCR = DMA_IFCR_CGIF1 << dmadev->flagPos;
 }
 
@@ -543,10 +557,10 @@ static inline void clearAllFlags(
 /// ----------------------------------------------------------------------
 /// \brief    Habilita el canal DMA.
 /// \param    channel: El numero de canal.
-/// 
+///
 static inline void enable(
     const DMADEV_TypeDef *dmadev) {
-    
+
     dmadev->dmac->CCR |= DMA_CCR_EN;
 }
 
@@ -554,9 +568,9 @@ static inline void enable(
 /// ----------------------------------------------------------------------
 /// \brief    Deshabilita el canal DMA.
 /// \param    channel: El numero de canal.
-/// 
+///
 static inline void disable(
     const DMADEV_TypeDef *dmadev) {
-    
+
     dmadev->dmac->CCR &= ~DMA_CCR_EN;
 }

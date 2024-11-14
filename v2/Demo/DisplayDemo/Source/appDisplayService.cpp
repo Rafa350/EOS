@@ -10,6 +10,7 @@
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
+#include "HTL/STM32/htlLTDC.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #elif defined(DISPLAY_DRV_ILI9341)
@@ -157,6 +158,21 @@ void DisplayService::onExecute() {
     devSPI->initPinSCK<DISPLAY_SCK_Pin>();
     devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
     devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
+
+#if 0
+    auto devLTDC = ltdc::LTDCDevice::pInst;
+    devLTDC->initPinDE<DISPLAY_DE_Pin, DISPLAY_DE_POL>();
+    devLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, DISPLAY_HSYNC_POL>();
+    devLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, DISPLAY_VSYNC_POL>();
+    devLTDC->initPinPC<DISPLAY_PC_Pin, DISPLAY_PC_POL>();
+    devLTDC->initPinRX<DISPLAY_R2_Pin, DISPLAY_R3_Pin, DISPLAY_R4_Pin, DISPLAY_R5_Pin, DISPLAY_R6_Pin, DISPLAY_R7_Pin>();
+    devLTDC->initPinGX<DISPLAY_G2_Pin, DISPLAY_G3_Pin, DISPLAY_G4_Pin, DISPLAY_G5_Pin, DISPLAY_G6_Pin, DISPLAY_G7_Pin>();
+    devLTDC->initPinBX<DISPLAY_B2_Pin, DISPLAY_B3_Pin, DISPLAY_B4_Pin, DISPLAY_B5_Pin, DISPLAY_B6_Pin, DISPLAY_B7_Pin>();
+    devLTDC->initialize(_displayWidth, _displayHeight, DISPLAY_HSYNC, DISPLAY_VSYNC, DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
+    devLTDC->setBackgroundColor(RGB(0, 0, 255));
+
+    auto devLTDCLayer = ltdc::LTDCLayerDevice::pInst;
+#endif
 
     auto device = new eos::Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
     device->initialize(initCommands, sizeof(initCommands)/sizeof(initCommands[0]));

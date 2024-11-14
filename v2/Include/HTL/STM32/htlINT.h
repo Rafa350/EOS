@@ -24,7 +24,6 @@
 
 
 namespace htl {
-
 	namespace irq {
 
 		enum class Priority {

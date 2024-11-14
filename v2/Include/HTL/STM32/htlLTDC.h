@@ -10,7 +10,6 @@
 
 
 namespace htl {
-
 	namespace ltdc {
 
 		/// \brief Image format.

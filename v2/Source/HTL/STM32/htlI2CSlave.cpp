@@ -197,7 +197,8 @@ void I2CSlaveDevice::interruptServiceListen() {
 	//
 	if ((CR1 & I2C_CR1_ADDRIE) && (ISR & I2C_ISR_ADDR)) {
 
-		// Canvia l'estat 'transmiting' o 'receiving'
+		// Canvia l'estat 'transmiting' o 'receiving' depenent
+		// de la direccio de la comunicacio.
 		//
 		disableInterrupts(_i2c);
     	if (ISR & I2C_ISR_DIR) {

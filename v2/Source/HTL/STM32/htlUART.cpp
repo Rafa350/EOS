@@ -17,6 +17,20 @@ static void setReceiveTimeout(USART_TypeDef *usart, uint32_t timeout);
 static ClockSource getClockSource(USART_TypeDef *usart);
 static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
 
+static void enable(USART_TypeDef *usart);
+static void disable(USART_TypeDef *usart);
+static void enableTransmission(USART_TypeDef *usart);
+static void enableTransmissionIRQ(USART_TypeDef *usart);
+static void enableTransmissionDMA(USART_TypeDef *usart);
+static void disableTransmission(USART_TypeDef *usart);
+static void enableReception(USART_TypeDef *usart);
+static void enableReceptionIRQ(USART_TypeDef *usart);
+static void enableReceptionDMA(USART_TypeDef *usart);
+static void disableReception(USART_TypeDef *usart);
+
+static void clearTransmissionCompleteFlag(USART_TypeDef *usart);
+static void clearReceiverTimeOutFlag(USART_TypeDef *usart);
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
@@ -43,22 +57,18 @@ Result UARTDevice::initialize() {
 	if (_state == State::reset) {
 
 		activate();
+		disable(_usart);
 
-		_usart->CR1 &= ~(
-			#if defined(EOS_PLATFORM_STM32G0)
-			USART_CR1_FIFOEN | // Deshabilita el FIFO
-			#endif
-			USART_CR1_UE |     // Desabilita el dispositiu
-			USART_CR1_TE |     // Desabilita la transmissio
-			USART_CR1_RE);     // Deshabilita la recepcio
-	    _usart->CR2 &= ~(
+		_usart->CR2 &= ~(
 	    	USART_CR2_LINEN |  // Modus sincron, deshabilita LIN
 			USART_CR2_CLKEN);  // ;odus sincron, desabilita CLK
+
 		_usart->CR3 &= ~(
 			USART_CR3_SCEN |   // Desabilita smartcad
 			USART_CR3_HDSEL |  // Desabilita half-duplex
 			USART_CR3_IREN);   // Desabilita IRDA
-		_usart->CR1 |= USART_CR1_UE; // Habilita el dispositiu de nou
+
+		enable(_usart);
 
 		_state = State::ready;
 
@@ -78,10 +88,7 @@ Result UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		_usart->CR1 = 0;
-		_usart->CR2 = 0;
-		_usart->CR3 = 0;
-
+		disable(_usart);
 		deactivate();
 
 		_state = State::reset;
@@ -278,6 +285,7 @@ Result UARTDevice::receive_IRQ(
 
 		_usart->CR1 |=
 			USART_CR1_RE |              // Habilita la recepcio
+			USART_CR1_PEIE |            // Habilita interrupcio PE
 			USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
 			USART_CR1_RTOIE;            // Habilita interrupcio RTO
 
@@ -312,12 +320,11 @@ Result UARTDevice::transmit_DMA(
         _txCount = 0;
         _txMaxCount = length;
 
-        // Habilita comunicacio, transmissio i DMA
+        // Habilita comunicacio per DMA
         //
-        _usart->CR1 |=
-			USART_CR1_TE;   // Habilita transmissio
-        _usart->CR3 |=
-			USART_CR3_DMAT; // Habilita DMA
+        _usart->ICR = USART_ICR_TCCF;   // Borra el flag de transmissio complerta
+        _usart->CR1 |= USART_CR1_TE;    // Habilita transmissio
+        _usart->CR3 |= USART_CR3_DMAT;  // Habilita DMA
 
         // Inicia la transferencia per DMA
         //
@@ -416,11 +423,11 @@ void UARTDevice::interruptService() {
 
 		// Comprova si es un error PARITY
 		//
-		if (ISR & USART_ISR_PE) {
+		if ((ISR & USART_ISR_PE) && (CR1 & USART_CR1_PEIE)) {
 
 			// Borra el flag
 			//
-			_usart->ICR = USART_ICR_FECF;
+			_usart->ICR = USART_ICR_PECF;
 		}
 
 		// Comprova si hi ha error FRAME
@@ -487,22 +494,8 @@ void UARTDevice::interruptService() {
 			//
 			if ((CR1 & USART_CR1_TCIE) && (CR1 & USART_CR1_TCIE)) {
 
-				// Borra el flag
-				//
-				_usart->ICR = USART_ICR_TCCF;
-
-				// Desabilita interrupcions, cominicacions, DMA, etc
-				//
-				ATOMIC_CLEAR_BIT(_usart->CR1,
-					USART_CR1_TXEIE_TXFNFIE | // Deshabilita interrupcio TXE
-					USART_CR1_TCIE |          // Deshabilita interrupcio TC
-					USART_CR1_RTOIE |         // Deshabilita intterrupcio RTO
-					USART_CR1_TE);            // Desabilita transmissio
-				ATOMIC_CLEAR_BIT(_usart->CR3,
-					USART_CR3_DMAT);          // Desabilita DMA
-
-				// Notifica final de transmissio
-				//
+				clearTransmissionCompleteFlag(_usart);
+				disableTransmission(_usart);
 				notifyTxComplete(_txBuffer, _txCount, true);
 
 				_state = State::ready;
@@ -515,15 +508,7 @@ void UARTDevice::interruptService() {
 					_rxBuffer[_rxCount++] = _usart->RDR;
 					if (_rxCount == _rxMaxCount) {
 
-						// Deshabilita interrrupcions, comunicacio, etc.
-						//
-						ATOMIC_CLEAR_BIT(_usart->CR1,
-							USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
-							USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
-							USART_CR1_RE);             // Deshabilita recepcio
-
-						// Notifica el final de recepcio
-						//
+						disableReception(_usart);
 						notifyRxComplete(_rxBuffer, _rxCount, true);
 
 						// Canvia l'estat
@@ -533,19 +518,18 @@ void UARTDevice::interruptService() {
 				}
 			}
 
-			// Interrupcio 'TIMEOUT'
+			// Interrupcio 'RTO'
 			//
 			if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
 
-				// Borra el flag
-				//
-				_usart->ICR = USART_ICR_RTOCF;
+				clearReceiverTimeOutFlag(_usart);
 
 				// Deshabilita interrrupcions, comunicacio, etc.
 				//
 				ATOMIC_CLEAR_BIT(_usart->CR1,
 					USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
 					USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
+					USART_CR1_PEIE |           // Deshabilita interrupcio PE
 					USART_CR1_RE);             // Deshabilita recepcio
 
 				// Notifica final de recepcio
@@ -560,6 +544,16 @@ void UARTDevice::interruptService() {
 	}
 }
 #endif
+
+
+void UARTDevice::txInterruptService() {
+
+}
+
+
+void UARTDevice::rxInterruptService() {
+
+}
 
 
 /// ----------------------------------------------------------------------
@@ -947,4 +941,104 @@ static void setReceiveTimeout(
         usart->CR2 |= USART_CR2_RTOEN;
         usart->RTOR = timeout;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borra el flah 'TC'
+/// \param    usart: Registres de de hardware del dispositiu
+///
+static inline void clearTransmissionCompleteFlag(
+	USART_TypeDef *usart) {
+
+	usart->ICR = USART_ICR_TCCF;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borra el flag 'RTO'
+/// \param    usart: Registres de de hardware del dispositiu
+///
+static inline void clearReceiverTimeOutFlag(
+	USART_TypeDef *usart) {
+
+	usart->ICR = USART_ICR_RTOCF;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita el dispositiu.
+/// \param    usart: Registres de hardware del dispositiu.
+///
+static inline void enable(
+	USART_TypeDef *usart) {
+
+	usart->CR1 |= USART_CR1_UE;
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desabilita el dispositiu.
+/// \param    usart: Registres de hardware del dispositiu.
+///
+static void disable(
+	USART_TypeDef *usart) {
+
+	usart->CR1 &= ~(
+		#if defined(EOS_PLATFORM_STM32G0)
+		USART_CR1_FIFOEN | // Deshabilita el FIFO
+		#endif
+		USART_CR1_UE |     // Desabilita el dispositiu
+		USART_CR1_TE |     // Desabilita la transmissio
+		USART_CR1_RE);     // Deshabilita la recepcio
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita la transmissio
+/// \param    usart: Registres de hardware del dispositiu.
+///
+static void disableTransmission(
+	USART_TypeDef *usart) {
+
+	auto a = startATOMIC();
+
+	// Desabilita interrupcions i transmissio
+	//
+	usart->CR1 &= ~(
+		USART_CR1_TXEIE_TXFNFIE | // Deshabilita interrupcio TXE
+		USART_CR1_TCIE |          // Deshabilita interrupcio TC
+		USART_CR1_TE);            // Desabilita transmissio
+
+	// Deshabilita el DMA
+	//
+	usart->CR3 &= ~USART_CR3_DMAT;
+
+	endATOMIC(a);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desabilita la recepcio.
+/// \param    usart: Registres de hardware del dispositiu.
+///
+static void disableReception(
+	USART_TypeDef *usart) {
+
+	auto a = startATOMIC();
+
+	// Desabilita interrupcions i recepcio
+	//
+	usart->CR1 &= ~(
+		USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
+		USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
+		USART_CR1_PEIE |           // Deshabilita interrupcio PE
+		USART_CR1_RE);             // Deshabilita recepcio
+
+	// Deshabilita el DMA
+	//
+	usart->CR3 &= ~USART_CR3_DMAT;
+
+	endATOMIC(a);
 }

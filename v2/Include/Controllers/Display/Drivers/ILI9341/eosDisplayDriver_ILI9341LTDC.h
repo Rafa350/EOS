@@ -59,6 +59,9 @@ namespace eos {
 
         public:
             DisplayDriver_ILI9341LTDC(Device_ILI9341 *device, FrameBuffer *frameBuffer);
+            DisplayDriver_ILI9341LTDC(htl::ltdc::LTDCDevice *devLTDC,
+            		htl::ltdc::LTDCLayerDevice *devLTDCLayer,
+					Device_ILI9341 *device, FrameBuffer *frameBuffer);
 
             void initialize() override;
             void deinitialize() override;

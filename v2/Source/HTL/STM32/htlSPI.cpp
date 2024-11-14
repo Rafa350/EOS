@@ -482,7 +482,7 @@ static void disable(
 /// \param    spi: Els registres de hardware del dispositiu SPI
 /// \param    data: Les dades a transmetre.
 ///
-static void write8(
+static inline void write8(
 	SPI_TypeDef *spi,
 	uint8_t data) {
 
@@ -496,7 +496,7 @@ static void write8(
 /// \param    spi: Els registre de hardware del dispositiu SPI
 /// \param    data: Les dades a transmetre.
 ///
-static void write16(
+static inline void write16(
 	SPI_TypeDef *spi,
 	uint16_t data) {
 
@@ -509,7 +509,7 @@ static void write16(
 /// \param    spi: Els registres de hardware del dispositiu SPI.
 /// \return   El valor de la lectura.
 ///
-static uint8_t read8(
+static inline uint8_t read8(
 	SPI_TypeDef *spi) {
 
 	return *((volatile uint8_t*)&spi->DR);
@@ -521,7 +521,7 @@ static uint8_t read8(
 /// \param    spi: Els registres de hardware del dispositiu SPI.
 /// \return   El valor de la lectura.
 ///
-static uint16_t read16(
+static inline uint16_t read16(
 	SPI_TypeDef *spi) {
 
 	return *((volatile uint16_t*)&spi->DR);

@@ -233,6 +233,9 @@ namespace htl {
 				void notifyRxComplete(const uint8_t *buffer, unsigned length, bool irq);
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 
+				void rxInterruptService();
+				void txInterruptService();
+
 			protected:
 				UARTDevice(USART_TypeDef *usart);
 				void interruptService();
