@@ -523,17 +523,7 @@ void UARTDevice::interruptService() {
 			if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
 
 				clearReceiverTimeOutFlag(_usart);
-
-				// Deshabilita interrrupcions, comunicacio, etc.
-				//
-				ATOMIC_CLEAR_BIT(_usart->CR1,
-					USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
-					USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
-					USART_CR1_PEIE |           // Deshabilita interrupcio PE
-					USART_CR1_RE);             // Deshabilita recepcio
-
-				// Notifica final de recepcio
-				//
+				disableReception(_usart);
 				notifyRxComplete(_rxBuffer, _rxCount, true);
 
 				// Canvia d'estat

@@ -332,11 +332,6 @@ Result DMADevice::waitForFinish(
 ///
 void DMADevice::interruptService() {
 
-	//auto CCR = _dmadev->dmac->CCR;
-	//auto ISR = _dmadev->dma->ISR;
-
-	// TODO: Utilitzar registres directament
-
     // Comprova si es una interrupcio TC (Transfer Complete)
     //
     if (isTransferCompleteInterruptEnabled(_dmadev) &&

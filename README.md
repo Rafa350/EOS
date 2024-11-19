@@ -4,7 +4,6 @@
 * Verified targets STM32F0xx, STM32F1xx, STM32F4xx, STM32F7xx, STM32G030xx, STM32G0x1xx, PIC32MX.
 * FreeRTOS scheduler.
 * HAL module.
-  * Independent HAL C bare metal library. C99
   * Independent HTL (HAL Template Library) with minimal overload. C++17
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
@@ -33,3 +32,5 @@
 	* Demo (Demos)
 	* Build (Projects and builds for demos)
 	* Tools (EOS developement tools)
+	
+## PlatformIO/VSCode integration (Experimental)
