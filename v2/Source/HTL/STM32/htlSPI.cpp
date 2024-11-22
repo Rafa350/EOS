@@ -232,6 +232,8 @@ Result SPIDevice::transmit(
 		}
 
 		if (!error) {
+			// Espera que es buidin els fifos
+			//
             #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 		    if (!waitTxFifoEmpty(_spi, expireTime))
 		        error = true;
@@ -239,9 +241,6 @@ Result SPIDevice::transmit(
 		        error = true;
 		    else if (!waitRxFifoEmpty(_spi, expireTime))
 		        error = true;
-            #else
-            if (!waitNotBusy(_spi, expireTime))
-                error = true;
             #endif
 		}
 
@@ -456,11 +455,15 @@ static void enable(
 /// ----------------------------------------------------------------------
 /// \brief    Desabilita les comunicacions.
 /// \param    spi: Registres de hardware del dispositiu SPI
+/// \remarks  Asegurar-se que les comunicacions han finalitzat.
 ///
 static void disable(
     SPI_TypeDef *spi) {
 
-    #if defined(EOS_PLATFORM_STM32G0)
+	#if defined(EOS_PLATFORM_STM32F4)
+	spi->CR1 &= ~SPI_CR1_SPE;
+
+    #elif defined(EOS_PLATFORM_STM32G0)
     while ((spi->SR & SPI_SR_FTLVL) != 0)
         continue;
 

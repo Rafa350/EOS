@@ -10,7 +10,7 @@
 
 
 #ifndef HTL_LTDC_EXIST
-#error "LTDC hardware unavailable"
+#error "LTDC hardware required"
 #endif
 
 
@@ -182,9 +182,9 @@ void DisplayDriver_RGBLTDC::setPixels(
 	int16_t width,
 	int16_t height,
 	const Color *colors,
-	int16_t pitch) {
+	int16_t colorPitch) {
 
-	_workFrameBuffer->setPixels(x, y, width, height, colors, pitch);
+	_workFrameBuffer->setPixels(x, y, width, height, colors, colorPitch);
 }
 
 

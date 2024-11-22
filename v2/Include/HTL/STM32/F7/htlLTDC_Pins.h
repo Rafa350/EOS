@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __STM32_F7_htlLTDC_AF_F7__
-#define __STM32_F7_htlLTDC_AF_F7__
+#ifndef __STM32F7_htlLTDC_Pin__
+#define __STM32F7_htlLTDC_Pin__
 
 
 // EOS includes
@@ -10,7 +10,11 @@
 #include "HTL/STM32/htlLTDC.h"
 
 
-#if defined(EOS_PLATFORM_STM32F7)
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32F7)
+	#error "Valid for STM32F7 platform only"
+#endif
 
 
 #define ALT_FUNCTION(fn, pin, af)        \
@@ -143,9 +147,6 @@ namespace htl {
 #undef ALT_FUNCTION
 
 
-#endif // EOS_PLATFORM_STM32F7
-
-
-#endif // __STM32_F7_htlLTDC_AF_F7
+#endif // __STM32F7_htlLTDC_Pin
 
 

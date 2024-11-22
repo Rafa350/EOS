@@ -119,6 +119,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/App/Board/eosBoard_Custom.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/Board/eosBoard_Custom.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/Board/eosBoard_Custom_STM32F429I_DISC1.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/Board/eosBoard_Custom_STM32F429I_DISC1.h</locationURI>
+		</link>
+		<link>
 			<name>inc/App/STM32F4/FreeRTOSConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/FreeRTOSConfig.h</locationURI>
@@ -542,11 +552,6 @@
 			<name>src/Framework/STM32F4/HAL/stm32f4xx_hal_sdram.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL/Src/stm32f4xx_hal_sdram.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/STM32F4/HAL/stm32f4xx_hal_spi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL/Src/stm32f4xx_hal_spi.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32F4/HAL/stm32f4xx_hal_tim.c</name>

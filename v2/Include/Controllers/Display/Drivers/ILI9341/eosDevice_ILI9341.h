@@ -250,7 +250,7 @@
 	5, CMD_POWER_ON_SEQUENCE_CONTROL, p1, p2, p3, p4
 
 #define __ENABLE_3G(p1) \
-	2, CMD_ENABLE_3G, p1
+	2, CMD_ENABLE_3G, 0x02 | (p1 & 0x01)
 
 #define __INTERFACE_CONTROL(p1, p2, p3) \
 	4, CMD_INTERFACE_CONTROL, p1, p2, p3
@@ -265,7 +265,7 @@ namespace eos {
         private:
             Device_ILI9341(const Device_ILI9341 &) = delete;
             Device_ILI9341 & operator =(const Device_ILI9341 &) = delete;
-            
+
         protected:
             Device_ILI9341();
 
@@ -273,7 +273,7 @@ namespace eos {
 
         public:
             virtual ~Device_ILI9341() = default;
-            
+
             virtual void writeCommand(uint8_t cmd) = 0;
             virtual void writeData(uint8_t data) = 0;
             virtual void writeData(const uint8_t *data, unsigned dataSize) = 0;
@@ -299,15 +299,15 @@ namespace eos {
         public:
             Device_ILI9341_SPI(Pin *pinCS, Pin *pinRS, Pin *pinRST, DevSPI *devSPI);
             Device_ILI9341_SPI(const CreateParams *params);
-            
+
             void initialize(const uint8_t *script, unsigned scriptSize);
             void deinitialize();
 
-            void writeCommand(uint8_t cmd) override;
+            void writeCommand(uint8_t data) override;
             void writeData(uint8_t data) override;
             void writeData(const uint8_t *data, unsigned dataSize) override;
     };
-    
+
     class Device_ILI9341_SPIDMA: public Device_ILI9341_SPI {
         public:
             using DevDMA = htl::dma::DMADevice;

@@ -90,6 +90,7 @@ namespace eos {
             inline int16_t getMaxY() const override { return _displayFrameBuffer->getMaxY(); }
 
             void clear(Color color) override;
+
             void setPixel(int16_t x, int16_t y, Color color) override;
             void setHPixels(int16_t x, int16_t y, int16_t size, Color color) override;
             void setVPixels(int16_t x, int16_t y, int16_t size, Color color) override;

@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalStreamBuffer.h"
-#include "FreeRTOS.h
+#include "FreeRTOS.h"
 #include "stream_buffer.h"
 
 

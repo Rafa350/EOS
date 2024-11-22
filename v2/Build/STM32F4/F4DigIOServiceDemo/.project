@@ -276,37 +276,42 @@
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/CMSIS_RTOS/cmsis_os.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS/heap_3.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/portable/MemMang/heap_3.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/list.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/list.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/portable/GCC/ARM_CM4F/port.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/queue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/queue.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/tasks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/timers.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/HAL/stm32f4xx_hal.c</name>
