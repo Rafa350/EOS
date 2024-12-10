@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "System/IO/eosBinaryStreamReader.h"
 
 
@@ -29,7 +30,7 @@ BinaryStreamReader::BinaryStreamReader(
 bool BinaryStreamReader::readU8(
     uint8_t &data) {
 
-    if (_ptr + sizeof(uint8_t) < _end) {
+    if (_ptr + sizeof(uint8_t) <= _end) {
         uint8_t a = *_ptr++;
         data = a;
         return true;
@@ -47,7 +48,7 @@ bool BinaryStreamReader::readU8(
 bool BinaryStreamReader::readU16(
     uint16_t &data) {
 
-    if (_ptr + sizeof(uint16_t) < _end) {
+    if (_ptr + sizeof(uint16_t) <= _end) {
         uint8_t a = *_ptr++;
         uint8_t b = *_ptr++;
         data = (a << 8) | b;
@@ -66,7 +67,7 @@ bool BinaryStreamReader::readU16(
 bool BinaryStreamReader::readU32(
     uint32_t &data) {
 
-    if (_ptr + sizeof(uint32_t) < _end) {
+    if (_ptr + sizeof(uint32_t) <= _end) {
         uint8_t a = *_ptr++;
         uint8_t b = *_ptr++;
         uint8_t c = *_ptr++;
@@ -143,5 +144,14 @@ bool BinaryStreamReader::read(
 	uint8_t *data,
 	unsigned size) {
 
-	return true;
+    eosAssert(data != nullptr);
+    eosAssert(size > 0);
+
+	if ((_ptr + size) <= _end) {
+		memcpy(data, _ptr, size);
+		_ptr += size;
+		return true;
+	}
+	else
+		return true;
 }

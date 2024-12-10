@@ -3,6 +3,7 @@
 #include "HTL/STM32/htlDMA.h"
 
 
+using namespace eos;
 using namespace htl;
 using namespace htl::spi;
 
@@ -45,7 +46,7 @@ static uint16_t read16(SPI_TypeDef *spi);
 
 static bool isTxEmpty(SPI_TypeDef *spi);
 static bool isRxNotEmpty(SPI_TypeDef *spi);
-static bool isBusy(SPI_TypeDef *spi);
+static bool isSPIBusy(SPI_TypeDef *spi);
 
 #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 static bool waitRxFifoEmpty(SPI_TypeDef *spi, Tick expireTime);
@@ -66,8 +67,9 @@ SPIDevice::SPIDevice(
 	SPI_TypeDef *spi):
 
 	_spi {spi},
-	_state {State::reset} {
+	_state {State::invalid} {
 
+	_state = State::reset;
 }
 
 
@@ -103,10 +105,10 @@ Result SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::error();
+		return Results::errorState;
 }
 
 
@@ -123,24 +125,10 @@ Result SPIDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::error();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna l'event de notificacio.
-/// \param    event: L'event.
-/// \param    enabled: True per habilitar l'event.
-///
-void SPIDevice::setNotifyEvent(
-    INotifyEvent &event,
-    bool enabled) {
-
-    _notifyEvent = &event;
-    _notifyEventEnabled = enabled;
+		return Results::errorState;
 }
 
 
@@ -250,11 +238,14 @@ Result SPIDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Result::error() : Result::success();
+		return error ? Results::error : Results::success;
 	}
 
+	else if (_state == State::transmiting)
+		return Results::busy;
+
 	else
-		return Result::busy();
+		return Results::errorState;
 }
 
 
@@ -270,33 +261,38 @@ Result SPIDevice::transmit_DMA(
     const uint8_t *txBuffer,
     unsigned bufferSize) {
 
-    // Habilita les transferencies per DMA
-    //
-    _spi->CR2 |= SPI_CR2_TXDMAEN;
+	if (_state == State::ready) {
 
-    // Habilita la comunicacio
-    //
-    enable(_spi);
+		// Habilita les transferencies per DMA
+		//
+		_spi->CR2 |= SPI_CR2_TXDMAEN;
 
-    // Inicia la transferencia i espera que finalitzi
-    //
-    devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), bufferSize);
-    devTxDMA->waitForFinish(Tick(1000));
+		// Habilita la comunicacio
+		//
+		enable(_spi);
 
-    // Espera que el SPI acabi de transferir
-    //
-    while (isBusy(_spi))
-        continue;
+		// Inicia la transferencia i espera que finalitzi
+		//
+		devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), bufferSize);
+		devTxDMA->waitForFinish(Tick(1000));
 
-    // Desabilita la comunicacio
-    //
-    disable(_spi);
+		// Espera que el SPI acabi de transferir
+		//
+		while (isSPIBusy(_spi))
+			continue;
 
-    // Deshabilita la transfertencia per DMA
-    //
-    _spi->CR2 &= ~SPI_CR2_TXDMAEN;
+		// Desabilita la comunicacio
+		//
+		disable(_spi);
 
-    return Result::success();
+		// Deshabilita la transfertencia per DMA
+		//
+		_spi->CR2 &= ~SPI_CR2_TXDMAEN;
+
+		return Results::success;
+	}
+	else
+		return Results::errorState;
 }
 
 
@@ -560,7 +556,7 @@ static inline bool isRxNotEmpty(
 /// \param    spi: Els registres de hardware del dispoositiu SPI.
 /// \return   True si hi ha una transmissio pendent.
 ///
-static inline bool isBusy(
+static inline bool isSPIBusy(
 	SPI_TypeDef *spi) {
 
 	return (spi->SR & SPI_SR_BSY) != 0;
@@ -615,7 +611,7 @@ static bool waitNotBusy(
     SPI_TypeDef *spi,
     Tick expireTime) {
 
-    while (isBusy(spi)) {
+    while (isSPIBusy(spi)) {
         if (hasTickExpired(expireTime)) {
             return false;
         }

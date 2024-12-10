@@ -11,7 +11,7 @@
 namespace htl {
 
 	namespace tmr {
-    
+
 		enum class DeviceID {
 			#ifdef HTL_TMR1_EXIST
 				_1,
@@ -92,7 +92,8 @@ namespace htl {
 		enum class NotifyID {
 			null,
 			trigger,
-			update
+			update,
+			error
 		};
 
 		struct NotifyEventArgs {
@@ -100,9 +101,9 @@ namespace htl {
 			bool isr;
 			union {
 				struct {
-				} Trigger;
+				} trigger;
 				struct {
-				} Update;
+				} update;
 			};
 		};
 

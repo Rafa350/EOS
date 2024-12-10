@@ -15,7 +15,6 @@ namespace eos {
 		public:
 	        using Pin = htl::gpio::PinDevice;
 	        using DevSPI = htl::spi::SPIDevice;
-            using Result = SimpleResult<BasicResults>;
 			enum class State {
 				reset,
 				ready
@@ -43,7 +42,7 @@ namespace eos {
 
             Result initialize();
             void deinitialize();
-			
+
             inline uint8_t read() const { return _pinState; }
             Result update();
             inline bool isUnderVoltage() const { return _underVoltage; }

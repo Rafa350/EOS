@@ -47,7 +47,7 @@ Device_CLT0138SQ7::Device_CLT0138SQ7(
 /// \brief    Inicialitzacio.
 /// \return   El resultat de l'operacio.
 ///
-Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize() {
+Result Device_CLT0138SQ7::initialize() {
 
 	if (_state == State::reset) {
 
@@ -55,11 +55,11 @@ Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize() {
 
 		_state = State::ready;
 
-		return Result::success();
+		return Results::success;
 	}
 
 	else
-		return Result::error();
+		return Results::error;
 }
 
 
@@ -67,7 +67,7 @@ Device_CLT0138SQ7::Result Device_CLT0138SQ7::initialize() {
 /// \brief    Actualitza l'estat del driver en funcio del les entrades.
 /// \return   El resultat de l'operacio.
 ///
-Device_CLT0138SQ7::Result Device_CLT0138SQ7::update() {
+Result Device_CLT0138SQ7::update() {
 
 	// NO UTILITZAR INTERRUPCIONS. Per evitar bloqueig si es crida
 	// desde un altre interrupcio amb prioritat inferior o igual a la del SPI
@@ -85,9 +85,9 @@ Device_CLT0138SQ7::Result Device_CLT0138SQ7::update() {
 
 		_pinState = rxBuffer[0];
 
-		return Result::success();
+		return Results::success;
 	}
 
 	else
-	    return Result::error();
+	    return Results::error;
 }

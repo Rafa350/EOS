@@ -144,33 +144,31 @@ namespace htl {
 		/// Identificador de la notificacio
 		///
 		enum class NotifyID {
-			rxComplete, ///< Recepcio complerta.
-			txComplete, ///< Transmissio complerta.
-			error       ///< Error de comunicacio.
+			null,
+			rxCompleted, ///< Recepcio complerta.
+			txCompleted, ///< Transmissio complerta.
+			error        ///< Error de comunicacio.
 		};
 
 		/// Parametres de la notificacio.
 		///
 		struct NotifyEventArgs {
-		    UARTDevice * const instance;   ///< La instancia del dispositiu.
-			NotifyID id;                   ///< Identificador de la notificacio.
 			bool irq;                      ///< Indica si es notifica desde una interrupcio.
 			union {
 				struct {
 					const uint8_t *buffer; ///< Dades transmeses.
 					unsigned length;       ///< Nombre de bytes transmessos.
-				} TxComplete;              ///< Parametres de 'TxComplete'
+				} txCompleted;             ///< Parametres de 'TxComplete'
 				struct {
 					const uint8_t *buffer; ///< Dades rebudes.
 					unsigned length;       ///< Nombre de bytes rebuts.
-				} RxComplete;              ///< Parametres de 'RxComplete'
+				} rxCompleted;             ///< Parametres de 'RxComplete'
 			};
 		};
 
-		using NotifyEventRaiser = eos::EventRaiser<NotifyID, NotifyEventArgs>;
-		using INotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
-		template <typename Instance_> using NotifyEvent =
-		        eos::CallbackP1<Instance_, NotifyEventArgs&>;
+		using NotifyEventRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+		using INotifyEvent = NotifyEventRaiser::IEvent;
+		template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
 
 		namespace internal {
@@ -183,16 +181,6 @@ namespace htl {
 
 		}
 
-		enum class Results {
-		    success,
-		    busy,
-		    timeout,
-		    error
-		};
-
-		using Result = eos::SimpleResult<Results>;
-
-
 		/// Clase que implementa el dispositiu de comunicacio UART.
         ///
 		class UARTDevice {
@@ -202,6 +190,7 @@ namespace htl {
                 /// Estats en que es troba el dispositiu.
                 ///
 				enum class State {
+					invalid,     ///< Objecte no valid.
 					reset,       ///< Creat, pero sense inicialitzar.
 					ready,       ///< Inicialitzat in preparat per operar.
 					transmiting, ///< Transmeten dades.
@@ -221,16 +210,15 @@ namespace htl {
 				const uint8_t *_txBuffer;       ///< Buffer de transmissio.
 				unsigned _txCount;              ///< Contador de bytes transmesos.
 				unsigned _txMaxCount;           ///< Maxim del contador de bytes rebuts.
-				INotifyEvent *_notifyEvent;     ///< Event de notificacio.
-				bool _notifyEventEnabled;       ///< Habilitacio del event de notificacio.
+				NotifyEventRaiser _erNotify;    ///< Event de notificacio
 				DMANotifyEvent _dmaNotifyEvent; ///< Event de notificacio del DMA.
 
 			private:
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
 
-				void notifyTxComplete(const uint8_t *buffer, unsigned length, bool irq);
-				void notifyRxComplete(const uint8_t *buffer, unsigned length, bool irq);
+				void notifyTxCompleted(const uint8_t *buffer, unsigned length, bool irq);
+				void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 
 				void rxInterruptService();
@@ -243,38 +231,36 @@ namespace htl {
 				virtual void deactivate() = 0;
 
 			public:
-				Result initialize();
-				Result deinitialize();
+				eos::Result initialize();
+				eos::Result deinitialize();
 
-				void setProtocol(WordBits wordBits, Parity parity,
+				eos::Result setProtocol(WordBits wordBits, Parity parity,
 				        StopBits stopBits, Handsake handlsake);
-				void setTimming(BaudMode baudMode, ClockSource clockSource,
+				eos::Result setTimming(BaudMode baudMode, ClockSource clockSource,
 				        uint32_t rate, OverSampling oversampling);
-				void setRxTimeout(uint32_t timeout);
+				eos::Result setRxTimeout(uint32_t timeout);
 
-				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
-
-				/// Habilita l'event de notificacio.
-				///
+				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+					_erNotify.set(event, enabled);
+				}
 				inline void enableNotifyEvent() {
-					_notifyEventEnabled = _notifyEvent != nullptr;
+					_erNotify.enable();
 				}
-
-				/// Deshabilita l'event de notificacio.
-				///
 				inline void disableNotifyEvent() {
-					_notifyEventEnabled = false;
+					_erNotify.disable();
 				}
 
-				Result transmit(const uint8_t *buffer, unsigned length, Tick timeout);
-				Result receive(uint8_t *buffer, unsigned bufferSize, Tick timeout);
-				Result transmit_IRQ(const uint8_t *buffer, unsigned length);
-				Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
-				Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned length);
-				Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
+				eos::Result transmit(const uint8_t *buffer, unsigned length, Tick timeout);
+				eos::Result receive(uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				eos::Result transmit_IRQ(const uint8_t *buffer, unsigned length);
+				eos::Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
+				eos::Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned length);
+				eos::Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
 
 				inline State getState() const { return _state; }
-                inline bool isReady() const { return _state == State::ready; }
+                inline bool isValid() const { return _state != State::invalid; }
+				inline bool isReady() const { return _state == State::ready; }
+				inline bool isBusy() const { return _state != State::ready; }
 		};
 
 

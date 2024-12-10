@@ -69,15 +69,16 @@ void SerialDriver_UART::onReceive(
 /// \param    args: Parametres del event.
 ///
 void SerialDriver_UART::uartNotifyEventHandler(
-	UARTNotifyEventArgs &args) {
+	UARTNotifyID id,
+	UARTNotifyEventArgs * const args) {
 
-	switch (args.id) {
-		case htl::uart::NotifyID::txComplete:
-		    notifyTxCompleted(args.TxComplete.length);
+	switch (id) {
+		case UARTNotifyID::txCompleted:
+		    notifyTxCompleted(args->txCompleted.length);
 			break;
 
-		case htl::uart::NotifyID::rxComplete:
-		    notifyRxCompleted(args.RxComplete.length);
+		case UARTNotifyID::rxCompleted:
+		    notifyRxCompleted(args->rxCompleted.length);
 			break;
 	}
 }

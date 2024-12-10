@@ -8,15 +8,6 @@ namespace eos {
 
     class Stream {
     	public:
-			enum class Results {
-				success,
-				error,
-				busy,
-				timeout
-			};
-			using Result = eos::SimpleResult<Results>;
-
-    	public:
     		virtual ~Stream() = default;
 
     		virtual Result write(const uint8_t *data, unsigned length, unsigned *count = nullptr) = 0;

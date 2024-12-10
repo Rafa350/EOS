@@ -10,12 +10,11 @@
 
 
 namespace eos {
-    
+
 	/// \brief Clase que implementa del driver del chip VNI8200XP
 	///
     class Device_VNI8200XP {
 		public:
-            using Result = SimpleResult<BasicResults>;
 			enum class State {
 				reset,
 				ready,
@@ -34,13 +33,13 @@ namespace eos {
 
     		virtual Result initialize() = 0;
     		virtual void deinitialize() = 0;
-            
+
             virtual void set(uint8_t pinMask) = 0;
             virtual void clear(uint8_t pinMask) = 0;
             virtual void toggle(uint8_t pinMask) = 0;
 			virtual void write(uint8_t pinMask, bool pinState) = 0;
 			virtual uint8_t read() const = 0;
-			
+
             virtual void enable() const = 0;
 			virtual void disable() const = 0;
             virtual Result update() = 0;
@@ -71,16 +70,16 @@ namespace eos {
     	public:
     		Device_VNI8200XP_SPI(DevSPI *devSPI, Pin *pinSS, Pin *pinOUTEN = nullptr);
             Device_VNI8200XP_SPI(const CreateParams *params);
-            
+
             Result initialize() override;
             void deinitialize() override;
-        	
+
             void set(uint8_t pinMask) override;
 			void clear(uint8_t pinMask) override;
 			void toggle(uint8_t pinMask) override;
 			void write(uint8_t pinMask, bool pinState) override;
 			uint8_t read() const override;
-			
+
             void enable() const override;
 			void disable() const override;
             Result update() override;

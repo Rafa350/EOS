@@ -1,6 +1,6 @@
 #pragma once
 #ifndef __STM32G0_htlI2C_Traits__
-#define __STM32G0_htlI2C_traits__
+#define __STM32G0_htlI2C_Traits__
 
 
 // HTL includes

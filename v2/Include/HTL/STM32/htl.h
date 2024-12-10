@@ -281,5 +281,29 @@ namespace htl {
 
 }
 
+#if defined(HTL_MODULE_DMA)
+#include "HTL/STM32/htDMA.h"
+#endif
+#if defined(HTL_MODULE_GPIO)
+	#include "HTL/STM32/htlGPIO.h"
+#endif
+#if defined(HTL_MODULE_I2C) && \
+    (defined(HTL_I2C1_EXIST) || defined(HTL_I2C2_EXIST) || \
+     defined(HTL_I2C3_EXIST) || defined(HTL_I2C4_EXIST))
+	#include "HTL/STM32/htlI2C.h"
+#endif
+#if defined(HTL_MODULE_INT)
+	#include "HTL/STM32/htINT.h"
+#endif
+#if defined(HTL_MODULE_SPI)
+	#include "HTL/STM32/htlSPI.h"
+#endif
+#if defined(HTL_MODULE_TMR)
+	#include "HTL/STM32/htlTMR.h"
+#endif
+#if defined(HTL_MODULE_UART)
+	#include "HST/STM32/htlUART.h"
+#endif
+
 
 #endif // __STM32_htl__

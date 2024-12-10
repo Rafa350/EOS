@@ -206,28 +206,5 @@ void DisplayDriver_SSD1306::refresh() {
     auto width = _frameBuffer->getWidth();
     auto height = _frameBuffer->getHeight();
 
-    #if 1
     _device->writeData(buffer, width * height / 8);
-
-    #else
-    uint8_t command[3];
-    command[0] = 0x0B;
-    command[1] = 0x00;
-    command[2] = 0x10;
-
-    // Bucle per procesat totes les pagines una a una
-    //
-    for (uint8_t i = 0, ii = height / 8; i < ii; i++) {
-
-        // Transfereix una pagina
-        //
-        _device->writeCommand(command, sizeof(command));
-        _device->writeData(buffer, width);
-
-        // Pasa a la seguent pagina
-        //
-        command[0] += 1;
-        buffer += width;
-    }
-    #endif
 }

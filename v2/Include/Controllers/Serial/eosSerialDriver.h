@@ -9,7 +9,7 @@
 
 namespace eos {
 
-	/// \brief Driver per comunicacions serie. 
+	/// \brief Driver per comunicacions serie.
 	///
 	class SerialDriver {
 		public:

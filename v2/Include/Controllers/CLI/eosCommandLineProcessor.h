@@ -26,7 +26,7 @@ namespace eos {
 				const CommandDefinition *command;
 				const char *text;
 			};
-			using CommandEventRaiser = EventRaiser<CommandID, CommandEventArgs>;
+			using CommandEventRaiser = NotifyEventRaiser<CommandID, CommandEventArgs>;
 			using ICommandEvent = CommandEventRaiser::IEvent;
 			template <typename Instance_> using CommandEvent = CommandEventRaiser::Event<Instance_>;
 

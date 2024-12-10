@@ -61,9 +61,9 @@ namespace eos {
     				} changed;
     			};
 			};
-			using NotifyEventRaiser = EventRaiser<NotifyID, NotifyEventArgs>;
-			using INotifyEvent = NotifyEventRaiser::IEvent;
-			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
+			using ER = NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+			using INotifyEvent = ER::IEvent;
+			template <typename Instance_> using NotifyEvent = ER::Event<Instance_>;
 
 		private:
             enum class CommandId {
@@ -93,7 +93,7 @@ namespace eos {
             DigOutputList1 _outputs;
             DigOutputList2 _pending;
 
-            NotifyEventRaiser _erNotify;
+            ER _erNotify;
             volatile unsigned _timeCounter;
             unsigned _nextTimeLimit;
             CommandQueue _commandQueue;

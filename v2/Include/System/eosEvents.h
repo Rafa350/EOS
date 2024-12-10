@@ -15,8 +15,53 @@
 
 namespace eos {
 
-	template <typename Id_, typename Args_>
+	template <typename Args_>
 	class EventRaiser {
+		public:
+			using IEvent = ICallbackP1<Args_ * const>;
+			template <typename Instance_> using Event = CallbackP1<Instance_, Args_ * const>;
+
+		private:
+			IEvent *_event;
+			bool _enabled;
+
+		public:
+			EventRaiser() :
+				_event {nullptr},
+				_enabled {false} {
+			}
+
+			void raise(Args_ * const args) const {
+				if (isEnabled())
+					_event->execute(args);
+			}
+
+			inline bool isEnabled() const {
+				return _enabled;
+			}
+
+			void set(IEvent &event) {
+				_event = &event;
+				_enabled = true;
+			}
+
+			void set(IEvent &event, bool enabled) {
+				_event = &event;
+				_enabled = true;
+			}
+
+			inline void enable() {
+				_enabled = _event != nullptr;
+			}
+
+			inline void disable() {
+				_enabled = false;
+			}
+	};
+
+
+	template <typename Id_, typename Args_>
+	class NotifyEventRaiser {
 
 		static_assert(std::is_enum_v<Id_>);
 
@@ -29,7 +74,7 @@ namespace eos {
 			uint32_t _enabled;
 
 		public:
-			EventRaiser() :
+			NotifyEventRaiser() :
 				_event {nullptr},
 				_enabled {0} {
 			}

@@ -36,9 +36,6 @@ namespace htl {
 			exti14 = EXTI4_15_IRQn,
 			exti15 = EXTI4_15_IRQn,
 
-			spi1 = SPI1_IRQn,
-			spi2 = SPI2_IRQn,
-
 			#ifdef HTL_TMR1_EXIST
 			tmr1_CC = TIM1_CC_IRQn,
 			tmr1_BRK_UP_TRG_COM = TIM1_BRK_UP_TRG_COM_IRQn,
@@ -90,6 +87,9 @@ namespace htl {
 			uart2 = USART2_IRQn,
 			uart3 = USART3_4_LPUART1_IRQn,
 			uart4 = USART3_4_LPUART1_IRQn,
+
+			spi1 = SPI1_IRQn,
+			spi2 = SPI2_IRQn,
 
 			i2c1 = I2C1_IRQn,
 			i2c2 = I2C2_IRQn,

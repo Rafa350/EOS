@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -22,7 +23,7 @@ Device_SSD1306_SPI::Device_SSD1306_SPI(
     _pinDC {pinDC},
     _pinRST {pinRST},
     _devSPI {devSPI} {
-    
+
 }
 
 
@@ -30,8 +31,8 @@ Device_SSD1306_SPI::Device_SSD1306_SPI(
 /// \brief    Destructor.
 ///
 Device_SSD1306_SPI::~Device_SSD1306_SPI() {
-    
-    deinitialize();               
+
+    deinitialize();
 }
 
 
@@ -49,9 +50,9 @@ void Device_SSD1306_SPI::initialize(
     _pinCS->set();
     if (_pinRST != nullptr) {
         _pinRST->clear();
-        htl::waitTicks(100);
+        Task::delay(100);
         _pinRST->set();
-        htl::waitTicks(300);
+        Task::delay(100);
     }
 
     writeScript(script, scriptSize);
@@ -62,7 +63,7 @@ void Device_SSD1306_SPI::initialize(
 /// \brief    Desinicialitzacio.
 ///
 void Device_SSD1306_SPI::deinitialize() {
-    
+
     _pinCS->set();
 }
 
@@ -89,9 +90,9 @@ void Device_SSD1306_SPI::writeCommand(
 /// \param    dataSize: Tamany de les dades en bytes.
 ///
 void Device_SSD1306_SPI::writeData(
-    const uint8_t *data, 
+    const uint8_t *data,
     unsigned dataSize) {
-    
+
     _pinDC->set();
     _pinCS->clear();
     _devSPI->transmit(data, dataSize, Tick(1000));

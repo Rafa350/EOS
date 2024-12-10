@@ -3,6 +3,11 @@
 #define __STM32_htlSPI__
 
 
+/// \file      htlSPI.h
+/// \author    Rafael Serrano (rsr.openware@gmail.com)
+/// \brief     UART device manager.
+
+
 // EOS includes
 //
 #include "HTL/STM32/htl.h"
@@ -87,28 +92,18 @@ namespace htl {
 		};
 
         struct NotifyEventArgs {
-            SPIDevice * const instance; ///< La instancia del dispositiu.
-		    NotifyID id;
             bool irq;
         };
 
-        using INotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
-        template <typename Instance_> using NotifyEvent =
-                eos::CallbackP1<Instance_, NotifyEventArgs&>;
-
-
-		enum class Results {
-		    success,
-		    busy,
-		    timeout,
-		    error
-		};
-		using Result = eos::SimpleResult<Results>;
+        using NotifyEventRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+        using INotifyEvent = NotifyEventRaiser::IEvent;
+        template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
 
 		class SPIDevice {
 			public:
 				enum class State {
+					invalid,
 					reset,
 					ready,
 					transmiting
@@ -117,8 +112,7 @@ namespace htl {
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
-                INotifyEvent *_notifyEvent;
-                bool _notifyEventEnabled;
+				NotifyEventRaiser _erNotify;
 
 			private:
 				SPIDevice(const SPIDevice &) = delete;
@@ -131,42 +125,45 @@ namespace htl {
 				virtual void deactivate() = 0;
 
 			public:
-				Result initialize(Mode mode, ClkPolarity clkPolarity,
+				eos::Result initialize(Mode mode, ClkPolarity clkPolarity,
 				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
 				        ClockDivider clkDivider);
-				inline Result initMaster(ClkPolarity clkPolarity,
+				eos::Result initMaster(ClkPolarity clkPolarity,
                         ClkPhase clkPhase, WordSize size, FirstBit firstBit,
                         ClockDivider clkDivider) {
 				    return initialize(Mode::master, clkPolarity, clkPhase,
 				            size, firstBit, clkDivider);
 				}
-				Result deinitialize();
+				eos::Result deinitialize();
 
-				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
-
+				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+					_erNotify.set(event, enabled);
+				}
 				inline void enableNotifyEvent() {
-					_notifyEventEnabled = _notifyEvent != nullptr;
+					_erNotify.enable();
 				}
 				inline void disableNotifyEvent() {
-					_notifyEventEnabled = false;
+					_erNotify.disable();
 				}
 
-				Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
+				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        unsigned bufferSize, Tick timeout = Tick(-1));
-				inline Result receive(uint8_t *rxBuffer, unsigned bufferSize,
+				inline eos::Result receive(uint8_t *rxBuffer, unsigned bufferSize,
 				        Tick timeout)  {
 					return transmit(nullptr, rxBuffer, bufferSize, timeout);
 				}
-                inline Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
+                inline eos::Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
                         Tick timeout) {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
 
-                Result transmit_DMA(htl::dma::DMADevice *devTxDMA,
+                eos::Result transmit_DMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, unsigned bufferSize);
 
                 inline State getState() const { return _state; }
-                inline bool isReady() const { return _state == State::ready; }
+                inline bool isValid() const { return _state != State::invalid; }
+				inline bool isReady() const { return _state == State::ready; }
+				inline bool isBusy() const { return _state != State::ready; }
 		};
 
 

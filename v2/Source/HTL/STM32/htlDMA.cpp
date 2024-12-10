@@ -2,6 +2,7 @@
 #include "HTL/STM32/htlDMA.h"
 
 
+using namespace eos;
 using namespace htl;
 using namespace htl::dma;
 using namespace htl::dma::internal;
@@ -93,10 +94,10 @@ Result DMADevice::initMemoryToMemory() {
 		tmp |= DMA_CCR_MEM2MEM;      // Memoria a memoria
 		_dmadev->dmac->CCR = tmp;
 
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::error();
+		return Results::error;
 }
 
 
@@ -185,11 +186,11 @@ Result DMADevice::initMemoryToPeripheral(
         //
         _state = State::ready;
 
-        return Result::success();
+        return Results::success;
     }
 
     else
-        return Result::error();
+        return Results::error;
 }
 
 
@@ -219,10 +220,10 @@ Result DMADevice::deinitialize() {
         //
         _state = State::reset;
 
-        return Result::success();
+        return Results::success;
     }
     else
-        return Result::error();
+        return Results::error;
 }
 
 
@@ -278,10 +279,10 @@ Result DMADevice::start(
         //
         _state = State::transfering;
 
-        return Result::success();
+        return Results::success;
     }
     else
-        return Result::error();
+        return Results::error;
 
 }
 
@@ -319,11 +320,11 @@ Result DMADevice::waitForFinish(
         //
         _state = State::ready;
 
-        return expired ? Result::timeout() : Result::success();
+        return expired ? Results::timeout : Results::success;
     }
 
     else
-        return Result::error();
+        return Results::error;
 }
 
 

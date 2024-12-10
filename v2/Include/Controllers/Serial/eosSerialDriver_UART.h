@@ -14,6 +14,7 @@ namespace eos {
             using DevUART = htl::uart::UARTDevice;
 
 	    private:
+            using UARTNotifyID = htl::uart::NotifyID;
 	        using UARTNotifyEvent = htl::uart::NotifyEvent<SerialDriver_UART>;
 	        using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
 
@@ -24,7 +25,7 @@ namespace eos {
 			UARTNotifyEvent _uartNotifyEvent;
 
 		private:
-			void uartNotifyEventHandler(UARTNotifyEventArgs &args);
+			void uartNotifyEventHandler(UARTNotifyID, UARTNotifyEventArgs * const args);
 
 		protected:
             void onInitialize() override;

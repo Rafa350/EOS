@@ -60,7 +60,7 @@ void SerialStream::rxCompletedEventHandler(
 /// \param    drvSerial:: El driver del canal serie.
 /// \return   El resultat de l'operacio.
 ///
-Stream::Result SerialStream::initialize(
+Result SerialStream::initialize(
 	SerialDriver *drvSerial) {
 
 	eosAssert(drvSerial != nullptr);
@@ -71,10 +71,10 @@ Stream::Result SerialStream::initialize(
 		_drvSerial->initialize();
 		_drvSerial->setTxCompletedEvent(_txCompletedEvent);
 		_drvSerial->setRxCompletedEvent(_rxCompletedEvent);
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::error();
+		return Results::error;
 }
 
 
@@ -82,15 +82,15 @@ Stream::Result SerialStream::initialize(
 /// \brief    Deinicialitza el stream.
 /// \return   El resultat de l'operacio.
 ///
-Stream::Result SerialStream::deinitialize() {
+Result SerialStream::deinitialize() {
 
 	if (_drvSerial != nullptr) {
 		_drvSerial->deinitialize();
 		_drvSerial = nullptr;
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::error();
+		return Results::error;
 }
 
 
@@ -101,13 +101,13 @@ Stream::Result SerialStream::deinitialize() {
 /// \param    count: El nombre de bytes escrits.
 /// \return   El resultat de l'operacio.
 //
-Stream::Result SerialStream::write(
+Result SerialStream::write(
 	const uint8_t *data,
 	unsigned length,
 	unsigned *count) {
 
 	if (_drvSerial == nullptr)
-		return Result::error();
+		return Results::error;
 
 	else {
 		_drvSerial->transmit(data, length);
@@ -116,10 +116,10 @@ Stream::Result SerialStream::write(
 			if (count != nullptr)
 				*count = length;
 
-			return Result::success();
+			return Results::success;
 		}
 		else
-			return Result::timeout();
+			return Results::timeout;
 	}
 }
 
@@ -131,13 +131,13 @@ Stream::Result SerialStream::write(
 /// \param    count: El nombre de bytes lleigits.
 /// \return   El resultat de l'operacio.
 ///
-Stream::Result SerialStream::read(
+Result SerialStream::read(
 	uint8_t *data,
 	unsigned size,
 	unsigned *count) {
 
 	if (_drvSerial == nullptr)
-		return Result::error();
+		return Results::error;
 
 	else {
 		_drvSerial->receive(data, size);
@@ -147,9 +147,9 @@ Stream::Result SerialStream::read(
 			if (count != nullptr)
 				*count = _rxDataCount;
 
-			return Result::success();
+			return Results::success;
 		}
 		else
-			return Result::timeout();
+			return Results::timeout;
 	}
 }

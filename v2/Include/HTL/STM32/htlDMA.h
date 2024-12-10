@@ -104,15 +104,6 @@ namespace htl {
 		};
 
 
-		enum class Results {
-            success,
-            busy,
-            timeout,
-            error
-        };
-        using Result = eos::SimpleResult<Results>;
-
-
         enum class NotifyID {
             null,
             half,
@@ -183,16 +174,16 @@ namespace htl {
                 virtual void deactivateImpl() = 0;
 
 			public:
-				Result initMemoryToMemory();
-                Result initMemoryToPeripheral(Priority priority,
+                eos::Result initMemoryToMemory();
+                eos::Result initMemoryToPeripheral(Priority priority,
                         DataSize srcSize, DataSize dstSize,
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
-                Result initPeripheralToMemory(Priority priority,
+                eos::Result initPeripheralToMemory(Priority priority,
                         DataSize srcSize, DataSize dstSize,
                         AddressIncrement srcInc, AddressIncrement dstInc,
                         TransferMode mode, RequestID requestID);
-				Result deinitialize();
+                eos::Result deinitialize();
 
                 void setNotifyEvent(INotifyEvent &event, bool enabled = true);
                 inline void enableNotifyEvent() {
@@ -202,10 +193,10 @@ namespace htl {
                     _notifyEventEnabled = false;
                 }
 
-				Result start(const uint8_t *src, uint8_t *dst, unsigned size);
+                eos::Result start(const uint8_t *src, uint8_t *dst, unsigned size);
 
 				// TODO: temporal
-				Result waitForFinish(Tick timeout);
+                eos::Result waitForFinish(Tick timeout);
 
 				inline State getState() const { return _state; }
                 inline bool isReady() const { return _state == State::ready; }

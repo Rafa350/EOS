@@ -59,7 +59,7 @@ void MemoryStream::setPosition(
 /// \param    size: Numero de bytes a escriure.
 /// \return   El numero de bytes escrits.
 ///
-Stream::Result MemoryStream::write(
+Result MemoryStream::write(
     const uint8_t *data,
     unsigned size,
 	unsigned *count) {
@@ -75,15 +75,15 @@ Stream::Result MemoryStream::write(
     if (count != nullptr)
     	*count = size;
 
-    return Result::success();
+    return Results::success;
 }
 
 
-Stream::Result MemoryStream::read(
+Result MemoryStream::read(
 	uint8_t *data,
 	unsigned size,
 	unsigned *count) {
 
-	return Result::success();
+	return Results::success;
 }
 

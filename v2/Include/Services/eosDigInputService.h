@@ -41,13 +41,13 @@ namespace eos {
 					} initialize;
 				};
 			};
-			using NotifyEventRaiser = EventRaiser<NotifyID, NotifyEventArgs>;
-			using INotifyEvent = NotifyEventRaiser::IEvent;
-			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
+			using ER = NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+			using INotifyEvent = ER::IEvent;
+			template <typename Instance_> using NotifyEvent = ER::Event<Instance_>;
 
         private:
     		DigInputList _inputs;
-    		NotifyEventRaiser _erNotify;
+    		ER _erNotify;
             unsigned _scanPeriod;
 
         private:

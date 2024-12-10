@@ -10,12 +10,6 @@
 
 namespace eos {
 
-    enum class BasicResults {
-        success,
-        error
-    };
-
-
     template <typename Enum_>
     class ResultBase {
 
@@ -30,39 +24,23 @@ namespace eos {
             }
 
         public:
-            constexpr bool isSuccess() const {
-                return _result == Enum_::success;
+            inline operator Enum_() const {
+            	return _result;
             }
 
-            constexpr bool hasError() const {
-                return _result != Enum_::success;
+            inline bool operator == (Enum_ result) const {
+            	return _result == result;
             }
 
-            constexpr Enum_ getResult() const {
-                return _result; }
+            inline bool operator == (ResultBase result) const {
+            	return _result == result._result;
+            }
     };
 
 
     template <typename Enum_>
     class SimpleResult: public ResultBase<Enum_> {
         public:
-            constexpr static SimpleResult success() {
-                return SimpleResult(Enum_::success);
-            }
-
-            constexpr static SimpleResult busy() {
-                return SimpleResult(Enum_::busy);
-            }
-
-            constexpr static SimpleResult timeout() {
-                return SimpleResult(Enum_::timeout);
-            }
-
-            constexpr static SimpleResult error() {
-                return SimpleResult(Enum_::error);
-            }
-
-        private:
             constexpr SimpleResult(Enum_ result) :
                 ResultBase<Enum_> {result} {
             }
@@ -74,39 +52,51 @@ namespace eos {
         private:
             Value_ const _value;
 
-        private:
+        public:
             constexpr ComplexResult(Enum_ status, Value_ value = {}) :
                 ResultBase<Enum_> {status},
                 _value {value} {
             }
 
         public:
-            constexpr Value_ getValue() const {
-                return _value;
+            inline operator Value_() const {
+            	return _value;
             }
     };
 
 
-    template <typename Enum_>
-    constexpr bool isSuccess(Enum_ status) {
-        return status == Enum_::success;
-    }
+	enum class Results {   // Codis d'error
+		success,           // Operacio finalitzada correctament
+		pending,           // Operacio correcte pero pendent de finalitzar
+		timeout,           // S'ha produit timeout
+		busy,              // Ocupat
+		error,             // Error d'operacio
+		errorState,        // Operacio no permesa en l'estat actual
+		errorParameter     // Error ens els parametres
+	};
 
-    template <typename Enum_>
-    constexpr bool hasError(Enum_ status) {
-        return status != Enum_::success;
-    }
+	class Result: public SimpleResult<Results> {
+        public:
+            constexpr Result(Results result) :
+                SimpleResult {result} {
+            }
+			inline bool isSuccess() const {
+				return *this == Results::success;
+			}
+	};
 
-
-    template <typename Enum_, typename Value_>
-    constexpr bool isSuccess(const ComplexResult<Enum_, Value_> &result) {
-        return result.isSuccess();
-    }
-
-    template <typename Enum_, typename Value_>
-    constexpr bool hasError(const ComplexResult<Enum_, Value_> &result) {
-        return !result.isSuccess();
-    }
+	class ResultUINT: public ComplexResult<Results, unsigned> {
+    public:
+        constexpr ResultUINT(Results result) :
+            ComplexResult {result} {
+        }
+        constexpr ResultUINT(Results result, unsigned value) :
+            ComplexResult {result, value} {
+        }
+		inline bool isSuccess() const {
+			return *this == Results::success;
+		}
+	};
 }
 
 

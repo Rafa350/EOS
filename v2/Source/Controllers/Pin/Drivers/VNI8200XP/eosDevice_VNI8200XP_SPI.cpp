@@ -17,11 +17,11 @@ static uint8_t calcParity(uint8_t data);
 /// \param    pinOUTEN: El pin OUTEN
 ///
 Device_VNI8200XP_SPI::Device_VNI8200XP_SPI(
-    DevSPI *devSPI, 
-    Pin *pinSS, 
+    DevSPI *devSPI,
+    Pin *pinSS,
     Pin *pinOUTEN):
-    
-    Device_VNI8200XP(),   
+
+    Device_VNI8200XP(),
     _state {State::reset},
     _curPinState {0},
     _oldPinState {0},
@@ -54,20 +54,20 @@ Device_VNI8200XP_SPI::Device_VNI8200XP_SPI(
 /// \brief    Inicialitza el dispositiu.
 /// \return   El resultat de l'operacio.
 ///
-Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize() {
+Result Device_VNI8200XP_SPI::initialize() {
 
     if (_state == State::reset) {
-        
+
         _pinSS->set();
         if (_pinOUTEN != nullptr)
             _pinOUTEN->clear();
 
         _state = State::ready;
 
-        return Result::success();
+        return Results::success;
     }
     else
-        return Result::error();
+        return Results::error;
 }
 
 
@@ -75,7 +75,7 @@ Device_VNI8200XP::Result Device_VNI8200XP_SPI::initialize() {
 /// \brieg    Desinicialitza el dispositiu.
 ///
 void Device_VNI8200XP_SPI::deinitialize() {
-    
+
     if (_pinOUTEN != nullptr)
         _pinOUTEN->clear();
     _pinSS->set();
@@ -91,7 +91,7 @@ void Device_VNI8200XP_SPI::enable() const {
     eosAssert(_state == State::ready);
 
     if (_state == State::ready) {
-        
+
         if (_pinOUTEN != nullptr)
             _pinOUTEN->set();
     }
@@ -106,7 +106,7 @@ void Device_VNI8200XP_SPI::disable() const {
     eosAssert(_state == State::ready);
 
     if (_state == State::ready) {
-        
+
         if (_pinOUTEN != nullptr)
             _pinOUTEN->clear();
     }
@@ -117,10 +117,10 @@ void Device_VNI8200XP_SPI::disable() const {
 /// \brief    Actualitza les sortides en funcio del estat intern.
 /// \return   El resultat de l'operacio.
 ///
-Device_VNI8200XP::Result Device_VNI8200XP_SPI::update() {
+Result Device_VNI8200XP_SPI::update() {
 
     eosAssert(_state == State::ready);
-    
+
     if (_state == State::ready) {
 
         _state = State::updating;
@@ -142,11 +142,11 @@ Device_VNI8200XP::Result Device_VNI8200XP_SPI::update() {
 
         _state = State::ready;
 
-        return Result::success();
+        return Results::success;
     }
 
     else
-        return Result::error();
+        return Results::error;
 }
 
 

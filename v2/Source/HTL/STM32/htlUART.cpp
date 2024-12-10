@@ -3,6 +3,7 @@
 #include "HTL/STM32/htlUART.h"
 
 
+using namespace eos;
 using namespace htl;
 using namespace htl::uart;
 using namespace htl::clock;
@@ -40,11 +41,10 @@ UARTDevice::UARTDevice(
 	USART_TypeDef *usart):
 
 	_usart {usart},
-	_state {State::reset},
-	_notifyEvent {nullptr},
-	_notifyEventEnabled {false},
+	_state {State::invalid},
 	_dmaNotifyEvent {*this, &UARTDevice::dmaNotifyEventHandler} {
 
+	_state = State::reset;
 }
 
 
@@ -52,7 +52,7 @@ UARTDevice::UARTDevice(
 /// \brief    Inicialitza el modul UART.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::initialize() {
+eos::Result UARTDevice::initialize() {
 
 	if (_state == State::reset) {
 
@@ -72,11 +72,11 @@ Result UARTDevice::initialize() {
 
 		_state = State::ready;
 
-		return Result::success();
+		return eos::Results::success;
 	}
 
 	else
-		return Result::error();
+		return eos::Results::errorState;
 }
 
 
@@ -84,7 +84,7 @@ Result UARTDevice::initialize() {
 /// \brief    Desinicialitza el modul.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::deinitialize() {
+eos::Result UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -93,11 +93,11 @@ Result UARTDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::success();
+		return eos::Results::success;
 	}
 
 	else
-		return Result::error();
+		return eos::Results::errorState;
 }
 
 
@@ -107,8 +107,9 @@ Result UARTDevice::deinitialize() {
 /// \param    parity: Les opcions de paritat.
 /// \param    stopBits: Les opcions de parada.
 /// \param    handsake: Protocol.
+/// \return   El resultat de l'operacio.
 ///
-void UARTDevice::setProtocol(
+eos::Result UARTDevice::setProtocol(
 	WordBits wordBits,
 	Parity parity,
 	StopBits stopBits,
@@ -120,19 +121,27 @@ void UARTDevice::setProtocol(
 		setStopBits(_usart, stopBits);
 		setHandsake(_usart, handsake);
 		setReceiveTimeout(_usart, 11 * 100);
+		return Results::success;
 	}
+	else
+		return Results::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el valor del timeout per recepcio.
 /// \param    timeout: El temps.
+/// \param    El resultat de l'operacio.
 ///
-void UARTDevice::setRxTimeout(
+eos::Result UARTDevice::setRxTimeout(
     uint32_t timeout) {
 
-	if (_state == State::ready)
+	if (_state == State::ready) {
 		setReceiveTimeout(_usart, timeout);
+		return Results::success;
+	}
+	else
+		return Results::errorState;
 }
 
 
@@ -143,14 +152,16 @@ void UARTDevice::setRxTimeout(
 /// \param    clockSource: Les opcions de clocking.
 /// \param    rate: El valor de velocitat.
 /// \param    overSampling: Tipus de mostreig
+/// \return   El resultat de l'operacio.
 ///
-void UARTDevice::setTimming(
+eos::Result UARTDevice::setTimming(
 	BaudMode baudMode,
 	ClockSource clockSource,
 	uint32_t rate,
 	OverSampling overSampling) {
 
 	if (_state == State::ready) {
+
 		switch (baudMode) {
 			case BaudMode::_1200:
 				rate = 1200;
@@ -210,23 +221,11 @@ void UARTDevice::setTimming(
 		}
 		else
 			_usart->BRR = div;
+
+		return Results::success;
 	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna l'event de notificacio.
-/// \param    event: L'event.
-/// \param    enabled: Indica si l'habilita.
-///
-void UARTDevice::setNotifyEvent(
-	INotifyEvent &event,
-	bool enabled) {
-
-	if (_state == State::ready) {
-		_notifyEvent = &event;
-		_notifyEventEnabled = enabled;
-	}
+	else
+		return Results::errorState;
 }
 
 
@@ -236,7 +235,7 @@ void UARTDevice::setNotifyEvent(
 /// \param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
-Result UARTDevice::transmit_IRQ(
+eos::Result UARTDevice::transmit_IRQ(
 	const uint8_t *buffer,
 	unsigned length) {
 
@@ -254,14 +253,14 @@ Result UARTDevice::transmit_IRQ(
 			USART_CR1_TE |            // Habilita la transmissio
 			USART_CR1_TXEIE_TXFNFIE;  // Habilita interrupcio TXE
 
-		return Result::success();
+		return Results::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Result::busy();
+		return Results::busy;
 
 	else
-		return Result::error();
+		return Results::errorState;
 }
 
 
@@ -271,7 +270,7 @@ Result UARTDevice::transmit_IRQ(
 /// \param    bufferSize: Tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::receive_IRQ(
+eos::Result UARTDevice::receive_IRQ(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
@@ -289,14 +288,14 @@ Result UARTDevice::receive_IRQ(
 			USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
 			USART_CR1_RTOIE;            // Habilita interrupcio RTO
 
-		return Result::success();
+		return Results::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Result::busy();
+		return Results::busy;
 
 	else
-		return Result::error();
+		return Results::errorState;
 }
 
 
@@ -307,7 +306,7 @@ Result UARTDevice::receive_IRQ(
 /// \param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
-Result UARTDevice::transmit_DMA(
+eos::Result UARTDevice::transmit_DMA(
     dma::DMADevice *devDMA,
     const uint8_t *buffer,
     unsigned length) {
@@ -331,14 +330,14 @@ Result UARTDevice::transmit_DMA(
         devDMA->setNotifyEvent(_dmaNotifyEvent, true);
         devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txMaxCount);
 
-        return Result::success();
+        return Results::success;
     }
 
     else if ((_state == State::transmiting) || (_state == State::receiving))
-        return Result::busy();
+        return Results::busy;
 
     else
-        return Result::error();
+        return Results::errorState;
 }
 
 
@@ -349,12 +348,12 @@ Result UARTDevice::transmit_DMA(
 /// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::receive_DMA(
+eos::Result UARTDevice::receive_DMA(
     dma::DMADevice *devDMA,
     uint8_t *buffer,
     unsigned bufferSize) {
 
-	return Result::error();
+	return Results::error;
 }
 
 
@@ -496,7 +495,7 @@ void UARTDevice::interruptService() {
 
 				clearTransmissionCompleteFlag(_usart);
 				disableTransmission(_usart);
-				notifyTxComplete(_txBuffer, _txCount, true);
+				notifyTxCompleted(_txBuffer, _txCount, true);
 
 				_state = State::ready;
 			}
@@ -509,7 +508,7 @@ void UARTDevice::interruptService() {
 					if (_rxCount == _rxMaxCount) {
 
 						disableReception(_usart);
-						notifyRxComplete(_rxBuffer, _rxCount, true);
+						notifyRxCompleted(_rxBuffer, _rxCount, true);
 
 						// Canvia l'estat
 						//
@@ -524,7 +523,7 @@ void UARTDevice::interruptService() {
 
 				clearReceiverTimeOutFlag(_usart);
 				disableReception(_usart);
-				notifyRxComplete(_rxBuffer, _rxCount, true);
+				notifyRxCompleted(_rxBuffer, _rxCount, true);
 
 				// Canvia d'estat
 				//
@@ -583,23 +582,19 @@ void UARTDevice::dmaNotifyEventHandler(
 /// \param    length: El nombre de bytes de dades.
 /// \param    irq: true si ve d'una interrupcio.
 ///
-void UARTDevice::notifyTxComplete(
+void UARTDevice::notifyTxCompleted(
 	const uint8_t *buffer,
 	unsigned length,
 	bool irq) {
 
-	if (_notifyEventEnabled) {
-		NotifyEventArgs args = {
-		    .instance = this,
-			.id = NotifyID::txComplete,
-			.irq = irq,
-			.TxComplete {
-				.buffer = buffer,
-				.length = length
-			}
-		};
-		_notifyEvent->execute(args);
-	}
+	NotifyEventArgs args = {
+		.irq = irq,
+		.txCompleted {
+			.buffer = buffer,
+			.length = length
+		}
+	};
+	_erNotify.raise(NotifyID::txCompleted, &args);
 }
 
 
@@ -609,23 +604,19 @@ void UARTDevice::notifyTxComplete(
 /// \param    length: El nombre de bytes de dades.
 /// \param    irq: true si ve d'una interrupcio.
 ///
-void UARTDevice::notifyRxComplete(
+void UARTDevice::notifyRxCompleted(
 	const uint8_t *buffer,
 	unsigned length,
 	bool irq) {
 
-	if (_notifyEventEnabled) {
-		NotifyEventArgs args = {
-		    .instance = this,
-			.id = NotifyID::rxComplete,
-			.irq = irq,
-			.RxComplete {
-				.buffer = buffer,
-				.length = length
-			}
-		};
-		_notifyEvent->execute(args);
-	}
+	NotifyEventArgs args = {
+		.irq = irq,
+		.rxCompleted {
+			.buffer = buffer,
+			.length = length
+		}
+	};
+	_erNotify.raise(NotifyID::rxCompleted, &args);
 }
 
 
@@ -935,7 +926,7 @@ static void setReceiveTimeout(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Borra el flah 'TC'
+/// \brief    Borra el flag 'TC'
 /// \param    usart: Registres de de hardware del dispositiu
 ///
 static inline void clearTransmissionCompleteFlag(

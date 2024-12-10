@@ -3,6 +3,11 @@
 #define __STM32_htlI2C__
 
 
+/// \file      htlI2C.h
+/// \author    Rafael Serrano (rsr.openware@gmail.com)
+/// \brief     I2C device manager.
+
+
 // EOS includes
 //
 #include "HTL/STM32/htl.h"
@@ -57,31 +62,19 @@ namespace htl {
 			smba
 		};
 
-
-		/// Resultats de les operacions
-		///
-        enum class Results {
-            success,
-            busy,
-            timeout,
-            error
-        };
-        using Result = eos::SimpleResult<Results>;
-
-
         /// Identificador de la notificacio.
 		///
-        enum class NotifyId {
+        enum class NotifyID {
+        	null,
             addressMatch,    ///< Coindicencia en l'adressa.
             rxStart,         ///< Inici de la recepcio.
             rxCompleted,     ///< Recepcio finalitzada.
             txStart,         ///< Inici de la transmissio.
-            txCompleted      ///< Transmissio finalitzada.
+            txCompleted,     ///< Transmissio finalitzada.
+			error
         };
 
         struct NotifyEventArgs {
-            I2CDevice * const instance;  ///< La instancia del dispositiu.
-            NotifyId id;                 ///< Identificador de la notificacio
             bool irq;
             union {
                 struct {
@@ -90,6 +83,7 @@ namespace htl {
                 struct {
                     uint8_t *buffer;     ///< Buffer de dades.
                     unsigned bufferSize; ///< Tamany del buffer de dades.
+                    bool first;          ///< Indica si es el primer bloc
                 } rxStart;
                 struct {
                     unsigned length;     ///< Nombre de bytes rebuts.
@@ -97,6 +91,7 @@ namespace htl {
                 struct {
                     uint8_t *buffer;     ///< Buffer de dades
                     unsigned length;     ///< Nombre de bytes a transmetre.
+                    bool first;          ///< Indica si es el primer bloc
                 } txStart;
                 struct {
                     unsigned length;     ///< Nombre de bytes transmessos.
@@ -105,11 +100,13 @@ namespace htl {
         };
 
 
-        using ISlaveNotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
-        template <typename Instance_> using SlaveNotifyEvent = eos::CallbackP1<Instance_, NotifyEventArgs&>;
+        using SlaveNotifyRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+        using ISlaveNotifyEvent = SlaveNotifyRaiser::IEvent;
+        template <typename Instance_> using SlaveNotifyEvent = SlaveNotifyRaiser::Event<Instance_>;
 
-        using IMasterNotifyEvent = eos::ICallbackP1<NotifyEventArgs&>;
-        template <typename Instance_> using MasterNotifyEvent = eos::CallbackP1<Instance_, NotifyEventArgs&>;
+        using MasterNotifyRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+        using IMasterNotifyEvent = MasterNotifyRaiser::IEvent;
+        template <typename Instance_> using MasterNotifyEvent = MasterNotifyRaiser::Event<Instance_>;
 
 
 		class I2CDevice {
@@ -127,6 +124,7 @@ namespace htl {
 		class I2CSlaveDevice: public I2CDevice {
 			public:
 				enum class State {
+					invalid,
 					reset,
 					ready,
 					listen,
@@ -136,20 +134,19 @@ namespace htl {
 
 			private:
 				State _state;
+				bool _restart;
 				uint8_t *_buffer;
-				unsigned _maxCount;
-				unsigned _count;
-                ISlaveNotifyEvent *_notifyEvent;
-                bool _notifyEventEnabled;
+				unsigned _byteCount;
+				SlaveNotifyRaiser _erNotify;
 
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 
                 void notifyAddressMatch(I2CAddr addr, bool irq);
-                void notifyRxStart(uint8_t * &buffer, unsigned &bufferSize, bool irq);
+                void notifyRxStart(uint8_t * &buffer, unsigned &bufferSize, bool first, bool irq);
                 void notifyRxCompleted(unsigned length, bool irq);
-                void notifyTxStart(uint8_t * &buffer, unsigned &length, bool irq);
+                void notifyTxStart(uint8_t * &buffer, unsigned &length, bool first, bool irq);
                 void notifyTxCompleted(unsigned length, bool irq);
 
 				void interruptServiceListen();
@@ -161,35 +158,39 @@ namespace htl {
 				void interruptService();
 
 			public:
-				Result initialize(I2CAddr addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
-				Result deinitialize();
+				eos::Result initialize(I2CAddr addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
+				eos::Result deinitialize();
 
-				void setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
+				eos::Result setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
 
 				/// Habilita l'event de notificacio.
 				///
 				inline void enableNotifyEvent() {
-					_notifyEventEnabled = _notifyEvent != nullptr;
+					_erNotify.enable();
 				}
 
 				/// Deshabilita l'event de notificacio.
 				///
 				inline void disableNotifyEvent() {
-					_notifyEventEnabled = false;
+					_erNotify.disable();
 				}
 
-				Result listem(Tick timeout = Tick(-1));
-				Result listen_IRQ();
-				Result abortListen();
+				eos::Result listem(Tick timeout = Tick(-1));
+				eos::Result listen_IRQ(bool restart);
+				eos::Result abortListen();
 
 				/// Obte l'estat del dispositiu.
 				///
 				inline State getState() const { return _state; }
+				inline bool isValid() const { return _state != State::invalid; }
+				inline bool isReady() const { return _state == State::ready; }
+				inline bool isBusy() const { return _state != State::ready; }
 		};
 
 		class I2CMasterDevice: public I2CDevice {
 			public:
 				enum class State {
+					invalid,
 					reset,
 					ready,
                     transmiting,
@@ -198,8 +199,7 @@ namespace htl {
 
 			private:
 				State _state;
-                IMasterNotifyEvent *_notifyEvent;
-                bool _notifyEventEnabled;
+				MasterNotifyRaiser _erNotify;
                 uint8_t *_buffer;
                 unsigned _maxCount;
                 unsigned _count;
@@ -218,33 +218,36 @@ namespace htl {
 				void interruptServiceReceive();
 
 			public:
-				Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
+				eos::Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
 					uint8_t sclh, uint8_t scll);
-				Result deinitialize();
+				eos::Result deinitialize();
 
-				void setNotifyEvent(IMasterNotifyEvent &event, bool enabled = true);
+				eos::Result setNotifyEvent(IMasterNotifyEvent &event, bool enabled = true);
 
 				/// Habilita l'event de notificacio.
 				///
 				inline void enableNotifyEvent() {
-					_notifyEventEnabled = _notifyEvent != nullptr;
+					_erNotify.enable();
 				}
 
 				/// Deshabilita l'event de notificacio.
 				///
 				inline void disableNotifyEvent() {
-					_notifyEventEnabled = false;
+					_erNotify.disable();
 				}
 
-				Result transmit(I2CAddr addr, const uint8_t *buffer, unsigned length, Tick timeout = Tick(-1));
-				Result receive(I2CAddr addr, uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
+				eos::Result transmit(I2CAddr addr, const uint8_t *buffer, unsigned length, Tick timeout = Tick(-1));
+				eos::Result receive(I2CAddr addr, uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
 
-				Result transmit_IRQ(I2CAddr addr, const uint8_t *buffer, unsigned length);
-				Result receive_IRQ(I2CAddr addr, uint8_t *buffer, unsigned bufferSize);
+				eos::Result transmit_IRQ(I2CAddr addr, const uint8_t *buffer, unsigned length);
+				eos::Result receive_IRQ(I2CAddr addr, uint8_t *buffer, unsigned bufferSize);
 
 				/// Obte l'estat del dispositiu.
 				///
 				inline State getState() const { return _state; }
+				inline bool isValid() const { return _state != State::invalid; }
+				inline bool isReady() const { return _state == State::ready; }
+				inline bool isBusy() const { return _state != State::ready; }
 		};
 
 

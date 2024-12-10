@@ -32,10 +32,10 @@ namespace eos {
 			SerialStream();
 			SerialStream(SerialDriver *drvSerial);
 
-			Stream::Result initialize(SerialDriver *drvSerial);
-			Stream::Result deinitialize();
+			Result initialize(SerialDriver *drvSerial);
+			Result deinitialize();
 
-			Stream::Result write(const uint8_t *data, unsigned length, unsigned *count = nullptr) override;
-			Stream::Result read(uint8_t *data, unsigned size, unsigned *count = nullptr) override;
+			Result write(const uint8_t *data, unsigned length, unsigned *count = nullptr) override;
+			Result read(uint8_t *data, unsigned size, unsigned *count = nullptr) override;
 	};
 }

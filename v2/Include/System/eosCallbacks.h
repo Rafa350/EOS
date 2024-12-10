@@ -36,19 +36,19 @@ namespace eos {
 	};
 
 
-    template <typename param1_>
+    template <typename Param1_>
     class ICallbackP1 {
         public:
             virtual ~ICallbackP1() {
             }
-            virtual void execute(param1_ p1) const = 0;
+            virtual void execute(Param1_ p1) const = 0;
     };
 
-    template <typename Instance_, typename param1_>
-    class CallbackP1: public ICallbackP1<param1_> {
+    template <typename Instance_, typename Param1_>
+    class CallbackP1: public ICallbackP1<Param1_> {
         public:
 			using RInstance = Instance_ &;
-            using Method = void (Instance_::*)(param1_);
+            using Method = void (Instance_::*)(Param1_);
         private:
             RInstance const _instance;
             Method const _method;
@@ -57,25 +57,25 @@ namespace eos {
             	_instance {instance},
 				_method {method} {
             }
-            void execute(param1_ p1) const override {
+            void execute(Param1_ p1) const override {
                 (_instance.*_method)(p1);
             }
     };
 
 
-    template <typename param1_, typename param2_>
+    template <typename Param1_, typename Param2_>
     class ICallbackP2 {
         public:
             virtual ~ICallbackP2() {
             }
-            virtual void execute(param1_ p1, param2_ p2) const = 0;
+            virtual void execute(Param1_ p1, Param2_ p2) const = 0;
     };
 
-    template <typename Instance_, typename param1_, typename param2_>
-    class CallbackP2: public ICallbackP2<param1_, param2_> {
+    template <typename Instance_, typename Param1_, typename Param2_>
+    class CallbackP2: public ICallbackP2<Param1_, Param2_> {
         public:
 			using RInstance = Instance_ &;
-    	    using Method = void (Instance_::*)(param1_, param2_);
+    	    using Method = void (Instance_::*)(Param1_, Param2_);
         private:
             RInstance const _instance;
             Method const _method;
@@ -84,7 +84,7 @@ namespace eos {
             	_instance {instance},
 				_method {method} {
             }
-            void execute(param1_ p1, param2_ p2) const override {
+            void execute(Param1_ p1, Param2_ p2) const override {
                 (_instance.*_method)(p1, p2);
             }
     };
