@@ -149,7 +149,7 @@ namespace htl {
 			high,
 			fast
 		};
-        
+
 		/// Modus d'inicialitzacio.
 		///
         enum class InitMode {
@@ -160,9 +160,8 @@ namespace htl {
         };
 
         /// \brief Parametres d'inicialitzacio.
-        ///.
+        ///
         struct InitInfo {
-            PinMask mask;
             InitMode mode;
             union {
                 struct {
@@ -194,7 +193,7 @@ namespace htl {
 
 		namespace internal {
 
-            void initialize(GPIO_TypeDef * const gpio, const InitInfo *info);
+            void initialize(GPIO_TypeDef * const gpio, PinMask mask, const InitInfo *info);
 		    void initInput(GPIO_TypeDef * const gpio, PinMask mask,
 		            InputMode mode);
             void initInput(GPIO_TypeDef * const gpio, PinBit bit,
@@ -786,11 +785,11 @@ namespace htl {
 			class Activator final {
 				private:
 					using PortTraits = internal::PortTraits<portId_>;
-                    
+
                 private:
 					static constexpr uint32_t _rccEnableAddr = PortTraits::rccEnableAddr;
 					static constexpr uint32_t _rccEnablePos = PortTraits::rccEnablePos;
-                    
+
                 private:
 					static PinMask _mask;
 

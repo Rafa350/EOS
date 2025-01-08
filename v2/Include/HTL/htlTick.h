@@ -25,7 +25,7 @@ namespace htl {
 				void tmrNotifyEventHandler(htl::tmr::TMRDevice *sender,
 				        htl::tmr::NotifyEventArgs &args);
 			public:
-				void initialize(uint32_t frequency);
+				void initialize(unsigned frequency);
 				void deinitialize();
 				void start();
 				void stop();

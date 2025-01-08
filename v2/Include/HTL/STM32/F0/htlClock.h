@@ -13,126 +13,130 @@
 
 namespace htl {
 
-	enum class ClockId {
-		sysclk,
-		pclk,
-		hclk,
-		hse,
-		hsi,
-		hsi14,
-		lse,
-		lsi,
-		i2cclk
-	};
+	namespace clock {
 
-	enum class HseBypassMode {
-		on,
-		off,
-		unchanged
-	};
+		enum class ClockID {
+			sysclk,
+			pclk,
+			hclk,
+			hse,
+			hsi,
+			hsi14,
+			lse,
+			lsi,
+			i2cclk
+		};
 
-	enum class PllSource {
-		hsi,
-		hse
-	};
+		enum class HseBypassMode {
+			on,
+			off,
+			unchanged
+		};
 
-	enum class PllHseDivider {
-		_1,
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		_9,
-		_10,
-		_11,
-		_12,
-		_13,
-		_14,
-		_15,
-		_16
-	};
+		enum class PllSource {
+			hsi,
+			hse
+		};
 
-	enum class PllMultiplier {
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		_9,
-		_10,
-		_11,
-		_12,
-		_13,
-		_14,
-		_15,
-		_16
-	};
+		enum class PllHseDivider {
+			_1,
+			_2,
+			_3,
+			_4,
+			_5,
+			_6,
+			_7,
+			_8,
+			_9,
+			_10,
+			_11,
+			_12,
+			_13,
+			_14,
+			_15,
+			_16
+		};
 
-	enum class SysClkSource {
-		hsi,
-		hse,
-		pll
-	};
+		enum class PllMultiplier {
+			_2,
+			_3,
+			_4,
+			_5,
+			_6,
+			_7,
+			_8,
+			_9,
+			_10,
+			_11,
+			_12,
+			_13,
+			_14,
+			_15,
+			_16
+		};
 
-	enum class I2CClkSource {
-		hsi,
-		sysclk
-	};
+		enum class SysClkSource {
+			hsi,
+			hse,
+			pll
+		};
 
-	enum class HClkPrescaler {
-		_1,
-		_2,
-		_4,
-		_8,
-		_16,
-		_64,
-		_128,
-		_256,
-		_512
-	};
+		enum class I2CClkSource {
+			hsi,
+			sysclk
+		};
 
-	enum class PClkPrescaler {
-		_1,
-		_2,
-		_4,
-		_8,
-		_16
-	};
+		enum class HClkPrescaler {
+			_1,
+			_2,
+			_4,
+			_8,
+			_16,
+			_64,
+			_128,
+			_256,
+			_512
+		};
 
-	class Clock {
-		public:
-			static void hsiEnable();
-			static void hsiDisable();
-            static bool isHsiEnabled();
+		enum class PClkPrescaler {
+			_1,
+			_2,
+			_4,
+			_8,
+			_16
+		};
 
-			static void hsi14Enable();
-			static void hsi14Disable();
-            static bool isHsi14Enabled();
+		class Clock {
+			public:
+				static void hsiEnable();
+				static void hsiDisable();
+				static bool isHsiEnabled();
 
-            static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
-			static void hseDisable();
-            static bool isHseEnabled();
+				static void hsi14Enable();
+				static void hsi14Disable();
+				static bool isHsi14Enabled();
 
-			static void pllEnable();
-			static void pllDisable();
-            static bool isPllEnabled();
-			static bool setPllSource(PllSource value);
-			static void setPllMultiplier(PllMultiplier value);
-			static void setPllHseDivider(PllHseDivider value);
+				static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+				static void hseDisable();
+				static bool isHseEnabled();
 
-			static bool setSysClkSource(SysClkSource source);
-			static void setI2CClkSource(I2CClkSource source);
+				static void pllEnable();
+				static void pllDisable();
+				static bool isPllEnabled();
+				static bool setPllSource(PllSource value);
+				static void setPllMultiplier(PllMultiplier value);
+				static void setPllHseDivider(PllHseDivider value);
 
-			static void setHClkPrescaler(HClkPrescaler value);
-			static void setPClkPrescaler(PClkPrescaler value);
+				static bool setSysClkSource(SysClkSource source);
+				static void setI2CClkSource(I2CClkSource source);
 
-			static unsigned getClockFrequency(ClockId clockId);
-	};
+				static void setHClkPrescaler(HClkPrescaler value);
+				static void setPClkPrescaler(PClkPrescaler value);
+
+				static unsigned getClockFrequency(ClockID clockId);
+		};
+
+	}
 }
 
 

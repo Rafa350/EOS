@@ -109,7 +109,7 @@ void PinDevice::initialize(
     const InitInfo &info) const {
 
     activate();
-    internal::initialize(_gpio, &info);
+    internal::initialize(_gpio, _mask, &info);
 }
 
 
@@ -202,7 +202,8 @@ PinInterrupt::PinInterrupt(
 void PinInterrupt::enableInterruptPin(
 	Edge edge) const {
 
-	#if defined(EOS_PLATFORM_STM32F4) || \
+	#if defined(EOS_PLATFORM_STM32F0) || \
+	    defined(EOS_PLATFORM_STM32F4) || \
 	    defined(EOS_PLATFORM_STM32F7)
 
 	if ((RCC->APB2ENR & RCC_APB2ENR_SYSCFGEN) == 0) {
@@ -280,7 +281,8 @@ void PinInterrupt::enableInterruptPin(
 ///
 void PinInterrupt::disableInterruptPin() const {
 
-	#if defined(EOS_PLATFORM_STM32F4) || \
+	#if defined(EOS_PLATFORM_STM32F0) || \
+	    defined(EOS_PLATFORM_STM32F4) || \
 	    defined(EOS_PLATFORM_STM32F7)
 
 	uint32_t mask = 1 << _pinNum;
@@ -390,29 +392,31 @@ void PinInterrupt::notifyFallingEdge() const {
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza els pins.
 /// \param    gpio: Registres de hardware del GPIO.
+/// \param    mack: mascara de pins
 /// \param    info: Informacio per la inicialitzacio.
 ///
 void internal::initialize(
     GPIO_TypeDef * const gpio,
+	PinMask mask,
     const InitInfo *info) {
 
     switch(info->mode) {
         case InitMode::input:
-            internal::initInput(gpio, info->mask, info->input.mode);
+            internal::initInput(gpio, mask, info->input.mode);
             break;
 
         case InitMode::output:
-            internal::initOutput(gpio, info->mask, info->output.mode,
+            internal::initOutput(gpio, mask, info->output.mode,
                     info->output.speed, info->output.state);
             break;
 
         case InitMode::alternate:
-            internal::initAlternate(gpio, info->mask, info->alternate.mode,
+            internal::initAlternate(gpio, mask, info->alternate.mode,
                     info->alternate.speed, info->alternate.function);
             break;
 
         case InitMode::analogic:
-            internal::initAnalogic(gpio, info->mask);
+            internal::initAnalogic(gpio, mask);
             break;
     }
 }
@@ -495,7 +499,7 @@ void internal::initOutput(
     bool state) {
 
     auto m = uint16_t(mask);
-    for (uint8_t b = 0; b < 15; b++) {
+    for (auto b = 0; b < 15; b++) {
         if ((m & (1 << b)) != 0)
             initOutput(gpio, PinBit(b), mode, speed, state);
     }
@@ -668,7 +672,7 @@ void internal::initAnalogic(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desinicialitza els pins. Els deixa en la seva configuracio 
+/// \brief    Desinicialitza els pins. Els deixa en la seva configuracio
 ///           per defecte.
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    mask: Mascara dels pins a desinicialitzar.
@@ -683,7 +687,7 @@ void internal::deinitialize(
             deinitialize(gpio, PinMask(1 << b));
     }
 }
-    
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza un pin. El deixa en la seva configuracio

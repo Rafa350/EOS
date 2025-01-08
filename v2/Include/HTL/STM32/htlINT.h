@@ -8,7 +8,9 @@
 #include "HTL/STM32/htl.h"
 
 
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F0)
+	#include "F0/F030/htlINT_Vectors.h"
+#elif defined(EOS_PLATFORM_STM32F4)
 	#include "F4/htlINT_Vectors.h"
 #elif defined(EOS_PLATFORM_STM32F7)
 	#include "F7/htlINT_Vectors.h"
@@ -24,6 +26,7 @@
 
 
 namespace htl {
+
 	namespace irq {
 
 		enum class Priority {
@@ -49,7 +52,7 @@ namespace htl {
 			_0,
 			_1,
 			_2,
-			_3,
+			_3
 		};
 
 		void setInterruptVectorPriority(VectorID vector, Priority priority,

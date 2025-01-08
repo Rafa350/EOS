@@ -32,13 +32,13 @@ TickGenerator::TickGenerator():
 /// \param    frequency: Frequencia.
 ///
 void TickGenerator::initialize(
-    uint32_t frequency) {
+    unsigned frequency) {
 
-	uint32_t period = 1000;
-	uint32_t prescaler = (Clock::getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
+	unsigned limit = 1000;
+	unsigned prescaler = (Clock::getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
-	__devTMR->initBase(clkDiv, prescaler, period);
+	__devTMR->initialize(clkDiv, prescaler, limit, 0);
 	__devTMR->setNotifyEvent(_tmrNotifyEvent, true);
 
 	enableInterruptVector(irq::VectorID::tmr14);
@@ -108,7 +108,7 @@ void TickGenerator::wait(
 
 /// ----------------------------------------------------------------------
 /// \brief    Gestiona les notificacions del temporitzador.
-/// \param    sender: El temporitzadort que envia la noptificacio.
+/// \param    sender: El temporitzadort que envia la notificacio.
 /// \param    args: Parametres de la notificacio.
 ///
 void TickGenerator::tmrNotifyEventHandler(

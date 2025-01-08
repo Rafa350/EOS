@@ -16,132 +16,288 @@ TMRDevice::TMRDevice(
 	_tim {tim},
 	_state {State::reset},
 	_notifyEvent {nullptr},
-	_notifyEventEnabled {false}{
+	_notifyEventEnabled {false} {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el temporitzador en modus base de temps
-/// \param    clkDiv: Divisor del rellotge.
+/// \brief    Inicialitza el temporitzador.
+/// \param    divider: Divisor del rellotge.
 /// \param    prescaler: Valor del prescaler.
-/// \param    period: Periode.
-/// \param    repeat: Contador de repeticions del event 'update'.
+/// \param    limit: Valor limit del contador.
+/// \param    repeat: Valor de repeticio.
 ///
-TMRDevice::Result TMRDevice::initBase(
-	ClockDivider clkDiv,
-	uint32_t prescaler,
-	uint32_t period,
-	uint32_t repeat) {
+eos::Result TMRDevice::initialize(
+	ClockDivider divider,
+	unsigned prescaler,
+	unsigned limit,
+	unsigned repeat) {
 
-	if (!IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) && clkDiv != ClockDivider::_1)
-		return Result::error;
+	if (!IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) && divider != ClockDivider::_1)
+		return eos::Results::errorParameter;
 
 	if (!IS_TIM_REPETITION_COUNTER_INSTANCE(_tim) && repeat != 0)
-		return Result::error;
+		return eos::Results::errorParameter;
 
-	if (_state != State::reset)
-		return Result::error;
+	if (_state == State::reset) {
 
-	// Activa el dispositiu
-	//
-	activate();
+		activate();
 
-	// Inicialitza el timer.
-	// -Para el contador (CEN = 0).
-	// -Inicialitza ARR de forma in mediata (ARPE = 0).
-	// -Inicilitza el divisor del rellotge.
-	//
-	uint32_t cr1 = _tim->CR1;
-	cr1 &= ~(TIM_CR1_CEN | TIM_CR1_ARPE);
-	if (IS_TIM_CLOCK_DIVISION_INSTANCE(_tim)) {
-		cr1 &= ~TIM_CR1_CKD;
-		switch (clkDiv) {
-			case ClockDivider::_1:
-				break;
+		// Inicialitza el timer.
+		// -Para el contador (CEN = 0).
+		// -Inicialitza ARR de forma in mediata (ARPE = 0).
+		// -Inicilitza el divisor del rellotge.
+		//
+		unsigned CR1 = _tim->CR1;
+		CR1 &= ~(TIM_CR1_CEN | TIM_CR1_ARPE);
+		if (IS_TIM_CLOCK_DIVISION_INSTANCE(_tim)) {
+			CR1 &= ~TIM_CR1_CKD;
+			switch (divider) {
+				case ClockDivider::_1:
+					break;
 
-			case ClockDivider::_2:
-				cr1 |= TIM_CR1_CKD_0;
-				break;
+				case ClockDivider::_2:
+					CR1 |= TIM_CR1_CKD_0;
+					break;
 
-			case ClockDivider::_4:
-				cr1 |= TIM_CR1_CKD_1;
-				break;
+				case ClockDivider::_4:
+					CR1 |= TIM_CR1_CKD_1;
+					break;
+			}
 		}
+		CR1 |= TIM_CR1_DIR;
+		CR1 |= 0b00 << TIM_CR1_CMS_Pos;
+		_tim->CR1 = CR1;
+
+		_tim->PSC = prescaler;
+		_tim->ARR = limit;
+		if (IS_TIM_REPETITION_COUNTER_INSTANCE(_tim))
+			_tim->RCR = repeat;
+
+		_state = State::ready;
+
+		return eos::Results::success;
 	}
-	_tim->CR1 = cr1;
 
-	// Configura la base de temps
-	//
-	_tim->ARR = period;
-	_tim->PSC = prescaler;
-
-	// Configura cada quant es genere un event 'update'
-	//
-	if (IS_TIM_REPETITION_COUNTER_INSTANCE(_tim))
-		_tim->RCR = repeat;
-
-	_state = State::ready;
-
-	return Result::ok;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el temporitzador en modus generador PWM
-/// \param    prescaler: Valor del prescaler.
-/// \param    period: Periode.
-/// \param    duty: Duty
-///
-TMRDevice::Result TMRDevice::initPWM(
-	ClockDivider clkDiv,
-	uint32_t prescaler,
-	uint32_t period,
-	uint32_t duty) {
-
-	if (initBase(clkDiv, prescaler, period) != Result::ok)
-		return Result::error;
-
-	return Result::ok;
+	else
+		return eos::Results::error;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el timer.
 ///
-TMRDevice::Result TMRDevice::deinitialize() {
+eos::Result TMRDevice::deinitialize() {
 
-	if (_state == State::ready) {
+	if (_state != State::ready)
+		return eos::Results::errorState;
 
-		_tim->CR1 &= ~TIM_CR1_CEN;
-		_tim->DIER &= ~(TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
+	_tim->CR1 &= ~TIM_CR1_CEN;
+	_tim->DIER &= ~(TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
 
-		deactivate();
+	deactivate();
 
-		_state = State::reset;
+	_state = State::reset;
 
-		return Result::ok;
-	}
-
-	else
-		return Result::error;
+	return eos::Results::success;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Canvia el periode del temporitzador.
-/// \param    period: El nou valor del periode.
-/// \param    immediate: True si el canvi es inmediat.
+/// \brief    Canvia el valor del prescaler.
+/// \param    value: El nou valor.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'operacio nomes es valida si el dispositiu esta inicialitzat.
 ///
-void TMRDevice::setPeriod(
-	uint32_t period,
-	bool immediate) {
+eos::Result TMRDevice::setPrescaler(
+	unsigned value) {
 
-	if (immediate)
-		_tim->CR1 &= ~TIM_CR1_ARPE;
-	else
-		_tim->CR1 |= TIM_CR1_ARPE;
-	_tim->ARR = period;
+	if (_state == State::reset)
+		return eos::Results::errorState;
+
+	_tim->PSC = value;
+
+	return eos::Results::success;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Canvia el valor limit del contador.
+/// \param    value: El nou valor.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'operacio nomes es valida si el dispositiu esta inicialitzat.
+///
+eos::Result TMRDevice::setLimit(
+	unsigned value) {
+
+	if (_state == State::reset)
+		return eos::Results::errorState;
+
+	else {
+		if (_state == State::ready)
+			_tim->CR1 &= ~TIM_CR1_ARPE;
+		else
+			_tim->CR1 |= TIM_CR1_ARPE;
+		_tim->ARR = value;
+
+		return eos::Results::success;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Canvia el valor de repeticions.
+/// \param    value: El nou valor.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'operacio nomes es valida si el dispositiu esta inicialitzat.
+///
+eos::Result TMRDevice::setRepeat(
+	unsigned value) {
+
+	if (!IS_TIM_REPETITION_COUNTER_INSTANCE(_tim))
+		return eos::Results::errorUnsupported;
+
+	if (_state == State::reset)
+		return eos::Results::errorState;
+
+	_tim->RCR = value;
+
+	return eos::Results::success;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura un canal per generar un senyal PWM
+/// \param    channel: El canal.
+/// \param    polarity: La polaritat.
+/// \param    compare: El valor a comparar del contador
+/// \return   El resultat de l'operacio.
+///
+eos::Result TMRDevice::configurePwmChannel(
+	Channel channel,
+	ChannelPolarity polarity,
+	unsigned compare) {
+
+	if (!IS_TIM_CC1_INSTANCE(_tim) && (channel == Channel::_1))
+		return eos::Results::errorUnsupported;
+	if (!IS_TIM_CC2_INSTANCE(_tim) && (channel == Channel::_2))
+		return eos::Results::errorUnsupported;
+	if (!IS_TIM_CC3_INSTANCE(_tim) && (channel == Channel::_3))
+		return eos::Results::errorUnsupported;
+	if (!IS_TIM_CC4_INSTANCE(_tim) && (channel == Channel::_4))
+		return eos::Results::errorUnsupported;
+
+
+	if (_state != State::ready)
+		return eos::Results::errorState;
+
+	switch (channel) {
+		case Channel::_1:
+			if (polarity == ChannelPolarity::activeHigh)
+				_tim->CCER &= ~TIM_CCER_CC1P;
+			else
+				_tim->CCER |= TIM_CCER_CC1P;
+			break;
+
+		case Channel::_2:
+			if (polarity == ChannelPolarity::activeHigh)
+				_tim->CCER &= ~TIM_CCER_CC2P;
+			else
+				_tim->CCER |= TIM_CCER_CC2P;
+			break;
+
+		case Channel::_3:
+			if (polarity == ChannelPolarity::activeHigh)
+				_tim->CCER &= ~TIM_CCER_CC3P;
+			else
+				_tim->CCER |= TIM_CCER_CC3P;
+			break;
+
+		case Channel::_4:
+			if (polarity == ChannelPolarity::activeHigh)
+				_tim->CCER &= ~TIM_CCER_CC4P;
+			else
+				_tim->CCER |= TIM_CCER_CC4P;
+			break;
+	}
+
+	unsigned CCMRx;
+	switch (channel) {
+		case Channel::_1:
+			CCMRx = _tim->CCMR1;
+			CCMRx &= ~TIM_CCMR1_OC1M_Msk;
+			CCMRx |= 0b110 << TIM_CCMR1_OC1M_Pos;
+			CCMRx |= TIM_CCMR1_OC1PE;
+			_tim->CCMR1 = CCMRx;
+			_tim->CCR1 = compare;
+			break;
+
+		case Channel::_2:
+			CCMRx = _tim->CCMR1;
+			CCMRx &= ~TIM_CCMR1_OC2M_Msk;
+			CCMRx |= 0b110 << TIM_CCMR1_OC2M_Pos;
+			CCMRx |= TIM_CCMR1_OC2PE;
+			_tim->CCMR1 = CCMRx;
+			_tim->CCR2 = compare;
+			break;
+
+		case Channel::_3:
+			CCMRx = _tim->CCMR2;
+			CCMRx &= ~TIM_CCMR2_OC3M_Msk;
+			CCMRx |= 0b110 << TIM_CCMR2_OC3M_Pos;
+			CCMRx |= TIM_CCMR2_OC3PE;
+			_tim->CCMR2 = CCMRx;
+			_tim->CCR3 = compare;
+			break;
+
+		case Channel::_4:
+			CCMRx = _tim->CCMR2;
+			CCMRx &= ~TIM_CCMR2_OC4M_Msk;
+			CCMRx |= 0b110 << TIM_CCMR2_OC4M_Pos;
+			CCMRx |= TIM_CCMR2_OC4PE;
+			_tim->CCMR2 = CCMRx;
+			_tim->CCR4 = compare;
+			break;
+	}
+
+	return eos::Results::success;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita un canal.
+/// \param    channel: El canal.
+///
+void TMRDevice::enableChannel(
+	Channel channel) {
+
+	if (!IS_TIM_CC1_INSTANCE(_tim) && (channel == Channel::_1))
+		return;
+	if (!IS_TIM_CC2_INSTANCE(_tim) && (channel == Channel::_2))
+		return;
+	if (!IS_TIM_CC3_INSTANCE(_tim) && (channel == Channel::_3))
+		return;
+	if (!IS_TIM_CC4_INSTANCE(_tim) && (channel == Channel::_4))
+		return;
+
+	switch (channel) {
+		case Channel::_1:
+			_tim->CCER |= TIM_CCER_CC1E;
+			break;
+
+		case Channel::_2:
+			_tim->CCER |= TIM_CCER_CC2E;
+			break;
+
+		case Channel::_3:
+			_tim->CCER |= TIM_CCER_CC3E;
+			break;
+
+		case Channel::_4:
+			_tim->CCER |= TIM_CCER_CC4E;
+			break;
+	}
 }
 
 
@@ -157,7 +313,7 @@ void TMRDevice::setNotifyEvent(
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el contador en modus polling
 ///
-TMRDevice::Result TMRDevice::start() {
+eos::Result TMRDevice::start() {
 
 	if (_state == State::ready) {
 
@@ -166,17 +322,17 @@ TMRDevice::Result TMRDevice::start() {
 
 		_state = State::busy;
 
-		return Result::ok;
+		return eos::Results::success;
 	}
 	else
-		return Result::error;
+		return eos::Results::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el contador en modus interrupcio
 ///
-TMRDevice::Result TMRDevice::start_IRQ() {
+eos::Result TMRDevice::start_IRQ() {
 
 	if (_state == State::ready) {
 
@@ -184,17 +340,17 @@ TMRDevice::Result TMRDevice::start_IRQ() {
 		_tim->DIER |= TIM_DIER_UIE; // Habilita la interrupcio
 		_tim->CR1 |= TIM_CR1_CEN;   // Comença a contar
 
-		return Result::ok;
+		return eos::Results::success;
 	}
 	else
-		return Result::error;
+		return eos::Results::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza el contador en modus polling.
 ///
-TMRDevice::Result TMRDevice::stop() {
+eos::Result TMRDevice::stop() {
 
 	if ((_state == State::busy) || (_state == State::busyIRQ)) {
 
@@ -206,10 +362,10 @@ TMRDevice::Result TMRDevice::stop() {
 
 		_state = State::ready;
 
-		return Result::ok;
+		return eos::Results::success;
 	}
 	else
-		return Result::error;
+		return eos::Results::error;
 }
 
 
@@ -218,24 +374,51 @@ TMRDevice::Result TMRDevice::stop() {
 ///
 void TMRDevice::interruptService() {
 
+	unsigned SR = _tim->SR;
+	unsigned DIER = _tim->DIER;
+
 	// Event TRIGGER
 	//
-	if ((_tim->SR & TIM_SR_TIF) && (_tim->DIER & TIM_DIER_TIE)) {
+	if ((SR & TIM_SR_TIF) && (DIER & TIM_DIER_TIE)) {
 		_tim->SR &= ~TIM_SR_TIF;
 		notifyTrigger();
 	}
 
 	// Event UPDATE
 	//
-	if ((_tim->SR & TIM_SR_UIF) && (_tim->DIER & TIM_DIER_UIE)) {
+	if ((SR & TIM_SR_UIF) && (DIER & TIM_DIER_UIE)) {
 		_tim->SR &= ~TIM_SR_UIF;
 		notifyUpdate();
+	}
+
+	// Event CAPTURE/COMPARE 1
+	//
+	if ((SR & TIM_SR_CC1IF) && (DIER & TIM_DIER_CC1IE)) {
+		_tim->SR &= ~TIM_SR_CC1IF;
+	}
+
+	// Event CAPTURE/COMPARE 2
+	//
+	if ((SR & TIM_SR_CC2IF) && (DIER & TIM_DIER_CC2IE)) {
+		_tim->SR &= ~TIM_SR_CC2IF;
+	}
+
+	// Event CAPTURE/COMPARE 3
+	//
+	if ((SR & TIM_SR_CC3IF) && (DIER & TIM_DIER_CC3IE)) {
+		_tim->SR &= ~TIM_SR_CC3IF;
+	}
+
+	// Event CAPTURE/COMPARE 4
+	//
+	if ((SR & TIM_SR_CC4IF) && (DIER & TIM_DIER_CC4IE)) {
+		_tim->SR &= ~TIM_SR_CC4IF;
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llasça un event de notificacio Trigger
+/// \brief    Genera un event de notificacio Trigger
 ///
 void TMRDevice::notifyTrigger() {
 
@@ -250,7 +433,7 @@ void TMRDevice::notifyTrigger() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llasça un event de notificacio Update
+/// \brief    Genera un event de notificacio Update
 ///
 void TMRDevice::notifyUpdate() {
 

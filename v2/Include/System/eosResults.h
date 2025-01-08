@@ -72,7 +72,8 @@ namespace eos {
 		busy,              // Ocupat
 		error,             // Error d'operacio
 		errorState,        // Operacio no permesa en l'estat actual
-		errorParameter     // Error ens els parametres
+		errorParameter,    // Error ens els parametres
+		errorUnsupported   // No soportado
 	};
 
 	class Result: public SimpleResult<Results> {

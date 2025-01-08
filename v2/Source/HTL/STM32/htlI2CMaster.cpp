@@ -28,10 +28,7 @@ I2CMasterDevice::I2CMasterDevice(
 	I2C_TypeDef *i2c):
 
 	I2CDevice {i2c},
-	_state {State::reset},
-	_notifyEvent {nullptr},
-	_notifyEventEnabled {false} {
-
+	_state {State::reset} {
 }
 
 
@@ -60,10 +57,10 @@ Result I2CMasterDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::error();
+		return Results::error;
 }
 
 
@@ -80,10 +77,10 @@ Result I2CMasterDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::error();
+		return Results::error;
 }
 
 
@@ -91,15 +88,18 @@ Result I2CMasterDevice::deinitialize() {
 /// \brief    Asigna el event de notificacio.
 /// \param    event: L'event.
 /// \param    enabled: True per habilitar l'event.
+/// \return   El resultat de l'operacio.
 ///
-void I2CMasterDevice::setNotifyEvent(
+eos::Result I2CMasterDevice::setNotifyEvent(
 	IMasterNotifyEvent &event,
 	bool enabled) {
 
     if ((_state == State::reset) || (_state == State::ready)) {
-    	_notifyEvent = &event;
-    	_notifyEventEnabled = enabled;
+    	_erNotify.set(event, enabled);
+    	return Results::success;
     }
+    else
+    	return Results::errorState;
 }
 
 
@@ -112,16 +112,14 @@ void I2CMasterDevice::notifyTxCompleted(
 	unsigned length,
 	bool irq) {
 
-	if (_notifyEventEnabled) {
+	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
-			.instance = this,
-			.id = NotifyId::txCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length
 			}
 		};
-		_notifyEvent->execute(args);
+		_erNotify.raise(NotifyID::txCompleted, &args);
 	}
 }
 
@@ -135,16 +133,14 @@ void I2CMasterDevice::notifyRxCompleted(
 	unsigned length,
 	bool irq) {
 
-	if (_notifyEventEnabled) {
+	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
-			.instance = this,
-			.id = NotifyId::rxCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length
 			}
 		};
-		_notifyEvent->execute(args);
+		_erNotify.raise(NotifyID::rxCompleted, &args);
 	}
 }
 
@@ -215,7 +211,7 @@ Result I2CMasterDevice::transmit(
 	while ((_i2c->ISR & I2C_ISR_STOPF) == 0)
 		continue;
 
-	return Result::success();
+	return Results::success;
 }
 
 
@@ -282,7 +278,7 @@ Result I2CMasterDevice::receive(
     //
     _i2c->ICR |= I2C_ISR_STOPF;
 
-    return Result::success();
+    return Results::success;
 }
 
 
@@ -338,11 +334,11 @@ Result I2CMasterDevice::transmit_IRQ(
 		enableTransmitInterrupts(_i2c);
 	    start(_i2c);
 
-		return Result::success();
+		return Results::success;
 	}
 
 	else
-		return Result::busy();
+		return Results::busy;
 }
 
 
@@ -391,10 +387,10 @@ Result I2CMasterDevice::receive_IRQ(
 		enableReceiveInterrupts(_i2c);
 	    start(_i2c);
 
-		return Result::success();
+		return Results::success;
 	}
 	else
-		return Result::busy();
+		return Results::busy;
 }
 
 

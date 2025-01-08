@@ -3,8 +3,15 @@
 #define __eosBoard_NUCLEO_F030R8__
 
 
-#define EOS_ARDWARE_NUCLEO_F030R8
+#define EOS_HARDWARE_NUCLEO_F030R8
 
+
+// -----------------------------------------------------------------------
+// Board information
+// -----------------------------------------------------------------------
+
+#define EOS_BOARD_NAME            "NUCLEO F030R8"
+#define EOS_BOARD_MANUFACTURER    "ST-Microelectronics"
 
 // -----------------------------------------------------------------------
 // External oscilator parameters
@@ -24,14 +31,14 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_GPIO            htl::GPIO_A5
-#define LED1_ON              htl::GPIOState::set
-#define LED1_OFF             htl::GPIOState::clear
+#define LED1_Pin             htl::gpio::PinA5
+#define LED1_StateON         true
+#define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_GPIO::initOutput(htl::GPIODriver::pushPull)
-#define LED1_On()            LED1_GPIO::set()
-#define LED1_Off()           LED1_GPIO::clear()
-#define LED1_Toggle()        LED1_GPIO::toggle()
+#define LED1_Initialize()    LED1_Pin::pInst->initOutput(htl::gpio::OutputMode::pushPull)
+#define LED1_On()            LED1_Pin::pInst->set()
+#define LED1_Off()           LED1_Pin::pInst->clear()
+#define LED1_Toggle()        LED1_Pin::pInst->toggle()
 
 #endif // USE_LED1
 
@@ -43,9 +50,9 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_GPIO             htl::GPIO_C13
-#define SW1_ON               htl::GPIOState::set
-#define SW1_OFF              htl::GPIOState::clear
+#define SW1_Pin              htl::gpio::PinC13
+#define SW1_StateON          true
+#define SW1_StateOFF         false
 
 #endif // SW1
 
@@ -57,35 +64,35 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-#define ARDUINO_D0_GPIO      htl::GPIO_A3
-#define ARDUINO_D1_GPIO      htl::GPIO_A2
-#define ARDUINO_D2_GPIO      htl::GPIO_A10
-#define ARDUINO_D3_GPIO      htl::GPIO_B3
-#define ARDUINO_D4_GPIO      htl::GPIO_B5
-#define ARDUINO_D5_GPIO      htl::GPIO_B4
-#define ARDUINO_D6_GPIO      htl::GPIO_B10
-#define ARDUINO_D7_GPIO      htl::GPIO_A8
-#define ARDUINO_D8_GPIO      htl::GPIO_A9
-#define ARDUINO_D9_GPIO      htl::GPIO_C7
-#define ARDUINO_D10_GPIO     htl::GPIO_B6
-#define ARDUINO_D11_GPIO     htl::GPIO_A7
-#define ARDUINO_D12_GPIO     htl::GPIO_A6
-#define ARDUINO_D13_GPIO     htl::GPIO_A5
-#define ARDUINO_D14_GPIO     htl::GPIO_B9
-#define ARDUINO_D15_GPIO     htl::GPIO_B8
+#define ARDUINO_D0_Pin       htl::gpio::PinA3
+#define ARDUINO_D1_Pin       htl::gpio::PinA2
+#define ARDUINO_D2_Pin       htl::gpio::PinA10
+#define ARDUINO_D3_Pin       htl::gpio::PinB3
+#define ARDUINO_D4_Pin       htl::gpio::PinB5
+#define ARDUINO_D5_Pin       htl::gpio::PinB4
+#define ARDUINO_D6_Pin       htl::gpio::PinB10
+#define ARDUINO_D7_Pin       htl::gpio::PinA8
+#define ARDUINO_D8_Pin       htl::gpio::PinA9
+#define ARDUINO_D9_Pin       htl::gpio::PinC7
+#define ARDUINO_D10_Pin      htl::gpio::PinB6
+#define ARDUINO_D11_Pin      htl::gpio::PinA7
+#define ARDUINO_D12_Pin      htl::gpio::PinA6
+#define ARDUINO_D13_Pin      htl::gpio::PinA5
+#define ARDUINO_D14_Pin      htl::gpio::PinB9
+#define ARDUINO_D15_Pin      htl::gpio::PinB8
 
-#define ARDUINO_UART         htl::UART_2
-#define ARDUINO_RX_GPIO      htl::GPIO_A3 // D0
-#define ARDUINO_TX_GPIO      htl::GPIO_A2 // D1
+#define ARDUINO_UART         htl::uart::UARTDevice2
+#define ARDUINO_RX_GPIO      htl::gpio::PinA3 // D0
+#define ARDUINO_TX_GPIO      htl::gpio::PinA2 // D1
 
-#define ARDUINO_I2C          htl::I2CMaster_1
-#define ARDUINO_SCL_GPIO     htl::GPIO_B8 // D15
-#define ARDUINO_SDA_GPIO     htl::GPIO_B9 // D14
+#define ARDUINO_I2C          htl::i2c::I2CMasterDevice
+#define ARDUINO_SCL_GPIO     htl::gpio::PinB8 // D15
+#define ARDUINO_SDA_GPIO     htl::gpio::PinB9 // D14
 
-#define ARDUINO_SPI          htl::SPI_1
-#define ARDUINO_SCK_GPIO     htl::GPIO_A5 // D13
-#define ARDUINO_MISO_GPIO    htl::GPIO_A6 // D12
-#define ARDUINO_MOSI_GPIO    htl::GPIO_A7 // D11
+#define ARDUINO_SPI          htl::spi::SPIDevice1
+#define ARDUINO_SCK_GPIO     htl::gpio::PinA5 // D13
+#define ARDUINO_MISO_GPIO    htl::gpio::PinA6 // D12
+#define ARDUINO_MOSI_GPIO    htl::gpio::PinA7 // D11
 
 #endif // USE_ARDUINO
 
