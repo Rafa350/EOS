@@ -93,6 +93,7 @@ namespace htl {
                 uint16_t _value;
             public:
                 constexpr explicit PinMask(uint16_t value) : _value {value} {}
+                constexpr explicit PinMask(PinBit bit) : _value {(uint16_t)(1 << bit)} {}
                 constexpr operator uint16_t () const { return _value; }
         };
 
@@ -183,6 +184,7 @@ namespace htl {
         };
 
         /// \brief Edge interrupcion selection
+        ///
 		enum class Edge {
             none,
 			falling,
@@ -320,7 +322,7 @@ namespace htl {
 				PinDevice & operator = (const PinDevice &) = delete;
 
 			protected:
-                PinDevice(GPIO_TypeDef *gpio, PinBit pinNumber);
+                PinDevice(GPIO_TypeDef *gpio, PinBit bit);
 				virtual void activate() const = 0;
 				virtual void deactivate() const = 0;
 
@@ -331,6 +333,7 @@ namespace htl {
                 void initAnalogic() const;
                 void initialize(const InitInfo &info) const;
                 void deinitialize() const;
+
 				inline void set() const {
                     _gpio->BSRR = _mask;
 				}
@@ -359,6 +362,9 @@ namespace htl {
 
             private:
                 static PinDeviceX _instance;
+                static constexpr auto _mask = PinMask(PinTraits::mask);
+                static constexpr auto _bit = PinBit(PinTraits::bit);
+                static constexpr auto _gpioAddr = PortTraits::gpioAddr;
 
             public:
                 static constexpr auto portID = portID_;
@@ -368,16 +374,15 @@ namespace htl {
 
             private:
                 inline PinDeviceX():
-                    PinDevice(reinterpret_cast<GPIO_TypeDef*>(PortTraits::gpioAddr), PinBit(PinTraits::bit)) {
+                    PinDevice(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), _bit) {
                 }
 
             protected:
                 void activate() const override {
-                    Activator::activate(PinMask(PinTraits::mask));
+                    Activator::activate(_mask);
                 }
-
                 void deactivate() const override {
-                    Activator::activate(PinMask(PinTraits::mask));
+                    Activator::activate(_mask);
                 }
         };
 
@@ -501,21 +506,27 @@ namespace htl {
 				uint8_t const _pinNum;
 				INotifyEvent *_notifyEvent;
 				bool _notifyEventEnabled;
+
 			private:
 				PinInterrupt(const PinInterrupt &) = delete;
 				PinInterrupt & operator = (const PinInterrupt &) = delete;
 				void notifyRisingEdge() const;
 				void notifyFallingEdge() const;
+
 			protected:
 				PinInterrupt(GPIO_TypeDef *gpio, PinID pinID);
 				void interruptService() const;
+
 			public:
 				void enableInterruptPin(Edge edge) const;
 				void disableInterruptPin() const;
+
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
+
 				inline void enableNotifyEvent() {
 					_notifyEventEnabled = _notifyEvent != nullptr;
 				}
+
 				inline void disableEventEvent() {
 					_notifyEventEnabled = false;
 				}

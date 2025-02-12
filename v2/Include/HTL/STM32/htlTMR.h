@@ -118,7 +118,6 @@ namespace htl {
 		};
 
 		struct NotifyEventArgs {
-			NotifyID id;
 			bool isr;
 			union {
 				struct {
@@ -128,17 +127,15 @@ namespace htl {
 			};
 		};
 
-		class TMRDevice;
-		using INotifyEvent = eos::ICallbackP2<TMRDevice*, NotifyEventArgs&>;
-		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, TMRDevice*, NotifyEventArgs&>;
-
+		using NotifyEventRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+		using INotifyEvent = NotifyEventRaiser::IEvent;
+		template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
 		namespace internal {
 
 			template <DeviceID>
 			struct HardwareInfo;
 		}
-
 
 		class TMRDevice {
 			public:
@@ -153,8 +150,7 @@ namespace htl {
 			private:
 				TIM_TypeDef * const _tim;
 				State _state;
-				INotifyEvent *_notifyEvent;
-				bool _notifyEventEnabled;
+				NotifyEventRaiser _erNotify;
 
 			private:
 				TMRDevice(const TMRDevice &) = delete;
@@ -173,7 +169,7 @@ namespace htl {
 				inline eos::Result initialize(ClockDivider divider, unsigned prescaler) {
 					return initialize(divider, prescaler, 0, 0);
 				}
-				eos::Result initialize(ClockDivider divider, unsigned prescaler, unsigned limit, unsigned repeat);
+				eos::Result initialize(ClockDivider divider, unsigned prescaler, unsigned reload, unsigned repeat);
 				eos::Result deinitialize();
 
 				eos::Result setPrescaler(unsigned value);
@@ -182,16 +178,23 @@ namespace htl {
 				eos::Result setCountDirection(CountDirection value);
 				inline unsigned getCounter() const { return _tim->CNT; }
 
-				eos::Result configurePwmChannel(Channel channel, ChannelPolarity polarity, unsigned compare);
+				eos::Result configurePwmChannel(Channel channel, ChannelPolarity, unsigned compare);
+				eos::Result configurePwmChannel1(ChannelPolarity polarity, unsigned compare);
+				eos::Result configurePwmChannel2(ChannelPolarity polarity, unsigned compare);
+				eos::Result configurePwmChannel3(ChannelPolarity polarity, unsigned compare);
+				eos::Result configurePwmChannel4(ChannelPolarity polarity, unsigned compare);
+
 				void enableChannel(Channel channel);
 				void disableChannel(Channel channel);
 
-				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
+				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+					_erNotify.set(event, enabled);
+				}
 				inline void enableNotifyEvent() {
-					_notifyEventEnabled = _notifyEvent != nullptr;
+					_erNotify.enable();
 				}
 				inline void disableNotifyEvent() {
-					_notifyEventEnabled = false;
+					_erNotify.disable();
 				}
 				eos::Result start();
 				eos::Result start_IRQ();

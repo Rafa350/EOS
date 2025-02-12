@@ -22,8 +22,7 @@ namespace htl {
 			private:
 				TickGenerator();
 				TickGenerator(const TickGenerator&) = delete;
-				void tmrNotifyEventHandler(htl::tmr::TMRDevice *sender,
-				        htl::tmr::NotifyEventArgs &args);
+				void tmrNotifyEventHandler(htl::tmr::NotifyID id, htl::tmr::NotifyEventArgs * const args);
 			public:
 				void initialize(unsigned frequency);
 				void deinitialize();

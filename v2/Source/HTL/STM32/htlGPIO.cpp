@@ -96,7 +96,7 @@ PinDevice::PinDevice(
     PinBit bit):
 
     _gpio {gpio},
-    _mask {uint16_t(1 << bit)} {
+    _mask {bit} {
 
 }
 

@@ -14,10 +14,7 @@ TMRDevice::TMRDevice(
 	TIM_TypeDef *tim) :
 
 	_tim {tim},
-	_state {State::reset},
-	_notifyEvent {nullptr},
-	_notifyEventEnabled {false} {
-
+	_state {State::reset} {
 }
 
 
@@ -25,13 +22,13 @@ TMRDevice::TMRDevice(
 /// \brief    Inicialitza el temporitzador.
 /// \param    divider: Divisor del rellotge.
 /// \param    prescaler: Valor del prescaler.
-/// \param    limit: Valor limit del contador.
+/// \param    reload: Valor de recarrega del contador.
 /// \param    repeat: Valor de repeticio.
 ///
 eos::Result TMRDevice::initialize(
 	ClockDivider divider,
 	unsigned prescaler,
-	unsigned limit,
+	unsigned reload,
 	unsigned repeat) {
 
 	if (!IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) && divider != ClockDivider::_1)
@@ -71,7 +68,7 @@ eos::Result TMRDevice::initialize(
 		_tim->CR1 = CR1;
 
 		_tim->PSC = prescaler;
-		_tim->ARR = limit;
+		_tim->ARR = reload;
 		if (IS_TIM_REPETITION_COUNTER_INSTANCE(_tim))
 			_tim->RCR = repeat;
 
@@ -168,7 +165,7 @@ eos::Result TMRDevice::setRepeat(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura un canal per generar un senyal PWM
+/// \brief    Configura el canal especificat, per generar un senyal PWM
 /// \param    channel: El canal.
 /// \param    polarity: La polaritat.
 /// \param    compare: El valor a comparar del contador
@@ -179,87 +176,161 @@ eos::Result TMRDevice::configurePwmChannel(
 	ChannelPolarity polarity,
 	unsigned compare) {
 
-	if (!IS_TIM_CC1_INSTANCE(_tim) && (channel == Channel::_1))
-		return eos::Results::errorUnsupported;
-	if (!IS_TIM_CC2_INSTANCE(_tim) && (channel == Channel::_2))
-		return eos::Results::errorUnsupported;
-	if (!IS_TIM_CC3_INSTANCE(_tim) && (channel == Channel::_3))
-		return eos::Results::errorUnsupported;
-	if (!IS_TIM_CC4_INSTANCE(_tim) && (channel == Channel::_4))
-		return eos::Results::errorUnsupported;
+	switch (channel) {
+		case Channel::_1:
+			return configurePwmChannel1(polarity, compare);
 
+		case Channel::_2:
+			return configurePwmChannel2(polarity, compare);
+
+		case Channel::_3:
+			return configurePwmChannel3(polarity, compare);
+
+		case Channel::_4:
+			return configurePwmChannel4(polarity, compare);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el canal 1, per generar un senyal PWM
+/// \param    polarity: La polaritat.
+/// \param    compare: El valor a comparar del contador
+/// \return   El resultat de l'operacio.
+///
+eos::Result TMRDevice::configurePwmChannel1(
+	ChannelPolarity polarity,
+	unsigned compare) {
+
+	if (!IS_TIM_CC1_INSTANCE(_tim))
+		return eos::Results::errorUnsupported;
 
 	if (_state != State::ready)
 		return eos::Results::errorState;
 
-	switch (channel) {
-		case Channel::_1:
-			if (polarity == ChannelPolarity::activeHigh)
-				_tim->CCER &= ~TIM_CCER_CC1P;
-			else
-				_tim->CCER |= TIM_CCER_CC1P;
-			break;
+	unsigned CCER = _tim->CCER;
+	if (polarity == ChannelPolarity::activeHigh)
+		CCER &= ~TIM_CCER_CC1P;
+	else
+		CCER |= TIM_CCER_CC1P;
+	CCER &= ~TIM_CCER_CC1E;
+	_tim->CCER = CCER;
 
-		case Channel::_2:
-			if (polarity == ChannelPolarity::activeHigh)
-				_tim->CCER &= ~TIM_CCER_CC2P;
-			else
-				_tim->CCER |= TIM_CCER_CC2P;
-			break;
+	unsigned CCMR = _tim->CCMR1;
+	CCMR &= ~(TIM_CCMR1_OC1M_Msk | TIM_CCMR1_CC1S_Msk);
+	CCMR |= 0b110 << TIM_CCMR1_OC1M_Pos;
+	CCMR |= TIM_CCMR1_OC1PE;
+	_tim->CCMR1 = CCMR;
 
-		case Channel::_3:
-			if (polarity == ChannelPolarity::activeHigh)
-				_tim->CCER &= ~TIM_CCER_CC3P;
-			else
-				_tim->CCER |= TIM_CCER_CC3P;
-			break;
+	_tim->CCR1 = compare;
 
-		case Channel::_4:
-			if (polarity == ChannelPolarity::activeHigh)
-				_tim->CCER &= ~TIM_CCER_CC4P;
-			else
-				_tim->CCER |= TIM_CCER_CC4P;
-			break;
-	}
+	return eos::Results::success;
+}
 
-	unsigned CCMRx;
-	switch (channel) {
-		case Channel::_1:
-			CCMRx = _tim->CCMR1;
-			CCMRx &= ~TIM_CCMR1_OC1M_Msk;
-			CCMRx |= 0b110 << TIM_CCMR1_OC1M_Pos;
-			CCMRx |= TIM_CCMR1_OC1PE;
-			_tim->CCMR1 = CCMRx;
-			_tim->CCR1 = compare;
-			break;
 
-		case Channel::_2:
-			CCMRx = _tim->CCMR1;
-			CCMRx &= ~TIM_CCMR1_OC2M_Msk;
-			CCMRx |= 0b110 << TIM_CCMR1_OC2M_Pos;
-			CCMRx |= TIM_CCMR1_OC2PE;
-			_tim->CCMR1 = CCMRx;
-			_tim->CCR2 = compare;
-			break;
+/// ----------------------------------------------------------------------
+/// \brief    Configura el canal 2, per generar un senyal PWM
+/// \param    polarity: La polaritat.
+/// \param    compare: El valor a comparar del contador
+/// \return   El resultat de l'operacio.
+///
+eos::Result TMRDevice::configurePwmChannel2(
+	ChannelPolarity polarity,
+	unsigned compare) {
 
-		case Channel::_3:
-			CCMRx = _tim->CCMR2;
-			CCMRx &= ~TIM_CCMR2_OC3M_Msk;
-			CCMRx |= 0b110 << TIM_CCMR2_OC3M_Pos;
-			CCMRx |= TIM_CCMR2_OC3PE;
-			_tim->CCMR2 = CCMRx;
-			_tim->CCR3 = compare;
-			break;
+	if (!IS_TIM_CC2_INSTANCE(_tim))
+		return eos::Results::errorUnsupported;
 
-		case Channel::_4:
-			CCMRx = _tim->CCMR2;
-			CCMRx &= ~TIM_CCMR2_OC4M_Msk;
-			CCMRx |= 0b110 << TIM_CCMR2_OC4M_Pos;
-			CCMRx |= TIM_CCMR2_OC4PE;
-			_tim->CCMR2 = CCMRx;
-			_tim->CCR4 = compare;
-			break;
-	}
+	if (_state != State::ready)
+		return eos::Results::errorState;
+
+	unsigned CCER = _tim->CCER;
+	if (polarity == ChannelPolarity::activeHigh)
+		CCER &= ~TIM_CCER_CC2P;
+	else
+		CCER |= TIM_CCER_CC2P;
+	CCER &= ~TIM_CCER_CC2E;
+	_tim->CCER = CCER;
+
+	unsigned CCMR = _tim->CCMR1;
+	CCMR &= ~(TIM_CCMR1_OC2M_Msk | TIM_CCMR1_CC2S_Msk);
+	CCMR |= 0b110 << TIM_CCMR1_OC2M_Pos;
+	CCMR |= TIM_CCMR1_OC2PE;
+	_tim->CCMR1 = CCMR;
+
+	_tim->CCR2 = compare;
+
+	return eos::Results::success;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el canal 3, per generar un senyal PWM
+/// \param    polarity: La polaritat.
+/// \param    compare: El valor a comparar del contador
+/// \return   El resultat de l'operacio.
+///
+eos::Result TMRDevice::configurePwmChannel3(
+	ChannelPolarity polarity,
+	unsigned compare) {
+
+	if (!IS_TIM_CC3_INSTANCE(_tim))
+		return eos::Results::errorUnsupported;
+
+	if (_state != State::ready)
+		return eos::Results::errorState;
+
+	unsigned CCER = _tim->CCER;
+	if (polarity == ChannelPolarity::activeHigh)
+		CCER &= ~TIM_CCER_CC3P;
+	else
+		CCER |= TIM_CCER_CC3P;
+	CCER &= ~TIM_CCER_CC3E;
+	_tim->CCER = CCER;
+
+	unsigned CCMR = _tim->CCMR2;
+	CCMR &= ~(TIM_CCMR2_OC3M_Msk | TIM_CCMR2_CC3S_Msk);
+	CCMR |= 0b110 << TIM_CCMR2_OC3M_Pos;
+	CCMR |= TIM_CCMR2_OC3PE;
+	_tim->CCMR2 = CCMR;
+
+	_tim->CCR3 = compare;
+
+	return eos::Results::success;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el canal 4, per generar un senyal PWM
+/// \param    polarity: La polaritat.
+/// \param    compare: El valor a comparar del contador
+/// \return   El resultat de l'operacio.
+///
+eos::Result TMRDevice::configurePwmChannel4(
+	ChannelPolarity polarity,
+	unsigned compare) {
+
+	if (!IS_TIM_CC4_INSTANCE(_tim))
+		return eos::Results::errorUnsupported;
+
+	if (_state != State::ready)
+		return eos::Results::errorState;
+
+	unsigned CCER = _tim->CCER;
+	if (polarity == ChannelPolarity::activeHigh)
+		CCER &= ~TIM_CCER_CC4P;
+	else
+		CCER |= TIM_CCER_CC4P;
+	CCER &= ~TIM_CCER_CC4E;
+	_tim->CCER = CCER;
+
+	unsigned CCMR = _tim->CCMR2;
+	CCMR &= ~(TIM_CCMR2_OC4M_Msk | TIM_CCMR2_CC4S_Msk);
+	CCMR |= 0b110 << TIM_CCMR2_OC4M_Pos;
+	CCMR |= TIM_CCMR2_OC4PE;
+	_tim->CCMR2 = CCMR;
+
+	_tim->CCR4 = compare;
 
 	return eos::Results::success;
 }
@@ -298,15 +369,6 @@ void TMRDevice::enableChannel(
 			_tim->CCER |= TIM_CCER_CC4E;
 			break;
 	}
-}
-
-
-void TMRDevice::setNotifyEvent(
-	INotifyEvent &event,
-	bool enabled) {
-
-	_notifyEvent = &event;
-	_notifyEventEnabled = enabled;
 }
 
 
@@ -422,12 +484,11 @@ void TMRDevice::interruptService() {
 ///
 void TMRDevice::notifyTrigger() {
 
-	if (_notifyEventEnabled) {
+	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
-			.id = NotifyID::trigger,
 			.isr = true
 		};
-		_notifyEvent->execute(this, args);
+		_erNotify.raise(NotifyID::trigger, &args);
 	}
 }
 
@@ -437,11 +498,10 @@ void TMRDevice::notifyTrigger() {
 ///
 void TMRDevice::notifyUpdate() {
 
-	if (_notifyEventEnabled) {
+	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
-			.id = NotifyID::update,
 			.isr = true
 		};
-		_notifyEvent->execute(this, args);
+		_erNotify.raise(NotifyID::update, &args);
 	}
 }

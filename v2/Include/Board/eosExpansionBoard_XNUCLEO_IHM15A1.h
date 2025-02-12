@@ -3,6 +3,9 @@
 #define __eosExpansionBoard_XNUCLEO_IHM15A1__
 
 
+#define EOS_HARDWARE_XNUCLEO_IHM15A1
+
+
 #define IHM15A1_STBY_Pin          ARDUINO_D8_Pin
 #define IHM15A1_EFA_Pin           ARDUINO_D2_Pin
 #define IHM15A1_EFB_Pin           ARDUINO_D11_Pin

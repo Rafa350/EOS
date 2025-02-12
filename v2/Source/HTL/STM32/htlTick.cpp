@@ -112,10 +112,10 @@ void TickGenerator::wait(
 /// \param    args: Parametres de la notificacio.
 ///
 void TickGenerator::tmrNotifyEventHandler(
-	htl::tmr::TMRDevice *sender,
-	htl::tmr::NotifyEventArgs &args) {
+	htl::tmr::NotifyID id,
+	htl::tmr::NotifyEventArgs * const args) {
 
-	if (args.id == htl::tmr::NotifyID::update)
+	if (id == htl::tmr::NotifyID::update)
 		_tickCounter++;
 
 	#ifdef DBG_Pin

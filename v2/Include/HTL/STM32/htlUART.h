@@ -305,12 +305,14 @@ namespace htl {
 				template <typename pin_>
 				inline void initPinTX() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_>::alt;
+					//htl::gpio::PinX<pin_::portID, pin_::pinID>::
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinRX() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_>::alt;
+					//htl::gpio::PinX<pin_::portID, pin_::pinID>::
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
