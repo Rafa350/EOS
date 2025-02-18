@@ -88,7 +88,7 @@ void STSPIN840_Device::disable() {
 void STSPIN840_Device::setDirection(
 	Direction dir) {
 
-	_pinPH->write(dir == Direction::forward ? 0 : 1);
+	_pinPH->write(dir == Direction::backward);
 }
 
 
@@ -114,6 +114,7 @@ void STSPIN840_Device::pwmStart(
 ///
 void STSPIN840_Device::pwmStop() {
 
+	_tmr->disableChannel(_channel);
 	_tmr->stop();
 }
 

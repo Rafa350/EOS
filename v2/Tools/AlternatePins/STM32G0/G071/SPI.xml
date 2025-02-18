@@ -1,0 +1,53 @@
+<alternatePins>
+	<file path="HTL/STM32/G0/G071/htlSPI_Pins.h" 
+		  namespace="htl::spi::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32G071)"
+		  conditionErrorMessage="Unsupported platform">
+
+		<device device="DeviceID::spi1" condition="defined(HTL_SPI1_EXIST)"  pinFunctionPrefix="PinFunction::">
+			<function pinFunction="sck">
+				<pin port="A" pin="1" value="0"/>
+				<pin port="A" pin="5" value="0"/>
+				<pin port="B" pin="3" value="0"/>
+			</function>
+
+			<function pinFunction="miso">
+				<pin port="A" pin="6" value="0"/>
+				<pin port="A" pin="11" value="0"/>
+				<pin port="B" pin="4" value="0"/>
+			</function>
+
+			<function pinFunction="mosi">
+				<pin port="A" pin="2" value="0"/>
+				<pin port="A" pin="7" value="0"/>
+				<pin port="A" pin="12" value="0"/>
+				<pin port="B" pin="5" value="0"/>
+			</function>
+	    </device>
+		
+		<device device="DeviceID::spi2" condition="defined(HTL_SPI2_EXIST)"  pinFunctionPrefix="PinFunction::">
+			<function pinFunction="sck">
+				<pin port="A" pin="0" value="0"/>
+				<pin port="B" pin="8" value="1"/>
+				<pin port="B" pin="10" value="5"/>
+				<pin port="B" pin="13" value="0"/>
+			</function>
+
+			<function pinFunction="miso">
+				<pin port="A" pin="3" value="0"/>
+				<pin port="A" pin="9" value="4"/>
+				<pin port="B" pin="1" value="1"/>
+				<pin port="B" pin="6" value="4"/>
+				<pin port="B" pin="14" value="0"/>
+			</function>
+
+			<function pinFunction="mosi">
+				<pin port="A" pin="4" value="1"/>
+				<pin port="A" pin="10" value="0"/>
+				<pin port="B" pin="7" value="1"/>
+				<pin port="B" pin="11" value="0"/>
+				<pin port="B" pin="15" value="0"/>
+			</function>
+		</device>
+	</file>
+</alternatePins>

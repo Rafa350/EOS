@@ -32,8 +32,8 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_PortID          htl::gpio::PortID::A
-#define LED1_PinID           htl::gpio::PinID::_5
+#define LED1_PortID          htl::gpio::PortID::portA
+#define LED1_PinID           htl::gpio::PinID::pin5
 #define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
 #define LED1_StateON         true
 #define LED1_StateOFF        false

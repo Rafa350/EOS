@@ -15,55 +15,55 @@ namespace htl {
 
 		enum class DeviceID {
 			#ifdef HTL_TMR1_EXIST
-				_1,
+				tmr1,
 			#endif
 			#ifdef HTL_TMR2_EXIST
-				_2,
+				tmr2,
 			#endif
 			#ifdef HTL_TMR3_EXIST
-				_3,
+				tmr3,
 			#endif
 			#ifdef HTL_TMR4_EXIST
-				_4,
+				tmr4,
 			#endif
 			#ifdef HTL_TMR5_EXIST
-				_5,
+				tmr5,
 			#endif
 			#ifdef HTL_TMR6_EXIST
-				_6,
+				tmr6,
 			#endif
 			#ifdef HTL_TMR7_EXIST
-				_7,
+				tmr7,
 			#endif
 			#ifdef HTL_TMR8_EXIST
-				_8,
+				tmr8,
 			#endif
 			#ifdef HTL_TMR9_EXIST
-				_9,
+				tmr9,
 			#endif
 			#ifdef HTL_TMR10_EXIST
-				_10,
+				tmr10,
 			#endif
 			#ifdef HTL_TMR11_EXIST
-				_11,
+				tmr11,
 			#endif
 			#ifdef HTL_TMR12_EXIST
-				_12,
+				tmr12,
 			#endif
 			#ifdef HTL_TMR13_EXIST
-				_13,
+				tmr13,
 			#endif
 			#ifdef HTL_TMR14_EXIST
-				_14,
+				tmr14,
 			#endif
 			#ifdef HTL_TMR15_EXIST
-				_15,
+				tmr15,
 			#endif
 			#ifdef HTL_TMR16_EXIST
-				_16,
+				tmr16,
 			#endif
 			#ifdef HTL_TMR17_EXIST
-				_17,
+				tmr17,
 			#endif
 		};
 
@@ -91,10 +91,10 @@ namespace htl {
 		};
 
 		enum class Channel {
-			_1,
-			_2,
-			_3,
-			_4
+			ch1,
+			ch2,
+			ch3,
+			ch4
 		};
 
 		enum class ChannelPolarity {
@@ -134,7 +134,7 @@ namespace htl {
 		namespace internal {
 
 			template <DeviceID>
-			struct HardwareInfo;
+			struct TMRTraits;
 		}
 
 		class TMRDevice {
@@ -203,7 +203,7 @@ namespace htl {
 
 		namespace internal {
 
-			template <DeviceID, PinFunction, typename>
+			template <DeviceID, PinFunction, htl::gpio::PortID, htl::gpio::PinID>
 			struct PinFunctionInfo;
 
 		}
@@ -211,7 +211,7 @@ namespace htl {
 		template <DeviceID deviceID_>
 		class TMRDeviceX: public TMRDevice {
 			private:
-				using HI = internal::HardwareInfo<deviceID_>;
+				using HI = internal::TMRTraits<deviceID_>;
 				static constexpr uint32_t _timAddr = HI::timAddr;
 				static constexpr uint32_t _rccAddr = HI::rccAddr;
 				static constexpr uint32_t _enablePos = HI::enablePos;
@@ -245,25 +245,25 @@ namespace htl {
 
 				template <typename pin_>
 				inline void initPinCH1() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch1, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch1, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH2() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch2, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch2, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH3() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch3, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch3, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH4() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch4, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch4, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
@@ -273,63 +273,63 @@ namespace htl {
 
 
 		#ifdef HTL_TMR1_EXIST
-		using TMRDevice1 = TMRDeviceX<DeviceID::_1>;
+		using TMRDevice1 = TMRDeviceX<DeviceID::tmr1>;
 		#endif
 		#ifdef HTL_TMR2_EXIST
-		using TMRDevice2 = TMRDeviceX<DeviceID::_2>;
+		using TMRDevice2 = TMRDeviceX<DeviceID::tmr2>;
 		#endif
 		#ifdef HTL_TMR3_EXIST
-		using TMRDevice3 = TMRDeviceX<DeviceID::_3>;
+		using TMRDevice3 = TMRDeviceX<DeviceID::tmr3>;
 		#endif
 		#ifdef HTL_TMR4_EXIST
-		using TMRDevice4 = TMRDeviceX<DeviceID::_4>;
+		using TMRDevice4 = TMRDeviceX<DeviceID::tmr4>;
 		#endif
 		#ifdef HTL_TMR5_EXIST
-		using TMRDevice5 = TMRDeviceX<DeviceID::_5>;
+		using TMRDevice5 = TMRDeviceX<DeviceID::tmr5>;
 		#endif
 		#ifdef HTL_TMR6_EXIST
-		using TMRDevice6 = TMRDeviceX<DeviceID::_6>;
+		using TMRDevice6 = TMRDeviceX<DeviceID::tmr6>;
 		#endif
 		#ifdef HTL_TMR7_EXIST
-		using TMRDevice7 = TMRDeviceX<DeviceID::_7>;
+		using TMRDevice7 = TMRDeviceX<DeviceID::tmr7>;
 		#endif
 		#ifdef HTL_TMR8_EXIST
-		using TMRDevice8 = TMRDeviceX<DeviceID::_8>;
+		using TMRDevice8 = TMRDeviceX<DeviceID::tmr8>;
 		#endif
 		#ifdef HTL_TMR9_EXIST
-		using TMRDevice9 = TMRDeviceX<DeviceID::_9>;
+		using TMRDevice9 = TMRDeviceX<DeviceID::tmr9>;
 		#endif
 		#ifdef HTL_TMR10_EXIST
-		using TMRDevice10 = TMRDeviceX<DeviceID::_10>;
+		using TMRDevice10 = TMRDeviceX<DeviceID::tmr10>;
 		#endif
 		#ifdef HTL_TMR11_EXIST
-		using TMRDevice11 = TMRDeviceX<DeviceID::_11>;
+		using TMRDevice11 = TMRDeviceX<DeviceID::tmr11>;
 		#endif
 		#ifdef HTL_TMR12_EXIST
-		using TMRDevice12 = TMRDeviceX<DeviceID::_12>;
+		using TMRDevice12 = TMRDeviceX<DeviceID::tmr12>;
 		#endif
 		#ifdef HTL_TMR13_EXIST
-		using TMRDevice13 = TMRDeviceX<DeviceID::_13>;
+		using TMRDevice13 = TMRDeviceX<DeviceID::tmr13>;
 		#endif
 		#ifdef HTL_TMR14_EXIST
-		using TMRDevice14 = TMRDeviceX<DeviceID::_14>;
+		using TMRDevice14 = TMRDeviceX<DeviceID::tmr14>;
 		#endif
 		#ifdef HTL_TMR15_EXIST
-		using TMRDevice15 = TMRDeviceX<DeviceID::_15>;
+		using TMRDevice15 = TMRDeviceX<DeviceID::tmr15>;
 		#endif
 		#ifdef HTL_TMR16_EXIST
-		using TMRDevice16 = TMRDeviceX<DeviceID::_16>;
+		using TMRDevice16 = TMRDeviceX<DeviceID::tmr16>;
 		#endif
 		#ifdef HTL_TMR17_EXIST
-		using TMRDevice17 = TMRDeviceX<DeviceID::_17>;
+		using TMRDevice17 = TMRDeviceX<DeviceID::tmr17>;
 		#endif
 
 
+		#ifndef EOS_PLATFORM_STM32F0
 		namespace internal {
-
 			#ifdef HTL_TMR1_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_1> {
+			struct TMRTraits<DeviceID::tmr1> {
 				static constexpr uint32_t timAddr = TIM1_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
@@ -346,7 +346,7 @@ namespace htl {
 
 			#ifdef HTL_TMR2_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_2> {
+			struct TMRTraits<DeviceID::tmr2> {
 				static constexpr uint32_t timAddr = TIM2_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -360,7 +360,7 @@ namespace htl {
 
 			#ifdef HTL_TMR3_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_3> {
+			struct TMRTraits<DeviceID::tmr3> {
 				static constexpr uint32_t timAddr = TIM3_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -377,7 +377,7 @@ namespace htl {
 
 			#ifdef HTL_TMR4_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_4> {
+			struct TMRTraits<DeviceID::tmr4> {
 				static constexpr uint32_t timAddr = TIM4_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -388,7 +388,7 @@ namespace htl {
 
 			#ifdef HTL_TMR5_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_5> {
+			struct TMRTraits<DeviceID::tmr5> {
 				static constexpr uint32_t timAddr = TIM5_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -399,7 +399,7 @@ namespace htl {
 
 			#ifdef HTL_TMR6_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_6> {
+			struct TMRTraits<DeviceID::tmr6> {
 				static constexpr uint32_t timAddr = TIM6_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -416,7 +416,7 @@ namespace htl {
 
 			#ifdef HTL_TMR7_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_7> {
+			struct TMRTraits<DeviceID::tmr7> {
 				static constexpr uint32_t timAddr = TIM7_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -430,7 +430,7 @@ namespace htl {
 
 			#ifdef HTL_TMR8_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_8> {
+			struct TMRTraits<DeviceID::tmr8> {
 				static constexpr uint32_t timAddr = TIM8_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -441,7 +441,7 @@ namespace htl {
 
 			#ifdef HTL_TMR9_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_9> {
+			struct TMRTraits<DeviceID::tmr9> {
 				static constexpr uint32_t timAddr = TIM9_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -452,7 +452,7 @@ namespace htl {
 
 			#ifdef HTL_TMR10_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_10> {
+			struct TMRTraits<DeviceID::_10> {
 				static constexpr uint32_t timAddr = TIM10_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -463,7 +463,7 @@ namespace htl {
 
 			#ifdef HTL_TMR11_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_11> {
+			struct TMRTraits<DeviceID::_11> {
 				static constexpr uint32_t timAddr = TIM11_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -474,7 +474,7 @@ namespace htl {
 
 			#ifdef HTL_TMR12_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_12> {
+			struct TMRTraits<DeviceID::_12> {
 				static constexpr uint32_t timAddr = TIM12_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -485,7 +485,7 @@ namespace htl {
 
 			#ifdef HTL_TMR13_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_13> {
+			struct TMRTraits<DeviceID::_13> {
 				static constexpr uint32_t timAddr = TIM13_BASE;
 				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
@@ -496,7 +496,7 @@ namespace htl {
 
 			#ifdef HTL_TMR14_EXIST
 			template <>
-			struct HardwareInfo<DeviceID::_14> {
+			struct TMRTraits<DeviceID::tmr14> {
 				static constexpr uint32_t timAddr = TIM14_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
@@ -511,6 +511,7 @@ namespace htl {
 			};
 			#endif
 		}
+		#endif
 	}
 }
 
@@ -532,6 +533,7 @@ namespace htl {
 
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/F030/htlTMR_Pins.h"
+	#include "htl/STM32/F0/htlTMR_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)
     #include "htl/STM32/F4/htlTMR_Pins.h"

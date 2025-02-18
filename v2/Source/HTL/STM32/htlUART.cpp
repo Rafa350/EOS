@@ -60,13 +60,17 @@ eos::Result UARTDevice::initialize() {
 		disable(_usart);
 
 		_usart->CR2 &= ~(
+			#if defined(EOS_PLATFORM_STM32G0)
 	    	USART_CR2_LINEN |  // Modus sincron, deshabilita LIN
+			#endif
 			USART_CR2_CLKEN);  // ;odus sincron, desabilita CLK
 
 		_usart->CR3 &= ~(
+			#if defined(EOS_PLATFORM_STM32G0)
 			USART_CR3_SCEN |   // Desabilita smartcad
-			USART_CR3_HDSEL |  // Desabilita half-duplex
-			USART_CR3_IREN);   // Desabilita IRDA
+			USART_CR3_IREN |   // Desabilita IRDA
+			#endif
+			USART_CR3_HDSEL);  // Desabilita half-duplex
 
 		enable(_usart);
 
@@ -163,35 +167,35 @@ eos::Result UARTDevice::setTimming(
 	if (_state == State::ready) {
 
 		switch (baudMode) {
-			case BaudMode::_1200:
+			case BaudMode::b1200:
 				rate = 1200;
 				break;
 
-			case BaudMode::_2400:
+			case BaudMode::b2400:
 				rate = 2400;
 				break;
 
-			case BaudMode::_4800:
+			case BaudMode::b4800:
 				rate = 4800;
 				break;
 
-			case BaudMode::_9600:
+			case BaudMode::b9600:
 				rate = 9600;
 				break;
 
-			case BaudMode::_19200:
+			case BaudMode::b19200:
 				rate = 19200;
 				break;
 
-			case BaudMode::_38400:
+			case BaudMode::b38400:
 				rate = 38400;
 				break;
 
-			case BaudMode::_57600:
+			case BaudMode::b57600:
 				rate = 57600;
 				break;
 
-			case BaudMode::_115200:
+			case BaudMode::b115200:
 				rate = 115200;
 				break;
 
@@ -250,8 +254,12 @@ eos::Result UARTDevice::transmit_IRQ(
         // Habilita comunicacio, interrupcions, rtc
         //
 		_usart->CR1 |=
-			USART_CR1_TE |            // Habilita la transmissio
-			USART_CR1_TXEIE_TXFNFIE;  // Habilita interrupcio TXE
+			#if defined(EOS_PLATFORM_STM32G0)
+			USART_CR1_TXEIE_TXFNFIE | // Habilita interrupcio TXE
+			#else
+			USART_CR1_TXEIE |         // Habilita interrupcio TXE
+			#endif
+			USART_CR1_TE;             // Habilita la transmissio
 
 		return Results::success;
 	}
@@ -285,7 +293,11 @@ eos::Result UARTDevice::receive_IRQ(
 		_usart->CR1 |=
 			USART_CR1_RE |              // Habilita la recepcio
 			USART_CR1_PEIE |            // Habilita interrupcio PE
+			#if defined(EOS_PLATFORM_STM32G0)
 			USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
+			#else
+			USART_CR1_RXNEIE |          // Habilita interrupcio RXNE
+			#endif
 			USART_CR1_RTOIE;            // Habilita interrupcio RTO
 
 		return Results::success;
@@ -360,7 +372,119 @@ eos::Result UARTDevice::receive_DMA(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.
 ///
-#if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0)
+void UARTDevice::interruptService() {
+
+	auto CR1 = _usart->CR1;
+	auto CR3 = _usart->CR3;
+	auto ISR = _usart->ISR;
+
+	// Comprova de forma rapida si hi ha errors
+	//
+	if (ISR & (USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE)) {
+
+		// Comprova si es un error PARITY
+		//
+		if ((ISR & USART_ISR_PE) && (CR1 & USART_CR1_PEIE)) {
+
+			// Borra el flag
+			//
+			_usart->ICR = USART_ICR_PECF;
+		}
+
+		// Comprova si hi ha error FRAME
+		//
+	    if ((ISR & USART_ISR_FE) && (CR3 & USART_CR3_EIE)) {
+
+			// Borra el flag
+			//
+	    	_usart->ICR = USART_ICR_FECF;
+	    }
+
+	    // Comprova si es un error NOISE
+	    //
+	    if ((ISR & USART_ISR_NE) && (CR3 & USART_CR3_EIE)) {
+
+			// Borra el flag
+			//
+	    	_usart->ICR = USART_ICR_NCF;
+	    }
+
+		// Comprova si es un error OVERRUN
+		//
+		if ((ISR & USART_ISR_ORE) &&
+			(CR1 & USART_CR1_RXNEIE) &&
+			(CR3 & USART_CR3_EIE)) {
+
+			// Borra el flag
+			//
+			_usart->ICR = USART_ICR_ORECF;
+		}
+	}
+
+	// No hi han errrors
+	//
+	else {
+		// Interrupcio 'TXE'
+		//
+		if ((CR1 & USART_CR1_TXEIE) && (ISR & USART_ISR_TXE)) {
+
+			if (_txCount < _txMaxCount) {
+				_usart->TDR = _txBuffer[_txCount++];
+				if (_txCount == _txMaxCount) {
+
+					ATOMIC_CLEAR_BIT(_usart->CR1,
+						USART_CR1_TXEIE); // Deshabilita interrupcio TXE
+					ATOMIC_SET_BIT(_usart->CR1,
+						USART_CR1_TCIE);          // Habilita interrupcio TC
+				}
+			}
+		}
+
+		// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
+		//
+		if ((CR1 & USART_CR1_TCIE) && (CR1 & USART_CR1_TCIE)) {
+
+			clearTransmissionCompleteFlag(_usart);
+			disableTransmission(_usart);
+			notifyTxCompleted(_txBuffer, _txCount, true);
+
+			_state = State::ready;
+		}
+
+		/// Interrupcio 'RXNE'
+		//
+		if ((CR1 & USART_CR1_RXNEIE) && (ISR & USART_ISR_RXNE)) {
+			if (_rxCount < _rxMaxCount) {
+				_rxBuffer[_rxCount++] = _usart->RDR;
+				if (_rxCount == _rxMaxCount) {
+
+					disableReception(_usart);
+					notifyRxCompleted(_rxBuffer, _rxCount, true);
+
+					// Canvia l'estat
+					//
+					_state = State::ready;
+				}
+			}
+		}
+
+		// Interrupcio 'RTO'
+		//
+		if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
+
+			clearReceiverTimeOutFlag(_usart);
+			disableReception(_usart);
+			notifyRxCompleted(_rxBuffer, _rxCount, true);
+
+			// Canvia d'estat
+			//
+			_state = State::ready;
+		}
+	}
+}
+
+#elif defined(EOS_PLATFORM_STM32F7)
 void UARTDevice::interruptService() {
 
     // Interrupcio TXEFE (FIFO/TX empty)
@@ -705,7 +829,14 @@ static ClockSource getClockSource(
         #endif
     }
 
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F0)
+    static const ClockSource csTbl[4] = {
+        ClockSource::pclk,
+        ClockSource::sysclk,
+        ClockSource::hsi,
+        ClockSource::lse
+    };
+#elif defined(EOS_PLATFORM_STM32F4)
     static const ClockSource csTbl[4] = {
         ClockSource::pclk1,
         ClockSource::sysclk,
@@ -988,7 +1119,11 @@ static void disableTransmission(
 	// Desabilita interrupcions i transmissio
 	//
 	usart->CR1 &= ~(
+#if defined(EOS_PLATFORM_STM32F0)
+		USART_CR1_TXEIE |         // Deshabilita interrupcio TXE
+#else
 		USART_CR1_TXEIE_TXFNFIE | // Deshabilita interrupcio TXE
+#endif
 		USART_CR1_TCIE |          // Deshabilita interrupcio TC
 		USART_CR1_TE);            // Desabilita transmissio
 
@@ -1012,7 +1147,11 @@ static void disableReception(
 	// Desabilita interrupcions i recepcio
 	//
 	usart->CR1 &= ~(
+#if defined(EOS_PLATFORM_STM32F0)
+		USART_CR1_RXNEIE |         // Deshabilita interrupcio RXNE
+#else
 		USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
+#endif
 		USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
 		USART_CR1_PEIE |           // Deshabilita interrupcio PE
 		USART_CR1_RE);             // Deshabilita recepcio

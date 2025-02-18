@@ -25,28 +25,28 @@ namespace htl {
         ///
 		enum class DeviceID {
 			#ifdef HTL_UART1_EXIST
-				_1,
+				uart1,
 			#endif
 			#ifdef HTL_UART2_EXIST
-				_2,
+				uart2,
 			#endif
 			#ifdef HTL_UART3_EXIST
-				_3,
+				uart3,
 			#endif
 			#ifdef HTL_UART4_EXIST
-				_4,
+				uart4,
 			#endif
 			#ifdef HTL_UART5_EXIST
-				_5,
+				uart5,
 			#endif
 			#ifdef HTL_UART6_EXIST
-				_6,
+				uart6,
 			#endif
 			#ifdef HTL_UART7_EXIST
-				_7,
+				uart7,
 			#endif
 			#ifdef HTL_UART8_EXIST
-				_8,
+				uart8,
 			#endif
 		};
 
@@ -88,14 +88,14 @@ namespace htl {
         /// Velocitat de transmissio.
         ///
 		enum class BaudMode {
-			_1200,    ///< 1200 baud.
-			_2400,    ///< 2400 baud.
-			_4800,    ///< 4800 baud.
-			_9600,    ///< 9600 baud.
-			_19200,   ///< 19200 baud.
-			_38400,   ///< 38600 baud.
-			_57600,   ///< 57600 baud.
-			_115200,  ///< 115200 baud.
+			b1200,    ///< 1200 baud.
+			b2400,    ///< 2400 baud.
+			b4800,    ///< 4800 baud.
+			b9600,    ///< 9600 baud.
+			b19200,   ///< 19200 baud.
+			b38400,   ///< 38600 baud.
+			b57600,   ///< 57600 baud.
+			b115200,  ///< 115200 baud.
 			div,      ///< Utilitza el divisor per calcular la velocitat.
 			rate,     ///< Utilitza la velocitat especificada.
 			automatic ///< Deteccio automatica.
@@ -109,16 +109,13 @@ namespace htl {
 		};
 
 		enum class ClockSource {
-            #if defined(EOS_PLATFORM_STM32F4)
+            #if defined(EOS_PLATFORM_STM32F0) || \
+			    defined(EOS_PLATFORM_STM32F4) || \
+				defined(EOS_PLATFORM_STM32F7)
 			pclk,
 			sysclk,
 			hsi,
 			lse,
-            #elif defined(EOS_PLATFORM_STM32F7)
-            pclk,
-            sysclk,
-            hsi,
-            lse,
             #elif defined(EOS_PLATFORM_STM32G0)
 			pclk,
 			sysclk,
@@ -176,7 +173,7 @@ namespace htl {
 			template <DeviceID>
 			struct UARTTraits;
 
-			template <DeviceID, PinFunction, typename>
+			template <DeviceID, PinFunction, htl::gpio::PortID, htl::gpio::PinID>
 			struct PinFunctionInfo;
 
 		}
@@ -304,27 +301,25 @@ namespace htl {
 
 				template <typename pin_>
 				inline void initPinTX() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_>::alt;
-					//htl::gpio::PinX<pin_::portID, pin_::pinID>::
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinRX() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_>::alt;
-					//htl::gpio::PinX<pin_::portID, pin_::pinID>::
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCTS() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::cts, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::cts, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinRTS() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_::portID, pin_::pinID>::value;
 					pin_:initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
@@ -334,35 +329,36 @@ namespace htl {
 
 
 		#ifdef HTL_UART1_EXIST
-			using UARTDevice1 = UARTDeviceX<DeviceID::_1>;
+			using UARTDevice1 = UARTDeviceX<DeviceID::uart1>;
 		#endif
 		#ifdef HTL_UART2_EXIST
-			using UARTDevice2 = UARTDeviceX<DeviceID::_2>;
+			using UARTDevice2 = UARTDeviceX<DeviceID::uart2>;
 		#endif
 		#ifdef HTL_UART3_EXIST
-			using UARTDevice3 = UARTDeviceX<DeviceID::_3>;
+			using UARTDevice3 = UARTDeviceX<DeviceID::uart3>;
 		#endif
 		#ifdef HTL_UART4_EXIST
-			using UARTDevice4 = UARTDeviceX<DeviceID::_4>;
+			using UARTDevice4 = UARTDeviceX<DeviceID::uart4>;
 		#endif
 		#ifdef HTL_UART5_EXIST
-			using UARTDevice5 = UARTDeviceX<DeviceID::_5>;
+			using UARTDevice5 = UARTDeviceX<DeviceID::uart5>;
 		#endif
 		#ifdef HTL_UART6_EXIST
-			using UARTDevice6 = UARTDeviceX<DeviceID::_6>;
+			using UARTDevice6 = UARTDeviceX<DeviceID::uart6>;
 		#endif
 		#ifdef HTL_UART7_EXIST
-			using UARTDevice7 = UARTDeviceX<DeviceID::_7>;
+			using UARTDevice7 = UARTDeviceX<DeviceID::uart7>;
 		#endif
 		#ifdef HTL_UART8_EXIST
-			using UARTDevice8 = UARTDeviceX<DeviceID::_8>;
+			using UARTDevice8 = UARTDeviceX<DeviceID::uart8>;
 		#endif
 
+#ifndef EOS_PLATFORM_STM32F0
 		namespace internal {
 
 			#ifdef HTL_UART1_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_1> {
+			struct UARTTraits<DeviceID::uart1> {
 				static constexpr uint32_t usartAddr = USART1_BASE;
                 #if defined(EOS_PLATFORM_STM32F7)
                 static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
@@ -376,12 +372,13 @@ namespace htl {
 
 			#ifdef HTL_UART2_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_2> {
+			struct UARTTraits<DeviceID::uart2> {
 				static constexpr uint32_t usartAddr = USART2_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART2EN_Pos;
 				static constexpr bool supportedRxTimeout = false;
+				#elif defined(EOS_PLATFORM_STM32F0)
 				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr bool supportedRxTimeout = true;
 				#else
@@ -392,7 +389,7 @@ namespace htl {
 
 			#ifdef HTL_UART3_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_3> {
+			struct UARTTraits<DeviceID::uart3> {
 				static constexpr uint32_t usartAddr = USART3_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -408,7 +405,7 @@ namespace htl {
 
 			#ifdef HTL_UART4_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_4> {
+			struct UARTTraits<DeviceID::uart4> {
 				static constexpr uint32_t usartAddr = USART4_BASE;
 				#if defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
@@ -424,7 +421,7 @@ namespace htl {
 
 			#ifdef HTL_UART5_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_5> {
+			struct UARTTraits<DeviceID::uart5> {
 				static constexpr uint32_t usartAddr = USART5_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
@@ -437,7 +434,7 @@ namespace htl {
 
 			#ifdef HTL_UART6_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_6> {
+			struct UARTTraits<DeviceID::uart6> {
 				static constexpr uint32_t usartAddr = USART6_BASE;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
@@ -450,7 +447,7 @@ namespace htl {
 
 			#ifdef HTL_UART7_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_7> {
+			struct UARTTraits<DeviceID::uart7> {
 				static constexpr USART_TypeDef *usart = UART7;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
@@ -463,7 +460,7 @@ namespace htl {
 
 			#ifdef HTL_UART8_EXIST
 			template <>
-			struct UARTTraits<DeviceID::_8> {
+			struct UARTTraits<DeviceID::uart8> {
 				static constexpr USART_TypeDef *usart = UART8;
 				static constexpr bool supportedRxTimeout = true;
                 #if defined(EOS_PLATFORM_STM32F4)
@@ -474,6 +471,7 @@ namespace htl {
 			};
 			#endif
 		}
+		#endif
 	}
 }
 
@@ -494,6 +492,7 @@ namespace htl {
     #include "htl/STM32/G0/G0B1/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
+	#include "htl/STM32/F0/htlUART_Traits.h"
     #include "htl/STM32/F0/F030/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)

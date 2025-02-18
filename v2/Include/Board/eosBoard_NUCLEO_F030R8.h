@@ -31,7 +31,9 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_Pin             htl::gpio::PinA5
+#define LED1_PortID          htl::gpio::PortID::portA
+#define LED1_PinID           htl::gpio::PinID::pin5
+#define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
@@ -50,12 +52,34 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_Pin              htl::gpio::PinC13
+#define SW1_PortID           htl::gpio::PortID::C
+#define SW1_PinID            htl::gpio::PinID::_13
+#define SW1_Pin              htl::gpio::PinX<SW1_PortID, SW1_PinID>
+#define SW1_FastPin          htl::gpio::FastPinX<SW1_PortID, SW1_PinID>
+#define SW1_PinInterrupt     htl::gpio::PinInterruptX<SW1_PortID, SW1_PinID>
+#define SW1_PinInitialize    htl::gpio::pInst->initInput(htl::gpio::InputMode::floating)
 #define SW1_StateON          true
-#define SW1_StateOFF         false
+#define SW1_StateOF          false
+
+#define SW1_Initialize()
+#define SW1_Read()
+
 
 #endif // SW1
 
+
+// -----------------------------------------------------------------------
+// SIO (Comunicacio serie a traver del depurador)
+// -----------------------------------------------------------------------
+//
+#ifdef USE_SIO
+#define EXIST_SIO
+
+#define SIO_UART_Device    htl::uart::UARTDevice2
+#define SIO_TX_Pin         htl::gpio::PinA2
+#define SIO_RX_Pin         htl::gpio::PinA3
+
+#endif // USE_SIO
 
 // -----------------------------------------------------------------------
 // Arduino expansion connector

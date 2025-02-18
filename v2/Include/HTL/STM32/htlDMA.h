@@ -123,10 +123,10 @@ namespace htl {
         namespace internal {
             typedef struct {
                 DMA_TypeDef * const dma;
-#if defined(EOS_PLATFORM_STM32G0)
+				#if defined(EOS_PLATFORM_STM32G0)
                 DMA_Channel_TypeDef * const dmac;
                 DMAMUX_Channel_TypeDef * const muxc;
-#endif
+				#endif
                 unsigned const flagPos;
             } DMADEV_TypeDef;
 
@@ -259,7 +259,11 @@ namespace htl {
 		    struct DMATraits<DeviceID::_11> {
 		        static constexpr const DMADEV_TypeDef *dmadev = &__dmadev11;
                 static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				#if defined(EOS_PLATFORM_STM32F0)
+                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMAEN_Pos;
+				#else
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
+				#endif
 		    };
             #endif
 
@@ -267,9 +271,12 @@ namespace htl {
 		    template <>
             struct DMATraits<DeviceID::_12> {
                 static constexpr const DMADEV_TypeDef *dmadev = &__dmadev12;
-                static constexpr uint32_t rccEnableAddr =
-                        RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				#if defined(EOS_PLATFORM_STM32F0)
+                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMAEN_Pos;
+				#else
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
+				#endif
             };
             #endif
 
@@ -277,9 +284,12 @@ namespace htl {
             template <>
             struct DMATraits<DeviceID::_13> {
                 static constexpr const DMADEV_TypeDef *dmadev = &__dmadev13;
-                static constexpr uint32_t rccEnableAddr =
-                        RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+				#if defined(EOS_PLATFORM_STM32F0)
+                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMAEN_Pos;
+				#else
                 static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
+				#endif
             };
             #endif
 		}

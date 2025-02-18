@@ -177,16 +177,16 @@ eos::Result TMRDevice::configurePwmChannel(
 	unsigned compare) {
 
 	switch (channel) {
-		case Channel::_1:
+		case Channel::ch1:
 			return configurePwmChannel1(polarity, compare);
 
-		case Channel::_2:
+		case Channel::ch2:
 			return configurePwmChannel2(polarity, compare);
 
-		case Channel::_3:
+		case Channel::ch3:
 			return configurePwmChannel3(polarity, compare);
 
-		case Channel::_4:
+		case Channel::ch4:
 			return configurePwmChannel4(polarity, compare);
 	}
 }
@@ -343,30 +343,66 @@ eos::Result TMRDevice::configurePwmChannel4(
 void TMRDevice::enableChannel(
 	Channel channel) {
 
-	if (!IS_TIM_CC1_INSTANCE(_tim) && (channel == Channel::_1))
+	if (!IS_TIM_CC1_INSTANCE(_tim) && (channel == Channel::ch1))
 		return;
-	if (!IS_TIM_CC2_INSTANCE(_tim) && (channel == Channel::_2))
+	if (!IS_TIM_CC2_INSTANCE(_tim) && (channel == Channel::ch2))
 		return;
-	if (!IS_TIM_CC3_INSTANCE(_tim) && (channel == Channel::_3))
+	if (!IS_TIM_CC3_INSTANCE(_tim) && (channel == Channel::ch3))
 		return;
-	if (!IS_TIM_CC4_INSTANCE(_tim) && (channel == Channel::_4))
+	if (!IS_TIM_CC4_INSTANCE(_tim) && (channel == Channel::ch4))
 		return;
 
 	switch (channel) {
-		case Channel::_1:
+		case Channel::ch1:
 			_tim->CCER |= TIM_CCER_CC1E;
 			break;
 
-		case Channel::_2:
+		case Channel::ch2:
 			_tim->CCER |= TIM_CCER_CC2E;
 			break;
 
-		case Channel::_3:
+		case Channel::ch3:
 			_tim->CCER |= TIM_CCER_CC3E;
 			break;
 
-		case Channel::_4:
+		case Channel::ch4:
 			_tim->CCER |= TIM_CCER_CC4E;
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    desabilita un canal.
+/// \param    channel: El canal.
+///
+void TMRDevice::disableChannel(
+	Channel channel) {
+
+	if (!IS_TIM_CC1_INSTANCE(_tim) && (channel == Channel::ch1))
+		return;
+	if (!IS_TIM_CC2_INSTANCE(_tim) && (channel == Channel::ch2))
+		return;
+	if (!IS_TIM_CC3_INSTANCE(_tim) && (channel == Channel::ch3))
+		return;
+	if (!IS_TIM_CC4_INSTANCE(_tim) && (channel == Channel::ch4))
+		return;
+
+	switch (channel) {
+		case Channel::ch1:
+			_tim->CCER &= ~TIM_CCER_CC1E;
+			break;
+
+		case Channel::ch2:
+			_tim->CCER &= ~TIM_CCER_CC2E;
+			break;
+
+		case Channel::ch3:
+			_tim->CCER &= ~TIM_CCER_CC3E;
+			break;
+
+		case Channel::ch4:
+			_tim->CCER &= ~TIM_CCER_CC4E;
 			break;
 	}
 }

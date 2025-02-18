@@ -1,0 +1,43 @@
+<alternatePins>
+	<file path="HTL/STM32/F0/F030/htlUART_Pins.h" 
+		  namespace="htl::uart::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32F030)"
+		  conditionErrorMessage="Unsupported platform">
+		<device device="htl::uart::DeviceID::uart1" condition="defined(HTL_UART1_EXIST)" pinFunctionPrefix="htl::uart::PinFunction::">
+			<function pinFunction="tx">
+				<pin port="A" pin="2" value="1"/>
+				<pin port="A" pin="9" value="1"/>
+				<pin port="A" pin="14" value="1"/>
+				<pin port="B" pin="6" value="0"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="A" pin="3" value="1"/>
+				<pin port="A" pin="10" value="1"/>
+				<pin port="A" pin="15" value="1"/>
+				<pin port="B" pin="7" value="0"/>
+			</function>
+			<function pinFunction="cts">
+				<pin port="A" pin="0" value="1"/>
+			</function>
+			<function pinFunction="rts">
+				<pin port="A" pin="1" value="1"/>
+			</function>
+		</device>
+		<device device="htl::uart::DeviceID::uart2" condition="defined(HTL_UART2_EXIST)" pinFunctionPrefix="htl::uart::PinFunction::">
+			<function pinFunction="tx">
+				<pin port="A" pin="2" value="1"/>
+				<pin port="A" pin="14" value="1"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="A" pin="3" value="1"/>
+				<pin port="A" pin="15" value="1"/>
+			</function>
+			<function pinFunction="cts">
+				<pin port="A" pin="0" value="1"/>
+			</function>
+			<function pinFunction="rts">
+				<pin port="A" pin="1" value="1"/>
+			</function>
+		</device>
+	</file>
+</alternatePins>
