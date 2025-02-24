@@ -91,6 +91,22 @@ bool SerialDriver::receive(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Aborta l'operacio en curs.
+/// \return   True si tot es correcte.
+///
+bool SerialDriver::abort() {
+
+	if ((_state == State::transmiting) || (_state == State::receiving)) {
+		onAbort();
+		_state = State::ready;
+		return true;
+	}
+	else
+		return false;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Habilita l'event 'TxCompleted'
 /// \param    event: L'event
 /// \param    enabled: Indica si el deixa habilitat

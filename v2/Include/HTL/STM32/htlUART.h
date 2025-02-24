@@ -15,6 +15,13 @@
 #include "HTL/STM32/htlDMA.h"
 
 
+// Default options
+//
+#ifndef HTL_OPTION_UART_ENABLE_DMA
+    #define HTL_OPTION_UART_ENABLE_DMA 1
+#endif
+
+
 namespace htl {
 
 	namespace uart {
@@ -167,18 +174,17 @@ namespace htl {
 		using INotifyEvent = NotifyEventRaiser::IEvent;
 		template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
-
 		namespace internal {
 
 			template <DeviceID>
 			struct UARTTraits;
 
-			template <DeviceID, PinFunction, htl::gpio::PortID, htl::gpio::PinID>
+			template <DeviceID, PinFunction, gpio::PortID, gpio::PinID>
 			struct PinFunctionInfo;
 
 		}
 
-		/// Clase que implementa el dispositiu de comunicacio UART.
+        /// Clase que implementa el dispositiu de comunicacio UART.
         ///
 		class UARTDevice {
 			public:
@@ -235,7 +241,7 @@ namespace htl {
 				        StopBits stopBits, Handsake handlsake);
 				eos::Result setTimming(BaudMode baudMode, ClockSource clockSource,
 				        uint32_t rate, OverSampling oversampling);
-				eos::Result setRxTimeout(uint32_t timeout);
+				eos::Result setRxTimeout(unsigned timeout);
 
 				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
 					_erNotify.set(event, enabled);
@@ -247,12 +253,14 @@ namespace htl {
 					_erNotify.disable();
 				}
 
-				eos::Result transmit(const uint8_t *buffer, unsigned length, Tick timeout);
-				eos::Result receive(uint8_t *buffer, unsigned bufferSize, Tick timeout);
+				eos::Result transmit(const uint8_t *buffer, unsigned length, unsigned timeout);
+				eos::Result receive(uint8_t *buffer, unsigned bufferSize, unsigned timeout);
 				eos::Result transmit_IRQ(const uint8_t *buffer, unsigned length);
 				eos::Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
 				eos::Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned length);
 				eos::Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
+				eos::Result abortTransmission();
+				eos::Result abortReception();
 
 				inline State getState() const { return _state; }
                 inline bool isValid() const { return _state != State::invalid; }

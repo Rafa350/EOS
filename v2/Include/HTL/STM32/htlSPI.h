@@ -23,22 +23,22 @@ namespace htl {
 
 		enum class DeviceID {
 			#ifdef HTL_SPI1_EXIST
-			_1,
+			spi1,
 			#endif
 			#ifdef HTL_SPI2_EXIST
-			_2,
+			spi2,
 			#endif
 			#ifdef HTL_SPI3_EXIST
-			_3,
+			spi3,
 			#endif
 			#ifdef HTL_SPI4_EXIST
-			_4,
+			spi4,
 			#endif
 			#ifdef HTL_SPI5_EXIST
-			_5,
+			spi5,
 			#endif
 			#ifdef HTL_SPI6_EXIST
-			_6
+			spi6
 			#endif
 		};
 
@@ -147,13 +147,13 @@ namespace htl {
 				}
 
 				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
-				        unsigned bufferSize, Tick timeout = Tick(-1));
+				        unsigned bufferSize, unsigned timeout);
 				inline eos::Result receive(uint8_t *rxBuffer, unsigned bufferSize,
-				        Tick timeout)  {
+				        unsigned timeout)  {
 					return transmit(nullptr, rxBuffer, bufferSize, timeout);
 				}
                 inline eos::Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
-                        Tick timeout) {
+                        unsigned timeout) {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
 
@@ -172,7 +172,7 @@ namespace htl {
 			template <DeviceID>
 			struct SPITraits;
 
-			template <DeviceID, PinFunction, typename>
+			template <DeviceID, PinFunction, gpio::PortID, gpio::PinID>
 			struct PinFunctionInfo;
 		}
 
@@ -215,17 +215,17 @@ namespace htl {
 
 				template <typename pin_>
 				void initPinSCK() {
-				    auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_>::alt;
+				    auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_::portID, pin_::pinID>::value;
                     pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_::portID, pin_::pinID>::value;
                     pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMISO() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_::portID, pin_::pinID>::value;
                     pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
@@ -234,22 +234,22 @@ namespace htl {
 		SPIDeviceX<deviceID_> SPIDeviceX<deviceID_>::_instance;
 
 		#ifdef HTL_SPI1_EXIST
-		typedef SPIDeviceX<DeviceID::_1> SPIDevice1;
+		typedef SPIDeviceX<DeviceID::spi1> SPIDevice1;
 		#endif
 		#ifdef HTL_SPI2_EXIST
-		typedef SPIDeviceX<DeviceID::_2> SPIDevice2;
+		typedef SPIDeviceX<DeviceID::spi2> SPIDevice2;
 		#endif
 		#ifdef HTL_SPI3_EXIST
-		typedef SPIDeviceX<DeviceID::_3> SPIDevice3;
+		typedef SPIDeviceX<DeviceID::spi3> SPIDevice3;
 		#endif
 		#ifdef HTL_SPI4_EXIST
-		typedef SPIDeviceX<DeviceID::_4> SPIDevice4;
+		typedef SPIDeviceX<DeviceID::spi4> SPIDevice4;
 		#endif
 		#ifdef HTL_SPI5_EXIST
-		typedef SPIDeviceX<DeviceID::_5> SPIDevice5;
+		typedef SPIDeviceX<DeviceID::spi5> SPIDevice5;
 		#endif
 		#ifdef HTL_SPI6_EXIST
-		typedef SPIDeviceX<DeviceID::_6> SPIDevice6;
+		typedef SPIDeviceX<DeviceID::spi6> SPIDevice6;
 		#endif
 
 

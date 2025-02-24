@@ -57,7 +57,7 @@ namespace eos {
             void notifyInitialize(ServiceParams *params);
 
         protected:
-            void initService(ServiceParams &params) override;
+            void onInitialize(ServiceParams &params) override;
             void onExecute() override;
 
         public:

@@ -293,7 +293,7 @@ Result DMADevice::start(
 /// \return   El resultat de l'operacio.
 ///
 Result DMADevice::waitForFinish(
-    Tick timeout) {
+    unsigned timeout) {
 
     // Comprova si l'estat es 'transfering'
     //
@@ -305,7 +305,7 @@ Result DMADevice::waitForFinish(
         auto expireTime = htl::getTick() + timeout;
         while (((_dmadev->dma->ISR & ((DMA_ISR_TCIF1 | DMA_ISR_TEIF1) << _dmadev->flagPos)) == 0) &&
                 !expired) {
-            expired = timeout == Tick(-1) ? false : hasTickExpired(expireTime);
+            expired = timeout == unsigned(-1) ? false : hasTickExpired(expireTime);
         }
 
         // Borra els flags d'interrupcio del canal

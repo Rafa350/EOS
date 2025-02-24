@@ -31,6 +31,7 @@ void osalHeapFree(HHeap hHeap, void *block);
 
 bool osalHeapVerify(HHeap hHeap, void *block);
 void osalHeapGetInfo(HHeap hHeap, HeapInformation *info);
+unsigned osalHeapGetAvailable(HHeap hHeap);
 
 void* osal_malloc(int size);
 void osal_free(void* p);

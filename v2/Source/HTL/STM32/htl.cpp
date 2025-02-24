@@ -29,7 +29,7 @@ void htl::deinitialize() {
 /// \brief    Obte el numero de tick.
 /// \return   El numero de tick.
 ///
-Tick htl::getTick() {
+unsigned htl::getTick() {
 
 	return TickGenerator::pInst->getTick();
 }
@@ -41,7 +41,7 @@ Tick htl::getTick() {
 /// \param    ticks: El nombre de ticks.
 ///
 void htl::waitTicks(
-	Tick ticks) {
+	unsigned ticks) {
 
     TickGenerator::pInst->wait(ticks);
 }
@@ -53,7 +53,7 @@ void htl::waitTicks(
 /// \return   true si ja ha expirat.
 ///
 bool htl::hasTickExpired(
-    Tick tick) {
+    unsigned tick) {
 
     return static_cast<int>(tick - getTick()) <= 0;
 }

@@ -30,16 +30,16 @@ namespace htl {
 	    ///
 		enum class DeviceID {
 			#ifdef HTL_I2C1_EXIST
-			_1,
+			i2c1,
 			#endif
 			#ifdef HTL_I2C2_EXIST
-			_2,
+			i2c2,
 			#endif
 			#ifdef HTL_I2C3_EXIST
-			_3,
+			i2c3,
 			#endif
 			#ifdef HTL_I2C4_EXIST
-			_4
+			i2c4
 			#endif
 		};
 
@@ -175,7 +175,7 @@ namespace htl {
 					_erNotify.disable();
 				}
 
-				eos::Result listem(Tick timeout = Tick(-1));
+				eos::Result listem(unsigned timeout = unsigned(-1));
 				eos::Result listen_IRQ(bool restart);
 				eos::Result abortListen();
 
@@ -236,8 +236,8 @@ namespace htl {
 					_erNotify.disable();
 				}
 
-				eos::Result transmit(I2CAddr addr, const uint8_t *buffer, unsigned length, Tick timeout = Tick(-1));
-				eos::Result receive(I2CAddr addr, uint8_t *buffer, unsigned bufferSize, Tick timeout = Tick(-1));
+				eos::Result transmit(I2CAddr addr, const uint8_t *buffer, unsigned length, unsigned timeout);
+				eos::Result receive(I2CAddr addr, uint8_t *buffer, unsigned bufferSize, unsigned timeout);
 
 				eos::Result transmit_IRQ(I2CAddr addr, const uint8_t *buffer, unsigned length);
 				eos::Result receive_IRQ(I2CAddr addr, uint8_t *buffer, unsigned bufferSize);
@@ -256,7 +256,7 @@ namespace htl {
 			template <DeviceID>
 			class I2CTraits;
 
-			template <DeviceID, PinFunction, typename>
+			template <DeviceID, PinFunction, gpio::PortID, gpio::PinID>
 			struct PinFunctionInfo;
 		}
 
@@ -311,17 +311,17 @@ namespace htl {
 
 				template <typename pin_>
 				void inline initPinSCL() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSMBA() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 		};
@@ -331,16 +331,16 @@ namespace htl {
 
 
 		#ifdef HTL_I2C1_EXIST
-		typedef I2CSlaveDeviceX<DeviceID::_1> I2CSlaveDevice1;
+		typedef I2CSlaveDeviceX<DeviceID::i2c1> I2CSlaveDevice1;
 		#endif
 		#ifdef HTL_I2C2_EXIST
-		typedef I2CSlaveDeviceX<DeviceID::_2> I2CSlaveDevice2;
+		typedef I2CSlaveDeviceX<DeviceID::i2c2> I2CSlaveDevice2;
 		#endif
 		#ifdef HTL_I2C3_EXIST
-		typedef I2CSlaveDeviceX<DeviceID::_3> I2CSlaveDevice3;
+		typedef I2CSlaveDeviceX<DeviceID::i2c3> I2CSlaveDevice3;
 		#endif
 		#ifdef HTL_I2C4_EXIST
-		typedef I2CSlaveDeviceX<DeviceID::_4> I2CSlaveDevice4;
+		typedef I2CSlaveDeviceX<DeviceID::i2c4> I2CSlaveDevice4;
 		#endif
 
 
@@ -390,12 +390,12 @@ namespace htl {
 
 				template <typename pin_>
 				void inline initPinSCL() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::PortID, pin_::PinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_>::alt;
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::PortID, pin_::PinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
 				}
 		};
@@ -405,16 +405,16 @@ namespace htl {
 
 
 		#ifdef HTL_I2C1_EXIST
-		typedef I2CMasterDeviceX<DeviceID::_1> I2CMasterDevice1;
+		typedef I2CMasterDeviceX<DeviceID::i2c1> I2CMasterDevice1;
 		#endif
 		#ifdef HTL_I2C2_EXIST
-		typedef I2CMasterDeviceX<DeviceID::_2> I2CMasterDevice2;
+		typedef I2CMasterDeviceX<DeviceID::i2c2> I2CMasterDevice2;
 		#endif
 		#ifdef HTL_I2C3_EXIST
-		typedef I2CMasterDeviceX<DeviceID::_3> I2CMasterDevice3;
+		typedef I2CMasterDeviceX<DeviceID::i2c3> I2CMasterDevice3;
 		#endif
 		#ifdef HTL_I2C4_EXIST
-		typedef I2CMasterDeviceX<DeviceID::_4> I2CMasterDevice4;
+		typedef I2CMasterDeviceX<DeviceID::i2c4> I2CMasterDevice4;
 		#endif
 
 

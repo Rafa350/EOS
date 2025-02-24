@@ -8,13 +8,6 @@
 #include "System/eosEvents.h"
 
 
-namespace htl {
-
-	using Tick = uint32_t;
-
-}
-
-
 #if defined(EOS_PLATFORM_PIC32MX) || \
     defined(EOS_PLATFORM_PIC32MZ)
     #include "HTL/PIC32/htl.h"
@@ -37,10 +30,10 @@ namespace htl {
 	void initialize();
 	void deinitialize();
 
-	Tick getTick();
-	void waitTicks(Tick ticks);
-	void waitToTick(Tick tick);
-	bool hasTickExpired(Tick tick);
+	unsigned getTick();
+	void waitTicks(unsigned ticks);
+	void waitToTick(unsigned tick);
+	bool hasTickExpired(unsigned tick);
 }
 
 

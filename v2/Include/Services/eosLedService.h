@@ -25,7 +25,7 @@ namespace eos {
 			LedService(Pin *pinLED1, Pin *pinLED2 = nullptr);
 
 		protected:
-			void initService(ServiceParams &params) override;
+			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 	};
 

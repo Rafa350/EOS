@@ -169,7 +169,6 @@ bool osalQueuePeekISR(
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    BaseType_t taskWoken = pdFALSE;
     bool result = xQueuePeekFromISR((QueueHandle_t) hQueue, element) == pdPASS;
     return result;
 }

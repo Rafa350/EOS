@@ -196,7 +196,7 @@ namespace htl {
                 eos::Result start(const uint8_t *src, uint8_t *dst, unsigned size);
 
 				// TODO: temporal
-                eos::Result waitForFinish(Tick timeout);
+                eos::Result waitForFinish(unsigned timeout);
 
 				inline State getState() const { return _state; }
                 inline bool isReady() const { return _state == State::ready; }

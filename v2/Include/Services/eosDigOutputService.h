@@ -122,7 +122,7 @@ namespace eos {
             bool hasExpired(unsigned timeLimit) const;
 
         protected:
-            void initService(ServiceParams &params) override;
+            void onInitialize(ServiceParams &params) override;
             void onExecute() override;
 
         public:

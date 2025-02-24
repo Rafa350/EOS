@@ -65,6 +65,23 @@ void SerialDriver_UART::onReceive(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Aborta l'operacio en curs.
+///
+void SerialDriver_UART::onAbort() {
+
+	switch (getState()) {
+		case State::receiving:
+			_devUART->abortReception();
+			break;
+
+		case State::transmiting:
+			_devUART->abortTransmission();
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Reb les notificacions del UART
 /// \param    args: Parametres del event.
 ///

@@ -47,7 +47,7 @@ namespace eos {
             virtual void onStop();
             virtual void onStopped();
             virtual void onExecute() = 0;
-            virtual void initService(ServiceParams &params);
+            virtual void onInitialize(ServiceParams &params);
 
             bool stopSignal() const;
             inline Task * getTask() const { return _task; }

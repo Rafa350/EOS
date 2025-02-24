@@ -368,7 +368,7 @@ bool DigOutputService::read(
 /// \brief    Inicialitza els parametres del servei.
 /// \param    params: Els parametres.
 ///
-void DigOutputService::initService(
+void DigOutputService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = serviceName;

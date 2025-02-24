@@ -29,7 +29,7 @@ LedService::LedService(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza els parametres del servei.
 ///
-void LedService::initService(
+void LedService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = serviceName;

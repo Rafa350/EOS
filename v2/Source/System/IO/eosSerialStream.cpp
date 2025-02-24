@@ -111,15 +111,17 @@ Result SerialStream::write(
 
 	else {
 		_drvSerial->transmit(data, length);
-		if (_txCompleted.wait(unsigned(-1))) {
+		if (_txCompleted.wait(_txTimeout)) {
 
 			if (count != nullptr)
 				*count = length;
 
 			return Results::success;
 		}
-		else
+		else {
+			_drvSerial->abort();
 			return Results::timeout;
+		}
 	}
 }
 
@@ -142,14 +144,16 @@ Result SerialStream::read(
 	else {
 		_drvSerial->receive(data, size);
 
-		if (_rxCompleted.wait(unsigned(-1))) {
+		if (_rxCompleted.wait(_rxTimeout)) {
 
 			if (count != nullptr)
 				*count = _rxDataCount;
 
 			return Results::success;
 		}
-		else
+		else {
+			_drvSerial->abort();
 			return Results::timeout;
+		}
 	}
 }

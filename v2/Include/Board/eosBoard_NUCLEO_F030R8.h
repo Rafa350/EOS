@@ -52,8 +52,8 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_PortID           htl::gpio::PortID::C
-#define SW1_PinID            htl::gpio::PinID::_13
+#define SW1_PortID           htl::gpio::PortID::portC
+#define SW1_PinID            htl::gpio::PinID::pin13
 #define SW1_Pin              htl::gpio::PinX<SW1_PortID, SW1_PinID>
 #define SW1_FastPin          htl::gpio::FastPinX<SW1_PortID, SW1_PinID>
 #define SW1_PinInterrupt     htl::gpio::PinInterruptX<SW1_PortID, SW1_PinID>
@@ -75,7 +75,8 @@
 #ifdef USE_SIO
 #define EXIST_SIO
 
-#define SIO_UART_Device    htl::uart::UARTDevice2
+#define SIO_Device         htl::uart::UARTDevice2
+#define SIO_IRQVector      htl::irq::VectorID::usart2
 #define SIO_TX_Pin         htl::gpio::PinA2
 #define SIO_RX_Pin         htl::gpio::PinA3
 
@@ -88,8 +89,8 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
-#define ARDUINO_D0_Pin       htl::gpio::PinA3
-#define ARDUINO_D1_Pin       htl::gpio::PinA2
+#define ARDUINO_D0_Pin       htl::gpio::PinA3    // Conflicte amb SIO RX
+#define ARDUINO_D1_Pin       htl::gpio::PinA2    // Conflicte amb SIO TX
 #define ARDUINO_D2_Pin       htl::gpio::PinA10
 #define ARDUINO_D3_Pin       htl::gpio::PinB3
 #define ARDUINO_D4_Pin       htl::gpio::PinB5
@@ -101,22 +102,22 @@
 #define ARDUINO_D10_Pin      htl::gpio::PinB6
 #define ARDUINO_D11_Pin      htl::gpio::PinA7
 #define ARDUINO_D12_Pin      htl::gpio::PinA6
-#define ARDUINO_D13_Pin      htl::gpio::PinA5
+#define ARDUINO_D13_Pin      htl::gpio::PinA5    // Conflicte amb LED1
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
 #define ARDUINO_UART         htl::uart::UARTDevice2
-#define ARDUINO_RX_GPIO      htl::gpio::PinA3 // D0
-#define ARDUINO_TX_GPIO      htl::gpio::PinA2 // D1
+#define ARDUINO_RX_Pin       htl::gpio::PinA3 // D0
+#define ARDUINO_TX_Pin       htl::gpio::PinA2 // D1
 
 #define ARDUINO_I2C          htl::i2c::I2CMasterDevice
-#define ARDUINO_SCL_GPIO     htl::gpio::PinB8 // D15
-#define ARDUINO_SDA_GPIO     htl::gpio::PinB9 // D14
+#define ARDUINO_SCL_Pin      htl::gpio::PinB8 // D15
+#define ARDUINO_SDA_Pin      htl::gpio::PinB9 // D14
 
 #define ARDUINO_SPI          htl::spi::SPIDevice1
-#define ARDUINO_SCK_GPIO     htl::gpio::PinA5 // D13
-#define ARDUINO_MISO_GPIO    htl::gpio::PinA6 // D12
-#define ARDUINO_MOSI_GPIO    htl::gpio::PinA7 // D11
+#define ARDUINO_SCK_Pin      htl::gpio::PinA5 // D13
+#define ARDUINO_MISO_Pin     htl::gpio::PinA6 // D12
+#define ARDUINO_MOSI_Pin     htl::gpio::PinA7 // D11
 
 #endif // USE_ARDUINO
 

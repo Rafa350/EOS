@@ -52,11 +52,13 @@ namespace eos {
 
             void notifyTxCompleted(unsigned length);
             void notifyRxCompleted(unsigned length);
+            State getState() const { return _state; }
 
 			virtual void onInitialize() = 0;
 			virtual void onDeinitialize() = 0;
 			virtual void onTransmit(const uint8_t *buffer, unsigned length) = 0;
 			virtual void onReceive(uint8_t *buffer, unsigned bufferSize) = 0;
+			virtual void onAbort() = 0;
 
 		public:
 			virtual ~SerialDriver() = default;
@@ -66,6 +68,7 @@ namespace eos {
 
 			bool transmit(const uint8_t *buffer, unsigned length);
             bool receive(uint8_t *buffer, unsigned bufferSize);
+            bool abort();
 
 			void setTxCompletedEvent(const ITxCompletedEvent &event, bool enabled = true);
 			void enableTxCompletedEvent() { _txCompletedEventEnabled = _txCompletedEvent != nullptr; }

@@ -1,59 +1,43 @@
-#pragma once
-#ifndef __STM32G071_htlI2C_Pins__
-#define __STM32G071_htlI2C_Pins__
-
-
-// EOS includes
-//
-#include "HTL/STM32/htl.h"
-#include "HTL/STM32/htlGPIO.h"
-
-
-// Platform check
-//
-#if !defined(EOS_PLATFORM_STM32G071)
-	#error "Valid for STM32G071 platform only"
-#endif
-
-
-#define ALT_FUNCTION(id, fn, pin, af)                 \
-	template <>                                       \
-	struct PinFunctionInfo<id, fn, pin> { \
-		static constexpr gpio::AlternateFunction alt = af;      \
-	};
-
-
-namespace htl {
-	namespace i2c {
-		namespace internal {
-
-			#ifdef HTL_I2C1_EXIST
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinA9,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB6,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB8,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB10, gpio::AlternateFunction::_1)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinA10, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB7,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB9,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB11, gpio::AlternateFunction::_1)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinA1,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinB5,  gpio::AlternateFunction::_6)
-			#endif // HTL_I2C1_EXIST
-
-			#ifdef HTL_I2C2_EXIST
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl, gpio::PinA11, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl, gpio::PinB10, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl, gpio::PinB13, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda, gpio::PinA12, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda, gpio::PinB11, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda, gpio::PinB14, gpio::AlternateFunction::_6)
-			#endif // HTL_I2C2_EXIST
-		}
-	}
-}
-
-
-#undef ALT_FUNCTION
-
-
-#endif // __STM32G071_htlI2C_Pins__
+<alternatePins>
+	<file path="HTL/STM32/G0/G071/htlI2C_Pins.h" 
+		  namespace="htl::i2c::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32G071)"
+		  conditionErrorMessage="Unsupported platform">
+		  
+		<device device="DeviceID::i2c1" condition="defined(HTL_I2C1_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="scl">
+				<pin port="A" pin="9" value="6"/>
+				<pin port="B" pin="6" value="6"/>
+				<pin port="B" pin="8" value="6"/>
+				<pin port="B" pin="10" value="1"/>
+			</function>
+			
+			<function pinFunction="sda">
+				<pin port="A" pin="10" value="6"/>
+				<pin port="B" pin="7" value="6"/>
+				<pin port="B" pin="9" value="6"/>
+				<pin port="B" pin="11" value="1"/>
+			</function>
+			
+			<function pinFunction="smba">
+				<pin port="A" pin="1" value="6"/>
+				<pin port="B" pin="5" value="6"/>
+			</function>
+		</device>
+		
+		<device device="DeviceID::i2c2" condition="defined(HTL_I2C2_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="scl">
+				<pin port="A" pin="11" value="6"/>
+				<pin port="B" pin="10" value="6"/>
+				<pin port="B" pin="13" value="6"/>
+			</function>
+			
+			<function pinFunction="sda">
+				<pin port="A" pin="12" value="6"/>
+				<pin port="B" pin="11" value="6"/>
+				<pin port="B" pin="14" value="6"/>
+			</function>
+		</device>
+		
+	</file>
+</alternatePins>

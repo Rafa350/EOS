@@ -23,16 +23,6 @@ Service::Service():
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza els parametres del servei.
-/// \param    params: Els parametres del servei.
-///
-void Service::initService(
-	ServiceParams &paramms) {
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Inicia l'execucio del servei.
 ///
 void Service::start() {
@@ -45,7 +35,7 @@ void Service::start() {
 			.stackSize = 256
 		};
 
-		initService(params);
+		onInitialize(params);
 
 		onStart();
 		_task = new Task(
@@ -92,6 +82,16 @@ void Service::taskCallbackHandler(
 	onExecute();
 	_state = State::stop;
 	onStopped();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza els parametres del servei.
+/// \param    params: Els parametres del servei.
+///
+void Service::onInitialize(
+	ServiceParams &paramms) {
+
 }
 
 

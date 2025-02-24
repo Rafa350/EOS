@@ -13,21 +13,27 @@ static void setParity(USART_TypeDef *usart, Parity parity);
 static void setWordBits(USART_TypeDef *usart, WordBits wordBits, bool useParity);
 static void setStopBits(USART_TypeDef *usart, StopBits stopBits);
 static void setHandsake(USART_TypeDef *usart, Handsake handsake);
-static void setReceiveTimeout(USART_TypeDef *usart, uint32_t timeout);
+static void setReceiveTimeout(USART_TypeDef *usart, unsigned timeout);
 
 static ClockSource getClockSource(USART_TypeDef *usart);
 static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
 
 static void enable(USART_TypeDef *usart);
 static void disable(USART_TypeDef *usart);
+
 static void enableTransmission(USART_TypeDef *usart);
 static void enableTransmissionIRQ(USART_TypeDef *usart);
 static void enableTransmissionDMA(USART_TypeDef *usart);
 static void disableTransmission(USART_TypeDef *usart);
+
 static void enableReception(USART_TypeDef *usart);
 static void enableReceptionIRQ(USART_TypeDef *usart);
 static void enableReceptionDMA(USART_TypeDef *usart);
 static void disableReception(USART_TypeDef *usart);
+
+static bool waitTransmissionCompleteFlag(USART_TypeDef *usart, unsigned expireTime);
+static bool waitTransmissionBufferEmptyFlag(USART_TypeDef *usart, unsigned expireTime);
+static bool waitReceptionBufferNotEmptyFlag(USART_TypeDef *usart, unsigned expireTime);
 
 static void clearTransmissionCompleteFlag(USART_TypeDef *usart);
 static void clearReceiverTimeOutFlag(USART_TypeDef *usart);
@@ -63,7 +69,7 @@ eos::Result UARTDevice::initialize() {
 			#if defined(EOS_PLATFORM_STM32G0)
 	    	USART_CR2_LINEN |  // Modus sincron, deshabilita LIN
 			#endif
-			USART_CR2_CLKEN);  // ;odus sincron, desabilita CLK
+			USART_CR2_CLKEN);  // Modus sincron, desabilita CLK
 
 		_usart->CR3 &= ~(
 			#if defined(EOS_PLATFORM_STM32G0)
@@ -138,7 +144,7 @@ eos::Result UARTDevice::setProtocol(
 /// \param    El resultat de l'operacio.
 ///
 eos::Result UARTDevice::setRxTimeout(
-    uint32_t timeout) {
+    unsigned timeout) {
 
 	if (_state == State::ready) {
 		setReceiveTimeout(_usart, timeout);
@@ -234,6 +240,51 @@ eos::Result UARTDevice::setTimming(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades.
+/// \param    buffer: El bloc de dades.
+/// \param    length: La longitut del bloc en bytes.
+///
+eos::Result UARTDevice::transmit(
+	const uint8_t *buffer,
+	unsigned length,
+	unsigned timeout) {
+
+	if (_state == State::ready) {
+
+		auto expireTime = getTick() + timeout;
+		bool error = false;
+
+		_state = State::transmiting;
+
+		enableTransmission(_usart);
+
+		while (length-- > 0) {
+			if (!waitTransmissionBufferEmptyFlag(_usart, expireTime)) {
+				error = true;
+				break;
+			}
+			_usart->TDR = *buffer++;
+		}
+
+	    if (!waitTransmissionCompleteFlag(_usart, expireTime))
+	    	error = true;
+
+		disableTransmission(_usart);
+
+		_state = State::ready;
+
+		return error ? Results::timeout : Results::success;
+	}
+
+	else if ((_state == State::transmiting) || (_state == State::receiving))
+		return Results::busy;
+
+	else
+		return Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicia la transmissio d'un bloc de dades per interrupcions.
 /// \param    buffer: Buffer de dades.
 /// \param    length: El nombre de bytes a transmetre.
@@ -251,54 +302,7 @@ eos::Result UARTDevice::transmit_IRQ(
 		_txCount = 0;
         _txMaxCount = length;
 
-        // Habilita comunicacio, interrupcions, rtc
-        //
-		_usart->CR1 |=
-			#if defined(EOS_PLATFORM_STM32G0)
-			USART_CR1_TXEIE_TXFNFIE | // Habilita interrupcio TXE
-			#else
-			USART_CR1_TXEIE |         // Habilita interrupcio TXE
-			#endif
-			USART_CR1_TE;             // Habilita la transmissio
-
-		return Results::success;
-	}
-
-	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Results::busy;
-
-	else
-		return Results::errorState;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicia la recepcio d'un bloc de dades per interrupcions.
-/// \param    buffer: Buffer de dades.
-/// \param    bufferSize: Tamany del buffer en bytes.
-/// \return   El resultat de l'operacio.
-///
-eos::Result UARTDevice::receive_IRQ(
-	uint8_t *buffer,
-	unsigned bufferSize) {
-
-	if (_state == State::ready) {
-
-		_state = State::receiving;
-
-		_rxBuffer = buffer;
-		_rxCount = 0;
-		_rxMaxCount = bufferSize;
-
-		_usart->CR1 |=
-			USART_CR1_RE |              // Habilita la recepcio
-			USART_CR1_PEIE |            // Habilita interrupcio PE
-			#if defined(EOS_PLATFORM_STM32G0)
-			USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
-			#else
-			USART_CR1_RXNEIE |          // Habilita interrupcio RXNE
-			#endif
-			USART_CR1_RTOIE;            // Habilita interrupcio RTO
+        enableTransmissionIRQ(_usart);
 
 		return Results::success;
 	}
@@ -331,11 +335,7 @@ eos::Result UARTDevice::transmit_DMA(
         _txCount = 0;
         _txMaxCount = length;
 
-        // Habilita comunicacio per DMA
-        //
-        _usart->ICR = USART_ICR_TCCF;   // Borra el flag de transmissio complerta
-        _usart->CR1 |= USART_CR1_TE;    // Habilita transmissio
-        _usart->CR3 |= USART_CR3_DMAT;  // Habilita DMA
+        enableTransmissionDMA(_usart);
 
         // Inicia la transferencia per DMA
         //
@@ -354,6 +354,97 @@ eos::Result UARTDevice::transmit_DMA(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Aborta la transmissio.
+///
+eos::Result UARTDevice::abortTransmission() {
+
+	if (_state == State::transmiting) {
+		disableTransmission(_usart);
+		_state = State::ready;
+		return eos::Results::success;
+	}
+	else
+		return Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Reb en bloc de dades.
+/// \param    buffer: Buffer de recepcio de dades.
+/// \param    bufferSize: Tamany del buffer en bytes.
+/// \param    timeout: Temps maxim de bloqueig.
+/// \return   El resultat.
+///
+eos::Result UARTDevice::receive(
+	uint8_t *buffer,
+	unsigned bufferSize,
+	unsigned timeout) {
+
+	if (_state == State::ready) {
+
+		_state = State::receiving;
+
+		auto expireTime = getTick() + timeout;
+		bool error = false;
+
+		enableReception(_usart);
+
+		while (bufferSize-- > 0) {
+
+			if (!waitReceptionBufferNotEmptyFlag(_usart, expireTime)) {
+				error = true;
+				break;
+			}
+
+			*buffer++ = _usart->RDR;
+		}
+
+		disableTransmission(_usart);
+
+		_state = State::ready;
+
+		return error ? Results::timeout : Results::success;
+	}
+	else if ((_state == State::transmiting) || (_state == State::receiving))
+		return Results::busy;
+
+	else
+		return Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicia la recepcio d'un bloc de dades per interrupcions.
+/// \param    buffer: Buffer de dades.
+/// \param    bufferSize: Tamany del buffer en bytes.
+/// \return   El resultat de l'operacio.
+///
+eos::Result UARTDevice::receive_IRQ(
+	uint8_t *buffer,
+	unsigned bufferSize) {
+
+	if (_state == State::ready) {
+
+		_state = State::receiving;
+
+		_rxBuffer = buffer;
+		_rxCount = 0;
+		_rxMaxCount = bufferSize;
+
+		enableReceptionIRQ(_usart);
+
+		return Results::success;
+	}
+
+	else if ((_state == State::transmiting) || (_state == State::receiving))
+		return Results::busy;
+
+	else
+		return Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades utilitzan DMA.
 /// \param    devDMA: El dispositiu DMA.
 /// \param    buffer: El buffer de dades.
@@ -366,6 +457,21 @@ eos::Result UARTDevice::receive_DMA(
     unsigned bufferSize) {
 
 	return Results::error;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Aborta la recepcio.
+///
+eos::Result UARTDevice::abortReception() {
+
+	if (_state == State::receiving) {
+		disableReception(_usart);
+		_state = State::ready;
+		return eos::Results::success;
+	}
+	else
+		return Results::errorState;
 }
 
 
@@ -1045,7 +1151,7 @@ static void setHandsake(
 ///
 static void setReceiveTimeout(
     USART_TypeDef *usart,
-    uint32_t timeout) {
+    unsigned timeout) {
 
     if (timeout == 0)
         usart->CR2 &= ~USART_CR2_RTOEN;
@@ -1079,6 +1185,73 @@ static inline void clearReceiverTimeOutFlag(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Espera l'activacio del flag TC
+/// \param    usart: Registres de hardware del dispositiu.
+/// \param    timeout: El temps maxim d'espera en ticks.
+/// \return   True si tot es correcte, false en cas de timeout.
+///
+static bool waitTransmissionCompleteFlag(
+	USART_TypeDef *usart,
+	unsigned expireTime) {
+
+	while ((usart->ISR & USART_ISR_TC) == 0) {
+		if (hasTickExpired(expireTime))
+			return false;
+	}
+
+	usart->ICR = USART_ICR_TCCF;
+
+	return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera l'activacio del flag TC
+/// \param    usart: Registres de hardware del dispositiu.
+/// \param    expireTime: El limit de temps.
+/// \return   True si tot es correcte, false en cas de timeout.
+///
+static bool waitTransmissionBufferEmptyFlag(
+	USART_TypeDef *usart,
+	unsigned expireTime) {
+
+#if defined(EOS_PLATFORM_STM32G0)
+	while ((usart->ISR & USART_ISR_TXE_TXFNF) == 0) {
+#else
+	while ((usart->ISR & USART_ISR_TXE) == 0) {
+#endif
+		if (hasTickExpired(expireTime))
+			return false;
+	}
+
+	return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera l'activacio de flag RXNE
+/// \param    usart: Els registres de hardware del dispositiu.
+/// \param    expireTime: El limit de temps.
+/// \return   True si tot es correcte, false en cas de timeout.
+///
+static bool waitReceptionBufferNotEmptyFlag(
+	USART_TypeDef *usart,
+	unsigned expireTime) {
+
+#if defined(EOS_PLATFORM_STM32G0)
+	while ((usart->ISR & USART_ISR_RXNE_RXFNE) == 0) {
+#else
+	while ((usart->ISR & USART_ISR_RXNE) == 0) {
+#endif
+		if (hasTickExpired(expireTime))
+			return false;
+	}
+
+	return true;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Habilita el dispositiu.
 /// \param    usart: Registres de hardware del dispositiu.
 ///
@@ -1086,7 +1259,6 @@ static inline void enable(
 	USART_TypeDef *usart) {
 
 	usart->CR1 |= USART_CR1_UE;
-
 }
 
 
@@ -1104,6 +1276,58 @@ static void disable(
 		USART_CR1_UE |     // Desabilita el dispositiu
 		USART_CR1_TE |     // Desabilita la transmissio
 		USART_CR1_RE);     // Deshabilita la recepcio
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la transmissio de dades.
+/// \param    usart: Registres de hardware del dispositiu.
+///
+static void enableTransmission(
+	USART_TypeDef *usart) {
+
+	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
+
+	auto a = startATOMIC();
+	usart->CR1 |= USART_CR1_TE;    // Habilita la tramsmissio
+	endATOMIC(a);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la transmissio de dades en modus IRQ
+/// \param    usart: Registres de hardware del dispositiu.
+///
+static void enableTransmissionIRQ(
+	USART_TypeDef *usart) {
+
+	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
+
+	auto a = startATOMIC();
+	usart->CR1 |=
+		#if defined(EOS_PLATFORM_STM32G0)
+		USART_CR1_TXEIE_TXFNFIE | // Habilita interrupcio TXE
+		#else
+		USART_CR1_TXEIE |         // Habilita interrupcio TXE
+		#endif
+		USART_CR1_TE;             // Habilita la transmissio
+	endATOMIC(a);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la transmissio de dades en modus DMA
+/// \param    usart: Registres de hardware del dispositiu.
+///
+static void enableTransmissionDMA(
+	USART_TypeDef *usart) {
+
+	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
+
+	auto a = startATOMIC();
+    usart->CR1 |= USART_CR1_TE;    // Habilita transmissio
+    usart->CR3 |= USART_CR3_DMAT;  // Habilita DMA
+    endATOMIC(a);
 }
 
 
@@ -1131,6 +1355,42 @@ static void disableTransmission(
 	//
 	usart->CR3 &= ~USART_CR3_DMAT;
 
+	endATOMIC(a);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la recepcio.
+/// \param    usart: Registres de hardware del dispoositiu.
+///
+static void enableReception(
+	USART_TypeDef *usart) {
+
+	usart->ICR = USART_ICR_RTOCF; // Borra el flag RTO
+
+	auto a = startATOMIC();
+	usart->CR1 |= USART_CR1_RE;
+	endATOMIC(a);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la recepcio en modus IRQ.
+/// \param    usart: Registres de hardware del dispoositiu.
+///
+static void enableReceptionIRQ(
+	USART_TypeDef *usart) {
+
+	auto a = startATOMIC();
+	usart->CR1 |=
+		USART_CR1_RE |              // Habilita la recepcio
+		USART_CR1_PEIE |            // Habilita interrupcio PE
+		#if defined(EOS_PLATFORM_STM32G0)
+		USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
+		#else
+		USART_CR1_RXNEIE |          // Habilita interrupcio RXNE
+		#endif
+		USART_CR1_RTOIE;            // Habilita interrupcio RTO
 	endATOMIC(a);
 }
 

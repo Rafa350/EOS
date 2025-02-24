@@ -118,6 +118,17 @@ bool osalHeapVerify(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte el nombre de bytes disponbibles en el heap.
+/// \return   El resultat.
+///
+unsigned osalHeapGetAvailable(
+	HHeap hHeap) {
+
+	return xPortGetFreeHeapSize();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Obte informacio del heap.
 /// \param    hHeap: El handler del heap;
 /// \param    info: Adressa on deixar el resultat.

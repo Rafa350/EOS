@@ -1,20 +1,19 @@
 #pragma once
-#ifndef __STM32_htlTick__
-#define __STM32_htlTick__
+#ifndef __htlTick__
+#define __htlTick__
 
 
-#include "HTL/STM32/htl.h"
-#include "HTL/STM32/htlTMR.h"
+#include "HTL/htl.h"
+#include "HTL/htlTMR.h"
 
 
 namespace htl {
-
 	namespace tick {
 
 		class TickGenerator {
 			private:
 				static TickGenerator _instance;
-				volatile Tick _tickCounter;
+				volatile unsigned _tickCounter;
 				htl::tmr::NotifyEvent<TickGenerator> _tmrNotifyEvent;
 			public:
 				static constexpr TickGenerator* pInst = &_instance;
@@ -28,12 +27,12 @@ namespace htl {
 				void deinitialize();
 				void start();
 				void stop();
-				Tick getTick();
-				void wait(Tick ticks);
+				unsigned getTick();
+				void wait(unsigned ticks);
 		};
 
 	}
 }
 
 
-#endif // __STM32_htlTick__
+#endif // __htlTick__

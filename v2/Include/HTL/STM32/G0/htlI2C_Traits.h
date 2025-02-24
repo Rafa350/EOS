@@ -21,7 +21,7 @@ namespace htl {
 
 			#ifdef HTL_I2C1_EXIST
 			template <>
-			struct I2CTraits<DeviceID::_1> {
+			struct I2CTraits<DeviceID::i2c1> {
 				static constexpr uint32_t i2cAddr = I2C1_BASE;
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_I2C1EN_Pos;
@@ -32,7 +32,7 @@ namespace htl {
 
 			#ifdef HTL_I2C2_EXIST
 			template <>
-			struct I2CTraits<DeviceID::_2> {
+			struct I2CTraits<DeviceID::i2c2> {
 				static constexpr uint32_t i2cAddr = I2C2_BASE;
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_I2C2EN_Pos;
@@ -43,7 +43,7 @@ namespace htl {
 
 			#ifdef HTL_I2C3_EXIST
 			template <>
-			struct I2CTraits<DeviceID::_3> {
+			struct I2CTraits<DeviceID::i2c3> {
 				static constexpr uint32_t i2cAddr = I2C3_BASE;
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_I2C3EN_Pos;

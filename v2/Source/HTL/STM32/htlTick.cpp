@@ -83,7 +83,7 @@ void TickGenerator::stop() {
 /// \brief    Obte el valor del contador de ticks
 /// \return   El valor del contador
 //
-Tick TickGenerator::getTick() {
+unsigned TickGenerator::getTick() {
 
     //disableInterrupts();
 	auto tick = _tickCounter;
@@ -98,7 +98,7 @@ Tick TickGenerator::getTick() {
 /// \param    ticks: El nombre de tics
 ///
 void TickGenerator::wait(
-	Tick ticks) {
+	unsigned ticks) {
 
 	auto lastTick = getTick() + ticks;
 	while (static_cast<int>(lastTick - getTick()) > 0)

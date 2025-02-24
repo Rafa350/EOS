@@ -32,6 +32,7 @@ namespace eos {
             void onDeinitialize() override;
             void onTransmit(const uint8_t *buffer, unsigned length) override;
             void onReceive(uint8_t *buffer, unsigned bufferSize) override;
+            void onAbort() override;
 
 		public:
 			SerialDriver_UART(DevUART *devUART);

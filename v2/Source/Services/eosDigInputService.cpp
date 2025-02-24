@@ -173,7 +173,7 @@ void DigInputService::removeInputs() {
 /// \brief    Inicialitza els parametres del servei.
 /// \param    params: Els parametres.
 ///
-void DigInputService::initService(
+void DigInputService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = serviceName;

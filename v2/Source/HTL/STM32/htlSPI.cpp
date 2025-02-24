@@ -49,12 +49,12 @@ static bool isRxNotEmpty(SPI_TypeDef *spi);
 static bool isSPIBusy(SPI_TypeDef *spi);
 
 #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
-static bool waitRxFifoEmpty(SPI_TypeDef *spi, Tick expireTime);
-static bool waitTxFifoEmpty(SPI_TypeDef *spi, Tick expireTime);
+static bool waitRxFifoEmpty(SPI_TypeDef *spi, unsigned expireTime);
+static bool waitTxFifoEmpty(SPI_TypeDef *spi, unsigned expireTime);
 #endif
-static bool waitNotBusy(SPI_TypeDef *spi, Tick expireTime);
-static bool waitRxNotEmpty(SPI_TypeDef *spi, Tick expireTime);
-static bool waitTxEmpty(SPI_TypeDef *spi, Tick expireTime);
+static bool waitNotBusy(SPI_TypeDef *spi, unsigned expireTime);
+static bool waitRxNotEmpty(SPI_TypeDef *spi, unsigned expireTime);
+static bool waitTxEmpty(SPI_TypeDef *spi, unsigned expireTime);
 
 static void clearOverrunFlag(SPI_TypeDef *spi);
 
@@ -144,7 +144,7 @@ Result SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
 	unsigned bufferSize,
-	Tick timeout) {
+	unsigned timeout) {
 
 	if (_state == State::ready) {
 
@@ -274,7 +274,7 @@ Result SPIDevice::transmit_DMA(
 		// Inicia la transferencia i espera que finalitzi
 		//
 		devTxDMA->start(txBuffer, (uint8_t*)&(_spi->DR), bufferSize);
-		devTxDMA->waitForFinish(Tick(1000));
+		devTxDMA->waitForFinish(1000);
 
 		// Espera que el SPI acabi de transferir
 		//
@@ -572,7 +572,7 @@ static inline bool isSPIBusy(
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 static bool waitRxFifoEmpty(
 	SPI_TypeDef *spi,
-	Tick expireTime) {
+	unsigned expireTime) {
 
 	while ((spi->SR & SPI_SR_FRLVL) != 0) {
 
@@ -591,7 +591,7 @@ static bool waitRxFifoEmpty(
 ///
 static bool waitTxFifoEmpty(
 	SPI_TypeDef *spi,
-	Tick expireTime) {
+	unsigned expireTime) {
 
 	while ((spi->SR & SPI_SR_FTLVL) != 0) {
 	}
@@ -609,7 +609,7 @@ static bool waitTxFifoEmpty(
 ///
 static bool waitNotBusy(
     SPI_TypeDef *spi,
-    Tick expireTime) {
+    unsigned expireTime) {
 
     while (isSPIBusy(spi)) {
         if (hasTickExpired(expireTime)) {
@@ -629,7 +629,7 @@ static bool waitNotBusy(
 ///
 static bool waitTxEmpty(
     SPI_TypeDef *spi,
-    Tick expireTime) {
+    unsigned expireTime) {
 
     while (!isTxEmpty(spi)) {
         if (hasTickExpired(expireTime))
@@ -648,7 +648,7 @@ static bool waitTxEmpty(
 ///
 static bool waitRxNotEmpty(
     SPI_TypeDef *spi,
-    Tick expireTime) {
+    unsigned expireTime) {
 
     while (!isRxNotEmpty(spi)) {
         if (hasTickExpired(expireTime))
