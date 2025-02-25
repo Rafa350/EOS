@@ -35,9 +35,6 @@ static bool waitTransmissionCompleteFlag(USART_TypeDef *usart, unsigned expireTi
 static bool waitTransmissionBufferEmptyFlag(USART_TypeDef *usart, unsigned expireTime);
 static bool waitReceptionBufferNotEmptyFlag(USART_TypeDef *usart, unsigned expireTime);
 
-static void clearTransmissionCompleteFlag(USART_TypeDef *usart);
-static void clearReceiverTimeOutFlag(USART_TypeDef *usart);
-
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
@@ -66,6 +63,7 @@ eos::Result UARTDevice::initialize() {
 		disable(_usart);
 
 		_usart->CR2 &= ~(
+			USART_CR2_RTOEN |  // RTO deshabilitat
 			#if defined(EOS_PLATFORM_STM32G0)
 	    	USART_CR2_LINEN |  // Modus sincron, deshabilita LIN
 			#endif
@@ -130,7 +128,6 @@ eos::Result UARTDevice::setProtocol(
 		setWordBits(_usart, wordBits, parity != Parity::none);
 		setStopBits(_usart, stopBits);
 		setHandsake(_usart, handsake);
-		setReceiveTimeout(_usart, 11 * 100);
 		return Results::success;
 	}
 	else
@@ -492,27 +489,18 @@ void UARTDevice::interruptService() {
 		// Comprova si es un error PARITY
 		//
 		if ((ISR & USART_ISR_PE) && (CR1 & USART_CR1_PEIE)) {
-
-			// Borra el flag
-			//
 			_usart->ICR = USART_ICR_PECF;
 		}
 
 		// Comprova si hi ha error FRAME
 		//
 	    if ((ISR & USART_ISR_FE) && (CR3 & USART_CR3_EIE)) {
-
-			// Borra el flag
-			//
 	    	_usart->ICR = USART_ICR_FECF;
 	    }
 
 	    // Comprova si es un error NOISE
 	    //
 	    if ((ISR & USART_ISR_NE) && (CR3 & USART_CR3_EIE)) {
-
-			// Borra el flag
-			//
 	    	_usart->ICR = USART_ICR_NCF;
 	    }
 
@@ -521,9 +509,6 @@ void UARTDevice::interruptService() {
 		if ((ISR & USART_ISR_ORE) &&
 			(CR1 & USART_CR1_RXNEIE) &&
 			(CR3 & USART_CR3_EIE)) {
-
-			// Borra el flag
-			//
 			_usart->ICR = USART_ICR_ORECF;
 		}
 	}
@@ -534,27 +519,23 @@ void UARTDevice::interruptService() {
 		// Interrupcio 'TXE'
 		//
 		if ((CR1 & USART_CR1_TXEIE) && (ISR & USART_ISR_TXE)) {
-
 			if (_txCount < _txMaxCount) {
 				_usart->TDR = _txBuffer[_txCount++];
 				if (_txCount == _txMaxCount) {
-
-					ATOMIC_CLEAR_BIT(_usart->CR1,
-						USART_CR1_TXEIE); // Deshabilita interrupcio TXE
-					ATOMIC_SET_BIT(_usart->CR1,
-						USART_CR1_TCIE);          // Habilita interrupcio TC
+					auto a = startATOMIC();
+					_usart->CR1 &= ~USART_CR1_TXEIE;   // Deshabilita interrupcio TXE
+					_usart->CR1 |= USART_CR1_TCIE;     // Habilita interrupcio TC
+					endATOMIC(a);
 				}
 			}
 		}
 
 		// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
 		//
-		if ((CR1 & USART_CR1_TCIE) && (CR1 & USART_CR1_TCIE)) {
-
-			clearTransmissionCompleteFlag(_usart);
+		if ((CR1 & USART_CR1_TCIE) && (ISR & USART_ISR_TC)) {
+			_usart->ICR = USART_ICR_TCCF;
 			disableTransmission(_usart);
 			notifyTxCompleted(_txBuffer, _txCount, true);
-
 			_state = State::ready;
 		}
 
@@ -564,27 +545,30 @@ void UARTDevice::interruptService() {
 			if (_rxCount < _rxMaxCount) {
 				_rxBuffer[_rxCount++] = _usart->RDR;
 				if (_rxCount == _rxMaxCount) {
-
 					disableReception(_usart);
 					notifyRxCompleted(_rxBuffer, _rxCount, true);
-
-					// Canvia l'estat
-					//
 					_state = State::ready;
 				}
+			}
+		}
+
+		// Interrupcio 'IDLE'
+		//
+		if ((CR1 & USART_CR1_IDLEIE) && (ISR & USART_ISR_IDLE)) {
+			_usart->ICR = USART_ICR_IDLECF;
+			if ((_state == State::receiving) && (_rxCount > 0)) {
+				disableReception(_usart);
+				notifyRxCompleted(_rxBuffer, _rxCount, true);
+				_state = State::ready;
 			}
 		}
 
 		// Interrupcio 'RTO'
 		//
 		if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
-
-			clearReceiverTimeOutFlag(_usart);
+			_usart->ICR = USART_ICR_RTOCF;
 			disableReception(_usart);
 			notifyRxCompleted(_rxBuffer, _rxCount, true);
-
-			// Canvia d'estat
-			//
 			_state = State::ready;
 		}
 	}
@@ -653,27 +637,18 @@ void UARTDevice::interruptService() {
 		// Comprova si es un error PARITY
 		//
 		if ((ISR & USART_ISR_PE) && (CR1 & USART_CR1_PEIE)) {
-
-			// Borra el flag
-			//
 			_usart->ICR = USART_ICR_PECF;
 		}
 
 		// Comprova si hi ha error FRAME
 		//
 	    if ((ISR & USART_ISR_FE) && (CR3 & USART_CR3_EIE)) {
-
-			// Borra el flag
-			//
 	    	_usart->ICR = USART_ICR_FECF;
 	    }
 
 	    // Comprova si es un error NOISE
 	    //
 	    if ((ISR & USART_ISR_NE) && (CR3 & USART_CR3_EIE)) {
-
-			// Borra el flag
-			//
 	    	_usart->ICR = USART_ICR_NECF;
 	    }
 
@@ -682,9 +657,6 @@ void UARTDevice::interruptService() {
 		if ((ISR & USART_ISR_ORE) &&
 			(CR1 & USART_CR1_RXNEIE_RXFNEIE) &&
 			(CR3 & (USART_CR3_RXFTIE | USART_CR3_EIE))) {
-
-			// Borra el flag
-			//
 			_usart->ICR = USART_ICR_ORECF;
 		}
 	}
@@ -706,7 +678,6 @@ void UARTDevice::interruptService() {
 			// Interrupcio 'TXE'
 			//
 			if ((CR1 & USART_CR1_TXEIE_TXFNFIE) && (ISR & USART_ISR_TXE_TXFNF)) {
-
 				if (_txCount < _txMaxCount) {
 					_usart->TDR = _txBuffer[_txCount++];
 					if (_txCount == _txMaxCount) {
@@ -721,12 +692,10 @@ void UARTDevice::interruptService() {
 
 			// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
 			//
-			if ((CR1 & USART_CR1_TCIE) && (CR1 & USART_CR1_TCIE)) {
-
-				clearTransmissionCompleteFlag(_usart);
+			if ((CR1 & USART_CR1_TCIE) && (ISR & USART_ISR_TC)) {
+				_usart->ICR = USART_ICR_TCCF;
 				disableTransmission(_usart);
 				notifyTxCompleted(_txBuffer, _txCount, true);
-
 				_state = State::ready;
 			}
 
@@ -747,32 +716,29 @@ void UARTDevice::interruptService() {
 				}
 			}
 
+			// Interrupcio 'IDLE'
+			//
+			if ((CR1 & USART_CR1_IDLEIE) && (ISR & USART_ISR_IDLE)) {
+				_usart->ICR = USART_ICR_IDLECF;
+				if ((_state == State::receiving) && (_rxCount > 0)) {
+					disableReception(_usart);
+					notifyRxCompleted(_rxBuffer, _rxCount, true);
+					_state = State::ready;
+				}
+			}
+
 			// Interrupcio 'RTO'
 			//
 			if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
-
-				clearReceiverTimeOutFlag(_usart);
+				_usart->ICR = USART_ICR_RTOCF;
 				disableReception(_usart);
 				notifyRxCompleted(_rxBuffer, _rxCount, true);
-
-				// Canvia d'estat
-				//
 				_state = State::ready;
 			}
 		}
 	}
 }
 #endif
-
-
-void UARTDevice::txInterruptService() {
-
-}
-
-
-void UARTDevice::rxInterruptService() {
-
-}
 
 
 /// ----------------------------------------------------------------------
@@ -1163,28 +1129,6 @@ static void setReceiveTimeout(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Borra el flag 'TC'
-/// \param    usart: Registres de de hardware del dispositiu
-///
-static inline void clearTransmissionCompleteFlag(
-	USART_TypeDef *usart) {
-
-	usart->ICR = USART_ICR_TCCF;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Borra el flag 'RTO'
-/// \param    usart: Registres de de hardware del dispositiu
-///
-static inline void clearReceiverTimeOutFlag(
-	USART_TypeDef *usart) {
-
-	usart->ICR = USART_ICR_RTOCF;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Espera l'activacio del flag TC
 /// \param    usart: Registres de hardware del dispositiu.
 /// \param    timeout: El temps maxim d'espera en ticks.
@@ -1381,22 +1325,34 @@ static void enableReception(
 static void enableReceptionIRQ(
 	USART_TypeDef *usart) {
 
+	usart->ICR =
+		USART_ICR_RTOCF |           // Borra el flag RTO
+		USART_ICR_IDLECF;           // Borra el flag IDLE
+
 	auto a = startATOMIC();
 	usart->CR1 |=
-		USART_CR1_RE |              // Habilita la recepcio
 		USART_CR1_PEIE |            // Habilita interrupcio PE
 		#if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
 		#else
 		USART_CR1_RXNEIE |          // Habilita interrupcio RXNE
 		#endif
-		USART_CR1_RTOIE;            // Habilita interrupcio RTO
+		USART_CR1_RE;               // Habilita la recepcio
+
+	// Activa RTO si es posible, si no, activa IDLE
+	// Notes:  Si RTO no esta suportat RTOEN sempre estara a zero per hardware
+	//
+	if (usart->CR2 & USART_CR2_RTOEN)
+		usart->CR1 |= USART_CR1_RTOIE;   // Habilita interrupcio RTO
+	else
+		usart->CR1 |= USART_CR1_IDLEIE;  // Habilita interrupcio IDLE
+
 	endATOMIC(a);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desabilita la recepcio.
+/// \brief    Deshabilita la recepcio.
 /// \param    usart: Registres de hardware del dispositiu.
 ///
 static void disableReception(
@@ -1413,6 +1369,7 @@ static void disableReception(
 		USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
 #endif
 		USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
+		USART_CR1_IDLEIE |         // Deshabilita interrupcio IDLE
 		USART_CR1_PEIE |           // Deshabilita interrupcio PE
 		USART_CR1_RE);             // Deshabilita recepcio
 
