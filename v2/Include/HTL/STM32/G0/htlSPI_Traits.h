@@ -9,9 +9,7 @@
 
 
 namespace htl {
-
 	namespace spi {
-
 		namespace internal {
 
 			#ifdef HTL_SPI1_EXIST
@@ -43,5 +41,6 @@ namespace htl {
 		}
 	}
 }
+
 
 #endif // __STM32G0_htlSPI_Traits__

@@ -16,7 +16,6 @@
 
 
 namespace htl {
-
 	namespace clock {
 
 		enum class ClockID {
@@ -147,6 +146,7 @@ namespace htl {
 
                 static unsigned getClockFrequency(ClockID clockId);
         };
+
 	}
 }
 

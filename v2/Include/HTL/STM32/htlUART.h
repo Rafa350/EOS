@@ -8,17 +8,27 @@
 /// \brief     UART device manager.
 
 
-// EOS includes
+// HTL main include
 //
 #include "HTL/STM32/htl.h"
-#include "HTL/STM32/htlGPIO.h"
-#include "HTL/STM32/htlDMA.h"
 
 
 // Default options
 //
-#ifndef HTL_OPTION_UART_ENABLE_DMA
-    #define HTL_OPTION_UART_ENABLE_DMA 1
+#ifndef HTL_UART_OPTION_IT
+    #define HTL_UART_OPTION_IRQ 1      // Habilita comunicacio per interrupcions
+#endif
+
+#ifndef HTL_UART_OPTION_DMA
+    #define HTL_UART_OPTION_DMA 1      // Habilita comunicacio per dma
+#endif
+
+
+// HTL includes
+//
+#include "HTL/STM32/htlGPIO.h"
+#if HTL_UART_OPTION_DMA == 1
+#include "HTL/STM32/htlDMA.h"
 #endif
 
 
@@ -75,12 +85,11 @@ namespace htl {
         /// Nombre de bits de paraula.
         ///
 		enum class WordBits {
-			#if defined(EOS_PLATFORM_STM32F4) || \
-			    defined(EOS_PLATFORM_STM32F7)
-				_7,
+			#if defined(EOS_PLATFORM_STM32G0)
+			word7,
 			#endif
-			_8,
-			_9
+			word8,
+			word9
 		};
 
         /// Nombre de bits de parada.
@@ -188,7 +197,9 @@ namespace htl {
         ///
 		class UARTDevice {
 			public:
+#if HTL_UART_OPTION_DMA == 1
                 using DevDMA = htl::dma::DMADevice;
+#endif
 
                 /// Estats en que es troba el dispositiu.
                 ///
@@ -201,8 +212,10 @@ namespace htl {
 				};
 
 			private:
+#if HTL_UART_OPTION_DMA == 1
 				using DMANotifyEvent = htl::dma::NotifyEvent<UARTDevice>;
 				using DMANotifyEventArgs = htl::dma::NotifyEventArgs;
+#endif
 
 			private:
 				USART_TypeDef * const _usart;   ///< Instancia del dispositiu.
@@ -214,7 +227,9 @@ namespace htl {
 				unsigned _txCount;              ///< Contador de bytes transmesos.
 				unsigned _txMaxCount;           ///< Maxim del contador de bytes rebuts.
 				NotifyEventRaiser _erNotify;    ///< Event de notificacio
+#if HTL_UART_OPTION_DMA == 1
 				DMANotifyEvent _dmaNotifyEvent; ///< Event de notificacio del DMA.
+#endif
 
 			private:
 				UARTDevice(const UARTDevice &) = delete;
@@ -222,11 +237,15 @@ namespace htl {
 
 				void notifyTxCompleted(const uint8_t *buffer, unsigned length, bool irq);
 				void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
+#if HTL_UART_OPTION_DMA == 1
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
+#endif
 
 			protected:
 				UARTDevice(USART_TypeDef *usart);
+#if HTL_UART_OPTION_IRQ == 1
 				void interruptService();
+#endif
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;
 
@@ -252,10 +271,15 @@ namespace htl {
 
 				eos::Result transmit(const uint8_t *buffer, unsigned length, unsigned timeout);
 				eos::Result receive(uint8_t *buffer, unsigned bufferSize, unsigned timeout);
+
+#if HTL_UART_OPTION_IRQ == 1
 				eos::Result transmit_IRQ(const uint8_t *buffer, unsigned length);
 				eos::Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
+#endif
+#if HTL_UART_OPTION_DMA == 1
 				eos::Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned length);
 				eos::Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
+#endif
 				eos::Result abortTransmission();
 				eos::Result abortReception();
 
@@ -300,9 +324,11 @@ namespace htl {
 				}
 
 			public:
+#if HTL_UART_OPTION_IRQ == 1
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
+#endif
 
 				template <typename pin_>
 				inline void initPinTX() {
@@ -358,7 +384,7 @@ namespace htl {
 			using UARTDevice8 = UARTDeviceX<DeviceID::uart8>;
 		#endif
 
-#ifndef EOS_PLATFORM_STM32F0
+#ifdef EOS_PLATFORM_STM32F4
 		namespace internal {
 
 			#ifdef HTL_UART1_EXIST
@@ -482,18 +508,23 @@ namespace htl {
 
 
 #if defined(EOS_PLATFORM_STM32G030)
+#include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G030/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G031)
+#include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G031/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G051)
+#include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G051/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
+	#include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G071/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G0B1)
+    #include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G0B1/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)

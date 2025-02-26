@@ -22,13 +22,21 @@ static void enable(USART_TypeDef *usart);
 static void disable(USART_TypeDef *usart);
 
 static void enableTransmission(USART_TypeDef *usart);
+#if HTL_UART_OPTION_IRQ == 1
 static void enableTransmissionIRQ(USART_TypeDef *usart);
+#endif
+#if HTL_UART_OPTION_DMA == 1
 static void enableTransmissionDMA(USART_TypeDef *usart);
+#endif
 static void disableTransmission(USART_TypeDef *usart);
 
 static void enableReception(USART_TypeDef *usart);
+#if HTL_UART_OPTION_IRQ == 1
 static void enableReceptionIRQ(USART_TypeDef *usart);
+#endif
+#if HTL_UART_OPTION_DMA == 1
 static void enableReceptionDMA(USART_TypeDef *usart);
+#endif
 static void disableReception(USART_TypeDef *usart);
 
 static bool waitTransmissionCompleteFlag(USART_TypeDef *usart, unsigned expireTime);
@@ -44,8 +52,11 @@ UARTDevice::UARTDevice(
 	USART_TypeDef *usart):
 
 	_usart {usart},
-	_state {State::invalid},
-	_dmaNotifyEvent {*this, &UARTDevice::dmaNotifyEventHandler} {
+	_state {State::invalid}
+#if HTL_UART_OPTION_DMA == 1
+	, _dmaNotifyEvent {*this, &UARTDevice::dmaNotifyEventHandler}
+#endif
+	{
 
 	_state = State::reset;
 }
@@ -287,6 +298,7 @@ eos::Result UARTDevice::transmit(
 /// \param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
+#if HTL_UART_OPTION_IRQ == 1
 eos::Result UARTDevice::transmit_IRQ(
 	const uint8_t *buffer,
 	unsigned length) {
@@ -310,6 +322,7 @@ eos::Result UARTDevice::transmit_IRQ(
 	else
 		return Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -319,6 +332,7 @@ eos::Result UARTDevice::transmit_IRQ(
 /// \param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
+#if HTL_UART_OPTION_DMA == 1
 eos::Result UARTDevice::transmit_DMA(
     dma::DMADevice *devDMA,
     const uint8_t *buffer,
@@ -348,6 +362,7 @@ eos::Result UARTDevice::transmit_DMA(
     else
         return Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -416,6 +431,7 @@ eos::Result UARTDevice::receive(
 /// \param    bufferSize: Tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
+#if HTL_UART_OPTION_IRQ == 1
 eos::Result UARTDevice::receive_IRQ(
 	uint8_t *buffer,
 	unsigned bufferSize) {
@@ -439,6 +455,7 @@ eos::Result UARTDevice::receive_IRQ(
 	else
 		return Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -448,6 +465,7 @@ eos::Result UARTDevice::receive_IRQ(
 /// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
+#if HTL_UART_OPTION_DMA == 1
 eos::Result UARTDevice::receive_DMA(
     dma::DMADevice *devDMA,
     uint8_t *buffer,
@@ -455,6 +473,7 @@ eos::Result UARTDevice::receive_DMA(
 
 	return Results::error;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -475,6 +494,7 @@ eos::Result UARTDevice::abortReception() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.
 ///
+#if HTL_UART_OPTION_IRQ == 1
 #if defined(EOS_PLATFORM_STM32F0)
 void UARTDevice::interruptService() {
 
@@ -681,7 +701,6 @@ void UARTDevice::interruptService() {
 				if (_txCount < _txMaxCount) {
 					_usart->TDR = _txBuffer[_txCount++];
 					if (_txCount == _txMaxCount) {
-
 						ATOMIC_CLEAR_BIT(_usart->CR1,
 							USART_CR1_TXEIE_TXFNFIE); // Deshabilita interrupcio TXE
 						ATOMIC_SET_BIT(_usart->CR1,
@@ -705,12 +724,8 @@ void UARTDevice::interruptService() {
 				if (_rxCount < _rxMaxCount) {
 					_rxBuffer[_rxCount++] = _usart->RDR;
 					if (_rxCount == _rxMaxCount) {
-
 						disableReception(_usart);
 						notifyRxCompleted(_rxBuffer, _rxCount, true);
-
-						// Canvia l'estat
-						//
 						_state = State::ready;
 					}
 				}
@@ -739,6 +754,7 @@ void UARTDevice::interruptService() {
 	}
 }
 #endif
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -746,6 +762,7 @@ void UARTDevice::interruptService() {
 /// \param    devDMA: El dispositiu DMA que genera l'event.
 /// \param    args: Parametres del event.
 ///
+#if HTL_UART_OPTION_DMA == 1
 void UARTDevice::dmaNotifyEventHandler(
     DevDMA *devDMA,
     DMANotifyEventArgs &args) {
@@ -770,6 +787,7 @@ void UARTDevice::dmaNotifyEventHandler(
         	break;
     }
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -1054,36 +1072,53 @@ static void setWordBits(
     WordBits wordBits,
     bool useParity) {
 
-    auto numBits = 7 + uint32_t(wordBits) + (useParity ? 0 : 1);
+	auto numBits = useParity? 1 : 0;
+	switch (wordBits) {
+		#if defined(EOS_PLATFORM_STM32G0)
+		case WordBits::word7:
+			numBits += 7;
+			break;
+		#endif
 
-    auto tmp = usart->CR1;
-    switch (numBits) {
-        #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-        case 7:
-            tmp |= USART_CR1_M1;
-            tmp &= ~USART_CR1_M0;
-            break;
-        #endif
+		case WordBits::word8:
+			numBits += 8;
+			break;
 
-        case 8:
-            #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-            tmp &= ~USART_CR1_M1;
-            tmp &= ~USART_CR1_M0;
-            #else
-            tmp &= ~USART_CR1_M;
-            #endif
-            break;
+		case WordBits::word9:
+			numBits += 9;
+			break;
+	}
 
-        case 9:
-            #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-            tmp &= ~USART_CR1_M1;
-            tmp |= USART_CR1_M0;
-            #else
-            tmp |= USART_CR1_M;
-            #endif
-            break;
-    }
-    usart->CR1 = tmp;
+	auto a = startATOMIC();
+	auto CR1 = usart->CR1;
+	#if defined(EOS_PLATFORM_STM32G0)
+	switch (numBits) {
+		case 7:
+			CR1 &= ~USART_CR1_M0;
+			CR1 |= USART_CR1_M1;
+			break;
+
+		default:
+		case 8:
+			CR1 &= ~USART_CR1_M0;
+			CR1 &= ~USART_CR1_M1;
+			break;
+
+		case 9:
+			CR1 |= USART_CR1_M0;
+			CR1 &= ~USART_CR1_M1;
+			break;
+	}
+	#elif defined(EOS_PLATFORM_STM32F0)
+	if (numBits == 8)
+		CR1 &= ~USART_CR1_M;
+	else
+		CR1 |= USART_CR1_M;
+	#else
+	#error "Unknown platform"
+	#endif
+	usart->CR1 = CR1;
+	endATOMIC(a);
 }
 
 
@@ -1242,6 +1277,7 @@ static void enableTransmission(
 /// \brief    Habilita la transmissio de dades en modus IRQ
 /// \param    usart: Registres de hardware del dispositiu.
 ///
+#if HTL_UART_OPTION_IRQ == 1
 static void enableTransmissionIRQ(
 	USART_TypeDef *usart) {
 
@@ -1257,12 +1293,14 @@ static void enableTransmissionIRQ(
 		USART_CR1_TE;             // Habilita la transmissio
 	endATOMIC(a);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la transmissio de dades en modus DMA
 /// \param    usart: Registres de hardware del dispositiu.
 ///
+#if HTL_UART_OPTION_DMA == 1
 static void enableTransmissionDMA(
 	USART_TypeDef *usart) {
 
@@ -1273,6 +1311,7 @@ static void enableTransmissionDMA(
     usart->CR3 |= USART_CR3_DMAT;  // Habilita DMA
     endATOMIC(a);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -1322,6 +1361,7 @@ static void enableReception(
 /// \brief    Habilita la recepcio en modus IRQ.
 /// \param    usart: Registres de hardware del dispoositiu.
 ///
+#if HTL_UART_OPTION_IRQ == 1
 static void enableReceptionIRQ(
 	USART_TypeDef *usart) {
 
@@ -1349,6 +1389,7 @@ static void enableReceptionIRQ(
 
 	endATOMIC(a);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
