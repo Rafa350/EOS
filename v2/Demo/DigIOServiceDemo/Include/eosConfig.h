@@ -15,9 +15,6 @@
 #define EOS_USE_STD_STRING
 
 
-#include "board/eosBoard.h"
-
-
 #ifdef __cplusplus
 
 #include "HTL/htlTMR.h"

@@ -5,14 +5,31 @@
 
 /// \file      htlSPI.h
 /// \author    Rafael Serrano (rsr.openware@gmail.com)
-/// \brief     UART device manager.
+/// \brief     SPI device manager.
 
 
-// EOS includes
+// HTL main includes
 //
 #include "HTL/STM32/htl.h"
+
+
+// Default options
+//
+#ifndef HTL_SPI_OPTION_IT
+    #define HTL_SPI_OPTION_IRQ 1      // Habilita comunicacio per interrupcions
+#endif
+
+#ifndef HTL_SPI_OPTION_DMA
+    #define HTL_SPI_OPTION_DMA 1      // Habilita comunicacio per dma
+#endif
+
+
+// HTL includes
+//
 #include "HTL/STM32/htlGPIO.h"
+#if HTL_SPI_OPTION_DMA == 1
 #include "HTL/STM32/htlDMA.h"
+#endif
 
 
 namespace htl {
@@ -385,8 +402,8 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32F030)
     #include "htl/STM32/F0/F030/htlSPI_Pins.h"
 
-#elif defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/F4/htlSPI_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F429)
+    #include "htl/STM32/F4/F429/htlSPI_Pins.h"
 	#include "htl/STM32/F4/htlSPI_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)

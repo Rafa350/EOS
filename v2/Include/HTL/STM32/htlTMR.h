@@ -323,221 +323,32 @@ namespace htl {
 		#ifdef HTL_TMR17_EXIST
 		using TMRDevice17 = TMRDeviceX<DeviceID::tmr17>;
 		#endif
-
-
-		#ifndef EOS_PLATFORM_STM32F0
-		namespace internal {
-			#ifdef HTL_TMR1_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr1> {
-				static constexpr uint32_t timAddr = TIM1_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
-				static constexpr uint32_t enablePos = RCC_APBENR2_TIM1EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-				static constexpr uint32_t enablePos = RCC_APB2ENR_TIM1EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-				static constexpr uint32_t enablePos = RCC_APB2ENR_TIM1EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR2_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr2> {
-				static constexpr uint32_t timAddr = TIM2_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t enablePos = RCC_APBENR1_TIM2EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM2EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR3_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr3> {
-				static constexpr uint32_t timAddr = TIM3_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t enablePos = RCC_APBENR1_TIM3EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM3EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM3EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR4_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr4> {
-				static constexpr uint32_t timAddr = TIM4_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM4EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR5_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr5> {
-				static constexpr uint32_t timAddr = TIM5_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM5EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR6_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr6> {
-				static constexpr uint32_t timAddr = TIM6_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t enablePos = RCC_APBENR1_TIM6EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM6EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM6EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR7_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr7> {
-				static constexpr uint32_t timAddr = TIM7_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t enablePos = RCC_APBENR1_TIM7EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM7EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR8_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr8> {
-				static constexpr uint32_t timAddr = TIM8_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-				static constexpr uint32_t enablePos = RCC_APB2ENR_TIM8EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR9_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr9> {
-				static constexpr uint32_t timAddr = TIM9_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-				static constexpr uint32_t enablePos = RCC_APB2ENR_TIM9EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR10_EXIST
-			template <>
-			struct TMRTraits<DeviceID::_10> {
-				static constexpr uint32_t timAddr = TIM10_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-				static constexpr uint32_t enablePos = RCC_APB2ENR_TIM10EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR11_EXIST
-			template <>
-			struct TMRTraits<DeviceID::_11> {
-				static constexpr uint32_t timAddr = TIM11_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-				static constexpr uint32_t enablePos = RCC_APB2ENR_TIM11EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR12_EXIST
-			template <>
-			struct TMRTraits<DeviceID::_12> {
-				static constexpr uint32_t timAddr = TIM12_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM12EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR13_EXIST
-			template <>
-			struct TMRTraits<DeviceID::_13> {
-				static constexpr uint32_t timAddr = TIM13_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM13EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_TMR14_EXIST
-			template <>
-			struct TMRTraits<DeviceID::tmr14> {
-				static constexpr uint32_t timAddr = TIM14_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
-				static constexpr uint32_t enablePos = RCC_APBENR2_TIM14EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F0)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM14EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM14EN_Pos;
-				#endif
-			};
-			#endif
-		}
-		#endif
 	}
 }
 
 #if defined(EOS_PLATFORM_STM32G030)
-    #include "htl/STM32/G0/G030/htlTMR_Pins.h"
 	#include "htl/STM32/G0/htlTMR_Traits.h"
+    #include "htl/STM32/G0/G030/htlTMR_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G031)
-    #include "htl/STM32/G0/G031/htlTMR_Pins.h"
 	#include "htl/STM32/G0/htlTMR_Traits.h"
+    #include "htl/STM32/G0/G031/htlTMR_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
+	#include "htl/STM32/G0/htlTMR_Traits.h"
     #include "htl/STM32/G0/G071/htlTMR_Pins.h"
-	//#include "htl/STM32/G0/htlTMR_Traits.h"
 
 #elif defined(EOS_PLATFORM_STM32G0B1)
-    #include "htl/STM32/G0/G0B1/htlTMR_Pins.h"
 	#include "htl/STM32/G0/htlTMR_Traits.h"
+    #include "htl/STM32/G0/G0B1/htlTMR_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F030)
-    #include "htl/STM32/F0/F030/htlTMR_Pins.h"
 	#include "htl/STM32/F0/htlTMR_Traits.h"
+    #include "htl/STM32/F0/F030/htlTMR_Pins.h"
 
-#elif defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/F4/htlTMR_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F429)
 	#include "htl/STM32/F4/htlTMR_Traits.h"
+    #include "htl/STM32/F4/F429/htlTMR_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
     #include "htl/STM32/F7/htlTMR_Pins.h"

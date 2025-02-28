@@ -1,0 +1,177 @@
+<alternatePins>
+	<file path="HTL/STM32/F4/F429/htlLTDC_Pins.h" 
+		  namespace="htl::ltdc::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32F429)"
+		  conditionErrorMessage="Unsupported platform">
+		<device device="DeviceID::ltdc" condition="defined(HTL_LTDC_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="de">
+				<pin port="F" pin="10" value="14"/>
+				<pin port="E" pin="13" value="14"/>
+				<pin port="K" pin="7" value="14"/>
+			</function>
+			
+			<function pinFunction="pc">
+				<pin port="E" pin="14" value="14"/>
+				<pin port="G" pin="7" value="14"/>
+				<pin port="I" pin="14" value="14"/>
+			</function>
+
+			<function pinFunction="hsync">
+				<pin port="C" pin="6" value="14"/>
+				<pin port="I" pin="10" value="14"/>
+				<pin port="I" pin="12" value="14"/>
+			</function>
+
+			<function pinFunction="vsync">
+				<pin port="A" pin="4" value="14"/>
+				<pin port="I" pin="9" value="14"/>
+				<pin port="I" pin="13" value="14"/>
+			</function>
+
+			<function pinFunction="r0">
+				<pin port="I" pin="15" value="14"/>
+				<pin port="H" pin="2" value="14"/>
+			</function>
+
+			<function pinFunction="r1">
+				<pin port="J" pin="0" value="14"/>
+				<pin port="A" pin="2" value="14"/>
+				<pin port="H" pin="3" value="14"/>
+			</function>
+
+			<function pinFunction="r2">
+				<pin port="A" pin="1" value="14"/>
+				<pin port="C" pin="10" value="14"/>
+				<pin port="H" pin="8" value="14"/>
+				<pin port="J" pin="1" value="14"/>
+			</function>
+
+			<function pinFunction="r3">
+				<pin port="H" pin="9" value="14"/>
+				<pin port="B" pin="0" value="14"/>
+				<pin port="J" pin="2" value="14"/>
+			</function>
+
+			<function pinFunction="r4">
+				<pin port="A" pin="5" value="14"/>
+				<pin port="A" pin="11" value="14"/>
+				<pin port="H" pin="10" value="14"/>
+				<pin port="J" pin="3" value="14"/>
+			</function>
+
+			<function pinFunction="r5">
+				<pin port="H" pin="11" value="14"/>
+				<pin port="A" pin="12" value="14"/>
+				<pin port="J" pin="4" value="14"/>
+			</function>
+
+			<function pinFunction="r6">
+				<pin port="A" pin="8" value="14"/>
+				<pin port="B" pin="1" value="9"/>
+				<pin port="H" pin="12" value="14"/>
+				<pin port="J" pin="5" value="14"/>
+			</function>
+
+			<function pinFunction="r7">
+				<pin port="E" pin="15" value="14"/>
+				<pin port="G" pin="6" value="14"/>
+				<pin port="J" pin="6" value="14"/>
+			</function>
+
+			<function pinFunction="b0">
+				<pin port="E" pin="4" value="14"/>
+				<pin port="J" pin="12" value="14"/>
+			</function>
+
+			<function pinFunction="b1">
+				<pin port="G" pin="12" value="14"/>
+				<pin port="J" pin="13" value="14"/>
+			</function>
+
+			<function pinFunction="b2">
+				<pin port="D" pin="6" value="14"/>
+				<pin port="G" pin="10" value="14"/>
+				<pin port="J" pin="14" value="14"/>
+			</function>
+
+			<function pinFunction="b3">
+				<pin port="G" pin="11" value="14"/>
+				<pin port="D" pin="10" value="14"/>
+				<pin port="J" pin="15" value="14"/>
+			</function>
+
+			<function pinFunction="b4">
+				<pin port="E" pin="12" value="14"/>
+				<pin port="G" pin="12" value="9"/>
+				<pin port="I" pin="4" value="14"/>
+				<pin port="K" pin="3" value="14"/>
+			</function>
+
+			<function pinFunction="b5">
+				<pin port="I" pin="5" value="14"/>
+				<pin port="A" pin="3" value="14"/>
+				<pin port="K" pin="4" value="14"/>
+			</function>
+
+			<function pinFunction="b6">
+				<pin port="B" pin="8" value="14"/>
+				<pin port="I" pin="6" value="14"/>
+				<pin port="K" pin="5" value="14"/>
+			</function>
+
+			<function pinFunction="b7">
+				<pin port="I" pin="7" value="14"/>
+				<pin port="B" pin="9" value="14"/>
+				<pin port="K" pin="6" value="14"/>
+			</function>
+
+			<function pinFunction="g0">
+				<pin port="E" pin="5" value="14"/>
+				<pin port="J" pin="7" value="14"/>
+			</function>
+
+			<function pinFunction="g1">
+				<pin port="E" pin="6" value="14"/>
+				<pin port="J" pin="8" value="14"/>
+			</function>
+
+			<function pinFunction="g2">
+				<pin port="A" pin="6" value="14"/>
+				<pin port="J" pin="9" value="14"/>
+				<pin port="H" pin="13" value="14"/>
+			</function>
+			
+			<function pinFunction="g3">
+				<pin port="H" pin="14" value="14"/>
+				<pin port="E" pin="11" value="14"/>
+				<pin port="G" pin="10" value="9"/>
+				<pin port="J" pin="10" value="14"/>
+			</function>
+
+			<function pinFunction="g4">
+				<pin port="B" pin="10" value="14"/>
+				<pin port="H" pin="15" value="14"/>
+				<pin port="J" pin="11" value="14"/>
+			</function>
+
+			<function pinFunction="g5">
+				<pin port="I" pin="0" value="14"/>
+				<pin port="B" pin="11" value="14"/>
+				<pin port="K" pin="0" value="14"/>
+			</function>
+
+			<function pinFunction="g6">
+				<pin port="C" pin="7" value="14"/>
+				<pin port="I" pin="1" value="14"/>
+				<pin port="K" pin="1" value="14"/>
+			</function>
+
+			<function pinFunction="g7">
+				<pin port="I" pin="2" value="14"/>
+				<pin port="D" pin="3" value="14"/>
+				<pin port="K" pin="2" value="14"/>
+			</function>
+
+		</device>
+	</file>
+</alternatePins>

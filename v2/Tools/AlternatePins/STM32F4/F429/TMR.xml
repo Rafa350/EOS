@@ -1,0 +1,23 @@
+<alternatePins>
+	<file path="HTL/STM32/F4/F429/htlTMR_Pins.h" 
+		  namespace="htl::tmr::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32F429)"
+		  conditionErrorMessage="Unsupported platform">
+		<device device="DeviceID::tmr3" condition="defined(HTL_TMR3_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="ch1">
+				<pin port="A" pin="6" value="1"/>
+				<pin port="B" pin="4" value="1"/>
+			</function>
+			<function pinFunction="ch2">
+				<pin port="A" pin="7" value="1"/>
+				<pin port="B" pin="5" value="1"/>
+			</function>
+			<function pinFunction="ch3">
+				<pin port="B" pin="0" value="1"/>
+			</function>
+			<function pinFunction="ch4">
+				<pin port="B" pin="1" value="1"/>
+			</function>
+		</device>
+	</file>
+</alternatePins>

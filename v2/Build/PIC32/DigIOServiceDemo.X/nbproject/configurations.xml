@@ -14,7 +14,6 @@
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
           <logicalFolder name="f5" displayName="Board" projectFiles="true">
-            <itemPath>../../../Include/Board/eosBoard.h</itemPath>
             <itemPath>../../../Include/Board/eosBoard_PIC32_USB_STARTER_KIT_I.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f6" displayName="Controllers" projectFiles="true">
@@ -82,6 +81,7 @@
           <itemPath>../../../Include/eosAssert.h</itemPath>
           <itemPath>../../../Include/eosPlatform.h</itemPath>
           <itemPath>../../../Include/eosToolchain.h</itemPath>
+          <itemPath>../../../Include/eosBoard.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>

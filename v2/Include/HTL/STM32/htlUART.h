@@ -15,16 +15,16 @@
 
 // Default options
 //
-#ifndef HTL_UART_OPTION_IT
-    #define HTL_UART_OPTION_IRQ 1      // Habilita comunicacio per interrupcions
+#ifndef HTL_UART_OPTION_IRQ
+    #define HTL_UART_OPTION_IRQ HTL_UART_DEFAULT_OPTION_IRQ
 #endif
 
 #ifndef HTL_UART_OPTION_DMA
-    #define HTL_UART_OPTION_DMA 1      // Habilita comunicacio per dma
+    #define HTL_UART_OPTION_DMA HTL_UART_DEFAULT_OPTION_DMA
 #endif
 
 
-// HTL includes
+// HTL aditional includes
 //
 #include "HTL/STM32/htlGPIO.h"
 #if HTL_UART_OPTION_DMA == 1
@@ -508,15 +508,15 @@ namespace htl {
 
 
 #if defined(EOS_PLATFORM_STM32G030)
-#include "htl/STM32/G0/htlUART_Traits.h"
+    #include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G030/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G031)
-#include "htl/STM32/G0/htlUART_Traits.h"
+    #include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G031/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G051)
-#include "htl/STM32/G0/htlUART_Traits.h"
+    #include "htl/STM32/G0/htlUART_Traits.h"
     #include "htl/STM32/G0/G051/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32G071)
@@ -531,8 +531,9 @@ namespace htl {
 	#include "htl/STM32/F0/htlUART_Traits.h"
     #include "htl/STM32/F0/F030/htlUART_Pins.h"
 
-#elif defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/F4/htlUART_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F429)
+	#include "htl/STM32/F4/htlUART_Traits.h"
+    #include "htl/STM32/F4/F429/htlUART_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
     #include "htl/STM32/F7/htlUART_Pins.h"

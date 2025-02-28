@@ -949,6 +949,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/F746</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F7/htlClock.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlClock.h</locationURI>
@@ -957,11 +962,6 @@
 			<name>inc/Framework/EOS/HTL/STM32/F7/htlINT_Vectors.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlINT_Vectors.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F7/htlLTDC_Pins.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlLTDC_Pins.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB</name>
@@ -1022,6 +1022,11 @@
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/F746/htlLTDC_Pins.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/F746/htlLTDC_Pins.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.cpp</name>

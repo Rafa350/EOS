@@ -70,7 +70,7 @@ void Device_ILI9341_SPI::writeCommand(
 
     _pinCS->clear();
     _pinRS->clear();
-    _devSPI->transmit(&data, 1, Tick(1000));
+    _devSPI->transmit(&data, 1, 1000);
     _pinCS->set();
 }
 
@@ -84,7 +84,7 @@ void Device_ILI9341_SPI::writeData(
 
     _pinCS->clear();
     _pinRS->set();
-    _devSPI->transmit(&data, 1, Tick(1000));
+    _devSPI->transmit(&data, 1, 1000);
     _pinCS->set();
 }
 
@@ -100,7 +100,7 @@ void Device_ILI9341_SPI::writeData(
 
     _pinCS->clear();
     _pinRS->set();
-    _devSPI->transmit(data, dataSize, Tick(1000));
+    _devSPI->transmit(data, dataSize, 1000);
     _pinCS->set();
 }
 
