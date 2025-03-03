@@ -701,10 +701,10 @@ void UARTDevice::interruptService() {
 				if (_txCount < _txMaxCount) {
 					_usart->TDR = _txBuffer[_txCount++];
 					if (_txCount == _txMaxCount) {
-						ATOMIC_CLEAR_BIT(_usart->CR1,
-							USART_CR1_TXEIE_TXFNFIE); // Deshabilita interrupcio TXE
-						ATOMIC_SET_BIT(_usart->CR1,
-							USART_CR1_TCIE);          // Habilita interrupcio TC
+						auto a = startATOMIC();
+						_usart->CR1 &= ~USART_CR1_TXEIE_TXFNFIE; // Deshabilita interrupcio TXE
+						_usart->CR1 |= USART_CR1_TCIE;           // Habilita interrupcio TC
+						endATOMIC(a);
 					}
 				}
 			}

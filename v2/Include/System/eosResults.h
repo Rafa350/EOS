@@ -86,12 +86,12 @@ namespace eos {
 			}
 	};
 
-	class ResultUINT: public ComplexResult<Results, unsigned> {
+	class ResultU32: public ComplexResult<Results, uint32_t> {
     public:
-        constexpr ResultUINT(Results result) :
+        constexpr ResultU32(Results result) :
             ComplexResult {result} {
         }
-        constexpr ResultUINT(Results result, unsigned value) :
+        constexpr ResultU32(Results result, unsigned value) :
             ComplexResult {result, value} {
         }
 		inline bool isSuccess() const {

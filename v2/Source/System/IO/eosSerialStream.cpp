@@ -11,9 +11,7 @@ using namespace eos;
 ///
 SerialStream::SerialStream() :
 
-	_drvSerial {nullptr},
-	_txCompletedEvent {*this, &SerialStream::txCompletedEventHandler},
-	_rxCompletedEvent {*this, &SerialStream::rxCompletedEventHandler} {
+	_drvSerial {nullptr} {
 }
 
 
@@ -24,34 +22,9 @@ SerialStream::SerialStream() :
 SerialStream::SerialStream(
 	SerialDriver *drvSerial) :
 
-	_drvSerial {nullptr},
-	_txCompletedEvent {*this, &SerialStream::txCompletedEventHandler},
-	_rxCompletedEvent {*this, &SerialStream::rxCompletedEventHandler} {
+	_drvSerial {nullptr} {
 
 	initialize(drvSerial);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    : Procesa l'event 'txCompleted'
-/// \params   : args : Parametres del event.
-///
-void SerialStream::txCompletedEventHandler(
-	const SerialDriver::TxCompletedEventArgs &args) {
-
-	_txCompleted.releaseISR();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    : Procesa l'event 'rxCompleted'
-/// \params   : args : Parametres del event.
-///
-void SerialStream::rxCompletedEventHandler(
-	const SerialDriver::RxCompletedEventArgs &args) {
-
-	_rxDataCount = args.length;
-	_rxCompleted.releaseISR();
 }
 
 
@@ -69,8 +42,6 @@ Result SerialStream::initialize(
 	if (_drvSerial == nullptr) {
 		_drvSerial = drvSerial;
 		_drvSerial->initialize();
-		_drvSerial->setTxCompletedEvent(_txCompletedEvent);
-		_drvSerial->setRxCompletedEvent(_rxCompletedEvent);
 		return Results::success;
 	}
 	else
@@ -111,10 +82,12 @@ Result SerialStream::write(
 
 	else {
 		_drvSerial->transmit(data, length);
-		if (_txCompleted.wait(_txTimeout)) {
+
+		auto result = _drvSerial->wait(_txTimeout);
+		if (result.isSuccess()) {
 
 			if (count != nullptr)
-				*count = length;
+				*count = result;
 
 			return Results::success;
 		}
@@ -144,10 +117,11 @@ Result SerialStream::read(
 	else {
 		_drvSerial->receive(data, size);
 
-		if (_rxCompleted.wait(_rxTimeout)) {
+		auto result = _drvSerial->wait(_rxTimeout);
+		if (result.isSuccess()) {
 
 			if (count != nullptr)
-				*count = _rxDataCount;
+				*count = result;
 
 			return Results::success;
 		}

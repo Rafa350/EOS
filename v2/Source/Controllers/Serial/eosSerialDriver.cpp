@@ -54,19 +54,19 @@ void SerialDriver::deinitialize() {
 /// \brief    Inicia una transmissio d'un bloc de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    length: Nombre de bytes en el buffer.
-/// \return   True si tot es correcte.
+/// \return   El resultat de l'operacio
 ///
-bool SerialDriver::transmit(
+Result SerialDriver::transmit(
     const uint8_t *buffer,
     unsigned length) {
 
     if (_state == State::ready) {
         onTransmit(buffer, length);
         _state = State::transmiting;
-        return true;
+        return Results::success;
     }
     else
-        return false;
+        return Results::busy;
 }
 
 
@@ -76,17 +76,42 @@ bool SerialDriver::transmit(
 /// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   True si tot es correcte.
 ///
-bool SerialDriver::receive(
+Result SerialDriver::receive(
     uint8_t *buffer,
     unsigned bufferSize) {
 
     if (_state == State::ready) {
         onReceive(buffer, bufferSize);
         _state = State::receiving;
-        return true;
+        return Results::success;
     }
     else
-        return false;
+        return Results::busy;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera que finalitzi l'es operacions pendents.
+/// \param    timeout: Tamps maxim d'espera.
+/// \return   El nombre de bytes transferits i el resultat.
+///
+ResultU32 SerialDriver::wait(
+	unsigned timeout) {
+
+	if (_state == State::receiving) {
+		if (_rxFinished.wait(timeout))
+			return ResultU32(Results::success, _rxCount);
+		else
+			return Results::timeout;
+	}
+	else if (_state == State::transmiting) {
+		if (_txFinished.wait(timeout))
+			return ResultU32(Results::success, _txCount);
+		else
+			return Results::timeout;
+	}
+	else
+		return Results::errorState;
 }
 
 
@@ -94,15 +119,15 @@ bool SerialDriver::receive(
 /// \brief    Aborta l'operacio en curs.
 /// \return   True si tot es correcte.
 ///
-bool SerialDriver::abort() {
+Result SerialDriver::abort() {
 
 	if ((_state == State::transmiting) || (_state == State::receiving)) {
 		onAbort();
 		_state = State::ready;
-		return true;
+		return Results::success;
 	}
 	else
-		return false;
+		return Results::errorState;
 }
 
 
@@ -173,12 +198,19 @@ void SerialDriver::raiseRxCompleted(
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de transmissio.
 /// \param    length: Nombre de bytes transmessos.
+/// \param    irq: True si es crida des d'una interrupcio.
 ///
 void SerialDriver::notifyTxCompleted(
-	unsigned length) {
+	unsigned length,
+	bool irq) {
 
     if (_state == State::transmiting) {
         raiseTxCompleted(length);
+        if (irq)
+        	_txFinished.releaseISR();
+        else
+        	_txFinished.release();
+        _txCount = length;
         _state = State::ready;
     }
 }
@@ -187,12 +219,19 @@ void SerialDriver::notifyTxCompleted(
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de la recepcio.
 /// \param    length: Nombre de bytes rebuts
+/// \param    irq: True si es crida des d'una interrupcio.
 ///
 void SerialDriver::notifyRxCompleted(
-	unsigned length) {
+	unsigned length,
+	bool irq) {
 
     if (_state == State::receiving) {
         raiseRxCompleted(length);
+        if (irq)
+        	_rxFinished.releaseISR();
+        else
+        	_rxFinished.release();
+        _rxCount = length;
         _state = State::ready;
     }
 }

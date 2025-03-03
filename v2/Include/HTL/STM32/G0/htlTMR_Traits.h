@@ -18,6 +18,7 @@
 namespace htl {
 	namespace tmr {
 		namespace internal {
+
 			#ifdef HTL_TMR1_EXIST
 			template <>
 			struct TMRTraits<DeviceID::tmr1> {
@@ -127,6 +128,7 @@ namespace htl {
 				static constexpr uint32_t enablePos = RCC_APBENR2_TIM14EN_Pos;
 			};
 			#endif
+
 		}
 	}
 }

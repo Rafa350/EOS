@@ -66,6 +66,7 @@ namespace htl {
 				static constexpr bool supportedRxTimeout = true;
 			};
 			#endif
+
 		}
 	}
 }

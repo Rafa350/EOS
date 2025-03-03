@@ -38,6 +38,7 @@ namespace htl {
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI3EN_Pos;
 			};
 			#endif
+
 		}
 	}
 }

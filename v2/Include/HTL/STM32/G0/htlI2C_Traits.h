@@ -51,6 +51,7 @@ namespace htl {
                 static constexpr uint32_t rccResetPos = RCC_APBRSTR1_I2C3RST_Pos;
 			};
 			#endif
+
 		}
 	}
 }

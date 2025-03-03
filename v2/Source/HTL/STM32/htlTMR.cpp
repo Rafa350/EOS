@@ -472,8 +472,8 @@ eos::Result TMRDevice::stop() {
 ///
 void TMRDevice::interruptService() {
 
-	unsigned SR = _tim->SR;
-	unsigned DIER = _tim->DIER;
+	auto SR = _tim->SR;
+	auto DIER = _tim->DIER;
 
 	// Event TRIGGER
 	//

@@ -79,10 +79,27 @@ Result MemoryStream::write(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    llegeix dades del stream.
+/// \param    data: Buffer on deixar les dades lleigides.
+/// \param    size: Numero de bytes a lleigit.
+/// \return   El numero de bytes lleigits.
+///
 Result MemoryStream::read(
 	uint8_t *data,
 	unsigned size,
 	unsigned *count) {
+
+    if (_ptr + size >= _end)
+        size = _end - _ptr;
+
+    if (size > 0) {
+    	memcpy(data, _ptr, size);
+    	_ptr += size;
+    }
+
+    if (count != nullptr)
+    	*count = size;
 
 	return Results::success;
 }

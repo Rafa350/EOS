@@ -77,6 +77,9 @@ void SerialDriver_UART::onAbort() {
 		case State::transmiting:
 			_devUART->abortTransmission();
 			break;
+
+		default:
+			break;
 	}
 }
 
@@ -91,11 +94,14 @@ void SerialDriver_UART::uartNotifyEventHandler(
 
 	switch (id) {
 		case UARTNotifyID::txCompleted:
-		    notifyTxCompleted(args->txCompleted.length);
+		    notifyTxCompleted(args->txCompleted.length, args->irq);
 			break;
 
 		case UARTNotifyID::rxCompleted:
-		    notifyRxCompleted(args->rxCompleted.length);
+		    notifyRxCompleted(args->rxCompleted.length, args->irq);
+			break;
+
+		default:
 			break;
 	}
 }
