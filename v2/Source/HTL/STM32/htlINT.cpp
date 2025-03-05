@@ -25,5 +25,4 @@ void htl::irq::setInterruptVectorPriority(
             priorityGroup,
             static_cast<uint32_t>(priority),
             static_cast<uint32_t>(subPriority)));
-
 }

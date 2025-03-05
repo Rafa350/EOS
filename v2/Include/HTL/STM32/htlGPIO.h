@@ -20,39 +20,39 @@ namespace htl {
 		/// Identificador dels ports.
 	    ///
 		enum class PortID {
-			#ifdef HTL_GPIOA_EXIST
+#ifdef HTL_GPIOA_EXIST
 			portA,
-			#endif
-			#ifdef HTL_GPIOB_EXIST
+#endif
+#ifdef HTL_GPIOB_EXIST
 			portB,
-			#endif
-			#ifdef HTL_GPIOC_EXIST
+#endif
+#ifdef HTL_GPIOC_EXIST
 			portC,
-			#endif
-			#ifdef HTL_GPIOD_EXIST
+#endif
+#ifdef HTL_GPIOD_EXIST
 			portD,
-			#endif
-			#ifdef HTL_GPIOE_EXIST
+#endif
+#ifdef HTL_GPIOE_EXIST
 			portE,
-			#endif
-			#ifdef HTL_GPIOF_EXIST
+#endif
+#ifdef HTL_GPIOF_EXIST
 			portF,
-			#endif
-			#ifdef HTL_GPIOG_EXIST
+#endif
+#ifdef HTL_GPIOG_EXIST
 			portG,
-			#endif
-			#ifdef HTL_GPIOH_EXIST
+#endif
+#ifdef HTL_GPIOH_EXIST
 			portH,
-			#endif
-			#ifdef HTL_GPIOI_EXIST
+#endif
+#ifdef HTL_GPIOI_EXIST
 			portI,
-			#endif
-			#ifdef HTL_GPIOJ_EXIST
+#endif
+#ifdef HTL_GPIOJ_EXIST
 			portJ,
-			#endif
-			#ifdef HTL_GPIOK_EXIST
+#endif
+#ifdef HTL_GPIOK_EXIST
 			portK,
-			#endif
+#endif
 		};
 
 		/// Identificador dels pins.
@@ -557,41 +557,41 @@ namespace htl {
 		template <PortID portID_, PinID pinID_>
 		PinInterruptX<portID_, pinID_> PinInterruptX<portID_, pinID_>::_instance;
 
-        #ifdef HTL_GPIOA_EXIST
+#ifdef HTL_GPIOA_EXIST
         typedef PortDeviceX<PortID::portA> PortA;
-        #endif
-        #ifdef HTL_GPIOB_EXIST
+#endif
+#ifdef HTL_GPIOB_EXIST
         typedef PortDeviceX<PortID::portB> PortB;
-        #endif
-        #ifdef HTL_GPIOC_EXIST
+#endif
+#ifdef HTL_GPIOC_EXIST
         typedef PortDeviceX<PortID::portC> PortC;
-        #endif
-        #ifdef HTL_GPIOD_EXIST
+#endif
+#ifdef HTL_GPIOD_EXIST
         typedef PortDeviceX<PortID::portD> PortD;
-        #endif
-        #ifdef HTL_GPIOE_EXIST
+#endif
+#ifdef HTL_GPIOE_EXIST
         typedef PortDeviceX<PortID::portE> PortE;
-        #endif
-        #ifdef HTL_GPIOF_EXIST
+#endif
+#ifdef HTL_GPIOF_EXIST
         typedef PortDeviceX<PortID::portF> PortF;
-        #endif
-        #ifdef HTL_GPIOG_EXIST
+#endif
+#ifdef HTL_GPIOG_EXIST
         typedef PortDeviceX<PortID::portG> PortG;
-        #endif
-        #ifdef HTL_GPIOH_EXIST
+#endif
+#ifdef HTL_GPIOH_EXIST
         typedef PortDeviceX<PortID::portH> PortH;
-        #endif
-        #ifdef HTL_GPIOI_EXIST
+#endif
+#ifdef HTL_GPIOI_EXIST
         typedef PortDeviceX<PortID::portI> PortI;
-        #endif
-        #ifdef HTL_GPIOJ_EXIST
+#endif
+#ifdef HTL_GPIOJ_EXIST
         typedef PortDeviceX<PortID::portJ> PortJ;
-        #endif
-        #ifdef HTL_GPIOK_EXIST
+#endif
+#ifdef HTL_GPIOK_EXIST
         typedef PortDeviceX<PortID::portK> PortK;
-        #endif
-        #ifdef HTL_GPIOA_EXIST
+#endif
 
+#ifdef HTL_GPIOA_EXIST
         typedef PinX<PortID::portA, PinID::pin0> PinA0;
         typedef PinX<PortID::portA, PinID::pin1> PinA1;
         typedef PinX<PortID::portA, PinID::pin2> PinA2;
@@ -608,8 +608,8 @@ namespace htl {
         typedef PinX<PortID::portA, PinID::pin13> PinA13;
         typedef PinX<PortID::portA, PinID::pin14> PinA14;
         typedef PinX<PortID::portA, PinID::pin15> PinA15;
-        #endif
-        #ifdef HTL_GPIOB_EXIST
+#endif
+#ifdef HTL_GPIOB_EXIST
         typedef PinX<PortID::portB, PinID::pin0> PinB0;
         typedef PinX<PortID::portB, PinID::pin1> PinB1;
         typedef PinX<PortID::portB, PinID::pin2> PinB2;
@@ -626,8 +626,8 @@ namespace htl {
         typedef PinX<PortID::portB, PinID::pin13> PinB13;
         typedef PinX<PortID::portB, PinID::pin14> PinB14;
         typedef PinX<PortID::portB, PinID::pin15> PinB15;
-        #endif
-        #ifdef HTL_GPIOC_EXIST
+#endif
+#ifdef HTL_GPIOC_EXIST
         typedef PinX<PortID::portC, PinID::pin0> PinC0;
         typedef PinX<PortID::portC, PinID::pin1> PinC1;
         typedef PinX<PortID::portC, PinID::pin2> PinC2;
@@ -644,8 +644,8 @@ namespace htl {
         typedef PinX<PortID::portC, PinID::pin13> PinC13;
         typedef PinX<PortID::portC, PinID::pin14> PinC14;
         typedef PinX<PortID::portC, PinID::pin15> PinC15;
-        #endif
-        #ifdef HTL_GPIOD_EXIST
+#endif
+#ifdef HTL_GPIOD_EXIST
         typedef PinX<PortID::portD, PinID::pin0> PinD0;
         typedef PinX<PortID::portD, PinID::pin1> PinD1;
         typedef PinX<PortID::portD, PinID::pin2> PinD2;
@@ -662,8 +662,8 @@ namespace htl {
         typedef PinX<PortID::portD, PinID::pin13> PinD13;
         typedef PinX<PortID::portD, PinID::pin14> PinD14;
         typedef PinX<PortID::portD, PinID::pin15> PinD15;
-        #endif
-        #ifdef HTL_GPIOE_EXIST
+#endif
+#ifdef HTL_GPIOE_EXIST
         typedef PinX<PortID::portE, PinID::pin0> PinE0;
         typedef PinX<PortID::portE, PinID::pin1> PinE1;
         typedef PinX<PortID::portE, PinID::pin2> PinE2;
@@ -680,8 +680,8 @@ namespace htl {
         typedef PinX<PortID::portE, PinID::pin13> PinE13;
         typedef PinX<PortID::portE, PinID::pin14> PinE14;
         typedef PinX<PortID::portE, PinID::pin15> PinE15;
-        #endif
-        #ifdef HTL_GPIOF_EXIST
+#endif
+#ifdef HTL_GPIOF_EXIST
         typedef PinX<PortID::portF, PinID::pin0> PinF0;
         typedef PinX<PortID::portF, PinID::pin1> PinF1;
         typedef PinX<PortID::portF, PinID::pin2> PinF2;
@@ -698,8 +698,8 @@ namespace htl {
         typedef PinX<PortID::portF, PinID::pin13> PinF13;
         typedef PinX<PortID::portF, PinID::pin14> PinF14;
         typedef PinX<PortID::portF, PinID::pin15> PinF15;
-        #endif
-        #ifdef HTL_GPIOG_EXIST
+#endif
+#ifdef HTL_GPIOG_EXIST
         typedef PinX<PortID::portG, PinID::pin0> PinG0;
         typedef PinX<PortID::portG, PinID::pin1> PinG1;
         typedef PinX<PortID::portG, PinID::pin2> PinG2;
@@ -716,8 +716,8 @@ namespace htl {
         typedef PinX<PortID::portG, PinID::pin13> PinG13;
         typedef PinX<PortID::portG, PinID::pin14> PinG14;
         typedef PinX<PortID::portG, PinID::pin15> PinG15;
-        #endif
-        #ifdef HTL_GPIOH_EXIST
+#endif
+#ifdef HTL_GPIOH_EXIST
         typedef PinX<PortID::portH, PinID::pin0> PinH0;
         typedef PinX<PortID::portH, PinID::pin1> PinH1;
         typedef PinX<PortID::portH, PinID::pin2> PinH2;
@@ -734,8 +734,8 @@ namespace htl {
         typedef PinX<PortID::portH, PinID::pin13> PinH13;
         typedef PinX<PortID::portH, PinID::pin14> PinH14;
         typedef PinX<PortID::portH, PinID::pin15> PinH15;
-        #endif
-        #ifdef HTL_GPIOI_EXIST
+#endif
+#ifdef HTL_GPIOI_EXIST
         typedef PinX<PortID::portI, PinID::pin0> PinI0;
         typedef PinX<PortID::portI, PinID::pin1> PinI1;
         typedef PinX<PortID::portI, PinID::pin2> PinI2;
@@ -752,8 +752,8 @@ namespace htl {
         typedef PinX<PortID::portI, PinID::pin13> PinI13;
         typedef PinX<PortID::portI, PinID::pin14> PinI14;
         typedef PinX<PortID::portI, PinID::pin15> PinI15;
-        #endif
-        #ifdef HTL_GPIOJ_EXIST
+#endif
+#ifdef HTL_GPIOJ_EXIST
         typedef PinX<PortID::portJ, PinID::pin0> PinJ0;
         typedef PinX<PortID::portJ, PinID::pin1> PinJ1;
         typedef PinX<PortID::portJ, PinID::pin2> PinJ2;
@@ -770,8 +770,8 @@ namespace htl {
         typedef PinX<PortID::portJ, PinID::pin13> PinJ13;
         typedef PinX<PortID::portJ, PinID::pin14> PinJ14;
         typedef PinX<PortID::portJ, PinID::pin15> PinJ15;
-        #endif
-        #ifdef HTL_GPIOK_EXIST
+#endif
+#ifdef HTL_GPIOK_EXIST
         typedef PinX<PortID::portK, PinID::pin0> PinK0;
         typedef PinX<PortID::portK, PinID::pin1> PinK1;
         typedef PinX<PortID::portK, PinID::pin2> PinK2;
@@ -788,7 +788,7 @@ namespace htl {
         typedef PinX<PortID::portK, PinID::pin13> PinK13;
         typedef PinX<PortID::portK, PinID::pin14> PinK14;
         typedef PinX<PortID::portK, PinID::pin15> PinK15;
-        #endif
+#endif
 
         namespace internal {
 
@@ -830,164 +830,164 @@ namespace htl {
 			template <PortID portId_>
 			PinMask Activator<portId_>::_mask {0};
 
-
-			#ifdef HTL_GPIOA_EXIST
+#if !defined(EOS_PLATFORM_STM32F0)
+#ifdef HTL_GPIOA_EXIST
 			template<>
 			struct PortTraits<PortID::portA> {
 				static constexpr uint32_t gpioAddr = GPIOA_BASE;
-				#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOAEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOAEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
 				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOAEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOB_EXIST
+#ifdef HTL_GPIOB_EXIST
 			template  <>
 			struct PortTraits<PortID::portB> {
 				static constexpr uint32_t gpioAddr = GPIOB_BASE;
-				#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOBEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOBEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
 				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOBEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOC_EXIST
+#ifdef HTL_GPIOC_EXIST
 			template  <>
 			struct PortTraits<PortID::portC> {
 				static constexpr uint32_t gpioAddr = GPIOC_BASE;
-				#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOCEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOCEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
 				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOCEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOD_EXIST
+#ifdef HTL_GPIOD_EXIST
 			template  <>
 			struct PortTraits<PortID::portD> {
 				static constexpr uint32_t gpioAddr = GPIOD_BASE;
-				#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIODEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIODEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
 				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIODEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOE_EXIST
+#ifdef HTL_GPIOE_EXIST
 			template  <>
 			struct PortTraits<PortID::portE> {
 				static constexpr uint32_t gpioAddr = GPIOE_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOEEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
 				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOEEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOF_EXIST
+#ifdef HTL_GPIOF_EXIST
 			template  <>
 			struct PortTraits<PortID::portF> {
 				static constexpr uint32_t gpioAddr = GPIOF_BASE;
-				#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHBENR_GPIOFEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOFEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
 				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOFEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOG_EXIST
+#ifdef HTL_GPIOG_EXIST
 			template  <>
 			struct PortTraits<PortID::portG> {
 				static constexpr uint32_t gpioAddr = GPIOG_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOGEN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
 				static constexpr uint32_t rccEnablePos = RCC_IOPENR_GPIOGEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOH_EXIST
+#ifdef HTL_GPIOH_EXIST
 			template  <>
 			struct PortTraits<PortID::portH> {
 				static constexpr uint32_t gpioAddr = GPIOH_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOHEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOI_EXIST
+#ifdef HTL_GPIOI_EXIST
 			template  <>
 			struct PortTraits<PortID::portI> {
 				static constexpr uint32_t gpioAddr = GPIOI_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOIEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOJ_EXIST
+#ifdef HTL_GPIOJ_EXIST
 			template  <>
 			struct PortTraits<PortID::portJ> {
 				static constexpr uint32_t gpioAddr = GPIOJ_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOJEN_Pos;
-				#endif
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_GPIOK_EXIST
+#ifdef HTL_GPIOK_EXIST
 			template  <>
 			struct PortTraits<PortID::portK> {
 				static constexpr uint32_t gpioAddr = GPIOK_BASE;
-				#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t rccEnablePos = RCC_AHB1ENR_GPIOKEN_Pos;
-				#endif
+#endif
 			};
-			#endif
-
+#endif
+#endif
 
 			template <>
 			struct PinTraits<PinID::pin0> {
@@ -1088,5 +1088,9 @@ namespace htl {
 	}
 }
 
+
+#if defined(EOS_PLATFORM_STM32F030)
+	#include "htl/STM32/F0/htlGPIO_Traits.h"
+#endif
 
 #endif // __STM32_htlGPIO__

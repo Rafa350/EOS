@@ -7,6 +7,14 @@
 
 
 // -----------------------------------------------------------------------
+// Board information
+// -----------------------------------------------------------------------
+
+#define EOS_BOARD_NAME            "STM32F746 DISCO"
+#define EOS_BOARD_MANUFACTURER    "ST-Microelectronics"
+
+
+// -----------------------------------------------------------------------
 // External oscilator parameters
 // -----------------------------------------------------------------------
 
@@ -23,15 +31,16 @@
 #ifdef USE_LED1
 #define EXIST_LED1
 
-#define LED1_Pin             htl::gpio::PinI1
-#define LED1_Instance        LED1_Pin::pInst
+#define LED1_PortID          htl::gpio::PortID::portI
+#define LED1_PinID           htl::gpio::PinID::pin1
+#define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_Pin::initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::low, false)
-#define LED1_On()            LED1_Pin::set()
-#define LED1_Off()           LED1_Pin::clear()
-#define LED1_Toggle()        LED1_Pin::toggle()
+#define LED1_Initialize()    LED1_Pin::pInst->initOutput(htl::gpio::OutputMode::pushPull)
+#define LED1_On()            LED1_Pin::pInst->set()
+#define LED1_Off()           LED1_Pin::pInst->clear()
+#define LED1_Toggle()        LED1_Pin::pInst->toggle()
 
 #endif // USE_LED1
 
@@ -43,12 +52,33 @@
 #ifdef USE_SW1
 #define EXIST_SW1
 
-#define SW1_Pin              htl::gpio::PinI11
-#define SW1_PinInterrupt     htl::gpio::PinInterrupX<SW1_Pin::portID, SW1_Pin::pinID>
+#define SW1_PortID           htl::gpio::PortID::portI
+#define SW1_PinID            htl::gpio::PinID::pin13
+#define SW1_Pin              htl::gpio::PinX<SW1_PortID, SW1_PinID>
+#define SW1_FastPin          htl::gpio::FastPinX<SW1_PortID, SW1_PinID>
+#define SW1_PinInterrupt     htl::gpio::PinInterruptX<SW1_PortID, SW1_PinID>
+#define SW1_PinInitialize    htl::gpio::pInst->initInput(htl::gpio::InputMode::floating)
 #define SW1_StateON          true
-#define SW1_StateOFF         false
+#define SW1_StateOF          false
+
+#define SW1_Initialize()
+#define SW1_Read()
 
 #endif // USE_SW1
+
+
+// -----------------------------------------------------------------------
+// SIO (Comunicacio serie a traver del depurador)
+// -----------------------------------------------------------------------
+//
+#ifdef USE_SIO
+#define EXIST_SIO
+
+#define SIO_UART_Device    htl::uart::UARTDevice1
+#define SIO_TX_Pin         htl::gpio::PinA9
+#define SIO_RX_Pin         htl::gpio::PinB7
+
+#endif // USE_SIO
 
 
 // -----------------------------------------------------------------------

@@ -1,69 +1,121 @@
 #pragma once
-#ifndef __STM32_F7_htlUART_AF_F7__
-#define __STM32_F7_htlUART_AF_F7__
+#ifndef __C9F7DA2EE6664204876F3C23AD32B6B2__
+#define __C9F7DA2EE6664204876F3C23AD32B6B2__
 
 
-// EOS includes
-//
-#include "HTL/htl.h"
-#include "HTL/STM32/htlGPIO.h"
+#if !defined(EOS_PLATFORM_STM32F746)
+    #error 'Unsupported platform'
+#endif
 
 
-#if defined(EOS_PLATFORM_STM32F7)
+namespace htl::uart::internal {
 
-
-#define ALT_FUNCTION(id, fn, pin, af)                    \
-    template <>                                          \
-    struct PinFunctionInfo<DeviceID::_##id, fn, pin> { \
-        static constexpr gpio::AlternateFunction alt = af;   \
+    #if defined(HTL_UART1_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::uart1, PinFunction::tx, htl::gpio::PortID::portA, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
     };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart1, PinFunction::tx, htl::gpio::PortID::portB, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart1, PinFunction::rx, htl::gpio::PortID::portA, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart1, PinFunction::rx, htl::gpio::PortID::portB, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    #endif
 
+    #if defined(HTL_UART2_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::uart2, PinFunction::tx, htl::gpio::PortID::portA, htl::gpio::PinID::pin2> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart2, PinFunction::tx, htl::gpio::PortID::portD, htl::gpio::PinID::pin5> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart2, PinFunction::rx, htl::gpio::PortID::portA, htl::gpio::PinID::pin3> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart2, PinFunction::rx, htl::gpio::PortID::portD, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    #endif
 
-namespace htl {
+    #if defined(HTL_UART3_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::uart3, PinFunction::tx, htl::gpio::PortID::portB, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart3, PinFunction::tx, htl::gpio::PortID::portC, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart3, PinFunction::tx, htl::gpio::PortID::portD, htl::gpio::PinID::pin8> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart3, PinFunction::rx, htl::gpio::PortID::portB, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart3, PinFunction::rx, htl::gpio::PortID::portC, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart3, PinFunction::rx, htl::gpio::PortID::portD, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_7;
+    };
+    #endif
 
-    namespace uart {
+    #if defined(HTL_UART4_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::uart4, PinFunction::tx, htl::gpio::PortID::portA, htl::gpio::PinID::pin0> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_8;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart4, PinFunction::tx, htl::gpio::PortID::portC, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_8;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart4, PinFunction::rx, htl::gpio::PortID::portA, htl::gpio::PinID::pin1> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_8;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart4, PinFunction::rx, htl::gpio::PortID::portC, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_8;
+    };
+    #endif
 
-        namespace internal {
+    #if defined(HTL_UART5_EXIST)
+    #endif
 
-            #ifdef HTL_UART1_EXIST
-            ALT_FUNCTION(1, PinFunction::tx,  gpio::PinA9,  gpio::AlternateFunction::_8)
+    #if defined(HTL_UART6_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::uart6, PinFunction::tx, htl::gpio::PortID::portC, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_8;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::uart6, PinFunction::rx, htl::gpio::PortID::portC, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_8;
+    };
+    #endif
 
-            ALT_FUNCTION(1, PinFunction::rx,  gpio::PinB7,  gpio::AlternateFunction::_8)
-            #endif
+    #if defined(HTL_UART7_EXIST)
+    #endif
 
-            #ifdef HTL_UART2_EXIST
-            ALT_FUNCTION(2, PinFunction::tx,  gpio::PinA9,  gpio::AlternateFunction::_8)
+    #if defined(HTL_UART8_EXIST)
+    #endif
 
-            ALT_FUNCTION(2, PinFunction::rx,  gpio::PinB7,  gpio::AlternateFunction::_8)
-            #endif
-
-            #ifdef HTL_UART3_EXIST
-            #endif
-
-            #ifdef HTL_UART4_EXIST
-            #endif
-
-            #ifdef HTL_UART5_EXIST
-            #endif
-
-            #ifdef HTL_UART6_EXIST
-            ALT_FUNCTION(6, PinFunction::tx,  gpio::PinC6,  gpio::AlternateFunction::_8)
-
-            ALT_FUNCTION(2, PinFunction::rx,  gpio::PinC7,  gpio::AlternateFunction::_8)
-            #endif
-
-            #ifdef HTL_UART7_EXIST
-            #endif
-
-            #ifdef HTL_UART8_EXIST
-            #endif
-        }
-    }
 }
 
 
-#endif // EOS_PLATFORM_STM32F7
-
-
-#endif // __STM32_F7_htlUART_AF_F7__
+#endif
 

@@ -23,8 +23,8 @@ namespace eos {
             unsigned getPosition() const;
             void setPosition(unsigned position);
 
-    		Result write(const uint8_t *data, unsigned length, unsigned *count = nullptr) override;
-    		Result read(uint8_t *data, unsigned size, unsigned *count = nullptr) override;
+    		ResultU32 write(const uint8_t *data, unsigned length) override;
+    		ResultU32 read(uint8_t *data, unsigned size) override;
 
             inline uint8_t *data() const { return _begin; }
             inline unsigned size() const { return _end - _begin; }

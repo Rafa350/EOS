@@ -28,7 +28,7 @@ namespace eos {
 				_rxTimeout = timeout;
 			}
 
-			Result write(const uint8_t *data, unsigned length, unsigned *count = nullptr) override;
-			Result read(uint8_t *data, unsigned size, unsigned *count = nullptr) override;
+			ResultU32 write(const uint8_t *data, unsigned length) override;
+			ResultU32 read(uint8_t *data, unsigned size) override;
 	};
 }

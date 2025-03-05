@@ -69,28 +69,24 @@ Result SerialStream::deinitialize() {
 /// \brief    Escriu dades en el stream.
 /// \param    data: El bloc de dades a escriure.
 /// \param    length: El nombre de bytes a escriure.
-/// \param    count: El nombre de bytes escrits.
-/// \return   El resultat de l'operacio.
+/// \return   El nombre de bytes transmissos, i resultat de l'operacio.
 //
-Result SerialStream::write(
+ResultU32 SerialStream::write(
 	const uint8_t *data,
-	unsigned length,
-	unsigned *count) {
+	unsigned length) {
 
-	if (_drvSerial == nullptr)
-		return Results::error;
+	if ((data == nullptr) || (length == 0))
+		return Results::errorParameter;
+
+	else if (_drvSerial == nullptr)
+		return Results::errorState;
 
 	else {
 		_drvSerial->transmit(data, length);
 
 		auto result = _drvSerial->wait(_txTimeout);
-		if (result.isSuccess()) {
-
-			if (count != nullptr)
-				*count = result;
-
-			return Results::success;
-		}
+		if (result.isSuccess())
+			return ResultU32(Results::success, result);
 		else {
 			_drvSerial->abort();
 			return Results::timeout;
@@ -103,13 +99,14 @@ Result SerialStream::write(
 /// \brief    Llegeix dades des del stream.
 /// \param    data: Bloc on deixar les dades.
 /// \param    size: Tamany del bloc en bytes.
-/// \param    count: El nombre de bytes lleigits.
-/// \return   El resultat de l'operacio.
+/// \return   El nombre de bytes transmessos, i el resultat de l'operacio.
 ///
-Result SerialStream::read(
+ResultU32 SerialStream::read(
 	uint8_t *data,
-	unsigned size,
-	unsigned *count) {
+	unsigned size) {
+
+	if ((data == nullptr) || (size == 0))
+		return Results::errorParameter;
 
 	if (_drvSerial == nullptr)
 		return Results::error;
@@ -118,13 +115,8 @@ Result SerialStream::read(
 		_drvSerial->receive(data, size);
 
 		auto result = _drvSerial->wait(_rxTimeout);
-		if (result.isSuccess()) {
-
-			if (count != nullptr)
-				*count = result;
-
-			return Results::success;
-		}
+		if (result.isSuccess())
+			return ResultU32(Results::success, result);
 		else {
 			_drvSerial->abort();
 			return Results::timeout;

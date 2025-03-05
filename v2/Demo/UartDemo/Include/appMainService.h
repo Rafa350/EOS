@@ -3,12 +3,9 @@
 
 
 #include "eos.h"
-#include "Controllers/Serial/eosAsyncSerialDriver.h"
-#include "HTL/htlGPIO.h"
+#include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlUART.h"
-#include "HTL/htlINT.h"
 #include "Services/eosService.h"
-#include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 
 
@@ -20,13 +17,13 @@ namespace app {
 
 		private:
         	UARTNotifyEvent _uartNotifyEvent;
+        	eos::Semaphore _completed;
 
 		private:
-            void uartNotifyEventHandler(const htl::uart::UARTDevice *uart, const htl::uart::NotifyEventArgs &args);
+            void uartNotifyEventHandler(htl::uart::NotifyID notifyID, htl::uart::NotifyEventArgs * const args);
 
 		protected:
-			bool onTaskStart() override;
-			bool onTask() override;
+			void onExecute() override;
 
 		public:
 			MainService();

@@ -137,7 +137,7 @@
         #define EOS_PLATFORM_STM32F769
 
     #else
-        #error  "Unknown STM32 processor"
+        #error "Unknown STM32 processor"
     #endif
 
 	#define EOS_PLATFORM_DETECTED 1

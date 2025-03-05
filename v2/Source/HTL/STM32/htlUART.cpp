@@ -75,16 +75,16 @@ eos::Result UARTDevice::initialize() {
 
 		_usart->CR2 &= ~(
 			USART_CR2_RTOEN |  // RTO deshabilitat
-			#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 	    	USART_CR2_LINEN |  // Modus sincron, deshabilita LIN
-			#endif
+#endif
 			USART_CR2_CLKEN);  // Modus sincron, desabilita CLK
 
 		_usart->CR3 &= ~(
-			#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 			USART_CR3_SCEN |   // Desabilita smartcad
 			USART_CR3_IREN |   // Desabilita IRDA
-			#endif
+#endif
 			USART_CR3_HDSEL);  // Desabilita half-duplex
 
 		enable(_usart);
@@ -622,11 +622,11 @@ void UARTDevice::interruptService() {
     //
     if ((_usart->CR1 & USART_CR1_RXNEIE) && (_usart->ISR & USART_ISR_RXNE)) {
 
-        if (_rxCount < _rxNaxCount) {
+        if (_rxCount < _rxMaxCount) {
             _rxBuffer[_rxCount++] = _usart->RDR;
             if (_rxCount == _rxMaxCount) {
                 ATOMIC_CLEAR_BIT(_usart->CR1, USART_CR1_RXNEIE | USART_CR1_RTOIE | USART_CR1_RE);
-                notifyRxComplete(_rxBuffer, _rxCount, true);
+                notifyRxCompleted(_rxBuffer, _rxCount, true);
                 _state = State::ready;
             }
         }
@@ -844,79 +844,79 @@ static ClockSource getClockSource(
 
     uint8_t sclk = 0;
     switch (reinterpret_cast<uint32_t>(usart)) {
-        #ifdef HTL_UART1_EXIST
+#ifdef HTL_UART1_EXIST
             case USART1_BASE:
-                #if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART1SEL)
+#if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART1SEL)
                 sclk = (RCC->CCIPR & RCC_CCIPR_USART1SEL) >> RCC_CCIPR_USART1SEL_Pos;
-                #elif defined(EOS_PLATFORM_STM32F0)
+#elif defined(EOS_PLATFORM_STM32F0)
                 sclk = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
-                #elif defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
 
-        #ifdef HTL_UART2_EXIST
+#ifdef HTL_UART2_EXIST
             case USART2_BASE:
-                #if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART2SEL)
+#if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART2SEL)
                 sclk = (RCC->CCIPR & RCC_CCIPR_USART2SEL) >> RCC_CCIPR_USART2SEL_Pos;
-                #elif defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
 
-        #ifdef HTL_UART3_EXIST
+#ifdef HTL_UART3_EXIST
             case USART3_BASE:
-                #if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART3SEL)
+#if defined(EOS_PLATFORM_STM32G0) && defined(RCC_CCIPR_USART3SEL)
                 sclk = (RCC->CCIPR & RCC_CCIPR_USART3SEL) >> RCC_CCIPR_USART3SEL_Pos;
-                #elif defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART3SEL) >> RCC_DCKCFGR2_USART3SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
 
-        #ifdef HTL_UART4_EXIST
-            case USART4_BASE:
-                #if defined(EOS_PLATFORM_STM32G0)  && defined(RCC_CCIPR_USART4SEL)
+#ifdef HTL_UART4_EXIST
+            case UART4_BASE:
+#if defined(EOS_PLATFORM_STM32G0)  && defined(RCC_CCIPR_USART4SEL)
                 sclk = (RCC->CCIPR & RCC_CCIPR_USART4SEL) >> RCC_CCIPR_USART4SEL_Pos;
-                #elif defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART4SEL) >> RCC_DCKCFGR2_UART4SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
 
-        #ifdef HTL_UART5_EXIST
-            case USART5_BASE:
-                #if defined(EOS_PLATFORM_STM32F7)
+#ifdef HTL_UART5_EXIST
+            case UART5_BASE:
+#if defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART5SEL) >> RCC_DCKCFGR2_UART5SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
 
-        #ifdef HTL_UART6_EXIST
+#ifdef HTL_UART6_EXIST
             case USART6_BASE:
-                #if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART6SEL) >> RCC_DCKCFGR2_USART6SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
 
-        #ifdef HTL_UART7_EXIST
+#ifdef HTL_UART7_EXIST
             case UART7_BASE:
-                #if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART7SEL) >> RCC_DCKCFGR2_UART7SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
 
-        #ifdef HTL_UART8_EXIST
+#ifdef HTL_UART8_EXIST
             case UART8_BASE:
-                #if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F7)
                 sclk = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART8SEL) >> RCC_DCKCFGR2_UART8SEL_Pos;
-                #endif
+#endif
                 break;
-        #endif
+#endif
     }
 
 #if defined(EOS_PLATFORM_STM32F0)
@@ -948,7 +948,7 @@ static ClockSource getClockSource(
         ClockSource::lse
     };
 #else
-    #error "Unknown platform"
+#error "Unknown platform"
 #endif
 
     return csTbl[sclk];
@@ -967,26 +967,26 @@ static unsigned getClockFrequency(
 
     switch (clockSource) {
         case ClockSource::pclk:
-            #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
             if ((uint32_t(usart) == USART1_BASE) ||
                 (uint32_t(usart) == USART6_BASE))
-                return clock::getClockFrequency(clock::ClockID::pclk2);
+                return Clock::getClockFrequency(clock::ClockID::pclk2);
             else
-            #endif
+#endif
                 return Clock::getClockFrequency(clock::ClockID::pclk);
 
         case ClockSource::sysclk:
             return Clock::getClockFrequency(clock::ClockID::sysclk);
 
-        #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
         case ClockSource::hsi:
             return Clock::getClockFrequency(clock::ClockID::hsi);
-        #endif
+#endif
 
-        #if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
         case ClockSource::hsi16:
             return Clock::getClockFrequency(clock::ClockID::hsi16);
-        #endif
+#endif
 
         case ClockSource::lse:
             return Clock::getClockFrequency(clock::ClockID::lse);
@@ -1074,11 +1074,11 @@ static void setWordBits(
 
 	auto numBits = useParity? 1 : 0;
 	switch (wordBits) {
-		#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 		case WordBits::word7:
 			numBits += 7;
 			break;
-		#endif
+#endif
 
 		case WordBits::word8:
 			numBits += 8;
@@ -1091,7 +1091,7 @@ static void setWordBits(
 
 	auto a = startATOMIC();
 	auto CR1 = usart->CR1;
-	#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 	switch (numBits) {
 		case 7:
 			CR1 &= ~USART_CR1_M0;
@@ -1109,14 +1109,14 @@ static void setWordBits(
 			CR1 &= ~USART_CR1_M1;
 			break;
 	}
-	#elif defined(EOS_PLATFORM_STM32F0)
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 	if (numBits == 8)
 		CR1 &= ~USART_CR1_M;
 	else
 		CR1 |= USART_CR1_M;
-	#else
-	#error "Unknown platform"
-	#endif
+#else
+#error "Unknown platform"
+#endif
 	usart->CR1 = CR1;
 	endATOMIC(a);
 }
@@ -1249,9 +1249,9 @@ static void disable(
 	USART_TypeDef *usart) {
 
 	usart->CR1 &= ~(
-		#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_FIFOEN | // Deshabilita el FIFO
-		#endif
+#endif
 		USART_CR1_UE |     // Desabilita el dispositiu
 		USART_CR1_TE |     // Desabilita la transmissio
 		USART_CR1_RE);     // Deshabilita la recepcio
@@ -1285,11 +1285,11 @@ static void enableTransmissionIRQ(
 
 	auto a = startATOMIC();
 	usart->CR1 |=
-		#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_TXEIE_TXFNFIE | // Habilita interrupcio TXE
-		#else
+#else
 		USART_CR1_TXEIE |         // Habilita interrupcio TXE
-		#endif
+#endif
 		USART_CR1_TE;             // Habilita la transmissio
 	endATOMIC(a);
 }
@@ -1326,7 +1326,7 @@ static void disableTransmission(
 	// Desabilita interrupcions i transmissio
 	//
 	usart->CR1 &= ~(
-#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 		USART_CR1_TXEIE |         // Deshabilita interrupcio TXE
 #else
 		USART_CR1_TXEIE_TXFNFIE | // Deshabilita interrupcio TXE
@@ -1372,11 +1372,11 @@ static void enableReceptionIRQ(
 	auto a = startATOMIC();
 	usart->CR1 |=
 		USART_CR1_PEIE |            // Habilita interrupcio PE
-		#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
-		#else
+#else
 		USART_CR1_RXNEIE |          // Habilita interrupcio RXNE
-		#endif
+#endif
 		USART_CR1_RE;               // Habilita la recepcio
 
 	// Activa RTO si es posible, si no, activa IDLE
@@ -1404,7 +1404,7 @@ static void disableReception(
 	// Desabilita interrupcions i recepcio
 	//
 	usart->CR1 &= ~(
-#if defined(EOS_PLATFORM_STM32F0)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 		USART_CR1_RXNEIE |         // Deshabilita interrupcio RXNE
 #else
 		USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE

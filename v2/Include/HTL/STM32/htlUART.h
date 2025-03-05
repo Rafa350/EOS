@@ -8,7 +8,7 @@
 /// \brief     UART device manager.
 
 
-// HTL main include
+// HTL main include (Include options)
 //
 #include "HTL/STM32/htl.h"
 
@@ -16,11 +16,11 @@
 // Default options
 //
 #ifndef HTL_UART_OPTION_IRQ
-    #define HTL_UART_OPTION_IRQ HTL_UART_DEFAULT_OPTION_IRQ
+	#define HTL_UART_OPTION_IRQ HTL_UART_DEFAULT_OPTION_IRQ
 #endif
 
 #ifndef HTL_UART_OPTION_DMA
-    #define HTL_UART_OPTION_DMA HTL_UART_DEFAULT_OPTION_DMA
+	#define HTL_UART_OPTION_DMA HTL_UART_DEFAULT_OPTION_DMA
 #endif
 
 
@@ -28,12 +28,11 @@
 //
 #include "HTL/STM32/htlGPIO.h"
 #if HTL_UART_OPTION_DMA == 1
-#include "HTL/STM32/htlDMA.h"
+	#include "HTL/STM32/htlDMA.h"
 #endif
 
 
 namespace htl {
-
 	namespace uart {
 
         class UARTDevice;
@@ -41,30 +40,30 @@ namespace htl {
         /// Identificador del dispositiu.
         ///
 		enum class DeviceID {
-			#ifdef HTL_UART1_EXIST
-				uart1,
-			#endif
-			#ifdef HTL_UART2_EXIST
-				uart2,
-			#endif
-			#ifdef HTL_UART3_EXIST
-				uart3,
-			#endif
-			#ifdef HTL_UART4_EXIST
-				uart4,
-			#endif
-			#ifdef HTL_UART5_EXIST
-				uart5,
-			#endif
-			#ifdef HTL_UART6_EXIST
-				uart6,
-			#endif
-			#ifdef HTL_UART7_EXIST
-				uart7,
-			#endif
-			#ifdef HTL_UART8_EXIST
-				uart8,
-			#endif
+#ifdef HTL_UART1_EXIST
+			uart1,
+#endif
+#ifdef HTL_UART2_EXIST
+			uart2,
+#endif
+#ifdef HTL_UART3_EXIST
+			uart3,
+#endif
+#ifdef HTL_UART4_EXIST
+			uart4,
+#endif
+#ifdef HTL_UART5_EXIST
+			uart5,
+#endif
+#ifdef HTL_UART6_EXIST
+			uart6,
+#endif
+#ifdef HTL_UART7_EXIST
+			uart7,
+#endif
+#ifdef HTL_UART8_EXIST
+			uart8,
+#endif
 		};
 
         /// Primer bit a transmetre.
@@ -125,19 +124,19 @@ namespace htl {
 		};
 
 		enum class ClockSource {
-            #if defined(EOS_PLATFORM_STM32F0) || \
-			    defined(EOS_PLATFORM_STM32F4) || \
-				defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0) || \
+    defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
 			pclk,
 			sysclk,
 			hsi,
 			lse,
-            #elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 			pclk,
 			sysclk,
 			hsi16,
 			lse,
-            #endif
+#endif
 			automatic
 		};
 
@@ -359,30 +358,30 @@ namespace htl {
 		UARTDeviceX<deviceID_> UARTDeviceX<deviceID_>::_instance;
 
 
-		#ifdef HTL_UART1_EXIST
-			using UARTDevice1 = UARTDeviceX<DeviceID::uart1>;
-		#endif
-		#ifdef HTL_UART2_EXIST
-			using UARTDevice2 = UARTDeviceX<DeviceID::uart2>;
-		#endif
-		#ifdef HTL_UART3_EXIST
-			using UARTDevice3 = UARTDeviceX<DeviceID::uart3>;
-		#endif
-		#ifdef HTL_UART4_EXIST
-			using UARTDevice4 = UARTDeviceX<DeviceID::uart4>;
-		#endif
-		#ifdef HTL_UART5_EXIST
-			using UARTDevice5 = UARTDeviceX<DeviceID::uart5>;
-		#endif
-		#ifdef HTL_UART6_EXIST
-			using UARTDevice6 = UARTDeviceX<DeviceID::uart6>;
-		#endif
-		#ifdef HTL_UART7_EXIST
-			using UARTDevice7 = UARTDeviceX<DeviceID::uart7>;
-		#endif
-		#ifdef HTL_UART8_EXIST
-			using UARTDevice8 = UARTDeviceX<DeviceID::uart8>;
-		#endif
+#ifdef HTL_UART1_EXIST
+		using UARTDevice1 = UARTDeviceX<DeviceID::uart1>;
+#endif
+#ifdef HTL_UART2_EXIST
+		using UARTDevice2 = UARTDeviceX<DeviceID::uart2>;
+#endif
+#ifdef HTL_UART3_EXIST
+		using UARTDevice3 = UARTDeviceX<DeviceID::uart3>;
+#endif
+#ifdef HTL_UART4_EXIST
+		using UARTDevice4 = UARTDeviceX<DeviceID::uart4>;
+#endif
+#ifdef HTL_UART5_EXIST
+		using UARTDevice5 = UARTDeviceX<DeviceID::uart5>;
+#endif
+#ifdef HTL_UART6_EXIST
+		using UARTDevice6 = UARTDeviceX<DeviceID::uart6>;
+#endif
+#ifdef HTL_UART7_EXIST
+		using UARTDevice7 = UARTDeviceX<DeviceID::uart7>;
+#endif
+#ifdef HTL_UART8_EXIST
+		using UARTDevice8 = UARTDeviceX<DeviceID::uart8>;
+#endif
 
 #ifdef EOS_PLATFORM_STM32F4
 		namespace internal {
@@ -503,6 +502,7 @@ namespace htl {
 			#endif
 		}
 		#endif
+
 	}
 }
 
@@ -535,8 +535,9 @@ namespace htl {
 	#include "htl/STM32/F4/htlUART_Traits.h"
     #include "htl/STM32/F4/F429/htlUART_Pins.h"
 
-#elif defined(EOS_PLATFORM_STM32F7)
-    #include "htl/STM32/F7/htlUART_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F746)
+	#include "htl/STM32/F7/htlUART_Traits.h"
+    #include "htl/STM32/F7/F746/htlUART_Pins.h"
 
 #else
     #error "Unknown platform"

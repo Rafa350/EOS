@@ -1,13 +1,11 @@
 #include "eos.h"
-#include "Controllers/Serial/eosAsyncSerialDriver_UART.h"
+#include "Controllers/Serial/eosSerialDriver_UART.h"
+#include "HTL/htlINT.h"
 
 #include "appConfig.h"
-#include "appApplication.h"
 #include "appMainService.h"
 
 
-using namespace eos;
-using namespace htl;
 using namespace app;
 
 
@@ -23,66 +21,53 @@ MainService::MainService():
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
 ///
-bool MainService::onTaskStart() {
+void MainService::onExecute() {
 
-	// Inicialitza el LED
-	//
-	LED1_Initialize();
-	LED1_Off();
+	auto devUART = hw::devUART;
 
     // Inicialitza la UART
 	//
-	hw::devUART->initPinTX<hw::PinTX>();
-	hw::devUART->initPinRX<hw::PinRX>();
-	hw::devUART->initialize();
+	devUART->initPinTX<hw::PinTX>();
+	devUART->initPinRX<hw::PinRX>();
+	devUART->initialize();
 
-	hw::devUART->setProtocol(htl::uart::WordBits::_8, htl::uart::Parity::none,
+	devUART->setProtocol(htl::uart::WordBits::word8, htl::uart::Parity::none,
 	        htl::uart::StopBits::_1, htl::uart::Handsake::none);
-#if defined( EOS_PLATFORM_STM32)
-	hw::devUART->setTimming(htl::uart::BaudMode::_19200,
+	devUART->setTimming(htl::uart::BaudMode::b115200,
 	        htl::uart::ClockSource::automatic, 0, htl::uart::OverSampling::_16);
-#elif defined(EOS_PLATFORM_PIC32)
-	hw::devUART->setTimming(_baudMode);
-#else
-#error "Undefined EOS_PLATFORM_XXX"
-#endif
-	irq::setInterruptVectorPriority(irq::VectorID::uart1, irq::Priority::_5);
-	irq::enableInterruptVector(irq::VectorID::uart1);
-	hw::devUART->setNotifyEvent(_uartNotifyEvent, true);
-	hw::devUART->enable();
+	htl::irq::setInterruptVectorPriority(htl::irq::VectorID::uart1, htl::irq::Priority::_5);
+	htl::irq::enableInterruptVector(htl::irq::VectorID::uart1);
 
-	return true;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Bucle d'execucio.
-///
-bool MainService::onTask() {
+	devUART->setNotifyEvent(_uartNotifyEvent, true);
 
 	const char *txBuffer = "Hello world!\r\n";
 
-	hw::devUART->transmit_IRQ((const uint8_t*)txBuffer, strlen(txBuffer));
+	while (!stopSignal()) {
 
-	Task::delay(100);
+		devUART->transmit_IRQ((const uint8_t*)txBuffer, strlen(txBuffer));
 
-	return true;
+		_completed.wait(unsigned(-1));
+		eos::Task::delay(1000);
+	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    : Procesa l'event del UART rxCompleted
+/// \param    : notifyID: Identificador de la notificacio.
 /// \params   : args : Parametres del event.
 ///
 void MainService::uartNotifyEventHandler(
-    const htl::uart::UARTDevice *uart,
-	const htl::uart::NotifyEventArgs &args) {
+    htl::uart::NotifyID notifyID,
+	htl::uart::NotifyEventArgs * const args) {
 
-    switch (args.id) {
-        case uart::NotifyID::txCompleted:
+    switch (notifyID) {
+        case htl::uart::NotifyID::txCompleted:
+        	_completed.releaseISR();
             break;
 
-        case uart::NotifyID::rxCompleted:
+        case htl::uart::NotifyID::rxCompleted:
+        	//_completed.releaseISR();
             break;
 
         default:

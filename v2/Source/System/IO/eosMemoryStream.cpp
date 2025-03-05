@@ -56,13 +56,11 @@ void MemoryStream::setPosition(
 /// ----------------------------------------------------------------------
 /// \brief    Escriu dades en el stream.
 /// \param    data: Dades a escriure.
-/// \param    size: Numero de bytes a escriure.
-/// \return   El numero de bytes escrits.
+/// \return   El nombre de bytes escrits i el resultat de l'operacio
 ///
-Result MemoryStream::write(
+ResultU32 MemoryStream::write(
     const uint8_t *data,
-    unsigned size,
-	unsigned *count) {
+    unsigned size) {
 
     if (_ptr + size >= _end)
         size = _end - _ptr;
@@ -72,23 +70,18 @@ Result MemoryStream::write(
         _ptr += size;
     }
 
-    if (count != nullptr)
-    	*count = size;
-
-    return Results::success;
+    return ResultU32(Results::success, size);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    llegeix dades del stream.
 /// \param    data: Buffer on deixar les dades lleigides.
-/// \param    size: Numero de bytes a lleigit.
-/// \return   El numero de bytes lleigits.
+/// \return   El nombre de bytes lleigits i el resultat de l'operacio
 ///
-Result MemoryStream::read(
+ResultU32 MemoryStream::read(
 	uint8_t *data,
-	unsigned size,
-	unsigned *count) {
+	unsigned size) {
 
     if (_ptr + size >= _end)
         size = _end - _ptr;
@@ -98,9 +91,6 @@ Result MemoryStream::read(
     	_ptr += size;
     }
 
-    if (count != nullptr)
-    	*count = size;
-
-	return Results::success;
+	return ResultU32(Results::success, size);
 }
 

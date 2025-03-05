@@ -33,9 +33,8 @@ char Parser::get() {
 	char ch = _ungetCh;
 
 	if (ch == '\xFF') {
-		unsigned count;
-		ch = ((_stream->read((uint8_t*)&ch, sizeof(char), &count) == Results::success) &&
-			  (count == sizeof(ch))) ? ch : '\xFF';
+		auto readResult = _stream->read((uint8_t*)&ch, sizeof(char));
+		ch = (readResult.isSuccess() && (readResult == sizeof(char))) ? ch : '\xFF';
 	}
 	else
 		_ungetCh = '\xFF';

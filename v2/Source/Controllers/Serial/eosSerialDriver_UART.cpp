@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Serial/eosSerialDriver_UART.h"
-#include "HTL/htlUART.h"
 
 
 using namespace eos;

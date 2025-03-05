@@ -196,9 +196,11 @@ bool TextStreamWriter::writeI32(int32_t data) {
 bool TextStreamWriter::writeChar(
 	char data) {
 
-	unsigned count;
-	unsigned length = sizeof(data);
-	return _stream->write((const uint8_t*)&data, length, &count).isSuccess() && (count == length);
+	eosAssert(_stream != nullptr);
+
+	constexpr unsigned length = sizeof(data);
+	auto writeResult = _stream->write((const uint8_t*)&data, length);
+	return writeResult.isSuccess() && (writeResult == length);
 }
 
 
@@ -212,9 +214,9 @@ bool TextStreamWriter::writeString(
 
 	eosAssert(_stream != nullptr);
 
-	unsigned count;
 	unsigned length = strlen(data);
-	return _stream->write((const uint8_t*)data, length, &count).isSuccess() && (count == length);
+	auto writeResult = _stream->write((const uint8_t*)data, length);
+	return writeResult.isSuccess() && (writeResult == length);
 }
 
 

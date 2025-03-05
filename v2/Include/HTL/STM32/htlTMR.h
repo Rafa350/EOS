@@ -10,61 +10,60 @@
 
 
 namespace htl {
-
 	namespace tmr {
 
 		enum class DeviceID {
-			#ifdef HTL_TMR1_EXIST
-				tmr1,
-			#endif
-			#ifdef HTL_TMR2_EXIST
-				tmr2,
-			#endif
-			#ifdef HTL_TMR3_EXIST
-				tmr3,
-			#endif
-			#ifdef HTL_TMR4_EXIST
-				tmr4,
-			#endif
-			#ifdef HTL_TMR5_EXIST
-				tmr5,
-			#endif
-			#ifdef HTL_TMR6_EXIST
-				tmr6,
-			#endif
-			#ifdef HTL_TMR7_EXIST
-				tmr7,
-			#endif
-			#ifdef HTL_TMR8_EXIST
-				tmr8,
-			#endif
-			#ifdef HTL_TMR9_EXIST
-				tmr9,
-			#endif
-			#ifdef HTL_TMR10_EXIST
-				tmr10,
-			#endif
-			#ifdef HTL_TMR11_EXIST
-				tmr11,
-			#endif
-			#ifdef HTL_TMR12_EXIST
-				tmr12,
-			#endif
-			#ifdef HTL_TMR13_EXIST
-				tmr13,
-			#endif
-			#ifdef HTL_TMR14_EXIST
-				tmr14,
-			#endif
-			#ifdef HTL_TMR15_EXIST
-				tmr15,
-			#endif
-			#ifdef HTL_TMR16_EXIST
-				tmr16,
-			#endif
-			#ifdef HTL_TMR17_EXIST
-				tmr17,
-			#endif
+#ifdef HTL_TMR1_EXIST
+			tmr1,
+#endif
+#ifdef HTL_TMR2_EXIST
+			tmr2,
+#endif
+#ifdef HTL_TMR3_EXIST
+			tmr3,
+#endif
+#ifdef HTL_TMR4_EXIST
+			tmr4,
+#endif
+#ifdef HTL_TMR5_EXIST
+			tmr5,
+#endif
+#ifdef HTL_TMR6_EXIST
+			tmr6,
+#endif
+#ifdef HTL_TMR7_EXIST
+			tmr7,
+#endif
+#ifdef HTL_TMR8_EXIST
+			tmr8,
+#endif
+#ifdef HTL_TMR9_EXIST
+			tmr9,
+#endif
+#ifdef HTL_TMR10_EXIST
+			tmr10,
+#endif
+#ifdef HTL_TMR11_EXIST
+			tmr11,
+#endif
+#ifdef HTL_TMR12_EXIST
+			tmr12,
+#endif
+#ifdef HTL_TMR13_EXIST
+			tmr13,
+#endif
+#ifdef HTL_TMR14_EXIST
+			tmr14,
+#endif
+#ifdef HTL_TMR15_EXIST
+			tmr15,
+#endif
+#ifdef HTL_TMR16_EXIST
+			tmr16,
+#endif
+#ifdef HTL_TMR17_EXIST
+			tmr17,
+#endif
 		};
 
 		enum class CountDirection {
@@ -272,59 +271,61 @@ namespace htl {
 		TMRDeviceX<deviceID_> TMRDeviceX<deviceID_>::_instance;
 
 
-		#ifdef HTL_TMR1_EXIST
+#ifdef HTL_TMR1_EXIST
 		using TMRDevice1 = TMRDeviceX<DeviceID::tmr1>;
-		#endif
-		#ifdef HTL_TMR2_EXIST
+#endif
+#ifdef HTL_TMR2_EXIST
 		using TMRDevice2 = TMRDeviceX<DeviceID::tmr2>;
-		#endif
-		#ifdef HTL_TMR3_EXIST
+#endif
+#ifdef HTL_TMR3_EXIST
 		using TMRDevice3 = TMRDeviceX<DeviceID::tmr3>;
-		#endif
-		#ifdef HTL_TMR4_EXIST
+#endif
+#ifdef HTL_TMR4_EXIST
 		using TMRDevice4 = TMRDeviceX<DeviceID::tmr4>;
-		#endif
-		#ifdef HTL_TMR5_EXIST
+#endif
+#ifdef HTL_TMR5_EXIST
 		using TMRDevice5 = TMRDeviceX<DeviceID::tmr5>;
-		#endif
-		#ifdef HTL_TMR6_EXIST
+#endif
+#ifdef HTL_TMR6_EXIST
 		using TMRDevice6 = TMRDeviceX<DeviceID::tmr6>;
-		#endif
-		#ifdef HTL_TMR7_EXIST
+#endif
+#ifdef HTL_TMR7_EXIST
 		using TMRDevice7 = TMRDeviceX<DeviceID::tmr7>;
-		#endif
-		#ifdef HTL_TMR8_EXIST
+#endif
+#ifdef HTL_TMR8_EXIST
 		using TMRDevice8 = TMRDeviceX<DeviceID::tmr8>;
-		#endif
-		#ifdef HTL_TMR9_EXIST
+#endif
+#ifdef HTL_TMR9_EXIST
 		using TMRDevice9 = TMRDeviceX<DeviceID::tmr9>;
-		#endif
-		#ifdef HTL_TMR10_EXIST
+#endif
+#ifdef HTL_TMR10_EXIST
 		using TMRDevice10 = TMRDeviceX<DeviceID::tmr10>;
-		#endif
-		#ifdef HTL_TMR11_EXIST
+#endif
+#ifdef HTL_TMR11_EXIST
 		using TMRDevice11 = TMRDeviceX<DeviceID::tmr11>;
-		#endif
-		#ifdef HTL_TMR12_EXIST
+#endif
+#ifdef HTL_TMR12_EXIST
 		using TMRDevice12 = TMRDeviceX<DeviceID::tmr12>;
-		#endif
-		#ifdef HTL_TMR13_EXIST
+#endif
+#ifdef HTL_TMR13_EXIST
 		using TMRDevice13 = TMRDeviceX<DeviceID::tmr13>;
-		#endif
-		#ifdef HTL_TMR14_EXIST
+#endif
+#ifdef HTL_TMR14_EXIST
 		using TMRDevice14 = TMRDeviceX<DeviceID::tmr14>;
-		#endif
-		#ifdef HTL_TMR15_EXIST
+#endif
+#ifdef HTL_TMR15_EXIST
 		using TMRDevice15 = TMRDeviceX<DeviceID::tmr15>;
-		#endif
-		#ifdef HTL_TMR16_EXIST
+#endif
+#ifdef HTL_TMR16_EXIST
 		using TMRDevice16 = TMRDeviceX<DeviceID::tmr16>;
-		#endif
-		#ifdef HTL_TMR17_EXIST
+#endif
+#ifdef HTL_TMR17_EXIST
 		using TMRDevice17 = TMRDeviceX<DeviceID::tmr17>;
-		#endif
+#endif
+
 	}
 }
+
 
 #if defined(EOS_PLATFORM_STM32G030)
 	#include "htl/STM32/G0/htlTMR_Traits.h"

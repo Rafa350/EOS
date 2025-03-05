@@ -18,8 +18,11 @@ MyApplication::MyApplication() {
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza l'aplicacio.
 ///
-void MyApplication::onInitialize() {
+void MyApplication::onExecute() {
 
 	auto mainService = new MainService();
-	addService(mainService, eos::Task::Priority::normal, 512, "MAINP");
+	addService(mainService);
+
+	while (true)
+		eos::Task::delay(1000);
 }
