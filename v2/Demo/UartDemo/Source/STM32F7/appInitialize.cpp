@@ -37,6 +37,9 @@ static void initializeClock() {
 	clkInit.APB1CLKDivider = RCC_HCLK_DIV4;
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
+
+	SystemCoreClockUpdate();
+
 }
 
 

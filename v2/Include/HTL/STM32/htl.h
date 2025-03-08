@@ -297,6 +297,7 @@ namespace htl {
 
 }
 
+
 #if defined(HTL_MODULE_DMA)
 #include "HTL/STM32/htDMA.h"
 #endif

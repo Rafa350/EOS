@@ -74,8 +74,7 @@ namespace eos {
 			#endif
 
 		protected:
-			bool onTaskStart() override;
-			bool onTask() override;
+			void onExecute() override;
 
 	};
 }

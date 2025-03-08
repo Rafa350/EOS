@@ -244,6 +244,8 @@ namespace htl {
 				UARTDevice(USART_TypeDef *usart);
 #if HTL_UART_OPTION_IRQ == 1
 				void interruptService();
+				void txInterruptService();
+				void rxInterruptService();
 #endif
 				virtual void activate() = 0;
 				virtual void deactivate() = 0;

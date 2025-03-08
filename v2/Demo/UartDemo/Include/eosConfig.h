@@ -3,6 +3,9 @@
 #define __eosConfig__
 
 
+#define HTL_UART_OPTION_DMA  0
+
+
 #define USE_LED1
 #define USE_SIO
 

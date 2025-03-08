@@ -386,6 +386,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/HTL/htlAtomic.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/htlAtomic.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/htlBits.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/htlBits.cpp</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/OSAL/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

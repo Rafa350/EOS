@@ -217,12 +217,13 @@ unsigned Clock::getClockFrequency(
 
 	static const uint8_t pclkPrescalerTbl[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
 	static const uint8_t hclkPrescalerTbl[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
-	static const uint8_t pllMultiplierTbl[16] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-	static const uint8_t pllHseDividerTbl[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
 	unsigned fclk = 0;
 
 	switch (clockId) {
+
+		// System clock
+		//
 		case ClockID::sysclk:
 			switch (RCC->CFGR & RCC_CFGR_SWS_Msk) {
 				case RCC_CFGR_SWS_HSE:
@@ -233,34 +234,56 @@ unsigned Clock::getClockFrequency(
 					fclk = CLOCK_HSI_FREQUENCY;
 					break;
 
-				case RCC_CFGR_SWS_PLL:
-					break;
+				case RCC_CFGR_SWS_PLL:  {
+				    // PLL_VCO = (HSE_VALUE or HSI_VALUE / PLL_M) * PLL_N
+				    // SYSCLK = PLL_VCO / PLL_P
+				    unsigned pllm = RCC->PLLCFGR & RCC_PLLCFGR_PLLM;
+
+				    unsigned pllvco;
+				    if ((RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC) != 0)
+				        pllvco = (HSE_VALUE / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 6);
+				    else
+				        pllvco = (HSI_VALUE / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 6);
+
+				    unsigned pllp = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLP) >> 16) + 1) * 2;
+				    fclk = pllvco / pllp;
+				    break;
+				}
 			}
 			break;
 
 		case ClockID::pclk:
+			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE1_Msk) >> RCC_CFGR_PPRE1_Pos];
 			break;
 
 		case ClockID::pclk2:
-			fclk = getClockFrequency(ClockID::pclk) * 2;
+			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE2_Msk) >> RCC_CFGR_PPRE2_Pos];
 			break;
 
 		case ClockID::hclk:
 			fclk = getClockFrequency(ClockID::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 			break;
 
+		// High speed external clock
+		//
 		case ClockID::hse:
 			fclk = CLOCK_HSE_FREQUENCY;
 			break;
 
+		// High speed internal clock
+		//
 		case ClockID::hsi:
 			fclk = CLOCK_HSI_FREQUENCY;
 			break;
 
+		// Low speed external clock
+		//
 		case ClockID::lse:
 			fclk = CLOCK_LSE_FREQUENCY;
 			break;
 
+		// Low speed internal clock
+		//
 		case ClockID::lsi:
 			fclk = CLOCK_LSI_FREQUENCY;
 			break;

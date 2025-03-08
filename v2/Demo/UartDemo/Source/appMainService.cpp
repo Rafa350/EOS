@@ -14,7 +14,6 @@ using namespace app;
 ///
 MainService::MainService():
 	_uartNotifyEvent {*this, &MainService::uartNotifyEventHandler} {
-
 }
 
 
