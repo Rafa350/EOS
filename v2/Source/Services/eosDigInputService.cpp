@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 
@@ -14,8 +13,11 @@
 #define PATTERN_IDLE     0x00000000
 
 
+import htl.interrupts;
+
+
 using namespace eos;
-using namespace htl::irq;
+using namespace htl::interrupts;
 
 
 constexpr const char *serviceName = "DigInput";

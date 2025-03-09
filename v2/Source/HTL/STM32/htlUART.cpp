@@ -1,16 +1,14 @@
 #include "HTL/htl.h"
-#include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlUART.h"
 
 
-import htl.bits;
 import htl.atomic;
+import htl.bits;
+import htl.clocks;
 
 
-using namespace eos;
 using namespace htl;
 using namespace htl::uart;
-using namespace htl::clock;
 
 
 static void setParity(USART_TypeDef *usart, Parity parity);
@@ -143,10 +141,10 @@ eos::Result UARTDevice::setProtocol(
 		setWordBits(_usart, wordBits, parity != Parity::none);
 		setStopBits(_usart, stopBits);
 		setHandsake(_usart, handsake);
-		return Results::success;
+		return eos::Results::success;
 	}
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 
 
@@ -160,10 +158,10 @@ eos::Result UARTDevice::setRxTimeout(
 
 	if (_state == State::ready) {
 		setReceiveTimeout(_usart, timeout);
-		return Results::success;
+		return eos::Results::success;
 	}
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 
 
@@ -244,10 +242,10 @@ eos::Result UARTDevice::setTimming(
 		else
 			_usart->BRR = div;
 
-		return Results::success;
+		return eos::Results::success;
 	}
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 
 
@@ -285,14 +283,14 @@ eos::Result UARTDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Results::timeout : Results::success;
+		return error ? eos::Results::timeout : eos::Results::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Results::busy;
+		return eos::Results::busy;
 
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 
 
@@ -317,14 +315,14 @@ eos::Result UARTDevice::transmit_IRQ(
 
         enableTransmissionIRQ(_usart);
 
-		return Results::success;
+		return eos::Results::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Results::busy;
+		return eos::Results::busy;
 
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 #endif
 
@@ -380,7 +378,7 @@ eos::Result UARTDevice::abortTransmission() {
 		return eos::Results::success;
 	}
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 
 
@@ -419,13 +417,13 @@ eos::Result UARTDevice::receive(
 
 		_state = State::ready;
 
-		return error ? Results::timeout : Results::success;
+		return error ? eos::Results::timeout : eos::Results::success;
 	}
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Results::busy;
+		return eos::Results::busy;
 
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 
 
@@ -450,14 +448,14 @@ eos::Result UARTDevice::receive_IRQ(
 
 		enableReceptionIRQ(_usart);
 
-		return Results::success;
+		return eos::Results::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Results::busy;
+		return eos::Results::busy;
 
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 #endif
 
@@ -491,7 +489,7 @@ eos::Result UARTDevice::abortReception() {
 		return eos::Results::success;
 	}
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 
 
@@ -962,26 +960,26 @@ static unsigned getClockFrequency(
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
             if (((unsigned) usart == USART1_BASE) ||
                 ((unsigned) usart == USART6_BASE))
-                return Clock::getClockFrequency(clock::ClockID::pclk2);
+                return clocks::getClockFrequency(clocks::ClockID::pclk2);
             else
 #endif
-                return Clock::getClockFrequency(clock::ClockID::pclk);
+                return clocks::getClockFrequency(clocks::ClockID::pclk);
 
         case ClockSource::sysclk:
-            return Clock::getClockFrequency(clock::ClockID::sysclk);
+            return clocks::getClockFrequency(clocks::ClockID::sysclk);
 
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
         case ClockSource::hsi:
-            return Clock::getClockFrequency(clock::ClockID::hsi);
+            return clocks::getClockFrequency(clocks::ClockID::hsi);
 #endif
 
 #if defined(EOS_PLATFORM_STM32G0)
         case ClockSource::hsi16:
-            return Clock::getClockFrequency(clock::ClockID::hsi16);
+            return clocks::getClockFrequency(clocks::ClockID::hsi16);
 #endif
 
         case ClockSource::lse:
-            return Clock::getClockFrequency(clock::ClockID::lse);
+            return clocks::getClockFrequency(clocks::ClockID::lse);
 
         default:
             return 0;

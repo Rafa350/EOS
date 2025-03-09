@@ -50,7 +50,7 @@ void STSPIN840_Device::initialize(
 
 	// Inicialitza el timer per la generacio del senyal PWM
 	//
-	_reload = (htl::clock::Clock::getClockFrequency(htl::clock::ClockID::pclk) / (_prescaler * frequency)) - 1;
+	_reload = (htl::clock::getClockFrequency(htl::clock::ClockID::pclk) / (_prescaler * frequency)) - 1;
 	_tmr->initialize(htl::tmr::ClockDivider::_1, _prescaler - 1, _reload, 0);
 }
 

@@ -76,7 +76,7 @@
 #define EXIST_SIO
 
 #define SIO_Device         htl::uart::UARTDevice2
-#define SIO_IRQVector      htl::irq::VectorID::usart2
+#define SIO_IRQVector      htl::interrupts::VectorID::usart2
 #define SIO_TX_Pin         htl::gpio::PinA2
 #define SIO_RX_Pin         htl::gpio::PinA3
 

@@ -7,8 +7,7 @@
 #endif
 
 
-using namespace htl;
-using namespace htl::clock;
+namespace htl::clock {
 
 
 /// ----------------------------------------------------------------------
@@ -16,7 +15,7 @@ using namespace htl::clock;
 /// \param    source: L'origen.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool Clock::setSysClkSource(
+bool setSysClkSource(
 	SysClkSource source) {
 
 	uint32_t tmp = RCC->CFGR;
@@ -54,7 +53,7 @@ bool Clock::setSysClkSource(
 /// \brief    Selecciona la font del rellotge I2CClk
 /// \param    source: La font.
 ///
-void Clock::setI2CClkSource(
+void setI2CClkSource(
 	I2CClkSource source) {
 
 	switch (source) {
@@ -73,7 +72,7 @@ void Clock::setI2CClkSource(
 /// \brief    Selecciona el valor del divisor del rellotge HClk (AHB)
 /// \param    value: El valor.
 ///
-void Clock::setHClkPrescaler(
+void setHClkPrescaler(
 	HClkPrescaler value) {
 
 	uint32_t tmp = RCC->CFGR;
@@ -125,7 +124,7 @@ void Clock::setHClkPrescaler(
 /// \brief    Selecciona el valor del divisor del rellotge PClk (APB)
 /// \param    value: El valor.
 ///
-void Clock::setPClkPrescaler(
+void setPClkPrescaler(
 	PClkPrescaler value) {
 
 	uint32_t tmp = RCC->CFGR;
@@ -160,7 +159,7 @@ void Clock::setPClkPrescaler(
 /// ----------------------------------------------------------------------
 /// \brief    Activa el rellotge HSI
 ///
-void Clock::hsiEnable() {
+void hsiEnable() {
 
 	if (!isHsiEnabled()) {
 		RCC->CR |= RCC_CR_HSION;
@@ -173,7 +172,7 @@ void Clock::hsiEnable() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el rellotge HSI
 ///
-void Clock::hsiDisable() {
+void hsiDisable() {
 
 	RCC->CR &= ~RCC_CR_HSION;
 	while ((RCC->CR & RCC_CR_HSIRDY) != 0)
@@ -185,7 +184,7 @@ void Clock::hsiDisable() {
 /// \brief    Comprova si el rellotge HSI es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool Clock::isHsiEnabled() {
+bool isHsiEnabled() {
 
     return (RCC->CR & RCC_CR_HSIRDY) != 0;
 }
@@ -195,7 +194,7 @@ bool Clock::isHsiEnabled() {
 /// \brief    Activa el rellotge HSE.
 /// \param    bypass: El modus del bypass
 ///
-void Clock::hseEnable(
+void hseEnable(
 	HseBypassMode bypass) {
 
 	switch (bypass) {
@@ -219,7 +218,7 @@ void Clock::hseEnable(
 /// ----------------------------------------------------------------------
 /// \brief   Desactiva el rellotge HSE.
 ///
-void Clock::hseDisable() {
+void hseDisable() {
 
 	RCC->CR &= ~RCC_CR_HSEON;
 	while ((RCC->CR & RCC_CR_HSERDY) != 0)
@@ -231,7 +230,7 @@ void Clock::hseDisable() {
 /// \brief    Comprova si el rellotge HSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool Clock::isHseEnabled() {
+bool isHseEnabled() {
 
     return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
@@ -240,7 +239,7 @@ bool Clock::isHseEnabled() {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el PLL
 ///
-void Clock::pllEnable() {
+void pllEnable() {
 
 	RCC->CR |= RCC_CR_PLLON;
 	while ((RCC->CR & RCC_CR_PLLRDY) == 0)
@@ -251,7 +250,7 @@ void Clock::pllEnable() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el PLL
 ///
-void Clock::pllDisable() {
+void pllDisable() {
 
 	RCC->CR &= ~RCC_CR_PLLON;
 	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
@@ -263,7 +262,7 @@ void Clock::pllDisable() {
 /// \brief    Comprova si el PLL esta activat.
 /// \return   True si esta activat, false en cas contrari.
 ///
-bool Clock::isPllEnabled() {
+bool isPllEnabled() {
 
     return ((RCC->CR & RCC_CR_PLLON) != 0) && ((RCC->CR & RCC_CR_PLLRDY) != 0);
 }
@@ -274,7 +273,7 @@ bool Clock::isPllEnabled() {
 /// \param    value: El valor.
 /// \return   True si tot es correce, false en cas contrari.
 ///
-bool Clock::setPllSource(
+bool setPllSource(
 	PllSource value) {
 
 	uint32_t tmp = RCC->CFGR;
@@ -304,7 +303,7 @@ bool Clock::setPllSource(
 /// \brief    Asigna el valor del divisor de la entrada HSE del PLL.
 /// \param    value: El valor.
 ///
-void Clock::setPllHseDivider(
+void setPllHseDivider(
 	PllHseDivider value) {
 
 	uint32_t tmp = RCC->CFGR2;
@@ -385,7 +384,7 @@ void Clock::setPllHseDivider(
 /// \brief    Asigna el valor del multiplicador del PLL.
 /// \param    value: El valor.
 ///
-void Clock::setPllMultiplier(
+void setPllMultiplier(
 	PllMultiplier value) {
 
 	uint32_t tmp = RCC->CFGR;
@@ -462,7 +461,7 @@ void Clock::setPllMultiplier(
 /// \param    clockId: Identificador del rellotge.
 /// \return   La frequencia en hz, o zero en cas d'error.
 ///
-unsigned Clock::getClockFrequency(
+unsigned getClockFrequency(
 	ClockID clockId) {
 
 	static const uint8_t pclkPrescalerTbl[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
@@ -530,4 +529,6 @@ unsigned Clock::getClockFrequency(
 	}
 
 	return fclk;
+}
+
 }

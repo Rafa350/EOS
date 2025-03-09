@@ -1,12 +1,13 @@
 #include "eos.h"
 #include "Controllers/Serial/eosSerialDriver_UART.h"
-#include "HTL/htlINT.h"
 
 #include "appConfig.h"
 #include "appMainService.h"
 
+import htl.interrupts;
 
 using namespace app;
+using namespace htl::interrupts;
 
 
 /// ----------------------------------------------------------------------
@@ -34,8 +35,8 @@ void MainService::onExecute() {
 	        htl::uart::StopBits::_1, htl::uart::Handsake::none);
 	devUART->setTimming(htl::uart::BaudMode::b115200,
 	        htl::uart::ClockSource::automatic, 0, htl::uart::OverSampling::_16);
-	htl::irq::setInterruptVectorPriority(htl::irq::VectorID::uart1, htl::irq::Priority::_5);
-	htl::irq::enableInterruptVector(htl::irq::VectorID::uart1);
+	setInterruptVectorPriority(VectorID::uart1, Priority::p5);
+	enableInterruptVector(VectorID::uart1);
 
 	devUART->setNotifyEvent(_uartNotifyEvent, true);
 

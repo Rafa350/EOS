@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HTL/htlINT.h"
 #include "Services/eosDigOutputService.h"
 #include "System/Core/eosTask.h"
 
@@ -8,8 +7,11 @@
 #include <limits>
 
 
+import htl.interrupts;
+
+
 using namespace eos;
-using namespace htl::irq;
+using namespace htl::interrupts;
 
 
 constexpr const char *serviceName = "DigOutput";
