@@ -4,6 +4,8 @@ module;
 #include "HTL/htl.h"
 
 
+export module htl.interrupts;
+
 #if defined(EOS_PLATFORM_STM32G0)
 export import htl.interrupts.stm32g0;
 #elif defined(EOS_PLATFORM_STM32F0)
@@ -15,7 +17,6 @@ export import htl.interrupts.stm32f7;
 #else
 	#error "Unsuported platform."
 #endif
-export module htl.interrupts;
 
 
 export namespace htl::interrupts {
@@ -60,7 +61,6 @@ export namespace htl::interrupts {
 }
 
 
-
 /// --------------------------------------------------------------------
 /// \brief    Configura la prioritat d'un vector d'interrupcio.
 /// \param    vectorID: El identificador del vector.
@@ -68,9 +68,9 @@ export namespace htl::interrupts {
 /// \param    subPriority: La sub-prioritat.
 ///
 void htl::interrupts::setInterruptVectorPriority(
-	VectorID vectorID,
-	Priority priority,
-	SubPriority subPriority) {
+	htl::interrupts::VectorID vectorID,
+	htl::interrupts::Priority priority,
+	htl::interrupts::SubPriority subPriority) {
 
 	uint32_t priorityGroup = NVIC_GetPriorityGrouping();
 
@@ -84,7 +84,7 @@ void htl::interrupts::setInterruptVectorPriority(
 /// \param   vectorID: El identificador del vector.
 ///
 void htl::interrupts::enableInterruptVector(
-	VectorID vectorID) {
+	htl::interrupts::VectorID vectorID) {
 
 	NVIC_EnableIRQ((IRQn_Type) vectorID);
 }
@@ -95,18 +95,20 @@ void htl::interrupts::enableInterruptVector(
 /// \param   vectorID: El identificador del vector.
 ///
 void htl::interrupts::disableInterruptVector(
-	VectorID vectorID) {
+	htl::interrupts::VectorID vectorID) {
 
 	NVIC_DisableIRQ((IRQn_Type) vectorID);
 }
 
 
 bool htl::interrupts::getInterruptState() {
+
 	return __get_PRIMASK() == 0;
 }
 
 
 void htl::interrupts::enableInterrupts() {
+
 	__enable_irq();
 }
 
@@ -118,6 +120,7 @@ void htl::interrupts::disableInterrupts() {
 
 void htl::interrupts::restoreInterrupts(
 	bool state) {
+
 	if (state)
 		__enable_irq();
 }

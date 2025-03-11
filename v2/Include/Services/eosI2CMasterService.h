@@ -56,7 +56,7 @@ namespace eos {
     		static constexpr uint32_t minStackSize = 256;
 
 		private:
-    		void devI2CNotifyEventHandler(htl::i2c::NotifyEventArgs &args);
+    		void devI2CNotifyEventHandler(htl::i2c::NotifyID id, htl::i2c::NotifyEventArgs * const args);
 
 		protected:
 			void onExecute() override;

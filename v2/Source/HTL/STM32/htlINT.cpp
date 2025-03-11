@@ -2,10 +2,6 @@
 #include "HTL/STM32/htlINT.h"
 
 
-using namespace htl;
-using namespace htl::irq;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Configura la prioritat d'un vector d'interrupcio.
 /// \param    vectorID: El vector.

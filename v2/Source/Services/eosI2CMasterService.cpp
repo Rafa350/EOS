@@ -151,23 +151,24 @@ void I2CMasterService::onExecute() {
 /// \param    args: Els parametres de la notificacio.
 ///
 void I2CMasterService::devI2CNotifyEventHandler(
-	htl::i2c::NotifyEventArgs &args) {
+	htl::i2c::NotifyID id,
+	htl::i2c::NotifyEventArgs * const args) {
 
-	switch (args.id) {
-		case htl::i2c::NotifyId::txCompleted:
-			if (args.irq)
+	switch (id) {
+		case htl::i2c::NotifyID::txCompleted:
+			if (args->irq)
 				_txFinished.releaseISR();
 			else
 				_txFinished.release();
-			_txFinishedLength = args.txCompleted.length;
+			_txFinishedLength = args->txCompleted.length;
 			break;
 
-		case htl::i2c::NotifyId::rxCompleted:
-			if (args.irq)
+		case htl::i2c::NotifyID::rxCompleted:
+			if (args->irq)
 				_rxFinished.releaseISR();
 			else
 				_rxFinished.release();
-			_rxFinishedLength = args.rxCompleted.length;
+			_rxFinishedLength = args->rxCompleted.length;
 			break;
 
 		default:

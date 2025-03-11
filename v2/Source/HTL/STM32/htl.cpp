@@ -1,9 +1,10 @@
 #include "HTL/htl.h"
 #include "HTL/htlTick.h"
 
+//import htl.tick;
+
 
 using namespace htl;
-using namespace htl::tick;
 
 
 
@@ -12,7 +13,7 @@ using namespace htl::tick;
 ///
 void htl::initialize() {
 
-	TickGenerator::pInst->initialize(1000000);
+	tick::TickGenerator::pInst->initialize(1000000);
 }
 
 
@@ -21,7 +22,7 @@ void htl::initialize() {
 ///
 void htl::deinitialize() {
 
-	TickGenerator::pInst->deinitialize();
+	tick::TickGenerator::pInst->deinitialize();
 }
 
 
@@ -31,7 +32,7 @@ void htl::deinitialize() {
 ///
 unsigned htl::getTick() {
 
-	return TickGenerator::pInst->getTick();
+	return tick::TickGenerator::pInst->getTick();
 }
 
 
@@ -43,7 +44,7 @@ unsigned htl::getTick() {
 void htl::waitTicks(
 	unsigned ticks) {
 
-    TickGenerator::pInst->wait(ticks);
+    tick::TickGenerator::pInst->wait(ticks);
 }
 
 
@@ -55,6 +56,6 @@ void htl::waitTicks(
 bool htl::hasTickExpired(
     unsigned tick) {
 
-    return static_cast<int>(tick - getTick()) <= 0;
+    return static_cast<int>(tick - htl::getTick()) <= 0;
 }
 

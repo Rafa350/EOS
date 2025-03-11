@@ -156,7 +156,7 @@ Result I2CMasterDevice::transmit(
 	uint16_t addr,
 	const uint8_t *buffer,
 	unsigned bufferSize,
-	Tick timeout) {
+	unsigned timeout) {
 
 	uint32_t tmp;
 
@@ -226,7 +226,7 @@ Result I2CMasterDevice::receive(
 	uint16_t addr,
 	uint8_t *buffer,
 	unsigned bufferSize,
-	Tick timeout) {
+	unsigned timeout) {
 
     uint32_t tmp;
 

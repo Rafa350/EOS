@@ -283,7 +283,7 @@
 #endif
 
 
-namespace htl {
+/*namespace htl {
 
 	inline unsigned startATOMIC() {
 		unsigned pm =  __get_PRIMASK();
@@ -295,7 +295,7 @@ namespace htl {
 		__set_PRIMASK(pm);
 	}
 
-}
+}*/
 
 
 #if defined(HTL_MODULE_DMA)

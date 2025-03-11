@@ -13,11 +13,16 @@
 #define PATTERN_IDLE     0x00000000
 
 
+#ifdef HTL_MODULAR
 import htl.interrupts;
+#else
+#include "HTL/htlINT.h"
+namespace interrupts = htl::irq;
+#endif
 
 
 using namespace eos;
-using namespace htl::interrupts;
+using namespace htl;
 
 
 constexpr const char *serviceName = "DigInput";
@@ -202,15 +207,15 @@ void DigInputService::onExecute() {
 		if (scanInputs()) {
 			for (auto input: _inputs) {
 
-				bool ie = getInterruptState();
+				bool ie = interrupts::getInterruptState();
 				if (ie)
-					disableInterrupts();
+					interrupts::disableInterrupts();
 
 				bool flag = input->_pinStatus.flag;
 				input->_pinStatus.flag = false;
 
 				if (ie)
-					enableInterrupts();
+					interrupts::enableInterrupts();
 
 				if (flag)
 					notifyChanged(input);

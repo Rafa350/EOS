@@ -3,6 +3,7 @@
 #define __eosConfig__
 
 
+#define HTL_MODULAR
 #define HTL_UART_OPTION_DMA  0
 
 

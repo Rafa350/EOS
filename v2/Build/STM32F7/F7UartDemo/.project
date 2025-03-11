@@ -211,6 +211,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/HTLmod</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -381,14 +386,39 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/htlAtomic.cpp</name>
+			<name>Src/Framework/EOS/HTLmod/htl_atomic.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/htlAtomic.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTLmod/htl_atomic.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/htlBits.cpp</name>
+			<name>Src/Framework/EOS/HTLmod/htl_bits.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/htlBits.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTLmod/htl_bits.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTLmod/htl_clocks.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTLmod/htl_clocks.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTLmod/htl_clocks_stm32f7.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTLmod/htl_clocks_stm32f7.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTLmod/htl_interrupts.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTLmod/htl_interrupts.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTLmod/htl_interrupts_stm32f7.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTLmod/htl_interrupts_stm32f7.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTLmod/htl_tick.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTLmod/htl_tick.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/OSAL/FreeRTOS</name>
@@ -586,6 +616,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlGPIO.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/htlTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/htlUART.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART.h</locationURI>
@@ -621,14 +656,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlClocks.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlClocks.cpp</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlClocks_stm32f7.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlClocks_stm32f7.cpp</locationURI>
+			<name>Src/Framework/EOS/HTL/STM32/F7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
@@ -636,14 +666,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlInterrupts.cpp</name>
+			<name>Src/Framework/EOS/HTL/STM32/htlTMR.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlInterrupts.cpp</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HTL/STM32/htlInterrupts_stm32f7.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlInterrupts_stm32f7.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTMR.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htlUART.cpp</name>
@@ -721,9 +746,24 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/F7/htlTMR_Traits.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlTMR_Traits.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/F7/htlUART_Traits.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlUART_Traits.h</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32/F7/htlClock.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F7/htlClock.cpp</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HTL/STM32/F7/F746/htlTMR_Pins.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/F746/htlTMR_Pins.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/F7/F746/htlUART_Pins.h</name>

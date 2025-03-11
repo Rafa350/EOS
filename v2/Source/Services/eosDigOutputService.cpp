@@ -7,11 +7,16 @@
 #include <limits>
 
 
+#ifdef HTL_MODULAR
 import htl.interrupts;
+#else
+#include "HTL/htlINT.h"
+namespace interrupts = htl::irq;
+#endif
 
 
 using namespace eos;
-using namespace htl::interrupts;
+using namespace htl;
 
 
 constexpr const char *serviceName = "DigOutput";
@@ -358,9 +363,9 @@ bool DigOutputService::read(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    disableInterrupts();
+    interrupts::disableInterrupts();
     bool pinState = output->_drv->read();
-    enableInterrupts();
+    interrupts::enableInterrupts();
 
     return pinState;
 }
@@ -618,7 +623,7 @@ void DigOutputService::tickInterruptFunction() {
 
 	// Incrementa el contador de temps
 	//
-	_timeCounter++;
+	_timeCounter += 1;
 
     Command cmd = {
         .id = CommandId::tick

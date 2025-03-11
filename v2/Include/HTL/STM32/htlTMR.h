@@ -352,6 +352,7 @@ namespace htl {
     #include "htl/STM32/F4/F429/htlTMR_Pins.h"
 
 #elif defined(EOS_PLATFORM_STM32F746)
+	#include "htl/STM32/F7/htlTMR_Traits.h"
     #include "htl/STM32/F7/F746/htlTMR_Pins.h"
 
 #else

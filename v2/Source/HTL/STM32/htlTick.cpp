@@ -1,16 +1,12 @@
 #include "HTL/htlTick.h"
-//#include "HTL/STM32/htlClock.h"
+#include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlTMR.h"
+#include "HTL/STM32/htlINT.h"
 #include "HTL/STM32/htlGPIO.h"
-
-
-import htl.interrupts;
-import htl.clocks.stm32g0;
 
 
 using namespace htl;
 using namespace htl::tick;
-using namespace htl::interrupts;
 
 
 using DevTMR = HTL_TICK_TIMER;
@@ -37,14 +33,14 @@ void TickGenerator::initialize(
     unsigned frequency) {
 
 	unsigned limit = 1000;
-	unsigned prescaler = (clocks::getClockFrequency(clocks::ClockID::pclk) / frequency) - 1;
+	unsigned prescaler = (clock::getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
 	__devTMR->initialize(clkDiv, prescaler, limit, 0);
 	__devTMR->setNotifyEvent(_tmrNotifyEvent, true);
 
-	enableInterruptVector(VectorID::tmr14);
-	setInterruptVectorPriority(VectorID::tmr14, Priority::p7);
+	enableInterruptVector(irq::VectorID::tmr14);
+	setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::p7);
 
 	start();
 }
@@ -59,7 +55,7 @@ void TickGenerator::deinitialize() {
 
 	__devTMR->disableNotifyEvent();
 
-	disableInterruptVector(VectorID::tmr14);
+	disableInterruptVector(irq::VectorID::tmr14);
 }
 
 

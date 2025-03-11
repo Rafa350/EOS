@@ -2,9 +2,15 @@
 #include "HTL/STM32/htlUART.h"
 
 
+#ifdef HTL_MODULAR
 import htl.atomic;
 import htl.bits;
 import htl.clocks;
+#else
+	#include "HTL/htlBits.h"
+	#include "HTL/htlAtomic.h"
+	#include "HTL/STM32/htlClock.h"
+#endif
 
 
 using namespace htl;
@@ -276,8 +282,7 @@ eos::Result UARTDevice::transmit(
 			_usart->TDR = *buffer++;
 		}
 
-	    if (!waitTransmissionCompleteFlag(_usart, expireTime))
-	    	error = true;
+	    error = !waitTransmissionCompleteFlag(_usart, expireTime);
 
 		disableTransmission(_usart);
 
@@ -355,14 +360,14 @@ eos::Result UARTDevice::transmit_DMA(
         devDMA->setNotifyEvent(_dmaNotifyEvent, true);
         devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txMaxCount);
 
-        return Results::success;
+        return eos::Results::success;
     }
 
     else if ((_state == State::transmiting) || (_state == State::receiving))
-        return Results::busy;
+        return eos::Results::busy;
 
     else
-        return Results::errorState;
+        return eos::Results::errorState;
 }
 #endif
 
@@ -473,7 +478,7 @@ eos::Result UARTDevice::receive_DMA(
     uint8_t *buffer,
     unsigned bufferSize) {
 
-	return Results::error;
+	return eos::Results::error;
 }
 #endif
 
@@ -760,7 +765,7 @@ void UARTDevice::dmaNotifyEventHandler(
 
         // Transmissio complerta de tots els bytes.
         //
-        case htl::dma::NotifyID::completed:
+        case htl::dma::NotifyID::completed: {
             _txCount = _txMaxCount;
             _usart->ICR = USART_ICR_TCCF;
             auto a = startAtomic();
@@ -768,6 +773,7 @@ void UARTDevice::dmaNotifyEventHandler(
             endAtomic(a);
             devDMA->disableNotifyEvent();
             break;
+        }
 
         // Error en la transmissio DMA.
         //
@@ -960,26 +966,26 @@ static unsigned getClockFrequency(
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
             if (((unsigned) usart == USART1_BASE) ||
                 ((unsigned) usart == USART6_BASE))
-                return clocks::getClockFrequency(clocks::ClockID::pclk2);
+                return clock::getClockFrequency(clock::ClockID::pclk2);
             else
 #endif
-                return clocks::getClockFrequency(clocks::ClockID::pclk);
+                return clock::getClockFrequency(clock::ClockID::pclk);
 
         case ClockSource::sysclk:
-            return clocks::getClockFrequency(clocks::ClockID::sysclk);
+            return clock::getClockFrequency(clock::ClockID::sysclk);
 
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
         case ClockSource::hsi:
-            return clocks::getClockFrequency(clocks::ClockID::hsi);
+            return clock::getClockFrequency(clock::ClockID::hsi);
 #endif
 
 #if defined(EOS_PLATFORM_STM32G0)
         case ClockSource::hsi16:
-            return clocks::getClockFrequency(clocks::ClockID::hsi16);
+            return clock::getClockFrequency(clock::ClockID::hsi16);
 #endif
 
         case ClockSource::lse:
-            return clocks::getClockFrequency(clocks::ClockID::lse);
+            return clock::getClockFrequency(clock::ClockID::lse);
 
         default:
             return 0;
@@ -1068,14 +1074,14 @@ static void setWordBits(
 			break;
 	}
 
-	auto a = startATOMIC();
+	auto a = startAtomic();
 	auto CR1 = usart->CR1;
 	if (numBits == 8)
 		CR1 &= ~USART_CR1_M;
 	else
 		CR1 |= USART_CR1_M;
 	usart->CR1 = CR1;
-	endATOMIC(a);
+	endAtomic(a);
 }
 #elif defined(EOS_PLATFORM_STM32G0)
 static void setWordBits(

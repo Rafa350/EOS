@@ -144,6 +144,9 @@ export namespace htl::clocks {
 }
 
 
+using namespace htl;
+
+
 /// ------------------------------------------------------------------------
 /// \brief    Selecciona el rellotge SysClk
 /// \param    source: L'origen.

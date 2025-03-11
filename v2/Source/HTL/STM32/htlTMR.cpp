@@ -189,6 +189,8 @@ eos::Result TMRDevice::configurePwmChannel(
 		case Channel::ch4:
 			return configurePwmChannel4(polarity, compare);
 	}
+
+	return eos::Results::errorParameter;
 }
 
 
