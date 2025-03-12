@@ -214,9 +214,15 @@ bool TextStreamWriter::writeString(
 
 	eosAssert(_stream != nullptr);
 
-	unsigned length = strlen(data);
-	auto writeResult = _stream->write((const uint8_t*)data, length);
-	return writeResult.isSuccess() && (writeResult == length);
+	if (data != nullptr) {
+		unsigned length = strlen(data);
+		if (length > 0) {
+			auto writeResult = _stream->write((const uint8_t*)data, length);
+			return writeResult.isSuccess() && (writeResult == length);
+		}
+	}
+
+	return true;
 }
 
 

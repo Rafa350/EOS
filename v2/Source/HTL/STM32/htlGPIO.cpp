@@ -1,4 +1,5 @@
 #include "HTL/htl.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htlGPIO.h"
 
 
@@ -528,35 +529,35 @@ void internal::initOutput(
     // Configura el pin com sortida digital
     //
     tmp = gpio->MODER;
-    tmp &= ~(MODER_Mask << (b * 2));
-    tmp |= MODER_OUTPUT << (b * 2);
+    clearBits(tmp, MODER_Mask << (b * 2));
+    setBits(tmp, MODER_OUTPUT << (b * 2));
     gpio->MODER = tmp;
 
     // Configura el driver de sortida
     //
     tmp = gpio->OTYPER;
-    tmp &= ~(OTYPER_Mask << b);
+    clearBits(tmp, OTYPER_Mask << b);
     if (mode == OutputMode::openDrain ||
         mode == OutputMode::openDrainPullUp)
-        tmp |= OTYPER_OD << b;
+        setBits(tmp, OTYPER_OD << b);
     gpio->OTYPER = tmp;
 
     // Configura la resistencia pull UP
     //
     tmp = gpio->PUPDR;
-    tmp &= ~(PUPDR_Mask << (b * 2));
+    clearBits(tmp, PUPDR_Mask << (b * 2));
     if (mode == OutputMode::openDrainPullUp)
-        tmp |= PUPDR_UP << (b * 2);
+        setBits(tmp, PUPDR_UP << (b * 2));
     gpio->PUPDR = tmp;
 
     // Configura la velocitat de conmutacio
     //
     tmp = gpio->OSPEEDR;
-    tmp &= ~(OSPEEDR_Mask << (b * 2));
-    tmp |= __speedTbl[uint8_t(speed)] << (b * 2);
+    clearBits(tmp, OSPEEDR_Mask << (b * 2));
+    setBits(tmp, __speedTbl[uint8_t(speed)] << (b * 2));
     gpio->OSPEEDR = tmp;
 
-    gpio->ODR |= (state ? 1 : 0) << b;
+    setBits(gpio->ODR, (state ? 1 : 0) << b);
 }
 
 
@@ -605,39 +606,39 @@ void internal::initAlternate(
     // Configura el pin com entrada/sortida alternativa
     //
     tmp = gpio->MODER;
-    tmp &= ~(MODER_Mask << (b * 2));
-    tmp |= MODER_ALTERNATE << (b * 2);
+    clearBits(tmp, MODER_Mask << (b * 2));
+    setBits(tmp, MODER_ALTERNATE << (b * 2));
     gpio->MODER = tmp;
 
     // Configura el driver de sortida
     //
     tmp = gpio->OTYPER;
-    tmp &= ~(OTYPER_Mask << b);
+    clearBits(tmp, OTYPER_Mask << b);
     if (mode == AlternateMode::openDrain ||
         mode == AlternateMode::openDrainPullUp)
-        tmp |= OTYPER_OD << b;
+        setBits(tmp, OTYPER_OD << b);
     gpio->OTYPER = tmp;
 
     // Configura la resistencia pull UP
     //
     tmp = gpio->PUPDR;
-    tmp &= ~(PUPDR_Mask << (b * 2));
+    clearBits(tmp, PUPDR_Mask << (b * 2));
     if (mode == AlternateMode::openDrainPullUp)
-        tmp |= PUPDR_UP << (b * 2);
+        setBits(tmp, PUPDR_UP << (b * 2));
     gpio->PUPDR = tmp;
 
     // Configura la velocitat de conmutacio
     //
     tmp = gpio->OSPEEDR;
-    tmp &= ~(OSPEEDR_Mask << (b * 2));
-    tmp |= __speedTbl[uint8_t(speed)] << (b * 2);
+    clearBits(tmp, OSPEEDR_Mask << (b * 2));
+    setBits(tmp, __speedTbl[uint8_t(speed)] << (b * 2));
     gpio->OSPEEDR = tmp;
 
     // Selecciona la funcio alternativa
     //
     tmp = gpio->AFR[b >> 3];
-    tmp &= ~(AFR_Mask << ((b & 0x07) * 4)) ;
-    tmp |= (uint32_t(af) & AFR_Mask) << ((b & 0x07) * 4);
+    clearBits(tmp, AFR_Mask << ((b & 0x07) * 4)) ;
+    setBits(tmp, (uint32_t(af) & AFR_Mask) << ((b & 0x07) * 4));
     gpio->AFR[b >> 3] = tmp;
 }
 
