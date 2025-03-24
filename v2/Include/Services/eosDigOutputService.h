@@ -15,7 +15,7 @@
 
 // Numero maxim d'elements en la cua de comandes
 #ifndef DigOutputService_CommandQueueSize
-    #define DigOutputService_CommandQueueSize 10
+    #define DigOutputService_CommandQueueSize 5
 #endif
 
 // Retard minim/maxim en ms
@@ -105,11 +105,11 @@ namespace eos {
             void processClear(DigOutput *output);
             void processSet(DigOutput *output);
             void processToggle(DigOutput *output);
-            void processPulse(DigOutput *output, unsigned pulseWidth);
+            void processPulse(DigOutput *output, unsigned width);
             void processDelayedSet(DigOutput *output, unsigned delay);
             void processDelayedClear(DigOutput *output, unsigned delay);
             void processDelayedToggle(DigOutput *output, unsigned delay);
-            void processDelayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
+            void processDelayedPulse(DigOutput *output, unsigned delay, unsigned width);
             void processTick();
 
             void setOutput(DigOutput *output);

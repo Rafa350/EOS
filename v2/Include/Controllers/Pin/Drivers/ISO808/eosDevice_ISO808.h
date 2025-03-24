@@ -15,7 +15,7 @@ namespace eos {
 	class Device_ISO808 final {
         public:
             using Pin = htl::gpio::PinDevice;
-            using Result = SimpleResult<BasicResults>;
+            using Result = SimpleResult<Results>;
             struct CreateParams {
                 Pin *pinSYNC;
                 Pin *pinLOAD;

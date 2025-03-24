@@ -22,32 +22,12 @@ namespace eos {
                 receiving
             };
 
-			struct TxCompletedEventArgs {
-				SerialDriver * const driver;
-				unsigned length;
-			};
-
-			struct RxCompletedEventArgs {
-				SerialDriver * const driver;
-				unsigned length;
-			};
-
-    		using ITxCompletedEvent = ICallbackP1<const TxCompletedEventArgs&>;
-    		using IRxCompletedEvent = ICallbackP1<const RxCompletedEventArgs&>;
-
-    		template <typename instance_> using TxCompletedEvent = CallbackP1<instance_, const TxCompletedEventArgs&>;
-    		template <typename instance_> using RxCompletedEvent = CallbackP1<instance_, const RxCompletedEventArgs&>;
-
         private:
             State _state;
             Semaphore _txFinished;
             Semaphore _rxFinished;
             unsigned _txCount;
             unsigned _rxCount;
-            const ITxCompletedEvent *_txCompletedEvent;
-            const IRxCompletedEvent *_rxCompletedEvent;
-            bool _txCompletedEventEnabled;
-            bool _rxCompletedEventEnabled;
 
         private:
             void raiseTxCompleted(unsigned length);
@@ -76,14 +56,6 @@ namespace eos {
             Result receive(uint8_t *buffer, unsigned bufferSize);
             ResultU32 wait(unsigned timeout);
             Result abort();
-
-			void setTxCompletedEvent(const ITxCompletedEvent &event, bool enabled = true);
-			void enableTxCompletedEvent() { _txCompletedEventEnabled = _txCompletedEvent != nullptr; }
-			void disableTxCompletedEvent() { _txCompletedEventEnabled = false; }
-
-			void setRxCompletedEvent(const IRxCompletedEvent &event, bool enabled = true);
-            void enableRxCompletedEvent() { _rxCompletedEventEnabled = _rxCompletedEvent != nullptr; }
-			void disableRxCompletedEvent() { _rxCompletedEventEnabled = false; }
 
 			inline bool isReady() const { return _state == State::ready; }
             inline bool isBusy() const { return _state != State::ready; }

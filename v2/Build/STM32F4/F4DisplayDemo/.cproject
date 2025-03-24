@@ -352,7 +352,6 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\system\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\BSP\STM32F429I-Discovery&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\Common\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\portable\GCC\ARM_CM4F&quot;"/>
 								</option>

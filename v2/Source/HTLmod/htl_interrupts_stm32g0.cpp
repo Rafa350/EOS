@@ -9,6 +9,7 @@ export module htl.interrupts.stm32g0;
 
 export namespace htl::interrupts {
 
+#if defined(EOS_PLATFORM_STM32G071)
 	enum class VectorID {
 		exti0 = EXTI0_1_IRQn,
 		exti1 = EXTI0_1_IRQn,
@@ -94,5 +95,7 @@ export namespace htl::interrupts {
 		dma17 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn,
 		dmamux1 = DMA1_Ch4_7_DMAMUX1_OVR_IRQn
 	};
-
+#else
+#error "Unkown platform"
+#endif
 }

@@ -6,6 +6,37 @@ module;
 
 export module htl.platform;
 
-if (defined(EOS_PLATFORM_STM32)
-export include htl.platform.stm32g0;
-#endif	
+export namespace htl::platform {
+
+	enum class PlatformID {
+		stm32f030r8,
+		stm32g071r8,
+		stm32g071rb
+	};
+
+#if defined(EOS_PLATFORM_STM32F030R8)
+	struct PlatformInfo {
+		static constexpr PlatformID id = PlatformID::stm32f030r8;
+		static constexpr const char *name = "STM32F030R8";
+		static constexpr unsigned ramSize = 36 * 1024;
+		static constexpr unsigned romSize = 128 * 1024;
+	};
+#elif defined(EOS_PLATFORM_STM32G071RB)
+	struct PlatformInfo {
+		static constexpr PlatformID id = PlatformID::stm32g071rb;
+		static constexpr const char *name = "STM32G071RB";
+		static constexpr unsigned ramSize = 36 * 1024;
+		static constexpr unsigned romSize = 128 * 1024;
+	};
+#else
+	#error 'Unknown platform'
+#endif
+
+	constexpr bool isPlatform(PlatformID id) {
+		return PlatformInfo::id == id;
+	}
+
+	constexpr const char *getPlatformName(PlatformID id) {
+		return PlatformInfo::name;
+	}
+}

@@ -299,7 +299,7 @@ namespace htl {
                     Activator::activate(mask);
                 }
                 void deactivate(PinMask mask) const override {
-                    Activator::activate(mask);
+                    Activator::deactivate(mask);
                 }
             public:
                 inline static void interruptHandler() {
@@ -382,7 +382,7 @@ namespace htl {
                     Activator::activate(_mask);
                 }
                 void deactivate() const override {
-                    Activator::activate(_mask);
+                    Activator::deactivate(_mask);
                 }
         };
 

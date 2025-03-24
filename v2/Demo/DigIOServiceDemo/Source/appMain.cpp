@@ -10,7 +10,7 @@ using namespace app;
 ///
 void appMain() {
     
-	ApplicationBase *app = new MyApplication();
+	auto *app = new MyApplication();
 	app->run();
 	delete app;
 }

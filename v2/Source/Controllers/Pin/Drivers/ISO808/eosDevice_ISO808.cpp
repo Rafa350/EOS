@@ -61,7 +61,7 @@ Device_ISO808::Result Device_ISO808::initialize() {
     if (_pinOUTEN == nullptr)
         _pinOUTEN->clear();
 
-    return Result::success();
+    return Results::success;
 }
 
 

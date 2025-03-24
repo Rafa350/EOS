@@ -99,29 +99,26 @@ namespace htl {
             _16
         };
 
-        class Clock {
-        	public:
-				static void hsiEnable();
-				static void hsiDisable();
-				static bool isHsiEnabled();
+		void hsiEnable();
+		void hsiDisable();
+		bool isHsiEnabled();
 
-				static void hseEnable(HseBypassMode bypass = HseBypassMode::off);
-				static void hseDisable();
-				static bool isHseEnabled();
+		void hseEnable(HseBypassMode bypass = HseBypassMode::off);
+		void hseDisable();
+		bool isHseEnabled();
 
-				static void pllEnable();
-				static void pllDisable();
-				static bool isPllEnabled();
-				static bool setPllSource(PllSource value);
-				static void setPllMultiplier(PllMultiplier value);
-				static void setPllHseDivider(PllHseDivider value);
+		void pllEnable();
+		void pllDisable();
+		bool isPllEnabled();
+		bool setPllSource(PllSource value);
+		void setPllMultiplier(PllMultiplier value);
+		void setPllHseDivider(PllHseDivider value);
 
-				static bool setSysClkSource(SysClkSource source);
-				static void setHClkPrescaler(HClkPrescaler value);
-				static void setPClkPrescaler(PClkPrescaler value);
+		bool setSysClkSource(SysClkSource source);
+		void setHClkPrescaler(HClkPrescaler value);
+		void setPClkPrescaler(PClkPrescaler value);
 
-				static unsigned getClockFrequency(ClockID clockId);
-        };
+		unsigned getClockFrequency(ClockID clockId);
     }
 }
 

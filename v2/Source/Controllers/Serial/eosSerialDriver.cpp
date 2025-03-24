@@ -9,11 +9,8 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 SerialDriver::SerialDriver() :
-    _state {State::reset},
-	_txCompletedEvent {nullptr},
-	_rxCompletedEvent {nullptr},
-	_txCompletedEventEnabled {false},
-	_rxCompletedEventEnabled {false} {
+    _state {State::reset} {
+
 }
 
 
@@ -39,11 +36,6 @@ void SerialDriver::deinitialize() {
     if (_state == State::ready) {
 
         onDeinitialize();
-
-        _txCompletedEvent = nullptr;
-        _rxCompletedEvent = nullptr;
-        _txCompletedEventEnabled = false;
-        _rxCompletedEventEnabled = false;
 
         _state = State::reset;
     }
@@ -132,70 +124,6 @@ Result SerialDriver::abort() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Habilita l'event 'TxCompleted'
-/// \param    event: L'event
-/// \param    enabled: Indica si el deixa habilitat
-///
-void SerialDriver::setTxCompletedEvent(
-	const ITxCompletedEvent &event,
-	bool enabled) {
-
-	_txCompletedEvent = &event;
-	_txCompletedEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita l'event 'RxCompleted'
-/// \param    event: L'event
-/// \param    enabled: Indica si el deixa habilitat
-///
-void SerialDriver::setRxCompletedEvent(
-	const IRxCompletedEvent &event,
-	bool enabled) {
-
-	_rxCompletedEvent = &event;
-	_rxCompletedEventEnabled = enabled;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera el event 'TxCompleted'.
-///
-void SerialDriver::raiseTxCompleted(
-    unsigned length) {
-
-    if (_txCompletedEventEnabled) {
-
-        TxCompletedEventArgs args = {
-            .driver = this,
-            .length = length
-        };
-
-        _txCompletedEvent->execute(args);
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera l'event 'RxCompleted'.
-///
-void SerialDriver::raiseRxCompleted(
-    unsigned length) {
-
-    if (_rxCompletedEventEnabled) {
-
-        RxCompletedEventArgs args = {
-            .driver = this,
-            .length = length
-        };
-
-        _rxCompletedEvent->execute(args);
-    }
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Notifica el final de transmissio.
 /// \param    length: Nombre de bytes transmessos.
 /// \param    irq: True si es crida des d'una interrupcio.
@@ -205,7 +133,6 @@ void SerialDriver::notifyTxCompleted(
 	bool irq) {
 
     if (_state == State::transmiting) {
-        raiseTxCompleted(length);
         if (irq)
         	_txFinished.releaseISR();
         else
@@ -226,7 +153,6 @@ void SerialDriver::notifyRxCompleted(
 	bool irq) {
 
     if (_state == State::receiving) {
-        raiseRxCompleted(length);
         if (irq)
         	_rxFinished.releaseISR();
         else

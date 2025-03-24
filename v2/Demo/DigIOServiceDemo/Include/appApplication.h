@@ -13,8 +13,6 @@
 
 namespace app {
 
-    class LedLoopService;
-
     typedef struct {
         int id;
     } ButtonMessage;
@@ -34,11 +32,12 @@ namespace app {
             using INPSRV_TMR = config::digInputService::TMR;
             using OUTSRV_TMR = config::digOutputService::TMR;
 
-            using DigInputChangedEvent = eos::DigInput::ChangedEvent<MyApplication>;
+            using DigInputNotifyEvent = eos::DigInputService::NotifyEvent<MyApplication>;
 
         private:
             eos::DigOutputService *_digOutputService;
             eos::DigInputService *_digInputService;
+            DigInputNotifyEvent _digInputNotifyEvent;
 
             #ifdef EXIST_LED1
                 eos::DigOutput *_led1;
@@ -51,31 +50,18 @@ namespace app {
             #endif
             #ifdef EXIST_SW1
                 eos::DigInput *_sw1;
-                DigInputChangedEvent _sw1ChangedEvent;
             #endif
             #ifdef EXIST_SW2
                 eos::DigInput *_sw2;
-                DigInputChangedEvent _sw2ChangedEvent;
             #endif
             #ifdef EXIST_SW3
                 eos::DigInput *_sw3;
-                DigInputChangedEvent _sw3ChangedEvent;
             #endif
 
         protected:
-            void onInitialize();
-            #ifdef EXIST_SW1
-                void sw1ChangedEventHandler(const eos::DigInput *sender, const eos::DigInput::ChangedEventArgs &args);
-            #endif
-            #ifdef EXIST_SW2
-                void sw2ChangedEventHandler(const eos::DigInput *sender, const eos::DigInput::ChangedEventArgs &args);
-            #endif
-            #ifdef EXIST_SW3
-                void sw3ChangedEventHandler(const eos::DigInput *sender, const eos::DigInput::ChangedEventArgs &args);
-            #endif
-            static void digInputServiceTMRInterruptFunction(htl::TMRInterruptParam);
-            static void digOutputServiceTMRInterruptFunction(htl::TMRInterruptParam);
-
+            void onExecute() override;
+            void digInputNotifyEventHandler(eos::DigInputService::NotifyID id, eos::DigInputService::NotifyEventArgs * const args);
+            
         public:
             MyApplication();
     };

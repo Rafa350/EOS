@@ -308,11 +308,11 @@ void DigOutputService::write(
 /// ----------------------------------------------------------------------
 /// \brief    Genera un puls de conmutacio.
 /// \param    output: La sortida.
-/// \param    pulseWidth: L'amplada del puls.
+/// \param    width: L'amplada del puls.
 ///
 void DigOutputService::pulse(
     DigOutput *output,
-    unsigned pulseWidth) {
+    unsigned width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -320,7 +320,7 @@ void DigOutputService::pulse(
     Command cmd = {
         .id = CommandId::pulse,
         .output = output,
-        .time1 = std::max(pulseWidth, minPulseWidth)
+        .time1 = std::max(width, minPulseWidth)
     };
 
     _commandQueue.push(cmd, unsigned(-1));
@@ -331,12 +331,12 @@ void DigOutputService::pulse(
 /// \brief    Genera un puls de conmutacio retardat.
 /// \param    output: La sortida.
 /// \param    delay: El retard del puls.
-/// \param    pulseWidth: L'amplada del puls.
+/// \param    width: L'amplada del puls.
 ///
 void DigOutputService::delayedPulse(
     DigOutput *output,
     unsigned delay,
-    unsigned pulseWidth) {
+    unsigned width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
@@ -345,7 +345,7 @@ void DigOutputService::delayedPulse(
         .id = CommandId::delayedPulse,
         .output = output,
         .time1 = std::max(delay, minDelay),
-        .time2 = std::max(pulseWidth, minPulseWidth)
+        .time2 = std::max(width, minPulseWidth)
     };
 
     _commandQueue.push(cmd, unsigned(-1));

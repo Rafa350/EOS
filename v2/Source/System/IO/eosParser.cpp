@@ -9,6 +9,8 @@ static bool isDigit(char ch);
 static bool isHexDigit(char ch);
 static bool isSpace(char ch);
 static bool isAscii(char ch);
+static bool isTrue(char ch);
+static bool isFalse(char ch);
 
 
 /// ----------------------------------------------------------------------
@@ -112,6 +114,41 @@ bool Parser::parseChar(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Analitza i obte un bool.
+/// \param    value: El valor analitzat. Nomes es valid si retorna true.
+/// \return   True si tot es correcte.
+///
+bool Parser::parseBool(
+	bool &value) {
+
+	bool done = false;
+	bool result = false;
+
+	while (!done) {
+		char ch = get();
+		if (isTrue(ch)) {
+			value = true;
+			result = true;
+			done = true;
+
+		}
+		else if (isFalse(ch)) {
+			value = false;
+			result = true;
+			done = true;
+
+		}
+		else if (!isSpace(ch)) {
+			unget(ch);
+			done = false;
+		}
+	}
+
+	return result;
+}
+
+
 static bool isDigit(
 	char ch) {
 
@@ -131,11 +168,29 @@ static bool isHexDigit(
 static bool isSpace(
 	char ch) {
 
-	return ch == ' ';
+	return (ch == ' ') || (ch == '\t');
 }
 
 
 static bool isAscii(char ch) {
 
 	return ch <= 0x7F;
+}
+
+
+static bool isTrue(char ch) {
+
+	return
+		(ch == '1') ||
+		(ch == 'Y') || (ch == 'y') ||
+		(ch == 'T') || (ch == 't');
+}
+
+
+static bool isFalse(char ch) {
+
+	return
+		(ch == '0') ||
+		(ch == 'N') || (ch == 'n') ||
+		(ch == 'F') || (ch == 'f');
 }

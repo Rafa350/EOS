@@ -5,6 +5,10 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Arranca el motor cap endevant.
+/// \param    speed: Percentatge de la velocitat maxima. (0..100)
+///
 void DCMotorDriver::forward(
 	unsigned speed) {
 
@@ -12,6 +16,10 @@ void DCMotorDriver::forward(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Arranca el motor cap enrere
+/// \param    speed: Percentatge de la velocitat maxima. (0..100)
+///
 void DCMotorDriver::backward(
 	unsigned speed) {
 
@@ -19,6 +27,9 @@ void DCMotorDriver::backward(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Atura el motor.
+///
 void DCMotorDriver::stop() {
 
 	implStop();

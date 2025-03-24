@@ -9,7 +9,7 @@
 extern void xPortSysTickHandler(void);
 
 
-static bool __schedulerActive = false;;
+static bool __schedulerActive = false;
 
 
 /// ----------------------------------------------------------------------

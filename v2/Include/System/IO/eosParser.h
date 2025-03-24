@@ -22,6 +22,7 @@ namespace eos {
 			Parser(Stream *stream);
 
 			bool parseU32(uint32_t &value);
+			bool parseBool(bool &value);
 			bool parseChar(char &value);
 	};
 }

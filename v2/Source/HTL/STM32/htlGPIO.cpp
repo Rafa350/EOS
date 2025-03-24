@@ -7,35 +7,45 @@ using namespace htl;
 using namespace htl::gpio;
 
 
-#define MODER_Mask           0b11
-#define MODER_INPUT          0b00
-#define MODER_OUTPUT         0b01
-#define MODER_ALTERNATE      0b10
-#define MODER_ANALOGIC       0b11
+struct MODER {
+	static constexpr uint32_t Mask      = 0b11;
+	static constexpr uint32_t INPUT     = 0b00;
+	static constexpr uint32_t OUTPUT    = 0b01;
+	static constexpr uint32_t ALTERNATE = 0b10;
+	static constexpr uint32_t ANALOGIC  = 0b11;
+};
 
-#define PUPDR_Mask           0b11
-#define PUPDR_NONE           0b00
-#define PUPDR_UP             0b01
-#define PUPDR_DOWN           0b10
+struct PUPDR {
+	static constexpr uint32_t Mask = 0b11;
+	static constexpr uint32_t NONE = 0b00;
+	static constexpr uint32_t UP   = 0b01;
+	static constexpr uint32_t DOWN = 0b10;
+};
 
-#define OTYPER_Mask          0b1
-#define OTYPER_PP            0b0
-#define OTYPER_OD            0b1
+struct OTYPER {
+	static constexpr uint32_t Mask = 0b1;
+	static constexpr uint32_t PP   = 0b0;
+	static constexpr uint32_t OD   = 0b1;
+};
 
-#define OSPEEDR_Mask         0b11
-#define OSPEEDR_LOW          0b00
-#define OSPEEDR_MEDIUM       0b01
-#define OSPEEDR_HIGH         0b10
-#define OSPEEDR_FAST         0b11
+struct OSPEEDR {
+	static constexpr uint32_t Mask   = 0b11;
+	static constexpr uint32_t LOW    = 0b00;
+	static constexpr uint32_t MEDIUM = 0b01;
+	static constexpr uint32_t HIGH   = 0b10;
+	static constexpr uint32_t FAST   = 0b11;
+};
 
-#define AFR_Mask             0b1111
+struct AFR {
+	static constexpr uint32_t Mask = 0b1111;
+};
 
 
 static const uint32_t __speedTbl[] = {
-    OSPEEDR_LOW,
-    OSPEEDR_MEDIUM,
-    OSPEEDR_HIGH,
-    OSPEEDR_FAST};
+    OSPEEDR::LOW,
+    OSPEEDR::MEDIUM,
+    OSPEEDR::HIGH,
+    OSPEEDR::FAST};
 
 
 /// ----------------------------------------------------------------------
@@ -443,7 +453,7 @@ void internal::initInput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com a entrade.
+/// \brief    Inicialitza un pin com a entrada.
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    bit: El bit del pin a inicialitzar.
 /// \param    node: Tipus d'entrada.
@@ -457,27 +467,28 @@ void internal::initInput(
 
     uint32_t tmp;
 
-    // Configura el piun com a entrada digital
+    // Configura el pin com a entrada digital
     //
     tmp = gpio->MODER;
-    tmp &= ~(MODER_Mask << (b * 2));
-    tmp |= MODER_INPUT << (b * 2);
+    tmp &= ~(MODER::Mask << (b * 2));
+    tmp |= MODER::INPUT << (b * 2);
     gpio->MODER = tmp;
 
     // Configura les resistencies pull UP/DOWN
     //
     tmp = gpio->PUPDR;
-    tmp &= ~(PUPDR_Mask << (b * 2));
+    tmp &= ~(PUPDR::Mask << (b * 2));
     switch (mode) {
         case InputMode::pullUp:
-            tmp |= PUPDR_UP << (b * 2);
+            tmp |= PUPDR::UP << (b * 2);
             break;
 
         case InputMode::pullDown:
-            tmp |= PUPDR_DOWN << (b * 2);
+            tmp |= PUPDR::DOWN << (b * 2);
             break;
 
         default:
+            tmp |= PUPDR::NONE << (b * 2);
             break;
     }
     gpio->PUPDR = tmp;
@@ -529,31 +540,35 @@ void internal::initOutput(
     // Configura el pin com sortida digital
     //
     tmp = gpio->MODER;
-    clearBits(tmp, MODER_Mask << (b * 2));
-    setBits(tmp, MODER_OUTPUT << (b * 2));
+    clearBits(tmp, MODER::Mask << (b * 2));
+    setBits(tmp, MODER::OUTPUT << (b * 2));
     gpio->MODER = tmp;
 
     // Configura el driver de sortida
     //
     tmp = gpio->OTYPER;
-    clearBits(tmp, OTYPER_Mask << b);
+    clearBits(tmp, OTYPER::Mask << b);
     if (mode == OutputMode::openDrain ||
         mode == OutputMode::openDrainPullUp)
-        setBits(tmp, OTYPER_OD << b);
+        setBits(tmp, OTYPER::OD << b);
+    else
+        setBits(tmp, OTYPER::PP << b);
     gpio->OTYPER = tmp;
 
     // Configura la resistencia pull UP
     //
     tmp = gpio->PUPDR;
-    clearBits(tmp, PUPDR_Mask << (b * 2));
+    clearBits(tmp, PUPDR::Mask << (b * 2));
     if (mode == OutputMode::openDrainPullUp)
-        setBits(tmp, PUPDR_UP << (b * 2));
+        setBits(tmp, PUPDR::UP << (b * 2));
+    else
+        setBits(tmp, PUPDR::NONE << (b * 2));
     gpio->PUPDR = tmp;
 
     // Configura la velocitat de conmutacio
     //
     tmp = gpio->OSPEEDR;
-    clearBits(tmp, OSPEEDR_Mask << (b * 2));
+    clearBits(tmp, OSPEEDR::Mask << (b * 2));
     setBits(tmp, __speedTbl[uint8_t(speed)] << (b * 2));
     gpio->OSPEEDR = tmp;
 
@@ -606,39 +621,43 @@ void internal::initAlternate(
     // Configura el pin com entrada/sortida alternativa
     //
     tmp = gpio->MODER;
-    clearBits(tmp, MODER_Mask << (b * 2));
-    setBits(tmp, MODER_ALTERNATE << (b * 2));
+    clearBits(tmp, MODER::Mask << (b * 2));
+    setBits(tmp, MODER::ALTERNATE << (b * 2));
     gpio->MODER = tmp;
 
     // Configura el driver de sortida
     //
     tmp = gpio->OTYPER;
-    clearBits(tmp, OTYPER_Mask << b);
+    clearBits(tmp, OTYPER::Mask << b);
     if (mode == AlternateMode::openDrain ||
         mode == AlternateMode::openDrainPullUp)
-        setBits(tmp, OTYPER_OD << b);
+        setBits(tmp, OTYPER::OD << b);
+    else
+    	setBits(tmp, OTYPER::PP << b);
     gpio->OTYPER = tmp;
 
     // Configura la resistencia pull UP
     //
     tmp = gpio->PUPDR;
-    clearBits(tmp, PUPDR_Mask << (b * 2));
+    clearBits(tmp, PUPDR::Mask << (b * 2));
     if (mode == AlternateMode::openDrainPullUp)
-        setBits(tmp, PUPDR_UP << (b * 2));
+        setBits(tmp, PUPDR::UP << (b * 2));
+    else
+    	setBits(tmp, PUPDR::NONE << (b * 2));
     gpio->PUPDR = tmp;
 
     // Configura la velocitat de conmutacio
     //
     tmp = gpio->OSPEEDR;
-    clearBits(tmp, OSPEEDR_Mask << (b * 2));
+    clearBits(tmp, OSPEEDR::Mask << (b * 2));
     setBits(tmp, __speedTbl[uint8_t(speed)] << (b * 2));
     gpio->OSPEEDR = tmp;
 
     // Selecciona la funcio alternativa
     //
     tmp = gpio->AFR[b >> 3];
-    clearBits(tmp, AFR_Mask << ((b & 0x07) * 4)) ;
-    setBits(tmp, (uint32_t(af) & AFR_Mask) << ((b & 0x07) * 4));
+    clearBits(tmp, AFR::Mask << ((b & 0x07) * 4)) ;
+    setBits(tmp, (uint32_t(af) & AFR::Mask) << ((b & 0x07) * 4));
     gpio->AFR[b >> 3] = tmp;
 }
 

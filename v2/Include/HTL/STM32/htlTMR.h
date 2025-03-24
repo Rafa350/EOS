@@ -243,26 +243,26 @@ namespace htl {
 				}
 
 				template <typename pin_>
-				inline void initPinCH1() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch1, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+				inline void initPinCH1(gpio::AlternateMode mode, gpio::Speed speed) {
+					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch1, pin_::portID, pin_::pinID>::value;
+					pin_::initAlternate(mode, speed, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH2() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch2, pin_::portID, pin_::pinID>::value;
+					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch2, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH3() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch3, pin_::portID, pin_::pinID>::value;
+					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch3, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH4() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch4, pin_::portID, pin_::pinID>::value;
+					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch4, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 		};

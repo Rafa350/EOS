@@ -73,6 +73,8 @@ void STSPIN840_Device::enable() {
 
 void STSPIN840_Device::disable() {
 
+	_pinSTBY->clear();
+
 	// Reconfigura el pin EF com sortida
 	//
 	__disable_irq();
@@ -82,7 +84,7 @@ void STSPIN840_Device::disable() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el sentiti de rotascio del motor.
+/// \brief    Selecciona el sentiti de rotacio del motor.
 /// \param    direction: La direccio de rotacio.
 ///
 void STSPIN840_Device::setDirection(

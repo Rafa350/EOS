@@ -22,13 +22,13 @@
 namespace config {
 
     namespace digInputService {
-        using TMR = htl::TMR_2;
+        using TMR = htl::tmr::TMRDevice2;
         constexpr bool safeMode = true;
         constexpr unsigned timerPeriod = 5;
     }
 
     namespace digOutputService {
-        using TMR = htl::TMR_3;
+        using TMR = htl::tmr::TMRDevice3;
         constexpr bool safeMode = true;
         constexpr unsigned timerPeriod = 1;
     }

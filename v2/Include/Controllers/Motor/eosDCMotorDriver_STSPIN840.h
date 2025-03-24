@@ -12,7 +12,7 @@ namespace eos {
 
 	class DCMotorDriver_STSPIN840: public DCMotorDriver {
 		private:
-			STSPIN840_Device const * _dev;
+			STSPIN840_Device * const _dev;
     	protected:
     		void implForward(unsigned speed) override;
     		void implBackward(unsigned speed) override;
