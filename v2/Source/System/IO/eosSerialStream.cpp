@@ -82,14 +82,16 @@ ResultU32 SerialStream::write(
 		return Results::errorState;
 
 	else {
-		_drvSerial->transmit(data, length);
-
-		auto result = _drvSerial->wait(_txTimeout);
-		if (result.isSuccess())
-			return ResultU32(Results::success, result);
+		if (_drvSerial->transmit(data, length) == Results::busy)
+			return Results::busy;
 		else {
-			_drvSerial->abort();
-			return Results::timeout;
+			auto result = _drvSerial->wait(_txTimeout);
+			if (result.isSuccess())
+				return ResultU32(Results::success, result);
+			else {
+				_drvSerial->abort();
+				return Results::timeout;
+			}
 		}
 	}
 }
@@ -112,14 +114,16 @@ ResultU32 SerialStream::read(
 		return Results::error;
 
 	else {
-		_drvSerial->receive(data, size);
-
-		auto result = _drvSerial->wait(_rxTimeout);
-		if (result.isSuccess())
-			return ResultU32(Results::success, result);
+		if (_drvSerial->receive(data, size) == Results::busy)
+			return Results::busy;
 		else {
-			_drvSerial->abort();
-			return Results::timeout;
+			auto result = _drvSerial->wait(_rxTimeout);
+			if (result.isSuccess())
+				return ResultU32(Results::success, result);
+			else {
+				_drvSerial->abort();
+				return Results::timeout;
+			}
 		}
 	}
 }

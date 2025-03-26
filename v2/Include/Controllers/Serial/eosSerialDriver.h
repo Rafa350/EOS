@@ -29,10 +29,6 @@ namespace eos {
             unsigned _txCount;
             unsigned _rxCount;
 
-        private:
-            void raiseTxCompleted(unsigned length);
-            void raiseRxCompleted(unsigned length);
-
 		protected:
             SerialDriver();
 

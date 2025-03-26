@@ -104,7 +104,7 @@ ResultU32 SerialListenerDriver::receive(
 			//
 			auto a = startAtomic();
 
-			// Llegeix les deades del buffer de recepcio i les transfereix
+			// Llegeix les dades del buffer de recepcio i les transfereix
 			// al buffer suministrat.
 			//
 			unsigned count = 0;

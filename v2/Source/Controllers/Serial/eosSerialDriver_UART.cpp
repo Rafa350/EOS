@@ -92,10 +92,15 @@ void SerialDriver_UART::uartNotifyEventHandler(
 	UARTNotifyEventArgs * const args) {
 
 	switch (id) {
+
+		// Notificacio del final de la transmissio
+		//
 		case UARTNotifyID::txCompleted:
 		    notifyTxCompleted(args->txCompleted.length, args->irq);
 			break;
 
+    	// Notificacio del final de la recepcio
+		//
 		case UARTNotifyID::rxCompleted:
 		    notifyRxCompleted(args->rxCompleted.length, args->irq);
 			break;

@@ -10,6 +10,8 @@
 
 namespace eos {
 
+	constexpr unsigned SUCCESS_VALUE = 0;
+
     template <typename Enum_>
     class ResultBase {
 
@@ -35,11 +37,18 @@ namespace eos {
             inline bool operator == (ResultBase result) const {
             	return _result == result._result;
             }
+
+            inline bool isSuccess() const {
+            	return (unsigned)_result == SUCCESS_VALUE;
+            }
     };
 
 
     template <typename Enum_>
     class SimpleResult: public ResultBase<Enum_> {
+    	public:
+    		using EnumType = Enum_;
+
         public:
             constexpr SimpleResult(Enum_ result) :
                 ResultBase<Enum_> {result} {
@@ -49,6 +58,10 @@ namespace eos {
 
     template <typename Enum_, typename Value_>
     class ComplexResult: public ResultBase<Enum_> {
+    	public:
+    		using EnumType = Enum_;
+    		using ValueType = Value_;
+
         private:
             Value_ const _value;
 
@@ -66,7 +79,7 @@ namespace eos {
 
 
 	enum class Results {   // Codis d'error
-		success,           // Operacio finalitzada correctament
+		success = SUCCESS_VALUE,  // Operacio finalitzada correctament
 		pending,           // Operacio correcte pero pendent de finalitzar
 		timeout,           // S'ha produit timeout
 		busy,              // Ocupat
@@ -76,28 +89,13 @@ namespace eos {
 		errorUnsupported   // No soportado
 	};
 
-	class Result: public SimpleResult<Results> {
-        public:
-            constexpr Result(Results result) :
-                SimpleResult {result} {
-            }
-			inline bool isSuccess() const {
-				return *this == Results::success;
-			}
-	};
-
-	class ResultU32: public ComplexResult<Results, uint32_t> {
-    public:
-        constexpr ResultU32(Results result) :
-            ComplexResult {result} {
-        }
-        constexpr ResultU32(Results result, unsigned value) :
-            ComplexResult {result, value} {
-        }
-		inline bool isSuccess() const {
-			return *this == Results::success;
-		}
-	};
+	using Result = SimpleResult<Results>;
+	using ResultU8 = ComplexResult<Results, uint8_t>;
+	using ResultU16 = ComplexResult<Results, uint16_t>;
+	using ResultU32 = ComplexResult<Results, uint32_t>;
+	using ResultI8 = ComplexResult<Results, int8_t>;
+	using ResultI16 = ComplexResult<Results, int16_t>;
+	using ResultI32 = ComplexResult<Results, int32_t>;
 }
 
 

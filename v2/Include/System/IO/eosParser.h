@@ -13,6 +13,7 @@ namespace eos {
 		private:
 			Stream * const _stream;
 			char _ungetCh;
+			bool _finished;
 
 		private:
 			char get();
@@ -24,6 +25,7 @@ namespace eos {
 			bool parseU32(uint32_t &value);
 			bool parseBool(bool &value);
 			bool parseChar(char &value);
+			bool isFinished() const { return _finished; }
 	};
 }
 
