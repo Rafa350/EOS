@@ -29,30 +29,30 @@ namespace htl {
 	    /// Identificador del dispositiu.
 	    ///
 		enum class DeviceID {
-			#ifdef HTL_I2C1_EXIST
+#ifdef HTL_I2C1_EXIST
 			i2c1,
-			#endif
-			#ifdef HTL_I2C2_EXIST
+#endif
+#ifdef HTL_I2C2_EXIST
 			i2c2,
-			#endif
-			#ifdef HTL_I2C3_EXIST
+#endif
+#ifdef HTL_I2C3_EXIST
 			i2c3,
-			#endif
-			#ifdef HTL_I2C4_EXIST
+#endif
+#ifdef HTL_I2C4_EXIST
 			i2c4
-			#endif
+#endif
 		};
 
 		enum class ClockSource {
-			#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4)
 			pclk1,
 			sysclk,
 			hsi,
-			#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32G0)
 			pclk,
 			sysclk,
 			hsi16,
-			#endif
+#endif
 			automatic
 		};
 
@@ -83,7 +83,6 @@ namespace htl {
                 struct {
                     uint8_t *buffer;     ///< Buffer de dades.
                     unsigned bufferSize; ///< Tamany del buffer de dades.
-                    bool first;          ///< Indica si es el primer bloc
                 } rxStart;
                 struct {
                     unsigned length;     ///< Nombre de bytes rebuts.
@@ -91,7 +90,6 @@ namespace htl {
                 struct {
                     uint8_t *buffer;     ///< Buffer de dades
                     unsigned length;     ///< Nombre de bytes a transmetre.
-                    bool first;          ///< Indica si es el primer bloc
                 } txStart;
                 struct {
                     unsigned length;     ///< Nombre de bytes transmessos.
@@ -136,7 +134,8 @@ namespace htl {
 				State _state;
 				bool _restart;
 				uint8_t *_buffer;
-				unsigned _byteCount;
+				unsigned _dataCount;
+				unsigned _xferCount;
 				SlaveNotifyRaiser _erNotify;
 
 			private:
@@ -144,9 +143,9 @@ namespace htl {
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 
                 void notifyAddressMatch(I2CAddr addr, bool irq);
-                void notifyRxStart(uint8_t * &buffer, unsigned &bufferSize, bool first, bool irq);
+                void notifyRxStart(uint8_t * &buffer, unsigned &bufferSize, bool irq);
                 void notifyRxCompleted(unsigned length, bool irq);
-                void notifyTxStart(uint8_t * &buffer, unsigned &length, bool first, bool irq);
+                void notifyTxStart(uint8_t * &buffer, unsigned &length, bool irq);
                 void notifyTxCompleted(unsigned length, bool irq);
 
 				void interruptServiceListen();
@@ -175,9 +174,9 @@ namespace htl {
 					_erNotify.disable();
 				}
 
-				eos::Result listem(unsigned timeout = unsigned(-1));
+				eos::Result listen(unsigned timeout);
 				eos::Result listen_IRQ(bool restart);
-				eos::Result abortListen();
+				eos::Result abort();
 
 				/// Obte l'estat del dispositiu.
 				///

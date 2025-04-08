@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "Controllers/Serial/eosSerialDriver_I2CSlave.h"
 
 
@@ -33,7 +32,7 @@ void SerialDriver_I2CSlave::onInitialize() {
 ///
 void SerialDriver_I2CSlave::onDeinitialize() {
 
-	_devI2C->abortListen();
+	_devI2C->abort();
     _devI2C->disableNotifyEvent();
 }
 
@@ -75,7 +74,7 @@ void SerialDriver_I2CSlave::onReceive(
 ///
 void SerialDriver_I2CSlave::onAbort() {
 
-	_devI2C->abortListen();
+	_devI2C->abort();
 }
 
 
@@ -93,19 +92,17 @@ void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 	if (getState() == State::transmiting) {
 
 		// Notifica l'inici de la transmissio de dades.
-		// TODO: Transmissio per blocs.
 		//
 		if (id == I2CNotifyID::txStart) {
-			if (args->txStart.first) {
-				args->txStart.buffer = _buffer;
-				args->txStart.length = _bufferSize;
-			}
+			args->txStart.buffer = _buffer;
+			args->txStart.length = _bufferSize;
 		}
 
 		// Notifica el final de la transmissio de dades.
 		//
 		else if (id == I2CNotifyID::txCompleted) {
 			notifyTxCompleted(args->txCompleted.length, args->irq);
+			_devI2C->abort();
 		}
 	}
 
@@ -114,18 +111,17 @@ void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 	else if (getState() == State::receiving) {
 
 		// Notifica l'inici de la recepcio de dades.
-		// TODO: Recepcio per blocs.
+		//
 		if (id == I2CNotifyID::rxStart) {
-			if (args->rxStart.first) {
-				args->rxStart.buffer = _buffer;
-				args->rxStart.bufferSize = _bufferSize;
-			}
+			args->rxStart.buffer = _buffer;
+			args->rxStart.bufferSize = _bufferSize;
 		}
 
 		// Notifica el final de la Recepcio de dades.
 		//
 		else if (id == I2CNotifyID::rxCompleted) {
 			notifyRxCompleted(args->rxCompleted.length, args->irq);
+			_devI2C->abort();
 		}
 	}
 }

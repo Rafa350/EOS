@@ -93,14 +93,18 @@ ResultU32 SerialDriver::wait(
 	if (_state == State::receiving) {
 		if (_rxFinished.wait(timeout))
 			return ResultU32(Results::success, _rxCount);
-		else
+		else {
+			abort();
 			return Results::timeout;
+		}
 	}
 	else if (_state == State::transmiting) {
 		if (_txFinished.wait(timeout))
 			return ResultU32(Results::success, _txCount);
-		else
+		else {
+			abort();
 			return Results::timeout;
+		}
 	}
 	else
 		return Results::errorState;

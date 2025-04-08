@@ -14,6 +14,7 @@ import htl.clocks;
 
 
 using namespace htl;
+using namespace htl::bits;
 using namespace htl::uart;
 
 
@@ -81,14 +82,14 @@ eos::Result UARTDevice::initialize() {
 		activate();
 		disable(_usart);
 
-		clearBits(_usart->CR2,
+		clear(_usart->CR2,
 #if !defined(EOS_PLATFORM_STM32F0)
 			USART_CR2_LINEN |     // Deshabilita modus LIN
 #endif
 			USART_CR2_RTOEN |     // Deshabilita receiver timeout
      		USART_CR2_CLKEN);     // Deshabilita clock extern
 
-		clearBits(_usart->CR3,
+		clear(_usart->CR3,
 #if !defined(EOS_PLATFORM_STM32F0)
 			USART_CR3_SCEN |      // Deshabilita
 			USART_CR3_IREN |      // Deshabilita modus IrDA
@@ -1004,13 +1005,13 @@ static void setParity(
 
     auto CR1 = usart->CR1;
     if (parity == Parity::none)
-    	clearBits(CR1, USART_CR1_PCE);
+    	clear(CR1, USART_CR1_PCE);
     else {
-    	setBits(CR1, USART_CR1_PCE);
+    	set(CR1, USART_CR1_PCE);
     	if (parity == Parity::even)
-    		clearBits(CR1, USART_CR1_PS);
+    		clear(CR1, USART_CR1_PS);
     	else
-    		setBits(CR1, USART_CR1_PS);
+    		set(CR1, USART_CR1_PS);
     }
     usart->CR1 = CR1;
 }
@@ -1028,23 +1029,23 @@ static void setStopBits(
     auto CR2 = usart->CR2;
     switch (stopBits) {
         case StopBits::_0p5:
-            clearBits(CR2, USART_CR2_STOP_1);
-            setBits(CR2, USART_CR2_STOP_0);
+            clear(CR2, USART_CR2_STOP_1);
+            set(CR2, USART_CR2_STOP_0);
             break;
 
         case StopBits::_1:
-        	clearBits(CR2, USART_CR2_STOP_1);
-        	clearBits(CR2, USART_CR2_STOP_0);
+        	clear(CR2, USART_CR2_STOP_1);
+        	clear(CR2, USART_CR2_STOP_0);
             break;
 
         case StopBits::_1p5:
-        	setBits(CR2, USART_CR2_STOP_1);
-        	setBits(CR2, USART_CR2_STOP_0);
+        	set(CR2, USART_CR2_STOP_1);
+        	set(CR2, USART_CR2_STOP_0);
             break;
 
         case StopBits::_2:
-        	setBits(CR2, USART_CR2_STOP_1);
-        	clearBits(CR2, USART_CR2_STOP_0);
+        	set(CR2, USART_CR2_STOP_1);
+        	clear(CR2, USART_CR2_STOP_0);
             break;
     }
     usart->CR2 = CR2;
@@ -1108,19 +1109,19 @@ static void setWordBits(
 	auto CR1 = usart->CR1;
 	switch (numBits) {
 		case 7:
-			clearBits(CR1, USART_CR1_M0);
-			setBits(CR1, USART_CR1_M1);
+			clear(CR1, USART_CR1_M0);
+			set(CR1, USART_CR1_M1);
 			break;
 
 		default:
 		case 8:
-			clearBits(CR1, USART_CR1_M0);
-			clearBits(CR1, USART_CR1_M1);
+			clear(CR1, USART_CR1_M0);
+			clear(CR1, USART_CR1_M1);
 			break;
 
 		case 9:
-			setBits(CR1, USART_CR1_M0);
-			clearBits(CR1, USART_CR1_M1);
+			set(CR1, USART_CR1_M0);
+			clear(CR1, USART_CR1_M1);
 			break;
 	}
 	usart->CR1 = CR1;
@@ -1141,11 +1142,11 @@ static void setHandsake(
     auto CR3 = usart->CR3;
     switch (handsake) {
         case Handsake::none:
-        	clearBits(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
+        	clear(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
             break;
 
         case Handsake::ctsrts:
-        	setBits(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
+        	set(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
             break;
     }
     usart->CR3 = CR3;
@@ -1162,9 +1163,9 @@ static void setReceiveTimeout(
     unsigned timeout) {
 
     if (timeout == 0)
-    	clearBits(usart->CR2, USART_CR2_RTOEN);
+    	clear(usart->CR2, USART_CR2_RTOEN);
     else {
-    	setBits(usart->CR2, USART_CR2_RTOEN);
+    	set(usart->CR2, USART_CR2_RTOEN);
         usart->RTOR = timeout;
     }
 }
@@ -1244,7 +1245,7 @@ static bool waitReceptionBufferNotEmptyFlag(
 static inline void enable(
 	USART_TypeDef *usart) {
 
-	setBits(usart->CR1,
+	set(usart->CR1,
 		USART_CR1_UE);       // Habilita el dispositiu
 }
 
@@ -1256,7 +1257,7 @@ static inline void enable(
 static void disable(
 	USART_TypeDef *usart) {
 
-	clearBits(usart->CR1,
+	clear(usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_FIFOEN |   // Deshabilita el FIFO
 #endif
@@ -1276,7 +1277,7 @@ static void enableTransmission(
 	usart->ICR = USART_ICR_TCCF;       // Borra el flag TC
 
 	auto a = startAtomic();
-	setBits(usart->CR1, USART_CR1_TE); // Habilita la tramsmissio
+	set(usart->CR1, USART_CR1_TE); // Habilita la tramsmissio
 	endAtomic(a);
 }
 
@@ -1292,7 +1293,7 @@ static void enableTransmissionIRQ(
 	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
 
 	auto a = startAtomic();
-	setBits(usart->CR1,
+	set(usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
 #else
@@ -1315,8 +1316,8 @@ static void enableTransmissionDMA(
 	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
 
 	auto a = startAtomic();
-    setBits(usart->CR1, USART_CR1_TE);    // Habilita transmissio
-    setBits(usart->CR3, USART_CR3_DMAT);  // Habilita DMA
+    set(usart->CR1, USART_CR1_TE);    // Habilita transmissio
+    set(usart->CR3, USART_CR3_DMAT);  // Habilita DMA
     endAtomic(a);
 }
 #endif
@@ -1333,7 +1334,7 @@ static void disableTransmission(
 
 	// Desabilita interrupcions i transmissio
 	//
-	usart->CR1 &= ~(
+	clear(usart->CR1,
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 		USART_CR1_TXEIE |         // Deshabilita interrupcio TXE
 #else
@@ -1344,7 +1345,7 @@ static void disableTransmission(
 
 	// Deshabilita el DMA
 	//
-	clearBits(usart->CR3, USART_CR3_DMAT);
+	clear(usart->CR3, USART_CR3_DMAT);
 
 	endAtomic(a);
 }
@@ -1360,7 +1361,7 @@ static void enableReception(
 	usart->ICR = USART_ICR_RTOCF; // Borra el flag RTO
 
 	auto a = startAtomic();
-	setBits(usart->CR1, USART_CR1_RE);
+	set(usart->CR1, USART_CR1_RE);
 	endAtomic(a);
 }
 
@@ -1373,13 +1374,13 @@ static void enableReception(
 static void enableReceptionIRQ(
 	USART_TypeDef *usart) {
 
-	usart->ICR =
+	set(usart->ICR,
 		USART_ICR_RTOCF |           // Borra el flag RTO
-		USART_ICR_IDLECF;           // Borra el flag IDLE
+		USART_ICR_IDLECF);          // Borra el flag IDLE
 
 	auto a = startAtomic();
 
-	setBits(usart->CR1,
+	set(usart->CR1,
 		USART_CR1_PEIE |            // Habilita interrupcio PE
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
@@ -1412,7 +1413,7 @@ static void disableReception(
 
 	// Desabilita interrupcions i recepcio
 	//
-	clearBits(usart->CR1,
+	clear(usart->CR1,
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 		USART_CR1_RXNEIE |         // Deshabilita interrupcio RXNE
 #else
@@ -1425,7 +1426,7 @@ static void disableReception(
 
 	// Deshabilita el DMA
 	//
-	clearBits(usart->CR3, USART_CR3_DMAT);
+	clear(usart->CR3, USART_CR3_DMAT);
 
 	endAtomic(a);
 }
