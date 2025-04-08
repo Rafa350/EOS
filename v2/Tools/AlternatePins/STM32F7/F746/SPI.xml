@@ -1,0 +1,101 @@
+<alternatePins>
+	<file path="HTL/STM32/F7/F746/htlSPI_Pins.h" 
+		  namespace="htl::spi::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32F746)"
+		  conditionErrorMessage="Unsupppined platform">
+		<device device="DeviceID::spi1" condition="defined(HTL_SPI1_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction ="sck">
+				<pin port="A" pin="5" value="5"/>
+				<pin port="B" pin="3" value="5"/>
+			</function>
+			<function pinFunction ="miso">
+				<pin port="A" pin="6" value="5"/>
+				<pin port="B" pin="4" value="5"/>
+			</function>
+			<function pinFunction ="mosi">
+				<pin port="A" pin="7" value="5"/>
+				<pin port="B" pin="5" value="5"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::spi2" condition="defined(HTL_SPI2_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction ="sck">
+				<pin port="A" pin="9" value="5"/>
+				<pin port="B" pin="10" value="5"/>
+				<pin port="B" pin="13" value="5"/>
+				<pin port="D" pin="3" value="5"/>
+				<pin port="I" pin="1" value="5"/>
+			</function>
+			<function pinFunction ="miso">
+				<pin port="B" pin="14" value="5"/>
+				<pin port="C" pin="2" value="5"/>
+				<pin port="I" pin="2" value="5"/>
+			</function>
+			<function pinFunction ="mosi">
+				<pin port="B" pin="15" value="5"/>
+				<pin port="C" pin="1" value="5"/>
+				<pin port="C" pin="3" value="5"/>
+				<pin port="I" pin="3" value="5"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::spi3" condition="defined(HTL_SPI3_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction ="sck">
+				<pin port="B" pin="3" value="6"/>
+				<pin port="C" pin="10" value="6"/>
+			</function>
+			<function pinFunction ="miso">
+				<pin port="B" pin="4" value="6"/>
+				<pin port="C" pin="11" value="6"/>
+			</function>
+			<function pinFunction ="mosi">
+				<pin port="B" pin="5" value="6"/>
+				<pin port="C" pin="12" value="6"/>
+				<pin port="D" pin="6" value="5"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::spi4" condition="defined(HTL_SPI4_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction ="sck">
+				<pin port="E" pin="2" value="5"/>
+				<pin port="E" pin="12" value="5"/>
+			</function>
+			<function pinFunction ="miso">
+				<pin port="E" pin="5" value="5"/>
+				<pin port="E" pin="13" value="5"/>
+			</function>
+			<function pinFunction ="mosi">
+				<pin port="E" pin="6" value="5"/>
+				<pin port="E" pin="14" value="5"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::spi5" condition="defined(HTL_SPI5_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction ="sck">
+				<pin port="F" pin="7" value="5"/>
+				<pin port="H" pin="6" value="5"/>
+			</function>
+			<function pinFunction ="miso">
+				<pin port="F" pin="8" value="5"/>
+				<pin port="H" pin="7" value="5"/>
+			</function>
+			<function pinFunction ="mosi">
+				<pin port="F" pin="9" value="5"/>
+				<pin port="F" pin="11" value="5"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::spi6" condition="defined(HTL_SPI6_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction ="sck">
+				<pin port="G" pin="13" value="5"/>
+			</function>
+			<function pinFunction ="miso">
+				<pin port="G" pin="12" value="5"/>
+			</function>
+			<function pinFunction ="mosi">
+				<pin port="G" pin="14" value="5"/>
+			</function>
+		</device>
+		
+	</file>
+</alternatePins>

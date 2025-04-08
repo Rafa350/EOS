@@ -597,11 +597,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlSPI.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/htlSPI_IRQ.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlSPI_IRQ.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
@@ -742,9 +737,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F7/htlSPI_AF_F7.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/F7/htlClock.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlSPI_AF_F7.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlClock.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/htlINT_Vectors.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlINT_Vectors.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Driver/SSD1306</name>

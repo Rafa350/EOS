@@ -275,17 +275,14 @@ void I2CSlaveDevice::interruptServiceReceive() {
 	//
 	if (isSet(CR1, I2C_CR1_RXIE) && isSet(ISR, I2C_ISR_RXNE)) {
 
-        // Llegeix el byte i el acumula en el buffer
-        //
+		// Llegeix aqui per borrar el flag RXNE
+		//
+		auto d = (uint8_t) _i2c->RXDR;
+
 	    if (_dataCount > 0) {
-	        *_buffer++ = (uint8_t) _i2c->RXDR;
+	        *_buffer++ = d;
 	        _dataCount--;
 	        _xferCount++;
-
-		    // Notifica l'inici de la recepcio del seguent bloc.
-		    //
-	        //if (_dataCount == 0)
-		    //    notifyRxRestart(_buffer, _dataCount, _xferCount, true);
 	    }
 	}
 
@@ -365,16 +362,9 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 	if (isSet(CR1, I2C_CR1_TXIE) && isSet(ISR, I2C_ISR_TXIS)) {
 
 		if (_dataCount > 0) {
-
 			_i2c->TXDR = *_buffer++;
 			_dataCount--;
 			_xferCount++;
-
-			// En cas que s'hagi transferit tot el bloc, obte el punter
-			// a un nou bloc de dades i al nombre de bytes a transmetre.
-			//
-			//if (_dataCount == 0)
-			//	notifyTxRestart(_buffer, _dataCount, _xferCount, true);
 		}
 
 		// No hi ha res per enviar, retorna 0xFF

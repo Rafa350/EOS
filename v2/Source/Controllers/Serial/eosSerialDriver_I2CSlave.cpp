@@ -24,6 +24,8 @@ SerialDriver_I2CSlave::SerialDriver_I2CSlave(
 void SerialDriver_I2CSlave::onInitialize() {
 
     _devI2C->setNotifyEvent(_i2cNotifyEvent);
+    _devI2C->listen_IRQ(true);
+
 }
 
 
@@ -48,8 +50,6 @@ void SerialDriver_I2CSlave::onTransmit(
 
 	_buffer = (uint8_t *) buffer;
 	_bufferSize = length;
-
-    _devI2C->listen_IRQ(true);
 }
 
 
@@ -64,8 +64,6 @@ void SerialDriver_I2CSlave::onReceive(
 
 	_buffer = buffer;
 	_bufferSize = bufferSize;
-
-    _devI2C->listen_IRQ(true);
 }
 
 
@@ -100,10 +98,8 @@ void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 
 		// Notifica el final de la transmissio de dades.
 		//
-		else if (id == I2CNotifyID::txCompleted) {
+		else if (id == I2CNotifyID::txCompleted)
 			notifyTxCompleted(args->txCompleted.length, args->irq);
-			_devI2C->abort();
-		}
 	}
 
 	// En cas de recepcio, procesa les notificacions de recepcio
@@ -119,9 +115,7 @@ void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 
 		// Notifica el final de la Recepcio de dades.
 		//
-		else if (id == I2CNotifyID::rxCompleted) {
+		else if (id == I2CNotifyID::rxCompleted)
 			notifyRxCompleted(args->rxCompleted.length, args->irq);
-			_devI2C->abort();
-		}
 	}
 }

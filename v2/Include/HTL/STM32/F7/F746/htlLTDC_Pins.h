@@ -1,152 +1,356 @@
 #pragma once
-#ifndef __STM32F7_htlLTDC_Pin__
-#define __STM32F7_htlLTDC_Pin__
+#ifndef __136CEA02A3A54C2C9C6C2D860BAA0ADB__
+#define __136CEA02A3A54C2C9C6C2D860BAA0ADB__
 
 
-// EOS includes
-//
-#include "HTL/htl.h"
-#include "HTL/htlGPIO.h"
-#include "HTL/STM32/htlLTDC.h"
-
-
-// Platform check
-//
-#if !defined(EOS_PLATFORM_STM32F7)
-	#error "Valid for STM32F7 platform only"
+#if !defined(EOS_PLATFORM_STM32F746)
+    #error 'Unsupported platform'
 #endif
 
 
-#define ALT_FUNCTION(fn, pin, af)        \
-	template <>                                  \
-	struct PinFunctionInfo<fn, pin> {            \
-		static constexpr gpio::AlternateFunction alt = af; \
-	};
+namespace htl::ltdc::internal {
 
+    #if defined(HTL_LTDC_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::de, htl::gpio::PortID::portF, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::de, htl::gpio::PortID::portE, htl::gpio::PinID::pin13> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::de, htl::gpio::PortID::portK, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::pc, htl::gpio::PortID::portE, htl::gpio::PinID::pin14> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::pc, htl::gpio::PortID::portG, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::pc, htl::gpio::PortID::portI, htl::gpio::PinID::pin14> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::hsync, htl::gpio::PortID::portC, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::hsync, htl::gpio::PortID::portI, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::hsync, htl::gpio::PortID::portI, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::vsync, htl::gpio::PortID::portA, htl::gpio::PinID::pin4> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::vsync, htl::gpio::PortID::portI, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::vsync, htl::gpio::PortID::portI, htl::gpio::PinID::pin13> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r0, htl::gpio::PortID::portI, htl::gpio::PinID::pin15> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r0, htl::gpio::PortID::portH, htl::gpio::PinID::pin2> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r1, htl::gpio::PortID::portJ, htl::gpio::PinID::pin0> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r1, htl::gpio::PortID::portA, htl::gpio::PinID::pin2> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r1, htl::gpio::PortID::portH, htl::gpio::PinID::pin3> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r2, htl::gpio::PortID::portA, htl::gpio::PinID::pin1> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r2, htl::gpio::PortID::portC, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r2, htl::gpio::PortID::portH, htl::gpio::PinID::pin8> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r2, htl::gpio::PortID::portJ, htl::gpio::PinID::pin1> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r3, htl::gpio::PortID::portH, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r3, htl::gpio::PortID::portB, htl::gpio::PinID::pin0> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r3, htl::gpio::PortID::portJ, htl::gpio::PinID::pin2> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r4, htl::gpio::PortID::portA, htl::gpio::PinID::pin5> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r4, htl::gpio::PortID::portA, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r4, htl::gpio::PortID::portH, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r4, htl::gpio::PortID::portJ, htl::gpio::PinID::pin3> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r5, htl::gpio::PortID::portH, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r5, htl::gpio::PortID::portA, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r5, htl::gpio::PortID::portJ, htl::gpio::PinID::pin4> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r6, htl::gpio::PortID::portA, htl::gpio::PinID::pin8> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r6, htl::gpio::PortID::portB, htl::gpio::PinID::pin1> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_9;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r6, htl::gpio::PortID::portH, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r6, htl::gpio::PortID::portJ, htl::gpio::PinID::pin5> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r7, htl::gpio::PortID::portE, htl::gpio::PinID::pin15> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r7, htl::gpio::PortID::portG, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::r7, htl::gpio::PortID::portJ, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b0, htl::gpio::PortID::portE, htl::gpio::PinID::pin4> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b0, htl::gpio::PortID::portJ, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b1, htl::gpio::PortID::portG, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b1, htl::gpio::PortID::portJ, htl::gpio::PinID::pin13> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b2, htl::gpio::PortID::portD, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b2, htl::gpio::PortID::portG, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b2, htl::gpio::PortID::portJ, htl::gpio::PinID::pin14> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b3, htl::gpio::PortID::portG, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b3, htl::gpio::PortID::portD, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b3, htl::gpio::PortID::portJ, htl::gpio::PinID::pin15> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b4, htl::gpio::PortID::portE, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b4, htl::gpio::PortID::portG, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_9;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b4, htl::gpio::PortID::portI, htl::gpio::PinID::pin4> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b4, htl::gpio::PortID::portK, htl::gpio::PinID::pin3> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b5, htl::gpio::PortID::portI, htl::gpio::PinID::pin5> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b5, htl::gpio::PortID::portA, htl::gpio::PinID::pin3> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b5, htl::gpio::PortID::portK, htl::gpio::PinID::pin4> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b6, htl::gpio::PortID::portB, htl::gpio::PinID::pin8> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b6, htl::gpio::PortID::portI, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b6, htl::gpio::PortID::portK, htl::gpio::PinID::pin5> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b7, htl::gpio::PortID::portI, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b7, htl::gpio::PortID::portB, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::b7, htl::gpio::PortID::portK, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g0, htl::gpio::PortID::portE, htl::gpio::PinID::pin5> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g0, htl::gpio::PortID::portJ, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g1, htl::gpio::PortID::portE, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g1, htl::gpio::PortID::portJ, htl::gpio::PinID::pin8> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g2, htl::gpio::PortID::portA, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g2, htl::gpio::PortID::portJ, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g2, htl::gpio::PortID::portH, htl::gpio::PinID::pin13> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g3, htl::gpio::PortID::portH, htl::gpio::PinID::pin14> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g3, htl::gpio::PortID::portE, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g3, htl::gpio::PortID::portG, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_9;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g3, htl::gpio::PortID::portJ, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g4, htl::gpio::PortID::portB, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g4, htl::gpio::PortID::portH, htl::gpio::PinID::pin15> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g4, htl::gpio::PortID::portJ, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g5, htl::gpio::PortID::portI, htl::gpio::PinID::pin0> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g5, htl::gpio::PortID::portB, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g5, htl::gpio::PortID::portK, htl::gpio::PinID::pin0> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g6, htl::gpio::PortID::portC, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g6, htl::gpio::PortID::portI, htl::gpio::PinID::pin1> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g6, htl::gpio::PortID::portK, htl::gpio::PinID::pin1> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g7, htl::gpio::PortID::portI, htl::gpio::PinID::pin2> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g7, htl::gpio::PortID::portD, htl::gpio::PinID::pin3> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::ltdc, PinFunction::g7, htl::gpio::PortID::portK, htl::gpio::PinID::pin2> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_14;
+    };
+    #endif
 
-namespace htl {
-	namespace ltdc {
-		namespace internal {
-
-			ALT_FUNCTION(PinFunction::de,    gpio::PinF10, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::de,    gpio::PinE13, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::de,    gpio::PinK7,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::pc,    gpio::PinE14, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::pc,    gpio::PinG7,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::pc,    gpio::PinI14, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::hsync, gpio::PinC6,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::hsync, gpio::PinI10, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::hsync, gpio::PinI12, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::vsync, gpio::PinA4,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::vsync, gpio::PinI9,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::vsync, gpio::PinI13, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r0,    gpio::PinI15, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r0,    gpio::PinH2,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r1,    gpio::PinJ0,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r1,    gpio::PinA2,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r1,    gpio::PinH3,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r2,    gpio::PinA1,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r2,    gpio::PinC10, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r2,    gpio::PinH8,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r2,    gpio::PinJ1,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r3,    gpio::PinH9,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r3,    gpio::PinB0,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r3,    gpio::PinJ2,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r4,    gpio::PinA5,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r4,    gpio::PinA11, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r4,    gpio::PinH10, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r4,    gpio::PinJ3,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r5,    gpio::PinH11, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r5,    gpio::PinA12, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r5,    gpio::PinJ4,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r6,    gpio::PinA8,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r6,    gpio::PinB1,  gpio::AlternateFunction::_9)
-			ALT_FUNCTION(PinFunction::r6,    gpio::PinH12, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r6,    gpio::PinJ5,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::r7,    gpio::PinE15, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r7,    gpio::PinG6,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::r7,    gpio::PinJ6,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b0,    gpio::PinE4,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b0,    gpio::PinJ12, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b1,    gpio::PinG12, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b1,    gpio::PinJ13, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b2,    gpio::PinD6,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b2,    gpio::PinG10, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b2,    gpio::PinJ14, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b3,    gpio::PinG11, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b3,    gpio::PinD10, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b3,    gpio::PinJ15, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b4,    gpio::PinE12, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b4,    gpio::PinG12, gpio::AlternateFunction::_9)
-			ALT_FUNCTION(PinFunction::b4,    gpio::PinI4,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b4,    gpio::PinK3,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b5,    gpio::PinI5,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b5,    gpio::PinA3,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b5,    gpio::PinK4,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b6,    gpio::PinB8,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b6,    gpio::PinI6,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b6,    gpio::PinK5,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::b7,    gpio::PinI7,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b7,    gpio::PinB9,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::b7,    gpio::PinK6,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g0,    gpio::PinE5,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g0,    gpio::PinJ7,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g1,    gpio::PinE6,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g1,    gpio::PinJ8,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g2,    gpio::PinA6,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g2,    gpio::PinJ9,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g2,    gpio::PinH13, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g3,    gpio::PinH14, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g3,    gpio::PinE11, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g3,    gpio::PinG10, gpio::AlternateFunction::_9)
-			ALT_FUNCTION(PinFunction::g3,    gpio::PinJ10, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g4,    gpio::PinB10, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g4,    gpio::PinH15, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g4,    gpio::PinJ11, gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g5,    gpio::PinI0,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g5,    gpio::PinB11, gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g5,    gpio::PinK0,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g6,    gpio::PinC7,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g6,    gpio::PinI1,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g6,    gpio::PinK1,  gpio::AlternateFunction::_14)
-
-			ALT_FUNCTION(PinFunction::g7,    gpio::PinI2,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g7,    gpio::PinD3,  gpio::AlternateFunction::_14)
-			ALT_FUNCTION(PinFunction::g7,    gpio::PinK2,  gpio::AlternateFunction::_14)
-		}
-	}
 }
 
 
-#undef ALT_FUNCTION
-
-
-#endif // __STM32F7_htlLTDC_Pin
-
+#endif
 

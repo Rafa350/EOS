@@ -9,7 +9,13 @@ export module htl.platform;
 export namespace htl::platform {
 
 	enum class PlatformID {
+		
 		stm32f030r8,
+		
+		stm32f429zi,
+		
+		stm32f746ng,
+		
 		stm32g071r8,
 		stm32g071rb
 	};
@@ -36,7 +42,4 @@ export namespace htl::platform {
 		return PlatformInfo::id == id;
 	}
 
-	constexpr const char *getPlatformName(PlatformID id) {
-		return PlatformInfo::name;
-	}
 }

@@ -54,6 +54,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/App/Board</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -960,6 +965,11 @@
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/SSD1306</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
