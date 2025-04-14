@@ -89,8 +89,10 @@
 #ifdef USE_ARDUINO
 #define EXIST_ARDUINO
 
+#ifndef USE_SIO
 #define ARDUINO_D0_Pin       htl::gpio::PinA3    // Conflicte amb SIO RX
 #define ARDUINO_D1_Pin       htl::gpio::PinA2    // Conflicte amb SIO TX
+#endif
 #define ARDUINO_D2_Pin       htl::gpio::PinA10
 #define ARDUINO_D3_Pin       htl::gpio::PinB3
 #define ARDUINO_D4_Pin       htl::gpio::PinB5
@@ -102,13 +104,17 @@
 #define ARDUINO_D10_Pin      htl::gpio::PinB6
 #define ARDUINO_D11_Pin      htl::gpio::PinA7
 #define ARDUINO_D12_Pin      htl::gpio::PinA6
+#ifndef USE_LED1
 #define ARDUINO_D13_Pin      htl::gpio::PinA5    // Conflicte amb LED1
+#endif
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
+#ifndef USE_SIO
 #define ARDUINO_UART         htl::uart::UARTDevice2
 #define ARDUINO_RX_Pin       htl::gpio::PinA3 // D0
 #define ARDUINO_TX_Pin       htl::gpio::PinA2 // D1
+#endif
 
 #define ARDUINO_I2C          htl::i2c::I2CMasterDevice
 #define ARDUINO_SCL_Pin      htl::gpio::PinB8 // D15

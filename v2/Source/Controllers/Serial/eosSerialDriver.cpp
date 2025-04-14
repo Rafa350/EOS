@@ -86,6 +86,7 @@ Result SerialDriver::receive(
 /// \brief    Espera que finalitzi l'es operacions pendents.
 /// \param    timeout: Tamps maxim d'espera.
 /// \return   El nombre de bytes transferits i el resultat.
+/// \notes    En cas de timeout, s'aborta la comunicacio.
 ///
 ResultU32 SerialDriver::wait(
 	unsigned timeout) {

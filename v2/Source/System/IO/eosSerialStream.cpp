@@ -120,10 +120,8 @@ ResultU32 SerialStream::read(
 			auto result = _drvSerial->wait(_rxTimeout);
 			if (result.isSuccess())
 				return ResultU32(Results::success, result);
-			else {
-				_drvSerial->abort();
+			else
 				return Results::timeout;
-			}
 		}
 	}
 }

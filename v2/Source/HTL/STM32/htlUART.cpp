@@ -503,106 +503,7 @@ eos::Result UARTDevice::abortReception() {
 /// \brief    Procesa les interrupcions.
 ///
 #if HTL_UART_OPTION_IRQ == 1
-#if defined(xEOS_PLATFORM_STM32F0)
-void UARTDevice::interruptService() {
-
-	auto CR1 = _usart->CR1;
-	auto CR3 = _usart->CR3;
-	auto ISR = _usart->ISR;
-
-	// Comprova de forma rapida si hi ha errors
-	//
-	if (ISR & (USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE)) {
-
-		// Comprova si es un error PARITY
-		//
-		if ((ISR & USART_ISR_PE) && (CR1 & USART_CR1_PEIE)) {
-			_usart->ICR = USART_ICR_PECF;
-		}
-
-		// Comprova si hi ha error FRAME
-		//
-	    if ((ISR & USART_ISR_FE) && (CR3 & USART_CR3_EIE)) {
-	    	_usart->ICR = USART_ICR_FECF;
-	    }
-
-	    // Comprova si es un error NOISE
-	    //
-	    if ((ISR & USART_ISR_NE) && (CR3 & USART_CR3_EIE)) {
-	    	_usart->ICR = USART_ICR_NCF;
-	    }
-
-		// Comprova si es un error OVERRUN
-		//
-		if ((ISR & USART_ISR_ORE) &&
-			(CR1 & USART_CR1_RXNEIE) &&
-			(CR3 & USART_CR3_EIE)) {
-			_usart->ICR = USART_ICR_ORECF;
-		}
-	}
-
-	// No hi han errrors
-	//
-	else {
-		// Interrupcio 'TXE'
-		//
-		if ((CR1 & USART_CR1_TXEIE) && (ISR & USART_ISR_TXE)) {
-			if (_txCount < _txMaxCount) {
-				_usart->TDR = _txBuffer[_txCount++];
-				if (_txCount == _txMaxCount) {
-					auto a = startATOMIC();
-					_usart->CR1 &= ~USART_CR1_TXEIE;   // Deshabilita interrupcio TXE
-					_usart->CR1 |= USART_CR1_TCIE;     // Habilita interrupcio TC
-					endATOMIC(a);
-				}
-			}
-		}
-
-		// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
-		//
-		if ((CR1 & USART_CR1_TCIE) && (ISR & USART_ISR_TC)) {
-			_usart->ICR = USART_ICR_TCCF;
-			disableTransmission(_usart);
-			notifyTxCompleted(_txBuffer, _txCount, true);
-			_state = State::ready;
-		}
-
-		/// Interrupcio 'RXNE'
-		//
-		if ((CR1 & USART_CR1_RXNEIE) && (ISR & USART_ISR_RXNE)) {
-			if (_rxCount < _rxMaxCount) {
-				_rxBuffer[_rxCount++] = _usart->RDR;
-				if (_rxCount == _rxMaxCount) {
-					disableReception(_usart);
-					notifyRxCompleted(_rxBuffer, _rxCount, true);
-					_state = State::ready;
-				}
-			}
-		}
-
-		// Interrupcio 'IDLE'
-		//
-		if ((CR1 & USART_CR1_IDLEIE) && (ISR & USART_ISR_IDLE)) {
-			_usart->ICR = USART_ICR_IDLECF;
-			if ((_state == State::receiving) && (_rxCount > 0)) {
-				disableReception(_usart);
-				notifyRxCompleted(_rxBuffer, _rxCount, true);
-				_state = State::ready;
-			}
-		}
-
-		// Interrupcio 'RTO'
-		//
-		if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
-			_usart->ICR = USART_ICR_RTOCF;
-			disableReception(_usart);
-			notifyRxCompleted(_rxBuffer, _rxCount, true);
-			_state = State::ready;
-		}
-	}
-}
-
-#elif defined(xEOS_PLATFORM_STM32F7)
+#if defined(xEOS_PLATFORM_STM32F7)
 void UARTDevice::interruptService() {
 
 	auto CR1 = _usart->CR1;
@@ -675,9 +576,9 @@ void UARTDevice::txInterruptService() {
 	// Interrupcio 'TXE'
 	//
 #if defined(EOS_PLATFORM_STM32G0)
-	if ((CR1 & USART_CR1_TXEIE_TXFNFIE) && (ISR & USART_ISR_TXE_TXFNF)) {
+	if (isSet(CR1, USART_CR1_TXEIE_TXFNFIE) && isSet(ISR, USART_ISR_TXE_TXFNF)) {
 #else
-	if ((CR1 & USART_CR1_TXEIE) && (ISR & USART_ISR_TXE)) {
+	if (isSet(CR1, USART_CR1_TXEIE) && isSet(ISR, USART_ISR_TXE)) {
 #endif
 		if (_txCount < _txMaxCount) {
 			_usart->TDR = _txBuffer[_txCount++];
@@ -696,7 +597,7 @@ void UARTDevice::txInterruptService() {
 
 	// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
 	//
-	if ((CR1 & USART_CR1_TCIE) && (ISR & USART_ISR_TC)) {
+	if (isSet(CR1, USART_CR1_TCIE) && isSet(ISR, USART_ISR_TC)) {
 		_usart->ICR = USART_ICR_TCCF;
 		disableTransmission(_usart);
 		notifyTxCompleted(_txBuffer, _txCount, true);
@@ -716,9 +617,9 @@ void UARTDevice::rxInterruptService() {
 	/// Interrupcio 'RXNE'
 	//
 #if defined(EOS_PLATFORM_STM32G0)
-	if ((CR1 & USART_CR1_RXNEIE_RXFNEIE) && (ISR & USART_ISR_RXNE_RXFNE)) {
+	if (isSet(CR1, USART_CR1_RXNEIE_RXFNEIE) && isSet(ISR, USART_ISR_RXNE_RXFNE)) {
 #else
-	if ((CR1 & USART_CR1_RXNEIE) && (ISR & USART_ISR_RXNE)) {
+	if (isSet(CR1, USART_CR1_RXNEIE) && isSet(ISR, USART_ISR_RXNE)) {
 #endif
 		if (_rxCount < _rxMaxCount) {
 			_rxBuffer[_rxCount++] = _usart->RDR;
@@ -732,9 +633,9 @@ void UARTDevice::rxInterruptService() {
 
 	// Interrupcio 'IDLE'
 	//
-	if ((CR1 & USART_CR1_IDLEIE) && (ISR & USART_ISR_IDLE)) {
+	if (isSet(CR1, USART_CR1_IDLEIE) && isSet(ISR, USART_ISR_IDLE)) {
 		_usart->ICR = USART_ICR_IDLECF;
-		if ((_state == State::receiving) && (_rxCount > 0)) {
+		if (_rxCount > 0) {
 			disableReception(_usart);
 			notifyRxCompleted(_rxBuffer, _rxCount, true);
 			_state = State::ready;
@@ -743,7 +644,7 @@ void UARTDevice::rxInterruptService() {
 
 	// Interrupcio 'RTO'
 	//
-	if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
+	if (isSet(CR1, USART_CR1_RTOIE) && isSet(ISR, USART_ISR_RTOF)) {
 		_usart->ICR = USART_ICR_RTOCF;
 		disableReception(_usart);
 		notifyRxCompleted(_rxBuffer, _rxCount, true);
