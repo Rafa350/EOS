@@ -21,8 +21,8 @@ namespace htl {
 
 		enum class VectorID {
 
-			usart1 = USART1_IRQn,
-			usart2 = USART2_IRQn,
+			uart1 = USART1_IRQn,
+			uart2 = USART2_IRQn,
 
 			spi1 = SPI1_IRQn,
 			spi2 = SPI2_IRQn,
