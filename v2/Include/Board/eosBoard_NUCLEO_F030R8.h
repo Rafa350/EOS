@@ -61,8 +61,8 @@
 #define SW1_StateON          true
 #define SW1_StateOF          false
 
-#define SW1_Initialize()
-#define SW1_Read()
+#define SW1_Initialize()     SW1_Pin::pInst->initInput(htl::gpio::InputMode::floating);
+#define SW1_Read()           SW1_Pin::pInst->read();
 
 
 #endif // SW1
