@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Serial/eosSerialDriver_UART.h"
 
 
@@ -15,24 +16,34 @@ SerialDriver_UART::SerialDriver_UART(
 
 	_devUART {devUART},
 	_uartNotifyEvent {*this, &SerialDriver_UART::uartNotifyEventHandler} {
+
+	eosAssert(devUART != nullptr);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la inicialitzacio del driver.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_UART::onInitialize() {
+bool SerialDriver_UART::onInitialize() {
 
-    _devUART->setNotifyEvent(_uartNotifyEvent);
+	eosAssert(_devUART != nullptr);
+
+	_devUART->setNotifyEvent(_uartNotifyEvent);
+    return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la desinicialitzacio del driver.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_UART::onDeinitialize() {
+bool SerialDriver_UART::onDeinitialize() {
 
-    _devUART->disableNotifyEvent();
+	eosAssert(_devUART != nullptr);
+
+	_devUART->disableNotifyEvent();
+    return true;
 }
 
 
@@ -40,12 +51,17 @@ void SerialDriver_UART::onDeinitialize() {
 /// \brief    Procesa la transmissio de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    length: Nombre de bytes a transmetre.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_UART::onTransmit(
+bool SerialDriver_UART::onTransmit(
 	const uint8_t *buffer,
 	unsigned length) {
 
-    _devUART->transmit_IRQ(buffer, length);
+	eosAssert(buffer != nullptr);
+	eosAssert(length > 0);
+	eosAssert(_devUART != nullptr);
+
+    return _devUART->transmit_IRQ(buffer, length).isSuccess();
 }
 
 
@@ -53,31 +69,37 @@ void SerialDriver_UART::onTransmit(
 /// \brief    Procesa la recepcio de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_UART::onReceive(
+bool SerialDriver_UART::onReceive(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
-    _devUART->receive_IRQ(buffer, bufferSize);
+	eosAssert(buffer != nullptr);
+	eosAssert(bufferSize > 0);
+	eosAssert(_devUART != nullptr);
+
+	return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Aborta l'operacio en curs.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_UART::onAbort() {
+bool SerialDriver_UART::onAbort() {
+
+	eosAssert(_devUART != nullptr);
 
 	switch (getState()) {
 		case State::receiving:
-			_devUART->abortReception();
-			break;
+			return _devUART->abortReception().isSuccess();
 
 		case State::transmiting:
-			_devUART->abortTransmission();
-			break;
+			return _devUART->abortTransmission().isSuccess();
 
 		default:
-			break;
+			return false;
 	}
 }
 
@@ -89,6 +111,8 @@ void SerialDriver_UART::onAbort() {
 void SerialDriver_UART::uartNotifyEventHandler(
 	UARTNotifyID id,
 	UARTNotifyEventArgs * const args) {
+
+	eosAssert(args != nullptr);
 
 	switch (id) {
 
@@ -102,9 +126,6 @@ void SerialDriver_UART::uartNotifyEventHandler(
 		//
 		case UARTNotifyID::rxCompleted:
 		    notifyRxCompleted(args->rxCompleted.length, args->irq);
-			break;
-
-		default:
 			break;
 	}
 }

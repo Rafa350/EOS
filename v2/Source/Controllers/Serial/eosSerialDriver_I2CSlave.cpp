@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Serial/eosSerialDriver_I2CSlave.h"
 
 
@@ -15,27 +16,34 @@ SerialDriver_I2CSlave::SerialDriver_I2CSlave(
 
 	_devI2C {devI2C},
 	_i2cNotifyEvent {*this, &SerialDriver_I2CSlave::i2cNotifyEventHandler} {
+
+	eosAssert(devI2C != nullptr);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la inicialitzacio del driver.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_I2CSlave::onInitialize() {
+bool SerialDriver_I2CSlave::onInitialize() {
+
+	eosAssert(_devI2C != nullptr);
 
     _devI2C->setNotifyEvent(_i2cNotifyEvent);
-    _devI2C->listen_IRQ(true);
-
+    return _devI2C->listen_IRQ(true).isSuccess();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la desinicialitzacio del driver.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_I2CSlave::onDeinitialize() {
+bool SerialDriver_I2CSlave::onDeinitialize() {
 
-	_devI2C->abort();
-    _devI2C->disableNotifyEvent();
+	eosAssert(_devI2C != nullptr);
+
+	_devI2C->disableNotifyEvent();
+	return _devI2C->abort().isSuccess();
 }
 
 
@@ -43,13 +51,19 @@ void SerialDriver_I2CSlave::onDeinitialize() {
 /// \brief    Procesa l'inici de la transmissio de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    length: El nombre de bytes en el buffer.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_I2CSlave::onTransmit(
+bool SerialDriver_I2CSlave::onTransmit(
 	const uint8_t *buffer,
 	unsigned length) {
 
+	eosAssert(buffer != nullptr);
+	eosAssert(length != 0);
+
 	_buffer = (uint8_t *) buffer;
 	_bufferSize = length;
+
+	return true;
 }
 
 
@@ -57,22 +71,31 @@ void SerialDriver_I2CSlave::onTransmit(
 /// \brief    Procesa l'inici de la recepcio de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: Tamany del buffer de dades.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_I2CSlave::onReceive(
+bool SerialDriver_I2CSlave::onReceive(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
+	eosAssert(buffer != nullptr);
+	eosAssert(bufferSize != 0);
+
 	_buffer = buffer;
 	_bufferSize = bufferSize;
+
+	return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la cancelacio de la comunicacio.
+/// \return   True si tot es correcte.
 ///
-void SerialDriver_I2CSlave::onAbort() {
+bool SerialDriver_I2CSlave::onAbort() {
 
-	_devI2C->abort();
+	eosAssert(_devI2C != nullptr);
+
+	return _devI2C->abort().isSuccess();
 }
 
 
@@ -84,6 +107,8 @@ void SerialDriver_I2CSlave::onAbort() {
 void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 	I2CNotifyID id,
 	I2CNotifyEventArgs * const args) {
+
+	eosAssert(args != nullptr);
 
 	// En cas de transmissio procesa les notificacions de transmissio
 	//

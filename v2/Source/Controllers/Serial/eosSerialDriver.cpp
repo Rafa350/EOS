@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Serial/eosSerialDriver.h"
 
 
@@ -19,12 +20,9 @@ SerialDriver::SerialDriver() :
 ///
 void SerialDriver::initialize() {
 
-    if (_state == State::reset) {
-
-        onInitialize();
-
-        _state = State::ready;
-    }
+    if (_state == State::reset)
+    	if (onInitialize())
+    		_state = State::ready;
 }
 
 
@@ -33,12 +31,9 @@ void SerialDriver::initialize() {
 ///
 void SerialDriver::deinitialize() {
 
-    if (_state == State::ready) {
-
-        onDeinitialize();
-
-        _state = State::reset;
-    }
+    if (_state == State::ready)
+    	if (onDeinitialize())
+    		_state = State::reset;
 }
 
 
@@ -46,19 +41,30 @@ void SerialDriver::deinitialize() {
 /// \brief    Inicia una transmissio d'un bloc de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    length: Nombre de bytes en el buffer.
-/// \return   El resultat de l'operacio
+/// \return   El resultat de l'operacio.
 ///
 Result SerialDriver::transmit(
     const uint8_t *buffer,
     unsigned length) {
 
-    if (_state == State::ready) {
-        onTransmit(buffer, length);
-        _state = State::transmiting;
-        return Results::success;
+	eosAssert(buffer != nullptr);
+	eosAssert(length > 0);
+
+	if ((buffer == nullptr) ||
+		(length == 0))
+		return Results::errorParameter;
+
+	else if (_state == State::ready) {
+    	if (onTransmit(buffer, length)) {
+    		_state = State::transmiting;
+    		return Results::success;
+    	}
+    	else
+    		return Results::error;
     }
+
     else
-        return Results::busy;
+    	return Results::busy;
 }
 
 
@@ -66,24 +72,35 @@ Result SerialDriver::transmit(
 /// \brief    Inicia la recepcio d'un bloc de dades.
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: El tamany del buffer en bytes.
-/// \return   True si tot es correcte.
+/// \return   El resultat de l'operacio.
 ///
 Result SerialDriver::receive(
     uint8_t *buffer,
     unsigned bufferSize) {
 
-    if (_state == State::ready) {
-        onReceive(buffer, bufferSize);
-        _state = State::receiving;
-        return Results::success;
+	eosAssert(buffer != nullptr);
+	eosAssert(bufferSize > 0);
+
+	if ((buffer == nullptr) ||
+		(bufferSize == 0))
+		return Results::errorParameter;
+
+	else if (_state == State::ready) {
+    	if (onReceive(buffer, bufferSize)) {
+    		_state = State::receiving;
+    		return Results::success;
+    	}
+    	else
+    		return Results::error;
     }
+
     else
-        return Results::busy;
+    	return Results::busy;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Espera que finalitzi l'es operacions pendents.
+/// \brief    Espera que finalitzi les operacions pendents.
 /// \param    timeout: Tamps maxim d'espera.
 /// \return   El nombre de bytes transferits i el resultat.
 /// \notes    En cas de timeout, s'aborta la comunicacio.
@@ -114,14 +131,17 @@ ResultU32 SerialDriver::wait(
 
 /// ----------------------------------------------------------------------
 /// \brief    Aborta l'operacio en curs.
-/// \return   True si tot es correcte.
+/// \return   El resultat de l'operacio.
 ///
 Result SerialDriver::abort() {
 
 	if ((_state == State::transmiting) || (_state == State::receiving)) {
-		onAbort();
-		_state = State::ready;
-		return Results::success;
+		if (onAbort()) {
+			_state = State::ready;
+			return Results::success;
+		}
+		else
+			return Results::error;
 	}
 	else
 		return Results::errorState;

@@ -30,11 +30,11 @@ namespace eos {
 			void i2cNotifyEventHandler(I2CNotifyID id, I2CNotifyEventArgs * const args);
 
 		protected:
-            void onInitialize() override;
-            void onDeinitialize() override;
-            void onTransmit(const uint8_t *buffer, unsigned length) override;
-            void onReceive(uint8_t *buffer, unsigned bufferSize) override;
-            void onAbort() override;
+            bool onInitialize() override;
+            bool onDeinitialize() override;
+            bool onTransmit(const uint8_t *buffer, unsigned length) override;
+            bool onReceive(uint8_t *buffer, unsigned bufferSize) override;
+            bool onAbort() override;
 
 		public:
 			SerialDriver_I2CSlave(DevI2C *devI2C);

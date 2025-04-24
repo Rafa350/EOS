@@ -36,11 +36,11 @@ namespace eos {
             void notifyRxCompleted(unsigned length, bool irq);
             State getState() const { return _state; }
 
-			virtual void onInitialize() = 0;
-			virtual void onDeinitialize() = 0;
-			virtual void onTransmit(const uint8_t *buffer, unsigned length) = 0;
-			virtual void onReceive(uint8_t *buffer, unsigned bufferSize) = 0;
-			virtual void onAbort() = 0;
+			virtual bool onInitialize() = 0;
+			virtual bool onDeinitialize() = 0;
+			virtual bool onTransmit(const uint8_t *buffer, unsigned length) = 0;
+			virtual bool onReceive(uint8_t *buffer, unsigned bufferSize) = 0;
+			virtual bool onAbort() = 0;
 
 		public:
 			virtual ~SerialDriver() = default;
