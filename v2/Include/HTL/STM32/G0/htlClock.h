@@ -113,23 +113,23 @@ namespace htl {
 
 		void hsi16Enable();
 		void hsi16Disable();
-		bool isHsi16Enabled();
+		bool hsi16IsEnabled();
 
 		void hseEnable(HseBypassMode bypass = HseBypassMode::off);
 		void hseDisable();
-		bool isHseEnabled();
+		bool hseIsEnabled();
 
 		void lsiEnable();
 		void lsiDisable();
-		bool isLsiEnabled();
+		bool lsiIsEnabled();
 
 		void lseEnable();
 		void lseDisable();
-		bool isLseEnabled();
+		bool lseIsEnabled();
 
 		void pllEnable();
 		void pllDisable();
-		bool isPllEnabled();
+		bool pllIsEnabled();
 		bool configurePll(PllSource source, unsigned multiplier, unsigned divider);
 		bool configurePllP(unsigned divider);
 		bool configurePllQ(unsigned divider);

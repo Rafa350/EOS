@@ -1,4 +1,5 @@
 #include "HTL/htl.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htlClock.h"
 
 
@@ -13,6 +14,8 @@
 #define RCC_CFGR_SW_LSI           (3 << RCC_CFGR_SW_Pos)
 #define RCC_CFGR_SW_LSE           (4 << RCC_CFGR_SW_Pos)
 
+
+using namespace htl::bits;
 
 namespace htl::clock {
 
@@ -30,25 +33,25 @@ bool setSysClkSource(
 	tmp &= ~RCC_CFGR_SW_Msk;
 	switch (source) {
 		case SysClkSource::hse:
-			if (!isHseEnabled())
+			if (!hseIsEnabled())
 				return false;
 			tmp |= RCC_CFGR_SW_HSE;
 			break;
 
 		case SysClkSource::lsi:
-			if (!isLsiEnabled())
+			if (!lsiIsEnabled())
 				return false;
 			tmp |= RCC_CFGR_SW_LSI;
 			break;
 
 		case SysClkSource::lse:
-			if (!isLseEnabled())
+			if (!lseIsEnabled())
 				return false;
 			tmp |= RCC_CFGR_SW_LSE;
 			break;
 
 		case SysClkSource::pllrclk:
-            if (!isPllEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN_Msk) == 0))
+            if (!pllIsEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN_Msk) == 0))
                 return false;
 			tmp |= RCC_CFGR_SW_PLLRCLK;
 			break;
@@ -154,8 +157,8 @@ void setPClkPrescaler(
 ///
 void hsi16Enable() {
 
-	RCC->CR |= RCC_CR_HSION;
-	while ((RCC->CR & RCC_CR_HSION) == 0)
+	set(RCC->CR, RCC_CR_HSION);
+	while (!hsi16IsEnabled())
 		continue;
 }
 
@@ -165,8 +168,8 @@ void hsi16Enable() {
 ///
 void hsi16Disable() {
 
-	RCC->CR &= ~RCC_CR_HSION;
-	while ((RCC->CR & RCC_CR_HSION) != 0)
+	clear(RCC->CR, RCC_CR_HSION);
+	while (hsi16IsEnabled())
 		continue;
 }
 
@@ -175,9 +178,9 @@ void hsi16Disable() {
 /// \brief    Comprova si el rellotge HSI es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool isHsi16Enabled() {
+bool hsi16IsEnabled() {
 
-    return (RCC->CR & RCC_CR_HSION) != 0;
+    return isSet(RCC->CR, RCC_CR_HSION);
 }
 
 
@@ -186,8 +189,8 @@ bool isHsi16Enabled() {
 ///
 void lsiEnable() {
 
-	RCC->CR |= RCC_CSR_LSION;
-	while ((RCC->CR & RCC_CSR_LSION) == 0)
+	set(RCC->CR, RCC_CSR_LSION);
+	while (!lsiIsEnabled())
 		continue;
 }
 
@@ -197,8 +200,8 @@ void lsiEnable() {
 ///
 void lsiDisable() {
 
-	RCC->CR &= ~RCC_CSR_LSION;
-	while ((RCC->CR & RCC_CSR_LSION) != 0)
+	clear(RCC->CR, RCC_CSR_LSION);
+	while (lsiIsEnabled())
 		continue;
 }
 
@@ -207,9 +210,9 @@ void lsiDisable() {
 /// \brief    Comprova si el rellotge LSI es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool isLsiEnabled() {
+bool lsiIsEnabled() {
 
-    return (RCC->CSR & RCC_CSR_LSION) != 0;
+    return isSet(RCC->CSR, RCC_CSR_LSION);
 }
 
 
@@ -232,8 +235,8 @@ void hseEnable(
 		default:
 			break;
 	}
-	RCC->CR |= RCC_CR_HSEON;
-	while ((RCC->CR & RCC_CR_HSERDY) == 0)
+	set(RCC->CR, RCC_CR_HSEON);
+	while (!hseIsEnabled())
 		continue;
 }
 
@@ -243,8 +246,8 @@ void hseEnable(
 ///
 void hseDisable() {
 
-	RCC->CR &= ~RCC_CR_HSEON;
-	while ((RCC->CR & RCC_CR_HSERDY) != 0)
+	clear(RCC->CR, RCC_CR_HSEON);
+	while (hseIsEnabled())
 		continue;
 }
 
@@ -253,9 +256,9 @@ void hseDisable() {
 /// \brief    Comprova si el rellotge HSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool isHseEnabled() {
+bool hseIsEnabled() {
 
-    return (RCC->CR & RCC_CR_HSERDY) != 0;
+    return isSet(RCC->CR, RCC_CR_HSERDY);
 }
 
 
@@ -264,8 +267,8 @@ bool isHseEnabled() {
 ///
 void lseEnable() {
 
-	RCC->BDCR |= RCC_BDCR_LSEON;
-	while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+	set(RCC->BDCR, RCC_BDCR_LSEON);
+	while (!lseIsEnabled())
 		continue;
 }
 
@@ -275,8 +278,8 @@ void lseEnable() {
 ///
 void lseDisable() {
 
-	RCC->BDCR &= ~RCC_BDCR_LSEON;
-	while ((RCC->BDCR & RCC_BDCR_LSERDY) != 0)
+	clear(RCC->BDCR, RCC_BDCR_LSEON);
+	while (lseIsEnabled())
 		continue;
 }
 
@@ -285,9 +288,9 @@ void lseDisable() {
 /// \brief    Comprova si el rellotge LSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool isLseEnabled() {
+bool lseIsEnabled() {
 
-    return (RCC->BDCR & RCC_BDCR_LSERDY) != 0;
+    return isSet(RCC->BDCR, RCC_BDCR_LSERDY);
 }
 
 
@@ -296,7 +299,7 @@ bool isLseEnabled() {
 ///
 void pllEnable() {
 
-	RCC->CR |= RCC_CR_PLLON;
+	set(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) == 0)
 		continue;
 }
@@ -307,7 +310,7 @@ void pllEnable() {
 ///
 void pllDisable() {
 
-	RCC->CR &= ~RCC_CR_PLLON;
+	clear(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
 		continue;
 
@@ -323,7 +326,7 @@ void pllDisable() {
 /// \brief    Comprova si el PLL esta activat.
 /// \return   True si esta activat, false en cas contrari.
 ///
-bool isPllEnabled() {
+bool pllIsEnabled() {
 
     return ((RCC->CR & RCC_CR_PLLON) != 0) && ((RCC->CR & RCC_CR_PLLRDY) != 0);
 }
@@ -344,7 +347,7 @@ bool configurePll(
 	if (divider < 1 || divider > 8 || multiplier < 8 || multiplier > 86)
 		return false;
 
-	if (clock::isPllEnabled())
+	if (clock::pllIsEnabled())
 		return false;
 
     uint32_t tmp = RCC->PLLCFGR;
@@ -352,13 +355,13 @@ bool configurePll(
 	tmp &= ~RCC_PLLCFGR_PLLSRC_Msk;
 	switch (source) {
 		case PllSource::hsi16:
-            if (!clock::isHsi16Enabled())
+            if (!clock::hsi16IsEnabled())
                 return false;
 			tmp |= 0b10 << RCC_PLLCFGR_PLLSRC_Pos;
 			break;
 
 		case PllSource::hse:
-			if (!clock::isHseEnabled())
+			if (!clock::hseIsEnabled())
 				return false;
 			tmp |= 0b11 << RCC_PLLCFGR_PLLSRC_Pos;
 			break;
@@ -386,7 +389,7 @@ bool configurePllP(
 	if (divider < 2 || divider > 32)
 		return false;
 
-	if (clock::isPllEnabled())
+	if (clock::pllIsEnabled())
 		return false;
 
 	uint32_t div = divider - 1;
@@ -412,7 +415,7 @@ bool configurePllQ(
 	if (divider < 2 || divider > 8)
 		return false;
 
-	if (clock::isPllEnabled())
+	if (clock::pllIsEnabled())
 		return false;
 
 	uint32_t div = divider - 1;
@@ -438,7 +441,7 @@ bool configurePllR(
 	if (divider < 2 || divider > 8)
 		return false;
 
-	if (clock::isPllEnabled())
+	if (clock::pllIsEnabled())
 		return false;
 
 	uint32_t div = divider - 1;

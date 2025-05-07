@@ -90,6 +90,11 @@ namespace htl::bits {
 	}
 
 	template<typename T_>
+	inline bool isSet(volatile T_ &var, T_ b) {
+		return (var & b) == b;
+	}
+
+	template<typename T_>
 	inline bool isAnySet(T_ &var, T_ b) {
 		return (var & b) != 0;
 	}

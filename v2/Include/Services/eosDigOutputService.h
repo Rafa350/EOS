@@ -15,7 +15,7 @@
 
 // Numero maxim d'elements en la cua de comandes
 #ifndef DigOutputService_CommandQueueSize
-    #define DigOutputService_CommandQueueSize 5
+    #define DigOutputService_CommandQueueSize 4
 #endif
 
 // Retard minim/maxim en ms
@@ -38,7 +38,6 @@
 namespace eos {
 
     class DigOutput;
-
 
     using DigOutputList1 = IntrusiveForwardList<DigOutput, 1>;
     using DigOutputListNode1 = IntrusiveForwardListNode<DigOutput, 1>;
@@ -66,7 +65,7 @@ namespace eos {
 			template <typename Instance_> using NotifyEvent = ER::Event<Instance_>;
 
 		private:
-            enum class CommandId {
+            enum class CommandID {
                 set,
                 clear,
                 toggle,
@@ -78,7 +77,7 @@ namespace eos {
                 tick
             };
             struct Command {
-                CommandId id;
+                CommandID id;
                 DigOutput *output;
                 unsigned time1;
                 unsigned time2;
@@ -101,7 +100,7 @@ namespace eos {
         private:
             DigOutputService(const DigOutputService&) = delete;
 
-            void processCommand(const Command &command);
+            void commandDispatcher(const Command &command);
             void processClear(DigOutput *output);
             void processSet(DigOutput *output);
             void processToggle(DigOutput *output);
@@ -154,7 +153,8 @@ namespace eos {
             void delayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
             bool read(DigOutput *ouput);
 
-            void tickInterruptFunction();
+            void tick(unsigned blockTime);
+            void tickISR();
     };
 
     /// \brief Clase que implementa una sortida digital.

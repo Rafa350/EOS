@@ -23,19 +23,19 @@ bool setSysClkSource(
 	tmp &= ~RCC_CFGR_SW_Msk;
 	switch (source) {
 		case SysClkSource::hse:
-            if (!isHseEnabled())
+            if (!hseIsEnabled())
                 return false;
 			tmp |= RCC_CFGR_SW_HSE;
 			break;
 
 		case SysClkSource::hsi:
-            if (!isHsiEnabled())
+            if (!hsiIsEnabled())
                 return false;
 			tmp |= RCC_CFGR_SW_HSI;
 			break;
 
 		case SysClkSource::pll:
-            if (!isPllEnabled())
+            if (!pllIsEnabled())
                 return false;
 			tmp |= RCC_CFGR_SW_PLL;
 			break;
@@ -161,11 +161,9 @@ void setPClkPrescaler(
 ///
 void hsiEnable() {
 
-	if (!isHsiEnabled()) {
-		RCC->CR |= RCC_CR_HSION;
-		while (!isHsiEnabled())
-			continue;
-	}
+	RCC->CR |= RCC_CR_HSION;
+	while (!hsiIsEnabled())
+		continue;
 }
 
 
@@ -175,7 +173,7 @@ void hsiEnable() {
 void hsiDisable() {
 
 	RCC->CR &= ~RCC_CR_HSION;
-	while ((RCC->CR & RCC_CR_HSIRDY) != 0)
+	while (hsiIsEnabled())
 		continue;
 }
 
@@ -184,7 +182,7 @@ void hsiDisable() {
 /// \brief    Comprova si el rellotge HSI es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool isHsiEnabled() {
+bool hsiIsEnabled() {
 
     return (RCC->CR & RCC_CR_HSIRDY) != 0;
 }
@@ -197,21 +195,23 @@ bool isHsiEnabled() {
 void hseEnable(
 	HseBypassMode bypass) {
 
-	switch (bypass) {
-		case HseBypassMode::on:
-			RCC->CR |= RCC_CR_HSEBYP;
-			break;
+	if (!hseIsEnabled()) {
+		switch (bypass) {
+			case HseBypassMode::on:
+				RCC->CR |= RCC_CR_HSEBYP;
+				break;
 
-		case HseBypassMode::off:
-			RCC->CR &= ~RCC_CR_HSEBYP;
-			break;
+			case HseBypassMode::off:
+				RCC->CR &= ~RCC_CR_HSEBYP;
+				break;
 
-		default:
-			break;
+			default:
+				break;
+		}
+		RCC->CR |= RCC_CR_HSEON;
+		while (!hseIsEnabled())
+			continue;
 	}
-	RCC->CR |= RCC_CR_HSEON;
-	while ((RCC->CR & RCC_CR_HSERDY) == 0)
-		continue;
 }
 
 
@@ -221,7 +221,7 @@ void hseEnable(
 void hseDisable() {
 
 	RCC->CR &= ~RCC_CR_HSEON;
-	while ((RCC->CR & RCC_CR_HSERDY) != 0)
+	while (hseIsEnabled())
 		continue;
 }
 
@@ -230,7 +230,7 @@ void hseDisable() {
 /// \brief    Comprova si el rellotge HSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool isHseEnabled() {
+bool hseIsEnabled() {
 
     return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
@@ -262,7 +262,7 @@ void pllDisable() {
 /// \brief    Comprova si el PLL esta activat.
 /// \return   True si esta activat, false en cas contrari.
 ///
-bool isPllEnabled() {
+bool pllIsEnabled() {
 
     return ((RCC->CR & RCC_CR_PLLON) != 0) && ((RCC->CR & RCC_CR_PLLRDY) != 0);
 }
@@ -273,7 +273,7 @@ bool isPllEnabled() {
 /// \param    value: El valor.
 /// \return   True si tot es correce, false en cas contrari.
 ///
-bool setPllSource(
+bool pllSetSource(
 	PllSource value) {
 
 	uint32_t tmp = RCC->CFGR;
@@ -281,13 +281,13 @@ bool setPllSource(
 	tmp &= ~RCC_CFGR_PLLSRC_Msk;
 	switch (value) {
 		case PllSource::hsi:
-            if (!isHsiEnabled())
+            if (!hsiIsEnabled())
                 return false;
 			tmp |= RCC_CFGR_PLLSRC_HSI_DIV2;
 			break;
 
 		case PllSource::hse:
-            if (!isHseEnabled())
+            if (!hseIsEnabled())
                 return false;
 			tmp |= RCC_CFGR_PLLSRC_HSE_PREDIV;
 			break;
@@ -303,7 +303,7 @@ bool setPllSource(
 /// \brief    Asigna el valor del divisor de la entrada HSE del PLL.
 /// \param    value: El valor.
 ///
-void setPllHseDivider(
+void pllSetHseDivider(
 	PllHseDivider value) {
 
 	uint32_t tmp = RCC->CFGR2;
@@ -384,7 +384,7 @@ void setPllHseDivider(
 /// \brief    Asigna el valor del multiplicador del PLL.
 /// \param    value: El valor.
 ///
-void setPllMultiplier(
+void pllSetMultiplier(
 	PllMultiplier value) {
 
 	uint32_t tmp = RCC->CFGR;

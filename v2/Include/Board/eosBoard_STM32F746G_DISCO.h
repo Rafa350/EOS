@@ -34,13 +34,14 @@
 #define LED1_PortID          htl::gpio::PortID::portI
 #define LED1_PinID           htl::gpio::PinID::pin1
 #define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
+#define LED1_Instance        LED1_Pin::pInst
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_Pin::pInst->initOutput(htl::gpio::OutputMode::pushPull)
-#define LED1_On()            LED1_Pin::pInst->set()
-#define LED1_Off()           LED1_Pin::pInst->clear()
-#define LED1_Toggle()        LED1_Pin::pInst->toggle()
+#define LED1_Initialize()    LED1_Instance->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::low, false)
+#define LED1_On()            LED1_Instance->set()
+#define LED1_Off()           LED1_Instance->clear()
+#define LED1_Toggle()        LED1_Instance->toggle()
 
 #endif // USE_LED1
 

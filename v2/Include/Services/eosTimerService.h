@@ -5,62 +5,88 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/halTMR.h"
 #include "Services/eosService.h"
-#include "System/eosCallbacks.h"
-#include "System/Collections/eosVector.h"
-#include "System/Collections/eosPriorityQueue.h"
+#include "System/eosEvents.h"
 #include "System/Core/eosQueue.h"
-#include "System/Core/eosTimer.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
 
 
 namespace eos {
 
-    class TimerCounter;
+	class TimerCounter;
 
-    struct QueueComparator {
-        bool operator () (const TimerCounter *left, const TimerCounter *right);
-    };
+    using TimerList = IntrusiveForwardList<TimerCounter, 1>;
+    using TimerListNode = IntrusiveForwardListNode<TimerCounter, 1>;
+
 
     class TimerService final : public Service {
+        public:
+            enum class NotifyID {
+            	timeout,
+            };
+            struct NotifyEventArgs {
+            	union {
+            		struct {
+            			TimerCounter *timer;
+            		} timeout;
+            	};
+            };
+			using ER = NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+			using INotifyEvent = ER::IEvent;
+			template <typename Instance_> using NotifyEvent = ER::Event<Instance_>;
+
         private:
-            enum class OpCode: uint8_t {
-                start,
-                stop,
-                pause,
-                resume,
-                timeOut
+            enum class CommandID {
+                timerStart,
+                timerStop,
+                timerPause,
+                timerResume,
+                tick
             };
             struct Command {
-                OpCode opCode;
+                CommandID id;
                 union {
-                    TimerCounter* timer;
-                    unsigned period;
+                	struct {
+                        TimerCounter* timer;
+                        unsigned period;
+                	} timerStart;
+                	struct {
+                        TimerCounter* timer;
+                	} timerStop;
+                	struct {
+                        TimerCounter* timer;
+                	} timerPause;
+                	struct {
+                        TimerCounter* timer;
+                	} timerResume;
+                	struct {
+                	} tick;
                 };
             };
-            using TimerEventCallback = CallbackP1<TimerService, const Timer::EventArgs&>;
-            using CommandQueue = Queue<Command>;
-            typedef Vector<TimerCounter*> TimerList;
-            typedef TimerList::Iterator TimerIterator;
-            typedef PriorityQueue<TimerCounter*, QueueComparator> TimerQueue;
-
-        public:
-            struct InitParams {
-                halTMRTimer timer;
-                unsigned period;
-            };
+			using CommandQueue = Queue<Command>;
 
         private:
+			constexpr static const unsigned _commandQueueSize = 4;
+
+        private:
+			TimerList _timers;
             CommandQueue _commandQueue;
-            TimerList _timers;
-            TimerQueue _activeQueue;
-            unsigned _osPeriod;
-            Timer _osTimer;
-            TimerEvent<TimerService> *_osTimerEventCallback;
+            ER _erNotify;
+            unsigned _ticks;
+
+        private:
+            void commandDispatcher(const Command &command) const;
+            bool updateTicks();
+
+            void timeout(TimerCounter *timer) const;
+
+            void notifyTimeout(TimerCounter *timer) const;
+
+        protected:
+            void onExecute() override;
 
         public:
             TimerService();
-            ~TimerService();
 
             void addTimer(TimerCounter *timer);
             void removeTimer(TimerCounter *timer);
@@ -71,69 +97,56 @@ namespace eos {
             void pause(TimerCounter *timer, unsigned blockTime);
             void resume(TimerCounter *timer, unsigned blockTime);
 
-        protected:
-            void onInitialize() override;
-            void onTask() override;
-
-        private:
-            void cmdStart(TimerCounter* timer);
-            void cmdStop(TimerCounter* timer);
-            void cmdPause(TimerCounter* timer);
-            void cmdResume(TimerCounter* timer);
-            void cmdTimeOut();
-            void osTimerEventHandler(const Timer::EventArgs& args);
+            void tick(unsigned blockTime);
+            void tickISR();
     };
 
-    class TimerCounter {
+    class TimerCounter final: public TimerListNode {
         public:
-            enum class EventType: uint8_t {
-                start,
-                stop,
-                pause,
-                resume,
-                timeout
+            enum class State {
+                running,
+                stoped,
+				paused
             };
-            struct EventArgs {
-                EventType type;
-                TimerCounter *timer;
-            };
-
-        private:
-            typedef ICallbackP1<const EventArgs&> IEventCallback;
 
         private:
             TimerService *_service;
-            IEventCallback *_eventCallback;
+            State _state;
+            bool _autorestart;
             unsigned _period;
-            unsigned _currentPeriod;
-            unsigned _expireTime;
+            unsigned _counter;
+
+        private:
+            void processStart();
+            void processStop();
+            void processPause();
+            void processResume();
+            bool processTick();
 
         public:
             TimerCounter(TimerService* service);
             ~TimerCounter();
 
-            inline void setEventCallback(IEventCallback &callback) {
-                _eventCallback = &callback;
-            }
-
-            void start(unsigned period, unsigned blockTime = ((unsigned)-1)) {
+            void start(unsigned period, unsigned blockTime = ((unsigned) -1)) {
                 _service->start(this, period, blockTime);
             }
 
-            void stop(unsigned blockTime = ((unsigned)-1)) {
+            void stop(unsigned blockTime = ((unsigned) -1)) {
                 _service->stop(this, blockTime);
             }
 
-            void pause(unsigned blockTime = ((unsigned)-1)) {
+            void pause(unsigned blockTime = ((unsigned) -1)) {
                 _service->pause(this, blockTime);
             }
 
-            void resume(unsigned blockTime = ((unsigned)-1)) {
+            void resume(unsigned blockTime = ((unsigned) -1)) {
                 _service->resume(this, blockTime);
             }
 
-        friend TimerService;
-        friend QueueComparator;
+            State getState() const { return _state; }
+            unsigned getCounter() const { return _counter; }
+
+            friend TimerService;
     };
 
 }

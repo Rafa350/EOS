@@ -142,7 +142,7 @@ namespace htl {
 				    pinR3_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<DeviceID::ltdc, PinFunction::r3, pinR3_::portID, pinR3_::pinID>::value);
 				    pinR4_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<DeviceID::ltdc, PinFunction::r4, pinR4_::portID, pinR4_::pinID>::value);
 				    pinR5_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<DeviceID::ltdc, PinFunction::r5, pinR5_::portID, pinR5_::pinID>::value);
-				    pinR6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<DeviceID::ltdc, PinFunction::r6, pinR6_::portID, pinR5_::pinID>::value);
+				    pinR6_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<DeviceID::ltdc, PinFunction::r6, pinR6_::portID, pinR6_::pinID>::value);
 				    pinR7_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, internal::PinFunctionInfo<DeviceID::ltdc, PinFunction::r7, pinR7_::portID, pinR7_::pinID>::value);
 				}
 				template <typename pinG2_, typename pinG3_, typename pinG4_, typename pinG5_, typename pinG6_, typename pinG7_>

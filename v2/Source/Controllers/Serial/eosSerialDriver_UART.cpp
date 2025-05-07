@@ -127,5 +127,15 @@ void SerialDriver_UART::uartNotifyEventHandler(
 		case UARTNotifyID::rxCompleted:
 		    notifyRxCompleted(args->rxCompleted.length, args->irq);
 			break;
+
+    	// Notificacio un error en la comunicacio
+		//
+		case UARTNotifyID::error:
+			break;
+
+    	// Notificacio nula
+		//
+		case UARTNotifyID::null:
+			break;
 	}
 }

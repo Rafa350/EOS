@@ -64,9 +64,11 @@ void DigOutputService::addOutput(
 
     // Afegeix la sortida a la llista
     //
+    if (!_outputs.contains(output)) {
     if (output->_service == nullptr) {
         output->_service = this;
         _outputs.pushFront(output);
+    }
     }
 
     // Fi de la seccio critica
@@ -237,12 +239,12 @@ void DigOutputService::set(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    Command cmd = {
-        .id = CommandId::set,
+    Command command = {
+        .id = CommandID::set,
         .output = output
     };
 
-    _commandQueue.push(cmd, unsigned(-1));
+    _commandQueue.push(command, unsigned(-1));
 }
 
 
@@ -256,12 +258,12 @@ void DigOutputService::clear(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    Command cmd = {
-        .id = CommandId::clear,
+    Command command = {
+        .id = CommandID::clear,
         .output = output
     };
 
-    _commandQueue.push(cmd, unsigned(-1));
+    _commandQueue.push(command, unsigned(-1));
 }
 
 
@@ -275,12 +277,12 @@ void DigOutputService::toggle(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    Command cmd = {
-        .id = CommandId::toggle,
+    Command command = {
+        .id = CommandID::toggle,
         .output = output
     };
 
-    _commandQueue.push(cmd, unsigned(-1));
+    _commandQueue.push(command, unsigned(-1));
 }
 
 
@@ -296,12 +298,12 @@ void DigOutputService::write(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    Command cmd = {
-        .id = state ? CommandId::set : CommandId::clear,
+    Command command = {
+        .id = state ? CommandID::set : CommandID::clear,
         .output = output
     };
 
-    _commandQueue.push(cmd, unsigned(-1));
+    _commandQueue.push(command, unsigned(-1));
 }
 
 
@@ -317,13 +319,13 @@ void DigOutputService::pulse(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    Command cmd = {
-        .id = CommandId::pulse,
+    Command command = {
+        .id = CommandID::pulse,
         .output = output,
         .time1 = std::max(width, minPulseWidth)
     };
 
-    _commandQueue.push(cmd, unsigned(-1));
+    _commandQueue.push(command, unsigned(-1));
 }
 
 
@@ -341,14 +343,14 @@ void DigOutputService::delayedPulse(
     eosAssert(output != nullptr);
     eosAssert(output->_service == this);
 
-    Command cmd = {
-        .id = CommandId::delayedPulse,
+    Command command = {
+        .id = CommandID::delayedPulse,
         .output = output,
         .time1 = std::max(delay, minDelay),
         .time2 = std::max(width, minPulseWidth)
     };
 
-    _commandQueue.push(cmd, unsigned(-1));
+    _commandQueue.push(command, unsigned(-1));
 }
 
 
@@ -392,53 +394,53 @@ void DigOutputService::onExecute() {
 	while (!stopSignal()) {
 
 		Command command;
-		while (_commandQueue.pop(command, unsigned(-1)))
-			processCommand(command);
+		while (_commandQueue.pop(command, (unsigned) -1))
+			commandDispatcher(command);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una comanda.
+/// \brief    Procesa les comandes.
 /// \param    command: La comanda.
 ///
-void DigOutputService::processCommand(
+void DigOutputService::commandDispatcher(
 	const Command &command) {
 
     switch (command.id) {
-        case CommandId::set:
+        case CommandID::set:
             processSet(command.output);
             break;
 
-        case CommandId::clear:
+        case CommandID::clear:
             processClear(command.output);
             break;
 
-        case CommandId::toggle:
+        case CommandID::toggle:
             processToggle(command.output);
             break;
 
-        case CommandId::pulse:
+        case CommandID::pulse:
             processPulse(command.output, command.time1);
             break;
 
-        case CommandId::delayedSet:
+        case CommandID::delayedSet:
             processDelayedSet(command.output, command.time1);
             break;
 
-        case CommandId::delayedClear:
+        case CommandID::delayedClear:
             processDelayedClear(command.output, command.time1);
             break;
 
-        case CommandId::delayedToggle:
+        case CommandID::delayedToggle:
             processDelayedToggle(command.output, command.time1);
             break;
 
-        case CommandId::delayedPulse:
+        case CommandID::delayedPulse:
             processDelayedPulse(command.output, command.time1, command.time2);
             break;
 
-        case CommandId::tick:
+        case CommandID::tick:
             processTick();
             break;
     }
@@ -616,23 +618,22 @@ void DigOutputService::processTick() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio del temportitzador
-/// \param    event: L'event que ha generat la interrupcio.
-/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
+/// \remarks  ATENCIO: Es procesa dins d'una interrupcio.
 ///
-void DigOutputService::tickInterruptFunction() {
+void DigOutputService::tickISR() {
 
 	// Incrementa el contador de temps
 	//
 	_timeCounter += 1;
 
-    Command cmd = {
-        .id = CommandId::tick
+    Command command = {
+        .id = CommandID::tick
     };
 
     // Es porta el missatge en la cua, per procesar-l'ho en la tasca,
     // fora de la interrupcio.
     //
-    _commandQueue.pushISR(cmd);
+    _commandQueue.pushISR(command);
 }
 
 

@@ -75,7 +75,7 @@ namespace eos {
 
             template <typename T_, int tag_>
             class IntrusiveForwardList {
-                public:
+            	public:
                     using ValueType = T_*;
                     using NodeType = IntrusiveForwardListNode<T_, tag_>*;
                     using Iterator = IntrusiveForwardListIterator<T_, tag_>;
@@ -109,7 +109,7 @@ namespace eos {
                     void remove(ValueType element) {
                         NodeType p = nullptr;
                         for (auto n = _first; n != nullptr; n = n->_next) {
-                            if (n == static_cast<ValueType>(element)) {
+                            if (n == static_cast<NodeType>(element)) {
                                 if (p == nullptr)
                                     _first = n->_next;
                                 else
@@ -127,6 +127,16 @@ namespace eos {
 
                     inline bool empty() const {
                         return _first == nullptr;
+                    }
+
+                    bool contains(ValueType element) const {
+                    	auto n = _first;
+                    	while (n) {
+                    		if (n == static_cast<NodeType>(element))
+                    			return true;
+                    		n = n->_next;
+                    	}
+                    	return false;
                     }
 
                     constexpr bool full() const {

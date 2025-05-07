@@ -6,13 +6,6 @@
 #include <cmath>
 
 
-#define PATTERN_MASK     0x000000FF
-#define PATTERN_POSEDGE  0x0000007F
-#define PATTERN_NEGEDGE  0x00000080
-#define PATTERN_ACTIVE   0x000000FF
-#define PATTERN_IDLE     0x00000000
-
-
 #ifdef HTL_MODULAR
 import htl.interrupts;
 #else
@@ -24,6 +17,12 @@ namespace interrupts = htl::irq;
 using namespace eos;
 using namespace htl;
 
+
+constexpr const uint32_t PATTERN_MASK    = 0x000000FF;
+constexpr const uint32_t PATTERN_POSEDGE = 0x0000007F;
+constexpr const uint32_t PATTERN_NEGEDGE = 0x00000080;
+constexpr const uint32_t PATTERN_ACTIVE  = 0x000000FF;
+constexpr const uint32_t PATTERN_IDLE    = 0x00000000;
 
 constexpr const char *serviceName = "DigInput";
 constexpr Task::Priority servicePriority = Task::Priority::normal;

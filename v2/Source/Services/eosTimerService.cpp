@@ -1,7 +1,8 @@
 #include "eos.h"
-#include "OSAL/osalKernel.h"
+#include "eosAssert.h"
 #include "Services/eosTimerService.h"
 #include "System/Core/eosTask.h"
+
 
 using namespace eos;
 
@@ -10,22 +11,8 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 TimerService::TimerService():
-
-    Service(),
-    _commandQueue(10),
-    _activeQueue(),
-    _osTimerEventCallback(*this, &TimerService::osTimerEventHandler) {
-    //_osTimer(false, &osTimerEventCallback, nullptr) {
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Destructor.
-///
-TimerService::~TimerService() {
-
-    while (!_timers.isEmpty())
-        delete _timers.peekBack();
+    _commandQueue {_commandQueueSize},
+	_ticks {1} {
 }
 
 
@@ -44,7 +31,7 @@ void TimerService::addTimer(
     Task::enterCriticalSection();
 
     if (timer->_service == nullptr) {
-        _timers.pushBack(timer);
+        _timers.pushFront(timer);
         timer->_service = this;
     }
 
@@ -69,14 +56,8 @@ void TimerService::removeTimer(
     Task::enterCriticalSection();
 
     if (timer->_service == this) {
-
-        // Si esta actiu l'elimina de la cua d'actius
-        //
-        if (_activeQueue.contains(timer))
-            _activeQueue.remove(timer);
-
+        _timers.remove(timer);
         timer->_service = nullptr;
-        _timers.removeAt(_timers.indexOf(timer));
     }
 
     // Fi de la seccio critica
@@ -94,18 +75,8 @@ void TimerService::removeTimers() {
     //
     Task::enterCriticalSection();
 
-    while (!_timers.isEmpty()) {
-
-        TimerCounter* timer = _timers.peekBack();
-
-        // Si esta actiu l'elimina de la cua d'actius
-        //
-        if (_activeQueue.contains(timer))
-            _activeQueue.remove(timer);
-
-        _timers.popBack();
-        timer->_service = nullptr;
-    }
+    while (!_timers.empty())
+    	removeTimer(_timers.front());
 
     // Fi de la seccio critica
     //
@@ -129,12 +100,14 @@ void TimerService::start(
 
     if (period > 0) {
 
-        timer->_period = period;
-
-        Command cmd;
-        cmd.opCode = OpCode::start;
-        cmd.timer = timer;
-        _commandQueue.push(cmd, blockTime);
+        Command command = {
+        	.id = CommandID::timerStart,
+        	.timerStart = {
+        		.timer = timer,
+        		.period = period
+        	}
+        };
+        _commandQueue.push(command, blockTime);
     }
 }
 
@@ -151,10 +124,13 @@ void TimerService::stop(
     eosAssert(timer != nullptr);
     eosAssert(timer->_service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::stop;
-    cmd.timer = timer;
-    _commandQueue.push(cmd, blockTime);
+    Command command = {
+    	.id = CommandID::timerStop,
+    	.timerStop = {
+    		.timer = timer
+    	}
+    };
+    _commandQueue.push(command, blockTime);
 }
 
 
@@ -170,10 +146,13 @@ void TimerService::pause(
     eosAssert(timer != nullptr);
     eosAssert(timer->_service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::pause;
-    cmd.timer = timer;
-    _commandQueue.push(cmd, blockTime);
+    Command command = {
+   		.id = CommandID::timerPause,
+   		.timerPause = {
+   			.timer = timer
+   		}
+    };
+    _commandQueue.push(command, blockTime);
 }
 
 
@@ -189,223 +168,151 @@ void TimerService::resume(
     eosAssert(timer != nullptr);
     eosAssert(timer->_service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::resume;
-    cmd.timer = timer;
-    _commandQueue.push(cmd, blockTime);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa els events del timer.
-/// \param    args: Parametres del event.
-///
-void TimerService::osTimerEventHandler(
-    const Timer::EventArgs &args) {
-
-    Command cmd;
-    cmd.opCode = OpCode::timeOut;
-    cmd.period = _osPeriod;
-    _commandQueue.push(cmd, 1000);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Initialiyza el servei.
-///
-void TimerService::onInitialize() {
-
-    _osTimer.setEventCallback(&_osTimerEventCallback);
-
-    Service::onInitialize();
+    Command command = {
+    	.id = CommandID::timerResume,
+    	.timerResume = {
+    		.timer = timer
+    	}
+    };
+    _commandQueue.push(command, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
-void TimerService::onTask() {
+void TimerService::onExecute() {
 
-    // Repeteix indefinidament
-    //
-    while (true) {
-
-        // Espera indefinidament que arribin comandes per procesar
-        //
-        Command cmd;
-        while (_commandQueue.pop(cmd, unsigned(-1))) {
-
-            switch (cmd.opCode) {
-                case OpCode::start:
-                    cmdStart(cmd.timer);
-                    break;
-
-                case OpCode::stop:
-                    cmdStop(cmd.timer);
-                    break;
-
-                case OpCode::pause:
-                    cmdPause(cmd.timer);
-                    break;
-
-                case OpCode::resume:
-                    cmdResume(cmd.timer);
-                    break;
-
-                case OpCode::timeOut:
-                    cmdTimeOut();
-                    break;
-            }
-        }
+    while (!stopSignal()) {
+    	Command command;
+        while (_commandQueue.pop(command, (unsigned) -1))
+        	commandDispatcher(command);
     }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'Start'.
-/// \param    timer: El temporitzador.
+/// \brief    Procesa una comanda.
+/// \param    command: La comanda.
 ///
-void TimerService::cmdStart(
-    TimerCounter *timer) {
+void TimerService::commandDispatcher(
+	const Command &command) const {
 
-    // Calcula el temps d'expiracio.
-    //
-    timer->_currentPeriod = timer->_period;
-    timer->_expireTime = osalGetTickTime() + timer->_currentPeriod;
+	switch (command.id) {
+		case CommandID::timerStart:
+			command.timerStart.timer->processStart();
+			break;
 
-    // Afegeig el contador a la llista de contadors actius.
-    //
-    if (_activeQueue.contains(timer))
-        _activeQueue.remove(timer);
+		case CommandID::timerStop:
+			command.timerStop.timer->processStop();
+			break;
 
-    _activeQueue.push(timer);
+		case CommandID::timerPause:
+			command.timerPause.timer->processPause();
+			break;
 
-    // Si es el primer, inicia el temporitzador.
-    //
-    if (_activeQueue.getSize() == 1)
-        _osTimer.start(timer->_currentPeriod, 0);
+		case CommandID::timerResume:
+			command.timerResume.timer->processResume();
+			break;
+
+		case CommandID::tick:
+			for (auto timer: _timers) {
+				if (timer->processTick())
+					timeout(timer);
+			}
+			break;
+	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'Stop'.
-/// \param    timer: El temporitzador.
+/// \brief    Actualitza el contador de ticks
+/// \return   True si s'ha arribat al final, false en cas contrari.
 ///
-void TimerService::cmdStop(
-    TimerCounter *timer) {
+bool TimerService::updateTicks() {
 
-    // Elimina el contador de la llista de contadors actius.
-    //
-    _activeQueue.remove(timer);
+	if (_ticks > 0)
+		_ticks -= 1;
+
+	if (_ticks == 0) {
+		_ticks = 1;
+		return true;
+	}
+	else
+		return false;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'Pause'.
-/// \param    timer: El temporitzador.
+/// \brief    Senyal tick
 ///
-void TimerService::cmdPause(
-    TimerCounter *timer) {
+void TimerService::tick(
+	unsigned blockTime) {
 
-    // Elimina el contador de la llista de contadors actius.
-    //
-    _activeQueue.remove(timer);
-
-    // Recalcula el periode que resta.
-    //
-    timer->_currentPeriod = timer->_expireTime - osalGetTickTime();
+	if (updateTicks()) {
+		Command command = {
+			.id = CommandID::tick
+		};
+		_commandQueue.push(command, blockTime);
+	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'Resume'.
-/// \param    timer: El temporitzador.
+/// \brief    Senyal tick per interrupcio
 ///
-void TimerService::cmdResume(
-    TimerCounter *timer) {
+void TimerService::tickISR() {
 
-    // Recalcula el temps d'expiracio amb el periode ue resta.
-    //
-    timer->_expireTime = osalGetTickTime() + timer->_currentPeriod;
-
-    // Afegeix el contador a la cua de contadors actius.
-    //
-    _activeQueue.push(timer);
-
-    // Si es el primer, inicia el temporitzador.
-    //
-    if (_activeQueue.getSize() == 1)
-        _osTimer.start(timer->_currentPeriod, 0);
+	if (updateTicks()) {
+		Command command = {
+			.id = CommandID::tick
+		};
+		_commandQueue.pushISR(command);
+	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'TimeOut'.
-/// \param    period: Periode de temps procesat.
+/// \brief    Operacions a realitzar quant el temporitzador arriba al final.
+/// \param    timer: El temporitzador.
 ///
-void TimerService::cmdTimeOut() {
+void TimerService::timeout(
+	TimerCounter *timer) const {
 
-    // Comprova si hi han contadors actius.
-    //
-    if (!_activeQueue.isEmpty()) {
+	notifyTimeout(timer);
+}
 
-        // Obte el temps actual.
-        //
-        unsigned currentTime = osalGetTickTime();
 
-        // Elimina els contadors que hagin arribat al final.
-        //
-        while (true) {
+/// ----------------------------------------------------------------------
+/// \brief    Notifica el 'timeout' d'un temporitzador.
+/// \param    timer: El temporitzador.
+///
+void TimerService::notifyTimeout(
+	TimerCounter *timer) const {
 
-            if (_activeQueue.isEmpty())
-                break;
-
-            TimerCounter *timer = _activeQueue.peek();
-            if (currentTime < timer->_expireTime)
-                break;
-
-            // Elimina el contador de la cua d'actius.
-            //
-            _activeQueue.pop();
-
-            // Crida a la funcio callback del contador.
-            //
-            if (timer->_eventCallback != nullptr) {
-                TimerCounter::EventArgs args;
-                args.type = TimerCounter::EventType::timeout;
-                args.timer = timer;
-                timer->_eventCallback->execute(args);
-            }
-        }
-
-        // Obte el primer contador actiu.
-        //
-        if (!_activeQueue.isEmpty()) {
-
-            // Recalcula el temps d'expiracio.
-            //
-            TimerCounter *timer = _activeQueue.peek();
-            _osPeriod = timer->_expireTime - currentTime;
-
-            // Activa el temporitzador, per un nou cicle.
-            //
-            _osTimer.start(_osPeriod, 0);
-        }
-    }
+	if (_erNotify.isEnabled(NotifyID::timeout)) {
+		NotifyEventArgs args = {
+			.timeout = {
+				.timer = timer
+			}
+		};
+		_erNotify.raise(NotifyID::timeout, &args);
+	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: El servei.
-/// \param    callback: El callback dels events.
 ///
 TimerCounter::TimerCounter(
     TimerService *service) :
 
-    _service(nullptr),
-    _eventCallback(nullptr),
-    _period(0) {
+    _service {nullptr},
+	_state {State::stoped},
+	_autorestart {false},
+    _period {0},
+	_counter {0} {
 
     if (service != nullptr)
         service->addTimer(this);
@@ -422,9 +329,71 @@ TimerCounter::~TimerCounter() {
 }
 
 
-bool QueueComparator::operator () (
-    const TimerCounter *left,
-    const TimerCounter *right) {
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'operacio 'Start'
+///
+void TimerCounter::processStart() {
 
-    return left->_expireTime < right->_expireTime;
+	if (_state == State::stoped) {
+		_state = State::running;
+		_counter = _period;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'operacio 'Stop'.
+///
+void TimerCounter::processStop() {
+
+	if (_state != State::stoped)
+		_state = State::stoped;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'operacio 'Pause'.
+///
+void TimerCounter::processPause() {
+
+	if (_state == State::running)
+		_state = State::paused;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'operacio 'Resume'.
+///
+void TimerCounter::processResume() {
+
+	if (_state == State::paused)
+		_state = State::running;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'operacio 'Tick'.
+/// \return   True si s'ha produit un timeout.
+///
+bool TimerCounter::processTick() {
+
+	if (_state == State::running) {
+
+		if (_counter > 0)
+			_counter -= 1;
+
+		if (_counter == 0) {
+
+			if (_autorestart) {
+				_counter = _period;
+				_state = State::running;
+			}
+			else
+			   _state = State::stoped;
+
+			return true;
+		}
+	}
+
+	return false;
 }

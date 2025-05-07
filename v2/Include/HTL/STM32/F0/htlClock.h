@@ -108,22 +108,22 @@ namespace htl {
 
 		void hsiEnable();
 		void hsiDisable();
-		bool isHsiEnabled();
+		bool hsiIsEnabled();
 
 		void hsi14Enable();
 		void hsi14Disable();
-		bool isHsi14Enabled();
+		bool hsi14IsEnabled();
 
 		void hseEnable(HseBypassMode bypass = HseBypassMode::off);
 		void hseDisable();
-		bool isHseEnabled();
+		bool hseIsEnabled();
 
 		void pllEnable();
 		void pllDisable();
-		bool isPllEnabled();
-		bool setPllSource(PllSource value);
-		void setPllMultiplier(PllMultiplier value);
-		void setPllHseDivider(PllHseDivider value);
+		bool pllIsEnabled();
+		bool pllSetSource(PllSource value);
+		void pllSetMultiplier(PllMultiplier value);
+		void pllSetHseDivider(PllHseDivider value);
 
 		bool setSysClkSource(SysClkSource source);
 		void setI2CClkSource(I2CClkSource source);

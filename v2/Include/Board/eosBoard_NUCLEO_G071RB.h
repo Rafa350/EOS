@@ -10,8 +10,10 @@
 // Board information
 // -----------------------------------------------------------------------
 
-#define EOS_BOARD_NAME            "NUCLEO G071RB"
-#define EOS_BOARD_MANUFACTURER    "ST-Microelectronics"
+#define EOS_BOARD_NAME                 "NUCLEO G071RB"
+#define EOS_BOARD_MANUFACTURER         "ST-Microelectronics"
+#define EOS_BOARD_CPU			       "STM32G071RB"
+#define EOS_BOARD_CPU_MANUFACTURER     "ST-Microelectronics"
 
 
 // -----------------------------------------------------------------------
@@ -35,13 +37,14 @@
 #define LED1_PortID          htl::gpio::PortID::portA
 #define LED1_PinID           htl::gpio::PinID::pin5
 #define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
+#define LED1_Instance        LED1_Pin::pInst
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_Pin::pInst->initOutput(htl::gpio::OutputMode::pushPull)
-#define LED1_On()            LED1_Pin::pInst->set()
-#define LED1_Off()           LED1_Pin::pInst->clear()
-#define LED1_Toggle()        LED1_Pin::pInst->toggle()
+#define LED1_Initialize()    LED1_Instance->initOutput(htl::gpio::OutputMode::pushPull)
+#define LED1_On()            LED1_Instance->set()
+#define LED1_Off()           LED1_Instance->clear()
+#define LED1_Toggle()        LED1_Instance->toggle()
 
 #endif // USE_LED1
 
