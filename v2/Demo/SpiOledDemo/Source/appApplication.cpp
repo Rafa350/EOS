@@ -10,14 +10,20 @@ using namespace app;
 ///-----------------------------------------------------------------------
 /// \brief Contructor.
 ///
-MyApplication::MyApplication():
+MyApplication::MyApplication() {
 
-	eos::RTOSApplication() {
+}
+
+
+void MyApplication::onExecute() {
 
     auto pinLED1 = LED1_Pin::pInst;
 	auto ledService = new eos::LedService(pinLED1, nullptr);
-	addService(ledService, eos::Task::Priority::normal, 128, "LED");
+	addService(ledService);
 
 	auto displayService = new DisplayService();
-	addService(displayService, eos::Task::Priority::normal, 128, "DISPLAY");
+	addService(displayService);
+
+	while (true)
+		eos::Task::delay(1000);
 }

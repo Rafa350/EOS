@@ -737,6 +737,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/F746</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F7/htlClock.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlClock.h</locationURI>
@@ -745,6 +750,11 @@
 			<name>inc/Framework/EOS/HTL/STM32/F7/htlINT_Vectors.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlINT_Vectors.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/htlSPI_Traits.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlSPI_Traits.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Driver/SSD1306</name>
@@ -765,6 +775,11 @@
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/F746/htlSPI_Pins.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/F746/htlSPI_Pins.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Driver/SSD1306/eosDevice_SSD1306.cpp</name>

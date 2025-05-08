@@ -1,10 +1,14 @@
 #include "HTL/htl.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/F0/htlClock.h"
 
 
 #if !defined(EOS_PLATFORM_STM32F0)
 	#error Solo es valido para la plataforma STM32F0
 #endif
+
+
+using namespace htl::bits;
 
 
 namespace htl::clock {
@@ -161,7 +165,7 @@ void setPClkPrescaler(
 ///
 void hsiEnable() {
 
-	RCC->CR |= RCC_CR_HSION;
+	set(RCC->CR, RCC_CR_HSION);
 	while (!hsiIsEnabled())
 		continue;
 }
@@ -172,7 +176,7 @@ void hsiEnable() {
 ///
 void hsiDisable() {
 
-	RCC->CR &= ~RCC_CR_HSION;
+	clear(RCC->CR, RCC_CR_HSION);
 	while (hsiIsEnabled())
 		continue;
 }
@@ -184,7 +188,7 @@ void hsiDisable() {
 ///
 bool hsiIsEnabled() {
 
-    return (RCC->CR & RCC_CR_HSIRDY) != 0;
+    return isSet(RCC->CR, RCC_CR_HSIRDY);
 }
 
 

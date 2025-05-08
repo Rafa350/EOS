@@ -49,6 +49,7 @@ namespace eos {
                 	struct {
                         TimerCounter* timer;
                         unsigned period;
+                        bool autorestart;
                 	} timerStart;
                 	struct {
                         TimerCounter* timer;
@@ -92,7 +93,17 @@ namespace eos {
             void removeTimer(TimerCounter *timer);
             void removeTimers();
 
-            void start(TimerCounter *timer, unsigned period, unsigned blockTime);
+            inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+            	_erNotify.set(event, enabled);
+            }
+            inline void enableNotifyEvent() {
+            	_erNotify.enable();
+            }
+            inline void disableNotifyEvent() {
+            	_erNotify.disable();
+            }
+
+            void start(TimerCounter *timer, unsigned period, bool autorestart, unsigned blockTime);
             void stop(TimerCounter *timer, unsigned blockTime);
             void pause(TimerCounter *timer, unsigned blockTime);
             void resume(TimerCounter *timer, unsigned blockTime);
@@ -117,7 +128,7 @@ namespace eos {
             unsigned _counter;
 
         private:
-            void processStart();
+            void processStart(unsigned period, bool autorestart);
             void processStop();
             void processPause();
             void processResume();
@@ -127,8 +138,8 @@ namespace eos {
             TimerCounter(TimerService* service);
             ~TimerCounter();
 
-            void start(unsigned period, unsigned blockTime = ((unsigned) -1)) {
-                _service->start(this, period, blockTime);
+            void start(unsigned period, bool autorestart, unsigned blockTime = ((unsigned) -1)) {
+                _service->start(this, period, autorestart, blockTime);
             }
 
             void stop(unsigned blockTime = ((unsigned) -1)) {

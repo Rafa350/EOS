@@ -28,8 +28,7 @@ namespace app {
 			eos::Graphics *_graphics;
 
 		protected:
-			bool onTaskStart() override;
-			bool onTask() override;
+			void onExecute() override;
 
 		public:
 			DisplayService();

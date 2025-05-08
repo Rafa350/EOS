@@ -7,12 +7,15 @@
 using namespace eos;
 
 
+constexpr static const unsigned _initTick = 1;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
 TimerService::TimerService():
     _commandQueue {_commandQueueSize},
-	_ticks {1} {
+	_ticks {_initTick} {
 }
 
 
@@ -88,11 +91,13 @@ void TimerService::removeTimers() {
 /// \brief    Inicia un temporitzador.
 /// \param    timer: El temporitzador.
 /// \param    period: El periode.
+/// \param    autorestart: True si arranca ciclicament.
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::start(
     TimerCounter *timer,
     unsigned period,
+	bool autorestart,
     unsigned blockTime) {
 
     eosAssert(timer != nullptr);
@@ -104,7 +109,8 @@ void TimerService::start(
         	.id = CommandID::timerStart,
         	.timerStart = {
         		.timer = timer,
-        		.period = period
+        		.period = period,
+				.autorestart = autorestart
         	}
         };
         _commandQueue.push(command, blockTime);
@@ -200,7 +206,9 @@ void TimerService::commandDispatcher(
 
 	switch (command.id) {
 		case CommandID::timerStart:
-			command.timerStart.timer->processStart();
+			command.timerStart.timer->processStart(
+				command.timerStart.period,
+				command.timerStart.autorestart);
 			break;
 
 		case CommandID::timerStop:
@@ -235,7 +243,7 @@ bool TimerService::updateTicks() {
 		_ticks -= 1;
 
 	if (_ticks == 0) {
-		_ticks = 1;
+		_ticks = _initTick;
 		return true;
 	}
 	else
@@ -332,12 +340,20 @@ TimerCounter::~TimerCounter() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa l'operacio 'Start'
 ///
-void TimerCounter::processStart() {
+void TimerCounter::processStart(
+	unsigned period,
+	bool autorestart) {
 
-	if (_state == State::stoped) {
+    Task::enterCriticalSection();
+
+    if (_state == State::stoped) {
+		_period = period;
+		_counter = period;
+		_autorestart = autorestart;
 		_state = State::running;
-		_counter = _period;
 	}
+
+    Task::exitCriticalSection();
 }
 
 
@@ -346,8 +362,12 @@ void TimerCounter::processStart() {
 ///
 void TimerCounter::processStop() {
 
-	if (_state != State::stoped)
+    Task::enterCriticalSection();
+
+    if (_state != State::stoped)
 		_state = State::stoped;
+
+    Task::exitCriticalSection();
 }
 
 
@@ -356,8 +376,12 @@ void TimerCounter::processStop() {
 ///
 void TimerCounter::processPause() {
 
-	if (_state == State::running)
+    Task::enterCriticalSection();
+
+    if (_state == State::running)
 		_state = State::paused;
+
+    Task::exitCriticalSection();
 }
 
 
@@ -366,8 +390,12 @@ void TimerCounter::processPause() {
 ///
 void TimerCounter::processResume() {
 
-	if (_state == State::paused)
+    Task::enterCriticalSection();
+
+    if (_state == State::paused)
 		_state = State::running;
+
+    Task::exitCriticalSection();
 }
 
 
@@ -377,7 +405,11 @@ void TimerCounter::processResume() {
 ///
 bool TimerCounter::processTick() {
 
-	if (_state == State::running) {
+	bool result = false;
+
+    Task::enterCriticalSection();
+
+    if (_state == State::running) {
 
 		if (_counter > 0)
 			_counter -= 1;
@@ -391,9 +423,11 @@ bool TimerCounter::processTick() {
 			else
 			   _state = State::stoped;
 
-			return true;
+			result = true;
 		}
 	}
 
-	return false;
+    Task::exitCriticalSection();
+
+    return result;
 }

@@ -131,7 +131,7 @@ namespace eos {
 
                     bool contains(ValueType element) const {
                     	auto n = _first;
-                    	while (n) {
+                    	while (n != nullptr) {
                     		if (n == static_cast<NodeType>(element))
                     			return true;
                     		n = n->_next;
