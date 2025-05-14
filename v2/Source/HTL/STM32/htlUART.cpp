@@ -1159,12 +1159,12 @@ static void disable(
 	USART_TypeDef *usart) {
 
 	clear(usart->CR1,
-#if defined(EOS_PLATFORM_STM32G0)
-		USART_CR1_FIFOEN |   // Deshabilita el FIFO
-#endif
-		USART_CR1_UE |       // Desabilita el dispositiu
-		USART_CR1_TE |       // Desabilita la transmissio
-		USART_CR1_RE);       // Deshabilita la recepcio
+//#if defined(EOS_PLATFORM_STM32G0)
+//		USART_CR1_FIFOEN |        // Deshabilita el FIFO
+//#endif
+		USART_CR1_UE |            // Desabilita el dispositiu
+		USART_CR1_TE |            // Desabilita la transmissio
+		USART_CR1_RE);            // Deshabilita la recepcio
 }
 
 
@@ -1178,7 +1178,10 @@ static void enableTransmission(
 	usart->ICR = USART_ICR_TCCF;       // Borra el flag TC
 
 	auto a = startAtomic();
-	set(usart->CR1, USART_CR1_TE); // Habilita la tramsmissio
+	clear(usart->CR1,
+		USART_CR1_FIFOEN);   // Desabilita el FIFO
+	set(usart->CR1,
+		USART_CR1_TE);       // Habilita la tramsmissio
 	endAtomic(a);
 }
 
@@ -1194,6 +1197,8 @@ static void enableTransmissionIRQ(
 	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
 
 	auto a = startAtomic();
+	clear(usart->CR1,
+		USART_CR1_FIFOEN);         // Deshabilita el FIFO
 	set(usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
@@ -1217,8 +1222,12 @@ static void enableTransmissionDMA(
 	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
 
 	auto a = startAtomic();
-    set(usart->CR1, USART_CR1_TE);    // Habilita transmissio
-    set(usart->CR3, USART_CR3_DMAT);  // Habilita DMA
+	clear(usart->CR1,
+		USART_CR1_FIFOEN);        // Deshabilita el FIFO
+    set(usart->CR1,
+    	USART_CR1_TE);            // Habilita transmissio
+    set(usart->CR3,
+    	USART_CR3_DMAT);          // Habilita DMA
     endAtomic(a);
 }
 #endif
@@ -1262,7 +1271,10 @@ static void enableReception(
 	usart->ICR = USART_ICR_RTOCF; // Borra el flag RTO
 
 	auto a = startAtomic();
-	set(usart->CR1, USART_CR1_RE);
+	clear(usart->CR1,
+		USART_CR1_FIFOEN);        // Deshabilita el FIFO
+	set(usart->CR1,
+		USART_CR1_RE);            // Habilita la recepcio
 	endAtomic(a);
 }
 
@@ -1280,6 +1292,9 @@ static void enableReceptionIRQ(
 		USART_ICR_IDLECF);          // Borra el flag IDLE
 
 	auto a = startAtomic();
+
+	clear(usart->CR1,
+		USART_CR1_FIFOEN);          // Deshabilita el FIFO
 
 	set(usart->CR1,
 		USART_CR1_PEIE |            // Habilita interrupcio PE

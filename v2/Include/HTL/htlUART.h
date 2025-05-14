@@ -12,11 +12,7 @@
 	defined(EOS_PLATFORM_PIC32MZ)
 	#include "HTL/PIC32/htlUART.h"
 
-#elif defined(EOS_PLATFORM_STM32F0) || \
-	defined(EOS_PLATFORM_STM32F1) || \
-	defined(EOS_PLATFORM_STM32F4) || \
-	defined(EOS_PLATFORM_STM32F7) || \
-	defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32)
 	#include "HTL/STM32/htlUART.h"
 
 #elif defined(EOS_PLATFORM_MSP432)

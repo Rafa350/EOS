@@ -295,6 +295,7 @@ namespace htl {
 		class UARTDeviceX final: public UARTDevice {
 			private:
 				using UARTTraits = internal::UARTTraits<deviceID_>;
+				template <PinFunction pinFunction_, gpio::PortID portID_, gpio::PinID pinID_> using UARTPins = internal::PinFunctionInfo<deviceID_, pinFunction_, portID_, pinID_>;
 
 			private:
 				static constexpr auto _usartAddr = UARTTraits::usartAddr;
@@ -333,25 +334,25 @@ namespace htl {
 
 				template <typename pin_>
 				inline void initPinTX() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::tx, pin_::portID, pin_::pinID>::value;
+					auto af = UARTPins<PinFunction::tx, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinRX() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rx, pin_::portID, pin_::pinID>::value;
+					auto af = UARTPins<PinFunction::rx, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCTS() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::cts, pin_::portID, pin_::pinID>::value;
+					auto af = UARTPins<PinFunction::cts, pin_::portID, pin_::pinID>::value;
 					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				inline void initPinRTS() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::rts, pin_::portID, pin_::pinID>::value;
+					auto af = UARTPins<PinFunction::rts, pin_::portID, pin_::pinID>::value;
 					pin_:initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
