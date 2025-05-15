@@ -1,13 +1,12 @@
 #include "eos.h"
+#include "HTL/htlINT.h"
 #include "Controllers/Serial/eosSerialDriver_UART.h"
 
 #include "appConfig.h"
 #include "appMainService.h"
 
-import htl.interrupts;
-
 using namespace app;
-using namespace htl::interrupts;
+using namespace htl::irq;
 
 
 /// ----------------------------------------------------------------------
@@ -33,8 +32,9 @@ void MainService::onExecute() {
 
 	devUART->setProtocol(htl::uart::WordBits::word8, htl::uart::Parity::none,
 	        htl::uart::StopBits::_1, htl::uart::Handsake::none);
-	devUART->setTimming(htl::uart::BaudMode::b115200,
+	devUART->setTimming(htl::uart::BaudMode::b19200,
 	        htl::uart::ClockSource::automatic, 0, htl::uart::OverSampling::_16);
+
 	setInterruptVectorPriority(VectorID::uart1, Priority::p5);
 	enableInterruptVector(VectorID::uart1);
 
@@ -46,7 +46,7 @@ void MainService::onExecute() {
 
 		devUART->transmit_IRQ((const uint8_t*)txBuffer, strlen(txBuffer));
 
-		_completed.wait(unsigned(-1));
+		_completed.wait((unsigned) -1);
 		eos::Task::delay(1000);
 	}
 }

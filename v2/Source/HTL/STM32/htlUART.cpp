@@ -2,15 +2,9 @@
 #include "HTL/STM32/htlUART.h"
 
 
-#ifdef HTL_MODULAR
-import htl.atomic;
-import htl.bits;
-import htl.clocks;
-#else
-	#include "HTL/htlBits.h"
-	#include "HTL/htlAtomic.h"
-	#include "HTL/STM32/htlClock.h"
-#endif
+#include "HTL/htlBits.h"
+#include "HTL/htlAtomic.h"
+#include "HTL/STM32/htlClock.h"
 
 
 using namespace htl;
@@ -81,6 +75,11 @@ eos::Result UARTDevice::initialize() {
 
 		activate();
 		disable(_usart);
+
+#if !defined(EOS_PLATFORM_STM32F7)
+		clear(_usart->CR1,
+			USART_CR1_FIFOEN);    // Deshabilita el FIFO
+#endif
 
 		clear(_usart->CR2,
 #if !defined(EOS_PLATFORM_STM32F0)
@@ -268,7 +267,7 @@ eos::Result UARTDevice::transmit(
 
 	if (_state == State::ready) {
 
-		auto expireTime = getTick() + timeout;
+		unsigned expireTime = getTick() + timeout;
 		bool error = false;
 
 		_state = State::transmiting;
@@ -503,58 +502,6 @@ eos::Result UARTDevice::abortReception() {
 /// \brief    Procesa les interrupcions.
 ///
 #if HTL_UART_OPTION_IRQ == 1
-#if defined(xEOS_PLATFORM_STM32F7)
-void UARTDevice::interruptService() {
-
-	auto CR1 = _usart->CR1;
-	auto ISR = _usart->ISR;
-
-    // Interrupcio TXEFE (FIFO/TX empty)
-    //
-    if ((CR1 & USART_CR1_TXEIE) && (ISR & USART_ISR_TXE)) {
-        if (_txCount < _txMaxCount) {
-            _usart->TDR = _txBuffer[_txCount++];
-            if (_txCount == _txMaxCount) {
-				auto a = startAtomic();
-				clearBits(_usart->CR1, USART_CR1_TXEIE);   // Deshabilita interrupcio TXE
-				setBits(_usart->CR1, USART_CR1_TCIE);      // Habilita interrupcio TC
-				endAtomic(a);
-            }
-        }
-    }
-
-    // Interrupcio TC (Transmission complete). Nomes en l'ultim caracter transmes
-    //
-    if ((CR1 & USART_CR1_TCIE) && (ISR & USART_ISR_TC)) {
-        _usart->ICR = USART_ICR_TCCF;
-        disableTransmission(_usart);
-        notifyTxCompleted(_txBuffer, _txCount, true);
-        _state = State::ready;
-    }
-
-    /// Interupcio FIFO/RD not empty
-    //
-    if ((CR1 & USART_CR1_RXNEIE) && (ISR & USART_ISR_RXNE)) {
-        if (_rxCount < _rxMaxCount) {
-            _rxBuffer[_rxCount++] = _usart->RDR;
-            if (_rxCount == _rxMaxCount) {
-            	disableReception(_usart);
-                notifyRxCompleted(_rxBuffer, _rxCount, true);
-                _state = State::ready;
-            }
-        }
-    }
-
-    // Interrupcio RX timeout
-    //
-    if ((CR1 & USART_CR1_RTOIE) && (ISR & USART_ISR_RTOF)) {
-        _usart->ICR = USART_ICR_RTOCF;
-        disableReception(_usart);
-        notifyRxCompleted(_rxBuffer, _rxCount, true);
-        _state = State::ready;
-    }
-}
-#endif
 void UARTDevice::interruptService() {
 
 	if (_state == State::transmiting)
@@ -671,7 +618,7 @@ void UARTDevice::dmaNotifyEventHandler(
             _txCount = _txMaxCount;
             _usart->ICR = USART_ICR_TCCF;
             auto a = startAtomic();
-            setBits(_usart->CR1, USART_CR1_TCIE);
+            set(_usart->CR1, USART_CR1_TCIE);
             endAtomic(a);
             devDMA->disableNotifyEvent();
             break;
@@ -1082,7 +1029,7 @@ static bool waitTransmissionCompleteFlag(
 	USART_TypeDef *usart,
 	unsigned expireTime) {
 
-	while ((usart->ISR & USART_ISR_TC) == 0) {
+	while (!isSet(usart->ISR, USART_ISR_TC)) {
 		if (hasTickExpired(expireTime))
 			return false;
 	}
@@ -1104,9 +1051,9 @@ static bool waitTransmissionBufferEmptyFlag(
 	unsigned expireTime) {
 
 #if defined(EOS_PLATFORM_STM32G0)
-	while ((usart->ISR & USART_ISR_TXE_TXFNF) == 0) {
+	while (!isSet(usart->ISR, USART_ISR_TXE_TXFNF)) {
 #else
-	while ((usart->ISR & USART_ISR_TXE) == 0) {
+	while (!isSet(usart->ISR, USART_ISR_TXE)) {
 #endif
 		if (hasTickExpired(expireTime))
 			return false;
@@ -1159,9 +1106,6 @@ static void disable(
 	USART_TypeDef *usart) {
 
 	clear(usart->CR1,
-//#if defined(EOS_PLATFORM_STM32G0)
-//		USART_CR1_FIFOEN |        // Deshabilita el FIFO
-//#endif
 		USART_CR1_UE |            // Desabilita el dispositiu
 		USART_CR1_TE |            // Desabilita la transmissio
 		USART_CR1_RE);            // Deshabilita la recepcio
@@ -1178,8 +1122,6 @@ static void enableTransmission(
 	usart->ICR = USART_ICR_TCCF;       // Borra el flag TC
 
 	auto a = startAtomic();
-	clear(usart->CR1,
-		USART_CR1_FIFOEN);   // Desabilita el FIFO
 	set(usart->CR1,
 		USART_CR1_TE);       // Habilita la tramsmissio
 	endAtomic(a);
@@ -1197,8 +1139,6 @@ static void enableTransmissionIRQ(
 	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
 
 	auto a = startAtomic();
-	clear(usart->CR1,
-		USART_CR1_FIFOEN);         // Deshabilita el FIFO
 	set(usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
@@ -1219,11 +1159,9 @@ static void enableTransmissionIRQ(
 static void enableTransmissionDMA(
 	USART_TypeDef *usart) {
 
-	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
+	usart->ICR = USART_ICR_TCCF;  // Borra el flag TC
 
 	auto a = startAtomic();
-	clear(usart->CR1,
-		USART_CR1_FIFOEN);        // Deshabilita el FIFO
     set(usart->CR1,
     	USART_CR1_TE);            // Habilita transmissio
     set(usart->CR3,
@@ -1271,8 +1209,6 @@ static void enableReception(
 	usart->ICR = USART_ICR_RTOCF; // Borra el flag RTO
 
 	auto a = startAtomic();
-	clear(usart->CR1,
-		USART_CR1_FIFOEN);        // Deshabilita el FIFO
 	set(usart->CR1,
 		USART_CR1_RE);            // Habilita la recepcio
 	endAtomic(a);
@@ -1293,9 +1229,6 @@ static void enableReceptionIRQ(
 
 	auto a = startAtomic();
 
-	clear(usart->CR1,
-		USART_CR1_FIFOEN);          // Deshabilita el FIFO
-
 	set(usart->CR1,
 		USART_CR1_PEIE |            // Habilita interrupcio PE
 #if defined(EOS_PLATFORM_STM32G0)
@@ -1309,9 +1242,9 @@ static void enableReceptionIRQ(
 	// Notes:  Si RTO no esta suportat RTOEN sempre estara a zero per hardware
 	//
 	if (usart->CR2 & USART_CR2_RTOEN)
-		setBits(usart->CR1, USART_CR1_RTOIE);    // Habilita interrupcio RTO
+		set(usart->CR1, USART_CR1_RTOIE);    // Habilita interrupcio RTO
 	else
-		setBits(usart->CR1, USART_CR1_IDLEIE);   // Habilita interrupcio IDLE
+		set(usart->CR1, USART_CR1_IDLEIE);   // Habilita interrupcio IDLE
 
 	endAtomic(a);
 }

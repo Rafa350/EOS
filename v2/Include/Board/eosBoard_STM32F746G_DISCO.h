@@ -10,8 +10,10 @@
 // Board information
 // -----------------------------------------------------------------------
 
-#define EOS_BOARD_NAME            "STM32F746 DISCO"
-#define EOS_BOARD_MANUFACTURER    "ST-Microelectronics"
+#define EOS_BOARD_NAME                 "STM32F746 DISCO"
+#define EOS_BOARD_MANUFACTURER         "ST-Microelectronics"
+#define EOS_BOARD_CPU			       "STM32F746"
+#define EOS_BOARD_CPU_MANUFACTURER     "ST-Microelectronics"
 
 
 // -----------------------------------------------------------------------
@@ -75,9 +77,11 @@
 #ifdef USE_SIO
 #define EXIST_SIO
 
-#define SIO_UART_Device    htl::uart::UARTDevice1
-#define SIO_TX_Pin         htl::gpio::PinA9
-#define SIO_RX_Pin         htl::gpio::PinB7
+#define SIO_UART_Device           htl::uart::UARTDevice1
+#define SIO_UART_InterruptHandler USART1_IRQHandler
+#define SIO_UART_IrqVector        htl::irq::VectorID::uart1
+#define SIO_TX_Pin                htl::gpio::PinA9
+#define SIO_RX_Pin                htl::gpio::PinB7
 
 #endif // USE_SIO
 

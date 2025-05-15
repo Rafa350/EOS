@@ -2,6 +2,8 @@
 #include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 #include "Controllers/Display/eosMonoFrameBuffer.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlSPI.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "appDisplayService.h"
@@ -24,7 +26,21 @@ DisplayService::DisplayService() {
 ///
 void DisplayService::onExecute() {
 
-	auto device = new Device_SSD1306_SPI();
+	auto pinCS = DISPLAY_CS_Pin::pInst;
+	pinCS->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, true);
+
+	auto pinDC = DISPLAY_DC_Pin::pInst;
+	pinCS->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+
+	auto pinRST = DISPLAY_RST_Pin::pInst;
+	pinCS->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::high, false);
+
+	auto devSPI = ARDUINO_SPI_Device::pInst;
+    devSPI->initPinSCK<DISPLAY_SCK_Pin>();
+    devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
+    devSPI->initialize(htl::spi::Mode::master, htl::spi::ClkPolarity::high, htl::spi::ClkPhase::edge1, htl::spi::WordSize::_8, htl::spi::FirstBit::msb, htl::spi::ClockDivider::_8);
+
+	auto device = new Device_SSD1306_SPI(pinCS, pinDC, pinRST, devSPI);
 
 	FrameBuffer *frameBuffer = new MonoFrameBuffer(
 		_displayWidth,

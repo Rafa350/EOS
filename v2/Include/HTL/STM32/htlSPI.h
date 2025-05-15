@@ -197,6 +197,7 @@ namespace htl {
 		class SPIDeviceX final: public SPIDevice {
 			private:
 				using SPITraits = internal::SPITraits<deviceID_>;
+				template <PinFunction pinFunction_, gpio::PortID portID_, gpio::PinID pinID_> using SPIPins = internal::PinFunctionInfo<deviceID_, pinFunction_, portID_, pinID_>;
 
 			private:
 				static constexpr auto _spiAddr = SPITraits::spiAddr;
@@ -232,17 +233,17 @@ namespace htl {
 
 				template <typename pin_>
 				void initPinSCK() {
-				    auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sck, pin_::portID, pin_::pinID>::value;
+				    auto af = SPIPins<PinFunction::sck, pin_::portID, pin_::pinID>::value;
                     pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::mosi, pin_::portID, pin_::pinID>::value;
+					auto af = SPIPins<PinFunction::mosi, pin_::portID, pin_::pinID>::value;
                     pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMISO() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::miso, pin_::portID, pin_::pinID>::value;
+					auto af = SPIPins<PinFunction::miso, pin_::portID, pin_::pinID>::value;
                     pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
