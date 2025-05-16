@@ -1,12 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HTL/STM32/htlGPIO.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "System/Graphics/eosColorDefinitions.h"
-
-#include <cmath>
 
 
 #ifndef HTL_LTDC_EXIST
@@ -20,13 +17,19 @@ using namespace htl;
 
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
+/// \param    devLTDC: Dispositiu LTDC
+/// \param    devLTDCLayer: Dispositiu LTDCLayer
 /// \param    frameBuffer1: Buffer d'imatge
 /// \param    frameBuffer2: Buffer d'imatge (Si es vol doble buffer)
 ///
 DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC(
+	htl::ltdc::LTDCDevice *devLTDC,
+	htl::ltdc::LTDCLayerDevice *devLTDCLayer,
 	FrameBuffer *frameBuffer1,
 	FrameBuffer *frameBuffer2):
 
+	_devLTDC {devLTDC},
+	_devLTDCLayer {devLTDCLayer},
 	_displayFrameBuffer {frameBuffer1},
 	_workFrameBuffer {frameBuffer2 == nullptr? frameBuffer1 : frameBuffer2} {
 }
@@ -42,7 +45,6 @@ void DisplayDriver_RGBLTDC::initialize() {
 		_workFrameBuffer->clear(Colors::black);
 
 	initializeGPIO();
-	initializeLTDC();
 }
 
 
@@ -60,7 +62,12 @@ void DisplayDriver_RGBLTDC::deinitialize() {
 ///
 void DisplayDriver_RGBLTDC::enable() {
 
+	_devLTDCLayer->setFrameBuffer(_displayFrameBuffer->getBuffer());
+	_devLTDCLayer->enable();
+
 	_devLTDC->enable();
+	_devLTDC->reload();
+
 	_pinLCDE->set();
 	_pinBKE->set();
 }
@@ -73,7 +80,9 @@ void DisplayDriver_RGBLTDC::disable() {
 
 	_pinLCDE->clear();
 	_pinBKE->clear();
+
 	_devLTDC->disable();
+	_devLTDCLayer->disable();
 }
 
 
@@ -220,7 +229,9 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Intercanvia els buffers
 		//
-		std::swap(_displayFrameBuffer, _workFrameBuffer);
+		auto tmp = _displayFrameBuffer;
+		_displayFrameBuffer = _workFrameBuffer;
+		_workFrameBuffer = tmp;
 
 		// Asigna l'adresa de la capa
 		//
@@ -237,62 +248,4 @@ void DisplayDriver_RGBLTDC::initializeGPIO() {
 
 	_pinBKE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
 	_pinLCDE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza el modul LTDC.
-/// \remarks Prepara la capa Layer1, pero no s'activara fins que s'asigni
-/// una adressa per buffer de video.
-///
-void DisplayDriver_RGBLTDC::initializeLTDC() {
-
-    auto width = getWidth();
-    auto height = getHeight();
-
-	// Inicialitza el modul LTDC
-	//
-	_devLTDC->initPinPC<PinPC, _pcPol>();
-	_devLTDC->initPinHSYNC<PinHSYNC, _hSyncPol>();
-	_devLTDC->initPinVSYNC<PinVSYNC, _vSyncPol>();
-	_devLTDC->initPinDE<PinDE, _dePol>();
-	_devLTDC->initPinRX<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	_devLTDC->initPinGX<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	_devLTDC->initPinBX<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	_devLTDC->initialize(width, height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
-	_devLTDC->setBackgroundColor(0x0000FF);
-
-	// Inicialitza la capa 1
-	// La capa ocupa tota la superficie de la pantalla
-	//
-	constexpr ltdc::PixelFormat pixelFormat =
-		Color::format == ColorFormat::argb8888 ? ltdc::PixelFormat::argb8888 :
-		Color::format == ColorFormat::argb4444 ? ltdc::PixelFormat::argb4444 :
-		Color::format == ColorFormat::argb1555 ? ltdc::PixelFormat::argb1555 :
-		Color::format == ColorFormat::rgb888 ? ltdc::PixelFormat::rgb888 :
-		Color::format == ColorFormat::al88 ? ltdc::PixelFormat::al88 :
-		Color::format == ColorFormat::al44 ? ltdc::PixelFormat::al44 :
-		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
-				ltdc::PixelFormat::rgb565;
-
-	_devLTDCLayer->setWindow(0, 0, width, height);
-	_devLTDCLayer->setFrameFormat(
-		pixelFormat,
-		width * Color::bytes,
-		((width * Color::bytes) + 63) & 0xFFFFFFC0,
-		height);
-	_devLTDCLayer->setConstantAlpha(255);
-	_devLTDCLayer->setDefaultColor(0x000000);
-
-	if (Color::format == ColorFormat::l8) {
-		static uint32_t clut[256];
-		for (unsigned i = 0; i < (sizeof(clut) / sizeof(clut[0])); i++)
-			clut[i] = i << 8;
-		_devLTDCLayer->setCLUTTable(clut);
-	}
-
-	_devLTDCLayer->setFrameBuffer(_displayFrameBuffer->getBuffer());
-	_devLTDCLayer->enable();
-
-	_devLTDC->reload();
 }

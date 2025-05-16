@@ -68,7 +68,7 @@ static uint32_t __rand(void) {
 #endif
 
 
-#if 1
+#if 0
 // Parametres d'inicialitzacio per interficie RGB
 //
 static const uint8_t initCommands[] = {
@@ -238,6 +238,8 @@ void DisplayService::onExecute() {
 	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
+	// Inicialitza el buffer del display
+	//
 	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
 		_displayWidth,
 		_displayHeight,
@@ -245,7 +247,52 @@ void DisplayService::onExecute() {
 		DisplayOrientation::normal,
 		reinterpret_cast<void*>(_displayBuffer));
 
-	_driver = new DisplayDriver_RGBLTDC(frameBuffer, nullptr);
+	// Inicialitza el dispositiu LTDC
+	//
+    auto devLTDC = ltdc::LTDCDevice::pInst;
+	devLTDC->initPinPC<DISPLAY_PC_Pin, DISPLAY_PC_POL>();
+	devLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, DISPLAY_HSYNC_POL>();
+	devLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, DISPLAY_VSYNC_POL>();
+	devLTDC->initPinDE<DISPLAY_DE_Pin, DISPLAY_DE_POL>();
+    devLTDC->initPinRX<DISPLAY_R0_Pin, DISPLAY_R1_Pin, DISPLAY_R2_Pin, DISPLAY_R3_Pin, DISPLAY_R4_Pin, DISPLAY_R5_Pin, DISPLAY_R6_Pin, DISPLAY_R7_Pin>();
+    devLTDC->initPinGX<DISPLAY_G0_Pin, DISPLAY_G1_Pin, DISPLAY_G2_Pin, DISPLAY_G3_Pin, DISPLAY_G4_Pin, DISPLAY_G5_Pin, DISPLAY_G6_Pin, DISPLAY_G7_Pin>();
+    devLTDC->initPinBX<DISPLAY_B0_Pin, DISPLAY_B1_Pin, DISPLAY_B2_Pin, DISPLAY_B3_Pin, DISPLAY_B4_Pin, DISPLAY_B5_Pin, DISPLAY_B6_Pin, DISPLAY_B7_Pin>();
+	devLTDC->initialize(_displayWidth, _displayHeight, DISPLAY_HSYNC, DISPLAY_VSYNC, DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
+	devLTDC->setBackgroundColor(0x0000FF);
+
+	// Inicialitza la capa 1
+	// La capa ocupa tota la superficie de la pantalla
+	//
+	constexpr ltdc::PixelFormat pixelFormat =
+		Color::format == ColorFormat::argb8888 ? ltdc::PixelFormat::argb8888 :
+		Color::format == ColorFormat::argb4444 ? ltdc::PixelFormat::argb4444 :
+		Color::format == ColorFormat::argb1555 ? ltdc::PixelFormat::argb1555 :
+		Color::format == ColorFormat::rgb888 ? ltdc::PixelFormat::rgb888 :
+		Color::format == ColorFormat::al88 ? ltdc::PixelFormat::al88 :
+		Color::format == ColorFormat::al44 ? ltdc::PixelFormat::al44 :
+		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
+				ltdc::PixelFormat::rgb565;
+
+	auto devLTDCLayer = ltdc::LTDCLayerDevice1::pInst;
+	devLTDCLayer->setWindow(0, 0, _displayWidth, _displayHeight);
+	devLTDCLayer->setFrameFormat(
+		pixelFormat,
+		_displayWidth * Color::bytes,
+		((_displayWidth * Color::bytes) + 63) & 0xFFFFFFC0,
+		_displayHeight);
+	devLTDCLayer->setConstantAlpha(255);
+	devLTDCLayer->setDefaultColor(0x000000);
+
+	if (Color::format == ColorFormat::l8) {
+		static uint32_t clut[256];
+		for (unsigned i = 0; i < (sizeof(clut) / sizeof(clut[0])); i++)
+			clut[i] = i << 8;
+		devLTDCLayer->setCLUTTable(clut);
+	}
+
+	// Inicialitza el driver de pantalla
+	//
+	_driver = new DisplayDriver_RGBLTDC(devLTDC, devLTDCLayer, frameBuffer, nullptr);
 
     #else
         #error No se especifico DISPLAY_DRV_XXXX
