@@ -95,8 +95,6 @@ eos::Result UARTDevice::initialize() {
 #endif
 			USART_CR3_HDSEL);     // Deshabilita half duplex
 
-		enable(_usart);
-
 		_state = State::ready;
 
 		return eos::Results::success;
@@ -272,6 +270,7 @@ eos::Result UARTDevice::transmit(
 
 		_state = State::transmiting;
 
+		enable(_usart);
 		enableTransmission(_usart);
 
 		while (length-- > 0) {
@@ -285,6 +284,7 @@ eos::Result UARTDevice::transmit(
 	    error = !waitTransmissionCompleteFlag(_usart, expireTime);
 
 		disableTransmission(_usart);
+		disable(_usart);
 
 		_state = State::ready;
 
@@ -318,6 +318,7 @@ eos::Result UARTDevice::transmit_IRQ(
 		_txCount = 0;
         _txMaxCount = length;
 
+        enable(_usart);
         enableTransmissionIRQ(_usart);
 
 		return eos::Results::success;
@@ -353,6 +354,7 @@ eos::Result UARTDevice::transmit_DMA(
         _txCount = 0;
         _txMaxCount = length;
 
+        enable(_usart);
         enableTransmissionDMA(_usart);
 
         // Inicia la transferencia per DMA
@@ -379,6 +381,7 @@ eos::Result UARTDevice::abortTransmission() {
 
 	if (_state == State::transmiting) {
 		disableTransmission(_usart);
+		disable(_usart);
 		_state = State::ready;
 		return eos::Results::success;
 	}
@@ -406,6 +409,7 @@ eos::Result UARTDevice::receive(
 		auto expireTime = getTick() + timeout;
 		bool error = false;
 
+		enable(_usart);
 		enableReception(_usart);
 
 		while (bufferSize-- > 0) {
@@ -451,6 +455,7 @@ eos::Result UARTDevice::receive_IRQ(
 		_rxCount = 0;
 		_rxMaxCount = bufferSize;
 
+		enable(_usart);
 		enableReceptionIRQ(_usart);
 
 		return eos::Results::success;
@@ -490,6 +495,7 @@ eos::Result UARTDevice::abortReception() {
 
 	if (_state == State::receiving) {
 		disableReception(_usart);
+		disable(_usart);
 		_state = State::ready;
 		return eos::Results::success;
 	}
@@ -545,7 +551,6 @@ void UARTDevice::txInterruptService() {
 	// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
 	//
 	if (isSet(CR1, USART_CR1_TCIE) && isSet(ISR, USART_ISR_TC)) {
-		_usart->ICR = USART_ICR_TCCF;
 		disableTransmission(_usart);
 		notifyTxCompleted(_txBuffer, _txCount, true);
 		_state = State::ready;
@@ -1041,7 +1046,7 @@ static bool waitTransmissionCompleteFlag(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Espera l'activacio del flag TC
+/// \brief    Espera l'activacio del flag TXE
 /// \param    usart: Registres de hardware del dispositiu.
 /// \param    expireTime: El limit de temps.
 /// \return   True si tot es correcte, false en cas de timeout.
@@ -1136,9 +1141,8 @@ static void enableTransmission(
 static void enableTransmissionIRQ(
 	USART_TypeDef *usart) {
 
-	usart->ICR = USART_ICR_TCCF;   // Borra el flag TC
-
 	auto a = startAtomic();
+
 	set(usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
@@ -1146,6 +1150,7 @@ static void enableTransmissionIRQ(
 		USART_CR1_TXEIE |          // Habilita interrupcio TXE
 #endif
 		USART_CR1_TE);             // Habilita la transmissio
+
 	endAtomic(a);
 }
 #endif
@@ -1162,10 +1167,12 @@ static void enableTransmissionDMA(
 	usart->ICR = USART_ICR_TCCF;  // Borra el flag TC
 
 	auto a = startAtomic();
+
     set(usart->CR1,
     	USART_CR1_TE);            // Habilita transmissio
     set(usart->CR3,
     	USART_CR3_DMAT);          // Habilita DMA
+
     endAtomic(a);
 }
 #endif
@@ -1180,20 +1187,21 @@ static void disableTransmission(
 
 	auto a = startAtomic();
 
-	// Desabilita interrupcions i transmissio
-	//
 	clear(usart->CR1,
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 		USART_CR1_TXEIE |         // Deshabilita interrupcio TXE
 #else
 		USART_CR1_TXEIE_TXFNFIE | // Deshabilita interrupcio TXE
 #endif
-		USART_CR1_TCIE |          // Deshabilita interrupcio TC
-		USART_CR1_TE);            // Desabilita transmissio
+		USART_CR1_TCIE);          // Deshabilita interrupcio TC
 
-	// Deshabilita el DMA
-	//
-	clear(usart->CR3, USART_CR3_DMAT);
+	clear(usart->CR3,
+		USART_CR3_DMAT);          // Desabilita el DMA
+
+	// TODO: Asegurar-se que l'ultim byte s'ha transmes
+
+	clear(usart->CR1,
+		USART_CR1_TE);            // Desabilita transmissio
 
 	endAtomic(a);
 }
@@ -1260,8 +1268,6 @@ static void disableReception(
 
 	auto a = startAtomic();
 
-	// Desabilita interrupcions i recepcio
-	//
 	clear(usart->CR1,
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 		USART_CR1_RXNEIE |         // Deshabilita interrupcio RXNE
@@ -1270,12 +1276,13 @@ static void disableReception(
 #endif
 		USART_CR1_RTOIE |          // Deshabilita interrupcio RTO
 		USART_CR1_IDLEIE |         // Deshabilita interrupcio IDLE
-		USART_CR1_PEIE |           // Deshabilita interrupcio PE
-		USART_CR1_RE);             // Deshabilita recepcio
+		USART_CR1_PEIE);           // Deshabilita interrupcio PE
 
-	// Deshabilita el DMA
-	//
-	clear(usart->CR3, USART_CR3_DMAT);
+	clear(usart->CR3,
+		USART_CR3_DMAT);           // Desabilita el DMA
+
+	clear(usart->CR1,
+		USART_CR1_RE);             // Deshabilita recepcio
 
 	endAtomic(a);
 }

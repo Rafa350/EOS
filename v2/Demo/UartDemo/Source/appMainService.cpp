@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "HTL/htlINT.h"
+#include "HTL/htlDMA.h"
 #include "Controllers/Serial/eosSerialDriver_UART.h"
 
 #include "appConfig.h"
@@ -35,8 +36,8 @@ void MainService::onExecute() {
 	devUART->setTimming(htl::uart::BaudMode::b19200,
 	        htl::uart::ClockSource::automatic, 0, htl::uart::OverSampling::_16);
 
-	setInterruptVectorPriority(VectorID::uart1, Priority::p5);
-	enableInterruptVector(VectorID::uart1);
+	setInterruptVectorPriority(hw::devUART_VectorID, Priority::p5);
+	enableInterruptVector(hw::devUART_VectorID);
 
 	devUART->setNotifyEvent(_uartNotifyEvent, true);
 

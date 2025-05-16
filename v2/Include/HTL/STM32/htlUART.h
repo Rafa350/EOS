@@ -205,7 +205,7 @@ namespace htl {
 				enum class State {
 					invalid,     ///< Objecte no valid.
 					reset,       ///< Creat, pero sense inicialitzar.
-					ready,       ///< Inicialitzat in preparat per operar.
+					ready,       ///< Inicialitzat i preparat per operar.
 					transmiting, ///< Transmeten dades.
 					receiving    ///< Rebent dades.
 				};
