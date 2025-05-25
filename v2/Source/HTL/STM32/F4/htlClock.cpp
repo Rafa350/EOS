@@ -46,21 +46,21 @@ bool htl::clock::setSysClkSource(
 /// \param    value: El valor.
 ///
 void htl::clock::setHClkPrescaler(
-		htl::clock::HClkPrescaler value) {
+	HClkPrescaler value) {
 
 	uint32_t tmp = RCC->CFGR;
 
 	tmp &= ~RCC_CFGR_HPRE_Msk;
 	switch (value) {
-        case htl::clock::HClkPrescaler::_1:
+        case HClkPrescaler::_1:
             tmp |= RCC_CFGR_HPRE_DIV1;
             break;
 
-        case htl::clock::HClkPrescaler::_2:
+        case HClkPrescaler::_2:
             tmp |= RCC_CFGR_HPRE_DIV2;
             break;
 
-        case htl::clock::HClkPrescaler::_4:
+        case HClkPrescaler::_4:
             tmp |= RCC_CFGR_HPRE_DIV4;
             break;
 

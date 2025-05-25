@@ -8,6 +8,7 @@ echo Generando variantes para STM32F429
 "C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32F4\F429\LTDC.xml
 "C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32F4\F429\SPI.xml
 "C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32F4\F429\TMR.xml
+"C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32F4\F429\UART.xml
 
 echo Generando variantes para STM32F746
 "C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32F7\F746\LTDC.xml

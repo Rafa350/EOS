@@ -84,9 +84,9 @@ namespace htl {
         /// Nombre de bits de paraula.
         ///
 		enum class WordBits {
-			#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
 			word7,
-			#endif
+#endif
 			word8,
 			word9
 		};
@@ -247,9 +247,6 @@ namespace htl {
 				void txInterruptService();
 				void rxInterruptService();
 #endif
-				virtual void activate() = 0;
-				virtual void deactivate() = 0;
-
 			public:
 				eos::Result initialize();
 				eos::Result deinitialize();
@@ -311,16 +308,17 @@ namespace htl {
 			private:
 				UARTDeviceX() :
 					UARTDevice {reinterpret_cast<USART_TypeDef*>(_usartAddr)} {
+					activate();
 				}
 
 			protected:
-				void activate() override {
+				void activate() {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
 
-				void deactivate() override {
+				void deactivate() {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
@@ -386,7 +384,7 @@ namespace htl {
 		using UARTDevice8 = UARTDeviceX<DeviceID::uart8>;
 #endif
 
-#ifdef EOS_PLATFORM_STM32F4
+#ifdef xEOS_PLATFORM_STM32F4
 		namespace internal {
 
 			#ifdef HTL_UART1_EXIST

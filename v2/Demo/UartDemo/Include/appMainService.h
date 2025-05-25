@@ -13,14 +13,16 @@ namespace app {
 
 	class MainService: public eos::Service {
 		private:
+			using UARTNotifyID = htl::uart::NotifyID;
         	using UARTNotifyEvent = htl::uart::NotifyEvent<MainService>;
+        	using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
 
 		private:
         	UARTNotifyEvent _uartNotifyEvent;
         	eos::Semaphore _completed;
 
 		private:
-            void uartNotifyEventHandler(htl::uart::NotifyID notifyID, htl::uart::NotifyEventArgs * const args);
+            void uartNotifyEventHandler(UARTNotifyID notifyID, UARTNotifyEventArgs * const args);
 
 		protected:
 			void onExecute() override;

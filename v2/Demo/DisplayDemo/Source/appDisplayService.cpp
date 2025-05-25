@@ -68,7 +68,7 @@ static uint32_t __rand(void) {
 #endif
 
 
-#if 0
+#if 1
 // Parametres d'inicialitzacio per interficie RGB
 //
 static const uint8_t initCommands[] = {

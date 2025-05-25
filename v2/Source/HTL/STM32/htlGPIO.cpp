@@ -1,5 +1,6 @@
 #include "HTL/htl.h"
 #include "HTL/htlBits.h"
+#include "HTL/htlAtomic.h"
 #include "HTL/STM32/htlGPIO.h"
 
 
@@ -7,7 +8,7 @@ using namespace htl;
 using namespace htl::gpio;
 
 
-struct MODER {
+struct MODE {
 	static constexpr uint32_t Mask      = 0b11;
 	static constexpr uint32_t INPUT     = 0b00;
 	static constexpr uint32_t OUTPUT    = 0b01;
@@ -15,20 +16,20 @@ struct MODER {
 	static constexpr uint32_t ANALOGIC  = 0b11;
 };
 
-struct PUPDR {
+struct PUPD {
 	static constexpr uint32_t Mask = 0b11;
 	static constexpr uint32_t NONE = 0b00;
 	static constexpr uint32_t UP   = 0b01;
 	static constexpr uint32_t DOWN = 0b10;
 };
 
-struct OTYPER {
+struct OTYPE {
 	static constexpr uint32_t Mask = 0b1;
 	static constexpr uint32_t PP   = 0b0;
 	static constexpr uint32_t OD   = 0b1;
 };
 
-struct OSPEEDR {
+struct OSPEED {
 	static constexpr uint32_t Mask   = 0b11;
 	static constexpr uint32_t LOW    = 0b00;
 	static constexpr uint32_t MEDIUM = 0b01;
@@ -36,16 +37,16 @@ struct OSPEEDR {
 	static constexpr uint32_t FAST   = 0b11;
 };
 
-struct AFR {
+struct AF {
 	static constexpr uint32_t Mask = 0b1111;
 };
 
 
 static const uint32_t __speedTbl[] = {
-    OSPEEDR::LOW,
-    OSPEEDR::MEDIUM,
-    OSPEEDR::HIGH,
-    OSPEEDR::FAST};
+    OSPEED::LOW,
+    OSPEED::MEDIUM,
+    OSPEED::HIGH,
+    OSPEED::FAST};
 
 
 /// ----------------------------------------------------------------------
@@ -104,10 +105,11 @@ void PortDevice::deinitialize() const {
 ///
 PinDevice::PinDevice(
     GPIO_TypeDef *gpio,
-    PinBit bit):
+    PinBit bit) :
 
     _gpio {gpio},
     _mask {bit} {
+
 
 }
 
@@ -119,7 +121,6 @@ PinDevice::PinDevice(
 void PinDevice::initialize(
     const InitInfo &info) const {
 
-    activate();
     internal::initialize(_gpio, _mask, &info);
 }
 
@@ -131,7 +132,6 @@ void PinDevice::initialize(
 void PinDevice::initInput(
 	InputMode mode) const {
 
-	activate();
 	internal::initInput(_gpio, _mask, mode);
 }
 
@@ -147,7 +147,6 @@ void PinDevice::initOutput(
 	Speed speed,
 	bool state) const {
 
-    activate();
 	internal::initOutput(_gpio, _mask, mode, speed, state);
 }
 
@@ -163,7 +162,6 @@ void PinDevice::initAlternate(
 	Speed speed,
 	AlternateFunction af) const {
 
-	activate();
 	internal::initAlternate(_gpio, _mask, mode, speed, af);
 }
 
@@ -173,7 +171,6 @@ void PinDevice::initAlternate(
 ///
 void PinDevice::initAnalogic() const {
 
-    activate();
 	internal::initAnalogic(_gpio, _mask);
 }
 
@@ -184,7 +181,6 @@ void PinDevice::initAnalogic() const {
 void PinDevice::deinitialize() const {
 
 	internal::deinitialize(_gpio, _mask);
-    deactivate();
 }
 
 
@@ -444,8 +440,8 @@ void internal::initInput(
     PinMask mask,
     InputMode mode) {
 
-    auto m = uint16_t(mask);
-    for (uint8_t b = 0; b < 15; b++) {
+    auto m = (uint16_t) mask;
+    for (auto b = 0; b < 15; b++) {
         if ((m & (1 << b)) != 0)
             initInput(gpio, PinBit(b), mode);
     }
@@ -463,35 +459,37 @@ void internal::initInput(
 	PinBit bit,
 	InputMode mode) {
 
-    auto b = uint8_t(bit);
+	auto a = startAtomic();
 
-    uint32_t tmp;
+    auto b = (uint8_t) bit;
 
     // Configura el pin com a entrada digital
     //
-    tmp = gpio->MODER;
-    tmp &= ~(MODER::Mask << (b * 2));
-    tmp |= MODER::INPUT << (b * 2);
-    gpio->MODER = tmp;
+    auto MODER = gpio->MODER;
+    MODER &= ~(MODE::Mask << (b * 2));
+    MODER |= MODE::INPUT << (b * 2);
+    gpio->MODER = MODER;
 
     // Configura les resistencies pull UP/DOWN
     //
-    tmp = gpio->PUPDR;
-    tmp &= ~(PUPDR::Mask << (b * 2));
+    auto PUPDR = gpio->PUPDR;
+    PUPDR &= ~(PUPD::Mask << (b * 2));
     switch (mode) {
         case InputMode::pullUp:
-            tmp |= PUPDR::UP << (b * 2);
+            PUPDR |= PUPD::UP << (b * 2);
             break;
 
         case InputMode::pullDown:
-            tmp |= PUPDR::DOWN << (b * 2);
+            PUPDR |= PUPD::DOWN << (b * 2);
             break;
 
         default:
-            tmp |= PUPDR::NONE << (b * 2);
+            PUPDR |= PUPD::NONE << (b * 2);
             break;
     }
-    gpio->PUPDR = tmp;
+    gpio->PUPDR = PUPDR;
+
+    endAtomic(a);
 }
 
 
@@ -510,7 +508,7 @@ void internal::initOutput(
     Speed speed,
     bool state) {
 
-    auto m = uint16_t(mask);
+    auto m = (uint16_t) mask;
     for (auto b = 0; b < 15; b++) {
         if ((m & (1 << b)) != 0)
             initOutput(gpio, PinBit(b), mode, speed, state);
@@ -533,46 +531,50 @@ void internal::initOutput(
 	Speed speed,
 	bool state) {
 
-    auto b = uint8_t(bit);
+	auto a = startAtomic();
 
-    uint32_t tmp;
+    auto b = (uint8_t) bit;
 
     // Configura el pin com sortida digital
     //
-    tmp = gpio->MODER;
-    clearBits(tmp, MODER::Mask << (b * 2));
-    setBits(tmp, MODER::OUTPUT << (b * 2));
-    gpio->MODER = tmp;
+    auto MODER = gpio->MODER;
+    clearBits(MODER, MODE::Mask << (b * 2));
+    setBits(MODER, MODE::OUTPUT << (b * 2));
+    gpio->MODER = MODER;
 
     // Configura el driver de sortida
     //
-    tmp = gpio->OTYPER;
-    clearBits(tmp, OTYPER::Mask << b);
+    auto OTYPER = gpio->OTYPER;
+    clearBits(OTYPER, OTYPE::Mask << b);
     if (mode == OutputMode::openDrain ||
         mode == OutputMode::openDrainPullUp)
-        setBits(tmp, OTYPER::OD << b);
+        setBits(OTYPER, OTYPE::OD << b);
     else
-        setBits(tmp, OTYPER::PP << b);
-    gpio->OTYPER = tmp;
+        setBits(OTYPER, OTYPE::PP << b);
+    gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
-    tmp = gpio->PUPDR;
-    clearBits(tmp, PUPDR::Mask << (b * 2));
+    auto PUPDR = gpio->PUPDR;
+    clearBits(PUPDR, PUPD::Mask << (b * 2));
     if (mode == OutputMode::openDrainPullUp)
-        setBits(tmp, PUPDR::UP << (b * 2));
+        setBits(PUPDR, PUPD::UP << (b * 2));
     else
-        setBits(tmp, PUPDR::NONE << (b * 2));
-    gpio->PUPDR = tmp;
+        setBits(PUPDR, PUPD::NONE << (b * 2));
+    gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
-    tmp = gpio->OSPEEDR;
-    clearBits(tmp, OSPEEDR::Mask << (b * 2));
-    setBits(tmp, __speedTbl[uint8_t(speed)] << (b * 2));
-    gpio->OSPEEDR = tmp;
+    auto OSPEEDR = gpio->OSPEEDR;
+    clearBits(OSPEEDR, OSPEED::Mask << (b * 2));
+    setBits(OSPEEDR, __speedTbl[(uint8_t) speed] << (b * 2));
+    gpio->OSPEEDR = OSPEEDR;
 
-    setBits(gpio->ODR, (state ? 1 : 0) << b);
+    // Configura l'estat de sortida
+    //
+    gpio->ODR = 1 << b;
+
+    endAtomic(a);
 }
 
 
@@ -614,51 +616,53 @@ void internal::initAlternate(
     Speed speed,
     AlternateFunction af) {
 
-    auto b = uint8_t(bit);
+	auto a = startAtomic();
 
-    uint32_t tmp;
+    auto b = uint8_t(bit);
 
     // Configura el pin com entrada/sortida alternativa
     //
-    tmp = gpio->MODER;
-    clearBits(tmp, MODER::Mask << (b * 2));
-    setBits(tmp, MODER::ALTERNATE << (b * 2));
-    gpio->MODER = tmp;
+    auto MODER = gpio->MODER;
+    clearBits(MODER, MODE::Mask << (b * 2));
+    setBits(MODER, MODE::ALTERNATE << (b * 2));
+    gpio->MODER = MODER;
 
     // Configura el driver de sortida
     //
-    tmp = gpio->OTYPER;
-    clearBits(tmp, OTYPER::Mask << b);
+    auto OTYPER = gpio->OTYPER;
+    clearBits(OTYPER, OTYPE::Mask << b);
     if (mode == AlternateMode::openDrain ||
         mode == AlternateMode::openDrainPullUp)
-        setBits(tmp, OTYPER::OD << b);
+        setBits(OTYPER, OTYPE::OD << b);
     else
-    	setBits(tmp, OTYPER::PP << b);
-    gpio->OTYPER = tmp;
+    	setBits(OTYPER, OTYPE::PP << b);
+    gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
-    tmp = gpio->PUPDR;
-    clearBits(tmp, PUPDR::Mask << (b * 2));
+    auto PUPDR = gpio->PUPDR;
+    clearBits(PUPDR, PUPD::Mask << (b * 2));
     if (mode == AlternateMode::openDrainPullUp)
-        setBits(tmp, PUPDR::UP << (b * 2));
+        setBits(PUPDR, PUPD::UP << (b * 2));
     else
-    	setBits(tmp, PUPDR::NONE << (b * 2));
-    gpio->PUPDR = tmp;
+    	setBits(PUPDR, PUPD::NONE << (b * 2));
+    gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
-    tmp = gpio->OSPEEDR;
-    clearBits(tmp, OSPEEDR::Mask << (b * 2));
-    setBits(tmp, __speedTbl[uint8_t(speed)] << (b * 2));
-    gpio->OSPEEDR = tmp;
+    auto OSPEEDR = gpio->OSPEEDR;
+    clearBits(OSPEEDR, OSPEED::Mask << (b * 2));
+    setBits(OSPEEDR, __speedTbl[uint8_t(speed)] << (b * 2));
+    gpio->OSPEEDR = OSPEEDR;
 
     // Selecciona la funcio alternativa
     //
-    tmp = gpio->AFR[b >> 3];
-    clearBits(tmp, AFR::Mask << ((b & 0x07) * 4)) ;
-    setBits(tmp, (uint32_t(af) & AFR::Mask) << ((b & 0x07) * 4));
-    gpio->AFR[b >> 3] = tmp;
+    auto AFR = gpio->AFR[b >> 3];
+    clearBits(AFR, AF::Mask << ((b & 0x07) * 4)) ;
+    setBits(AFR, (uint32_t(af) & AF::Mask) << ((b & 0x07) * 4));
+    gpio->AFR[b >> 3] = AFR;
+
+    endAtomic(a);
 }
 
 
@@ -688,6 +692,9 @@ void internal::initAnalogic(
     GPIO_TypeDef * const gpio,
     PinBit bit) {
 
+	auto a = startAtomic();
+
+	endAtomic(a);
 }
 
 
@@ -701,7 +708,7 @@ void internal::deinitialize(
 	GPIO_TypeDef * const gpio,
 	PinMask mask) {
 
-    auto m = uint16_t(mask);
+    auto m = (uint16_t) mask;
     for (uint8_t b = 0; b < 15; b++) {
         if ((m & (1 << b)) != 0)
             deinitialize(gpio, PinMask(1 << b));
@@ -718,47 +725,4 @@ void internal::deinitialize(
 void internal::deinitialize(
 	GPIO_TypeDef * const gpio,
 	PinBit bit) {
-/*
-
-    uint32_t tmp;
-
-    tmp = gpio->MODER;
-    #if defined(EOS_PLATFORM_STM32F4)
-    tmp |= MODER_ANALOGIC << pn;
-    #elif defined(EOS_PLATFORM_STM32G0)
-    tmp &= MODER_Mask << pn;
-    if ((gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) && ((pn == 13 || pn == 14)))
-        tmp |= MODER_ALTERNATE << pn;
-    else
-        tmp |= MODER_ANALOGIC << pn;
-    #else
-    #error "Undefined platform"
-    #endif
-    gpio->MODER = tmp;
-
-    tmp = gpio->OTYPER;
-    tmp &= OTYPER_Mask << pn;
-    tmp |= OTYPER_PP << pn;
-    gpio->OTYPER = tmp;
-
-    tmp = gpio->PUPDR;
-    tmp &= PUPDR_Mask << pn;
-    #if defined(EOS_PLATFORM_STM32F4)
-    tmp |=  PUPDR_NONE << pn;
-    #elif defined(EOS_PLATFORM_STM32G0)
-    if ((gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) && (pn == 14))
-        tmp |= PUPDR_DOWN << pn;
-    else if ((gpio == reinterpret_cast<GPIO_TypeDef*>(GPIOA_BASE)) && (pn == 13))
-        tmp |= PUPDR_UP << pn;
-    else
-        tmp |=  PUPDR_NONE << pn;
-    #else
-    #error "Undefined platform"
-    #endif
-    gpio->PUPDR = tmp;
-
-    gpio->ODR = 0 << pn;
-
-    gpio->AFR[pn >> 3] &= ~(AFR_Mask << ((pn & 0x07) * 4)) ;
-	*/
 }

@@ -18,6 +18,7 @@ namespace htl {
 				static constexpr uint32_t usartAddr = USART1_BASE;
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR2_USART1EN_Pos;
+				static constexpr bool isFIFOAvailable = true;
 			};
 			#endif
 
@@ -27,6 +28,7 @@ namespace htl {
 				static constexpr uint32_t usartAddr = USART2_BASE;
 				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART2EN_Pos;
+				static constexpr bool isFIFOAvailable = true;
 				static constexpr bool supportedRxTimeout = false;
 			};
 			#endif

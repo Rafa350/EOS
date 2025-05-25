@@ -431,9 +431,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/STM32/FreeRTOS/heap_4.c</name>
+			<name>Src/Framework/STM32/FreeRTOS/heap_1.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/portable/MemMang/heap_1.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/list.c</name>

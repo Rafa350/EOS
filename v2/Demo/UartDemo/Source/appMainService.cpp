@@ -7,7 +7,9 @@
 #include "appMainService.h"
 
 using namespace app;
+using namespace eos;
 using namespace htl::irq;
+using namespace htl::uart;
 
 
 /// ----------------------------------------------------------------------
@@ -31,10 +33,8 @@ void MainService::onExecute() {
 	devUART->initPinRX<hw::PinRX>();
 	devUART->initialize();
 
-	devUART->setProtocol(htl::uart::WordBits::word8, htl::uart::Parity::none,
-	        htl::uart::StopBits::_1, htl::uart::Handsake::none);
-	devUART->setTimming(htl::uart::BaudMode::b19200,
-	        htl::uart::ClockSource::automatic, 0, htl::uart::OverSampling::_16);
+	devUART->setProtocol(WordBits::word8, Parity::none, StopBits::_1, Handsake::none);
+	devUART->setTimming(BaudMode::b19200, ClockSource::automatic, 0, OverSampling::_16);
 
 	setInterruptVectorPriority(hw::devUART_VectorID, Priority::p5);
 	enableInterruptVector(hw::devUART_VectorID);
@@ -48,7 +48,7 @@ void MainService::onExecute() {
 		devUART->transmit_IRQ((const uint8_t*)txBuffer, strlen(txBuffer));
 
 		_completed.wait((unsigned) -1);
-		eos::Task::delay(1000);
+		Task::delay(1000);
 	}
 }
 
@@ -59,15 +59,15 @@ void MainService::onExecute() {
 /// \params   : args : Parametres del event.
 ///
 void MainService::uartNotifyEventHandler(
-    htl::uart::NotifyID notifyID,
-	htl::uart::NotifyEventArgs * const args) {
+    UARTNotifyID notifyID,
+	UARTNotifyEventArgs * const args) {
 
     switch (notifyID) {
-        case htl::uart::NotifyID::txCompleted:
+        case UARTNotifyID::txCompleted:
         	_completed.releaseISR();
             break;
 
-        case htl::uart::NotifyID::rxCompleted:
+        case UARTNotifyID::rxCompleted:
         	//_completed.releaseISR();
             break;
 

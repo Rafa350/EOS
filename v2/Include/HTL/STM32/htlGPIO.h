@@ -212,6 +212,9 @@ namespace htl {
             void initAnalogic(GPIO_TypeDef * const gpio, PinBit bit);
 		    void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
             void deinitialize(GPIO_TypeDef * const gpio, PinBit bit);
+
+            //void set(GPIO_TypeDef * const gpio, PinMask mask);
+            //void set(GPIO_TypeDef * const gpio, PinBit bit);
 		}
 
         namespace internal {
@@ -323,8 +326,6 @@ namespace htl {
 
 			protected:
                 PinDevice(GPIO_TypeDef *gpio, PinBit bit);
-				virtual void activate() const = 0;
-				virtual void deactivate() const = 0;
 
 			public:
                 void initInput(InputMode mode) const;
@@ -334,19 +335,20 @@ namespace htl {
                 void initialize(const InitInfo &info) const;
                 void deinitialize() const;
 
-				inline void set() const {
+				void set() const {
                     _gpio->BSRR = _mask;
 				}
-				inline void clear() const {
+				void clear() const {
                     _gpio->BSRR = _mask << 16;
 				}
-				inline void toggle() const {
-                    _gpio->ODR ^= _mask;
+				void toggle() const {
+					  auto odr = _gpio->ODR;
+					  _gpio->BSRR = ((odr & _mask) << 16) | (~odr & _mask);
 				}
-				inline void write(bool state) const {
-                    _gpio->BSRR = _mask << (state ? 0 : 16);
+				void write(bool state) const {
+                    _gpio->BSRR = state ? _mask : _mask << 16;
 				}
-				inline bool read() const {
+				bool read() const {
 					return (_gpio->IDR & _mask) != 0;
 				}
 		};
@@ -375,14 +377,7 @@ namespace htl {
             private:
                 inline PinDeviceX():
                     PinDevice(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), _bit) {
-                }
-
-            protected:
-                void activate() const override {
                     Activator::activate(_mask);
-                }
-                void deactivate() const override {
-                    Activator::deactivate(_mask);
                 }
         };
 

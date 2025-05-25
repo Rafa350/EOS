@@ -2,7 +2,6 @@
 #include "eosAssert.h"
 #include "Services/eosService.h"
 #include "System/eosApplicationBase.h"
-#include "System/Core/eosTask.h"
 
 
 using namespace eos;
