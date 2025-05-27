@@ -186,9 +186,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
-			<name>Src/App/STM32F7/stm32f7xx_it.c</name>
+			<name>Src/App/STM32F7/system_stm32f7xx.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Controllers</name>
@@ -401,19 +401,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplicationBase.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/System/eosDebug.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosDebug.cpp</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/System/eosRTOSApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRTOSApplication.cpp</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/System/eosString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/BSP/stm32746g_discovery.c</name>
@@ -519,11 +509,6 @@
 			<name>Src/Framework/STM32/System/syscalls.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/STM32/System/system_stm32f7xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/Controllers/Serial/eosAsyncSerialDriver.h</name>

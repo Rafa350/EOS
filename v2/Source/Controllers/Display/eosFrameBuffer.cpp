@@ -21,8 +21,8 @@ FrameBuffer::FrameBuffer(
 
 	_frameWidth {frameWidth},
 	_frameHeight {frameHeight},
-	_maxX {frameWidth - 1},
-	_maxY {frameHeight - 1},
+	_maxX {(int16_t)(frameWidth - 1)},
+	_maxY {(int16_t)(frameHeight - 1)},
 	_orientation {DisplayOrientation::normal} {
 }
 

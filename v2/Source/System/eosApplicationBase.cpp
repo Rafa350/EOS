@@ -14,12 +14,6 @@ ApplicationBase::ApplicationBase() {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Destructor.
-///
-ApplicationBase::~ApplicationBase() {
-}
-
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa l'aplicacio.

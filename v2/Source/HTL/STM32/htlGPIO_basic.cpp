@@ -87,7 +87,8 @@ static void portClockDisable(uint16_t &activeX, volatile uint32_t& r, uint32_t b
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    mask: Mascara dels pins per activar.
 ///
-#if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
 void htl::gpio::activate(
 	GPIO_TypeDef * const gpio,
 	PinMask mask) {
@@ -208,7 +209,8 @@ void htl::gpio::activate(
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    mask: Mascara dels pins per activar.
 ///
-#if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
 void htl::gpio::deactivate(
 	GPIO_TypeDef * const gpio,
 	PinMask mask) {

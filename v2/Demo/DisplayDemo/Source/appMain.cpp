@@ -13,5 +13,4 @@ void appMain() {
 
 	MyApplication *app = new MyApplication();
     app->run();
-    delete app;
 }

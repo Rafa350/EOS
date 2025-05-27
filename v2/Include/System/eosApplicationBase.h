@@ -27,7 +27,7 @@ namespace eos {
             virtual void onRun();
 
         public:
-            virtual ~ApplicationBase();
+            virtual ~ApplicationBase() = default;
             void run();
     };
 }

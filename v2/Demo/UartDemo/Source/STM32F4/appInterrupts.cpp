@@ -1,5 +1,9 @@
 #include "eos.h"
-#include "HTL/STM32/htlUART.h"
+
+#include "appConfig.h"
+
+
+using namespace app;
 
 
 /// ----------------------------------------------------------------------
@@ -7,5 +11,5 @@
 ///
 extern "C" void USART1_IRQHandler() {
 
-	htl::uart::UARTDevice1::interruptHandler();
+	hw::DevUART::pInst->interruptHandler();
 }

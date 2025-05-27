@@ -1,0 +1,70 @@
+<alternatePins>
+	<file path="HTL/STM32/F4/F429/htlUART_Pins.h" 
+		  namespace="htl::uart::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32F429)"
+		  conditionErrorMessage="Unsupported platform">
+		<device device="DeviceID::uart1" condition="defined(HTL_UART1_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="tx">
+				<pin port="A" pin="9" value="7"/>
+				<pin port="B" pin="6" value="7"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="A" pin="10" value="7"/>
+				<pin port="B" pin="7" value="7"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::uart2" condition="defined(HTL_UART2_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="tx">
+				<pin port="A" pin="2" value="7"/>
+				<pin port="D" pin="5" value="7"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="A" pin="3" value="7"/>
+				<pin port="D" pin="6" value="7"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::uart3" condition="defined(HTL_UART3_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="tx">
+				<pin port="B" pin="10" value="7"/>
+				<pin port="C" pin="10" value="7"/>
+				<pin port="D" pin="8" value="7"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="B" pin="11" value="7"/>
+				<pin port="C" pin="10" value="7"/>
+				<pin port="D" pin="9" value="7"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::uart4" condition="defined(HTL_UART4_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="tx">
+				<pin port="A" pin="0" value="8"/>
+				<pin port="C" pin="10" value="8"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="A" pin="1" value="8"/>
+				<pin port="C" pin="11" value="8"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::uart5" condition="defined(HTL_UART5_EXIST)" pinFunctionPrefix="PinFunction::">
+		</device>
+
+		<device device="DeviceID::uart6" condition="defined(HTL_UART6_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="tx">
+				<pin port="C" pin="6" value="8"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="C" pin="7" value="8"/>
+			</function>
+		</device>
+
+		<device device="DeviceID::uart7" condition="defined(HTL_UART7_EXIST)" pinFunctionPrefix="PinFunction::">
+		</device>
+
+		<device device="DeviceID::uart8" condition="defined(HTL_UART8_EXIST)" pinFunctionPrefix="PinFunction::">
+		</device>
+	</file>
+</alternatePins>
