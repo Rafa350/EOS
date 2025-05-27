@@ -134,14 +134,6 @@ namespace htl {
 			openDrainPullUp
 		};
 
-		/// Modus alternatiu
-		///
-		enum class AlternateMode {
-			pushPull,
-			openDrain,
-			openDrainPullUp
-		};
-
 		/// Opcions de velocitat.
 		///
 		enum class Speed {
@@ -156,7 +148,8 @@ namespace htl {
         enum class InitMode {
             input,
             output,
-            alternate,
+            alternateInput,
+			alternateOutput,
             analogic
         };
 
@@ -174,10 +167,14 @@ namespace htl {
                     bool state;
                 } output;
                 struct {
-                    AlternateMode mode;
+                    InputMode mode;
+                    AlternateFunction function;
+                } alternateInput;
+                struct {
+                    OutputMode mode;
                     Speed speed;
                     AlternateFunction function;
-                } alternate;
+                } alternateOutput;
                 struct {
                 } analogic;
             };
@@ -192,32 +189,7 @@ namespace htl {
 			all
 		};
 
-
 		namespace internal {
-
-            void initialize(GPIO_TypeDef * const gpio, PinMask mask, const InitInfo *info);
-		    void initInput(GPIO_TypeDef * const gpio, PinMask mask,
-		            InputMode mode);
-            void initInput(GPIO_TypeDef * const gpio, PinBit bit,
-                    InputMode mode);
-		    void initOutput(GPIO_TypeDef * const gpio, PinMask mask,
-		            OutputMode mode, Speed speed, bool state);
-            void initOutput(GPIO_TypeDef * const gpio, PinBit bit,
-                    OutputMode mode, Speed speed, bool state);
-		    void initAlternate(GPIO_TypeDef * const gpio, PinMask mask,
-		            AlternateMode mode, Speed speed, AlternateFunction af);
-            void initAlternate(GPIO_TypeDef * const gpio, PinBit bit,
-                    AlternateMode mode, Speed speed, AlternateFunction af);
-		    void initAnalogic(GPIO_TypeDef * const gpio, PinMask mask);
-            void initAnalogic(GPIO_TypeDef * const gpio, PinBit bit);
-		    void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
-            void deinitialize(GPIO_TypeDef * const gpio, PinBit bit);
-
-            //void set(GPIO_TypeDef * const gpio, PinMask mask);
-            //void set(GPIO_TypeDef * const gpio, PinBit bit);
-		}
-
-        namespace internal {
 
             template <PortID>
             class Activator;
@@ -228,6 +200,52 @@ namespace htl {
             template <PinID>
             struct PinTraits;
         }
+
+		void activate(GPIO_TypeDef * const gpio, PinMask mask);
+		void deactivate(GPIO_TypeDef * const gpio, PinMask mask);
+
+		void initialize(GPIO_TypeDef * const gpio, PinMask mask, const InitInfo *info);
+		void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
+		void deinitialize(GPIO_TypeDef * const gpio, PinBit bit);
+
+		void initInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode);
+		void initInput(GPIO_TypeDef * const gpio, PinBit bit, InputMode mode);
+
+		void initOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputMode mode, Speed speed, bool state);
+		void initOutput(GPIO_TypeDef * const gpio, PinBit bit, OutputMode mode, Speed speed, bool state);
+
+		void initAnalogic(GPIO_TypeDef * const gpio, PinMask mask);
+		void initAnalogic(GPIO_TypeDef * const gpio, PinBit bit);
+
+		void initAlternateOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputMode mode, Speed speed, AlternateFunction af);
+		void initAlternateOutput(GPIO_TypeDef * const gpio, PinBit bit, OutputMode mode, Speed speed, AlternateFunction af);
+
+		template <PortID portID_, PinID pinID_>
+		void initAlternateOutput(OutputMode mode, Speed speed, AlternateFunction af) {
+			auto gpio = reinterpret_cast<GPIO_TypeDef*>(internal::PortTraits<portID_>::gpioAddr);
+			auto bit = PinBit(internal::PinTraits<pinID_>::bit);
+			initAlternateOutput(gpio, bit, mode, speed, af);
+		}
+
+		void initAlternateInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode, AlternateFunction af);
+		void initAlternateInput(GPIO_TypeDef * const gpio, PinBit bit, InputMode mode, AlternateFunction af);
+
+		template <PortID portID_, PinID pinID_>
+		void initAlternateInput(InputMode mode, AlternateFunction af) {
+			auto gpio = reinterpret_cast<GPIO_TypeDef*>(internal::PortTraits<portID_>::gpioAddr);
+			auto bit = PinBit(internal::PinTraits<pinID_>::bit);
+			initAlternateInput(gpio, bit, mode, af);
+		}
+
+		void pinSet(GPIO_TypeDef * const gpio, PinMask mask);
+		void pinSet(GPIO_TypeDef * const gpio, PinBit bit);
+
+		void pinClear(GPIO_TypeDef * const gpio, PinMask mask);
+		void pinClear(GPIO_TypeDef * const gpio, PinBit bit);
+
+		void pinToggle(GPIO_TypeDef * const gpio, PinMask mask);
+		void pinToggle(GPIO_TypeDef * const gpio, PinBit bit);
+
 
         /// brief Clase que representa un port.
         ///
@@ -330,7 +348,7 @@ namespace htl {
 			public:
                 void initInput(InputMode mode) const;
                 void initOutput(OutputMode mode, Speed speed, bool state) const;
-                void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af) const;
+                void initAlternateOutput(OutputMode mode, Speed speed, AlternateFunction af) const;
                 void initAnalogic() const;
                 void initialize(const InitInfo &info) const;
                 void deinitialize() const;
@@ -377,7 +395,7 @@ namespace htl {
             private:
                 inline PinDeviceX():
                     PinDevice(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), _bit) {
-                    Activator::activate(_mask);
+                    //Activator::activate(_mask);
                 }
         };
 
@@ -410,7 +428,7 @@ namespace htl {
                     Activator::activate(mask);
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     auto bit = PinBit(_bit);
-                    internal::initInput(gpio, bit, mode);
+                    htl::gpio::initInput(gpio, bit, mode);
                 }
 
                 static void initOutput(OutputMode mode, Speed speed, bool state) {
@@ -418,7 +436,7 @@ namespace htl {
                     Activator::activate(mask);
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     auto bit = PinBit(_bit);
-                    internal::initOutput(gpio, bit, mode, speed, state);
+                    htl::gpio::initOutput(gpio, bit, mode, speed, state);
                 }
 
                 static void initAnalogic() {
@@ -426,21 +444,21 @@ namespace htl {
                     Activator::activate(mask);
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     auto bit = PinBit(_bit);
-                    internal::initAnalogic(gpio, bit);
+                    htl::gpio::initAnalogic(gpio, bit);
                 }
 
-                static void initAlternate(AlternateMode mode, Speed speed, AlternateFunction af) {
+                static void initAlternateOutput(OutputMode mode, Speed speed, AlternateFunction af) {
                     auto mask = PinMask(_mask);
                     Activator::activate(PinMask(mask));
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     auto bit = PinBit(_bit);
-                    internal::initAlternate(gpio, bit, mode, speed, af);
+                    htl::gpio::initAlternateOutput(gpio, bit, mode, speed, af);
                 }
 
                 static constexpr void deinitialize() {
                     auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
                     auto bit = PinBit(_bit);
-                    internal::deinitialize(gpio, bit);
+                    htl::gpio::deinitialize(gpio, bit);
                     auto mask = PinMask(_mask);
                     Activator::deactivate(mask);
                 }

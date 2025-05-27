@@ -231,20 +231,20 @@ namespace htl {
 					_instance.interruptService();
 				}
 
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				void initPinSCK() {
-				    auto af = SPIPins<PinFunction::sck, pin_::portID, pin_::pinID>::value;
-                    pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+				    auto af = SPIPins<PinFunction::sck, portID_, pinID_>::value;
+                    gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				void initPinMOSI() {
-					auto af = SPIPins<PinFunction::mosi, pin_::portID, pin_::pinID>::value;
-                    pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = SPIPins<PinFunction::mosi, portID_, pinID_>::value;
+                    gpio::initAlternateInput<portID_, pinID_>(gpio::InputMode::floating, af);
 				}
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				void initPinMISO() {
-					auto af = SPIPins<PinFunction::miso, pin_::portID, pin_::pinID>::value;
-                    pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = SPIPins<PinFunction::miso, portID_, pinID_>::value;
+                    gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
 

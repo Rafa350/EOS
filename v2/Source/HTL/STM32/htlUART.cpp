@@ -15,38 +15,9 @@ using namespace htl::bits;
 using namespace htl::uart;
 
 
-static void setParity(USART_TypeDef *usart, Parity parity);
-static void setWordBits(USART_TypeDef *usart, WordBits wordBits, bool useParity);
-static void setStopBits(USART_TypeDef *usart, StopBits stopBits);
-static void setHandsake(USART_TypeDef *usart, Handsake handsake);
-static void setReceiveTimeout(USART_TypeDef *usart, unsigned timeout);
-
 static ClockSource getClockSource(USART_TypeDef *usart);
 static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
 
-static void enable(USART_TypeDef *usart);
-static void disable(USART_TypeDef *usart);
-
-static void enableTransmission(USART_TypeDef *usart);
-#if HTL_UART_OPTION_IRQ == 1
-static void enableTransmissionIRQ(USART_TypeDef *usart);
-#endif
-#if HTL_UART_OPTION_DMA == 1
-static void enableTransmissionDMA(USART_TypeDef *usart);
-#endif
-static void disableTransmission(USART_TypeDef *usart);
-
-static void enableReception(USART_TypeDef *usart);
-#if HTL_UART_OPTION_IRQ == 1
-static void enableReceptionIRQ(USART_TypeDef *usart);
-#endif
-#if HTL_UART_OPTION_DMA == 1
-static void enableReceptionDMA(USART_TypeDef *usart);
-#endif
-static void disableReception(USART_TypeDef *usart);
-
-static void writeData(USART_TypeDef *usart, uint16_t data);
-static uint16_t readData(USART_TypeDef *usart);
 static bool waitTransmissionComplete(USART_TypeDef *usart, unsigned expireTime);
 static bool waitTransmissionBufferEmpty(USART_TypeDef *usart, unsigned expireTime);
 static bool waitReceptionBufferFull(USART_TypeDef *usart, unsigned expireTime);
@@ -78,7 +49,7 @@ eos::Result UARTDevice::initialize() {
 
 	if (_state == State::reset) {
 
-		disable(_usart);
+		disable();
 
 		clear(_usart->CR2,
 #if defined(EOS_PLATFORM_STM32G0)
@@ -115,7 +86,7 @@ eos::Result UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		disable(_usart);
+		disable();
 
 		_state = State::reset;
 
@@ -139,13 +110,13 @@ eos::Result UARTDevice::setProtocol(
 	WordBits wordBits,
 	Parity parity,
 	StopBits stopBits,
-	Handsake handsake) {
+	Handsake handsake) const {
 
 	if (_state == State::ready) {
-		setParity(_usart, parity);
-		setWordBits(_usart, wordBits, parity != Parity::none);
-		setStopBits(_usart, stopBits);
-		setHandsake(_usart, handsake);
+		setParity(parity);
+		setWordBits(wordBits, parity != Parity::none);
+		setStopBits(stopBits);
+		setHandsake(handsake);
 		return eos::Results::success;
 	}
 	else
@@ -154,21 +125,187 @@ eos::Result UARTDevice::setProtocol(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Configura la paritat.
+/// \param    usart: Registres de hardware del dispositiu.
+/// \param    parity: Opcions de paritat.
+///
+ void UARTDevice::setParity(
+    Parity parity) const {
+
+    auto CR1 = _usart->CR1;
+    if (parity == Parity::none)
+    	clear(CR1, USART_CR1_PCE);
+    else {
+    	set(CR1, USART_CR1_PCE);
+    	if (parity == Parity::even)
+    		clear(CR1, USART_CR1_PS);
+    	else
+    		set(CR1, USART_CR1_PS);
+    }
+    _usart->CR1 = CR1;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el nombre de bits de parada
+/// \param    usart: Registres de harware del dispositiu.
+/// \param    stopBits: Opcions dels bits de parada.
+///
+void UARTDevice::setStopBits(
+    StopBits stopBits) const {
+
+    auto CR2 = _usart->CR2;
+    switch (stopBits) {
+        case StopBits::_0p5:
+            clear(CR2, USART_CR2_STOP_1);
+            set(CR2, USART_CR2_STOP_0);
+            break;
+
+        case StopBits::_1:
+        	clear(CR2, USART_CR2_STOP_1);
+        	clear(CR2, USART_CR2_STOP_0);
+            break;
+
+        case StopBits::_1p5:
+        	set(CR2, USART_CR2_STOP_1);
+        	set(CR2, USART_CR2_STOP_0);
+            break;
+
+        case StopBits::_2:
+        	set(CR2, USART_CR2_STOP_1);
+        	clear(CR2, USART_CR2_STOP_0);
+            break;
+    }
+    _usart->CR2 = CR2;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura nombre de bits de paraula.
+/// \param    usart: Registres de herdware del dispositiu.
+/// \param    wordBits: Opcions dels bits de paraula.
+/// \params   useParity: True si utilitza bit de paritat
+///
+#if defined(EOS_PLATFORM_STM32F0) || \
+    defined(EOS_PLATFORM_STM32F4) || \
+    defined(EOS_PLATFORM_STM32F7)
+void UARTDevice::setWordBits(
+    WordBits wordBits,
+    bool useParity) const {
+
+	auto numBits = useParity? 1 : 0;
+	switch (wordBits) {
+		case WordBits::word8:
+			numBits += 8;
+			break;
+
+		case WordBits::word9:
+			numBits += 9;
+			break;
+	}
+
+	auto a = startAtomic();
+	auto CR1 = _usart->CR1;
+	if (numBits == 8)
+		clear(CR1, USART_CR1_M);
+	else
+		set(CR1, USART_CR1_M);
+	_usart->CR1 = CR1;
+	endAtomic(a);
+}
+
+#elif defined(EOS_PLATFORM_STM32G0)
+void UARTDevice::setWordBits(
+    WordBits wordBits,
+    bool useParity) const {
+
+	auto numBits = useParity? 1 : 0;
+	switch (wordBits) {
+		case WordBits::word7:
+			numBits += 7;
+			break;
+
+		case WordBits::word8:
+			numBits += 8;
+			break;
+
+		case WordBits::word9:
+			numBits += 9;
+			break;
+	}
+
+	auto a = startAtomic();
+	auto CR1 = _usart->CR1;
+	switch (numBits) {
+		case 7:
+			clear(CR1, USART_CR1_M0);
+			set(CR1, USART_CR1_M1);
+			break;
+
+		default:
+		case 8:
+			clear(CR1, USART_CR1_M0);
+			clear(CR1, USART_CR1_M1);
+			break;
+
+		case 9:
+			set(CR1, USART_CR1_M0);
+			clear(CR1, USART_CR1_M1);
+			break;
+	}
+	_usart->CR1 = CR1;
+	endAtomic(a);
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el protocol.
+/// \param    usart: Registres de hardware del dispositiu.
+/// \param    handsake: Opcions de protocol.
+///
+void UARTDevice::setHandsake(
+    Handsake handsake) const {
+
+    auto CR3 = _usart->CR3;
+    switch (handsake) {
+        case Handsake::none:
+        	clear(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
+            break;
+
+        case Handsake::ctsrts:
+        	set(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
+            break;
+    }
+    _usart->CR3 = CR3;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Asigna el valor del timeout per recepcio.
 /// \param    timeout: El temps.
 /// \param    El resultat de l'operacio.
 ///
+#if defined(EOS_PLATFORM_STM32F7) || \
+	defined(EOS_PLATFORM_STM32G0)
 eos::Result UARTDevice::setRxTimeout(
-    unsigned timeout) {
+    unsigned timeout) const {
 
 	if (_state == State::ready) {
-		setReceiveTimeout(_usart, timeout);
+
+		if (timeout == 0)
+	    	clear(_usart->CR2, USART_CR2_RTOEN);
+	    else {
+	    	set(_usart->CR2, USART_CR2_RTOEN);
+	        _usart->RTOR = timeout;
+	    }
+
 		return eos::Results::success;
 	}
 	else
 		return eos::Results::errorState;
 }
-
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -183,7 +320,7 @@ eos::Result UARTDevice::setTimming(
 	BaudMode baudMode,
 	ClockSource clockSource,
 	uint32_t rate,
-	OverSampling overSampling) {
+	OverSampling overSampling) const {
 
 	if (_state == State::ready) {
 
@@ -271,21 +408,21 @@ eos::Result UARTDevice::transmit(
 
 		_state = State::transmiting;
 
-		enable(_usart);
-		enableTransmission(_usart);
+		enable();
+		enableTransmission();
 
 		while (length-- > 0) {
 			if (!waitTransmissionBufferEmpty(_usart, expireTime)) {
 				error = true;
 				break;
 			}
-			writeData(_usart, *buffer++);
+			writeData(*buffer++);
 		}
 
 	    error = !waitTransmissionComplete(_usart, expireTime);
 
-		disableTransmission(_usart);
-		disable(_usart);
+		disableTransmission();
+		disable();
 
 		_state = State::ready;
 
@@ -319,8 +456,8 @@ eos::Result UARTDevice::transmit_IRQ(
 		_txCount = 0;
         _txMaxCount = length;
 
-        enable(_usart);
-        enableTransmissionIRQ(_usart);
+        enable();
+        enableTransmissionIRQ();
 
 		return eos::Results::success;
 	}
@@ -381,8 +518,8 @@ eos::Result UARTDevice::transmit_DMA(
 eos::Result UARTDevice::abortTransmission() {
 
 	if (_state == State::transmiting) {
-		disableTransmission(_usart);
-		disable(_usart);
+		disableTransmission();
+		disable();
 		_state = State::ready;
 		return eos::Results::success;
 	}
@@ -410,8 +547,8 @@ eos::Result UARTDevice::receive(
 		auto expireTime = getTick() + timeout;
 		bool error = false;
 
-		enable(_usart);
-		enableReception(_usart);
+		enable();
+		enableReception();
 
 		while (bufferSize-- > 0) {
 
@@ -419,10 +556,10 @@ eos::Result UARTDevice::receive(
 				error = true;
 				break;
 			}
-			*buffer++ = readData(_usart);
+			*buffer++ = readData();
 		}
 
-		disableTransmission(_usart);
+		disableTransmission();
 
 		_state = State::ready;
 
@@ -455,8 +592,8 @@ eos::Result UARTDevice::receive_IRQ(
 		_rxCount = 0;
 		_rxMaxCount = bufferSize;
 
-		enable(_usart);
-		enableReceptionIRQ(_usart);
+		enable();
+		enableReceptionIRQ();
 
 		return eos::Results::success;
 	}
@@ -494,8 +631,8 @@ eos::Result UARTDevice::receive_DMA(
 eos::Result UARTDevice::abortReception() {
 
 	if (_state == State::receiving) {
-		disableReception(_usart);
-		disable(_usart);
+		disableReception();
+		disable();
 		_state = State::ready;
 		return eos::Results::success;
 	}
@@ -544,7 +681,7 @@ void UARTDevice::txInterruptService() {
 	// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
 	//
 	if (isSet(CR1, USART_CR1_TCIE) && isSet(SR, USART_SR_TC)) {
-		disableTransmission(_usart);
+		disableTransmission();
 		notifyTxCompleted(_txBuffer, _txCount, true);
 		_state = State::ready;
 	}
@@ -573,7 +710,7 @@ void UARTDevice::txInterruptService() {
 	// Interrupcio 'TC'. Nomes en l'ultim caracter transmes.
 	//
 	if (isSet(CR1, USART_CR1_TCIE) && isSet(ISR, USART_ISR_TC)) {
-		disableTransmission(_usart);
+		disableTransmission();
 		notifyTxCompleted(_txBuffer, _txCount, true);
 		_state = State::ready;
 	}
@@ -583,23 +720,7 @@ void UARTDevice::txInterruptService() {
 void UARTDevice::txInterruptService() {
 
 	auto CR1 = _usart->CR1;
-	auto CR3 = _usart->CR3;
 	auto ISR = _usart->ISR;
-
-	// Interrupcio 'TXFT' (Transmission fifo threshold)
-	//
-#if HTL_UART_OPTION_FIFO == 1
-	if (isSet(CR3, USART_CR3_TXFTIE) && isSet(ISR, USART_ISR_TXFT)) {
-		while ((_txCount < _txMaxCount) && isSet(_usart->ISR, USART_ISR_TXE_TXFNF))
-			_usart->TDR = _txBuffer[_txCount++];
-		if (_txCount == _txMaxCount) {
-			auto a = startAtomic();
-			clearBits(_usart->CR3, USART_CR3_TXFTIE);  // Deshabilita interrupcio TXFT
-			setBits(_usart->CR1, USART_CR1_TCIE);      // Habilita interrupcio TC
-			endAtomic(a);
-		}
-	}
-#endif
 
 	// Interrupcio 'TXE' (Transmission buffer empty)
 	//
@@ -618,7 +739,7 @@ void UARTDevice::txInterruptService() {
 	// Interrupcio 'TC'. (Transmission complete)
 	//
 	if (isSet(CR1, USART_CR1_TCIE) && isSet(ISR, USART_ISR_TC)) {
-		disableTransmission(_usart);
+		disableTransmission();
 		notifyTxCompleted(_txBuffer, _txCount, true);
 		_state = State::ready;
 	}
@@ -641,7 +762,7 @@ void UARTDevice::rxInterruptService() {
 		if (_rxCount < _rxMaxCount) {
 			_rxBuffer[_rxCount++] = _usart->DR;
 			if (_rxCount == _rxMaxCount) {
-				disableReception(_usart);
+				disableReception();
 				notifyRxCompleted(_rxBuffer, _rxCount, true);
 				_state = State::ready;
 			}
@@ -652,7 +773,7 @@ void UARTDevice::rxInterruptService() {
 	//
 	if (isSet(CR1, USART_CR1_IDLEIE) && isSet(SR, USART_SR_IDLE)) {
 		if (_rxCount > 0) {
-			disableReception(_usart);
+			disableReception();
 			notifyRxCompleted(_rxBuffer, _rxCount, true);
 			_state = State::ready;
 		}
@@ -671,7 +792,7 @@ void UARTDevice::rxInterruptService() {
 		if (_rxCount < _rxMaxCount) {
 			_rxBuffer[_rxCount++] = _usart->RDR;
 			if (_rxCount == _rxMaxCount) {
-				disableReception(_usart);
+				disableReception();
 				notifyRxCompleted(_rxBuffer, _rxCount, true);
 				_state = State::ready;
 			}
@@ -683,7 +804,7 @@ void UARTDevice::rxInterruptService() {
 	if (isSet(CR1, USART_CR1_IDLEIE) && isSet(ISR, USART_ISR_IDLE)) {
 		_usart->ICR = USART_ICR_IDLECF;
 		if (_rxCount > 0) {
-			disableReception(_usart);
+			disableReception();
 			notifyRxCompleted(_rxBuffer, _rxCount, true);
 			_state = State::ready;
 		}
@@ -693,7 +814,7 @@ void UARTDevice::rxInterruptService() {
 	//
 	if (isSet(CR1, USART_CR1_RTOIE) && isSet(ISR, USART_ISR_RTOF)) {
 		_usart->ICR = USART_ICR_RTOCF;
-		disableReception(_usart);
+		disableReception();
 		notifyRxCompleted(_rxBuffer, _rxCount, true);
 		_state = State::ready;
 	}
@@ -711,7 +832,7 @@ void UARTDevice::rxInterruptService() {
 		if (_rxCount < _rxMaxCount) {
 			_rxBuffer[_rxCount++] = _usart->RDR;
 			if (_rxCount == _rxMaxCount) {
-				disableReception(_usart);
+				disableReception();
 				notifyRxCompleted(_rxBuffer, _rxCount, true);
 				_state = State::ready;
 			}
@@ -723,7 +844,7 @@ void UARTDevice::rxInterruptService() {
 	if (isSet(CR1, USART_CR1_IDLEIE) && isSet(ISR, USART_ISR_IDLE)) {
 		_usart->ICR = USART_ICR_IDLECF;
 		if (_rxCount > 0) {
-			disableReception(_usart);
+			disableReception();
 			notifyRxCompleted(_rxBuffer, _rxCount, true);
 			_state = State::ready;
 		}
@@ -733,7 +854,7 @@ void UARTDevice::rxInterruptService() {
 	//
 	if (isSet(CR1, USART_CR1_RTOIE) && isSet(ISR, USART_ISR_RTOF)) {
 		_usart->ICR = USART_ICR_RTOCF;
-		disableReception(_usart);
+		disableReception();
 		notifyRxCompleted(_rxBuffer, _rxCount, true);
 		_state = State::ready;
 	}
@@ -992,194 +1113,6 @@ static unsigned getClockFrequency(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura la paritat.
-/// \param    usart: Registres de hardware del dispositiu.
-/// \param    parity: Opcions de paritat.
-///
-static void setParity(
-    USART_TypeDef *usart,
-    Parity parity) {
-
-    auto CR1 = usart->CR1;
-    if (parity == Parity::none)
-    	clear(CR1, USART_CR1_PCE);
-    else {
-    	set(CR1, USART_CR1_PCE);
-    	if (parity == Parity::even)
-    		clear(CR1, USART_CR1_PS);
-    	else
-    		set(CR1, USART_CR1_PS);
-    }
-    usart->CR1 = CR1;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura el nombre de bits de parada
-/// \param    usart: Registres de harware del dispositiu.
-/// \param    stopBits: Opcions dels bits de parada.
-///
-static void setStopBits(
-    USART_TypeDef *usart,
-    StopBits stopBits) {
-
-    auto CR2 = usart->CR2;
-    switch (stopBits) {
-        case StopBits::_0p5:
-            clear(CR2, USART_CR2_STOP_1);
-            set(CR2, USART_CR2_STOP_0);
-            break;
-
-        case StopBits::_1:
-        	clear(CR2, USART_CR2_STOP_1);
-        	clear(CR2, USART_CR2_STOP_0);
-            break;
-
-        case StopBits::_1p5:
-        	set(CR2, USART_CR2_STOP_1);
-        	set(CR2, USART_CR2_STOP_0);
-            break;
-
-        case StopBits::_2:
-        	set(CR2, USART_CR2_STOP_1);
-        	clear(CR2, USART_CR2_STOP_0);
-            break;
-    }
-    usart->CR2 = CR2;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura nombre de bits de paraula.
-/// \param    usart: Registres de herdware del dispositiu.
-/// \param    wordBits: Opcions dels bits de paraula.
-/// \params   useParity: True si utilitza bit de paritat
-///
-#if defined(EOS_PLATFORM_STM32F0) || \
-    defined(EOS_PLATFORM_STM32F4) || \
-    defined(EOS_PLATFORM_STM32F7)
-static void setWordBits(
-    USART_TypeDef *usart,
-    WordBits wordBits,
-    bool useParity) {
-
-	auto numBits = useParity? 1 : 0;
-	switch (wordBits) {
-		case WordBits::word8:
-			numBits += 8;
-			break;
-
-		case WordBits::word9:
-			numBits += 9;
-			break;
-	}
-
-	auto a = startAtomic();
-	auto CR1 = usart->CR1;
-	if (numBits == 8)
-		CR1 &= ~USART_CR1_M;
-	else
-		CR1 |= USART_CR1_M;
-	usart->CR1 = CR1;
-	endAtomic(a);
-}
-
-#elif defined(EOS_PLATFORM_STM32G0)
-static void setWordBits(
-    USART_TypeDef *usart,
-    WordBits wordBits,
-    bool useParity) {
-
-	auto numBits = useParity? 1 : 0;
-	switch (wordBits) {
-		case WordBits::word7:
-			numBits += 7;
-			break;
-
-		case WordBits::word8:
-			numBits += 8;
-			break;
-
-		case WordBits::word9:
-			numBits += 9;
-			break;
-	}
-
-	auto a = startAtomic();
-	auto CR1 = usart->CR1;
-	switch (numBits) {
-		case 7:
-			clear(CR1, USART_CR1_M0);
-			set(CR1, USART_CR1_M1);
-			break;
-
-		default:
-		case 8:
-			clear(CR1, USART_CR1_M0);
-			clear(CR1, USART_CR1_M1);
-			break;
-
-		case 9:
-			set(CR1, USART_CR1_M0);
-			clear(CR1, USART_CR1_M1);
-			break;
-	}
-	usart->CR1 = CR1;
-	endAtomic(a);
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura el protocol.
-/// \param    usart: Registres de hardware del dispositiu.
-/// \param    handsake: Opcions de protocol.
-///
-static void setHandsake(
-    USART_TypeDef *usart,
-    Handsake handsake) {
-
-    auto CR3 = usart->CR3;
-    switch (handsake) {
-        case Handsake::none:
-        	clear(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
-            break;
-
-        case Handsake::ctsrts:
-        	set(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
-            break;
-    }
-    usart->CR3 = CR3;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura el timeout per recepcio.
-/// \param    usart: Registres de hardware del dispositiu.
-/// \param    timeout: Timeout en temps de bit individual.
-///
-#if defined(EOS_PLATFORM_STM32G0) || \
-	defined(EOS_PLATFORM_STM32F7)
-static void setReceiveTimeout(
-    USART_TypeDef *usart,
-    unsigned timeout) {
-
-    if (timeout == 0)
-    	clear(usart->CR2, USART_CR2_RTOEN);
-    else {
-    	set(usart->CR2, USART_CR2_RTOEN);
-        usart->RTOR = timeout;
-    }
-}
-#else
-static void setReceiveTimeout(
-    USART_TypeDef *usart,
-    unsigned timeout) {
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Espera que s'hagi completat la transmissio
 /// \param    usart: Registres de hardware del dispositiu.
 /// \param    timeout: El temps maxim d'espera en ticks.
@@ -1256,12 +1189,10 @@ static bool waitReceptionBufferFull(
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita el dispositiu.
-/// \param    usart: Registres de hardware del dispositiu.
 ///
-static inline void enable(
-	USART_TypeDef *usart) {
+void UARTDevice::enable() const {
 
-	set(usart->CR1,
+	set(_usart->CR1,
 #if HLT_UART_OPTION_FIFO == 1
 		USART_CR1_FIFOEN |   // Habilita el fifo
 #endif
@@ -1271,13 +1202,13 @@ static inline void enable(
 
 /// ----------------------------------------------------------------------
 /// \brief    Desabilita el dispositiu.
-/// \param    usart: Registres de hardware del dispositiu.
 ///
-static void disable(
-	USART_TypeDef *usart) {
+void UARTDevice::disable() const {
 
-	clear(usart->CR1,
+	clear(_usart->CR1,
+#if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_FIFOEN |        // Desabilita el FIFO
+#endif
 		USART_CR1_UE |            // Desabilita el dispositiu
 		USART_CR1_TE |            // Desabilita la transmissio
 		USART_CR1_RE);            // Deshabilita la recepcio
@@ -1286,13 +1217,11 @@ static void disable(
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la transmissio de dades.
-/// \param    usart: Registres de hardware del dispositiu.
 ///
-static void enableTransmission(
-	USART_TypeDef *usart) {
+void UARTDevice::enableTransmission() const {
 
 	auto a = startAtomic();
-	set(usart->CR1,
+	set(_usart->CR1,
 		USART_CR1_TE);       // Habilita la tramsmissio
 	endAtomic(a);
 }
@@ -1300,47 +1229,45 @@ static void enableTransmission(
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la transmissio de dades en modus IRQ
-/// \param    usart: Registres de hardware del dispositiu.
 ///
 #if HTL_UART_OPTION_IRQ == 1
-static void enableTransmissionIRQ(
-	USART_TypeDef *usart) {
+#if defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
+void UARTDevice::enableTransmissionIRQ() const {
 
 	auto a = startAtomic();
 
-#if HTL_UART_OPTION_FIFO == 1
-	// Habilita el nivell d'interrupcio del fifo
-	//
-	clear(usart->CR3, USART_CR3_TXFTCFG);
-	set(usart->CR3, (uint32_t)(2 << USART_CR3_TXFTCFG_Pos));
-
-	set(usart->CR3,
-		USART_CR3_TXFTIE);         // Habilita la interrupcio de nivell del FIFO
-#endif
-
-	set(usart->CR1,
-#if HTL_UART_OPTION_FIFO == 0
-#if defined(EOS_PLATFORM_STM32G0)
-		USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
-#else
+	set(_usart->CR1,
 		USART_CR1_TXEIE |          // Habilita interrupcio TXE
-#endif
-#endif
 		USART_CR1_TE);             // Habilita la transmissio
-
 	endAtomic(a);
 }
-#endif
+#elif defined(EOS_PLATFORM_STM32G0)
+void UARTDevice::enableTransmissionIRQ() const {
+
+	auto a = startAtomic();
+
+	if (isSet(_usart->CR1, USART_CR1_FIFOEN)) {
+
+	}
+	else {
+		set(_usart->CR1,
+			USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
+			USART_CR1_TE);             // Habilita la transmissio
+	}
+	endAtomic(a);
+}
+#endif // defined(EOS_PLATFORM_XXX)
+#endif // HTL_UART_OPTION_IRQ == 1
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la transmissio de dades en modus DMA
-/// \param    usart: Registres de hardware del dispositiu.
 ///
 #if HTL_UART_OPTION_DMA == 1
-static void enableTransmissionDMA(
-	USART_TypeDef *usart) {
+void UARTDevice::enableTransmissionDMA() const {
 
+	//TODO: Comprovar si es necesari
 	usart->ICR = USART_ICR_TCCF;  // Borra el flag TC
 
 	auto a = startAtomic();
@@ -1352,19 +1279,17 @@ static void enableTransmissionDMA(
 
     endAtomic(a);
 }
-#endif
+#endif // HTL_UART_OPTION_DMA == 1
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Deshabilita la transmissio
-/// \param    usart: Registres de hardware del dispositiu.
 ///
-static void disableTransmission(
-	USART_TypeDef *usart) {
+void UARTDevice::disableTransmission() const {
 
 	auto a = startAtomic();
 
-	clear(usart->CR1,
+	clear(_usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_TXEIE_TXFNFIE | // Deshabilita interrupcio TXE
 #else
@@ -1372,20 +1297,15 @@ static void disableTransmission(
 #endif
 		USART_CR1_TCIE);          // Deshabilita interrupcio TC
 
-#if HTL_UART_OPTION_FIFO == 1
-	clear(usart->CR3,
-		USART_CR3_TXFTIE);        // Desabilita la interrupcio de nivell del fifo
-#endif
-
 #if HTL_UART_OPTION_DMA == 1
-	clear(usart->CR3,
+	clear(_usart->CR3,
 		USART_CR3_DMAT);          // Desabilita el DMA
 #endif
 
 	// TODO: Asegurar-se que l'ultim byte s'ha transmes abans de deshabilitar
 	// ta transmissio
 
-	clear(usart->CR1,
+	clear(_usart->CR1,
 		USART_CR1_TE);            // Desabilita transmissio
 
 	endAtomic(a);
@@ -1394,17 +1314,15 @@ static void disableTransmission(
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la recepcio.
-/// \param    usart: Registres de hardware del dispoositiu.
 ///
-static void enableReception(
-	USART_TypeDef *usart) {
+void UARTDevice::enableReception() const {
 
 #if !defined(EOS_PLATFORM_STM32F4)
-	usart->ICR = USART_ICR_RTOCF; // Borra el flag RTO
+	_usart->ICR = USART_ICR_RTOCF; // Borra el flag RTO
 #endif
 
 	auto a = startAtomic();
-	set(usart->CR1,
+	set(_usart->CR1,
 		USART_CR1_RE);            // Habilita la recepcio
 	endAtomic(a);
 }
@@ -1415,18 +1333,17 @@ static void enableReception(
 /// \param    usart: Registres de hardware del dispoositiu.
 ///
 #if HTL_UART_OPTION_IRQ == 1
-static void enableReceptionIRQ(
-	USART_TypeDef *usart) {
+void UARTDevice::enableReceptionIRQ() const {
 
 #if !defined(EOS_PLATFORM_STM32F4)
-	set(usart->ICR,
+	set(_usart->ICR,
 		USART_ICR_RTOCF |           // Borra el flag RTO
 		USART_ICR_IDLECF);          // Borra el flag IDLE
 #endif
 
 	auto a = startAtomic();
 
-	set(usart->CR1,
+	set(_usart->CR1,
 		USART_CR1_PEIE |            // Habilita interrupcio PE
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_RXNEIE_RXFNEIE |  // Habilita interrupcio RXNE
@@ -1439,12 +1356,12 @@ static void enableReceptionIRQ(
 	// Notes:  Si RTO no esta suportat RTOEN sempre estara a zero per hardware
 	//
 #if defined(EOS_PLATFORM_STM32F4)
-	set(usart->CR1, USART_CR1_IDLEIE);       // Habilita interrupcio IDLE
+	set(_usart->CR1, USART_CR1_IDLEIE);       // Habilita interrupcio IDLE
 #else
-	if (usart->CR2 & USART_CR2_RTOEN)
-		set(usart->CR1, USART_CR1_RTOIE);    // Habilita interrupcio RTO
+	if (_usart->CR2 & USART_CR2_RTOEN)
+		set(_usart->CR1, USART_CR1_RTOIE);    // Habilita interrupcio RTO
 	else
-		set(usart->CR1, USART_CR1_IDLEIE);   // Habilita interrupcio IDLE
+		set(_usart->CR1, USART_CR1_IDLEIE);   // Habilita interrupcio IDLE
 #endif
 
 	endAtomic(a);
@@ -1454,14 +1371,12 @@ static void enableReceptionIRQ(
 
 /// ----------------------------------------------------------------------
 /// \brief    Deshabilita la recepcio.
-/// \param    usart: Registres de hardware del dispositiu.
 ///
-static void disableReception(
-	USART_TypeDef *usart) {
+void UARTDevice::disableReception() const {
 
 	auto a = startAtomic();
 
-	clear(usart->CR1,
+	clear(_usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
 		USART_CR1_RXNEIE_RXFNEIE | // Deshabilita interrupcio RXNE
 #else
@@ -1478,7 +1393,7 @@ static void disableReception(
 		USART_CR3_DMAT);           // Desabilita el DMA
 #endif
 
-	clear(usart->CR1,
+	clear(_usart->CR1,
 		USART_CR1_RE);             // Deshabilita recepcio
 
 	endAtomic(a);
@@ -1490,14 +1405,13 @@ static void disableReception(
 /// \param    usart: Registres de hardware del dispositiu.
 /// \param    data: Les dades a transmetre.
 //
-static void writeData(
-		USART_TypeDef *usart,
-		uint16_t data) {
+void UARTDevice::writeData(
+	uint8_t data) const {
 
 #if defined(EOS_PLATFORM_STM32F4)
-	usart->DR = data;
+	_usart->DR = data;
 #else
-	usart->TDR = data;
+	_usart->TDR = data;
 #endif
 }
 
@@ -1507,13 +1421,12 @@ static void writeData(
 /// \param    usart: Registres de hardware del dispositiu.
 /// \return   Les dades rebudes.
 //
-static uint16_t readData(
-	USART_TypeDef *usart) {
+uint8_t UARTDevice::readData() const {
 
 #if defined(EOS_PLATFORM_STM32F4)
-	return usart->DR;
+	return _usart->DR;
 #else
-	return usart->RDR;
+	return _usart->RDR;
 #endif
 }
 

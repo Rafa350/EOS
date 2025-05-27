@@ -234,6 +234,35 @@ namespace htl {
 				UARTDevice(const UARTDevice &) = delete;
 				UARTDevice & operator = (const UARTDevice &) = delete;
 
+				void setWordBits(WordBits wordBits, bool useParity) const;
+				void setStopBits(StopBits wordBits) const;
+				void setParity(Parity parity) const;
+				void setHandsake(Handsake handsake) const;
+
+				void enable() const;
+				void disable() const;
+
+				void enableTransmission() const;
+				void disableTransmission() const;
+#if HTL_UART_OPTION_IRQ == 1
+				void enableTransmissionIRQ() const;
+#endif
+#if HTL_UART_OPTION_DMA == 1
+				void enableTransmissionDMA() const;
+#endif
+
+				void enableReception() const;
+				void disableReception() const;
+#if HTL_UART_OPTION_IRQ == 1
+				void enableReceptionIRQ() const;
+#endif
+#if HTL_UART_OPTION_DMA == 1
+				void enableReceptionDMA() const;
+#endif
+
+				void writeData(uint8_t data) const;
+				uint8_t readData() const;
+
 				void notifyTxCompleted(const uint8_t *buffer, unsigned length, bool irq);
 				void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
 #if HTL_UART_OPTION_DMA == 1
@@ -252,10 +281,13 @@ namespace htl {
 				eos::Result deinitialize();
 
 				eos::Result setProtocol(WordBits wordBits, Parity parity,
-				        StopBits stopBits, Handsake handlsake);
+				        StopBits stopBits, Handsake handlsake) const;
 				eos::Result setTimming(BaudMode baudMode, ClockSource clockSource,
-				        uint32_t rate, OverSampling oversampling);
-				eos::Result setRxTimeout(unsigned timeout);
+				        uint32_t rate, OverSampling oversampling) const;
+#if defined(EOS_PLATFORM_STM32F7) || \
+	defined(EOS_PLATFORM_STM32G0)
+				eos::Result setRxTimeout(unsigned timeout) const;
+#endif
 
 				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
 					_erNotify.set(event, enabled);
@@ -330,28 +362,28 @@ namespace htl {
 				}
 #endif
 
-				template <typename pin_>
+				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
 				inline void initPinTX() {
-					auto af = UARTPins<PinFunction::tx, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = UARTPins<PinFunction::tx, portID_, pinID_>::value;
+					htl::gpio::initAlternateOutput<portID_, pinID_>(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::fast, af);
 				}
 
-				template <typename pin_>
+				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
 				inline void initPinRX() {
-					auto af = UARTPins<PinFunction::rx, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = UARTPins<PinFunction::rx, portID_, pinID_>::value;
+					htl::gpio::initAlternateInput<portID_, pinID_>(htl::gpio::InputMode::floating, af);
 				}
 
-				template <typename pin_>
+				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
 				inline void initPinCTS() {
-					auto af = UARTPins<PinFunction::cts, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = UARTPins<PinFunction::cts, portID_, pinID_>::value;
+					htl::gpio::initAlternateOutput<portID_, pinID_>(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::fast, af);
 				}
 
-				template <typename pin_>
+				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
 				inline void initPinRTS() {
-					auto af = UARTPins<PinFunction::rts, pin_::portID, pin_::pinID>::value;
-					pin_:initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = UARTPins<PinFunction::rts, portID_, pinID_>::value;
+					htl::gpio::initAlternateInput<portID_, pinID_>(htl::gpio::InputMode::floating, af);
 				}
 		};
 

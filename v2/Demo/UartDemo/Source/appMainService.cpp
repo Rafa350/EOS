@@ -29,8 +29,8 @@ void MainService::onExecute() {
 
     // Inicialitza la UART
 	//
-	devUART->initPinTX<hw::PinTX>();
-	devUART->initPinRX<hw::PinRX>();
+	devUART->initPinTX<hw::PinTX::portID, hw::PinTX::pinID>();
+	devUART->initPinRX<hw::PinRX::portID, hw::PinRX::pinID>();
 	devUART->initialize();
 
 	devUART->setProtocol(WordBits::word8, Parity::none, StopBits::_1, Handsake::none);

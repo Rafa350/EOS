@@ -391,11 +391,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/StartUp/STM32F7/main.cpp</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/System/Collections</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/System/Core</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -614,6 +609,11 @@
 			<name>Src/Framework/EOS/HTL/STM32/htlGPIO.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/HTL/STM32/htlGPIO_basic.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_basic.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htlINT.cpp</name>

@@ -242,28 +242,28 @@ namespace htl {
 					_instance.interruptService();
 				}
 
-				template <typename pin_>
-				inline void initPinCH1(gpio::AlternateMode mode, gpio::Speed speed) {
-					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch1, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(mode, speed, af);
+				template <gpio::PortID portID_, gpio::PinID pinID_>
+				void initPinCH1(gpio::OutputMode mode, gpio::Speed speed) {
+				    auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch1, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(mode, speed, af);
 				}
 
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				inline void initPinCH2() {
-					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch2, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch2, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				inline void initPinCH3() {
-					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch3, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch3, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				inline void initPinCH4() {
-					constexpr auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch4, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::pushPull, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch4, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
 

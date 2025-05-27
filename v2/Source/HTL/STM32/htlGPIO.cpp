@@ -8,47 +8,6 @@ using namespace htl;
 using namespace htl::gpio;
 
 
-struct MODE {
-	static constexpr uint32_t Mask      = 0b11;
-	static constexpr uint32_t INPUT     = 0b00;
-	static constexpr uint32_t OUTPUT    = 0b01;
-	static constexpr uint32_t ALTERNATE = 0b10;
-	static constexpr uint32_t ANALOGIC  = 0b11;
-};
-
-struct PUPD {
-	static constexpr uint32_t Mask = 0b11;
-	static constexpr uint32_t NONE = 0b00;
-	static constexpr uint32_t UP   = 0b01;
-	static constexpr uint32_t DOWN = 0b10;
-};
-
-struct OTYPE {
-	static constexpr uint32_t Mask = 0b1;
-	static constexpr uint32_t PP   = 0b0;
-	static constexpr uint32_t OD   = 0b1;
-};
-
-struct OSPEED {
-	static constexpr uint32_t Mask   = 0b11;
-	static constexpr uint32_t LOW    = 0b00;
-	static constexpr uint32_t MEDIUM = 0b01;
-	static constexpr uint32_t HIGH   = 0b10;
-	static constexpr uint32_t FAST   = 0b11;
-};
-
-struct AF {
-	static constexpr uint32_t Mask = 0b1111;
-};
-
-
-static const uint32_t __speedTbl[] = {
-    OSPEED::LOW,
-    OSPEED::MEDIUM,
-    OSPEED::HIGH,
-    OSPEED::FAST};
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    gpio: Registres hardware del modul GPIO.
@@ -70,7 +29,7 @@ void PortDevice::initInput(
 	InputMode mode) const {
 
 	activate(mask);
-	internal::initInput(_gpio, mask, mode);
+	htl::gpio::initInput(_gpio, mask, mode);
 }
 
 
@@ -86,7 +45,7 @@ void PortDevice::initOutput(
 	Speed speed) const {
 
 	activate(mask);
-	internal::initOutput(_gpio, mask, mode, speed, false);
+	htl::gpio::initOutput(_gpio, mask, mode, speed, false);
 }
 
 
@@ -121,7 +80,7 @@ PinDevice::PinDevice(
 void PinDevice::initialize(
     const InitInfo &info) const {
 
-    internal::initialize(_gpio, _mask, &info);
+    htl::gpio::initialize(_gpio, _mask, &info);
 }
 
 
@@ -132,7 +91,7 @@ void PinDevice::initialize(
 void PinDevice::initInput(
 	InputMode mode) const {
 
-	internal::initInput(_gpio, _mask, mode);
+	htl::gpio::initInput(_gpio, _mask, mode);
 }
 
 
@@ -147,22 +106,7 @@ void PinDevice::initOutput(
 	Speed speed,
 	bool state) const {
 
-	internal::initOutput(_gpio, _mask, mode, speed, state);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin en modus alternatiu.
-/// \param    mode: El tipus de entrada/sortida
-/// \param    speed: Velocitat de conmutacio.
-/// \param    af: Funcio alternativa.
-///
-void PinDevice::initAlternate(
-	AlternateMode mode,
-	Speed speed,
-	AlternateFunction af) const {
-
-	internal::initAlternate(_gpio, _mask, mode, speed, af);
+	htl::gpio::initOutput(_gpio, _mask, mode, speed, state);
 }
 
 
@@ -171,7 +115,7 @@ void PinDevice::initAlternate(
 ///
 void PinDevice::initAnalogic() const {
 
-	internal::initAnalogic(_gpio, _mask);
+	htl::gpio::initAnalogic(_gpio, _mask);
 }
 
 
@@ -180,7 +124,7 @@ void PinDevice::initAnalogic() const {
 ///
 void PinDevice::deinitialize() const {
 
-	internal::deinitialize(_gpio, _mask);
+	htl::gpio::deinitialize(_gpio, _mask);
 }
 
 
@@ -396,333 +340,3 @@ void PinInterrupt::notifyFallingEdge() const {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els pins.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    mack: mascara de pins
-/// \param    info: Informacio per la inicialitzacio.
-///
-void internal::initialize(
-    GPIO_TypeDef * const gpio,
-	PinMask mask,
-    const InitInfo *info) {
-
-    switch(info->mode) {
-        case InitMode::input:
-            internal::initInput(gpio, mask, info->input.mode);
-            break;
-
-        case InitMode::output:
-            internal::initOutput(gpio, mask, info->output.mode,
-                    info->output.speed, info->output.state);
-            break;
-
-        case InitMode::alternate:
-            internal::initAlternate(gpio, mask, info->alternate.mode,
-                    info->alternate.speed, info->alternate.function);
-            break;
-
-        case InitMode::analogic:
-            internal::initAnalogic(gpio, mask);
-            break;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els pins com a entrades.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    mask: Mascara dels pins a inicialitzar.
-/// \param    node: Tipus d'entrada.
-///
-void internal::initInput(
-    GPIO_TypeDef * const gpio,
-    PinMask mask,
-    InputMode mode) {
-
-    auto m = (uint16_t) mask;
-    for (auto b = 0; b < 15; b++) {
-        if ((m & (1 << b)) != 0)
-            initInput(gpio, PinBit(b), mode);
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com a entrada.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    bit: El bit del pin a inicialitzar.
-/// \param    node: Tipus d'entrada.
-///
-void internal::initInput(
-	GPIO_TypeDef * const gpio,
-	PinBit bit,
-	InputMode mode) {
-
-	auto a = startAtomic();
-
-    auto b = (uint8_t) bit;
-
-    // Configura el pin com a entrada digital
-    //
-    auto MODER = gpio->MODER;
-    MODER &= ~(MODE::Mask << (b * 2));
-    MODER |= MODE::INPUT << (b * 2);
-    gpio->MODER = MODER;
-
-    // Configura les resistencies pull UP/DOWN
-    //
-    auto PUPDR = gpio->PUPDR;
-    PUPDR &= ~(PUPD::Mask << (b * 2));
-    switch (mode) {
-        case InputMode::pullUp:
-            PUPDR |= PUPD::UP << (b * 2);
-            break;
-
-        case InputMode::pullDown:
-            PUPDR |= PUPD::DOWN << (b * 2);
-            break;
-
-        default:
-            PUPDR |= PUPD::NONE << (b * 2);
-            break;
-    }
-    gpio->PUPDR = PUPDR;
-
-    endAtomic(a);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els pins com sortides.
-/// \param    gpio: Els registres de hardware del GPIO.
-/// \param    mask: Mascara dels pins a inicialitzar.
-/// \param    mode: Tipus de sortida.
-/// \param    speed: Velocitat de conmutacio.
-/// \param    state: L'estat inicial del pin.
-///
-void internal::initOutput(
-    GPIO_TypeDef * const gpio,
-    PinMask mask,
-    OutputMode mode,
-    Speed speed,
-    bool state) {
-
-    auto m = (uint16_t) mask;
-    for (auto b = 0; b < 15; b++) {
-        if ((m & (1 << b)) != 0)
-            initOutput(gpio, PinBit(b), mode, speed, state);
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com sortida.
-/// \param    gpio: Els registres de hardware del GPIO.
-/// \param    bit: El bit del pin a inicialitzar.
-/// \param    mode: Tipus de sortida.
-/// \param    speed: Velocitat de conmutacio.
-/// \param    state: L'estat inicial del pin.
-///
-void internal::initOutput(
-	GPIO_TypeDef * const gpio,
-	PinBit bit,
-	OutputMode mode,
-	Speed speed,
-	bool state) {
-
-	auto a = startAtomic();
-
-    auto b = (uint8_t) bit;
-
-    // Configura el pin com sortida digital
-    //
-    auto MODER = gpio->MODER;
-    clearBits(MODER, MODE::Mask << (b * 2));
-    setBits(MODER, MODE::OUTPUT << (b * 2));
-    gpio->MODER = MODER;
-
-    // Configura el driver de sortida
-    //
-    auto OTYPER = gpio->OTYPER;
-    clearBits(OTYPER, OTYPE::Mask << b);
-    if (mode == OutputMode::openDrain ||
-        mode == OutputMode::openDrainPullUp)
-        setBits(OTYPER, OTYPE::OD << b);
-    else
-        setBits(OTYPER, OTYPE::PP << b);
-    gpio->OTYPER = OTYPER;
-
-    // Configura la resistencia pull UP
-    //
-    auto PUPDR = gpio->PUPDR;
-    clearBits(PUPDR, PUPD::Mask << (b * 2));
-    if (mode == OutputMode::openDrainPullUp)
-        setBits(PUPDR, PUPD::UP << (b * 2));
-    else
-        setBits(PUPDR, PUPD::NONE << (b * 2));
-    gpio->PUPDR = PUPDR;
-
-    // Configura la velocitat de conmutacio
-    //
-    auto OSPEEDR = gpio->OSPEEDR;
-    clearBits(OSPEEDR, OSPEED::Mask << (b * 2));
-    setBits(OSPEEDR, __speedTbl[(uint8_t) speed] << (b * 2));
-    gpio->OSPEEDR = OSPEEDR;
-
-    // Configura l'estat de sortida
-    //
-    gpio->ODR = 1 << b;
-
-    endAtomic(a);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els pins com entrades/sortides alternatives.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    mask: Mascara del pins a inicialitzar.
-/// \param    mode: Tipus de entrada/sortida.
-/// \param    speed: Velocitat de conmutacio.
-/// \param    af: La funcio alternativa.
-///
-void internal::initAlternate(
-	GPIO_TypeDef * const gpio,
-	PinMask mask,
-	AlternateMode mode,
-	Speed speed,
-	AlternateFunction af) {
-
-    auto m = uint16_t(mask);
-	for (uint8_t b = 0; b < 15; b++) {
-		if ((m & (1 << b)) != 0)
-		    initAlternate(gpio, PinBit(b), mode, speed, af);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com entrada/sortida alternativa.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    bit: El bit del pin a inicialitzar.
-/// \param    mode: Tipus de entrada/sortida.
-/// \param    speed: Velocitat de conmutacio.
-/// \param    af: La funcio alternativa.
-///
-void internal::initAlternate(
-    GPIO_TypeDef * const gpio,
-    PinBit bit,
-    AlternateMode mode,
-    Speed speed,
-    AlternateFunction af) {
-
-	auto a = startAtomic();
-
-    auto b = uint8_t(bit);
-
-    // Configura el pin com entrada/sortida alternativa
-    //
-    auto MODER = gpio->MODER;
-    clearBits(MODER, MODE::Mask << (b * 2));
-    setBits(MODER, MODE::ALTERNATE << (b * 2));
-    gpio->MODER = MODER;
-
-    // Configura el driver de sortida
-    //
-    auto OTYPER = gpio->OTYPER;
-    clearBits(OTYPER, OTYPE::Mask << b);
-    if (mode == AlternateMode::openDrain ||
-        mode == AlternateMode::openDrainPullUp)
-        setBits(OTYPER, OTYPE::OD << b);
-    else
-    	setBits(OTYPER, OTYPE::PP << b);
-    gpio->OTYPER = OTYPER;
-
-    // Configura la resistencia pull UP
-    //
-    auto PUPDR = gpio->PUPDR;
-    clearBits(PUPDR, PUPD::Mask << (b * 2));
-    if (mode == AlternateMode::openDrainPullUp)
-        setBits(PUPDR, PUPD::UP << (b * 2));
-    else
-    	setBits(PUPDR, PUPD::NONE << (b * 2));
-    gpio->PUPDR = PUPDR;
-
-    // Configura la velocitat de conmutacio
-    //
-    auto OSPEEDR = gpio->OSPEEDR;
-    clearBits(OSPEEDR, OSPEED::Mask << (b * 2));
-    setBits(OSPEEDR, __speedTbl[uint8_t(speed)] << (b * 2));
-    gpio->OSPEEDR = OSPEEDR;
-
-    // Selecciona la funcio alternativa
-    //
-    auto AFR = gpio->AFR[b >> 3];
-    clearBits(AFR, AF::Mask << ((b & 0x07) * 4)) ;
-    setBits(AFR, (uint32_t(af) & AF::Mask) << ((b & 0x07) * 4));
-    gpio->AFR[b >> 3] = AFR;
-
-    endAtomic(a);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els pins com entrades/sortides analogiques.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    mask: Mascara dels pins a inicialitzar.
-///
-void internal::initAnalogic(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
-
-    auto m = uint16_t(mask);
-    for (uint8_t b = 0; b < 15; b++) {
-        if ((m & (1 << b)) != 0)
-            initAnalogic(gpio, PinBit(b));
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com entrada/sortida analogica.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    bit: El bit del pin a inicialitzar.
-///
-void internal::initAnalogic(
-    GPIO_TypeDef * const gpio,
-    PinBit bit) {
-
-	auto a = startAtomic();
-
-	endAtomic(a);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desinicialitza els pins. Els deixa en la seva configuracio
-///           per defecte.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    mask: Mascara dels pins a desinicialitzar.
-///
-void internal::deinitialize(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
-
-    auto m = (uint16_t) mask;
-    for (uint8_t b = 0; b < 15; b++) {
-        if ((m & (1 << b)) != 0)
-            deinitialize(gpio, PinMask(1 << b));
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desinicialitza un pin. El deixa en la seva configuracio
-///           per defecte.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    bit: El bit del pin a desinicialitzar.
-///
-void internal::deinitialize(
-	GPIO_TypeDef * const gpio,
-	PinBit bit) {
-}

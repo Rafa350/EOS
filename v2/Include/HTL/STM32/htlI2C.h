@@ -308,20 +308,20 @@ namespace htl {
 					_instance.interruptService();
 				}
 
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				void inline initPinSCL() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
 				}
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				void inline initPinSDA() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
 				}
-				template <typename pin_>
+				template <gpio::PortID portID_, gpio::PinID pinID_>
 				void inline initPinSMBA() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_::portID, pin_::pinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
 				}
 		};
 
@@ -387,15 +387,15 @@ namespace htl {
 					_instance.interruptService();
 				}
 
-				template <typename pin_>
+				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
 				void inline initPinSCL() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::PortID, pin_::PinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
 				}
-				template <typename pin_>
+				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
 				void inline initPinSDA() {
-					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::PortID, pin_::PinID>::value;
-					pin_::initAlternate(gpio::AlternateMode::openDrain, gpio::Speed::fast, af);
+					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, portID_, pinID_>::value;
+					gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
 				}
 		};
 
