@@ -33,7 +33,11 @@ void TickGenerator::initialize(
     unsigned frequency) {
 
 	unsigned limit = 1000;
+#if defined(EOS_PLATFORM_STM32G0)
 	unsigned prescaler = (clock::getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
+#elif defined(EOS_PLATFORM_STM32F7)
+	unsigned prescaler = (clock::getClockFrequency(clock::ClockID::pclk1) / frequency) - 1;
+#endif
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
 	__devTMR->initialize(clkDiv, prescaler, limit, 0);

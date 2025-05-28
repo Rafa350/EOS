@@ -26,7 +26,7 @@
 
 #define LED1_PortID          htl::gpio::PortID::portG
 #define LED1_PinID           htl::gpio::PinID::pin13
-#define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
+#define LED1_Pin             htl::gpio::PinDeviceX<LED1_PortID, LED1_PinID>
 #define LED1_Instance        LED1_Pin::pInst
 #define LED1_StateON         true
 #define LED1_StateOFF        false
@@ -73,6 +73,22 @@
 #define SW1_StateOFF         false
 
 #endif // USE_SW1
+
+
+// -----------------------------------------------------------------------
+// SIO (Comunicacio serie a traver del depurador)
+// -----------------------------------------------------------------------
+//
+#ifdef USE_SIO
+#define EXIST_SIO
+
+#define SIO_UART_Device           htl::uart::UARTDevice1
+#define SIO_UART_InterruptHandler USART1_IRQHandler
+#define SIO_UART_IrqVector        htl::irq::VectorID::uart1
+#define SIO_TX_Pin                htl::gpio::PinA9
+#define SIO_RX_Pin                htl::gpio::PinA10
+
+#endif // USE_SIO
 
 
 // -----------------------------------------------------------------------

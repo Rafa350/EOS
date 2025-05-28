@@ -49,6 +49,7 @@ eos::Result UARTDevice::initialize() {
 
 	if (_state == State::reset) {
 
+		activate();
 		disable();
 
 		clear(_usart->CR2,
@@ -66,6 +67,7 @@ eos::Result UARTDevice::initialize() {
 			USART_CR3_SCEN |      // Deshabilita
 			USART_CR3_IREN |      // Deshabilita modus IrDA
 #endif
+			USART_CR3_DMAT |      // Desbilita DMA
 			USART_CR3_HDSEL);     // Deshabilita half duplex
 
 		_state = State::ready;
@@ -671,8 +673,8 @@ void UARTDevice::txInterruptService() {
 			_usart->DR = _txBuffer[_txCount++];
 			if (_txCount == _txMaxCount) {
 				auto a = startAtomic();
-				clearBits(_usart->CR1, USART_CR1_TXEIE);          // Deshabilita interrupcio TXE
-				setBits(_usart->CR1, USART_CR1_TCIE);             // Habilita interrupcio TC
+				clear(_usart->CR1, USART_CR1_TXEIE); // Deshabilita interrupcio TXE
+				set(_usart->CR1, USART_CR1_TCIE);    // Habilita interrupcio TC
 				endAtomic(a);
 			}
 		}
@@ -700,8 +702,8 @@ void UARTDevice::txInterruptService() {
 			_usart->TDR = _txBuffer[_txCount++];
 			if (_txCount == _txMaxCount) {
 				auto a = startAtomic();
-				clearBits(_usart->CR1, USART_CR1_TXEIE);          // Deshabilita interrupcio TXE
-				setBits(_usart->CR1, USART_CR1_TCIE);             // Habilita interrupcio TC
+				clear(_usart->CR1, USART_CR1_TXEIE); // Deshabilita interrupcio TXE
+				set(_usart->CR1, USART_CR1_TCIE);    // Habilita interrupcio TC
 				endAtomic(a);
 			}
 		}
@@ -729,8 +731,8 @@ void UARTDevice::txInterruptService() {
 			_usart->TDR = _txBuffer[_txCount++];
 			if (_txCount == _txMaxCount) {
 				auto a = startAtomic();
-				clearBits(_usart->CR1, USART_CR1_TXEIE_TXFNFIE);  // Deshabilita interrupcio TXE
-				setBits(_usart->CR1, USART_CR1_TCIE);             // Habilita interrupcio TC
+				clear(_usart->CR1, USART_CR1_TXEIE_TXFNFIE);  // Deshabilita interrupcio TXE
+				set(_usart->CR1, USART_CR1_TCIE);             // Habilita interrupcio TC
 				endAtomic(a);
 			}
 		}
@@ -952,7 +954,10 @@ static ClockSource getClockSource(
     USART_TypeDef *usart) {
 
 	static const ClockSource clockSourceTbl[] = {
-		ClockSource::pclk, ClockSource::sysclk, ClockSource::hsi, ClockSource::lse};
+		ClockSource::pclk,
+		ClockSource::sysclk,
+		ClockSource::hsi,
+		ClockSource::lse};
 
     if ((unsigned) usart == USART1_BASE) {
         unsigned sel = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
@@ -1087,8 +1092,14 @@ static unsigned getClockFrequency(
                 ((unsigned) usart == USART6_BASE))
                 return clock::getClockFrequency(clock::ClockID::pclk2);
             else
+                return clock::getClockFrequency(clock::ClockID::pclk1);
+#elif defined(EOS_PLATFORM_STM32F4)
+            return clock::getClockFrequency(clock::ClockID::pclk1);
+#elif defined(EOS_PLATFORM_STM32G0)
+            return clock::getClockFrequency(clock::ClockID::pclk);
+#else
+#error
 #endif
-                return clock::getClockFrequency(clock::ClockID::pclk);
 
         case ClockSource::sysclk:
             return clock::getClockFrequency(clock::ClockID::sysclk);

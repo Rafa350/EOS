@@ -8,16 +8,18 @@
 #endif
 
 
-#define RCC_CFGR_SW_HSISYS        (0 << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_HSE           (1 << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_PLLRCLK       (2 << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_LSI           (3 << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_LSE           (4 << RCC_CFGR_SW_Pos)
+struct CFGR_SW {
+	static constexpr uint32_t Mask    = RCC_CFGR_SW_Msk;
+	static constexpr uint32_t HSISYS  = 0 << RCC_CFGR_SW_Pos;
+	static constexpr uint32_t HSE     = 1 << RCC_CFGR_SW_Pos;
+	static constexpr uint32_t PLLRCLK = 2 << RCC_CFGR_SW_Pos;
+	static constexpr uint32_t LSI     = 3 << RCC_CFGR_SW_Pos;
+	static constexpr uint32_t LSE     = 4 << RCC_CFGR_SW_Pos;
+};
 
-
-using namespace htl::bits;
-
-namespace htl::clock {
+struct CFGR_HPRE {
+	static constexpr uint32_t Mask    = RCC_CFGR_HPRE_Msk;
+};
 
 
 /// ----------------------------------------------------------------------
@@ -25,43 +27,44 @@ namespace htl::clock {
 /// \param    source: L'origen.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool setSysClkSource(
+bool htl::clock::sysclkSetSource(
 	SysClkSource source) {
 
-	uint32_t tmp = RCC->CFGR;
+	auto CFGR = RCC->CFGR;
 
-	tmp &= ~RCC_CFGR_SW_Msk;
+	bits::clear(CFGR, CFGR_SW::Mask);
 	switch (source) {
 		case SysClkSource::hse:
 			if (!hseIsEnabled())
 				return false;
-			tmp |= RCC_CFGR_SW_HSE;
+			bits::set(CFGR, CFGR_SW::HSE);
 			break;
 
 		case SysClkSource::lsi:
 			if (!lsiIsEnabled())
 				return false;
-			tmp |= RCC_CFGR_SW_LSI;
+			bits::set(CFGR, CFGR_SW::LSI);
 			break;
 
 		case SysClkSource::lse:
 			if (!lseIsEnabled())
 				return false;
-			tmp |= RCC_CFGR_SW_LSE;
+			bits::set(CFGR, CFGR_SW::LSE);
 			break;
 
 		case SysClkSource::pllrclk:
             if (!pllIsEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN_Msk) == 0))
                 return false;
-			tmp |= RCC_CFGR_SW_PLLRCLK;
+			bits::set(CFGR, CFGR_SW::PLLRCLK);
 			break;
 
 		case SysClkSource::hsisys:
-			tmp |= RCC_CFGR_SW_HSISYS;
+			bits::set(CFGR, CFGR_SW::HSISYS);
 			break;
 	}
 
-	RCC->CFGR = tmp;
+	RCC->CFGR = CFGR;
+
 	while (((RCC->CFGR & RCC_CFGR_SWS_Msk) >> RCC_CFGR_SWS_Pos) != ((RCC->CFGR & RCC_CFGR_SW_Msk) >> RCC_CFGR_SW_Pos))
 		continue;
 
@@ -73,13 +76,13 @@ bool setSysClkSource(
 /// \brief    Selecciona el divisor del rellotge HSISYS
 /// \param    value: El valor del divisor.
 ///
-void setHsisysPrescaler(
+void htl::clock::hsisysSetPrescaler(
 	HsisysPrescaler value) {
 
-	uint32_t tmp = RCC->CR;
-	tmp &= ~RCC_CR_HSIDIV;
-	tmp |= ((uint32_t) value) << RCC_CR_HSIDIV_Pos;
-	RCC->CR = tmp;
+	auto CR = RCC->CR;
+	bits::clear(CR, RCC_CR_HSIDIV);
+	bits::set(CR, ((uint32_t) value) << RCC_CR_HSIDIV_Pos);
+	RCC->CR = CR;
 }
 
 
@@ -87,46 +90,46 @@ void setHsisysPrescaler(
 /// \brief    Selecciona el valor del divisor del rellotge HClk (AHB)
 /// \param    value: El valor.
 ///
-void setHClkPrescaler(
+void htl::clock::hclkSetPrescaler(
 	HClkPrescaler value) {
 
 	uint32_t tmp = RCC->CFGR;
 
 	tmp &= ~RCC_CFGR_HPRE_Msk;
 	switch (value) {
-        case HClkPrescaler::_1:
+        case HClkPrescaler::div1:
             tmp |= 0b0000 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_2:
+        case HClkPrescaler::div2:
             tmp |= 0b1000 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_4:
+        case HClkPrescaler::div4:
             tmp |= 0b1001 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_8:
+        case HClkPrescaler::div8:
             tmp |= 0b1010 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_16:
+        case HClkPrescaler::div16:
             tmp |= 0b1011 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_64:
+        case HClkPrescaler::div64:
             tmp |= 0b1100 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_128:
+        case HClkPrescaler::div128:
             tmp |= 0b1101 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_256:
+        case HClkPrescaler::div256:
             tmp |= 0b1110 << RCC_CFGR_HPRE_Pos;
             break;
 
-        case HClkPrescaler::_512:
+        case HClkPrescaler::div512:
             tmp |= 0b1111 << RCC_CFGR_HPRE_Pos;
             break;
 	}
@@ -139,25 +142,24 @@ void setHClkPrescaler(
 /// \brief    Selecciona el valor del divisor del rellotge PClk (APB)
 /// \param    value: El valor.
 ///
-void setPClkPrescaler(
+void htl::clock::pclkSetPrescaler(
 	PClkPrescaler value) {
 
 	static const uint32_t tbl[] = { 0b000, 0b100, 0b101, 0b110, 0b111 };
 
-	uint32_t tmp = RCC->CFGR;
-
-	tmp &= ~RCC_CFGR_PPRE_Msk;
-	tmp |= tbl[uint32_t(value)] << RCC_CFGR_PPRE_Pos;
-	RCC->CFGR = tmp;
+	uint32_t CFGR = RCC->CFGR;
+	bits::clear(CFGR, RCC_CFGR_PPRE_Msk);
+	bits::set(CFGR, tbl[(uint32_t) value] << RCC_CFGR_PPRE_Pos);
+	RCC->CFGR = CFGR;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el rellotge HSI
 ///
-void hsi16Enable() {
+void htl::clock::hsi16Enable() {
 
-	set(RCC->CR, RCC_CR_HSION);
+	bits::set(RCC->CR, RCC_CR_HSION);
 	while (!hsi16IsEnabled())
 		continue;
 }
@@ -166,9 +168,9 @@ void hsi16Enable() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el rellotge HSI
 ///
-void hsi16Disable() {
+void htl::clock::hsi16Disable() {
 
-	clear(RCC->CR, RCC_CR_HSION);
+	bits::clear(RCC->CR, RCC_CR_HSION);
 	while (hsi16IsEnabled())
 		continue;
 }
@@ -178,18 +180,18 @@ void hsi16Disable() {
 /// \brief    Comprova si el rellotge HSI es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool hsi16IsEnabled() {
+bool htl::clock::hsi16IsEnabled() {
 
-    return isSet(RCC->CR, RCC_CR_HSION);
+    return bits::isSet(RCC->CR, RCC_CR_HSION);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el rellotge LSI
 ///
-void lsiEnable() {
+void htl::clock::lsiEnable() {
 
-	set(RCC->CR, RCC_CSR_LSION);
+	bits::set(RCC->CR, RCC_CSR_LSION);
 	while (!lsiIsEnabled())
 		continue;
 }
@@ -198,9 +200,9 @@ void lsiEnable() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el rellotge LSI
 ///
-void lsiDisable() {
+void htl::clock::lsiDisable() {
 
-	clear(RCC->CR, RCC_CSR_LSION);
+	bits::clear(RCC->CR, RCC_CSR_LSION);
 	while (lsiIsEnabled())
 		continue;
 }
@@ -210,9 +212,9 @@ void lsiDisable() {
 /// \brief    Comprova si el rellotge LSI es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool lsiIsEnabled() {
+bool htl::clock::lsiIsEnabled() {
 
-    return isSet(RCC->CSR, RCC_CSR_LSION);
+    return bits::isSet(RCC->CSR, RCC_CSR_LSION);
 }
 
 
@@ -220,22 +222,22 @@ bool lsiIsEnabled() {
 /// \brief    Activa el rellotge HSE.
 /// \param    bypass: El modus del bypass
 ///
-void hseEnable(
+void htl::clock::hseEnable(
 	HseBypassMode bypass) {
 
 	switch (bypass) {
 		case HseBypassMode::on:
-			RCC->CR |= RCC_CR_HSEBYP;
+			bits::set(RCC->CR, RCC_CR_HSEBYP);
 			break;
 
 		case HseBypassMode::off:
-			RCC->CR &= ~RCC_CR_HSEBYP;
+			bits::clear(RCC->CR, RCC_CR_HSEBYP);
 			break;
 
 		default:
 			break;
 	}
-	set(RCC->CR, RCC_CR_HSEON);
+	bits::set(RCC->CR, RCC_CR_HSEON);
 	while (!hseIsEnabled())
 		continue;
 }
@@ -244,9 +246,9 @@ void hseEnable(
 /// ----------------------------------------------------------------------
 /// \brief   Desactiva el rellotge HSE.
 ///
-void hseDisable() {
+void htl::clock::hseDisable() {
 
-	clear(RCC->CR, RCC_CR_HSEON);
+	bits::clear(RCC->CR, RCC_CR_HSEON);
 	while (hseIsEnabled())
 		continue;
 }
@@ -256,18 +258,18 @@ void hseDisable() {
 /// \brief    Comprova si el rellotge HSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool hseIsEnabled() {
+bool htl::clock::hseIsEnabled() {
 
-    return isSet(RCC->CR, RCC_CR_HSERDY);
+    return bits::isSet(RCC->CR, RCC_CR_HSERDY);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el rellotge LSE.
 ///
-void lseEnable() {
+void htl::clock::lseEnable() {
 
-	set(RCC->BDCR, RCC_BDCR_LSEON);
+	bits::set(RCC->BDCR, RCC_BDCR_LSEON);
 	while (!lseIsEnabled())
 		continue;
 }
@@ -276,9 +278,9 @@ void lseEnable() {
 /// ----------------------------------------------------------------------
 /// \brief   Desactiva el rellotge LSE.
 ///
-void lseDisable() {
+void htl::clock::lseDisable() {
 
-	clear(RCC->BDCR, RCC_BDCR_LSEON);
+	bits::clear(RCC->BDCR, RCC_BDCR_LSEON);
 	while (lseIsEnabled())
 		continue;
 }
@@ -288,18 +290,18 @@ void lseDisable() {
 /// \brief    Comprova si el rellotge LSE es actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool lseIsEnabled() {
+bool htl::clock::lseIsEnabled() {
 
-    return isSet(RCC->BDCR, RCC_BDCR_LSERDY);
+    return bits::isSet(RCC->BDCR, RCC_BDCR_LSERDY);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el PLL
 ///
-void pllEnable() {
+void htl::clock::pllEnable() {
 
-	set(RCC->CR, RCC_CR_PLLON);
+	bits::set(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) == 0)
 		continue;
 }
@@ -308,17 +310,13 @@ void pllEnable() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el PLL
 ///
-void pllDisable() {
+void htl::clock::pllDisable() {
 
-	clear(RCC->CR, RCC_CR_PLLON);
+	bits::clear(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
 		continue;
 
-	uint32_t tmp = RCC->PLLCFGR;
-	tmp &= ~RCC_PLLCFGR_PLLPEN;
-	tmp &= ~RCC_PLLCFGR_PLLQEN;
-	tmp &= ~RCC_PLLCFGR_PLLREN;
-	RCC->PLLCFGR = tmp;
+	bits::clear(RCC->PLLCFGR, RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLQEN | RCC_PLLCFGR_PLLREN);
 }
 
 
@@ -326,20 +324,20 @@ void pllDisable() {
 /// \brief    Comprova si el PLL esta activat.
 /// \return   True si esta activat, false en cas contrari.
 ///
-bool pllIsEnabled() {
+bool htl::clock::pllIsEnabled() {
 
-    return ((RCC->CR & RCC_CR_PLLON) != 0) && ((RCC->CR & RCC_CR_PLLRDY) != 0);
+    return (bits::isSet(RCC->CR, RCC_CR_PLLON) && bits::isSet(RCC->CR, RCC_CR_PLLRDY));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el PLL.
 /// \param    source: Rellotge font.
-/// \param    multiplier: Factor de multiplicacio (N).
-/// \param    divider: Factor de divisio (M).
+/// \param    multiplier: Factor de multiplicacio.
+/// \param    divider: Factor de divisio.
 /// \return   True si s'ha realitzat l'operacio correctament.
 ///
-bool configurePll(
+bool htl::clock::pllConfigure(
 	PllSource source,
 	unsigned multiplier,
 	unsigned divider) {
@@ -350,29 +348,26 @@ bool configurePll(
 	if (clock::pllIsEnabled())
 		return false;
 
-    uint32_t tmp = RCC->PLLCFGR;
+    auto PLLCFGR = RCC->PLLCFGR;
 
-	tmp &= ~RCC_PLLCFGR_PLLSRC_Msk;
+	bits::clear(PLLCFGR, RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLM | RCC_PLLCFGR_PLLN);
 	switch (source) {
 		case PllSource::hsi16:
-            if (!clock::hsi16IsEnabled())
+            if (!hsi16IsEnabled())
                 return false;
-			tmp |= 0b10 << RCC_PLLCFGR_PLLSRC_Pos;
+			bits::set(PLLCFGR, (typeof(PLLCFGR)) (0b10 << RCC_PLLCFGR_PLLSRC_Pos));
 			break;
 
 		case PllSource::hse:
-			if (!clock::hseIsEnabled())
+			if (!hseIsEnabled())
 				return false;
-			tmp |= 0b11 << RCC_PLLCFGR_PLLSRC_Pos;
+			bits::set(PLLCFGR, (typeof(PLLCFGR)) (0b11 <<  RCC_PLLCFGR_PLLSRC_Pos));
 			break;
 	}
+	bits::set(PLLCFGR, ((divider - 1) << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
+	bits::set(PLLCFGR,  (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
 
-	tmp &= ~RCC_PLLCFGR_PLLM_Msk;
-	tmp &= ~RCC_PLLCFGR_PLLN_Msk;
-	tmp |= ((divider - 1) << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk;
-	tmp |= (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk;
-
-	RCC->PLLCFGR = tmp;
+	RCC->PLLCFGR = PLLCFGR;
 
 	return true;
 }
@@ -383,7 +378,7 @@ bool configurePll(
 /// \param    divider: El valor del divisor.
 /// \return   True si s'ha realitzat l'operacio correctament.
 ///
-bool configurePllP(
+bool htl::clock::pllSetPDivider(
 	unsigned divider) {
 
 	if (divider < 2 || divider > 32)
@@ -409,7 +404,7 @@ bool configurePllP(
 /// \param    divider: El valor del divisor.
 /// \return   True si s'ha realitzat l'operacio correctament.
 ///
-bool configurePllQ(
+bool htl::clock::pllSetQDivider(
 	unsigned divider) {
 
 	if (divider < 2 || divider > 8)
@@ -435,7 +430,7 @@ bool configurePllQ(
 /// \param    divider: El valor del divisor.
 /// \return   True si s'ha realitzat l'operacio correctament.
 ///
-bool configurePllR(
+bool htl::clock::pllSetRDivider(
 	unsigned divider) {
 
 	if (divider < 2 || divider > 8)
@@ -462,7 +457,7 @@ bool configurePllR(
 /// \param    source: El clock origen.
 /// \param    divider: El divisor.
 ///
-void configureMCO(
+void htl::clock::mcoConfigure(
 	clock::MCOOutput output,
 	clock::MCOSource source,
 	clock::MCODivider divider) {
@@ -501,14 +496,14 @@ void configureMCO(
 
 	uint32_t tmp = RCC->CFGR;
 	switch (output) {
-		case MCOOutput::_1:
+		case MCOOutput::out1:
 			tmp &= ~RCC_CFGR_MCOSEL_Msk;
 			tmp |= (src << RCC_CFGR_MCOSEL_Pos) & RCC_CFGR_MCOSEL_Msk;
 			tmp |= (div << RCC_CFGR_MCOPRE_Pos) & RCC_CFGR_MCOPRE_Msk;
 			break;
 
 		#ifdef EOS_PLATFORM_STM32G0B0
-			case MCOOutput::_2:
+			case MCOOutput::out2:
 				tmp &= ~RCC_CFGR_MCO2SEL_Msk;
 				tmp |= (src << RCC_CFGR_MCO2SEL_Pos) & RCC_CFGR__MCO2PRE_Msk;
 				tmp |= (div << RCC_CFGR_MCO2PRE_Pos) & RCC_CFGR_MCO2PRE_Msk;
@@ -528,7 +523,7 @@ void configureMCO(
 /// \param    clockId: Identificador del rellotge.
 /// \return   La frequencia en hz, o zero en cas d'error.
 ///
-unsigned getClockFrequency(
+unsigned htl::clock::getClockFrequency(
 	ClockID clockId) {
 
 	static const uint8_t hsiDividerTbl[8] = { 0, 1, 2, 3, 4, 5, 6, 7};
@@ -539,9 +534,9 @@ unsigned getClockFrequency(
 
 	switch (clockId) {
 		case ClockID::sysclk:
-			switch (RCC->CFGR & RCC_CFGR_SWS_Msk) {
+			switch (RCC->CFGR & RCC_CFGR_SWS) {
 				case RCC_CFGR_SWS_HSISYS:
-					fclk = clock::getClockFrequency(ClockID::hsisys);
+					fclk = getClockFrequency(ClockID::hsisys);
 					break;
 
 				case RCC_CFGR_SWS_HSE:
@@ -567,19 +562,19 @@ unsigned getClockFrequency(
 			break;
 
 		case ClockID::pclk:
-			fclk = clock::getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
+			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
 			break;
 
 		case ClockID::timpclk:
-			fclk = clock::getClockFrequency(ClockID::pclk) << (((RCC->CFGR & ~RCC_CFGR_PPRE_Msk) == 0) ? 0 : 1);
+			fclk = getClockFrequency(ClockID::pclk) << (((RCC->CFGR & ~RCC_CFGR_PPRE_Msk) == 0) ? 0 : 1);
 			break;
 
 		case ClockID::hclk:
-			fclk = clock::getClockFrequency(ClockID::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
+			fclk = getClockFrequency(ClockID::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 			break;
 
 		case ClockID::hclk8:
-			fclk = clock::getClockFrequency(ClockID::hclk) / 8;
+			fclk = getClockFrequency(ClockID::hclk) / 8;
 			break;
 
 		case ClockID::hsisys:
@@ -613,4 +608,3 @@ unsigned getClockFrequency(
 	return fclk;
 }
 
-}

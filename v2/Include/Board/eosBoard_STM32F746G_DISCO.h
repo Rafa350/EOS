@@ -35,7 +35,7 @@
 
 #define LED1_PortID          htl::gpio::PortID::portI
 #define LED1_PinID           htl::gpio::PinID::pin1
-#define LED1_Pin             htl::gpio::PinX<LED1_PortID, LED1_PinID>
+#define LED1_Pin             htl::gpio::PinDeviceX<LED1_PortID, LED1_PinID>
 #define LED1_Instance        LED1_Pin::pInst
 #define LED1_StateON         true
 #define LED1_StateOFF        false
@@ -57,7 +57,7 @@
 
 #define SW1_PortID           htl::gpio::PortID::portI
 #define SW1_PinID            htl::gpio::PinID::pin13
-#define SW1_Pin              htl::gpio::PinX<SW1_PortID, SW1_PinID>
+#define SW1_Pin              htl::gpio::PinDeviceX<SW1_PortID, SW1_PinID>
 #define SW1_FastPin          htl::gpio::FastPinX<SW1_PortID, SW1_PinID>
 #define SW1_PinInterrupt     htl::gpio::PinInterruptX<SW1_PortID, SW1_PinID>
 #define SW1_PinInitialize    htl::gpio::pInst->initInput(htl::gpio::InputMode::floating)

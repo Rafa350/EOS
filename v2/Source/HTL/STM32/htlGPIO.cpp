@@ -85,18 +85,19 @@ void PinDevice::initialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el pin en modun entrada digital.
+/// \brief    Inicialitza el pin com entrada digital.
 /// \param    mode: El tipus d'entrada.
 ///
 void PinDevice::initInput(
 	InputMode mode) const {
 
+	activate();
 	htl::gpio::initInput(_gpio, _mask, mode);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin en modus soirtida digital.
+/// \brief    Inicialitza un pin com sortida digital.
 /// \parAM    mode: El tipus de sortida.
 /// \param    speed: Velocitat de conmutacio.
 /// \param    state: L'estat inicial de la sortida.
@@ -106,6 +107,7 @@ void PinDevice::initOutput(
 	Speed speed,
 	bool state) const {
 
+	activate();
 	htl::gpio::initOutput(_gpio, _mask, mode, speed, state);
 }
 
@@ -115,7 +117,38 @@ void PinDevice::initOutput(
 ///
 void PinDevice::initAnalogic() const {
 
+	activate();
 	htl::gpio::initAnalogic(_gpio, _mask);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el pin com entrada digital alternativa.
+/// \param    mode: El tipus d'entrada.
+/// \param    af: Funcio alternativa.
+///
+void PinDevice::initAlternateInput(
+	InputMode mode,
+	AlternateFunction af) const {
+
+	activate();
+	htl::gpio::initAlternateInput(_gpio, _mask, mode, af);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza un pin com sortida digital alternativa.
+/// \parAM    mode: El tipus de sortida.
+/// \param    speed: Velocitat de conmutacio.
+/// \param    af: La funcio alternativa.
+///
+void PinDevice::initAlternateOutput(
+	OutputMode mode,
+	Speed speed,
+	AlternateFunction af) const {
+
+	activate();
+	htl::gpio::initAlternateOutput(_gpio, _mask, mode, speed, af);
 }
 
 
@@ -124,6 +157,7 @@ void PinDevice::initAnalogic() const {
 ///
 void PinDevice::deinitialize() const {
 
+	deactivate();
 	htl::gpio::deinitialize(_gpio, _mask);
 }
 

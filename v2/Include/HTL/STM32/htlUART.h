@@ -10,6 +10,7 @@
 
 // HTL main include (Include options)
 //
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htl.h"
 
 
@@ -271,6 +272,10 @@ namespace htl {
 
 			protected:
 				UARTDevice(USART_TypeDef *usart);
+
+				virtual void activate() const = 0;
+				virtual void deactivate() const = 0;
+
 #if HTL_UART_OPTION_IRQ == 1
 				void interruptService();
 				void txInterruptService();
@@ -340,17 +345,16 @@ namespace htl {
 			private:
 				UARTDeviceX() :
 					UARTDevice {reinterpret_cast<USART_TypeDef*>(_usartAddr)} {
-					activate();
 				}
 
 			protected:
-				void activate() {
+				void activate() const override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
 
-				void deactivate() {
+				void deactivate() const override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
@@ -362,28 +366,28 @@ namespace htl {
 				}
 #endif
 
-				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+				template <typename pin_>
 				inline void initPinTX() {
-					auto af = UARTPins<PinFunction::tx, portID_, pinID_>::value;
-					htl::gpio::initAlternateOutput<portID_, pinID_>(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::fast, af);
+					auto af = UARTPins<PinFunction::tx, pin_::portID, pin_::pinID>::value;
+					pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
-				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+				template <typename pin_>
 				inline void initPinRX() {
-					auto af = UARTPins<PinFunction::rx, portID_, pinID_>::value;
-					htl::gpio::initAlternateInput<portID_, pinID_>(htl::gpio::InputMode::floating, af);
+					auto af = UARTPins<PinFunction::rx, pin_::portID, pin_::pinID>::value;
+					pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
-				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+				template <typename pin_>
 				inline void initPinCTS() {
-					auto af = UARTPins<PinFunction::cts, portID_, pinID_>::value;
-					htl::gpio::initAlternateOutput<portID_, pinID_>(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::fast, af);
+					auto af = UARTPins<PinFunction::cts, pin_::portID, pin_::pinID>::value;
+					pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
-				template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+				template <typename pin_>
 				inline void initPinRTS() {
-					auto af = UARTPins<PinFunction::rts, portID_, pinID_>::value;
-					htl::gpio::initAlternateInput<portID_, pinID_>(htl::gpio::InputMode::floating, af);
+					auto af = UARTPins<PinFunction::rts, pin_::portID, pin_::pinID>::value;
+					pin_::pInst->initAlternateInput(gpio::InputMode::floating, af);
 				}
 		};
 

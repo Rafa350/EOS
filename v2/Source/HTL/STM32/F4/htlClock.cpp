@@ -14,19 +14,19 @@ bool htl::clock::setSysClkSource(
 
 	tmp &= ~RCC_CFGR_SW_Msk;
 	switch (source) {
-		case htl::clock::SysClkSource::hse:
+		case SysClkSource::hse:
             if (!htl::clock::isHseEnabled())
                 return false;
 			tmp |= RCC_CFGR_SW_HSE;
 			break;
 
-		case htl::clock::SysClkSource::hsi:
+		case SysClkSource::hsi:
             if (!htl::clock::isHsiEnabled())
                 return false;
 			tmp |= RCC_CFGR_SW_HSI;
 			break;
 
-		case htl::clock::SysClkSource::pll:
+		case SysClkSource::pll:
             if (!htl::clock::isPllEnabled())
                 return false;
 			tmp |= RCC_CFGR_SW_PLL;
@@ -219,7 +219,7 @@ unsigned htl::clock::getClockFrequency(
 	unsigned fclk = 0;
 
 	switch (clockID) {
-		case htl::clock::ClockID::sysclk:
+		case ClockID::sysclk:
 			switch (RCC->CFGR & RCC_CFGR_SWS_Msk) {
 				case RCC_CFGR_SWS_HSE:
 					fclk = CLOCK_HSE_FREQUENCY;
@@ -230,34 +230,45 @@ unsigned htl::clock::getClockFrequency(
 					break;
 
 				case RCC_CFGR_SWS_PLL:
-#if defined(EOS_PLATFORM_STM32F0)
-					if ((RCC->CFGR & RCC_CFGR_PLLSRC_Msk) == RCC_CFGR_PLLSRC_HSI_DIV2)
-						fclk = CLOCK_HSI_FREQUENCY / 2;
+					if ((RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC_Msk) == RCC_PLLCFGR_PLLSRC_HSI)
+						fclk = CLOCK_HSI_FREQUENCY;
 					else
-						fclk = CLOCK_HSE_FREQUENCY / pllHseDividerTbl[(RCC->CFGR2 & RCC_CFGR2_PREDIV_Msk) >> RCC_CFGR2_PREDIV_Pos];
-					fclk *= pllMultiplierTbl[(RCC->CFGR & RCC_CFGR_PLLMUL_Msk) >> RCC_CFGR_PLLMUL_Pos];
-#endif
+						fclk = CLOCK_HSE_FREQUENCY;
+					fclk *= pllMultiplierTbl[(RCC->PLLCFGR & RCC_PLLCFGR_PLLMUL_Msk) >> RCC_PLLCFGR_PLLMUL_Pos];
 					break;
 			}
 			break;
 
-		case htl::clock::ClockID::hclk:
+		case ClockID::hclk:
 			fclk = getClockFrequency(ClockID::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 			break;
 
-		case htl::clock::ClockID::hse:
+		case ClockID::pclk1:
+			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE1_Msk) >> RCC_CFGR_PPRE1_Pos];
+			break;
+
+		case ClockID::pclk2:
+			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE2_Msk) >> RCC_CFGR_PPRE2_Pos];
+			break;
+
+		case ClockID::timpclk:
+			fclk = getClockFrequency(ClockID::pclk1) << (((RCC->CFGR & ~RCC_CFGR_PPRE1_Msk) == 0) ? 0 : 1);
+			break;
+
+
+		case ClockID::hse:
 			fclk = CLOCK_HSE_FREQUENCY;
 			break;
 
-		case htl::clock::ClockID::hsi:
+		case ClockID::hsi:
 			fclk = CLOCK_HSI_FREQUENCY;
 			break;
 
-		case htl::clock::ClockID::lse:
+		case ClockID::lse:
 			fclk = CLOCK_LSE_FREQUENCY;
 			break;
 
-		case htl::clock::ClockID::lsi:
+		case ClockID::lsi:
 			fclk = CLOCK_LSI_FREQUENCY;
 			break;
 	}

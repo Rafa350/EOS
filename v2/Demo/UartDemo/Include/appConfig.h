@@ -12,12 +12,12 @@ namespace app {
 
     namespace hw {
 
-        using DevUART = htl::uart::UARTDevice1;
-        using PinTX = htl::gpio::PinA9;
-        using PinRX = htl::gpio::PinB7;
+        using DevUART = SIO_UART_Device;
+        using PinTX = SIO_TX_Pin;
+        using PinRX = SIO_RX_Pin;
 
         constexpr auto devUART = DevUART::pInst;
-        constexpr auto devUART_VectorID = htl::irq::VectorID::uart1;
+        constexpr auto devUART_VectorID = SIO_UART_IrqVector;
     }
 }
 

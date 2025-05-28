@@ -42,8 +42,8 @@ namespace htl {
 		};
 
 		enum class MCOOutput {
-			_1,
-			_2
+			out1,
+			out2
 		};
 
 		enum class MCOSource {
@@ -57,14 +57,14 @@ namespace htl {
 		};
 
 		enum class MCODivider {
-			_1,
-			_2,
-			_4,
-			_8,
-			_16,
-			_32,
-			_64,
-			_128
+			div1,
+			div2,
+			div4,
+			div8,
+			div16,
+			div32,
+			div64,
+			div128
 		};
 
 		enum class PllSource {
@@ -81,34 +81,34 @@ namespace htl {
 		};
 
 		enum class HsisysPrescaler {
-			_1,
-			_2,
-			_4,
-			_8,
-			_16,
-			_32,
-			_64,
-			_128
+			div1,
+			div2,
+			div4,
+			div8,
+			div16,
+			div32,
+			div64,
+			div128
 		};
 
 		enum class HClkPrescaler {
-			_1,
-			_2,
-			_4,
-			_8,
-			_16,
-			_64,
-			_128,
-			_256,
-			_512
+			div1,
+			div2,
+			div4,
+			div8,
+			div16,
+			div64,
+			div128,
+			div256,
+			div512
 		};
 
 		enum class PClkPrescaler {
-			_1,
-			_2,
-			_4,
-			_8,
-			_16
+			div1,
+			div2,
+			div4,
+			div8,
+			div16
 		};
 
 		void hsi16Enable();
@@ -130,17 +130,17 @@ namespace htl {
 		void pllEnable();
 		void pllDisable();
 		bool pllIsEnabled();
-		bool configurePll(PllSource source, unsigned multiplier, unsigned divider);
-		bool configurePllP(unsigned divider);
-		bool configurePllQ(unsigned divider);
-		bool configurePllR(unsigned divider);
+		bool pllConfigure(PllSource source, unsigned multiplier, unsigned divider);
+		bool pllSetPDivider(unsigned divider);
+		bool pllSetQDivider(unsigned divider);
+		bool pllSetRDivider(unsigned divider);
 
-		void configureMCO(MCOOutput output, MCOSource source, MCODivider divider);
+		void mcoConfigure(MCOOutput output, MCOSource source, MCODivider divider);
 
-		bool setSysClkSource(SysClkSource source);
-		void setHsisysPrescaler(HsisysPrescaler value);
-		void setHClkPrescaler(HClkPrescaler value);
-		void setPClkPrescaler(PClkPrescaler value);
+		bool sysclkSetSource(SysClkSource source);
+		void hsisysSetPrescaler(HsisysPrescaler value);
+		void hclkSetPrescaler(HClkPrescaler value);
+		void pclkSetPrescaler(PClkPrescaler value);
 
 		unsigned getClockFrequency(ClockID clockId);
 	}

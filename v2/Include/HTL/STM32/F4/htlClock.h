@@ -16,11 +16,12 @@ namespace htl {
 
         enum class ClockID {
             sysclk,
-            pclk,
+            pclk1,
+			pclk2,
+			timpclk,
             hclk,
             hse,
             hsi,
-            hsi14,
             lse,
             lsi
         };
@@ -116,7 +117,8 @@ namespace htl {
 
 		bool setSysClkSource(SysClkSource source);
 		void setHClkPrescaler(HClkPrescaler value);
-		void setPClkPrescaler(PClkPrescaler value);
+		void setPClk1Prescaler(PClkPrescaler value);
+		void setPClk2Prescaler(PClkPrescaler value);
 
 		unsigned getClockFrequency(ClockID clockId);
     }

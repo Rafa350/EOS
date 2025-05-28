@@ -137,9 +137,11 @@ namespace htl {
 
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
+
 				void interruptService();
-				virtual void activate() = 0;
-				virtual void deactivate() = 0;
+
+				virtual void activate() const = 0;
+				virtual void deactivate() const = 0;
 
 			public:
 				eos::Result initialize(Mode mode, ClkPolarity clkPolarity,
@@ -153,23 +155,23 @@ namespace htl {
 				}
 				eos::Result deinitialize();
 
-				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
+				void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
 					_erNotify.set(event, enabled);
 				}
-				inline void enableNotifyEvent() {
+				void enableNotifyEvent() {
 					_erNotify.enable();
 				}
-				inline void disableNotifyEvent() {
+				void disableNotifyEvent() {
 					_erNotify.disable();
 				}
 
 				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
 				        unsigned bufferSize, unsigned timeout);
-				inline eos::Result receive(uint8_t *rxBuffer, unsigned bufferSize,
+				eos::Result receive(uint8_t *rxBuffer, unsigned bufferSize,
 				        unsigned timeout)  {
 					return transmit(nullptr, rxBuffer, bufferSize, timeout);
 				}
-                inline eos::Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
+                eos::Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
                         unsigned timeout) {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
@@ -177,10 +179,10 @@ namespace htl {
                 eos::Result transmit_DMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, unsigned bufferSize);
 
-                inline State getState() const { return _state; }
-                inline bool isValid() const { return _state != State::invalid; }
-				inline bool isReady() const { return _state == State::ready; }
-				inline bool isBusy() const { return _state != State::ready; }
+                State getState() const { return _state; }
+                bool isValid() const { return _state != State::invalid; }
+				bool isReady() const { return _state == State::ready; }
+				bool isBusy() const { return _state != State::ready; }
 		};
 
 
@@ -216,35 +218,35 @@ namespace htl {
 				}
 
 			protected:
-				void activate() override {
+				void activate() const override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p |= 1 << _rccEnablePos;
 					__DSB();
 				}
-				void deactivate() override {
+				void deactivate() const override {
 					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
 					*p &= ~(1 << _rccEnablePos);
 				}
 
 			public:
-				inline static void interruptHandler() {
+				static void interruptHandler() {
 					_instance.interruptService();
 				}
 
-				template <gpio::PortID portID_, gpio::PinID pinID_>
+				template <typename pin_>
 				void initPinSCK() {
-				    auto af = SPIPins<PinFunction::sck, portID_, pinID_>::value;
-                    gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
+				    auto af = SPIPins<PinFunction::sck, pin_::portID, pin_::pinID>::value;
+				    pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
-				template <gpio::PortID portID_, gpio::PinID pinID_>
+				template <typename pin_>
 				void initPinMOSI() {
-					auto af = SPIPins<PinFunction::mosi, portID_, pinID_>::value;
-                    gpio::initAlternateInput<portID_, pinID_>(gpio::InputMode::floating, af);
+					auto af = SPIPins<PinFunction::mosi, pin_::portID, pin_::pinID>::value;
+					pin_::pInst->initAlternateInput(gpio::InputMode::floating, af);
 				}
-				template <gpio::PortID portID_, gpio::PinID pinID_>
+				template <typename pin_>
 				void initPinMISO() {
-					auto af = SPIPins<PinFunction::miso, portID_, pinID_>::value;
-                    gpio::initAlternateOutput<portID_, pinID_>(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
+					auto af = SPIPins<PinFunction::miso, pin_::portID, pin_::pinID>::value;
+                    pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 		};
 

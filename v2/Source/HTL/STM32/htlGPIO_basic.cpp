@@ -38,117 +38,77 @@ struct AF {
 };
 
 
-#ifdef HTL_GPIOA_EXIST
-static uint16_t __activeA = 0; // Control de l'activacio del modul GPIOA
-#endif
-#ifdef HTL_GPIOB_EXIST
-static uint16_t __activeB = 0; // Control de l'activacio del modul GPIOB
-#endif
-#ifdef HTL_GPIOC_EXIST
-static uint16_t __activeC = 0; // Control de l'activacio del modul GPIOC
-#endif
-#ifdef HTL_GPIOD_EXIST
-static uint16_t __activeD = 0; // Control de l'activacio del modul GPIOD
-#endif
-#ifdef HTL_GPIOE_EXIST
-static uint16_t __activeE = 0; // Control de l'activacio del modul GPIOE
-#endif
-#ifdef HTL_GPIOF_EXIST
-static uint16_t __activeF = 0; // Control de l'activacio del modul GPIOF
-#endif
-#ifdef HTL_GPIOG_EXIST
-static uint16_t __activeG = 0; // Control de l'activacio del modul GPIOG
-#endif
-#ifdef HTL_GPIOH_EXIST
-static uint16_t __activeH = 0; // Control de l'activacio del modul GPIOH
-#endif
-#ifdef HTL_GPIOI_EXIST
-static uint16_t __activeI = 0; // Control de l'activacio del modul GPIOI
-#endif
-#ifdef HTL_GPIOJ_EXIST
-static uint16_t __activeJ = 0; // Control de l'activacio del modul GPIOJ
-#endif
-#ifdef HTL_GPIOK_EXIST
-static uint16_t __activeK = 0; // Control de l'activacio del modul GPIOK
-#endif
-
-
 static uint32_t getSpeedValue(htl::gpio::Speed speed);
 static uint32_t getOutputTypeValue(htl::gpio::OutputMode mode);
 static uint32_t getPullUpDownValue(htl::gpio::InputMode mode);
 static uint32_t getPullUpDownValue(htl::gpio::OutputMode mode);
 
-static void portClockEnable(uint16_t &activeX, volatile uint32_t& r, uint32_t b, htl::gpio::PinMask mask);
-static void portClockDisable(uint16_t &activeX, volatile uint32_t& r, uint32_t b, htl::gpio::PinMask mask);
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el modul
 /// \param    gpio: Registres de hardware del GPIO.
-/// \param    mask: Mascara dels pins per activar.
 ///
 #if defined(EOS_PLATFORM_STM32F4) || \
 	defined(EOS_PLATFORM_STM32F7)
 void htl::gpio::activate(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
+	GPIO_TypeDef * const gpio) {
 	auto a = htl::startAtomic();
 
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			portClockEnable(__activeA, RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			portClockEnable(__activeB, RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			portClockEnable(__activeC, RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
 			break;
 #endif
-
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			portClockEnable(__activeD, RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
 		case GPIOE_BASE:
-			portClockEnable(__activeE, RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
 			break;
 #endif
 #ifdef HTL_GPIOF_EXIST
 		case GPIOF_BASE:
-			portClockEnable(__activeF, RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
 			break;
 #endif
 #ifdef HTL_GPIOG_EXIST
 		case GPIOG_BASE:
-			portClockEnable(__activeG, RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
 			break;
 #endif
 #ifdef HTL_GPIOH_EXIST
 		case GPIOH_BASE:
-			portClockEnable(__activeH, RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
 			break;
 #endif
 #ifdef HTL_GPIOI_EXIST
 		case GPIOI_BASE:
-			portClockEnable(__activeI, RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
 			break;
 #endif
 #ifdef HTL_GPIOJ_EXIST
 		case GPIOJ_BASE:
-			portClockEnable(__activeJ, RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
 			break;
 #endif
 #ifdef HTL_GPIOK_EXIST
 		case GPIOK_BASE:
-			portClockEnable(__activeK, RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN, mask);
+			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
 			break;
 #endif
 	}
@@ -160,30 +120,29 @@ void htl::gpio::activate(
 #elif defined(EOS_PLATFORM_STM32G0)
 
 void htl::gpio::activate(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
+	GPIO_TypeDef * const gpio) {
 
 	auto a = htl::startAtomic();
 
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			portClockEnable(__activeA, RCC->IOPENR, RCC_IOPENR_GPIOAEN, mask);
+			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			portClockEnable(__activeB, RCC->IOPENR, RCC_IOPENR_GPIOBEN, mask);
+			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			portClockEnable(__activeC, RCC->IOPENR, RCC_IOPENR_GPIOCEN, mask);
+			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOCEN);
 			break;
 #endif
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			portClockEnable(__activeD, RCC->IOPENR, RCC_IOPENR_GPIODEN, mask);
+			bits::set(RCC->IOPENR, RCC_IOPENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
@@ -193,7 +152,7 @@ void htl::gpio::activate(
 #endif
 #ifdef HTL_GPIOF_EXIST
 		case GPIOF_BASE:
-			portClockEnable(__activeF, RCC->IOPENR, RCC_IOPENR_GPIOFEN, mask);
+			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOFEN);
 			break;
 #endif
 	}
@@ -207,70 +166,68 @@ void htl::gpio::activate(
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el modul
 /// \param    gpio: Registres de hardware del GPIO.
-/// \param    mask: Mascara dels pins per activar.
 ///
 #if defined(EOS_PLATFORM_STM32F4) || \
 	defined(EOS_PLATFORM_STM32F7)
 void htl::gpio::deactivate(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
+	GPIO_TypeDef * const gpio) {
 
 	auto a = htl::startAtomic();
 
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			portClockDisable(__activeA, RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			portClockDisable(__activeB, RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			portClockDisable(__activeC, RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
 			break;
 #endif
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			portClockDisable(__activeD, RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
 		case GPIOE_BASE:
-			portClockDisable(__activeE, RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
 			break;
 #endif
 #ifdef HTL_GPIOF_EXIST
 		case GPIOF_BASE:
-			portClockDisable(__activeF, RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
 			break;
 #endif
 #ifdef HTL_GPIOG_EXIST
 		case GPIOG_BASE:
-			portClockDisable(__activeG, RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
 			break;
 #endif
 #ifdef HTL_GPIOH_EXIST
 		case GPIOH_BASE:
-			portClockDisable(__activeH, RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
 			break;
 #endif
 #ifdef HTL_GPIOI_EXIST
 		case GPIOI_BASE:
-			portClockDisable(__activeI, RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
 			break;
 #endif
 #ifdef HTL_GPIOJ_EXIST
 		case GPIOJ_BASE:
-			portClockDisable(__activeJ, RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
 			break;
 #endif
 #ifdef HTL_GPIOK_EXIST
 		case GPIOK_BASE:
-			portClockDisable(__activeK, RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN, mask);
+			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
 			break;
 #endif
 	}
@@ -281,31 +238,29 @@ void htl::gpio::deactivate(
 
 #elif defined(EOS_PLATFORM_STM32G0)
 void htl::gpio::deactivate(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
+	GPIO_TypeDef * const gpio) {
 
 	auto a = htl::startAtomic();
 
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			portClockDisable(__activeA, RCC->IOPENR, RCC_IOPENR_GPIOAEN, mask);
+			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			portClockDisable(__activeB, RCC->IOPENR, RCC_IOPENR_GPIOBEN, mask);
+			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			portClockDisable(__activeC, RCC->IOPENR, RCC_IOPENR_GPIOCEN, mask);
+			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOCEN);
 			break;
 #endif
-
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			portClockDisable(__activeD, RCC->IOPENR, RCC_IOPENR_GPIODEN, mask);
+			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
@@ -315,7 +270,7 @@ void htl::gpio::deactivate(
 #endif
 #ifdef HTL_GPIOF_EXIST
 		case GPIOF_BASE:
-			portClockDisable(__activeF, RCC->IOPENR, RCC_IOPENR_GPIOFEN, mask);
+			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOFEN);
 			break;
 #endif
 	}
@@ -391,8 +346,6 @@ void htl::gpio::initInput(
 	PinBit bit,
 	InputMode mode) {
 
-	activate(gpio, PinMask(bit));
-
 	auto a = startAtomic();
 
     auto b = (uint8_t) bit;
@@ -452,8 +405,6 @@ void htl::gpio::initOutput(
 	OutputMode mode,
 	Speed speed,
 	bool state) {
-
-	activate(gpio, PinMask(bit));
 
 	auto a = startAtomic();
 
@@ -529,8 +480,6 @@ void htl::gpio::initAlternateInput(
     InputMode mode,
     AlternateFunction af) {
 
-	activate(gpio, PinMask(bit));
-
 	auto a = startAtomic();
 
     auto b = uint8_t(bit);
@@ -597,8 +546,6 @@ void htl::gpio::initAlternateOutput(
     OutputMode mode,
     Speed speed,
     AlternateFunction af) {
-
-	activate(gpio, PinMask(bit));
 
 	auto a = startAtomic();
 
@@ -671,58 +618,6 @@ void htl::gpio::deinitialize(
 	GPIO_TypeDef * const gpio,
 	PinBit bit) {
 
-	deactivate(gpio, PinMask(bit));
-}
-
-
-void htl::gpio::pinSet(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
-
-    gpio->BSRR = mask;
-}
-
-
-void htl::gpio::pinSet(
-	GPIO_TypeDef * const gpio,
-	PinBit bit) {
-
-    gpio->BSRR = 1 << bit;
-}
-
-
-void htl::gpio::pinClear(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
-
-    gpio->BSRR = mask << 16;
-}
-
-
-void htl::gpio::pinClear(
-	GPIO_TypeDef * const gpio,
-	PinBit bit) {
-
-    gpio->BSRR = 1 << (bit + 16);
-}
-
-
-void htl::gpio::pinToggle(
-	GPIO_TypeDef * const gpio,
-	PinMask mask) {
-
-	auto odr = gpio->ODR;
-	gpio->BSRR = ((odr & mask) << 16) | (~odr & mask);
-}
-
-
-void htl::gpio::pinToggle(
-	GPIO_TypeDef * const gpio,
-	PinBit bit) {
-
-	auto odr = gpio->ODR;
-	auto mask = 1 << bit;
-	gpio->BSRR = ((odr & mask) << 16) | (~odr & mask);
 }
 
 
@@ -783,42 +678,4 @@ static uint32_t getPullUpDownValue(
 	htl::gpio::OutputMode mode) {
 
 	return mode == htl::gpio::OutputMode::openDrainPullUp ? PUPD::UP : PUPD::NONE;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Gestiona l'activacio del modul GPIO
-/// \param    activeX: Variable que contr els flags d'activacio
-/// \param    r: Registre d'activacio (RCC->xxxxx)
-/// \param    b: Bit del registre d'activacio.
-/// \param    mask: Mascara dels pins a activar.
-///
-static void portClockEnable(
-	uint16_t &activeX,
-	volatile uint32_t& r,
-	uint32_t b,
-	htl::gpio::PinMask mask) {
-
-	htl::bits::set(activeX, (typeof(activeX)) mask);
-	if ((activeX != 0) && !htl::bits::isSet(r, b))
-		htl::bits::set(r, b);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Gestiona la desactivacio del modul GPIO
-/// \param    activeX: Variable que contr els flags d'activacio
-/// \param    r: Registre d'activacio (RCC->xxxxx)
-/// \param    b: Bit del registre d'activacio.
-/// \param    mask: Mascara dels pins a desactivar.
-///
-static void portClockDisable(
-	uint16_t &activeX,
-	volatile uint32_t& r,
-	uint32_t b,
-	htl::gpio::PinMask mask) {
-
-	htl::bits::clear(activeX, (typeof(activeX)) mask);
-	if ((activeX == 0) && htl::bits::isSet(r, b))
-		htl::bits::clear(r, b);
 }

@@ -163,8 +163,8 @@ void DisplayService::onExecute() {
     // Inicialitza el dispositiu SPI
     //
     auto devSPI = DISPLAY_SPI_Device::pInst;
-    devSPI->initPinSCK<DISPLAY_SCK_Pin>();
-    devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
+    devSPI->initPinSCK<DISPLAY_SCK_Pin::portID, DISPLAY_SCK_Pin::pinID>();
+    devSPI->initPinMOSI<DISPLAY_MOSI_Pin::portID, DISPLAY_MOSI_Pin::pinID>();
     devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
 
 	// Inicialitza el dispositiu ILI9341
