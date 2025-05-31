@@ -7,20 +7,9 @@
 #include "HTL/STM32/htlClock.h"
 
 
-#define HTL_UART_OPTION_FIFO  0
-
-
-using namespace htl;
+using namespace htl::clock;
 using namespace htl::bits;
 using namespace htl::uart;
-
-
-static ClockSource getClockSource(USART_TypeDef *usart);
-static unsigned getClockFrequency(USART_TypeDef *usart, ClockSource clockSource);
-
-static bool waitTransmissionComplete(USART_TypeDef *usart, unsigned expireTime);
-static bool waitTransmissionBufferEmpty(USART_TypeDef *usart, unsigned expireTime);
-static bool waitReceptionBufferFull(USART_TypeDef *usart, unsigned expireTime);
 
 
 /// ----------------------------------------------------------------------
@@ -52,21 +41,27 @@ eos::Result UARTDevice::initialize() {
 		activate();
 		disable();
 
-		clear(_usart->CR2,
 #if defined(EOS_PLATFORM_STM32G0)
-			USART_CR2_LINEN |     // Deshabilita modus LIN
+#if HTL_UART_OPTION_FIFO == 1
+		if (isFifoAvailable())
+			set(_usart->CR1,
+				USART_CR1_FIFOEN);    // Habilita el FIFO
+		else
 #endif
-#if defined(EOS_PLATFORM_STM32G0) || \
-	defined(EOS_PLATFORM_STM32F7)
+			clear(_usart->CR1,
+				USART_CR1_FIFOEN);    // Deshabilita el FIFO
+#endif
+
+		clear(_usart->CR2,
+			USART_CR2_LINEN |     // Deshabilita modus LIN
+#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 			USART_CR2_RTOEN |     // Deshabilita receiver timeout
 #endif
      		USART_CR2_CLKEN);     // Deshabilita clock extern
 
 		clear(_usart->CR3,
-#if defined(EOS_PLATFORM_STM32G0)
-			USART_CR3_SCEN |      // Deshabilita
+			USART_CR3_SCEN |      // Deshabilita modus SmartCard
 			USART_CR3_IREN |      // Deshabilita modus IrDA
-#endif
 			USART_CR3_DMAT |      // Desbilita DMA
 			USART_CR3_HDSEL);     // Deshabilita half duplex
 
@@ -188,9 +183,7 @@ void UARTDevice::setStopBits(
 /// \param    wordBits: Opcions dels bits de paraula.
 /// \params   useParity: True si utilitza bit de paritat
 ///
-#if defined(EOS_PLATFORM_STM32F0) || \
-    defined(EOS_PLATFORM_STM32F4) || \
-    defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void UARTDevice::setWordBits(
     WordBits wordBits,
     bool useParity) const {
@@ -364,9 +357,9 @@ eos::Result UARTDevice::setTimming(
 		}
 
 		if (clockSource == ClockSource::automatic)
-			clockSource = getClockSource(_usart);
+			clockSource = getUARTClockSource();
 
-		unsigned fclk = getClockFrequency(_usart, clockSource);
+		unsigned fclk = getUARTClockFrequency(clockSource);
 
 		unsigned div;
 		if (baudMode == BaudMode::div)
@@ -414,14 +407,14 @@ eos::Result UARTDevice::transmit(
 		enableTransmission();
 
 		while (length-- > 0) {
-			if (!waitTransmissionBufferEmpty(_usart, expireTime)) {
+			if (!waitTransmissionBufferEmpty(expireTime)) {
 				error = true;
 				break;
 			}
 			writeData(*buffer++);
 		}
 
-	    error = !waitTransmissionComplete(_usart, expireTime);
+	    error = !waitTransmissionComplete(expireTime);
 
 		disableTransmission();
 		disable();
@@ -554,7 +547,7 @@ eos::Result UARTDevice::receive(
 
 		while (bufferSize-- > 0) {
 
-			if (!waitReceptionBufferFull(_usart, expireTime)) {
+			if (!waitReceptionBufferFull(expireTime)) {
 				error = true;
 				break;
 			}
@@ -946,7 +939,6 @@ void UARTDevice::notifyRxCompleted(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el rellotge asignat a la UART
-/// \param    usart: El bloc de registres
 /// \return   El rellotge.
 ///
 #if defined(EOS_PLATFORM_STM32F0)
@@ -976,14 +968,13 @@ static ClockSource getClockSource(
 
 
 #elif defined(EOS_PLATFORM_STM32F7)
-static ClockSource getClockSource(
-    USART_TypeDef *usart) {
+ClockSource UARTDevice::getUARTClockSource() const {
 
 	static const ClockSource clockSourceTbl[] = {
 		ClockSource::pclk, ClockSource::sysclk, ClockSource::hsi, ClockSource::lse};
 
     unsigned sel;
-    switch ((unsigned) usart) {
+    switch ((unsigned) _usart) {
 #ifdef HTL_UART1_EXIST
         case USART1_BASE:
             sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
@@ -1040,14 +1031,13 @@ static ClockSource getClockSource(
 }
 
 #elif defined(EOS_PLATFORM_STM32G0)
-static ClockSource getClockSource(
-    USART_TypeDef *usart) {
+ClockSource UARTDevice::getUARTClockSource() const {
 
     static const ClockSource clockSourceTbl[4] = {
         ClockSource::pclk, ClockSource::sysclk, ClockSource::hsi16, ClockSource::lse};
 
     unsigned sel;
-    switch ((unsigned) usart) {
+    switch ((unsigned) _usart) {
 #ifdef HTL_UART1_EXIST
         case USART1_BASE:
             sel = (RCC->CCIPR & RCC_CCIPR_USART1SEL) >> RCC_CCIPR_USART1SEL_Pos;
@@ -1077,45 +1067,43 @@ static ClockSource getClockSource(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte la frequencia del rellotge de la uart.
-/// \param    usart: El bloc de registres del dispositiu.
 /// \param    clockSource: El rellotge asignat.
 /// \return   La frequencia del rellotge.Zero en cas d'error.
 ///
-static unsigned getClockFrequency(
-    USART_TypeDef *usart,
-    ClockSource clockSource) {
+unsigned UARTDevice::getUARTClockFrequency(
+    ClockSource clockSource) const {
 
     switch (clockSource) {
         case ClockSource::pclk:
 #if defined(EOS_PLATFORM_STM32F7)
-            if (((unsigned) usart == USART1_BASE) ||
-                ((unsigned) usart == USART6_BASE))
-                return clock::getClockFrequency(clock::ClockID::pclk2);
+            if (((unsigned) _usart == USART1_BASE) ||
+                ((unsigned) _usart == USART6_BASE))
+                return getClockFrequency(ClockID::pclk2);
             else
-                return clock::getClockFrequency(clock::ClockID::pclk1);
+                return clock::getClockFrequency(ClockID::pclk1);
 #elif defined(EOS_PLATFORM_STM32F4)
-            return clock::getClockFrequency(clock::ClockID::pclk1);
+            return getClockFrequency(ClockID::pclk1);
 #elif defined(EOS_PLATFORM_STM32G0)
-            return clock::getClockFrequency(clock::ClockID::pclk);
+            return getClockFrequency(ClockID::pclk);
 #else
 #error
 #endif
 
         case ClockSource::sysclk:
-            return clock::getClockFrequency(clock::ClockID::sysclk);
+            return getClockFrequency(ClockID::sysclk);
 
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
         case ClockSource::hsi:
-            return clock::getClockFrequency(clock::ClockID::hsi);
+            return getClockFrequency(clock::ClockID::hsi);
 #endif
 
 #if defined(EOS_PLATFORM_STM32G0)
         case ClockSource::hsi16:
-            return clock::getClockFrequency(clock::ClockID::hsi16);
+            return getClockFrequency(ClockID::hsi16);
 #endif
 
         case ClockSource::lse:
-            return clock::getClockFrequency(clock::ClockID::lse);
+            return getClockFrequency(ClockID::lse);
 
         default:
             return 0;
@@ -1125,18 +1113,16 @@ static unsigned getClockFrequency(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que s'hagi completat la transmissio
-/// \param    usart: Registres de hardware del dispositiu.
 /// \param    timeout: El temps maxim d'espera en ticks.
 /// \return   True si tot es correcte, false en cas de timeout.
 ///
-static bool waitTransmissionComplete(
-	USART_TypeDef *usart,
+bool UARTDevice::waitTransmissionComplete(
 	unsigned expireTime) {
 
 #if defined(EOS_PLATFORM_STM32F4)
-	while (!isSet(usart->SR, USART_SR_TC)) {
+	while (!isSet(_usart->SR, USART_SR_TC)) {
 #else
-	while (!isSet(usart->ISR, USART_ISR_TC)) {
+	while (!isSet(_usart->ISR, USART_ISR_TC)) {
 #endif
 		if (hasTickExpired(expireTime))
 			return false;
@@ -1150,20 +1136,18 @@ static bool waitTransmissionComplete(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que el buffer de transmissio estigui buit.
-/// \param    usart: Registres de hardware del dispositiu.
 /// \param    expireTime: El limit de temps.
 /// \return   True si tot es correcte, false en cas de timeout.
 ///
-static bool waitTransmissionBufferEmpty(
-	USART_TypeDef *usart,
+bool UARTDevice::waitTransmissionBufferEmpty(
 	unsigned expireTime) {
 
 #if defined(EOS_PLATFORM_STM32G0)
-	while (!isSet(usart->ISR, USART_ISR_TXE_TXFNF)) {
+	while (!isSet(_usart->ISR, USART_ISR_TXE_TXFNF)) {
 #elif defined(EOS_PLATFORM_STM32F4)
-	while (!isSet(usart->SR, USART_SR_TXE)) {
+	while (!isSet(_usart->SR, USART_SR_TXE)) {
 #else
-	while (!isSet(usart->ISR, USART_ISR_TXE)) {
+	while (!isSet(_usart->ISR, USART_ISR_TXE)) {
 #endif
 		if (hasTickExpired(expireTime))
 			return false;
@@ -1175,20 +1159,18 @@ static bool waitTransmissionBufferEmpty(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que el buffer de recepcio estigui ple
-/// \param    usart: Els registres de hardware del dispositiu.
 /// \param    expireTime: El limit de temps.
 /// \return   True si tot es correcte, false en cas de timeout.
 ///
-static bool waitReceptionBufferFull(
-	USART_TypeDef *usart,
+bool UARTDevice::waitReceptionBufferFull(
 	unsigned expireTime) {
 
 #if defined(EOS_PLATFORM_STM32G0)
-	while ((usart->ISR & USART_ISR_RXNE_RXFNE) == 0) {
+	while ((_usart->ISR & USART_ISR_RXNE_RXFNE) == 0) {
 #elif defined(EOS_PLATFORM_STM32F4)
-	while ((usart->SR & USART_SR_RXNE) == 0) {
+	while ((_usart->SR & USART_SR_RXNE) == 0) {
 #else
-	while ((usart->ISR & USART_ISR_RXNE) == 0) {
+	while ((_usart->ISR & USART_ISR_RXNE) == 0) {
 #endif
 		if (hasTickExpired(expireTime))
 			return false;
@@ -1204,10 +1186,7 @@ static bool waitReceptionBufferFull(
 void UARTDevice::enable() const {
 
 	set(_usart->CR1,
-#if HLT_UART_OPTION_FIFO == 1
-		USART_CR1_FIFOEN |   // Habilita el fifo
-#endif
-		USART_CR1_UE);       // Habilita el dispositiu
+		USART_CR1_UE);  // Habilita el dispositiu
 }
 
 
@@ -1217,12 +1196,9 @@ void UARTDevice::enable() const {
 void UARTDevice::disable() const {
 
 	clear(_usart->CR1,
-#if defined(EOS_PLATFORM_STM32G0)
-		USART_CR1_FIFOEN |        // Desabilita el FIFO
-#endif
-		USART_CR1_UE |            // Desabilita el dispositiu
-		USART_CR1_TE |            // Desabilita la transmissio
-		USART_CR1_RE);            // Deshabilita la recepcio
+		USART_CR1_UE |  // Desabilita el dispositiu
+		USART_CR1_TE |  // Desabilita la transmissio
+		USART_CR1_RE);  // Deshabilita la recepcio
 }
 
 
@@ -1242,8 +1218,7 @@ void UARTDevice::enableTransmission() const {
 /// \brief    Habilita la transmissio de dades en modus IRQ
 ///
 #if HTL_UART_OPTION_IRQ == 1
-#if defined(EOS_PLATFORM_STM32F4) || \
-	defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void UARTDevice::enableTransmissionIRQ() const {
 
 	auto a = startAtomic();
@@ -1258,14 +1233,9 @@ void UARTDevice::enableTransmissionIRQ() const {
 
 	auto a = startAtomic();
 
-	if (isSet(_usart->CR1, USART_CR1_FIFOEN)) {
-
-	}
-	else {
-		set(_usart->CR1,
-			USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
-			USART_CR1_TE);             // Habilita la transmissio
-	}
+	set(_usart->CR1,
+		USART_CR1_TXEIE_TXFNFIE |  // Habilita interrupcio TXE
+		USART_CR1_TE);             // Habilita la transmissio
 	endAtomic(a);
 }
 #endif // defined(EOS_PLATFORM_XXX)
@@ -1440,4 +1410,28 @@ uint8_t UARTDevice::readData() const {
 	return _usart->RDR;
 #endif
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el fifo esta disposnible en la uart
+/// \return   El resultat de l'operacio.
+///
+#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
+bool UARTDevice::isFifoAvailable() const {
+
+	return false;
+}
+#endif // (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el fifo esta activat
+/// \return   El resultatd e l'operacio.
+///
+#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
+bool UARTDevice::isFifoEnabled() const {
+
+	return isSet(_uart->CR1, USART_CR1_FIFOEN);
+}
+#endif // (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
 

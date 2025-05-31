@@ -1,5 +1,9 @@
 #include "HTL/htl.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htlClock.h"
+
+
+using namespace htl::bits;
 
 
 /// ----------------------------------------------------------------------

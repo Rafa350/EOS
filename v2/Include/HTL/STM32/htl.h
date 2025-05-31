@@ -20,6 +20,7 @@
 //
 #define HTL_UART_DEFAULT_OPTION_IRQ    1
 #define HTL_UART_DEFAULT_OPTION_DMA    1
+#define HTL_UART_DEFAULT_OPTION_FIFO   0
 
 
 // Comprova l'existencia dels moduls GPIO

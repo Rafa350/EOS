@@ -8,6 +8,8 @@
 #include "Services/eosService.h"
 #include "System/Core/eosSemaphore.h"
 
+#include "appConfig.h"
+
 
 namespace app {
 
@@ -18,6 +20,7 @@ namespace app {
         	using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
 
 		private:
+        	hw::DevUART *_devUART;
         	UARTNotifyEvent _uartNotifyEvent;
         	eos::Semaphore _completed;
 
@@ -26,6 +29,9 @@ namespace app {
 
 		protected:
 			void onExecute() override;
+			void testPollingMode();
+			void testInterruptMode();
+			void testDmaMode();
 
 		public:
 			MainService();

@@ -1,10 +1,11 @@
 #include "eos.h"
 #include "HTL/htlINT.h"
 #include "HTL/htlDMA.h"
-#include "Controllers/Serial/eosSerialDriver_UART.h"
+#include "HTL/htlUART.h"
 
 #include "appConfig.h"
 #include "appMainService.h"
+
 
 using namespace app;
 using namespace eos;
@@ -16,6 +17,7 @@ using namespace htl::uart;
 /// \brief    Constructor.
 ///
 MainService::MainService():
+	_devUART {hw::devUART},
 	_uartNotifyEvent {*this, &MainService::uartNotifyEventHandler} {
 }
 
@@ -25,31 +27,51 @@ MainService::MainService():
 ///
 void MainService::onExecute() {
 
-	auto devUART = hw::devUART;
-
     // Inicialitza la UART
 	//
-	devUART->initPinTX<hw::PinTX>();
-	devUART->initPinRX<hw::PinRX>();
-	devUART->initialize();
+	_devUART->initPinTX<hw::PinTX>();
+	_devUART->initPinRX<hw::PinRX>();
+	_devUART->initialize();
 
-	devUART->setProtocol(WordBits::word8, Parity::none, StopBits::_1, Handsake::none);
-	devUART->setTimming(BaudMode::b19200, ClockSource::automatic, 0, OverSampling::_16);
+	_devUART->setProtocol(WordBits::word8, Parity::none, StopBits::_1, Handsake::none);
+	_devUART->setTimming(BaudMode::b19200, ClockSource::automatic, 0, OverSampling::_16);
+
+	while (!stopSignal()) {
+
+		testInterruptMode();
+	}
+}
+
+
+void MainService::testPollingMode() {
+
+	const char *txBuffer = "Interrupt: Hello world!\r\n";
+	for (auto i = 0; (i < 100) && !stopSignal(); i++)
+		_devUART->transmit((const uint8_t*)txBuffer, strlen(txBuffer), 1000);
+}
+
+
+void MainService::testInterruptMode() {
 
 	setInterruptVectorPriority(hw::devUART_VectorID, Priority::p5);
 	enableInterruptVector(hw::devUART_VectorID);
 
-	devUART->setNotifyEvent(_uartNotifyEvent, true);
+	_devUART->setNotifyEvent(_uartNotifyEvent, true);
 
-	const char *txBuffer = "Hello world!\r\n";
-
-	while (!stopSignal()) {
-
-		devUART->transmit_IRQ((const uint8_t*)txBuffer, strlen(txBuffer));
-
+	const char *txBuffer = "Interrupt: Hello world!\r\n";
+	for (auto i = 0; (i < 100) && !stopSignal(); i++) {
+		_devUART->transmit_IRQ((const uint8_t*)txBuffer, strlen(txBuffer));
 		_completed.wait((unsigned) -1);
-		Task::delay(1000);
 	}
+
+	_devUART->disableNotifyEvent();
+
+	disableInterruptVector(hw::devUART_VectorID);
+}
+
+
+void MainService::testDmaMode() {
+
 }
 
 

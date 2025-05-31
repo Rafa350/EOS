@@ -202,8 +202,8 @@ namespace htl {
             struct PinTraits;
         }
 
-		void activate(GPIO_TypeDef * const gpio);
-		void deactivate(GPIO_TypeDef * const gpio);
+		//void activate(GPIO_TypeDef * const gpio);
+		//void deactivate(GPIO_TypeDef * const gpio);
 
 		void initialize(GPIO_TypeDef * const gpio, PinMask mask, const InitInfo *info);
 		void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
@@ -223,6 +223,7 @@ namespace htl {
 
 		void initAlternateInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode, AlternateFunction af);
 		void initAlternateInput(GPIO_TypeDef * const gpio, PinBit bit, InputMode mode, AlternateFunction af);
+
 
         /// brief Clase que representa un port.
         ///
@@ -373,8 +374,8 @@ namespace htl {
 
             private:
                 static PinDeviceX _instance;
-                static constexpr auto _mask = PinMask(PinTraits::mask);
-                static constexpr auto _bit = PinBit(PinTraits::bit);
+                static constexpr auto _mask = PinTraits::mask;
+                static constexpr auto _bit = PinTraits::bit;
                 static constexpr auto _gpioAddr = PortTraits::gpioAddr;
 
             public:
@@ -385,16 +386,15 @@ namespace htl {
 
             private:
                 PinDeviceX():
-                    PinDevice(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), _bit) {
+                    PinDevice(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), PinBit(_bit)) {
                 }
 
             protected:
                 void activate() const override {
-                	PortActivator::activate(_mask);
+                	PortActivator::activate(PinMask(_mask));
                 }
-
                 void deactivate() const override {
-                	PortActivator::deactivate(_mask);
+                	PortActivator::deactivate(PinMask(_mask));
                 }
         };
 
@@ -723,7 +723,8 @@ namespace htl {
 					using PortTraits = internal::PortTraits<portId_>;
 
                 private:
-					static constexpr uint32_t _gpioAddr = PortTraits::gpioAddr;
+					static constexpr auto _addr = PortTraits::activateAddr;
+					static constexpr auto _bit = PortTraits::activateBit;
 
                 private:
 					static PinMask _mask;
@@ -732,8 +733,8 @@ namespace htl {
 					static void activate(PinMask mask) {
 					    auto m = (uint16_t) _mask;
 						if (!m) {
-							auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-							gpio::activate(gpio);
+							bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _bit));
+							__DSB();
 						}
 						bits::set(m, (uint16_t) mask);
 						_mask = PinMask(m);
@@ -743,8 +744,8 @@ namespace htl {
                         auto m = (uint16_t) _mask;
                         bits::clear(m, (uint16_t) mask);
 						if (!m) {
-							auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-							gpio::deactivate(gpio);
+							bits::clear(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _bit));
+							__DSB();
 						}
                         _mask = PinMask(m);
 					}
@@ -757,66 +758,125 @@ namespace htl {
 			template<>
 			struct PortTraits<PortID::portA> {
 				static constexpr uint32_t gpioAddr = GPIOA_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOAEN_Pos;
+#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOAEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOB_EXIST
 			template  <>
 			struct PortTraits<PortID::portB> {
 				static constexpr uint32_t gpioAddr = GPIOB_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOBEN_Pos;
+#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOBEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOC_EXIST
 			template  <>
 			struct PortTraits<PortID::portC> {
 				static constexpr uint32_t gpioAddr = GPIOC_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOCEN_Pos;
+#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOCEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOD_EXIST
 			template  <>
 			struct PortTraits<PortID::portD> {
 				static constexpr uint32_t gpioAddr = GPIOD_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIODEN_Pos;
+#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t activateBit = RCC_IOPENR_GPIODEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOE_EXIST
 			template  <>
 			struct PortTraits<PortID::portE> {
 				static constexpr uint32_t gpioAddr = GPIOE_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOEEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOF_EXIST
 			template  <>
 			struct PortTraits<PortID::portF> {
 				static constexpr uint32_t gpioAddr = GPIOF_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOFEN_Pos;
+#elif defined(EOS_PLATFORM_STM32G0)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
+				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOFEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOG_EXIST
 			template  <>
 			struct PortTraits<PortID::portG> {
 				static constexpr uint32_t gpioAddr = GPIOG_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOGEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOH_EXIST
 			template  <>
 			struct PortTraits<PortID::portH> {
 				static constexpr uint32_t gpioAddr = GPIOH_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOHEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOI_EXIST
 			template  <>
 			struct PortTraits<PortID::portI> {
 				static constexpr uint32_t gpioAddr = GPIOI_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOIEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOJ_EXIST
 			template  <>
 			struct PortTraits<PortID::portJ> {
 				static constexpr uint32_t gpioAddr = GPIOJ_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOJEN_Pos;
+#endif
 			};
 #endif
 #ifdef HTL_GPIOK_EXIST
 			template  <>
 			struct PortTraits<PortID::portK> {
 				static constexpr uint32_t gpioAddr = GPIOK_BASE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
+				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOKEN_Pos;
+#endif
 			};
 #endif
 

@@ -4,47 +4,53 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-struct MODE {
-	static constexpr uint32_t Mask      = 0b11;
-	static constexpr uint32_t INPUT     = 0b00;
-	static constexpr uint32_t OUTPUT    = 0b01;
-	static constexpr uint32_t ALTERNATE = 0b10;
-	static constexpr uint32_t ANALOGIC  = 0b11;
-};
+namespace htl::gpio::internal {
 
-struct PUPD {
-	static constexpr uint32_t Mask = 0b11;
-	static constexpr uint32_t NONE = 0b00;
-	static constexpr uint32_t UP   = 0b01;
-	static constexpr uint32_t DOWN = 0b10;
-};
+	struct MODE {
+		static constexpr uint32_t Mask      = 0b11;
+		static constexpr uint32_t INPUT     = 0b00;
+		static constexpr uint32_t OUTPUT    = 0b01;
+		static constexpr uint32_t ALTERNATE = 0b10;
+		static constexpr uint32_t ANALOGIC  = 0b11;
+	};
 
-struct OTYPE {
-	static constexpr uint32_t Mask = 0b1;
-	static constexpr uint32_t PP   = 0b0;
-	static constexpr uint32_t OD   = 0b1;
-};
+	struct PUPD {
+		static constexpr uint32_t Mask = 0b11;
+		static constexpr uint32_t NONE = 0b00;
+		static constexpr uint32_t UP   = 0b01;
+		static constexpr uint32_t DOWN = 0b10;
+	};
 
-struct OSPEED {
-	static constexpr uint32_t Mask   = 0b11;
-	static constexpr uint32_t LOW    = 0b00;
-	static constexpr uint32_t MEDIUM = 0b01;
-	static constexpr uint32_t HIGH   = 0b10;
-	static constexpr uint32_t FAST   = 0b11;
-};
+	struct OTYPE {
+		static constexpr uint32_t Mask = 0b1;
+		static constexpr uint32_t PP   = 0b0;
+		static constexpr uint32_t OD   = 0b1;
+	};
 
-struct AF {
-	static constexpr uint32_t Mask = 0b1111;
-};
+	struct OSPEED {
+		static constexpr uint32_t Mask   = 0b11;
+		static constexpr uint32_t LOW    = 0b00;
+		static constexpr uint32_t MEDIUM = 0b01;
+		static constexpr uint32_t HIGH   = 0b10;
+		static constexpr uint32_t FAST   = 0b11;
+	};
+
+	struct AF {
+		static constexpr uint32_t Mask = 0b1111;
+	};
+
+	uint32_t getSpeedValue(Speed speed);
+	uint32_t getOutputTypeValue(OutputMode mode);
+	uint32_t getPullUpDownValue(InputMode mode);
+	uint32_t getPullUpDownValue(OutputMode mode);
+}
 
 
-static uint32_t getSpeedValue(htl::gpio::Speed speed);
-static uint32_t getOutputTypeValue(htl::gpio::OutputMode mode);
-static uint32_t getPullUpDownValue(htl::gpio::InputMode mode);
-static uint32_t getPullUpDownValue(htl::gpio::OutputMode mode);
+using namespace htl::bits;
+using namespace htl::gpio;
+using namespace htl::gpio::internal;
 
-
-
+#if 0
 /// ----------------------------------------------------------------------
 /// \brief    Activa el modul
 /// \param    gpio: Registres de hardware del GPIO.
@@ -58,27 +64,27 @@ void htl::gpio::activate(
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
+			set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
+			set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
+			set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
 			break;
 #endif
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
+			set(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
 		case GPIOE_BASE:
-			bits::set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
+			set(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
 			break;
 #endif
 #ifdef HTL_GPIOF_EXIST
@@ -127,32 +133,32 @@ void htl::gpio::activate(
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOAEN);
+			set(RCC->IOPENR, RCC_IOPENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOBEN);
+			set(RCC->IOPENR, RCC_IOPENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOCEN);
+			set(RCC->IOPENR, RCC_IOPENR_GPIOCEN);
 			break;
 #endif
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			bits::set(RCC->IOPENR, RCC_IOPENR_GPIODEN);
+			set(RCC->IOPENR, RCC_IOPENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
 		case GPIOE_BASE:
-			portClockEnable(__activeE, RCC->IOPENR, RCC_IOPENR_GPIOEEN, mask);
+			set(RCC->IOPENR, RCC_IOPENR_GPIOEEN);
 			break;
 #endif
 #ifdef HTL_GPIOF_EXIST
 		case GPIOF_BASE:
-			bits::set(RCC->IOPENR, RCC_IOPENR_GPIOFEN);
+			set(RCC->IOPENR, RCC_IOPENR_GPIOFEN);
 			break;
 #endif
 	}
@@ -177,57 +183,57 @@ void htl::gpio::deactivate(
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
 			break;
 #endif
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
 		case GPIOE_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
 			break;
 #endif
 #ifdef HTL_GPIOF_EXIST
 		case GPIOF_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
 			break;
 #endif
 #ifdef HTL_GPIOG_EXIST
 		case GPIOG_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
 			break;
 #endif
 #ifdef HTL_GPIOH_EXIST
 		case GPIOH_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
 			break;
 #endif
 #ifdef HTL_GPIOI_EXIST
 		case GPIOI_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
 			break;
 #endif
 #ifdef HTL_GPIOJ_EXIST
 		case GPIOJ_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
 			break;
 #endif
 #ifdef HTL_GPIOK_EXIST
 		case GPIOK_BASE:
-			bits::clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
+			clear(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
 			break;
 #endif
 	}
@@ -245,32 +251,32 @@ void htl::gpio::deactivate(
 	switch ((uint32_t) gpio) {
 #ifdef HTL_GPIOA_EXIST
 		case GPIOA_BASE:
-			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOAEN);
+			clear(RCC->IOPENR, RCC_IOPENR_GPIOAEN);
 			break;
 #endif
 #ifdef HTL_GPIOB_EXIST
 		case GPIOB_BASE:
-			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOBEN);
+			clear(RCC->IOPENR, RCC_IOPENR_GPIOBEN);
 			break;
 #endif
 #ifdef HTL_GPIOC_EXIST
 		case GPIOC_BASE:
-			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOCEN);
+			clear(RCC->IOPENR, RCC_IOPENR_GPIOCEN);
 			break;
 #endif
 #ifdef HTL_GPIOD_EXIST
 		case GPIOD_BASE:
-			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIODEN);
+			clear(RCC->IOPENR, RCC_IOPENR_GPIODEN);
 			break;
 #endif
 #ifdef HTL_GPIOE_EXIST
 		case GPIOE_BASE:
-			portClockDisable(__activeE, RCC->IOPENR, RCC_IOPENR_GPIOEEN, mask);
+			clear(RCC->IOPENR, RCC_IOPENR_GPIOEEN);
 			break;
 #endif
 #ifdef HTL_GPIOF_EXIST
 		case GPIOF_BASE:
-			bits::clear(RCC->IOPENR, RCC_IOPENR_GPIOFEN);
+			clear(RCC->IOPENR, RCC_IOPENR_GPIOFEN);
 			break;
 #endif
 	}
@@ -278,6 +284,7 @@ void htl::gpio::deactivate(
 
 	htl::endAtomic(a);
 }
+#endif
 #endif
 
 
@@ -353,15 +360,15 @@ void htl::gpio::initInput(
     // Configura el pin com a entrada digital
     //
     auto MODER = gpio->MODER;
-    htl::bits::clear(MODER, MODE::Mask << (b * 2));
-    htl::bits::set(MODER, MODE::INPUT << (b * 2));
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::INPUT << (b * 2));
     gpio->MODER = MODER;
 
     // Configura les resistencies pull UP/DOWN
     //
     auto PUPDR = gpio->PUPDR;
-    htl::bits::clear(PUPDR, PUPD::Mask << (b * 2));
-    htl::bits::set(PUPDR, getPullUpDownValue(mode) << (b * 2));
+    clear(PUPDR, PUPD::Mask << (b * 2));
+    set(PUPDR, getPullUpDownValue(mode) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     endAtomic(a);
@@ -413,29 +420,29 @@ void htl::gpio::initOutput(
     // Configura el pin com sortida digital
     //
     auto MODER = gpio->MODER;
-    htl::bits::clear(MODER, MODE::Mask << (b * 2));
-    htl::bits::set(MODER, MODE::OUTPUT << (b * 2));
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::OUTPUT << (b * 2));
     gpio->MODER = MODER;
 
     // Configura el driver de sortida
     //
     auto OTYPER = gpio->OTYPER;
-    htl::bits::clear(OTYPER, OTYPE::Mask << b);
-    htl::bits::set(OTYPER, getOutputTypeValue(mode) << b);
+    clear(OTYPER, OTYPE::Mask << b);
+    set(OTYPER, getOutputTypeValue(mode) << b);
     gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
     auto PUPDR = gpio->PUPDR;
-    htl::bits::clear(PUPDR, PUPD::Mask << (b * 2));
-    htl::bits::set(PUPDR, getPullUpDownValue(mode) << (b * 2));
+    clear(PUPDR, PUPD::Mask << (b * 2));
+    set(PUPDR, getPullUpDownValue(mode) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
     auto OSPEEDR = gpio->OSPEEDR;
-    htl::bits::clear(OSPEEDR, OSPEED::Mask << (b * 2));
-    htl::bits::set(OSPEEDR, getSpeedValue(speed) << (b * 2));
+    clear(OSPEEDR, OSPEED::Mask << (b * 2));
+    set(OSPEEDR, getSpeedValue(speed) << (b * 2));
     gpio->OSPEEDR = OSPEEDR;
 
     // Configura l'estat de sortida
@@ -487,22 +494,22 @@ void htl::gpio::initAlternateInput(
     // Configura el pin com entrada/sortida alternativa
     //
     auto MODER = gpio->MODER;
-    htl::bits::clear(MODER, MODE::Mask << (b * 2));
-    htl::bits::set(MODER, MODE::ALTERNATE << (b * 2));
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::ALTERNATE << (b * 2));
     gpio->MODER = MODER;
 
     // Configura la resistencia pull UP
     //
     auto PUPDR = gpio->PUPDR;
-    htl::bits::clear(PUPDR, PUPD::Mask << (b * 2));
-    htl::bits::set(PUPDR, getPullUpDownValue(mode) << (b * 2));
+    clear(PUPDR, PUPD::Mask << (b * 2));
+    set(PUPDR, getPullUpDownValue(mode) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     // Selecciona la funcio alternativa
     //
     auto AFR = gpio->AFR[b >> 3];
-    htl::bits::clear(AFR, AF::Mask << ((b & 0x07) * 4)) ;
-    htl::bits::set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
+    clear(AFR, AF::Mask << ((b & 0x07) * 4)) ;
+    set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
     gpio->AFR[b >> 3] = AFR;
 
     endAtomic(a);
@@ -554,36 +561,36 @@ void htl::gpio::initAlternateOutput(
     // Configura el pin com entrada/sortida alternativa
     //
     auto MODER = gpio->MODER;
-    htl::bits::clear(MODER, MODE::Mask << (b * 2));
-    htl::bits::set(MODER, MODE::ALTERNATE << (b * 2));
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::ALTERNATE << (b * 2));
     gpio->MODER = MODER;
 
     // Configura el driver de sortida
     //
     auto OTYPER = gpio->OTYPER;
-    htl::bits::clear(OTYPER, OTYPE::Mask << b);
-    htl::bits::set(OTYPER, getOutputTypeValue(mode) << b);
+    clear(OTYPER, OTYPE::Mask << b);
+    set(OTYPER, getOutputTypeValue(mode) << b);
     gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
     auto PUPDR = gpio->PUPDR;
-    htl::bits::clear(PUPDR, PUPD::Mask << (b * 2));
-    htl::bits::set(PUPDR, getPullUpDownValue(mode) << (b * 2));
+    clear(PUPDR, PUPD::Mask << (b * 2));
+    set(PUPDR, getPullUpDownValue(mode) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
     auto OSPEEDR = gpio->OSPEEDR;
-    htl::bits::clear(OSPEEDR, OSPEED::Mask << (b * 2));
-    htl::bits::set(OSPEEDR, getSpeedValue(speed) << (b * 2));
+    clear(OSPEEDR, OSPEED::Mask << (b * 2));
+    set(OSPEEDR, getSpeedValue(speed) << (b * 2));
     gpio->OSPEEDR = OSPEEDR;
 
     // Selecciona la funcio alternativa
     //
     auto AFR = gpio->AFR[b >> 3];
-    htl::bits::clear(AFR, AF::Mask << ((b & 0x07) * 4)) ;
-    htl::bits::set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
+    clear(AFR, AF::Mask << ((b & 0x07) * 4)) ;
+    set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
     gpio->AFR[b >> 3] = AFR;
 
     endAtomic(a);
@@ -626,11 +633,12 @@ void htl::gpio::deinitialize(
 /// \param    mode: El tipus de sortida.
 /// \return   El resultat.
 ///
-static uint32_t getOutputTypeValue(
+uint32_t htl::gpio::internal::getOutputTypeValue(
 	htl::gpio::OutputMode mode) {
 
-	return mode == htl::gpio::OutputMode::pushPull ? OTYPE::PP : OTYPE::OD;
+	return mode == OutputMode::pushPull ? OTYPE::PP : OTYPE::OD;
 }
+
 
 
 /// ----------------------------------------------------------------------
@@ -638,34 +646,34 @@ static uint32_t getOutputTypeValue(
 /// \param    speed: La velocitat.
 /// \return   El resultat.
 ///
-static uint32_t getSpeedValue(
+uint32_t htl::gpio::internal::getSpeedValue(
 	htl::gpio::Speed speed) {
 
     switch (speed) {
     	default:
-    	case htl::gpio::Speed::low:
+    	case Speed::low:
     	    return OSPEED::LOW;
 
-    	case htl::gpio::Speed::medium:
+    	case Speed::medium:
     	    return OSPEED::MEDIUM;
 
-    	case htl::gpio::Speed::high:
+    	case Speed::high:
     	    return OSPEED::HIGH;
 
-    	case htl::gpio::Speed::fast:
+    	case Speed::fast:
     	    return OSPEED::FAST;
     }
 }
 
 
-static uint32_t getPullUpDownValue(
+uint32_t htl::gpio::internal::getPullUpDownValue(
 	htl::gpio::InputMode mode)  {
 
 	switch (mode) {
-		case htl::gpio::InputMode::pullUp:
+		case InputMode::pullUp:
 			return PUPD::UP;
 
-		case htl::gpio::InputMode::pullDown:
+		case InputMode::pullDown:
 			return PUPD::DOWN;
 
 		default:
@@ -674,8 +682,8 @@ static uint32_t getPullUpDownValue(
 }
 
 
-static uint32_t getPullUpDownValue(
+uint32_t htl::gpio::internal::getPullUpDownValue(
 	htl::gpio::OutputMode mode) {
 
-	return mode == htl::gpio::OutputMode::openDrainPullUp ? PUPD::UP : PUPD::NONE;
+	return mode == OutputMode::openDrainPullUp ? PUPD::UP : PUPD::NONE;
 }

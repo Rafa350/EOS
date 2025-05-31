@@ -24,6 +24,9 @@
 	#define HTL_UART_OPTION_DMA HTL_UART_DEFAULT_OPTION_DMA
 #endif
 
+#ifndef HTL_UART_OPTION_FIFO
+	#define HTL_UART_OPTION_FIFO HTL_UART_DEFAULT_OPTION_FIFO
+#endif
 
 // HTL aditional includes
 //
@@ -263,6 +266,17 @@ namespace htl {
 
 				void writeData(uint8_t data) const;
 				uint8_t readData() const;
+				bool waitTransmissionComplete(unsigned expireTime);
+				bool waitTransmissionBufferEmpty(unsigned expireTime);
+				bool waitReceptionBufferFull(unsigned expireTime);
+
+#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
+				bool isFifoAvailable() const;
+				bool isFifoEnabled() const;
+#endif
+
+				ClockSource getUARTClockSource() const;
+				unsigned getUARTClockFrequency(ClockSource clockSource) const;
 
 				void notifyTxCompleted(const uint8_t *buffer, unsigned length, bool irq);
 				void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
@@ -367,25 +381,25 @@ namespace htl {
 #endif
 
 				template <typename pin_>
-				inline void initPinTX() {
+				void initPinTX() {
 					auto af = UARTPins<PinFunction::tx, pin_::portID, pin_::pinID>::value;
 					pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
-				inline void initPinRX() {
+				void initPinRX() {
 					auto af = UARTPins<PinFunction::rx, pin_::portID, pin_::pinID>::value;
 					pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
-				inline void initPinCTS() {
+				void initPinCTS() {
 					auto af = UARTPins<PinFunction::cts, pin_::portID, pin_::pinID>::value;
 					pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
-				inline void initPinRTS() {
+				void initPinRTS() {
 					auto af = UARTPins<PinFunction::rts, pin_::portID, pin_::pinID>::value;
 					pin_::pInst->initAlternateInput(gpio::InputMode::floating, af);
 				}
