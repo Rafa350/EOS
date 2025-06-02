@@ -53,15 +53,19 @@ eos::Result UARTDevice::initialize() {
 #endif
 
 		clear(_usart->CR2,
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			USART_CR2_LINEN |     // Deshabilita modus LIN
-#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
+#endif
+#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			USART_CR2_RTOEN |     // Deshabilita receiver timeout
 #endif
      		USART_CR2_CLKEN);     // Deshabilita clock extern
 
 		clear(_usart->CR3,
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			USART_CR3_SCEN |      // Deshabilita modus SmartCard
 			USART_CR3_IREN |      // Deshabilita modus IrDA
+#endif
 			USART_CR3_DMAT |      // Desbilita DMA
 			USART_CR3_HDSEL);     // Deshabilita half duplex
 
@@ -153,22 +157,22 @@ void UARTDevice::setStopBits(
 
     auto CR2 = _usart->CR2;
     switch (stopBits) {
-        case StopBits::_0p5:
+        case StopBits::sb0p5:
             clear(CR2, USART_CR2_STOP_1);
             set(CR2, USART_CR2_STOP_0);
             break;
 
-        case StopBits::_1:
+        case StopBits::sb1:
         	clear(CR2, USART_CR2_STOP_1);
         	clear(CR2, USART_CR2_STOP_0);
             break;
 
-        case StopBits::_1p5:
+        case StopBits::sb1p5:
         	set(CR2, USART_CR2_STOP_1);
         	set(CR2, USART_CR2_STOP_0);
             break;
 
-        case StopBits::_2:
+        case StopBits::sb2:
         	set(CR2, USART_CR2_STOP_1);
         	clear(CR2, USART_CR2_STOP_0);
             break;
@@ -190,11 +194,11 @@ void UARTDevice::setWordBits(
 
 	auto numBits = useParity? 1 : 0;
 	switch (wordBits) {
-		case WordBits::word8:
+		case WordBits::wb8:
 			numBits += 8;
 			break;
 
-		case WordBits::word9:
+		case WordBits::wb9:
 			numBits += 9;
 			break;
 	}
@@ -216,15 +220,15 @@ void UARTDevice::setWordBits(
 
 	auto numBits = useParity? 1 : 0;
 	switch (wordBits) {
-		case WordBits::word7:
+		case WordBits::wb7:
 			numBits += 7;
 			break;
 
-		case WordBits::word8:
+		case WordBits::wb8:
 			numBits += 8;
 			break;
 
-		case WordBits::word9:
+		case WordBits::wb9:
 			numBits += 9;
 			break;
 	}
@@ -281,8 +285,7 @@ void UARTDevice::setHandsake(
 /// \param    timeout: El temps.
 /// \param    El resultat de l'operacio.
 ///
-#if defined(EOS_PLATFORM_STM32F7) || \
-	defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 eos::Result UARTDevice::setRxTimeout(
     unsigned timeout) const {
 
@@ -365,13 +368,13 @@ eos::Result UARTDevice::setTimming(
 		if (baudMode == BaudMode::div)
 			div = rate;
 		else {
-			if (overSampling == OverSampling::_8)
+			if (overSampling == OverSampling::os8)
 				div = (fclk + fclk + (rate / 2)) / rate;
 			else
 				div = (fclk + (rate / 2)) / rate;
 		}
 
-		if (overSampling == OverSampling::_8) {
+		if (overSampling == OverSampling::os8) {
 			unsigned temp = (uint16_t)(div & 0xFFF0U);
 			temp |= (uint16_t)((div & (uint16_t)0x000FU) >> 1U);
 			_usart->BRR = temp;
@@ -682,7 +685,7 @@ void UARTDevice::txInterruptService() {
 	}
 }
 
-#elif defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 void UARTDevice::txInterruptService() {
 
 	auto CR1 = _usart->CR1;
@@ -775,7 +778,7 @@ void UARTDevice::rxInterruptService() {
 	}
 }
 
-#elif defined(EOS_PLATFORM_STM32F7)
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7)
 void UARTDevice::rxInterruptService() {
 
 	auto CR1 = _usart->CR1;
@@ -942,8 +945,7 @@ void UARTDevice::notifyRxCompleted(
 /// \return   El rellotge.
 ///
 #if defined(EOS_PLATFORM_STM32F0)
-static ClockSource getClockSource(
-    USART_TypeDef *usart) {
+ClockSource UARTDevice::getUARTClockSource() const {
 
 	static const ClockSource clockSourceTbl[] = {
 		ClockSource::pclk,
@@ -951,7 +953,7 @@ static ClockSource getClockSource(
 		ClockSource::hsi,
 		ClockSource::lse};
 
-    if ((unsigned) usart == USART1_BASE) {
+    if ((unsigned) _usart == USART1_BASE) {
         unsigned sel = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
 		return clockSourceTbl[sel];
     }
@@ -960,12 +962,10 @@ static ClockSource getClockSource(
 }
 
 #elif defined(EOS_PLATFORM_STM32F4)
-static ClockSource getClockSource(
-    USART_TypeDef *usart) {
+ClockSource UARTDevice::getUARTClockSource() const {
 
 	return ClockSource::pclk;
 }
-
 
 #elif defined(EOS_PLATFORM_STM32F7)
 ClockSource UARTDevice::getUARTClockSource() const {
@@ -1075,7 +1075,9 @@ unsigned UARTDevice::getUARTClockFrequency(
 
     switch (clockSource) {
         case ClockSource::pclk:
-#if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0)
+            return getClockFrequency(ClockID::pclk);
+#elif defined(EOS_PLATFORM_STM32F7)
             if (((unsigned) _usart == USART1_BASE) ||
                 ((unsigned) _usart == USART6_BASE))
                 return getClockFrequency(ClockID::pclk2);
@@ -1086,7 +1088,7 @@ unsigned UARTDevice::getUARTClockFrequency(
 #elif defined(EOS_PLATFORM_STM32G0)
             return getClockFrequency(ClockID::pclk);
 #else
-#error
+#error "Unsuported platform"
 #endif
 
         case ClockSource::sysclk:
@@ -1218,7 +1220,7 @@ void UARTDevice::enableTransmission() const {
 /// \brief    Habilita la transmissio de dades en modus IRQ
 ///
 #if HTL_UART_OPTION_IRQ == 1
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void UARTDevice::enableTransmissionIRQ() const {
 
 	auto a = startAtomic();

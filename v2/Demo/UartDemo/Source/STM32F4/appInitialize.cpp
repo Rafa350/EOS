@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "hal/halSYS.h"
+#include "HTL/STM32/htlClock.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f429i_discovery_sdram.h"
@@ -63,6 +64,8 @@ static void initializeCLK() {
     pclkInit.PLLSAI.PLLSAIR = 4;
     pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_8;
     HAL_RCCEx_PeriphCLKConfig(&pclkInit);
+
+    eosAssert(SystemCoreClock == htl::clock::getClockFrequency(htl::clock::ClockID::sysclk));
 }
 
 

@@ -331,10 +331,10 @@ bool htl::clock::pllIsEnabled() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el PLL.
+/// \brief    Configura el PLL.
 /// \param    source: Rellotge font.
-/// \param    multiplier: Factor de multiplicacio.
-/// \param    divider: Factor de divisio.
+/// \param    multiplier: Factor de multiplicacio (N).
+/// \param    divider: Factor de divisio (M).
 /// \return   True si s'ha realitzat l'operacio correctament.
 ///
 bool htl::clock::pllConfigure(

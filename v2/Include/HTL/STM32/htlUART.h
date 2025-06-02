@@ -89,19 +89,19 @@ namespace htl {
         ///
 		enum class WordBits {
 #if defined(EOS_PLATFORM_STM32G0)
-			word7,
+			wb7,
 #endif
-			word8,
-			word9
+			wb8,
+			wb9
 		};
 
         /// Nombre de bits de parada.
         ///
 		enum class StopBits {
-			_0p5,
-			_1,
-			_1p5,
-			_2
+			sb0p5,
+			sb1,
+			sb1p5,
+			sb2
 		};
 
         /// Velocitat de transmissio.
@@ -145,8 +145,8 @@ namespace htl {
 		};
 
 		enum class OverSampling {
-			_8,
-			_16
+			os8,
+			os16
 		};
 
 		enum class PinFunction {
@@ -303,8 +303,7 @@ namespace htl {
 				        StopBits stopBits, Handsake handlsake) const;
 				eos::Result setTimming(BaudMode baudMode, ClockSource clockSource,
 				        uint32_t rate, OverSampling oversampling) const;
-#if defined(EOS_PLATFORM_STM32F7) || \
-	defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 				eos::Result setRxTimeout(unsigned timeout) const;
 #endif
 
