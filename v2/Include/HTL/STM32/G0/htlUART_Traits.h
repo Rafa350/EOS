@@ -16,8 +16,13 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart1> {
 				static constexpr uint32_t usartAddr = USART1_BASE;
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR2_USART1EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
+				static constexpr uint32_t activatePos = RCC_APBENR2_USART1EN_Pos;
+
+				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART1SEL_Msk;
+				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART1SEL_Pos;
+
 				static constexpr bool isFIFOAvailable = true;
 			};
 			#endif
@@ -26,8 +31,13 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart2> {
 				static constexpr uint32_t usartAddr = USART2_BASE;
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART2EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t activatePos = RCC_APBENR1_USART2EN_Pos;
+
+				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART2SEL_Msk;
+				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART2SEL_Pos;
+
 				static constexpr bool isFIFOAvailable = true;
 				static constexpr bool supportedRxTimeout = false;
 			};
@@ -37,8 +47,15 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart3> {
 				static constexpr uint32_t usartAddr = USART3_BASE;
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART3EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t activatePos = RCC_APBENR1_USART3EN_Pos;
+
+				/*
+				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART3SEL_Msk;
+				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART3SEL_Pos;
+				*/
+
 				static constexpr bool supportedRxTimeout = false;
 			};
 			#endif
@@ -47,8 +64,13 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart4> {
 				static constexpr uint32_t usartAddr = USART4_BASE;
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART4EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t activatePos = RCC_APBENR1_USART4EN_Pos;
+
+				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART1SEL_Msk;
+				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART1SEL_Pos;
+
 				static constexpr bool supportedRxTimeout = false;
 			};
 			#endif

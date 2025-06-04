@@ -359,10 +359,11 @@ eos::Result UARTDevice::setTimming(
 				break;
 		}
 
-		if (clockSource == ClockSource::automatic)
-			clockSource = getUARTClockSource();
+		if (clockSource != ClockSource::nochange) {
 
-		unsigned fclk = getUARTClockFrequency(clockSource);
+		}
+
+		unsigned fclk = getClockFrequency(getUARTClock());
 
 		unsigned div;
 		if (baudMode == BaudMode::div)
@@ -941,179 +942,6 @@ void UARTDevice::notifyRxCompleted(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el rellotge asignat a la UART
-/// \return   El rellotge.
-///
-#if defined(EOS_PLATFORM_STM32F0)
-ClockSource UARTDevice::getUARTClockSource() const {
-
-	static const ClockSource clockSourceTbl[] = {
-		ClockSource::pclk,
-		ClockSource::sysclk,
-		ClockSource::hsi,
-		ClockSource::lse};
-
-    if ((unsigned) _usart == USART1_BASE) {
-        unsigned sel = (RCC->CFGR3 & RCC_CFGR3_USART1SW) >> RCC_CFGR3_USART1SW_Pos;
-		return clockSourceTbl[sel];
-    }
-    else
-	    return ClockSource::pclk;
-}
-
-#elif defined(EOS_PLATFORM_STM32F4)
-ClockSource UARTDevice::getUARTClockSource() const {
-
-	return ClockSource::pclk;
-}
-
-#elif defined(EOS_PLATFORM_STM32F7)
-ClockSource UARTDevice::getUARTClockSource() const {
-
-	static const ClockSource clockSourceTbl[] = {
-		ClockSource::pclk, ClockSource::sysclk, ClockSource::hsi, ClockSource::lse};
-
-    unsigned sel;
-    switch ((unsigned) _usart) {
-#ifdef HTL_UART1_EXIST
-        case USART1_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART1SEL) >> RCC_DCKCFGR2_USART1SEL_Pos;
-            break;
-#endif
-
-#ifdef HTL_UART2_EXIST
-        case USART2_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART2SEL) >> RCC_DCKCFGR2_USART2SEL_Pos;
-            break;
-#endif
-
-#ifdef HTL_UART3_EXIST
-        case USART3_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART3SEL) >> RCC_DCKCFGR2_USART3SEL_Pos;
-            break;
-#endif
-
-#ifdef HTL_UART4_EXIST
-        case UART4_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART4SEL) >> RCC_DCKCFGR2_UART4SEL_Pos;
-            break;
-#endif
-
-#ifdef HTL_UART5_EXIST
-        case UART5_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART5SEL) >> RCC_DCKCFGR2_UART5SEL_Pos;
-            break;
-#endif
-
-#ifdef HTL_UART6_EXIST
-        case USART6_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_USART6SEL) >> RCC_DCKCFGR2_USART6SEL_Pos;
-            break;
-#endif
-
-#ifdef HTL_UART7_EXIST
-        case UART7_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART7SEL) >> RCC_DCKCFGR2_UART7SEL_Pos;
-            break;
-#endif
-
-#ifdef HTL_UART8_EXIST
-        case UART8_BASE:
-            sel = (RCC->DCKCFGR2 & RCC_DCKCFGR2_UART8SEL) >> RCC_DCKCFGR2_UART8SEL_Pos;
-            break;
-#endif
-        default:
-        	sel = 0;
-        	break;
-    }
-
-    return clockSourceTbl[sel];
-}
-
-#elif defined(EOS_PLATFORM_STM32G0)
-ClockSource UARTDevice::getUARTClockSource() const {
-
-    static const ClockSource clockSourceTbl[4] = {
-        ClockSource::pclk, ClockSource::sysclk, ClockSource::hsi16, ClockSource::lse};
-
-    unsigned sel;
-    switch ((unsigned) _usart) {
-#ifdef HTL_UART1_EXIST
-        case USART1_BASE:
-            sel = (RCC->CCIPR & RCC_CCIPR_USART1SEL) >> RCC_CCIPR_USART1SEL_Pos;
-            break;
-#endif
-
-#if defined(HTL_UART2_EXIST) && defined(RCC_CCIPR_USART2SEL)
-        case USART2_BASE:
-            sel = (RCC->CCIPR & RCC_CCIPR_USART2SEL) >> RCC_CCIPR_USART2SEL_Pos;
-            break;
-#endif
-
-#if defined(HTL_UART3_EXIST) && defined(RCC_CCIPR_USART3SEL)
-        case USART3_BASE:
-            sel = (RCC->CCIPR & RCC_CCIPR_USART3SEL) >> RCC_CCIPR_USART3SEL_Pos;
-            break;
-#endif
-        default:
-        	sel = 0;
-           	break;
-    }
-
-    return clockSourceTbl[sel];
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte la frequencia del rellotge de la uart.
-/// \param    clockSource: El rellotge asignat.
-/// \return   La frequencia del rellotge.Zero en cas d'error.
-///
-unsigned UARTDevice::getUARTClockFrequency(
-    ClockSource clockSource) const {
-
-    switch (clockSource) {
-        case ClockSource::pclk:
-#if defined(EOS_PLATFORM_STM32F0)
-            return getClockFrequency(ClockID::pclk);
-#elif defined(EOS_PLATFORM_STM32F7)
-            if (((unsigned) _usart == USART1_BASE) ||
-                ((unsigned) _usart == USART6_BASE))
-                return getClockFrequency(ClockID::pclk2);
-            else
-                return clock::getClockFrequency(ClockID::pclk1);
-#elif defined(EOS_PLATFORM_STM32F4)
-            return getClockFrequency(ClockID::pclk1);
-#elif defined(EOS_PLATFORM_STM32G0)
-            return getClockFrequency(ClockID::pclk);
-#else
-#error "Unsuported platform"
-#endif
-
-        case ClockSource::sysclk:
-            return getClockFrequency(ClockID::sysclk);
-
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-        case ClockSource::hsi:
-            return getClockFrequency(clock::ClockID::hsi);
-#endif
-
-#if defined(EOS_PLATFORM_STM32G0)
-        case ClockSource::hsi16:
-            return getClockFrequency(ClockID::hsi16);
-#endif
-
-        case ClockSource::lse:
-            return getClockFrequency(ClockID::lse);
-
-        default:
-            return 0;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Espera que s'hagi completat la transmissio
 /// \param    timeout: El temps maxim d'espera en ticks.
 /// \return   True si tot es correcte, false en cas de timeout.
@@ -1436,4 +1264,3 @@ bool UARTDevice::isFifoEnabled() const {
 	return isSet(_uart->CR1, USART_CR1_FIFOEN);
 }
 #endif // (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
-

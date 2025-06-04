@@ -16,8 +16,10 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart1> {
 				static constexpr uint32_t usartAddr = USART1_BASE;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB2ENR_USART1EN_Pos;
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+                static constexpr uint32_t activatePos = RCC_APB2ENR_USART1EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk2;
 			};
 #endif
 
@@ -25,7 +27,12 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart2> {
 				static constexpr uint32_t usartAddr = USART2_BASE;
-				static constexpr bool supportedRxTimeout = true;
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t activatePos = RCC_APB1ENR_USART2EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
+
+                static constexpr bool supportedRxTimeout = true;
 			};
 #endif
 
@@ -33,6 +40,11 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart3> {
 				static constexpr uint32_t usartAddr = USART3_BASE;
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t activatePos = RCC_APB1ENR_USART3EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
+
 				static constexpr bool supportedRxTimeout = true;
 			};
 #endif
@@ -41,6 +53,11 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart4> {
 				static constexpr uint32_t usartAddr = UART4_BASE;
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t activatePos = RCC_APB1ENR_UART4EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
+
 				static constexpr bool supportedRxTimeout = true;
 			};
 #endif
@@ -49,9 +66,12 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart5> {
 				static constexpr uint32_t usartAddr = UART5_BASE;
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t activatePos = RCC_APB1ENR_UART5EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
+
 				static constexpr bool supportedRxTimeout = true;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART5EN_Pos;
 			};
 #endif
 
@@ -59,9 +79,12 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart6> {
 				static constexpr uint32_t usartAddr = USART6_BASE;
-				static constexpr bool supportedRxTimeout = true;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB2ENR_USART6EN_Pos;
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+                static constexpr uint32_t activatePos = RCC_APB2ENR_USART6EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk2;
+
+                static constexpr bool supportedRxTimeout = true;
 			};
 #endif
 
@@ -69,9 +92,12 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart7> {
 				static constexpr uint32_t usartAddr = UART7_BASE;
+                static constexpr uint32_t activateAddrAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t activatePos = RCC_APB1ENR_UART7EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
+
 				static constexpr bool supportedRxTimeout = true;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART7EN_Pos;
 			};
 #endif
 
@@ -80,8 +106,10 @@ namespace htl {
 			struct UARTTraits<DeviceID::uart8> {
 				static constexpr uint32_t usartAddr = UART8_BASE;
 				static constexpr bool supportedRxTimeout = true;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART8EN_Pos;
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+                static constexpr uint32_t activatePos = RCC_APB1ENR_UART8EN_Pos;
+
+                static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
 			};
 #endif
 		}

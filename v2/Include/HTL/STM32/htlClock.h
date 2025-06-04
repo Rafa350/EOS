@@ -29,7 +29,7 @@
 namespace htl {
 	namespace clock {
 
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		enum class SystemClockSource {
 			hsi,
 			hse,
@@ -78,8 +78,8 @@ namespace htl {
 			disabled,
 			div2, div3, div4, div5, div6, div7, div8
 		};
-#else
-#error "Unknown platform"
+//#else
+//#error "Unknown platform"
 #endif
 
 		class ClockDevice {
@@ -91,7 +91,7 @@ namespace htl {
 				static constexpr ClockDevice &rInst = _instance;
 				static constexpr unsigned clockLSIfrequency = CLOCK_LSI_FREQUENCY;
 				static constexpr unsigned clockLSEfrequency = CLOCK_LSE_FREQUENCY;
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr unsigned clockHSIfrequency = CLOCK_HSI_FREQUENCY;
 #elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr unsigned clockHSI16frequency = CLOCK_HSI16_FREQUENCY;
@@ -128,7 +128,7 @@ namespace htl {
 				void disableLSI() const;
 				bool isLSIEnabled() const;
 
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				// Control del rellotge HSI
 				//
 				void enableHSI() const;

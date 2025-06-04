@@ -12,6 +12,7 @@
 //
 #include "HTL/htlBits.h"
 #include "HTL/STM32/htl.h"
+#include "HTL/STM32/htlClock.h"
 
 
 // Default options
@@ -128,20 +129,19 @@ namespace htl {
 		};
 
 		enum class ClockSource {
-#if defined(EOS_PLATFORM_STM32F0) || \
-    defined(EOS_PLATFORM_STM32F4) || \
-	defined(EOS_PLATFORM_STM32F7)
 			pclk,
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			sysclk,
-			hsi,
-			lse,
-#elif defined(EOS_PLATFORM_STM32G0)
-			pclk,
-			sysclk,
+#endif
+#if defined(EOS_PLATFORM_STM32G0)
 			hsi16,
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
+			hsi,
+#endif
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			lse,
 #endif
-			automatic
+			nochange
 		};
 
 		enum class OverSampling {
@@ -275,8 +275,9 @@ namespace htl {
 				bool isFifoEnabled() const;
 #endif
 
-				ClockSource getUARTClockSource() const;
-				unsigned getUARTClockFrequency(ClockSource clockSource) const;
+				virtual clock::ClockID getUARTClock() const = 0;
+				//ClockSource getUARTClockSource() const;
+				//unsigned getUARTClockFrequency(ClockSource clockSource) const;
 
 				void notifyTxCompleted(const uint8_t *buffer, unsigned length, bool irq);
 				void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
@@ -346,8 +347,8 @@ namespace htl {
 
 			private:
 				static constexpr auto _usartAddr = UARTTraits::usartAddr;
-				static constexpr auto _rccEnableAddr = UARTTraits::rccEnableAddr;
-				static constexpr auto _rccEnablePos = UARTTraits::rccEnablePos;
+				static constexpr auto _activateAddr = UARTTraits::activateAddr;
+				static constexpr auto _activatePos = UARTTraits::activatePos;
 				static UARTDeviceX _instance;
 
 			public:
@@ -362,15 +363,13 @@ namespace htl {
 
 			protected:
 				void activate() const override {
-					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p |= 1 << _rccEnablePos;
+					bits::set(*reinterpret_cast<uint32_t *>(_activateAddr), 1UL << _activatePos);
 					__DSB();
 				}
-
 				void deactivate() const override {
-					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p &= ~(1 << _rccEnablePos);
+					bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
 				}
+				clock::ClockID getUARTClock() const override;
 
 			public:
 #if HTL_UART_OPTION_IRQ == 1
@@ -432,127 +431,6 @@ namespace htl {
 #ifdef HTL_UART8_EXIST
 		using UARTDevice8 = UARTDeviceX<DeviceID::uart8>;
 #endif
-
-#ifdef xEOS_PLATFORM_STM32F4
-		namespace internal {
-
-			#ifdef HTL_UART1_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart1> {
-				static constexpr uint32_t usartAddr = USART1_BASE;
-                #if defined(EOS_PLATFORM_STM32F7)
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB2ENR_USART1EN_Pos;
-				#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR2_USART1EN_Pos;
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_UART2_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart2> {
-				static constexpr uint32_t usartAddr = USART2_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART2EN_Pos;
-				static constexpr bool supportedRxTimeout = false;
-				#elif defined(EOS_PLATFORM_STM32F0)
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr bool supportedRxTimeout = true;
-				#else
-				#error Plataforma no soportada
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_UART3_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart3> {
-				static constexpr uint32_t usartAddr = USART3_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART3EN_Pos;
-				static constexpr bool supportedRxTimeout = false;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr bool supportedRxTimeout = true;
-				#else
-				#error Plataforma no soportada
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_UART4_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart4> {
-				static constexpr uint32_t usartAddr = USART4_BASE;
-				#if defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_USART4EN_Pos;
-				static constexpr bool supportedRxTimeout = false;
-				#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				static constexpr bool supportedRxTimeout = true;
-				#else
-				#error Plataforma no soportada
-				#endif
-			};
-			#endif
-
-			#ifdef HTL_UART5_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart5> {
-				static constexpr uint32_t usartAddr = USART5_BASE;
-				static constexpr bool supportedRxTimeout = true;
-                #if defined(EOS_PLATFORM_STM32F4)
-                #elif defined(EOS_PLATFORM_STM32F7)
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART5EN_Pos;
-                #endif
-			};
-			#endif
-
-			#ifdef HTL_UART6_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart6> {
-				static constexpr uint32_t usartAddr = USART6_BASE;
-				static constexpr bool supportedRxTimeout = true;
-                #if defined(EOS_PLATFORM_STM32F4)
-                #elif defined(EOS_PLATFORM_STM32F7)
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB2ENR_USART6EN_Pos;
-                #endif
-			};
-			#endif
-
-			#ifdef HTL_UART7_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart7> {
-				static constexpr USART_TypeDef *usart = UART7;
-				static constexpr bool supportedRxTimeout = true;
-                #if defined(EOS_PLATFORM_STM32F4)
-                #elif defined(EOS_PLATFORM_STM32F7)
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART7EN_Pos;
-                #endif
-			};
-			#endif
-
-			#ifdef HTL_UART8_EXIST
-			template <>
-			struct UARTTraits<DeviceID::uart8> {
-				static constexpr USART_TypeDef *usart = UART8;
-				static constexpr bool supportedRxTimeout = true;
-                #if defined(EOS_PLATFORM_STM32F4)
-                #elif defined(EOS_PLATFORM_STM32F7)
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-                static constexpr uint32_t rccEnablePos = RCC_APB1ENR_UART8EN_Pos;
-                #endif
-			};
-			#endif
-		}
-		#endif
-
 	}
 }
 
@@ -593,5 +471,105 @@ namespace htl {
     #error "Unknown platform"
 #endif
 
+
+#if defined(EOS_PLATFORM_STM32F0)
+namespace htl::uart {
+
+	template<DeviceID deviceID_>
+	clock::ClockID UARTDeviceX<deviceID_>::getUARTClock() const {
+
+		auto addr = reinterpret_cast<uint32_t*>(UARTTraits::clockSourceAddr);
+		auto msk = UARTTraits::clockSourceMsk;
+		auto pos = UARTTraits::clockSourcePos;
+
+		switch ((*addr & msk) >> pos) {
+			case RCC_CFGR3_USART1SW_PCLK:
+				return clock::ClockID::pclk;
+
+			case RCC_CFGR3_USART1SW_SYSCLK:
+				return clock::ClockID::sysclk;
+
+			case RCC_CFGR3_USART1SW_LSE:
+				return clock::ClockID::lse;
+
+			case RCC_CFGR3_USART1SW_HSI:
+				return clock::ClockID::hsi;
+		}
+	}
+
+	template<>
+	inline clock::ClockID UARTDeviceX<DeviceID::uart2>::getUARTClock() const {
+		return clock::ClockID::pclk;
+	}
+}
+
+#elif defined(EOS_PLATFORM_STM32F4)
+
+namespace htl::uart {
+
+	template<DeviceID deviceID_>
+	clock::ClockID htl::uart::UARTDeviceX<deviceID_>::getUARTClock() const {
+		return UARTTraits::pclkX;
+	}
+}
+
+#elif defined(EOS_PLATFORM_STM32F7)
+
+namespace htl::uart {
+
+	template<DeviceID deviceID_>
+	clock::ClockID htl::uart::UARTDeviceX<deviceID_>::getUARTClock() const {
+
+		auto addr = reinterpret_cast<uint32_t*>(UARTTraits::clockSourceAddr);
+		auto msk = UARTTraits::clockSourceMsk;
+		auto pos = UARTTraits::clockSourcePos;
+
+		auto pclkX = UARTTraits::pclkX;
+
+		switch ((*addr & msk) >> pos) {
+			case 0:
+				return pclkX;
+
+			case 1:
+				return clock::ClockID::sysclk;
+
+			case 2:
+				return clock::ClockID::hsi;
+
+			case 3:
+				return clock::ClockID::lse;
+		}
+	}
+
+}
+
+#elif defined(EOS_PLATFORM_STM32G0)
+
+namespace htl::uart {
+
+	template<DeviceID deviceID_>
+	clock::ClockID htl::uart::UARTDeviceX<deviceID_>::getUARTClock() const {
+
+		auto addr = reinterpret_cast<uint32_t*>(UARTTraits::clockSourceAddr);
+		auto msk = UARTTraits::clockSourceMsk;
+		auto pos = UARTTraits::clockSourcePos;
+
+		switch ((*addr & msk) >> pos) {
+			case 0:
+				return clock::ClockID::pclk;
+
+			case 1:
+				return clock::ClockID::sysclk;
+
+			case 2:
+				return clock::ClockID::hsi16;
+
+			case 3:
+				return clock::ClockID::lse;
+		}
+	}
+}
+
+#endif
 
 #endif // __STM32_htlUART__

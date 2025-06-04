@@ -724,7 +724,7 @@ namespace htl {
 
                 private:
 					static constexpr auto _addr = PortTraits::activateAddr;
-					static constexpr auto _bit = PortTraits::activateBit;
+					static constexpr auto _pos = PortTraits::activatePos;
 
                 private:
 					static PinMask _mask;
@@ -733,7 +733,7 @@ namespace htl {
 					static void activate(PinMask mask) {
 					    auto m = (uint16_t) _mask;
 						if (!m) {
-							bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _bit));
+							bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
 							__DSB();
 						}
 						bits::set(m, (uint16_t) mask);
@@ -744,7 +744,7 @@ namespace htl {
                         auto m = (uint16_t) _mask;
                         bits::clear(m, (uint16_t) mask);
 						if (!m) {
-							bits::clear(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _bit));
+							bits::clear(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
 							__DSB();
 						}
                         _mask = PinMask(m);
@@ -760,13 +760,13 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOA_BASE;
 #if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				static constexpr uint32_t activateBit = RCC_AHBENR_GPIOAEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHBENR_GPIOAEN_Pos;
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOAEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOAEN_Pos;
 #elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOAEN_Pos;
+				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOAEN_Pos;
 #endif
 			};
 #endif
@@ -776,13 +776,13 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOB_BASE;
 #if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				static constexpr uint32_t activateBit = RCC_AHBENR_GPIOBEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHBENR_GPIOBEN_Pos;
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOBEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOBEN_Pos;
 #elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOBEN_Pos;
+				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOBEN_Pos;
 #endif
 			};
 #endif
@@ -792,13 +792,13 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOC_BASE;
 #if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				static constexpr uint32_t activateBit = RCC_AHBENR_GPIOCEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHBENR_GPIOCEN_Pos;
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOCEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOCEN_Pos;
 #elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOCEN_Pos;
+				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOCEN_Pos;
 #endif
 			};
 #endif
@@ -808,13 +808,13 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOD_BASE;
 #if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				static constexpr uint32_t activateBit = RCC_AHBENR_GPIODEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHBENR_GPIODEN_Pos;
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIODEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIODEN_Pos;
 #elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activateBit = RCC_IOPENR_GPIODEN_Pos;
+				static constexpr uint32_t activatePos = RCC_IOPENR_GPIODEN_Pos;
 #endif
 			};
 #endif
@@ -824,7 +824,7 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOE_BASE;
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOEEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOEEN_Pos;
 #endif
 			};
 #endif
@@ -834,13 +834,13 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOF_BASE;
 #if defined(EOS_PLATFORM_STM32F0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				static constexpr uint32_t activateBit = RCC_AHBENR_GPIOFEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHBENR_GPIOFEN_Pos;
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOFEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOFEN_Pos;
 #elif defined(EOS_PLATFORM_STM32G0)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activateBit = RCC_IOPENR_GPIOFEN_Pos;
+				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOFEN_Pos;
 #endif
 			};
 #endif
@@ -850,7 +850,7 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOG_BASE;
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOGEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOGEN_Pos;
 #endif
 			};
 #endif
@@ -860,7 +860,7 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOH_BASE;
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOHEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOHEN_Pos;
 #endif
 			};
 #endif
@@ -870,7 +870,7 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOI_BASE;
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOIEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOIEN_Pos;
 #endif
 			};
 #endif
@@ -880,7 +880,7 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOJ_BASE;
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOJEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOJEN_Pos;
 #endif
 			};
 #endif
@@ -890,7 +890,7 @@ namespace htl {
 				static constexpr uint32_t gpioAddr = GPIOK_BASE;
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
-				static constexpr uint32_t activateBit = RCC_AHB1ENR_GPIOKEN_Pos;
+				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOKEN_Pos;
 #endif
 			};
 #endif

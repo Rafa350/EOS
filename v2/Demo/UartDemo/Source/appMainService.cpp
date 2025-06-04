@@ -34,7 +34,7 @@ void MainService::onExecute() {
 	_devUART->initialize();
 
 	_devUART->setProtocol(WordBits::wb8, Parity::none, StopBits::sb1, Handsake::none);
-	_devUART->setTimming(BaudMode::b19200, ClockSource::automatic, 0, OverSampling::os16);
+	_devUART->setTimming(BaudMode::b19200, ClockSource::nochange, 0, OverSampling::os16);
 
 	while (!stopSignal()) {
 
