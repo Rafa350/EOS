@@ -291,12 +291,14 @@ eos::Result UARTDevice::setRxTimeout(
 
 	if (_state == State::ready) {
 
-		if (timeout == 0)
-	    	clear(_usart->CR2, USART_CR2_RTOEN);
-	    else {
-	    	set(_usart->CR2, USART_CR2_RTOEN);
-	        _usart->RTOR = timeout;
-	    }
+		if (isRTOAvailable()) {
+			if (timeout == 0)
+				clear(_usart->CR2, USART_CR2_RTOEN);
+			else {
+				set(_usart->CR2, USART_CR2_RTOEN);
+				_usart->RTOR = timeout;
+			}
+		}
 
 		return eos::Results::success;
 	}
@@ -309,14 +311,12 @@ eos::Result UARTDevice::setRxTimeout(
 /// ----------------------------------------------------------------------
 /// \brief    Asigna els valor de temporitzacio.
 /// \param    baudMode: Les opcions del baud rate
-/// \param    clockSource: Les opcions de clocking.
 /// \param    rate: El valor de velocitat.
 /// \param    overSampling: Tipus de mostreig
 /// \return   El resultat de l'operacio.
 ///
 eos::Result UARTDevice::setTimming(
 	BaudMode baudMode,
-	ClockSource clockSource,
 	uint32_t rate,
 	OverSampling overSampling) const {
 
@@ -359,10 +359,6 @@ eos::Result UARTDevice::setTimming(
 				break;
 		}
 
-		if (clockSource != ClockSource::nochange) {
-
-		}
-
 		unsigned fclk = getClockFrequency(getUARTClock());
 
 		unsigned div;
@@ -382,6 +378,23 @@ eos::Result UARTDevice::setTimming(
 		}
 		else
 			_usart->BRR = div;
+
+		return eos::Results::success;
+	}
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona la font del relloge del generador de bauds
+/// \param    clockSource: La font.
+/// \return   El resultat de l'operacio.
+///
+eos::Result UARTDevice::setClockSource(
+	ClockSource clockSource) const {
+
+	if(_state == State::ready){
 
 		return eos::Results::success;
 	}
@@ -1114,7 +1127,7 @@ void UARTDevice::disableTransmission() const {
 #endif
 
 	// TODO: Asegurar-se que l'ultim byte s'ha transmes abans de deshabilitar
-	// ta transmissio
+	// la transmissio
 
 	clear(_usart->CR1,
 		USART_CR1_TE);            // Desabilita transmissio

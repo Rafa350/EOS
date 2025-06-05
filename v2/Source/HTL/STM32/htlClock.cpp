@@ -17,12 +17,13 @@ htl::clock::ClockDevice htl::clock::ClockDevice::_instance;
 
 
 using namespace htl::bits;
+using namespace htl::clock;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor per defecte del dispositiu.
 ///
-htl::clock::ClockDevice::ClockDevice() {
+ClockDevice::ClockDevice() {
 
 }
 
@@ -30,7 +31,7 @@ htl::clock::ClockDevice::ClockDevice() {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el clock LSE
 ///
-void htl::clock::ClockDevice::enableLSE() const {
+void ClockDevice::enableLSE() const {
 
 	set(RCC->BDCR, RCC_BDCR_LSEON);
 	while (!isLSEEnabled())
@@ -41,7 +42,7 @@ void htl::clock::ClockDevice::enableLSE() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el clock LSE
 ///
-void htl::clock::ClockDevice::disableLSE() const {
+void ClockDevice::disableLSE() const {
 
 	clear(RCC->BDCR, RCC_BDCR_LSEON);
 	while (isLSEEnabled())
@@ -53,7 +54,7 @@ void htl::clock::ClockDevice::disableLSE() const {
 /// \brief    Comprova si el clock LSE esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool htl::clock::ClockDevice::isLSEEnabled() const {
+bool ClockDevice::isLSEEnabled() const {
 
 	return isSet(RCC->BDCR, RCC_BDCR_LSERDY);
 }
@@ -63,7 +64,7 @@ bool htl::clock::ClockDevice::isLSEEnabled() const {
 /// \brief    Activa el clock HSE
 /// \param    hseBaypassMode: Indica si utilitza un rellotge extern
 ///
-void htl::clock::ClockDevice::enableHSE(
+void ClockDevice::enableHSE(
 	HseBypassMode bypass) const {
 
 	switch (bypass) {
@@ -87,7 +88,7 @@ void htl::clock::ClockDevice::enableHSE(
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el clock HSE
 ///
-void htl::clock::ClockDevice::disableHSE() const {
+void ClockDevice::disableHSE() const {
 	hseDisable();
 
 	clear(RCC->CR, RCC_CR_HSEON);
@@ -100,7 +101,7 @@ void htl::clock::ClockDevice::disableHSE() const {
 /// \brief    Comprova si el clock HSE esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool htl::clock::ClockDevice::isHSEEnabled() const {
+bool ClockDevice::isHSEEnabled() const {
 
     return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
@@ -109,7 +110,7 @@ bool htl::clock::ClockDevice::isHSEEnabled() const {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el clock LSI
 ///
-void htl::clock::ClockDevice::enableLSI() const {
+void ClockDevice::enableLSI() const {
 
 	set(RCC->CR, RCC_CSR_LSION);
 	while (!isLSIEnabled())
@@ -120,7 +121,7 @@ void htl::clock::ClockDevice::enableLSI() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el clock LSI
 ///
-void htl::clock::ClockDevice::disableLSI() const {
+void ClockDevice::disableLSI() const {
 
 	clear(RCC->CR, RCC_CSR_LSION);
 	while (isLSIEnabled())
@@ -132,7 +133,7 @@ void htl::clock::ClockDevice::disableLSI() const {
 /// \brief    Comprova si el clock LSI esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool htl::clock::ClockDevice::isLSIEnabled() const {
+bool ClockDevice::isLSIEnabled() const {
 
 	return isSet(RCC->CSR, RCC_CSR_LSION);
 }
@@ -142,7 +143,7 @@ bool htl::clock::ClockDevice::isLSIEnabled() const {
 /// \brief    Activa el clock HSI
 ///
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-void htl::clock::ClockDevice::enableHSI() const {
+void ClockDevice::enableHSI() const {
 
 	set(RCC->CR, RCC_CR_HSION);
 	while (!isHSIEnabled())
@@ -155,7 +156,7 @@ void htl::clock::ClockDevice::enableHSI() const {
 /// \brief    Desactiva el clock HSI
 ///
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-void htl::clock::ClockDevice::disableHSI() const {
+void ClockDevice::disableHSI() const {
 
 	clear(RCC->CR, RCC_CR_HSION);
 	while (isHSIEnabled())
@@ -169,7 +170,7 @@ void htl::clock::ClockDevice::disableHSI() const {
 /// \return   True si esta actiu, false en cas contrari.
 ///
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-bool htl::clock::ClockDevice::isHSIEnabled() const {
+bool ClockDevice::isHSIEnabled() const {
 
 	return isSet(RCC->CR, RCC_CR_HSION);
 }
@@ -181,7 +182,7 @@ bool htl::clock::ClockDevice::isHSIEnabled() const {
 /// \param    kernelMode: Selecciona el modus kernel.
 ///
 #if defined(EOS_PLATFORM_STM32G0)
-void htl::clock::ClockDevice::enableHSI16(
+void ClockDevice::enableHSI16(
 	bool kernelMode) const {
 
 	set(RCC->CR, RCC_CR_HSION);
@@ -200,7 +201,7 @@ void htl::clock::ClockDevice::enableHSI16(
 /// \brief    Desactiva el clock HSI16
 ///
 #if defined(EOS_PLATFORM_STM32G0)
-void htl::clock::ClockDevice::disableHSI16() const {
+void ClockDevice::disableHSI16() const {
 
 	clear(RCC->CR, RCC_CR_HSION);
 	while (isHSI16Enabled())
@@ -214,7 +215,7 @@ void htl::clock::ClockDevice::disableHSI16() const {
 /// \return   True si esta actiu, false en cas contrari.
 ///
 #if defined(EOS_PLATFORM_STM32G0)
-bool htl::clock::ClockDevice::isHSI16Enabled() const {
+bool ClockDevice::isHSI16Enabled() const {
 
 	return isSet(RCC->CR, RCC_CR_HSION);
 }
@@ -224,7 +225,7 @@ bool htl::clock::ClockDevice::isHSI16Enabled() const {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el PLL
 ///
-void htl::clock::ClockDevice::enablePLL() const {
+void ClockDevice::enablePLL() const {
 
 	set(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) == 0)
@@ -235,7 +236,7 @@ void htl::clock::ClockDevice::enablePLL() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el PLL
 ///
-void htl::clock::ClockDevice::disablePLL() const {
+void ClockDevice::disablePLL() const {
 
 	clear(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
@@ -251,7 +252,7 @@ void htl::clock::ClockDevice::disablePLL() const {
 /// \brief    Comprova si el PLL esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool htl::clock::ClockDevice::isPLLEnabled() const {
+bool ClockDevice::isPLLEnabled() const {
 
     return (isSet(RCC->CR, RCC_CR_PLLON) && isSet(RCC->CR, RCC_CR_PLLRDY));
 }
@@ -268,7 +269,7 @@ bool htl::clock::ClockDevice::isPLLEnabled() const {
 /// \return   True si tot es correcte, false en cas contrari.
 ///
 #if defined(EOS_PLATFORM_STM32G0)
-bool htl::clock::ClockDevice::configurePLL(
+bool ClockDevice::configurePLL(
 		PLLsource source,
 		unsigned multiplier,
 		unsigned divider,
@@ -344,7 +345,7 @@ bool htl::clock::ClockDevice::configurePLL(
 /// \return   True si tot es correcte, false en cas contrari.
 ///
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-bool htl::clock::ClockDevice::selectSystemClock(
+bool ClockDevice::selectSystemClock(
 	SystemClockSource source) const {
 
 	auto CFGR = RCC->CFGR;
@@ -379,7 +380,7 @@ bool htl::clock::ClockDevice::selectSystemClock(
 }
 
 #elif defined(EOS_PLATFORM_STM32G0)
-bool htl::clock::ClockDevice::selectSystemClock(
+bool ClockDevice::selectSystemClock(
 	SystemClockSource source) const {
 
 	auto CFGR = RCC->CFGR;
@@ -405,11 +406,7 @@ bool htl::clock::ClockDevice::selectSystemClock(
 			break;
 
 		case SystemClockSource::pllrclk:
-#if defined(EOS_PLATFORM_STM32G0)
             if (!isPLLEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN) == 0))
-#else
-            if (!isPLLEnabled())
-#endif
                 return false;
 			set(CFGR, RCC_CFGR_SW_PLLRCLK);
 			break;
@@ -435,7 +432,7 @@ bool htl::clock::ClockDevice::selectSystemClock(
 /// \return   La frequencia en hertz. 0 en cas d'error.
 ///
 #if defined(EOS_PLATFORM_STM32F4)
-unsigned htl::clock::ClockDevice::getClockFrequency(
+unsigned ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
 	static const uint8_t hclkPrescalerTbl[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
@@ -515,7 +512,7 @@ unsigned htl::clock::ClockDevice::getClockFrequency(
 }
 
 #elif defined(EOS_PLATFORM_STM32G0)
-unsigned htl::clock::ClockDevice::getClockFrequency(
+unsigned ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
 	static const uint8_t hsiDividerTbl[8] = { 0, 1, 2, 3, 4, 5, 6, 7};

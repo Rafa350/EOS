@@ -12,7 +12,7 @@ namespace htl {
 	namespace uart {
 		namespace internal {
 
-			#ifdef HTL_UART1_EXIST
+#ifdef HTL_UART1_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart1> {
 				static constexpr uint32_t usartAddr = USART1_BASE;
@@ -24,10 +24,11 @@ namespace htl {
 				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART1SEL_Pos;
 
 				static constexpr bool isFIFOAvailable = true;
+				static constexpr bool isRTOAvailable = true;
 			};
-			#endif
+#endif
 
-			#ifdef HTL_UART2_EXIST
+#ifdef HTL_UART2_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart2> {
 				static constexpr uint32_t usartAddr = USART2_BASE;
@@ -38,59 +39,75 @@ namespace htl {
 				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART2SEL_Msk;
 				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART2SEL_Pos;
 
+#if defined(EOS_PLATFORM_STM32G071) || defined(EOS_PLATFORM_STM32G081) || \
+    defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)
 				static constexpr bool isFIFOAvailable = true;
-				static constexpr bool supportedRxTimeout = false;
+				static constexpr bool isRTOAvailable = true;
+#else
+				static constexpr bool isFIFOAvailable = false;
+				static constexpr bool isRTOAvailable = false;
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_UART3_EXIST
+#ifdef HTL_UART3_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart3> {
 				static constexpr uint32_t usartAddr = USART3_BASE;
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART3EN_Pos;
 
-				/*
+#if defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)
 				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
 				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART3SEL_Msk;
 				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART3SEL_Pos;
-				*/
+#endif
 
-				static constexpr bool supportedRxTimeout = false;
+#if defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)
+				static constexpr bool isFIFOAvailable = true;
+				static constexpr bool isRTOAvailable = true;
+#else
+				static constexpr bool isFIFOAvailable = false;
+				static constexpr bool isRTOAvailable = false;
+#endif
 			};
-			#endif
+#endif
 
-			#ifdef HTL_UART4_EXIST
+#ifdef HTL_UART4_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart4> {
 				static constexpr uint32_t usartAddr = USART4_BASE;
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART4EN_Pos;
 
-				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
-				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART1SEL_Msk;
-				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART1SEL_Pos;
-
-				static constexpr bool supportedRxTimeout = false;
+				static constexpr bool isFIFOAvailable = false;
+				static constexpr bool isRTOAvailable = false;
 			};
-			#endif
+#endif
 
-			#ifdef HTL_UART5_EXIST
+#ifdef HTL_UART5_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart5> {
 				static constexpr uint32_t usartAddr = USART5_BASE;
-				static constexpr bool supportedRxTimeout = true;
-			};
-			#endif
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t activatePos = RCC_APBENR1_USART5EN_Pos;
 
-			#ifdef HTL_UART6_EXIST
+				static constexpr bool isFIFOAvailable = false;
+				static constexpr bool isRTOAvailable = false;
+			};
+#endif
+
+#ifdef HTL_UART6_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart6> {
 				static constexpr uint32_t usartAddr = USART6_BASE;
-				static constexpr bool supportedRxTimeout = true;
-			};
-			#endif
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t activatePos = RCC_APBENR1_USART6EN_Pos;
 
+				static constexpr bool isFIFOAvailable = false;
+				static constexpr bool isRTOAvailable = false;
+			};
+#endif
 		}
 	}
 }

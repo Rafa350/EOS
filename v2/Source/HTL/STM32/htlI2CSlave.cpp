@@ -607,7 +607,7 @@ static void enableListenInterrupts(
 static void enableTransmitInterrupts(
 	I2C_TypeDef *i2c) {
 
-	setBits(i2c->CR1,
+	set(i2c->CR1,
 		I2C_CR1_TXIE |       // Habilita TX
 		I2C_CR1_STOPIE |     // Habilita STOP
 		I2C_CR1_NACKIE |     // Habilita NACK

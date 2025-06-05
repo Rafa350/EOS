@@ -139,9 +139,8 @@ namespace htl {
 			hsi,
 #endif
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-			lse,
+			lse
 #endif
-			nochange
 		};
 
 		enum class OverSampling {
@@ -271,13 +270,12 @@ namespace htl {
 				bool waitReceptionBufferFull(unsigned expireTime);
 
 #if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
-				bool isFifoAvailable() const;
-				bool isFifoEnabled() const;
+				virtual bool isFIFOAvailable() const = 0;
+				bool isFIFOEnabled() const;
 #endif
+				virtual bool isRTOAvailable() const = 0;
 
 				virtual clock::ClockID getUARTClock() const = 0;
-				//ClockSource getUARTClockSource() const;
-				//unsigned getUARTClockFrequency(ClockSource clockSource) const;
 
 				void notifyTxCompleted(const uint8_t *buffer, unsigned length, bool irq);
 				void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
@@ -302,8 +300,8 @@ namespace htl {
 
 				eos::Result setProtocol(WordBits wordBits, Parity parity,
 				        StopBits stopBits, Handsake handlsake) const;
-				eos::Result setTimming(BaudMode baudMode, ClockSource clockSource,
-				        uint32_t rate, OverSampling oversampling) const;
+				eos::Result setTimming(BaudMode baudMode, uint32_t rate, OverSampling oversampling) const;
+				eos::Result setClockSource(ClockSource clockSource) const;
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 				eos::Result setRxTimeout(unsigned timeout) const;
 #endif
@@ -369,7 +367,14 @@ namespace htl {
 				void deactivate() const override {
 					bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
 				}
+
 				clock::ClockID getUARTClock() const override;
+
+#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
+				bool isFIFOAvailable() const override;
+				bool isFIFOEnabled() const;
+#endif
+				bool isRTOAvailable() const override;
 
 			public:
 #if HTL_UART_OPTION_IRQ == 1
@@ -499,6 +504,7 @@ namespace htl::uart {
 
 	template<>
 	inline clock::ClockID UARTDeviceX<DeviceID::uart2>::getUARTClock() const {
+
 		return clock::ClockID::pclk;
 	}
 }
@@ -509,6 +515,7 @@ namespace htl::uart {
 
 	template<DeviceID deviceID_>
 	clock::ClockID htl::uart::UARTDeviceX<deviceID_>::getUARTClock() const {
+
 		return UARTTraits::pclkX;
 	}
 }
@@ -571,5 +578,15 @@ namespace htl::uart {
 }
 
 #endif
+
+namespace htl::uart {
+
+	template<DeviceID deviceID_>
+	bool UARTDeviceX<deviceID_>::isRTOAvailable() const {
+
+		return UARTTraits::isRTOAvailable;
+	}
+}
+
 
 #endif // __STM32_htlUART__
