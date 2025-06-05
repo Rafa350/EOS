@@ -19,6 +19,8 @@ namespace htl {
                 static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
                 static constexpr uint32_t activatePos = RCC_APB2ENR_USART1EN_Pos;
 
+                static constexpr bool isRTOAvailable = false;
+
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk2;
 			};
 #endif
@@ -32,7 +34,7 @@ namespace htl {
 
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
 
-                static constexpr bool supportedRxTimeout = true;
+                static constexpr bool isRTOAvailable = true;
 			};
 #endif
 
@@ -45,7 +47,7 @@ namespace htl {
 
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
 
-				static constexpr bool supportedRxTimeout = true;
+                static constexpr bool isRTOAvailable = true;
 			};
 #endif
 
@@ -58,7 +60,7 @@ namespace htl {
 
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
 
-				static constexpr bool supportedRxTimeout = true;
+                static constexpr bool isRTOAvailable = true;
 			};
 #endif
 
@@ -71,7 +73,7 @@ namespace htl {
 
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
 
-				static constexpr bool supportedRxTimeout = true;
+                static constexpr bool isRTOAvailable = true;
 			};
 #endif
 
@@ -84,7 +86,7 @@ namespace htl {
 
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk2;
 
-                static constexpr bool supportedRxTimeout = true;
+                static constexpr bool isRTOAvailable = true;
 			};
 #endif
 
@@ -97,7 +99,7 @@ namespace htl {
 
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
 
-				static constexpr bool supportedRxTimeout = true;
+                static constexpr bool isRTOAvailable = true;
 			};
 #endif
 
@@ -105,11 +107,12 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart8> {
 				static constexpr uint32_t usartAddr = UART8_BASE;
-				static constexpr bool supportedRxTimeout = true;
                 static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
                 static constexpr uint32_t activatePos = RCC_APB1ENR_UART8EN_Pos;
 
                 static constexpr clock::ClockID pclkX = clock::ClockID::pclk1;
+
+                static constexpr bool isRTOAvailable = true;
 			};
 #endif
 		}

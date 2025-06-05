@@ -359,7 +359,7 @@ eos::Result UARTDevice::setTimming(
 				break;
 		}
 
-		unsigned fclk = getClockFrequency(getUARTClock());
+		unsigned fclk = ClockDevice::pInst->getClockFrequency(getUARTClock());
 
 		unsigned div;
 		if (baudMode == BaudMode::div)

@@ -19,7 +19,7 @@
     #include "HTL/STM32/F7/htlClock.h"
 
 #elif defined(EOS_PLATFORM_STM32G0)
-    #include "HTL/STM32/G0/htlClock.h"
+    //#include "HTL/STM32/G0/htlClock.h"
 
 #else
 	#error "Unknown platform"
@@ -28,6 +28,27 @@
 
 namespace htl {
 	namespace clock {
+
+#if defined(EOS_PLATFORM_STM32G0)
+		enum class ClockID {
+			sysclk,
+			pclk,
+			timpclk,
+			hclk,
+			hclk8,
+			hse,
+			hsi16,
+#if defined(EOS_PLATFORM_STM32G0B1)
+			hsi48,
+#endif
+			lse,
+			lsi,
+			hsisys,
+			pllpclk,
+			pllqclk,
+			pllrclk
+		};
+#endif
 
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		enum class SystemClockSource {
@@ -47,11 +68,37 @@ namespace htl {
 	#error "Unknown platform"
 #endif
 
+		enum class AHBPrescaler {
+			div1, div2, div4, div8, div16, div64, div128, div256, div512
+		};
+
+		enum class APBPrescaler {
+			div1, div2, div4, div8, div16
+		};
+
 #if defined(EOS_PLATFORM_STM32F4)
 		enum class PLLsource {
 			hsi,
 			hse
 		};
+
+		enum class PLLPdivider {
+			// Valors critics
+			div2, div4, div6, div8
+		};
+
+		enum class PLLQdivider {
+			// Valors critics
+			div2, div3, div4, div5, div6, div7, div8, div9,
+			div10, div11, div12, div13, div14, div15
+		};
+
+		enum class PLLRdivider {
+			// Valors critics
+			div2, div3, div4, div5, div6, div7
+		};
+
+
 #elif defined(EOS_PLATFORM_STM32G0)
 		enum class PLLsource {
 			hsi16,
@@ -60,23 +107,23 @@ namespace htl {
 
 		enum class PLLPdivider {
 			/*** Valors critics ***/
-			disabled,
 			div2, div3, div4, div5, div6, div7, div8, div9,
 			div10, div11, div12, div13, div14, div15, div16, div17, div18, div19,
 			div20, div21, div22, div23, div24, div25, div26, div27, div28, div29,
-			div30, div31, div32
+			div30, div31, div32,
+			disabled
 		};
 
 		enum class PLLQdivider {
 			/*** Valors critics ***/
-			disabled,
-			div2, div3, div4, div5, div6, div7, div8
+			div2, div3, div4, div5, div6, div7, div8,
+			disabled
 		};
 
 		enum class PLLRdivider {
 			/*** Valors critics ***/
-			disabled,
-			div2, div3, div4, div5, div6, div7, div8
+			div2, div3, div4, div5, div6, div7, div8,
+			disabled
 		};
 //#else
 //#error "Unknown platform"
@@ -110,26 +157,26 @@ namespace htl {
 				bool operator = (const ClockDevice&) = delete;
 
 			public:
-				// Control del rellotge LSE
+				// Control del oscilador LSE
 				//
 				void enableLSE() const;
 				void disableLSE() const;
 				bool isLSEEnabled() const;
 
-				// Control del rellotge HSE
+				// Control del oscilador HSE
 				//
-				void enableHSE(HseBypassMode bypass = HseBypassMode::off) const;
+				void enableHSE(bool bypass = false) const;
 				void disableHSE() const;
 				bool isHSEEnabled() const;
 
-				// Control del rellotge LSI
+				// Control del oscilador LSI
 				//
 				void enableLSI() const;
 				void disableLSI() const;
 				bool isLSIEnabled() const;
 
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-				// Control del rellotge HSI
+				// Control del oscilador HSI
 				//
 				void enableHSI() const;
 				void disableHSI() const;
@@ -157,11 +204,27 @@ namespace htl {
 				void enablePLL() const;
 				void disablePLL() const;
 				bool isPLLEnabled() const;
-#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32F4)
+				void enablePLLSAI() const;
+				void disablePLLSAI() const;
+				bool isPLLSAIEnabled() const;
+				bool configurePLL(PLLsource source, unsigned multiplier, unsigned divider, PLLPdivider divP, PLLQdivider divQ) const;
+				bool configurePLLSAI(unsigned divider, PLLQdivider divQ, PLLRdivider divR) const;
+#elif defined(EOS_PLATFORM_STM32G0)
 				bool configurePLL(PLLsource source, unsigned multiplier, unsigned divider, PLLPdivider divP, PLLQdivider divQ, PLLRdivider divR) const;
 #endif
 
+				// Configuracio dels rellotges del sistema
+				//
 				bool selectSystemClock(SystemClockSource source) const;
+				void setAHBPrescaler(AHBPrescaler prescaler) const;
+#if defined(EOS_PLATFORM_STM32F4)
+				void setAPB1Prescaler(APBPrescaler prescaler) const;
+				void setAPB2Prescaler(APBPrescaler prescaler) const;
+#elif defined(EOS_PLATFORM_STM32G0)
+				void setAPBPrescaler(APBPrescaler prescaler) const;
+#endif
+
 				unsigned getClockFrequency(ClockID clockID) const;
 		};
 	}

@@ -13,11 +13,11 @@
 #endif
 
 
-htl::clock::ClockDevice htl::clock::ClockDevice::_instance;
-
-
 using namespace htl::bits;
 using namespace htl::clock;
+
+
+ClockDevice ClockDevice::_instance;
 
 
 /// ----------------------------------------------------------------------
@@ -29,7 +29,7 @@ ClockDevice::ClockDevice() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el clock LSE
+/// \brief    Activa el oscilador LSE
 ///
 void ClockDevice::enableLSE() const {
 
@@ -40,7 +40,7 @@ void ClockDevice::enableLSE() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva el clock LSE
+/// \brief    Desactiva el oscilador LSE
 ///
 void ClockDevice::disableLSE() const {
 
@@ -51,7 +51,7 @@ void ClockDevice::disableLSE() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si el clock LSE esta actiu.
+/// \brief    Comprova si el oscilador LSE esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
 bool ClockDevice::isLSEEnabled() const {
@@ -61,24 +61,17 @@ bool ClockDevice::isLSEEnabled() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el clock HSE
+/// \brief    Activa el oscilador HSE
 /// \param    hseBaypassMode: Indica si utilitza un rellotge extern
 ///
 void ClockDevice::enableHSE(
-	HseBypassMode bypass) const {
+	bool bypass) const {
 
-	switch (bypass) {
-		case HseBypassMode::on:
-			set(RCC->CR, RCC_CR_HSEBYP);
-			break;
+	if (bypass)
+		set(RCC->CR, RCC_CR_HSEBYP);
+	else
+		clear(RCC->CR, RCC_CR_HSEBYP);
 
-		case HseBypassMode::off:
-			clear(RCC->CR, RCC_CR_HSEBYP);
-			break;
-
-		default:
-			break;
-	}
 	set(RCC->CR, RCC_CR_HSEON);
 	while (!isHSEEnabled())
 		continue;
@@ -86,10 +79,9 @@ void ClockDevice::enableHSE(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva el clock HSE
+/// \brief    Desactiva el oscilador HSE
 ///
 void ClockDevice::disableHSE() const {
-	hseDisable();
 
 	clear(RCC->CR, RCC_CR_HSEON);
 	while (isHSEEnabled())
@@ -98,7 +90,7 @@ void ClockDevice::disableHSE() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si el clock HSE esta actiu.
+/// \brief    Comprova si el oscilador HSE esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
 bool ClockDevice::isHSEEnabled() const {
@@ -108,7 +100,7 @@ bool ClockDevice::isHSEEnabled() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el clock LSI
+/// \brief    Activa el oscilador LSI
 ///
 void ClockDevice::enableLSI() const {
 
@@ -119,7 +111,7 @@ void ClockDevice::enableLSI() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva el clock LSI
+/// \brief    Desactiva el oscilador LSI
 ///
 void ClockDevice::disableLSI() const {
 
@@ -130,7 +122,7 @@ void ClockDevice::disableLSI() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si el clock LSI esta actiu.
+/// \brief    Comprova si el oscilador LSI esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
 bool ClockDevice::isLSIEnabled() const {
@@ -140,7 +132,7 @@ bool ClockDevice::isLSIEnabled() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el clock HSI
+/// \brief    Activa el oscilador HSI
 ///
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void ClockDevice::enableHSI() const {
@@ -153,7 +145,7 @@ void ClockDevice::enableHSI() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva el clock HSI
+/// \brief    Desactiva el oscilador HSI
 ///
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void ClockDevice::disableHSI() const {
@@ -166,7 +158,7 @@ void ClockDevice::disableHSI() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si el clock HSI esta actiu.
+/// \brief    Comprova si el oscilador HSI esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
@@ -177,11 +169,11 @@ bool ClockDevice::isHSIEnabled() const {
 #endif
 
 
+#if defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
-/// \brief    Activa el clock HSI16
+/// \brief    Activa el oscilador HSI16
 /// \param    kernelMode: Selecciona el modus kernel.
 ///
-#if defined(EOS_PLATFORM_STM32G0)
 void ClockDevice::enableHSI16(
 	bool kernelMode) const {
 
@@ -197,10 +189,10 @@ void ClockDevice::enableHSI16(
 #endif
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Desactiva el clock HSI16
-///
 #if defined(EOS_PLATFORM_STM32G0)
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el oscilador HSI16
+///
 void ClockDevice::disableHSI16() const {
 
 	clear(RCC->CR, RCC_CR_HSION);
@@ -210,11 +202,11 @@ void ClockDevice::disableHSI16() const {
 #endif
 
 
+#if defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si el clock HSI16 esta actiu.
+/// \brief    Comprova si el oscilador HSI16 esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-#if defined(EOS_PLATFORM_STM32G0)
 bool ClockDevice::isHSI16Enabled() const {
 
 	return isSet(RCC->CR, RCC_CR_HSION);
@@ -258,6 +250,103 @@ bool ClockDevice::isPLLEnabled() const {
 }
 
 
+#if defined(EOS_PLATFORM_STM32F4)
+/// ----------------------------------------------------------------------
+/// \brief    Habilita el PLLSAI
+///
+void ClockDevice::enablePLLSAI() const {
+
+	set(RCC->CFGR, RCC_CR_PLLSAION);
+	while (!isPLLSAIEnabled())
+		continue;
+}
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32F4)
+/// ----------------------------------------------------------------------
+/// \brief    Desabilita el PLLSAI
+///
+void ClockDevice::disablePLLSAI() const {
+
+	clear(RCC->CFGR, RCC_CR_PLLSAION);
+	while (isPLLSAIEnabled())
+		continue;
+}
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32F4)
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el PLLSAI esta actiu.
+/// \return   True si esta actiu, false en cas contrari.
+///
+bool ClockDevice::isPLLSAIEnabled() const {
+
+	return isSet(RCC->CR, RCC_CR_PLLSAIRDY);
+}
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32F4)
+/// ----------------------------------------------------------------------
+/// \brief    Configura el PLL
+/// \param    sorce: El rellotge.
+/// \param    multiplier: Factor de multiplicacio (N)
+/// \param    divider: Factor de divisio (M)
+/// \param    divP: Factor de divisio de la sortida P
+/// \param    divQ: Factor de divisio de la sortida Q
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool ClockDevice::configurePLL(
+	PLLsource source,
+	unsigned multiplier,
+	unsigned divider,
+	PLLPdivider divP,
+	PLLQdivider divQ) const {
+
+	if (divider < 2 || divider > 63 || multiplier < 50 || multiplier > 432)
+		return false;
+
+	if (isPLLEnabled())
+		return false;
+
+    auto PLLCFGR = RCC->PLLCFGR;
+
+    clear(PLLCFGR, RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLM | RCC_PLLCFGR_PLLN);
+	switch (source) {
+		case PLLsource::hsi:
+            if (!isHSIEnabled())
+                return false;
+			set(PLLCFGR, (uint32_t) RCC_PLLCFGR_PLLSRC_HSI);
+			break;
+
+		case PLLsource::hse:
+			if (!isHSEEnabled())
+				return false;
+			set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSE);
+			break;
+	}
+	set(PLLCFGR, (divider << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
+	set(PLLCFGR, (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
+
+	// Configura el divisor P
+	//
+	clear(PLLCFGR, RCC_PLLCFGR_PLLP);
+	set(PLLCFGR, ((uint32_t) divP << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP_Msk);
+
+	// Configura el divisor Q
+	//
+	clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
+	set(PLLCFGR, ((2 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ_Msk);
+
+	RCC->PLLCFGR = PLLCFGR;
+
+	return true;
+}
+
+
+#elif defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
 /// \brief    Configura el PLL
 /// \param    sorce: El rellotge.
@@ -268,7 +357,6 @@ bool ClockDevice::isPLLEnabled() const {
 /// \param    divR: Factor de divisio de la sortida R
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-#if defined(EOS_PLATFORM_STM32G0)
 bool ClockDevice::configurePLL(
 		PLLsource source,
 		unsigned multiplier,
@@ -308,7 +396,7 @@ bool ClockDevice::configurePLL(
 		clear(PLLCFGR, RCC_PLLCFGR_PLLPEN);
 	else {
 		clear(PLLCFGR, RCC_PLLCFGR_PLLP);
-		set(PLLCFGR, ((uint32_t) divP << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP);
+		set(PLLCFGR, ((1 + (uint32_t) divP) << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP);
 		set(PLLCFGR, RCC_PLLCFGR_PLLPEN);
 	}
 
@@ -318,7 +406,7 @@ bool ClockDevice::configurePLL(
 		clear(PLLCFGR, RCC_PLLCFGR_PLLQEN);
 	else {
 		clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
-		set(PLLCFGR, ((uint32_t) divQ << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ);
+		set(PLLCFGR, ((1 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ);
 		set(PLLCFGR, RCC_PLLCFGR_PLLQEN);
 	}
 
@@ -328,7 +416,7 @@ bool ClockDevice::configurePLL(
 		clear(PLLCFGR, RCC_PLLCFGR_PLLREN);
 	else {
 		clear(PLLCFGR, RCC_PLLCFGR_PLLR);
-		set(PLLCFGR, ((uint32_t) divR << RCC_PLLCFGR_PLLR_Pos) & RCC_PLLCFGR_PLLR);
+		set(PLLCFGR, ((1 + (uint32_t) divR) << RCC_PLLCFGR_PLLR_Pos) & RCC_PLLCFGR_PLLR);
 		set(PLLCFGR, RCC_PLLCFGR_PLLREN);
 	}
 
@@ -422,6 +510,77 @@ bool ClockDevice::selectSystemClock(
 		continue;
 
 	return true;
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el prescaler del clock AHB
+/// \param    prescaler: Valor del prescaler.
+/// \remarks  El posen els prescalers APB1 i APB2 a la maxima divisio
+///
+void ClockDevice::setAHBPrescaler(
+	AHBPrescaler prescaler) const {
+
+	auto CFGR = RCC->CFGR;
+	clear(CFGR, RCC_CFGR_HPRE);
+#if defined(EOS_PLATFORM_STM32F4)
+	set(CFGR, 7UL << RCC_CFGR_PPRE1_Pos);
+	set(CFGR, 7UL << RCC_CFGR_PPRE2_Pos);
+#endif
+	if (prescaler != AHBPrescaler::div1)
+		set(CFGR, ((7 + (uint32_t) prescaler) << RCC_CFGR_HPRE_Pos) & RCC_CFGR_HPRE_Msk);
+	RCC->CFGR = CFGR;
+}
+
+
+#if defined(EOS_PLATFORM_STM32F4)
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el prescaler del clock APB1
+/// \param    prescaler: Valor del prescaler.
+///
+void ClockDevice::setAPB1Prescaler(
+	APBPrescaler prescaler) const {
+
+	auto CFGR = RCC->CFGR;
+	clear(CFGR, RCC_CFGR_PPRE1);
+	if (prescaler != APBPrescaler::div1)
+		set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE1_Pos) & RCC_CFGR_PPRE1_Msk);
+	RCC->CFGR = CFGR;
+}
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32F4)
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el prescaler del clock APB2
+/// \param    prescaler: Valor del prescaler.
+///
+void ClockDevice::setAPB2Prescaler(
+	APBPrescaler prescaler) const {
+
+	auto CFGR = RCC->CFGR;
+	clear(CFGR, RCC_CFGR_PPRE2);
+	if (prescaler != APBPrescaler::div1)
+		set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE2_Pos) & RCC_CFGR_PPRE2_Msk);
+	RCC->CFGR = CFGR;
+}
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32G0)
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el prescaler del clock APB
+/// \param    prescaler: Valor del prescaler.
+///
+void ClockDevice::setAPBPrescaler(
+	APBPrescaler prescaler) const {
+
+	auto CFGR = RCC->CFGR;
+	clear(CFGR, RCC_CFGR_PPRE);
+	if (prescaler != APBPrescaler::div1)
+		set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE_Pos) & RCC_CFGR_PPRE_Msk);
+	RCC->CFGR = CFGR;
 }
 #endif
 

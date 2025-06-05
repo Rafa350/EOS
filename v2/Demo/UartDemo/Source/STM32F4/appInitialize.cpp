@@ -6,6 +6,9 @@
 #include "stm32f429i_discovery_sdram.h"
 
 
+using namespace htl::clock;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el rellotge del sistema.
 ///
@@ -15,7 +18,7 @@ static void initializeCLK() {
 	RCC_ClkInitTypeDef clkInit;
     RCC_PeriphCLKInitTypeDef pclkInit;
 
-	// Enable Power Control clock
+    // Enable Power Control clock
 	//
 	__HAL_RCC_PWR_CLK_ENABLE();
 
@@ -24,6 +27,25 @@ static void initializeCLK() {
 	// regarding system frequency refer to product datasheet.
 	//
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+#if 1
+
+	auto clock = ClockDevice::pInst;
+
+	clock->enableHSE();
+
+	clock->disablePLL();
+	clock->configurePLL(PLLsource::hse, 360, 8, PLLPdivider::div2, PLLQdivider::div7);
+	clock->enablePLL();
+
+	HAL_PWREx_EnableOverDrive();
+
+	clock->selectSystemClock(SystemClockSource::pll);
+	clock->setAHBPrescaler(AHBPrescaler::div1);
+	clock->setAPB1Prescaler(APBPrescaler::div4);
+	clock->setAPB2Prescaler(APBPrescaler::div2);
+
+#else
 
 	// Enable HSE Oscillator and activate PLL with HSE as source
 	//
@@ -50,6 +72,8 @@ static void initializeCLK() {
 	clkInit.APB1CLKDivider = RCC_HCLK_DIV4;
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_5);
+
+#endif
 
 	// Inicialitza rellotge del modul LTDC
 	// -Configure PLLSAI prescalers for LCD

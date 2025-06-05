@@ -195,7 +195,8 @@ namespace htl {
 
 		}
 
-        /// Clase que implementa el dispositiu de comunicacio UART.
+
+		/// Clase que implementa el dispositiu de comunicacio UART.
         ///
 		class UARTDevice {
 			public:
@@ -270,10 +271,10 @@ namespace htl {
 				bool waitReceptionBufferFull(unsigned expireTime);
 
 #if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
-				virtual bool isFIFOAvailable() const = 0;
+				constexpr virtual bool isFIFOAvailable() const = 0;
 				bool isFIFOEnabled() const;
 #endif
-				virtual bool isRTOAvailable() const = 0;
+				constexpr virtual bool isRTOAvailable() const = 0;
 
 				virtual clock::ClockID getUARTClock() const = 0;
 
@@ -371,10 +372,10 @@ namespace htl {
 				clock::ClockID getUARTClock() const override;
 
 #if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
-				bool isFIFOAvailable() const override;
+				constexpr bool isFIFOAvailable() const override;
 				bool isFIFOEnabled() const;
 #endif
-				bool isRTOAvailable() const override;
+				constexpr bool isRTOAvailable() const override;
 
 			public:
 #if HTL_UART_OPTION_IRQ == 1
@@ -582,7 +583,7 @@ namespace htl::uart {
 namespace htl::uart {
 
 	template<DeviceID deviceID_>
-	bool UARTDeviceX<deviceID_>::isRTOAvailable() const {
+	constexpr bool UARTDeviceX<deviceID_>::isRTOAvailable() const {
 
 		return UARTTraits::isRTOAvailable;
 	}
