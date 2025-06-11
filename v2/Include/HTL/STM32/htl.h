@@ -293,21 +293,6 @@
 #endif
 
 
-/*namespace htl {
-
-	inline unsigned startATOMIC() {
-		unsigned pm =  __get_PRIMASK();
-		__set_PRIMASK(1);
-		return pm;
-	}
-
-	inline void endATOMIC(unsigned pm) {
-		__set_PRIMASK(pm);
-	}
-
-}*/
-
-
 #if defined(HTL_MODULE_DMA)
 #include "HTL/STM32/htDMA.h"
 #endif

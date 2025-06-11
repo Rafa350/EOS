@@ -302,6 +302,47 @@ void htl::gpio::initAlternate(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Inicialitza un pin entrada analogica
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    mask: Mascara dels pins a inicialitzar.
+///
+void htl::gpio::initAnalogic(
+	GPIO_TypeDef * const gpio,
+	PinMask mask) {
+
+    auto m = (uint16_t) mask;
+	for (uint8_t b = 0; b < 16; b++) {
+		if ((m & (1 << b)) != 0)
+		    initAnalogic(gpio, PinBit(b));
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza un pin entrada analogica
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    bit: Bit del pin a inicialitzar.
+///
+void htl::gpio::initAnalogic(
+	GPIO_TypeDef * const gpio,
+	PinBit bit) {
+
+    auto b = uint8_t(bit);
+
+    auto a = startAtomic();
+
+    // Configura el pin com entrada analogica
+    //
+    auto MODER = gpio->MODER;
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::ANALOGIC << (b * 2));
+    gpio->MODER = MODER;
+
+    endAtomic(a);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Desinicialitza els pins. Els deixa en la seva configuracio
 ///           per defecte.
 /// \param    gpio: Registres de hardware del GPIO.

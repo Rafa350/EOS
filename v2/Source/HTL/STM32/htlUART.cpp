@@ -258,7 +258,9 @@ void UARTDevice::setWordBits(
 	_usart->CR1 = CR1;
 	endAtomic(a);
 }
-#endif
+#else
+#error "Unknown platform"
+#endif // defined(EOS_PLATFORM_XXX)
 
 
 /// ----------------------------------------------------------------------
@@ -283,12 +285,14 @@ void UARTDevice::setHandsake(
 }
 
 
+#if defined(EOS_PLATFORM_STM32F0) || \
+	defined(EOS_PLATFORM_STM32F7) || \
+	defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el valor del timeout per recepcio.
 /// \param    timeout: El temps.
 /// \param    El resultat de l'operacio.
 ///
-#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 eos::Result UARTDevice::setRxTimeout(
     unsigned timeout) const {
 
@@ -308,7 +312,7 @@ eos::Result UARTDevice::setRxTimeout(
 	else
 		return eos::Results::errorState;
 }
-#endif
+#endif // defined(EOS_PLATFORM_XXX)
 
 
 /// ----------------------------------------------------------------------
@@ -389,21 +393,25 @@ eos::Result UARTDevice::setTimming(
 }
 
 
+#if defined(EOS_PLATFORM_STM32F7) || \
+	defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona la font del relloge del generador de bauds
 /// \param    clockSource: La font.
 /// \return   El resultat de l'operacio.
 ///
 eos::Result UARTDevice::setClockSource(
-	ClockSource clockSource) const {
+	ClockSource source) const {
 
 	if(_state == State::ready){
 
+		setClockSourceImpl(source);
 		return eos::Results::success;
 	}
 	else
 		return eos::Results::errorState;
 }
+#endif // defined(EOS_PLATFORM_XXX)
 
 
 /// ----------------------------------------------------------------------
@@ -483,9 +491,10 @@ eos::Result UARTDevice::transmit_IRQ(
 	else
 		return eos::Results::errorState;
 }
-#endif
+#endif // HTL_UART_OPTION_IRQ == 1
 
 
+#if HTL_UART_OPTION_DMA == 1
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades utilitzant DMA.
 /// \param    devDMA: Dispositiu DMA.
@@ -493,7 +502,6 @@ eos::Result UARTDevice::transmit_IRQ(
 /// \param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
-#if HTL_UART_OPTION_DMA == 1
 eos::Result UARTDevice::transmit_DMA(
     dma::DMADevice *devDMA,
     const uint8_t *buffer,
@@ -524,7 +532,7 @@ eos::Result UARTDevice::transmit_DMA(
     else
         return eos::Results::errorState;
 }
-#endif
+#endif // HTL_UART_OPTION_DMA == 1
 
 
 /// ----------------------------------------------------------------------
@@ -588,13 +596,13 @@ eos::Result UARTDevice::receive(
 }
 
 
+#if HTL_UART_OPTION_IRQ == 1
 /// ----------------------------------------------------------------------
 /// \brief    Inicia la recepcio d'un bloc de dades per interrupcions.
 /// \param    buffer: Buffer de dades.
 /// \param    bufferSize: Tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-#if HTL_UART_OPTION_IRQ == 1
 eos::Result UARTDevice::receive_IRQ(
 	uint8_t *buffer,
 	unsigned bufferSize) {
@@ -619,9 +627,10 @@ eos::Result UARTDevice::receive_IRQ(
 	else
 		return eos::Results::errorState;
 }
-#endif
+#endif // HTL_UART_OPTION_IRQ == 1
 
 
+#if HTL_UART_OPTION_DMA == 1
 /// ----------------------------------------------------------------------
 /// \brief    Reb un bloc de dades utilitzan DMA.
 /// \param    devDMA: El dispositiu DMA.
@@ -629,7 +638,6 @@ eos::Result UARTDevice::receive_IRQ(
 /// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-#if HTL_UART_OPTION_DMA == 1
 eos::Result UARTDevice::receive_DMA(
     dma::DMADevice *devDMA,
     uint8_t *buffer,
@@ -637,7 +645,7 @@ eos::Result UARTDevice::receive_DMA(
 
 	return eos::Results::error;
 }
-#endif
+#endif // HTL_UART_OPTION_DMA == 1
 
 
 /// ----------------------------------------------------------------------
@@ -656,10 +664,10 @@ eos::Result UARTDevice::abortReception() {
 }
 
 
+#if HTL_UART_OPTION_IRQ == 1
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.
 ///
-#if HTL_UART_OPTION_IRQ == 1
 void UARTDevice::interruptService() {
 
 	if (_state == State::transmiting)
@@ -667,9 +675,10 @@ void UARTDevice::interruptService() {
 	else if (_state == State::receiving)
 		rxInterruptService();
 }
-#endif
+#endif // HTL_UART_OPTION_IRQ == 1
 
 
+#if HTL_UART_OPTION_IRQ == 1
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions per la transmissio
 ///
@@ -759,9 +768,13 @@ void UARTDevice::txInterruptService() {
 		_state = State::ready;
 	}
 }
-#endif
+#else
+#error "Unknown platform"
+#endif // defined(SOS_PLATFORM_XXX)
+#endif // HTL_UART_OPTION_IRQ == 1
 
 
+#if HTL_UART_OPTION_IRQ == 1
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions per la recepcio.
 ///
@@ -874,15 +887,18 @@ void UARTDevice::rxInterruptService() {
 		_state = State::ready;
 	}
 }
-#endif
+#else
+#error "Unknown platform"
+#endif // defined(EOS_PLATFORM_XXX
+#endif // HTL_UART_OPTION_IRQ == 1
 
 
+#if HTL_UART_OPTION_DMA == 1
 /// ----------------------------------------------------------------------
 /// \brief    Reb les notificacions del DMA
 /// \param    devDMA: El dispositiu DMA que genera l'event.
 /// \param    args: Parametres del event.
 ///
-#if HTL_UART_OPTION_DMA == 1
 void UARTDevice::dmaNotifyEventHandler(
     DevDMA *devDMA,
     DMANotifyEventArgs &args) {
@@ -910,7 +926,7 @@ void UARTDevice::dmaNotifyEventHandler(
         	break;
     }
 }
-#endif
+#endif // HTL_UART_OPTION_DMA == 1
 
 
 /// ----------------------------------------------------------------------
@@ -1060,10 +1076,10 @@ void UARTDevice::enableTransmission() const {
 }
 
 
+#if HTL_UART_OPTION_IRQ == 1
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la transmissio de dades en modus IRQ
 ///
-#if HTL_UART_OPTION_IRQ == 1
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void UARTDevice::enableTransmissionIRQ() const {
 
@@ -1084,14 +1100,16 @@ void UARTDevice::enableTransmissionIRQ() const {
 		USART_CR1_TE);             // Habilita la transmissio
 	endAtomic(a);
 }
+#else
+#error "Unknown platform"
 #endif // defined(EOS_PLATFORM_XXX)
 #endif // HTL_UART_OPTION_IRQ == 1
 
 
+#if HTL_UART_OPTION_DMA == 1
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la transmissio de dades en modus DMA
 ///
-#if HTL_UART_OPTION_DMA == 1
 void UARTDevice::enableTransmissionDMA() const {
 
 	//TODO: Comprovar si es necesari
@@ -1155,11 +1173,11 @@ void UARTDevice::enableReception() const {
 }
 
 
+#if HTL_UART_OPTION_IRQ == 1
 /// ----------------------------------------------------------------------
 /// \brief    Habilita la recepcio en modus IRQ.
 /// \param    usart: Registres de hardware del dispoositiu.
 ///
-#if HTL_UART_OPTION_IRQ == 1
 void UARTDevice::enableReceptionIRQ() const {
 
 #if !defined(EOS_PLATFORM_STM32F4)
@@ -1193,7 +1211,7 @@ void UARTDevice::enableReceptionIRQ() const {
 
 	endAtomic(a);
 }
-#endif
+#endif // HTL_UART_OPTION_IRQ == 1
 
 
 /// ----------------------------------------------------------------------
@@ -1258,11 +1276,11 @@ uint8_t UARTDevice::readData() const {
 }
 
 
+#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el fifo esta disposnible en la uart
 /// \return   El resultat de l'operacio.
 ///
-#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
 bool UARTDevice::isFifoAvailable() const {
 
 	return false;
@@ -1270,11 +1288,11 @@ bool UARTDevice::isFifoAvailable() const {
 #endif // (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
 
 
+#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el fifo esta activat
 /// \return   El resultatd e l'operacio.
 ///
-#if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
 bool UARTDevice::isFifoEnabled() const {
 
 	return isSet(_uart->CR1, USART_CR1_FIFOEN);

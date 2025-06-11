@@ -35,6 +35,11 @@ void MainService::onExecute() {
 
 	_devUART->setProtocol(WordBits::wb8, Parity::none, StopBits::sb1, Handsake::none);
 	_devUART->setTimming(BaudMode::b19200, 0, OverSampling::os16);
+#if defined(EOS_PLATFORM_STM32F7)
+	_devUART->setClockSource(ClockSource::pclk);
+#elif defined(EOS_PLATFORM_STM32G0)
+	_devUART->setClockSource(ClockSource::pclk);
+#endif
 
 	while (!stopSignal()) {
 

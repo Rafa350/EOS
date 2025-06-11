@@ -91,26 +91,26 @@ namespace htl {
 			odd   ///< Senas
 		};
 
-        /// Nombre de bits de paraula.
+        /// Nombre de bits de paraula (No inclou el bit de paritat).
         ///
 		enum class WordBits {
 #if defined(EOS_PLATFORM_STM32G0)
-			wb7,
+			wb7,  ///< Paraula de 7 bits
 #endif
-			wb8,
-			wb9
+			wb8,  ///< Paraula de 8 bits
+			wb9   ///< Paraula de 9 bits
 		};
 
         /// Nombre de bits de parada.
         ///
 		enum class StopBits {
-			sb0p5,
-			sb1,
-			sb1p5,
-			sb2
+			sb0p5, ///< 0.5 bits de parada
+			sb1,   ///< 1 bit de parada
+			sb1p5, ///< 1.5 bits de parada
+			sb2    ///< 2 bits de parada
 		};
 
-        /// Velocitat de transmissio.
+        /// Opcions de velocitat de transmissio.
         ///
 		enum class BaudMode {
 			b1200,    ///< 1200 baud.
@@ -133,26 +133,35 @@ namespace htl {
 			ctsrts ///< Protocol CTS/RTS
 		};
 
-		enum class ClockSource {
-			pclk,
-#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-			sysclk,
-#endif
+
 #if defined(EOS_PLATFORM_STM32G0)
-			hsi16,
-#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-			hsi,
-#endif
-#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-			lse
-#endif
+		/// Origen del rellotge del generador de bauds
+		///
+		enum class ClockSource {
+			pclk = 0,
+			sysclk = 1,
+			hsi16 = 2,
+			lse = 3
 		};
 
+#elif defined(EOS_PLATFORM_STM32F7)
+		enum class ClockSource {
+			pclk = 0,
+			sysclk = 1,
+			hsi = 2,
+			lse = 3
+		};
+#endif
+
+		// Mostreig den la recepcio de dades
+		//
 		enum class OverSampling {
 			os8,
 			os16
 		};
 
+		// Funcio dels pins
+		//
 		enum class PinFunction {
 			tx,
 			rx,
@@ -206,7 +215,7 @@ namespace htl {
 		class UARTDevice {
 			public:
 #if HTL_UART_OPTION_DMA == 1
-                using DevDMA = htl::dma::DMADevice;
+                using DevDMA = dma::DMADevice;
 #endif
 
                 /// Estats en que es troba el dispositiu.
@@ -221,8 +230,8 @@ namespace htl {
 
 			private:
 #if HTL_UART_OPTION_DMA == 1
-				using DMANotifyEvent = htl::dma::NotifyEvent<UARTDevice>;
-				using DMANotifyEventArgs = htl::dma::NotifyEventArgs;
+				using DMANotifyEvent = dma::NotifyEvent<UARTDevice>;
+				using DMANotifyEventArgs = dma::NotifyEventArgs;
 #endif
 
 			private:
@@ -305,6 +314,9 @@ namespace htl {
 #if HTL_UART_OPTION_DEACTIVATE == 1
 				virtual void deactivateImpl() const = 0;
 #endif
+#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
+				virtual void setClockSourceImpl(ClockSource source) const = 0;
+#endif
 
 #if HTL_UART_OPTION_IRQ == 1
 				void interruptService();
@@ -318,7 +330,9 @@ namespace htl {
 				eos::Result setProtocol(WordBits wordBits, Parity parity,
 				        StopBits stopBits, Handsake handlsake) const;
 				eos::Result setTimming(BaudMode baudMode, uint32_t rate, OverSampling oversampling) const;
+#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 				eos::Result setClockSource(ClockSource clockSource) const;
+#endif
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 				eos::Result setRxTimeout(unsigned timeout) const;
 #endif
@@ -386,7 +400,9 @@ namespace htl {
 					bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
 				}
 #endif
-
+#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
+				void setClockSourceImpl(ClockSource source) const override;
+#endif
 				clock::ClockID getUARTClock() const override;
 
 #if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
@@ -594,9 +610,28 @@ namespace htl::uart {
 				return clock::ClockID::lse;
 		}
 	}
-}
 
+}
 #endif
+
+
+#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
+namespace htl::uart {
+
+	template<DeviceID deviceID_>
+	void htl::uart::UARTDeviceX<deviceID_>::setClockSourceImpl(ClockSource source) const {
+
+		constexpr auto clockSourceAddr = UARTTraits::clockSourceAddr;
+		constexpr auto clockSourceMsk = UARTTraits::clockSourceMsk;
+		constexpr auto clockSourcePos = UARTTraits::clockSourcePos;
+
+		auto reg = reinterpret_cast<volatile uint32_t*>(clockSourceAddr);
+		bits::clear(*reg, clockSourceMsk);
+		bits::set(*reg, ((uint32_t) source << clockSourcePos) & clockSourceMsk);
+	}
+}
+#endif
+
 
 namespace htl::uart {
 
