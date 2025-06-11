@@ -5,6 +5,7 @@
 
 
 using namespace app;
+using namespace eos;
 
 
 ///-----------------------------------------------------------------------
@@ -17,13 +18,13 @@ MyApplication::MyApplication() {
 
 void MyApplication::onExecute() {
 
-    auto pinLED1 = LED1_Pin::pInst;
-	auto ledService = new eos::LedService(pinLED1, nullptr);
+    auto pinLED1 = LED11_Pin::pInst;
+	auto ledService = new LedService(pinLED1, nullptr);
 	addService(ledService);
 
 	auto displayService = new DisplayService();
 	addService(displayService);
 
 	while (true)
-		eos::Task::delay(1000);
+		Task::delay(1000);
 }

@@ -1,75 +1,87 @@
 #pragma once
-#ifndef __STM32G0B1_htlI2C_Pins__
-#define __STM32G0B1_htlI2C_Pins__
+#ifndef __C8962654D1E741619889E55290DC7133__
+#define __C8962654D1E741619889E55290DC7133__
 
 
-// EOS includes
-//
-#include "HTL/STM32/htl.h"
-#include "HTL/STM32/htlGPIO.h"
+#if !defined(EOS_PLATFORM_STM32G0B1)
+    #error 'Unsupported platform'
+#endif
 
 
-#if defined(EOS_PLATFORM_STM32G0B1)
+namespace htl::i2c::internal {
 
+    #if defined(HTL_I2C1_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::scl, htl::gpio::PortID::portA, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::scl, htl::gpio::PortID::portB, htl::gpio::PinID::pin6> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::scl, htl::gpio::PortID::portB, htl::gpio::PinID::pin8> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::scl, htl::gpio::PortID::portB, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_1;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::sda, htl::gpio::PortID::portA, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::sda, htl::gpio::PortID::portB, htl::gpio::PinID::pin7> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::sda, htl::gpio::PortID::portB, htl::gpio::PinID::pin9> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::sda, htl::gpio::PortID::portB, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_1;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::smba, htl::gpio::PortID::portA, htl::gpio::PinID::pin1> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c1, PinFunction::smba, htl::gpio::PortID::portB, htl::gpio::PinID::pin5> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    #endif
 
-#define ALT_FUNCTION(id, fn, pin, af)                 \
-	template <>                                       \
-	struct PinFunctionInfo<id, fn, pin> { \
-		static constexpr gpio::AlternateFunction alt = af;      \
-	};
+    #if defined(HTL_I2C2_EXIST)
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c2, PinFunction::scl, htl::gpio::PortID::portA, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c2, PinFunction::scl, htl::gpio::PortID::portB, htl::gpio::PinID::pin10> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c2, PinFunction::scl, htl::gpio::PortID::portB, htl::gpio::PinID::pin13> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c2, PinFunction::sda, htl::gpio::PortID::portA, htl::gpio::PinID::pin12> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c2, PinFunction::sda, htl::gpio::PortID::portB, htl::gpio::PinID::pin11> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    template<>
+    struct PinFunctionInfo<DeviceID::i2c2, PinFunction::sda, htl::gpio::PortID::portB, htl::gpio::PinID::pin14> {
+        static constexpr htl::gpio::AlternateFunction value = htl::gpio::AlternateFunction::_6;
+    };
+    #endif
 
-
-namespace htl {
-	namespace i2c {
-		namespace internal {
-
-			#ifdef HTL_I2C1_EXIST
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinA9,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB6,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::scl,  gpio::PinB8,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinA10, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB7,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::sda,  gpio::PinB9,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinA1,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinB5,  gpio::AlternateFunction::_6)
-			#endif // HTL_I2C1_EXIST
-
-			#ifdef HTL_I2C2_EXIST
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl,  gpio::PinA7,  gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl,  gpio::PinA9,  gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl,  gpio::PinA11, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl,  gpio::PinB3,  gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl,  gpio::PinB10, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::scl,  gpio::PinB13, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda,  gpio::PinA8,  gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda,  gpio::PinA10, gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda,  gpio::PinA12, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda,  gpio::PinB4,  gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda,  gpio::PinB11, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_2, PinFunction::sda,  gpio::PinB14, gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinA8,  gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinA15, gpio::AlternateFunction::_8)
-			ALT_FUNCTION(DeviceID::_1, PinFunction::smba, gpio::PinB12, gpio::AlternateFunction::_8)
-			#endif // HTL_I2C2_EXIST
-
-			#ifdef HTL_I2C3_EXIST
-			ALT_FUNCTION(DeviceID::_3, PinFunction::scl,  gpio::PinA7,  gpio::AlternateFunction::_9)
-			ALT_FUNCTION(DeviceID::_3, PinFunction::scl,  gpio::PinB3,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_3, PinFunction::scl,  gpio::PinC1,  gpio::AlternateFunction::_6)
-
-			ALT_FUNCTION(DeviceID::_3, PinFunction::sda,  gpio::PinA6,  gpio::AlternateFunction::_9)
-			ALT_FUNCTION(DeviceID::_3, PinFunction::sda,  gpio::PinB4,  gpio::AlternateFunction::_6)
-			ALT_FUNCTION(DeviceID::_3, PinFunction::sda,  gpio::PinC6,  gpio::AlternateFunction::_6)
-			#endif // HTL_I2C3_EXIST
-		}
-	}
 }
 
 
-#undef ALT_FUNCTION
+#endif
 
-
-#endif // EOS_PLATFORM_STM32G0B1
-
-
-#endif // __STM32G0B1_htlI2C_Pins__

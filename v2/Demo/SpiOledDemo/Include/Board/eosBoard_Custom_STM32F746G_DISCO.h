@@ -10,12 +10,12 @@
 // LED 1
 // -----------------------------------------------------------------------
 //
-#ifdef USE_CUSTOM_LED1
-#define EXIST_LED1
+#ifdef USE_CUSTOM_LED11
+#define EXIST_LED11
 
-#define LED1_Pin             ARDUINO_D3_Pin
-#define LED1_StateON         true
-#define LED1_StateOFF        false
+#define LED11_Pin            ARDUINO_D3_Pin
+#define LED11_StateON        true
+#define LED11_StateOFF       false
 
 #endif // USE_CUSTOM_LED1
 
@@ -24,12 +24,12 @@
 // LED 2
 // -----------------------------------------------------------------------
 //
-#ifdef USE_CUSTOM_LED2
-#define EXIST_LED2
+#ifdef USE_CUSTOM_LED12
+#define EXIST_LED12
 
-#define LED2_Pin             ARDUINO_D2_Pin
-#define LED2_StateON         true
-#define LED2_StateOFF        false
+#define LED12_Pin            ARDUINO_D2_Pin
+#define LED12_StateON        true
+#define LED12_StateOFF       false
 
 #endif // USE_CUSTOM_LED2
 
@@ -49,6 +49,7 @@
 #define DISPLAY_CS_Pin       ARDUINO_D7_Pin
 #define DISPLAY_SCK_Pin      ARDUINO_SCK_Pin
 #define DISPLAY_MOSI_Pin     ARDUINO_MOSI_Pin
+#define DISPLAY_MISO_Pin     ARDUINO_MISO_Pin
 #define DISPLAY_SPI_Device   ARDUINO_SPI_Device
 
 #endif

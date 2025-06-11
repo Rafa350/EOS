@@ -1,10 +1,13 @@
-#include "hal/halSYS.h"
+#include "eos.h"
+#include "eosAssert.h"
+#include "HTL/STM32/htlClock.h"
+
 #include "stm32f7xx_hal.h"
-#include "stm32f7xx_hal_rcc.h"
-#include "stm32f7xx_hal_rng.h"
-#include "stm32f7xx_hal_flash_ex.h"
 #include "stm32746g_discovery.h"
 #include "stm32746g_discovery_sdram.h"
+
+
+using namespace htl::clock;
 
 
 /// ----------------------------------------------------------------------
@@ -12,34 +15,24 @@
 ///
 static void initializeClock() {
 
-	RCC_ClkInitTypeDef clkInit;
-	RCC_OscInitTypeDef oscInit;
+	auto clk = ClockDevice::pInst;
 
-	// Enable HSE Oscillator and activate PLL with HSE as source ç
-	//
-	oscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-	oscInit.HSEState = RCC_HSE_ON;
-	oscInit.HSIState = RCC_HSI_OFF;
-	oscInit.PLL.PLLState = RCC_PLL_ON;
-	oscInit.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	oscInit.PLL.PLLM = 25;
-	oscInit.PLL.PLLN = 432;
-	oscInit.PLL.PLLP = RCC_PLLP_DIV2;
-	oscInit.PLL.PLLQ = 9;
-	HAL_RCC_OscConfig(&oscInit);
+	clk->enableHSE();
 
-	// Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
-	// clocks dividers
-	//
-	clkInit.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
-	clkInit.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	clkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	clkInit.APB1CLKDivider = RCC_HCLK_DIV4;
-	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
-	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
+	clk->disablePLL();
+	clk->configurePLL(PLLsource::hse, 432, 25, PLLPdivider::div2, PLLQdivider::div9);
+	clk->enablePLL();
+
+	clk->selectSystemClock(SystemClockSource::pll, FlashLatency::fl7);
+
+	clk->setAHBPrescaler(AHBPrescaler::div1);
+	clk->setAPB1Prescaler(APBPrescaler::div4);
+	clk->setAPB2Prescaler(APBPrescaler::div2);
+
+	clk->disableHSI();
 
 	SystemCoreClockUpdate();
-
+	eosAssert(SystemCoreClock == clk->getClockFrequency(ClockID::sysclk));
 }
 
 
@@ -70,7 +63,7 @@ void appInitialize() {
 
 	enableCache();
 
-    halSYSInitialize();
+    HAL_Init();
 
 	initializeClock();
 	initializeSDRam();

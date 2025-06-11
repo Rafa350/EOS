@@ -1,8 +1,14 @@
 #include "eos.h"
-#include "hal/halSYS.h"
+#include "eosAssert.h"
+#include "htl/STM32/htlClock.h"
+
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f429i_discovery_sdram.h"
+
+
+using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -10,9 +16,7 @@
 ///
 static void initializeCLK() {
 
-	RCC_OscInitTypeDef oscInit;
-	RCC_ClkInitTypeDef clkInit;
-    RCC_PeriphCLKInitTypeDef pclkInit;
+	auto clk = clock::ClockDevice::pInst;
 
 	// Enable Power Control clock
 	//
@@ -26,6 +30,7 @@ static void initializeCLK() {
 
 	// Enable HSE Oscillator and activate PLL with HSE as source
 	//
+	RCC_OscInitTypeDef oscInit;
 	oscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;
 	oscInit.HSEState = RCC_HSE_ON;
 	oscInit.PLL.PLLState = RCC_PLL_ON;
@@ -43,6 +48,7 @@ static void initializeCLK() {
 	// Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
 	// clocks dividers
 	//
+	RCC_ClkInitTypeDef clkInit;
 	clkInit.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
 	clkInit.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	clkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;
@@ -58,11 +64,19 @@ static void initializeCLK() {
 	// -PLLLCDCLK = PLLSAI_VCO Output/PLLSAI_R = 192/4 = 96 Mhz
 	// -LTDC clock frequency = PLLLCDCLK / RCC_PLLSAIDivR = 96/4 = 24 Mhz
 	//
+    RCC_PeriphCLKInitTypeDef pclkInit;
     pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
     pclkInit.PLLSAI.PLLSAIN = 192;
     pclkInit.PLLSAI.PLLSAIR = 4;
     pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_8;
     HAL_RCCEx_PeriphCLKConfig(&pclkInit);
+
+
+    auto fpclk1 = clk->getClockFrequency(clock::ClockID::pclk1);
+    eosAssert(fpclk1 <= 108000000);
+
+    auto fpclk2 = clk->getClockFrequency(clock::ClockID::pclk2);
+    eosAssert(fpclk2 <= 108000000);
 }
 
 
@@ -81,7 +95,7 @@ static void initializeSDRAM() {
 ///
 void appInitialize() {
 
-	halSYSInitialize();
+	HAL_Init();
 
 	initializeCLK();
 	initializeSDRAM();

@@ -29,6 +29,8 @@ namespace htl {
 				static constexpr uint32_t clockSourcerAddr = RCC_BASE + offsetof(RCC_TypeDef, CFGR3);
 				static constexpr uint32_t clockSourceMsk = RCC_CFGR3_USART1SW_Msk;
 				static constexpr uint32_t clockSourcePos = RCC_CFGR3_USART1SW_Pos;
+
+				static constexpr bool isRTOAvailable = false;
 			};
 			#endif
 
@@ -38,18 +40,23 @@ namespace htl {
 				static constexpr uint32_t usartAddr = USART2_BASE;
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
 				static constexpr uint32_t activatePos = RCC_APB1ENR_USART2EN_Pos;
+
+				static constexpr bool isRTOAvailable = false;
 			};
 			#endif
 
 			#ifdef HTL_UART3_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart3> {
+
+				static constexpr bool isRTOAvailable = false;
 			};
 			#endif
 
 			#ifdef HTL_UART4_EXIST
 			template <>
 			struct UARTTraits<DeviceID::uart4> {
+				static constexpr bool isRTOAvailable = false;
 			};
 			#endif
 

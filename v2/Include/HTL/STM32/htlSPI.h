@@ -10,7 +10,8 @@
 
 // HTL main includes
 //
-#include "HTL/STM32/htl.h"
+#include "HTL/htl.h"
+#include "HTL/htlBits.h"
 
 
 // Default options
@@ -39,24 +40,24 @@ namespace htl {
         class SPIDevice;
 
 		enum class DeviceID {
-			#ifdef HTL_SPI1_EXIST
+#ifdef HTL_SPI1_EXIST
 			spi1,
-			#endif
-			#ifdef HTL_SPI2_EXIST
+#endif
+#ifdef HTL_SPI2_EXIST
 			spi2,
-			#endif
-			#ifdef HTL_SPI3_EXIST
+#endif
+#ifdef HTL_SPI3_EXIST
 			spi3,
-			#endif
-			#ifdef HTL_SPI4_EXIST
+#endif
+#ifdef HTL_SPI4_EXIST
 			spi4,
-			#endif
-			#ifdef HTL_SPI5_EXIST
+#endif
+#ifdef HTL_SPI5_EXIST
 			spi5,
-			#endif
-			#ifdef HTL_SPI6_EXIST
+#endif
+#ifdef HTL_SPI6_EXIST
 			spi6
-			#endif
+#endif
 		};
 
 		enum class Mode {
@@ -75,8 +76,8 @@ namespace htl {
 		};
 
 		enum class WordSize {
-			_8,
-			_16
+			ws8,
+			ws16
 		};
 
 		enum class FirstBit {
@@ -85,14 +86,14 @@ namespace htl {
 		};
 
 		enum class ClockDivider {
-			_2,
-			_4,
-			_8,
-			_16,
-			_32,
-			_64,
-			_128,
-			_256
+			div2,
+			div4,
+			div8,
+			div16,
+			div32,
+			div64,
+			div128,
+			div256
 		};
 
 		enum class PinFunction {
@@ -135,13 +136,46 @@ namespace htl {
 				SPIDevice(const SPIDevice &) = delete;
 				SPIDevice & operator = (const SPIDevice &) = delete;
 
+				void activate() const {
+					activateImpl();
+				}
+				void deactivate() const {
+					deactivateImpl();
+				}
+
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
 
 				void interruptService();
 
-				virtual void activate() const = 0;
-				virtual void deactivate() const = 0;
+				virtual void activateImpl() const = 0;
+				virtual void deactivateImpl() const = 0;
+
+				void enable() const;
+				void disable() const;
+
+				void setClockDivider(ClockDivider clkDivider) const;
+				void setMode(Mode mode) const;
+				void setClkPolarity(ClkPolarity polarity) const;
+				void setClkPhase(ClkPhase phase) const;
+				void setWordSize(WordSize size) const;
+				void setFirstBit(FirstBit firstBit) const;
+
+				void write8(uint8_t data) const;
+				void write16(uint16_t data) const;
+				uint8_t read8() const;
+				uint16_t read16() const;
+
+				bool isTxEmpty() const;
+				bool isRxNotEmpty() const;
+				bool isSPIBusy() const;
+				bool waitNotBusy(unsigned expireTime) const;
+				bool waitRxNotEmpty(unsigned expireTime) const;
+				bool waitTxEmpty(unsigned expireTime) const;
+#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
+				bool waitRxFifoEmpty(unsigned expireTime) const;
+				bool waitTxFifoEmpty(unsigned expireTime) const;
+#endif
 
 			public:
 				eos::Result initialize(Mode mode, ClkPolarity clkPolarity,
@@ -203,8 +237,8 @@ namespace htl {
 
 			private:
 				static constexpr auto _spiAddr = SPITraits::spiAddr;
-				static constexpr auto _rccEnableAddr = SPITraits::rccEnableAddr;
-				static constexpr auto _rccEnablePos = SPITraits::rccEnablePos;
+				static constexpr auto _activateAddr = SPITraits::activateAddr;
+				static constexpr auto _activatePos = SPITraits::activatePos;
 				static SPIDeviceX _instance;
 
 			public:
@@ -218,14 +252,14 @@ namespace htl {
 				}
 
 			protected:
-				void activate() const override {
-					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p |= 1 << _rccEnablePos;
+				void activateImpl() const override {
+					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
+					bits::set(*p, 1UL << _activatePos);
 					__DSB();
 				}
-				void deactivate() const override {
-					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p &= ~(1 << _rccEnablePos);
+				void deactivateImpl() const override {
+					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
+					bits::clear(*p, 1UL << _activatePos);
 				}
 
 			public:
@@ -236,41 +270,41 @@ namespace htl {
 				template <typename pin_>
 				void initPinSCK() {
 				    auto af = SPIPins<PinFunction::sck, pin_::portID, pin_::pinID>::value;
-				    pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
+				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
 					auto af = SPIPins<PinFunction::mosi, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternateInput(gpio::InputMode::floating, af);
+					gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMISO() {
 					auto af = SPIPins<PinFunction::miso, pin_::portID, pin_::pinID>::value;
-                    pin_::pInst->initAlternateOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, af);
+					gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 		};
 
 		template <DeviceID deviceID_>
 		SPIDeviceX<deviceID_> SPIDeviceX<deviceID_>::_instance;
 
-		#ifdef HTL_SPI1_EXIST
+#ifdef HTL_SPI1_EXIST
 		typedef SPIDeviceX<DeviceID::spi1> SPIDevice1;
-		#endif
-		#ifdef HTL_SPI2_EXIST
+#endif
+#ifdef HTL_SPI2_EXIST
 		typedef SPIDeviceX<DeviceID::spi2> SPIDevice2;
-		#endif
-		#ifdef HTL_SPI3_EXIST
+#endif
+#ifdef HTL_SPI3_EXIST
 		typedef SPIDeviceX<DeviceID::spi3> SPIDevice3;
-		#endif
-		#ifdef HTL_SPI4_EXIST
+#endif
+#ifdef HTL_SPI4_EXIST
 		typedef SPIDeviceX<DeviceID::spi4> SPIDevice4;
-		#endif
-		#ifdef HTL_SPI5_EXIST
+#endif
+#ifdef HTL_SPI5_EXIST
 		typedef SPIDeviceX<DeviceID::spi5> SPIDevice5;
-		#endif
-		#ifdef HTL_SPI6_EXIST
+#endif
+#ifdef HTL_SPI6_EXIST
 		typedef SPIDeviceX<DeviceID::spi6> SPIDevice6;
-		#endif
+	#endif
 
 	}
 }

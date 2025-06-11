@@ -68,8 +68,9 @@ static uint32_t __rand(void) {
 #endif
 
 
-#if 0
-// Parametres d'inicialitzacio per interficie RGB
+#if defined(DISPLAY_DRV_ILI9341LTDC)
+
+// Parametres d'inicialitzacio per interficie LTDC
 //
 static const uint8_t initCommands[] = {
 
@@ -114,6 +115,38 @@ static const uint8_t initCommands[] = {
 			0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
 	OP_END
 };
+
+#elif defined(DISPLAY_DRV_ILI9341)
+
+// Parametres d'inicialitzacio per interficie SPI
+//
+static const uint8_t initCommands[] = {
+
+	__SOFTWARE_RESET,
+	OP_DELAY, 250,
+	OP_DELAY, 250,
+	__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x62),
+	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
+	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
+	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
+	__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
+	__PUMP_RATIO_CONTROL(0x20),
+	__POWER_CONTROL_1(0x23),
+	__POWER_CONTROL_2(0x10),
+	__VCOM_CONTROL_1(0x3E, 0x28),
+	__VCOM_CONTROL_2(0x86),
+	__PIXEL_FORMAT_SET(0x55),
+	__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF),
+	__FRAME_RATE_CONTROL_1(0x00, 0x18),
+	__DISPLAY_FUNCTION_CONTROL(0x08, 0x82, 0x27, 0x00),
+	__ENABLE_3G(0x00),
+	__GAMMA_SET(0x01),
+	__POSITIVE_GAMMA_CORRECTION( 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
+			0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
+	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
+			0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
+	OP_END
+};
 #endif
 
 
@@ -144,28 +177,28 @@ void DisplayService::onExecute() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
-    #if defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F7)
 	//halRNGInitialize();
-    #endif
+#endif
 
-	#if defined(DISPLAY_DRV_ILI9341LTDC) || defined(DISPLAY_DRV_ILI9341)
+#if defined(DISPLAY_DRV_ILI9341LTDC) || defined(DISPLAY_DRV_ILI9341)
 
     // Inicialitza el pin CS
     //
     auto pinCS = DISPLAY_CS_Pin::pInst;
-    pinCS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, true);
+    pinCS->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, true);
 
     // Inicialitza el pin RS
     //
     auto pinRS = DISPLAY_RS_Pin::pInst;
-    pinRS->initOutput(gpio::OutputMode::pushPull, gpio::Speed::fast, false);
+    pinRS->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, false);
 
     // Inicialitza el dispositiu SPI
     //
     auto devSPI = DISPLAY_SPI_Device::pInst;
-    devSPI->initPinSCK<DISPLAY_SCK_Pin::portID, DISPLAY_SCK_Pin::pinID>();
-    devSPI->initPinMOSI<DISPLAY_MOSI_Pin::portID, DISPLAY_MOSI_Pin::pinID>();
-    devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::_8, spi::FirstBit::msb, spi::ClockDivider::_8);
+    devSPI->initPinSCK<DISPLAY_SCK_Pin>();
+    devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
+    devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::ws8, spi::FirstBit::msb, spi::ClockDivider::div8);
 
 	// Inicialitza el dispositiu ILI9341
 	//

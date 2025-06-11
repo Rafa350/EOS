@@ -19,7 +19,6 @@ namespace eos {
 	    private:
 	        Pin * const _pinLED1;
 	        Pin * const _pinLED2;
-	        unsigned _weakTime;
 
 		public:
 			LedService(Pin *pinLED1, Pin *pinLED2 = nullptr);

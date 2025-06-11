@@ -27,8 +27,8 @@
 #define EOS_USE_STD_STRING
 #define USE_ARDUINO
 #define USE_SW1
-#define USE_CUSTOM_LED1
-#define USE_CUSTOM_LED2
+#define USE_CUSTOM_LED11
+#define USE_CUSTOM_LED12
 #define USE_CUSTOM_DISPLAY
 
 

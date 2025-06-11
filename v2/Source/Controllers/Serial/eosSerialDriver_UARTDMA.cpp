@@ -27,11 +27,11 @@ SerialDriver_UARTDMA::SerialDriver_UARTDMA(
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: Nombre de bytes en el buffer de dades..
 ///
-void SerialDriver_UARTDMA::onTransmit(
+bool SerialDriver_UARTDMA::onTransmit(
 	const uint8_t *buffer,
 	unsigned bufferSize) {
 
-    _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize);
+    return _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize).isSuccess();
 }
 
 
@@ -40,9 +40,9 @@ void SerialDriver_UARTDMA::onTransmit(
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
 ///
-void SerialDriver_UARTDMA::onReceive(
+bool SerialDriver_UARTDMA::onReceive(
 	uint8_t *buffer,
 	unsigned bufferSize) {
 
-    _devUART->receive_IRQ(buffer, bufferSize);
+    return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }

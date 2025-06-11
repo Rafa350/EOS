@@ -4,6 +4,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -38,19 +39,20 @@ void STSPIN840_Device::initialize(
 
 	// Inicialitza el pin EF
 	//
-	_pinEF->initOutput(htl::gpio::OutputMode::openDrain, htl::gpio::Speed::medium, false);
+	_pinEF->initOutput(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::medium, false);
 
 	// Inicialitza el pin PH
 	//
-	_pinPH->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::medium, false);
+	_pinPH->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none,  gpio::Speed::medium, false);
 
 	// Inicialitza el pin STANDBY/RESET
 	//
-	_pinSTBY->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::medium, false);
+	_pinSTBY->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::medium, false);
 
 	// Inicialitza el timer per la generacio del senyal PWM
 	//
-	_reload = (htl::clock::getClockFrequency(htl::clock::ClockID::pclk) / (_prescaler * frequency)) - 1;
+	auto clk = clock::ClockDevice::pInst;
+	_reload = (clk->getClockFrequency(clock::ClockID::pclk) / (_prescaler * frequency)) - 1;
 	_tmr->initialize(htl::tmr::ClockDivider::_1, _prescaler - 1, _reload, 0);
 }
 
@@ -65,7 +67,7 @@ void STSPIN840_Device::enable() {
 	// Reconfigura el pin EF com entrada
 	//
 	_pinEF->set();
-	_pinEF->initInput(htl::gpio::InputMode::pullUp);
+	_pinEF->initInput(gpio::PullUpDown::up);
 
 	_pinSTBY->set();
 }
@@ -78,7 +80,7 @@ void STSPIN840_Device::disable() {
 	// Reconfigura el pin EF com sortida
 	//
 	__disable_irq();
-	_pinEF->initOutput(htl::gpio::OutputMode::openDrain, htl::gpio::Speed::medium, false);
+	_pinEF->initOutput(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::medium, false);
 	__enable_irq();
 }
 

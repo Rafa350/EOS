@@ -16,8 +16,8 @@ namespace htl {
 			template<>
 			struct SPITraits<DeviceID::spi1> {
 				static constexpr uint32_t spiAddr = SPI1_BASE;
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR2_SPI1EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
+				static constexpr uint32_t activatePos = RCC_APBENR2_SPI1EN_Pos;
 			};
 			#endif
 
@@ -25,8 +25,8 @@ namespace htl {
 			template<>
 			struct SPITraits<DeviceID::spi2> {
 				static constexpr uint32_t spiAddr = SPI2_BASE;
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI2EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t activatePos = RCC_APBENR1_SPI2EN_Pos;
 			};
 			#endif
 
@@ -34,8 +34,8 @@ namespace htl {
 			template<>
 			struct SPITraits<DeviceID::spi3> {
 				static constexpr uint32_t spiAddr = SPI3_BASE;
-				static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
-				static constexpr uint32_t rccEnablePos = RCC_APBENR1_SPI3EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
+				static constexpr uint32_t activatePos = RCC_APBENR1_SPI3EN_Pos;
 			};
 			#endif
 

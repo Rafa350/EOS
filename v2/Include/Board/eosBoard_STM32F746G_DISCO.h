@@ -40,7 +40,7 @@
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_Instance->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::low, false)
+#define LED1_Initialize()    LED1_Instance->initOutput(htl::gpio::OutputType::pushPull, htl::gpio::PullUpDown::none, htl::gpio::Speed::low, false)
 #define LED1_On()            LED1_Instance->set()
 #define LED1_Off()           LED1_Instance->clear()
 #define LED1_Toggle()        LED1_Instance->toggle()
@@ -58,14 +58,14 @@
 #define SW1_PortID           htl::gpio::PortID::portI
 #define SW1_PinID            htl::gpio::PinID::pin13
 #define SW1_Pin              htl::gpio::PinDeviceX<SW1_PortID, SW1_PinID>
-#define SW1_FastPin          htl::gpio::FastPinX<SW1_PortID, SW1_PinID>
+#define SW1_Instance         SW1_Pin::pInst
 #define SW1_PinInterrupt     htl::gpio::PinInterruptX<SW1_PortID, SW1_PinID>
-#define SW1_PinInitialize    htl::gpio::pInst->initInput(htl::gpio::InputMode::floating)
+#define SW1_PinInitialize    SW1_Instance->initInput(htl::gpio::InputMode::floating)
 #define SW1_StateON          true
 #define SW1_StateOF          false
 
 #define SW1_Initialize()
-#define SW1_Read()
+#define SW1_Read()           SW1_Instance->read()
 
 #endif // USE_SW1
 
@@ -189,7 +189,9 @@
 #define ARDUINO_D10_Pin      htl::gpio::PinA8
 #define ARDUINO_D11_Pin      htl::gpio::PinB15
 #define ARDUINO_D12_Pin      htl::gpio::PinB14
+#ifndef EXIST_LED1
 #define ARDUINO_D13_Pin      htl::gpio::PinI1
+#endif
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
@@ -202,7 +204,9 @@
 #define ARDUINO_SDA_Pin      htl::gpio::PinB9
 
 #define ARDUINO_SPI_Device   htl::spi::SPIDevice2
+#ifndef EXIST_LED1
 #define ARDUINO_SCK_Pin      htl::gpio::PinI1
+#endif
 #define ARDUINO_MISO_Pin     htl::gpio::PinB14
 #define ARDUINO_MOSI_Pin     htl::gpio::PinB15
 

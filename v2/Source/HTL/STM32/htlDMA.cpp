@@ -1,9 +1,11 @@
-#include "HTL/STM32/htl.h"
+#include "HTL/htl.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htlDMA.h"
 
 
 using namespace eos;
 using namespace htl;
+using namespace htl::bits;
 using namespace htl::dma;
 using namespace htl::dma::internal;
 
@@ -88,10 +90,10 @@ Result DMADevice::initMemoryToMemory() {
         disable(_dmadev);
 
 		uint32_t tmp = _dmadev->dmac->CCR;
-		tmp = ~(DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
+		clear(tmp, DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
 				DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
 				DMA_CCR_EN);
-		tmp |= DMA_CCR_MEM2MEM;      // Memoria a memoria
+		set(tmp, DMA_CCR_MEM2MEM);      // Memoria a memoria
 		_dmadev->dmac->CCR = tmp;
 
 		return Results::success;
@@ -134,20 +136,19 @@ Result DMADevice::initMemoryToPeripheral(
 
         // Transferencia de memoria a periferic
         //
-        tmp &= ~DMA_CCR_DIR_Msk;
-        tmp |= 1 << DMA_CCR_DIR_Pos;
-        tmp &= ~DMA_CCR_MEM2MEM;
+        clear(tmp, DMA_CCR_DIR | DMA_CCR_MEM2MEM);
+        set(tmp, 1UL << DMA_CCR_DIR_Pos);
 
         // Selecciona el modus de transferencia
         //
         tmp &= ~DMA_CCR_CIRC_Msk;
         if (mode == TransferMode::circular)
-            tmp |= 1 << DMA_CCR_CIRC_Pos;
+            set(tmp, 1UL << DMA_CCR_CIRC_Pos);
 
         // Selecciona la prioritat
         //
-        tmp &= ~DMA_CCR_PL_Msk;
-        tmp |= ((uint32_t)priority << DMA_CCR_PL_Pos) & DMA_CCR_PL_Msk;
+        clear(tmp, DMA_CCR_PL);
+        set(tmp, ((uint32_t)priority << DMA_CCR_PL_Pos) & DMA_CCR_PL_Msk);
 
         // Parametres de access a la memoria
         //
@@ -178,8 +179,8 @@ Result DMADevice::initMemoryToPeripheral(
         // Selecciona el dispositiu de fa la solicitut DMA
         //
         tmp = _dmadev->muxc->CCR;
-        tmp &= ~DMAMUX_CxCR_DMAREQ_ID;
-        tmp |= (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos);
+        clear(tmp, DMAMUX_CxCR_DMAREQ_ID);
+        set(tmp, (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos));
         _dmadev->muxc->CCR = tmp;
 
         // Canvia l'estat a 'ready'
@@ -214,7 +215,9 @@ Result DMADevice::deinitialize() {
 
         // Desactiva el dispositiu.
         //
+#if HTL_DMA_OPTION_DEACTIVATEW == 1
         deactivate();
+#endif
 
         // Canvia l'estat a 'reset'
         //
@@ -405,7 +408,7 @@ void DMADevice::notifyHalfTransfer(
 static inline void enableTransferCompleteInterrupt(
     const DMADEV_TypeDef *dmadev) {
 
-    dmadev->dmac->CCR |= DMA_CCR_TCIE;
+    set(dmadev->dmac->CCR, DMA_CCR_TCIE);
 }
 
 
@@ -416,7 +419,7 @@ static inline void enableTransferCompleteInterrupt(
 static inline void enableHalfTransferInterrupt(
     const DMADEV_TypeDef *dmadev) {
 
-    dmadev->dmac->CCR |= DMA_CCR_HTIE;
+    set(dmadev->dmac->CCR, DMA_CCR_HTIE);
 }
 
 
@@ -427,7 +430,7 @@ static inline void enableHalfTransferInterrupt(
 static inline void enableTransferErrorInterrupt(
     const DMADEV_TypeDef *dmadev) {
 
-    dmadev->dmac->CCR |= DMA_CCR_TEIE;
+    set(dmadev->dmac->CCR, DMA_CCR_TEIE);
 }
 
 
@@ -438,7 +441,7 @@ static inline void enableTransferErrorInterrupt(
 static void disableAllInterrupts(
     const DMADEV_TypeDef *dmadev) {
 
-    dmadev->dmac->CCR &= ~(DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
+    clear(dmadev->dmac->CCR, DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
 }
 
 

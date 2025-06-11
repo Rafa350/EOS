@@ -1,7 +1,7 @@
 #include "HTL/htl.h"
 #include "HTL/htlBits.h"
 #include "HTL/htlAtomic.h"
-#include "HTL/STM32/htlGPIO.h"
+#include "HTL/htlGPIO.h"
 
 
 using namespace htl;
@@ -22,30 +22,32 @@ PortDevice::PortDevice(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com entrades.
 /// \param    mask: Mascara de pins a configurar.
-/// \param    mode: Tipus d'entrada.
+/// \param    pupd: Resistencies pull up/down.
 ///
 void PortDevice::initInput(
 	PinMask mask,
-	InputMode mode) const {
+	PullUpDown pupd) const {
 
 	activate(mask);
-	htl::gpio::initInput(_gpio, mask, mode);
+	htl::gpio::initInput(_gpio, mask, pupd);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio com sortides.
 /// \param    mask: Mascara de pins a configurar.
-/// \param    mode: El tipus de sortida.
+/// \param    type: El tipus de sortida.
+/// \param    pupd: Resistencies pull up/down.
 /// \param    speed: Opcions de velocitat.
 ///
 void PortDevice::initOutput(
 	PinMask mask,
-	OutputMode mode,
+	OutputType type,
+	PullUpDown pupd,
 	Speed speed) const {
 
 	activate(mask);
-	htl::gpio::initOutput(_gpio, mask, mode, speed, false);
+	htl::gpio::initOutput(_gpio, mask, type, pupd, speed, false);
 }
 
 
@@ -86,29 +88,31 @@ void PinDevice::initialize(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com entrada digital.
-/// \param    mode: El tipus d'entrada.
+/// \param    pupd: Reesistencies pull up/down.
 ///
 void PinDevice::initInput(
-	InputMode mode) const {
+	PullUpDown pupd) const {
 
 	activate();
-	htl::gpio::initInput(_gpio, _mask, mode);
+	htl::gpio::initInput(_gpio, _mask, pupd);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza un pin com sortida digital.
-/// \parAM    mode: El tipus de sortida.
+/// \parAM    type: El tipus de sortida.
+/// \param    pupd: Resistencies pull up/down.
 /// \param    speed: Velocitat de conmutacio.
 /// \param    state: L'estat inicial de la sortida.
 ///
 void PinDevice::initOutput(
-	OutputMode mode,
+	OutputType type,
+	PullUpDown pupd,
 	Speed speed,
 	bool state) const {
 
 	activate();
-	htl::gpio::initOutput(_gpio, _mask, mode, speed, state);
+	htl::gpio::initOutput(_gpio, _mask, type, pupd, speed, state);
 }
 
 
@@ -123,32 +127,20 @@ void PinDevice::initAnalogic() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el pin com entrada digital alternativa.
-/// \param    mode: El tipus d'entrada.
-/// \param    af: Funcio alternativa.
-///
-void PinDevice::initAlternateInput(
-	InputMode mode,
-	AlternateFunction af) const {
-
-	activate();
-	htl::gpio::initAlternateInput(_gpio, _mask, mode, af);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com sortida digital alternativa.
-/// \parAM    mode: El tipus de sortida.
+/// \brief    Inicialitza un pin com entrada/sortida alternativa.
+/// \param    type: El tipus de sortida.
+/// \param    pupd: Resistencies pull pu/down
 /// \param    speed: Velocitat de conmutacio.
 /// \param    af: La funcio alternativa.
 ///
-void PinDevice::initAlternateOutput(
-	OutputMode mode,
+void PinDevice::initAlternate(
+	OutputType type,
+	PullUpDown pupd,
 	Speed speed,
 	AlternateFunction af) const {
 
 	activate();
-	htl::gpio::initAlternateOutput(_gpio, _mask, mode, speed, af);
+	htl::gpio::initAlternate(_gpio, _mask, type, pupd, speed, af);
 }
 
 
@@ -157,7 +149,9 @@ void PinDevice::initAlternateOutput(
 ///
 void PinDevice::deinitialize() const {
 
+#if HTL_GPIO_OPTIONS == 1
 	deactivate();
+#endif
 	htl::gpio::deinitialize(_gpio, _mask);
 }
 

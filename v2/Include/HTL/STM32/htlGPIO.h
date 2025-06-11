@@ -10,8 +10,15 @@
 
 // EOS includes
 //
+#include "HTL/htl.h"
 #include "HTL/htlBits.h"
-#include "HTL/STM32/htl.h"
+
+
+// Default options
+//
+#ifndef HTL_GPIO_OPTION_DEACTIVATE
+	#define HTL_GPIO_OPTION_DEACTIVATE HTL_GPIO_DEFAULT_OPTION_DEACTIVATE
+#endif
 
 
 namespace htl {
@@ -119,22 +126,6 @@ namespace htl {
 			_15
 		};
 
-		/// Modus d'entrada.
-		///
-		enum class InputMode {
-			floating,
-			pullUp,
-			pullDown
-		};
-
-		/// Modus de sortida.
-		///
-		enum class OutputMode {
-			pushPull,
-			openDrain,
-			openDrainPullUp
-		};
-
 		/// Opcions de velocitat.
 		///
 		enum class Speed {
@@ -144,13 +135,27 @@ namespace htl {
 			fast
 		};
 
+		// Opcio de resistencies pull up/down.
+		//
+		enum class PullUpDown {
+			none,
+			up,
+			down
+		};
+
+		// Opcions del driver de sortida.
+		//
+		enum class OutputType {
+			pushPull,
+			openDrain
+		};
+
 		/// Modus d'inicialitzacio.
 		///
         enum class InitMode {
             input,
             output,
-            alternateInput,
-			alternateOutput,
+            alternate,
             analogic
         };
 
@@ -160,22 +165,20 @@ namespace htl {
             InitMode mode;
             union {
                 struct {
-                    InputMode mode;
+                    PullUpDown pupd;
                 } input;
                 struct {
-                    OutputMode mode;
+                    OutputType type;
+                    PullUpDown pupd;
                     Speed speed;
                     bool state;
                 } output;
                 struct {
-                    InputMode mode;
-                    AlternateFunction function;
-                } alternateInput;
-                struct {
-                    OutputMode mode;
+                    OutputType type;
+                    PullUpDown pupd;
                     Speed speed;
                     AlternateFunction function;
-                } alternateOutput;
+                } alternate;
                 struct {
                 } analogic;
             };
@@ -202,28 +205,34 @@ namespace htl {
             struct PinTraits;
         }
 
-		//void activate(GPIO_TypeDef * const gpio);
-		//void deactivate(GPIO_TypeDef * const gpio);
-
 		void initialize(GPIO_TypeDef * const gpio, PinMask mask, const InitInfo *info);
 		void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
 		void deinitialize(GPIO_TypeDef * const gpio, PinBit bit);
 
-		void initInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode);
-		void initInput(GPIO_TypeDef * const gpio, PinBit bit, InputMode mode);
+		void initInput(GPIO_TypeDef * const gpio, PinMask mask, PullUpDown pupd);
+		void initInput(GPIO_TypeDef * const gpio, PinBit bit, PullUpDown pupd);
 
-		void initOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputMode mode, Speed speed, bool state);
-		void initOutput(GPIO_TypeDef * const gpio, PinBit bit, OutputMode mode, Speed speed, bool state);
+		void initOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputType type, PullUpDown pupd, Speed speed, bool state);
+		void initOutput(GPIO_TypeDef * const gpio, PinBit bit, OutputType, PullUpDown pupd, Speed speed, bool state);
 
 		void initAnalogic(GPIO_TypeDef * const gpio, PinMask mask);
 		void initAnalogic(GPIO_TypeDef * const gpio, PinBit bit);
 
-		void initAlternateOutput(GPIO_TypeDef * const gpio, PinMask mask, OutputMode mode, Speed speed, AlternateFunction af);
-		void initAlternateOutput(GPIO_TypeDef * const gpio, PinBit bit, OutputMode mode, Speed speed, AlternateFunction af);
+		void initAlternate(GPIO_TypeDef * const gpio, PinMask mask, OutputType type, PullUpDown pull, Speed speed, AlternateFunction af);
+		void initAlternate(GPIO_TypeDef * const gpio, PinBit bit, OutputType type, PullUpDown pull, Speed speed, AlternateFunction af);
 
-		void initAlternateInput(GPIO_TypeDef * const gpio, PinMask mask, InputMode mode, AlternateFunction af);
-		void initAlternateInput(GPIO_TypeDef * const gpio, PinBit bit, InputMode mode, AlternateFunction af);
+		template <PortID portID_, PinID pinID_>
+		void initAlternate(OutputType type, PullUpDown pupd, Speed speed, AlternateFunction af) {
 
+			using PortTraits = internal::PortTraits<portID_>;
+            using PinTraits = internal::PinTraits<pinID_>;
+            using PortActivator = internal::PortActivator<portID_>;
+
+            PortActivator::activate(PinMask(PinTraits::mask));
+
+            auto gpio = reinterpret_cast<GPIO_TypeDef*>(PortTraits::gpioAddr);
+            initAlternate(gpio, PinBit(PinTraits::bit), type, pupd, speed, af);
+		}
 
         /// brief Clase que representa un port.
         ///
@@ -235,14 +244,26 @@ namespace htl {
 				PortDevice(const PortDevice &) = delete;
 				PortDevice & operator = (const PortDevice &) = delete;
 
+			private:
+				void activate(PinMask mask) const {
+					activateImpl(mask);
+				}
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+				void deactivate(PinMask mask) const {
+					deactivateImpl(mask);
+				}
+#endif
+
 			protected:
 				PortDevice(GPIO_TypeDef *gpio);
-				virtual void activate(PinMask mask) const = 0;
-				virtual void deactivate(PinMask mask) const = 0;
+				virtual void activateImpl(PinMask mask) const = 0;
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+				virtual void deactivateImpl(PinMask mask) const = 0;
+#endif
 
 			public:
-				void initInput(PinMask mask, InputMode mode) const;
-				void initOutput(PinMask mask, OutputMode mode, Speed speed = Speed::medium) const;
+				void initInput(PinMask mask, PullUpDown pupd) const;
+				void initOutput(PinMask mask, OutputType type, PullUpDown pupd, Speed speed = Speed::medium) const;
 				void deinitialize() const;
 
 				void set(PinMask mask) const {
@@ -302,12 +323,14 @@ namespace htl {
                 }
 
             protected:
-                void activate(PinMask mask) const override {
+                void activateImpl(PinMask mask) const override {
                     PortActivator::activate(mask);
                 }
-                void deactivate(PinMask mask) const override {
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+                void deactivateImpl(PinMask mask) const override {
                     PortActivator::deactivate(mask);
                 }
+#endif
 
             public:
                 static void interruptHandler() {
@@ -330,17 +353,27 @@ namespace htl {
 				PinDevice(const PinDevice &) = delete;
 				PinDevice & operator = (const PinDevice &) = delete;
 
+			private:
+                inline void activate() const {
+                	activateImpl();
+                }
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+                inline void deactivate() const {
+                	deactivateImpl();
+                }
+#endif
+
 			protected:
                 PinDevice(GPIO_TypeDef *gpio, PinBit bit);
 
-                virtual void activate() const = 0;
-                virtual void deactivate() const = 0;
-
+                virtual void activateImpl() const = 0;
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+                virtual void deactivateImpl() const = 0;
+#endif
 			public:
-                void initInput(InputMode mode) const;
-                void initOutput(OutputMode mode, Speed speed, bool state) const;
-                void initAlternateInput(InputMode mode, AlternateFunction af) const;
-                void initAlternateOutput(OutputMode mode, Speed speed, AlternateFunction af) const;
+                void initInput(PullUpDown pupd) const;
+                void initOutput(OutputType type, PullUpDown pupd, Speed speed, bool state) const;
+                void initAlternate(OutputType outputType, PullUpDown pupd, Speed speed, AlternateFunction af) const;
                 void initAnalogic() const;
                 void initialize(const InitInfo &info) const;
                 void deinitialize() const;
@@ -390,12 +423,14 @@ namespace htl {
                 }
 
             protected:
-                void activate() const override {
+                void activateImpl() const override {
                 	PortActivator::activate(PinMask(_mask));
                 }
-                void deactivate() const override {
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+                void deactivateImpl() const override {
                 	PortActivator::deactivate(PinMask(_mask));
                 }
+#endif
         };
 
         template <PortID portID_, PinID pinID_>
@@ -740,6 +775,7 @@ namespace htl {
 						_mask = PinMask(m);
 					}
 
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
 					static void deactivate(PinMask mask) {
                         auto m = (uint16_t) _mask;
                         bits::clear(m, (uint16_t) mask);
@@ -749,6 +785,7 @@ namespace htl {
 						}
                         _mask = PinMask(m);
 					}
+#endif
 			};
 
 			template <PortID portId_>

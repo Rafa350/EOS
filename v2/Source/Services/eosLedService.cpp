@@ -48,7 +48,7 @@ void LedService::onExecute() {
     if (_pinLED2 != nullptr)
         _pinLED2->clear();
 
-    _weakTime = Task::getTickCount();
+    auto weakTime = Task::getTickCount();
 
     while (!stopSignal()) {
 
@@ -58,6 +58,6 @@ void LedService::onExecute() {
 		if (_pinLED2 != nullptr)
 			_pinLED2->toggle();
 
-		Task::delay(500, _weakTime);
+		Task::delay(500, weakTime);
 	}
 }

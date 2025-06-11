@@ -88,6 +88,9 @@ eos::Result UARTDevice::deinitialize() {
 	if (_state == State::ready) {
 
 		disable();
+#if HTL_UART_OPTION_DEACTIVATE == 1
+		deactivate();
+#endif
 
 		_state = State::reset;
 
@@ -504,8 +507,8 @@ eos::Result UARTDevice::transmit_DMA(
         _txCount = 0;
         _txMaxCount = length;
 
-        enable(_usart);
-        enableTransmissionDMA(_usart);
+        enable();
+        enableTransmissionDMA();
 
         // Inicia la transferencia per DMA
         //
@@ -1092,13 +1095,13 @@ void UARTDevice::enableTransmissionIRQ() const {
 void UARTDevice::enableTransmissionDMA() const {
 
 	//TODO: Comprovar si es necesari
-	usart->ICR = USART_ICR_TCCF;  // Borra el flag TC
+	_usart->ICR = USART_ICR_TCCF;  // Borra el flag TC
 
 	auto a = startAtomic();
 
-    set(usart->CR1,
+    set(_usart->CR1,
     	USART_CR1_TE);            // Habilita transmissio
-    set(usart->CR3,
+    set(_usart->CR3,
     	USART_CR3_DMAT);          // Habilita DMA
 
     endAtomic(a);
@@ -1213,7 +1216,7 @@ void UARTDevice::disableReception() const {
 		USART_CR1_PEIE);           // Deshabilita interrupcio PE
 
 #if HTL_UART_OPTION_DMA == 1
-	clear(usart->CR3,
+	clear(_usart->CR3,
 		USART_CR3_DMAT);           // Desabilita el DMA
 #endif
 

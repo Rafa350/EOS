@@ -3,7 +3,14 @@
 #define __STM32_htlDMA__
 
 
-#include "htl/STM32/htl.h"
+#include "HTL/htl.h"
+
+
+// Default options
+//
+#ifndef HTL_DMA_OPTION_DEACTIVATE
+	#define HTL_DMA_OPTION_DEACTIVATE HTL_DMA_DEFAULT_OPTION_DEACTIVATE
+#endif
 
 
 namespace htl {
@@ -13,48 +20,48 @@ namespace htl {
         /// Identificador del dispositiu.
         ///
 		enum class DeviceID {
-            #ifdef HTL_DMA1_CHANNEL1_EXIST
-			_11,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL2_EXIST
-			_12,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL3_EXIST
-			_13,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL4_EXIST
-			_14,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL5_EXIST
-			_15,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL6_EXIST
-			_16,
-            #endif
-            #ifdef HTL_DMA1_CHANNEL7_EXIST
-			_17,
-            #endif
-            #ifdef HTL_DMA2_CHANNEL1_EXIST
-			_21,
-            #endif
-            #ifdef HTL_DMA3_CHANNEL2_EXIST
-			_22,
-            #endif
-            #ifdef HTL_DMA4_CHANNEL3_EXIST
-			_23,
-            #endif
-            #ifdef HTL_DMA5_CHANNEL4_EXIST
-			_24,
-            #endif
-            #ifdef HTL_DMA6_CHANNEL5_EXIST
-			_25,
-            #endif
-            #ifdef HTL_DMA7_CHANNEL6_EXIST
-			_26,
-            #endif
-            #ifdef HTL_DMA8_CHANNEL7_EXIST
-			_27
-            #endif
+#ifdef HTL_DMA1_CHANNEL1_EXIST
+			dma11,
+#endif
+#ifdef HTL_DMA1_CHANNEL2_EXIST
+			dma12,
+#endif
+#ifdef HTL_DMA1_CHANNEL3_EXIST
+			dma13,
+#endif
+#ifdef HTL_DMA1_CHANNEL4_EXIST
+			dma14,
+#endif
+#ifdef HTL_DMA1_CHANNEL5_EXIST
+			dma15,
+#endif
+#ifdef HTL_DMA1_CHANNEL6_EXIST
+			dma16,
+#endif
+#ifdef HTL_DMA1_CHANNEL7_EXIST
+			dma17,
+#endif
+#ifdef HTL_DMA2_CHANNEL1_EXIST
+			dma21,
+#endif
+#ifdef HTL_DMA3_CHANNEL2_EXIST
+			dma22,
+#endif
+#ifdef HTL_DMA4_CHANNEL3_EXIST
+			dma23,
+#endif
+#ifdef HTL_DMA5_CHANNEL4_EXIST
+			dma24,
+#endif
+#ifdef HTL_DMA6_CHANNEL5_EXIST
+			dma25,
+#endif
+#ifdef HTL_DMA7_CHANNEL6_EXIST
+			dma26,
+#endif
+#ifdef HTL_DMA8_CHANNEL7_EXIST
+			dma27
+#endif
 		};
 
 		enum class RequestID {
@@ -123,10 +130,10 @@ namespace htl {
         namespace internal {
             typedef struct {
                 DMA_TypeDef * const dma;
-				#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32G0)
                 DMA_Channel_TypeDef * const dmac;
                 DMAMUX_Channel_TypeDef * const muxc;
-				#endif
+#endif
                 unsigned const flagPos;
             } DMADEV_TypeDef;
 
@@ -160,18 +167,24 @@ namespace htl {
                 void notifyTransferCompleted(bool irq);
                 void notifyHalfTransfer(bool irq);
 
-                inline void activate() {
+                inline void activate() const {
                     activateImpl();
                 }
-                inline void deactivate() {
+#if HTL_DMA_OPTION_DEACTIVATE == 1
+                inline void deactivate() const {
                     activateImpl();
                 }
+#endif
 
 			protected:
 				DMADevice(const internal::DMADEV_TypeDef *dmadev);
-                void interruptService();
-                virtual void activateImpl() = 0;
-                virtual void deactivateImpl() = 0;
+
+				void interruptService();
+
+                virtual void activateImpl() const = 0;
+#if HTL_DMA_OPTION_DEACTIVATE == 1
+                virtual void deactivateImpl() const = 0;
+#endif
 
 			public:
                 eos::Result initMemoryToMemory();
@@ -217,8 +230,8 @@ namespace htl {
 
             private:
                 static constexpr auto dmadev = DMATraits::dmadev;
-                static constexpr auto _rccEnableAddr = DMATraits::rccEnableAddr;
-                static constexpr auto _rccEnablePos = DMATraits::rccEnablePos;
+                static constexpr auto _activateAddr = DMATraits::activateAddr;
+                static constexpr auto _activatePos = DMATraits::activatePos;
                 static DMADeviceX _instance;
 
             private:
@@ -227,15 +240,17 @@ namespace htl {
                 }
 
             protected:
-                void activateImpl() override {
-                    auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-                    *p |= 1 << _rccEnablePos;
+                void activateImpl() const override {
+                    auto p = reinterpret_cast<uint32_t *>(_activateAddr);
+                    *p |= 1 << _activatePos;
                     __DSB();
                 }
-                void deactivateImpl() override {
-                    auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-                    *p &= ~(1 << _rccEnablePos);
+#if HTL_DMA_OPTION_DEACTIVATE == 1
+                void deactivateImpl() const override {
+                    auto p = reinterpret_cast<uint32_t *>(_activateAddr);
+                    *p &= ~(1 << _activatePos);
                 }
+#endif
 
             public:
                 static constexpr auto deviceID = deviceID_;
@@ -254,67 +269,67 @@ namespace htl {
 
 		namespace internal {
 
-            #ifdef HTL_DMA1_CHANNEL1_EXIST
+#ifdef HTL_DMA1_CHANNEL1_EXIST
 		    template <>
-		    struct DMATraits<DeviceID::_11> {
+		    struct DMATraits<DeviceID::dma11> {
 		        static constexpr const DMADEV_TypeDef *dmadev = &__dmadev11;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				#if defined(EOS_PLATFORM_STM32F0)
-                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMAEN_Pos;
-				#else
-                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
-				#endif
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+#if defined(EOS_PLATFORM_STM32F0)
+                static constexpr uint32_t activatePos = RCC_AHBENR_DMAEN_Pos;
+#else
+                static constexpr uint32_t activatePos = RCC_AHBENR_DMA1EN_Pos;
+#endif
 		    };
-            #endif
+#endif
 
-            #ifdef HTL_DMA1_CHANNEL2_EXIST
+#ifdef HTL_DMA1_CHANNEL2_EXIST
 		    template <>
-            struct DMATraits<DeviceID::_12> {
+            struct DMATraits<DeviceID::dma12> {
                 static constexpr const DMADEV_TypeDef *dmadev = &__dmadev12;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				#if defined(EOS_PLATFORM_STM32F0)
-                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMAEN_Pos;
-				#else
-                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
-				#endif
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+#if defined(EOS_PLATFORM_STM32F0)
+                static constexpr uint32_t activatePos = RCC_AHBENR_DMAEN_Pos;
+#else
+                static constexpr uint32_t activatePos = RCC_AHBENR_DMA1EN_Pos;
+#endif
             };
-            #endif
+#endif
 
-		    #ifdef HTL_DMA1_CHANNEL3_EXIST
+#ifdef HTL_DMA1_CHANNEL3_EXIST
             template <>
-            struct DMATraits<DeviceID::_13> {
+            struct DMATraits<DeviceID::dma13> {
                 static constexpr const DMADEV_TypeDef *dmadev = &__dmadev13;
-                static constexpr uint32_t rccEnableAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
-				#if defined(EOS_PLATFORM_STM32F0)
-                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMAEN_Pos;
-				#else
-                static constexpr uint32_t rccEnablePos = RCC_AHBENR_DMA1EN_Pos;
-				#endif
+                static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHBENR);
+#if defined(EOS_PLATFORM_STM32F0)
+                static constexpr uint32_t activatePos = RCC_AHBENR_DMAEN_Pos;
+#else
+                static constexpr uint32_t activatePos = RCC_AHBENR_DMA1EN_Pos;
+#endif
             };
-            #endif
+#endif
 		}
 
-        #ifdef HTL_DMA1_CHANNEL1_EXIST
-		using DMADevice11 = DMADeviceX<DeviceID::_11>;
-        #endif
-        #ifdef HTL_DMA1_CHANNEL2_EXIST
-        using DMADevice12 = DMADeviceX<DeviceID::_12>;
-        #endif
-        #ifdef HTL_DMA1_CHANNEL3_EXIST
-        using DMADevice13 = DMADeviceX<DeviceID::_13>;
-        #endif
-        #ifdef HTL_DMA1_CHANNEL4_EXIST
-        using DMADevice14 = DMADeviceX<DeviceID::_14>;
-        #endif
-        #ifdef HTL_DMA1_CHANNEL5_EXIST
-        using DMADevice15 = DMADeviceX<DeviceID::_15>;
-        #endif
-        #ifdef HTL_DMA1_CHANNEL6_EXIST
-        using DMADevice16 = DMADeviceX<DeviceID::_16>;
-        #endif
-        #ifdef HTL_DMA1_CHANNEL7_EXIST
-        using DMADevice17 = DMADeviceX<DeviceID::_17>;
-        #endif
+#ifdef HTL_DMA1_CHANNEL1_EXIST
+		using DMADevice11 = DMADeviceX<DeviceID::dma11>;
+#endif
+#ifdef HTL_DMA1_CHANNEL2_EXIST
+        using DMADevice12 = DMADeviceX<DeviceID::dma12>;
+#endif
+#ifdef HTL_DMA1_CHANNEL3_EXIST
+        using DMADevice13 = DMADeviceX<DeviceID::dma13>;
+#endif
+#ifdef HTL_DMA1_CHANNEL4_EXIST
+        using DMADevice14 = DMADeviceX<DeviceID::dma14>;
+#endif
+#ifdef HTL_DMA1_CHANNEL5_EXIST
+        using DMADevice15 = DMADeviceX<DeviceID::dma15>;
+#endif
+#ifdef HTL_DMA1_CHANNEL6_EXIST
+        using DMADevice16 = DMADeviceX<DeviceID::dma16>;
+#endif
+#ifdef HTL_DMA1_CHANNEL7_EXIST
+        using DMADevice17 = DMADeviceX<DeviceID::dma17>;
+#endif
 	}
 }
 

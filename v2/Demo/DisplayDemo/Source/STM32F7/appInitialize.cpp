@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "hal/halSYS.h"
+
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_rcc.h"
 #include "stm32746g_discovery.h"
@@ -69,7 +69,7 @@ void appInitialize() {
 
 	enableCache();
 
-    halSYSInitialize();
+	HAL_Init();
 
 	initializeCLK();
 	initializeSDRAM();

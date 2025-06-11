@@ -7,16 +7,16 @@
 
 
 #if defined(EOS_PLATFORM_STM32F0)
-    #include "HTL/STM32/F0/htlClock.h"
+    //#include "HTL/STM32/F0/htlClock.h"
 
 #elif defined(EOS_PLATFORM_STM32F1)
     #include "HTL/STM32/F1/htlClock.h"
 
 #elif defined(EOS_PLATFORM_STM32F4)
-    #include "HTL/STM32/F4/htlClock.h"
+    //#include "HTL/STM32/F4/htlClock.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
-    #include "HTL/STM32/F7/htlClock.h"
+    //#include "HTL/STM32/F7/htlClock.h"
 
 #elif defined(EOS_PLATFORM_STM32G0)
     //#include "HTL/STM32/G0/htlClock.h"
@@ -29,7 +29,34 @@
 namespace htl {
 	namespace clock {
 
-#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32F0)
+		enum class ClockID {
+			sysclk,
+			pclk,
+			hclk,
+			hse,
+			hsi,
+			hsi14,
+			lse,
+			lsi,
+			i2cclk
+		};
+
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+        enum class ClockID {
+            sysclk,
+            pclk1,
+			pclk2,
+			tim1clk,
+			tim2clk,
+            hclk,
+            hse,
+            hsi,
+            lse,
+            lsi
+        };
+
+#elif defined(EOS_PLATFORM_STM32G0)
 		enum class ClockID {
 			sysclk,
 			pclk,
@@ -76,7 +103,14 @@ namespace htl {
 			div1, div2, div4, div8, div16
 		};
 
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F0)
+		enum class PLLsource {
+			hsi,
+			hse
+		};
+
+
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		enum class PLLsource {
 			hsi,
 			hse
@@ -128,6 +162,10 @@ namespace htl {
 //#else
 //#error "Unknown platform"
 #endif
+
+		enum class FlashLatency {
+			fl0, fl1, fl2, fl3, fl4, fl5, fl6, fl7
+		};
 
 		class ClockDevice {
 			private:
@@ -204,24 +242,30 @@ namespace htl {
 				void enablePLL() const;
 				void disablePLL() const;
 				bool isPLLEnabled() const;
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F0)
+				bool configurePLL(PLLsource source, unsigned multiplier, unsigned divider) const;
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				void enablePLLSAI() const;
 				void disablePLLSAI() const;
 				bool isPLLSAIEnabled() const;
 				bool configurePLL(PLLsource source, unsigned multiplier, unsigned divider, PLLPdivider divP, PLLQdivider divQ) const;
-				bool configurePLLSAI(unsigned divider, PLLQdivider divQ, PLLRdivider divR) const;
+				bool configurePLLSAI(unsigned multiplier, PLLQdivider divQ, PLLRdivider divR) const;
 #elif defined(EOS_PLATFORM_STM32G0)
 				bool configurePLL(PLLsource source, unsigned multiplier, unsigned divider, PLLPdivider divP, PLLQdivider divQ, PLLRdivider divR) const;
 #endif
 
 				// Configuracio dels rellotges del sistema
 				//
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+				bool selectSystemClock(SystemClockSource source, FlashLatency fl) const;
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
 				bool selectSystemClock(SystemClockSource source) const;
+#endif
 				void setAHBPrescaler(AHBPrescaler prescaler) const;
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				void setAPB1Prescaler(APBPrescaler prescaler) const;
 				void setAPB2Prescaler(APBPrescaler prescaler) const;
-#elif defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
 				void setAPBPrescaler(APBPrescaler prescaler) const;
 #endif
 

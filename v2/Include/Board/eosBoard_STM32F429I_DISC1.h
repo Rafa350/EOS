@@ -31,7 +31,7 @@
 #define LED1_StateON         true
 #define LED1_StateOFF        false
 
-#define LED1_Initialize()    LED1_Instance->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::low, false)
+#define LED1_Initialize()    LED1_Instance->initOutput(htl::gpio::OutputType::pushPull, htl::gpio::PullUpDown::none, htl::gpio::Speed::low, false)
 #define LED1_On()            LED1_Instance->set()
 #define LED1_Off()           LED1_Instance->clear()
 #define LED1_Toggle()        LED1_Instance->toggle()
@@ -51,7 +51,7 @@
 #define LED2_StateON         true
 #define LED2_StateOFF        false
 
-#define LED2_Initialize()    LED2_Instance->initOutput(htl::gpio::OutputMode::pushPull, htl::gpio::Speed::low, false)
+#define LED2_Initialize()    LED2_Instance->initOutput(htl::gpio::OutputType::pushPull, htl::gpio::PullUpDown::none, htl::gpio::Speed::low, false)
 #define LED2_On()            LED2_Instance->set()
 #define LED2_Off()           LED2_Instance->clear()
 #define LED2_Toggle()        LED2_Instance->toggle()

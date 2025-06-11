@@ -6,21 +6,30 @@
 #include "HTL/htl.h"
 
 
+// Opcions per defecte del modul GPIO
+//
+#define HTL_GPIO_DEFAULT_OPTION_DEACTIVATE       1
+
 // Opcions per defecte pel modul SPI
 //
-#define HTL_SPI_DEFAULT_OPTION_IRQ     1
-#define HTL_SPI_DEFAULT_OPTION_DMA     1
+#define HTL_SPI_DEFAULT_OPTION_IRQ               1
+#define HTL_SPI_DEFAULT_OPTION_DMA               1
 
 // Opcions per defecte pel modul I2C
 //
-#define HTL_I2C_DEFAULT_OPTION_IRQ     1
-#define HTL_I2C_DEFAULT_OPTION_DMA     1
+#define HTL_I2C_DEFAULT_OPTION_IRQ               1
+#define HTL_I2C_DEFAULT_OPTION_DMA               1
 
 // Opcions per defecte pel modul UART
 //
-#define HTL_UART_DEFAULT_OPTION_IRQ    1
-#define HTL_UART_DEFAULT_OPTION_DMA    1
-#define HTL_UART_DEFAULT_OPTION_FIFO   0
+#define HTL_UART_DEFAULT_OPTION_IRQ              1
+#define HTL_UART_DEFAULT_OPTION_DMA              1
+#define HTL_UART_DEFAULT_OPTION_FIFO             0
+#define HTL_UART_DEFAULT_OPTION_DEACTIVATE       1
+
+// Opcions per defecte del modul DMA
+//
+#define HTL_DMA_DEFAULT_OPTION_DEACTIVATE        1
 
 
 // Comprova l'existencia dels moduls GPIO

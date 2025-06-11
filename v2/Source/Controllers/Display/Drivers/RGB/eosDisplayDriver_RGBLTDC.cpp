@@ -246,6 +246,6 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	_pinBKE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
-	_pinLCDE->initOutput(gpio::OutputMode::pushPull, gpio::Speed::low, false);
+	_pinBKE->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::low, false);
+	_pinLCDE->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::low, false);
 }

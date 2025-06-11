@@ -1,10 +1,12 @@
 #include "HTL/htl.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htlSPI.h"
 #include "HTL/STM32/htlDMA.h"
 
 
 using namespace eos;
 using namespace htl;
+using namespace htl::bits;
 using namespace htl::spi;
 
 
@@ -28,33 +30,6 @@ using namespace htl::spi;
 #error "Undefined platform"
 #endif
 
-
-static void setClockDivider(SPI_TypeDef *spi, ClockDivider clkDivider);
-static void setMode(SPI_TypeDef *spi, Mode mode);
-static void setClkPolarity(SPI_TypeDef *spi, ClkPolarity polarity);
-static void setClkPhase(SPI_TypeDef *spi, ClkPhase phase);
-static void setWordSize(SPI_TypeDef *spi, WordSize size);
-static void setFirstBit(SPI_TypeDef *spi, FirstBit firstBit);
-
-static void enable(SPI_TypeDef *spi);
-static void disable(SPI_TypeDef *spi);
-
-static void write8(SPI_TypeDef *spi, uint8_t data);
-static void write16(SPI_TypeDef *spi, uint16_t data);
-static uint8_t read8(SPI_TypeDef *spi);
-static uint16_t read16(SPI_TypeDef *spi);
-
-static bool isTxEmpty(SPI_TypeDef *spi);
-static bool isRxNotEmpty(SPI_TypeDef *spi);
-static bool isSPIBusy(SPI_TypeDef *spi);
-
-#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
-static bool waitRxFifoEmpty(SPI_TypeDef *spi, unsigned expireTime);
-static bool waitTxFifoEmpty(SPI_TypeDef *spi, unsigned expireTime);
-#endif
-static bool waitNotBusy(SPI_TypeDef *spi, unsigned expireTime);
-static bool waitRxNotEmpty(SPI_TypeDef *spi, unsigned expireTime);
-static bool waitTxEmpty(SPI_TypeDef *spi, unsigned expireTime);
 
 static void clearOverrunFlag(SPI_TypeDef *spi);
 
@@ -81,7 +56,7 @@ SPIDevice::SPIDevice(
 /// \param    size: El tamany de trama
 /// \param    firstBite: El primer bit de la trama.
 /// \param    clkDivider: Divisor de frequencia.
-/// \return   El resultst de l'operacio.
+/// \return   El resultat de l'operacio.
 ///
 Result SPIDevice::initialize(
 	Mode mode,
@@ -94,14 +69,14 @@ Result SPIDevice::initialize(
 	if (_state == State::reset) {
 
 		activate();
-		disable(_spi);
+		disable();
 
-		setClockDivider(_spi, clkDivider);
-		setMode(_spi, mode);
-		setClkPolarity(_spi, clkPolarity);
-		setClkPhase(_spi, clkPhase);
-		setWordSize(_spi, size);
-		setFirstBit(_spi, firstBit);
+		setClockDivider(clkDivider);
+		setMode(mode);
+		setClkPolarity(clkPolarity);
+		setClkPhase(clkPhase);
+		setWordSize(size);
+		setFirstBit(firstBit);
 
 		_state = State::ready;
 
@@ -120,7 +95,7 @@ Result SPIDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		disable(_spi);
+		disable();
 		deactivate();
 
 		_state = State::reset;
@@ -152,17 +127,19 @@ Result SPIDevice::transmit(
 
 		auto expireTime = htl::getTick() + timeout;
 
-		#if defined(EOS_PLATFORM_STM32G0)
-		bool len8 = (_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8;
-		#elif defined(EOS_PLATFORM_STM32F4)
-		bool len8 = (_spi->CR1 & SPI_CR1_DFF_Msk) == 0;
-		#elif defined(EOS_PLATFORM_STM32F7)
-		bool len8 = (_spi->CR2 & SPI_CR2_DS_Msk) == SPI_CR2_DS_LEN8;
-		#endif
+#if defined(EOS_PLATFORM_STM32G0)
+		bool len8 = (_spi->CR2 & SPI_CR2_DS) == SPI_CR2_DS_LEN8;
+#elif defined(EOS_PLATFORM_STM32F4)
+		bool len8 = (_spi->CR1 & SPI_CR1_DFF) == 0;
+#elif defined(EOS_PLATFORM_STM32F7)
+		bool len8 = (_spi->CR2 & SPI_CR2_DS) == SPI_CR2_DS_LEN8;
+#else
+#error "Unknown platform"
+#endif
 
 		// Habilita la comunicacio
 		//
-		enable(_spi);
+		enable();
 
 		// Bucle per transmetre i/o rebre
 		//
@@ -172,7 +149,7 @@ Result SPIDevice::transmit(
 
 			// Espera que el buffer de transmissio estigui buit
 			//
-            if (!waitTxEmpty(_spi, expireTime)) {
+            if (!waitTxEmpty(expireTime)) {
                 error = true;
                 continue;
             }
@@ -181,24 +158,24 @@ Result SPIDevice::transmit(
             //
             if (len8) {
                 if (txBuffer == nullptr)
-                    write8(_spi, 0);
+                    write8(0);
                 else {
                     uint8_t data = txBuffer[count];
-                    write8(_spi, data);
+                    write8(data);
                 }
             }
             else {
                 if (txBuffer == nullptr)
-                    write16(_spi, 0);
+                    write16(0);
                 else {
                     uint16_t data = *(const uint16_t*)&txBuffer[count];
-                    write16(_spi, data);
+                    write16(data);
                 }
             }
 
             // Espera que el buffer de recepcio no estigui buit
             //
-            if (!waitRxNotEmpty(_spi, expireTime)) {
+            if (!waitRxNotEmpty(expireTime)) {
                 error = true;
                 continue;
             }
@@ -206,12 +183,12 @@ Result SPIDevice::transmit(
             // Reb les dades
             //
             if (len8) {
-                uint8_t data = read8(_spi);
+                uint8_t data = read8();
                 if (rxBuffer != nullptr)
                     rxBuffer[count] = data;
             }
             else {
-                uint16_t data = read16(_spi);
+                uint16_t data = read16();
                 if (rxBuffer != nullptr)
                     *(uint16_t*)(&rxBuffer[count]) = data;
             }
@@ -222,19 +199,24 @@ Result SPIDevice::transmit(
 		if (!error) {
 			// Espera que es buidin els fifos
 			//
-            #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
-		    if (!waitTxFifoEmpty(_spi, expireTime))
+#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
+		    if (!waitTxFifoEmpty(expireTime))
 		        error = true;
-		    else if (!waitNotBusy(_spi, expireTime))
+		    else if (!waitNotBusy(expireTime))
 		        error = true;
-		    else if (!waitRxFifoEmpty(_spi, expireTime))
+		    else if (!waitRxFifoEmpty(expireTime))
 		        error = true;
-            #endif
+#elif defined(EOS_PLATFORM_STM32F4)
+		    if (!waitNotBusy(expireTime))
+		        error = true;
+#else
+#error "Unknown platform"
+#endif
 		}
 
 		// Deshabilita la comunicacio
 		//
-		disable(_spi);
+		disable();
 
 		_state = State::ready;
 
@@ -265,11 +247,11 @@ Result SPIDevice::transmit_DMA(
 
 		// Habilita les transferencies per DMA
 		//
-		_spi->CR2 |= SPI_CR2_TXDMAEN;
+		set(_spi->CR2, SPI_CR2_TXDMAEN);
 
 		// Habilita la comunicacio
 		//
-		enable(_spi);
+		enable();
 
 		// Inicia la transferencia i espera que finalitzi
 		//
@@ -278,16 +260,16 @@ Result SPIDevice::transmit_DMA(
 
 		// Espera que el SPI acabi de transferir
 		//
-		while (isSPIBusy(_spi))
+		while (isSPIBusy())
 			continue;
 
 		// Desabilita la comunicacio
 		//
-		disable(_spi);
+		disable();
 
 		// Deshabilita la transfertencia per DMA
 		//
-		_spi->CR2 &= ~SPI_CR2_TXDMAEN;
+		clear(_spi->CR2, SPI_CR2_TXDMAEN);
 
 		return Results::success;
 	}
@@ -296,304 +278,261 @@ Result SPIDevice::transmit_DMA(
 }
 
 
-/// -------------------------------------------------------------------------
-/// \brief    Asigna el divisor del rellotge.
-/// \param    spi: Els registres de hardware del dispositiu SPI.
-/// \param    clkDivider: El valor del divisor.
-/// \remarks  La frequencia resultant es PCLK/clkDivider
-///
-static void setClockDivider(
-	SPI_TypeDef *spi,
-	ClockDivider clkDivider) {
-
-	static const uint32_t clkDividerTbl[] = { SPI_CR1_BR_DIV2, SPI_CR1_BR_DIV4,
-		SPI_CR1_BR_DIV8, SPI_CR1_BR_DIV16, SPI_CR1_BR_DIV32, SPI_CR1_BR_DIV64,
-		SPI_CR1_BR_DIV128, SPI_CR1_BR_DIV256 };
-
-	uint32_t CR1 = spi->CR1;
-	CR1 &= ~SPI_CR1_BR_Msk;
-	CR1 |= clkDividerTbl[uint8_t(clkDivider)];
-	spi->CR1 = CR1;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el modus de comunicacio (Polaritat i fase).
-/// \param    spi: Els registres de hardware del dispositiu SPI
-/// \param    mode: El modus de treball.
-///
-static void setMode(
-	SPI_TypeDef *spi,
-	Mode mode) {
-
-    // Configura el registre CR1
-    //
-	uint32_t CR1 = spi->CR1;
-	CR1 &= ~SPI_CR1_CRCEN;
-	if (mode == Mode::master)
-		CR1 |= (SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM);
-	CR1 &= ~(SPI_CR1_BIDIMODE | SPI_CR1_RXONLY);
-	spi->CR1 = CR1;
-
-	// Configura el registre CR2
-	//
-	uint32_t CR2 = spi->CR2;
-	CR2 &= ~(SPI_CR2_SSOE | SPI_CR2_FRF);
-    #if defined(EOS_PLATFORM_STM32G0)
-	CR2 &= ~SPI_CR2_NSSP;
-    #endif
-	spi->CR2 = CR2;
-};
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna la polaritat del senyal CLK
-/// \param    spi: Els registres de hardware del dispositiu SPI.
-/// \param    polarity: La polaritat.
-///
-static void setClkPolarity(
-	SPI_TypeDef *spi,
-	ClkPolarity polarity) {
-
-	if (polarity == ClkPolarity::high)
-		spi->CR1 |= SPI_CR1_CPOL;
-	else
-		spi->CR1 &= ~SPI_CR1_CPOL;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna la fase del senyal CLK
-/// \param    regs: Els regiostres de hardware del dispositiu SPI.
-/// \param    polarity: La fase.
-///
-static void setClkPhase(
-	SPI_TypeDef *spi,
-	ClkPhase phase) {
-
-	if (phase == ClkPhase::edge2)
-		spi->CR1 |= SPI_CR1_CPHA;
-	else
-		spi->CR1 &= ~SPI_CR1_CPHA;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el tamany de la trama.
-/// \param    spi: Els registres de hardware del dispositiu SPI..
-/// \param    size: El tamany.
-///
-static void setWordSize(
-	SPI_TypeDef *spi,
-	WordSize size) {
-
-	#if defined(EOS_PLATFORM_STM32F4)
-	if (size == WordSize::_16)
-		spi->CR1 |= SPI_CR1_DFF;
-	else
-		spi->CR1 &= ~SPI_CR1_DFF;
-
-	#elif defined(EOS_PLATFORM_STM32F7)
-	uint32_t tmp = spi->CR2;
-	tmp &= ~(SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0);
-	switch (size) {
-		case WordSize::_8:
-			tmp |= SPI_CR2_DS_LEN8;
-			break;
-
-		case WordSize::_16:
-			tmp |= SPI_CR2_DS_LEN16;
-			break;
-	}
-	spi->CR2 = tmp;
-
-	#elif defined(EOS_PLATFORM_STM32G0)
-	uint32_t tmp = spi->CR2;
-	tmp &= (SPI_CR2_DS_Msk | SPI_CR2_FRXTH_Msk);
-	tmp |= size == WordSize::_8 ?
-		SPI_CR2_DS_LEN8 | SPI_CR2_FRXTH :
-		SPI_CR2_DS_LEN16;
-	spi->CR2 = tmp;
-
-    #else
-    #error "Unknown platform"
-	#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Indica quin es el primer bit a transmetre en cada trama.
-/// \param    spi: Els registres de hardware del dispositiu SPI.
-/// \param    firstBit: Quin bit es el primer.
-///
-static void setFirstBit(
-	SPI_TypeDef *spi,
-	FirstBit firstBit) {
-
-	if (firstBit == FirstBit::lsb)
-		spi->CR1 |= SPI_CR1_LSBFIRST;
-	else
-		spi->CR1 &= ~SPI_CR1_LSBFIRST;
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les comunicacions.
-/// \param    spi: Registres de hardware del dispositiu SPI
 ///
-static void enable(
-    SPI_TypeDef *spi) {
+void SPIDevice::enable() const {
 
-    spi->CR1 |= SPI_CR1_SPE;
+    set(_spi->CR1, SPI_CR1_SPE);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desabilita les comunicacions.
-/// \param    spi: Registres de hardware del dispositiu SPI
 /// \remarks  Asegurar-se que les comunicacions han finalitzat.
 ///
-static void disable(
-    SPI_TypeDef *spi) {
+void SPIDevice::disable() const {
 
-	#if defined(EOS_PLATFORM_STM32F4)
-	spi->CR1 &= ~SPI_CR1_SPE;
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+	clear(_spi->CR1, SPI_CR1_SPE);
 
-    #elif defined(EOS_PLATFORM_STM32G0)
-    while ((spi->SR & SPI_SR_FTLVL) != 0)
+#elif defined(EOS_PLATFORM_STM32G0)
+    while ((_spi->SR & SPI_SR_FTLVL) != 0)
         continue;
 
-    while ((spi->SR & SPI_SR_BSY) != 0)
+    while ((_spi->SR & SPI_SR_BSY) != 0)
         continue;
 
-    spi->CR1 &= ~SPI_CR1_SPE;
+    clear(_spi->CR1, SPI_CR1_SPE);
 
-    while ((spi->SR & SPI_SR_FRLVL) != 0)
-        read8(spi);
-    #endif
+    while ((_spi->SR & SPI_SR_FRLVL) != 0)
+        read8();
+#else
+#error "Unknown platform"
+#endif
+}
 
+
+/// -------------------------------------------------------------------------
+/// \brief    Asigna el divisor del rellotge.
+/// \param    clkDivider: El valor del divisor.
+/// \remarks  La frequencia resultant es PCLK/clkDivider
+///
+void SPIDevice::setClockDivider(
+	ClockDivider clkDivider) const {
+
+	auto CR1 = _spi->CR1;
+	clear(CR1, SPI_CR1_BR);
+	set(CR1, ((uint32_t) clkDivider << SPI_CR1_BR_Pos) & SPI_CR1_BR_Msk);
+	_spi->CR1 = CR1;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el modus de comunicacio (Master/Slave).
+/// \param    mode: El modus de treball.
+///
+void SPIDevice::setMode(
+	Mode mode) const {
+
+    // Configura el registre CR1
+    //
+	auto CR1 = _spi->CR1;
+	clear(CR1,
+		SPI_CR1_CRCEN |      // Deshabilita CRC
+		SPI_CR1_BIDIMODE |   // Deshabilita modus bitireccional
+		SPI_CR1_RXONLY);     // Desabilita modus lectura
+	if (mode == Mode::master)
+		set(CR1,
+			SPI_CR1_MSTR |   // Habilita modus master
+			SPI_CR1_SSI |    // Habilita seleccio d'esclau per software
+			SPI_CR1_SSM);    // Habilita control del esclau per software
+	_spi->CR1 = CR1;
+
+	// Configura el registre CR2
+	//
+	auto CR2 = _spi->CR2;
+	clear(CR2,
+#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
+	    SPI_CR2_NSSP |       // Deshabilita puls entre tramas
+#endif
+		SPI_CR2_SSOE);       // Desabilita la sortida SS
+	_spi->CR2 = CR2;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la polaritat del senyal CLK
+/// \param    polarity: La polaritat.
+///
+void SPIDevice::setClkPolarity(
+	ClkPolarity polarity) const {
+
+	if (polarity == ClkPolarity::high)
+		set(_spi->CR1, SPI_CR1_CPOL);
+	else
+		clear(_spi->CR1, SPI_CR1_CPOL);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la fase del senyal CLK
+/// \param    polarity: La fase.
+///
+void SPIDevice::setClkPhase(
+	ClkPhase phase) const {
+
+	if (phase == ClkPhase::edge2)
+		set(_spi->CR1, SPI_CR1_CPHA);
+	else
+		clear(_spi->CR1, SPI_CR1_CPHA);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el tamany de la trama.
+/// \param    size: El tamany.
+///
+void SPIDevice::setWordSize(
+	WordSize size) const {
+
+#if defined(EOS_PLATFORM_STM32F4)
+	if (size == WordSize::ws16)
+		set(_spi->CR1, SPI_CR1_DFF);
+	else
+		clear(_spi->CR1, SPI_CR1_DFF);
+
+#elif defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
+	auto CR2 = _spi->CR2;
+	clear(CR2, SPI_CR2_DS | SPI_CR2_FRXTH);
+	set(CR2, size == WordSize::ws8 ?
+		SPI_CR2_DS_LEN8 | SPI_CR2_FRXTH :
+		SPI_CR2_DS_LEN16);
+	_spi->CR2 = CR2;
+
+#else
+    #error "Unknown platform"
+#endif
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Indica quin es el primer bit a transmetre en cada trama.
+/// \param    firstBit: Quin bit es el primer.
+///
+void SPIDevice::setFirstBit(
+	FirstBit firstBit) const {
+
+	if (firstBit == FirstBit::lsb)
+		set(_spi->CR1, SPI_CR1_LSBFIRST);
+	else
+		clear(_spi->CR1, SPI_CR1_LSBFIRST);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Excriu una paraula de 8 bits en el registre de sortida
 ///           de dades.
-/// \param    spi: Els registres de hardware del dispositiu SPI
 /// \param    data: Les dades a transmetre.
 ///
-static inline void write8(
-	SPI_TypeDef *spi,
-	uint8_t data) {
+void SPIDevice::write8(
+	uint8_t data) const {
 
-	*((volatile uint8_t*)&spi->DR) = data;
+	*((volatile uint8_t*)&_spi->DR) = data;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Excriu una paraula de 16 bits en el registre de sortida
 ///           de dades.
-/// \param    spi: Els registre de hardware del dispositiu SPI
 /// \param    data: Les dades a transmetre.
 ///
-static inline void write16(
-	SPI_TypeDef *spi,
-	uint16_t data) {
+void SPIDevice::write16(
+	uint16_t data) const {
 
-	*((volatile uint16_t*)&spi->DR) = data;
+	*((volatile uint16_t*)&_spi->DR) = data;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix una paraula de 8 bits.
-/// \param    spi: Els registres de hardware del dispositiu SPI.
 /// \return   El valor de la lectura.
 ///
-static inline uint8_t read8(
-	SPI_TypeDef *spi) {
+uint8_t SPIDevice::read8() const {
 
-	return *((volatile uint8_t*)&spi->DR);
+	return *((volatile uint8_t*)&_spi->DR);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix una paraula de 16 bits.
-/// \param    spi: Els registres de hardware del dispositiu SPI.
 /// \return   El valor de la lectura.
 ///
-static inline uint16_t read16(
-	SPI_TypeDef *spi) {
+uint16_t SPIDevice::read16() const {
 
-	return *((volatile uint16_t*)&spi->DR);
+	return *((volatile uint16_t*)&_spi->DR);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el registre de sortida es buit.
-/// \param    spi: Els registres de hardware del dispoositiu SPI.
 /// \return   True si el registre de sortida es buit.
 ///
-static inline bool isTxEmpty(
-	SPI_TypeDef *spi) {
+bool SPIDevice::isTxEmpty() const {
 
-	return (spi->SR & SPI_SR_TXE) != 0;
+	return isSet(_spi->SR, SPI_SR_TXE);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el registre d'entrada no es buit.
-/// \param    spi: Els registres de hardware del dispoositiu SPI.
 /// \return   True si el registre d'entrada no es buit.
 ///
-static inline bool isRxNotEmpty(
-	SPI_TypeDef *spi) {
+bool SPIDevice::isRxNotEmpty() const {
 
-	return (spi->SR & SPI_SR_RXNE) != 0;
+	return isSet(_spi->SR, SPI_SR_RXNE);
 };
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si encara hi ha una transmissio pendent.
-/// \param    spi: Els registres de hardware del dispoositiu SPI.
 /// \return   True si hi ha una transmissio pendent.
 ///
-static inline bool isSPIBusy(
-	SPI_TypeDef *spi) {
+bool SPIDevice::isSPIBusy() const {
 
-	return (spi->SR & SPI_SR_BSY) != 0;
+	return isSet(_spi->SR, SPI_SR_BSY);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que el fifo de recepcio estigui buit.
-/// \param    regs: El bloc de registres.
 /// \param    expireTime: Temps limit.
 /// \return   True si tot es correcte. False en cas de timeout.
 ///
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-static bool waitRxFifoEmpty(
-	SPI_TypeDef *spi,
-	unsigned expireTime) {
+bool SPIDevice::waitRxFifoEmpty(
+	unsigned expireTime) const {
 
-	while ((spi->SR & SPI_SR_FRLVL) != 0) {
+	while ((_spi->SR & SPI_SR_FRLVL) != 0) {
 
-		uint8_t dummy = *((volatile uint8_t *)&spi->DR);
+		uint8_t dummy = read8();
 	}
 
 	return true;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que el fifo de transmissio estigui buit.
-/// \param    regs: El bloc de registres.
 /// \param    expireTime: Temps limit
 /// \return   True si tot es correcte. False en cas de timeout.
 ///
-static bool waitTxFifoEmpty(
-	SPI_TypeDef *spi,
-	unsigned expireTime) {
+#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
+bool SPIDevice::waitTxFifoEmpty(
+	unsigned expireTime) const {
 
-	while ((spi->SR & SPI_SR_FTLVL) != 0) {
+	while ((_spi->SR & SPI_SR_FTLVL) != 0) {
 	}
 
 	return true;
@@ -603,15 +542,12 @@ static bool waitTxFifoEmpty(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera el final de les operacions.
-/// \param    spi: El bloc de registres del dispositiu.
-/// \param    expireTime: Temps limit.
 /// \return   True si tot es correcte. False en cas de timeout.
 ///
-static bool waitNotBusy(
-    SPI_TypeDef *spi,
-    unsigned expireTime) {
+bool SPIDevice::waitNotBusy(
+    unsigned expireTime) const {
 
-    while (isSPIBusy(spi)) {
+    while (isSPIBusy()) {
         if (hasTickExpired(expireTime)) {
             return false;
         }
@@ -623,15 +559,13 @@ static bool waitNotBusy(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera fins que el registre de transmissio estigui buit.
-/// \param    spi: El bloc de registres del dispositiu.
 /// \param    expiteRime: Temps limit.
 /// \return   TRue si tot es correcte, false en cas d'error (TimeOut)
 ///
-static bool waitTxEmpty(
-    SPI_TypeDef *spi,
-    unsigned expireTime) {
+bool SPIDevice::waitTxEmpty(
+    unsigned expireTime) const {
 
-    while (!isTxEmpty(spi)) {
+    while (!isTxEmpty()) {
         if (hasTickExpired(expireTime))
             return false;
     }
@@ -642,15 +576,13 @@ static bool waitTxEmpty(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera fins que el registre de recepcio no estigui buit.
-/// \param    spi: El bloc de registres del dispositiu.
 /// \param    expiteRime: Temps limit.
 /// \return   TRue si tot es correcte, false en cas d'error (TimeOut)
 ///
-static bool waitRxNotEmpty(
-    SPI_TypeDef *spi,
-    unsigned expireTime) {
+bool SPIDevice::waitRxNotEmpty(
+    unsigned expireTime) const {
 
-    while (!isRxNotEmpty(spi)) {
+    while (!isRxNotEmpty()) {
         if (hasTickExpired(expireTime))
             return false;
     }

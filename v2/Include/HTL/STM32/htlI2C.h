@@ -311,17 +311,17 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternateOutput(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
+					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternateOutput(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
+					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSMBA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternateOutput(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
+					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 		};
 
@@ -390,12 +390,12 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternateOutput(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
+					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternateOutput(gpio::OutputMode::openDrain, gpio::Speed::fast, af);
+					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 		};
 

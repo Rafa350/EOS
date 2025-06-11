@@ -1,8 +1,8 @@
 #include "eos.h"
-#include "hal/halSYS.h"
+#include "eosAssert.h"
 #include "HTL/STM32/htlClock.h"
+
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_rcc.h"
 #include "stm32f429i_discovery_sdram.h"
 
 
@@ -14,10 +14,6 @@ using namespace htl::clock;
 ///
 static void initializeCLK() {
 
-	RCC_OscInitTypeDef oscInit;
-	RCC_ClkInitTypeDef clkInit;
-    RCC_PeriphCLKInitTypeDef pclkInit;
-
     // Enable Power Control clock
 	//
 	__HAL_RCC_PWR_CLK_ENABLE();
@@ -28,68 +24,36 @@ static void initializeCLK() {
 	//
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-#if 1
+	auto clk = ClockDevice::pInst;
 
-	auto clock = ClockDevice::pInst;
+	// Activa el oscilador extern
+	//
+	clk->enableHSE();
 
-	clock->enableHSE();
-
-	clock->disablePLL();
-	clock->configurePLL(PLLsource::hse, 360, 8, PLLPdivider::div2, PLLQdivider::div7);
-	clock->enablePLL();
+	// Configura el PLL
+	//
+	clk->disablePLL();
+	clk->configurePLL(PLLsource::hse, 360, 8, PLLPdivider::div2, PLLQdivider::div7);
+	clk->enablePLL();
 
 	HAL_PWREx_EnableOverDrive();
 
-	clock->selectSystemClock(SystemClockSource::pll);
-	clock->setAHBPrescaler(AHBPrescaler::div1);
-	clock->setAPB1Prescaler(APBPrescaler::div4);
-	clock->setAPB2Prescaler(APBPrescaler::div2);
-
-#else
-
-	// Enable HSE Oscillator and activate PLL with HSE as source
+	// Selecciona el rellotge del sistema
 	//
-	oscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-	oscInit.HSEState = RCC_HSE_ON;
-	oscInit.PLL.PLLState = RCC_PLL_ON;
-	oscInit.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	oscInit.PLL.PLLM = 8;
-	oscInit.PLL.PLLN = 360;
-	oscInit.PLL.PLLP = RCC_PLLP_DIV2;
-	oscInit.PLL.PLLQ = 7;
-	HAL_RCC_OscConfig(&oscInit);
+	clk->selectSystemClock(SystemClockSource::pll, FlashLatency::fl5);
 
-	// Activate the Over-Drive mode
+	// Configura els divisors AHB i APBx
 	//
-	HAL_PWREx_EnableOverDrive();
+	clk->setAHBPrescaler(AHBPrescaler::div1);
+	clk->setAPB1Prescaler(APBPrescaler::div4);
+	clk->setAPB2Prescaler(APBPrescaler::div2);
 
-	// Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
-	// clocks dividers
+	// Desabilita els osciladors no utilitzats.
 	//
-	clkInit.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-	clkInit.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	clkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	clkInit.APB1CLKDivider = RCC_HCLK_DIV4;
-	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
-	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_5);
+	clk->disableHSI();
 
-#endif
-
-	// Inicialitza rellotge del modul LTDC
-	// -Configure PLLSAI prescalers for LCD
-	// -Enable Pixel Clock
-	// -PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
-	// -PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAI_N = 192 Mhz
-	// -PLLLCDCLK = PLLSAI_VCO Output/PLLSAI_R = 192/4 = 96 Mhz
-	// -LTDC clock frequency = PLLLCDCLK / RCC_PLLSAIDivR = 96/4 = 24 Mhz
-	//
-    pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
-    pclkInit.PLLSAI.PLLSAIN = 192;
-    pclkInit.PLLSAI.PLLSAIR = 4;
-    pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_8;
-    HAL_RCCEx_PeriphCLKConfig(&pclkInit);
-
-    eosAssert(SystemCoreClock == htl::clock::getClockFrequency(htl::clock::ClockID::sysclk));
+    SystemCoreClockUpdate();
+    eosAssert(SystemCoreClock == clk->getClockFrequency(htl::clock::ClockID::sysclk));
 }
 
 

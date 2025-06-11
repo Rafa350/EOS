@@ -288,7 +288,48 @@ bool ClockDevice::isPLLSAIEnabled() const {
 #endif
 
 
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F0)
+/// ----------------------------------------------------------------------
+/// \brief    Configura el PLL
+/// \param    sorce: El rellotge.
+/// \param    multiplier: Factor de multiplicacio (N)
+/// \param    divider: Factor de divisio (M)
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool ClockDevice::configurePLL(
+	PLLsource source,
+	unsigned multiplier,
+	unsigned divider) const {
+
+	if ((source == PLLsource::hsi) && ((multiplier < 1) || (multiplier > 16)))
+		return false;
+
+	if ((source == PLLsource::hse) && (multiplier != 2))
+		return false;
+
+	if ((divider < 2) || divider > 16)
+		return false;
+
+	if (isPLLEnabled())
+		return false;
+
+	if (source == PLLsource::hse) {
+		auto CFGR2 = RCC->CFGR2;
+		clear(CFGR2, RCC_CFGR2_PREDIV);
+		set(CFGR2, ((divider - 1) << RCC_CFGR2_PREDIV_Pos) & RCC_CFGR2_PREDIV_Msk);
+		RCC->CFGR2 = CFGR2;
+	}
+
+	auto CFGR = RCC->CFGR;
+	clear(CFGR, RCC_CFGR_PLLMUL);
+	set(CFGR, ((multiplier - 1) << RCC_CFGR_PLLMUL_Pos) & RCC_CFGR_PLLMUL_Msk);
+	RCC->CFGR = CFGR;
+
+	return true;
+}
+
+
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Configura el PLL
 /// \param    sorce: El rellotge.
@@ -427,16 +468,73 @@ bool ClockDevice::configurePLL(
 #endif
 
 
+#if defined(EOS_PLATFORM_STM32F4)
+/// ----------------------------------------------------------------------
+/// \brief    Configura el PLLSAI
+/// \param    multiplier: Factor de multiplicacio (N)
+/// \param    divQ: Factor de divisio de la sortida Q
+/// \param    divR: Factor de divisio de la sortida R
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool ClockDevice::configurePLLSAI(
+		unsigned multiplier,
+		PLLQdivider divQ,
+		PLLRdivider divR) const {
+
+	if (multiplier < 50 || multiplier > 432)
+		return false;
+
+	if (isPLLSAIEnabled())
+		return false;
+
+	auto PLLSAICFGR = RCC->PLLSAICFGR;
+
+	clear(PLLSAICFGR, RCC_PLLSAICFGR_PLLSAIN);
+	set(PLLSAICFGR,  (multiplier << RCC_PLLSAICFGR_PLLSAIN_Pos) & RCC_PLLSAICFGR_PLLSAIN_Msk);
+
+	// Configura el divisor Q
+	//
+	clear(PLLSAICFGR, RCC_PLLSAICFGR_PLLSAIQ);
+	set(PLLSAICFGR, ((2 + (uint32_t) divQ) << RCC_PLLSAICFGR_PLLSAIQ_Pos) & RCC_PLLSAICFGR_PLLSAIQ_Msk);
+
+	// Configura el divisor R
+	//
+	clear(PLLSAICFGR, RCC_PLLSAICFGR_PLLSAIR);
+	set(PLLSAICFGR, ((2 + (uint32_t) divQ) << RCC_PLLSAICFGR_PLLSAIR_Pos) & RCC_PLLSAICFGR_PLLSAIR_Msk);
+
+	RCC->PLLSAICFGR = PLLSAICFGR;
+
+	return true;
+}
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el rellotge principal del sistema
 /// \param    source: El rellotge a seleccionar.
+/// \param    fl: Latencia de la memoria FLASH
 /// \return   True si tot es correcte, false en cas contrari.
+/// \remarks  El posen els prescalers AHB, APB1 i APB2 a la maxima divisio
 ///
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 bool ClockDevice::selectSystemClock(
-	SystemClockSource source) const {
+	SystemClockSource source,
+	FlashLatency fl) const {
 
+	auto ACR = FLASH->ACR;
 	auto CFGR = RCC->CFGR;
+
+	// Si la latencia actual es mes baixa que la indicada, la puja
+	//
+	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) < (uint32_t) fl) {
+		clear(ACR, FLASH_ACR_LATENCY);
+		set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		FLASH->ACR = ACR;
+	}
+
+	set(CFGR, 15UL << RCC_CFGR_HPRE_Pos);
+	set(CFGR, 7UL << RCC_CFGR_PPRE1_Pos);
+	set(CFGR, 7UL << RCC_CFGR_PPRE2_Pos);
 
 	clear(CFGR, RCC_CFGR_SW);
 	switch (source) {
@@ -464,10 +562,23 @@ bool ClockDevice::selectSystemClock(
 	while (((RCC->CFGR & RCC_CFGR_SWS) >> RCC_CFGR_SWS_Pos) != ((RCC->CFGR & RCC_CFGR_SW) >> RCC_CFGR_SW_Pos))
 		continue;
 
+	// Si la latencia actual es mes alta que la indicada, la baixa
+	//
+	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) > (uint32_t) fl) {
+		clear(ACR, FLASH_ACR_LATENCY);
+		set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		FLASH->ACR = ACR;
+	}
+
 	return true;
 }
 
 #elif defined(EOS_PLATFORM_STM32G0)
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el rellotge principal del sistema
+/// \param    source: El rellotge a seleccionar.
+/// \return   True si tot es correcte, false en cas contrari.
+///
 bool ClockDevice::selectSystemClock(
 	SystemClockSource source) const {
 
@@ -524,7 +635,7 @@ void ClockDevice::setAHBPrescaler(
 
 	auto CFGR = RCC->CFGR;
 	clear(CFGR, RCC_CFGR_HPRE);
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 	set(CFGR, 7UL << RCC_CFGR_PPRE1_Pos);
 	set(CFGR, 7UL << RCC_CFGR_PPRE2_Pos);
 #endif
@@ -534,7 +645,7 @@ void ClockDevice::setAHBPrescaler(
 }
 
 
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el prescaler del clock APB1
 /// \param    prescaler: Valor del prescaler.
@@ -551,7 +662,7 @@ void ClockDevice::setAPB1Prescaler(
 #endif
 
 
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el prescaler del clock APB2
 /// \param    prescaler: Valor del prescaler.
@@ -590,12 +701,40 @@ void ClockDevice::setAPBPrescaler(
 /// \param    clockID: El identificador del rellotge.
 /// \return   La frequencia en hertz. 0 en cas d'error.
 ///
-#if defined(EOS_PLATFORM_STM32F4)
+#if defined(EOS_PLATFORM_STM32F0)
 unsigned ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
-	static const uint8_t hclkPrescalerTbl[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
-	static const uint8_t pclkPrescalerTbl[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
+	unsigned fclk = 0;
+
+	switch (clockID) {
+		case ClockID::hse:
+			fclk = clockHSEfrequency;
+			break;
+
+		case ClockID::hsi:
+			fclk = clockHSIfrequency;
+			break;
+
+		case ClockID::lse:
+			fclk = clockLSEfrequency;
+			break;
+
+		case ClockID::lsi:
+			fclk = clockLSIfrequency;
+			break;
+	}
+
+	return fclk;
+}
+
+
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+unsigned ClockDevice::getClockFrequency(
+	ClockID clockID) const {
+
+	static const uint8_t shiftABH[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
+	static const uint8_t shiftAPB[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
 
 	unsigned fclk = 0;
 
@@ -621,27 +760,31 @@ unsigned ClockDevice::getClockFrequency(
 					fclk /= pllDiv;
 					fclk *= pllMul;
 				    fclk /= pllP;
+				    fclk >>= shiftABH[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 					break;
 				}
 			}
 			break;
 
 		case ClockID::hclk:
-			fclk = getClockFrequency(ClockID::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos];
+			fclk = getClockFrequency(ClockID::sysclk);
 			break;
 
 		case ClockID::pclk1:
-			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE1) >> RCC_CFGR_PPRE1_Pos];
+			fclk = getClockFrequency(ClockID::hclk) >> shiftAPB[(RCC->CFGR & RCC_CFGR_PPRE1) >> RCC_CFGR_PPRE1_Pos];
 			break;
 
 		case ClockID::pclk2:
-			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE2) >> RCC_CFGR_PPRE2_Pos];
+			fclk = getClockFrequency(ClockID::hclk) >> shiftAPB[(RCC->CFGR & RCC_CFGR_PPRE2) >> RCC_CFGR_PPRE2_Pos];
 			break;
 
-		case ClockID::timpclk:
+		case ClockID::tim1clk:
 			fclk = getClockFrequency(ClockID::pclk1) << (((RCC->CFGR & ~RCC_CFGR_PPRE1) == 0) ? 0 : 1);
 			break;
 
+		case ClockID::tim2clk:
+			fclk = getClockFrequency(ClockID::pclk2) << (((RCC->CFGR & ~RCC_CFGR_PPRE1) == 0) ? 0 : 1);
+			break;
 
 		case ClockID::hse:
 			fclk = clockHSEfrequency;
@@ -663,20 +806,13 @@ unsigned ClockDevice::getClockFrequency(
 	return fclk;
 }
 
-#elif defined(EOS_PLATFORM_STM32F7)
-unsigned htl::clock::ClockDevice::getClockFrequency(
-	ClockID clockID) const {
-
-	return 0;
-}
 
 #elif defined(EOS_PLATFORM_STM32G0)
 unsigned ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
-	static const uint8_t hsiDividerTbl[8] = { 0, 1, 2, 3, 4, 5, 6, 7};
-	static const uint8_t pclkPrescalerTbl[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
-	static const uint8_t hclkPrescalerTbl[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
+	static const uint8_t shiftAHB[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
+	static const uint8_t shiftAPB[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
 
 	unsigned fclk = 0;
 
@@ -710,7 +846,7 @@ unsigned ClockDevice::getClockFrequency(
 			break;
 
 		case ClockID::pclk:
-			fclk = getClockFrequency(ClockID::hclk) >> pclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
+			fclk = getClockFrequency(ClockID::hclk) >> shiftAPB[(RCC->CFGR & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
 			break;
 
 		case ClockID::timpclk:
@@ -718,7 +854,7 @@ unsigned ClockDevice::getClockFrequency(
 			break;
 
 		case ClockID::hclk:
-			fclk = getClockFrequency(ClockID::sysclk) >> hclkPrescalerTbl[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
+			fclk = getClockFrequency(ClockID::sysclk) >> shiftAHB[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 			break;
 
 		case ClockID::hclk8:
@@ -726,7 +862,7 @@ unsigned ClockDevice::getClockFrequency(
 			break;
 
 		case ClockID::hsisys:
-			fclk = CLOCK_HSI16_FREQUENCY >> hsiDividerTbl[(RCC->CR & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos];
+			fclk = clockHSI16frequency >> ((RCC->CR & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos);
 			break;
 
 		case ClockID::hse:

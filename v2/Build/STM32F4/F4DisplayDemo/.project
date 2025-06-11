@@ -234,11 +234,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HTL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -415,11 +410,6 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HAL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -769,19 +759,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HTL/STM32/F4</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HTL/STM32/htl.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htl.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlClock.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlClock.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
@@ -1007,11 +992,6 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HTL/STM32/F4/htlClock.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F4/htlClock.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>

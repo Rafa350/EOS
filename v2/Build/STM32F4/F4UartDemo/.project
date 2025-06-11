@@ -441,11 +441,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlUART.h</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HTL/STM32/F4</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htl.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htl.cpp</locationURI>
@@ -569,11 +564,6 @@
 			<name>Inc/Framework/EOS/HTL/STM32/F4/htlUART_Traits.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlUART_Traits.h</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HTL/STM32/F4/htlClock.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F4/htlClock.cpp</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/F4/F429/htlUART_Pins.h</name>

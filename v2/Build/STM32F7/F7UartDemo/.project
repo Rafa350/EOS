@@ -191,11 +191,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HAL</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/HTL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -354,11 +349,6 @@
 			<name>Inc/Framework/EOS/System/eosResults.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosResults.h</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HAL/STM32</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HTL/STM32</name>
@@ -571,16 +561,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/HAL/STM32/halSYS.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HTL/STM32/F7</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/EOS/HTL/STM32/htl.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htl.cpp</locationURI>
@@ -691,11 +671,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HTL/STM32/F7/htlClock.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlClock.h</locationURI>
-		</link>
-		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/F7/htlTMR_Traits.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlTMR_Traits.h</locationURI>
@@ -704,11 +679,6 @@
 			<name>Inc/Framework/EOS/HTL/STM32/F7/htlUART_Traits.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlUART_Traits.h</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/HTL/STM32/F7/htlClock.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F7/htlClock.cpp</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HTL/STM32/F7/F746/htlTMR_Pins.h</name>
