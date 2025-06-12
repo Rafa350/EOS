@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #ifndef __STM32F7_htlUART_Traits__
 #define __STM32F7_htlUART_traits__
 
@@ -6,6 +7,13 @@
 // HAL includes
 //
 #include "HTL/STM32/htl.h"
+
+
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32F7)
+	#error "Valid for STM32F7 platform only"
+#endif
 
 
 namespace htl {

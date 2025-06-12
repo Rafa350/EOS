@@ -3,27 +3,7 @@
 #define __STM32_htlCLock__
 
 
-#include "HTL/STM32/htl.h"
-
-
-#if defined(EOS_PLATFORM_STM32F0)
-    //#include "HTL/STM32/F0/htlClock.h"
-
-#elif defined(EOS_PLATFORM_STM32F1)
-    #include "HTL/STM32/F1/htlClock.h"
-
-#elif defined(EOS_PLATFORM_STM32F4)
-    //#include "HTL/STM32/F4/htlClock.h"
-
-#elif defined(EOS_PLATFORM_STM32F7)
-    //#include "HTL/STM32/F7/htlClock.h"
-
-#elif defined(EOS_PLATFORM_STM32G0)
-    //#include "HTL/STM32/G0/htlClock.h"
-
-#else
-	#error "Unknown platform"
-#endif
+#include "HTL/htl.h"
 
 
 namespace htl {
@@ -36,10 +16,8 @@ namespace htl {
 			hclk,
 			hse,
 			hsi,
-			hsi14,
 			lse,
 			lsi,
-			i2cclk
 		};
 
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
@@ -75,6 +53,8 @@ namespace htl {
 			pllqclk,
 			pllrclk
 		};
+#else
+	#error "Unkonwn platform"
 #endif
 
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
@@ -109,7 +89,6 @@ namespace htl {
 			hse
 		};
 
-
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		enum class PLLsource {
 			hsi,
@@ -131,7 +110,6 @@ namespace htl {
 			// Valors critics
 			div2, div3, div4, div5, div6, div7
 		};
-
 
 #elif defined(EOS_PLATFORM_STM32G0)
 		enum class PLLsource {
@@ -159,13 +137,15 @@ namespace htl {
 			div2, div3, div4, div5, div6, div7, div8,
 			disabled
 		};
-//#else
-//#error "Unknown platform"
+#else
+	#error "Unknown platform"
 #endif
 
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		enum class FlashLatency {
 			fl0, fl1, fl2, fl3, fl4, fl5, fl6, fl7
 		};
+#endif
 
 		class ClockDevice {
 			private:
@@ -234,7 +214,7 @@ namespace htl {
 				bool isHSI48Enabled() const;
 #endif
 #else
-#error "Unknown platform"
+	#error "Unknown platform"
 #endif
 
 				// Control del PLL
@@ -258,7 +238,7 @@ namespace htl {
 				//
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				bool selectSystemClock(SystemClockSource source, FlashLatency fl) const;
-#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
 				bool selectSystemClock(SystemClockSource source) const;
 #endif
 				void setAHBPrescaler(AHBPrescaler prescaler) const;

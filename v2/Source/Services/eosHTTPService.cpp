@@ -16,20 +16,13 @@ HTTPService::HTTPService():
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el servei.
-///
-void HTTPService::onInitialize() {
-
-}
-
 
 /// ----------------------------------------------------------------------
 /// \brief    : Procesa la tasca del servei.
 ///
-void HTTPService::onTask() {
+void HTTPService::onExecute() {
 
     httpServer.initialize();
-    while (true) 
+    while (!stopSignal())
         httpServer.run();
 }

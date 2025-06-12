@@ -9,7 +9,7 @@
 
 
 namespace eos {
-    
+
     class HTTPService: public Service {
         public:
             static constexpr uint32_t stackSize = 300;
@@ -19,13 +19,12 @@ namespace eos {
     		HttpServer httpServer;
 
 		protected:
-			void onInitialize() override;
-			void onTask() override;
+			void onExecute() override;
 
 		public:
             HTTPService();
     };
-    
+
 }
 
 

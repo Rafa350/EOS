@@ -50,7 +50,13 @@
     #include "stm32f4xx.h"
 
 #elif defined(EOS_PLATFORM_STM32F7)
-    #if defined(EOS_PLATFORM_STM32F746)
+	#if !defined(STM32F7)
+		#define STM32F7
+	#endif
+	#if !defined(STM32F7xx)
+		#define STM32F7xx
+	#endif
+    #if defined(EOS_PLATFORM_STM32F746) && !defined(STM32F746xx)
         #define STM32F746xx
     #endif
 	#include "stm32f7xx.h"
@@ -62,9 +68,9 @@
 	#if !defined(STM32G0xx)
 		#define STM32G0xx
 	#endif
-	#if defined(EOS_PLATFORM_STM32G031)
+	#if defined(EOS_PLATFORM_STM32G031) && !defined(STM32G031xx)
 		#define STM32G031xx
-	#elif defined(EOS_PLATFORM_STM32G051)
+	#elif defined(EOS_PLATFORM_STM32G051) && !defined(STM32G051xx)
 		#define STM32G051xx
 	#elif defined(EOS_PLATFORM_STM32G071) && !defined(STM32G071xx)
 		#define STM32G071xx

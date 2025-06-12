@@ -24,7 +24,7 @@ DisplayService::DisplayService():
 ///-----------------------------------------------------------------------
 /// \brief Process la inicialitzacio de la tasca.
 ///
-void DisplayService::onInitialize() {
+void DisplayService::onExecute() {
 
 	constexpr int frameBufferLineBytes = (DISPLAY_WIDTH * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
@@ -35,19 +35,13 @@ void DisplayService::onInitialize() {
 		frameBufferPitch,
 		DisplayOrientation::normal,
 		reinterpret_cast<void*>(DISPLAY_BUFFER));
-
-	_driver = new DisplayDriver_RGBLTDC(frameBuffer);
+/*
+	_driver = new DisplayDriver_RGBLTDC(frameBuffer, nullptr);
     _driver->initialize();
     _driver->enable();
 
     _graphics = new eos::Graphics(_driver);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa l'execucio de la tasca.
-///
-void DisplayService::onTask() {
-
-    Task::delay(1000);
+*/
+    while (!stopSignal())
+    	Task::delay(1000);
 }

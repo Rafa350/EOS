@@ -569,6 +569,7 @@ namespace htl::uart {
 		auto pclkX = UARTTraits::pclkX;
 
 		switch ((*addr & msk) >> pos) {
+			default:
 			case 0:
 				return pclkX;
 
@@ -597,6 +598,7 @@ namespace htl::uart {
 		auto pos = UARTTraits::clockSourcePos;
 
 		switch ((*addr & msk) >> pos) {
+			default:
 			case 0:
 				return clock::ClockID::pclk;
 

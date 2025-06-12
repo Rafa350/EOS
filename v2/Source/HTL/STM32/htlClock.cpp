@@ -131,10 +131,12 @@ bool ClockDevice::isLSIEnabled() const {
 }
 
 
+#if defined(EOS_PLATFORM_STM32F0) || \
+	defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Activa el oscilador HSI
 ///
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void ClockDevice::enableHSI() const {
 
 	set(RCC->CR, RCC_CR_HSION);
@@ -144,10 +146,12 @@ void ClockDevice::enableHSI() const {
 #endif
 
 
+#if defined(EOS_PLATFORM_STM32F0) || \
+	defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el oscilador HSI
 ///
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 void ClockDevice::disableHSI() const {
 
 	clear(RCC->CR, RCC_CR_HSION);
@@ -157,11 +161,13 @@ void ClockDevice::disableHSI() const {
 #endif
 
 
+#if defined(EOS_PLATFORM_STM32F0) || \
+	defined(EOS_PLATFORM_STM32F4) || \
+	defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si el oscilador HSI esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 bool ClockDevice::isHSIEnabled() const {
 
 	return isSet(RCC->CR, RCC_CR_HSION);
@@ -509,7 +515,52 @@ bool ClockDevice::configurePLLSAI(
 #endif
 
 
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F0)
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el rellotge principal del sistema
+/// \param    source: El rellotge a seleccionar.
+/// \remarks  El posen els prescalers AHB, APB
+///
+bool ClockDevice::selectSystemClock(
+	SystemClockSource source) const {
+
+	auto CFGR = RCC->CFGR;
+
+	set(CFGR, 15UL << RCC_CFGR_HPRE_Pos);
+	set(CFGR, 7UL << RCC_CFGR_PPRE_Pos);
+
+	clear(CFGR, RCC_CFGR_SW);
+	switch (source) {
+		case SystemClockSource::hsi:
+			if (!isHSIEnabled())
+				return false;
+			set(CFGR, (typeof(CFGR)) RCC_CFGR_SW_HSI);
+			break;
+
+		case SystemClockSource::hse:
+			if (!isHSEEnabled())
+				return false;
+			set(CFGR, (typeof(CFGR)) RCC_CFGR_SW_HSE);
+			break;
+
+		case SystemClockSource::pll:
+			if (!isPLLEnabled())
+				return false;
+			set(CFGR, (typeof(CFGR)) RCC_CFGR_SW_PLL);
+			break;
+	}
+
+	RCC->CFGR = CFGR;
+
+
+	while (((RCC->CFGR & RCC_CFGR_SWS) >> RCC_CFGR_SWS_Pos) != ((RCC->CFGR & RCC_CFGR_SW) >> RCC_CFGR_SW_Pos))
+		continue;
+
+	return true;
+}
+
+#elif defined(EOS_PLATFORM_STM32F4) || \
+	  defined(EOS_PLATFORM_STM32F7)
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el rellotge principal del sistema
 /// \param    source: El rellotge a seleccionar.
@@ -679,7 +730,8 @@ void ClockDevice::setAPB2Prescaler(
 #endif
 
 
-#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32F0) || \
+	defined(EOS_PLATFORM_STM32G0)
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el prescaler del clock APB
 /// \param    prescaler: Valor del prescaler.
@@ -705,9 +757,40 @@ void ClockDevice::setAPBPrescaler(
 unsigned ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
+	static const uint8_t shiftAHB[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
+	static const uint8_t shiftAPB[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
+
 	unsigned fclk = 0;
 
 	switch (clockID) {
+		case ClockID::sysclk:
+			switch (RCC->CFGR & RCC_CFGR_SWS) {
+				case RCC_CFGR_SWS_HSI:
+					fclk = clockHSIfrequency;
+					break;
+
+				case RCC_CFGR_SWS_HSE:
+					fclk = clockHSEfrequency;
+					break;
+
+				case RCC_CFGR_SWS_PLL:
+					if ((RCC->CFGR & RCC_CFGR_PLLSRC) == (0b10 << RCC_CFGR_PLLSRC_Pos))
+						fclk =  clockHSIfrequency / 2;
+					else
+						fclk = clockHSEfrequency / ((RCC->CFGR2 > RCC_CFGR2_PREDIV_Pos) & RCC_CFGR2_PREDIV_Msk);
+					fclk *= ((RCC->CFGR & RCC_CFGR_PLLMUL) >> RCC_CFGR_PLLMUL_Pos) + 1;
+					break;
+			}
+			break;
+
+		case ClockID::hclk:
+			fclk = getClockFrequency(ClockID::sysclk) >> shiftAHB[0];
+			break;
+
+		case ClockID::pclk:
+			fclk = getClockFrequency(ClockID::hclk) >> shiftAPB[0];
+			break;
+
 		case ClockID::hse:
 			fclk = clockHSEfrequency;
 			break;
@@ -733,7 +816,7 @@ unsigned ClockDevice::getClockFrequency(
 unsigned ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
-	static const uint8_t shiftABH[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
+	static const uint8_t shiftAHB[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
 	static const uint8_t shiftAPB[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
 
 	unsigned fclk = 0;
@@ -760,7 +843,7 @@ unsigned ClockDevice::getClockFrequency(
 					fclk /= pllDiv;
 					fclk *= pllMul;
 				    fclk /= pllP;
-				    fclk >>= shiftABH[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
+				    fclk >>= shiftAHB[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 					break;
 				}
 			}

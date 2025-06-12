@@ -32,8 +32,7 @@ namespace app {
 			DisplayService();
 
 		protected:
-			void onInitialize() override;
-			void onTask() override;
+			void onExecute() override;
 	};
 
 }

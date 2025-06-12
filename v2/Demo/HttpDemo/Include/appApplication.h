@@ -12,7 +12,7 @@ namespace app {
 
 	class MyApplication: public eos::RTOSApplication {
 		protected:
-			void onInitialize() override;
+			void onExecute() override;
 		public :
 			MyApplication();
 	};

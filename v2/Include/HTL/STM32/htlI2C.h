@@ -511,11 +511,12 @@ namespace htl {
 	#include "htl/STM32/G0/htlI2C_Traits.h"
     #include "htl/STM32/F0/F030/htlI2C_Pins.h"
 
-#elif defined(EOS_PLATFORM_STM32F4)
-    #include "htl/STM32/F4/htlI2C_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F429)
+    #include "htl/STM32/F4/F429/htlI2C_Pins.h"
 
-#elif defined(EOS_PLATFORM_STM32F7)
-    #include "htl/STM32/F7/htlI2C_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F746)
+	#include "htl/STM32/F7/htlI2C_Traits.h"
+    #include "htl/STM32/F7/F746/htlI2C_Pins.h"
 
 #else
     #error "Unknown platform"

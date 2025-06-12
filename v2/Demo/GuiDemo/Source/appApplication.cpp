@@ -44,7 +44,7 @@ void MyApplication::onInitialize() {
 	// Inicialitza el servei LED
 	//
 	_ledService = new eos::LedService(LED1_Pin::pInst);
-	addService(_ledService, eos::Task::Priority::normal, 128, "LED");
+	addService(_ledService);
 return;
 	// Inicialitza el servei Touchpad
 	//
@@ -57,7 +57,7 @@ return;
 	// Inicialitza el servei GUI
 	//
 	_guiService = new GuiService();
-	addService(_guiService, eos::Task::Priority::normal, 512, "GUI");
+	addService(_guiService);
 
 	// Carrega els recursos
 	//

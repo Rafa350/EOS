@@ -8,6 +8,13 @@
 #include "HTL/STM32/htl.h"
 
 
+// Platform check
+//
+#if !defined(EOS_PLATFORM_STM32F7)
+	#error "Valid for STM32F7 platform only"
+#endif
+
+
 namespace htl {
 	namespace spi {
 		namespace internal {

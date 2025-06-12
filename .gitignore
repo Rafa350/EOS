@@ -4,3 +4,4 @@ temp
 *.elf
 *.chm
 Makefile-genesis.properties
+Build

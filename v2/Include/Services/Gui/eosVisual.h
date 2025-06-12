@@ -20,10 +20,12 @@ namespace eos {
 
 	/// \brief Clase base pels parametres dels events generats per visuals
 	//
-	struct VisualEventArgs: public EventArgs<Visual> {
+	struct VisualEventArgs {
+
+		Visual* visual;
 
 		inline VisualEventArgs(Visual* visual):
-			EventArgs(visual) {
+			visual {visual} {
 		}
 	};
 

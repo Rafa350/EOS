@@ -12,6 +12,7 @@
 #endif
 
 
+using namespace eos;
 using namespace app;
 
 
@@ -23,14 +24,13 @@ MyApplication::MyApplication() {
 }
 
 
-void MyApplication::onInitialize() {
+void MyApplication::onExecute() {
 
     #ifdef EXIST_LED1
     LED1_Initialize();
 
     auto ledService = new eos::LedService(LED1_Instance);
-    addService(ledService, eos::Task::Priority::normal,
-            eos::LedService::stackSize, eos::LedService::serviceName);
+    addService(ledService);
     #endif
     /*
     #ifdef EXIST_DISPLAY
@@ -40,6 +40,8 @@ void MyApplication::onInitialize() {
     #endif
     */
     auto httpService = new eos::HTTPService();
-    addService(httpService, eos::Task::Priority::normal,
-            eos::HTTPService::stackSize, eos::HTTPService::serviceName);
+    addService(httpService);
+
+    while (true)
+    	Task::delay(1000);
 }

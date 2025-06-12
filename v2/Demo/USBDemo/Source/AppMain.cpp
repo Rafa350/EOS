@@ -1,8 +1,4 @@
-#include "eos.h"
 #include "appApplication.h"
-
-
-using namespace app;
 
 
 /// ----------------------------------------------------------------------
@@ -10,6 +6,6 @@ using namespace app;
 ///
 void appMain() {
 
-	auto app = new MyApplication();
+	auto app = new app::MyApplication();
     app->run();
 }

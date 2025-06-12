@@ -11,9 +11,6 @@
 #define EOS_USE_STD_STRING
 
 
-#include "Board/eosBoard.h"
-
-
 // Opcions de configuracio pel servei 'DigInput'
 //
 #define eosDigInputService_Enabled                       1

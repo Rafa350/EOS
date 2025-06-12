@@ -1229,19 +1229,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F7/htlClock.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlClock.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F7/htlI2C_AF_F7.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlI2C_AF_F7.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F7/htlLTDC_AF_F7.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlLTDC_AF_F7.h</locationURI>
+			<name>inc/Framework/EOS/HTL/STM32/F7/F746</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosBorder.h</name>
@@ -1537,6 +1527,11 @@
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/F746/htlI2C_Pins.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/F746/htlI2C_Pins.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.cpp</name>
