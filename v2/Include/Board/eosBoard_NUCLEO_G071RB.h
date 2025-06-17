@@ -3,6 +3,9 @@
 #define __eosBoard_NUCLEO_G071RB__
 
 
+#include "eos.h"
+
+
 #define EOS_HARDWARE_NUCLEO_G071RB
 
 
@@ -210,12 +213,15 @@
 #define ARDUINO_D14_Pin      htl::gpio::PinB9
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
+#define ARDUINO_UART_Device  htl::uart::UARTDevice1
 #define ARDUINO_RX_Pin       htl::gpio::PinC5
 #define ARDUINO_TX_Pin       htl::gpio::PinC4
 
+#define ARDUINO_I2C_Device   htl::i2c::I2CMasterDevice1
 #define ARDUINO_SCL_Pin      htl::gpio::PinB8
 #define ARDUINO_SDA_Pin      htl::gpio::PinB9
 
+#define ARDUINO_SPI_Device   htl::spi::SPIDevice1
 #ifndef USE_LED1
 #define ARDUINO_SCK_Pin      htl::gpio::PinA5
 #endif

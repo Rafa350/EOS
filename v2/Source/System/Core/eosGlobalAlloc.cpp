@@ -30,3 +30,10 @@ void operator delete(
 
     osalHeapFree(nullptr, p);
 }
+
+
+void operator delete(
+	void *p,
+	size_t size) {
+
+}

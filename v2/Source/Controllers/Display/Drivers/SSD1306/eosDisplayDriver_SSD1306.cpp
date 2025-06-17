@@ -206,5 +206,14 @@ void DisplayDriver_SSD1306::refresh() {
     auto width = _frameBuffer->getWidth();
     auto height = _frameBuffer->getHeight();
 
+    uint8_t cmd[6];
+    cmd[0] = SSD1306_CMD_SET_COLUMN;
+    cmd[1] = 0;
+    cmd[2] = width - 1;
+    cmd[3] = SSD1306_CMD_SET_PAGE;
+    cmd[4] = 0;
+    cmd[5] = (height / 8) - 1;
+
+    _device->writeCommand(cmd, sizeof(cmd));
     _device->writeData(buffer, width * height / 8);
 }

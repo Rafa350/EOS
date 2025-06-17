@@ -3,6 +3,9 @@
 #define __eosBoard_STM32F746G_DISCO__
 
 
+#include "eos.h"
+
+
 #define EOS_HARDWARE_STM32F746G_DISCO
 
 

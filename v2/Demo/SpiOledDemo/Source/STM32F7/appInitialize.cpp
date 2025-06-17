@@ -42,11 +42,11 @@ static void initializeCLK() {
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
 
 	auto fhclk = clk->getClockFrequency(clock::ClockID::hclk);
-	eosAssert(fhclk <= 216000000);
+	eosAssert(fhclk == 216000000);
 	auto fpclk1 = clk->getClockFrequency(clock::ClockID::pclk1);
-	eosAssert(fpclk1 <= 54000000);
+	eosAssert(fpclk1 == 54000000);
 	auto fpclk2 = clk->getClockFrequency(clock::ClockID::pclk2);
-	eosAssert(fpclk2 <= 108000000);
+	eosAssert(fpclk2 == 108000000);
 }
 
 

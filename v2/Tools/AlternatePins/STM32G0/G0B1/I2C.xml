@@ -1,0 +1,43 @@
+<alternatePins>
+	<file path="HTL/STM32/G0/G0B1/htlI2C_Pins.h" 
+		  namespace="htl::i2c::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32G0B1)"
+		  conditionErrorMessage="Unsupported platform">
+		  
+		<device device="DeviceID::i2c1" condition="defined(HTL_I2C1_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="scl">
+				<pin port="A" pin="9" value="6"/>
+				<pin port="B" pin="6" value="6"/>
+				<pin port="B" pin="8" value="6"/>
+				<pin port="B" pin="10" value="1"/>
+			</function>
+			
+			<function pinFunction="sda">
+				<pin port="A" pin="10" value="6"/>
+				<pin port="B" pin="7" value="6"/>
+				<pin port="B" pin="9" value="6"/>
+				<pin port="B" pin="11" value="1"/>
+			</function>
+			
+			<function pinFunction="smba">
+				<pin port="A" pin="1" value="6"/>
+				<pin port="B" pin="5" value="6"/>
+			</function>
+		</device>
+		
+		<device device="DeviceID::i2c2" condition="defined(HTL_I2C2_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="scl">
+				<pin port="A" pin="11" value="6"/>
+				<pin port="B" pin="10" value="6"/>
+				<pin port="B" pin="13" value="6"/>
+			</function>
+			
+			<function pinFunction="sda">
+				<pin port="A" pin="12" value="6"/>
+				<pin port="B" pin="11" value="6"/>
+				<pin port="B" pin="14" value="6"/>
+			</function>
+		</device>
+		
+	</file>
+</alternatePins>

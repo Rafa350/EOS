@@ -52,7 +52,7 @@ void Device_SSD1306_SPI::initialize(
         _pinRST->clear();
         Task::delay(100);
         _pinRST->set();
-        Task::delay(100);
+        Task::delay(1000);
     }
 
     writeScript(script, scriptSize);

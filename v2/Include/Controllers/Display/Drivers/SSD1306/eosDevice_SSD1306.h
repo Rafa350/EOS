@@ -12,6 +12,8 @@
 #define SSD1306_CMD_DISPLAY_ON              0xAF
 #define SSD1306_CMD_DISPLAY_OFF             0xAE
 #define SSD1306_CMD_SET_ADDRESSING_MODE     0x20
+#define SSD1306_CMD_SET_COLUMN              0x21
+#define SSD1306_CMD_SET_PAGE                0x22
 
 
 namespace eos {
@@ -22,7 +24,7 @@ namespace eos {
         private:
             Device_SSD1306(const Device_SSD1306 &) = delete;
             Device_SSD1306 & operator = (const Device_SSD1306 &) = delete;
-            
+
         protected:
             Device_SSD1306();
 
@@ -34,7 +36,7 @@ namespace eos {
             virtual void writeCommand(const uint8_t *data, unsigned dataSize) = 0;
             virtual void writeData(const uint8_t *data, unsigned dataSize) = 0;
     };
-    
+
 
     /// \brief Clase que representa un dispositiu SSD1306 amb
     //         interficie SPI
@@ -49,14 +51,14 @@ namespace eos {
             Pin const * const _pinDC;
             Pin const * const _pinRST;
             DevSPI * const _devSPI;
-            
+
         public:
             Device_SSD1306_SPI(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI);
             ~Device_SSD1306_SPI();
 
             void initialize(const uint8_t *script, unsigned scriptSize);
             void deinitialize();
-            
+
             void writeCommand(const uint8_t *data, unsigned dataSize) override;
             void writeData(const uint8_t *data, unsigned dataSize) override;
     };

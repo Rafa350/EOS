@@ -97,6 +97,7 @@ message("    EOS path : ${EOS_PATH}")
 
 
 add_subdirectory(HTL)
+add_subdirectory(System)
 
 
 # Include paths

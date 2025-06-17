@@ -2,7 +2,6 @@
 #include "appApplication.h"
 
 
-using namespace eos;
 using namespace app;
 
 
@@ -11,7 +10,6 @@ using namespace app;
 ///
 void appMain() {
 
-	MyApplication *app = new MyApplication();
+	auto app = new MyApplication();
     app->run();
-    delete app;
 }

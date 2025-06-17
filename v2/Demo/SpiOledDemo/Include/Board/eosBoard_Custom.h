@@ -12,6 +12,9 @@
 #elif defined(HARDWARE_CUSTOM_STM32F429I_DISC1)
     #include "Board/eosBoard_Custom_STM32F429I_DISC1.h"
 
+#elif defined(HARDWARE_CUSTOM_NUCLEO_G071RB)
+    #include "Board/eosBoard_Custom_NUCLEO_G071RB.h"
+
 #endif
 
 

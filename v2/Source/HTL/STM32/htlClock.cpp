@@ -62,12 +62,12 @@ bool ClockDevice::isLSEEnabled() const {
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el oscilador HSE
-/// \param    hseBaypassMode: Indica si utilitza un rellotge extern
+/// \param    bypass: Indica si utilitza un rellotge extern
 ///
 void ClockDevice::enableHSE(
-	bool bypass) const {
+	HSEBypass bypass) const {
 
-	if (bypass)
+	if (bypass == HSEBypass::enabled)
 		set(RCC->CR, RCC_CR_HSEBYP);
 	else
 		clear(RCC->CR, RCC_CR_HSEBYP);
@@ -628,12 +628,31 @@ bool ClockDevice::selectSystemClock(
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el rellotge principal del sistema
 /// \param    source: El rellotge a seleccionar.
+/// \param    fl: Latencia de la memoria FLASH
 /// \return   True si tot es correcte, false en cas contrari.
 ///
 bool ClockDevice::selectSystemClock(
-	SystemClockSource source) const {
+	SystemClockSource source,
+	FlashLatency fl) const {
 
 	auto CFGR = RCC->CFGR;
+	auto ACR = FLASH->ACR;
+
+	// Si la latencia actual es mes baixa que la indicada, la puja
+	//
+	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) < (uint32_t) fl) {
+		clear(ACR, FLASH_ACR_LATENCY);
+		set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		FLASH->ACR = ACR;
+
+		while ((FLASH->ACR & FLASH_ACR_LATENCY) != ((uint32_t)fl << FLASH_ACR_LATENCY_Pos))
+			continue;
+	}
+
+	// Inicialitza els divisor al valor mes alt
+	//
+	set(CFGR, 15UL << RCC_CFGR_HPRE_Pos);
+	set(CFGR, 7UL << RCC_CFGR_PPRE_Pos);
 
 	clear(CFGR, RCC_CFGR_SW);
 	switch (source) {
@@ -670,6 +689,17 @@ bool ClockDevice::selectSystemClock(
 
 	while (((RCC->CFGR & RCC_CFGR_SWS) >> RCC_CFGR_SWS_Pos) != ((RCC->CFGR & RCC_CFGR_SW) >> RCC_CFGR_SW_Pos))
 		continue;
+
+	// Si la latencia actual es mes alta que la indicada, la baixa
+	//
+	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) > (uint32_t) fl) {
+		clear(ACR, FLASH_ACR_LATENCY);
+		set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		FLASH->ACR = ACR;
+
+		while ((FLASH->ACR & FLASH_ACR_LATENCY) != ((uint32_t)fl << FLASH_ACR_LATENCY_Pos))
+			continue;
+	}
 
 	return true;
 }

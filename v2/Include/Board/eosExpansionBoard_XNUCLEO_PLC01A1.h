@@ -13,5 +13,4 @@
 #define PLC01A1_CS2_Pin      ARDUINO_D10_Pin
 #define PLC01A1_OUTEN_Pin    ARDUINO_D6_Pin
 
-
 #endif // __eosBoard_XNUCLEO_PLC01A1__

@@ -57,6 +57,11 @@ namespace htl {
 	#error "Unkonwn platform"
 #endif
 
+		enum class HSEBypass {
+			disabled,
+			enabled
+		};
+
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		enum class SystemClockSource {
 			hsi,
@@ -145,6 +150,10 @@ namespace htl {
 		enum class FlashLatency {
 			fl0, fl1, fl2, fl3, fl4, fl5, fl6, fl7
 		};
+#elif defined(EOS_PLATFORM_STM32G0)
+		enum class FlashLatency {
+			fl0, fl1, fl2
+		};
 #endif
 
 		class ClockDevice {
@@ -183,7 +192,7 @@ namespace htl {
 
 				// Control del oscilador HSE
 				//
-				void enableHSE(bool bypass = false) const;
+				void enableHSE(HSEBypass bypass = HSEBypass::disabled) const;
 				void disableHSE() const;
 				bool isHSEEnabled() const;
 
@@ -236,9 +245,9 @@ namespace htl {
 
 				// Configuracio dels rellotges del sistema
 				//
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 				bool selectSystemClock(SystemClockSource source, FlashLatency fl) const;
-#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
+#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F0)
 				bool selectSystemClock(SystemClockSource source) const;
 #endif
 				void setAHBPrescaler(AHBPrescaler prescaler) const;

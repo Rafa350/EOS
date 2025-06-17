@@ -6,6 +6,7 @@
 #include "HTL/htlSPI.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
+#include "appConfig.h"
 #include "appDisplayService.h"
 
 
@@ -79,38 +80,40 @@ DisplayService::DisplayService() {
 ///
 void DisplayService::onExecute() {
 
-	auto pinCS = DISPLAY_CS_Pin::pInst;
+	auto pinCS = hw::pinCS;
 	pinCS->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::high, true);
 
-	auto pinDC = DISPLAY_DC_Pin::pInst;
-	pinCS->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::high, false);
+	auto pinDC = hw::pinDC;
+	pinDC->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::high, false);
 
-	auto pinRST = DISPLAY_RST_Pin::pInst;
-	pinCS->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::high, false);
+	auto pinRST = hw::pinRST;
+	pinRST->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::high, false);
 
-	auto devSPI = ARDUINO_SPI_Device::pInst;
+	auto devSPI = hw::devSPI;
     devSPI->initPinSCK<DISPLAY_SCK_Pin>();
     devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
-    devSPI->initialize(spi::Mode::master, spi::ClkPolarity::low, spi::ClkPhase::edge1,
-    	spi::WordSize::ws8, spi::FirstBit::msb, spi::ClockDivider::div128);
+    devSPI->initMaster(spi::ClkPolarity::low, spi::ClkPhase::edge1,
+    	spi::WordSize::ws8, spi::FirstBit::msb, hw::devSPI_ClockDivider);
 
 	auto device = new Device_SSD1306_SPI(pinCS, pinDC, pinRST, devSPI);
 	device->initialize(__displayInitScript, sizeof(__displayInitScript));
 
-	FrameBuffer *frameBuffer = new MonoFrameBuffer(
+	auto displayBuffer = new uint8_t[_displayWidth * _displayHeight / 8];
+
+	auto frameBuffer = new MonoFrameBuffer(
 		_displayWidth,
 		_displayHeight,
 		DisplayOrientation::normal,
-		reinterpret_cast<uint8_t*>(_displayBuffer),
+		displayBuffer,
 		_displayWidth,
 		MonoFrameBuffer::Mapping::vertical);
 
-	_driver = new DisplayDriver_SSD1306(device, frameBuffer);
-	_driver->initialize();
-	_driver->clear(Colors::white);
-	_driver->enable();
+	auto driver = new DisplayDriver_SSD1306(device, frameBuffer);
+	driver->initialize();
+	driver->clear(Colors::white);
+	driver->enable();
 
-	_graphics = new Graphics(_driver);
+	auto graphics = new Graphics(driver);
 
 	static int count = 0;
 
@@ -118,26 +121,29 @@ void DisplayService::onExecute() {
 
 		Task::delay(500);
 
-		_graphics->clear(Colors::black);
+		graphics->clear(Colors::black);
 
 		switch (count & 0x3) {
 			case 0:
-				_graphics->drawRectangle(0, 0, 127, 63, Colors::white);
-				_graphics->fillEllipse(10, 10, 20, 20, Colors::white);
-				_graphics->fillEllipse(107, 43, 117, 53, Colors::white);
+				graphics->drawRectangle(0, 0, 127, 63, Colors::white);
+				graphics->fillEllipse(10, 10, 20, 20, Colors::white);
+				graphics->fillEllipse(107, 43, 117, 53, Colors::white);
 				break;
+
 			case 1:
-				_graphics->drawEllipse(20, 20, 118, 54, Colors::white);
+				graphics->drawEllipse(20, 20, 118, 54, Colors::white);
 				break;
+
 			case 2:
-				_graphics->drawEllipse(30, 30, 118, 54, Colors::white);
+				graphics->drawEllipse(30, 30, 118, 54, Colors::white);
 				break;
+
 			case 3:
-				_graphics->drawEllipse(40, 40, 118, 54, Colors::white);
+				graphics->drawEllipse(40, 40, 118, 54, Colors::white);
 				break;
 		}
 
-		_driver->refresh();
+		driver->refresh();
 
 		count++;
 	}

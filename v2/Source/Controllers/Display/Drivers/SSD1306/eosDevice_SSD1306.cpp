@@ -23,7 +23,5 @@ void Device_SSD1306::writeScript(
     const uint8_t *script,
     unsigned scriptSize) {
 
-    //for (unsigned i = 0; i < scriptSize; i++)
-    //    writeCommand(&script[i], 1);
     writeCommand(script, scriptSize);
 }

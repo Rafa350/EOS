@@ -67,14 +67,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/appApplication.h</locationURI>
 		</link>
 		<link>
+			<name>inc/App/appConfig.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/appConfig.h</locationURI>
+		</link>
+		<link>
 			<name>inc/App/appDisplayService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/appDisplayService.h</locationURI>
-		</link>
-		<link>
-			<name>inc/App/eosConfig.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS</name>
@@ -125,6 +125,11 @@
 			<name>inc/App/STM32F7/FreeRTOSConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/STM32F7/FreeRTOSConfig.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F7/eosConfig.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/SpiOledDemo/Include/STM32F7/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F7/stm32746g_discovery.h</name>

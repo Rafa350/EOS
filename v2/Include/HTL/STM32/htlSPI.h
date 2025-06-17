@@ -10,8 +10,8 @@
 
 // HTL main includes
 //
-#include "HTL/htl.h"
 #include "HTL/htlBits.h"
+#include "HTL/STM32/htl.h"
 
 
 // Default options
@@ -101,7 +101,6 @@ namespace htl {
 			miso,
 			mosi
 		};
-
 
         enum class NotifyID {
 		    null,
