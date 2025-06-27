@@ -6,6 +6,7 @@
 #define USE_LED2
 
 #define USE_USB_DEVICE0
+#define USE_SD
 
 
 // Opcions de configuracio pel servei 'DigInput'

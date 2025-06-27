@@ -67,6 +67,7 @@ namespace eos {
     /// \brief Clase que representa un dispositiu SSD1306 amb
     //         interficie SPI-DMA
     //
+#if HTL_SPI_OPTION_DMA == 1
     class Device_SSD1306_SPIDMA: public Device_SSD1306_SPI {
         public:
             using DevDMA = htl::dma::DMADevice;
@@ -79,6 +80,7 @@ namespace eos {
 
             void writeData(const uint8_t *data, unsigned dataSize) override;
     };
+#endif
 }
 
 

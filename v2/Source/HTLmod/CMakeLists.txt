@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 4.0)
+
+list(APPEND SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/htl_atomic.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/htl_bits.cpp
+)
+
+
+#list(APPEND SOURCES
+#	${CMAKE_CURRENT_SOURCE_DIR}/htlDMA2D.cpp
+#	${CMAKE_CURRENT_SOURCE_DIR}/htlLTDC.cpp
+#)
+
+target_sources(${CMAKE_PROJECT_NAME} PUBLIC FILE_SET htlmod_fileset TYPE CXX_MODULES FILES
+	${SOURCES}
+)

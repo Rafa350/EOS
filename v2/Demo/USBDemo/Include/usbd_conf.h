@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -41,8 +40,8 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* Memory management macros */
-#define USBD_malloc               malloc
-#define USBD_free                 free
+#define USBD_malloc               appUSBDmalloc
+#define USBD_free                 appUSBDfree
 #define USBD_memset               memset
 #define USBD_memcpy               memcpy
 #define USBD_Delay                HAL_Delay

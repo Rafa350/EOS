@@ -39,9 +39,9 @@ namespace htl::gpio::internal {
 		static constexpr uint32_t Mask = 0b1111;
 	};
 
-	uint32_t getSpeedValue(Speed speed);
-	uint32_t getOutputTypeValue(OutputType type);
-	uint32_t getPullUpDownValue(PullUpDown pupd);
+	uint32_t convert(Speed speed);
+	uint32_t convert(OutputType type);
+	uint32_t convert(PullUpDown pupd);
 }
 
 
@@ -128,7 +128,7 @@ void htl::gpio::initInput(
     //
     auto PUPDR = gpio->PUPDR;
     clear(PUPDR, PUPD::Mask << (b * 2));
-    set(PUPDR, getPullUpDownValue(pupd) << (b * 2));
+    set(PUPDR, convert(pupd) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     endAtomic(a);
@@ -191,26 +191,26 @@ void htl::gpio::initOutput(
     //
     auto OTYPER = gpio->OTYPER;
     clear(OTYPER, OTYPE::Mask << b);
-    set(OTYPER, getOutputTypeValue(type) << b);
+    set(OTYPER, convert(type) << b);
     gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
     auto PUPDR = gpio->PUPDR;
     clear(PUPDR, PUPD::Mask << (b * 2));
-    set(PUPDR, getPullUpDownValue(pupd) << (b * 2));
+    set(PUPDR, convert(pupd) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
     auto OSPEEDR = gpio->OSPEEDR;
     clear(OSPEEDR, OSPEED::Mask << (b * 2));
-    set(OSPEEDR, getSpeedValue(speed) << (b * 2));
+    set(OSPEEDR, convert(speed) << (b * 2));
     gpio->OSPEEDR = OSPEEDR;
 
     // Configura l'estat de sortida
     //
-    gpio->ODR = 1 << b;
+   	set(gpio->BSRR, 1UL << (b + (state ? 0 : 16)));
 
     endAtomic(a);
 }
@@ -234,7 +234,7 @@ void htl::gpio::initAlternate(
 	AlternateFunction af) {
 
     auto m = (uint16_t) mask;
-	for (uint8_t b = 0; b < 16; b++) {
+	for (auto b = 0; b < 16; b++) {
 		if ((m & (1 << b)) != 0)
 		    initAlternate(gpio, PinBit(b), type, pupd, speed, af);
 	}
@@ -273,21 +273,21 @@ void htl::gpio::initAlternate(
     //
     auto OTYPER = gpio->OTYPER;
     clear(OTYPER, OTYPE::Mask << b);
-    set(OTYPER, getOutputTypeValue(type) << b);
+    set(OTYPER, convert(type) << b);
     gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
     auto PUPDR = gpio->PUPDR;
     clear(PUPDR, PUPD::Mask << (b * 2));
-    set(PUPDR, getPullUpDownValue(pupd) << (b * 2));
+    set(PUPDR, convert(pupd) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
     auto OSPEEDR = gpio->OSPEEDR;
     clear(OSPEEDR, OSPEED::Mask << (b * 2));
-    set(OSPEEDR, getSpeedValue(speed) << (b * 2));
+    set(OSPEEDR, convert(speed) << (b * 2));
     gpio->OSPEEDR = OSPEEDR;
 
     // Selecciona la funcio alternativa
@@ -311,7 +311,7 @@ void htl::gpio::initAnalogic(
 	PinMask mask) {
 
     auto m = (uint16_t) mask;
-	for (uint8_t b = 0; b < 16; b++) {
+	for (auto b = 0; b < 16; b++) {
 		if ((m & (1 << b)) != 0)
 		    initAnalogic(gpio, PinBit(b));
 	}
@@ -353,7 +353,7 @@ void htl::gpio::deinitialize(
 	PinMask mask) {
 
     auto m = (uint16_t) mask;
-    for (uint8_t b = 0; b < 16; b++) {
+    for (auto b = 0; b < 16; b++) {
         if ((m & (1 << b)) != 0)
             deinitialize(gpio, PinBit(b));
     }
@@ -374,11 +374,11 @@ void htl::gpio::deinitialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el valor del tipus de sortida
-/// \param    mode: El tipus de sortida.
+/// \brief    Converteix OutputType a uint32_t
+/// \param    mode: El valor a convertir.
 /// \return   El resultat.
 ///
-uint32_t htl::gpio::internal::getOutputTypeValue(
+uint32_t htl::gpio::internal::convert(
 	htl::gpio::OutputType type) {
 
 	return type == OutputType::pushPull ? OTYPE::PP : OTYPE::OD;
@@ -386,15 +386,14 @@ uint32_t htl::gpio::internal::getOutputTypeValue(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el valor de la velocitat
-/// \param    speed: La velocitat.
+/// \brief    Converteix Speed a uint32_t
+/// \param    speed: El valor a convertir.
 /// \return   El resultat.
 ///
-uint32_t htl::gpio::internal::getSpeedValue(
+uint32_t htl::gpio::internal::convert(
 	htl::gpio::Speed speed) {
 
     switch (speed) {
-    	default:
     	case Speed::low:
     	    return OSPEED::LOW;
 
@@ -404,13 +403,18 @@ uint32_t htl::gpio::internal::getSpeedValue(
     	case Speed::high:
     	    return OSPEED::HIGH;
 
-    	case Speed::fast:
+    	default:
     	    return OSPEED::FAST;
     }
 }
 
 
-uint32_t htl::gpio::internal::getPullUpDownValue(
+/// ----------------------------------------------------------------------
+/// \brief    Converteix el valor PullUp a uint32_t
+/// \param    pupd: El valor a convertir
+/// \return   El resultat.
+///
+uint32_t htl::gpio::internal::convert(
 	htl::gpio::PullUpDown pupd)  {
 
 	switch (pupd) {

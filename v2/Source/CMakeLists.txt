@@ -74,31 +74,16 @@ set(include_dirs
 #
 set(symbol_definitions
     -DSTM32G071RB
-    -DHARDWARE_CUSTOM
     -DEOS_NO_INCLUDE_BOARD
 )
 
-# Executable files
-add_executable(${CMAKE_PROJECT_NAME} 
-    ${EOS_PATH}/Source/StartUp/STM32G0/main.cpp
-    ${source_files}
-)
+# Target
+add_library(${CMAKE_PROJECT_NAME} STATIC)
 
-target_sources(${CMAKE_PROJECT_NAME}
-    PUBLIC 
-        FILE_SET CXX_MODULES 
-        BASE_DIRS ${EOS_PATH}
-        FILES ${module_files}
-)
-
-
-message("Project info:")
-message("    EOS path : ${EOS_PATH}")
-
-
-add_subdirectory(HTL)
-add_subdirectory(System)
-
+# Sources
+#
+add_subdirectory("HTLMod")
+#add_subdirectory(System)
 
 # Include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${include_dirs})
@@ -116,36 +101,4 @@ target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
 
     # Full debug configuration
     -Og -g3 -ggdb
-)
-
-# Linker options
-target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
-    ${CPU_PARAMETERS}
-    -T${linker_script_file}
-    --specs=nosys.specs 
-    -Wl,-Map=${CMAKE_PROJECT_NAME}.map
-    -Wl,--print-memory-usage    
-    -Wl,--cref 
-    -Wl,--gc-sections 
-    -Wl,--start-group 
-    -lc 
-    -lm 
-    -lstdc++ 
-    -lsupc++ 
-    -Wl,--end-group    
-)
-
-# Execute post-build to print size
-add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
-)
-
-# Convert output to hex and binary
-add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
-)
-
-# Convert to bin file -> add conditional check?
-add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 )

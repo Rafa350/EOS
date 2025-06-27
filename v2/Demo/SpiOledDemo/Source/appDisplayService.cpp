@@ -19,7 +19,7 @@ static const uint8_t __displayInitScript[] = {
 	// Turn off display
 	0xAE,
 
-	// Set addrerssing mode
+	// Set addrerssing mode (Horizontal mode)
 	0x20, 0x00,
 
 	// Set display clock divider

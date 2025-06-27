@@ -197,9 +197,9 @@ Result SPIDevice::transmit(
 		}
 
 		if (!error) {
+#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 			// Espera que es buidin els fifos
 			//
-#if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 		    if (!waitTxFifoEmpty(expireTime))
 		        error = true;
 		    else if (!waitNotBusy(expireTime))
@@ -207,6 +207,8 @@ Result SPIDevice::transmit(
 		    else if (!waitRxFifoEmpty(expireTime))
 		        error = true;
 #elif defined(EOS_PLATFORM_STM32F4)
+		    // Espera que s'hagin transmes totes les trames
+		    //
 		    if (!waitNotBusy(expireTime))
 		        error = true;
 #else
@@ -231,6 +233,7 @@ Result SPIDevice::transmit(
 }
 
 
+#if HTL_SPI_OPTION_DMA == 1
 /// ----------------------------------------------------------------------
 /// \brief    Transmiteix un bloc de dades en modus DMA
 /// \param    devTxDMA: DMA per la transmissio
@@ -276,6 +279,7 @@ Result SPIDevice::transmit_DMA(
 	else
 		return Results::errorState;
 }
+#endif // HTL_SPI_OPTION_DMA == 1
 
 
 /// ----------------------------------------------------------------------
@@ -514,6 +518,8 @@ bool SPIDevice::waitRxFifoEmpty(
 	unsigned expireTime) const {
 
 	while ((_spi->SR & SPI_SR_FRLVL) != 0) {
+        if (hasTickExpired(expireTime))
+            return false;
 
 		uint8_t dummy = read8();
 	}
@@ -533,6 +539,8 @@ bool SPIDevice::waitTxFifoEmpty(
 	unsigned expireTime) const {
 
 	while ((_spi->SR & SPI_SR_FTLVL) != 0) {
+        if (hasTickExpired(expireTime))
+            return false;
 	}
 
 	return true;
@@ -548,9 +556,8 @@ bool SPIDevice::waitNotBusy(
     unsigned expireTime) const {
 
     while (isSPIBusy()) {
-        if (hasTickExpired(expireTime)) {
+        if (hasTickExpired(expireTime))
             return false;
-        }
     }
 
     return true;

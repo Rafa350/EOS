@@ -14,11 +14,13 @@
 //
 #define HTL_SPI_DEFAULT_OPTION_IRQ               1
 #define HTL_SPI_DEFAULT_OPTION_DMA               1
+#define HTL_SPI_DEFAULT_OPTION_DEACTIVATE        1
 
 // Opcions per defecte pel modul I2C
 //
 #define HTL_I2C_DEFAULT_OPTION_IRQ               1
 #define HTL_I2C_DEFAULT_OPTION_DMA               1
+#define HTL_I2C_DEFAULT_OPTION_DEACTIVATE        1
 
 // Opcions per defecte pel modul UART
 //

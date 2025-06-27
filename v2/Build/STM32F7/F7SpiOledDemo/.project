@@ -292,6 +292,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htl.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/htlAtomic.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlAtomic.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htlBits.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlBits.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HTL/htlGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>

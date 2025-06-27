@@ -10,12 +10,29 @@
 
 
 using namespace htl;
+using namespace htl::clock;
 
 
 static void initializeCLK() {
 
-	auto clk = clock::ClockDevice::pInst;
+	auto clk = ClockDevice::pInst;
 
+#if 1
+	clk->enableHSE();
+
+	clk->disablePLL();
+	clk->configurePLL(PLLsource::hse, 432, 25, PLLPdivider::div2, PLLQdivider::div9);
+	clk->enablePLL();
+
+	clk->selectSystemClock(SystemClockSource::pll, FlashLatency::fl7);
+
+	clk->setAHBPrescaler(AHBPrescaler::div1);
+	clk->setAPB1Prescaler(APBPrescaler::div4);
+	clk->setAPB2Prescaler(APBPrescaler::div2);
+
+	clk->disableHSI();
+
+#else
 	// Enable HSE Oscillator and activate PLL with HSE as source
     //
 	RCC_OscInitTypeDef oscInit;
@@ -40,6 +57,9 @@ static void initializeCLK() {
 	clkInit.APB1CLKDivider = RCC_HCLK_DIV4;
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
+#endif
+
+	SystemCoreClockUpdate();
 
 	auto fhclk = clk->getClockFrequency(clock::ClockID::hclk);
 	eosAssert(fhclk == 216000000);

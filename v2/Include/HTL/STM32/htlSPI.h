@@ -16,12 +16,16 @@
 
 // Default options
 //
-#ifndef HTL_SPI_OPTION_IT
-    #define HTL_SPI_OPTION_IRQ 1      // Habilita comunicacio per interrupcions
+#ifndef HTL_SPI_OPTION_IRQ
+    #define HTL_SPI_OPTION_IRQ HTL_SPI_DEFAULT_OPTION_IT
 #endif
 
 #ifndef HTL_SPI_OPTION_DMA
-    #define HTL_SPI_OPTION_DMA 1      // Habilita comunicacio per dma
+    #define HTL_SPI_OPTION_DMA HTL_SPI_DEFAULT_OPTION_DMA
+#endif
+
+#ifndef HTL_SPI_OPTION_DEACTIVATE
+    #define HTL_SPI_OPTION_DEACTIVATE HTL_SPI_DEFAULT_OPTION_DEACTIVATE
 #endif
 
 
@@ -145,6 +149,10 @@ namespace htl {
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
 
+				eos::Result initialize(Mode mode, ClkPolarity clkPolarity,
+				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
+				        ClockDivider clkDivider);
+
 				void interruptService();
 
 				virtual void activateImpl() const = 0;
@@ -177,9 +185,6 @@ namespace htl {
 #endif
 
 			public:
-				eos::Result initialize(Mode mode, ClkPolarity clkPolarity,
-				        ClkPhase clkPhase, WordSize size, FirstBit firstBit,
-				        ClockDivider clkDivider);
 				eos::Result initMaster(ClkPolarity clkPolarity,
                         ClkPhase clkPhase, WordSize size, FirstBit firstBit,
                         ClockDivider clkDivider) {
@@ -209,9 +214,10 @@ namespace htl {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
 
+#if HTL_SPI_OPTION_DMA == 1
                 eos::Result transmit_DMA(htl::dma::DMADevice *devTxDMA,
                         const uint8_t *txBuffer, unsigned bufferSize);
-
+#endif
                 State getState() const { return _state; }
                 bool isValid() const { return _state != State::invalid; }
 				bool isReady() const { return _state == State::ready; }

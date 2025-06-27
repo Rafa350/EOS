@@ -8,6 +8,7 @@ int main() {
 
 	// Inicialitzacio del hardware
 	//
+
 	appInitialize();
 
 	// Inicia l'aplicacio EOS

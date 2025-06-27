@@ -123,7 +123,6 @@ namespace htl {
 		};
 
 		enum class PLLPdivider {
-			/*** Valors critics ***/
 			div2, div3, div4, div5, div6, div7, div8, div9,
 			div10, div11, div12, div13, div14, div15, div16, div17, div18, div19,
 			div20, div21, div22, div23, div24, div25, div26, div27, div28, div29,
@@ -132,13 +131,11 @@ namespace htl {
 		};
 
 		enum class PLLQdivider {
-			/*** Valors critics ***/
 			div2, div3, div4, div5, div6, div7, div8,
 			disabled
 		};
 
 		enum class PLLRdivider {
-			/*** Valors critics ***/
 			div2, div3, div4, div5, div6, div7, div8,
 			disabled
 		};

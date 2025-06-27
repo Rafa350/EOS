@@ -290,8 +290,7 @@
 #ifdef USE_SD
 #define EXIST_SD
 
-#define SD_PRESENT_PORT           HAL_GPIO_PORT_C
-#define SD_PRESENT_PIN            HAL_GPIO_PIN_13
+#define SD_PRESENT_Pin            htl::gpio::PinC13
 
 #define SD_DMA_RX_CHANNEL         DMA_CHANNEL_4
 #define SD_DMA_RX_STREAM          DMA2_Stream3

@@ -1,7 +1,7 @@
 #include "HTL/htl.h"
 #include "HTL/htlBits.h"
 #include "HTL/htlAtomic.h"
-#include "HTL/htlGPIO.h"
+#include "HTL/STM32/htlGPIO.h"
 
 
 using namespace htl;

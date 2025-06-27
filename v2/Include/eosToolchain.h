@@ -43,33 +43,22 @@
 namespace eos {
 	namespace build {
 
-		enum class ToolChainType {
+		enum class ToolChainID {
 			xc32,
 			gnu,
 			mvc
 		};
 
 		struct Toolchain {
-			#ifdef EOS_TOOLCHAIN_XC32
-			static constexpr ToolChainType toolChain = ToolChainType::xc32;
-			static constexpr bool is_XC32_Toolchain = true;
-			#else
-			static constexpr bool is_XC32_Toolchain = false;
-			#endif
-
-			#ifdef EOS_TOOLCHAIN_GNU
-			static constexpr ToolChainType toolChain = ToolChainType::gnu;
-			static constexpr bool is_GNU_Toolchain = true;
-			#else
-			static constexpr bool is_GNU_Toolchain = false;
-			#endif
-
-			#ifdef EOS_TOOLCHAIN_MVC
-			static constexpr ToolChainType toolChain = ToolChainType::msc;
-			static constexpr bool is_MVC_Toolchain = true;
-			#else
-			static constexpr bool is_MVC_Toolchain = false;
-			#endif
+#if defined(EOS_TOOLCHAIN_XC32)
+			static constexpr ToolChainID toolChain = ToolChainID::xc32;
+#elif defined(EOS_TOOLCHAIN_GNU)
+			static constexpr ToolChainID toolChain = ToolChainID::gnu;
+#elif defined(EOS_TOOLCHAIN_MVC)
+			static constexpr ToolChainID toolChain = ToolChainID::msc;
+#else
+#	error "Unknown toolchain"
+#endif
 		};
 	}
 }

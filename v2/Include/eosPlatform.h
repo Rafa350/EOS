@@ -180,54 +180,29 @@
 namespace eos {
 	namespace build {
 
+		enum class PlatformID {
+			stm32f249zi,
+			stm32f746ng,
+			stm32g031k8,
+			stm32g071rb,
+			stm32g0B1re
+		};
+
 		struct Platform {
-			#ifdef EOS_PLATFORM_PIC32
-			static constexpr bool is_PIC32_Platform = true;
-			#else
-			static constexpr bool is_PIC32_Platform = false;
-			#endif
+#if defined(EOS_PLATFORM_STM32F429ZI)
+			static constexpr PlatformID platformID = PlatformID::stm32f429zi;
+#elif defined(EOS_PLATFORM_STM32F746NG)
+			static constexpr PlatformID platformID = PlatformID::stm32f746ng;
+#elif defined(EOS_PLATFORM_STM32G031K9)
+			static constexpr PlatformID platformID = PlatformID::stm32g031k8;
+#elif defined(EOS_PLATFORM_STM32G071RB)
+			static constexpr PlatformID platformID = PlatformID::stm32g071rb;
+#elif defined(EOS_PLATFORM_STM32G0B1RE)
+			static constexpr PlatformID platformID = PlatformID::stm32g0B1re;
+#else
+	#error "Unkonwn platform"
+#endif
 
-			#ifdef EOS_PLATFORM_PIC32MX
-			static constexpr bool is_PIC32MX_Platform = true;
-			#else
-			static constexpr bool is_PIC32MX_Platform = false;
-			#endif
-
-			#ifdef EOS_PLATFORM_PIC32MZ
-			static constexpr bool is_PIC32MZ_Platform = true;
-			#else
-			static constexpr bool is_PIC32MZ_Platform = false;
-			#endif
-
-			#ifdef EOS_PLATFORM_STM32
-			static constexpr bool is_STM32_Platform = true;
-			#else
-			static constexpr bool is_STM32_Platform = false;
-			#endif
-
-			#ifdef EOS_PLATFORM_STM32G0
-			static constexpr bool is_STM32G0_Platform = true;
-			#else
-			static constexpr bool is_STM32G0_Platform = false;
-			#endif
-
-			#ifdef EOS_PLATFORM_STM32F0
-			static constexpr bool is_STM32F0_Platform = true;
-			#else
-			static constexpr bool is_STM32F0_Platform = false;
-			#endif
-
-			#ifdef EOS_PLATFORM_STM32F4
-			static constexpr bool is_STM32F4_Platform = true;
-			#else
-			static constexpr bool is_STM32F4_Platform = false;
-			#endif
-
-			#ifdef EOS_PLATFORM_STM32F7
-			static constexpr bool is_STM32F7_Platform = true;
-			#else
-			static constexpr bool is_STM32F7_Platform = false;
-			#endif
 		};
 	}
 }

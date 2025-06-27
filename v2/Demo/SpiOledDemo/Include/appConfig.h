@@ -41,7 +41,7 @@ namespace app {
         constexpr auto devSPI_ClkPhase      = htl::spi::ClkPhase::edge1;
         constexpr auto devSPI_WordSize      = htl::spi::WordSize::ws8;
         constexpr auto devSPI_FirstBit      = htl::spi::FirstBit::msb;
-        constexpr auto devSPI_ClockDivider  = htl::spi::ClockDivider::div256;
+        constexpr auto devSPI_ClockDivider  = htl::spi::ClockDivider::div8;
 #endif
     }
 }
