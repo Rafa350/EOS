@@ -40,6 +40,14 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* Memory management macros */
+#ifdef __cplusplus
+extern "C" {
+	void* appUSBDmalloc(size_t size);
+	void appUSBDfree(void *p);
+};
+#endif
+
+
 #define USBD_malloc               appUSBDmalloc
 #define USBD_free                 appUSBDfree
 #define USBD_memset               memset

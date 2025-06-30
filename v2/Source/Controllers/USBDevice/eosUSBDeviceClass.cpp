@@ -1,7 +1,5 @@
 #include "eos.h"
-#include "Controllers/USBDevice/eosUSBDeviceClass.h"
-
-#include "usbd_core.h"
+#include "Controllers/USBDevice/eosUSBDeviceDriver.h"
 
 
 using namespace eos;
@@ -10,12 +8,9 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    devUSBD: El dispositiu USB
-/// \param    usbdClass: El descriptor de la clase de dispositiu.
 ///
 USBDeviceClass::USBDeviceClass(
-	USBDevice *devUSBD,
-	USBD_ClassTypeDef *usbdClass):
+	USBDeviceDriver *drvUSBD) :
 
-	_devUSBD {devUSBD},
-	_usbdClass {usbdClass} {
+	_drvUSBD {drvUSBD} {
 }

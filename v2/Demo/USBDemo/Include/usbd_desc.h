@@ -33,7 +33,6 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-extern USBD_DescriptorsTypeDef MSC_Desc;
 
 #endif /* __USBD_DESC_H */
- 
+

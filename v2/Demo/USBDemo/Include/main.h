@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    USB_Device/MSC_Standalone/Inc/main.h 
+  * @file    USB_Device/MSC_Standalone/Inc/main.h
   * @author  MCD Application Team
   * @brief   Header for main.c module
   ******************************************************************************
@@ -15,7 +15,7 @@
   *
   ******************************************************************************
   */
-  
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
@@ -25,7 +25,6 @@
 #include "usbd_core.h"
 #include "usbd_desc.h"
 #include "usbd_msc.h"
-#include "usbd_storage.h"
 #include "stm32746g_discovery.h"
 #include "stm32746g_discovery_sd.h"
 

@@ -1,8 +1,13 @@
 #include "eos.h"
-#include "Controllers/USBDevice//eosUSBDevice.h"
-#include "Controllers/USBDevice//eosUSBDeviceClassMSC.h"
-#include "Controllers/USBDevice/eosMSCStorage_SSD.h"
-#include "Controllers/USBDevice/eosMSCStorage_RAM.h"
+#include "Controllers/USBDevice/eosUSBDeviceDriver.h"
+#if defined(USE_CDC_DEVICE)
+#include "Controllers/USBDevice/CDC/eosUSBDeviceClassCDC.h"
+#include "Controllers/USBDevice/CDC/eosCDCInterface_VCOM.h"
+#elif defined(USE_MSC_DEVICE)
+#include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
+#include "Controllers/USBDevice/MSC/eosMSCStorage_SSD.h"
+#include "Controllers/USBDevice/MSC/eosMSCStorage_RAM.h"
+#endif
 #include "System/Core/eosTask.h"
 #include "Services/eosLedService.h"
 
@@ -14,14 +19,11 @@
 using namespace app;
 
 
-#define USE_EOSUSB
-
-
-#if !defined(USE_EOSUSB)
-static USBD_HandleTypeDef USBD_Device;
+#if defined(USE_CDC_DEVICE)
+extern USBD_DescriptorsTypeDef VCP_Desc;
+#elif defined(USE_MSC_DEVICE)
+extern USBD_DescriptorsTypeDef MSC_Desc;
 #endif
-
-static void Error_Handler(void);
 
 
 /// ----------------------------------------------------------------------
@@ -43,38 +45,38 @@ void MyApplication::onExecute() {
 	//auto mainService = new MainService();
 	//addService(mainService);
 
-#if defined(USE_EOSUSB)
-	auto devUSBD = new eos::USBDevice();
-	devUSBD->initialize(&MSC_Desc);
+	auto drvUSBD = new eos::USBDeviceDriver();
 
-	auto devMSC = new eos::USBDeviceClassMSC(devUSBD);
-	//auto storage = new eos::MSCStorage_SSD();
+#if defined(USE_CDC_DEVICE)
+	auto interface = new eos::CDCInterface_VCOM(drvUSBD);
+	auto devClassCDC = new eos::USBDeviceClassCDC(drvUSBD, interface);
 
-	unsigned memSize = 10 * 1024;
-	uint8_t *mem = new uint8_t[memSize];
+	drvUSBD->registerClass(devClassCDC);
+	drvUSBD->initialize(&VCP_Desc);
 
-	auto storage = new eos::MSCStorage_RAM(mem, memSize);
-	devMSC->initialize(storage);
+#elif defined(USE_MSC_DEVICE)
+	auto storage = new eos::MSCStorage_SSD();
 
-	devUSBD->start();
+	//unsigned memSize = 64 * 1024;
+	//uint8_t *mem = new uint8_t[memSize];
+	//auto storage = new eos::MSCStorage_RAM(mem, memSize);
 
-#else
+	auto devClassMSC = new eos::USBDeviceClassMSC(devUSBD, storage);
 
-	/* Init Device Library */
-	USBD_Init(&USBD_Device, &MSC_Desc, 0);
-
-	/* Add Supported Class */
-	USBD_RegisterClass(&USBD_Device, USBD_MSC_CLASS);
-
-	/* Add Storage callbacks for MSC Class */
-	USBD_MSC_RegisterStorage(&USBD_Device, &USBD_DISK_fops);
-
-	/* Start Device Process */
-	USBD_Start(&USBD_Device);
+	drvUSBD->registerClass(devClassMSC);
+	drvUSBD->initialize(&MSC_Desc);
 #endif
 
-	while (true)
+	drvUSBD->start();
+
+	auto handle = drvUSBD->getHandle();
+	char * text = "Capullo total\r\n";
+
+	while (true) {
 		eos::Task::delay(1000);
+	    USBD_CDC_SetTxBuffer(handle, (uint8_t*) text, strlen(text));
+	    USBD_CDC_TransmitPacket(handle);
+}
 }
 
 
@@ -177,40 +179,6 @@ void BSP_SD_MspInit(SD_HandleTypeDef *hsd, void *Params)
   HAL_NVIC_EnableIRQ(SD_DMAx_Tx_IRQn);
 }
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-static void Error_Handler(void)
-{
-  /* User may add here some code to deal with this error */
-  while(1)
-  {
-  }
-}
-
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t* file, uint32_t line)
-{
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-
-  /* Infinite loop */
-  while (1)
-  {
-  }
-}
-#endif
-
 extern "C" void HAL_Delay(uint32_t delay) {
 
 	while (delay) {
@@ -219,7 +187,11 @@ extern "C" void HAL_Delay(uint32_t delay) {
 	}
 }
 
+#if defined(USE_MSC_DEVICE)
 static uint8_t __usbdMemory[sizeof(USBD_MSC_BOT_HandleTypeDef)];
+#elif defined(USE_CDC_DEVICE)
+static uint8_t __usbdMemory[sizeof(USBD_CDC_HandleTypeDef)];
+#endif
 static unsigned __usbAllocCount = 0;
 
 extern "C" void* appUSBDmalloc(size_t size) {
