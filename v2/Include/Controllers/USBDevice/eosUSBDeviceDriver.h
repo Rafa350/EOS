@@ -55,6 +55,18 @@ namespace eos {
 
 		public:
 			virtual void initialize() = 0;
+
+			virtual int8_t classInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) = 0;
+			virtual int8_t classDeinit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) = 0;
+			virtual int8_t classSetup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) = 0;
+			virtual int8_t classEP0TxSent() = 0;
+			virtual int8_t classEP0RxReady(USBD_HandleTypeDef *pdev) = 0;
+			virtual int8_t classDataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) = 0;
+			virtual int8_t classDataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) = 0;
+			virtual int8_t* classGetHSCfgDesc(uint16_t *length) = 0;
+			virtual int8_t* classGetFSCfgDesc(uint16_t *length) = 0;
+			virtual int8_t* classGetOtherSpeedCfgDesc(uint16_t *length) = 0;
+			virtual int8_t* classGetDeviceQualifierDescriptor(uint16_t *length) = 0;
 	};
 }
 

@@ -1,8 +1,6 @@
 #include "eos.h"
 #include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
 
-#include "usbd_msc.h"
-
 
 using namespace eos;
 
@@ -33,3 +31,19 @@ void USBDeviceClassMSC::initialize() {
 	// TODO:
 	//handle->pUserData[handle->classId] = storage;
 }
+
+
+int8_t USBDeviceClassMSC::classInit(
+	USBD_HandleTypeDef *pdev,
+	uint8_t cfgidx) {
+
+}
+
+
+int8_t USBDeviceClassMSC::classDeinit(
+	USBD_HandleTypeDef *pdev,
+	uint8_t cfgidx) {
+
+}
+
+

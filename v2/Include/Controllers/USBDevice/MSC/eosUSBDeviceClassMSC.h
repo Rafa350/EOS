@@ -5,8 +5,7 @@
 
 #include "eos.h"
 #include "Controllers/USBDevice/eosUSBDeviceDriver.h"
-
-#include "usbd_msc.h"
+#include "Controllers/USBDevice/MSC/ST/st_usbd_msc.h"
 
 
 namespace eos {
@@ -23,7 +22,7 @@ namespace eos {
 			virtual USBD_StorageTypeDef* getDescriptor() const = 0;
 	};
 
-	class USBDeviceClassMSC: public USBDeviceClass {
+	class USBDeviceClassMSC final: public USBDeviceClass {
 		private:
 			MSCStorage *_storage;
 
@@ -31,6 +30,9 @@ namespace eos {
 			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, MSCStorage *storage);
 
 			void initialize() override;
+
+			int8_t classInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) override;
+			int8_t classDeinit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) override;
 	};
 }
 
