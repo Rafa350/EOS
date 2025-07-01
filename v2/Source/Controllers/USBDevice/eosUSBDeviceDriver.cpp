@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "Controllers/USBDevice/eosUSBDeviceDriver.h"
-
-#include "usbd_core.h"
+#include "Controllers/USBDevice/ST/st_usbd_core.h"
 
 
 using namespace eos;

@@ -7,32 +7,23 @@
 using namespace eos;
 
 
-static int8_t __inquiryData[] = {
+static const int8_t __inquiryData[] = {
 	/* LUN 0 */
+	0x00,                              // Qualifier / Device type
+	(int8_t) 0x80,                     // RMB
+	0x02,                              // Version
+	0x02,                              // NORMACA / HISUP / FORMAT
+	(STANDARD_INQUIRY_DATA_LEN - 5),   // Additional length
 	0x00,
-	(int8_t) 0x80,
-	0x02,
-	0x02,
-	(STANDARD_INQUIRY_DATA_LEN - 5),
 	0x00,
 	0x00,
-	0x00,
-	'S', 'T', 'M', ' ', ' ', ' ', ' ', ' ', /* Manufacturer: 8 bytes  */
-	'P', 'r', 'o', 'd', 'u', 'c', 't', ' ', /* Product     : 16 Bytes */
+	'S', 'T', 'M', ' ', ' ', ' ', ' ', ' ', // Manufacturer
+	'P', 'r', 'o', 'd', 'u', 'c', 't', ' ', // Product
 	' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-	'0', '.', '0','1',                      /* Version     : 4 Bytes  */
+	'0', '.', '0','1',                      // Version
 };
 
-static MSCStorage_SSD *__instance;
 volatile uint32_t __writestatus, __readstatus = 0;
-
-static int8_t __init(uint8_t lun);
-static int8_t __getCapacity(uint8_t lun, uint32_t *block_num, uint16_t *block_size);
-static int8_t __isReady(uint8_t lun);
-static int8_t __isWriteProtected(uint8_t lun);
-static int8_t __read(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len);
-static int8_t __write(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len);
-static int8_t __getMaxLun(void);
 
 
 /// ----------------------------------------------------------------------
@@ -40,22 +31,6 @@ static int8_t __getMaxLun(void);
 ///
 MSCStorage_SSD::MSCStorage_SSD() {
 
-	_callTable.GetCapacity = __getCapacity;
-	_callTable.GetMaxLun = __getMaxLun;
-	_callTable.Init = __init;
-	_callTable.IsReady = __isReady;
-	_callTable.IsWriteProtected = __isWriteProtected;
-	_callTable.Read = __read;
-	_callTable.Write = __write;
-	_callTable.pInquiry = __inquiryData;
-
-	__instance = this;
-}
-
-
-USBD_StorageTypeDef * MSCStorage_SSD::getDescriptor() const {
-
-	return (USBD_StorageTypeDef*) &_callTable;
 }
 
 
@@ -63,12 +38,22 @@ USBD_StorageTypeDef * MSCStorage_SSD::getDescriptor() const {
 /// \brief    Inicialitzacio.
 /// \return   0 si tot es correcte.
 ///
-int8_t MSCStorage_SSD::init(
+int8_t MSCStorage_SSD::initialize(
 	uint8_t lun) {
 
 	BSP_SD_Init();
 
 	return 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte les dades SCSI
+/// \return   El punter a les dades.
+//
+int8_t const * MSCStorage_SSD::getInquiryData() {
+
+	return __inquiryData;
 }
 
 
@@ -80,8 +65,8 @@ int8_t MSCStorage_SSD::init(
 ///
 int8_t MSCStorage_SSD::getCapacity(
 	uint8_t lun,
-	uint32_t *block_num,
-	uint16_t *block_size) {
+	uint32_t *blkQuantity,
+	uint16_t *blkSize) {
 
 	HAL_SD_CardInfoTypeDef info;
 	int8_t result = -1;
@@ -90,8 +75,8 @@ int8_t MSCStorage_SSD::getCapacity(
 
 	    BSP_SD_GetCardInfo(&info);
 
-	    *block_num = info.LogBlockNbr;
-	    *block_size = info.LogBlockSize;
+	    *blkQuantity = info.LogBlockNbr;
+	    *blkSize = info.LogBlockSize;
 	    result = 0;
 	}
 
@@ -233,62 +218,6 @@ bool MSCStorage_SSD::isCardPresent() const {
 bool MSCStorage_SSD::isCardBusy() const {
 
 	return BSP_SD_GetCardState() != SD_TRANSFER_OK;
-}
-
-
-int8_t __init(
-	uint8_t lun) {
-
-	return __instance->init(lun);
-}
-
-
-int8_t __getCapacity(
-	uint8_t lun,
-	uint32_t *block_num,
-	uint16_t *block_size) {
-
-	return __instance->getCapacity(lun, block_num, block_size);
-}
-
-
-int8_t __isReady(
-	uint8_t lun) {
-
-	return __instance->isReady(lun);
-}
-
-
-int8_t __isWriteProtected(
-	uint8_t lun) {
-
-	return __instance->isWriteProtected(lun);
-}
-
-
-int8_t __read(
-	uint8_t lun,
-	uint8_t *buf,
-	uint32_t blk_addr,
-	uint16_t blk_len) {
-
-	return __instance->read(lun, buf, blk_addr, blk_len);
-}
-
-
-int8_t __write(
-	uint8_t lun,
-	uint8_t *buf,
-	uint32_t blk_addr,
-	uint16_t blk_len) {
-
-	return __instance->write(lun, buf, blk_addr, blk_len);
-}
-
-
-int8_t __getMaxLun() {
-
-	return __instance->getMaxLun();
 }
 
 

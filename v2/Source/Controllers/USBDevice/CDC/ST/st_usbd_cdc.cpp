@@ -1,24 +1,24 @@
+#include "Controllers/USBDevice/ST/st_usbd_core.h"
+#include "Controllers/USBDevice/ST/st_usbd_ctlreq.h"
 #include "Controllers/USBDevice/CDC/eosUSBDeviceClassCDC.h"
-#include "usbd_core.h"
-#include "usbd_ctlreq.h"
 
 
-static uint8_t USBD_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
-static uint8_t USBD_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
-static uint8_t USBD_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
-static uint8_t USBD_CDC_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum);
-static uint8_t USBD_CDC_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum);
-static uint8_t USBD_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev);
+//static uint8_t USBD_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
+//static uint8_t USBD_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
+//static uint8_t USBD_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
+//static uint8_t USBD_CDC_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum);
+//static uint8_t USBD_CDC_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum);
+//static uint8_t USBD_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev);
 #ifndef USE_USBD_COMPOSITE
-static uint8_t *USBD_CDC_GetFSCfgDesc(uint16_t *length);
-static uint8_t *USBD_CDC_GetHSCfgDesc(uint16_t *length);
-static uint8_t *USBD_CDC_GetOtherSpeedCfgDesc(uint16_t *length);
-uint8_t *USBD_CDC_GetDeviceQualifierDescriptor(uint16_t *length);
+//static uint8_t *USBD_CDC_GetFSCfgDesc(uint16_t *length);
+//static uint8_t *USBD_CDC_GetHSCfgDesc(uint16_t *length);
+//static uint8_t *USBD_CDC_GetOtherSpeedCfgDesc(uint16_t *length);
+//uint8_t *USBD_CDC_GetDeviceQualifierDescriptor(uint16_t *length);
 #endif /* USE_USBD_COMPOSITE  */
 
 #ifndef USE_USBD_COMPOSITE
 /* USB Standard Device Descriptor */
-__ALIGN_BEGIN static uint8_t USBD_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] __ALIGN_END =
+__ALIGN_BEGIN uint8_t USBD_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] __ALIGN_END =
 {
   USB_LEN_DEV_QUALIFIER_DESC,
   USB_DESC_TYPE_DEVICE_QUALIFIER,
@@ -40,14 +40,14 @@ __ALIGN_BEGIN static uint8_t USBD_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_
   * @{
   */
 
-
-/* CDC interface class callbacks structure */
+/*
+// CDC interface class callbacks structure
 USBD_ClassTypeDef  USBD_CDC =
 {
   USBD_CDC_Init,
   USBD_CDC_DeInit,
   USBD_CDC_Setup,
-  NULL,                 /* EP0_TxSent */
+  NULL,
   USBD_CDC_EP0_RxReady,
   USBD_CDC_DataIn,
   USBD_CDC_DataOut,
@@ -64,12 +64,13 @@ USBD_ClassTypeDef  USBD_CDC =
   USBD_CDC_GetFSCfgDesc,
   USBD_CDC_GetOtherSpeedCfgDesc,
   USBD_CDC_GetDeviceQualifierDescriptor,
-#endif /* USE_USBD_COMPOSITE  */
+#endif
 };
+*/
 
 #ifndef USE_USBD_COMPOSITE
 /* USB CDC device Configuration Descriptor */
-__ALIGN_BEGIN static uint8_t USBD_CDC_CfgDesc[USB_CDC_CONFIG_DESC_SIZ] __ALIGN_END =
+__ALIGN_BEGIN uint8_t USBD_CDC_CfgDesc[USB_CDC_CONFIG_DESC_SIZ] __ALIGN_END =
 {
   /* Configuration Descriptor */
   0x09,                                       /* bLength: Configuration Descriptor size */
@@ -173,7 +174,7 @@ static uint8_t CDCInEpAdd = CDC_IN_EP;
 static uint8_t CDCOutEpAdd = CDC_OUT_EP;
 static uint8_t CDCCmdEpAdd = CDC_CMD_EP;
 
-
+#if 0
 static eos::CDCInterface* getInterface(
 	USBD_HandleTypeDef *pdev) {
 
@@ -614,7 +615,7 @@ uint8_t *USBD_CDC_GetDeviceQualifierDescriptor(uint16_t *length)
   return USBD_CDC_DeviceQualifierDesc;
 }
 #endif /* USE_USBD_COMPOSITE  */
-
+#endif
 
 /**
   * @brief  USBD_CDC_SetTxBuffer
@@ -754,4 +755,3 @@ uint8_t USBD_CDC_ReceivePacket(USBD_HandleTypeDef *pdev)
 
   return (uint8_t)USBD_OK;
 }
-

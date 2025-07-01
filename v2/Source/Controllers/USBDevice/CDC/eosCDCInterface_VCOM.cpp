@@ -64,30 +64,30 @@ int8_t CDCInterface_VCOM::deinitialize() {
 /// \param    dataSize: Tamany del buffer de dades.
 ///
 int8_t CDCInterface_VCOM::control(
-	uint8_t cmd,
+	ControlCmd cc,
 	uint8_t *data,
 	uint16_t dataSize) {
 
-	switch (cmd) {
-		case CDC_SEND_ENCAPSULATED_COMMAND:
+	switch (cc) {
+		case ControlCmd::SEND_ENCAPSULATED_COMMAND:
 			break;
 
-		case CDC_GET_ENCAPSULATED_RESPONSE:
+		case ControlCmd::GET_ENCAPSULATED_RESPONSE:
 			break;
 
-		case CDC_SET_COMM_FEATURE:
+		case ControlCmd::SET_COMM_FEATURE:
 			break;
 
-		case CDC_GET_COMM_FEATURE:
+		case ControlCmd::GET_COMM_FEATURE:
 			break;
 
-		case CDC_CLEAR_COMM_FEATURE:
+		case ControlCmd::CLEAR_COMM_FEATURE:
 			break;
 
-		case CDC_SET_LINE_CODING:
+		case ControlCmd::SET_LINE_CODING:
 			break;
 
-		case CDC_GET_LINE_CODING:
+		case ControlCmd::GET_LINE_CODING:
 			if (dataSize < 7)
 				return -1;
 
@@ -100,10 +100,10 @@ int8_t CDCInterface_VCOM::control(
 			data[6] = LineCoding.datatype;
 			break;
 
-		case CDC_SET_CONTROL_LINE_STATE:
+		case ControlCmd::SET_CONTROL_LINE_STATE:
 			break;
 
-		case CDC_SEND_BREAK:
+		case ControlCmd::SEND_BREAK:
 			break;
 
 		default:

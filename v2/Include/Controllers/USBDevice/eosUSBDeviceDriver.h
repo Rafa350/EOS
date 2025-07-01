@@ -4,11 +4,11 @@
 
 
 #include "eos.h"
+#include "Controllers/USBDevice/ST/st_usbd_def.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/eosResults.h"
 
 #include "usbd_desc.h"
-#include "usbd_def.h"
 
 
 namespace eos {
@@ -56,17 +56,22 @@ namespace eos {
 		public:
 			virtual void initialize() = 0;
 
-			virtual int8_t classInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) = 0;
-			virtual int8_t classDeinit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) = 0;
-			virtual int8_t classSetup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) = 0;
+			virtual int8_t classInit(uint8_t cfgidx) = 0;
+			virtual int8_t classDeinit(uint8_t cfgidx) = 0;
+
+			virtual int8_t classSetup(USBD_SetupReqTypedef *req) = 0;
+
 			virtual int8_t classEP0TxSent() = 0;
-			virtual int8_t classEP0RxReady(USBD_HandleTypeDef *pdev) = 0;
-			virtual int8_t classDataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) = 0;
-			virtual int8_t classDataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) = 0;
-			virtual int8_t* classGetHSCfgDesc(uint16_t *length) = 0;
-			virtual int8_t* classGetFSCfgDesc(uint16_t *length) = 0;
-			virtual int8_t* classGetOtherSpeedCfgDesc(uint16_t *length) = 0;
-			virtual int8_t* classGetDeviceQualifierDescriptor(uint16_t *length) = 0;
+			virtual int8_t classEP0RxReady() = 0;
+			virtual int8_t classSOF() = 0;
+			virtual int8_t classDataIn(uint8_t epnum) = 0;
+			virtual int8_t classDataOut(uint8_t epnum) = 0;
+			virtual int8_t classIsoINIncomplete(uint8_t epnum) = 0;
+			virtual int8_t classIsoOUTIncomplete(uint8_t epnum) = 0;
+			virtual uint8_t* classGetHSConfigurationDescriptor(uint16_t *length) = 0;
+			virtual uint8_t* classGetFSConfigurationDescriptor(uint16_t *length) = 0;
+			virtual uint8_t* classGetOtherSpeedConfigurationDescriptor(uint16_t *length) = 0;
+			virtual uint8_t* classGetDeviceQualifierDescriptor(uint16_t *length) = 0;
 	};
 }
 

@@ -3,19 +3,11 @@
 #define __st_usbd_msc__
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include  "st_usbd_msc_bot.h"
-#include  "st_usbd_msc_scsi.h"
-#include  "usbd_ioreq.h"
+#include  "Controllers/USBDevice/ST/st_usbd_ioreq.h"
+#include  "Controllers/USBDevice/MSC/ST/st_usbd_msc_bot.h"
+#include  "Controllers/USBDevice/MSC/ST/st_usbd_msc_scsi.h"
 
 
-
-/** @defgroup USBD_BOT_Exported_Defines
-  * @{
-  */
 /* MSC Class Config */
 #ifndef MSC_MEDIA_PACKET
 #define MSC_MEDIA_PACKET             512U
@@ -85,12 +77,7 @@ typedef struct
 extern USBD_ClassTypeDef  USBD_MSC;
 #define USBD_MSC_CLASS    &USBD_MSC
 
-uint8_t  USBD_MSC_RegisterStorage(USBD_HandleTypeDef   *pdev,
-                                  USBD_StorageTypeDef *fops);
-
-#ifdef __cplusplus
-}
-#endif
+uint8_t  USBD_MSC_RegisterStorage(USBD_HandleTypeDef *pdev, USBD_StorageTypeDef *fops);
 
 #endif // __st_usbd__msc__
 

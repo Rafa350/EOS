@@ -13,6 +13,10 @@ namespace app {
         protected:
             void onExecute() override;
 
+        private:
+            void initializeGPIO();
+            void configureInterrupts();
+
         public:
             MyApplication();
     };

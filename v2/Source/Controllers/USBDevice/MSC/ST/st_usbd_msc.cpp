@@ -253,7 +253,7 @@ uint8_t USBD_MSC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
           if ((req->wValue  == 0U) && (req->wLength == 1U) &&
               ((req->bmRequest & 0x80U) == 0x80U))
           {
-            max_lun = (uint32_t)((USBD_StorageTypeDef *)pdev->pUserData[pdev->classId])->GetMaxLun();
+            max_lun = getStorage(pdev)->getMaxLun();
             hmsc->max_lun = (max_lun > MSC_BOT_MAX_LUN) ? MSC_BOT_MAX_LUN : max_lun;
             (void)USBD_CtlSendData(pdev, (uint8_t *)&hmsc->max_lun, 1U);
           }
@@ -468,22 +468,7 @@ uint8_t *USBD_MSC_GetDeviceQualifierDescriptor(uint16_t *length)
   return USBD_MSC_DeviceQualifierDesc;
 }
 #endif /* USE_USBD_COMPOSITE */
-/**
-  * @brief  USBD_MSC_RegisterStorage
-  * @param  fops: storage callback
-  * @retval status
-  */
-uint8_t USBD_MSC_RegisterStorage(USBD_HandleTypeDef *pdev, USBD_StorageTypeDef *fops)
-{
-  if (fops == NULL)
-  {
-    return (uint8_t)USBD_FAIL;
-  }
 
-  pdev->pUserData[pdev->classId] = fops;
-
-  return (uint8_t)USBD_OK;
-}
 
 /**
   * @}

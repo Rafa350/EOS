@@ -23,6 +23,7 @@
 EndBSPDependencies */
 
 /* Includes ------------------------------------------------------------------*/
+#include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
 #include "Controllers/USBDevice/MSC/ST/st_usbd_msc_data.h"
 
 

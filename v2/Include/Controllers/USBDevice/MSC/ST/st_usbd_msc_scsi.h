@@ -1,48 +1,13 @@
-/**
-  ******************************************************************************
-  * @file    usbd_msc_scsi.h
-  * @author  MCD Application Team
-  * @brief   Header for the usbd_msc_scsi.c file
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2015 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-
-/* Define to prevent recursive inclusion -------------------------------------*/
+#pragma once
 #ifndef __USBD_MSC_SCSI_H
 #define __USBD_MSC_SCSI_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-/* Includes ------------------------------------------------------------------*/
-#include "usbd_def.h"
+#include "Controllers/USBDevice/ST/st_usbd_def.h"
 
-/** @addtogroup STM32_USB_DEVICE_LIBRARY
-  * @{
-  */
-
-/** @defgroup USBD_SCSI
-  * @brief header file for the storage disk file
-  * @{
-  */
-
-/** @defgroup USBD_SCSI_Exported_Defines
-  * @{
-  */
 
 #define SENSE_LIST_DEEPTH                           4U
 
-/* SCSI Commands */
 #define SCSI_FORMAT_UNIT                            0x04U
 #define SCSI_INQUIRY                                0x12U
 #define SCSI_MODE_SELECT6                           0x15U
@@ -110,22 +75,12 @@ extern "C" {
 #define SCSI_MEDIUM_UNLOCKED                        0x00U
 #define SCSI_MEDIUM_LOCKED                          0x01U
 #define SCSI_MEDIUM_EJECTED                         0x02U
-/**
-  * @}
-  */
 
 
-/** @defgroup USBD_SCSI_Exported_TypesDefinitions
-  * @{
-  */
-
-typedef struct _SENSE_ITEM
-{
+typedef struct _SENSE_ITEM {
   uint8_t Skey;
-  union
-  {
-    struct _ASCs
-    {
+  union  {
+    struct _ASCs {
       uint8_t ASC;
       uint8_t ASCQ;
     } b;
@@ -133,51 +88,10 @@ typedef struct _SENSE_ITEM
     uint8_t *pData;
   } w;
 } USBD_SCSI_SenseTypeDef;
-/**
-  * @}
-  */
 
-/** @defgroup USBD_SCSI_Exported_Macros
-  * @{
-  */
 
-/**
-  * @}
-  */
-
-/** @defgroup USBD_SCSI_Exported_Variables
-  * @{
-  */
-
-/**
-  * @}
-  */
-/** @defgroup USBD_SCSI_Exported_FunctionsPrototype
-  * @{
-  */
 int8_t SCSI_ProcessCmd(USBD_HandleTypeDef *pdev, uint8_t lun, uint8_t *cmd);
+void SCSI_SenseCode(USBD_HandleTypeDef *pdev, uint8_t lun, uint8_t sKey, uint8_t ASC);
 
-void SCSI_SenseCode(USBD_HandleTypeDef *pdev, uint8_t lun, uint8_t sKey,
-                    uint8_t ASC);
 
-/**
-  * @}
-  */
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __USBD_MSC_SCSI_H */
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
+#endif // __USBD_MSC_SCSI_H

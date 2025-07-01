@@ -3,12 +3,7 @@
 #define __st_usbd_cdc__
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-#include  "usbd_ioreq.h"
+#include  "Controllers/USBDevice/ST/st_usbd_ioreq.h"
 
 
 #ifndef CDC_IN_EP
@@ -60,47 +55,38 @@ extern "C" {
 #define CDC_SEND_BREAK                              0x23U
 
 
-typedef struct {
-  uint32_t bitrate;
-  uint8_t  format;
-  uint8_t  paritytype;
-  uint8_t  datatype;
-} USBD_CDC_LineCodingTypeDef;
+struct USBD_CDC_LineCodingTypeDef {
+	uint32_t bitrate;
+	uint8_t  format;
+	uint8_t paritytype;
+	uint8_t datatype;
+};
 
 
-typedef struct {
-  uint32_t data[CDC_DATA_HS_MAX_PACKET_SIZE / 4U];      /* Force 32-bit alignment */
-  uint8_t  CmdOpCode;
-  uint8_t  CmdLength;
-  uint8_t  *RxBuffer;
-  uint8_t  *TxBuffer;
-  uint32_t RxLength;
-  uint32_t TxLength;
-
-  __IO uint32_t TxState;
-  __IO uint32_t RxState;
-} USBD_CDC_HandleTypeDef;
+struct USBD_CDC_HandleTypeDef {
+	uint32_t data[CDC_DATA_HS_MAX_PACKET_SIZE / 4U];      /* Force 32-bit alignment */
+	uint8_t CmdOpCode;
+	uint8_t CmdLength;
+	uint8_t *RxBuffer;
+	uint8_t *TxBuffer;
+	uint32_t RxLength;
+	uint32_t TxLength;
+	volatile uint32_t TxState;
+	volatile uint32_t RxState;
+};
 
 
 extern USBD_ClassTypeDef USBD_CDC;
-#define USBD_CDC_CLASS &USBD_CDC
 
 #ifdef USE_USBD_COMPOSITE
-uint8_t USBD_CDC_SetTxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff,
-                             uint32_t length, uint8_t ClassId);
+uint8_t USBD_CDC_SetTxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff, uint32_t length, uint8_t ClassId);
 uint8_t USBD_CDC_TransmitPacket(USBD_HandleTypeDef *pdev, uint8_t ClassId);
 #else
-uint8_t USBD_CDC_SetTxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff,
-                             uint32_t length);
+uint8_t USBD_CDC_SetTxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff, uint32_t length);
 uint8_t USBD_CDC_TransmitPacket(USBD_HandleTypeDef *pdev);
 #endif /* USE_USBD_COMPOSITE */
 uint8_t USBD_CDC_SetRxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff);
 uint8_t USBD_CDC_ReceivePacket(USBD_HandleTypeDef *pdev);
-
-
-#ifdef __cplusplus
-}
-#endif
 
 
 #endif  // __st_usbd_cdc__

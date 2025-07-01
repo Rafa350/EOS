@@ -12,14 +12,17 @@ namespace eos {
 
 	class MSCStorage {
 		public:
-			virtual int8_t init(uint8_t lun) = 0;
-			virtual int8_t getCapacity(uint8_t lun, uint32_t *block_num, uint16_t *block_size) = 0;
+			virtual int8_t initialize(uint8_t lun) = 0;
+
+			virtual int8_t getCapacity(uint8_t lun, uint32_t *blkQuantity, uint16_t *blkSize) = 0;
+			virtual int8_t getMaxLun() = 0;
+			virtual int8_t const * getInquiryData() = 0;
+
 			virtual int8_t isReady(uint8_t lun) = 0;
 			virtual int8_t isWriteProtected(uint8_t lun) = 0;
-			virtual int8_t read(uint8_t lun, uint8_t *buf, uint32_t blkStart, uint16_t blkCount) = 0;
-			virtual int8_t write(uint8_t lun, uint8_t *buf, uint32_t blkStart, uint16_t blkCount) = 0;
-			virtual int8_t getMaxLun() = 0;
-			virtual USBD_StorageTypeDef* getDescriptor() const = 0;
+
+			virtual int8_t read(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
+			virtual int8_t write(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
 	};
 
 	class USBDeviceClassMSC final: public USBDeviceClass {
@@ -31,8 +34,22 @@ namespace eos {
 
 			void initialize() override;
 
-			int8_t classInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) override;
-			int8_t classDeinit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) override;
+			int8_t classInit(uint8_t cfgidx) override;
+			int8_t classDeinit(uint8_t cfgidx) override;
+
+			int8_t classSetup(USBD_SetupReqTypedef *req) override;
+
+			int8_t classEP0TxSent() override;
+			int8_t classEP0RxReady() override;
+			int8_t classSOF() override;
+			int8_t classDataIn(uint8_t epnum) override;
+			int8_t classDataOut(uint8_t epnum) override;
+			int8_t classIsoINIncomplete(uint8_t epnum) override;
+			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
+			uint8_t* classGetHSConfigurationDescriptor(uint16_t *length) override;
+			uint8_t* classGetFSConfigurationDescriptor(uint16_t *length) override;
+			uint8_t* classGetOtherSpeedConfigurationDescriptor(uint16_t *length) override;
+			uint8_t* classGetDeviceQualifierDescriptor(uint16_t *length) override;
 	};
 }
 

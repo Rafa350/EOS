@@ -23,10 +23,11 @@
 EndBSPDependencies */
 
 /* Includes ------------------------------------------------------------------*/
+#include "Controllers/USBDevice/ST/st_usbd_ioreq.h"
+#include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
 #include "Controllers/USBDevice/MSC/ST/st_usbd_msc_bot.h"
 #include "Controllers/USBDevice/MSC/ST/st_usbd_msc.h"
 #include "Controllers/USBDevice/MSC/ST/st_usbd_msc_scsi.h"
-#include "usbd_ioreq.h"
 
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
@@ -89,6 +90,12 @@ static void MSC_BOT_Abort(USBD_HandleTypeDef *pdev);
   */
 
 
+static eos::MSCStorage* getStorage(
+	USBD_HandleTypeDef *pdev) {
+
+	return (eos::MSCStorage*) pdev->pUserData[pdev->classId];
+}
+
 /**
   * @brief  MSC_BOT_Init
   *         Initialize the BOT Process
@@ -117,7 +124,7 @@ void MSC_BOT_Init(USBD_HandleTypeDef *pdev)
   hmsc->scsi_sense_head = 0U;
   hmsc->scsi_medium_state = SCSI_MEDIUM_UNLOCKED;
 
-  ((USBD_StorageTypeDef *)pdev->pUserData[pdev->classId])->Init(0U);
+  getStorage(pdev)->initialize(0U);
 
   (void)USBD_LL_FlushEP(pdev, MSCOutEpAdd);
   (void)USBD_LL_FlushEP(pdev, MSCInEpAdd);
@@ -379,11 +386,11 @@ void  MSC_BOT_SendCSW(USBD_HandleTypeDef *pdev, uint8_t CSW_Status)
   hmsc->csw.bStatus = CSW_Status;
   hmsc->bot_state = USBD_BOT_IDLE;
 
-  (void)USBD_LL_Transmit(pdev, MSCInEpAdd, (uint8_t *)&hmsc->csw,
+  USBD_LL_Transmit(pdev, MSCInEpAdd, (uint8_t *)&hmsc->csw,
                          USBD_BOT_CSW_LENGTH);
 
   /* Prepare EP to Receive next Cmd */
-  (void)USBD_LL_PrepareReceive(pdev, MSCOutEpAdd, (uint8_t *)&hmsc->cbw,
+  USBD_LL_PrepareReceive(pdev, MSCOutEpAdd, (uint8_t *)&hmsc->cbw,
                                USBD_BOT_CBW_LENGTH);
 }
 

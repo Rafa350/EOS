@@ -30,6 +30,19 @@ extern USBD_DescriptorsTypeDef MSC_Desc;
 /// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication() {
+
+	initializeGPIO();
+	configureInterrupts();
+}
+
+
+void MyApplication::initializeGPIO() {
+
+}
+
+
+void MyApplication::configureInterrupts() {
+
 }
 
 
@@ -57,11 +70,11 @@ void MyApplication::onExecute() {
 #elif defined(USE_MSC_DEVICE)
 	auto storage = new eos::MSCStorage_SSD();
 
-	//unsigned memSize = 64 * 1024;
-	//uint8_t *mem = new uint8_t[memSize];
-	//auto storage = new eos::MSCStorage_RAM(mem, memSize);
+	/*unsigned memSize = 64 * 1024;
+	uint8_t *mem = new uint8_t[memSize];
+	auto storage = new eos::MSCStorage_RAM(mem, memSize);*/
 
-	auto devClassMSC = new eos::USBDeviceClassMSC(devUSBD, storage);
+	auto devClassMSC = new eos::USBDeviceClassMSC(drvUSBD, storage);
 
 	drvUSBD->registerClass(devClassMSC);
 	drvUSBD->initialize(&MSC_Desc);
@@ -74,9 +87,11 @@ void MyApplication::onExecute() {
 
 	while (true) {
 		eos::Task::delay(1000);
+#if defined(USE_CDC_DEVICE)
 	    USBD_CDC_SetTxBuffer(handle, (uint8_t*) text, strlen(text));
 	    USBD_CDC_TransmitPacket(handle);
-}
+#endif
+	}
 }
 
 
