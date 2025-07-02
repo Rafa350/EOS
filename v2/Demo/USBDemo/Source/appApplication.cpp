@@ -61,7 +61,7 @@ void MyApplication::onExecute() {
 	auto drvUSBD = new eos::USBDeviceDriver();
 
 #if defined(USE_CDC_DEVICE)
-	auto interface = new eos::CDCInterface_VCOM(drvUSBD);
+	auto interface = new eos::CDCInterface_VCOM();
 	auto devClassCDC = new eos::USBDeviceClassCDC(drvUSBD, interface);
 
 	drvUSBD->registerClass(devClassCDC);
@@ -82,14 +82,13 @@ void MyApplication::onExecute() {
 
 	drvUSBD->start();
 
-	auto handle = drvUSBD->getHandle();
-	char * text = "Capullo total\r\n";
+	const char * text = "Capullo total\r\n";
 
 	while (true) {
 		eos::Task::delay(1000);
 #if defined(USE_CDC_DEVICE)
-	    USBD_CDC_SetTxBuffer(handle, (uint8_t*) text, strlen(text));
-	    USBD_CDC_TransmitPacket(handle);
+	    devClassCDC->setTxBuffer((uint8_t*) text, strlen(text));
+	    devClassCDC->transmitPacket();
 #endif
 	}
 }

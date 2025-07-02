@@ -9,14 +9,9 @@
 namespace eos {
 
 	class CDCInterface_VCOM: public CDCInterface {
-		private:
-			USBD_HandleTypeDef *_usbd; // Provisional
-
 		public:
-			CDCInterface_VCOM(USBDeviceDriver *drvUSBD);
-
-			int8_t initialize() override;
-			int8_t deinitialize() override;
+			int8_t initialize(USBDeviceClassCDC *cdc) override;
+			int8_t deinitialize(USBDeviceClassCDC *cdc) override;
 
 			int8_t control(ControlCmd cc, uint8_t *data, uint16_t dataSize) override;
 

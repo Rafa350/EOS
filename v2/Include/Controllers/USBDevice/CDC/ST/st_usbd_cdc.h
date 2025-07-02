@@ -3,9 +3,6 @@
 #define __st_usbd_cdc__
 
 
-#include  "Controllers/USBDevice/ST/st_usbd_ioreq.h"
-
-
 #ifndef CDC_IN_EP
 #define CDC_IN_EP                                   0x81U  /* EP1 for data IN */
 #endif /* CDC_IN_EP */
@@ -41,9 +38,7 @@
 
 #define CDC_REQ_MAX_DATA_SIZE                       0x7U
 
-/*---------------------------------------------------------------------*/
-/*  CDC definitions                                                    */
-/*---------------------------------------------------------------------*/
+
 #define CDC_SEND_ENCAPSULATED_COMMAND               0x00U
 #define CDC_GET_ENCAPSULATED_RESPONSE               0x01U
 #define CDC_SET_COMM_FEATURE                        0x02U
@@ -65,28 +60,15 @@ struct USBD_CDC_LineCodingTypeDef {
 
 struct USBD_CDC_HandleTypeDef {
 	uint32_t data[CDC_DATA_HS_MAX_PACKET_SIZE / 4U];      /* Force 32-bit alignment */
-	uint8_t CmdOpCode;
-	uint8_t CmdLength;
-	uint8_t *RxBuffer;
-	uint8_t *TxBuffer;
-	uint32_t RxLength;
-	uint32_t TxLength;
-	volatile uint32_t TxState;
-	volatile uint32_t RxState;
+	uint8_t cmdOpCode;
+	uint8_t cmdLength;
+	uint8_t *rxBuffer;
+	uint8_t *txBuffer;
+	uint32_t rxLength;
+	uint32_t txLength;
+	volatile uint32_t txState;
+	volatile uint32_t rxState;
 };
-
-
-extern USBD_ClassTypeDef USBD_CDC;
-
-#ifdef USE_USBD_COMPOSITE
-uint8_t USBD_CDC_SetTxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff, uint32_t length, uint8_t ClassId);
-uint8_t USBD_CDC_TransmitPacket(USBD_HandleTypeDef *pdev, uint8_t ClassId);
-#else
-uint8_t USBD_CDC_SetTxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff, uint32_t length);
-uint8_t USBD_CDC_TransmitPacket(USBD_HandleTypeDef *pdev);
-#endif /* USE_USBD_COMPOSITE */
-uint8_t USBD_CDC_SetRxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff);
-uint8_t USBD_CDC_ReceivePacket(USBD_HandleTypeDef *pdev);
 
 
 #endif  // __st_usbd_cdc__

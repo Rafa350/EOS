@@ -170,10 +170,10 @@ __ALIGN_BEGIN uint8_t USBD_CDC_CfgDesc[USB_CDC_CONFIG_DESC_SIZ] __ALIGN_END =
 };
 #endif /* USE_USBD_COMPOSITE  */
 
-static uint8_t CDCInEpAdd = CDC_IN_EP;
+/*static uint8_t CDCInEpAdd = CDC_IN_EP;
 static uint8_t CDCOutEpAdd = CDC_OUT_EP;
 static uint8_t CDCCmdEpAdd = CDC_CMD_EP;
-
+*/
 #if 0
 static eos::CDCInterface* getInterface(
 	USBD_HandleTypeDef *pdev) {
@@ -615,7 +615,6 @@ uint8_t *USBD_CDC_GetDeviceQualifierDescriptor(uint16_t *length)
   return USBD_CDC_DeviceQualifierDesc;
 }
 #endif /* USE_USBD_COMPOSITE  */
-#endif
 
 /**
   * @brief  USBD_CDC_SetTxBuffer
@@ -755,3 +754,4 @@ uint8_t USBD_CDC_ReceivePacket(USBD_HandleTypeDef *pdev)
 
   return (uint8_t)USBD_OK;
 }
+#endif

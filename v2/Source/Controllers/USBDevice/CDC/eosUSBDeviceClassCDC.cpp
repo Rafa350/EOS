@@ -3,7 +3,6 @@
 #include "Controllers/USBDevice/ST/st_usbd_core.h"
 #include "Controllers/USBDevice/ST/st_usbd_ctlreq.h"
 #include "Controllers/USBDevice/CDC/eosUSBDeviceClassCDC.h"
-#include "Controllers/USBDevice/CDC/ST/st_usbd_cdc.h"
 
 
 using namespace eos;
@@ -33,9 +32,55 @@ USBDeviceClassCDC::USBDeviceClassCDC(
 ///
 void USBDeviceClassCDC::initialize() {
 
-	// TODO: pasar-ho a USBDeviceDriver::initialize
 	auto pdev = _drvUSBD->getHandle();
 	USBD_RegisterClass(pdev, this);
+}
+
+
+bool USBDeviceClassCDC::setTxBuffer(
+	uint8_t *buffer,
+	unsigned length) {
+
+	_cdc.txBuffer = buffer;
+	_cdc.txLength = length;
+
+	return true;
+}
+
+
+bool USBDeviceClassCDC::setRxBuffer(
+	uint8_t *buffer) {
+
+    _cdc.rxBuffer = buffer;
+
+	return true;
+}
+
+
+bool USBDeviceClassCDC::transmitPacket() {
+
+	if (_cdc.txState == 0) {
+		_cdc.txState = 1U;
+
+		auto pdev = _drvUSBD->getHandle();
+		pdev->ep_in[_inEpAdd & 0xFU].total_length = _cdc.txLength;
+		USBD_LL_Transmit(pdev, _inEpAdd, _cdc.txBuffer, _cdc.txLength);
+
+		return true;
+	}
+	else
+		return false;
+}
+
+
+bool USBDeviceClassCDC::receivePacket() {
+
+	auto pdev = _drvUSBD->getHandle();
+	bool hs = pdev->dev_speed == USBD_SPEED_HIGH;
+
+    USBD_LL_PrepareReceive(pdev, _outEpAdd, _cdc.rxBuffer, hs ? CDC_DATA_HS_OUT_PACKET_SIZE : CDC_DATA_FS_OUT_PACKET_SIZE);
+
+	return true;
 }
 
 
@@ -52,24 +97,17 @@ int8_t USBDeviceClassCDC::classInit(
 	pdev->pClassDataCmsit[pdev->classId] = &_cdc;
 	pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
 
-#ifdef USE_USBD_COMPOSITE
-	/* Get the Endpoints addresses allocated for this class instance */
-	CDCInEpAdd  = USBD_CoreGetEPAdd(pdev, USBD_EP_IN, USBD_EP_TYPE_BULK, (uint8_t)pdev->classId);
-	CDCOutEpAdd = USBD_CoreGetEPAdd(pdev, USBD_EP_OUT, USBD_EP_TYPE_BULK, (uint8_t)pdev->classId);
-	CDCCmdEpAdd = USBD_CoreGetEPAdd(pdev, USBD_EP_IN, USBD_EP_TYPE_INTR, (uint8_t)pdev->classId);
-#endif /* USE_USBD_COMPOSITE */
-
 	bool hs = pdev->dev_speed == USBD_SPEED_HIGH;
 
     // Open EP IN
    	//
    	USBD_LL_OpenEP(pdev, _inEpAdd, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_IN_PACKET_SIZE :  CDC_DATA_FS_IN_PACKET_SIZE);
-   	pdev->ep_in[_inEpAdd & 0xFU].is_used = 1U;
+   	pdev->ep_in[_inEpAdd & 0xFU].is_used = 1;
 
    	// Open EP OUT
    	//
    	USBD_LL_OpenEP(pdev, _outEpAdd, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_OUT_PACKET_SIZE : CDC_DATA_FS_OUT_PACKET_SIZE);
-   	pdev->ep_out[_outEpAdd & 0xFU].is_used = 1U;
+   	pdev->ep_out[_outEpAdd & 0xFU].is_used = 1;
 
    	// Set bInterval for CDC CMD Endpoint
    	//
@@ -78,24 +116,24 @@ int8_t USBDeviceClassCDC::classInit(
     // Open Command IN EP
    	//
     USBD_LL_OpenEP(pdev, _cmdEpAdd, USBD_EP_TYPE_INTR, CDC_CMD_PACKET_SIZE);
-    pdev->ep_in[_cmdEpAdd & 0xFU].is_used = 1U;
+    pdev->ep_in[_cmdEpAdd & 0xFU].is_used = 1;
 
-    _cdc.RxBuffer = nullptr;
+    _cdc.rxBuffer = nullptr;
 
     // Inicialitza l'interficie
     //
-  	_interface->initialize();
+  	_interface->initialize(this);
 
   	/* Init Xfer states */
-  	_cdc.TxState = 0U;
-  	_cdc.RxState = 0U;
+  	_cdc.txState = 0;
+  	_cdc.rxState = 0;
 
   	// S'ha d'inicialitzar-se en _interface->initialize();
   	//
-  	if (_cdc.RxBuffer == NULL)
+  	if (_cdc.rxBuffer == NULL)
   		return USBD_EMEM;
 
-	USBD_LL_PrepareReceive(pdev, _outEpAdd, _cdc.RxBuffer, hs ? CDC_DATA_HS_OUT_PACKET_SIZE : CDC_DATA_FS_OUT_PACKET_SIZE);
+	USBD_LL_PrepareReceive(pdev, _outEpAdd, _cdc.rxBuffer, hs ? CDC_DATA_HS_OUT_PACKET_SIZE : CDC_DATA_FS_OUT_PACKET_SIZE);
 
 	return USBD_OK;
 }
@@ -108,13 +146,6 @@ int8_t USBDeviceClassCDC::classDeinit(
 	uint8_t cfgidx) {
 
 	auto pdev = _drvUSBD->getHandle();
-
-	#ifdef USE_USBD_COMPOSITE
-	/* Get the Endpoints addresses allocated for this CDC class instance */
-	CDCInEpAdd  = USBD_CoreGetEPAdd(pdev, USBD_EP_IN, USBD_EP_TYPE_BULK, (uint8_t)pdev->classId);
-	CDCOutEpAdd = USBD_CoreGetEPAdd(pdev, USBD_EP_OUT, USBD_EP_TYPE_BULK, (uint8_t)pdev->classId);
-	CDCCmdEpAdd = USBD_CoreGetEPAdd(pdev, USBD_EP_IN, USBD_EP_TYPE_INTR, (uint8_t)pdev->classId);
-#endif /* USE_USBD_COMPOSITE */
 
 	// Close EP IN
 	//
@@ -135,7 +166,7 @@ int8_t USBDeviceClassCDC::classDeinit(
 	// DeInit  physical Interface components
 	//
 	if (pdev->pClassDataCmsit[pdev->classId] != nullptr) {
-		_interface->deinitialize();
+		_interface->deinitialize(this);
 	    pdev->pClassDataCmsit[pdev->classId] = nullptr;
 	    pdev->pClassData = nullptr;
 	}
@@ -149,30 +180,26 @@ int8_t USBDeviceClassCDC::classSetup(
 
 	auto pdev = _drvUSBD->getHandle();
 
-	USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *)pdev->pClassDataCmsit[pdev->classId];
 	uint16_t len;
 	uint8_t ifalt = 0U;
 	uint16_t status_info = 0U;
 
 	USBD_StatusTypeDef ret = USBD_OK;
 
-	if (hcdc == nullptr)
-		return USBD_FAIL;
-
 	switch (req->bmRequest & USB_REQ_TYPE_MASK) {
 		case USB_REQ_TYPE_CLASS:
 			if (req->wLength != 0U) {
 				if ((req->bmRequest & 0x80U) != 0U) {
-					_interface->control((CDCInterface::ControlCmd)req->bRequest, (uint8_t *)hcdc->data, req->wLength);
+					_interface->control((CDCInterface::ControlCmd)req->bRequest, (uint8_t *)_cdc.data, req->wLength);
 
 					len = MIN(CDC_REQ_MAX_DATA_SIZE, req->wLength);
-					USBD_CtlSendData(pdev, (uint8_t *)hcdc->data, len);
+					USBD_CtlSendData(pdev, (uint8_t *) _cdc.data, len);
 				}
 				else {
-					hcdc->CmdOpCode = req->bRequest;
-					hcdc->CmdLength = (uint8_t)MIN(req->wLength, USB_MAX_EP0_SIZE);
+					_cdc.cmdOpCode = req->bRequest;
+					_cdc.cmdLength = (uint8_t) MIN(req->wLength, USB_MAX_EP0_SIZE);
 
-					USBD_CtlPrepareRx(pdev, (uint8_t *)hcdc->data, hcdc->CmdLength);
+					USBD_CtlPrepareRx(pdev, (uint8_t*) _cdc.data, _cdc.cmdLength);
 				}
 			}
 			else
@@ -234,9 +261,9 @@ int8_t USBDeviceClassCDC::classEP0TxSent() {
 
 int8_t USBDeviceClassCDC::classEP0RxReady() {
 
-	if (_cdc.CmdOpCode != 0xFFU) {
-		_interface->control((CDCInterface::ControlCmd) _cdc.CmdOpCode, (uint8_t *)_cdc.data, (uint16_t)_cdc.CmdLength);
-		_cdc.CmdOpCode = 0xFFU;
+	if (_cdc.cmdOpCode != 0xFFU) {
+		_interface->control((CDCInterface::ControlCmd) _cdc.cmdOpCode, (uint8_t *)_cdc.data, (uint16_t)_cdc.cmdLength);
+		_cdc.cmdOpCode = 0xFFU;
 	}
 
 	return USBD_OK;
@@ -260,8 +287,8 @@ int8_t USBDeviceClassCDC::classDataIn(
 		USBD_LL_Transmit(pdev, epnum, NULL, 0U);
 	}
   	else {
-  		_cdc.TxState = 0U;
-  		_interface->txDataCompleted(_cdc.TxBuffer, &_cdc.TxLength, epnum);
+  		_cdc.txState = 0U;
+  		_interface->txDataCompleted(_cdc.txBuffer, &_cdc.txLength, epnum);
   	}
 
     return USBD_OK;
@@ -279,11 +306,11 @@ int8_t USBDeviceClassCDC::classDataOut(
 		return USBD_FAIL;
 
 	/* Get the received data length */
-	hcdc->RxLength = USBD_LL_GetRxDataSize(pdev, epnum);
+	hcdc->rxLength = USBD_LL_GetRxDataSize(pdev, epnum);
 
 	/* USB data will be immediately processed, this allow next USB traffic being
   	   NAKed till the end of the application Xfer */
-	_interface->rxDataAvailable(hcdc->RxBuffer, &hcdc->RxLength);
+	_interface->rxDataAvailable(hcdc->rxBuffer, &hcdc->rxLength);
 
 	return USBD_OK;
 }
@@ -312,16 +339,15 @@ int8_t USBDeviceClassCDC::classIsoOUTIncomplete(
 uint8_t* USBDeviceClassCDC::classGetHSConfigurationDescriptor(
 	uint16_t *length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP);
-	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP);
-	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP);
-
+	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_HS_BINTERVAL;
 
+	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
+	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
@@ -334,16 +360,15 @@ uint8_t* USBDeviceClassCDC::classGetHSConfigurationDescriptor(
 uint8_t* USBDeviceClassCDC::classGetFSConfigurationDescriptor(
 	uint16_t *length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP);
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP);
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP);
-
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
@@ -355,16 +380,15 @@ uint8_t* USBDeviceClassCDC::classGetFSConfigurationDescriptor(
 uint8_t* USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
 	uint16_t *length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP);
-	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP);
-	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP);
-
+	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
+	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
+	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 

@@ -26,23 +26,15 @@ uint8_t UserTxBuffer[APP_TX_DATA_SIZE]; /* Received Data over UART (CDC
                                          * interface) are stored in this buffer
                                          */
 
-/// ---------------------------------------------------------------------
-/// \brief    Constructor.
-///
-CDCInterface_VCOM::CDCInterface_VCOM(
-	USBDeviceDriver *drvUSBD) {
-
-	_usbd = drvUSBD->getHandle();
-}
-
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio
 ///
-int8_t CDCInterface_VCOM::initialize() {
+int8_t CDCInterface_VCOM::initialize(
+	USBDeviceClassCDC *cdc) {
 
-	USBD_CDC_SetTxBuffer(_usbd, UserTxBuffer, 0);
-	USBD_CDC_SetRxBuffer(_usbd, UserRxBuffer);
+	cdc->setTxBuffer(UserTxBuffer, 0);
+	cdc->setRxBuffer(UserRxBuffer);
 
 	return USBD_OK;
 }
@@ -51,7 +43,8 @@ int8_t CDCInterface_VCOM::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitzacio
 ///
-int8_t CDCInterface_VCOM::deinitialize() {
+int8_t CDCInterface_VCOM::deinitialize(
+	USBDeviceClassCDC *cdc) {
 
 	return USBD_OK;
 }

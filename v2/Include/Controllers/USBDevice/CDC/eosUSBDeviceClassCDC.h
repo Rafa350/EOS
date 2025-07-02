@@ -10,6 +10,8 @@
 
 namespace eos {
 
+	class USBDeviceClassCDC;
+
 	class CDCInterface {
 		public :
 			enum class ControlCmd: uint8_t {
@@ -25,8 +27,8 @@ namespace eos {
 			};
 
 		public:
-			virtual int8_t initialize() = 0;
-			virtual int8_t deinitialize() = 0;
+			virtual int8_t initialize(USBDeviceClassCDC *cdc) = 0;
+			virtual int8_t deinitialize(USBDeviceClassCDC *cdc) = 0;
 
 			virtual int8_t control(ControlCmd cc, uint8_t *data, uint16_t dataSize) = 0;
 
@@ -46,6 +48,11 @@ namespace eos {
 			USBDeviceClassCDC(USBDeviceDriver *drvUSBD, CDCInterface *interface);
 
 			void initialize();
+
+			bool setTxBuffer(uint8_t *buffer, unsigned length);
+			bool setRxBuffer(uint8_t *buffer);
+			bool transmitPacket();
+			bool receivePacket();
 
 			int8_t classInit(uint8_t cfgidx) override;
 			int8_t classDeinit(uint8_t cfgidx) override;

@@ -51,6 +51,7 @@ static void initializeMPU() {
 static void initializeClock() {
 
 	bool ok;
+
 	RCC_ClkInitTypeDef RCC_ClkInitStruct;
 	RCC_OscInitTypeDef RCC_OscInitStruct;
 

@@ -24,9 +24,7 @@ USBDeviceClassMSC::USBDeviceClassMSC(
 void USBDeviceClassMSC::initialize() {
 
 	auto handle = _drvUSBD->getHandle();
-
 	USBD_RegisterClass(handle, this);
-	handle->pUserData[handle->classId] = _storage;
 }
 
 

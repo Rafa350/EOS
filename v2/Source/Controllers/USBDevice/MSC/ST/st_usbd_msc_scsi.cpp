@@ -54,7 +54,6 @@ int8_t SCSI_ProcessCmd(
 	uint8_t lun,
 	uint8_t *cmd) {
 
-	int8_t ret;
 	USBD_MSC_BOT_HandleTypeDef *hmsc = (USBD_MSC_BOT_HandleTypeDef *)pdev->pClassDataCmsit[pdev->classId];
 
 	if (hmsc == NULL)
