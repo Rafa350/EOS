@@ -4,6 +4,7 @@
 
 
 #include "eos.h"
+#include "Controllers/USBDevice/eosUSBDefinitions.h"
 #include "Controllers/USBDevice/ST/st_usbd_def.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/eosResults.h"
@@ -19,6 +20,16 @@ namespace eos {
     using USBDeviceClassList = IntrusiveForwardList<USBDeviceClass, 0>;
     using USBDeviceClassListNode = IntrusiveForwardListNode<USBDeviceClass, 0>;
 
+	struct USBDeviceDescriptors {
+		uint8_t *device;
+		uint8_t *langID;
+		uint8_t *manufacturer;
+		uint8_t *product;
+		uint8_t *serial;
+		uint8_t *configuration;
+		uint8_t *interface;
+	};
+
 	class USBDeviceDriver final {
 		public:
 			enum class State {
@@ -29,18 +40,22 @@ namespace eos {
 			};
 
 		private:
+			const USBDeviceDescriptors * const _descriptors;
 			State _state;
 			USBDeviceClassList _classes;
 			USBD_HandleTypeDef _usbd;
 
 		public:
-			USBDeviceDriver();
+			USBDeviceDriver(const USBDeviceDescriptors *descriptors);
 
 			Result registerClass(USBDeviceClass *devClass);
 
 			Result initialize(USBD_DescriptorsTypeDef *descriptors);
 			Result start();
 			Result stop();
+
+			bool getDeviceDescriptor(uint8_t* &data, unsigned &length);
+			bool getLangIDDescriptor(uint8_t* &data, unsigned &length);
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }

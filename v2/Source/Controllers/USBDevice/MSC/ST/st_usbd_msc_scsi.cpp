@@ -1164,7 +1164,7 @@ static int8_t SCSI_ProcessWrite(USBD_HandleTypeDef *pdev, uint8_t lun)
 
   if (p_scsi_blk->len == 0U)
   {
-    MSC_BOT_SendCSW(pdev, USBD_CSW_CMD_PASSED);
+    xMSC_BOT_SendCSW(pdev, USBD_CSW_CMD_PASSED);
   }
   else
   {

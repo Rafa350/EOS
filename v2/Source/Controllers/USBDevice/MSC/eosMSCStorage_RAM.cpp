@@ -90,6 +90,7 @@ int8_t MSCStorage_RAM::read(
 	unsigned len = blkCount * __blockSize;
 	uint8_t *ptr = _storage + (blkStart * __blockSize);
 
+	// TODO: Implementar-ho amb DMA
 	memcpy(buffer, ptr, len);
 
 	return 0;
@@ -105,6 +106,7 @@ int8_t MSCStorage_RAM::write(
 	unsigned len = blkCount * __blockSize;
 	uint8_t *ptr = _storage + (blkStart * __blockSize);
 
+	// TODO: Implementar-ho amb DMA
 	memcpy(ptr, buffer, len);
 
 	return 0;

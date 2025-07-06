@@ -1,30 +1,9 @@
 #include "eos.h"
 #include "Controllers/USBDevice/CDC/eosCDCInterface_VCOM.h"
-#include "Controllers/USBDevice/CDC/ST/st_usbd_cdc.h"
+#include "Controllers/USBDevice/CDC/eosCDCDefinitions.h"
 
 
 using namespace eos;
-
-
-/* Private typedef ----------------------------------------------------------- */
-/* Private define ------------------------------------------------------------ */
-#define APP_RX_DATA_SIZE  2048
-#define APP_TX_DATA_SIZE  2048
-
-/* Private macro ------------------------------------------------------------- */
-/* Private variables --------------------------------------------------------- */
-USBD_CDC_LineCodingTypeDef LineCoding = {
-  115200,                       /* baud rate */
-  0x00,                         /* stop bits-1 */
-  0x00,                         /* parity - none */
-  0x08                          /* nb. of bits 8 */
-};
-
-uint8_t UserRxBuffer[APP_RX_DATA_SIZE]; /* Received Data over USB are stored in
-                                         * this buffer */
-uint8_t UserTxBuffer[APP_TX_DATA_SIZE]; /* Received Data over UART (CDC
-                                         * interface) are stored in this buffer
-                                         */
 
 
 /// ----------------------------------------------------------------------
@@ -33,8 +12,10 @@ uint8_t UserTxBuffer[APP_TX_DATA_SIZE]; /* Received Data over UART (CDC
 int8_t CDCInterface_VCOM::initialize(
 	USBDeviceClassCDC *cdc) {
 
-	cdc->setTxBuffer(UserTxBuffer, 0);
-	cdc->setRxBuffer(UserRxBuffer);
+	_lineCoding.dwDTERate = 115200;
+	_lineCoding.bCharFormat = 0;
+	_lineCoding.bParityType = 0;
+	_lineCoding.bDataBits = 0;
 
 	return USBD_OK;
 }
@@ -51,52 +32,44 @@ int8_t CDCInterface_VCOM::deinitialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa les comandes de control
-/// \param    cmd: La comanda.
+/// \brief    Procesa les solicituts
+/// \param    requestID: Codi de la solicitut.
 /// \param    data: Buffer de dades.
 /// \param    dataSize: Tamany del buffer de dades.
 ///
 int8_t CDCInterface_VCOM::control(
-	ControlCmd cc,
+	CDCRequestID requestID,
 	uint8_t *data,
-	uint16_t dataSize) {
+	unsigned dataSize) {
 
-	switch (cc) {
-		case ControlCmd::SEND_ENCAPSULATED_COMMAND:
+	switch (requestID) {
+		case CDCRequestID::sendEncapsulatedCommand:
 			break;
 
-		case ControlCmd::GET_ENCAPSULATED_RESPONSE:
+		case CDCRequestID::getEncapsulatedResponse:
 			break;
 
-		case ControlCmd::SET_COMM_FEATURE:
+		case CDCRequestID::setCommFeature:
 			break;
 
-		case ControlCmd::GET_COMM_FEATURE:
+		case CDCRequestID::getCommFeature:
 			break;
 
-		case ControlCmd::CLEAR_COMM_FEATURE:
+		case CDCRequestID::clearCommFeature:
 			break;
 
-		case ControlCmd::SET_LINE_CODING:
+		case CDCRequestID::setLineCoding:
+			setLineCoding(data, dataSize);
 			break;
 
-		case ControlCmd::GET_LINE_CODING:
-			if (dataSize < 7)
-				return -1;
-
-			data[0] = (uint8_t) (LineCoding.bitrate);
-			data[1] = (uint8_t) (LineCoding.bitrate >> 8);
-			data[2] = (uint8_t) (LineCoding.bitrate >> 16);
-			data[3] = (uint8_t) (LineCoding.bitrate >> 24);
-			data[4] = LineCoding.format;
-			data[5] = LineCoding.paritytype;
-			data[6] = LineCoding.datatype;
+		case CDCRequestID::getLineCoding:
+			getLineCoding(data, dataSize);
 			break;
 
-		case ControlCmd::SET_CONTROL_LINE_STATE:
+		case CDCRequestID::setControlLineState:
 			break;
 
-		case ControlCmd::SEND_BREAK:
+		case CDCRequestID::sendBreak:
 			break;
 
 		default:
@@ -108,23 +81,49 @@ int8_t CDCInterface_VCOM::control(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica que hi han dades disponibles
+/// \brief    Procesa la solicitut 'SetLineCoding'
+/// \param    data: Les dades.
+/// \param    dataSize: Tamany de les dades.
 ///
-int8_t CDCInterface_VCOM::rxDataAvailable(
+void CDCInterface_VCOM::setLineCoding(
 	uint8_t *data,
-	uint32_t *length) {
+	unsigned dataSize) {
 
-	return 0;
+	memcpy(&_lineCoding, data, sizeof(_lineCoding));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la solicitut 'GetLineCoding'
+/// \param    data: Les dades.
+/// \param    dataSize: Tamany de les dades.
+///
+void CDCInterface_VCOM::getLineCoding(
+	uint8_t *data,
+	unsigned dataSize) {
+
+	memcpy(data, &_lineCoding, dataSize);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que hi han dades disponibles
+/// \param    data: Buffer de dades.
+/// \param    length: Longitut de les dades en bytes.
+///
+void CDCInterface_VCOM::rxDataAvailable(
+	const uint8_t *buffer,
+	unsigned length) {
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de la transmissio.
 ///
-int8_t CDCInterface_VCOM::txDataCompleted(
-	uint8_t *data,
-	uint32_t *length,
+void CDCInterface_VCOM::txDataCompleted(
+	const uint8_t *buffer,
+	unsigned length,
 	uint8_t epnum) {
 
-	return 0;
 }

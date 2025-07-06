@@ -11,12 +11,23 @@
 #include "System/Core/eosTask.h"
 #include "Services/eosLedService.h"
 
+#include "stm32746g_discovery.h"
+#include "stm32746g_discovery_sd.h"
+
 #include "appApplication.h"
 
-#include "main.h"
 
+extern uint8_t USBD_DeviceDesc[1];
+extern uint8_t USBD_LangIDDesc[1];
 
 using namespace app;
+using namespace eos;
+
+
+static const USBDeviceDescriptors __descriptors {
+	USBD_DeviceDesc,
+	USBD_LangIDDesc
+};
 
 
 #if defined(USE_CDC_DEVICE)
@@ -58,7 +69,7 @@ void MyApplication::onExecute() {
 	//auto mainService = new MainService();
 	//addService(mainService);
 
-	auto drvUSBD = new eos::USBDeviceDriver();
+	auto drvUSBD = new eos::USBDeviceDriver(&__descriptors);
 
 #if defined(USE_CDC_DEVICE)
 	auto interface = new eos::CDCInterface_VCOM();
@@ -82,13 +93,19 @@ void MyApplication::onExecute() {
 
 	drvUSBD->start();
 
-	const char * text = "Capullo total\r\n";
+#if defined(USE_CDC_DEVICE)
+	const char *txBuffer = "Capullo total\r\n";
+	uint8_t rxBuffer[5];
+#endif
 
 	while (true) {
-		eos::Task::delay(1000);
 #if defined(USE_CDC_DEVICE)
-	    devClassCDC->setTxBuffer((uint8_t*) text, strlen(text));
-	    devClassCDC->transmitPacket();
+	    devClassCDC->receive(rxBuffer, sizeof(rxBuffer));
+	    if (devClassCDC->wait(1000) == eos::Results::success) {
+	    	if (devClassCDC->transmit((uint8_t*) txBuffer, strlen(txBuffer)) == eos::Results::success) {
+	    		devClassCDC->wait(1000);
+	    	}
+	    }
 #endif
 	}
 }
@@ -199,26 +216,4 @@ extern "C" void HAL_Delay(uint32_t delay) {
 		if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
 			delay--;
 	}
-}
-
-#if defined(USE_MSC_DEVICE)
-static uint8_t __usbdMemory[sizeof(USBD_MSC_BOT_HandleTypeDef)];
-#elif defined(USE_CDC_DEVICE)
-static uint8_t __usbdMemory[sizeof(USBD_CDC_HandleTypeDef)];
-#endif
-static unsigned __usbAllocCount = 0;
-
-extern "C" void* appUSBDmalloc(size_t size) {
-
-	if (__usbAllocCount > 0)
-		while (true)
-			continue;
-
-	__usbAllocCount++;
-	return __usbdMemory;
-}
-
-extern "C" void appUSBDfree(void *p) {
-
-	__usbAllocCount--;
 }

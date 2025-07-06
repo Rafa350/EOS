@@ -18,18 +18,9 @@
 /* MSC Class Config */
 #define MSC_MEDIA_PACKET                      512
 
-#ifdef __cplusplus
-extern "C" {
-	void* appUSBDmalloc(size_t size);
-	void appUSBDfree(void *p);
-};
-#endif
 
-#define USBD_malloc               appUSBDmalloc
-#define USBD_free                 appUSBDfree
-#define USBD_memset               memset
-#define USBD_memcpy               memcpy
 #define USBD_Delay                HAL_Delay
+
 
 /* DEBUG macros */
 #if (USBD_DEBUG_LEVEL > 0)

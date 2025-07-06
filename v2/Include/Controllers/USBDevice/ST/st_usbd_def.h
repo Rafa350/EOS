@@ -2,12 +2,15 @@
 #ifndef __st_usbd_def__
 #define __st_usbd_def__
 
+
 namespace eos {
 
 	class USBDeviceClass;
+	class USBDeviceDriver;
 }
 
 #include "usbd_conf.h"
+#include "Controllers/USBDevice/eosUSBDefinitions.h"
 
 
 #ifndef NULL
@@ -156,17 +159,6 @@ namespace eos {
 #define USBD_DESC_ECM_BCD_HIGH                          0x10U
 #endif /* USE_USBD_COMPOSITE */
 
-
-
-
-typedef  struct  usb_setup_req
-{
-  uint8_t   bmRequest;
-  uint8_t   bRequest;
-  uint16_t  wValue;
-  uint16_t  wIndex;
-  uint16_t  wLength;
-} USBD_SetupReqTypedef;
 
 typedef struct
 {
@@ -346,6 +338,7 @@ typedef struct _USBD_HandleTypeDef
   USBD_SetupReqTypedef    request;
   USBD_DescriptorsTypeDef *pDesc;
   eos::USBDeviceClass     *pClass[USBD_MAX_SUPPORTED_CLASS];
+  eos::USBDeviceDriver    *_instance;
   void                    *pClassData;
   void                    *pClassDataCmsit[USBD_MAX_SUPPORTED_CLASS];
   void                    *pUserData[USBD_MAX_SUPPORTED_CLASS];
@@ -354,9 +347,6 @@ typedef struct _USBD_HandleTypeDef
   void                    *pConfDesc;
   uint32_t                classId;
   uint32_t                NumClasses;
-#ifdef USE_USBD_COMPOSITE
-  USBD_CompositeElementTypeDef tclasslist[USBD_MAX_SUPPORTED_CLASS];
-#endif /* USE_USBD_COMPOSITE */
 #if (USBD_USER_REGISTER_CALLBACK == 1U)
   void (* DevStateCallback)(uint8_t dev_state, uint8_t cfgidx);                    /*!< User Notification callback      */
 #endif /* USBD_USER_REGISTER_CALLBACK */
@@ -379,10 +369,6 @@ typedef enum
   RESPONSE_AVAILABLE = 0x01,
   CONNECTION_SPEED_CHANGE = 0x2A
 } USBD_CDC_NotifCodeTypeDef;
-/**
-  * @}
-  */
-
 
 
 /** @defgroup USBD_DEF_Exported_Macros
@@ -452,7 +438,6 @@ __STATIC_INLINE uint16_t SWAPBYTE(uint8_t *addr)
 #endif /* __CC_ARM */
 #endif /* __ALIGN_BEGIN */
 #endif /* __GNUC__ */
-
 
 #endif // __st_usbd_def__
 

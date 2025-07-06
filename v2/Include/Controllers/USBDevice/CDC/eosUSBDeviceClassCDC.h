@@ -5,54 +5,68 @@
 
 #include "eos.h"
 #include "Controllers/USBDevice/eosUSBDeviceDriver.h"
-#include "Controllers/USBDevice/CDC/ST/st_usbd_cdc.h"
+#include "Controllers/USBDevice/CDC/eosCDCDefinitions.h"
+#include "System/eosResults.h"
 
 
 namespace eos {
 
 	class USBDeviceClassCDC;
 
-	class CDCInterface {
-		public :
-			enum class ControlCmd: uint8_t {
-				SEND_ENCAPSULATED_COMMAND = 0x00,
-				GET_ENCAPSULATED_RESPONSE = 0x01,
-				SET_COMM_FEATURE = 0x02,
-				GET_COMM_FEATURE = 0x03,
-				CLEAR_COMM_FEATURE = 0x04,
-				SET_LINE_CODING = 0x20,
-				GET_LINE_CODING = 0x21,
-				SET_CONTROL_LINE_STATE = 0x22,
-				SEND_BREAK = 0x23
-			};
+	struct CDCLineCoding {
+		uint32_t dwDTERate;
+		uint8_t bCharFormat;
+		uint8_t bParityType;
+		uint8_t bDataBits;
+	};
 
+	class CDCInterface {
 		public:
 			virtual int8_t initialize(USBDeviceClassCDC *cdc) = 0;
 			virtual int8_t deinitialize(USBDeviceClassCDC *cdc) = 0;
 
-			virtual int8_t control(ControlCmd cc, uint8_t *data, uint16_t dataSize) = 0;
+			virtual int8_t control(CDCRequestID requestID, uint8_t *data, unsigned dataSize) = 0;
 
-			virtual int8_t rxDataAvailable(uint8_t *data, uint32_t *length) = 0;
-			virtual int8_t txDataCompleted(uint8_t *data, uint32_t *length, uint8_t epnum) = 0;
+			virtual void rxDataAvailable(const uint8_t *buffer, unsigned length) = 0;
+			virtual void txDataCompleted(const uint8_t *buffer, unsigned length, uint8_t epnum) = 0;
 	};
 
 	class USBDeviceClassCDC final: public USBDeviceClass {
 		private:
-			CDCInterface *_interface;
-			USBD_CDC_HandleTypeDef _cdc;
+			enum class State {
+				reset,
+				idle,
+				transmiting,
+				receiving
+			};
+
+		private:
 			static constexpr uint8_t _inEpAdd  = CDC_IN_EP;
 			static constexpr uint8_t _outEpAdd = CDC_OUT_EP;
 			static constexpr uint8_t _cmdEpAdd = CDC_CMD_EP;
+
+		private:
+			CDCInterface *_interface;
+			USBD_CDC_HandleTypeDef _cdc;
+			volatile State _state; // S'actualitza per interrupcions
+			const uint8_t *_txBuffer;
+			unsigned _txLength;
+			uint8_t *_rxBuffer;
+			unsigned _rxBufferSize;
+			unsigned _rxLength;
+			CDCRequestID _req_requestID;
+			uint8_t _req_length;
 
 		public:
 			USBDeviceClassCDC(USBDeviceDriver *drvUSBD, CDCInterface *interface);
 
 			void initialize();
 
-			bool setTxBuffer(uint8_t *buffer, unsigned length);
-			bool setRxBuffer(uint8_t *buffer);
-			bool transmitPacket();
-			bool receivePacket();
+			Result transmit(const uint8_t *buffer, unsigned length);
+			Result receive(uint8_t *buffer, unsigned bufferSize);
+			Result wait(unsigned timeout);
+
+			inline bool isBusy() const { return _state != State::idle; }
 
 			int8_t classInit(uint8_t cfgidx) override;
 			int8_t classDeinit(uint8_t cfgidx) override;

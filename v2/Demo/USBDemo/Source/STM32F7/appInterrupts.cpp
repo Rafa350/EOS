@@ -1,10 +1,9 @@
 #include "eos.h"
 #include "HTL/STM32/htlUART.h"
 
-#include "main.h"
-
 
 extern "C" void xPortSysTickHandler(void);
+
 
 extern PCD_HandleTypeDef hpcd;
 extern SD_HandleTypeDef uSdHandle;

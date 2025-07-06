@@ -8,8 +8,11 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
+/// \param    descriptors: Els descriptors del dispositiu
 ///
-USBDeviceDriver::USBDeviceDriver() :
+USBDeviceDriver::USBDeviceDriver(
+	const USBDeviceDescriptors *descriptors) :
+	_descriptors {descriptors},
 	_state {State::reset} {
 }
 
@@ -42,6 +45,9 @@ Result USBDeviceDriver::initialize(
 	if (_state != State::reset)
 		return Results::errorState;
 
+	// TODO: Provisional
+	_usbd._instance = this;
+
 	if (USBD_Init(&_usbd, descriptors, 0) != USBD_StatusTypeDef::USBD_OK)
 		return Results::error;
 
@@ -63,7 +69,7 @@ Result USBDeviceDriver::start() {
 	if (_state != State::ready)
 		return Results::errorState;
 
-	if (USBD_Start(&_usbd) != USBD_StatusTypeDef::USBD_OK)
+	if (USBD_LL_Start(&_usbd) != USBD_StatusTypeDef::USBD_OK)
 		return Results::error;
 
 	_state = State::running;
@@ -81,10 +87,49 @@ Result USBDeviceDriver::stop() {
 	if (_state != State::running)
 		return Results::errorState;
 
-	if (USBD_Stop(&_usbd) != USBD_StatusTypeDef::USBD_OK)
+	if (USBD_LL_Stop(&_usbd) != USBD_StatusTypeDef::USBD_OK)
 		return Results::error;
+
+	while (!_classes.empty()) {
+		auto cls = _classes.front();
+		cls->classDeinit(_usbd.dev_config);
+		_classes.remove(cls);
+	}
 
 	_state = State::ready;
 
 	return Results::success;
+}
+
+
+bool USBDeviceDriver::getDeviceDescriptor(
+	uint8_t* &data,
+	unsigned &length) {
+
+	if (_descriptors != nullptr) {
+		data = _descriptors->device;
+		if (data != nullptr) {
+			length = data[0];
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool USBDeviceDriver::getLangIDDescriptor(
+	uint8_t* &data,
+	unsigned &length) {
+
+	if (_descriptors != nullptr) {
+		data = _descriptors->langID;
+		if (data != nullptr) {
+			length = data[0];
+			return true;
+		}
+	}
+
+	return false;
+
 }

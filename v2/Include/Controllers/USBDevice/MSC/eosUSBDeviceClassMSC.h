@@ -5,10 +5,11 @@
 
 #include "eos.h"
 #include "Controllers/USBDevice/eosUSBDeviceDriver.h"
-#include "Controllers/USBDevice/MSC/ST/st_usbd_msc.h"
+#include "Controllers/USBDevice/MSC/eosMSCDefinitions.h"
 
 
 namespace eos {
+
 
 	class MSCStorage {
 		public:
@@ -25,9 +26,29 @@ namespace eos {
 			virtual int8_t write(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
 	};
 
+	class SCSIProcessor;
+
 	class USBDeviceClassMSC final: public USBDeviceClass {
 		private:
 			MSCStorage *_storage;
+			USBD_MSC_BOT_HandleTypeDef _msc;
+			SCSIProcessor *_scsi;
+			static constexpr uint8_t _inEpAdd  = MSC_EPIN_ADDR;
+			static constexpr uint8_t _outEpAdd = MSC_EPOUT_ADDR;
+
+		private:
+			// BOT layer
+			void botInit();
+			void botDeInit();
+			void botReset();
+			void botDataIn(uint8_t epnum);
+			void botDataOut(uint8_t epnum);
+			void botSendCSW(uint8_t CSW_Status);
+			void botCplClrFeature(uint8_t epnum);
+			void botSendData(uint8_t *buffer, unsigned length);
+			void botCBWDecode();
+			void botAbort();
+
 
 		public:
 			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, MSCStorage *storage);

@@ -1,9 +1,8 @@
 #pragma once
-#ifndef __USBD_CORE_H
-#define __USBD_CORE_H
+#ifndef __st_usbd_core__
+#define __st_usbd_core__
 
 
-//#include "usbd_conf.h"
 #include "Controllers/USBDevice/ST/st_usbd_def.h"
 #include "Controllers/USBDevice/ST/st_usbd_ioreq.h"
 #include "Controllers/USBDevice/ST/st_usbd_ctlreq.h"
@@ -11,25 +10,20 @@
 
 #ifndef USBD_DEBUG_LEVEL
 #define USBD_DEBUG_LEVEL           0U
-#endif /* USBD_DEBUG_LEVEL */
-#define USBD_SOF          USBD_LL_SOF
+#endif
+#define USBD_SOF                   USBD_LL_SOF
+
 
 USBD_StatusTypeDef USBD_Init(USBD_HandleTypeDef *pdev, USBD_DescriptorsTypeDef *pdesc, uint8_t id);
 USBD_StatusTypeDef USBD_DeInit(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_Start(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_Stop(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_RegisterClass(USBD_HandleTypeDef *pdev, eos::USBDeviceClass *pclass);
+
+
 #if (USBD_USER_REGISTER_CALLBACK == 1U)
-USBD_StatusTypeDef USBD_RegisterDevStateCallback(USBD_HandleTypeDef *pdev, USBD_DevStateCallbackTypeDef pUserCallback);
+	USBD_StatusTypeDef USBD_RegisterDevStateCallback(USBD_HandleTypeDef *pdev, USBD_DevStateCallbackTypeDef pUserCallback);
 #endif /* USBD_USER_REGISTER_CALLBACK */
-
-#ifdef USE_USBD_COMPOSITE
-USBD_StatusTypeDef  USBD_RegisterClassComposite(USBD_HandleTypeDef *pdev, USBD_ClassTypeDef *pclass,
-                                                USBD_CompositeClassTypeDef classtype, uint8_t *EpAddr);
-
-USBD_StatusTypeDef  USBD_UnRegisterClassComposite(USBD_HandleTypeDef *pdev);
-uint8_t USBD_CoreGetEPAdd(USBD_HandleTypeDef *pdev, uint8_t ep_dir, uint8_t ep_type, uint8_t ClassId);
-#endif /* USE_USBD_COMPOSITE */
 
 uint8_t USBD_CoreFindIF(USBD_HandleTypeDef *pdev, uint8_t index);
 uint8_t USBD_CoreFindEP(USBD_HandleTypeDef *pdev, uint8_t index);
@@ -54,14 +48,12 @@ USBD_StatusTypeDef USBD_LL_IsoOUTIncomplete(USBD_HandleTypeDef *pdev, uint8_t ep
 USBD_StatusTypeDef USBD_LL_DevConnected(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_LL_DevDisconnected(USBD_HandleTypeDef *pdev);
 
-/* USBD Low Level Driver */
 USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_LL_DeInit(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_LL_Start(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_LL_Stop(USBD_HandleTypeDef *pdev);
 
-USBD_StatusTypeDef USBD_LL_OpenEP(USBD_HandleTypeDef *pdev, uint8_t ep_addr,
-                                  uint8_t ep_type, uint16_t ep_mps);
+USBD_StatusTypeDef USBD_LL_OpenEP(USBD_HandleTypeDef *pdev, uint8_t ep_addr, uint8_t ep_type, uint16_t ep_mps);
 
 USBD_StatusTypeDef USBD_LL_CloseEP(USBD_HandleTypeDef *pdev, uint8_t ep_addr);
 USBD_StatusTypeDef USBD_LL_FlushEP(USBD_HandleTypeDef *pdev, uint8_t ep_addr);
@@ -88,4 +80,5 @@ void *USBD_GetEpDesc(uint8_t *pConfDesc, uint8_t EpAddr);
 USBD_DescHeaderTypeDef *USBD_GetNextDesc(uint8_t *pbuf, uint16_t *ptr);
 
 
-#endif /* __USBD_CORE_H */
+
+#endif

@@ -1,9 +1,11 @@
 #pragma once
-#ifndef __USBD_MSC_SCSI_H
-#define __USBD_MSC_SCSI_H
+#ifndef __eosSCSIProcessor__
+#define __eosSCSIProcessor__
 
 
-#include "Controllers/USBDevice/ST/st_usbd_def.h"
+#include "eos.h"
+#include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
+#include "Controllers/USBDevice/MSC/eosMSCDefinitions.h"
 
 
 #define SENSE_LIST_DEEPTH                           4U
@@ -77,21 +79,56 @@
 #define SCSI_MEDIUM_EJECTED                         0x02U
 
 
-typedef struct _SENSE_ITEM {
-  uint8_t Skey;
-  union  {
-    struct _ASCs {
-      uint8_t ASC;
-      uint8_t ASCQ;
-    } b;
-    uint8_t ASC;
-    uint8_t *pData;
-  } w;
-} USBD_SCSI_SenseTypeDef;
+namespace eos {
+
+	class MSCStorage;
+
+	class SCSIProcessor {
+		private:
+			MSCStorage *_storage;
+			USBD_HandleTypeDef *_pdev;
+			uint8_t _inEpAdd;
+			uint8_t _outEpAdd;
+			USBD_MSC_BOT_HandleTypeDef *_msc;
+			USBD_SCSI_SenseTypeDef _sense[SENSE_LIST_DEEPTH];
+			unsigned _senseTail;
+			unsigned _senseHead;
+            USBD_MSC_BOT_LUN_TypeDef _scsi_blk[MSC_BOT_MAX_LUN];
+			unsigned _mediumState;
+
+		private:
+			int8_t testUnitReady(uint8_t lun, uint8_t *params);
+			int8_t inquiry(uint8_t lun, uint8_t *params);
+			int8_t readFormatCapacity(uint8_t lun, uint8_t *params);
+			int8_t readCapacity10(uint8_t lun, uint8_t *params);
+			int8_t readCapacity16(uint8_t lun, uint8_t *params);
+			int8_t requestSense(uint8_t lun, uint8_t *params);
+			int8_t startStopUnit(int8_t lun, uint8_t *params);
+			int8_t allowPreventRemovable(uint8_t lun, uint8_t *params);
+			int8_t modeSense6(uint8_t lun, uint8_t *params);
+			int8_t modeSense10(uint8_t lun, uint8_t *params);
+			int8_t write10(uint8_t lun, uint8_t *params);
+			int8_t write12(uint8_t lun, uint8_t *params);
+			int8_t read10(uint8_t lun, uint8_t *params);
+			int8_t read12(uint8_t lun, uint8_t *params);
+			int8_t verify10(uint8_t lun, uint8_t *params);
+			int8_t reportLuns(uint8_t lun, uint8_t *params);
+			int8_t receiveDiagnosticResults(uint8_t lun, uint8_t *params);
+			int8_t checkAddressRange(uint8_t lun, uint32_t blk_offset, uint32_t blk_nbr);
+			int8_t processRead(uint8_t lun);
+			int8_t processWrite(uint8_t lun);
+			int8_t updateBotData(const uint8_t *buffer, uint16_t length);
+
+		public:
+			SCSIProcessor(MSCStorage *storage, USBD_HandleTypeDef *_pdev,
+				uint8_t inEpAddr, uint8_t outEpAddr, USBD_MSC_BOT_HandleTypeDef *msc);
+
+			void initialize();
+			int8_t processCmd(uint8_t lun, uint8_t *cmd);
+			void senseCode(uint8_t lun, uint8_t sKey, uint8_t ASC);
+	};
+
+}
 
 
-int8_t SCSI_ProcessCmd(USBD_HandleTypeDef *pdev, uint8_t lun, uint8_t *cmd);
-void SCSI_SenseCode(USBD_HandleTypeDef *pdev, uint8_t lun, uint8_t sKey, uint8_t ASC);
-
-
-#endif // __USBD_MSC_SCSI_H
+#endif // __eosSCSIProcessor__
