@@ -316,8 +316,7 @@ typedef struct
 
 
 /* USB Device handle structure */
-typedef struct _USBD_HandleTypeDef
-{
+struct USBD_HandleTypeDef {
   uint8_t                 id;
   uint32_t                dev_config;
   uint32_t                dev_default_config;
@@ -350,7 +349,7 @@ typedef struct _USBD_HandleTypeDef
 #if (USBD_USER_REGISTER_CALLBACK == 1U)
   void (* DevStateCallback)(uint8_t dev_state, uint8_t cfgidx);                    /*!< User Notification callback      */
 #endif /* USBD_USER_REGISTER_CALLBACK */
-} USBD_HandleTypeDef;
+};
 
 #if (USBD_USER_REGISTER_CALLBACK == 1U)
 typedef void (*USBD_DevStateCallbackTypeDef)(uint8_t dev_state, uint8_t cfgidx);   /*!< pointer to User callback function  */

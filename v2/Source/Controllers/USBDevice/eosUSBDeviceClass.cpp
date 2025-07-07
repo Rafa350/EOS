@@ -14,3 +14,4 @@ USBDeviceClass::USBDeviceClass(
 
 	_drvUSBD {drvUSBD} {
 }
+

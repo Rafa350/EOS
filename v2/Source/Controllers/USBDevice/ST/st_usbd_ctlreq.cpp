@@ -25,12 +25,14 @@ static uint8_t USBD_GetLen(uint8_t *buf);
   * @param  req: usb request
   * @retval status
   */
-USBD_StatusTypeDef USBD_StdDevReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
-{
+USBD_StatusTypeDef USBD_StdDevReq(
+	USBD_HandleTypeDef *pdev,
+	USBD_SetupReqTypedef *req) {
+
   USBD_StatusTypeDef ret = USBD_OK;
 
-  switch (req->requestType & USB_REQ_TYPE_MASK)
-  {
+  switch (req->requestType & USB_REQ_TYPE_MASK) {
+
     case USB_REQ_TYPE_CLASS:
     case USB_REQ_TYPE_VENDOR:
       ret = (USBD_StatusTypeDef) pdev->pClass[pdev->classId]->classSetup(req);
@@ -337,9 +339,9 @@ static void USBD_GetDescriptor(
 	USBD_HandleTypeDef *pdev,
 	USBD_SetupReqTypedef *req) {
 
-	uint16_t len = 0U;
-	uint8_t *pbuf = NULL;
-	uint8_t err = 0U;
+	uint16_t len = 0;
+	uint8_t *pbuf = nullptr;
+	uint8_t err = 0;
 
     switch (req->value >> 8) {
 #if ((USBD_LPM_ENABLED == 1U) || (USBD_CLASS_BOS_ENABLED == 1U))
@@ -356,13 +358,12 @@ static void USBD_GetDescriptor(
       break;
 #endif /* (USBD_LPM_ENABLED == 1U) || (USBD_CLASS_BOS_ENABLED == 1U) */
         case USB_DESC_TYPE_DEVICE: {
-        	/**********************************/
         	uint8_t *xpbuf;
         	unsigned xlen;
             pdev->_instance->getDeviceDescriptor(xpbuf, xlen);
-            pbuf = pdev->pDesc->GetDeviceDescriptor(pdev->dev_speed, &len);
-            eosAssert(pbuf == xpbuf);
-            /**********************************/
+            pbuf = xpbuf;
+            len = xlen;
+            //pbuf = pdev->pDesc->GetDeviceDescriptor(pdev->dev_speed, &len);
         }
         break;
 
@@ -379,30 +380,56 @@ static void USBD_GetDescriptor(
 
         case USB_DESC_TYPE_STRING:
         	switch ((uint8_t)(req->value)) {
-        		case USBD_IDX_LANGID_STR:
+        		case USBD_IDX_LANGID_STR: {
+                	uint8_t *xpbuf;
+                	unsigned xlen;
+        			if (pdev->_instance->getLangIDStrDescriptor(xpbuf, xlen)) {
+        				pbuf = xpbuf;
+        				len = xlen;
+        			}
+        			/*
         			if (pdev->pDesc->GetLangIDStrDescriptor != NULL) {
         				pbuf = pdev->pDesc->GetLangIDStrDescriptor(pdev->dev_speed, &len);
         			}
+        			*/
         			else {
         				USBD_CtlError(pdev, req);
         				err++;
         			}
         			break;
+        		}
 
-        		case USBD_IDX_MFC_STR:
+        		case USBD_IDX_MFC_STR: {
+        			uint8_t *xpbuf;
+        			unsigned xlen;
+        			if (pdev->_instance->getManufacturerStrDescriptor(xpbuf, xlen)) {
+        				pbuf = xpbuf;
+        				len = xlen;
+        			}
+        			/*
         			if (pdev->pDesc->GetManufacturerStrDescriptor != NULL) {
         				pbuf = pdev->pDesc->GetManufacturerStrDescriptor(pdev->dev_speed, &len);
         			}
+        			*/
         			else {
         				USBD_CtlError(pdev, req);
         				err++;
         			}
         			break;
+        		}
 
         		case USBD_IDX_PRODUCT_STR:
+        			uint8_t *xpbuf;
+        			unsigned xlen;
+        			if (pdev->_instance->getProductStrDescriptor(xpbuf, xlen)) {
+        				pbuf = xpbuf;
+        				len = xlen;
+        			}
+        			/*
         			if (pdev->pDesc->GetProductStrDescriptor != NULL) {
         				pbuf = pdev->pDesc->GetProductStrDescriptor(pdev->dev_speed, &len);
         			}
+        			*/
         			else {
         				USBD_CtlError(pdev, req);
         				err++;

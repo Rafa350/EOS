@@ -23,11 +23,8 @@ namespace eos {
 	struct USBDeviceDescriptors {
 		uint8_t *device;
 		uint8_t *langID;
-		uint8_t *manufacturer;
-		uint8_t *product;
-		uint8_t *serial;
-		uint8_t *configuration;
-		uint8_t *interface;
+		const char *manufacturer;
+		const char *product;
 	};
 
 	class USBDeviceDriver final {
@@ -45,6 +42,9 @@ namespace eos {
 			USBDeviceClassList _classes;
 			USBD_HandleTypeDef _usbd;
 
+		private:
+			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
+
 		public:
 			USBDeviceDriver(const USBDeviceDescriptors *descriptors);
 
@@ -54,8 +54,12 @@ namespace eos {
 			Result start();
 			Result stop();
 
-			bool getDeviceDescriptor(uint8_t* &data, unsigned &length);
-			bool getLangIDDescriptor(uint8_t* &data, unsigned &length);
+			USBD_StatusTypeDef setClassConfig(uint8_t cfgidx);
+
+			bool getDeviceDescriptor(uint8_t* &data, unsigned &length) const;
+			bool getLangIDStrDescriptor(uint8_t* &data, unsigned &length) const;
+			bool getManufacturerStrDescriptor(uint8_t* &data, unsigned &length) const;
+			bool getProductStrDescriptor(uint8_t* &data, unsigned &length) const;
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }

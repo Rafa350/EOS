@@ -102,9 +102,27 @@ Result USBDeviceDriver::stop() {
 }
 
 
+USBD_StatusTypeDef USBDeviceDriver::setClassConfig(
+	uint8_t cfgidx) {
+
+	USBD_StatusTypeDef ret = USBD_OK;
+
+	for (auto cls: _classes)
+		cls->classInit(cfgidx);
+
+	return ret;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el descriptor del dispositiu.
+/// \param    data: Punter al descriptor.
+/// \param    length: Longitutu en bytes del descriptor.
+/// \return   True si tot es correcte.
+///
 bool USBDeviceDriver::getDeviceDescriptor(
 	uint8_t* &data,
-	unsigned &length) {
+	unsigned &length) const {
 
 	if (_descriptors != nullptr) {
 		data = _descriptors->device;
@@ -118,9 +136,15 @@ bool USBDeviceDriver::getDeviceDescriptor(
 }
 
 
-bool USBDeviceDriver::getLangIDDescriptor(
+/// ----------------------------------------------------------------------
+/// \brief    Obte el descriptor de llenguatge
+/// \param    data: Punter al descriptor.
+/// \param    length: Longitutu en bytes del descriptor.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::getLangIDStrDescriptor(
 	uint8_t* &data,
-	unsigned &length) {
+	unsigned &length) const {
 
 	if (_descriptors != nullptr) {
 		data = _descriptors->langID;
@@ -131,5 +155,65 @@ bool USBDeviceDriver::getLangIDDescriptor(
 	}
 
 	return false;
+}
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el discriptor de la string del nom del fabricant.
+/// \param    data: Punter al descriptor.
+/// \param    length: Longitut del descriptor.
+/// \return   Trus si tot es correcte.
+///
+bool USBDeviceDriver::getManufacturerStrDescriptor(
+	uint8_t* &data,
+	unsigned &length) const {
+
+    return getStringDescriptor(_descriptors->manufacturer, data, length);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el discriptor de la string del nom del producte.
+/// \param    data: Punter al descriptor.
+/// \param    length: Longitut del descriptor.
+/// \return   Trus si tot es correcte.
+///
+bool USBDeviceDriver::getProductStrDescriptor(
+	uint8_t* &data,
+	unsigned &length) const {
+
+    return getStringDescriptor(_descriptors->product, data, length);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte un descriptor de cadena
+/// \param    str: El punter a la string.
+/// \param    data: Punter al descriptor.
+/// \param    length: La longitut del descriptor.
+/// \return   True si tot es correcte.
+/// \remarks  Retorna un buffer intern estatic.
+///
+bool USBDeviceDriver::getStringDescriptor(
+	const char *str,
+	uint8_t *&data,
+	unsigned &length) const {
+
+	static uint8_t buffer[USBD_MAX_STR_DESC_SIZ];
+
+	if (str == nullptr)
+		return false;
+
+    length = MIN(sizeof(buffer), (strlen(str) * 2) + 2);
+    data = buffer;
+
+    unsigned i = 0;
+    buffer[i++] = length;
+    buffer[i++] = USB_DESC_TYPE_STRING;
+    while (*str != 0) {
+		buffer[i++] = *str++;
+		buffer[i++] = 0;
+    }
+
+	return true;
 }

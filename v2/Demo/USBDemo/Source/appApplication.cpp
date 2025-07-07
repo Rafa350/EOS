@@ -26,7 +26,9 @@ using namespace eos;
 
 static const USBDeviceDescriptors __descriptors {
 	USBD_DeviceDesc,
-	USBD_LangIDDesc
+	USBD_LangIDDesc,
+	"rsr.openware@gmail.com",
+	"EOS USB-VCOM demo"
 };
 
 
