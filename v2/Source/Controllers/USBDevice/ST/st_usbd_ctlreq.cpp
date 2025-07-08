@@ -29,6 +29,10 @@ USBD_StatusTypeDef USBD_StdDevReq(
 	USBD_HandleTypeDef *pdev,
 	USBD_SetupReqTypedef *req) {
 
+#if 1
+	return pdev->_instance->processDeviceRequest(req) ? USBD_OK : USBD_FAIL;
+
+#else
   USBD_StatusTypeDef ret = USBD_OK;
 
   switch (req->requestType & USB_REQ_TYPE_MASK) {
@@ -42,33 +46,37 @@ USBD_StatusTypeDef USBD_StdDevReq(
       switch (req->requestID)
       {
         case USB_REQ_GET_DESCRIPTOR:
-          if (!pdev->_instance->processGetDescriptorRequest(req))
+          if (!pdev->_instance->processDeviceRequest_GetDescriptor(req))
           	  USBD_GetDescriptor(pdev, req);
           break;
 
         case USB_REQ_SET_ADDRESS:
-            pdev->_instance->processSetAddressRequest(req);
+           ret = pdev->_instance->processDeviceRequest_SetAddress(req) ? USBD_OK : USBD_FAIL;
             //USBD_SetAddress(pdev, req);
           break;
 
         case USB_REQ_SET_CONFIGURATION:
-          ret = USBD_SetConfig(pdev, req);
+        	ret = pdev->_instance->processDeviceRequest_SetConfiguration(req) ? USBD_OK : USBD_FAIL;
+          //ret = USBD_SetConfig(pdev, req);
           break;
 
         case USB_REQ_GET_CONFIGURATION:
-          USBD_GetConfig(pdev, req);
+        	ret = pdev->_instance->processDeviceRequest_GetConfiguration(req) ? USBD_OK : USBD_FAIL;
+          //USBD_GetConfig(pdev, req);
           break;
 
         case USB_REQ_GET_STATUS:
-          USBD_GetStatus(pdev, req);
+        	ret = pdev->_instance->processDeviceRequest_GetStatus(req) ? USBD_OK : USBD_FAIL;
+          //USBD_GetStatus(pdev, req);
           break;
 
         case USB_REQ_SET_FEATURE:
-          USBD_SetFeature(pdev, req);
+          ret = pdev->_instance->processDeviceRequest_SetFeature(req) ? USBD_OK : USBD_FAIL;
+          //USBD_SetFeature(pdev, req);
           break;
 
         case USB_REQ_CLEAR_FEATURE:
-          pdev->_instance->processClearFeatureRequest(req);
+          ret = pdev->_instance->processDeviceRequest_ClearFeature(req) ? USBD_OK : USBD_FAIL;
           //USBD_ClrFeature(pdev, req);
           break;
 
@@ -84,6 +92,7 @@ USBD_StatusTypeDef USBD_StdDevReq(
   }
 
   return ret;
+#endif
 }
 
 /**

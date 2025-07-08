@@ -45,8 +45,6 @@ namespace eos {
 			USBD_HandleTypeDef _usbd;
 
 		private:
-			USBD_StatusTypeDef processDeviceRequest(USBD_SetupReqTypedef *request);
-			//bool processGetDescriptorRequest(USBD_SetupReqTypedef *request);
 			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
 
 		public:
@@ -59,9 +57,14 @@ namespace eos {
 			Result stop();
 
 			// PRIVATE
-			bool processGetDescriptorRequest(USBD_SetupReqTypedef *request);
-			bool processSetAddressRequest(USBD_SetupReqTypedef *request);
-			bool processClearFeatureRequest(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_SetAddress(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_SetFeature(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_ClearFeature(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_GetConfiguration(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_SetConfiguration(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_GetStatus(USBD_SetupReqTypedef *request);
 			/////////
 
 			USBD_StatusTypeDef setClassConfig(uint8_t cfgidx);
