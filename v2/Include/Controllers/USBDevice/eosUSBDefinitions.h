@@ -47,6 +47,14 @@
 			static constexpr uint8_t setSynchFrame    = 0x0C;
 		};
 
+		struct Request_ValueDescriptorType {
+			static constexpr uint8_t device                  = 1;
+			static constexpr uint8_t configuration           = 2;
+			static constexpr uint8_t string                  = 3;
+			static constexpr uint8_t deviceQualifier         = 6;
+			static constexpr uint8_t otherSpeedConfiguration = 7;
+		};
+
 	}
 
 	enum class USBDRequestDirection {
@@ -63,7 +71,7 @@
 	enum class USBDRequestRecipient {
 		device    = internal::Request_RequestType_Recipient::device,
 		interface = internal::Request_RequestType_Recipient::interface,
-		endpoint  = internal::Request_RequestType_Recipient::endPoint
+		endPoint  = internal::Request_RequestType_Recipient::endPoint
 	};
 
 	enum class USBDRequestID {
@@ -78,6 +86,14 @@
 		getInterface     = internal::Request_RequestID::getInterface,
 		setInterface     = internal::Request_RequestID::setInterface,
 		setSynchFrame    = internal::Request_RequestID::setSynchFrame
+	};
+
+	enum class USBDRequestValueDescriptorType {
+		device                  = internal::Request_ValueDescriptorType::device,
+		configuration           = internal::Request_ValueDescriptorType::configuration,
+		string 					= internal::Request_ValueDescriptorType::string,
+		deviceQualifier 		= internal::Request_ValueDescriptorType::deviceQualifier,
+		otherSpeedConfiguration = internal::Request_ValueDescriptorType::otherSpeedConfiguration
 	};
 
 	struct USBD_SetupReqTypedef {
@@ -101,6 +117,14 @@
 
 		inline USBDRequestID getRequestID() const  {
 			return (USBDRequestID) requestID;
+		}
+
+		inline USBDRequestValueDescriptorType getValueDescriptorType() const {
+			return (USBDRequestValueDescriptorType) (value >> 8);
+		}
+
+		inline uint8_t getValueDescriptorIndex() const {
+			return value & 0xFF;
 		}
 
 		template <typename T>

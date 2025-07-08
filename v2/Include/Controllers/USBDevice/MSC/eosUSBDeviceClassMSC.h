@@ -67,10 +67,10 @@ namespace eos {
 			int8_t classDataOut(uint8_t epnum) override;
 			int8_t classIsoINIncomplete(uint8_t epnum) override;
 			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
-			uint8_t* classGetHSConfigurationDescriptor(uint16_t *length) override;
-			uint8_t* classGetFSConfigurationDescriptor(uint16_t *length) override;
-			uint8_t* classGetOtherSpeedConfigurationDescriptor(uint16_t *length) override;
-			uint8_t* classGetDeviceQualifierDescriptor(uint16_t *length) override;
+			bool classGetHSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
+			bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
+			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
+			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
 	};
 }
 

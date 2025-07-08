@@ -101,7 +101,11 @@ USBD_StatusTypeDef USBD_RegisterClass(
     if (pdev->pClass[pdev->classId]->GetHSConfigDescriptor != nullptr)
     	pdev->pConfDesc = (void *)pdev->pClass[pdev->classId]->GetHSConfigDescriptor(&len);
 #else /* Default USE_USB_FS */
-    pdev->pConfDesc = (void *)pdev->pClass[pdev->classId]->classGetFSConfigurationDescriptor(&len);
+    unsigned xlen;
+    uint8_t *xdata;
+    pdev->pClass[pdev->classId]->classGetFSConfigurationDescriptor(xdata, xlen);
+    pdev->pConfDesc = xdata;
+    len = xlen;
 #endif /* USE_USB_FS */
 
     /* Increment the NumClasses */

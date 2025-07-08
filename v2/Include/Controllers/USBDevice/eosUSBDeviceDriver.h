@@ -25,6 +25,8 @@ namespace eos {
 		uint8_t *langID;
 		const char *manufacturer;
 		const char *product;
+		const char *interface;
+		const char *configuration;
 	};
 
 	class USBDeviceDriver final {
@@ -43,6 +45,8 @@ namespace eos {
 			USBD_HandleTypeDef _usbd;
 
 		private:
+			USBD_StatusTypeDef processDeviceRequest(USBD_SetupReqTypedef *request);
+			//bool processGetDescriptorRequest(USBD_SetupReqTypedef *request);
 			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
 
 		public:
@@ -54,12 +58,22 @@ namespace eos {
 			Result start();
 			Result stop();
 
-			USBD_StatusTypeDef setClassConfig(uint8_t cfgidx);
+			// PRIVATE
+			bool processGetDescriptorRequest(USBD_SetupReqTypedef *request);
+			bool processSetAddressRequest(USBD_SetupReqTypedef *request);
+			bool processClearFeatureRequest(USBD_SetupReqTypedef *request);
+			/////////
 
-			bool getDeviceDescriptor(uint8_t* &data, unsigned &length) const;
-			bool getLangIDStrDescriptor(uint8_t* &data, unsigned &length) const;
-			bool getManufacturerStrDescriptor(uint8_t* &data, unsigned &length) const;
-			bool getProductStrDescriptor(uint8_t* &data, unsigned &length) const;
+			USBD_StatusTypeDef setClassConfig(uint8_t cfgidx);
+			USBD_StatusTypeDef processRequest(USBD_SetupReqTypedef *request);
+
+			bool getDeviceDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getLangIDStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getManufacturerStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getProductStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getInterfaceStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getConfigurationStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getSerialStrDescriptor(uint8_t *&data, unsigned &length) const;
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }
@@ -87,10 +101,10 @@ namespace eos {
 			virtual int8_t classDataOut(uint8_t epnum) = 0;
 			virtual int8_t classIsoINIncomplete(uint8_t epnum) = 0;
 			virtual int8_t classIsoOUTIncomplete(uint8_t epnum) = 0;
-			virtual uint8_t* classGetHSConfigurationDescriptor(uint16_t *length) = 0;
-			virtual uint8_t* classGetFSConfigurationDescriptor(uint16_t *length) = 0;
-			virtual uint8_t* classGetOtherSpeedConfigurationDescriptor(uint16_t *length) = 0;
-			virtual uint8_t* classGetDeviceQualifierDescriptor(uint16_t *length) = 0;
+			virtual bool classGetHSConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
+			virtual bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
+			virtual bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
+			virtual bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) = 0;
 	};
 }
 

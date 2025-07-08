@@ -336,29 +336,32 @@ int8_t USBDeviceClassCDC::classIsoOUTIncomplete(
 }
 
 
-uint8_t* USBDeviceClassCDC::classGetHSConfigurationDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassCDC::classGetHSConfigurationDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_HS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
-	*length = (uint16_t)sizeof(USBD_CDC_CfgDesc);
+	data = USBD_CDC_CfgDesc;
+	length = sizeof(USBD_CDC_CfgDesc);
 
-	return USBD_CDC_CfgDesc;
+	return true;
 }
 
 
-uint8_t* USBDeviceClassCDC::classGetFSConfigurationDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassCDC::classGetFSConfigurationDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
 	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
 	if (pEpCmdDesc != nullptr)
@@ -372,13 +375,16 @@ uint8_t* USBDeviceClassCDC::classGetFSConfigurationDescriptor(
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	*length = (uint16_t)sizeof(USBD_CDC_CfgDesc);
-	return USBD_CDC_CfgDesc;
+	data = USBD_CDC_CfgDesc;
+	length = sizeof(USBD_CDC_CfgDesc);
+
+	return true;
 }
 
 
-uint8_t* USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
 	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
 	if (pEpCmdDesc != nullptr)
@@ -392,14 +398,19 @@ uint8_t* USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	*length = (uint16_t)sizeof(USBD_CDC_CfgDesc);
-	return USBD_CDC_CfgDesc;
+	data = USBD_CDC_CfgDesc;
+	length = sizeof(USBD_CDC_CfgDesc);
+
+	return true;
 }
 
 
-uint8_t* USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
-	*length = (uint16_t)sizeof(USBD_CDC_DeviceQualifierDesc);
-	return USBD_CDC_DeviceQualifierDesc;
+	data = USBD_CDC_DeviceQualifierDesc;
+	length = sizeof(USBD_CDC_DeviceQualifierDesc);
+
+	return true;
 }

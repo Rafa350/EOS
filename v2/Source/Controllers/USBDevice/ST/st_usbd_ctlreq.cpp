@@ -42,11 +42,13 @@ USBD_StatusTypeDef USBD_StdDevReq(
       switch (req->requestID)
       {
         case USB_REQ_GET_DESCRIPTOR:
-          USBD_GetDescriptor(pdev, req);
+          if (!pdev->_instance->processGetDescriptorRequest(req))
+          	  USBD_GetDescriptor(pdev, req);
           break;
 
         case USB_REQ_SET_ADDRESS:
-          USBD_SetAddress(pdev, req);
+            pdev->_instance->processSetAddressRequest(req);
+            //USBD_SetAddress(pdev, req);
           break;
 
         case USB_REQ_SET_CONFIGURATION:
@@ -66,7 +68,8 @@ USBD_StatusTypeDef USBD_StdDevReq(
           break;
 
         case USB_REQ_CLEAR_FEATURE:
-          USBD_ClrFeature(pdev, req);
+          pdev->_instance->processClearFeatureRequest(req);
+          //USBD_ClrFeature(pdev, req);
           break;
 
         default:
@@ -339,6 +342,9 @@ static void USBD_GetDescriptor(
 	USBD_HandleTypeDef *pdev,
 	USBD_SetupReqTypedef *req) {
 
+	unsigned xlen;
+	uint8_t *xdata;
+
 	uint16_t len = 0;
 	uint8_t *pbuf = nullptr;
 	uint8_t err = 0;
@@ -369,11 +375,15 @@ static void USBD_GetDescriptor(
 
         case USB_DESC_TYPE_CONFIGURATION:
         	if (pdev->dev_speed == USBD_SPEED_HIGH) {
-        		pbuf = (uint8_t *)pdev->pClass[0]->classGetHSConfigurationDescriptor(&len);
+        		pdev->pClass[0]->classGetHSConfigurationDescriptor(xdata, xlen);
+        		pbuf = xdata;
+        		len = xlen;
         		pbuf[1] = USB_DESC_TYPE_CONFIGURATION;
         	}
         	else {
-        		pbuf = (uint8_t *)pdev->pClass[0]->classGetFSConfigurationDescriptor(&len);
+        		pdev->pClass[0]->classGetFSConfigurationDescriptor(xdata, xlen);
+        		pbuf = xdata;
+        		len = xlen;
         		pbuf[1] = USB_DESC_TYPE_CONFIGURATION;
         	}
         	break;
@@ -511,7 +521,9 @@ static void USBD_GetDescriptor(
 
     	case USB_DESC_TYPE_DEVICE_QUALIFIER:
     		if (pdev->dev_speed == USBD_SPEED_HIGH) {
-   				pbuf = (uint8_t *)pdev->pClass[0]->classGetDeviceQualifierDescriptor(&len);
+   				pdev->pClass[0]->classGetDeviceQualifierDescriptor(xdata, xlen);
+        		pbuf = xdata;
+        		len = xlen;
     		}
     		else {
     			USBD_CtlError(pdev, req);
@@ -521,8 +533,10 @@ static void USBD_GetDescriptor(
 
     	case USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION:
     		if (pdev->dev_speed == USBD_SPEED_HIGH) {
-    				pbuf = (uint8_t *)pdev->pClass[0]->classGetOtherSpeedConfigurationDescriptor(&len);
-    				pbuf[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
+    				pdev->pClass[0]->classGetOtherSpeedConfigurationDescriptor(xdata, xlen);
+            		pbuf = xdata;
+            		len = xlen;
+            		pbuf[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
     		}
     		else {
     			USBD_CtlError(pdev, req);

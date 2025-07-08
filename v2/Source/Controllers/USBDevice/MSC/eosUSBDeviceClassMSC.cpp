@@ -240,8 +240,9 @@ int8_t USBDeviceClassMSC::classIsoOUTIncomplete(
 }
 
 
-uint8_t* USBDeviceClassMSC::classGetHSConfigurationDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassMSC::classGetHSConfigurationDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
 	USBD_EpDescTypeDef *pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
 	if (pEpInDesc != NULL)
@@ -251,13 +252,16 @@ uint8_t* USBDeviceClassMSC::classGetHSConfigurationDescriptor(
 	if (pEpOutDesc != NULL)
 		pEpOutDesc->wMaxPacketSize = MSC_MAX_HS_PACKET;
 
-	*length = (uint16_t)sizeof(USBD_MSC_CfgDesc);
-	return USBD_MSC_CfgDesc;
+	data = USBD_MSC_CfgDesc;
+	length = sizeof(USBD_MSC_CfgDesc);
+
+	return true;
 }
 
 
-uint8_t* USBDeviceClassMSC::classGetFSConfigurationDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassMSC::classGetFSConfigurationDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
 	USBD_EpDescTypeDef *pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
 	if (pEpInDesc != NULL)
@@ -267,13 +271,16 @@ uint8_t* USBDeviceClassMSC::classGetFSConfigurationDescriptor(
 	if (pEpOutDesc != NULL)
 		pEpOutDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
-	*length = (uint16_t)sizeof(USBD_MSC_CfgDesc);
-	return USBD_MSC_CfgDesc;
+	data = USBD_MSC_CfgDesc;
+	length = sizeof(USBD_MSC_CfgDesc);
+
+	return true;
 }
 
 
-uint8_t* USBDeviceClassMSC::classGetOtherSpeedConfigurationDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassMSC::classGetOtherSpeedConfigurationDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
 	USBD_EpDescTypeDef *pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
 	if (pEpInDesc != NULL)
@@ -284,16 +291,21 @@ uint8_t* USBDeviceClassMSC::classGetOtherSpeedConfigurationDescriptor(
 		pEpOutDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
 
-	*length = (uint16_t)sizeof(USBD_MSC_CfgDesc);
-	return USBD_MSC_CfgDesc;
+	data = USBD_MSC_CfgDesc;
+	length = sizeof(USBD_MSC_CfgDesc);
+
+	return true;
 }
 
 
-uint8_t* USBDeviceClassMSC::classGetDeviceQualifierDescriptor(
-	uint16_t *length) {
+bool USBDeviceClassMSC::classGetDeviceQualifierDescriptor(
+	uint8_t *&data,
+	unsigned &length) {
 
-	*length = (uint16_t)sizeof(USBD_MSC_DeviceQualifierDesc);
-	return USBD_MSC_DeviceQualifierDesc;
+	data = USBD_MSC_DeviceQualifierDesc;
+	length = sizeof(USBD_MSC_DeviceQualifierDesc);
+
+	return true;
 }
 
 

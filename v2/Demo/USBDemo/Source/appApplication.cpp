@@ -28,7 +28,9 @@ static const USBDeviceDescriptors __descriptors {
 	USBD_DeviceDesc,
 	USBD_LangIDDesc,
 	"rsr.openware@gmail.com",
-	"EOS USB-VCOM demo"
+	"EOS USB-VCOM demo",
+	"VCP interface",
+	"VCP configuration"
 };
 
 
