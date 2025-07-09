@@ -23,7 +23,7 @@ HTimer osalTimerCreate(
 		1,
 		(info->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
 		(void* const) info->param,
-		(void*) info->callback);
+		info->callback);
     if (hTimer == NULL)
     	return NULL;
 
@@ -50,7 +50,7 @@ bool osalTimerDestroy(
 	unsigned blockTime) {
 
 	eosAssert(hTimer != NULL);
-    
+
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
 	return xTimerDelete((TimerHandle_t)hTimer, blockTicks) == pdPASS;
 }

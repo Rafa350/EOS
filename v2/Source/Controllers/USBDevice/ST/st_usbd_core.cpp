@@ -252,11 +252,13 @@ USBD_StatusTypeDef USBD_LL_SetupStage(
 	switch (pdev->request.requestType & 0x1FU) {
 
 		case USB_REQ_RECIPIENT_DEVICE:
-		  ret = USBD_StdDevReq(pdev, &pdev->request);
+			ret = pdev->_instance->processDeviceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
+			//ret = USBD_StdDevReq(pdev, &pdev->request);
 		  break;
 
 		case USB_REQ_RECIPIENT_INTERFACE:
-		  ret = USBD_StdItfReq(pdev, &pdev->request);
+			ret = pdev->_instance->processInterfaceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
+		  //ret = USBD_StdItfReq(pdev, &pdev->request);
 		  break;
 
 		case USB_REQ_RECIPIENT_ENDPOINT:

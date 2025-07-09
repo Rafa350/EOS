@@ -7,7 +7,7 @@
 #define USBD_MAX_STR_DESC_SIZ                          64U
 #endif /* USBD_MAX_STR_DESC_SIZ */
 
-
+#if 0
 static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
 static void USBD_SetAddress(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
 static USBD_StatusTypeDef USBD_SetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
@@ -15,6 +15,7 @@ static void USBD_GetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
 static void USBD_GetStatus(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
 static void USBD_SetFeature(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
 static void USBD_ClrFeature(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
+#endif
 static uint8_t USBD_GetLen(uint8_t *buf);
 
 
@@ -347,6 +348,7 @@ USBD_StatusTypeDef USBD_StdEPReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef 
   * @param  req: usb request
   * @retval None
   */
+#if 0
 static void USBD_GetDescriptor(
 	USBD_HandleTypeDef *pdev,
 	USBD_SetupReqTypedef *req) {
@@ -576,7 +578,7 @@ static void USBD_GetDescriptor(
         USBD_CtlSendStatus(pdev);
     }
 }
-
+#endif
 
 /**
   * @brief  USBD_SetAddress
@@ -585,6 +587,7 @@ static void USBD_GetDescriptor(
   * @param  req: usb request
   * @retval None
   */
+#if 0
 static void USBD_SetAddress(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   uint8_t  dev_addr;
@@ -618,6 +621,8 @@ static void USBD_SetAddress(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
     USBD_CtlError(pdev, req);
   }
 }
+#endif
+
 
 /**
   * @brief  USBD_SetConfig
@@ -626,6 +631,7 @@ static void USBD_SetAddress(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
   * @param  req: usb request
   * @retval status
   */
+#if 0
 static USBD_StatusTypeDef USBD_SetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   USBD_StatusTypeDef ret = USBD_OK;
@@ -716,6 +722,8 @@ static USBD_StatusTypeDef USBD_SetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReq
 
   return ret;
 }
+#endif
+
 
 /**
   * @brief  USBD_GetConfig
@@ -724,6 +732,7 @@ static USBD_StatusTypeDef USBD_SetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReq
   * @param  req: usb request
   * @retval None
   */
+#if 0
 static void USBD_GetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   if (req->length != 1U)
@@ -750,6 +759,8 @@ static void USBD_GetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
     }
   }
 }
+#endif
+
 
 /**
   * @brief  USBD_GetStatus
@@ -758,6 +769,7 @@ static void USBD_GetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
   * @param  req: usb request
   * @retval None
   */
+#if 0
 static void USBD_GetStatus(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   switch (pdev->dev_state)
@@ -790,6 +802,7 @@ static void USBD_GetStatus(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
       break;
   }
 }
+#endif
 
 
 /**
@@ -799,6 +812,7 @@ static void USBD_GetStatus(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
   * @param  req: usb request
   * @retval None
   */
+#if 0
 static void USBD_SetFeature(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   if (req->value == USB_FEATURE_REMOTE_WAKEUP)
@@ -816,6 +830,7 @@ static void USBD_SetFeature(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
     USBD_CtlError(pdev, req);
   }
 }
+#endif
 
 
 /**
@@ -825,6 +840,7 @@ static void USBD_SetFeature(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
   * @param  req: usb request
   * @retval None
   */
+#if 0
 static void USBD_ClrFeature(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   switch (pdev->dev_state)
@@ -844,6 +860,7 @@ static void USBD_ClrFeature(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
       break;
   }
 }
+#endif
 
 
 /**

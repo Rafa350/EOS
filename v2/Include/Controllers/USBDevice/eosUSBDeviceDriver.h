@@ -45,6 +45,23 @@ namespace eos {
 			USBD_HandleTypeDef _usbd;
 
 		private:
+			USBDeviceClass *getClassFromEndPoint(uint8_t epAdd) const;
+
+			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_SetAddress(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_SetFeature(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_ClearFeature(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_GetConfiguration(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_SetConfiguration(USBD_SetupReqTypedef *request);
+			bool processDeviceRequest_GetStatus(USBD_SetupReqTypedef *request);
+
+			bool getDeviceDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getLangIDStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getManufacturerStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getProductStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getInterfaceStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getConfigurationStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getSerialStrDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
 
 		public:
@@ -58,25 +75,12 @@ namespace eos {
 
 			// PRIVATE
 			bool processDeviceRequest(USBD_SetupReqTypedef *request);
-			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
-			bool processDeviceRequest_SetAddress(USBD_SetupReqTypedef *request);
-			bool processDeviceRequest_SetFeature(USBD_SetupReqTypedef *request);
-			bool processDeviceRequest_ClearFeature(USBD_SetupReqTypedef *request);
-			bool processDeviceRequest_GetConfiguration(USBD_SetupReqTypedef *request);
-			bool processDeviceRequest_SetConfiguration(USBD_SetupReqTypedef *request);
-			bool processDeviceRequest_GetStatus(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequest(USBD_SetupReqTypedef *request);
+			bool processEndPointRequest(USBD_SetupReqTypedef *request);
 			/////////
 
 			USBD_StatusTypeDef setClassConfig(uint8_t cfgidx);
-			USBD_StatusTypeDef processRequest(USBD_SetupReqTypedef *request);
-
-			bool getDeviceDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getLangIDStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getManufacturerStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getProductStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getInterfaceStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getConfigurationStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getSerialStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool processRequest(USBD_SetupReqTypedef *request);
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }

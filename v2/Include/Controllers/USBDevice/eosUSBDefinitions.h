@@ -58,7 +58,7 @@
 	}
 
 	enum class USBDRequestDirection {
-		hostToDevide = internal::Request_RequestType_Direction::hostToDevice,
+		hostToDevice = internal::Request_RequestType_Direction::hostToDevice,
 		deviceToHost = internal::Request_RequestType_Direction::deviceToHost
 	};
 
