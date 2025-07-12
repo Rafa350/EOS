@@ -68,8 +68,8 @@ namespace eos {
 
 			inline bool isBusy() const { return _state != State::idle; }
 
-			int8_t classInit(uint8_t cfgidx) override;
-			int8_t classDeinit(uint8_t cfgidx) override;
+			int8_t classInitialize(uint8_t cfgidx) override;
+			int8_t classDeinitialize(uint8_t cfgidx) override;
 
 			int8_t classSetup(USBD_SetupReqTypedef *req) override;
 			int8_t classEP0TxSent() override;
@@ -83,6 +83,8 @@ namespace eos {
 			bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
+
+			bool usesEndPoint(uint8_t epAdd) const override;
 	};
 }
 

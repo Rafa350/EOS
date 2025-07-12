@@ -5,7 +5,7 @@
 using namespace eos;
 
 
-static const int8_t __inquiryData[] = {
+static const int8_t __inquiryData[STANDARD_INQUIRY_DATA_LEN] = {
 	/* LUN 0 */
 	0x00,                              // Qualifier / Device type
 	(int8_t) 0x80,                     // RMB
@@ -58,11 +58,11 @@ int8_t const * MSCStorage_RAM::getInquiryData() {
 
 int8_t MSCStorage_RAM::getCapacity(
 	uint8_t lun,
-	uint32_t *block_num,
-	uint16_t *block_size) {
+	uint32_t *blkQuantity,
+	uint16_t *blkSize) {
 
-	*block_size = __blockSize;
-	*block_num = _storageSize / __blockSize;
+	*blkSize = __blockSize;
+	*blkQuantity = _storageSize / __blockSize;
 	return 0;
 }
 

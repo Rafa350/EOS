@@ -26,15 +26,12 @@ static uint8_t USBD_GetLen(uint8_t *buf);
   * @param  req: usb request
   * @retval status
   */
+#if 0
 USBD_StatusTypeDef USBD_StdDevReq(
 	USBD_HandleTypeDef *pdev,
 	USBD_SetupReqTypedef *req) {
 
-#if 1
-	return pdev->_instance->processDeviceRequest(req) ? USBD_OK : USBD_FAIL;
-
-#else
-  USBD_StatusTypeDef ret = USBD_OK;
+	USBD_StatusTypeDef ret = USBD_OK;
 
   switch (req->requestType & USB_REQ_TYPE_MASK) {
 
@@ -47,38 +44,38 @@ USBD_StatusTypeDef USBD_StdDevReq(
       switch (req->requestID)
       {
         case USB_REQ_GET_DESCRIPTOR:
-          if (!pdev->_instance->processDeviceRequest_GetDescriptor(req))
+          //if (!pdev->_instance->processDeviceRequest_GetDescriptor(req))
           	  USBD_GetDescriptor(pdev, req);
           break;
 
         case USB_REQ_SET_ADDRESS:
-           ret = pdev->_instance->processDeviceRequest_SetAddress(req) ? USBD_OK : USBD_FAIL;
-            //USBD_SetAddress(pdev, req);
+           //ret = pdev->_instance->processDeviceRequest_SetAddress(req) ? USBD_OK : USBD_FAIL;
+            USBD_SetAddress(pdev, req);
           break;
 
         case USB_REQ_SET_CONFIGURATION:
-        	ret = pdev->_instance->processDeviceRequest_SetConfiguration(req) ? USBD_OK : USBD_FAIL;
-          //ret = USBD_SetConfig(pdev, req);
+        	//ret = pdev->_instance->processDeviceRequest_SetConfiguration(req) ? USBD_OK : USBD_FAIL;
+          ret = USBD_SetConfig(pdev, req);
           break;
 
         case USB_REQ_GET_CONFIGURATION:
-        	ret = pdev->_instance->processDeviceRequest_GetConfiguration(req) ? USBD_OK : USBD_FAIL;
-          //USBD_GetConfig(pdev, req);
+        	//ret = pdev->_instance->processDeviceRequest_GetConfiguration(req) ? USBD_OK : USBD_FAIL;
+          USBD_GetConfig(pdev, req);
           break;
 
         case USB_REQ_GET_STATUS:
-        	ret = pdev->_instance->processDeviceRequest_GetStatus(req) ? USBD_OK : USBD_FAIL;
-          //USBD_GetStatus(pdev, req);
+        	//ret = pdev->_instance->processDeviceRequest_GetStatus(req) ? USBD_OK : USBD_FAIL;
+          USBD_GetStatus(pdev, req);
           break;
 
         case USB_REQ_SET_FEATURE:
-          ret = pdev->_instance->processDeviceRequest_SetFeature(req) ? USBD_OK : USBD_FAIL;
-          //USBD_SetFeature(pdev, req);
+          //ret = pdev->_instance->processDeviceRequest_SetFeature(req) ? USBD_OK : USBD_FAIL;
+          USBD_SetFeature(pdev, req);
           break;
 
         case USB_REQ_CLEAR_FEATURE:
-          ret = pdev->_instance->processDeviceRequest_ClearFeature(req) ? USBD_OK : USBD_FAIL;
-          //USBD_ClrFeature(pdev, req);
+          //ret = pdev->_instance->processDeviceRequest_ClearFeature(req) ? USBD_OK : USBD_FAIL;
+          USBD_ClrFeature(pdev, req);
           break;
 
         default:
@@ -93,8 +90,9 @@ USBD_StatusTypeDef USBD_StdDevReq(
   }
 
   return ret;
-#endif
 }
+#endif
+
 
 /**
   * @brief  USBD_StdItfReq
@@ -103,6 +101,7 @@ USBD_StatusTypeDef USBD_StdDevReq(
   * @param  req: usb request
   * @retval status
   */
+#if 0
 USBD_StatusTypeDef USBD_StdItfReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   USBD_StatusTypeDef ret = USBD_OK;
@@ -158,6 +157,8 @@ USBD_StatusTypeDef USBD_StdItfReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef
 
   return ret;
 }
+#endif
+
 
 /**
   * @brief  USBD_StdEPReq
@@ -166,6 +167,7 @@ USBD_StatusTypeDef USBD_StdItfReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef
   * @param  req: usb request
   * @retval status
   */
+#if 0
 USBD_StatusTypeDef USBD_StdEPReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   USBD_EndpointTypeDef *pep;
@@ -339,6 +341,7 @@ USBD_StatusTypeDef USBD_StdEPReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef 
 
   return ret;
 }
+#endif
 
 
 /**
@@ -375,12 +378,15 @@ static void USBD_GetDescriptor(
       break;
 #endif /* (USBD_LPM_ENABLED == 1U) || (USBD_CLASS_BOS_ENABLED == 1U) */
         case USB_DESC_TYPE_DEVICE: {
+#if 0
         	uint8_t *xpbuf;
         	unsigned xlen;
             pdev->_instance->getDeviceDescriptor(xpbuf, xlen);
             pbuf = xpbuf;
             len = xlen;
-            //pbuf = pdev->pDesc->GetDeviceDescriptor(pdev->dev_speed, &len);
+#else
+            pbuf = pdev->pDesc->GetDeviceDescriptor(pdev->dev_speed, &len);
+#endif
         }
         break;
 
@@ -402,17 +408,18 @@ static void USBD_GetDescriptor(
         case USB_DESC_TYPE_STRING:
         	switch ((uint8_t)(req->value)) {
         		case USBD_IDX_LANGID_STR: {
+#if 0
                 	uint8_t *xpbuf;
                 	unsigned xlen;
         			if (pdev->_instance->getLangIDStrDescriptor(xpbuf, xlen)) {
         				pbuf = xpbuf;
         				len = xlen;
         			}
-        			/*
+#else
         			if (pdev->pDesc->GetLangIDStrDescriptor != NULL) {
         				pbuf = pdev->pDesc->GetLangIDStrDescriptor(pdev->dev_speed, &len);
         			}
-        			*/
+#endif
         			else {
         				USBD_CtlError(pdev, req);
         				err++;
@@ -421,17 +428,18 @@ static void USBD_GetDescriptor(
         		}
 
         		case USBD_IDX_MFC_STR: {
+#if 0
         			uint8_t *xpbuf;
         			unsigned xlen;
         			if (pdev->_instance->getManufacturerStrDescriptor(xpbuf, xlen)) {
         				pbuf = xpbuf;
         				len = xlen;
         			}
-        			/*
+#else
         			if (pdev->pDesc->GetManufacturerStrDescriptor != NULL) {
         				pbuf = pdev->pDesc->GetManufacturerStrDescriptor(pdev->dev_speed, &len);
         			}
-        			*/
+#endif
         			else {
         				USBD_CtlError(pdev, req);
         				err++;
@@ -440,17 +448,18 @@ static void USBD_GetDescriptor(
         		}
 
         		case USBD_IDX_PRODUCT_STR:
+#if 0
         			uint8_t *xpbuf;
         			unsigned xlen;
         			if (pdev->_instance->getProductStrDescriptor(xpbuf, xlen)) {
         				pbuf = xpbuf;
         				len = xlen;
         			}
-        			/*
+#else
         			if (pdev->pDesc->GetProductStrDescriptor != NULL) {
         				pbuf = pdev->pDesc->GetProductStrDescriptor(pdev->dev_speed, &len);
         			}
-        			*/
+#endif
         			else {
         				USBD_CtlError(pdev, req);
         				err++;

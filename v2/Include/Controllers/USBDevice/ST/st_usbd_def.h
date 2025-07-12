@@ -336,11 +336,10 @@ struct USBD_HandleTypeDef {
 
   USBD_SetupReqTypedef    request;
   USBD_DescriptorsTypeDef *pDesc;
-  eos::USBDeviceClass     *pClass[USBD_MAX_SUPPORTED_CLASS];
+  //eos::USBDeviceClass     *pClass[USBD_MAX_SUPPORTED_CLASS];
   eos::USBDeviceDriver    *_instance;
-  void                    *pClassData;
-  void                    *pClassDataCmsit[USBD_MAX_SUPPORTED_CLASS];
-  void                    *pUserData[USBD_MAX_SUPPORTED_CLASS];
+  //void                    *pClassData;
+  //void                    *pClassDataCmsit[USBD_MAX_SUPPORTED_CLASS];
   void                    *pData;
   void                    *pBosDesc;
   void                    *pConfDesc;

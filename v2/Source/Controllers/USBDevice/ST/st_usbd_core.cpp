@@ -25,8 +25,8 @@ USBD_StatusTypeDef USBD_Init(
 		return USBD_FAIL;
 	}
 
-	pdev->pClass[0] = NULL;
-	pdev->pUserData[0] = NULL;
+	//pdev->pClass[0] = NULL;
+	//pdev->pUserData[0] = NULL;
 	pdev->pConfDesc = NULL;
 
 	pdev->pDesc = pdesc;
@@ -56,21 +56,18 @@ USBD_StatusTypeDef USBD_DeInit(
 	/* Set Default State */
 	pdev->dev_state = USBD_STATE_DEFAULT;
 
-	/* Free Class Resources */
-	 if (pdev->pClass[0] != nullptr) {
-		 pdev->pClass[0]->classDeinit((uint8_t)pdev->dev_config);
-	 }
-	 pdev->pUserData[0] = nullptr;
+	auto classe = pdev->_instance->getClass();
+	if (classe != nullptr)
+		classe->classDeinitialize((uint8_t)pdev->dev_config);
 
+	/* Free Device descriptors resources */
+	pdev->pDesc = nullptr;
+	pdev->pConfDesc = nullptr;
 
-	 /* Free Device descriptors resources */
-	 pdev->pDesc = nullptr;
-	 pdev->pConfDesc = nullptr;
+	/* DeInitialize low level driver */
+	ret = USBD_LL_DeInit(pdev);
 
-	 /* DeInitialize low level driver */
-	 ret = USBD_LL_DeInit(pdev);
-
-	 return ret;
+	return ret;
 }
 
 /**
@@ -84,84 +81,19 @@ USBD_StatusTypeDef USBD_RegisterClass(
 	USBD_HandleTypeDef *pdev,
 	eos::USBDeviceClass *pclass) {
 
-	uint16_t len = 0U;
-
-	if (pclass == NULL) {
-#if (USBD_DEBUG_LEVEL > 1U)
-		USBD_ErrLog("Invalid Class handle");
-#endif /* (USBD_DEBUG_LEVEL > 1U) */
+	if (pclass == nullptr)
 		return USBD_FAIL;
-	}
 
-	/* link the class to the USB Device handle */
-	pdev->pClass[0] = pclass;
-
-	/* Get Device Configuration Descriptor */
-#ifdef USE_USB_HS
-    if (pdev->pClass[pdev->classId]->GetHSConfigDescriptor != nullptr)
-    	pdev->pConfDesc = (void *)pdev->pClass[pdev->classId]->GetHSConfigDescriptor(&len);
-#else /* Default USE_USB_FS */
-    unsigned xlen;
-    uint8_t *xdata;
-    pdev->pClass[pdev->classId]->classGetFSConfigurationDescriptor(xdata, xlen);
-    pdev->pConfDesc = xdata;
-    len = xlen;
-#endif /* USE_USB_FS */
+    uint8_t *data;
+    unsigned len;
+    pclass->classGetFSConfigurationDescriptor(data, len);
+    pdev->pConfDesc = data;
 
     /* Increment the NumClasses */
     pdev->NumClasses++;
 
     return USBD_OK;
 }
-
-
-#if (USBD_USER_REGISTER_CALLBACK == 1U)
-/**
-  * @brief  USBD_RegisterDevStateCallback
-  * @param  pdev : Device Handle
-  * @param  pUserCallback: User Callback
-  * @retval USBD Status
-  */
-USBD_StatusTypeDef USBD_RegisterDevStateCallback(USBD_HandleTypeDef *pdev, USBD_DevStateCallbackTypeDef pUserCallback)
-{
-  pdev->DevStateCallback = pUserCallback;
-
-  return USBD_OK;
-}
-#endif /* USBD_USER_REGISTER_CALLBACK */
-
-/**
-  * @brief  USBD_Start
-  *         Start the USB Device Core.
-  * @param  pdev: Device Handle
-  * @retval USBD Status
-  */
-/*
-USBD_StatusTypeDef USBD_Start(
-	USBD_HandleTypeDef *pdev) {
-
-	return USBD_LL_Start(pdev);
-}
-*/
-/**
-  * @brief  USBD_Stop
-  *         Stop the USB Device Core.
-  * @param  pdev: Device Handle
-  * @retval USBD Status
-  */
-/*
-USBD_StatusTypeDef USBD_Stop
-	(USBD_HandleTypeDef *pdev) {
-
-	USBD_LL_Stop(pdev);
-
-	if (pdev->pClass[0] != NULL) {
-		pdev->pClass[0]->classDeinit((uint8_t)pdev->dev_config);
-	}
-
-  return USBD_OK;
-}
-*/
 
 /**
   * @brief  USBD_RunTestMode
@@ -200,9 +132,8 @@ USBD_StatusTypeDef USBD_SetClassConfig(
 
 	USBD_StatusTypeDef ret = USBD_OK;
 
-	if (pdev->pClass[0] != NULL) {
-		/* Set configuration and Start the Class */
-		ret = (USBD_StatusTypeDef)pdev->pClass[0]->classInit(cfgidx);
+	if (pdev->_instance->getClass() != nullptr) {
+		ret = (USBD_StatusTypeDef)pdev->_instance->getClass()->classInitialize(cfgidx);
 	}
 
 	return ret;
@@ -222,7 +153,7 @@ USBD_StatusTypeDef USBD_ClrClassConfig(
 	USBD_StatusTypeDef ret = USBD_OK;
 
 	/* Clear configuration  and De-initialize the Class process */
-	if (pdev->pClass[0]->classDeinit(cfgidx) != 0U) {
+	if (pdev->_instance->getClass()->classDeinitialize(cfgidx) != 0) {
 		ret = USBD_FAIL;
 	}
 
@@ -246,30 +177,32 @@ USBD_StatusTypeDef USBD_LL_SetupStage(
 	USBD_ParseSetupRequest(&pdev->request, psetup);
 
 	pdev->ep0_state = USBD_EP0_SETUP;
-
 	pdev->ep0_data_len = pdev->request.length;
 
-	switch (pdev->request.requestType & 0x1FU) {
+	ret = pdev->_instance->processRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
+/*
+	switch (pdev->request.requestType & 0x1F) {
 
 		case USB_REQ_RECIPIENT_DEVICE:
-			ret = pdev->_instance->processDeviceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
-			//ret = USBD_StdDevReq(pdev, &pdev->request);
+		  ret = pdev->_instance->processDeviceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
+		  //ret = USBD_StdDevReq(pdev, &pdev->request);
 		  break;
 
 		case USB_REQ_RECIPIENT_INTERFACE:
-			ret = pdev->_instance->processInterfaceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
+		  ret = pdev->_instance->processInterfaceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
 		  //ret = USBD_StdItfReq(pdev, &pdev->request);
 		  break;
 
 		case USB_REQ_RECIPIENT_ENDPOINT:
-		  ret = USBD_StdEPReq(pdev, &pdev->request);
+		  ret = pdev->_instance->processEndPointRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
+		  //ret = USBD_StdEPReq(pdev, &pdev->request);
 		  break;
 
 		default:
 		  ret = USBD_LL_StallEP(pdev, (pdev->request.requestType & 0x80U));
 		  break;
 	}
-
+*/
 	return ret;
 }
 
@@ -331,7 +264,7 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 					//
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 						pdev->classId = idx;
-						pdev->pClass[idx]->classEP0RxReady();
+						pdev->_instance->getClass()->classEP0RxReady();
 					}
 				}
 
@@ -349,7 +282,7 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 			//
 			if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 				pdev->classId = idx;
-				ret = (USBD_StatusTypeDef)pdev->pClass[idx]->classDataOut(epnum);
+				ret = (USBD_StatusTypeDef)pdev->_instance->getClass()->classDataOut(epnum);
 			}
 			if (ret != USBD_OK) {
 				return ret;
@@ -403,7 +336,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 				else {
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 						pdev->classId = 0U;
-						pdev->pClass[0]->classEP0TxSent();
+						pdev->_instance->getClass()->classEP0TxSent();
 					}
 					USBD_LL_StallEP(pdev, 0x80U);
 					USBD_CtlReceiveStatus(pdev);
@@ -422,7 +355,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 		if (((uint16_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
 			if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 				pdev->classId = idx;
-				ret = (USBD_StatusTypeDef)pdev->pClass[idx]->classDataIn(epnum);
+				ret = (USBD_StatusTypeDef)pdev->_instance->getClass()->classDataIn(epnum);
 				if (ret != USBD_OK)
 					return ret;
 			}
@@ -474,8 +407,8 @@ USBD_StatusTypeDef USBD_LL_Reset(USBD_HandleTypeDef *pdev)
   }
 #else
 
-  if (pdev->pClass[0] != NULL)
-	  if (pdev->pClass[0]->classDeinit((uint8_t)pdev->dev_config) != USBD_OK)
+  if (pdev->_instance->getClass()!= nullptr)
+	  if (pdev->_instance->getClass()->classDeinitialize((uint8_t)pdev->dev_config) != USBD_OK)
 		  ret = USBD_FAIL;
 #endif /* USE_USBD_COMPOSITE */
 
@@ -552,8 +485,8 @@ USBD_StatusTypeDef USBD_LL_SOF(USBD_HandleTypeDef *pdev) {
 
 	/* The SOF event can be distributed for all classes that support it */
 	if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-		if (pdev->pClass[0] != NULL) {
-			pdev->pClass[0]->classSOF();
+		if (pdev->_instance->getClass() != nullptr) {
+			pdev->_instance->getClass()->classSOF();
 		}
 	}
 
@@ -570,14 +503,14 @@ USBD_StatusTypeDef USBD_LL_SOF(USBD_HandleTypeDef *pdev) {
 USBD_StatusTypeDef USBD_LL_IsoINIncomplete(USBD_HandleTypeDef *pdev,
                                            uint8_t epnum)
 {
-  if (pdev->pClass[pdev->classId] == NULL)
+  if (pdev->_instance->getClass() == nullptr)
   {
     return USBD_FAIL;
   }
 
   if (pdev->dev_state == USBD_STATE_CONFIGURED)
   {
-      pdev->pClass[pdev->classId]->classIsoINIncomplete(epnum);
+      pdev->_instance->getClass()->classIsoINIncomplete(epnum);
   }
 
   return USBD_OK;
@@ -594,12 +527,12 @@ USBD_StatusTypeDef USBD_LL_IsoOUTIncomplete(
 	USBD_HandleTypeDef *pdev,
     uint8_t epnum) {
 
-	if (pdev->pClass[pdev->classId] == NULL) {
+	if (pdev->_instance->getClass() == nullptr) {
 		return USBD_FAIL;
 	}
 
 	if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-		pdev->pClass[pdev->classId]->classIsoOUTIncomplete(epnum);
+		pdev->_instance->getClass()->classIsoOUTIncomplete(epnum);
 	}
 
 	return USBD_OK;
@@ -632,8 +565,8 @@ USBD_StatusTypeDef USBD_LL_DevDisconnected(
 	/* Free Class Resources */
 	pdev->dev_state = USBD_STATE_DEFAULT;
 
-	if (pdev->pClass[0] != NULL) {
-		if (pdev->pClass[0]->classDeinit((uint8_t)pdev->dev_config) != 0U) {
+	if (pdev->_instance->getClass() != nullptr) {
+		if (pdev->_instance->getClass()->classDeinitialize((uint8_t)pdev->dev_config) != 0U) {
 			ret = USBD_FAIL;
 		}
 	}

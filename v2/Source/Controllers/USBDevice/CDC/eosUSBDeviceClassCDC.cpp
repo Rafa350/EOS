@@ -122,7 +122,7 @@ Result USBDeviceClassCDC::wait(
 /// ----------------------------------------------------------------------
 /// \brief    Inicializa la clase.
 ///
-int8_t USBDeviceClassCDC::classInit(
+int8_t USBDeviceClassCDC::classInitialize(
 	uint8_t cfgidx) {
 
 	auto pdev = _drvUSBD->getHandle();
@@ -131,18 +131,18 @@ int8_t USBDeviceClassCDC::classInit(
     // Prepara EP IN
    	//
    	USBD_LL_OpenEP(pdev, _inEpAdd, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_IN_PACKET_SIZE : CDC_DATA_FS_IN_PACKET_SIZE);
-   	pdev->ep_in[_inEpAdd & 0xFU ].is_used = 1;
+   	pdev->ep_in[_inEpAdd & 0x0F].is_used = 1;
 
    	// Prepara EP OUT
    	//
    	USBD_LL_OpenEP(pdev, _outEpAdd, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_OUT_PACKET_SIZE : CDC_DATA_FS_OUT_PACKET_SIZE);
-   	pdev->ep_out[_outEpAdd & 0xFU].is_used = 1;
+   	pdev->ep_out[_outEpAdd & 0x0F].is_used = 1;
 
    	// Prepara EP CMD
    	//
    	pdev->ep_in[_cmdEpAdd & 0xFU].bInterval = hs ? CDC_HS_BINTERVAL : CDC_FS_BINTERVAL;
     USBD_LL_OpenEP(pdev, _cmdEpAdd, USBD_EP_TYPE_INTR, CDC_CMD_PACKET_SIZE);
-    pdev->ep_in[_cmdEpAdd & 0xFU].is_used = 1;
+    pdev->ep_in[_cmdEpAdd & 0x0F].is_used = 1;
 
   	_state = State::idle;
 
@@ -157,7 +157,7 @@ int8_t USBDeviceClassCDC::classInit(
 /// ----------------------------------------------------------------------
 /// \brief     Desinicialitza la clase.
 ///
-int8_t USBDeviceClassCDC::classDeinit(
+int8_t USBDeviceClassCDC::classDeinitialize(
 	uint8_t cfgidx) {
 
 	auto pdev = _drvUSBD->getHandle();
@@ -170,13 +170,13 @@ int8_t USBDeviceClassCDC::classDeinit(
 	// Close EP OUT
 	//
 	USBD_LL_CloseEP(pdev, _outEpAdd);
-	pdev->ep_out[_outEpAdd & 0xFU].is_used = 0U;
+	pdev->ep_out[_outEpAdd & 0xFU].is_used = 0;
 
 	// Close Command IN EP
 	//
 	USBD_LL_CloseEP(pdev, _cmdEpAdd);
-	pdev->ep_in[_cmdEpAdd & 0xFU].is_used = 0U;
-	pdev->ep_in[_cmdEpAdd & 0xFU].bInterval = 0U;
+	pdev->ep_in[_cmdEpAdd & 0xFU].is_used = 0;
+	pdev->ep_in[_cmdEpAdd & 0xFU].bInterval = 0;
 
 	// Desinicialitza l'interficie.
 	//
@@ -196,6 +196,7 @@ int8_t USBDeviceClassCDC::classSetup(
 	USBD_StatusTypeDef ret = USBD_OK;
 
 	switch (req->getType()) {
+
 		case USBDRequestType::clase:
 			if (req->length != 0) {
 				if (req->getDirection() == USBDRequestDirection::deviceToHost) {
@@ -414,3 +415,11 @@ bool USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
 
 	return true;
 }
+
+
+bool USBDeviceClassCDC::usesEndPoint(
+	uint8_t epAdd) const {
+
+	return (epAdd == _inEpAdd) || (epAdd == _outEpAdd);
+}
+

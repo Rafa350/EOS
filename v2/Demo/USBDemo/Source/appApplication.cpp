@@ -24,6 +24,8 @@ using namespace app;
 using namespace eos;
 
 
+#if defined(USE_CDC_DEVICE)
+extern USBD_DescriptorsTypeDef VCP_Desc;
 static const USBDeviceDescriptors __descriptors {
 	USBD_DeviceDesc,
 	USBD_LangIDDesc,
@@ -34,10 +36,16 @@ static const USBDeviceDescriptors __descriptors {
 };
 
 
-#if defined(USE_CDC_DEVICE)
-extern USBD_DescriptorsTypeDef VCP_Desc;
 #elif defined(USE_MSC_DEVICE)
 extern USBD_DescriptorsTypeDef MSC_Desc;
+static const USBDeviceDescriptors __descriptors {
+	USBD_DeviceDesc,
+	USBD_LangIDDesc,
+	"rsr.openware@gmail.com",
+	"EOS USB-MSC demo",
+	"MSC interface",
+	"MSC configuration"
+};
 #endif
 
 
@@ -48,6 +56,13 @@ MyApplication::MyApplication() {
 
 	initializeGPIO();
 	configureInterrupts();
+}
+
+
+void MyApplication::initApplication(
+		ApplicationParams &params) {
+
+	params.stackSize = params.stackSize * 2;
 }
 
 
@@ -83,11 +98,15 @@ void MyApplication::onExecute() {
 	drvUSBD->initialize(&VCP_Desc);
 
 #elif defined(USE_MSC_DEVICE)
+
+#if 0
 	auto storage = new eos::MSCStorage_SSD();
 
-	/*unsigned memSize = 64 * 1024;
+#else
+	unsigned memSize = 64 * 1024;
 	uint8_t *mem = new uint8_t[memSize];
-	auto storage = new eos::MSCStorage_RAM(mem, memSize);*/
+	auto storage = new eos::MSCStorage_RAM(mem, memSize);
+#endif
 
 	auto devClassMSC = new eos::USBDeviceClassMSC(drvUSBD, storage);
 
@@ -110,6 +129,9 @@ void MyApplication::onExecute() {
 	    		devClassCDC->wait(1000);
 	    	}
 	    }
+#endif
+#if defined(USE_MSC_DEVICE)
+	    eos::Task::delay(1000);
 #endif
 	}
 }

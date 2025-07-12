@@ -11,6 +11,9 @@
 #define eosAssert(condition) \
     if (!(condition)) eosErrorHandler(__FILE__, __LINE__, #condition)
 
+#define eosAssertReturn(call, result) \
+	if ((call) != (result)) eosErrorHandler(__FILE__, __LINE__, #call)
+
 #define eosWarning(msg) \
     eosErrorHandler(__FILE__, __LINE__, msg)
 
@@ -20,6 +23,8 @@
 #else
 
 #define eosAssert(condition)
+#define eosAssertReturn(call, result) \
+	call
 #define eosWarning(msg)
 #define eosFatal(msg)
 

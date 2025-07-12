@@ -53,6 +53,8 @@
 
 	namespace internal {
 
+		// Valors obtinguts de 'USB Comunication Device Class specification'
+		//
 		struct CDCRequest_RequestID {
 			static constexpr uint8_t sendEncapsulatedCommand = 0x00;
 			static constexpr uint8_t getEncapsulatedResponse = 0x01;

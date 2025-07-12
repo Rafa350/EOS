@@ -37,26 +37,24 @@ namespace eos {
 			static constexpr uint8_t _outEpAdd = MSC_EPOUT_ADDR;
 
 		private:
-			// BOT layer
-			void botInit();
-			void botDeInit();
+			void botInitialize();
+			void botDeInitialize();
 			void botReset();
 			void botDataIn(uint8_t epnum);
 			void botDataOut(uint8_t epnum);
-			void botSendCSW(uint8_t CSW_Status);
+			void botSendCSW(uint8_t cswStatus);
 			void botCplClrFeature(uint8_t epnum);
 			void botSendData(uint8_t *buffer, unsigned length);
 			void botCBWDecode();
 			void botAbort();
-
 
 		public:
 			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, MSCStorage *storage);
 
 			void initialize() override;
 
-			int8_t classInit(uint8_t cfgidx) override;
-			int8_t classDeinit(uint8_t cfgidx) override;
+			int8_t classInitialize(uint8_t cfgidx) override;
+			int8_t classDeinitialize(uint8_t cfgidx) override;
 
 			int8_t classSetup(USBD_SetupReqTypedef *req) override;
 
@@ -71,6 +69,8 @@ namespace eos {
 			bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
+
+			bool usesEndPoint(uint8_t epAdd) const override;
 	};
 }
 

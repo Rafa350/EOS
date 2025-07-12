@@ -2,6 +2,7 @@
 #include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
 #include "Controllers/USBDevice/MSC/eosSCSIProcessor.h"
 #include "Controllers/USBDevice/ST/st_usbd_core.h"
+#include "System/eosMath.h"
 
 
 using namespace eos;
@@ -35,34 +36,29 @@ void USBDeviceClassMSC::initialize() {
 }
 
 
-int8_t USBDeviceClassMSC::classInit(
+int8_t USBDeviceClassMSC::classInitialize(
 	uint8_t cfgidx) {
 
 	auto pdev = _drvUSBD->getHandle();
-
-	pdev->pClassDataCmsit[pdev->classId] = &_msc;
-	pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
-	pdev->pUserData[pdev->classId] = _storage;
-
 	bool hs = pdev->dev_speed == USBD_SPEED_HIGH;
 
     // Open EP OUT
 	//
     USBD_LL_OpenEP(pdev, _outEpAdd, USBD_EP_TYPE_BULK, hs ? MSC_MAX_HS_PACKET : MSC_MAX_FS_PACKET);
-    pdev->ep_out[_outEpAdd & 0xFU].is_used = 1U;
+    pdev->ep_out[_outEpAdd & 0x0F].is_used = 1;
 
     // Open EP IN
     //
 	USBD_LL_OpenEP(pdev, _inEpAdd, USBD_EP_TYPE_BULK, hs ? MSC_MAX_HS_PACKET : MSC_MAX_FS_PACKET);
-	pdev->ep_in[_inEpAdd & 0xFU].is_used = 1U;
+	pdev->ep_in[_inEpAdd & 0x0F].is_used = 1;
 
-	botInit();
+	botInitialize();
 
 	return USBD_OK;
 }
 
 
-int8_t USBDeviceClassMSC::classDeinit(
+int8_t USBDeviceClassMSC::classDeinitialize(
 	uint8_t cfgidx) {
 
 	auto pdev = _drvUSBD->getHandle();
@@ -70,123 +66,105 @@ int8_t USBDeviceClassMSC::classDeinit(
 	// Close EP OUT
 	//
 	USBD_LL_CloseEP(pdev, _outEpAdd);
-	pdev->ep_out[_outEpAdd & 0xFU].is_used = 0U;
+	pdev->ep_out[_outEpAdd & 0x0F].is_used = 0;
 
 	// Close EP IN
 	//
 	USBD_LL_CloseEP(pdev, _inEpAdd);
-	pdev->ep_in[_inEpAdd & 0xFU].is_used = 0U;
+	pdev->ep_in[_inEpAdd & 0x0F].is_used = 0;
 
 	// Free MSC Class Resources
 	//
-	if (pdev->pClassDataCmsit[pdev->classId] != NULL) {
-		botDeInit();
-		pdev->pClassDataCmsit[pdev->classId]  = NULL;
-		pdev->pClassData = NULL;
-	}
+	botDeInitialize();
 
 	return USBD_OK;
 }
 
 
 int8_t USBDeviceClassMSC::classSetup(
-	USBD_SetupReqTypedef *req) {
+	USBD_SetupReqTypedef *request) {
 
-	USBD_StatusTypeDef ret = USBD_OK;
-	uint32_t max_lun;
-	uint16_t status_info = 0U;
+	bool ok = false;
 
 	auto pdev = _drvUSBD->getHandle();
 
-	switch (req->requestType & USB_REQ_TYPE_MASK) {
+	switch (request->getType()) {
 
-		case USB_REQ_TYPE_CLASS:
-			switch (req->requestID) {
-				case BOT_GET_MAX_LUN:
-					if ((req->value  == 0U) &&
-						(req->length == 1U) &&
-						((req->requestType & 0x80U) == 0x80U)) {
-						max_lun = _storage->getMaxLun();
-						_msc.max_lun = (max_lun > MSC_BOT_MAX_LUN) ? MSC_BOT_MAX_LUN : max_lun;
-						USBD_CtlSendData(pdev, (uint8_t*) &_msc.max_lun, 1U);
-					}
-					else {
-						USBD_CtlError(pdev, req);
-						ret = USBD_FAIL;
+		case USBDRequestType::clase:
+			switch (getMSCRequestID(request)) {
+
+				case  MSCRequestID::botGetMaxLun:
+					if ((request->value  == 0) &&
+						(request->length == 1) &&
+						(request->getDirection() == USBDRequestDirection::deviceToHost)) {
+
+						int8_t maxLun = _storage->getMaxLun();
+						_msc.max_lun = min((int8_t) MSC_BOT_MAX_LUN, maxLun);
+						USBD_CtlSendData(pdev, (uint8_t*) &maxLun, 1);
+						ok = true;
 					}
 					break;
 
-				case BOT_RESET:
-					if ((req->value  == 0U) &&
-						(req->length == 0U) &&
-						((req->requestType & 0x80U) != 0x80U)) {
+				case MSCRequestID::botReset:
+					if ((request->value  == 0) &&
+						(request->length == 0) &&
+						(request->getDirection() == USBDRequestDirection::hostToDevice)) {
+
 						botReset();
+						ok = true;
 					}
-					else {
-						USBD_CtlError(pdev, req);
-						ret = USBD_FAIL;
-					}
-					break;
-
-				default:
-					USBD_CtlError(pdev, req);
-					ret = USBD_FAIL;
 					break;
 			}
 			break;
 
-		case USB_REQ_TYPE_STANDARD:
-			switch (req->requestID) {
-				case USB_REQ_GET_STATUS:
-					if (pdev->dev_state == USBD_STATE_CONFIGURED)
-						USBD_CtlSendData(pdev, (uint8_t *) &status_info, 2U);
-					else {
-						USBD_CtlError(pdev, req);
-						ret = USBD_FAIL;
-					}
-					break;
+		case USBDRequestType::standard:
+			switch (request->getRequestID()) {
 
-				case USB_REQ_GET_INTERFACE:
-					if (pdev->dev_state == USBD_STATE_CONFIGURED)
-						USBD_CtlSendData(pdev, (uint8_t*) &_msc.interface, 1U);
-					else {
-						USBD_CtlError(pdev, req);
-						ret = USBD_FAIL;
-					}
-					break;
-
-				case USB_REQ_SET_INTERFACE:
-					if (pdev->dev_state == USBD_STATE_CONFIGURED)
-						_msc.interface = (uint8_t)(req->value);
-					else {
-						USBD_CtlError(pdev, req);
-						ret = USBD_FAIL;
-					}
-					break;
-
-				case USB_REQ_CLEAR_FEATURE:
+				case USBDRequestID::getStatus:
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-						if (req->value == USB_FEATURE_EP_HALT)	{
-							USBD_LL_FlushEP(pdev, (uint8_t) req->index);
-							botCplClrFeature((uint8_t) req->index);
+						uint16_t status = 0;
+						USBD_CtlSendData(pdev, (uint8_t*) &status, 2);
+						ok = true;
+					}
+					break;
+
+				case USBDRequestID::getInterface:
+					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+						USBD_CtlSendData(pdev, (uint8_t*) &_msc.interface, 1);
+						ok = true;
+					}
+					break;
+
+				case USBDRequestID::setInterface:
+					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+						_msc.interface = (uint8_t) request->value;
+						ok = true;
+					}
+					break;
+
+				case USBDRequestID::clearFeature:
+					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+						if (request->value == USB_FEATURE_EP_HALT)	{
+							USBD_LL_FlushEP(pdev, (uint8_t) request->index);
+							botCplClrFeature((uint8_t) request->index);
 						}
 					}
+					ok = true;
 					break;
 
 				default:
-					USBD_CtlError(pdev, req);
-					ret = USBD_FAIL;
 					break;
 			}
 			break;
 
 		default:
-			USBD_CtlError(pdev, req);
-			ret = USBD_FAIL;
 			break;
-		}
+	}
 
-	return ret;
+	if (!ok)
+		USBD_CtlError(pdev, request);
+
+	return ok ? USBD_OK : USBD_FAIL;
 }
 
 
@@ -244,12 +222,12 @@ bool USBDeviceClassMSC::classGetHSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	USBD_EpDescTypeDef *pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
-	if (pEpInDesc != NULL)
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
+	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = MSC_MAX_HS_PACKET;
 
-	USBD_EpDescTypeDef *pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _outEpAdd);
-	if (pEpOutDesc != NULL)
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _outEpAdd);
+	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = MSC_MAX_HS_PACKET;
 
 	data = USBD_MSC_CfgDesc;
@@ -263,12 +241,12 @@ bool USBDeviceClassMSC::classGetFSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	USBD_EpDescTypeDef *pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
-	if (pEpInDesc != NULL)
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
+	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
-	USBD_EpDescTypeDef *pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _outEpAdd);
-	if (pEpOutDesc != NULL)
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _outEpAdd);
+	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
 	data = USBD_MSC_CfgDesc;
@@ -282,12 +260,12 @@ bool USBDeviceClassMSC::classGetOtherSpeedConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	USBD_EpDescTypeDef *pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
-	if (pEpInDesc != NULL)
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _inEpAdd);
+	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
-	USBD_EpDescTypeDef *pEpOutDesc =(USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _outEpAdd);
-	if (pEpOutDesc != NULL)
+	auto pEpOutDesc =(USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_MSC_CfgDesc, _outEpAdd);
+	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
 
@@ -309,7 +287,15 @@ bool USBDeviceClassMSC::classGetDeviceQualifierDescriptor(
 }
 
 
-void USBDeviceClassMSC::botInit() {
+bool USBDeviceClassMSC::usesEndPoint(
+	uint8_t epAdd) const {
+
+	return (epAdd == _inEpAdd) || (epAdd == _outEpAdd);
+}
+
+
+
+void USBDeviceClassMSC::botInitialize() {
 
 	auto pdev = _drvUSBD->getHandle();
 
@@ -326,7 +312,7 @@ void USBDeviceClassMSC::botInit() {
 }
 
 
-void USBDeviceClassMSC::botDeInit() {
+void USBDeviceClassMSC::botDeInitialize() {
 
     _msc.bot_state = USBD_BOT_IDLE;
 }
@@ -350,7 +336,7 @@ void USBDeviceClassMSC::botDataIn(
 
 	switch (_msc.bot_state) {
 		case USBD_BOT_DATA_IN:
-			if (_scsi->processCmd(_msc.cbw.bLUN, &_msc.cbw.CB[0]) < 0)
+			if (!_scsi->processCmd(_msc.cbw.bLUN, &_msc.cbw.CB[0]))
 				botSendCSW(USBD_CSW_CMD_FAILED);
 			break;
 
@@ -370,7 +356,7 @@ void USBDeviceClassMSC::botDataOut(uint8_t epnum) {
 			break;
 
 		case USBD_BOT_DATA_OUT:
-			if (_scsi->processCmd(_msc.cbw.bLUN, &_msc.cbw.CB[0]) < 0)
+			if (!_scsi->processCmd(_msc.cbw.bLUN, &_msc.cbw.CB[0]))
 				botSendCSW(USBD_CSW_CMD_FAILED);
 			break;
 	}
@@ -378,12 +364,12 @@ void USBDeviceClassMSC::botDataOut(uint8_t epnum) {
 
 
 void USBDeviceClassMSC::botSendCSW(
-	uint8_t CSW_Status) {
+	uint8_t cswStatus) {
 
 	auto pdev = _drvUSBD->getHandle();
 
 	_msc.csw.dSignature = USBD_BOT_CSW_SIGNATURE;
-	_msc.csw.bStatus = CSW_Status;
+	_msc.csw.bStatus = cswStatus;
 	_msc.bot_state = USBD_BOT_IDLE;
 
 	USBD_LL_Transmit(pdev, _inEpAdd, (uint8_t*) &_msc.csw, USBD_BOT_CSW_LENGTH);
@@ -396,11 +382,11 @@ void USBDeviceClassMSC::botCplClrFeature(
 
 	auto pdev = _drvUSBD->getHandle();
 
-	if (_msc.bot_status == USBD_BOT_STATUS_ERROR) 	{
+	if (_msc.bot_status == USBD_BOT_STATUS_ERROR) {
 		USBD_LL_StallEP(pdev, _inEpAdd);
 		USBD_LL_StallEP(pdev, _outEpAdd);
 	}
-	else if (((epnum & 0x80U) == 0x80U) && (_msc.bot_status != USBD_BOT_STATUS_RECOVERY))
+	else if (((epnum & 0x80) == 0x80) && (_msc.bot_status != USBD_BOT_STATUS_RECOVERY))
 		botSendCSW(USBD_CSW_CMD_FAILED);
 }
 
@@ -411,13 +397,11 @@ void USBDeviceClassMSC::botSendData(
 
 	auto pdev = _drvUSBD->getHandle();
 
-	length = MIN(_msc.cbw.dDataLength, length);
-
 	_msc.csw.dDataResidue -= length;
 	_msc.csw.bStatus = USBD_CSW_CMD_PASSED;
 	_msc.bot_state = USBD_BOT_SEND_DATA;
 
-	USBD_LL_Transmit(pdev, _inEpAdd, buffer, length);
+	USBD_LL_Transmit(pdev, _inEpAdd, buffer, min((unsigned) _msc.cbw.dDataLength, length));
 }
 
 
@@ -432,35 +416,29 @@ void USBDeviceClassMSC::botCBWDecode() {
 		(_msc.cbw.dSignature != USBD_BOT_CBW_SIGNATURE) ||
 	    (_msc.cbw.bLUN > _msc.max_lun) ||
 		(_msc.cbw.bCBLength < 1U) ||
-	    (_msc.cbw.bCBLength > 16U)) {
+	    (_msc.cbw.bCBLength > 16)) {
 		_scsi->senseCode(_msc.cbw.bLUN, ILLEGAL_REQUEST, INVALID_CDB);
 		_msc.bot_status = USBD_BOT_STATUS_ERROR;
 		botAbort();
 	}
 
 	else {
-		if (_scsi->processCmd(_msc.cbw.bLUN, &_msc.cbw.CB[0]) < 0) {
-			if (_msc.bot_state == USBD_BOT_NO_DATA) {
+		if (!_scsi->processCmd(_msc.cbw.bLUN, &_msc.cbw.CB[0])) {
+			if (_msc.bot_state == USBD_BOT_NO_DATA)
 				botSendCSW(USBD_CSW_CMD_FAILED);
-			}
-			else {
+			else
 				botAbort();
-			}
 		}
 
-		/* Burst xfer handled internally */
 		else if ((_msc.bot_state != USBD_BOT_DATA_IN) &&
 				 (_msc.bot_state != USBD_BOT_DATA_OUT) &&
 				 (_msc.bot_state != USBD_BOT_LAST_DATA_IN)) {
-			if (_msc.bot_data_length > 0U) {
+			if (_msc.bot_data_length > 0)
 				botSendData(_msc.bot_data, _msc.bot_data_length);
-			}
-			else if (_msc.bot_data_length == 0U) {
+			else if (_msc.bot_data_length == 0)
 				botSendCSW(USBD_CSW_CMD_PASSED);
-			}
-			else {
+			else
 				botAbort();
-			}
 		}
 	}
 }
@@ -470,8 +448,8 @@ void USBDeviceClassMSC::botAbort() {
 
 	auto pdev = _drvUSBD->getHandle();
 
-	if ((_msc.cbw.bmFlags == 0U) &&
-	    (_msc.cbw.dDataLength != 0U) &&
+	if ((_msc.cbw.bmFlags == 0) &&
+	    (_msc.cbw.dDataLength != 0) &&
 	    (_msc.bot_status == USBD_BOT_STATUS_NORMAL))
 		USBD_LL_StallEP(pdev, _outEpAdd);
 
@@ -482,3 +460,4 @@ void USBDeviceClassMSC::botAbort() {
 		USBD_LL_StallEP(pdev, _outEpAdd);
 	}
 }
+

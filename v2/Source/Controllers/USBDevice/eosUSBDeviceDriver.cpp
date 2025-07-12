@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "Controllers/USBDevice/eosUSBDeviceDriver.h"
 #include "Controllers/USBDevice/ST/st_usbd_core.h"
+#include "System/eosMath.h"
 
 
 using namespace eos;
@@ -92,7 +93,7 @@ Result USBDeviceDriver::stop() {
 
 	while (!_classes.empty()) {
 		auto cls = _classes.front();
-		cls->classDeinit(_usbd.dev_config);
+		cls->classDeinitialize(_usbd.dev_config);
 		_classes.remove(cls);
 	}
 
@@ -108,7 +109,7 @@ USBD_StatusTypeDef USBDeviceDriver::setClassConfig(
 	USBD_StatusTypeDef ret = USBD_OK;
 
 	for (auto cls: _classes)
-		cls->classInit(cfgidx);
+		cls->classInitialize(cfgidx);
 
 	return ret;
 }
@@ -122,40 +123,36 @@ USBD_StatusTypeDef USBDeviceDriver::setClassConfig(
 USBDeviceClass *USBDeviceDriver::getClassFromEndPoint(
 	uint8_t epAddr) const {
 
-	return _classes.front();
+	for (auto cls: _classes)
+		if (cls->usesEndPoint(epAddr))
+			return cls;
+
+	return nullptr;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una solicitut.
+/// \brief    Despatxa una solicitut.
 /// \param    request: La solicitut.
 /// \return   El resultat de l'operacio.
 ///
 bool USBDeviceDriver::processRequest(
 	USBD_SetupReqTypedef *request) {
 
-	bool ok = false;
-
 	switch (request->getRecipient()) {
 
 		case USBDRequestRecipient::device:
-			ok = processDeviceRequest(request);
-			break;
+			return processDeviceRequest(request);
 
 		case USBDRequestRecipient::interface:
-			ok = processInterfaceRequest(request);
-			break;
+			return processInterfaceRequest(request);
 
 		case USBDRequestRecipient::endPoint:
-			ok = processEndPointRequest(request);
-			break;
+			return processEndPointRequest(request);
 
 		default:
-			ok = USBD_LL_StallEP(getHandle(), request->requestType & 0x80) == USBD_OK;
-			break;
+			return USBD_LL_StallEP(getHandle(), request->requestType & 0x80) == USBD_OK;
 	}
-
-	return ok;
 }
 
 
@@ -167,16 +164,13 @@ bool USBDeviceDriver::processRequest(
 bool USBDeviceDriver::processDeviceRequest(
 	USBD_SetupReqTypedef *request) {
 
-	bool ok = false;
-
-	// Provisional per proves
-    auto pdev = getHandle();
+	auto ok = false;
 
 	switch (request->getType()) {
 
 		case USBDRequestType::clase:
 		case USBDRequestType::vendor:
-			ok = (USBD_StatusTypeDef) _classes.front()->classSetup(request) == USBD_OK;
+			ok = getClass()->classSetup(request) == USBD_OK;
 			break;
 
 		case USBDRequestType::standard:
@@ -219,13 +213,13 @@ bool USBDeviceDriver::processDeviceRequest(
 					break;
 
 				default:
-					USBD_CtlError(pdev, request);
+					USBD_CtlError(getHandle(), request);
 					break;
 			}
 			break;
 
 		default:
-			USBD_CtlError(pdev, request);
+			USBD_CtlError(getHandle(), request);
 			break;
 	}
 
@@ -246,9 +240,8 @@ bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
 
 	// Provisional per proves
     auto pdev = getHandle();
-    auto classe = pdev->pClass[0];
 
-	bool ok = false;
+	auto ok = false;
 
     switch (request->getValueDescriptorType()) {
 
@@ -256,19 +249,22 @@ bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
             ok = getDeviceDescriptor(data, length);
             break;
 
-        case USBDRequestValueDescriptorType::configuration:
-        	if (pdev->dev_speed == USBD_SPEED_HIGH) {
-        		ok = classe->classGetHSConfigurationDescriptor(data, length);
-        		if (ok)
-        			data[1] = USB_DESC_TYPE_CONFIGURATION;
-        	}
-        	else {
-        		ok = classe->classGetFSConfigurationDescriptor(data, length);
-        		if (ok)
-        			data[1] = USB_DESC_TYPE_CONFIGURATION;
+        case USBDRequestValueDescriptorType::configuration: {
+        	auto classe = getClass();
+        	if (classe != nullptr) {
+				if (pdev->dev_speed == USBD_SPEED_HIGH) {
+					ok = classe->classGetHSConfigurationDescriptor(data, length);
+					if (ok)
+						data[1] = USB_DESC_TYPE_CONFIGURATION;
+				}
+				else {
+					ok = classe->classGetFSConfigurationDescriptor(data, length);
+					if (ok)
+						data[1] = USB_DESC_TYPE_CONFIGURATION;
+				}
         	}
         	break;
-
+        }
 
         case USBDRequestValueDescriptorType::string:
         	switch (request->getValueDescriptorIndex()) {
@@ -299,26 +295,24 @@ bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
         	}
         	break;
 
-    	case USBDRequestValueDescriptorType::deviceQualifier:
-  			ok = classe->classGetDeviceQualifierDescriptor(data, length);
+    	case USBDRequestValueDescriptorType::deviceQualifier: {
+   			ok = getClass()->classGetDeviceQualifierDescriptor(data, length);
     		break;
+    	}
 
-    	case USBDRequestValueDescriptorType::otherSpeedConfiguration:
-    		if (pdev->dev_speed == USBD_SPEED_HIGH) {
-    			ok = classe->classGetOtherSpeedConfigurationDescriptor(data, length);
-    			if (ok)
-    				data[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
-    		}
+    	case USBDRequestValueDescriptorType::otherSpeedConfiguration: {
+			if (pdev->dev_speed == USBD_SPEED_HIGH) {
+				ok = getClass()->classGetOtherSpeedConfigurationDescriptor(data, length);
+				if (ok)
+					data[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
+			}
     		break;
+    	}
     }
-
-    // Provisional per proves. es procesa el error en el cridador
-    if (!ok)
-    	return false;
 
     if (ok) {
 		if (request->length != 0) {
-			length = MIN(length, request->length);
+			length = min(length, (unsigned) request->length);
 			USBD_CtlSendData(pdev, data, length);
 		}
 		else
@@ -342,7 +336,7 @@ bool USBDeviceDriver::processDeviceRequest_SetAddress(
 	// Provisional per proves
     auto pdev = getHandle();
 
-    bool ok = false;
+    auto ok = false;
 
 	if ((request->index == 0) &&
 		(request->length == 0) &&
@@ -379,14 +373,14 @@ bool USBDeviceDriver::processDeviceRequest_ClearFeature(
 	// Provisional per proves
     auto pdev = getHandle();
 
-    bool ok = false;
+    auto ok = false;
 
     switch (pdev->dev_state) {
 		case USBD_STATE_DEFAULT:
 		case USBD_STATE_ADDRESSED:
 		case USBD_STATE_CONFIGURED:
 			if (request->value == USB_FEATURE_REMOTE_WAKEUP) {
-				pdev->dev_remote_wakeup = 0U;
+				pdev->dev_remote_wakeup = 0;
 				USBD_CtlSendStatus(pdev);
 			}
 			ok = true;
@@ -411,18 +405,18 @@ bool USBDeviceDriver::processDeviceRequest_SetFeature(
 	// Provisional per proves
     auto pdev = getHandle();
 
-    bool ok = true;
+    auto ok = false;
 
     if (request->value == USB_FEATURE_REMOTE_WAKEUP) {
 	    pdev->dev_remote_wakeup = 1;
 	    USBD_CtlSendStatus(pdev);
+	    ok = true;
     }
 	else if (request->value == USB_FEATURE_TEST_MODE) {
 		pdev->dev_test_mode = (uint8_t)(request->index >> 8);
 	    USBD_CtlSendStatus(pdev);
+	    ok = true;
 	}
-	else
-		ok = false;
 
     if (!ok)
 	    USBD_CtlError(pdev, request);
@@ -442,26 +436,20 @@ bool USBDeviceDriver::processDeviceRequest_GetConfiguration(
 	// Provisional per proves
     auto pdev = getHandle();
 
-    bool ok = true;
+    bool ok = false;
 
-    if (request->length != 1)
-    	ok = false;
-
-	else {
+    if (request->length == 1) {
 		switch (pdev->dev_state) {
-
 			case USBD_STATE_DEFAULT:
 			case USBD_STATE_ADDRESSED:
 				pdev->dev_default_config = 0U;
 				USBD_CtlSendData(pdev, (uint8_t *)&pdev->dev_default_config, 1);
+				ok = true;
 				break;
 
 			case USBD_STATE_CONFIGURED:
 				USBD_CtlSendData(pdev, (uint8_t *)&pdev->dev_config, 1);
-				break;
-
-			default:
-				ok = false;
+				ok = true;
 				break;
 		}
 	}
@@ -630,7 +618,7 @@ bool USBDeviceDriver::processInterfaceRequest(
 						auto idx = USBD_CoreFindIF(pdev, LOBYTE(request->index));
 						if ((idx != 0xFF) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
 							pdev->classId = idx;
-							ok = pdev->pClass[idx]->classSetup(request) == USBD_OK;
+							ok = getClass()->classSetup(request) == USBD_OK;
 						}
 						if ((request->length == 0) && (ok)) {
 							USBD_CtlSendStatus(pdev);
@@ -664,31 +652,32 @@ bool USBDeviceDriver::processEndPointRequest(
     auto pdev = getHandle();
 
 	auto epAddr = LOBYTE(request->index);
-	// auto classe = getClassFromEndPoint(epAddr);
 
-	switch (request->requestType & USB_REQ_TYPE_MASK) {
-		case USB_REQ_TYPE_CLASS:
-		case USB_REQ_TYPE_VENDOR:
+	switch (request->getType()) {
+		case USBDRequestType::clase:
+		case USBDRequestType::vendor:
+
 			/* Get the class index relative to this endpoint */
 			idx = USBD_CoreFindEP(pdev, epAddr);
-			if (((uint8_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
+
+			if (((uint8_t)idx != 0xFF) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
 				pdev->classId = idx;
-				ret = (USBD_StatusTypeDef)pdev->pClass[idx]->classSetup(request);
+				ret = (USBD_StatusTypeDef)  getClass()->classSetup(request);
 			}
 			break;
 
-		case USB_REQ_TYPE_STANDARD:
-			switch (request->requestID) {
-				case USB_REQ_SET_FEATURE:
+		case USBDRequestType::standard:
+
+			switch (request->getRequestID()) {
+				case USBDRequestID::setFeature:
 					switch (pdev->dev_state) {
 						case USBD_STATE_ADDRESSED:
-							if ((epAddr != 0x00U) && (epAddr != 0x80U)) {
+							if ((epAddr != 0x00) && (epAddr != 0x80)) {
 								USBD_LL_StallEP(pdev, epAddr);
 								USBD_LL_StallEP(pdev, 0x80U);
 							}
-							else {
+							else
 								USBD_CtlError(pdev, request);
-							}
 							break;
 
 						case USBD_STATE_CONFIGURED:
@@ -706,7 +695,7 @@ bool USBDeviceDriver::processEndPointRequest(
 					}
 					break;
 
-				case USB_REQ_CLEAR_FEATURE:
+				case USBDRequestID::clearFeature:
 					switch (pdev->dev_state) {
 						case USBD_STATE_ADDRESSED:
 							if ((epAddr != 0x00U) && (epAddr != 0x80U)) {
@@ -730,7 +719,7 @@ bool USBDeviceDriver::processEndPointRequest(
 								if (((uint8_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
 									pdev->classId = idx;
 									/* Call the class data out function to manage the request */
-									ret = (USBD_StatusTypeDef)(pdev->pClass[idx]->classSetup(request));
+									ret = (USBD_StatusTypeDef)(getClass()->classSetup(request));
 								}
 							}
 							break;
@@ -741,7 +730,7 @@ bool USBDeviceDriver::processEndPointRequest(
 					}
 					break;
 
-				case USB_REQ_GET_STATUS:
+				case USBDRequestID::getStatus:
 					switch (pdev->dev_state) {
 						case USBD_STATE_ADDRESSED:
 							if ((epAddr != 0x00U) && (epAddr != 0x80U)) {
@@ -800,6 +789,48 @@ bool USBDeviceDriver::processEndPointRequest(
 	}
 
 	return ret == USBD_OK;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut 'sertFeature'
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::processEndPointRequest_SetFeature(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut 'clearFeature'
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::processEndPointRequest_ClearFeature(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut 'getStatus'
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::processEndPointRequest_GetStatus(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+
+	return ok;
 }
 
 

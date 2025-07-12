@@ -12,6 +12,7 @@ namespace app {
     class MyApplication: public eos::RTOSApplication {
         protected:
             void onExecute() override;
+            void initApplication(ApplicationParams &params) override;
 
         private:
             void initializeGPIO();

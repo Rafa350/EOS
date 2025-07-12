@@ -7,7 +7,7 @@
 using namespace eos;
 
 
-static const int8_t __inquiryData[] = {
+static const int8_t __inquiryData[STANDARD_INQUIRY_DATA_LEN] = {
 	/* LUN 0 */
 	0x00,                              // Qualifier / Device type
 	(int8_t) 0x80,                     // RMB
@@ -23,7 +23,8 @@ static const int8_t __inquiryData[] = {
 	'0', '.', '0','1',                      // Version
 };
 
-volatile uint32_t __writestatus, __readstatus = 0;
+volatile uint32_t __writestatus = 0;
+volatile uint32_t __readstatus = 0;
 
 
 /// ----------------------------------------------------------------------
@@ -59,8 +60,8 @@ int8_t const * MSCStorage_SSD::getInquiryData() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte la capacitat.
-/// \param    block_num: El nombre de blocs.
-/// \param    block_size: El tamany de cada block.
+/// \param    blkQuantity: El nombre de blocs.
+/// \param    blkSize: El tamany de cada block.
 /// \return   0 si tot es correcte.
 ///
 int8_t MSCStorage_SSD::getCapacity(
@@ -68,19 +69,18 @@ int8_t MSCStorage_SSD::getCapacity(
 	uint32_t *blkQuantity,
 	uint16_t *blkSize) {
 
-	HAL_SD_CardInfoTypeDef info;
-	int8_t result = -1;
-
 	if (isCardPresent()) {
 
+		HAL_SD_CardInfoTypeDef info;
 	    BSP_SD_GetCardInfo(&info);
 
 	    *blkQuantity = info.LogBlockNbr;
 	    *blkSize = info.LogBlockSize;
-	    result = 0;
+	    return 0;
 	}
 
-	return result;
+	else
+		return -1;
 }
 
 
@@ -173,7 +173,7 @@ int8_t MSCStorage_SSD::write(
 
 	if (isCardPresent()) {
 
-		BSP_SD_WriteBlocks_DMA((uint32_t *)buffer, blkStart, blkCount);
+		BSP_SD_WriteBlocks_DMA((uint32_t*) buffer, blkStart, blkCount);
 
 		// Wait for Tx Transfer completion
 		//

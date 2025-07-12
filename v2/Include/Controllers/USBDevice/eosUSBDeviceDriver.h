@@ -55,6 +55,10 @@ namespace eos {
 			bool processDeviceRequest_SetConfiguration(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_GetStatus(USBD_SetupReqTypedef *request);
 
+			bool processEndPointRequest_SetFeature(USBD_SetupReqTypedef *request);
+			bool processEndPointRequest_ClearFeature(USBD_SetupReqTypedef *request);
+			bool processEndPointRequest_GetStatus(USBD_SetupReqTypedef *request);
+
 			bool getDeviceDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getLangIDStrDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getManufacturerStrDescriptor(uint8_t *&data, unsigned &length) const;
@@ -84,6 +88,7 @@ namespace eos {
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }
+			inline USBDeviceClass *getClass() const { return _classes.front(); }
 	};
 
 	class USBDeviceClass: public USBDeviceClassListNode {
@@ -96,8 +101,8 @@ namespace eos {
 		public:
 			virtual void initialize() = 0;
 
-			virtual int8_t classInit(uint8_t cfgidx) = 0;
-			virtual int8_t classDeinit(uint8_t cfgidx) = 0;
+			virtual int8_t classInitialize(uint8_t cfgidx) = 0;
+			virtual int8_t classDeinitialize(uint8_t cfgidx) = 0;
 
 			virtual int8_t classSetup(USBD_SetupReqTypedef *req) = 0;
 
@@ -112,6 +117,8 @@ namespace eos {
 			virtual bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
 			virtual bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
 			virtual bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) = 0;
+
+			virtual bool usesEndPoint(uint8_t epAdd) const = 0;
 	};
 }
 
