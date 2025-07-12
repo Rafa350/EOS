@@ -170,13 +170,6 @@ namespace eos {
 		uint8_t  ReservedForAlign[3];
 	};
 
-	struct USBD_MSC_BOT_LUN_TypeDef {
-	  uint16_t size;
-	  uint32_t nbr;
-	  uint32_t addr;
-	  uint32_t len;
-	};
-
 	struct USBD_MSC_BOT_HandleTypeDef {
 		uint32_t                 max_lun;
 		uint32_t                 interface;

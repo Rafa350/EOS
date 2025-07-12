@@ -13,14 +13,14 @@ namespace eos {
 
 	class MSCStorage {
 		public:
-			virtual int8_t initialize(uint8_t lun) = 0;
+			virtual int8_t initialize() = 0;
 
-			virtual int8_t getCapacity(uint8_t lun, uint32_t *blkQuantity, uint16_t *blkSize) = 0;
+			virtual int8_t getCapacity(uint8_t lun, unsigned &blkQuantity, unsigned &blkSize) = 0;
 			virtual int8_t getMaxLun() = 0;
 			virtual int8_t const * getInquiryData() = 0;
 
-			virtual int8_t isReady(uint8_t lun) = 0;
-			virtual int8_t isWriteProtected(uint8_t lun) = 0;
+			virtual bool isReady(uint8_t lun) = 0;
+			virtual bool isWriteProtected(uint8_t lun) = 0;
 
 			virtual int8_t read(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
 			virtual int8_t write(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;

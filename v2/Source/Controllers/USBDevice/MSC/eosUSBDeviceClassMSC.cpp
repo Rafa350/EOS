@@ -31,6 +31,8 @@ USBDeviceClassMSC::USBDeviceClassMSC(
 ///
 void USBDeviceClassMSC::initialize() {
 
+	_storage->initialize();
+
 	auto pdev = _drvUSBD->getHandle();
 	USBD_RegisterClass(pdev, this);
 }
@@ -304,7 +306,7 @@ void USBDeviceClassMSC::botInitialize() {
 
 	_scsi->initialize();
 
-	_storage->initialize(0);
+	//_storage->initialize(0);
 
 	USBD_LL_FlushEP(pdev, _outEpAdd);
 	USBD_LL_FlushEP(pdev, _inEpAdd);

@@ -39,8 +39,7 @@ MSCStorage_SSD::MSCStorage_SSD() {
 /// \brief    Inicialitzacio.
 /// \return   0 si tot es correcte.
 ///
-int8_t MSCStorage_SSD::initialize(
-	uint8_t lun) {
+int8_t MSCStorage_SSD::initialize() {
 
 	BSP_SD_Init();
 
@@ -66,16 +65,16 @@ int8_t const * MSCStorage_SSD::getInquiryData() {
 ///
 int8_t MSCStorage_SSD::getCapacity(
 	uint8_t lun,
-	uint32_t *blkQuantity,
-	uint16_t *blkSize) {
+	unsigned &blkQuantity,
+	unsigned &blkSize) {
 
 	if (isCardPresent()) {
 
 		HAL_SD_CardInfoTypeDef info;
 	    BSP_SD_GetCardInfo(&info);
 
-	    *blkQuantity = info.LogBlockNbr;
-	    *blkSize = info.LogBlockSize;
+	    blkQuantity = info.LogBlockNbr;
+	    blkSize = info.LogBlockSize;
 	    return 0;
 	}
 
@@ -87,12 +86,12 @@ int8_t MSCStorage_SSD::getCapacity(
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si esta preparat.
 /// \param    lun: Dispositiu logic.
-/// \return   0 si esta preparat.
+/// \return   True si esta preparat.
 ///
-int8_t MSCStorage_SSD::isReady(
+bool MSCStorage_SSD::isReady(
 	uint8_t lun) {
 
-	int8_t result = -1;
+	bool result = false;
 
 	if (isCardPresent()) {
 		if (_prevStatus < 0) {
@@ -101,7 +100,7 @@ int8_t MSCStorage_SSD::isReady(
 
 	    }
 	    if (!isCardBusy())
-	    	result = 0;
+	    	result = true;
 	}
 	else if (_prevStatus == 0)
 	    _prevStatus = -1;
@@ -113,12 +112,12 @@ int8_t MSCStorage_SSD::isReady(
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si esta protegit d'escriptura.
 /// \param    lun: Dispositiu logic.
-/// \return   0 si no ho esta.
+/// \return   True si ho esta.
 ///
-int8_t MSCStorage_SSD::isWriteProtected(
+bool MSCStorage_SSD::isWriteProtected(
 	uint8_t lun) {
 
-	return 0;
+	return false;
 }
 
 

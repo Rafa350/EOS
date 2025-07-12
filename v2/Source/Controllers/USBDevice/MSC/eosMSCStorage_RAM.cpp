@@ -38,8 +38,7 @@ MSCStorage_RAM::MSCStorage_RAM(
 }
 
 
-int8_t MSCStorage_RAM::initialize(
-	uint8_t lun) {
+int8_t MSCStorage_RAM::initialize() {
 
 	memset(_storage, 0, _storageSize);
 	return 0;
@@ -58,26 +57,26 @@ int8_t const * MSCStorage_RAM::getInquiryData() {
 
 int8_t MSCStorage_RAM::getCapacity(
 	uint8_t lun,
-	uint32_t *blkQuantity,
-	uint16_t *blkSize) {
+	unsigned &blkQuantity,
+	unsigned &blkSize) {
 
-	*blkSize = __blockSize;
-	*blkQuantity = _storageSize / __blockSize;
+	blkSize = __blockSize;
+	blkQuantity = _storageSize / __blockSize;
 	return 0;
 }
 
 
-int8_t MSCStorage_RAM::isReady(
+bool MSCStorage_RAM::isReady(
 	uint8_t lun) {
 
-	return 0;
+	return true;
 }
 
 
-int8_t MSCStorage_RAM::isWriteProtected(
+bool MSCStorage_RAM::isWriteProtected(
 	uint8_t lun) {
 
-	return 0;
+	return false;
 }
 
 

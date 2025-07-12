@@ -8,7 +8,7 @@
 #include "Controllers/USBDevice/MSC/eosMSCDefinitions.h"
 
 
-#define SENSE_LIST_DEEPTH                           4U
+//#define SENSE_LIST_DEEPTH                           4U
 
 #define SCSI_FORMAT_UNIT                            0x04U
 #define SCSI_INQUIRY                                0x12U
@@ -80,6 +80,20 @@ namespace eos {
 
 	class SCSIProcessor {
 		private:
+			static constexpr unsigned _senseListSize = 4;
+			static constexpr unsigned _lunDataListSize = 4;
+
+		private:
+			typedef USBD_SCSI_SenseTypeDef SenseList[_senseListSize];
+
+			struct LunData {
+			  unsigned blkSize;
+			  unsigned blkQuantity;
+			  uint32_t addr;
+			  uint32_t len;
+			};
+			typedef LunData LunDataList[_lunDataListSize];
+
 			enum class MediumState {
 				unlocked,
 				locked,
@@ -92,10 +106,10 @@ namespace eos {
 			uint8_t _inEpAdd;
 			uint8_t _outEpAdd;
 			USBD_MSC_BOT_HandleTypeDef *_msc;
-			USBD_SCSI_SenseTypeDef _sense[SENSE_LIST_DEEPTH];
+			SenseList _senseList;
 			unsigned _senseTail;
 			unsigned _senseHead;
-            USBD_MSC_BOT_LUN_TypeDef _scsi_blk[MSC_BOT_MAX_LUN];
+            LunDataList _lunDataList;
 			MediumState _mediumState;
 
 		private:
@@ -119,7 +133,7 @@ namespace eos {
 			bool checkAddressRange(uint8_t lun, uint32_t blk_offset, uint32_t blk_nbr);
 			bool processRead(uint8_t lun);
 			bool processWrite(uint8_t lun);
-			bool updateBotData(const uint8_t *buffer, uint16_t length);
+			bool updateBotData(const uint8_t *buffer, unsigned length);
 
 		public:
 			SCSIProcessor(MSCStorage *storage, USBD_HandleTypeDef *_pdev,

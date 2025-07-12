@@ -99,7 +99,7 @@ void MyApplication::onExecute() {
 
 #elif defined(USE_MSC_DEVICE)
 
-#if 0
+#if 1
 	auto storage = new eos::MSCStorage_SSD();
 
 #else

@@ -65,6 +65,9 @@ static uint8_t MSC_Diagnostic_Data[DIAGNOSTIC_DATA_LEN] = {
 };
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+///
 SCSIProcessor::SCSIProcessor(
 	MSCStorage *storage,
 	USBD_HandleTypeDef *pdev,
@@ -169,12 +172,12 @@ void SCSIProcessor::senseCode(
 	uint8_t sKey,
 	uint8_t ASC) {
 
-	_sense[_senseTail].Skey = sKey;
-	_sense[_senseTail].w.b.ASC = ASC;
-	_sense[_senseTail].w.b.ASCQ = 0;
+	_senseList[_senseTail].Skey = sKey;
+	_senseList[_senseTail].w.b.ASC = ASC;
+	_senseList[_senseTail].w.b.ASCQ = 0;
 
 	_senseTail++;
-	if (_senseTail == (sizeof(_sense) / sizeof(_sense[0])))
+	if (_senseTail == _senseListSize)
 		_senseTail = 0;
 }
 
@@ -196,7 +199,7 @@ bool SCSIProcessor::testUnitReady(
 		return false;
 	}
 
-	if (_storage->isReady(lun) != 0) {
+	if (!_storage->isReady(lun)) {
 		senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 		_msc->bot_state = USBD_BOT_NO_DATA;
 		return false;
@@ -208,18 +211,18 @@ bool SCSIProcessor::testUnitReady(
 
 bool SCSIProcessor::inquiry(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
 	if (_msc->cbw.dDataLength == 0) {
 		senseCode(lun, ILLEGAL_REQUEST, INVALID_CDB);
 		return false;
 	}
 
-	if ((params[1] & 0x01) != 0) {
-		if (params[2] == 0) {
+	if ((cmd[1] & 0x01) != 0) {
+		if (cmd[2] == 0) {
 			updateBotData(MSC_Page00_Inquiry_Data, LENGTH_INQUIRY_PAGE00);
 		}
-		else if (params[2] == 0x80) {
+		else if (cmd[2] == 0x80) {
 			updateBotData(MSC_Page80_Inquiry_Data, LENGTH_INQUIRY_PAGE80);
 		}
 		else {
@@ -231,8 +234,8 @@ bool SCSIProcessor::inquiry(
 	else {
 		auto pPage = (uint8_t*) & _storage->getInquiryData()[lun * STANDARD_INQUIRY_DATA_LEN];
 		auto len = pPage[4] + 5;
-		if (params[4] <= len)
-			len = params[4];
+		if (cmd[4] <= len)
+			len = cmd[4];
 		updateBotData(pPage, len);
 	}
 
@@ -242,13 +245,12 @@ bool SCSIProcessor::inquiry(
 
 bool SCSIProcessor::readFormatCapacity(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	uint16_t blk_size;
-	uint32_t blk_nbr;
-	int8_t ret;
+	unsigned blkSize;
+	unsigned blkQuantity;
 
-	ret = _storage->getCapacity(lun, &blk_nbr, &blk_size);
+	auto ret = _storage->getCapacity(lun, blkQuantity, blkSize);
 	if ((ret != 0) || (_mediumState == MediumState::ejected)) {
 		senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 		return false;
@@ -257,17 +259,15 @@ bool SCSIProcessor::readFormatCapacity(
 	_msc->bot_data[0] = 0;
 	_msc->bot_data[1] = 0;
 	_msc->bot_data[2] = 0;
-
 	_msc->bot_data[3] = 0x08;
-	_msc->bot_data[4] = (uint8_t)((blk_nbr - 1) >> 24);
-	_msc->bot_data[5] = (uint8_t)((blk_nbr - 1) >> 16);
-	_msc->bot_data[6] = (uint8_t)((blk_nbr - 1) >>  8);
-	_msc->bot_data[7] = (uint8_t)(blk_nbr - 1);
-
+	_msc->bot_data[4] = (uint8_t)((blkQuantity - 1) >> 24);
+	_msc->bot_data[5] = (uint8_t)((blkQuantity - 1) >> 16);
+	_msc->bot_data[6] = (uint8_t)((blkQuantity - 1) >>  8);
+	_msc->bot_data[7] = (uint8_t)(blkQuantity - 1);
 	_msc->bot_data[8] = 0x02;
-	_msc->bot_data[9] = (uint8_t)(blk_size >>  16);
-	_msc->bot_data[10] = (uint8_t)(blk_size >>  8);
-	_msc->bot_data[11] = (uint8_t)(blk_size);
+	_msc->bot_data[9] = (uint8_t)(blkSize >>  16);
+	_msc->bot_data[10] = (uint8_t)(blkSize >>  8);
+	_msc->bot_data[11] = (uint8_t)(blkSize);
 
 	_msc->bot_data_length = 12;
 
@@ -279,27 +279,27 @@ bool SCSIProcessor::readCapacity10(
 	uint8_t lun,
 	const uint8_t *params) {
 
-	auto p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 
-	auto ret = _storage->getCapacity(lun, &p_scsi_blk->nbr, &p_scsi_blk->size);
+	auto ret = _storage->getCapacity(lun, lunData->blkQuantity, lunData->blkSize);
 	if ((ret != 0) || (_mediumState == MediumState::ejected)) {
 		senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 		return false;
 	}
 
+	auto bq = lunData->blkQuantity - 1;
+	_msc->bot_data[0] = (uint8_t)(bq >> 24);
+	_msc->bot_data[1] = (uint8_t)(bq >> 16);
+	_msc->bot_data[2] = (uint8_t)(bq >>  8);
+	_msc->bot_data[3] = (uint8_t)(bq);
+
+	auto bs = lunData->blkSize;
+	_msc->bot_data[4] = (uint8_t)(bs >> 24);
+	_msc->bot_data[5] = (uint8_t)(bs >> 16);
+	_msc->bot_data[6] = (uint8_t)(bs >> 8);
+	_msc->bot_data[7] = (uint8_t)(bs);
+
 	_msc->bot_data_length = 8;
-
-	auto nbr = p_scsi_blk->nbr - 1;
-	_msc->bot_data[0] = (uint8_t)(nbr >> 24);
-	_msc->bot_data[1] = (uint8_t)(nbr >> 16);
-	_msc->bot_data[2] = (uint8_t)(nbr >>  8);
-	_msc->bot_data[3] = (uint8_t)(nbr);
-
-	auto size = p_scsi_blk->size;
-	_msc->bot_data[4] = (uint8_t)(size >> 24);
-	_msc->bot_data[5] = (uint8_t)(size >> 16);
-	_msc->bot_data[6] = (uint8_t)(size >> 8);
-	_msc->bot_data[7] = (uint8_t)(size);
 
 	return true;
 }
@@ -309,9 +309,9 @@ bool SCSIProcessor::readCapacity16(
 	uint8_t lun,
 	const uint8_t *params) {
 
-	auto p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 
-	auto ret = _storage->getCapacity(lun, &p_scsi_blk->nbr, &p_scsi_blk->size);
+	auto ret = _storage->getCapacity(lun, lunData->blkQuantity, lunData->blkSize);
 	if ((ret != 0) || (_mediumState == MediumState::ejected)) {
 		senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 		return false;
@@ -325,15 +325,17 @@ bool SCSIProcessor::readCapacity16(
 
 	memset(_msc->bot_data, 0, _msc->bot_data_length);
 
-	_msc->bot_data[4] = (uint8_t)((p_scsi_blk->nbr - 1) >> 24);
-	_msc->bot_data[5] = (uint8_t)((p_scsi_blk->nbr - 1) >> 16);
-	_msc->bot_data[6] = (uint8_t)((p_scsi_blk->nbr - 1) >>  8);
-	_msc->bot_data[7] = (uint8_t)(p_scsi_blk->nbr - 1);
+	auto bq = lunData->blkQuantity - 1;
+	_msc->bot_data[4] = (uint8_t)(bq >> 24);
+	_msc->bot_data[5] = (uint8_t)(bq >> 16);
+	_msc->bot_data[6] = (uint8_t)(bq >>  8);
+	_msc->bot_data[7] = (uint8_t)bq;
 
-	_msc->bot_data[8] = (uint8_t)(p_scsi_blk->size >>  24);
-	_msc->bot_data[9] = (uint8_t)(p_scsi_blk->size >>  16);
-	_msc->bot_data[10] = (uint8_t)(p_scsi_blk->size >>  8);
-	_msc->bot_data[11] = (uint8_t)(p_scsi_blk->size);
+	auto bs = lunData->blkSize;
+	_msc->bot_data[8] = (uint8_t)(bs >>  24);
+	_msc->bot_data[9] = (uint8_t)(bs >>  16);
+	_msc->bot_data[10] = (uint8_t)(bs >>  8);
+	_msc->bot_data[11] = (uint8_t)(bs);
 
 	return true;
 }
@@ -341,7 +343,7 @@ bool SCSIProcessor::readCapacity16(
 
 bool SCSIProcessor::requestSense(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
 	if (_msc->cbw.dDataLength == 0) {
 		senseCode(lun, ILLEGAL_REQUEST, INVALID_CDB);
@@ -354,17 +356,17 @@ bool SCSIProcessor::requestSense(
 	_msc->bot_data[7] = REQUEST_SENSE_DATA_LEN - 6;
 
 	if ((_senseHead != _senseTail)) {
-		_msc->bot_data[2] = (uint8_t) _sense[_senseHead].Skey;
-		_msc->bot_data[12] = (uint8_t) _sense[_senseHead].w.b.ASC;
-		_msc->bot_data[13] = (uint8_t) _sense[_senseHead].w.b.ASCQ;
+		_msc->bot_data[2] = _senseList[_senseHead].Skey;
+		_msc->bot_data[12] = _senseList[_senseHead].w.b.ASC;
+		_msc->bot_data[13] = _senseList[_senseHead].w.b.ASCQ;
 		_senseHead++;
-		if (_senseHead == (sizeof(_sense) / sizeof(_sense[0])))
+		if (_senseHead == _senseListSize)
 			_senseHead = 0;
 	}
 
 	_msc->bot_data_length = REQUEST_SENSE_DATA_LEN;
-	if (params[4] < REQUEST_SENSE_DATA_LEN)
-		_msc->bot_data_length = params[4];
+	if (cmd[4] < REQUEST_SENSE_DATA_LEN)
+		_msc->bot_data_length = cmd[4];
 
 	return true;
 }
@@ -372,16 +374,16 @@ bool SCSIProcessor::requestSense(
 
 bool SCSIProcessor::startStopUnit(
 	int8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	if ((_mediumState == MediumState::locked) && ((params[4] & 0x03) == 0x02)) {
+	if ((_mediumState == MediumState::locked) && ((cmd[4] & 0x03) == 0x02)) {
 		senseCode(lun, ILLEGAL_REQUEST, INVALID_FIELD_IN_COMMAND);
 		return false;
 	}
 
 	_msc->bot_data_length = 0;
 
-	switch (params[4] & 0x03) {
+	switch (cmd[4] & 0x03) {
 		case 0x01: // LOEJ=0, START=1
 			_mediumState = MediumState::unlocked;
 			break;
@@ -424,17 +426,17 @@ bool SCSIProcessor::allowPreventMediumRemoval(
 
 bool SCSIProcessor::modeSense6(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
 	unsigned len = MODE_SENSE6_LEN;
 
-	if (_storage->isWriteProtected(lun) != 0)
+	if (_storage->isWriteProtected(lun))
 		MSC_Mode_Sense6_data[2] |= (0x01 << 7);   // Set the WP (write protection) bit
 	else
 		MSC_Mode_Sense6_data[2] &= ~(0x01 << 7);  // Clear the WP (write protection) bit
 
-	if (params[4] < len)
-		len = params[4];
+	if (cmd[4] < len)
+		len = cmd[4];
 
 	updateBotData(MSC_Mode_Sense6_data, len);
 
@@ -444,17 +446,17 @@ bool SCSIProcessor::modeSense6(
 
 bool SCSIProcessor::modeSense10(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
 	unsigned len = MODE_SENSE10_LEN;
 
-	if (_storage->isWriteProtected(lun) != 0)
+	if (_storage->isWriteProtected(lun))
 		MSC_Mode_Sense10_data[3] |= (0x01 << 7);  // Set the WP (write protection) bit
 	else
 		MSC_Mode_Sense10_data[3] &= ~(0x01 << 7); // Clear the WP (write protection) bit
 
-	if (params[8] < len)
-		len = params[8];
+	if (cmd[8] < len)
+		len = cmd[8];
 
 	updateBotData(MSC_Mode_Sense10_data, len);
 
@@ -464,9 +466,9 @@ bool SCSIProcessor::modeSense10(
 
 bool SCSIProcessor::write10(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 	uint32_t len;
 
 	if (_msc->bot_state == USBD_BOT_IDLE) {
@@ -483,33 +485,33 @@ bool SCSIProcessor::write10(
 		}
 
 		/* Check whether Media is ready */
-		if (_storage->isReady(lun) != 0) {
+		if (!_storage->isReady(lun)) {
 			senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 			return false;
 		}
 
 		/* Check If media is write-protected */
-		if (_storage->isWriteProtected(lun) != 0) {
+		if (_storage->isWriteProtected(lun)) {
 			senseCode(lun, NOT_READY, WRITE_PROTECTED);
 			return false;
 		}
 
-		p_scsi_blk->addr =
-			((uint32_t)params[2] << 24) |
-			((uint32_t)params[3] << 16) |
-			((uint32_t)params[4] << 8) |
-			(uint32_t)params[5];
+		lunData->addr =
+			((uint32_t)cmd[2] << 24) |
+			((uint32_t)cmd[3] << 16) |
+			((uint32_t)cmd[4] << 8) |
+			(uint32_t)cmd[5];
 
-		p_scsi_blk->len =
-			((uint32_t)params[7] << 8) |
-			(uint32_t)params[8];
+		lunData->len =
+			((uint32_t)cmd[7] << 8) |
+			(uint32_t)cmd[8];
 
 		/* check if LBA address is in the right range */
-		if (!checkAddressRange(lun, p_scsi_blk->addr, p_scsi_blk->len)) {
+		if (!checkAddressRange(lun, lunData->addr, lunData->len)) {
 			return false;
 		}
 
-		len = p_scsi_blk->len * p_scsi_blk->size;
+		len = lunData->len * lunData->blkSize;
 
 		/* cases 3,11,13 : Hn,Ho <> D0 */
 		if (_msc->cbw.dDataLength != len) {
@@ -533,9 +535,9 @@ bool SCSIProcessor::write10(
 
 bool SCSIProcessor::write12(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 	uint32_t len;
 
 	if (_msc->bot_state == USBD_BOT_IDLE) {
@@ -550,34 +552,34 @@ bool SCSIProcessor::write12(
 			return false;
 		}
 
-		if (_storage->isReady(lun) != 0) {
+		if (!_storage->isReady(lun)) {
 			senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 			_msc->bot_state = USBD_BOT_NO_DATA;
 			return false;
 		}
 
-		if (_storage->isWriteProtected(lun) != 0) {
+		if (_storage->isWriteProtected(lun)) {
 			senseCode(lun, NOT_READY, WRITE_PROTECTED);
 			_msc->bot_state = USBD_BOT_NO_DATA;
 			return false;
 		}
 
-		p_scsi_blk->addr =
-			((uint32_t)params[2] << 24) |
-			((uint32_t)params[3] << 16) |
-			((uint32_t)params[4] << 8) |
-			(uint32_t)params[5];
+		lunData->addr =
+			((uint32_t)cmd[2] << 24) |
+			((uint32_t)cmd[3] << 16) |
+			((uint32_t)cmd[4] << 8) |
+			(uint32_t)cmd[5];
 
-		p_scsi_blk->len =
-			((uint32_t)params[6] << 24) |
-			((uint32_t)params[7] << 16) |
-			((uint32_t)params[8] << 8) |
-			(uint32_t)params[9];
+		lunData->len =
+			((uint32_t)cmd[6] << 24) |
+			((uint32_t)cmd[7] << 16) |
+			((uint32_t)cmd[8] << 8) |
+			(uint32_t)cmd[9];
 
-		if (!checkAddressRange(lun, p_scsi_blk->addr, p_scsi_blk->len))
+		if (!checkAddressRange(lun, lunData->addr, lunData->len))
 			return false;
 
-		len = p_scsi_blk->len * p_scsi_blk->size;
+		len = lunData->len * lunData->blkSize;
 
 		/* cases 3,11,13 : Hn,Ho <> D0 */
 		if (_msc->cbw.dDataLength != len) {
@@ -601,9 +603,9 @@ bool SCSIProcessor::write12(
 
 bool SCSIProcessor::read10(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 
 	if (_msc->bot_state == USBD_BOT_IDLE) {
 
@@ -618,25 +620,25 @@ bool SCSIProcessor::read10(
 			return false;
 		}
 
-		if (_storage->isReady(lun) != 0) {
+		if (!_storage->isReady(lun)) {
 			senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 			return false;
 		}
 
-		p_scsi_blk->addr =
-			((uint32_t)params[2] << 24) |
-			((uint32_t)params[3] << 16) |
-			((uint32_t)params[4] <<  8) |
-			(uint32_t)params[5];
+		lunData->addr =
+			((uint32_t)cmd[2] << 24) |
+			((uint32_t)cmd[3] << 16) |
+			((uint32_t)cmd[4] <<  8) |
+			(uint32_t)cmd[5];
 
-		p_scsi_blk->len =
-			((uint32_t)params[7] <<  8) |
-			(uint32_t)params[8];
+		lunData->len =
+			((uint32_t)cmd[7] <<  8) |
+			(uint32_t)cmd[8];
 
-		if (!checkAddressRange(lun, p_scsi_blk->addr, p_scsi_blk->len))
+		if (!checkAddressRange(lun, lunData->addr, lunData->len))
 			return false;
 
-		if (_msc->cbw.dDataLength != (p_scsi_blk->len * p_scsi_blk->size)) {
+		if (_msc->cbw.dDataLength != (lunData->len * lunData->blkSize)) {
 			senseCode(lun, ILLEGAL_REQUEST, INVALID_CDB);
 			return false;
 		}
@@ -652,9 +654,9 @@ bool SCSIProcessor::read10(
 
 bool SCSIProcessor::read12(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 
 	if (_msc->bot_state == USBD_BOT_IDLE) {
 
@@ -668,27 +670,27 @@ bool SCSIProcessor::read12(
 			return false;
 		}
 
-		if (_storage->isReady(lun) != 0) {
+		if (!_storage->isReady(lun)) {
 			senseCode(lun, NOT_READY, MEDIUM_NOT_PRESENT);
 			return false;
 		}
 
-		p_scsi_blk->addr =
-			((uint32_t)params[2] << 24) |
-			((uint32_t)params[3] << 16) |
-			((uint32_t)params[4] <<  8) |
-			(uint32_t)params[5];
+		lunData->addr =
+			((uint32_t)cmd[2] << 24) |
+			((uint32_t)cmd[3] << 16) |
+			((uint32_t)cmd[4] <<  8) |
+			(uint32_t)cmd[5];
 
-		p_scsi_blk->len =
-			((uint32_t)params[6] << 24) |
-			((uint32_t)params[7] << 16) |
-			((uint32_t)params[8] << 8) |
-			(uint32_t)params[9];
+		lunData->len =
+			((uint32_t)cmd[6] << 24) |
+			((uint32_t)cmd[7] << 16) |
+			((uint32_t)cmd[8] << 8) |
+			(uint32_t)cmd[9];
 
-		if (!checkAddressRange(lun, p_scsi_blk->addr, p_scsi_blk->len))
+		if (!checkAddressRange(lun, lunData->addr, lunData->len))
 			return false;
 
-		if (_msc->cbw.dDataLength != (p_scsi_blk->len * p_scsi_blk->size)) {
+		if (_msc->cbw.dDataLength != (lunData->len * lunData->blkSize)) {
 			senseCode(lun, ILLEGAL_REQUEST, INVALID_CDB);
 			return false;
 		}
@@ -705,16 +707,16 @@ bool SCSIProcessor::read12(
 
 bool SCSIProcessor::verify10(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 
-	if ((params[1] & 0x02U) == 0x02U) {
+	if ((cmd[1] & 0x02) == 0x02) {
 		senseCode(lun, ILLEGAL_REQUEST, INVALID_FIELD_IN_COMMAND);
 		return false;
 	}
 
-	if (!checkAddressRange(lun, p_scsi_blk->addr, p_scsi_blk->len))
+	if (!checkAddressRange(lun, lunData->addr, lunData->len))
 		return false;
 
 	_msc->bot_data_length = 0U;
@@ -725,7 +727,7 @@ bool SCSIProcessor::verify10(
 
 bool SCSIProcessor::reportLuns(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
 	uint32_t lun_list_length;
 	uint32_t total_length;
@@ -755,19 +757,15 @@ bool SCSIProcessor::reportLuns(
 
 bool SCSIProcessor::receiveDiagnosticResults(
 	uint8_t lun,
-	const uint8_t *params) {
+	const uint8_t *cmd) {
 
-	uint16_t allocation_length;
+	unsigned length = (cmd[3] << 8) | cmd[4];
+	if (length > 0) {
+		if (length > DIAGNOSTIC_DATA_LEN)
+			length = DIAGNOSTIC_DATA_LEN;
 
-	allocation_length = (((uint16_t)params[3] << 8) | (uint16_t)params[4]);
-
-	if (allocation_length == 0)
-		return true;
-
-	if (allocation_length > DIAGNOSTIC_DATA_LEN)
-		allocation_length = DIAGNOSTIC_DATA_LEN;
-
-	updateBotData(MSC_Diagnostic_Data, allocation_length);
+		updateBotData(MSC_Diagnostic_Data, length);
+	}
 
 	return true;
 }
@@ -778,9 +776,9 @@ bool SCSIProcessor::checkAddressRange(
 	uint32_t blk_offset,
 	uint32_t blk_nbr) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 
-	if ((blk_offset + blk_nbr) > p_scsi_blk->nbr) {
+	if ((blk_offset + blk_nbr) > lunData->blkQuantity) {
 		senseCode(lun, ILLEGAL_REQUEST, ADDRESS_OUT_OF_RANGE);
 		return false;
 	}
@@ -792,26 +790,26 @@ bool SCSIProcessor::checkAddressRange(
 bool SCSIProcessor::processRead(
 	uint8_t lun) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 	uint32_t len;
 
-	len = p_scsi_blk->len * p_scsi_blk->size;
+	len = lunData->len * lunData->blkSize;
 
 	len = min(len, (uint32_t) MSC_MEDIA_PACKET);
 
-	if (_storage->read(lun, _msc->bot_data, p_scsi_blk->addr, (len / p_scsi_blk->size)) < 0) {
+	if (_storage->read(lun, _msc->bot_data, lunData->addr, (len / lunData->blkSize)) < 0) {
 		senseCode(lun, HARDWARE_ERROR, UNRECOVERED_READ_ERROR);
 		return false;
 	}
 
 	USBD_LL_Transmit(_pdev, _inEpAdd, _msc->bot_data, len);
 
-	p_scsi_blk->addr += (len / p_scsi_blk->size);
-	p_scsi_blk->len -= (len / p_scsi_blk->size);
+	lunData->addr += (len / lunData->blkSize);
+	lunData->len -= (len / lunData->blkSize);
 
 	_msc->csw.dDataResidue -= len;
 
-	if (p_scsi_blk->len == 0U)
+	if (lunData->len == 0)
 		_msc->bot_state = USBD_BOT_LAST_DATA_IN;
 
 	return true;
@@ -821,23 +819,23 @@ bool SCSIProcessor::processRead(
 bool SCSIProcessor::processWrite(
 	uint8_t lun) {
 
-	USBD_MSC_BOT_LUN_TypeDef *p_scsi_blk = &_scsi_blk[lun];
+	auto lunData = &_lunDataList[lun];
 	uint32_t len;
 
-	len = p_scsi_blk->len * p_scsi_blk->size;
+	len = lunData->len * lunData->blkSize;
 	len = MIN(len, MSC_MEDIA_PACKET);
 
-	if (_storage->write(lun, _msc->bot_data, p_scsi_blk->addr, (len / p_scsi_blk->size)) < 0) {
+	if (_storage->write(lun, _msc->bot_data, lunData->addr, (len / lunData->blkSize)) < 0) {
 		senseCode(lun, HARDWARE_ERROR, WRITE_FAULT);
 		return false;
 	}
 
-	p_scsi_blk->addr += (len / p_scsi_blk->size);
-	p_scsi_blk->len -= (len / p_scsi_blk->size);
+	lunData->addr += (len / lunData->blkSize);
+	lunData->len -= (len / lunData->blkSize);
 
 	_msc->csw.dDataResidue -= len;
 
-	if (p_scsi_blk->len == 0U) {
+	if (lunData->len == 0) {
 		//botSendCSW(_pdev, USBD_CSW_CMD_PASSED);
 		_msc->csw.dSignature = USBD_BOT_CSW_SIGNATURE;
 		_msc->csw.bStatus = USBD_CSW_CMD_PASSED;
@@ -847,27 +845,20 @@ bool SCSIProcessor::processWrite(
 		USBD_LL_PrepareReceive(_pdev, _outEpAdd, (uint8_t*) &_msc->cbw, USBD_BOT_CBW_LENGTH);
 	}
 	else {
-		len = MIN((p_scsi_blk->len * p_scsi_blk->size), MSC_MEDIA_PACKET);
+		len = min((lunData->len * lunData->blkSize), (uint32_t) MSC_MEDIA_PACKET);
 		USBD_LL_PrepareReceive(_pdev, _outEpAdd, _msc->bot_data, len);
 	}
 
 	return true;
-
 }
 
 
 bool SCSIProcessor::updateBotData(
-	const uint8_t *pBuff,
-	uint16_t length) {
+	const uint8_t *buffer,
+	unsigned length) {
 
-	uint16_t len = length;
-
-	_msc->bot_data_length = len;
-
-	while (len != 0U) {
-		len--;
-		_msc->bot_data[len] = pBuff[len];
-	}
+	_msc->bot_data_length = length;
+	memcpy(_msc->bot_data, buffer, length);
 
 	return true;
 }
