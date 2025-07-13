@@ -10,7 +10,7 @@ namespace eos {
 
 	class MSCStorage_SSD final: public MSCStorage {
 		private:
-			int8_t _prevStatus = 0;
+			int8_t _prevStatus;
 
 		private:
 			bool isCardPresent() const;
@@ -22,7 +22,7 @@ namespace eos {
 			int8_t initialize() override;
 
 			int8_t getCapacity(uint8_t lun, unsigned &blkQuantity, unsigned &blkSize) override;
-			int8_t getMaxLun() override;
+			unsigned getMaxLun() override;
 			int8_t const * getInquiryData() override;
 
 			bool isReady(uint8_t lun) override;

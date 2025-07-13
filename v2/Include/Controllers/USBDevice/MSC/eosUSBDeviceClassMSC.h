@@ -16,7 +16,7 @@ namespace eos {
 			virtual int8_t initialize() = 0;
 
 			virtual int8_t getCapacity(uint8_t lun, unsigned &blkQuantity, unsigned &blkSize) = 0;
-			virtual int8_t getMaxLun() = 0;
+			virtual unsigned getMaxLun() = 0;
 			virtual int8_t const * getInquiryData() = 0;
 
 			virtual bool isReady(uint8_t lun) = 0;

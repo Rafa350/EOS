@@ -55,6 +55,22 @@ int8_t const * MSCStorage_RAM::getInquiryData() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte el valor lun mes gran suportat.
+/// \return   El resultat.
+///
+unsigned MSCStorage_RAM::getMaxLun() {
+
+	return 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte la capacitat.
+/// \param    blkQuantity: El nombre de blocs.
+/// \param    blkSize: El tamany de cada block.
+/// \return   0 si tot es correcte.
+///
 int8_t MSCStorage_RAM::getCapacity(
 	uint8_t lun,
 	unsigned &blkQuantity,
@@ -62,10 +78,16 @@ int8_t MSCStorage_RAM::getCapacity(
 
 	blkSize = __blockSize;
 	blkQuantity = _storageSize / __blockSize;
+
 	return 0;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si esta preparat.
+/// \param    lun: Dispositiu logic.
+/// \return   True si esta preparat.
+///
 bool MSCStorage_RAM::isReady(
 	uint8_t lun) {
 
@@ -73,6 +95,11 @@ bool MSCStorage_RAM::isReady(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si esta protegit d'escriptura.
+/// \param    lun: Dispositiu logic.
+/// \return   True si ho esta.
+///
 bool MSCStorage_RAM::isWriteProtected(
 	uint8_t lun) {
 
@@ -107,12 +134,6 @@ int8_t MSCStorage_RAM::write(
 
 	// TODO: Implementar-ho amb DMA
 	memcpy(ptr, buffer, len);
-
-	return 0;
-}
-
-
-int8_t MSCStorage_RAM::getMaxLun() {
 
 	return 0;
 }

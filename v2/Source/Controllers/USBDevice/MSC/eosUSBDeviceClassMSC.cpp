@@ -31,8 +31,6 @@ USBDeviceClassMSC::USBDeviceClassMSC(
 ///
 void USBDeviceClassMSC::initialize() {
 
-	_storage->initialize();
-
 	auto pdev = _drvUSBD->getHandle();
 	USBD_RegisterClass(pdev, this);
 }
@@ -100,9 +98,9 @@ int8_t USBDeviceClassMSC::classSetup(
 						(request->length == 1) &&
 						(request->getDirection() == USBDRequestDirection::deviceToHost)) {
 
-						int8_t maxLun = _storage->getMaxLun();
-						_msc.max_lun = min((int8_t) MSC_BOT_MAX_LUN, maxLun);
-						USBD_CtlSendData(pdev, (uint8_t*) &maxLun, 1);
+						uint8_t maxLun = min(_storage->getMaxLun(), MSC_BOT_MAX_LUN);
+						_msc.max_lun = maxLun;
+						USBD_CtlSendData(pdev, &maxLun, 1); // !Atencio buffer/length
 						ok = true;
 					}
 					break;
@@ -125,7 +123,7 @@ int8_t USBDeviceClassMSC::classSetup(
 				case USBDRequestID::getStatus:
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 						uint16_t status = 0;
-						USBD_CtlSendData(pdev, (uint8_t*) &status, 2);
+						USBD_CtlSendData(pdev, (uint8_t*) &status, 2); // !Atencio buffer/length
 						ok = true;
 					}
 					break;
@@ -304,9 +302,8 @@ void USBDeviceClassMSC::botInitialize() {
 	_msc.bot_state = USBD_BOT_IDLE;
 	_msc.bot_status = USBD_BOT_STATUS_NORMAL;
 
+	_storage->initialize();
 	_scsi->initialize();
-
-	//_storage->initialize(0);
 
 	USBD_LL_FlushEP(pdev, _outEpAdd);
 	USBD_LL_FlushEP(pdev, _inEpAdd);

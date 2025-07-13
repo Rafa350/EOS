@@ -19,7 +19,7 @@ namespace eos {
 			int8_t initialize() override;
 
 			int8_t getCapacity(uint8_t lun, unsigned &blkQuantity, unsigned &blkSize) override;
-			int8_t getMaxLun() override;
+			unsigned getMaxLun() override;
 			int8_t const * getInquiryData() override;
 
 			bool isReady(uint8_t lun) override;

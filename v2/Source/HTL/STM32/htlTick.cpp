@@ -122,10 +122,6 @@ void TickGenerator::tmrNotifyEventHandler(
 
 	if (id == htl::tmr::NotifyID::update)
 		_tickCounter += 1;
-
-	#ifdef DBG_Pin
-	DBG_Pin::pInst->toggle();
-	#endif
 }
 
 

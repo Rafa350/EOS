@@ -137,13 +137,14 @@ void MyApplication::onExecute() {
 }
 
 
+#ifdef USE_MSC_DEVICE
 /**
   * @brief  Initializes the SD MSP.
   * @param  hsd: SD handle
   * @param  Params
   * @retval None
   */
-void BSP_SD_MspInit(SD_HandleTypeDef *hsd, void *Params)
+extern "C" void xBSP_SD_MspInit(SD_HandleTypeDef *hsd, void *Params)
 {
   static DMA_HandleTypeDef dma_rx_handle;
   static DMA_HandleTypeDef dma_tx_handle;
@@ -235,6 +236,8 @@ void BSP_SD_MspInit(SD_HandleTypeDef *hsd, void *Params)
   HAL_NVIC_SetPriority(SD_DMAx_Tx_IRQn, 0x06, 0);
   HAL_NVIC_EnableIRQ(SD_DMAx_Tx_IRQn);
 }
+#endif
+
 
 extern "C" void HAL_Delay(uint32_t delay) {
 

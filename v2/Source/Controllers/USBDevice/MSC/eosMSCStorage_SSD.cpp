@@ -4,6 +4,8 @@
 #include "stm32746g_discovery_sd.h"
 
 
+#define xUSE_SSD_DMA
+
 using namespace eos;
 
 
@@ -23,6 +25,7 @@ static const int8_t __inquiryData[STANDARD_INQUIRY_DATA_LEN] = {
 	'0', '.', '0','1',                      // Version
 };
 
+
 volatile uint32_t __writestatus = 0;
 volatile uint32_t __readstatus = 0;
 
@@ -30,7 +33,9 @@ volatile uint32_t __readstatus = 0;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-MSCStorage_SSD::MSCStorage_SSD() {
+MSCStorage_SSD::MSCStorage_SSD():
+
+	_prevStatus {0} {
 
 }
 
@@ -42,7 +47,6 @@ MSCStorage_SSD::MSCStorage_SSD() {
 int8_t MSCStorage_SSD::initialize() {
 
 	BSP_SD_Init();
-
 	return 0;
 }
 
@@ -140,14 +144,18 @@ int8_t MSCStorage_SSD::read(
 
 	if (isCardPresent()) {
 
-	    BSP_SD_ReadBlocks_DMA((uint32_t *)buffer, blkStart, blkCount);
+#ifdef USE_SSD_DMA
+	    if (BSP_SD_ReadBlocks_DMA((uint32_t*) buffer, blkStart, blkCount) != MSD_OK)
+	    	return -1;
 
 	    // Wait for Rx Transfer completion
 	    //
 	    while (__readstatus == 0)
-	    	continue;
-	    __readstatus = 0;
-
+	    	__readstatus = 0;
+#else
+	    if (BSP_SD_ReadBlocks((uint32_t*) buffer, blkStart, blkCount, timeout) != MSD_OK)
+	    	return -1;
+#endif
 	    // Wait until SD card is ready to use for new operation
 	    //
 	    while (isCardBusy()) {
@@ -172,6 +180,7 @@ int8_t MSCStorage_SSD::write(
 
 	if (isCardPresent()) {
 
+#ifdef USE_SDD_DMA
 		BSP_SD_WriteBlocks_DMA((uint32_t*) buffer, blkStart, blkCount);
 
 		// Wait for Tx Transfer completion
@@ -179,6 +188,9 @@ int8_t MSCStorage_SSD::write(
 		while (__writestatus == 0)
 			continue;
 		__writestatus = 0;
+#else
+		BSP_SD_WriteBlocks((uint32_t*) buffer, blkStart, blkCount, timeout);
+#endif
 
 		// Wait until SD card is ready to use for new operation
 		//
@@ -194,7 +206,11 @@ int8_t MSCStorage_SSD::write(
 }
 
 
-int8_t MSCStorage_SSD::getMaxLun() {
+/// ----------------------------------------------------------------------
+/// \brief    Obte el valor lun mes gran suportat.
+/// \return   El resultat.
+///
+unsigned MSCStorage_SSD::getMaxLun() {
 
 	return 0;
 }
