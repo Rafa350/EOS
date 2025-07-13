@@ -38,10 +38,11 @@ MSCStorage_RAM::MSCStorage_RAM(
 }
 
 
-int8_t MSCStorage_RAM::initialize() {
+Result MSCStorage_RAM::initialize() {
 
 	memset(_storage, 0, _storageSize);
-	return 0;
+
+	return Results::success;
 }
 
 
@@ -107,7 +108,15 @@ bool MSCStorage_RAM::isWriteProtected(
 }
 
 
-int8_t MSCStorage_RAM::read(
+/// ----------------------------------------------------------------------
+/// \brief    Lectura de dades.
+/// \param    lun: Dispositiu logic.
+/// \param    buffer: Buffer de dades.
+/// \param    blkStart: Block inicial.
+/// \param    blkCount: Nombre de block a lleigir.
+/// \return   El resultat de l'operacio
+///
+Result MSCStorage_RAM::read(
 	uint8_t lun,
 	uint8_t *buffer,
 	uint32_t blkStart,
@@ -119,11 +128,19 @@ int8_t MSCStorage_RAM::read(
 	// TODO: Implementar-ho amb DMA
 	memcpy(buffer, ptr, len);
 
-	return 0;
+	return Results::success;
 }
 
 
-int8_t MSCStorage_RAM::write(
+/// ----------------------------------------------------------------------
+/// \brief    Escriptura de dades.
+/// \param    lun: Dispositiu logic.
+/// \param    buffer: Buffer de dades.
+/// \param    blkStart: Block inicial.
+/// \param    blkCount: Nombre de block a escriure.
+/// \return   El resultat de l'operacio
+///
+Result MSCStorage_RAM::write(
 	uint8_t lun,
 	uint8_t *buffer,
 	uint32_t blkStart,
@@ -135,5 +152,5 @@ int8_t MSCStorage_RAM::write(
 	// TODO: Implementar-ho amb DMA
 	memcpy(ptr, buffer, len);
 
-	return 0;
+	return Results::success;
 }

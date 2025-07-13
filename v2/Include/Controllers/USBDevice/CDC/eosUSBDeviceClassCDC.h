@@ -41,9 +41,9 @@ namespace eos {
 			};
 
 		private:
-			static constexpr uint8_t _inEpAdd  = CDC_IN_EP;
-			static constexpr uint8_t _outEpAdd = CDC_OUT_EP;
-			static constexpr uint8_t _cmdEpAdd = CDC_CMD_EP;
+			static constexpr uint8_t _inEpAddr  = CDC_IN_EP;
+			static constexpr uint8_t _outEpAddr = CDC_OUT_EP;
+			static constexpr uint8_t _cmdEpAddr = CDC_CMD_EP;
 
 		private:
 			CDCInterface *_interface;
@@ -60,7 +60,7 @@ namespace eos {
 		public:
 			USBDeviceClassCDC(USBDeviceDriver *drvUSBD, CDCInterface *interface);
 
-			void initialize();
+			Result initialize();
 
 			Result transmit(const uint8_t *buffer, unsigned length);
 			Result receive(uint8_t *buffer, unsigned bufferSize);
@@ -84,7 +84,7 @@ namespace eos {
 			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
 
-			bool usesEndPoint(uint8_t epAdd) const override;
+			bool usesEndPoint(uint8_t epAddr) const override;
 	};
 }
 

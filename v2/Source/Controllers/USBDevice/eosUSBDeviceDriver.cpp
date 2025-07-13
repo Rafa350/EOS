@@ -9,11 +9,11 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
-/// \param    descriptors: Els descriptors del dispositiu
+/// \param    configuration: La configuracio del dispositiu
 ///
 USBDeviceDriver::USBDeviceDriver(
-	const USBDeviceDescriptors *descriptors) :
-	_descriptors {descriptors},
+	const USBDeviceConfiguration *configuration) :
+	_configuration {configuration},
 	_state {State::reset} {
 }
 
@@ -40,8 +40,7 @@ Result USBDeviceDriver::registerClass(
 /// \param    descriptors: Els descriptors del dispositiu USB
 /// \return   El resultst de l'operacio.
 ///
-Result USBDeviceDriver::initialize(
-	USBD_DescriptorsTypeDef *descriptors) {
+Result USBDeviceDriver::initialize() {
 
 	if (_state != State::reset)
 		return Results::errorState;
@@ -49,7 +48,7 @@ Result USBDeviceDriver::initialize(
 	// TODO: Provisional
 	_usbd._instance = this;
 
-	if (USBD_Init(&_usbd, descriptors, 0) != USBD_StatusTypeDef::USBD_OK)
+	if (USBD_Init(&_usbd, nullptr, 0) != USBD_StatusTypeDef::USBD_OK)
 		return Results::error;
 
 	for (auto cls: _classes)
@@ -844,8 +843,8 @@ bool USBDeviceDriver::getDeviceDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-	if (_descriptors != nullptr) {
-		data = _descriptors->device;
+	if (_configuration != nullptr) {
+		data = _configuration->device;
 		if (data == nullptr)
 			length = 0;
 		else {
@@ -868,8 +867,8 @@ bool USBDeviceDriver::getLangIDStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-	if (_descriptors != nullptr) {
-		data = _descriptors->langID;
+	if (_configuration != nullptr) {
+		data = _configuration->langID;
 		if (data == nullptr)
 			length = 0;
 		else {
@@ -892,7 +891,7 @@ bool USBDeviceDriver::getManufacturerStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-    return getStringDescriptor(_descriptors->manufacturer, data, length);
+    return getStringDescriptor(_configuration->manufacturer, data, length);
 }
 
 
@@ -906,7 +905,7 @@ bool USBDeviceDriver::getProductStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-    return getStringDescriptor(_descriptors->product, data, length);
+    return getStringDescriptor(_configuration->product, data, length);
 }
 
 
@@ -920,7 +919,7 @@ bool USBDeviceDriver::getInterfaceStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-    return getStringDescriptor(_descriptors->interface, data, length);
+    return getStringDescriptor(_configuration->interface, data, length);
 }
 
 
@@ -934,7 +933,7 @@ bool USBDeviceDriver::getConfigurationStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-    return getStringDescriptor(_descriptors->configuration, data, length);
+    return getStringDescriptor(_configuration->configuration, data, length);
 }
 
 

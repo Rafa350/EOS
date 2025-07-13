@@ -335,37 +335,25 @@ struct USBD_HandleTypeDef {
   uint8_t                 ConfIdx;
 
   USBD_SetupReqTypedef    request;
-  USBD_DescriptorsTypeDef *pDesc;
-  //eos::USBDeviceClass     *pClass[USBD_MAX_SUPPORTED_CLASS];
+  USBD_DescriptorsTypeDef *xpDesc;
   eos::USBDeviceDriver    *_instance;
-  //void                    *pClassData;
-  //void                    *pClassDataCmsit[USBD_MAX_SUPPORTED_CLASS];
   void                    *pData;
   void                    *pBosDesc;
   void                    *pConfDesc;
   uint32_t                classId;
   uint32_t                NumClasses;
-#if (USBD_USER_REGISTER_CALLBACK == 1U)
-  void (* DevStateCallback)(uint8_t dev_state, uint8_t cfgidx);                    /*!< User Notification callback      */
-#endif /* USBD_USER_REGISTER_CALLBACK */
 };
 
-#if (USBD_USER_REGISTER_CALLBACK == 1U)
-typedef void (*USBD_DevStateCallbackTypeDef)(uint8_t dev_state, uint8_t cfgidx);   /*!< pointer to User callback function  */
-#endif /* USBD_USER_REGISTER_CALLBACK */
-
 /* USB Device endpoint direction */
-typedef enum
-{
-  OUT   = 0x00,
-  IN    = 0x80,
+typedef enum {
+	OUT   = 0x00,
+	IN    = 0x80,
 } USBD_EPDirectionTypeDef;
 
-typedef enum
-{
-  NETWORK_CONNECTION = 0x00,
-  RESPONSE_AVAILABLE = 0x01,
-  CONNECTION_SPEED_CHANGE = 0x2A
+typedef enum {
+	NETWORK_CONNECTION = 0x00,
+	RESPONSE_AVAILABLE = 0x01,
+	CONNECTION_SPEED_CHANGE = 0x2A
 } USBD_CDC_NotifCodeTypeDef;
 
 

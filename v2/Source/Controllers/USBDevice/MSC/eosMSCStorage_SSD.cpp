@@ -44,10 +44,11 @@ MSCStorage_SSD::MSCStorage_SSD():
 /// \brief    Inicialitzacio.
 /// \return   0 si tot es correcte.
 ///
-int8_t MSCStorage_SSD::initialize() {
+Result MSCStorage_SSD::initialize() {
 
 	BSP_SD_Init();
-	return 0;
+
+	return Results::success;
 }
 
 
@@ -131,15 +132,14 @@ bool MSCStorage_SSD::isWriteProtected(
 /// \param    buffer: Buffer de dades.
 /// \param    blkStart: Block inicial.
 /// \param    blkCount: Nombre de block a lleigir.
-/// \return   0 si tot es correcte.
+/// \return   El resultat de l'operacio
 ///
-int8_t MSCStorage_SSD::read(
+Result MSCStorage_SSD::read(
 	uint8_t lun,
 	uint8_t *buffer,
 	uint32_t blkStart,
 	uint16_t blkCount) {
 
-	int8_t result = -1;
 	uint32_t timeout = 100000;
 
 	if (isCardPresent()) {
@@ -154,28 +154,36 @@ int8_t MSCStorage_SSD::read(
 	    	__readstatus = 0;
 #else
 	    if (BSP_SD_ReadBlocks((uint32_t*) buffer, blkStart, blkCount, timeout) != MSD_OK)
-	    	return -1;
+	    	return Results::timeout;
 #endif
 	    // Wait until SD card is ready to use for new operation
 	    //
 	    while (isCardBusy()) {
 	    	if (timeout-- == 0)
-	    		return result;
+	    		return Results::timeout;
 	    }
-	    result = 0;
-	}
 
-	return result;
+	    return Results::success;
+	}
+	else
+		return Results::error;
 }
 
 
-int8_t MSCStorage_SSD::write(
+/// ----------------------------------------------------------------------
+/// \brief    Escriptura de dades.
+/// \param    lun: Dispositiu logic.
+/// \param    buffer: Buffer de dades.
+/// \param    blkStart: Block inicial.
+/// \param    blkCount: Nombre de block a escriure.
+/// \return   El resultat de l'operacio
+///
+Result MSCStorage_SSD::write(
 	uint8_t lun,
 	uint8_t *buffer,
 	uint32_t blkStart,
 	uint16_t blkCount) {
 
-	int8_t result = -1;
 	uint32_t timeout = 100000;
 
 	if (isCardPresent()) {
@@ -189,20 +197,22 @@ int8_t MSCStorage_SSD::write(
 			continue;
 		__writestatus = 0;
 #else
-		BSP_SD_WriteBlocks((uint32_t*) buffer, blkStart, blkCount, timeout);
+		if (BSP_SD_WriteBlocks((uint32_t*) buffer, blkStart, blkCount, timeout) != MSD_OK)
+			return Results::timeout;
 #endif
 
 		// Wait until SD card is ready to use for new operation
 		//
 		while (isCardBusy())	{
 			if (timeout-- == 0)
-				return result;
+				return Results::timeout;
 		}
 
-		result = 0;
+		return Results::success;
 	}
 
-	return result;
+	else
+		return Results::error;
 }
 
 

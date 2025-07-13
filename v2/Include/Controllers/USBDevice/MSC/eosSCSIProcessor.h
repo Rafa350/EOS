@@ -6,6 +6,7 @@
 #include "eos.h"
 #include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
 #include "Controllers/USBDevice/MSC/eosMSCDefinitions.h"
+#include "System/eosResults.h"
 
 
 //#define SENSE_LIST_DEEPTH                           4U
@@ -139,7 +140,7 @@ namespace eos {
 			SCSIProcessor(MSCStorage *storage, USBD_HandleTypeDef *_pdev,
 				uint8_t inEpAddr, uint8_t outEpAddr, USBD_MSC_BOT_HandleTypeDef *msc);
 
-			void initialize();
+			Result initialize();
 			bool processCmd(uint8_t lun, const uint8_t *cmd);
 			void senseCode(uint8_t lun, uint8_t sKey, uint8_t ASC);
 	};

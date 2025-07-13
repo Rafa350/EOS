@@ -20,7 +20,7 @@ namespace eos {
     using USBDeviceClassList = IntrusiveForwardList<USBDeviceClass, 0>;
     using USBDeviceClassListNode = IntrusiveForwardListNode<USBDeviceClass, 0>;
 
-	struct USBDeviceDescriptors {
+	struct USBDeviceConfiguration {
 		uint8_t *device;
 		uint8_t *langID;
 		const char *manufacturer;
@@ -39,7 +39,7 @@ namespace eos {
 			};
 
 		private:
-			const USBDeviceDescriptors * const _descriptors;
+			const USBDeviceConfiguration * const _configuration;
 			State _state;
 			USBDeviceClassList _classes;
 			USBD_HandleTypeDef _usbd;
@@ -47,6 +47,7 @@ namespace eos {
 		private:
 			USBDeviceClass *getClassFromEndPoint(uint8_t epAdd) const;
 
+			bool processDeviceRequest(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_SetAddress(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_SetFeature(USBD_SetupReqTypedef *request);
@@ -55,6 +56,9 @@ namespace eos {
 			bool processDeviceRequest_SetConfiguration(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_GetStatus(USBD_SetupReqTypedef *request);
 
+			bool processInterfaceRequest(USBD_SetupReqTypedef *request);
+
+			bool processEndPointRequest(USBD_SetupReqTypedef *request);
 			bool processEndPointRequest_SetFeature(USBD_SetupReqTypedef *request);
 			bool processEndPointRequest_ClearFeature(USBD_SetupReqTypedef *request);
 			bool processEndPointRequest_GetStatus(USBD_SetupReqTypedef *request);
@@ -69,19 +73,13 @@ namespace eos {
 			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
 
 		public:
-			USBDeviceDriver(const USBDeviceDescriptors *descriptors);
+			USBDeviceDriver(const USBDeviceConfiguration *configuration);
 
 			Result registerClass(USBDeviceClass *devClass);
 
-			Result initialize(USBD_DescriptorsTypeDef *descriptors);
+			Result initialize();
 			Result start();
 			Result stop();
-
-			// PRIVATE
-			bool processDeviceRequest(USBD_SetupReqTypedef *request);
-			bool processInterfaceRequest(USBD_SetupReqTypedef *request);
-			bool processEndPointRequest(USBD_SetupReqTypedef *request);
-			/////////
 
 			USBD_StatusTypeDef setClassConfig(uint8_t cfgidx);
 			bool processRequest(USBD_SetupReqTypedef *request);
@@ -99,7 +97,7 @@ namespace eos {
 			USBDeviceClass(USBDeviceDriver *drvUSBD);
 
 		public:
-			virtual void initialize() = 0;
+			virtual Result initialize() = 0;
 
 			virtual int8_t classInitialize(uint8_t cfgidx) = 0;
 			virtual int8_t classDeinitialize(uint8_t cfgidx) = 0;
@@ -118,7 +116,7 @@ namespace eos {
 			virtual bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
 			virtual bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) = 0;
 
-			virtual bool usesEndPoint(uint8_t epAdd) const = 0;
+			virtual bool usesEndPoint(uint8_t epAddr) const = 0;
 	};
 }
 

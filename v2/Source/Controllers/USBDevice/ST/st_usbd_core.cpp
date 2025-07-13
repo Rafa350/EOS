@@ -15,28 +15,15 @@ USBD_StatusTypeDef USBD_Init(
     USBD_DescriptorsTypeDef *pdesc,
 	uint8_t id) {
 
-	USBD_StatusTypeDef ret;
-
-	/* Check whether the USB Host handle is valid */
-	if (pdev == NULL) {
-#if (USBD_DEBUG_LEVEL > 1U)
-		USBD_ErrLog("Invalid Device handle");
-#endif /* (USBD_DEBUG_LEVEL > 1U) */
+	if (pdev == nullptr)
 		return USBD_FAIL;
-	}
 
-	//pdev->pClass[0] = NULL;
-	//pdev->pUserData[0] = NULL;
 	pdev->pConfDesc = NULL;
-
-	pdev->pDesc = pdesc;
 
 	pdev->dev_state = USBD_STATE_DEFAULT;
 	pdev->id = id;
 
-	ret = USBD_LL_Init(pdev);
-
-	return ret;
+	return USBD_LL_Init(pdev);
 }
 
 /**
@@ -47,8 +34,6 @@ USBD_StatusTypeDef USBD_Init(
   */
 USBD_StatusTypeDef USBD_DeInit(
 	USBD_HandleTypeDef *pdev) {
-
-	USBD_StatusTypeDef ret;
 
 	/* Disconnect the USB Device */
 	USBD_LL_Stop(pdev);
@@ -61,13 +46,10 @@ USBD_StatusTypeDef USBD_DeInit(
 		classe->classDeinitialize((uint8_t)pdev->dev_config);
 
 	/* Free Device descriptors resources */
-	pdev->pDesc = nullptr;
 	pdev->pConfDesc = nullptr;
 
 	/* DeInitialize low level driver */
-	ret = USBD_LL_DeInit(pdev);
-
-	return ret;
+	return USBD_LL_DeInit(pdev);
 }
 
 /**
@@ -172,38 +154,12 @@ USBD_StatusTypeDef USBD_LL_SetupStage(
 	USBD_HandleTypeDef *pdev,
 	uint8_t *psetup) {
 
-	USBD_StatusTypeDef ret;
-
 	USBD_ParseSetupRequest(&pdev->request, psetup);
 
 	pdev->ep0_state = USBD_EP0_SETUP;
 	pdev->ep0_data_len = pdev->request.length;
 
-	ret = pdev->_instance->processRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
-/*
-	switch (pdev->request.requestType & 0x1F) {
-
-		case USB_REQ_RECIPIENT_DEVICE:
-		  ret = pdev->_instance->processDeviceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
-		  //ret = USBD_StdDevReq(pdev, &pdev->request);
-		  break;
-
-		case USB_REQ_RECIPIENT_INTERFACE:
-		  ret = pdev->_instance->processInterfaceRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
-		  //ret = USBD_StdItfReq(pdev, &pdev->request);
-		  break;
-
-		case USB_REQ_RECIPIENT_ENDPOINT:
-		  ret = pdev->_instance->processEndPointRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
-		  //ret = USBD_StdEPReq(pdev, &pdev->request);
-		  break;
-
-		default:
-		  ret = USBD_LL_StallEP(pdev, (pdev->request.requestType & 0x80U));
-		  break;
-	}
-*/
-	return ret;
+	return pdev->_instance->processRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
 }
 
 /**
@@ -383,34 +339,9 @@ USBD_StatusTypeDef USBD_LL_Reset(USBD_HandleTypeDef *pdev)
   pdev->dev_remote_wakeup = 0U;
   pdev->dev_test_mode = 0U;
 
-#ifdef USE_USBD_COMPOSITE
-  /* Parse the table of classes in use */
-  for (uint32_t i = 0U; i < USBD_MAX_SUPPORTED_CLASS; i++)
-  {
-    /* Check if current class is in use */
-    if ((pdev->tclasslist[i].Active) == 1U)
-    {
-      if (pdev->pClass[i] != NULL)
-      {
-        pdev->classId = i;
-        /* Clear configuration  and De-initialize the Class process*/
-
-        if (pdev->pClass[i]->DeInit != NULL)
-        {
-          if (pdev->pClass[i]->DeInit(pdev, (uint8_t)pdev->dev_config) != USBD_OK)
-          {
-            ret = USBD_FAIL;
-          }
-        }
-      }
-    }
-  }
-#else
-
   if (pdev->_instance->getClass()!= nullptr)
 	  if (pdev->_instance->getClass()->classDeinitialize((uint8_t)pdev->dev_config) != USBD_OK)
 		  ret = USBD_FAIL;
-#endif /* USE_USBD_COMPOSITE */
 
   /* Open EP0 OUT */
   (void)USBD_LL_OpenEP(pdev, 0x00U, USBD_EP_TYPE_CTRL, USB_MAX_EP0_SIZE);

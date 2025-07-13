@@ -501,14 +501,10 @@ uint8_t USBD_LL_IsStallEP(
 
 	PCD_HandleTypeDef *hpcd = (PCD_HandleTypeDef*) pdev->pData;
 
-  if((ep_addr & 0x80) == 0x80)
-  {
-    return hpcd->IN_ep[ep_addr & 0xF].is_stall;
-  }
-  else
-  {
-    return hpcd->OUT_ep[ep_addr & 0xF].is_stall;
-  }
+	if ((ep_addr & 0x80) == 0x80)
+		return hpcd->IN_ep[ep_addr & 0xF].is_stall;
+	else
+		return hpcd->OUT_ep[ep_addr & 0xF].is_stall;
 }
 
 

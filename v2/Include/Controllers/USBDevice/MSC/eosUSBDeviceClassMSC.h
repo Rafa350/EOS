@@ -6,14 +6,14 @@
 #include "eos.h"
 #include "Controllers/USBDevice/eosUSBDeviceDriver.h"
 #include "Controllers/USBDevice/MSC/eosMSCDefinitions.h"
+#include "System/eosResults.h"
 
 
 namespace eos {
 
-
 	class MSCStorage {
 		public:
-			virtual int8_t initialize() = 0;
+			virtual Result initialize() = 0;
 
 			virtual int8_t getCapacity(uint8_t lun, unsigned &blkQuantity, unsigned &blkSize) = 0;
 			virtual unsigned getMaxLun() = 0;
@@ -22,8 +22,8 @@ namespace eos {
 			virtual bool isReady(uint8_t lun) = 0;
 			virtual bool isWriteProtected(uint8_t lun) = 0;
 
-			virtual int8_t read(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
-			virtual int8_t write(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
+			virtual Result read(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
+			virtual Result write(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) = 0;
 	};
 
 	class SCSIProcessor;
@@ -33,8 +33,8 @@ namespace eos {
 			MSCStorage *_storage;
 			USBD_MSC_BOT_HandleTypeDef _msc;
 			SCSIProcessor *_scsi;
-			static constexpr uint8_t _inEpAdd  = MSC_EPIN_ADDR;
-			static constexpr uint8_t _outEpAdd = MSC_EPOUT_ADDR;
+			static constexpr uint8_t _inEpAddr  = MSC_EPIN_ADDR;
+			static constexpr uint8_t _outEpAddr = MSC_EPOUT_ADDR;
 
 		private:
 			void botInitialize();
@@ -51,7 +51,7 @@ namespace eos {
 		public:
 			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, MSCStorage *storage);
 
-			void initialize() override;
+			Result initialize() override;
 
 			int8_t classInitialize(uint8_t cfgidx) override;
 			int8_t classDeinitialize(uint8_t cfgidx) override;
@@ -70,7 +70,7 @@ namespace eos {
 			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
 
-			bool usesEndPoint(uint8_t epAdd) const override;
+			bool usesEndPoint(uint8_t epAddr) const override;
 	};
 }
 

@@ -1,3 +1,5 @@
+#include "eos.h"
+
 #ifdef USE_CDC_DEVICE
 
 
@@ -71,6 +73,7 @@ __ALIGN_BEGIN uint8_t USBD_StringSerial[USB_SIZ_STRING_SERIAL] __ALIGN_END = {
 
 __ALIGN_BEGIN uint8_t USBD_StrDesc[USBD_MAX_STR_DESC_SIZ] __ALIGN_END;
 
+#if 0
 static void IntToUnicode(uint32_t value, uint8_t * pbuf, uint8_t len);
 static void Get_SerialNum(void);
 
@@ -253,4 +256,6 @@ static void IntToUnicode(uint32_t value, uint8_t * pbuf, uint8_t len)
     pbuf[2 * idx + 1] = 0;
   }
 }
+#endif
+
 #endif

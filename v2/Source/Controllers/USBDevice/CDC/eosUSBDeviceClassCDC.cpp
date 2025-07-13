@@ -37,11 +37,14 @@ USBDeviceClassCDC::USBDeviceClassCDC(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
+/// \return   El resultat de l'operacio.
 ///
-void USBDeviceClassCDC::initialize() {
+Result USBDeviceClassCDC::initialize() {
 
 	auto pdev = _drvUSBD->getHandle();
 	USBD_RegisterClass(pdev, this);
+
+	return Results::success;
 }
 
 
@@ -61,8 +64,8 @@ Result USBDeviceClassCDC::transmit(
 		return Results::errorState;
 
 	auto pdev = _drvUSBD->getHandle();
-	pdev->ep_in[_inEpAdd & 0xFU].total_length = length;
-	if (USBD_LL_Transmit(pdev, _inEpAdd, (uint8_t*) buffer, length) != USBD_OK)
+	pdev->ep_in[_inEpAddr & 0x0F].total_length = length;
+	if (USBD_LL_Transmit(pdev, _inEpAddr, (uint8_t*) buffer, length) != USBD_OK)
 		return Results::error;
 
 	_txBuffer = buffer;
@@ -89,7 +92,7 @@ Result USBDeviceClassCDC::receive(
 		return Results::errorState;
 
 	auto pdev = _drvUSBD->getHandle();
-	if (USBD_LL_PrepareReceive(pdev, _outEpAdd, buffer, bufferSize) != USBD_OK)
+	if (USBD_LL_PrepareReceive(pdev, _outEpAddr, buffer, bufferSize) != USBD_OK)
 		return Results::error;
 
 	_rxBuffer = buffer;
@@ -130,19 +133,19 @@ int8_t USBDeviceClassCDC::classInitialize(
 
     // Prepara EP IN
    	//
-   	USBD_LL_OpenEP(pdev, _inEpAdd, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_IN_PACKET_SIZE : CDC_DATA_FS_IN_PACKET_SIZE);
-   	pdev->ep_in[_inEpAdd & 0x0F].is_used = 1;
+   	USBD_LL_OpenEP(pdev, _inEpAddr, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_IN_PACKET_SIZE : CDC_DATA_FS_IN_PACKET_SIZE);
+   	pdev->ep_in[_inEpAddr & 0x0F].is_used = 1;
 
    	// Prepara EP OUT
    	//
-   	USBD_LL_OpenEP(pdev, _outEpAdd, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_OUT_PACKET_SIZE : CDC_DATA_FS_OUT_PACKET_SIZE);
-   	pdev->ep_out[_outEpAdd & 0x0F].is_used = 1;
+   	USBD_LL_OpenEP(pdev, _outEpAddr, USBD_EP_TYPE_BULK, hs ? CDC_DATA_HS_OUT_PACKET_SIZE : CDC_DATA_FS_OUT_PACKET_SIZE);
+   	pdev->ep_out[_outEpAddr & 0x0F].is_used = 1;
 
    	// Prepara EP CMD
    	//
-   	pdev->ep_in[_cmdEpAdd & 0xFU].bInterval = hs ? CDC_HS_BINTERVAL : CDC_FS_BINTERVAL;
-    USBD_LL_OpenEP(pdev, _cmdEpAdd, USBD_EP_TYPE_INTR, CDC_CMD_PACKET_SIZE);
-    pdev->ep_in[_cmdEpAdd & 0x0F].is_used = 1;
+   	pdev->ep_in[_cmdEpAddr & 0xFU].bInterval = hs ? CDC_HS_BINTERVAL : CDC_FS_BINTERVAL;
+    USBD_LL_OpenEP(pdev, _cmdEpAddr, USBD_EP_TYPE_INTR, CDC_CMD_PACKET_SIZE);
+    pdev->ep_in[_cmdEpAddr & 0x0F].is_used = 1;
 
   	_state = State::idle;
 
@@ -164,19 +167,19 @@ int8_t USBDeviceClassCDC::classDeinitialize(
 
 	// Close EP IN
 	//
-	USBD_LL_CloseEP(pdev, _inEpAdd);
-	pdev->ep_in[_inEpAdd & 0xFU].is_used = 0U;
+	USBD_LL_CloseEP(pdev, _inEpAddr);
+	pdev->ep_in[_inEpAddr & 0xFU].is_used = 0U;
 
 	// Close EP OUT
 	//
-	USBD_LL_CloseEP(pdev, _outEpAdd);
-	pdev->ep_out[_outEpAdd & 0xFU].is_used = 0;
+	USBD_LL_CloseEP(pdev, _outEpAddr);
+	pdev->ep_out[_outEpAddr & 0xFU].is_used = 0;
 
 	// Close Command IN EP
 	//
-	USBD_LL_CloseEP(pdev, _cmdEpAdd);
-	pdev->ep_in[_cmdEpAdd & 0xFU].is_used = 0;
-	pdev->ep_in[_cmdEpAdd & 0xFU].bInterval = 0;
+	USBD_LL_CloseEP(pdev, _cmdEpAddr);
+	pdev->ep_in[_cmdEpAddr & 0xFU].is_used = 0;
+	pdev->ep_in[_cmdEpAddr & 0xFU].bInterval = 0;
 
 	// Desinicialitza l'interficie.
 	//
@@ -341,15 +344,15 @@ bool USBDeviceClassCDC::classGetHSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_HS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
@@ -364,15 +367,15 @@ bool USBDeviceClassCDC::classGetFSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
@@ -387,15 +390,15 @@ bool USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAdd);
+	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAdd);
+	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAdd);
+	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
@@ -418,8 +421,8 @@ bool USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
 
 
 bool USBDeviceClassCDC::usesEndPoint(
-	uint8_t epAdd) const {
+	uint8_t epAddr) const {
 
-	return (epAdd == _inEpAdd) || (epAdd == _outEpAdd);
+	return (epAddr == _inEpAddr) || (epAddr == _outEpAddr);
 }
 

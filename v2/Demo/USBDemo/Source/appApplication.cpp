@@ -7,6 +7,8 @@
 #include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
 #include "Controllers/USBDevice/MSC/eosMSCStorage_SSD.h"
 #include "Controllers/USBDevice/MSC/eosMSCStorage_RAM.h"
+#elif defined(USE_HUD_DEVICE)
+#include "Controllers/USBDevice/MSC/eosUSBDeviceClassHID.h"
 #endif
 #include "System/Core/eosTask.h"
 #include "Services/eosLedService.h"
@@ -25,7 +27,6 @@ using namespace eos;
 
 
 #if defined(USE_CDC_DEVICE)
-extern USBD_DescriptorsTypeDef VCP_Desc;
 static const USBDeviceDescriptors __descriptors {
 	USBD_DeviceDesc,
 	USBD_LangIDDesc,
@@ -35,14 +36,23 @@ static const USBDeviceDescriptors __descriptors {
 	"VCP configuration"
 };
 
-
 #elif defined(USE_MSC_DEVICE)
-extern USBD_DescriptorsTypeDef MSC_Desc;
-static const USBDeviceDescriptors __descriptors {
+static const USBDeviceConfiguration __deviceConfiguration {
 	USBD_DeviceDesc,
 	USBD_LangIDDesc,
 	"rsr.openware@gmail.com",
 	"EOS USB-MSC demo",
+	"MSC interface",
+	"MSC configuration"
+};
+
+#elif defined(USE_HID_DEVICE)
+extern USBD_DescriptorsTypeDef HID_Desc;
+static const USBDeviceDescriptors __descriptors {
+	USBD_DeviceDesc,
+	USBD_LangIDDesc,
+	"rsr.openware@gmail.com",
+	"EOS USB-HID demo",
 	"MSC interface",
 	"MSC configuration"
 };
@@ -88,7 +98,7 @@ void MyApplication::onExecute() {
 	//auto mainService = new MainService();
 	//addService(mainService);
 
-	auto drvUSBD = new eos::USBDeviceDriver(&__descriptors);
+	auto drvUSBD = new eos::USBDeviceDriver(&__deviceConfiguration);
 
 #if defined(USE_CDC_DEVICE)
 	auto interface = new eos::CDCInterface_VCOM();
@@ -111,7 +121,14 @@ void MyApplication::onExecute() {
 	auto devClassMSC = new eos::USBDeviceClassMSC(drvUSBD, storage);
 
 	drvUSBD->registerClass(devClassMSC);
-	drvUSBD->initialize(&MSC_Desc);
+	drvUSBD->initialize();
+
+#elif defined(USE_HID_DEVICE)
+	auto devClassHID = new eos::USBDeviceClassHID(devUSB);
+
+	drvUSBD->registerClass(devClassHID);
+	drvUSBD->initialize(&HID_Desc);
+
 #endif
 
 	drvUSBD->start();
@@ -129,8 +146,9 @@ void MyApplication::onExecute() {
 	    		devClassCDC->wait(1000);
 	    	}
 	    }
-#endif
-#if defined(USE_MSC_DEVICE)
+#elif defined(USE_MSC_DEVICE) || defined(USE_HID_DEVICE)
+	    eos::Task::delay(1000);
+#else
 	    eos::Task::delay(1000);
 #endif
 	}

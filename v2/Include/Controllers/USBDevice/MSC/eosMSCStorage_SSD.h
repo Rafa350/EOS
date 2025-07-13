@@ -19,7 +19,7 @@ namespace eos {
 		public:
 			MSCStorage_SSD();
 
-			int8_t initialize() override;
+			Result initialize() override;
 
 			int8_t getCapacity(uint8_t lun, unsigned &blkQuantity, unsigned &blkSize) override;
 			unsigned getMaxLun() override;
@@ -28,8 +28,8 @@ namespace eos {
 			bool isReady(uint8_t lun) override;
 			bool isWriteProtected(uint8_t lun) override;
 
-			int8_t read(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) override;
-			int8_t write(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) override;
+			Result read(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) override;
+			Result write(uint8_t lun, uint8_t *buffer, uint32_t blkStart, uint16_t blkCount) override;
 	};
 
 }

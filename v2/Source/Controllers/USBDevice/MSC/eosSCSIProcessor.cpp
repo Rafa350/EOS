@@ -88,12 +88,15 @@ SCSIProcessor::SCSIProcessor(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el procesador.
+/// \return   El resultat de l'operacio.
 ///
-void SCSIProcessor::initialize() {
+Result SCSIProcessor::initialize() {
 
 	_senseTail = 0;
 	_senseHead = 0;
 	_mediumState = MediumState::unlocked;
+
+	return Results::success;
 }
 
 
@@ -797,7 +800,7 @@ bool SCSIProcessor::processRead(
 
 	len = min(len, (uint32_t) MSC_MEDIA_PACKET);
 
-	if (_storage->read(lun, _msc->bot_data, lunData->addr, (len / lunData->blkSize)) < 0) {
+	if (_storage->read(lun, _msc->bot_data, lunData->addr, (len / lunData->blkSize)) != Results::success) {
 		senseCode(lun, HARDWARE_ERROR, UNRECOVERED_READ_ERROR);
 		return false;
 	}
@@ -825,7 +828,7 @@ bool SCSIProcessor::processWrite(
 	len = lunData->len * lunData->blkSize;
 	len = MIN(len, MSC_MEDIA_PACKET);
 
-	if (_storage->write(lun, _msc->bot_data, lunData->addr, (len / lunData->blkSize)) < 0) {
+	if (_storage->write(lun, _msc->bot_data, lunData->addr, (len / lunData->blkSize)) != Results::success) {
 		senseCode(lun, HARDWARE_ERROR, WRITE_FAULT);
 		return false;
 	}
