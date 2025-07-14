@@ -21,7 +21,8 @@ namespace eos {
     using USBDeviceClassListNode = IntrusiveForwardListNode<USBDeviceClass, 0>;
 
 	struct USBDeviceConfiguration {
-		uint8_t *device;
+		uint8_t *deviceDescriptor;
+		uint8_t *configurationDescriptor;
 		uint8_t *langID;
 		const char *manufacturer;
 		const char *product;
@@ -86,6 +87,7 @@ namespace eos {
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }
+			inline const USBDeviceConfiguration* getConfiguration() const { return _configuration; }
 			inline USBDeviceClass *getClass() const { return _classes.front(); }
 	};
 

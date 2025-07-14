@@ -15,7 +15,7 @@
 #define USBD_SELF_POWERED                     1
 #define USBD_DEBUG_LEVEL                      0
 
-/* MSC Class Config */
+
 #define MSC_MEDIA_PACKET                      512
 
 

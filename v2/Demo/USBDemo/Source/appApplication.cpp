@@ -19,17 +19,19 @@
 #include "appApplication.h"
 
 
-extern uint8_t USBD_DeviceDesc[1];
-extern uint8_t USBD_LangIDDesc[1];
-
 using namespace app;
 using namespace eos;
 
 
+extern uint8_t USBD_DeviceDescriptor[1];
+extern uint8_t USBD_LangIDDescriptor[1];
+
 #if defined(USE_CDC_DEVICE)
-static const USBDeviceDescriptors __descriptors {
-	USBD_DeviceDesc,
-	USBD_LangIDDesc,
+extern uint8_t USBD_CDC_ConfigurationDescriptor[];
+static const USBDeviceConfiguration __deviceConfiguration {
+	USBD_DeviceDescriptor,
+	USBD_CDC_ConfigurationDescriptor,
+	USBD_LangIDDescriptor,
 	"rsr.openware@gmail.com",
 	"EOS USB-VCOM demo",
 	"VCP interface",
@@ -37,9 +39,11 @@ static const USBDeviceDescriptors __descriptors {
 };
 
 #elif defined(USE_MSC_DEVICE)
+extern uint8_t USBD_MSC_ConfigurationDescriptor[];
 static const USBDeviceConfiguration __deviceConfiguration {
-	USBD_DeviceDesc,
-	USBD_LangIDDesc,
+	USBD_DeviceDescriptor,
+	USBD_MSC_ConfigurationDescriptor,
+	USBD_LangIDDescriptor,
 	"rsr.openware@gmail.com",
 	"EOS USB-MSC demo",
 	"MSC interface",
@@ -47,9 +51,10 @@ static const USBDeviceConfiguration __deviceConfiguration {
 };
 
 #elif defined(USE_HID_DEVICE)
-extern USBD_DescriptorsTypeDef HID_Desc;
+extern uint8t_ USBD_HID_CfgDesc;
 static const USBDeviceDescriptors __descriptors {
-	USBD_DeviceDesc,
+	USBD_DeviceDescriptor,
+	USBLD_HID_CfgDesc,
 	USBD_LangIDDesc,
 	"rsr.openware@gmail.com",
 	"EOS USB-HID demo",
@@ -105,7 +110,7 @@ void MyApplication::onExecute() {
 	auto devClassCDC = new eos::USBDeviceClassCDC(drvUSBD, interface);
 
 	drvUSBD->registerClass(devClassCDC);
-	drvUSBD->initialize(&VCP_Desc);
+	drvUSBD->initialize();
 
 #elif defined(USE_MSC_DEVICE)
 

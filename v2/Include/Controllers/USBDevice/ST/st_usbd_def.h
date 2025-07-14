@@ -160,8 +160,7 @@ namespace eos {
 #endif /* USE_USBD_COMPOSITE */
 
 
-typedef struct
-{
+typedef struct {
   uint8_t   bLength;
   uint8_t   bDescriptorType;
   uint16_t  wTotalLength;
@@ -172,35 +171,34 @@ typedef struct
   uint8_t   bMaxPower;
 } __PACKED USBD_ConfigDescTypeDef;
 
-typedef struct
-{
-  uint8_t   bLength;
-  uint8_t   bDescriptorType;
-  uint16_t  wTotalLength;
-  uint8_t   bNumDeviceCaps;
+
+typedef struct {
+	uint8_t   bLength;
+	uint8_t   bDescriptorType;
+	uint16_t  wTotalLength;
+	uint8_t   bNumDeviceCaps;
 } USBD_BosDescTypeDef;
 
-typedef struct
-{
-  uint8_t   bLength;
-  uint8_t   bDescriptorType;
-  uint8_t   bEndpointAddress;
-  uint8_t   bmAttributes;
-  uint16_t  wMaxPacketSize;
-  uint8_t   bInterval;
+typedef struct {
+	uint8_t   bLength;
+	uint8_t   bDescriptorType;
+	uint8_t   bEndpointAddress;
+	uint8_t   bmAttributes;
+	uint16_t  wMaxPacketSize;
+	uint8_t   bInterval;
 } __PACKED USBD_EpDescTypeDef;
 
-typedef  struct
-{
-  uint8_t  bLength;
-  uint8_t  bDescriptorType;
-  uint8_t  bDescriptorSubType;
+typedef  struct {
+	uint8_t  bLength;
+	uint8_t  bDescriptorType;
+	uint8_t  bDescriptorSubType;
 } USBD_DescHeaderTypeDef;
+
 
 struct _USBD_HandleTypeDef;
 
-typedef struct _Device_cb
-{
+
+typedef struct _Device_cb {
   uint8_t (*Init)(struct _USBD_HandleTypeDef *pdev, uint8_t cfgidx);
   uint8_t (*DeInit)(struct _USBD_HandleTypeDef *pdev, uint8_t cfgidx);
   /* Control Endpoints*/
@@ -224,26 +222,24 @@ typedef struct _Device_cb
 
 } USBD_ClassTypeDef;
 
+
 /* Following USB Device Speed */
-typedef enum
-{
-  USBD_SPEED_HIGH  = 0U,
-  USBD_SPEED_FULL  = 1U,
-  USBD_SPEED_LOW   = 2U,
+typedef enum {
+	USBD_SPEED_HIGH  = 0U,
+	USBD_SPEED_FULL  = 1U,
+	USBD_SPEED_LOW   = 2U,
 } USBD_SpeedTypeDef;
 
 /* Following USB Device status */
-typedef enum
-{
-  USBD_OK = 0U,
-  USBD_BUSY,
-  USBD_EMEM,
-  USBD_FAIL,
+typedef enum {
+	USBD_OK = 0U,
+	USBD_BUSY,
+	USBD_EMEM,
+	USBD_FAIL,
 } USBD_StatusTypeDef;
 
 /* USB Device descriptors structure */
-typedef struct
-{
+typedef struct {
   uint8_t *(*GetDeviceDescriptor)(USBD_SpeedTypeDef speed, uint16_t *length);
   uint8_t *(*GetLangIDStrDescriptor)(USBD_SpeedTypeDef speed, uint16_t *length);
   uint8_t *(*GetManufacturerStrDescriptor)(USBD_SpeedTypeDef speed, uint16_t *length);
@@ -260,15 +256,14 @@ typedef struct
 } USBD_DescriptorsTypeDef;
 
 /* USB Device handle structure */
-typedef struct
-{
-  uint32_t total_length;
-  uint32_t rem_length;
-  uint32_t bInterval;
-  uint16_t maxpacket;
-  uint8_t status;
-  uint8_t is_used;
-  uint8_t *pbuffer;
+typedef struct {
+	uint32_t total_length;
+	uint32_t rem_length;
+	uint32_t bInterval;
+	uint16_t maxpacket;
+	uint8_t status;
+	uint8_t is_used;
+	uint8_t *pbuffer;
 } USBD_EndpointTypeDef;
 
 #ifdef USE_USBD_COMPOSITE
@@ -317,31 +312,31 @@ typedef struct
 
 /* USB Device handle structure */
 struct USBD_HandleTypeDef {
-  uint8_t                 id;
-  uint32_t                dev_config;
-  uint32_t                dev_default_config;
-  uint32_t                dev_config_status;
-  USBD_SpeedTypeDef       dev_speed;
-  USBD_EndpointTypeDef    ep_in[16];
-  USBD_EndpointTypeDef    ep_out[16];
-  __IO uint32_t           ep0_state;
-  uint32_t                ep0_data_len;
-  __IO uint8_t            dev_state;
-  __IO uint8_t            dev_old_state;
-  uint8_t                 dev_address;
-  uint8_t                 dev_connection_status;
-  uint8_t                 dev_test_mode;
-  uint32_t                dev_remote_wakeup;
-  uint8_t                 ConfIdx;
+	uint8_t                 id;
+	uint32_t                dev_config;
+	uint32_t                dev_default_config;
+	uint32_t                dev_config_status;
+	USBD_SpeedTypeDef       dev_speed;
+	USBD_EndpointTypeDef    ep_in[16];
+	USBD_EndpointTypeDef    ep_out[16];
+	__IO uint32_t           ep0_state;
+	uint32_t                ep0_data_len;
+	__IO uint8_t            dev_state;
+	__IO uint8_t            dev_old_state;
+	uint8_t                 dev_address;
+	uint8_t                 dev_connection_status;
+	uint8_t                 dev_test_mode;
+	uint32_t                dev_remote_wakeup;
+	uint8_t                 ConfIdx;
 
-  USBD_SetupReqTypedef    request;
-  USBD_DescriptorsTypeDef *xpDesc;
-  eos::USBDeviceDriver    *_instance;
-  void                    *pData;
-  void                    *pBosDesc;
-  void                    *pConfDesc;
-  uint32_t                classId;
-  uint32_t                NumClasses;
+	USBD_SetupReqTypedef    request;
+	USBD_DescriptorsTypeDef *xpDesc;
+	eos::USBDeviceDriver    *_instance;
+	void                    *pData;
+	void                    *pBosDesc;
+	void                    *pConfDesc;
+	uint32_t                classId;
+	uint32_t                NumClasses;
 };
 
 /* USB Device endpoint direction */

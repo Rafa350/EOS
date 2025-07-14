@@ -4,6 +4,7 @@
 
 
 #include "eos.h"
+#include "Controllers/USBDevice/eosUSBDefinitions.h"
 
 
 #ifndef MSC_MEDIA_PACKET
@@ -15,7 +16,7 @@
 
 #define BOT_GET_MAX_LUN              0xFE
 #define BOT_RESET                    0xFF
-#define USB_MSC_CONFIG_DESC_SIZ      32
+#define USB_MSC_CONFIG_DESC_SIZE     32
 
 #ifndef MSC_EPIN_ADDR
 #define MSC_EPIN_ADDR                0x81U

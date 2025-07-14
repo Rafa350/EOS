@@ -346,7 +346,7 @@ bool USBDeviceDriver::processDeviceRequest_SetAddress(
 	    	pdev->dev_address = addr;
 	    	USBD_LL_SetUSBAddress(pdev, addr);
 	    	USBD_CtlSendStatus(pdev);
-	    	if (addr != 0U)
+	    	if (addr != 0)
 	    		pdev->dev_state = USBD_STATE_ADDRESSED;
 	    	else
 	    		pdev->dev_state = USBD_STATE_DEFAULT;
@@ -844,7 +844,7 @@ bool USBDeviceDriver::getDeviceDescriptor(
 	unsigned &length) const {
 
 	if (_configuration != nullptr) {
-		data = _configuration->device;
+		data = _configuration->deviceDescriptor;
 		if (data == nullptr)
 			length = 0;
 		else {
@@ -979,12 +979,12 @@ bool USBDeviceDriver::getStringDescriptor(
 	else {
 
 		data = buffer;
-		length = MIN(sizeof(buffer), (strlen(str) * 2) + 2);
+		length = min(sizeof(buffer), (strlen(str) * 2) + 2);
 
 		unsigned i = 0;
 		buffer[i++] = length;
 		buffer[i++] = USB_DESC_TYPE_STRING;
-		while (*str != 0) {
+		while ((*str != 0) && (i < length)) {
 			buffer[i++] = *str++;
 			buffer[i++] = 0;
 		}

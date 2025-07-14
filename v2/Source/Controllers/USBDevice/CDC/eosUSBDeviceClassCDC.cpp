@@ -10,8 +10,7 @@ using namespace eos;
 using namespace htl;
 
 
-extern uint8_t USBD_CDC_CfgDesc[USB_CDC_CONFIG_DESC_SIZ];
-extern uint8_t USBD_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC];
+extern uint8_t USBD_CDC_DeviceQualifierDescriptor[USB_LEN_DEV_QUALIFIER_DESC];
 
 
 /// ----------------------------------------------------------------------
@@ -344,20 +343,22 @@ bool USBDeviceClassCDC::classGetHSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAddr);
+	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_HS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
-	data = USBD_CDC_CfgDesc;
-	length = sizeof(USBD_CDC_CfgDesc);
+	data = cd;
+	length = cd[2];
 
 	return true;
 }
@@ -367,20 +368,22 @@ bool USBDeviceClassCDC::classGetFSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAddr);
+	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	data = USBD_CDC_CfgDesc;
-	length = sizeof(USBD_CDC_CfgDesc);
+	data = cd;
+	length = cd[2];
 
 	return true;
 }
@@ -390,20 +393,22 @@ bool USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _cmdEpAddr);
+	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+
+	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(cd, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(cd, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(USBD_CDC_CfgDesc, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(cd, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	data = USBD_CDC_CfgDesc;
-	length = sizeof(USBD_CDC_CfgDesc);
+	data = cd;
+	length = cd[2];
 
 	return true;
 }
@@ -413,8 +418,8 @@ bool USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	data = USBD_CDC_DeviceQualifierDesc;
-	length = sizeof(USBD_CDC_DeviceQualifierDesc);
+	data = USBD_CDC_DeviceQualifierDescriptor;
+	length = sizeof(USBD_CDC_DeviceQualifierDescriptor);
 
 	return true;
 }
