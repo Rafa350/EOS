@@ -10,9 +10,6 @@ using namespace eos;
 using namespace htl;
 
 
-extern uint8_t USBD_CDC_DeviceQualifierDescriptor[USB_LEN_DEV_QUALIFIER_DESC];
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Crea el objecte.
 /// \param    devUSBD: El dispositiu USB
@@ -343,22 +340,22 @@ bool USBDeviceClassCDC::classGetHSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+	auto descriptor = _drvUSBD->getConfiguration()->configurationDescriptor;
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _cmdEpAddr);
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*) descriptor, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_HS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*) descriptor, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*) descriptor, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
 
-	data = cd;
-	length = cd[2];
+	data = (uint8_t*)  descriptor;
+	length = descriptor->wTotalLength;
 
 	return true;
 }
@@ -368,22 +365,22 @@ bool USBDeviceClassCDC::classGetFSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+	auto descriptor = _drvUSBD->getConfiguration()->configurationDescriptor;
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _cmdEpAddr);
+	auto pEpCmdDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*) descriptor, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*) descriptor, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*) descriptor, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	data = cd;
-	length = cd[2];
+	data = (uint8_t*) descriptor;
+	length = descriptor->wTotalLength;
 
 	return true;
 }
@@ -393,22 +390,22 @@ bool USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+	auto descriptor = _drvUSBD->getConfiguration()->configurationDescriptor;
 
-	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(cd, _cmdEpAddr);
+	auto pEpCmdDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc((uint8_t*) descriptor, _cmdEpAddr);
 	if (pEpCmdDesc != nullptr)
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(cd, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc((uint8_t*) descriptor, _outEpAddr);
 	if (pEpOutDesc != nullptr)
 		pEpOutDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc(cd, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef *) USBD_GetEpDesc((uint8_t*) descriptor, _inEpAddr);
 	if (pEpInDesc != nullptr)
 		pEpInDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
 
-	data = cd;
-	length = cd[2];
+	data = (uint8_t*) descriptor;
+	length = descriptor->wTotalLength;
 
 	return true;
 }
@@ -418,8 +415,10 @@ bool USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	data = USBD_CDC_DeviceQualifierDescriptor;
-	length = sizeof(USBD_CDC_DeviceQualifierDescriptor);
+	auto descriptor = _drvUSBD->getConfiguration()->deviceQualifierDescriptor;
+
+	data = (uint8_t*) descriptor;
+	length = descriptor->bLength;
 
 	return true;
 }

@@ -23,13 +23,15 @@ using namespace app;
 using namespace eos;
 
 
-extern uint8_t USBD_DeviceDescriptor[1];
-extern uint8_t USBD_LangIDDescriptor[1];
+extern uint8_t deviceDescriptor[1];
+extern uint8_t deviceQualifierDescriptor[1];
+extern uint8_t langIDDescriptor[1];
 
 #if defined(USE_CDC_DEVICE)
 extern uint8_t USBD_CDC_ConfigurationDescriptor[];
 static const USBDeviceConfiguration __deviceConfiguration {
 	USBD_DeviceDescriptor,
+	USBD_DeviceQualifierDescriptor,
 	USBD_CDC_ConfigurationDescriptor,
 	USBD_LangIDDescriptor,
 	"rsr.openware@gmail.com",
@@ -39,11 +41,12 @@ static const USBDeviceConfiguration __deviceConfiguration {
 };
 
 #elif defined(USE_MSC_DEVICE)
-extern uint8_t USBD_MSC_ConfigurationDescriptor[];
+extern uint8_t configurationDescriptor[];
 static const USBDeviceConfiguration __deviceConfiguration {
-	USBD_DeviceDescriptor,
-	USBD_MSC_ConfigurationDescriptor,
-	USBD_LangIDDescriptor,
+	(USBD_DeviceDescriptor*) deviceDescriptor,
+	(USBD_DeviceQualifierDescriptor*) deviceQualifierDescriptor,
+	(USBD_ConfigurationDescriptor*) configurationDescriptor,
+	(USBD_LangIDDescriptorHeader*) langIDDescriptor,
 	"rsr.openware@gmail.com",
 	"EOS USB-MSC demo",
 	"MSC interface",
@@ -54,6 +57,7 @@ static const USBDeviceConfiguration __deviceConfiguration {
 extern uint8t_ USBD_HID_CfgDesc;
 static const USBDeviceDescriptors __descriptors {
 	USBD_DeviceDescriptor,
+	USBD_DeviceQualifierDescriptor,
 	USBLD_HID_CfgDesc,
 	USBD_LangIDDesc,
 	"rsr.openware@gmail.com",

@@ -21,9 +21,10 @@ namespace eos {
     using USBDeviceClassListNode = IntrusiveForwardListNode<USBDeviceClass, 0>;
 
 	struct USBDeviceConfiguration {
-		uint8_t *deviceDescriptor;
-		uint8_t *configurationDescriptor;
-		uint8_t *langID;
+		USBD_DeviceDescriptor *deviceDescriptor;
+		USBD_DeviceQualifierDescriptor *deviceQualifierDescriptor;
+		USBD_ConfigurationDescriptor *configurationDescriptor;
+		USBD_LangIDDescriptorHeader *langIDDescriptor;
 		const char *manufacturer;
 		const char *product;
 		const char *interface;

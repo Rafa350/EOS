@@ -843,12 +843,14 @@ bool USBDeviceDriver::getDeviceDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
+	auto descriptor = _configuration->deviceDescriptor;
+
 	if (_configuration != nullptr) {
-		data = _configuration->deviceDescriptor;
+		data = (uint8_t*) descriptor;
 		if (data == nullptr)
 			length = 0;
 		else {
-			length = data[0];
+			length = descriptor->bLength;
 			return true;
 		}
 	}
@@ -867,12 +869,14 @@ bool USBDeviceDriver::getLangIDStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
+	auto descriptor = _configuration->langIDDescriptor;
+
 	if (_configuration != nullptr) {
-		data = _configuration->langID;
+		data = (uint8_t*) descriptor;
 		if (data == nullptr)
 			length = 0;
 		else {
-			length = data[0];
+			length = descriptor->bLength;
 			return true;
 		}
 	}

@@ -8,7 +8,7 @@
 #define USE_USB_DEVICE0
 #define USE_SD
 
-#define USE_CDC_DEVICE
+#define USE_MSC_DEVICE
 
 // Opcions de configuracio pel servei 'DigInput'
 //

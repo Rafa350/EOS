@@ -547,7 +547,7 @@ void *USBD_GetEpDesc(
 	uint8_t EpAddr) {
 
 	USBD_DescHeaderTypeDef *pdesc = (USBD_DescHeaderTypeDef *)(void *)pConfDesc;
-	USBD_ConfigDescTypeDef *desc = (USBD_ConfigDescTypeDef *)(void *)pConfDesc;
+	auto *desc = (USBD_ConfigurationDescriptor*)(void *)pConfDesc;
 	USBD_EpDescTypeDef *pEpDesc = NULL;
 	uint16_t ptr;
 

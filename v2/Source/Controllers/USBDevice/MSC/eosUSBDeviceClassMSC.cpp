@@ -8,10 +8,6 @@
 using namespace eos;
 
 
-//extern uint8_t USBD_MSC_ConfigurationDescriptor[USB_MSC_CONFIG_DESC_SIZE];
-extern uint8_t USBD_MSC_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC];
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Crea el objecte.
 ///
@@ -224,21 +220,23 @@ bool USBDeviceClassMSC::classGetHSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+	auto descriptor =  _drvUSBD->getConfiguration()->configurationDescriptor;
+	if (descriptor == nullptr)
+		return false;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*)descriptor, _inEpAddr);
 	if (pEpInDesc == nullptr)
 		return false;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*)descriptor, _outEpAddr);
 	if (pEpOutDesc == nullptr)
 		return false;
 
 	pEpInDesc->wMaxPacketSize = MSC_MAX_HS_PACKET;
 	pEpOutDesc->wMaxPacketSize = MSC_MAX_HS_PACKET;
 
-	data = cd;
-	length = cd[2];
+	data = (uint8_t*) descriptor;
+	length = descriptor->wTotalLength;
 
 	return true;
 }
@@ -248,21 +246,23 @@ bool USBDeviceClassMSC::classGetFSConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+	auto descriptor = _drvUSBD->getConfiguration()->configurationDescriptor;
+	if (descriptor == nullptr)
+		return false;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*)descriptor, _inEpAddr);
 	if (pEpInDesc == nullptr)
 		return false;
 
-	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _outEpAddr);
+	auto pEpOutDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*)descriptor, _outEpAddr);
 	if (pEpOutDesc == nullptr)
 		return false;
 
 	pEpInDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 	pEpOutDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
-	data = cd;
-	length = cd[2];
+	data = (uint8_t*) descriptor;
+	length = descriptor->wTotalLength;
 
 	return true;
 }
@@ -272,21 +272,23 @@ bool USBDeviceClassMSC::classGetOtherSpeedConfigurationDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	auto cd = _drvUSBD->getConfiguration()->configurationDescriptor;
+	auto descriptor = _drvUSBD->getConfiguration()->configurationDescriptor;
+	if (descriptor == nullptr)
+		return false;
 
-	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _inEpAddr);
+	auto pEpInDesc = (USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*)descriptor, _inEpAddr);
 	if (pEpInDesc == nullptr)
 		return false;
 
-	auto pEpOutDesc =(USBD_EpDescTypeDef*) USBD_GetEpDesc(cd, _outEpAddr);
+	auto pEpOutDesc =(USBD_EpDescTypeDef*) USBD_GetEpDesc((uint8_t*)descriptor, _outEpAddr);
 	if (pEpOutDesc == nullptr)
 		return false;
 
 	pEpInDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 	pEpOutDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
 
-	data = cd;
-	length = cd[2];
+	data = (uint8_t*) descriptor;
+	length = descriptor->wTotalLength;
 
 	return true;
 }
@@ -296,19 +298,27 @@ bool USBDeviceClassMSC::classGetDeviceQualifierDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
-	data = USBD_MSC_DeviceQualifierDesc;
-	length = sizeof(USBD_MSC_DeviceQualifierDesc);
+	auto descriptor = (USBD_DeviceQualifierDescriptor*) _drvUSBD->getConfiguration()->deviceQualifierDescriptor;
+	if (descriptor == nullptr)
+		return false;
+
+	data = (uint8_t*) descriptor;
+	length = descriptor->bLength;
 
 	return true;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si s'utilitza els endPoint especidicat.
+/// \param    epAddr: L'adressa del endPoint.
+/// \return   True si s'utilitza, false en cas contrari.
+///
 bool USBDeviceClassMSC::usesEndPoint(
 	uint8_t epAddr) const {
 
 	return (epAddr == _inEpAddr) || (epAddr == _outEpAddr);
 }
-
 
 
 void USBDeviceClassMSC::botInitialize() {

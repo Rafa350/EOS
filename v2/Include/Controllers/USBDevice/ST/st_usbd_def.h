@@ -159,18 +159,18 @@ namespace eos {
 #define USBD_DESC_ECM_BCD_HIGH                          0x10U
 #endif /* USE_USBD_COMPOSITE */
 
-
-typedef struct {
-  uint8_t   bLength;
-  uint8_t   bDescriptorType;
-  uint16_t  wTotalLength;
-  uint8_t   bNumInterfaces;
-  uint8_t   bConfigurationValue;
-  uint8_t   iConfiguration;
-  uint8_t   bmAttributes;
-  uint8_t   bMaxPower;
-} __PACKED USBD_ConfigDescTypeDef;
-
+/*
+struct USBD_ConfigurationDescriptor {
+	uint8_t bLength;
+	uint8_t bDescriptorType;
+	uint16_t wTotalLength;
+	uint8_t bNumInterfaces;
+	uint8_t bConfigurationValue;
+	uint8_t iConfiguration;
+	uint8_t bmAttributes;
+	uint8_t bMaxPower;
+} __PACKED;
+*/
 
 typedef struct {
 	uint8_t   bLength;
@@ -197,7 +197,7 @@ typedef  struct {
 
 struct _USBD_HandleTypeDef;
 
-
+#if 1
 typedef struct _Device_cb {
   uint8_t (*Init)(struct _USBD_HandleTypeDef *pdev, uint8_t cfgidx);
   uint8_t (*DeInit)(struct _USBD_HandleTypeDef *pdev, uint8_t cfgidx);
@@ -221,7 +221,7 @@ typedef struct _Device_cb {
 #endif /* USBD_SUPPORT_USER_STRING_DESC  */
 
 } USBD_ClassTypeDef;
-
+#endif
 
 /* Following USB Device Speed */
 typedef enum {
@@ -239,6 +239,7 @@ typedef enum {
 } USBD_StatusTypeDef;
 
 /* USB Device descriptors structure */
+#if 1
 typedef struct {
   uint8_t *(*GetDeviceDescriptor)(USBD_SpeedTypeDef speed, uint16_t *length);
   uint8_t *(*GetLangIDStrDescriptor)(USBD_SpeedTypeDef speed, uint16_t *length);
@@ -254,6 +255,7 @@ typedef struct {
   uint8_t *(*GetBOSDescriptor)(USBD_SpeedTypeDef speed, uint16_t *length);
 #endif /* (USBD_LPM_ENABLED == 1U) || (USBD_CLASS_BOS_ENABLED == 1) */
 } USBD_DescriptorsTypeDef;
+#endif
 
 /* USB Device handle structure */
 typedef struct {
