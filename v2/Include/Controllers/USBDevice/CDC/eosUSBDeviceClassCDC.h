@@ -33,7 +33,6 @@ namespace eos {
 
 
 	struct USBDeviceClassCDCConfiguration {
-		uint8_t iface;
 		uint8_t inEpAddr;
 		uint8_t outEpAddr;
 		uint8_t cmdEpAddr;
@@ -47,6 +46,9 @@ namespace eos {
 				transmiting,
 				receiving
 			};
+
+		private:
+			static constexpr uint8_t _ifaceQty = 2;
 
 		private:
 			uint8_t _inEpAddr  = CDC_IN_EP;
@@ -87,12 +89,10 @@ namespace eos {
 			int8_t classIsoINIncomplete(uint8_t epnum) override;
 			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
 			unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) override;
-			bool classGetHSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
-			bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
-			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
 
 			bool usesEndPoint(uint8_t epAddr) const override;
+			bool usesIface(uint8_t ifaceQty) const override;
 	};
 }
 

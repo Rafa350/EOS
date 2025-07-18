@@ -15,9 +15,9 @@ static uint8_t __responseData[internal::maxRequestResponseDataSize] __attribute_
 /// \param    configuration: La configuracio del dispositiu
 ///
 USBDeviceDriver::USBDeviceDriver(
-	const USBDeviceConfiguration *configuration,
+	//const USBDeviceConfiguration *configuration,
 	const USBDeviceDriverConfiguration *cfg) :
-	_configuration {configuration},
+	//_configuration {configuration},
 	_state {State::reset},
 
 	_manufacturerStr {cfg->manufacturerStr},
@@ -165,7 +165,7 @@ USBDeviceClass *USBDeviceDriver::getClassFromInterface(
 	uint8_t iface) const {
 
 	for (auto cls: _classes)
-		if (cls->usesIFace(iface))
+		if (cls->usesIface(iface))
 			return cls;
 
 	return nullptr;
@@ -177,6 +177,7 @@ USBDeviceClass *USBDeviceDriver::getClassFromInterface(
 /// \param    ifabe: El interface.
 /// \return   El descriptor o nullptr en cas d'error.
 ///
+/*
 USBD_InterfaceDescriptor * const USBDeviceDriver::getIFaceDescriptor(
 	uint8_t iface) const {
 
@@ -206,13 +207,14 @@ USBD_InterfaceDescriptor * const USBDeviceDriver::getIFaceDescriptor(
 
 	return nullptr;
 }
-
+*/
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el descriptor d'un endpoint.
 /// \param    epAddr: El endpoint.
 /// \return   El descriptor o nullptr en cas d'error.
 ///
+/*
 USBD_EndPointDescriptor * const USBDeviceDriver::getEpDescriptor(
 	uint8_t epAddr) const {
 
@@ -243,7 +245,7 @@ USBD_EndPointDescriptor * const USBDeviceDriver::getEpDescriptor(
 
 	return nullptr;
 }
-
+*/
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa l'arribada de dades.
@@ -441,11 +443,11 @@ bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
     	}
 
     	case USBDRequestValueDescriptorType::otherSpeedConfiguration: {
-			if (pdev->dev_speed == USBD_SPEED_HIGH) {
+			/*if (pdev->dev_speed == USBD_SPEED_HIGH) {
 				ok = getClass()->classGetOtherSpeedConfigurationDescriptor(data, length);
 				if (ok)
 					data[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
-			}
+			}*/
     		break;
     	}
     }
@@ -1048,11 +1050,17 @@ bool USBDeviceDriver::getConfigurationDescriptor(
 	unsigned &length,
 	bool hs) const {
 
-#if 1
-	if (sizeof(__responseData) < sizeof(USBD_ConfigurationDescriptor))
-		return false;
+	uint8_t *ptr;
+	uint8_t *ptrEnd;
 
-	auto descriptor = (USBD_ConfigurationDescriptor*) __responseData;
+	ptr = __responseData;
+	ptrEnd = ptr + sizeof(__responseData);
+
+	// Configuration descriptor
+	//
+	if (ptr + sizeof(USBD_ConfigurationDescriptor) > ptrEnd)
+		return false;
+	auto descriptor = (USBD_ConfigurationDescriptor*) ptr;
 	descriptor->bLength = sizeof(USBD_ConfigurationDescriptor);
 	descriptor->bDescriptorType = (uint8_t) DescriptorType::configuration;
 	descriptor->wTotalLength = sizeof(USBD_ConfigurationDescriptor);
@@ -1062,42 +1070,40 @@ bool USBDeviceDriver::getConfigurationDescriptor(
 	descriptor->iConfiguration = 0;
 	descriptor->bmAttributes = 0xC0;
 	descriptor->bMaxPower = _maxPower;
+	ptr += sizeof(USBD_ConfigurationDescriptor);
 
-	auto ptr = __responseData + sizeof(USBD_ConfigurationDescriptor);
-	auto remainSize = sizeof(__responseData) - sizeof(USBD_ConfigurationDescriptor);
+	// Interface descriptors
+	//
 	for (auto cls: _classes) {
-		auto ifaceLength = cls->classGetInterfaceDescriptors(ptr, remainSize, hs);
+		auto ifaceLength = cls->classGetInterfaceDescriptors(ptr, ptrEnd - ptr, hs);
 		if (ifaceLength == 0)
 			return false;
 		descriptor->wTotalLength += ifaceLength;
 		ptr += ifaceLength;
-		remainSize -= ifaceLength;
 		descriptor->bNumInterfaces++;
+	}
+
+	// Renumera els interfaces
+	//
+	ptr = __responseData;
+	ptrEnd = ptr + descriptor->wTotalLength;
+
+	uint8_t ifaceNumber = 0;
+	while (ptr < ptrEnd) {
+		auto header = (USBD_DescriptorHeader*) ptr;
+		if ((header->bLength == sizeof(USBD_InterfaceDescriptor)) &&
+			(header->bDescriptorType == (uint8_t) DescriptorType::interface)) {
+
+			auto ifaceDescriptor = (USBD_InterfaceDescriptor*) header;
+			ifaceDescriptor->bInterfaceNumber = ifaceNumber++;
+		}
+		ptr += header->bLength;
 	}
 
 	data = (uint8_t*) descriptor;
 	length = descriptor->wTotalLength;
 
 	return true;
-
-#else
-	auto ok = false;
-	auto classe = getClass();
-	if (classe != nullptr) {
-		if (false/*pdev->dev_speed == USBD_SPEED_HIGH*/) {
-			ok = classe->classGetHSConfigurationDescriptor(data, length);
-			if (ok)
-				data[1] = USB_DESC_TYPE_CONFIGURATION;
-		}
-		else {
-			ok = classe->classGetFSConfigurationDescriptor(data, length);
-			if (ok)
-				data[1] = USB_DESC_TYPE_CONFIGURATION;
-		}
-	}
-
-	return ok;
-#endif
 }
 
 
@@ -1167,7 +1173,8 @@ bool USBDeviceDriver::getInterfaceStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-    return getStringDescriptor(_configuration->interface, data, length);
+    //return getStringDescriptor(_configuration->interface, data, length);
+	return false;
 }
 
 
@@ -1181,7 +1188,8 @@ bool USBDeviceDriver::getConfigurationStrDescriptor(
 	uint8_t* &data,
 	unsigned &length) const {
 
-    return getStringDescriptor(_configuration->configuration, data, length);
+    //return getStringDescriptor(_configuration->configuration, data, length);
+	return false;
 }
 
 

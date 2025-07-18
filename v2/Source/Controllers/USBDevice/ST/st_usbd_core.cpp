@@ -18,7 +18,6 @@ USBD_StatusTypeDef USBD_Init(
 	if (pdev == nullptr)
 		return USBD_FAIL;
 
-	pdev->pConfDesc = NULL;
 	pdev->dev_state = USBD_STATE_DEFAULT;
 	pdev->id = id;
 
@@ -44,9 +43,6 @@ USBD_StatusTypeDef USBD_DeInit(
 	if (classe != nullptr)
 		classe->classDeinitialize((uint8_t)pdev->dev_config);
 
-	/* Free Device descriptors resources */
-	pdev->pConfDesc = nullptr;
-
 	/* DeInitialize low level driver */
 	return USBD_LL_DeInit(pdev);
 }
@@ -64,12 +60,6 @@ USBD_StatusTypeDef USBD_RegisterClass(
 
 	if (pclass == nullptr)
 		return USBD_FAIL;
-
-    uint8_t *data;
-    unsigned len;
-//    pdev->dev_speed == USBD_SpeedTypeDef::USBD_SPEED_FULL
-    pclass->classGetFSConfigurationDescriptor(data, len);
-    pdev->pConfDesc = data;
 
     /* Increment the NumClasses */
     pdev->NumClasses++;

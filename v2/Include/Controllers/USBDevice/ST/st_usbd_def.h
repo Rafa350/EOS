@@ -336,7 +336,6 @@ struct USBD_HandleTypeDef {
 	eos::USBDeviceDriver    *_instance;
 	void                    *pData;
 	void                    *pBosDesc;
-	void                    *pConfDesc;
 	uint32_t                classId;
 	uint32_t                NumClasses;
 };

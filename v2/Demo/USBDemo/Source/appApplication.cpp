@@ -23,51 +23,6 @@ using namespace app;
 using namespace eos;
 
 
-extern uint8_t deviceDescriptor[1];
-extern uint8_t deviceQualifierDescriptor[1];
-extern uint8_t langIDDescriptor[1];
-
-#if defined(USE_CDC_DEVICE)
-extern uint8_t configurationDescriptor[];
-static const USBDeviceConfiguration __deviceConfiguration {
-	(USBD_DeviceDescriptor*) deviceDescriptor,
-	(USBD_DeviceQualifierDescriptor*) deviceQualifierDescriptor,
-	(USBD_ConfigurationDescriptor*) configurationDescriptor,
-	(USBD_LangIDDescriptorHeader*) langIDDescriptor,
-	"rsr.openware@gmail.com",
-	"EOS USB-VCOM demo",
-	"VCP interface",
-	"VCP configuration"
-};
-
-#elif defined(USE_MSC_DEVICE)
-extern uint8_t configurationDescriptor[];
-static const USBDeviceConfiguration __deviceConfiguration {
-	(USBD_DeviceDescriptor*) deviceDescriptor,
-	(USBD_DeviceQualifierDescriptor*) deviceQualifierDescriptor,
-	(USBD_ConfigurationDescriptor*) configurationDescriptor,
-	(USBD_LangIDDescriptorHeader*) langIDDescriptor,
-	"rsr.openware@gmail.com",
-	"EOS USB-MSC demo",
-	"MSC interface",
-	"MSC configuration"
-};
-
-#elif defined(USE_HID_DEVICE)
-extern uint8t_ USBD_HID_CfgDesc;
-static const USBDeviceDescriptors __descriptors {
-	USBD_DeviceDescriptor,
-	USBD_DeviceQualifierDescriptor,
-	USBLD_HID_CfgDesc,
-	USBD_LangIDDesc,
-	"rsr.openware@gmail.com",
-	"EOS USB-HID demo",
-	"MSC interface",
-	"MSC configuration"
-};
-#endif
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
@@ -118,14 +73,14 @@ void MyApplication::onExecute() {
 		.maxPower = USBD_MAX_POWER
 	};
 
-	auto drvUSBD = new eos::USBDeviceDriver(&__deviceConfiguration, &configuration);
+//	auto drvUSBD = new eos::USBDeviceDriver(&__deviceConfiguration, &configuration);
+	auto drvUSBD = new eos::USBDeviceDriver(&configuration);
 
 #if defined(USE_CDC_DEVICE)
 
 	auto vcom = new eos::CDCInterface_VCOM();
 
 	USBDeviceClassCDCConfiguration cdcConfiguration = {
-		.iface = 0,
 		.inEpAddr = CDC_IN_EP,
 		.outEpAddr = CDC_OUT_EP,
 		.cmdEpAddr = CDC_CMD_EP
@@ -147,7 +102,6 @@ void MyApplication::onExecute() {
 #endif
 
 	USBDeviceClassMSCConfiguration mscConfiguration = {
-		.iface = 0, // Generar el numero automaticament
 		.inEpAddr = MSC_EPIN_ADDR,
 		.outEpAddr = MSC_EPOUT_ADDR
 	};

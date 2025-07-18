@@ -19,7 +19,7 @@ USBDeviceClassMSC::USBDeviceClassMSC(
 	const USBDeviceClassMSCConfiguration *configuration,
 	MSCStorage *storage) :
 
-	USBDeviceClass {drvUSBD, configuration->iface},
+	USBDeviceClass {drvUSBD, reserveIface(_ifaceQty)},
 	_storage {storage},
 	_scsi {new SCSIProcessor(storage, drvUSBD->getHandle())},
 	_inEpAddr {configuration->inEpAddr},
@@ -244,15 +244,16 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	unsigned bufferSize,
 	bool hs) {
 
-	auto size = sizeof(USBD_InterfaceDescriptor) + sizeof(USBD_EndPointDescriptor) * 2;
-	if (bufferSize < size)
-		return 0;
+	auto maxPacketSize = hs ? MSC_MAX_HS_PACKET : MSC_MAX_FS_PACKET;
 
-	unsigned maxPacketSize = hs ? MSC_MAX_HS_PACKET : MSC_MAX_FS_PACKET;
+	auto ptr = buffer;
+	auto ptrEnd = buffer + bufferSize;
 
-	// Interface
+	// Interface descriptor
 	//
-	auto ifaceDescriptor = (USBD_InterfaceDescriptor*) buffer;
+	if (ptr + sizeof(USBD_InterfaceDescriptor) > ptrEnd)
+		return 0;
+	auto ifaceDescriptor = (USBD_InterfaceDescriptor*) ptr;
 	ifaceDescriptor->bLength = sizeof(USBD_InterfaceDescriptor);
 	ifaceDescriptor->bDescriptorType = (uint8_t) DescriptorType::interface;
 	ifaceDescriptor->bInterfaceNumber = _iface;
@@ -261,99 +262,36 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	ifaceDescriptor->bInterfaceClass = (uint8_t) ClassID::msc;
 	ifaceDescriptor->bInterfaceSubClass = 0x06;
 	ifaceDescriptor->bInterfaceProtocol = 0x50;
-	ifaceDescriptor->iInterface = 5;
+	ifaceDescriptor->iInterface = 0;
+	ptr += sizeof(USBD_InterfaceDescriptor);
 
-	// EndPoint 1
+	// IN endpoint descriptor
 	//
-	auto ep1Descriptor = (USBD_EndPointDescriptor*) (buffer + sizeof(USBD_InterfaceDescriptor));
-	ep1Descriptor->bLength = sizeof(USBD_EndPointDescriptor);
-	ep1Descriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
-	ep1Descriptor->bEndPointAddress = _inEpAddr;
-	ep1Descriptor->bmAttributes = 0x02;
-	ep1Descriptor->wMaxPacketSize = maxPacketSize;
-	ep1Descriptor->bInterval = 0;
+	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
+		return 0;
+	auto inEpDescriptor = (USBD_EndPointDescriptor*) ptr;
+	inEpDescriptor->bLength = sizeof(USBD_EndPointDescriptor);
+	inEpDescriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
+	inEpDescriptor->bEndPointAddress = _inEpAddr;
+	inEpDescriptor->bmAttributes = 0x02;
+	inEpDescriptor->wMaxPacketSize = maxPacketSize;
+	inEpDescriptor->bInterval = 0;
+	ptr += sizeof(USBD_EndPointDescriptor);
 
-	// EndPoint 2
+	// OUT endpoint descriptor
 	//
-	auto ep2Descriptor = (USBD_EndPointDescriptor*) (buffer + sizeof(USBD_InterfaceDescriptor) + sizeof(USBD_EndPointDescriptor));
-	ep2Descriptor->bLength = sizeof(USBD_EndPointDescriptor);
-	ep2Descriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
-	ep2Descriptor->bEndPointAddress = _outEpAddr;
-	ep2Descriptor->bmAttributes = 0x02;
-	ep2Descriptor->wMaxPacketSize = maxPacketSize;
-	ep2Descriptor->bInterval = 0;
+	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
+		return 0;
+	auto outEpDescriptor = (USBD_EndPointDescriptor*) ptr;
+	outEpDescriptor->bLength = sizeof(USBD_EndPointDescriptor);
+	outEpDescriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
+	outEpDescriptor->bEndPointAddress = _outEpAddr;
+	outEpDescriptor->bmAttributes = 0x02;
+	outEpDescriptor->wMaxPacketSize = maxPacketSize;
+	outEpDescriptor->bInterval = 0;
+	ptr += sizeof(USBD_EndPointDescriptor);
 
-	return size;
-}
-
-
-bool USBDeviceClassMSC::classGetHSConfigurationDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
-
-	auto pEpInDesc = _drvUSBD->getEpDescriptor(_inEpAddr);
-	if (pEpInDesc == nullptr)
-		return false;
-
-	auto pEpOutDesc = _drvUSBD->getEpDescriptor(_outEpAddr);
-	if (pEpOutDesc == nullptr)
-		return false;
-
-	pEpInDesc->wMaxPacketSize = MSC_MAX_HS_PACKET;
-	pEpOutDesc->wMaxPacketSize = MSC_MAX_HS_PACKET;
-
-	auto configurationDescriptor = _drvUSBD->getConfigurationDescriptor();
-	data = (uint8_t*) configurationDescriptor;
-	length = configurationDescriptor->wTotalLength;
-
-	return true;
-}
-
-
-bool USBDeviceClassMSC::classGetFSConfigurationDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
-
-	auto pEpInDesc = _drvUSBD->getEpDescriptor(_inEpAddr);
-	if (pEpInDesc == nullptr)
-		return false;
-
-	auto pEpOutDesc = _drvUSBD->getEpDescriptor(_outEpAddr);
-	if (pEpOutDesc == nullptr)
-		return false;
-
-	pEpInDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
-	pEpOutDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
-
-	auto configurationDescriptor = _drvUSBD->getConfigurationDescriptor();
-	data = (uint8_t*) configurationDescriptor;
-	length = configurationDescriptor->wTotalLength;
-
-	return true;
-}
-
-
-bool USBDeviceClassMSC::classGetOtherSpeedConfigurationDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
-
-	auto inEpDesc = _drvUSBD->getEpDescriptor(_inEpAddr);
-	if (inEpDesc == nullptr)
-		return false;
-
-	auto outEpDesc = _drvUSBD->getEpDescriptor(_outEpAddr);
-	if (outEpDesc == nullptr)
-		return false;
-
-	inEpDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
-	outEpDesc->wMaxPacketSize = MSC_MAX_FS_PACKET;
-
-	auto configurationDescriptor = _drvUSBD->getConfigurationDescriptor();
-	data = (uint8_t*) configurationDescriptor;
-	length = configurationDescriptor->wTotalLength;
-
-
-	return true;
+	return ptr - buffer;
 }
 
 
@@ -361,6 +299,8 @@ bool USBDeviceClassMSC::classGetDeviceQualifierDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
+	return false;
+	/*
 	auto descriptor = (USBD_DeviceQualifierDescriptor*) _drvUSBD->getConfiguration()->deviceQualifierDescriptor;
 	if (descriptor == nullptr)
 		return false;
@@ -369,6 +309,7 @@ bool USBDeviceClassMSC::classGetDeviceQualifierDescriptor(
 	length = descriptor->bLength;
 
 	return true;
+	*/
 }
 
 
@@ -381,6 +322,18 @@ bool USBDeviceClassMSC::usesEndPoint(
 	uint8_t epAddr) const {
 
 	return (epAddr == _inEpAddr) || (epAddr == _outEpAddr);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si s'utilitza el interface especificat.
+/// \param    ifase: El numero del interface.
+/// \return   True si s'utilitza, false en cas contrari.
+///
+bool USBDeviceClassMSC::usesIface(
+	uint8_t iface) const {
+
+	return (iface >= _iface) && (iface < (_iface + _ifaceQty));
 }
 
 

@@ -34,9 +34,6 @@ namespace eos {
 			int8_t classDataOut(uint8_t epnum) override;
 			int8_t classIsoINIncomplete(uint8_t epnum) override;
 			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
-			bool classGetHSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
-			bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
-			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
 
 			bool usesEndPoint(uint8_t epAddr) const override;

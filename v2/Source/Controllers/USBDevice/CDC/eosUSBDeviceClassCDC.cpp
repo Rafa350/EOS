@@ -21,7 +21,7 @@ USBDeviceClassCDC::USBDeviceClassCDC(
 	const USBDeviceClassCDCConfiguration *configuration,
 	CDCInterface *interface) :
 
-	USBDeviceClass {drvUSBD, configuration->iface},
+	USBDeviceClass {drvUSBD, reserveIface(_ifaceQty)},
 	_inEpAddr {configuration->inEpAddr},
 	_outEpAddr {configuration->outEpAddr},
 	_cmdEpAddr {configuration->cmdEpAddr},
@@ -345,91 +345,69 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	unsigned bufferSize,
 	bool hs) {
 
-	return false;
-}
+	auto maxPacketSize = hs ? CDC_DATA_HS_MAX_PACKET_SIZE : CDC_DATA_FS_MAX_PACKET_SIZE;
+	auto ptr = buffer;
+	auto ptrEnd = buffer + bufferSize;
 
+	// Interface 1
+	//
+	if (ptr + sizeof(USBD_InterfaceDescriptor) > ptrEnd)
+		return 0;
+	auto iface1Descriptor = (USBD_InterfaceDescriptor*) ptr;
+	iface1Descriptor->bLength = sizeof(USBD_InterfaceDescriptor);
+	iface1Descriptor->bDescriptorType = (uint8_t) DescriptorType::interface;
+	iface1Descriptor->bInterfaceNumber = _iface;
+	iface1Descriptor->bAlternateSetting = 0;
+	iface1Descriptor->bNumEndPoints = 1;
+	iface1Descriptor->bInterfaceClass = (uint8_t) ClassID::cdc;
+	iface1Descriptor->bInterfaceSubClass = 0x02;
+	iface1Descriptor->bInterfaceProtocol = 0x01;
+	iface1Descriptor->iInterface = 0;
+	ptr += sizeof(USBD_InterfaceDescriptor);
 
-bool USBDeviceClassCDC::classGetHSConfigurationDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
+	// Interface 2
+	//
+	if (ptr + sizeof(USBD_InterfaceDescriptor) > ptrEnd)
+		return 0;
+	auto iface2Descriptor = (USBD_InterfaceDescriptor*) ptr;
+	iface2Descriptor->bLength = sizeof(USBD_InterfaceDescriptor);
+	iface2Descriptor->bDescriptorType = (uint8_t) DescriptorType::interface;
+	iface2Descriptor->bInterfaceNumber = _iface + 1;
+	iface2Descriptor->bAlternateSetting = 0;
+	iface2Descriptor->bNumEndPoints = 2;
+	iface2Descriptor->bInterfaceClass = (uint8_t) ClassID::cdc;
+	iface2Descriptor->bInterfaceSubClass = 0x0A;
+	iface2Descriptor->bInterfaceProtocol = 0x00;
+	iface2Descriptor->iInterface = 0;
+	ptr += sizeof(USBD_InterfaceDescriptor);
 
-	auto cmdEpDesc = _drvUSBD->getEpDescriptor(_cmdEpAddr);
-	if (cmdEpDesc == nullptr)
-		return false;
+	// EndPoint 1
+	//
+	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
+		return 0;
+	auto ep1Descriptor = (USBD_EndPointDescriptor*) ptr;
+	ep1Descriptor->bLength = sizeof(USBD_EndPointDescriptor);
+	ep1Descriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
+	ep1Descriptor->bEndPointAddress = _outEpAddr;
+	ep1Descriptor->bmAttributes = 0x02;
+	ep1Descriptor->wMaxPacketSize = maxPacketSize;
+	ep1Descriptor->bInterval = 0;
+	ptr += sizeof(USBD_EndPointDescriptor);
 
-	auto outEpDesc = _drvUSBD->getEpDescriptor(_outEpAddr);
-	if (outEpDesc == nullptr)
-		return false;
+	// EndPoint 2
+	//
+	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
+		return 0;
+	auto ep2Descriptor = (USBD_EndPointDescriptor*) ptr;
+	ep2Descriptor->bLength = sizeof(USBD_EndPointDescriptor);
+	ep2Descriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
+	ep2Descriptor->bEndPointAddress = _inEpAddr;
+	ep2Descriptor->bmAttributes = 0x02;
+	ep2Descriptor->wMaxPacketSize = maxPacketSize;
+	ep2Descriptor->bInterval = 0;
+	ptr += sizeof(USBD_EndPointDescriptor);
 
-	auto inEpDesc = _drvUSBD->getEpDescriptor(_inEpAddr);
-	if (inEpDesc == nullptr)
-		return false;
-
-	cmdEpDesc->bInterval = CDC_HS_BINTERVAL;
-	outEpDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
-	inEpDesc->wMaxPacketSize = CDC_DATA_HS_MAX_PACKET_SIZE;
-
-	auto configurationDescriptor = _drvUSBD->getConfigurationDescriptor();
-	data = (uint8_t*) configurationDescriptor;
-	length = configurationDescriptor->wTotalLength;
-
-	return true;
-}
-
-
-bool USBDeviceClassCDC::classGetFSConfigurationDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
-
-	auto cmdEpDesc = _drvUSBD->getEpDescriptor(_cmdEpAddr);
-	if (cmdEpDesc == nullptr)
-		return false;
-
-	auto outEpDesc = _drvUSBD->getEpDescriptor(_outEpAddr);
-	if (outEpDesc == nullptr)
-		return false;
-
-	auto inEpDesc = _drvUSBD->getEpDescriptor(_inEpAddr);
-	if (inEpDesc == nullptr)
-		return false;
-
-	cmdEpDesc->bInterval = CDC_FS_BINTERVAL;
-	outEpDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
-	inEpDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
-
-	auto configurationDescriptor = _drvUSBD->getConfigurationDescriptor();
-	data = (uint8_t*) configurationDescriptor;
-	length = configurationDescriptor->wTotalLength;
-
-	return true;
-}
-
-
-bool USBDeviceClassCDC::classGetOtherSpeedConfigurationDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
-
-	auto cmdEpDesc = _drvUSBD->getEpDescriptor(_cmdEpAddr);
-	if (cmdEpDesc == nullptr)
-		return false;
-
-	auto outEpDesc = _drvUSBD->getEpDescriptor(_outEpAddr);
-	if (outEpDesc == nullptr)
-		return false;
-
-	auto inEpDesc = _drvUSBD->getEpDescriptor(_inEpAddr);
-	if (inEpDesc == nullptr)
-		return false;
-
-	cmdEpDesc->bInterval = CDC_FS_BINTERVAL;
-	outEpDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
-	inEpDesc->wMaxPacketSize = CDC_DATA_FS_MAX_PACKET_SIZE;
-
-	auto configurationDescriptor = _drvUSBD->getConfigurationDescriptor();
-	data = (uint8_t*) configurationDescriptor;
-	length = configurationDescriptor->wTotalLength;
-
-	return true;
+	return ptr - buffer;
 }
 
 
@@ -437,6 +415,8 @@ bool USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
 	uint8_t *&data,
 	unsigned &length) {
 
+	return false;
+	/*
 	auto descriptor = _drvUSBD->getConfiguration()->deviceQualifierDescriptor;
 	if (descriptor == nullptr)
 		return false;
@@ -444,7 +424,7 @@ bool USBDeviceClassCDC::classGetDeviceQualifierDescriptor(
 	data = (uint8_t*) descriptor;
 	length = descriptor->bLength;
 
-	return true;
+	return true;*/
 }
 
 
@@ -452,5 +432,17 @@ bool USBDeviceClassCDC::usesEndPoint(
 	uint8_t epAddr) const {
 
 	return (epAddr == _inEpAddr) || (epAddr == _outEpAddr);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si s'utilitza el interface especificat.
+/// \param    ifase: El numero del interface.
+/// \return   True si s'utilitza, false en cas contrari.
+///
+bool USBDeviceClassCDC::usesIface(
+	uint8_t iface) const {
+
+	return (iface >= _iface) && (iface < (_iface + _ifaceQty));
 }
 

@@ -20,18 +20,6 @@ namespace eos {
     using USBDeviceClassList = IntrusiveForwardList<USBDeviceClass, 0>;
     using USBDeviceClassListNode = IntrusiveForwardListNode<USBDeviceClass, 0>;
 
-    // TODO: Obsolete
-	struct USBDeviceConfiguration {
-		USBD_DeviceDescriptor *deviceDescriptor;
-		USBD_DeviceQualifierDescriptor *deviceQualifierDescriptor;
-		USBD_ConfigurationDescriptor *configurationDescriptor;
-		USBD_LangIDDescriptorHeader *langIDDescriptor;
-		const char *manufacturer;
-		const char *product;
-		const char *interface;
-		const char *configuration;
-	};
-
 	struct USBDeviceDriverConfiguration {
 		const char *manufacturerStr;
 		const char *productStr;
@@ -53,7 +41,6 @@ namespace eos {
 			};
 
 		private:
-			const USBDeviceConfiguration * const _configuration;
 			State _state;
 			USBDeviceClassList _classes;
 			USBD_HandleTypeDef _usbd;
@@ -75,7 +62,7 @@ namespace eos {
 
 		private:
 			USBDeviceClass *getClassFromEndPoint(uint8_t epAddr) const;
-			USBDeviceClass *getClassFromInterface(uint8_t interface) const;
+			USBDeviceClass *getClassFromInterface(uint8_t iface) const;
 
 			bool processDeviceRequest(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
@@ -104,7 +91,7 @@ namespace eos {
 			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
 
 		public:
-			USBDeviceDriver(const USBDeviceConfiguration *configuration, const USBDeviceDriverConfiguration *cfg);
+			USBDeviceDriver(const USBDeviceDriverConfiguration *cfg);
 
 			Result registerClass(USBDeviceClass *devClass);
 
@@ -121,14 +108,9 @@ namespace eos {
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }
-			inline USBDeviceClass *getClass() const { return _classes.front(); }
 
 			// TODO: Obsolete
-			inline const USBDeviceConfiguration* getConfiguration() const { return _configuration; }
-
-			USBD_ConfigurationDescriptor * const getConfigurationDescriptor() const { return _configuration->configurationDescriptor; }
-			USBD_InterfaceDescriptor * const getIFaceDescriptor(uint8_t iface) const;
-			USBD_EndPointDescriptor * const getEpDescriptor(uint8_t epAddr) const;
+			inline USBDeviceClass *getClass() const { return _classes.front(); }
 	};
 
 	class USBDeviceClass: public USBDeviceClassListNode {
@@ -140,6 +122,7 @@ namespace eos {
 			};
 
 		private:
+			static uint8_t _ifaceCount;
 			State _state;
 
 		protected:
@@ -150,6 +133,7 @@ namespace eos {
 			USBDeviceClass(USBDeviceDriver *drvUSBD, uint8_t iface);
 
 			virtual Result initializeImpl() = 0;
+			uint8_t reserveIface(unsigned ifaceQty);
 
 		public:
 			Result initialize();
@@ -157,7 +141,7 @@ namespace eos {
 			inline State getState() const { return _state; }
 
 			virtual bool usesEndPoint(uint8_t epAddr) const = 0;
-			inline bool usesIFace(uint8_t iface) const { return _iface == iface; }
+			virtual bool usesIface(uint8_t iface) const = 0;
 
 			virtual int8_t classInitialize(uint8_t cfgidx) = 0;
 			virtual int8_t classDeinitialize(uint8_t cfgidx) = 0;
@@ -172,9 +156,6 @@ namespace eos {
 			virtual int8_t classIsoINIncomplete(uint8_t epAddr) = 0;
 			virtual int8_t classIsoOUTIncomplete(uint8_t epAddr) = 0;
 			virtual unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) = 0;
-			virtual bool classGetHSConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
-			virtual bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
-			virtual bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) = 0;
 			virtual bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) = 0;
 	};
 }
