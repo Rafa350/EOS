@@ -12,17 +12,20 @@
 
 #define USBD_VID                      0x0483
 #define USBD_PID                      0x5720
-#define USBD_LANGID_STRING            0x409
+
+#define USBD_LANGID_STRING            0x0409
+
 #define USBD_MANUFACTURER_STRING      "STMicroelectronics"
+
 #define USBD_PRODUCT_HS_STRING        "Mass Storage in HS Mode"
 #define USBD_PRODUCT_FS_STRING        "Mass Storage in FS Mode"
 #define USBD_CONFIGURATION_HS_STRING  "MSC Config"
-#define USBD_INTERFACE_HS_STRING      "MSC Interface"
 #define USBD_CONFIGURATION_FS_STRING  "MSC Config"
+#define USBD_INTERFACE_HS_STRING      "MSC Interface"
 #define USBD_INTERFACE_FS_STRING      "MSC Interface"
 
 
-uint8_t deviceDescriptor[sizeof(USBD_DeviceDescriptor)] __ALIGN_END = {
+uint8_t deviceDescriptor[sizeof(USBD_DeviceDescriptor)] __attribute__((aligned(4))) = {
 	sizeof(USBD_DeviceDescriptor),     // bLength
 	USB_DESC_TYPE_DEVICE,              // bDescriptorType
 	0x00,                              // bcdUSB
@@ -43,7 +46,7 @@ uint8_t deviceDescriptor[sizeof(USBD_DeviceDescriptor)] __ALIGN_END = {
 	USBD_MAX_NUM_CONFIGURATION         // bNumConfigurations
 };
 
-uint8_t deviceQualifierDescriptor[sizeof(USBD_DeviceQualifierDescriptor)]  __ALIGN_END = {
+uint8_t deviceQualifierDescriptor[sizeof(USBD_DeviceQualifierDescriptor)] __attribute__((aligned(4))) = {
 	sizeof(USBD_DeviceQualifierDescriptor),
 	USB_DESC_TYPE_DEVICE_QUALIFIER,
 	0x00,
@@ -56,7 +59,7 @@ uint8_t deviceQualifierDescriptor[sizeof(USBD_DeviceQualifierDescriptor)]  __ALI
 	0x00
 };
 
-uint8_t configurationDescriptor[USB_MSC_CONFIG_DESC_SIZE]  __ALIGN_END = {
+uint8_t configurationDescriptor[USB_MSC_CONFIG_DESC_SIZE] __attribute__((aligned(4))) = {
 	sizeof(USBD_ConfigurationDescriptor),   // bLength: Configuration Descriptor size
 	USB_DESC_TYPE_CONFIGURATION,       // bDescriptorType: Configuration
 	USB_MSC_CONFIG_DESC_SIZE,          // wTotalLength (LO byte)
@@ -71,7 +74,7 @@ uint8_t configurationDescriptor[USB_MSC_CONFIG_DESC_SIZE]  __ALIGN_END = {
 	#endif
 	USBD_MAX_POWER,                    // MaxPower (mA)
 
-	// Interface 1
+	// Interface 0
 	0x09,                              // bLength: Interface Descriptor size
 	0x04,                              // bDescriptorType:
 	0x00,                              // bInterfaceNumber: Number of Interface
@@ -101,7 +104,7 @@ uint8_t configurationDescriptor[USB_MSC_CONFIG_DESC_SIZE]  __ALIGN_END = {
 	0x00                               // Polling interval in milliseconds
 };
 
-uint8_t langIDDescriptor[USB_LEN_LANGID_STR_DESC] __ALIGN_END = {
+uint8_t langIDDescriptor[USB_LEN_LANGID_STR_DESC] __attribute__((aligned(4))) = {
 	USB_LEN_LANGID_STR_DESC,
 	USB_DESC_TYPE_STRING,
 	LOBYTE(USBD_LANGID_STRING),

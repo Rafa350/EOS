@@ -19,7 +19,7 @@ namespace eos {
 			static constexpr uint8_t _inEpAddr = HID_EPIN_ADDR;
 
 		public:
-			USBDeviceClassHID(USBDeviceDriver *drvUSBD);
+			USBDeviceClassHID(USBDeviceDriver *drvUSBD, uint8_t iface);
 
 			Result initialize();
 

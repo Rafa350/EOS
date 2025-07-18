@@ -31,6 +31,14 @@ namespace eos {
 			virtual void txDataCompleted(const uint8_t *buffer, unsigned length, uint8_t epnum) = 0;
 	};
 
+
+	struct USBDeviceClassCDCConfiguration {
+		uint8_t iface;
+		uint8_t inEpAddr;
+		uint8_t outEpAddr;
+		uint8_t cmdEpAddr;
+	};
+
 	class USBDeviceClassCDC final: public USBDeviceClass {
 		private:
 			enum class State {
@@ -41,11 +49,9 @@ namespace eos {
 			};
 
 		private:
-			static constexpr uint8_t _inEpAddr  = CDC_IN_EP;
-			static constexpr uint8_t _outEpAddr = CDC_OUT_EP;
-			static constexpr uint8_t _cmdEpAddr = CDC_CMD_EP;
-
-		private:
+			uint8_t _inEpAddr  = CDC_IN_EP;
+			uint8_t _outEpAddr = CDC_OUT_EP;
+			uint8_t _cmdEpAddr = CDC_CMD_EP;
 			CDCInterface *_interface;
 			USBD_CDC_HandleTypeDef _cdc;
 			volatile State _state; // S'actualitza per interrupcions
@@ -57,10 +63,11 @@ namespace eos {
 			CDCRequestID _req_requestID;
 			uint8_t _req_length;
 
-		public:
-			USBDeviceClassCDC(USBDeviceDriver *drvUSBD, CDCInterface *interface);
+		protected:
+			Result initializeImpl() override;
 
-			Result initialize();
+		public:
+			USBDeviceClassCDC(USBDeviceDriver *drvUSBD, const USBDeviceClassCDCConfiguration *configuration, CDCInterface *interface);
 
 			Result transmit(const uint8_t *buffer, unsigned length);
 			Result receive(uint8_t *buffer, unsigned bufferSize);
@@ -79,6 +86,7 @@ namespace eos {
 			int8_t classDataOut(uint8_t epnum) override;
 			int8_t classIsoINIncomplete(uint8_t epnum) override;
 			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
+			unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) override;
 			bool classGetHSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;

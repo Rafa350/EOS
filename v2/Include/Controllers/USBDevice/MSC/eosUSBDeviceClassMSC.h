@@ -28,30 +28,37 @@ namespace eos {
 
 	class SCSIProcessor;
 
+	struct USBDeviceClassMSCConfiguration {
+		uint8_t iface;
+		uint8_t inEpAddr;
+		uint8_t outEpAddr;
+	};
+
 	class USBDeviceClassMSC final: public USBDeviceClass {
 		private:
 			MSCStorage *_storage;
-			USBD_MSC_BOT_HandleTypeDef _msc;
 			SCSIProcessor *_scsi;
-			static constexpr uint8_t _inEpAddr  = MSC_EPIN_ADDR;
-			static constexpr uint8_t _outEpAddr = MSC_EPOUT_ADDR;
+			uint8_t const _inEpAddr;
+			uint8_t const _outEpAddr;
+			USBD_MSC_BOT_HandleTypeDef _msc;
 
 		private:
 			void botInitialize();
 			void botDeInitialize();
 			void botReset();
-			void botDataIn(uint8_t epnum);
-			void botDataOut(uint8_t epnum);
+			void botDataIn(uint8_t epAddr);
+			void botDataOut(uint8_t epAddr);
 			void botSendCSW(uint8_t cswStatus);
 			void botCplClrFeature(uint8_t epnum);
 			void botSendData(uint8_t *buffer, unsigned length);
 			void botCBWDecode();
 			void botAbort();
 
-		public:
-			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, MSCStorage *storage);
+		protected:
+			Result initializeImpl() override;
 
-			Result initialize() override;
+		public:
+			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, const USBDeviceClassMSCConfiguration *configuration, MSCStorage *storage);
 
 			int8_t classInitialize(uint8_t cfgidx) override;
 			int8_t classDeinitialize(uint8_t cfgidx) override;
@@ -61,10 +68,11 @@ namespace eos {
 			int8_t classEP0TxSent() override;
 			int8_t classEP0RxReady() override;
 			int8_t classSOF() override;
-			int8_t classDataIn(uint8_t epnum) override;
-			int8_t classDataOut(uint8_t epnum) override;
+			int8_t classDataIn(uint8_t epAddr) override;
+			int8_t classDataOut(uint8_t epAddr) override;
 			int8_t classIsoINIncomplete(uint8_t epnum) override;
 			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
+			unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) override;
 			bool classGetHSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetFSConfigurationDescriptor(uint8_t *&data, unsigned &length) override;
 			bool classGetOtherSpeedConfigurationDescriptor(uint8_t *&data, unsigned &length) override;

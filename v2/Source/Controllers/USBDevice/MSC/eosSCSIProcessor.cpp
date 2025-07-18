@@ -70,16 +70,11 @@ static uint8_t MSC_Diagnostic_Data[DIAGNOSTIC_DATA_LEN] = {
 ///
 SCSIProcessor::SCSIProcessor(
 	MSCStorage *storage,
-	USBD_HandleTypeDef *pdev,
-	uint8_t inEpAdd,
-	uint8_t outEpAdd,
-	USBD_MSC_BOT_HandleTypeDef *msc):
+	USBD_HandleTypeDef *pdev) :
 
+	_status {Status::reset},
 	_storage {storage},
 	_pdev {pdev},
-	_inEpAdd {inEpAdd},
-	_outEpAdd {outEpAdd},
-	_msc {msc},
 	_senseTail {0},
 	_senseHead {0},
 	_mediumState {MediumState::unlocked} {
@@ -90,11 +85,24 @@ SCSIProcessor::SCSIProcessor(
 /// \brief    Inicialitza el procesador.
 /// \return   El resultat de l'operacio.
 ///
-Result SCSIProcessor::initialize() {
+Result SCSIProcessor::initialize(
+	uint8_t inEpAddr,
+	uint8_t outEpAddr,
+	USBD_MSC_BOT_HandleTypeDef *msc) {
+
+	if (_status != Status::reset)
+		return Results::errorState;
 
 	_senseTail = 0;
 	_senseHead = 0;
 	_mediumState = MediumState::unlocked;
+
+	_msc = msc;
+
+	_inEpAddr = inEpAddr;
+	_outEpAddr = outEpAddr;
+
+	_status = Status::ready;
 
 	return Results::success;
 }
@@ -526,7 +534,7 @@ bool SCSIProcessor::write10(
 
 		/* Prepare EP to receive first data packet */
 		_msc->bot_state = USBD_BOT_DATA_OUT;
-		USBD_LL_PrepareReceive(_pdev, _outEpAdd, _msc->bot_data, len);
+		USBD_LL_PrepareReceive(_pdev, _outEpAddr, _msc->bot_data, len);
 	}
 
 	else
@@ -594,7 +602,7 @@ bool SCSIProcessor::write12(
 
 		/* Prepare EP to receive first data packet */
 		_msc->bot_state = USBD_BOT_DATA_OUT;
-		USBD_LL_PrepareReceive(_pdev, _outEpAdd, _msc->bot_data, len);
+		USBD_LL_PrepareReceive(_pdev, _outEpAddr, _msc->bot_data, len);
 	}
 
 	else /* Write Process ongoing */
@@ -805,7 +813,7 @@ bool SCSIProcessor::processRead(
 		return false;
 	}
 
-	USBD_LL_Transmit(_pdev, _inEpAdd, _msc->bot_data, len);
+	USBD_LL_Transmit(_pdev, _inEpAddr, _msc->bot_data, len);
 
 	lunData->addr += (len / lunData->blkSize);
 	lunData->len -= (len / lunData->blkSize);
@@ -844,12 +852,12 @@ bool SCSIProcessor::processWrite(
 		_msc->csw.bStatus = USBD_CSW_CMD_PASSED;
 		_msc->bot_state = USBD_BOT_IDLE;
 
-		USBD_LL_Transmit(_pdev, _inEpAdd, (uint8_t*) &_msc->csw, USBD_BOT_CSW_LENGTH);
-		USBD_LL_PrepareReceive(_pdev, _outEpAdd, (uint8_t*) &_msc->cbw, USBD_BOT_CBW_LENGTH);
+		USBD_LL_Transmit(_pdev, _inEpAddr, (uint8_t*) &_msc->csw, USBD_BOT_CSW_LENGTH);
+		USBD_LL_PrepareReceive(_pdev, _outEpAddr, (uint8_t*) &_msc->cbw, USBD_BOT_CBW_LENGTH);
 	}
 	else {
 		len = min((lunData->len * lunData->blkSize), (uint32_t) MSC_MEDIA_PACKET);
-		USBD_LL_PrepareReceive(_pdev, _outEpAdd, _msc->bot_data, len);
+		USBD_LL_PrepareReceive(_pdev, _outEpAddr, _msc->bot_data, len);
 	}
 
 	return true;

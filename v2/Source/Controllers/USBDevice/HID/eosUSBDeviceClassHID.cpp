@@ -17,11 +17,13 @@ extern uint8_t USBD_HID_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC];
 /// ----------------------------------------------------------------------
 /// \brief    Crea el objecte.
 /// \param    devUSBD: El dispositiu USB
+/// \param    iface: El interface que gestiona.
 ///
 USBDeviceClassHID::USBDeviceClassHID(
-	USBDeviceDriver *drvUSBD) :
+	USBDeviceDriver *drvUSBD,
+	uint8_t iface) :
 
-	USBDeviceClass {drvUSBD} {
+	USBDeviceClass {drvUSBD, iface} {
 
 }
 

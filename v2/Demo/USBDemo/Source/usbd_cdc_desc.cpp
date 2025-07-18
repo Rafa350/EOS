@@ -21,7 +21,7 @@
 #define USBD_INTERFACE_FS_STRING      "VCP Interface"
 
 
-uint8_t USBD_DeviceDescriptor[USB_LEN_DEV_DESC] __ALIGN_END = {
+uint8_t deviceDescriptor[USB_LEN_DEV_DESC] __ALIGN_END = {
 	0x12,                              // bLength
 	USB_DESC_TYPE_DEVICE,              // bDescriptorType
 	0x00,                              // bcdUSB
@@ -42,7 +42,7 @@ uint8_t USBD_DeviceDescriptor[USB_LEN_DEV_DESC] __ALIGN_END = {
 	USBD_MAX_NUM_CONFIGURATION         // bNumConfigurations
 };
 
-uint8_t USBD_DeviceQualifierDescriptor[USB_LEN_DEV_QUALIFIER_DESC] __ALIGN_END = {
+uint8_t deviceQualifierDescriptor[USB_LEN_DEV_QUALIFIER_DESC] __ALIGN_END = {
 	  USB_LEN_DEV_QUALIFIER_DESC,      // bLength
 	  USB_DESC_TYPE_DEVICE_QUALIFIER,  // bDescriptorType
 	  0x00,                            // bcdUSB
@@ -55,7 +55,7 @@ uint8_t USBD_DeviceQualifierDescriptor[USB_LEN_DEV_QUALIFIER_DESC] __ALIGN_END =
 	  0x00                             // bReserved
 };
 
-__ALIGN_BEGIN uint8_t USBD_CDC_ConfigurationDescriptor[USB_CDC_CONFIG_DESC_SIZ] __ALIGN_END = {
+uint8_t configurationDescriptor[USB_CDC_CONFIG_DESC_SIZ] __ALIGN_END = {
 
 	// Configuration Descriptor
 	0x09,                                       /* bLength: Configuration Descriptor size */
@@ -73,10 +73,9 @@ __ALIGN_BEGIN uint8_t USBD_CDC_ConfigurationDescriptor[USB_CDC_CONFIG_DESC_SIZ] 
 	#endif /* USBD_SELF_POWERED */
 	USBD_MAX_POWER,                             /* MaxPower (mA) */
 
-	// Interface Descriptor
+	// Interface 0
 	0x09,                                       /* bLength: Interface Descriptor size */
 	USB_DESC_TYPE_INTERFACE,                    /* bDescriptorType: Interface */
-	// Interface descriptor type
 	0x00,                                       /* bInterfaceNumber: Number of Interface */
 	0x00,                                       /* bAlternateSetting: Alternate setting */
 	0x01,                                       /* bNumEndpoints: One endpoint used */
@@ -151,7 +150,7 @@ __ALIGN_BEGIN uint8_t USBD_CDC_ConfigurationDescriptor[USB_CDC_CONFIG_DESC_SIZ] 
 	0x00                                        /* bInterval */
 };
 
-__ALIGN_BEGIN uint8_t USBD_LangIDDescriptor[USB_LEN_LANGID_STR_DESC] __ALIGN_END = {
+uint8_t langIDDescriptor[USB_LEN_LANGID_STR_DESC] __ALIGN_END = {
   USB_LEN_LANGID_STR_DESC,
   USB_DESC_TYPE_STRING,
   LOBYTE(USBD_LANGID_STRING),
@@ -164,6 +163,7 @@ __ALIGN_BEGIN uint8_t USBD_StringSerial[USB_SIZ_STRING_SERIAL] __ALIGN_END = {
 };
 
 __ALIGN_BEGIN uint8_t USBD_StrDesc[USBD_MAX_STR_DESC_SIZ] __ALIGN_END;
+
 
 const char* USBD_Strings[] = {
 };

@@ -28,12 +28,12 @@ extern uint8_t deviceQualifierDescriptor[1];
 extern uint8_t langIDDescriptor[1];
 
 #if defined(USE_CDC_DEVICE)
-extern uint8_t USBD_CDC_ConfigurationDescriptor[];
+extern uint8_t configurationDescriptor[];
 static const USBDeviceConfiguration __deviceConfiguration {
-	USBD_DeviceDescriptor,
-	USBD_DeviceQualifierDescriptor,
-	USBD_CDC_ConfigurationDescriptor,
-	USBD_LangIDDescriptor,
+	(USBD_DeviceDescriptor*) deviceDescriptor,
+	(USBD_DeviceQualifierDescriptor*) deviceQualifierDescriptor,
+	(USBD_ConfigurationDescriptor*) configurationDescriptor,
+	(USBD_LangIDDescriptorHeader*) langIDDescriptor,
 	"rsr.openware@gmail.com",
 	"EOS USB-VCOM demo",
 	"VCP interface",
@@ -107,11 +107,30 @@ void MyApplication::onExecute() {
 	//auto mainService = new MainService();
 	//addService(mainService);
 
-	auto drvUSBD = new eos::USBDeviceDriver(&__deviceConfiguration);
+	USBDeviceDriverConfiguration configuration = {
+		.manufacturerStr = "rsr.openware@gmail.com",
+		.productStr = "EOS USB Device Demo",
+		.serialNumberStr = nullptr,
+		.langID = USBD_LANGID_STRING,
+		.pid = USBD_PID,
+		.vid = USBD_VID,
+		.maxEp0Size = USB_MAX_EP0_SIZE,
+		.maxPower = USBD_MAX_POWER
+	};
+
+	auto drvUSBD = new eos::USBDeviceDriver(&__deviceConfiguration, &configuration);
 
 #if defined(USE_CDC_DEVICE)
-	auto interface = new eos::CDCInterface_VCOM();
-	auto devClassCDC = new eos::USBDeviceClassCDC(drvUSBD, interface);
+
+	auto vcom = new eos::CDCInterface_VCOM();
+
+	USBDeviceClassCDCConfiguration cdcConfiguration = {
+		.iface = 0,
+		.inEpAddr = CDC_IN_EP,
+		.outEpAddr = CDC_OUT_EP,
+		.cmdEpAddr = CDC_CMD_EP
+	};
+	auto devClassCDC = new eos::USBDeviceClassCDC(drvUSBD, &cdcConfiguration, vcom);
 
 	drvUSBD->registerClass(devClassCDC);
 	drvUSBD->initialize();
@@ -127,7 +146,12 @@ void MyApplication::onExecute() {
 	auto storage = new eos::MSCStorage_RAM(mem, memSize);
 #endif
 
-	auto devClassMSC = new eos::USBDeviceClassMSC(drvUSBD, storage);
+	USBDeviceClassMSCConfiguration mscConfiguration = {
+		.iface = 0, // Generar el numero automaticament
+		.inEpAddr = MSC_EPIN_ADDR,
+		.outEpAddr = MSC_EPOUT_ADDR
+	};
+	auto devClassMSC = new eos::USBDeviceClassMSC(drvUSBD, &mscConfiguration, storage);
 
 	drvUSBD->registerClass(devClassMSC);
 	drvUSBD->initialize();

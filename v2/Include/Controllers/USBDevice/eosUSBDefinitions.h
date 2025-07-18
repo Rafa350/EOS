@@ -10,6 +10,8 @@
 
 	namespace internal {
 
+		constexpr unsigned maxRequestResponseDataSize = 50;
+
 		struct Request_RequestType_Direction {
 			static constexpr uint8_t POS          = 7;
 			static constexpr uint8_t MASK         = 0b1 << Request_RequestType_Direction::POS;
@@ -133,9 +135,25 @@
 		}
 	};
 
+	enum class ClassID: uint8_t {
+		audio = 0x01,
+		cdc = 0x02,
+		hid = 0x03,
+		msc = 0x08,
+		printer = 0x07
+	};
+
+	enum class DescriptorType: uint8_t {
+		device = 0x01,
+		configuration = 0x02,
+		interface = 0x04,
+		endPoint = 0x05,
+		string = 0x03
+	};
+
 	// Device Descriptor header (USB spec.)
 	//
-	struct USBDDescriptorHeader {
+	struct USBD_DescriptorHeader {
 		uint8_t bLength;
 		uint8_t bDescriptorType;
 	} __attribute__((packed, aligned(1)));
@@ -184,6 +202,27 @@
 		uint8_t iConfiguration;
 		uint8_t bmAttributes;
 		uint8_t bMaxPower;
+	} __attribute__((packed, aligned(1)));
+
+	struct USBD_InterfaceDescriptor {
+		uint8_t bLength;
+		uint8_t bDescriptorType;
+		uint8_t bInterfaceNumber;
+		uint8_t bAlternateSetting;
+		uint8_t bNumEndPoints;
+		uint8_t bInterfaceClass;
+		uint8_t bInterfaceSubClass;
+		uint8_t bInterfaceProtocol;
+		uint8_t iInterface;
+	} __attribute__((packed, aligned(1)));
+
+	struct USBD_EndPointDescriptor {
+		uint8_t bLength;
+		uint8_t bDescriptorType;
+		uint8_t bEndPointAddress;
+		uint8_t bmAttributes;
+		uint16_t wMaxPacketSize;
+		uint8_t bInterval;
 	} __attribute__((packed, aligned(1)));
 
 	// Language ID descriptor (USB spec.)

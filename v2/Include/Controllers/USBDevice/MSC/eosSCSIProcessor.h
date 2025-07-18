@@ -85,6 +85,11 @@ namespace eos {
 			static constexpr unsigned _lunDataListSize = 4;
 
 		private:
+			enum class Status {
+				reset,
+				ready
+			};
+
 			typedef USBD_SCSI_SenseTypeDef SenseList[_senseListSize];
 
 			struct LunData {
@@ -102,10 +107,11 @@ namespace eos {
 			};
 
 		private:
+			Status _status;
 			MSCStorage *_storage;
 			USBD_HandleTypeDef *_pdev;
-			uint8_t _inEpAdd;
-			uint8_t _outEpAdd;
+			uint8_t _inEpAddr;
+			uint8_t _outEpAddr;
 			USBD_MSC_BOT_HandleTypeDef *_msc;
 			SenseList _senseList;
 			unsigned _senseTail;
@@ -137,10 +143,9 @@ namespace eos {
 			bool updateBotData(const uint8_t *buffer, unsigned length);
 
 		public:
-			SCSIProcessor(MSCStorage *storage, USBD_HandleTypeDef *_pdev,
-				uint8_t inEpAddr, uint8_t outEpAddr, USBD_MSC_BOT_HandleTypeDef *msc);
+			SCSIProcessor(MSCStorage *storage, USBD_HandleTypeDef *_pdev);
 
-			Result initialize();
+			Result initialize(uint8_t inEpAddr, uint8_t outEpAddr, USBD_MSC_BOT_HandleTypeDef *msc);
 			bool processCmd(uint8_t lun, const uint8_t *cmd);
 			void senseCode(uint8_t lun, uint8_t sKey, uint8_t ASC);
 	};

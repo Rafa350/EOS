@@ -19,7 +19,6 @@ USBD_StatusTypeDef USBD_Init(
 		return USBD_FAIL;
 
 	pdev->pConfDesc = NULL;
-
 	pdev->dev_state = USBD_STATE_DEFAULT;
 	pdev->id = id;
 
@@ -68,6 +67,7 @@ USBD_StatusTypeDef USBD_RegisterClass(
 
     uint8_t *data;
     unsigned len;
+//    pdev->dev_speed == USBD_SpeedTypeDef::USBD_SPEED_FULL
     pclass->classGetFSConfigurationDescriptor(data, len);
     pdev->pConfDesc = data;
 
@@ -112,13 +112,7 @@ USBD_StatusTypeDef USBD_SetClassConfig(
 	USBD_HandleTypeDef *pdev,
 	uint8_t cfgidx) {
 
-	USBD_StatusTypeDef ret = USBD_OK;
-
-	if (pdev->_instance->getClass() != nullptr) {
-		ret = (USBD_StatusTypeDef)pdev->_instance->getClass()->classInitialize(cfgidx);
-	}
-
-	return ret;
+	return pdev->_instance->setClassConfig(cfgidx);
 }
 
 /**
@@ -132,14 +126,7 @@ USBD_StatusTypeDef USBD_ClrClassConfig(
 	USBD_HandleTypeDef *pdev,
 	uint8_t cfgidx) {
 
-	USBD_StatusTypeDef ret = USBD_OK;
-
-	/* Clear configuration  and De-initialize the Class process */
-	if (pdev->_instance->getClass()->classDeinitialize(cfgidx) != 0) {
-		ret = USBD_FAIL;
-	}
-
-	return ret;
+	return pdev->_instance->clearClassConfig(cfgidx);
 }
 
 
@@ -175,12 +162,11 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
     uint8_t epnum,
 	uint8_t *pdata) {
 
-	USBD_EndpointTypeDef *pep;
-	USBD_StatusTypeDef ret = USBD_OK;
 	uint8_t idx;
 
 	if (epnum == 0) {
-		pep = &pdev->ep_out[0];
+
+		USBD_EndpointTypeDef *pep = &pdev->ep_out[0];
 
 		if (pdev->ep0_state == USBD_EP0_DATA_OUT) {
 			if (pep->rem_length > pep->maxpacket) {
@@ -190,6 +176,8 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 				USBD_CtlContinueRx(pdev, pep->pbuffer, MAX(pep->rem_length, pep->maxpacket));
 			}
 			else {
+
+				eos::USBDeviceClass *cls = nullptr;
 
 				// Find the class ID relative to the current request
 				//
@@ -229,6 +217,9 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 		}
 	}
 	else {
+		return pdev->_instance->dataOutStage(epnum) ? USBD_OK : USBD_FAIL;
+#if 0
+
 		// Get the class index relative to this interface
 		//
 		idx = USBD_CoreFindEP(pdev, (epnum & 0x7FU));
@@ -244,6 +235,7 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 				return ret;
 			}
 		}
+#endif
 	}
 
 	return USBD_OK;
@@ -262,13 +254,9 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
     uint8_t epnum,
 	uint8_t *pdata) {
 
-	USBD_EndpointTypeDef *pep;
-	USBD_StatusTypeDef ret;
-	uint8_t idx;
+	if (epnum == 0) {
 
-	if (epnum == 0U) {
-
-		pep = &pdev->ep_in[0];
+		USBD_EndpointTypeDef *pep = &pdev->ep_in[0];
 
 		if (pdev->ep0_state == USBD_EP0_DATA_IN) {
 			if (pep->rem_length > pep->maxpacket) {
@@ -302,10 +290,12 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 
 		if (pdev->dev_test_mode != 0U) {
 			USBD_RunTestMode(pdev);
-			pdev->dev_test_mode = 0U;
+			pdev->dev_test_mode = 0;
 		}
 	}
 	else {
+		return (USBD_StatusTypeDef) pdev->_instance->dataInStage(epnum) ? USBD_OK : USBD_FAIL;
+#if 0
 		idx = USBD_CoreFindEP(pdev, ((uint8_t)epnum | 0x80U));
 
 		if (((uint16_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
@@ -316,6 +306,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 					return ret;
 			}
 		}
+#endif
 	}
 
 	return USBD_OK;
