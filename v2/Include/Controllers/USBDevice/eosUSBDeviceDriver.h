@@ -69,9 +69,6 @@ namespace eos {
 			uint8_t _maxPower;
 
 		private:
-			USBDeviceClass *getClassFromEndPoint(EpAddr epAddr) const;
-			USBDeviceClass *getClassFromInterface(uint8_t iface) const;
-
 			bool processDeviceRequest(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_SetAddress(USBD_SetupReqTypedef *request);
@@ -99,6 +96,10 @@ namespace eos {
 			bool getSerialStrDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
 
+			void ctlError(USBD_SetupReqTypedef *request);
+			void ctlSendStatus();
+			void ctlSendData(uint8_t *data, unsigned length);
+
 		public:
 			USBDeviceDriver(const USBDeviceDriverConfiguration *cfg);
 
@@ -117,6 +118,9 @@ namespace eos {
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }
+
+			USBDeviceClass *getClassFromEndPoint(EpAddr epAddr) const;
+			USBDeviceClass *getClassFromInterface(uint8_t iface) const;
 
 			// TODO: Obsolete
 			inline USBDeviceClass *getClass() const { return _classes.front(); }

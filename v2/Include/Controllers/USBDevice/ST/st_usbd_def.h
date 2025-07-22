@@ -329,14 +329,9 @@ struct USBD_HandleTypeDef {
 	uint8_t                 dev_connection_status;
 	uint8_t                 dev_test_mode;
 	uint32_t                dev_remote_wakeup;
-	uint8_t                 ConfIdx;
-
 	USBD_SetupReqTypedef    request;
 	eos::USBDeviceDriver    *_instance;
 	void                    *pData;
-	void                    *pBosDesc;
-	uint32_t                classId;
-	uint32_t                NumClasses;
 };
 
 /* USB Device endpoint direction */
@@ -372,7 +367,7 @@ __STATIC_INLINE uint16_t SWAPBYTE(uint8_t *addr)
 }
 
 #ifndef LOBYTE
-#define LOBYTE(x)  ((uint8_t)((x) & 0x00FFU))
+#define LOBYTE(x)  ((uint8_t)((x) & 0x00FF))
 #endif /* LOBYTE */
 
 #ifndef HIBYTE

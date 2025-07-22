@@ -47,25 +47,6 @@ USBD_StatusTypeDef USBD_DeInit(
 	return USBD_LL_DeInit(pdev);
 }
 
-/**
-  * @brief  USBD_RegisterClass
-  *         Link class driver to Device Core.
-  * @param  pdev: Device Handle
-  * @param  pclass: Class handle
-  * @retval USBD Status
-  */
-USBD_StatusTypeDef USBD_RegisterClass(
-	USBD_HandleTypeDef *pdev,
-	eos::USBDeviceClass *pclass) {
-
-	if (pclass == nullptr)
-		return USBD_FAIL;
-
-    /* Increment the NumClasses */
-    pdev->NumClasses++;
-
-    return USBD_OK;
-}
 
 /**
   * @brief  USBD_RunTestMode
@@ -100,9 +81,9 @@ USBD_StatusTypeDef USBD_RunTestMode(USBD_HandleTypeDef *pdev)
 
 USBD_StatusTypeDef USBD_SetClassConfig(
 	USBD_HandleTypeDef *pdev,
-	uint8_t cfgidx) {
+	uint8_t configIdx) {
 
-	return pdev->_instance->setClassConfig(cfgidx);
+	return pdev->_instance->setClassConfig(configIdx);
 }
 
 /**
@@ -114,9 +95,9 @@ USBD_StatusTypeDef USBD_SetClassConfig(
   */
 USBD_StatusTypeDef USBD_ClrClassConfig(
 	USBD_HandleTypeDef *pdev,
-	uint8_t cfgidx) {
+	uint8_t configIdx) {
 
-	return pdev->_instance->clearClassConfig(cfgidx);
+	return pdev->_instance->clearClassConfig(configIdx);
 }
 
 
@@ -139,6 +120,7 @@ USBD_StatusTypeDef USBD_LL_SetupStage(
 	return pdev->_instance->processRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
 }
 
+
 /**
   * @brief  USBD_LL_DataOutStage
   *         Handle data OUT stage
@@ -151,8 +133,6 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 	USBD_HandleTypeDef *pdev,
     uint8_t epnum,
 	uint8_t *pdata) {
-
-	uint8_t idx;
 
 	if (epnum == 0) {
 
@@ -175,61 +155,29 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 					case USB_REQ_RECIPIENT_DEVICE:
 						/* Device requests must be managed by the first instantiated class
 			   	   	   	   (or duplicated by all classes for simplicity) */
-						idx = 0U;
-						//cls = pdev->_instance->getClass();
+						cls = pdev->_instance->getClass();
 						break;
 
 					case USB_REQ_RECIPIENT_INTERFACE:
-						idx = USBD_CoreFindIF(pdev, LOBYTE(pdev->request.index));
-						//cls = pdev->_instance->getClassFromInterface(LOBYTE(pdev->request.index));
+						cls = pdev->_instance->getClassFromInterface(LOBYTE(pdev->request.index));
 						break;
 
 					case USB_REQ_RECIPIENT_ENDPOINT:
-						idx = USBD_CoreFindEP(pdev, LOBYTE(pdev->request.index));
-						//cls = pdev->_instance->getClassFromEndPoint(LOBYTE(pdev->request.index));
-						break;
-
-					default:
-						/* Back to the first class in case of doubt */
-						idx = 0U;
+						cls = pdev->_instance->getClassFromEndPoint(eos::EpAddr(LOBYTE(pdev->request.index)));
 						break;
 				}
 
-				if (idx < USBD_MAX_SUPPORTED_CLASS) {
-
-					// Setup the class ID and route the request to the relative class function
-					//
-					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-						pdev->classId = idx;
-						pdev->_instance->getClass()->classEP0RxReady();
-					}
+				if (cls != nullptr) {
+					if (pdev->dev_state == USBD_STATE_CONFIGURED)
+						cls->classEP0RxReady();
 				}
 
 				USBD_CtlSendStatus(pdev);
 			}
 		}
 	}
-	else {
+	else
 		return pdev->_instance->dataOutStage(eos::EpAddr(epnum)) ? USBD_OK : USBD_FAIL;
-#if 0
-
-		// Get the class index relative to this interface
-		//
-		idx = USBD_CoreFindEP(pdev, (epnum & 0x7FU));
-
-		if (((uint16_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
-			// Call the class data out function to manage the request
-			//
-			if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-				pdev->classId = idx;
-				ret = (USBD_StatusTypeDef)pdev->_instance->getClass()->classDataOut(epnum);
-			}
-			if (ret != USBD_OK) {
-				return ret;
-			}
-		}
-#endif
-	}
 
 	return USBD_OK;
 }
@@ -272,7 +220,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 				}
 				else {
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-						pdev->classId = 0;
+						//pdev->classId = 0;
 						pdev->_instance->getClass()->classEP0TxSent();
 					}
 					USBD_LL_StallEP(pdev, 0x80U);

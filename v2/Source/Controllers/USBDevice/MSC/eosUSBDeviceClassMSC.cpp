@@ -45,10 +45,6 @@ Result USBDeviceClassMSC::initializeImpl() {
 	if (_scsi->initialize(_inEpAddr, _outEpAddr, &_msc) != Results::success)
 		return Results::error;
 
-	// TODO: Provisional
-	auto pdev = _drvUSBD->getHandle();
-	USBD_RegisterClass(pdev, this);
-
 	return Results::success;
 }
 
