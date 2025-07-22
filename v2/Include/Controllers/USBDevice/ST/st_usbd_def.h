@@ -332,7 +332,6 @@ struct USBD_HandleTypeDef {
 	uint8_t                 ConfIdx;
 
 	USBD_SetupReqTypedef    request;
-	USBD_DescriptorsTypeDef *xpDesc;
 	eos::USBDeviceDriver    *_instance;
 	void                    *pData;
 	void                    *pBosDesc;

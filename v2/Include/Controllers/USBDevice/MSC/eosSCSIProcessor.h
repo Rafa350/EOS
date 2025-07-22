@@ -110,8 +110,8 @@ namespace eos {
 			Status _status;
 			MSCStorage *_storage;
 			USBD_HandleTypeDef *_pdev;
-			uint8_t _inEpAddr;
-			uint8_t _outEpAddr;
+			EpAddr _inEpAddr;
+			EpAddr _outEpAddr;
 			USBD_MSC_BOT_HandleTypeDef *_msc;
 			SenseList _senseList;
 			unsigned _senseTail;
@@ -145,7 +145,7 @@ namespace eos {
 		public:
 			SCSIProcessor(MSCStorage *storage, USBD_HandleTypeDef *_pdev);
 
-			Result initialize(uint8_t inEpAddr, uint8_t outEpAddr, USBD_MSC_BOT_HandleTypeDef *msc);
+			Result initialize(EpAddr inEpAddr, EpAddr outEpAddr, USBD_MSC_BOT_HandleTypeDef *msc);
 			bool processCmd(uint8_t lun, const uint8_t *cmd);
 			void senseCode(uint8_t lun, uint8_t sKey, uint8_t ASC);
 	};

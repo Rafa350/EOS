@@ -30,13 +30,12 @@ namespace eos {
 			int8_t classEP0TxSent() override;
 			int8_t classEP0RxReady() override;
 			int8_t classSOF() override;
-			int8_t classDataIn(uint8_t epnum) override;
-			int8_t classDataOut(uint8_t epnum) override;
-			int8_t classIsoINIncomplete(uint8_t epnum) override;
-			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
-			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
+			int8_t classDataIn(EpAddr epAddr) override;
+			int8_t classDataOut(EpAddr epAddr) override;
+			int8_t classIsoINIncomplete(EpAddr epAddr) override;
+			int8_t classIsoOUTIncomplete(EpAddr epAddr) override;
 
-			bool usesEndPoint(uint8_t epAddr) const override;
+			bool usesEndPoint(EpAddr epAddr) const override;
 	};
 }
 

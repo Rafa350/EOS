@@ -184,7 +184,7 @@ namespace eos {
 
 }
 
-//namespace eos {
+namespace eos {
 	namespace internal {
 
 		// Valors obtinguts de 'USB Mass Storage Class specification'
@@ -205,7 +205,14 @@ namespace eos {
 		return request->getClassRequestID<MSCRequestID>();
 	}
 
-//}
+	enum class MSCSubClassID: uint8_t {
+		scsiTransparentCommandSet = 0x06
+	};
+
+	enum class MSCProtocolID: uint8_t {
+		bulkOnlyTransport = 0x50
+	};
+}
 
 
 #endif // __eosMSCDefinitions__

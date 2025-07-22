@@ -11,7 +11,7 @@ uint8_t USBDeviceClass::_ifaceCount = 0;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    devUSBD: El dispositiu USB
-/// \param    iface: El numero d'interface que gestiona
+/// \param    iface: El numero del primer interface que gestiona
 ///
 USBDeviceClass::USBDeviceClass(
 	USBDeviceDriver *drvUSBD,

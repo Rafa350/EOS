@@ -16,6 +16,7 @@
 #include "stm32746g_discovery.h"
 #include "stm32746g_discovery_sd.h"
 
+#include "appConfig.h"
 #include "appApplication.h"
 
 
@@ -63,17 +64,16 @@ void MyApplication::onExecute() {
 	//addService(mainService);
 
 	USBDeviceDriverConfiguration configuration = {
-		.manufacturerStr = "rsr.openware@gmail.com",
-		.productStr = "EOS USB Device Demo",
-		.serialNumberStr = nullptr,
-		.langID = USBD_LANGID_STRING,
-		.pid = USBD_PID,
-		.vid = USBD_VID,
+		.manufacturerStr = configuration::usbd::manufacturerStr,
+		.productStr = configuration::usbd::productStr,
+		.serialNumberStr = "FFFFFFFEFFFF",
+		.languageID = configuration::usbd::languageID,
+		.productID = configuration::usbd::productID,
+		.vendorID = configuration::usbd::vendorID,
 		.maxEp0Size = USB_MAX_EP0_SIZE,
-		.maxPower = USBD_MAX_POWER
+		.maxPower = configuration::usbd::maxPower
 	};
 
-//	auto drvUSBD = new eos::USBDeviceDriver(&__deviceConfiguration, &configuration);
 	auto drvUSBD = new eos::USBDeviceDriver(&configuration);
 
 #if defined(USE_CDC_DEVICE)
@@ -81,9 +81,9 @@ void MyApplication::onExecute() {
 	auto vcom = new eos::CDCInterface_VCOM();
 
 	USBDeviceClassCDCConfiguration cdcConfiguration = {
-		.inEpAddr = CDC_IN_EP,
-		.outEpAddr = CDC_OUT_EP,
-		.cmdEpAddr = CDC_CMD_EP
+		.inEpAddr = configuration::usbd::cdc::inEpAddr,
+		.outEpAddr = configuration::usbd::cdc::outEpAddr,
+		.cmdEpAddr = configuration::usbd::cdc::cmdEpAddr
 	};
 	auto devClassCDC = new eos::USBDeviceClassCDC(drvUSBD, &cdcConfiguration, vcom);
 
@@ -102,10 +102,11 @@ void MyApplication::onExecute() {
 #endif
 
 	USBDeviceClassMSCConfiguration mscConfiguration = {
-		.inEpAddr = MSC_EPIN_ADDR,
-		.outEpAddr = MSC_EPOUT_ADDR
+		.inEpAddr = configuration::usbd::msc::inEpAddr,
+		.outEpAddr = configuration::usbd::msc::outEpAddr,
+		.storage = storage
 	};
-	auto devClassMSC = new eos::USBDeviceClassMSC(drvUSBD, &mscConfiguration, storage);
+	auto devClassMSC = new eos::USBDeviceClassMSC(drvUSBD, &mscConfiguration);
 
 	drvUSBD->registerClass(devClassMSC);
 	drvUSBD->initialize();
@@ -127,12 +128,16 @@ void MyApplication::onExecute() {
 
 	while (true) {
 #if defined(USE_CDC_DEVICE)
-	    devClassCDC->receive(rxBuffer, sizeof(rxBuffer));
+    	//devClassCDC->transmit((uint8_t*) txBuffer, strlen(txBuffer));
+    	//eos::Task::delay(500);
+
+    	devClassCDC->receive(rxBuffer, sizeof(rxBuffer));
 	    if (devClassCDC->wait(1000) == eos::Results::success) {
 	    	if (devClassCDC->transmit((uint8_t*) txBuffer, strlen(txBuffer)) == eos::Results::success) {
 	    		devClassCDC->wait(1000);
 	    	}
 	    }
+
 #elif defined(USE_MSC_DEVICE) || defined(USE_HID_DEVICE)
 	    eos::Task::delay(1000);
 #else

@@ -75,6 +75,8 @@ SCSIProcessor::SCSIProcessor(
 	_status {Status::reset},
 	_storage {storage},
 	_pdev {pdev},
+	_inEpAddr {0},
+	_outEpAddr {0},
 	_senseTail {0},
 	_senseHead {0},
 	_mediumState {MediumState::unlocked} {
@@ -86,8 +88,8 @@ SCSIProcessor::SCSIProcessor(
 /// \return   El resultat de l'operacio.
 ///
 Result SCSIProcessor::initialize(
-	uint8_t inEpAddr,
-	uint8_t outEpAddr,
+	EpAddr inEpAddr,
+	EpAddr outEpAddr,
 	USBD_MSC_BOT_HandleTypeDef *msc) {
 
 	if (_status != Status::reset)

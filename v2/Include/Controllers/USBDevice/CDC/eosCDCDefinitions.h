@@ -85,6 +85,48 @@
 		return request->getClassRequestID<CDCRequestID>();
 	}
 
+
+	enum class CDCDescriptorType: uint8_t {
+		cdcInterface = 0x24
+	};
+
+	enum class CDCDescriptorSubType: uint8_t {
+		cdcHeader = 0x00,
+		cdcCallManagement = 0x01,
+		cdcAbstractControlManagement = 0x02,
+		cdcUnion = 0x06
+	};
+
+	struct CDCHeaderFunctionalDescriptor{
+	    uint8_t  bFunctionLength;           // Tamany en bytes
+	    uint8_t  bDescriptorType;           // CS_INTERFACE (0x24)
+	    uint8_t  bDescriptorSubType;        // CDC_HEADER (0x00)
+	    uint16_t bcdCDC;                 	// Versio de l'especificacio
+	} __attribute__((packed));
+
+	struct CDCCallManagementFunctionalDescriptor {
+	    uint8_t  bFunctionLength;           // Tamany enbytes
+	    uint8_t  bDescriptorType;        	// CS_INTERFACE (0x24)
+	    uint8_t  bDescriptorSubType;     	// CDC_CALL_MANAGEMENT (0x01)
+	    uint8_t  bmCapabilities;         	// Bit 0: Device handle call mgmt, Bit 1: Uses Data Interface
+	    uint8_t  bDataInterface;         	// Número de interfaz de datos asociada
+	} __attribute__((packed));
+
+	struct CDCACMFunctionalDescriptor {
+	    uint8_t  bFunctionLength;        // Tamaño (4)
+	    uint8_t  bDescriptorType;        // CS_INTERFACE (0x24)
+	    uint8_t  bDescriptorSubType;     // CDC_ABSTRACT_CONTROL_MANAGEMENT (0x02)
+	    uint8_t  bmCapabilities;         // Bits que indican comandos soportados (ej. Set_Line_Coding)
+	} __attribute__((packed));
+
+	struct CDCUnionFunctionalDescriptor {
+	    uint8_t  bFunctionLength;        // Tamaño en bytes (5 o más si hay interfaces adicionales)
+	    uint8_t  bDescriptorType;        // CS_INTERFACE (0x24)
+	    uint8_t  bDescriptorSubType;     // CDC_UNION (0x06)
+	    uint8_t  bMasterInterface;       // Número de interfaz principal (control)
+	    uint8_t  bSlaveInterface[1];     // Número de interfaz secundaria (datos)
+	} __attribute__((packed));
+
 //}
 
 

@@ -10,7 +10,7 @@
 
 	namespace internal {
 
-		constexpr unsigned maxRequestResponseDataSize = 50;
+		constexpr unsigned maxRequestResponseDataSize = 150;
 
 		struct Request_RequestType_Direction {
 			static constexpr uint8_t POS          = 7;
@@ -50,11 +50,15 @@
 		};
 
 		struct Request_ValueDescriptorType {
-			static constexpr uint8_t device                  = 1;
-			static constexpr uint8_t configuration           = 2;
-			static constexpr uint8_t string                  = 3;
-			static constexpr uint8_t deviceQualifier         = 6;
-			static constexpr uint8_t otherSpeedConfiguration = 7;
+			static constexpr uint8_t device                  = 0x01;
+			static constexpr uint8_t configuration           = 0x02;
+			static constexpr uint8_t string                  = 0x03;
+			static constexpr uint8_t interface 				 = 0x04;
+			static constexpr uint8_t endPoint                = 0x05;
+			static constexpr uint8_t deviceQualifier         = 0x06;
+			static constexpr uint8_t otherSpeedConfiguration = 0x07;
+			static constexpr uint8_t iad                     = 0x0B;
+			static constexpr uint8_t bos                     = 0x0F;
 		};
 
 	}
@@ -94,8 +98,12 @@
 		device                  = internal::Request_ValueDescriptorType::device,
 		configuration           = internal::Request_ValueDescriptorType::configuration,
 		string 					= internal::Request_ValueDescriptorType::string,
+		interface               = internal::Request_ValueDescriptorType::interface,
+		endPoint                = internal::Request_ValueDescriptorType::endPoint,
 		deviceQualifier 		= internal::Request_ValueDescriptorType::deviceQualifier,
-		otherSpeedConfiguration = internal::Request_ValueDescriptorType::otherSpeedConfiguration
+		otherSpeedConfiguration = internal::Request_ValueDescriptorType::otherSpeedConfiguration,
+		iad                     = internal::Request_ValueDescriptorType::iad,
+		bos                     = internal::Request_ValueDescriptorType::bos
 	};
 
 	struct USBD_SetupReqTypedef {
@@ -135,20 +143,32 @@
 		}
 	};
 
+	constexpr uint16_t bcdUSB = 0x0200;    // Versio USB 2.0
+
 	enum class ClassID: uint8_t {
+		classFromInterface = 0x00,
 		audio = 0x01,
 		cdc = 0x02,
+		cdcData = 0x0A,
 		hid = 0x03,
+		image = 0x06,
 		msc = 0x08,
-		printer = 0x07
+		printer = 0x07,
+		video = 0x0E,
+		miscelaneous = 0xFE,
+		vendorSpecific = 0xFF
 	};
 
 	enum class DescriptorType: uint8_t {
 		device = 0x01,
 		configuration = 0x02,
+		string = 0x03,
 		interface = 0x04,
 		endPoint = 0x05,
-		string = 0x03
+		deviceQualifier = 0x06,
+		otherSpeedConfiguration = 0x07,
+		interfacePower = 0x08,
+		interfaceAssociation = 0x0B
 	};
 
 	// Device Descriptor header (USB spec.)
@@ -204,6 +224,21 @@
 		uint8_t bMaxPower;
 	} __attribute__((packed, aligned(1)));
 
+	// Interface association descreiptor (USB spec.)
+	//
+	struct USBD_InterfaceAssociationDescriptor {
+		uint8_t bLength;
+		uint8_t bDescriptorType;
+		uint8_t bFirstInterface;
+		uint8_t bInterfaceCount;
+		uint8_t bFunctionClass;
+		uint8_t bFunctionSubClass;
+		uint8_t bFunctionProtocol;
+		uint8_t iFunction;
+	} __attribute__((packed, aligned(1)));
+
+	// Interface descriptor (USB spec.)
+	//
 	struct USBD_InterfaceDescriptor {
 		uint8_t bLength;
 		uint8_t bDescriptorType;
@@ -216,6 +251,8 @@
 		uint8_t iInterface;
 	} __attribute__((packed, aligned(1)));
 
+	// Endpoint descriptor (USB spec.)
+	//
 	struct USBD_EndPointDescriptor {
 		uint8_t bLength;
 		uint8_t bDescriptorType;

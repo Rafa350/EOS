@@ -153,17 +153,17 @@ int8_t USBDeviceClassHID::classEP0RxReady() {
 /// \return   El resultat de l'operacio.
 ///
 int8_t USBDeviceClassHID::classDataIn(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
 	auto pdev = _drvUSBD->getHandle();
 
 	PCD_HandleTypeDef *pcd = (PCD_HandleTypeDef *)pdev->pData;
 
-	if ((pdev->ep_in[epnum & 0xFU].total_length > 0) &&
-       ((pdev->ep_in[epnum & 0xFU].total_length % pcd->IN_ep[epnum & 0xFU].maxpacket) == 0)) {
+	if ((pdev->ep_in[epAddr & 0x0F].total_length > 0) &&
+       ((pdev->ep_in[epAddr & 0x0F].total_length % pcd->IN_ep[epAddr & 0x0F].maxpacket) == 0)) {
 
-		pdev->ep_in[epnum & 0xFU].total_length = 0;
-		USBD_LL_Transmit(pdev, epnum, nullptr, 0);
+		pdev->ep_in[epAddr & 0x0F].total_length = 0;
+		USBD_LL_Transmit(pdev, epAddr, nullptr, 0);
 	}
 
     return USBD_OK;
@@ -171,7 +171,7 @@ int8_t USBDeviceClassHID::classDataIn(
 
 
 int8_t USBDeviceClassHID::classDataOut(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
 	return USBD_FAIL;
 }
@@ -184,32 +184,21 @@ int8_t USBDeviceClassHID::classSOF() {
 
 
 int8_t USBDeviceClassHID::classIsoINIncomplete(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
 	return USBD_FAIL;
 }
 
 
 int8_t USBDeviceClassHID::classIsoOUTIncomplete(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
 	return USBD_FAIL;
 }
 
 
-bool USBDeviceClassHID::classGetDeviceQualifierDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
-
-	data = USBD_HID_DeviceQualifierDesc;
-	length = sizeof(USBD_HID_DeviceQualifierDesc);
-
-	return true;
-}
-
-
 bool USBDeviceClassHID::usesEndPoint(
-	uint8_t epAddr) const {
+	EpAddr epAddr) const {
 
 	return epAddr == _inEpAddr;
 }

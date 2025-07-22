@@ -8,6 +8,9 @@
 using namespace eos;
 
 
+static constexpr uint8_t __ifaceQty = 1;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Crea el objecte.
 /// \param    devUSBD: El dispositiu USB
@@ -16,12 +19,11 @@ using namespace eos;
 ///
 USBDeviceClassMSC::USBDeviceClassMSC(
 	USBDeviceDriver *drvUSBD,
-	const USBDeviceClassMSCConfiguration *configuration,
-	MSCStorage *storage) :
+	const USBDeviceClassMSCConfiguration *configuration) :
 
-	USBDeviceClass {drvUSBD, reserveIface(_ifaceQty)},
-	_storage {storage},
-	_scsi {new SCSIProcessor(storage, drvUSBD->getHandle())},
+	USBDeviceClass {drvUSBD, reserveIface(__ifaceQty)},
+	_storage {configuration->storage},
+	_scsi {new SCSIProcessor(configuration->storage, drvUSBD->getHandle())},
 	_inEpAddr {configuration->inEpAddr},
 	_outEpAddr {configuration->outEpAddr} {
 }
@@ -160,8 +162,8 @@ int8_t USBDeviceClassMSC::classSetup(
 				case USBDRequestID::clearFeature:
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 						if (request->value == USB_FEATURE_EP_HALT)	{
-							USBD_LL_FlushEP(pdev, (uint8_t) request->index);
-							botCplClrFeature((uint8_t) request->index);
+							USBD_LL_FlushEP(pdev, LOBYTE(request->index));
+							botCplClrFeature(EpAddr(LOBYTE(request->index)));
 						}
 					}
 					ok = true;
@@ -196,18 +198,18 @@ int8_t USBDeviceClassMSC::classEP0RxReady() {
 
 
 int8_t USBDeviceClassMSC::classDataIn(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
-	botDataIn(epnum);
+	botDataIn(epAddr);
 
 	return USBD_OK;
 }
 
 
 int8_t USBDeviceClassMSC::classDataOut(
-	uint8_t epnum) {
+		EpAddr epAddr) {
 
-	botDataOut(epnum);
+	botDataOut(epAddr);
 
 	return USBD_OK;
 }
@@ -220,14 +222,14 @@ int8_t USBDeviceClassMSC::classSOF() {
 
 
 int8_t USBDeviceClassMSC::classIsoINIncomplete(
-	uint8_t epnum) {
+		EpAddr epAddr) {
 
 	return USBD_FAIL;
 }
 
 
 int8_t USBDeviceClassMSC::classIsoOUTIncomplete(
-	uint8_t epnum) {
+		EpAddr epAddr) {
 
 	return USBD_FAIL;
 }
@@ -249,6 +251,21 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	auto ptr = buffer;
 	auto ptrEnd = buffer + bufferSize;
 
+	// Interface association descriptor
+	//
+	if (ptr + sizeof(USBD_InterfaceAssociationDescriptor) > ptrEnd)
+		return 0;
+	auto ifaceAssociationDescriptor = (USBD_InterfaceAssociationDescriptor*) ptr;
+	ifaceAssociationDescriptor->bLength = sizeof(USBD_InterfaceAssociationDescriptor);
+	ifaceAssociationDescriptor->bDescriptorType = (uint8_t) DescriptorType::interfaceAssociation;
+	ifaceAssociationDescriptor->bFirstInterface = _iface;
+	ifaceAssociationDescriptor->bInterfaceCount = __ifaceQty;
+	ifaceAssociationDescriptor->bFunctionClass = (uint8_t) ClassID::msc;
+	ifaceAssociationDescriptor->bFunctionSubClass = (uint8_t) MSCSubClassID::scsiTransparentCommandSet;
+	ifaceAssociationDescriptor->bFunctionProtocol = (uint8_t) MSCProtocolID::bulkOnlyTransport;
+	ifaceAssociationDescriptor->iFunction = 0;
+	ptr += sizeof(USBD_InterfaceAssociationDescriptor);
+
 	// Interface descriptor
 	//
 	if (ptr + sizeof(USBD_InterfaceDescriptor) > ptrEnd)
@@ -260,8 +277,8 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	ifaceDescriptor->bAlternateSetting = 0;
 	ifaceDescriptor->bNumEndPoints = 2;
 	ifaceDescriptor->bInterfaceClass = (uint8_t) ClassID::msc;
-	ifaceDescriptor->bInterfaceSubClass = 0x06;
-	ifaceDescriptor->bInterfaceProtocol = 0x50;
+	ifaceDescriptor->bInterfaceSubClass = (uint8_t) MSCSubClassID::scsiTransparentCommandSet;
+	ifaceDescriptor->bInterfaceProtocol = (uint8_t) MSCProtocolID::bulkOnlyTransport;
 	ifaceDescriptor->iInterface = 0;
 	ptr += sizeof(USBD_InterfaceDescriptor);
 
@@ -295,31 +312,13 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 }
 
 
-bool USBDeviceClassMSC::classGetDeviceQualifierDescriptor(
-	uint8_t *&data,
-	unsigned &length) {
-
-	return false;
-	/*
-	auto descriptor = (USBD_DeviceQualifierDescriptor*) _drvUSBD->getConfiguration()->deviceQualifierDescriptor;
-	if (descriptor == nullptr)
-		return false;
-
-	data = (uint8_t*) descriptor;
-	length = descriptor->bLength;
-
-	return true;
-	*/
-}
-
-
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si s'utilitza els endPoint especificat.
+/// \brief    Comprova si s'utilitza els endpoint especificat.
 /// \param    epAddr: L'adressa del endPoint.
 /// \return   True si s'utilitza, false en cas contrari.
 ///
 bool USBDeviceClassMSC::usesEndPoint(
-	uint8_t epAddr) const {
+	EpAddr epAddr) const {
 
 	return (epAddr == _inEpAddr) || (epAddr == _outEpAddr);
 }
@@ -333,7 +332,7 @@ bool USBDeviceClassMSC::usesEndPoint(
 bool USBDeviceClassMSC::usesIface(
 	uint8_t iface) const {
 
-	return (iface >= _iface) && (iface < (_iface + _ifaceQty));
+	return (iface >= _iface) && (iface < (_iface + __ifaceQty));
 }
 
 
@@ -370,7 +369,7 @@ void USBDeviceClassMSC::botReset() {
 
 
 void USBDeviceClassMSC::botDataIn(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
 	switch (_msc.bot_state) {
 		case USBD_BOT_DATA_IN:
@@ -387,7 +386,7 @@ void USBDeviceClassMSC::botDataIn(
 
 
 void USBDeviceClassMSC::botDataOut(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
 	switch (_msc.bot_state) {
 		case USBD_BOT_IDLE:
@@ -417,7 +416,7 @@ void USBDeviceClassMSC::botSendCSW(
 
 
 void USBDeviceClassMSC::botCplClrFeature(
-	uint8_t epnum) {
+	EpAddr epAddr) {
 
 	auto pdev = _drvUSBD->getHandle();
 
@@ -425,7 +424,7 @@ void USBDeviceClassMSC::botCplClrFeature(
 		USBD_LL_StallEP(pdev, _inEpAddr);
 		USBD_LL_StallEP(pdev, _outEpAddr);
 	}
-	else if (((epnum & 0x80) == 0x80) && (_msc.bot_status != USBD_BOT_STATUS_RECOVERY))
+	else if (((epAddr & 0x80) == 0x80) && (_msc.bot_status != USBD_BOT_STATUS_RECOVERY))
 		botSendCSW(USBD_CSW_CMD_FAILED);
 }
 

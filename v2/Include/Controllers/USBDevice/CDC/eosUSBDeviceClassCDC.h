@@ -31,11 +31,10 @@ namespace eos {
 			virtual void txDataCompleted(const uint8_t *buffer, unsigned length, uint8_t epnum) = 0;
 	};
 
-
 	struct USBDeviceClassCDCConfiguration {
-		uint8_t inEpAddr;
-		uint8_t outEpAddr;
-		uint8_t cmdEpAddr;
+		EpAddr const inEpAddr;
+		EpAddr const outEpAddr;
+		EpAddr const cmdEpAddr;
 	};
 
 	class USBDeviceClassCDC final: public USBDeviceClass {
@@ -48,12 +47,9 @@ namespace eos {
 			};
 
 		private:
-			static constexpr uint8_t _ifaceQty = 2;
-
-		private:
-			uint8_t _inEpAddr  = CDC_IN_EP;
-			uint8_t _outEpAddr = CDC_OUT_EP;
-			uint8_t _cmdEpAddr = CDC_CMD_EP;
+			EpAddr _inEpAddr;
+			EpAddr _outEpAddr;
+			EpAddr _cmdEpAddr;
 			CDCInterface *_interface;
 			USBD_CDC_HandleTypeDef _cdc;
 			volatile State _state; // S'actualitza per interrupcions
@@ -84,14 +80,13 @@ namespace eos {
 			int8_t classEP0TxSent() override;
 			int8_t classEP0RxReady() override;
 			int8_t classSOF() override;
-			int8_t classDataIn(uint8_t epnum) override;
-			int8_t classDataOut(uint8_t epnum) override;
-			int8_t classIsoINIncomplete(uint8_t epnum) override;
-			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
+			int8_t classDataIn(EpAddr epAddr) override;
+			int8_t classDataOut(EpAddr epAddr) override;
+			int8_t classIsoINIncomplete(EpAddr epAddr) override;
+			int8_t classIsoOUTIncomplete(EpAddr epAddr) override;
 			unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) override;
-			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
 
-			bool usesEndPoint(uint8_t epAddr) const override;
+			bool usesEndPoint(EpAddr epAddr) const override;
 			bool usesIface(uint8_t ifaceQty) const override;
 	};
 }

@@ -20,15 +20,26 @@ namespace eos {
     using USBDeviceClassList = IntrusiveForwardList<USBDeviceClass, 0>;
     using USBDeviceClassListNode = IntrusiveForwardListNode<USBDeviceClass, 0>;
 
+    class EpAddr final {
+    	private:
+    		uint8_t _addr;
+    	public:
+    		constexpr explicit EpAddr(uint8_t addr) : _addr {addr} {};
+    		constexpr EpAddr(const EpAddr &epAddr) : _addr {epAddr._addr} {}
+
+    		constexpr EpAddr& operator=(const EpAddr &epAddr) { _addr = epAddr._addr; return *this; }
+    		constexpr operator uint8_t() const { return _addr; }
+    };
+
 	struct USBDeviceDriverConfiguration {
 		const char *manufacturerStr;
 		const char *productStr;
 		const char *serialNumberStr;
-		uint16_t langID;
-		uint16_t pid;
-		uint16_t vid;
+		uint16_t languageID;
+		uint16_t productID;
+		uint16_t vendorID;
 		unsigned maxEp0Size;
-		unsigned maxPower;
+		uint8_t maxPower;
 	};
 
 	class USBDeviceDriver final {
@@ -46,22 +57,19 @@ namespace eos {
 			USBD_HandleTypeDef _usbd;
 
 			const char * const _manufacturerStr;
-			uint8_t const _manufacturerIdx = 1;
 			const char * const _productStr;
-			uint8_t const _productIdx = 2;
 			const char * const _serialNumberStr;
-			uint8_t const _serialNumberIdx = 3;
 
-			uint16_t const _langID;
+			uint16_t const _languageID;
 
-			uint16_t const _pid;
-			uint16_t const _vid;
+			uint16_t const _productID;
+			uint16_t const _vendorID;
 			unsigned const _maxEp0Size;
 
 			uint8_t _maxPower;
 
 		private:
-			USBDeviceClass *getClassFromEndPoint(uint8_t epAddr) const;
+			USBDeviceClass *getClassFromEndPoint(EpAddr epAddr) const;
 			USBDeviceClass *getClassFromInterface(uint8_t iface) const;
 
 			bool processDeviceRequest(USBD_SetupReqTypedef *request);
@@ -81,6 +89,7 @@ namespace eos {
 			bool processEndPointRequest_GetStatus(USBD_SetupReqTypedef *request);
 
 			bool getDeviceDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getConfigurationDescriptor(uint8_t *&data, unsigned &length, bool hr) const;
 			bool getLangIDStrDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getManufacturerStrDescriptor(uint8_t *&data, unsigned &length) const;
@@ -99,11 +108,11 @@ namespace eos {
 			Result start();
 			Result stop();
 
-			USBD_StatusTypeDef setClassConfig(uint8_t cfgidx);
-			USBD_StatusTypeDef clearClassConfig(uint8_t cfgidx);
+			USBD_StatusTypeDef setClassConfig(uint8_t configIdx);
+			USBD_StatusTypeDef clearClassConfig(uint8_t configIdx);
 
-			bool dataOutStage(uint8_t epAddr);
-			bool dataInStage(uint8_t epAddr);
+			bool dataOutStage(EpAddr epAddr);
+			bool dataInStage(EpAddr epAddr);
 			bool processRequest(USBD_SetupReqTypedef *request);
 
 			inline State getState() const {	return _state; }
@@ -140,7 +149,7 @@ namespace eos {
 
 			inline State getState() const { return _state; }
 
-			virtual bool usesEndPoint(uint8_t epAddr) const = 0;
+			virtual bool usesEndPoint(EpAddr epAddr) const = 0;
 			virtual bool usesIface(uint8_t iface) const = 0;
 
 			virtual int8_t classInitialize(uint8_t cfgidx) = 0;
@@ -151,12 +160,11 @@ namespace eos {
 			virtual int8_t classEP0TxSent() = 0;
 			virtual int8_t classEP0RxReady() = 0;
 			virtual int8_t classSOF() = 0;
-			virtual int8_t classDataIn(uint8_t epAddr) = 0;
-			virtual int8_t classDataOut(uint8_t epAddr) = 0;
-			virtual int8_t classIsoINIncomplete(uint8_t epAddr) = 0;
-			virtual int8_t classIsoOUTIncomplete(uint8_t epAddr) = 0;
+			virtual int8_t classDataIn(EpAddr epAddr) = 0;
+			virtual int8_t classDataOut(EpAddr epAddr) = 0;
+			virtual int8_t classIsoINIncomplete(EpAddr epAddr) = 0;
+			virtual int8_t classIsoOUTIncomplete(EpAddr epAddr) = 0;
 			virtual unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) = 0;
-			virtual bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) = 0;
 	};
 }
 

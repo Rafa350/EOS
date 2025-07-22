@@ -171,19 +171,22 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 
 				// Find the class ID relative to the current request
 				//
-				switch (pdev->request.requestType & 0x1FU) {
+				switch (pdev->request.requestType & 0x1F) {
 					case USB_REQ_RECIPIENT_DEVICE:
 						/* Device requests must be managed by the first instantiated class
 			   	   	   	   (or duplicated by all classes for simplicity) */
 						idx = 0U;
+						//cls = pdev->_instance->getClass();
 						break;
 
 					case USB_REQ_RECIPIENT_INTERFACE:
 						idx = USBD_CoreFindIF(pdev, LOBYTE(pdev->request.index));
+						//cls = pdev->_instance->getClassFromInterface(LOBYTE(pdev->request.index));
 						break;
 
 					case USB_REQ_RECIPIENT_ENDPOINT:
 						idx = USBD_CoreFindEP(pdev, LOBYTE(pdev->request.index));
+						//cls = pdev->_instance->getClassFromEndPoint(LOBYTE(pdev->request.index));
 						break;
 
 					default:
@@ -207,7 +210,7 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 		}
 	}
 	else {
-		return pdev->_instance->dataOutStage(epnum) ? USBD_OK : USBD_FAIL;
+		return pdev->_instance->dataOutStage(eos::EpAddr(epnum)) ? USBD_OK : USBD_FAIL;
 #if 0
 
 		// Get the class index relative to this interface
@@ -269,7 +272,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 				}
 				else {
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-						pdev->classId = 0U;
+						pdev->classId = 0;
 						pdev->_instance->getClass()->classEP0TxSent();
 					}
 					USBD_LL_StallEP(pdev, 0x80U);
@@ -284,7 +287,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 		}
 	}
 	else {
-		return (USBD_StatusTypeDef) pdev->_instance->dataInStage(epnum) ? USBD_OK : USBD_FAIL;
+		return (USBD_StatusTypeDef) pdev->_instance->dataInStage(eos::EpAddr(epnum)) ? USBD_OK : USBD_FAIL;
 #if 0
 		idx = USBD_CoreFindEP(pdev, ((uint8_t)epnum | 0x80U));
 
@@ -422,7 +425,7 @@ USBD_StatusTypeDef USBD_LL_IsoINIncomplete(USBD_HandleTypeDef *pdev,
 
   if (pdev->dev_state == USBD_STATE_CONFIGURED)
   {
-      pdev->_instance->getClass()->classIsoINIncomplete(epnum);
+      pdev->_instance->getClass()->classIsoINIncomplete(eos::EpAddr(epnum));
   }
 
   return USBD_OK;
@@ -444,7 +447,7 @@ USBD_StatusTypeDef USBD_LL_IsoOUTIncomplete(
 	}
 
 	if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-		pdev->_instance->getClass()->classIsoOUTIncomplete(epnum);
+		pdev->_instance->getClass()->classIsoOUTIncomplete(eos::EpAddr(epnum));
 	}
 
 	return USBD_OK;

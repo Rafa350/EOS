@@ -29,29 +29,27 @@ namespace eos {
 	class SCSIProcessor;
 
 	struct USBDeviceClassMSCConfiguration {
-		uint8_t inEpAddr;
-		uint8_t outEpAddr;
+		EpAddr const inEpAddr;
+		EpAddr const outEpAddr;
+		MSCStorage * const storage;
 	};
 
 	class USBDeviceClassMSC final: public USBDeviceClass {
 		private:
-			static constexpr uint8_t _ifaceQty = 1;
-
-		private:
-			MSCStorage *_storage;
-			SCSIProcessor *_scsi;
-			uint8_t const _inEpAddr;
-			uint8_t const _outEpAddr;
+			MSCStorage * const _storage;
+			SCSIProcessor * const _scsi;
+			EpAddr const _inEpAddr;
+			EpAddr const _outEpAddr;
 			USBD_MSC_BOT_HandleTypeDef _msc;
 
 		private:
 			void botInitialize();
 			void botDeInitialize();
 			void botReset();
-			void botDataIn(uint8_t epAddr);
-			void botDataOut(uint8_t epAddr);
+			void botDataIn(EpAddr epAddr);
+			void botDataOut(EpAddr epAddr);
 			void botSendCSW(uint8_t cswStatus);
-			void botCplClrFeature(uint8_t epnum);
+			void botCplClrFeature(EpAddr epAddr);
 			void botSendData(uint8_t *buffer, unsigned length);
 			void botCBWDecode();
 			void botAbort();
@@ -60,7 +58,7 @@ namespace eos {
 			Result initializeImpl() override;
 
 		public:
-			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, const USBDeviceClassMSCConfiguration *configuration, MSCStorage *storage);
+			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, const USBDeviceClassMSCConfiguration *configuration);
 
 			int8_t classInitialize(uint8_t cfgidx) override;
 			int8_t classDeinitialize(uint8_t cfgidx) override;
@@ -70,14 +68,13 @@ namespace eos {
 			int8_t classEP0TxSent() override;
 			int8_t classEP0RxReady() override;
 			int8_t classSOF() override;
-			int8_t classDataIn(uint8_t epAddr) override;
-			int8_t classDataOut(uint8_t epAddr) override;
-			int8_t classIsoINIncomplete(uint8_t epnum) override;
-			int8_t classIsoOUTIncomplete(uint8_t epnum) override;
+			int8_t classDataIn(EpAddr epAddr) override;
+			int8_t classDataOut(EpAddr epAddr) override;
+			int8_t classIsoINIncomplete(EpAddr epAddr) override;
+			int8_t classIsoOUTIncomplete(EpAddr epAddr) override;
 			unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) override;
-			bool classGetDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) override;
 
-			bool usesEndPoint(uint8_t epAddr) const override;
+			bool usesEndPoint(EpAddr epAddr) const override;
 			bool usesIface(uint8_t iface) const override;
 };
 }
