@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Controllers/USBDevice/eosUSBDeviceDriver.h"
+#include "Controllers/USBDevice/ST/st_usbd_core.h"
 
 
 using namespace eos;
@@ -42,14 +43,51 @@ Result USBDeviceClass::initialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Reserva un nombre de interfaces
+/// \brief    Reserva un nombre determinat d'interficies
 /// \param    ifaceQty: La quantitat a reservar.
 /// \return   El primer iface disponible.
 ///
 uint8_t USBDeviceClass::reserveIface(
-	unsigned ifaceQty) {
+	uint8_t ifaceQty) {
 
-	uint8_t iface = _ifaceCount;
+	auto iface = _ifaceCount;
 	_ifaceCount += ifaceQty;
+
 	return iface;
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Respon com a error a una solicitut.
+/// \param    request: La soligitut que ha generat l'error.
+///
+void USBDeviceClass::ctlError(
+	USBD_SetupReqTypedef *request) {
+
+	auto pdev = _drvUSBD->getHandle();
+	USBD_LL_StallEP(pdev, 0x80);
+	USBD_LL_StallEP(pdev, 0x00);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Respon a una solicitut amb l'estat.
+///
+void USBDeviceClass::ctlSendStatus() {
+
+	USBD_CtlSendStatus(_drvUSBD->getHandle());
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Respon a una solicitut amb dades.
+/// \param    data: Les dades.
+/// \param    length: La longitut de les dades en bytes.
+///
+void USBDeviceClass::ctlSendData(
+	uint8_t *data,
+	unsigned length) {
+
+	USBD_CtlSendData(_drvUSBD->getHandle(), data, length);
+}
+

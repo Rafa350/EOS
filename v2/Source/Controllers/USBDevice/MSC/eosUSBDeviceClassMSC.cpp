@@ -53,7 +53,7 @@ int8_t USBDeviceClassMSC::classInitialize(
 	uint8_t cfgidx) {
 
 	auto pdev = _drvUSBD->getHandle();
-	bool hs = pdev->dev_speed == USBD_SPEED_HIGH;
+	auto hs = pdev->dev_speed == USBD_SPEED_HIGH;
 
     // Open EP OUT
 	//
@@ -97,8 +97,7 @@ int8_t USBDeviceClassMSC::classDeinitialize(
 int8_t USBDeviceClassMSC::classSetup(
 	USBD_SetupReqTypedef *request) {
 
-	bool ok = false;
-
+	auto ok = false;
 	auto pdev = _drvUSBD->getHandle();
 
 	switch (request->getType()) {
@@ -113,7 +112,7 @@ int8_t USBDeviceClassMSC::classSetup(
 
 						uint8_t maxLun = min(_storage->getMaxLun(), MSC_BOT_MAX_LUN);
 						_msc.max_lun = maxLun;
-						USBD_CtlSendData(pdev, &maxLun, 1); // !Atencio buffer/length
+						ctlSendData(&maxLun, 1); // !Atencio buffer/length
 						ok = true;
 					}
 					break;
@@ -136,14 +135,14 @@ int8_t USBDeviceClassMSC::classSetup(
 				case USBDRequestID::getStatus:
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 						uint16_t status = 0;
-						USBD_CtlSendData(pdev, (uint8_t*) &status, 2); // !Atencio buffer/length
+						ctlSendData((uint8_t*) &status, 2); // !Atencio buffer/length
 						ok = true;
 					}
 					break;
 
 				case USBDRequestID::getInterface:
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
-						USBD_CtlSendData(pdev, (uint8_t*) &_msc.interface, 1);
+						ctlSendData((uint8_t*) &_msc.interface, 1);
 						ok = true;
 					}
 					break;
@@ -175,7 +174,7 @@ int8_t USBDeviceClassMSC::classSetup(
 	}
 
 	if (!ok)
-		USBD_CtlError(pdev, request);
+		ctlError(request);
 
 	return ok ? USBD_OK : USBD_FAIL;
 }
@@ -449,7 +448,7 @@ void USBDeviceClassMSC::botCBWDecode() {
 	if ((USBD_LL_GetRxDataSize(pdev, _outEpAddr) != USBD_BOT_CBW_LENGTH) ||
 		(_msc.cbw.dSignature != USBD_BOT_CBW_SIGNATURE) ||
 	    (_msc.cbw.bLUN > _msc.max_lun) ||
-		(_msc.cbw.bCBLength < 1U) ||
+		(_msc.cbw.bCBLength < 1) ||
 	    (_msc.cbw.bCBLength > 16)) {
 		_scsi->senseCode(_msc.cbw.bLUN, ILLEGAL_REQUEST, INVALID_CDB);
 		_msc.bot_status = USBD_BOT_STATUS_ERROR;

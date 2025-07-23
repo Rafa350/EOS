@@ -373,9 +373,9 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	ifaceAssociationDescriptor->bDescriptorType = (uint8_t) DescriptorType::interfaceAssociation;
 	ifaceAssociationDescriptor->bFirstInterface = _iface;
 	ifaceAssociationDescriptor->bInterfaceCount = __ifaceQty;
-	ifaceAssociationDescriptor->bFunctionClass = 2;
-	ifaceAssociationDescriptor->bFunctionSubClass = 2;
-	ifaceAssociationDescriptor->bFunctionProtocol = 1;
+	ifaceAssociationDescriptor->bFunctionClass = (uint8_t) ClassID::cdc;
+	ifaceAssociationDescriptor->bFunctionSubClass = 0x02;
+	ifaceAssociationDescriptor->bFunctionProtocol = 0x01;
 	ifaceAssociationDescriptor->iFunction = 0;
 	ptr += sizeof(USBD_InterfaceAssociationDescriptor);
 

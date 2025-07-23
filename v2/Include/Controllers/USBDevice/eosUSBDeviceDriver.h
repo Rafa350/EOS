@@ -69,6 +69,8 @@ namespace eos {
 			uint8_t _maxPower;
 
 		private:
+			bool processRequest(USBD_SetupReqTypedef *request);
+
 			bool processDeviceRequest(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_SetAddress(USBD_SetupReqTypedef *request);
@@ -114,7 +116,7 @@ namespace eos {
 
 			bool dataOutStage(EpAddr epAddr);
 			bool dataInStage(EpAddr epAddr);
-			bool processRequest(USBD_SetupReqTypedef *request);
+			bool setupStage(uint8_t *data);
 
 			inline State getState() const {	return _state; }
 			inline USBD_HandleTypeDef * getHandle() { return &_usbd; }
@@ -146,7 +148,11 @@ namespace eos {
 			USBDeviceClass(USBDeviceDriver *drvUSBD, uint8_t iface);
 
 			virtual Result initializeImpl() = 0;
-			uint8_t reserveIface(unsigned ifaceQty);
+			static uint8_t reserveIface(uint8_t ifaceQty);
+
+			void ctlError(USBD_SetupReqTypedef *request);
+			void ctlSendStatus();
+			void ctlSendData(uint8_t *data, unsigned length);
 
 		public:
 			Result initialize();
