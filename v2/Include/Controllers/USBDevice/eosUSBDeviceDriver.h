@@ -87,10 +87,10 @@ namespace eos {
 			bool processEndPointRequest_ClearFeature(USBD_SetupReqTypedef *request);
 			bool processEndPointRequest_GetStatus(USBD_SetupReqTypedef *request);
 
-			bool getDeviceDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getDeviceQualifierDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getConfigurationDescriptor(uint8_t *&data, unsigned &length, bool hr) const;
-			bool getLangIDStrDescriptor(uint8_t *&data, unsigned &length) const;
+			bool getDeviceDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool getDeviceQualifierDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool getConfigurationDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length, bool hr) const;
+			bool getLangIDStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
 			bool getManufacturerStrDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getProductStrDescriptor(uint8_t *&data, unsigned &length) const;
 			bool getInterfaceStrDescriptor(uint8_t *&data, unsigned &length) const;

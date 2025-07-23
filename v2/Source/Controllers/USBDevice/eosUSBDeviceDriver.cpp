@@ -354,18 +354,21 @@ bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
     switch (request->getValueDescriptorType()) {
 
         case USBDRequestValueDescriptorType::device:
-            ok = getDeviceDescriptor(data, length);
+            ok = getDeviceDescriptor(__responseData, sizeof(__responseData), length);
+           	data = __responseData;
             break;
 
         case USBDRequestValueDescriptorType::configuration:
-        	ok = getConfigurationDescriptor(data, length, pdev->dev_speed == USBD_SPEED_HIGH);
+        	ok = getConfigurationDescriptor(__responseData, sizeof(__responseData), length, pdev->dev_speed == USBD_SPEED_HIGH);
+        	data = __responseData;
         	break;
 
         case USBDRequestValueDescriptorType::string: {
         	auto idx = request->getValueDescriptorIndex();
         	switch (idx) {
         		case USBD_IDX_LANGID_STR:
-        			ok = getLangIDStrDescriptor(data, length);
+        			ok = getLangIDStrDescriptor(__responseData, sizeof(__responseData), length);
+        			data = __responseData;
         			break;
 
         		case USBD_IDX_CONFIG_STR:
@@ -395,18 +398,13 @@ bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
         }
 
     	case USBDRequestValueDescriptorType::deviceQualifier: {
-   			ok = getDeviceQualifierDescriptor(data, length);
+   			ok = getDeviceQualifierDescriptor(__responseData, sizeof(__responseData), length);
+   			data = __responseData;
     		break;
     	}
 
-    	case USBDRequestValueDescriptorType::otherSpeedConfiguration: {
-			/*if (pdev->dev_speed == USBD_SPEED_HIGH) {
-				ok = getClass()->classGetOtherSpeedConfigurationDescriptor(data, length);
-				if (ok)
-					data[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
-			}*/
+    	case USBDRequestValueDescriptorType::otherSpeedConfiguration:
     		break;
-    	}
 
     	default:
     		break;
@@ -755,38 +753,6 @@ bool USBDeviceDriver::processEndPointRequest(
 
 				case USBDRequestID::clearFeature:
 					ok = processEndPointRequest_ClearFeature(request);
-#if 0
-					switch (pdev->dev_state) {
-						case USBD_STATE_ADDRESSED:
-							if ((epAddr != 0x00) && (epAddr != 0x80)) {
-								USBD_LL_StallEP(pdev, epAddr);
-								USBD_LL_StallEP(pdev, 0x80U);
-							}
-							else
-								ctlError(request);
-							break;
-
-						case USBD_STATE_CONFIGURED:
-							if (request->value == USB_FEATURE_EP_HALT) {
-								if ((epAddr & 0x7FU) != 0x00U) {
-									USBD_LL_ClearStallEP(pdev, epAddr);
-								}
-								ctlSendStatus();
-
-								/* Get the class index relative to this interface */
-								idx = USBD_CoreFindEP(pdev, epAddr);
-								if (((uint8_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS)) {
-									/* Call the class data out function to manage the request */
-									ret = (USBD_StatusTypeDef)(getClass()->classSetup(request));
-								}
-							}
-							break;
-
-						default:
-							ctlError(request);
-							break;
-					}
-#endif
 					break;
 
 				case USBDRequestID::getStatus:
@@ -874,9 +840,8 @@ bool USBDeviceDriver::processEndPointRequest_SetFeature(
 
 		case USBD_STATE_CONFIGURED:
 			if (request->value == USB_FEATURE_EP_HALT) {
-				if ((epAddr != 0x00) && (epAddr != 0x80) && (request->length == 0x00)) {
+				if ((epAddr != 0x00) && (epAddr != 0x80) && (request->length == 0))
 					USBD_LL_StallEP(pdev, epAddr);
-				}
 			}
 			ctlSendStatus();
 			ok = true;
@@ -949,17 +914,18 @@ bool USBDeviceDriver::processEndPointRequest_GetStatus(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el descriptor del dispositiu.
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitutu en bytes del descriptor.
+/// \param    buffer: Buffer de dades.
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Longitut de les dades transferides al buffer
 /// \return   True si tot es correcte.
-/// \remarks  El descriptor utilitza sembre IAD
 ///
 bool USBDeviceDriver::getDeviceDescriptor(
-	uint8_t* &data,
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
-	auto ptr = __responseData;
-	auto ptrEnd = ptr + sizeof(__responseData);
+	auto ptr = buffer;
+	auto ptrEnd = buffer + bufferSize;
 
 	if (ptr + sizeof(USBD_DeviceDescriptor) > ptrEnd)
 		return false;
@@ -980,8 +946,7 @@ bool USBDeviceDriver::getDeviceDescriptor(
 	descriptor->bMaxConfigurations = 1;
 	ptr += sizeof(USBD_DeviceDescriptor);
 
-	data = __responseData;
-	length = ptr - __responseData;
+	length = ptr - buffer;
 
 	return true;
 }
@@ -989,17 +954,19 @@ bool USBDeviceDriver::getDeviceDescriptor(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el descriptor del dispositiu.
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitutu en bytes del descriptor.
+/// \param    buffer: Buffer de dades.
+/// \param    bufferSize: Tamany del buffer en bytes.
+/// \param    length: Longitut de les dades transferides al buffer.
 /// \return   True si tot es correcte.
 /// \remarks  El descriptor utilitza sembre IAD
 ///
 bool USBDeviceDriver::getDeviceQualifierDescriptor(
-	uint8_t *&data,
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
-	auto ptr = __responseData;
-	auto ptrEnd = ptr + sizeof(__responseData);
+	auto ptr = buffer;
+	auto ptrEnd = buffer + bufferSize;
 
 	if (ptr + sizeof(USBD_DeviceQualifierDescriptor) > ptrEnd)
 		return false;
@@ -1015,8 +982,7 @@ bool USBDeviceDriver::getDeviceQualifierDescriptor(
 	descriptor->bReserved = 0;
 	ptr += sizeof(USBD_DeviceQualifierDescriptor);
 
-	data = __responseData;
-	length = ptr - __responseData;
+	length = ptr - buffer;
 
 	return true;
 }
@@ -1025,20 +991,22 @@ bool USBDeviceDriver::getDeviceQualifierDescriptor(
 /// ----------------------------------------------------------------------
 /// \brief    Obte el descriptor de configuracio. El genera combinant totes
 ///           les clases que suporta el driver
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitutu en bytes del descriptor.
+/// \param    buffer: Buffer de dades.
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Longitutu de les dades transferides al buffer
 /// \return   True si tot es correcte.
 ///
 bool USBDeviceDriver::getConfigurationDescriptor(
-	uint8_t *&data,
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length,
 	bool hs) const {
 
 	uint8_t *ptr;
 	uint8_t *ptrEnd;
 
-	ptr = __responseData;
-	ptrEnd = ptr + sizeof(__responseData);
+	ptr = buffer;
+	ptrEnd = buffer + bufferSize;
 
 	// Configuration descriptor
 	//
@@ -1067,8 +1035,8 @@ bool USBDeviceDriver::getConfigurationDescriptor(
 
 	// Conta i renumera els interfaces
 	//
-	ptr = __responseData;
-	ptrEnd = ptr + descriptor->wTotalLength;
+	ptr =  buffer;
+	ptrEnd = buffer + descriptor->wTotalLength;
 
 	uint8_t ifaceNumber = 0;
 	while (ptr < ptrEnd) {
@@ -1089,7 +1057,6 @@ bool USBDeviceDriver::getConfigurationDescriptor(
 	}
 	descriptor->bNumInterfaces = ifaceNumber;
 
-	data = __responseData;
 	length = descriptor->wTotalLength;
 
 	return true;
@@ -1098,20 +1065,22 @@ bool USBDeviceDriver::getConfigurationDescriptor(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el descriptor de llenguatge
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitutu en bytes del descriptor.
+/// \param    buffer: Buffer de dades.
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Longitut de les dades transferides al buffer
 /// \return   True si tot es correcte.
 ///
 bool USBDeviceDriver::getLangIDStrDescriptor(
-	uint8_t* &data,
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
 	constexpr unsigned maxLanguages = 1;
 
 	auto size = sizeof(USBD_LangIDDescriptorHeader) + ((sizeof(uint16_t) * (maxLanguages - 1)));
 
-	auto ptr = __responseData;
-	auto ptrEnd = ptr + sizeof(__responseData);
+	auto ptr = buffer;
+	auto ptrEnd = buffer + bufferSize;
 
 	if (ptr + size > ptrEnd)
 		return false;
@@ -1121,8 +1090,7 @@ bool USBDeviceDriver::getLangIDStrDescriptor(
 	descriptor->wLangID[0] = _languageID;
 	ptr += size;
 
-	data = __responseData;
-	length = ptr - __responseData;
+	length = ptr - buffer;
 
 	return true;
 }
