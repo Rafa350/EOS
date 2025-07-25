@@ -50,7 +50,7 @@ Result USBDeviceClassMSC::initializeImpl() {
 
 
 int8_t USBDeviceClassMSC::classInitialize(
-	uint8_t cfgidx) {
+	uint8_t configIdx) {
 
 	auto pdev = _drvUSBD->getHandle();
 	auto hs = pdev->dev_speed == USBD_SPEED_HIGH;
@@ -72,7 +72,7 @@ int8_t USBDeviceClassMSC::classInitialize(
 
 
 int8_t USBDeviceClassMSC::classDeinitialize(
-	uint8_t cfgidx) {
+	uint8_t configIdx) {
 
 	auto pdev = _drvUSBD->getHandle();
 
@@ -101,8 +101,8 @@ int8_t USBDeviceClassMSC::classSetup(
 	auto pdev = _drvUSBD->getHandle();
 
 	switch (request->getType()) {
-
 		case USBDRequestType::clase:
+
 			switch (getMSCRequestID(request)) {
 
 				case  MSCRequestID::botGetMaxLun:
@@ -135,7 +135,7 @@ int8_t USBDeviceClassMSC::classSetup(
 				case USBDRequestID::getStatus:
 					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
 						uint16_t status = 0;
-						ctlSendData((uint8_t*) &status, 2); // !Atencio buffer/length
+						ctlSendData((uint8_t*) &status, sizeof(status));
 						ok = true;
 					}
 					break;
@@ -234,12 +234,14 @@ int8_t USBDeviceClassMSC::classIsoOUTIncomplete(
 /// \brief    Obte els descriptors del interface.
 /// \param    buffer: Buffer on deixar les dades.
 /// \param    bufferSize: Tamany del buffer.
-/// \return   El nombre de bytes escrits en el buffer. Zero en cas d'error.
+/// \param    length: El nombre de bytes escrits en el buffer.
+/// \return   True si tot es correcte.
 ///
-unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
+bool USBDeviceClassMSC::buildInterfaceDescriptors(
 	uint8_t *buffer,
 	unsigned bufferSize,
-	bool hs) {
+	bool hs,
+	unsigned &length) {
 
 	auto maxPacketSize = hs ? MSC_MAX_HS_PACKET : MSC_MAX_FS_PACKET;
 
@@ -249,7 +251,7 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	// Interface association descriptor
 	//
 	if (ptr + sizeof(USBD_InterfaceAssociationDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto ifaceAssociationDescriptor = (USBD_InterfaceAssociationDescriptor*) ptr;
 	ifaceAssociationDescriptor->bLength = sizeof(USBD_InterfaceAssociationDescriptor);
 	ifaceAssociationDescriptor->bDescriptorType = (uint8_t) DescriptorType::interfaceAssociation;
@@ -264,7 +266,7 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	// Interface descriptor
 	//
 	if (ptr + sizeof(USBD_InterfaceDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto ifaceDescriptor = (USBD_InterfaceDescriptor*) ptr;
 	ifaceDescriptor->bLength = sizeof(USBD_InterfaceDescriptor);
 	ifaceDescriptor->bDescriptorType = (uint8_t) DescriptorType::interface;
@@ -280,7 +282,7 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	// IN endpoint descriptor
 	//
 	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto inEpDescriptor = (USBD_EndPointDescriptor*) ptr;
 	inEpDescriptor->bLength = sizeof(USBD_EndPointDescriptor);
 	inEpDescriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
@@ -293,7 +295,7 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	// OUT endpoint descriptor
 	//
 	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto outEpDescriptor = (USBD_EndPointDescriptor*) ptr;
 	outEpDescriptor->bLength = sizeof(USBD_EndPointDescriptor);
 	outEpDescriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
@@ -303,7 +305,9 @@ unsigned USBDeviceClassMSC::classGetInterfaceDescriptors(
 	outEpDescriptor->bInterval = 0;
 	ptr += sizeof(USBD_EndPointDescriptor);
 
-	return ptr - buffer;
+	length = ptr - buffer;
+
+	return true;
 }
 
 

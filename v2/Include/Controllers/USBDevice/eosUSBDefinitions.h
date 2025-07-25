@@ -65,7 +65,7 @@
 
 	enum class USBDRequestDirection {
 		hostToDevice = internal::Request_RequestType_Direction::hostToDevice,
-		deviceToHost = internal::Request_RequestType_Direction::deviceToHost
+		deviceToHost = internal::Request_RequestType_Direction::deviceToHost,
 	};
 
 	enum class USBDRequestType {
@@ -129,12 +129,20 @@
 			return (USBDRequestID) requestID;
 		}
 
-		inline USBDRequestValueDescriptorType getValueDescriptorType() const {
+		inline USBDRequestValueDescriptorType getDescriptorType() const {
 			return (USBDRequestValueDescriptorType) (value >> 8);
 		}
 
-		inline uint8_t getValueDescriptorIndex() const {
-			return value & 0xFF;
+		inline uint8_t getDescriptorIndex() const {
+			return value & 0x00FF;
+		}
+
+		inline uint8_t getInterfaceNumber() const {
+			return index & 0x00FF;
+		}
+
+		inline uint8_t getEndPointNumber() const {
+			return index & 0x00FF;
 		}
 
 		template <typename T>
@@ -224,7 +232,7 @@
 		uint8_t bMaxPower;
 	} __attribute__((packed, aligned(1)));
 
-	// Interface association descreiptor (USB spec.)
+	// Interface association descriptor (USB spec.)
 	//
 	struct USBD_InterfaceAssociationDescriptor {
 		uint8_t bLength;

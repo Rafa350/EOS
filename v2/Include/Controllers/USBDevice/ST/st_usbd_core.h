@@ -18,11 +18,10 @@ USBD_StatusTypeDef USBD_Init(USBD_HandleTypeDef *pdev, USBD_DescriptorsTypeDef *
 USBD_StatusTypeDef USBD_DeInit(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_Start(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_Stop(USBD_HandleTypeDef *pdev);
-USBD_StatusTypeDef USBD_RegisterClass(USBD_HandleTypeDef *pdev, eos::USBDeviceClass *pclass);
 
 
-uint8_t USBD_CoreFindIF(USBD_HandleTypeDef *pdev, uint8_t index);
-uint8_t USBD_CoreFindEP(USBD_HandleTypeDef *pdev, uint8_t index);
+//uint8_t USBD_CoreFindIF(USBD_HandleTypeDef *pdev, uint8_t index);
+//uint8_t USBD_CoreFindEP(USBD_HandleTypeDef *pdev, uint8_t index);
 
 USBD_StatusTypeDef USBD_RunTestMode(USBD_HandleTypeDef *pdev);
 USBD_StatusTypeDef USBD_SetClassConfig(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
@@ -69,8 +68,8 @@ uint32_t USBD_LL_GetRxDataSize(USBD_HandleTypeDef *pdev, uint8_t  ep_addr);
 
 void  USBD_LL_Delay(uint32_t Delay);
 
-void *USBD_GetEpDesc(uint8_t *pConfDesc, uint8_t EpAddr);
-USBD_DescHeaderTypeDef *USBD_GetNextDesc(uint8_t *pbuf, uint16_t *ptr);
+//void *USBD_GetEpDesc(uint8_t *pConfDesc, uint8_t EpAddr);
+//USBD_DescHeaderTypeDef *USBD_GetNextDesc(uint8_t *pbuf, uint16_t *ptr);
 
 
 #endif

@@ -114,14 +114,6 @@ USBD_StatusTypeDef USBD_LL_SetupStage(
 	uint8_t *psetup) {
 
 	return pdev->_instance->setupStage(psetup) ? USBD_OK : USBD_FAIL;
-#if 0
-	USBD_ParseSetupRequest(&pdev->request, psetup);
-
-	pdev->ep0_state = USBD_EP0_SETUP;
-	pdev->ep0_data_len = pdev->request.length;
-
-	return pdev->_instance->processRequest(&pdev->request) ? USBD_OK : USBD_FAIL;
-#endif
 }
 
 

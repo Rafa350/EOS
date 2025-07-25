@@ -46,9 +46,6 @@ USBDeviceClassCDC::USBDeviceClassCDC(
 ///
 Result USBDeviceClassCDC::initializeImpl() {
 
-	auto pdev = _drvUSBD->getHandle();
-	USBD_RegisterClass(pdev, this);
-
 	return Results::success;
 }
 
@@ -131,7 +128,7 @@ Result USBDeviceClassCDC::wait(
 /// \brief    Inicializa la clase.
 ///
 int8_t USBDeviceClassCDC::classInitialize(
-	uint8_t cfgidx) {
+	uint8_t configIdx) {
 
 	auto pdev = _drvUSBD->getHandle();
 	bool hs = pdev->dev_speed == USBD_SPEED_HIGH;
@@ -167,7 +164,7 @@ int8_t USBDeviceClassCDC::classInitialize(
 /// \brief     Desinicialitza la clase.
 ///
 int8_t USBDeviceClassCDC::classDeinitialize(
-	uint8_t cfgidx) {
+	uint8_t configIdx) {
 
 	auto pdev = _drvUSBD->getHandle();
 
@@ -353,12 +350,14 @@ int8_t USBDeviceClassCDC::classIsoOUTIncomplete(
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: Tamany del buffer.
 /// \param    hs: Indica velocitat FS
-/// \return   El nombre de bytes escrits en el buffer. Zero en cas d'error.
+/// \param    El nombre de bytes escrits en el buffer.
+/// \return   True si tot es correcte.
 ///
-unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
+bool USBDeviceClassCDC::buildInterfaceDescriptors(
 	uint8_t *buffer,
 	unsigned bufferSize,
-	bool hs) {
+	bool hs,
+	unsigned &length) {
 
 	auto maxPacketSize = hs ? CDC_DATA_HS_MAX_PACKET_SIZE : CDC_DATA_FS_MAX_PACKET_SIZE;
 	auto ptr = buffer;
@@ -367,7 +366,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// Interface association descriptor
 	//
 	if (ptr + sizeof(USBD_InterfaceAssociationDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto ifaceAssociationDescriptor = (USBD_InterfaceAssociationDescriptor*) ptr;
 	ifaceAssociationDescriptor->bLength = sizeof(USBD_InterfaceAssociationDescriptor);
 	ifaceAssociationDescriptor->bDescriptorType = (uint8_t) DescriptorType::interfaceAssociation;
@@ -382,7 +381,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// Interface descriptor 1
 	//
 	if (ptr + sizeof(USBD_InterfaceDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto iface1Descriptor = (USBD_InterfaceDescriptor*) ptr;
 	iface1Descriptor->bLength = sizeof(USBD_InterfaceDescriptor);
 	iface1Descriptor->bDescriptorType = (uint8_t) DescriptorType::interface;
@@ -398,7 +397,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// Header functional descriptor
 	//
 	if (ptr + sizeof(CDCHeaderFunctionalDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto headerFunctionalDescriptor = (CDCHeaderFunctionalDescriptor*) ptr;
 	headerFunctionalDescriptor->bFunctionLength = sizeof(CDCHeaderFunctionalDescriptor);
 	headerFunctionalDescriptor->bDescriptorType = (uint8_t) CDCDescriptorType::cdcInterface;
@@ -409,7 +408,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// Call management functional descriptor
 	//
 	if (ptr + sizeof(CDCCallManagementFunctionalDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto callManagementFunctionalDescriptor = (CDCCallManagementFunctionalDescriptor*) ptr;
 	callManagementFunctionalDescriptor->bFunctionLength = sizeof(CDCCallManagementFunctionalDescriptor);
 	callManagementFunctionalDescriptor->bDescriptorType = (uint8_t) CDCDescriptorType::cdcInterface;
@@ -421,7 +420,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// ACM functional descriptor
 	//
 	if (ptr + sizeof(CDCACMFunctionalDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto acmFunctionalDescriptor = (CDCACMFunctionalDescriptor*) ptr;
 	acmFunctionalDescriptor->bFunctionLength = sizeof(CDCACMFunctionalDescriptor);
 	acmFunctionalDescriptor->bDescriptorType = (uint8_t) CDCDescriptorType::cdcInterface;
@@ -432,7 +431,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// Union functional descriptor
 	//
 	if (ptr + sizeof(CDCUnionFunctionalDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto unionFunctionalDescriptor = (CDCUnionFunctionalDescriptor*) ptr;
 	unionFunctionalDescriptor->bFunctionLength = sizeof(CDCUnionFunctionalDescriptor);
 	unionFunctionalDescriptor->bDescriptorType = (uint8_t) CDCDescriptorType::cdcInterface;
@@ -444,7 +443,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// CMD endpoint descriptor
 	//
 	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto cmdEpDescriptor = (USBD_EndPointDescriptor*) ptr;
 	cmdEpDescriptor->bLength = sizeof(USBD_EndPointDescriptor);
 	cmdEpDescriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
@@ -457,7 +456,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// Interface descriptor 2
 	//
 	if (ptr + sizeof(USBD_InterfaceDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto iface2Descriptor = (USBD_InterfaceDescriptor*) ptr;
 	iface2Descriptor->bLength = sizeof(USBD_InterfaceDescriptor);
 	iface2Descriptor->bDescriptorType = (uint8_t) DescriptorType::interface;
@@ -473,7 +472,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// OUT endpoint descriptor
 	//
 	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto outEpDescriptor = (USBD_EndPointDescriptor*) ptr;
 	outEpDescriptor->bLength = sizeof(USBD_EndPointDescriptor);
 	outEpDescriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
@@ -486,7 +485,7 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	// IN endpoint destriptor
 	//
 	if (ptr + sizeof(USBD_EndPointDescriptor) > ptrEnd)
-		return 0;
+		return false;
 	auto inEpDescriptor = (USBD_EndPointDescriptor*) ptr;
 	inEpDescriptor->bLength = sizeof(USBD_EndPointDescriptor);
 	inEpDescriptor->bDescriptorType = (uint8_t) DescriptorType::endPoint;
@@ -496,7 +495,9 @@ unsigned USBDeviceClassCDC::classGetInterfaceDescriptors(
 	inEpDescriptor->bInterval = 0;
 	ptr += sizeof(USBD_EndPointDescriptor);
 
-	return ptr - buffer;
+	length = ptr - buffer;
+
+	return true;
 }
 
 

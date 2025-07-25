@@ -23,9 +23,14 @@ namespace eos {
     class EpAddr final {
     	private:
     		uint8_t _addr;
+
     	public:
     		constexpr explicit EpAddr(uint8_t addr) : _addr {addr} {};
     		constexpr EpAddr(const EpAddr &epAddr) : _addr {epAddr._addr} {}
+
+    		constexpr bool isEP0() const { return (_addr & 0x7F) == 0; }
+    		constexpr bool isIN() const { return (_addr & 0x80) == 0x80; }
+    		constexpr bool isOUT() const { return (_addr & 0x80) == 0; }
 
     		constexpr EpAddr& operator=(const EpAddr &epAddr) { _addr = epAddr._addr; return *this; }
     		constexpr operator uint8_t() const { return _addr; }
@@ -72,6 +77,7 @@ namespace eos {
 			bool processRequest(USBD_SetupReqTypedef *request);
 
 			bool processDeviceRequest(USBD_SetupReqTypedef *request);
+			bool processDeviceRequestOnClass(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_GetDescriptor(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_SetAddress(USBD_SetupReqTypedef *request);
 			bool processDeviceRequest_SetFeature(USBD_SetupReqTypedef *request);
@@ -81,22 +87,25 @@ namespace eos {
 			bool processDeviceRequest_GetStatus(USBD_SetupReqTypedef *request);
 
 			bool processInterfaceRequest(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequestOnClass(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequest_GetStatus(USBD_SetupReqTypedef *request);
 
 			bool processEndPointRequest(USBD_SetupReqTypedef *request);
+			bool processEndPointRequestOnClass(USBD_SetupReqTypedef *request);
 			bool processEndPointRequest_SetFeature(USBD_SetupReqTypedef *request);
 			bool processEndPointRequest_ClearFeature(USBD_SetupReqTypedef *request);
 			bool processEndPointRequest_GetStatus(USBD_SetupReqTypedef *request);
 
-			bool getDeviceDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
-			bool getDeviceQualifierDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
-			bool getConfigurationDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length, bool hr) const;
-			bool getLangIDStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
-			bool getManufacturerStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getProductStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getInterfaceStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getConfigurationStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getSerialStrDescriptor(uint8_t *&data, unsigned &length) const;
-			bool getStringDescriptor(const char *str, uint8_t *&data, unsigned &length) const;
+			bool buildDeviceDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool buildDeviceQualifierDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool buildConfigurationDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length, bool hr) const;
+			bool buildLangIDStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool buildManufacturerStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool buildProductStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool buildInterfaceStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool buildConfigurationStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			bool buildSerialStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
+			static bool buildStringDescriptor(const char *str, uint8_t *buffer, unsigned bufferSize, unsigned &length);
 
 			void ctlError(USBD_SetupReqTypedef *request);
 			void ctlSendStatus();
@@ -162,8 +171,8 @@ namespace eos {
 			virtual bool usesEndPoint(EpAddr epAddr) const = 0;
 			virtual bool usesIface(uint8_t iface) const = 0;
 
-			virtual int8_t classInitialize(uint8_t cfgidx) = 0;
-			virtual int8_t classDeinitialize(uint8_t cfgidx) = 0;
+			virtual int8_t classInitialize(uint8_t confIdx) = 0;
+			virtual int8_t classDeinitialize(uint8_t confIdx) = 0;
 
 			virtual int8_t classSetup(USBD_SetupReqTypedef *req) = 0;
 
@@ -174,7 +183,8 @@ namespace eos {
 			virtual int8_t classDataOut(EpAddr epAddr) = 0;
 			virtual int8_t classIsoINIncomplete(EpAddr epAddr) = 0;
 			virtual int8_t classIsoOUTIncomplete(EpAddr epAddr) = 0;
-			virtual unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) = 0;
+
+			virtual bool buildInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs, unsigned &length) = 0;
 	};
 }
 

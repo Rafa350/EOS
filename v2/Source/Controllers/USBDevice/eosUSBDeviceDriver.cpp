@@ -112,28 +112,28 @@ Result USBDeviceDriver::stop() {
 USBD_StatusTypeDef USBDeviceDriver::setClassConfig(
 	uint8_t configIdx) {
 
-	USBD_StatusTypeDef ret = USBD_OK;
+	auto ok = true;
 
 	for (auto cls: _classes) {
 		if (cls->classInitialize(configIdx) != USBD_OK)
-			ret = USBD_FAIL;
+			ok = false;
 	}
 
-	return ret;
+	return ok ? USBD_OK : USBD_FAIL;
 }
 
 
 USBD_StatusTypeDef USBDeviceDriver::clearClassConfig(
 	uint8_t configIdx) {
 
-	USBD_StatusTypeDef ret = USBD_OK;
+	auto ok = true;
 
 	for (auto cls: _classes) {
 		if (cls->classDeinitialize(configIdx) != USBD_OK)
-			ret = USBD_FAIL;
+			ok = false;
 	}
 
-	return ret;
+	return ok ? USBD_OK : USBD_FAIL;
 }
 
 
@@ -207,9 +207,8 @@ bool USBDeviceDriver::dataOutStage(
 
 	else {
 		auto cls = getClassFromEndPoint(epAddr);
-		if (cls == nullptr)
-			return false;
-		ok = cls->classDataOut(epAddr) == USBD_OK;
+		if (cls != nullptr)
+			ok = cls->classDataOut(epAddr) == USBD_OK;
 	}
 
 	return ok;
@@ -230,9 +229,8 @@ bool USBDeviceDriver::dataInStage(
 
 	else {
 		auto cls = getClassFromEndPoint(epAddr);
-		if (cls == nullptr)
-			return false;
-		ok = cls->classDataIn(epAddr) == USBD_OK;
+		if (cls != nullptr)
+			ok = cls->classDataIn(epAddr) == USBD_OK;
 	}
 
 	return ok;
@@ -265,7 +263,7 @@ bool USBDeviceDriver::processRequest(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una solicitut de tipus 'device'
+/// \brief    Procesa una solicitut dirigides al dispositiu
 /// \param    request: La solicitut.
 /// \return   True si tot es correcte.
 ///
@@ -277,12 +275,9 @@ bool USBDeviceDriver::processDeviceRequest(
 	switch (request->getType()) {
 
 		case USBDRequestType::clase:
-		case USBDRequestType::vendor: {
-			// TODO: Revisar
-			auto cls = getClass();
-			ok = cls->classSetup(request) == USBD_OK;
+		case USBDRequestType::vendor:
+			processDeviceRequestOnClass(request);
 			break;
-		}
 
 		case USBDRequestType::standard:
 			switch (request->getRequestID()) {
@@ -338,6 +333,27 @@ bool USBDeviceDriver::processDeviceRequest(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut dirigides al dispositiu
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::processDeviceRequestOnClass(
+	USBD_SetupReqTypedef *request) {
+
+	bool ok = false;
+
+	// TODO:: Revisar
+	for (auto cls: _classes) {
+		ok = cls->classSetup(request) == USBD_OK;
+		if (!ok)
+			break;
+	}
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa una solicitut 'getDescriptor'
 /// \param    request: La solicitut.
 /// \return   True si tot es correcte.
@@ -345,75 +361,76 @@ bool USBDeviceDriver::processDeviceRequest(
 bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
 	USBD_SetupReqTypedef *request) {
 
-	unsigned length = 0;
-	uint8_t *data = nullptr;
-
 	auto ok = false;
     auto pdev = getHandle();
 
-    switch (request->getValueDescriptorType()) {
+    auto buffer = __responseData;
+    auto bufferSize = sizeof(__responseData);
+    unsigned length;
 
-        case USBDRequestValueDescriptorType::device:
-            ok = getDeviceDescriptor(__responseData, sizeof(__responseData), length);
-           	data = __responseData;
+    switch (request->getDescriptorType()) {
+
+    	case USBDRequestValueDescriptorType::bos:
+    		break;
+
+    	case USBDRequestValueDescriptorType::iad:
+    		break;
+
+    	case USBDRequestValueDescriptorType::interface:
+    		break;
+
+    	case USBDRequestValueDescriptorType::endPoint:
+    		break;
+
+    	case USBDRequestValueDescriptorType::device:
+            ok = buildDeviceDescriptor(buffer, bufferSize, length);
             break;
 
-        case USBDRequestValueDescriptorType::configuration:
-        	ok = getConfigurationDescriptor(__responseData, sizeof(__responseData), length, pdev->dev_speed == USBD_SPEED_HIGH);
-        	data = __responseData;
-        	break;
-
-        case USBDRequestValueDescriptorType::string: {
-        	auto idx = request->getValueDescriptorIndex();
-        	switch (idx) {
-        		case USBD_IDX_LANGID_STR:
-        			ok = getLangIDStrDescriptor(__responseData, sizeof(__responseData), length);
-        			data = __responseData;
-        			break;
-
-        		case USBD_IDX_CONFIG_STR:
-        			ok = getConfigurationStrDescriptor(data, length);
-        			break;
-
-        		case USBD_IDX_INTERFACE_STR:
-        			ok = getInterfaceStrDescriptor(data, length);
-        			break;
-
-        		case USBD_IDX_MFC_STR:
-        			ok = getManufacturerStrDescriptor(data, length);
-        			break;
-
-        		case USBD_IDX_PRODUCT_STR:
-        			ok = getProductStrDescriptor(data, length);
-        			break;
-
-        		case USBD_IDX_SERIAL_STR:
-        			ok = getSerialStrDescriptor(data, length);
-        			break;
-
-        		default:
-        			break;
-        	}
-        	break;
-        }
-
     	case USBDRequestValueDescriptorType::deviceQualifier: {
-   			ok = getDeviceQualifierDescriptor(__responseData, sizeof(__responseData), length);
-   			data = __responseData;
+   			ok = buildDeviceQualifierDescriptor(buffer, bufferSize, length);
     		break;
     	}
+
+    	case USBDRequestValueDescriptorType::configuration:
+        	ok = buildConfigurationDescriptor(buffer, bufferSize, length, pdev->dev_speed == USBD_SPEED_HIGH);
+        	break;
 
     	case USBDRequestValueDescriptorType::otherSpeedConfiguration:
     		break;
 
-    	default:
-    		break;
+    	case USBDRequestValueDescriptorType::string:
+        	switch (request->getDescriptorIndex()) {
+        		case USBD_IDX_LANGID_STR:
+        			ok = buildLangIDStrDescriptor(buffer, bufferSize, length);
+        			break;
+
+        		case USBD_IDX_CONFIG_STR:
+        			ok = buildConfigurationStrDescriptor(buffer, bufferSize, length);
+        			break;
+
+        		case USBD_IDX_INTERFACE_STR:
+        			ok = buildInterfaceStrDescriptor(buffer, bufferSize, length);
+        			break;
+
+        		case USBD_IDX_MFC_STR:
+        			ok = buildManufacturerStrDescriptor(buffer, bufferSize, length);
+        			break;
+
+        		case USBD_IDX_PRODUCT_STR:
+        			ok = buildProductStrDescriptor(buffer, bufferSize, length);
+        			break;
+
+        		case USBD_IDX_SERIAL_STR:
+        			ok = buildSerialStrDescriptor(buffer, bufferSize, length);
+        			break;
+        	}
+        	break;
     }
 
     if (ok) {
-		if (request->length != 0) {
+		if (request->length > 0) {
 			length = min(length, (unsigned) request->length);
-			ctlSendData(data, length);
+			ctlSendData(buffer, length);
 		}
 		else
 			ctlSendStatus();
@@ -442,7 +459,6 @@ bool USBDeviceDriver::processDeviceRequest_SetAddress(
 
 		uint8_t addr = request->value;
 	    if (pdev->dev_state != USBD_STATE_CONFIGURED) {
-
 	    	pdev->dev_address = addr;
 	    	USBD_LL_SetUSBAddress(pdev, addr);
 	    	ctlSendStatus();
@@ -568,7 +584,6 @@ bool USBDeviceDriver::processDeviceRequest_SetConfiguration(
 	static uint8_t cfgidx;
 
 	cfgidx = (uint8_t)(request->value);
-
 	if (cfgidx > USBD_MAX_NUM_CONFIGURATION) {
 		ctlError(request);
 		return false;
@@ -646,10 +661,9 @@ bool USBDeviceDriver::processDeviceRequest_GetStatus(
     bool ok = false;
     auto pdev = getHandle();
 
-    switch (pdev->dev_state) {
-    	case USBD_STATE_DEFAULT:
-	    case USBD_STATE_ADDRESSED:
-	    case USBD_STATE_CONFIGURED:
+    if ((pdev->dev_state == USBD_STATE_DEFAULT) ||
+	    (pdev->dev_state == USBD_STATE_ADDRESSED) ||
+	    (pdev->dev_state == USBD_STATE_CONFIGURED)) {
 	    	if (request->length == 2) {
 #if (USBD_SELF_POWERED == 1)
 	    		pdev->dev_config_status = USB_CONFIG_SELF_POWERED;
@@ -663,7 +677,6 @@ bool USBDeviceDriver::processDeviceRequest_GetStatus(
 	    		ctlSendData((uint8_t*) &pdev->dev_config_status, 2);
 	    		ok = true;
 	    	}
-	    	break;
     }
 
     if (!ok)
@@ -674,7 +687,7 @@ bool USBDeviceDriver::processDeviceRequest_GetStatus(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una solicitut de tipus 'interface'
+/// \brief    Procesa una solicitut dirigides al interficie
 /// \param    request: La solicitut.
 /// \return   True si tot es correcte.
 ///
@@ -682,37 +695,84 @@ bool USBDeviceDriver::processInterfaceRequest(
 	USBD_SetupReqTypedef *request) {
 
 	auto ok = false;
-    auto pdev = getHandle();
 
+#if 1
 	switch (request->getType()) {
-
 		case USBDRequestType::clase:
 		case USBDRequestType::vendor:
+			ok = processInterfaceRequestOnClass(request);
+			break;
+
 		case USBDRequestType::standard:
-
-			switch (pdev->dev_state) {
-
-				case USBD_STATE_DEFAULT:
-				case USBD_STATE_ADDRESSED:
-				case USBD_STATE_CONFIGURED: {
-
-					auto iface = LOBYTE(request->index);
-					auto cls = getClassFromInterface(iface);
-					if (cls != nullptr) {
-						ok = cls->classSetup(request) == USBD_OK;
-						if ((request->length == 0) && (ok))
-							ctlSendStatus();
-					}
+			switch (request->getRequestID()) {
+				case USBDRequestID::getStatus:
+					ok = processInterfaceRequest_GetStatus(request);
 					break;
-				}
+
+				default:
+					ok = processInterfaceRequestOnClass(request);
+					break;
 			}
 			break;
 	}
 
-	if (!ok)
-		ctlError(request);
+	return true;
+#else
+	auto pdev = getHandle();
+	auto state = pdev->dev_state;
+	if ((state == USBD_STATE_DEFAULT) ||
+		(state == USBD_STATE_ADDRESSED) ||
+		(state == USBD_STATE_CONFIGURED)) {
+
+		auto iface = request->getInterfaceNumber();
+		auto cls = getClassFromInterface(iface);
+		if (cls != nullptr) {
+			ok = cls->classSetup(request) == USBD_OK;
+			// TODO: Resoldre el ctlXXX en la funcio classSetup
+			if (ok) {
+				if (request->length == 0)
+					ctlSendStatus();
+			}
+			else
+				ctlError(request);
+		}
+	}
+#endif
+    return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut dirigides al interficie
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::processInterfaceRequestOnClass(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+
+	auto iface = request->getInterfaceNumber();
+	auto cls = getClassFromInterface(iface);
+	if (cls != nullptr)
+		ok = cls->classSetup(request) == USBD_OK;
 
 	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut 'getStatus'
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::processInterfaceRequest_GetStatus(
+	USBD_SetupReqTypedef *request) {
+
+	uint16_t status = 0;
+
+	ctlSendData((uint8_t*) &status, sizeof(status));
+	return true;
 }
 
 
@@ -725,81 +785,29 @@ bool USBDeviceDriver::processEndPointRequest(
 	USBD_SetupReqTypedef *request) {
 
 	auto ok = false;
-	USBD_EndpointTypeDef *pep;
-	uint8_t idx;
-	USBD_StatusTypeDef ret = USBD_OK;
-
-	// Provisional per proves
-    auto pdev = getHandle();
-
-	auto epAddr = EpAddr(LOBYTE(request->index));
 
 	switch (request->getType()) {
 
 		case USBDRequestType::clase:
-		case USBDRequestType::vendor: {
-			auto cls = getClassFromEndPoint(epAddr);
-			if (cls != nullptr)
-				ok = cls->classSetup(request) == USBD_OK;
+		case USBDRequestType::vendor:
+			ok = processEndPointRequestOnClass(request);
 			break;
-		}
 
 		case USBDRequestType::standard:
 			switch (request->getRequestID()) {
-
 				case USBDRequestID::setFeature:
-					ok = processEndPointRequest_SetFeature(request);
+					if (request->getDirection() == USBDRequestDirection::hostToDevice)
+						ok = processEndPointRequest_SetFeature(request);
 					break;
 
 				case USBDRequestID::clearFeature:
-					ok = processEndPointRequest_ClearFeature(request);
+					if (request->getDirection() == USBDRequestDirection::hostToDevice)
+						ok = processEndPointRequest_ClearFeature(request);
 					break;
 
 				case USBDRequestID::getStatus:
-					switch (pdev->dev_state) {
-						case USBD_STATE_ADDRESSED:
-							if ((epAddr != 0x00U) && (epAddr != 0x80U)) {
-								ctlError(request);
-								break;
-							}
-							pep = ((epAddr & 0x80U) == 0x80U) ? &pdev->ep_in[epAddr & 0x7FU] : &pdev->ep_out[epAddr & 0x7FU];
-							pep->status = 0x0000U;
-
-							ctlSendData((uint8_t *)&pep->status, 2U);
-							break;
-
-						case USBD_STATE_CONFIGURED:
-							if ((epAddr & 0x80U) == 0x80U) {
-								if (pdev->ep_in[epAddr & 0xFU].is_used == 0U) {
-									ctlError(request);
-									break;
-								}
-							}
-							else {
-								if (pdev->ep_out[epAddr & 0xFU].is_used == 0U) {
-									ctlError(request);
-									break;
-								}
-							}
-
-							pep = ((epAddr & 0x80U) == 0x80U) ? &pdev->ep_in[epAddr & 0x7FU] : &pdev->ep_out[epAddr & 0x7FU];
-							if ((epAddr == 0x00U) || (epAddr == 0x80U)) {
-								pep->status = 0x0000U;
-							}
-							else if (USBD_LL_IsStallEP(pdev, epAddr) != 0U) {
-								pep->status = 0x0001U;
-							}
-							else {
-								pep->status = 0x0000U;
-							}
-
-							ctlSendData((uint8_t *)&pep->status, 2U);
-							break;
-
-						default:
-							ctlError(request);
-							break;
-					}
+					if (request->getDirection() == USBDRequestDirection::deviceToHost)
+						ok = processEndPointRequest_GetStatus(request);
 					break;
 
 				default:
@@ -813,7 +821,26 @@ bool USBDeviceDriver::processEndPointRequest(
 			break;
 	}
 
-	return ret == USBD_OK;
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut de tipus 'endPoint'
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceDriver::processEndPointRequestOnClass(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+
+	auto epAddr = EpAddr(request->getEndPointNumber());
+	auto cls = getClassFromEndPoint(epAddr);
+	if (cls != nullptr)
+		ok = cls->classSetup(request) == USBD_OK;
+
+	return ok;
 }
 
 
@@ -865,34 +892,35 @@ bool USBDeviceDriver::processEndPointRequest_ClearFeature(
 
 	auto ok = false;
 	auto pdev = getHandle();
-	auto epAddr = EpAddr(LOBYTE(request->index));
+	auto epAddr = EpAddr(request->getEndPointNumber());
 
 	switch (pdev->dev_state) {
 		case USBD_STATE_ADDRESSED:
-			if ((epAddr != 0x00) && (epAddr != 0x80)) {
+			if (!epAddr.isEP0()) {
 				USBD_LL_StallEP(pdev, epAddr);
 				USBD_LL_StallEP(pdev, 0x80);
 				ok = true;
 			}
+			else
+				ctlError(request);
 			break;
 
 		case USBD_STATE_CONFIGURED:
 			if (request->value == USB_FEATURE_EP_HALT) {
-				if ((epAddr & 0x7F) != 0x00)
+				if (epAddr.isEP0())
 					USBD_LL_ClearStallEP(pdev, epAddr);
 				ctlSendStatus();
 				auto cls = getClassFromEndPoint(epAddr);
 				if (cls != nullptr)
 					ok = cls->classSetup(request) == USBD_OK;
 			}
+			else
+				ctlError(request);
 			break;
 
 		default:
-			break;
+			ctlError(request);
 	}
-
-	if (!ok)
-		ctlError(request);
 
 	return ok;
 }
@@ -907,6 +935,46 @@ bool USBDeviceDriver::processEndPointRequest_GetStatus(
 	USBD_SetupReqTypedef *request) {
 
 	auto ok = false;
+	auto pdev = getHandle();
+	auto epAddr = EpAddr(request->getEndPointNumber());
+
+	USBD_EndpointTypeDef *pep;
+
+	switch (pdev->dev_state) {
+		case USBD_STATE_ADDRESSED:
+			if (epAddr.isEP0()) {
+				pep = ((epAddr & 0x80) == 0x80) ? &pdev->ep_in[epAddr & 0x7F] : &pdev->ep_out[epAddr & 0x7F];
+				pep->status = 0x0000;
+				ctlSendData((uint8_t*) &pep->status, 2);
+				ok = true;
+			}
+			break;
+
+		case USBD_STATE_CONFIGURED:
+			if ((epAddr & 0x80) == 0x80) {
+				if (pdev->ep_in[epAddr & 0x0F].is_used == 0) {
+					break;
+				}
+			}
+			else {
+				if (pdev->ep_out[epAddr & 0x0F].is_used == 0) {
+					break;
+				}
+			}
+			pep = ((epAddr & 0x80) == 0x80) ? &pdev->ep_in[epAddr & 0x7F] : &pdev->ep_out[epAddr & 0x7F];
+			if ((epAddr == 0x00) || (epAddr == 0x80))
+				pep->status = 0x0000;
+			else if (USBD_LL_IsStallEP(pdev, epAddr) != 0)
+				pep->status = 0x0001;
+			else
+				pep->status = 0x0000;
+			ctlSendData((uint8_t*) &pep->status, 2);
+			ok = true;
+			break;
+	}
+
+	if (!ok)
+		ctlError(request);
 
 	return ok;
 }
@@ -919,7 +987,7 @@ bool USBDeviceDriver::processEndPointRequest_GetStatus(
 /// \param    length: Longitut de les dades transferides al buffer
 /// \return   True si tot es correcte.
 ///
-bool USBDeviceDriver::getDeviceDescriptor(
+bool USBDeviceDriver::buildDeviceDescriptor(
 	uint8_t *buffer,
 	unsigned bufferSize,
 	unsigned &length) const {
@@ -960,7 +1028,7 @@ bool USBDeviceDriver::getDeviceDescriptor(
 /// \return   True si tot es correcte.
 /// \remarks  El descriptor utilitza sembre IAD
 ///
-bool USBDeviceDriver::getDeviceQualifierDescriptor(
+bool USBDeviceDriver::buildDeviceQualifierDescriptor(
 	uint8_t *buffer,
 	unsigned bufferSize,
 	unsigned &length) const {
@@ -996,7 +1064,7 @@ bool USBDeviceDriver::getDeviceQualifierDescriptor(
 /// \param    length: Longitutu de les dades transferides al buffer
 /// \return   True si tot es correcte.
 ///
-bool USBDeviceDriver::getConfigurationDescriptor(
+bool USBDeviceDriver::buildConfigurationDescriptor(
 	uint8_t *buffer,
 	unsigned bufferSize,
 	unsigned &length,
@@ -1025,9 +1093,9 @@ bool USBDeviceDriver::getConfigurationDescriptor(
 
 	// Interface descriptors
 	//
+	unsigned ifaceLength;
 	for (auto cls: _classes) {
-		auto ifaceLength = cls->classGetInterfaceDescriptors(ptr, ptrEnd - ptr, hs);
-		if (ifaceLength == 0)
+		if (!cls->buildInterfaceDescriptors(ptr, ptrEnd - ptr, hs, ifaceLength))
 			return false;
 		descriptor->wTotalLength += ifaceLength;
 		ptr += ifaceLength;
@@ -1070,7 +1138,7 @@ bool USBDeviceDriver::getConfigurationDescriptor(
 /// \param    length: Longitut de les dades transferides al buffer
 /// \return   True si tot es correcte.
 ///
-bool USBDeviceDriver::getLangIDStrDescriptor(
+bool USBDeviceDriver::buildLangIDStrDescriptor(
 	uint8_t *buffer,
 	unsigned bufferSize,
 	unsigned &length) const {
@@ -1098,94 +1166,107 @@ bool USBDeviceDriver::getLangIDStrDescriptor(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el discriptor de la string del nom del fabricant.
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitut del descriptor.
-/// \return   Trus si tot es correcte.
+/// \param    buffer: Buffer de dades
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Tamany de les dades transferides al buffer.
+/// \return   True si tot es correcte.
 ///
-bool USBDeviceDriver::getManufacturerStrDescriptor(
-	uint8_t* &data,
+bool USBDeviceDriver::buildManufacturerStrDescriptor(
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
-    return getStringDescriptor(_manufacturerStr, data, length);
+    return buildStringDescriptor(_manufacturerStr, buffer, bufferSize, length);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el discriptor de la string del nom del producte.
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitut del descriptor.
-/// \return   Trus si tot es correcte.
+/// \param    buffer: Buffer de dades
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Tamany de les dades transferides al buffer.
+/// \return   True si tot es correcte.
 ///
-bool USBDeviceDriver::getProductStrDescriptor(
-	uint8_t* &data,
+bool USBDeviceDriver::buildProductStrDescriptor(
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
-    return getStringDescriptor(_productStr, data, length);
+    return buildStringDescriptor(_productStr, buffer, bufferSize, length);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el discriptor de la string del interface.
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitut del descriptor.
-/// \return   Trus si tot es correcte.
+/// \param    buffer: Buffer de dades
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Tamany de les dades transferides al buffer.
+/// \return   True si tot es correcte.
 ///
-bool USBDeviceDriver::getInterfaceStrDescriptor(
-	uint8_t* &data,
+bool USBDeviceDriver::buildInterfaceStrDescriptor(
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
-    return getStringDescriptor("__interfaceStr__", data, length);
+    return buildStringDescriptor("__interfaceStr__", buffer, bufferSize, length);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el discriptor de la string de la configuracio.
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitut del descriptor.
-/// \return   Trus si tot es correcte.
+/// \param    buffer: Buffer de dades
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Tamany de les dades transferides al buffer.
+/// \return   True si tot es correcte.
+
 ///
-bool USBDeviceDriver::getConfigurationStrDescriptor(
-	uint8_t* &data,
+bool USBDeviceDriver::buildConfigurationStrDescriptor(
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
-    return getStringDescriptor("__default_configuration__", data, length);
+    return buildStringDescriptor("__default_configuration__", buffer, bufferSize, length);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el discriptor de la string del numero de serie.
-/// \param    data: Punter al descriptor.
-/// \param    length: Longitut del descriptor.
-/// \return   Trus si tot es correcte.
+/// \param    buffer: Buffer de dades
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Tamany de les dades transferides al buffer.
+/// \return   True si tot es correcte.
+
 ///
-bool USBDeviceDriver::getSerialStrDescriptor(
-	uint8_t *&data,
+bool USBDeviceDriver::buildSerialStrDescriptor(
+	uint8_t *buffer,
+	unsigned bufferSize,
 	unsigned &length) const {
 
-	return getStringDescriptor(_serialNumberStr, data, length);
+	return buildStringDescriptor(_serialNumberStr, buffer, bufferSize, length);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte un descriptor de cadena
 /// \param    str: El punter a la string.
-/// \param    data: Punter al descriptor.
-/// \param    length: La longitut del descriptor.
+/// \param    buffer: Buffer de dades
+/// \param    bufferSize: Tamany del buffer de dades.
+/// \param    length: Tamany de les dades transferides al buffer.
 /// \return   True si tot es correcte.
-/// \remarks  Retorna un buffer intern estatic.
 ///
-bool USBDeviceDriver::getStringDescriptor(
+bool USBDeviceDriver::buildStringDescriptor(
 	const char *str,
-	uint8_t *&data,
-	unsigned &length) const {
+	uint8_t *buffer,
+	unsigned bufferSize,
+	unsigned &length) {
 
 	if (str == nullptr)
 		return false;
 
-	auto size = sizeof(USBD_StringDescriptorHeader) + (sizeof(uint16_t) * ((strlen(str) - 1)));
+	auto ptr = buffer;
+	auto ptrEnd = buffer + bufferSize;
 
-	auto ptr = __responseData;
-	auto ptrEnd = ptr + sizeof(__responseData);
+	auto size = sizeof(USBD_StringDescriptorHeader) + (sizeof(uint16_t) * ((strlen(str) - 1)));
 
 	if (ptr + size > ptrEnd)
 		return false;
@@ -1196,8 +1277,7 @@ bool USBDeviceDriver::getStringDescriptor(
 		descriptor->wChar[i] = (uint16_t) str[i];
 	ptr += size;
 
-	data = __responseData;
-	length = ptr - __responseData;
+	length = ptr - buffer;
 
 	return true;
 }

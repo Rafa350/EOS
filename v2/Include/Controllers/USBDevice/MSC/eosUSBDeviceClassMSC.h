@@ -60,8 +60,8 @@ namespace eos {
 		public:
 			USBDeviceClassMSC(USBDeviceDriver *drvUSBD, const USBDeviceClassMSCConfiguration *configuration);
 
-			int8_t classInitialize(uint8_t cfgidx) override;
-			int8_t classDeinitialize(uint8_t cfgidx) override;
+			int8_t classInitialize(uint8_t configIdx) override;
+			int8_t classDeinitialize(uint8_t configIdx) override;
 
 			int8_t classSetup(USBD_SetupReqTypedef *req) override;
 
@@ -72,7 +72,8 @@ namespace eos {
 			int8_t classDataOut(EpAddr epAddr) override;
 			int8_t classIsoINIncomplete(EpAddr epAddr) override;
 			int8_t classIsoOUTIncomplete(EpAddr epAddr) override;
-			unsigned classGetInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs) override;
+
+			bool buildInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs, unsigned &length) override;
 
 			bool usesEndPoint(EpAddr epAddr) const override;
 			bool usesIface(uint8_t iface) const override;

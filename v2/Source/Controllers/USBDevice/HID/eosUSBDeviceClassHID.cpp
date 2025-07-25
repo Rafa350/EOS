@@ -34,9 +34,6 @@ USBDeviceClassHID::USBDeviceClassHID(
 ///
 Result USBDeviceClassHID::initialize() {
 
-	auto pdev = _drvUSBD->getHandle();
-	USBD_RegisterClass(pdev, this);
-
 	return Results::success;
 }
 
