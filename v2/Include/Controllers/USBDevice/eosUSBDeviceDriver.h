@@ -107,9 +107,11 @@ namespace eos {
 			bool buildSerialStrDescriptor(uint8_t *buffer, unsigned bufferSize, unsigned &length) const;
 			static bool buildStringDescriptor(const char *str, uint8_t *buffer, unsigned bufferSize, unsigned &length);
 
-			void ctlError(USBD_SetupReqTypedef *request);
+			void ctlError();
 			void ctlSendStatus();
 			void ctlSendData(uint8_t *data, unsigned length);
+			void ctlContinueSendData(uint8_t *data, unsigned length);
+			void ctlPrepareRx(uint8_t *data, unsigned length);
 
 		public:
 			USBDeviceDriver(const USBDeviceDriverConfiguration *cfg);
@@ -159,7 +161,7 @@ namespace eos {
 			virtual Result initializeImpl() = 0;
 			static uint8_t reserveIface(uint8_t ifaceQty);
 
-			void ctlError(USBD_SetupReqTypedef *request);
+			void ctlError();
 			void ctlSendStatus();
 			void ctlSendData(uint8_t *data, unsigned length);
 
@@ -183,6 +185,8 @@ namespace eos {
 			virtual int8_t classDataOut(EpAddr epAddr) = 0;
 			virtual int8_t classIsoINIncomplete(EpAddr epAddr) = 0;
 			virtual int8_t classIsoOUTIncomplete(EpAddr epAddr) = 0;
+
+			virtual bool processInterfaceRequest(USBD_SetupReqTypedef *request);
 
 			virtual bool buildInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs, unsigned &length) = 0;
 	};

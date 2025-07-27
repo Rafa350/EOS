@@ -43,6 +43,9 @@ namespace eos {
 			USBD_MSC_BOT_HandleTypeDef _msc;
 
 		private:
+			bool processInterfaceRequest_GetMaxLUN(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequest_BotReset(USBD_SetupReqTypedef *request);
+
 			void botInitialize();
 			void botDeInitialize();
 			void botReset();
@@ -72,6 +75,8 @@ namespace eos {
 			int8_t classDataOut(EpAddr epAddr) override;
 			int8_t classIsoINIncomplete(EpAddr epAddr) override;
 			int8_t classIsoOUTIncomplete(EpAddr epAddr) override;
+
+			bool processInterfaceRequest(USBD_SetupReqTypedef *request) override;
 
 			bool buildInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs, unsigned &length) override;
 

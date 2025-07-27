@@ -49,6 +49,147 @@ Result USBDeviceClassMSC::initializeImpl() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut dirigides al interficie
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceClassMSC::processInterfaceRequest(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+	auto pdev = _drvUSBD->getHandle();
+
+	switch (request->getType()) {
+		case USBDRequestType::clase:
+
+			switch (getMSCRequestID(request)) {
+				case  MSCRequestID::botGetMaxLun:
+					return processInterfaceRequest_GetMaxLUN(request);
+
+				case MSCRequestID::botReset:
+					return processInterfaceRequest_BotReset(request);
+
+				default:
+					ctlError();
+					return false;
+			}
+			break;
+
+		case USBDRequestType::standard:
+			switch (request->getRequestID()) {
+
+				case USBDRequestID::getStatus:
+					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+						uint16_t status = 0;
+						ctlSendData((uint8_t*) &status, sizeof(status));
+						ok = true;
+					}
+					break;
+
+				case USBDRequestID::getInterface:
+					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+						ctlSendData((uint8_t*) &_msc.interface, 1);
+						ok = true;
+					}
+					break;
+
+				case USBDRequestID::setInterface:
+					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+						_msc.interface = (uint8_t) request->value;
+						ok = true;
+					}
+					break;
+
+				case USBDRequestID::clearFeature:
+					if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+						if (request->value == USB_FEATURE_EP_HALT)	{
+							USBD_LL_FlushEP(pdev, LOBYTE(request->index));
+							botCplClrFeature(EpAddr(LOBYTE(request->index)));
+						}
+					}
+					ok = true;
+					break;
+
+				default:
+					ctlError();
+					return false;
+			}
+			break;
+
+		default:
+			ctlError();
+			return false;
+	}
+
+	if (!ok)
+		ctlError();
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut 'GET_MAX_LUN'
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceClassMSC::processInterfaceRequest_GetMaxLUN(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+
+	// Verifica la sol·licitut
+	//
+	if ((request->value == 0) &&
+		(request->length == 1) &&
+		(request->getDirection() == USBDRequestDirection::deviceToHost)) {
+
+		uint8_t maxLun = min(_storage->getMaxLun(), MSC_BOT_MAX_LUN);
+		_msc.max_lun = maxLun;
+
+		ctlSendData(&maxLun, 1);
+
+		ok = true;
+	}
+
+	if (!ok)
+		ctlError();
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut 'BOT_RESET'
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceClassMSC::processInterfaceRequest_BotReset(
+	USBD_SetupReqTypedef *request) {
+
+	auto ok = false;
+
+	// Verifica la sol·lisitut
+	//
+	if ((request->value  == 0) &&
+		(request->length == 0) &&
+		(request->getDirection() == USBDRequestDirection::hostToDevice)) {
+
+		botReset();
+
+		ctlSendStatus();
+
+		ok = true;
+	}
+
+	if (!ok)
+		ctlError();
+
+	return ok;
+}
+
+
 int8_t USBDeviceClassMSC::classInitialize(
 	uint8_t configIdx) {
 
@@ -174,7 +315,7 @@ int8_t USBDeviceClassMSC::classSetup(
 	}
 
 	if (!ok)
-		ctlError(request);
+		ctlError();
 
 	return ok ? USBD_OK : USBD_FAIL;
 }

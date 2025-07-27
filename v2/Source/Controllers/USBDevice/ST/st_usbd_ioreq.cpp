@@ -107,7 +107,7 @@ USBD_StatusTypeDef USBD_CtlSendStatus(
 
 	pdev->ep0_state = USBD_EP0_STATUS_IN;
 
-	USBD_LL_Transmit(pdev, 0x00U, NULL, 0U);
+	USBD_LL_Transmit(pdev, 0x00, NULL, 0);
 
 	return USBD_OK;
 }
@@ -124,7 +124,7 @@ USBD_StatusTypeDef USBD_CtlReceiveStatus(
 
 	pdev->ep0_state = USBD_EP0_STATUS_OUT;
 
-	USBD_LL_PrepareReceive(pdev, 0U, NULL, 0U);
+	USBD_LL_PrepareReceive(pdev, 0, NULL, 0);
 
 	return USBD_OK;
 }

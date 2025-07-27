@@ -251,9 +251,9 @@ USBD_StatusTypeDef USBD_LL_Reset(
 
 	pdev->dev_state = USBD_STATE_DEFAULT;
 	pdev->ep0_state = USBD_EP0_IDLE;
-	pdev->dev_config = 0U;
-	pdev->dev_remote_wakeup = 0U;
-	pdev->dev_test_mode = 0U;
+	pdev->dev_config = 0;
+	pdev->dev_remote_wakeup = 0;
+	pdev->dev_test_mode = 0;
 
 	if (pdev->_instance->getClass()!= nullptr)
 		if (pdev->_instance->getClass()->classDeinitialize((uint8_t)pdev->dev_config) != USBD_OK)

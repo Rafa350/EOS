@@ -14,6 +14,14 @@ namespace eos {
 	inline T max(T a, T b) {
 		return a > b ? a : b;
 	}
+
+	inline uint8_t loByte(uint16_t b) {
+		return (uint8_t) b;
+	}
+
+	inline uint8_t hiByte(uint16_t b) {
+		return (uint8_t) (b >> 8);
+	}
 }
 
 

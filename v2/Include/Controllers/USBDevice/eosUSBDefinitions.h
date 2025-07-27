@@ -46,7 +46,7 @@
 			static constexpr uint8_t setConfiguration = 0x09;
 			static constexpr uint8_t getInterface     = 0x0A;
 			static constexpr uint8_t setInterface     = 0x0B;
-			static constexpr uint8_t setSynchFrame    = 0x0C;
+			static constexpr uint8_t synchFrame       = 0x0C;
 		};
 
 		struct Request_ValueDescriptorType {
@@ -91,7 +91,7 @@
 		setConfiguration = internal::Request_RequestID::setConfiguration,
 		getInterface     = internal::Request_RequestID::getInterface,
 		setInterface     = internal::Request_RequestID::setInterface,
-		setSynchFrame    = internal::Request_RequestID::setSynchFrame
+		synchFrame       = internal::Request_RequestID::synchFrame
 	};
 
 	enum class USBDRequestValueDescriptorType {

@@ -43,6 +43,19 @@ Result USBDeviceClass::initialize() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa una solicitut dirigides al interficie
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceClass::processInterfaceRequest(
+	USBD_SetupReqTypedef *request) {
+
+	ctlError();
+	return false;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Reserva un nombre determinat d'interficies
 /// \param    ifaceQty: La quantitat a reservar.
 /// \return   El primer iface disponible.
@@ -59,10 +72,8 @@ uint8_t USBDeviceClass::reserveIface(
 
 /// ----------------------------------------------------------------------
 /// \brief    Respon com a error a una solicitut.
-/// \param    request: La soligitut que ha generat l'error.
 ///
-void USBDeviceClass::ctlError(
-	USBD_SetupReqTypedef *request) {
+void USBDeviceClass::ctlError() {
 
 	auto pdev = _drvUSBD->getHandle();
 	USBD_LL_StallEP(pdev, 0x80);
