@@ -43,6 +43,10 @@ namespace eos {
 			USBD_MSC_BOT_HandleTypeDef _msc;
 
 		private:
+			bool processInterfaceRequest_ClearFeature(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequest_GetStatus(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequest_GetInterface(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequest_SetInterface(USBD_SetupReqTypedef *request);
 			bool processInterfaceRequest_GetMaxLUN(USBD_SetupReqTypedef *request);
 			bool processInterfaceRequest_BotReset(USBD_SetupReqTypedef *request);
 

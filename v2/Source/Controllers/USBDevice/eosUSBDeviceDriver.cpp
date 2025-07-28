@@ -40,7 +40,7 @@ Result USBDeviceDriver::registerClass(
 	if (_state != State::reset)
 		return Results::errorState;
 
-	_classes.pushFront(devClass);
+	_devClasses.pushFront(devClass);
 
 	return Results::success;
 }
@@ -61,7 +61,7 @@ Result USBDeviceDriver::initialize() {
 	if (USBD_Init(&_usbd, nullptr, 0) != USBD_StatusTypeDef::USBD_OK)
 		return Results::error;
 
-	for (auto cls: _classes)
+	for (auto cls: _devClasses)
 		cls->initialize();
 
 	_state = State::ready;
@@ -100,7 +100,7 @@ Result USBDeviceDriver::stop() {
 	if (USBD_LL_Stop(&_usbd) != USBD_StatusTypeDef::USBD_OK)
 		return Results::error;
 
-	for (auto cls: _classes)
+	for (auto cls: _devClasses)
 		cls->classDeinitialize(_usbd.dev_config);
 
 	_state = State::ready;
@@ -114,7 +114,7 @@ USBD_StatusTypeDef USBDeviceDriver::setClassConfig(
 
 	auto ok = true;
 
-	for (auto cls: _classes) {
+	for (auto cls: _devClasses) {
 		if (cls->classInitialize(configIdx) != USBD_OK)
 			ok = false;
 	}
@@ -128,7 +128,7 @@ USBD_StatusTypeDef USBDeviceDriver::clearClassConfig(
 
 	auto ok = true;
 
-	for (auto cls: _classes) {
+	for (auto cls: _devClasses) {
 		if (cls->classDeinitialize(configIdx) != USBD_OK)
 			ok = false;
 	}
@@ -145,7 +145,7 @@ USBD_StatusTypeDef USBDeviceDriver::clearClassConfig(
 USBDeviceClass *USBDeviceDriver::getClassFromEndPoint(
 	EpAddr epAddr) const {
 
-	for (auto cls: _classes)
+	for (auto cls: _devClasses)
 		if (cls->usesEndPoint(epAddr))
 			return cls;
 
@@ -161,7 +161,7 @@ USBDeviceClass *USBDeviceDriver::getClassFromEndPoint(
 USBDeviceClass *USBDeviceDriver::getClassFromInterface(
 	uint8_t iface) const {
 
-	for (auto cls: _classes)
+	for (auto cls: _devClasses)
 		if (cls->usesIface(iface))
 			return cls;
 
@@ -321,7 +321,7 @@ bool USBDeviceDriver::processDeviceRequestOnClass(
 	USBD_SetupReqTypedef *request) {
 
 	// TODO:: Revisar
-	for (auto cls: _classes) {
+	for (auto cls: _devClasses) {
 		if (cls->classSetup(request) == USBD_OK)
 			return true;
 	}
@@ -347,7 +347,8 @@ bool USBDeviceDriver::processDeviceRequest_GetDescriptor(
 
     // Verifica la solicitut
     //
-	if (request->getDirection() == USBDRequestDirection::deviceToHost) {
+	if ((request->getRequestID() == USBDRequestID::getDescriptor) &&
+		(request->getDirection() == USBDRequestDirection::deviceToHost)) {
 
 		switch (request->getDescriptorType()) {
 			case USBDRequestValueDescriptorType::bos:
@@ -435,10 +436,11 @@ bool USBDeviceDriver::processDeviceRequest_SetAddress(
 
     // Comprova la solicitut
     //
-	if ((request->value <= 0x007F) &&
+	if ((request->getRequestID() == USBDRequestID::setAddress) &&
+		(request->getDirection() == USBDRequestDirection::hostToDevice) &&
+		(request->value <= 0x007F) &&
 		(request->index == 0) &&
-		(request->length == 0) &&
-		(request->getDirection() == USBDRequestDirection::hostToDevice)) {
+		(request->length == 0)) {
 
 	    auto pdev = getHandle();
 
@@ -484,8 +486,9 @@ bool USBDeviceDriver::processDeviceRequest_ClearFeature(
 
     auto ok = false;
 
-	if ((request->length == 0) &&
-		(request->getDirection() == USBDRequestDirection::hostToDevice)) {
+	if ((request->getRequestID() == USBDRequestID::clearFeature) &&
+		(request->getDirection() == USBDRequestDirection::hostToDevice) &&
+		(request->length == 0)) {
 
 		auto pdev = getHandle();
 
@@ -523,8 +526,9 @@ bool USBDeviceDriver::processDeviceRequest_SetFeature(
 
     auto ok = false;
 
-	if ((request->length == 0) &&
-	    (request->getDirection() == USBDRequestDirection::hostToDevice)) {
+	if ((request->getRequestID() == USBDRequestID::setFeature) &&
+	    (request->getDirection() == USBDRequestDirection::hostToDevice) &&
+		(request->length == 0)) {
 
 		auto pdev = getHandle();
 
@@ -562,10 +566,11 @@ bool USBDeviceDriver::processDeviceRequest_GetConfiguration(
 
     // Verifica la solicitut
     //
-    if ((request->value == 0) &&
+    if ((request->getRequestID() == USBDRequestID::getConfiguration) &&
+       	(request->getDirection() == USBDRequestDirection::deviceToHost) &&
+    	(request->value == 0) &&
     	(request->index == 0) &&
-    	(request->length == 1) &&
-    	(request->getDirection() == USBDRequestDirection::deviceToHost)) {
+    	(request->length == 1)) {
 
         auto pdev = getHandle();
 
@@ -603,10 +608,11 @@ bool USBDeviceDriver::processDeviceRequest_SetConfiguration(
 
     // Verifica la sol·licitut
     //
-	if ((loByte(request->value) <= USBD_MAX_NUM_CONFIGURATION) &&
+	if ((request->getRequestID() == USBDRequestID::setConfiguration) &&
+		(request->getDirection() == USBDRequestDirection::hostToDevice) &&
+		(loByte(request->value) <= USBD_MAX_NUM_CONFIGURATION) &&
 		(request->index == 0) &&
-		(request->length == 0) &&
-		(request->getDirection() == USBDRequestDirection::hostToDevice)) {
+		(request->length == 0)) {
 
 		auto pdev = getHandle();
 
@@ -688,9 +694,10 @@ bool USBDeviceDriver::processDeviceRequest_GetStatus(
 
     // Verifica la sol·licitut
     //
-    if ((request->value == 0) &&
-    	(request->length == 2) &&
-    	(request->getDirection() == USBDRequestDirection::deviceToHost)) {
+    if ((request->getRequestID() == USBDRequestID::getStatus) &&
+       	(request->getDirection() == USBDRequestDirection::deviceToHost) &&
+    	(request->value == 0) &&
+    	(request->length == 2)) {
 
         auto pdev = getHandle();
 
@@ -777,8 +784,13 @@ bool USBDeviceDriver::processInterfaceRequestOnClass(
 bool USBDeviceDriver::processInterfaceRequest_GetStatus(
 	USBD_SetupReqTypedef *request) {
 
-	const uint16_t status = 0;
-	ctlSendData((uint8_t*) &status, sizeof(status));
+    if ((request->getRequestID() == USBDRequestID::getStatus) &&
+       	(request->getDirection() == USBDRequestDirection::deviceToHost) &&
+    	(request->length == 2)) {
+
+    	const uint16_t status = 0;
+	    ctlSendData((uint8_t*) &status, 2);
+    }
 
 	return true;
 }
@@ -849,7 +861,9 @@ bool USBDeviceDriver::processEndPointRequest_SetFeature(
 
 	// Verifica la sol·licitut
 	//
-	if (request->getDirection() == USBDRequestDirection::hostToDevice) {
+	if ((request->getRequestID() == USBDRequestID::setFeature) &&
+		(request->getDirection() == USBDRequestDirection::hostToDevice) &&
+		(request->length == 0)) {
 
 		auto pdev = getHandle();
 		auto epAddr = EpAddr(LOBYTE(request->index));
@@ -893,7 +907,9 @@ bool USBDeviceDriver::processEndPointRequest_ClearFeature(
 
 	// Verifica la solicitut
 	//
-	if (request->getDirection() == USBDRequestDirection::hostToDevice) {
+	if ((request->getRequestID() == USBDRequestID::clearFeature) &&
+		(request->getDirection() == USBDRequestDirection::hostToDevice) &&
+		(request->length == 0)) {
 
 		auto pdev = getHandle();
 		auto epAddr = EpAddr(request->getEndPointNumber());
@@ -941,7 +957,9 @@ bool USBDeviceDriver::processEndPointRequest_GetStatus(
 
 	auto ok = false;
 
-	if (request->getDirection() == USBDRequestDirection::deviceToHost) {
+	if ((request->getRequestID() == USBDRequestID::getStatus) &&
+		(request->getDirection() == USBDRequestDirection::deviceToHost) &&
+		(request->length == 2)) {
 
 		auto pdev = getHandle();
 		auto epAddr = EpAddr(request->getEndPointNumber());
@@ -970,7 +988,7 @@ bool USBDeviceDriver::processEndPointRequest_GetStatus(
 
 		if (ok) {
 			uint16_t status = pep->status;
-			ctlSendData((uint8_t*) &status, sizeof(status));
+			ctlSendData((uint8_t*) &status, 2);
 		}
 	}
 
@@ -1059,7 +1077,10 @@ bool USBDeviceDriver::buildDeviceQualifierDescriptor(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el descriptor de configuracio. El genera combinant totes
-///           les clases que suporta el driver
+///           les clases que suporta el driver. Per unificar tant dispositius
+///           simples com combinats, s'utilitza el descriptor IAD en totes
+///           les classes de dispositiu, encara que nomes tinguin una
+///           sola interficie.
 /// \param    buffer: Buffer de dades.
 /// \param    bufferSize: Tamany del buffer de dades.
 /// \param    length: Longitutu de les dades transferides al buffer
@@ -1095,7 +1116,7 @@ bool USBDeviceDriver::buildConfigurationDescriptor(
 	// Interface descriptors
 	//
 	unsigned ifaceLength;
-	for (auto cls: _classes) {
+	for (auto cls: _devClasses) {
 		if (!cls->buildInterfaceDescriptors(ptr, ptrEnd - ptr, hs, ifaceLength))
 			return false;
 		descriptor->wTotalLength += ifaceLength;

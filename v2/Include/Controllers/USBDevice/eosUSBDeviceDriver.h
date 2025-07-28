@@ -58,7 +58,7 @@ namespace eos {
 
 		private:
 			State _state;
-			USBDeviceClassList _classes;
+			USBDeviceClassList _devClasses;
 			USBD_HandleTypeDef _usbd;
 
 			const char * const _manufacturerStr;
@@ -136,7 +136,7 @@ namespace eos {
 			USBDeviceClass *getClassFromInterface(uint8_t iface) const;
 
 			// TODO: Obsolete
-			inline USBDeviceClass *getClass() const { return _classes.front(); }
+			inline USBDeviceClass *getClass() const { return _devClasses.front(); }
 	};
 
 	class USBDeviceClass: public USBDeviceClassListNode {
