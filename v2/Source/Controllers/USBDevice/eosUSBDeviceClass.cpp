@@ -43,11 +43,37 @@ Result USBDeviceClass::initialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una solicitut dirigides al interficie
+/// \brief    Procesa per defecte, una solicitut dirigides al dispositiu
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceClass::processDeviceRequest(
+	USBD_SetupReqTypedef *request) {
+
+	ctlError();
+	return false;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa per defecte, una solicitut dirigides al interficie
 /// \param    request: La solicitut.
 /// \return   True si tot es correcte.
 ///
 bool USBDeviceClass::processInterfaceRequest(
+	USBD_SetupReqTypedef *request) {
+
+	ctlError();
+	return false;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa per defecte, una solicitut dirigides al endpoint
+/// \param    request: La solicitut.
+/// \return   True si tot es correcte.
+///
+bool USBDeviceClass::processEndPointRequest(
 	USBD_SetupReqTypedef *request) {
 
 	ctlError();

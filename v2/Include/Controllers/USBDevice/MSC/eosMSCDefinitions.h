@@ -190,15 +190,15 @@ namespace eos {
 		// Valors obtinguts de 'USB Mass Storage Class specification'
 		//
 		struct MSCRequest_RequestID {
-			static constexpr uint8_t botGetMaxLun = 0xFE;
-			static constexpr uint8_t botReset     = 0xFF;
+			static constexpr uint8_t getMaxLun = 0xFE;
+			static constexpr uint8_t botReset  = 0xFF;
 		};
 
 	}
 
 	enum class MSCRequestID {
-		botGetMaxLun = internal::MSCRequest_RequestID::botGetMaxLun,
-		botReset     = internal::MSCRequest_RequestID::botReset
+		getMaxLun = internal::MSCRequest_RequestID::getMaxLun,
+		botReset  = internal::MSCRequest_RequestID::botReset
 	};
 
 	inline MSCRequestID getMSCRequestID(USBD_SetupReqTypedef *request) {

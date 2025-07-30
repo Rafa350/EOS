@@ -79,12 +79,12 @@ USBD_StatusTypeDef USBD_RunTestMode(USBD_HandleTypeDef *pdev)
   * @param  cfgidx: configuration index
   * @retval status
   */
-USBD_StatusTypeDef USBD_SetClassConfig(
+/*USBD_StatusTypeDef USBD_SetClassConfig(
 	USBD_HandleTypeDef *pdev,
 	uint8_t configIdx) {
 
-	return pdev->_instance->setClassConfig(configIdx);
-}
+	return pdev->_instance->setClassConfig(configIdx) ? USBD_OK : USBD_FAIL;
+}*/
 
 
 /**
@@ -94,12 +94,12 @@ USBD_StatusTypeDef USBD_SetClassConfig(
   * @param  cfgidx: configuration index
   * @retval status
   */
-USBD_StatusTypeDef USBD_ClrClassConfig(
+/*USBD_StatusTypeDef USBD_ClrClassConfig(
 	USBD_HandleTypeDef *pdev,
 	uint8_t configIdx) {
 
-	return pdev->_instance->clearClassConfig(configIdx);
-}
+	return pdev->_instance->clearClassConfig(configIdx) ? USBD_OK : USBD_FAIL;
+}*/
 
 
 /**
@@ -130,6 +130,7 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
     uint8_t epnum,
 	uint8_t *pdata) {
 
+#if 0
 	if (epnum == 0) {
 
 		USBD_EndpointTypeDef *pep = &pdev->ep_out[0];
@@ -173,6 +174,7 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(
 		}
 	}
 	else
+#endif
 		return pdev->_instance->dataOutStage(eos::EpAddr(epnum)) ? USBD_OK : USBD_FAIL;
 
 	return USBD_OK;
@@ -191,7 +193,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 	USBD_HandleTypeDef *pdev,
     uint8_t epnum,
 	uint8_t *pdata) {
-
+#if 0
 	if (epnum == 0) {
 
 		USBD_EndpointTypeDef *pep = &pdev->ep_in[0];
@@ -232,6 +234,7 @@ USBD_StatusTypeDef USBD_LL_DataInStage(
 		}
 	}
 	else
+#endif
 		return (USBD_StatusTypeDef) pdev->_instance->dataInStage(eos::EpAddr(epnum)) ? USBD_OK : USBD_FAIL;
 
 	return USBD_OK;

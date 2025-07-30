@@ -64,6 +64,9 @@ namespace eos {
 		protected:
 			Result initializeImpl() override;
 
+			bool processInterfaceRequest_getInterface(USBD_SetupReqTypedef *request);
+			bool processInterfaceRequest_setInterface(USBD_SetupReqTypedef *request);
+
 		public:
 			USBDeviceClassCDC(USBDeviceDriver *drvUSBD, const USBDeviceClassCDCConfiguration *configuration, CDCInterface *interface);
 
@@ -76,7 +79,7 @@ namespace eos {
 			int8_t classInitialize(uint8_t configIdx) override;
 			int8_t classDeinitialize(uint8_t configIdx) override;
 
-			int8_t classSetup(USBD_SetupReqTypedef *req) override;
+			int8_t classSetup(USBD_SetupReqTypedef *req);// override;
 			int8_t classEP0TxSent() override;
 			int8_t classEP0RxReady() override;
 			int8_t classSOF() override;
@@ -85,7 +88,11 @@ namespace eos {
 			int8_t classIsoINIncomplete(EpAddr epAddr) override;
 			int8_t classIsoOUTIncomplete(EpAddr epAddr) override;
 
-			bool buildInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs, unsigned &length) override;
+			bool processDeviceRequest(USBD_SetupReqTypedef *request) override;
+			bool processInterfaceRequest(USBD_SetupReqTypedef *request) override;
+			bool processEndPointRequest(USBD_SetupReqTypedef *request) override;
+
+			bool buildInterfaceDescriptors(bool hs, uint8_t *buffer, unsigned bufferSize, unsigned &length) override;
 
 			bool usesEndPoint(EpAddr epAddr) const override;
 			bool usesIface(uint8_t ifaceQty) const override;

@@ -26,7 +26,7 @@ namespace eos {
 			int8_t classInitialize(uint8_t cfgidx) override;
 			int8_t classDeinitialize(uint8_t cfgidx) override;
 
-			int8_t classSetup(USBD_SetupReqTypedef *req) override;
+			int8_t classSetup(USBD_SetupReqTypedef *req);// override;
 			int8_t classEP0TxSent() override;
 			int8_t classEP0RxReady() override;
 			int8_t classSOF() override;

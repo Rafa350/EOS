@@ -122,8 +122,8 @@ namespace eos {
 			Result start();
 			Result stop();
 
-			USBD_StatusTypeDef setClassConfig(uint8_t configIdx);
-			USBD_StatusTypeDef clearClassConfig(uint8_t configIdx);
+			bool setClassConfig(uint8_t configIdx);
+			bool clearClassConfig(uint8_t configIdx);
 
 			bool dataOutStage(EpAddr epAddr);
 			bool dataInStage(EpAddr epAddr);
@@ -176,8 +176,6 @@ namespace eos {
 			virtual int8_t classInitialize(uint8_t confIdx) = 0;
 			virtual int8_t classDeinitialize(uint8_t confIdx) = 0;
 
-			virtual int8_t classSetup(USBD_SetupReqTypedef *req) = 0;
-
 			virtual int8_t classEP0TxSent() = 0;
 			virtual int8_t classEP0RxReady() = 0;
 			virtual int8_t classSOF() = 0;
@@ -186,9 +184,11 @@ namespace eos {
 			virtual int8_t classIsoINIncomplete(EpAddr epAddr) = 0;
 			virtual int8_t classIsoOUTIncomplete(EpAddr epAddr) = 0;
 
+			virtual bool processDeviceRequest(USBD_SetupReqTypedef *request);
 			virtual bool processInterfaceRequest(USBD_SetupReqTypedef *request);
+			virtual bool processEndPointRequest(USBD_SetupReqTypedef *request);
 
-			virtual bool buildInterfaceDescriptors(uint8_t *buffer, unsigned bufferSize, bool hs, unsigned &length) = 0;
+			virtual bool buildInterfaceDescriptors(bool hs, uint8_t *buffer, unsigned bufferSize, unsigned &length) = 0;
 	};
 }
 

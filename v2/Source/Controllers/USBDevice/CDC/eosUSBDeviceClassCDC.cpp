@@ -124,6 +124,77 @@ Result USBDeviceClassCDC::wait(
 }
 
 
+bool USBDeviceClassCDC::processDeviceRequest(
+	USBD_SetupReqTypedef *request) {
+
+	return classSetup(request) == USBD_OK;
+}
+
+
+bool USBDeviceClassCDC::processInterfaceRequest(
+	USBD_SetupReqTypedef *request) {
+
+	switch (request->getType()) {
+		case USBDRequestType::clase:
+			switch (request->getRequestID()) {
+				default:
+					return classSetup(request) == USBD_OK;
+			}
+			break;
+
+		case USBDRequestType::standard:
+			switch (request->getRequestID()) {
+				case USBDRequestID::getInterface:
+					return processInterfaceRequest_getInterface(request);
+
+				case USBDRequestID::setInterface:
+					return processInterfaceRequest_setInterface(request);
+			}
+			break;
+	}
+
+	ctlError();
+	return false;
+}
+
+
+bool USBDeviceClassCDC::processInterfaceRequest_getInterface(
+	USBD_SetupReqTypedef *request) {
+
+	auto pdev = _drvUSBD->getHandle();
+	if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+		uint8_t iface = 0;
+		USBD_CtlSendData(pdev, &iface, sizeof(iface));
+		return true;
+	}
+
+	ctlError();
+	return false;
+}
+
+
+bool USBDeviceClassCDC::processInterfaceRequest_setInterface(
+	USBD_SetupReqTypedef *request) {
+
+	auto pdev = _drvUSBD->getHandle();
+	if (pdev->dev_state == USBD_STATE_CONFIGURED) {
+		ctlSendStatus();
+		return true;
+	}
+
+	ctlError();
+	return false;
+}
+
+
+bool USBDeviceClassCDC::processEndPointRequest(
+	USBD_SetupReqTypedef *request) {
+
+	ctlError();
+	return false;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Inicializa la clase.
 ///
@@ -204,15 +275,15 @@ int8_t USBDeviceClassCDC::classSetup(
 	switch (req->getType()) {
 
 		case USBDRequestType::clase:
-			if (req->length != 0) {
+			if (req->wLength != 0) {
 				if (req->getDirection() == USBDRequestDirection::deviceToHost) {
-					_interface->control(getCDCRequestID(req), (uint8_t *)_cdc.data, req->length);
-					auto len = min(CDC_REQ_MAX_DATA_SIZE, (unsigned) req->length);
+					_interface->control(getCDCRequestID(req), (uint8_t *)_cdc.data, req->wLength);
+					auto len = min(CDC_REQ_MAX_DATA_SIZE, (unsigned) req->wLength);
 					USBD_CtlSendData(pdev, (uint8_t *) _cdc.data, len);
 				}
 				else {
 					_req_requestID = getCDCRequestID(req);
-					_req_length = min(USB_MAX_EP0_SIZE, (unsigned) req->length);
+					_req_length = min(USB_MAX_EP0_SIZE, (unsigned) req->wLength);
 					USBD_CtlPrepareRx(pdev, (uint8_t*) _cdc.data, _req_length);
 				}
 			}
@@ -260,7 +331,7 @@ int8_t USBDeviceClassCDC::classSetup(
 	}
 
 	if (ret == USBD_FAIL)
-		USBD_CtlError(pdev, req);
+		ctlError();
 
 	return ret;
 }
@@ -347,16 +418,16 @@ int8_t USBDeviceClassCDC::classIsoOUTIncomplete(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el interface descriptor
+/// \param    hs: True si es high speed
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: Tamany del buffer.
-/// \param    hs: Indica velocitat FS
 /// \param    El nombre de bytes escrits en el buffer.
 /// \return   True si tot es correcte.
 ///
 bool USBDeviceClassCDC::buildInterfaceDescriptors(
+	bool hs,
 	uint8_t *buffer,
 	unsigned bufferSize,
-	bool hs,
 	unsigned &length) {
 
 	auto maxPacketSize = hs ? CDC_DATA_HS_MAX_PACKET_SIZE : CDC_DATA_FS_MAX_PACKET_SIZE;

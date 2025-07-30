@@ -107,47 +107,47 @@
 	};
 
 	struct USBD_SetupReqTypedef {
-		uint8_t requestType;
-		uint8_t requestID;
-		uint16_t value;
-		uint16_t index;
-		uint16_t length;
+		uint8_t bmRequestType;
+		uint8_t bRequestID;
+		uint16_t wValue;
+		uint16_t wIndex;
+		uint16_t wLength;
 
 		inline USBDRequestDirection getDirection() const {
-			return (USBDRequestDirection) (requestType & internal::Request_RequestType_Direction::MASK);
+			return (USBDRequestDirection) (bmRequestType & internal::Request_RequestType_Direction::MASK);
 		}
 
 		inline USBDRequestType getType() const {
-			return (USBDRequestType) (requestType & internal::Request_RequestType_Type::MASK);
+			return (USBDRequestType) (bmRequestType & internal::Request_RequestType_Type::MASK);
 		}
 
 		inline USBDRequestRecipient getRecipient() const {
-			return (USBDRequestRecipient) (requestType & internal::Request_RequestType_Recipient::MASK);
+			return (USBDRequestRecipient) (bmRequestType & internal::Request_RequestType_Recipient::MASK);
 		}
 
 		inline USBDRequestID getRequestID() const  {
-			return (USBDRequestID) requestID;
+			return (USBDRequestID) bRequestID;
 		}
 
 		inline USBDRequestValueDescriptorType getDescriptorType() const {
-			return (USBDRequestValueDescriptorType) (value >> 8);
+			return (USBDRequestValueDescriptorType) (wValue >> 8);
 		}
 
 		inline uint8_t getDescriptorIndex() const {
-			return value & 0x00FF;
+			return wValue & 0x00FF;
 		}
 
 		inline uint8_t getInterfaceNumber() const {
-			return index & 0x00FF;
+			return wIndex & 0x00FF;
 		}
 
 		inline uint8_t getEndPointNumber() const {
-			return index & 0x00FF;
+			return wIndex & 0x00FF;
 		}
 
 		template <typename T>
 		inline T getClassRequestID() const {
-			return (T) requestID;
+			return (T) bRequestID;
 		}
 	};
 
