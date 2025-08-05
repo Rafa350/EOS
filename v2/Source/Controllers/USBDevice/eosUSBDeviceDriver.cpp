@@ -388,9 +388,6 @@ bool USBDeviceDriver::processDeviceRequest(
 				case USBDRequestID::setConfiguration:
 					return processDeviceRequest_SetConfiguration(request);
 
-				case USBDRequestID::setDescriptor:
-					break;
-
 				case USBDRequestID::setFeature:
 					return processDeviceRequest_SetFeature(request);
 			}

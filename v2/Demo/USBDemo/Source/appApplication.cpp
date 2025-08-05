@@ -7,7 +7,7 @@
 #include "Controllers/USBDevice/MSC/eosUSBDeviceClassMSC.h"
 #include "Controllers/USBDevice/MSC/eosMSCStorage_SSD.h"
 #include "Controllers/USBDevice/MSC/eosMSCStorage_RAM.h"
-#elif defined(USE_HUD_DEVICE)
+#elif defined(USE_HID_DEVICE)
 #include "Controllers/USBDevice/MSC/eosUSBDeviceClassHID.h"
 #endif
 #include "System/Core/eosTask.h"

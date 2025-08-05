@@ -181,6 +181,7 @@ namespace eos {
 	namespace build {
 
 		enum class PlatformID {
+            pic32mx460f512l,
 			stm32f249zi,
 			stm32f746ng,
 			stm32g031k8,
@@ -189,7 +190,9 @@ namespace eos {
 		};
 
 		struct Platform {
-#if defined(EOS_PLATFORM_STM32F429ZI)
+#if defined(EOS_PLATFORM_PIC32MX460F512L)
+            static constexpr PlatformID = PlatformID::pic32mx460f512l;
+#elif defined(EOS_PLATFORM_STM32F429ZI)
 			static constexpr PlatformID platformID = PlatformID::stm32f429zi;
 #elif defined(EOS_PLATFORM_STM32F746NG)
 			static constexpr PlatformID platformID = PlatformID::stm32f746ng;
