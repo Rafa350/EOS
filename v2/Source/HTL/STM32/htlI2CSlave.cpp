@@ -5,7 +5,6 @@
 
 
 using namespace eos;
-using namespace htl;
 using namespace htl::bits;
 using namespace htl::i2c;
 
@@ -30,10 +29,9 @@ I2CSlaveDevice::I2CSlaveDevice(
 	I2C_TypeDef *i2c) :
 
 	I2CDevice {i2c},
-	_state {State::invalid},
+	_state {State::reset},
 	_restart {false} {
 
-	_state = State::reset;
 }
 
 

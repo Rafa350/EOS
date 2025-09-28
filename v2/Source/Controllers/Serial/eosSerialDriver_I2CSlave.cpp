@@ -95,7 +95,9 @@ bool SerialDriver_I2CSlave::onAbort() {
 
 	eosAssert(_devI2C != nullptr);
 
-	return _devI2C->abort().isSuccess();
+	return
+		_devI2C->abort().isSuccess() &&
+		_devI2C->listen_IRQ(true).isSuccess();
 }
 
 

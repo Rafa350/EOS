@@ -37,14 +37,18 @@
 
 namespace eos {
 
-    class DigOutput;
+    class IDigOutput;
 
-    using DigOutputList1 = IntrusiveForwardList<DigOutput, 1>;
-    using DigOutputListNode1 = IntrusiveForwardListNode<DigOutput, 1>;
+    using DigOutputList1 = IntrusiveForwardList<IDigOutput, 1>;
+    using DigOutputListNode1 = IntrusiveForwardListNode<IDigOutput, 1>;
 
-    using DigOutputList2 = IntrusiveForwardList<DigOutput, 2>;
-    using DigOutputListNode2 = IntrusiveForwardListNode<DigOutput, 2>;
+    using DigOutputList2 = IntrusiveForwardList<IDigOutput, 2>;
+    using DigOutputListNode2 = IntrusiveForwardListNode<IDigOutput, 2>;
 
+    /// \brief Clase que representa una sortida digital individual
+    ///
+    class IDigOutput: public DigOutputListNode1, public DigOutputListNode2  {
+    };
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
@@ -56,7 +60,7 @@ namespace eos {
 			struct NotifyEventArgs {
     			union {
     				struct {
-    					DigOutput * const output;
+    					IDigOutput * const output;
     				} changed;
     			};
 			};
@@ -78,7 +82,7 @@ namespace eos {
             };
             struct Command {
                 CommandID id;
-                DigOutput *output;
+                IDigOutput *output;
                 unsigned time1;
                 unsigned time2;
             };
@@ -101,21 +105,21 @@ namespace eos {
             DigOutputService(const DigOutputService&) = delete;
 
             void commandDispatcher(const Command &command);
-            void processClear(DigOutput *output);
-            void processSet(DigOutput *output);
-            void processToggle(DigOutput *output);
-            void processPulse(DigOutput *output, unsigned width);
-            void processDelayedSet(DigOutput *output, unsigned delay);
-            void processDelayedClear(DigOutput *output, unsigned delay);
-            void processDelayedToggle(DigOutput *output, unsigned delay);
-            void processDelayedPulse(DigOutput *output, unsigned delay, unsigned width);
+            void processClear(IDigOutput *output);
+            void processSet(IDigOutput *output);
+            void processToggle(IDigOutput *output);
+            void processPulse(IDigOutput *output, unsigned width);
+            void processDelayedSet(IDigOutput *output, unsigned delay);
+            void processDelayedClear(IDigOutput *output, unsigned delay);
+            void processDelayedToggle(IDigOutput *output, unsigned delay);
+            void processDelayedPulse(IDigOutput *output, unsigned delay, unsigned width);
             void processTick();
 
-            void setOutput(DigOutput *output);
-            void clearOutput(DigOutput *output);
-            void toggleOutput(DigOutput *output);
+            void setOutput(IDigOutput *output);
+            void clearOutput(IDigOutput *output);
+            void toggleOutput(IDigOutput *output);
 
-            void notifyChanged(DigOutput *output);
+            void notifyChanged(IDigOutput *output);
 
             void updateNextTimeLimit();
             bool hasExpired(unsigned timeLimit) const;
@@ -128,8 +132,10 @@ namespace eos {
             DigOutputService();
             ~DigOutputService();
 
-            void addOutput(DigOutput *output);
-            void removeOutput(DigOutput *output);
+            IDigOutput* makeOutput(PinDriver *drv);
+
+            void addOutput(IDigOutput *output);
+            void removeOutput(IDigOutput *output);
             void removeOutputs();
 
             inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
@@ -142,24 +148,25 @@ namespace eos {
             	_erNotify.disable();
             }
 
-            void set(DigOutput *output);
-            void clear(DigOutput *output);
-            void write(DigOutput *output, bool pinState);
-            void toggle(DigOutput *output);
-            void pulse(DigOutput *output, unsigned width);
-            void delayedSet(DigOutput *output, unsigned delay);
-            void delayedClear(DigOutput *output, unsigned delay);
-            void delayedToggle(DigOutput *output, unsigned delay);
-            void delayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
-            bool read(DigOutput *ouput);
+            void set(IDigOutput *output);
+            void clear(IDigOutput *output);
+            void write(IDigOutput *output, bool pinState);
+            void toggle(IDigOutput *output);
+            void pulse(IDigOutput *output, unsigned width);
+            void delayedSet(IDigOutput *output, unsigned delay);
+            void delayedClear(IDigOutput *output, unsigned delay);
+            void delayedToggle(IDigOutput *output, unsigned delay);
+            void delayedPulse(IDigOutput *output, unsigned delay, unsigned pulseWidth);
+            bool read(IDigOutput *ouput);
 
             void tick(unsigned blockTime);
             void tickISR();
     };
 
+    // TODO: fer aquesta clase interna
     /// \brief Clase que implementa una sortida digital.
     ///
-    class DigOutput final: public DigOutputListNode1, public DigOutputListNode2 {
+    class DigOutput final: public IDigOutput {
         private:
             enum class State {
                 idle,
@@ -171,62 +178,16 @@ namespace eos {
             };
 
         public:
-            DigOutputService *_service;  // El servei al que pertany
             PinDriver *_drv;
             State _state;
             unsigned _timeLimit;
             unsigned _timeLimit2;
 
         public:
-            DigOutput(DigOutputService *service, PinDriver *drv);
-            ~DigOutput();
-
-            inline DigOutputService* getService() const {
-                return _service;
-            }
+            DigOutput(PinDriver *drv);
 
             inline PinDriver *getPinDriver() const {
             	return _drv;
-            }
-
-            inline void set() {
-                _service->set(this);
-            }
-
-            inline void clear() {
-                _service->clear(this);
-            }
-
-            inline void write(bool pinState) {
-                _service->write(this, pinState);
-            }
-
-            inline void toggle() {
-                _service->toggle(this);
-            }
-
-            inline void pulse(unsigned width) {
-                _service->pulse(this, width);
-            }
-
-            inline void delayedSet(unsigned delay) {
-                _service->delayedSet(this, delay);
-            }
-
-            inline void delayedClear(unsigned delay) {
-                _service->delayedClear(this, delay);
-            }
-
-            inline void delayedToggle(unsigned delay) {
-                _service->delayedToggle(this, delay);
-            }
-
-            inline void delayedPulse(unsigned delay, unsigned width) {
-                _service->delayedPulse(this, delay, width);
-            }
-
-            inline bool read() {
-            	return _service->read(this);
             }
 
             friend DigOutputService;

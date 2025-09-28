@@ -221,7 +221,6 @@ namespace htl {
                 /// Estats en que es troba el dispositiu.
                 ///
 				enum class State {
-					invalid,     ///< Objecte no valid.
 					reset,       ///< Creat, pero sense inicialitzar.
 					ready,       ///< Inicialitzat i preparat per operar.
 					transmiting, ///< Transmeten dades.
@@ -362,7 +361,6 @@ namespace htl {
 				eos::Result abortReception();
 
 				inline State getState() const { return _state; }
-                inline bool isValid() const { return _state != State::invalid; }
 				inline bool isReady() const { return _state == State::ready; }
 				inline bool isBusy() const { return _state != State::ready; }
 		};

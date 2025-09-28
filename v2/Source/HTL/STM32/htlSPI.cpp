@@ -42,7 +42,7 @@ SPIDevice::SPIDevice(
 	SPI_TypeDef *spi):
 
 	_spi {spi},
-	_state {State::invalid} {
+	_state {State::reset} {
 
 	_state = State::reset;
 }

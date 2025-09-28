@@ -6,7 +6,7 @@
 using namespace htl;
 
 
-#ifdef _TMR1x
+#ifdef _TMR1
 extern "C" void __ISR(_TIMER_1_VECTOR, IPL2SOFT) TMR_1_InterruptVector(void);
 #endif
 #ifdef _TMR2
@@ -29,7 +29,7 @@ extern "C" void __ISR(_TIMER_5_VECTOR, IPL2SOFT) TMR_5_InterruptVector(void);
 #ifdef _TMR1
 extern "C" void TMR_1_InterruptHandler(void) {
 
-    TMR_1::interruptHandler();
+    htl::tmr::TMRDevice1::interruptHandler();
 }
 #endif
 
@@ -40,7 +40,7 @@ extern "C" void TMR_1_InterruptHandler(void) {
 #ifdef _TMR2
 extern "C" void TMR_2_InterruptHandler(void) {
 
-    TMR_2::interruptHandler();
+    htl::tmr::TMRDevice2::interruptHandler();
 }
 #endif
 
@@ -51,7 +51,7 @@ extern "C" void TMR_2_InterruptHandler(void) {
 #ifdef _TMR3
 extern "C" void TMR_3_InterruptHandler(void) {
 
-    TMR_3::interruptHandler();
+    htl::tmr::TMRDevice3::interruptHandler();
 }
 #endif
 
@@ -62,7 +62,7 @@ extern "C" void TMR_3_InterruptHandler(void) {
 #ifdef _TMR4
 extern "C" void TMR_4_InterruptHandler(void) {
 
-    TMR_4::interruptHandler();
+    htl::tmr::TMRDevice4::interruptHandler();
 }
 #endif
 
@@ -73,6 +73,6 @@ extern "C" void TMR_4_InterruptHandler(void) {
 #ifdef _TMR5
 extern "C" void TMR_5_InterruptHandler(void) {
 
-    TMR_5::interruptHandler();
+    htl::tmr::TMRDevice5::interruptHandler();
 }
 #endif

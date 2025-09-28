@@ -20,13 +20,11 @@ UARTDevice::UARTDevice(
 	USART_TypeDef *usart):
 
 	_usart {usart},
-	_state {State::invalid}
+	_state {State::reset}
 #if HTL_UART_OPTION_DMA == 1
 	, _dmaNotifyEvent {*this, &UARTDevice::dmaNotifyEventHandler}
 #endif
 	{
-
-	_state = State::reset;
 }
 
 

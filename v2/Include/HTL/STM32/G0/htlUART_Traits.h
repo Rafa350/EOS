@@ -20,8 +20,8 @@ namespace htl {
 				static constexpr uint32_t activatePos = RCC_APBENR2_USART1EN_Pos;
 
 				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
-				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART1SEL_Msk;
 				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART1SEL_Pos;
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART1SEL_Msk;
 
 				static constexpr bool isFIFOAvailable = true;
 				static constexpr bool isRTOAvailable = true;
@@ -36,8 +36,8 @@ namespace htl {
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART2EN_Pos;
 
 				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
-				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART2SEL_Msk;
 				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART2SEL_Pos;
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART2SEL_Msk;
 
 #if defined(EOS_PLATFORM_STM32G071) || defined(EOS_PLATFORM_STM32G081) || \
     defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)
@@ -59,8 +59,8 @@ namespace htl {
 
 #if defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)
 				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR);
-				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART3SEL_Msk;
 				static constexpr uint32_t clockSourcePos = RCC_CCIPR_USART3SEL_Pos;
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR_USART3SEL_Msk;
 #endif
 
 #if defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)

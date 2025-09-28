@@ -1,10 +1,12 @@
 #include "HTL/htl.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htlI2C.h"
 
 #include <cmath>
 
 
 using namespace eos;
+using namespace htl::bits;
 using namespace htl::i2c;
 
 
@@ -12,7 +14,6 @@ static void setWriteAddress(I2C_TypeDef *i2c, I2CAddr addr);
 static void setReadAddress(I2C_TypeDef *i2c, I2CAddr addr);
 static void setTimming(I2C_TypeDef *i2c, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
 static void start(I2C_TypeDef *i2c);
-static void start(I2C_TypeDef *i2c, unsigned count, unsigned maxCount);
 static void enable(I2C_TypeDef *i2c);
 static void disable(I2C_TypeDef *i2c);
 static void enableTransmitInterrupts(I2C_TypeDef *i2c);
@@ -158,60 +159,64 @@ Result I2CMasterDevice::transmit(
 	unsigned bufferSize,
 	unsigned timeout) {
 
-	uint32_t tmp;
+	if (_state == State::ready) {
 
-	setWriteAddress(_i2c, addr);
+		_state = State::transmiting;
 
-	tmp = _i2c->CR2;
+		auto expireTime = htl::getTick() + timeout;
+		bool error = false;
 
-	// Modus AUTOEND
-	//
-	tmp |= I2C_CR2_AUTOEND;
+		unsigned bufferCount = 0;
 
-	// Configura el nombre de bytes a transmetre
-	//
-	tmp &= ~(I2C_CR2_NBYTES_Msk | I2C_CR2_RELOAD);
-	if (bufferSize < 255)
-		tmp |= (bufferSize << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
-	else {
-		tmp |= (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
-		tmp |= I2C_CR2_RELOAD;
-	}
+		unsigned blockSize = std::min(bufferSize, (unsigned)255);
+		unsigned blockCount = 0;
 
-	// Inicia la comunicacio
-	//
-	start(_i2c);
+		startTransmit(addr, bufferCount, bufferSize);
 
-	_i2c->CR2 = tmp;
+		while ((bufferCount < bufferSize) && !error) {
 
-	unsigned blockSize = std::min(bufferSize, 255u);
-	while (bufferSize > 0) {
-
-		while ((_i2c->ISR & I2C_ISR_TXIS) == 0)
-			continue;
-
-		_i2c->TXDR = *buffer++;
-
-		bufferSize--;
-		blockSize--;
-
-		// Si es necesari prepara un altre bloc
-		//
-		if ((bufferSize > 0) && (blockSize == 0)) {
-
-			while ((_i2c->ISR & I2C_ISR_TCR) == 0)
+			// Espera que el registre TXD estigui buit
+			//
+			if (!waitTxEmpty(expireTime)) {
+				error = true;
 				continue;
+			}
 
-			// TODO: Preparar el seguent bloc
+			_i2c->TXDR = *buffer++;
 
-			blockSize = std::min(bufferSize, 255u);
+			bufferCount++;
+			blockCount++;
+
+			// Si es necesari prepara un altre bloc
+			//
+			if ((bufferCount < bufferSize) && (blockCount == blockSize)) {
+
+				// Espera que s'hagi completat la transmissio de l'ultim byte
+				//
+				while (!isTxCompleteReload())
+					continue;
+
+				blockSize = std::min(bufferSize - bufferCount, (unsigned)255);
+				blockCount = 0;
+
+				startTransmit(addr, bufferCount, bufferSize);
+			}
 		}
+
+		if (!waitSTOPCondition(expireTime))
+			error = true;
+
+		_state = State::ready;
+
+		return error ? Results::error : Results::success;
+
 	}
 
-	while ((_i2c->ISR & I2C_ISR_STOPF) == 0)
-		continue;
+	else if ((_state == State::transmiting) || (_state == State::receiving))
+		return Results::busy;
 
-	return Results::success;
+	else
+		return Results::errorState;
 }
 
 
@@ -228,57 +233,53 @@ Result I2CMasterDevice::receive(
 	unsigned bufferSize,
 	unsigned timeout) {
 
-    uint32_t tmp;
+	if (_state == State::ready) {
 
-    tmp = _i2c->CR2;
+		auto expireTime = htl::getTick() + timeout;
+		bool error = false;
 
-    setReadAddress(_i2c, addr);
+		unsigned bufferCount = 0;
 
-    // Modus AUTOEND
-    //
-    tmp |= I2C_CR2_AUTOEND;
+		unsigned blockSize = std::min(bufferSize, (unsigned)255);
+		unsigned blockCount = 0;
 
-    // Configura el nombre de bytes a rebre
-    //
-    tmp &= ~(I2C_CR2_NBYTES_Msk | I2C_CR2_RELOAD);
-    if (bufferSize < 255)
-        tmp |= (bufferSize << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
-    else {
-        tmp |= (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
-        tmp |= I2C_CR2_RELOAD;
-    }
+		startReceive(addr, bufferCount, bufferSize);
 
-    _i2c->CR2 = tmp;
+		while ((bufferCount < bufferSize) && !error) {
 
-    // Inicia la comunicacio.
-    //
-    start(_i2c);
+			 if (waitRxNotEmpty(expireTime)) {
+				 error = true;
+				 continue;
+			 }
 
-    unsigned blockSize = std::min(bufferSize, 255u);
-    while (bufferSize > 0) {
+			*buffer++ = _i2c->RXDR;
 
-        while ((_i2c->ISR & I2C_ISR_RXNE) == 0)
-            continue;
+			bufferCount++;
+			blockSize--;
 
-        *buffer++ = _i2c->RXDR;
+			// si es necesari, prepara un altre bloc
+			//
+			if ((bufferCount < bufferSize) && (blockCount == blockSize)) {
 
-        bufferSize--;
-        blockSize--;
+				blockSize = std::min(bufferSize - bufferCount, (unsigned)255);
+				blockCount = 0;
+			}
+		}
 
-        // si es necesari, prepara un altre bloc
-        //
-    }
+		// Espera l'indicador STOP
+		//
+		if (!waitSTOPCondition(expireTime))
+			error = true;
 
-    // Espera l'indicador STOP
-    //
-    while ((_i2c->ISR & I2C_ISR_STOPF) == 0)
-        continue;
+		return error ? Results::error : Results::success;
+	}
 
-    // Borra l'indicador STOP
-    //
-    _i2c->ICR |= I2C_ISR_STOPF;
+	else if (_state == State::receiving || _state == State::transmiting)
+		return Results::busy;
 
-    return Results::success;
+	else
+		return Results::error;
+
 }
 
 
@@ -332,7 +333,7 @@ Result I2CMasterDevice::transmit_IRQ(
 		// Inicia la transmissio
 		//
 		enableTransmitInterrupts(_i2c);
-	    start(_i2c);
+		start(_i2c);
 
 		return Results::success;
 	}
@@ -435,7 +436,7 @@ void I2CMasterDevice::interruptServiceTransmit() {
 		if (ISR & I2C_ISR_TXIS)
 			_i2c->TXDR = 0;
 		if (ISR & I2C_ISR_TXE)
-        	_i2c->ISR |= I2C_ISR_TXE;
+        	set(_i2c->ISR, I2C_ISR_TXE);
 	}
 
 	// Event TXIS
@@ -562,12 +563,12 @@ static void setWriteAddress(
 	I2C_TypeDef *i2c,
 	I2CAddr addr) {
 
-	auto tmp = i2c->CR2;
+	auto CR2 = i2c->CR2;
 
-	tmp &= ~(I2C_CR2_SADD | I2C_CR2_ADD10 | I2C_CR2_RD_WRN);
-	tmp |= (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk;
+	clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10 | I2C_CR2_RD_WRN);
+	set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
 
-	i2c->CR2 = tmp;
+	i2c->CR2 = CR2;
 }
 
 
@@ -580,13 +581,13 @@ static void setReadAddress(
 	I2C_TypeDef *i2c,
 	I2CAddr addr) {
 
-	auto tmp = i2c->CR2;
+	auto CR2 = i2c->CR2;
 
-	tmp &= ~(I2C_CR2_SADD | I2C_CR2_ADD10);
-	tmp |= (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk;
-	tmp |= I2C_CR2_RD_WRN;
+	clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10);
+	set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
+	set(CR2, I2C_CR2_RD_WRN);
 
-	i2c->CR2 = tmp;
+	i2c->CR2 = CR2;
 }
 
 
@@ -613,60 +614,99 @@ static void setTimming(
 		((sdadel << I2C_TIMINGR_SDADEL_Pos) & I2C_TIMINGR_SDADEL_Msk) |
 		((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
 		((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
-
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicia la comunicacio generant una condicio START.
+/// \brief    Inicia la tranmissio generant una condicio START.
 /// \param    i2c: Els registres de hardware del dispositiu.
 ///
-static void start(
-	I2C_TypeDef *i2c) {
+static void start(I2C_TypeDef *i2c) {
 
-	i2c->CR2 |= I2C_CR2_START;
+	set(i2c->CR2, I2C_CR2_START);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicia la comunicacio generant una condicio START.
-/// \param    i2c: Els registres de hardware del dispositiu.
+/// \brief    Inicia la tranmissio generant una condicio START.
+/// \param    addr: L'adressa
 /// \param    count: Bytes transmesos fins al moment.
 /// \param    macCount: Bytes totals a transmetre.
 ///
-static void start(
-	I2C_TypeDef *i2c,
+void I2CMasterDevice::startTransmit(
+	I2CAddr addr,
 	unsigned count,
 	unsigned maxCount) {
 
-	auto CR2 = i2c->CR2;
+	auto CR2 = _i2c->CR2;
 	auto length = maxCount - count;
 
 	// Configura el modus de transmisio de dades en funcio del nombre
 	// de bytes a transmetre.
 	//
-	CR2 &= ~(I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND);
+	clear(CR2, I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND);
+
+	// Si el bloc es menor de 255 bytes, aleshores transmet
+	// totes les dades d'una tirada en un sol bloc
+	// i genera el STOP automaticament al final
+	//
 	if (length < 255) {
-
-		// Transmet totes les dades d'una tirada en un sol bloc
-		// i genera el STOP automaticament al final
-		//
-		CR2 |= (length << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
-		CR2 |= I2C_CR2_AUTOEND; // Genera stop automaticament
+		set(CR2, (length << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+		set(CR2, I2C_CR2_AUTOEND); // Genera stop automaticament
 	}
 
+	// En cas contrari, transmet les dades en blocs de 255 bytes.
+	//
 	else {
-
-		// Transmet les dades en blocs de 255 bytes.
-		//
-		CR2 |= (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
-		CR2 |= I2C_CR2_RELOAD; // Solicita carregar el seguent bloc
+		set(CR2, (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+		set(CR2, I2C_CR2_RELOAD); // Solicita carregar el seguent bloc
 	}
-	CR2 |= I2C_CR2_START;
 
-	i2c->CR2 = CR2;
+	// Condicio START, si es al inici de la transmissio
+	//
+	if (count == 0) {
+		clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10 | I2C_CR2_RD_WRN);
+		set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
+     	set(CR2, I2C_CR2_START);
+	}
+
+	_i2c->CR2 = CR2;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicia la recepcio generant una condicio START.
+/// \param    addr: L'adressa
+/// \param    count: Bytes transmesos fins al moment.
+/// \param    macCount: Bytes totals a transmetre.
+///
+void I2CMasterDevice::startReceive(
+	I2CAddr addr,
+	unsigned count,
+	unsigned maxCount) {
+
+	auto CR2 = _i2c->CR2;
+	auto length = maxCount - count;
+
+    clear(CR2, I2C_CR2_NBYTES_Msk | I2C_CR2_RELOAD | I2C_CR2_AUTOEND);
+    if (length < 255) {
+        set(CR2, (length << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+    	set(CR2, I2C_CR2_AUTOEND);
+    }
+    else {
+        set(CR2, (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+        set(CR2, I2C_CR2_RELOAD);
+    }
+
+	if (count > 0) {
+		clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10);
+		set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
+		set(CR2, I2C_CR2_RD_WRN);
+     	set(CR2, I2C_CR2_START);
+	}
+
+	_i2c->CR2 = CR2;
+}
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita el dispositiu.
@@ -675,7 +715,7 @@ static void start(
 static void enable(
 	I2C_TypeDef *i2c) {
 
-	i2c->CR1 |= I2C_CR1_PE;
+	set(i2c->CR1, I2C_CR1_PE);
 }
 
 
@@ -686,7 +726,7 @@ static void enable(
 static void disable(
 	I2C_TypeDef *i2c) {
 
-	i2c->CR1 &= ~I2C_CR1_PE;
+	clear(i2c->CR1, I2C_CR1_PE);
 }
 
 
@@ -697,16 +737,16 @@ static void disable(
 static void enableTransmitInterrupts(
 	I2C_TypeDef *i2c) {
 
-	i2c->ICR |=
+	set(i2c->ICR,
 		I2C_ICR_NACKCF | // Borra NACK
-		I2C_ICR_STOPCF;  // Borra STOP
+		I2C_ICR_STOPCF); // Borra STOP
 
-	i2c->CR1 |=
+	set(i2c->CR1,
 		I2C_CR1_ERRIE |  // Habilita ERR
 		I2C_CR1_TXIE |   // Habilita TX
 		I2C_CR1_NACKIE | // Habilita NACK
 		I2C_CR1_TCIE |   // Habilita TC
-		I2C_CR1_STOPIE;  // Habilita STOP
+		I2C_CR1_STOPIE); // Habilita STOP
 }
 
 /// ----------------------------------------------------------------------
@@ -716,14 +756,14 @@ static void enableTransmitInterrupts(
 static void enableReceiveInterrupts(
 	I2C_TypeDef *i2c) {
 
-	i2c->ICR |=
-		I2C_ICR_STOPCF;  // Borra STOP
+	set(i2c->ICR,
+		I2C_ICR_STOPCF); // Borra STOP
 
-	i2c->CR1 |=
+	set(i2c->CR1,
 		I2C_CR1_ERRIE |  // Habilita ERR
 		I2C_CR1_RXIE |   // Habilita RX
 		I2C_CR1_TCIE |   // Habilita TC
-		I2C_CR1_STOPIE;  // Habilita STOP
+		I2C_CR1_STOPIE); // Habilita STOP
 }
 
 
@@ -734,7 +774,7 @@ static void enableReceiveInterrupts(
 static void disableInterrupts(
 	I2C_TypeDef *i2c) {
 
-    i2c->CR1 &= ~(
+    clear(i2c->CR1,
 		I2C_CR1_ERRIE |  // Deshabilita ERR
 		I2C_CR1_NACKIE | // Deshabilita NACK
 		I2C_CR1_TCIE |   // Deshabilita TC
@@ -742,3 +782,90 @@ static void disableInterrupts(
 		I2C_CR1_RXIE |   // Deshabilita RX
 		I2C_CR1_STOPIE); // Deshabilita STOP
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera fins que el registre de transmissio no estigui
+///           buit.
+/// \param    expiteTime: Temps limit.
+/// \return   True si no es buit, false en cas d'error (TimeOut)
+///
+bool I2CMasterDevice::waitRxNotEmpty(
+    unsigned expireTime) const {
+
+    while (!isRxNotEmpty()) {
+        if (hasTickExpired(expireTime))
+            return false;
+    }
+
+    return true;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera fins que el registre de transmissio estigui buit.
+/// \param    expiteTime: Temps limit.
+/// \return   True si tot es correcte, false en cas d'error (TimeOut)
+///
+bool I2CMasterDevice::waitTxEmpty(
+    unsigned expireTime) const {
+
+    while (!isTxEmpty()) {
+        if (hasTickExpired(expireTime))
+            return false;
+    }
+
+    return true;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera fins que es detecti una condicio STOP.
+/// \param    expiteTime: Temps limit.
+/// \return   True si tot es correcte, false en cas d'error (TimeOut)
+///
+bool I2CMasterDevice::waitSTOPCondition(
+    unsigned expireTime) const {
+
+    while (!isSTOPCondition()) {
+        if (hasTickExpired(expireTime))
+            return false;
+    }
+
+    return true;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova que el registre de recepcio no estigui buit
+/// \return   True si no es buit, false en cas contrari.
+///
+bool I2CMasterDevice::isRxNotEmpty() const {
+
+	return isSet(_i2c->ISR, I2C_ISR_RXNE);
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova que el registre de transmissio estigui buit
+/// \return   True si es buit, false en cas contrari.
+///
+bool I2CMasterDevice::isTxEmpty() const {
+
+	return isSet(_i2c->ISR, I2C_ISR_TXIS);
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si ha finalitzat la transmissio
+/// \return   True si ha finalitzat, false en cas contrari.
+///
+bool I2CMasterDevice::isTxCompleteReload() const {
+
+	return isSet(_i2c->ISR, I2C_ISR_TCR);
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si s'ha detectat una condicio STOP
+/// \return   True si s'ha detectet, false en cas contrari.
+///
+bool I2CMasterDevice::isSTOPCondition() const {
+
+	return isSet(_i2c->ISR, I2C_ISR_STOPF);
+}
+

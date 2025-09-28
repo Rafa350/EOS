@@ -85,14 +85,26 @@
         #define EOS_PLATFORM_STM32G051K8
 
     // STM32G071xx
+    #elif defined(STM32G071K8)
+        #define EOS_PLATFORM_STM32G0
+        #define EOS_PLATFORM_STM32G071
+        #define EOS_PLATFORM_STM32G071K8
     #elif defined(STM32G071KB)
         #define EOS_PLATFORM_STM32G0
         #define EOS_PLATFORM_STM32G071
         #define EOS_PLATFORM_STM32G071KB
+    #elif defined(STM32G071C8)
+        #define EOS_PLATFORM_STM32G0
+        #define EOS_PLATFORM_STM32G071
+        #define EOS_PLATFORM_STM32G071C8
     #elif defined(STM32G071CB)
         #define EOS_PLATFORM_STM32G0
         #define EOS_PLATFORM_STM32G071
         #define EOS_PLATFORM_STM32G071CB
+    #elif defined(STM32G071R8)
+        #define EOS_PLATFORM_STM32G0
+        #define EOS_PLATFORM_STM32G071
+        #define EOS_PLATFORM_STM32G071R8
     #elif defined(STM32G071RB)
         #define EOS_PLATFORM_STM32G0
         #define EOS_PLATFORM_STM32G071
@@ -181,11 +193,28 @@ namespace eos {
 	namespace build {
 
 		enum class PlatformID {
+
+			// PIC32MX4xxxFxxx
             pic32mx460f512l,
+
+			// STM32F429xx
 			stm32f249zi,
+
+			// STM32F7446xx
 			stm32f746ng,
+
+			// STM32G031xx
 			stm32g031k8,
+
+			// STM32G071xx
+			stm32g071c8,
+			stm32g071cb,
+			stm32g071k8,
+			stm32g071kb,
+			stm32g071r8,
 			stm32g071rb,
+
+			// STM32G0B1xx
 			stm32g0B1re
 		};
 
@@ -196,8 +225,14 @@ namespace eos {
 			static constexpr PlatformID platformID = PlatformID::stm32f429zi;
 #elif defined(EOS_PLATFORM_STM32F746NG)
 			static constexpr PlatformID platformID = PlatformID::stm32f746ng;
-#elif defined(EOS_PLATFORM_STM32G031K9)
+#elif defined(EOS_PLATFORM_STM32G031K8)
 			static constexpr PlatformID platformID = PlatformID::stm32g031k8;
+#elif defined(EOS_PLATFORM_STM32G071K8)
+			static constexpr PlatformID platformID = PlatformID::stm32g071k8;
+#elif defined(EOS_PLATFORM_STM32G071KB)
+			static constexpr PlatformID platformID = PlatformID::stm32g071kb;
+#elif defined(EOS_PLATFORM_STM32G071R8)
+			static constexpr PlatformID platformID = PlatformID::stm32g071r8;
 #elif defined(EOS_PLATFORM_STM32G071RB)
 			static constexpr PlatformID platformID = PlatformID::stm32g071rb;
 #elif defined(EOS_PLATFORM_STM32G0B1RE)

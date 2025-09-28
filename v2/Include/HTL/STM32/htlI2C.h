@@ -122,7 +122,6 @@ namespace htl {
 		class I2CSlaveDevice: public I2CDevice {
 			public:
 				enum class State {
-					invalid,
 					reset,
 					ready,
 					listen,
@@ -181,7 +180,6 @@ namespace htl {
 				/// Obte l'estat del dispositiu.
 				///
 				inline State getState() const { return _state; }
-				inline bool isValid() const { return _state != State::invalid; }
 				inline bool isReady() const { return _state == State::ready; }
 				inline bool isBusy() const { return _state != State::ready; }
 		};
@@ -189,7 +187,6 @@ namespace htl {
 		class I2CMasterDevice: public I2CDevice {
 			public:
 				enum class State {
-					invalid,
 					reset,
 					ready,
                     transmiting,
@@ -209,6 +206,18 @@ namespace htl {
 
 				void notifyTxCompleted(unsigned length, bool irq);
 				void notifyRxCompleted(unsigned length, bool irq);
+
+				void startTransmit(I2CAddr addr, unsigned count, unsigned maxCount);
+				void startReceive(I2CAddr addr, unsigned count, unsigned maxCount);
+
+				bool waitTxEmpty(unsigned expireTime) const;
+				bool waitRxNotEmpty(unsigned expireTime) const;
+				bool waitSTOPCondition(unsigned expireTime) const;
+
+			    bool isTxEmpty() const;
+			    bool isTxCompleteReload() const;
+			    bool isRxNotEmpty() const;
+			    bool isSTOPCondition() const;
 
 			protected:
 				I2CMasterDevice(I2C_TypeDef *i2c);
@@ -244,7 +253,6 @@ namespace htl {
 				/// Obte l'estat del dispositiu.
 				///
 				inline State getState() const { return _state; }
-				inline bool isValid() const { return _state != State::invalid; }
 				inline bool isReady() const { return _state == State::ready; }
 				inline bool isBusy() const { return _state != State::ready; }
 		};
@@ -266,10 +274,10 @@ namespace htl {
 
 			private:
 				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
-				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
-				static constexpr auto _rccEnablePos = I2CTraits::rccEnablePos;
-                static constexpr auto _rccResetAddr = I2CTraits::rccResetAddr;
-                static constexpr auto _rccResetPos = I2CTraits::rccResetPos;
+				static constexpr auto _activateAddr = I2CTraits::activateAddr;
+				static constexpr auto _activatePos = I2CTraits::activatePos;
+                static constexpr auto _resetAddr = I2CTraits::resetAddr;
+                static constexpr auto _resetPos = I2CTraits::resetPos;
 				static I2CSlaveDeviceX _instance;
 
 			public:
@@ -284,22 +292,22 @@ namespace htl {
 
 			protected:
 				void activate() override {
-					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p |= 1 << _rccEnablePos;
+					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
+					*p |= 1 << _activatePos;
 					__DSB();
 				}
 				void deactivate() override {
-					auto p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p &= ~(1 << _rccEnablePos);
+					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
+					*p &= ~(1 << _activatePos);
 				}
 
                 void reset() override {
-                    auto p = reinterpret_cast<uint32_t *>(_rccResetAddr);
-                    *p |= 1 << _rccResetPos;
-                    while ((*p & (1 << _rccResetPos)) == 0)
+                    auto p = reinterpret_cast<uint32_t *>(_resetAddr);
+                    *p |= 1 << _resetPos;
+                    while ((*p & (1 << _resetPos)) == 0)
                         continue;
-                    *p &= ~(1 << _rccResetPos);
-                    while ((*p & (1 << _rccResetPos)) != 0)
+                    *p &= ~(1 << _resetPos);
+                    while ((*p & (1 << _resetPos)) != 0)
                         continue;
                 }
 
@@ -311,17 +319,17 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void inline initPinSMBA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 		};
 
@@ -350,10 +358,13 @@ namespace htl {
 
 			private:
 				static constexpr auto _i2cAddr = I2CTraits::i2cAddr;
-				static constexpr auto _rccEnableAddr = I2CTraits::rccEnableAddr;
-				static constexpr auto _rccEnablePos = I2CTraits::rccEnablePos;
-                static constexpr auto _rccResetAddr = I2CTraits::rccResetAddr;
-                static constexpr auto _rccResetPos = I2CTraits::rccResetPos;
+				static constexpr auto _activateAddr = I2CTraits::activateAddr;
+				static constexpr auto _activatePos = I2CTraits::activatePos;
+                static constexpr auto _resetAddr = I2CTraits::resetAddr;
+                static constexpr auto _resetPos = I2CTraits::resetPos;
+                static constexpr auto _clockSourceAddr = I2CTraits::clockSourceAddr;
+                static constexpr auto _clockSourcePos = I2CTraits::clockSourcePos;
+                static constexpr auto _clockSourceMsk = I2CTraits::clockSourceMsk;
 				static I2CMasterDeviceX _instance;
 
 			public:
@@ -368,14 +379,14 @@ namespace htl {
 
 			protected:
 				void activate() override {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p |= 1 << _rccEnablePos;
+					uint32_t *p = reinterpret_cast<uint32_t *>(_activateAddr);
+					*p |= 1 << _activatePos;
 					__DSB();
 				}
 
 				void deactivate() override {
-					uint32_t *p = reinterpret_cast<uint32_t *>(_rccEnableAddr);
-					*p &= ~(1 << _rccEnablePos);
+					uint32_t *p = reinterpret_cast<uint32_t *>(_activateAddr);
+					*p &= ~(1 << _activatePos);
 				}
 
 				void reset() override {
@@ -390,12 +401,19 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
+
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				}
+
+				void initClockSource(ClockSource clockSource) {
+					uint32_t *p = reinterpret_cast<uint32_t *>(_clockSourceAddr);
+					*p &= ~_clockSourceMsk;
+					*p |= ((uint32_t)clockSource << _clockSourcePos) & _clockSourceMsk;
 				}
 		};
 

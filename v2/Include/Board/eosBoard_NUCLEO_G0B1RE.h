@@ -210,18 +210,18 @@
 #define ARDUINO_D15_Pin      htl::gpio::PinB8
 
 #define ARTUINO_UART_Device  htl::uart::UARTDevice1
-#define ARDUINO_RX_Pin       htl::gpio::PinC5
-#define ARDUINO_TX_Pin       htl::gpio::PinC4
+#define ARDUINO_RX_Pin       htl::gpio::PinC5 // ARDUINO_D0
+#define ARDUINO_TX_Pin       htl::gpio::PinC4 // ARDUINO_D1
 
 #define ARDUINO_I2C_SlaveDevice   htl::i2c::I2CSlaveDevice1
 #define ARDUINO_I2C_MasterDevice  htl::i2c::I2CMasterDevice1
-#define ARDUINO_SCL_Pin      htl::gpio::PinB8
-#define ARDUINO_SDA_Pin      htl::gpio::PinB9
+#define ARDUINO_SCL_Pin      htl::gpio::PinB8 // ARDUINO_D15
+#define ARDUINO_SDA_Pin      htl::gpio::PinB9 // ARDUINO_D14
 
 #define ARDUINO_SPI_Device   htl::spi::SPIDevice1
-#define ARDUINO_SCK_Pin      htl::gpio::PinA5
-#define ARDUINO_MISO_Pin     htl::gpio::PinA6
-#define ARDUINO_MOSI_Pin     htl::gpio::PinA7
+#define ARDUINO_SCK_Pin      htl::gpio::PinA5 // ARDUINO_D13
+#define ARDUINO_MISO_Pin     htl::gpio::PinA6 // ARDUINO_D12
+#define ARDUINO_MOSI_Pin     htl::gpio::PinA7 // ARDUINO_D11
 
 #endif // USE_ARDUINO
 

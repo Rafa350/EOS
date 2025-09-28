@@ -13,21 +13,21 @@ namespace htl {
     
     namespace tmr {
 
-        enum class TMRTimer {
+        enum class DeviceID {
             #ifdef _TMR1
-                _1,
+                tmr1,
             #endif
             #ifdef _TMR2
-                _2,
+                tmr2,
             #endif
             #ifdef _TMR3
-                _3,
+                tmr3,
             #endif
             #ifdef _TMR4
-                _4,
+                tmr4,
             #endif
             #ifdef _TMR5
-                _5,
+                tmr5,
             #endif
         };
 
@@ -93,14 +93,14 @@ namespace htl {
         using TMRInterruptParam = void*;
         using TMRInterruptFunction = void (*)(TMRInterruptParam param);
 
-        template <TMRTimer timer_>
+        template <DeviceID deviceID_>
         struct TMRTimerTrait {
         };
 
-        template <TMRTimer timer_>
-        class TMR_x {
+        template <DeviceID deviceID_>
+        class TMRDeviceX {
             private:
-                using TimerTrait = TMRTimerTrait<timer_>;
+                using TimerTrait = TMRTimerTrait<deviceID_>;
                 using IF = typename TimerTrait::IF;
                 using IE = typename TimerTrait::IE;
 
@@ -112,13 +112,13 @@ namespace htl {
                 static TMRInterruptParam _isrParam;
 
             private:
-                TMR_x() = delete;
-                TMR_x(const TMR_x &) = delete;
-                TMR_x(const TMR_x &&) = delete;
-                ~TMR_x() = delete;
+                TMRDeviceX() = delete;
+                TMRDeviceX(const TMRDeviceX &) = delete;
+                TMRDeviceX(const TMRDeviceX &&) = delete;
+                ~TMRDeviceX() = delete;
 
-                TMR_x & operator = (const TMR_x &) = delete;
-                TMR_x & operator = (const TMR_x &&) = delete;
+                TMRDeviceX & operator = (const TMRDeviceX &) = delete;
+                TMRDeviceX & operator = (const TMRDeviceX &&) = delete;
 
             public:
                 /// \brief Inicialitza i activa el modul
@@ -336,30 +336,30 @@ namespace htl {
                 }
         };
 
-        template <TMRTimer timer_> TMRInterruptFunction TMR_x<timer_>::_isrFunction = nullptr;
-        template <TMRTimer timer_> TMRInterruptParam TMR_x<timer_>::_isrParam = nullptr;
+        template <DeviceID deviceID_> TMRInterruptFunction TMRDeviceX<deviceID_>::_isrFunction = nullptr;
+        template <DeviceID deviceID_> TMRInterruptParam TMRDeviceX<deviceID_>::_isrParam = nullptr;
 
 
         #ifdef _TMR1
-            using TMR_1 = TMR_x<TMRTimer::_1>;
+            using TMRDevice1 = TMRDeviceX<DeviceID::tmr1>;
         #endif
         #ifdef _TMR2
-            using TMR_2 = TMR_x<TMRTimer::_2>;
+            using TMRDevice2 = TMRDeviceX<DeviceID::tmr2>;
         #endif
         #ifdef _TMR3
-            using TMR_3 = TMR_x<TMRTimer::_3>;
+            using TMRDevice3 = TMRDeviceX<DeviceID::tmr3>;
         #endif
         #ifdef _TMR4
-            using TMR_4 = TMR_x<TMRTimer::_4>;
+            using TMRDevice4 = TMRDeviceX<DeviceID::tmr4>;
         #endif
         #ifdef _TMR5
-            using TMR_5 = TMR_x<TMRTimer::_5>;
+            using TMRDevice5 = TMRDeviceX<DeviceID::tmr5>;
         #endif
 
 
         #ifdef _TMR1
             template <>
-            struct TMRTimerTrait<TMRTimer::_1> {
+            struct TMRTimerTrait<DeviceID::tmr1> {
                 using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T1IF_POSITION>;
                 using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T1IE_POSITION>;
                 static constexpr uint32_t addr = _TMR1_BASE_ADDRESS;
@@ -369,7 +369,7 @@ namespace htl {
 
         #ifdef _TMR2
             template <>
-            struct TMRTimerTrait<TMRTimer::_2> {
+            struct TMRTimerTrait<DeviceID::tmr2> {
                 using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T2IF_POSITION>;
                 using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T2IE_POSITION>;
                 static constexpr uint32_t addr = _TMR2_BASE_ADDRESS;
@@ -379,7 +379,7 @@ namespace htl {
 
         #ifdef _TMR3
             template <>
-            struct TMRTimerTrait<TMRTimer::_3> {
+            struct TMRTimerTrait<DeviceID::tmr3> {
                 using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T3IF_POSITION>;
                 using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T3IE_POSITION>;
                 static constexpr uint32_t addr = _TMR3_BASE_ADDRESS;
@@ -389,7 +389,7 @@ namespace htl {
 
         #ifdef _TMR4
             template <>
-            struct TMRTimerTrait<TMRTimer::_4> {
+            struct TMRTimerTrait<DeviceID::tmr4> {
                 using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T4IF_POSITION>;
                 using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T4IE_POSITION>;
                 static constexpr uint32_t addr = _TMR4_BASE_ADDRESS;
@@ -399,7 +399,7 @@ namespace htl {
 
         #ifdef _TMR5
             template <>
-            struct TMRTimerTrait<TMRTimer::_5> {
+            struct TMRTimerTrait<DeviceID::tmr5> {
                 using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T5IF_POSITION>;
                 using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T5IE_POSITION>;
                 static constexpr uint32_t addr = _TMR5_BASE_ADDRESS;

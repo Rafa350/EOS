@@ -124,7 +124,6 @@ namespace htl {
 		class SPIDevice {
 			public:
 				enum class State {
-					invalid,
 					reset,
 					ready,
 					transmiting
@@ -219,7 +218,6 @@ namespace htl {
                         const uint8_t *txBuffer, unsigned bufferSize);
 #endif
                 State getState() const { return _state; }
-                bool isValid() const { return _state != State::invalid; }
 				bool isReady() const { return _state == State::ready; }
 				bool isBusy() const { return _state != State::ready; }
 		};

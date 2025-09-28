@@ -212,8 +212,8 @@ namespace htl {
 			private:
 				using HI = internal::TMRTraits<deviceID_>;
 				static constexpr uint32_t _timAddr = HI::timAddr;
-				static constexpr uint32_t _rccAddr = HI::rccAddr;
-				static constexpr uint32_t _enablePos = HI::enablePos;
+				static constexpr uint32_t _activateAddr = HI::activateAddr;
+				static constexpr uint32_t _activatePos = HI::activatePos;
 				static TMRDeviceX _instance;
 
 			public:
@@ -228,13 +228,13 @@ namespace htl {
 
 			protected:
 				void activate() override {
-					uint32_t *p = reinterpret_cast<uint32_t*>(_rccAddr);
-					*p |= 1 << _enablePos;
+					uint32_t *p = reinterpret_cast<uint32_t*>(_activateAddr);
+					*p |= 1 << _activatePos;
 					__DSB();
 				}
 				void deactivate() override {
-					uint32_t *p = reinterpret_cast<uint32_t*>(_rccAddr);
-					*p &= ~(1 << _enablePos);
+					uint32_t *p = reinterpret_cast<uint32_t*>(_activateAddr);
+					*p &= ~(1 << _activatePos);
 				}
 
 			public:

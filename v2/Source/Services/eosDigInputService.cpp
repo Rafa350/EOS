@@ -124,9 +124,11 @@ void DigInputService::addInput(
 
     // Afegeix l'entrada a la llista
     //
-    if (input->_service == nullptr) {
-        input->_service = this;
-        _inputs.pushFront(input);
+    if (!_inputs.contains(input)) {
+		if (input->_service == nullptr) {
+			input->_service = this;
+			_inputs.pushFront(input);
+		}
     }
 
     // Fi de la seccio critica
