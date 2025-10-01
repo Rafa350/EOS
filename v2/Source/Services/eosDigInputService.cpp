@@ -5,24 +5,102 @@
 
 #include <cmath>
 
-
-#ifdef HTL_MODULAR
-import htl.interrupts;
-#else
 #include "HTL/htlINT.h"
-namespace interrupts = htl::irq;
-#endif
+
+
+namespace eos {
+
+    class Input final: public DigInput {
+
+		private: static constexpr const uint32_t _patternMask    = 0x000000FF;
+		private: static constexpr const uint32_t _patternPosEdge = 0x0000007F;
+		private: static constexpr const uint32_t _patternNegEdge = 0x00000080;
+		private: static constexpr const uint32_t _patternActive  = 0x000000FF;
+		private: static constexpr const uint32_t _patternIdle    = 0x00000000;
+
+    	public: enum class ScanMode {
+			polling,
+			interrupt
+		};
+
+        public: ScanMode scanMode;
+
+        private: PinDriver * const _drv;
+        private: unsigned _pattern;
+        private: struct {
+			unsigned state : 1;
+			unsigned flag : 1;
+			unsigned edges : 30;
+		} _status;
+
+
+        public: Input(PinDriver *pinDrv):
+			_drv {pinDrv} {
+
+			if (_drv->read()) {
+				_status.state = 1;
+				_pattern = _patternActive;
+			}
+			else {
+				_status.state = 0;
+				_pattern = _patternIdle;
+			}
+			_status.edges = 0;
+			_status.flag = 0;
+		}
+
+        public: bool scan() {
+
+        	_pattern <<= 1;
+            if (_drv->read())
+                _pattern |= 1;
+
+            // Analitza el patro per detectar un flanc positiu
+            //
+            if ((_pattern & _patternMask) == _patternPosEdge) {
+                _status.state = 1;
+                _status.edges += 1;
+                _status.flag = 1;
+                return true;
+            }
+
+            // Analitza el patro per detectar un flanc negatiu
+            //
+            else if ((_pattern & _patternMask) == _patternNegEdge) {
+                _status.state = 0;
+                _status.edges += 1;
+                _status.flag = 1;
+                return true;
+            }
+
+            else
+            	return false;
+        }
+
+        public: inline bool getState() const {
+        	return _status.state;
+        }
+
+        public: inline unsigned getEdges(bool clear) {
+        	auto edges = _status.edges;
+        	if (clear)
+        		_status.edges = 0;
+        	return edges;
+        }
+
+        public: inline bool readFlag() {
+        	bool flag = _status.flag == 1;
+        	_status.flag = 0;
+        	return flag;
+        }
+    };
+}
 
 
 using namespace eos;
 using namespace htl;
+using namespace htl::irq;
 
-
-constexpr const uint32_t PATTERN_MASK    = 0x000000FF;
-constexpr const uint32_t PATTERN_POSEDGE = 0x0000007F;
-constexpr const uint32_t PATTERN_NEGEDGE = 0x00000080;
-constexpr const uint32_t PATTERN_ACTIVE  = 0x000000FF;
-constexpr const uint32_t PATTERN_IDLE    = 0x00000000;
 
 constexpr const char *serviceName = "DigInput";
 constexpr Task::Priority servicePriority = Task::Priority::normal;
@@ -109,6 +187,20 @@ void DigInputService::notifyInitialize(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Crea una entrada.
+/// \param    pinDrv: El driver del pin.
+/// \return   L'entrada.
+///
+DigInput * DigInputService::makeInput(
+	PinDriver * pinDrv) {
+
+    eosAssert(pinDrv != nullptr);
+
+    return new Input(pinDrv);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Afegeix una entrada al servei.
 /// \param    input: L'entrada a afeigir.
 ///
@@ -116,7 +208,6 @@ void DigInputService::addInput(
     DigInput *input) {
 
     eosAssert(input != nullptr);
-    eosAssert(input->_service == nullptr);
 
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
@@ -124,12 +215,9 @@ void DigInputService::addInput(
 
     // Afegeix l'entrada a la llista
     //
-    if (!_inputs.contains(input)) {
-		if (input->_service == nullptr) {
-			input->_service = this;
-			_inputs.pushFront(input);
-		}
-    }
+    auto i = static_cast<Input*>(input);
+    if (!_inputs.contains(i))
+		_inputs.pushFront(i);
 
     // Fi de la seccio critica
     //
@@ -145,16 +233,14 @@ void DigInputService::removeInput(
     DigInput *input) {
 
     eosAssert(input != nullptr);
-    eosAssert(input->_service == this);
 
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
 
-    if (input->_service == this) {
-        _inputs.remove(input);
-        input->_service = nullptr;
-    }
+    auto i = static_cast<Input*>(input);
+    if (_inputs.contains(i))
+        _inputs.remove(i);
 
     // Fi de la seccio critica
     //
@@ -208,15 +294,16 @@ void DigInputService::onExecute() {
 		if (scanInputs()) {
 			for (auto input: _inputs) {
 
-				bool ie = interrupts::getInterruptState();
-				if (ie)
-					interrupts::disableInterrupts();
+				auto i = static_cast<Input*>(input);
 
-				bool flag = input->_pinStatus.flag;
-				input->_pinStatus.flag = false;
+				bool s = getInterruptState();
+				if (s)
+					disableInterrupts();
 
-				if (ie)
-					interrupts::enableInterrupts();
+				bool flag = i->readFlag();
+
+				if (s)
+					enableInterrupts();
 
 				if (flag)
 					notifyChanged(input);
@@ -238,32 +325,9 @@ bool DigInputService::scanInputs() {
     //
     for (auto input: _inputs) {
 
-        if (input->_scanMode == DigInput::ScanMode::polling) {
-
-            // Actualitza el patro
-            //
-            input->_pattern <<= 1;
-            if (input->_drv->read())
-                input->_pattern |= 1;
-
-            // Analitza el patro per detectar un flanc positiu
-            //
-            if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-                input->_pinStatus.state = 1;
-                input->_pinStatus.edges += 1;
-                input->_pinStatus.flag = 1;
-                changed = true;
-            }
-
-            // Analitza el patro per detectar un flanc negatiu
-            //
-            else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-                input->_pinStatus.state = 0;
-                input->_pinStatus.edges += 1;
-                input->_pinStatus.flag = 1;
-                changed = true;
-            }
-        }
+        auto i = static_cast<Input*>(input);
+        if (i->scanMode == Input::ScanMode::polling)
+        	changed |= i->scan();
     }
 
     return changed;
@@ -279,11 +343,11 @@ bool DigInputService::read(
     const DigInput *input) const {
 
     eosAssert(input != nullptr);
-    eosAssert(input->_service == this);
 
     Task::enterCriticalSection();
 
-    bool value = input->_pinStatus.state == 1;
+    auto i = static_cast<const Input*>(input);
+    auto value = i->getState();
 
     Task::exitCriticalSection();
 
@@ -302,54 +366,13 @@ uint32_t DigInputService::getEdges(
 	bool clear) const {
 
     eosAssert(input != nullptr);
-    eosAssert(input->_service == this);
 
     Task::enterCriticalSection();
 
-    unsigned edges = input->_pinStatus.edges;
-    if (clear)
-    	input->_pinStatus.edges = 0;
+    auto i = static_cast<Input*>(input);
+    auto edges = i->getEdges(clear);
 
     Task::exitCriticalSection();
 
     return edges;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    service: The service.
-/// \param    drv: El driver del pin
-///
-DigInput::DigInput(
-    DigInputService *service,
-    PinDriver *drv):
-
-	_service {nullptr},
-    _drv {drv},
-    _scanMode {ScanMode::polling} {
-
-    if (_drv->read()) {
-        _pinStatus.state = 1;
-        _pattern = PATTERN_ACTIVE;
-    }
-    else {
-        _pinStatus.state = 0;
-        _pattern = PATTERN_IDLE;
-    }
-    _pinStatus.edges = 0;
-    _pinStatus.flag = false;
-
-    if (service != nullptr)
-        service->addInput(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Destructor.
-///
-DigInput::~DigInput() {
-
-    if (_service != nullptr)
-        _service->removeInput(this);
 }
