@@ -117,6 +117,7 @@ namespace htl {
 		};
 
 		struct NotifyEventArgs {
+			NotifyID id;
 			bool isr;
 			union {
 				struct {
@@ -126,7 +127,9 @@ namespace htl {
 			};
 		};
 
-		using NotifyEventRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+		class TMRDevice;
+
+		using NotifyEventRaiser = eos::EventRaiser<TMRDevice, NotifyEventArgs>;
 		using INotifyEvent = NotifyEventRaiser::IEvent;
 		template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 

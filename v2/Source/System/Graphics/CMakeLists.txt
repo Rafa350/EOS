@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 4.0)
 
-target_sources(${CMAKE_PROJECT_NAME} PUBLIC FILE_SET system_graphics_fileset TYPE CXX_MODULES FILES
+add_subdirectory("Fonts")
+
+list(APPEND SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/eosBitmap.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/eosBrush.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/eosColor.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/eosColorMath.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/eosConsole.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/eosFont.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/eosGraphics.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/eosGraphics_Bitmap.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/eosGraphics_Circle.cpp
@@ -19,3 +27,7 @@ target_sources(${CMAKE_PROJECT_NAME} PUBLIC FILE_SET system_graphics_fileset TYP
 	${CMAKE_CURRENT_SOURCE_DIR}/eosText.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/eosTransformation.cpp
 )	
+
+target_sources(${CMAKE_PROJECT_NAME} PUBLIC 
+	${SOURCES}
+)

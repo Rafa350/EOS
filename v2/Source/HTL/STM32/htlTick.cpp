@@ -117,10 +117,10 @@ void TickGenerator::wait(
 /// \param    args: Parametres de la notificacio.
 ///
 void TickGenerator::tmrNotifyEventHandler(
-	htl::tmr::NotifyID id,
+	htl::tmr::TMRDevice * const sender,
 	htl::tmr::NotifyEventArgs * const args) {
 
-	if (id == htl::tmr::NotifyID::update)
+	if (args->id == htl::tmr::NotifyID::update)
 		_tickCounter += 1;
 }
 

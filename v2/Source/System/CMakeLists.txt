@@ -5,8 +5,12 @@ add_subdirectory("Graphics")
 add_subdirectory("IO")
 
 
-target_sources(${CMAKE_PROJECT_NAME} PUBLIC FILE_SET system_fileset TYPE CXX_MODULES FILES
+list(APPEND SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/eosApplicationBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/eosDebug.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/eosRTOSApplication.cpp	
 )	
+
+target_sources(${CMAKE_PROJECT_NAME} PUBLIC 
+	${SOURCES}
+)

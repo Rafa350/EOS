@@ -13,15 +13,13 @@ namespace eos {
 
 	class Device_CLT0138SQ7 final {
 		public:
-	        using Pin = htl::gpio::PinDevice;
-	        using DevSPI = htl::spi::SPIDevice;
 			enum class State {
 				reset,
 				ready
 			};
 			struct CreateParams {
-			    Pin *pinSS;
-			    DevSPI *devSPI;
+				htl::gpio::PinDevice *pinSS;
+				htl::spi::SPIDevice *devSPI;
 			};
 
         private:
@@ -33,11 +31,11 @@ namespace eos {
 			uint8_t _pinState;
 			bool _underVoltage;
 			bool _overTemperature;
-			DevSPI *_devSPI;
-			const Pin * const _pinSS;
+			htl::spi::SPIDevice * const _devSPI;
+			htl::gpio::PinDevice * const _pinSS;
 
 		public:
-            Device_CLT0138SQ7(DevSPI *devSPI, Pin *pinSS);
+            Device_CLT0138SQ7(htl::spi::SPIDevice *devSPI, htl::gpio::PinDevice *pinSS);
             Device_CLT0138SQ7(const CreateParams *params);
 
             Result initialize();

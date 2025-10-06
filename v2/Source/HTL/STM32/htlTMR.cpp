@@ -526,9 +526,10 @@ void TMRDevice::notifyTrigger() {
 
 	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
+			.id = NotifyID::trigger,
 			.isr = true
 		};
-		_erNotify.raise(NotifyID::trigger, &args);
+		_erNotify.raise(this, &args);
 	}
 }
 
@@ -540,8 +541,9 @@ void TMRDevice::notifyUpdate() {
 
 	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
+			.id = NotifyID::update,
 			.isr = true
 		};
-		_erNotify.raise(NotifyID::update, &args);
+		_erNotify.raise(this, &args);
 	}
 }

@@ -88,3 +88,30 @@ unsigned osalTaskGetStackHighWaterMark(void) {
 
 	return uxTaskGetStackHighWaterMark(NULL);
 }
+
+
+unsigned osalNotifyWait(
+	bool clear,
+	unsigned blockTime) {
+
+//	TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+//	return ulTaskNotifyTake(clear, blockTicks);
+	return 0;
+}
+
+
+void osalTaskNotifyRelease(
+	unsigned blockTime) {
+
+	//xTaskNotify();
+}
+
+
+void osalTaskNotifyReleaseISR(
+	HTask hTask) {
+
+	portBASE_TYPE taskWoken = pdFALSE;
+
+	if (xTaskNotifyFromISR((TaskHandle_t)hTask, 0, eNoAction, &taskWoken) == pdPASS)
+		portEND_SWITCHING_ISR(taskWoken);
+}

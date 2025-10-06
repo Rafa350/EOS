@@ -13,8 +13,8 @@ using namespace htl;
 /// \param    pinSS: El pin pel chip select.
 ///
 Device_CLT0138SQ7::Device_CLT0138SQ7(
-    DevSPI *devSPI,
-    Pin *pinSS):
+    htl::spi::SPIDevice *devSPI,
+    htl::gpio::PinDevice *pinSS):
 
 	_state {State::reset},
 	_pinState {0},

@@ -51,24 +51,22 @@ namespace eos {
 	///
     class Device_VNI8200XP_SPI final: public Device_VNI8200XP {
         public:
-            using Pin = htl::gpio::PinDevice;
-            using DevSPI = htl::spi::SPIDevice;
             struct CreateParams {
-                DevSPI *devSPI;
-                Pin *pinSS;
-                Pin *pinOUTEN;
+            	htl::spi::SPIDevice *devSPI;
+                htl::gpio::PinDevice *pinSS;
+                htl::gpio::PinDevice *pinOUTEN;
             };
 
     	private:
     		State _state;
     		uint8_t _curPinState;
             uint8_t _oldPinState;
-    		DevSPI *_devSPI;
-    		Pin const * const _pinSS;
-    		Pin const * const _pinOUTEN;
+            htl::spi::SPIDevice * const _devSPI;
+    		htl::gpio::PinDevice * const _pinSS;
+    		htl::gpio::PinDevice * const _pinOUTEN;
 
     	public:
-    		Device_VNI8200XP_SPI(DevSPI *devSPI, Pin *pinSS, Pin *pinOUTEN = nullptr);
+    		Device_VNI8200XP_SPI(htl::spi::SPIDevice *devSPI, htl::gpio::PinDevice *pinSS, htl::gpio::PinDevice *pinOUTEN = nullptr);
             Device_VNI8200XP_SPI(const CreateParams *params);
 
             Result initialize() override;

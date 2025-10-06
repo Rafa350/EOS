@@ -12,6 +12,6 @@ list(APPEND SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/eosTimer.cpp
 )
 
-target_sources(${CMAKE_PROJECT_NAME} PUBLIC FILE_SET system_core_fileset TYPE CXX_MODULES FILES
+target_sources(${CMAKE_PROJECT_NAME} PUBLIC 
 	${SOURCES}
 )	

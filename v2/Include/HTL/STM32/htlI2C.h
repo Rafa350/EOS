@@ -65,17 +65,17 @@ namespace htl {
         /// Identificador de la notificacio.
 		///
         enum class NotifyID {
-        	null,
             addressMatch,    ///< Coindicencia en l'adressa.
             rxStart,         ///< Inici de la recepcio.
             rxCompleted,     ///< Recepcio finalitzada.
             txStart,         ///< Inici de la transmissio.
             txCompleted,     ///< Transmissio finalitzada.
-			error
+			error            ///< S'ha produit un error.
         };
 
         struct NotifyEventArgs {
-            bool irq;
+        	NotifyID id;                ///< Identificador de la notificacio
+            bool irq;                   ///< True si la notificacio s'ha generat en una interrupcio.
             union {
                 struct {
                     I2CAddr addr;       ///< L'adressa coincident.
@@ -98,11 +98,11 @@ namespace htl {
         };
 
 
-        using SlaveNotifyRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+        using SlaveNotifyRaiser = eos::EventRaiser<I2CSlaveDevice, NotifyEventArgs>;
         using ISlaveNotifyEvent = SlaveNotifyRaiser::IEvent;
         template <typename Instance_> using SlaveNotifyEvent = SlaveNotifyRaiser::Event<Instance_>;
 
-        using MasterNotifyRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+        using MasterNotifyRaiser = eos::EventRaiser<I2CMasterDevice, NotifyEventArgs>;
         using IMasterNotifyEvent = MasterNotifyRaiser::IEvent;
         template <typename Instance_> using MasterNotifyEvent = MasterNotifyRaiser::Event<Instance_>;
 
@@ -163,6 +163,11 @@ namespace htl {
                 void notifyRxCompleted(unsigned length, bool irq);
                 void notifyTxStart(uint8_t * &buffer, unsigned &length, bool irq);
                 void notifyTxCompleted(unsigned length, bool irq);
+
+                void enableListenInterrupts();
+                void enableTransmitInterrupts();
+                void enableReceiveInterrupts();
+                void disableInterrupts();
 
 				void interruptServiceListen();
 				void interruptServiceReceive();
@@ -299,6 +304,9 @@ namespace htl {
 				static constexpr auto _activatePos = I2CTraits::activatePos;
                 static constexpr auto _resetAddr = I2CTraits::resetAddr;
                 static constexpr auto _resetPos = I2CTraits::resetPos;
+                static constexpr auto _clockSourceAddr = I2CTraits::clockSourceAddr;
+                static constexpr auto _clockSourcePos = I2CTraits::clockSourcePos;
+                static constexpr auto _clockSourceMsk = I2CTraits::clockSourceMsk;
 				static I2CSlaveDeviceX _instance;
 
 			public:
@@ -342,15 +350,23 @@ namespace htl {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
 				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
+
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
 				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
+
 				template <typename pin_>
 				void inline initPinSMBA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_::portID, pin_::pinID>::value;
 				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				}
+
+				void initClockSource(ClockSource clockSource) {
+					uint32_t *p = reinterpret_cast<uint32_t *>(_clockSourceAddr);
+					*p &= ~_clockSourceMsk;
+					*p |= ((uint32_t)clockSource << _clockSourcePos) & _clockSourceMsk;
 				}
 		};
 

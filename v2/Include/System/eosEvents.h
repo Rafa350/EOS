@@ -15,11 +15,11 @@
 
 namespace eos {
 
-	template <typename Args_>
+	template <typename Sender_, typename Args_>
 	class EventRaiser {
 		public:
-			using IEvent = ICallbackP1<Args_ * const>;
-			template <typename Instance_> using Event = CallbackP1<Instance_, Args_ * const>;
+			using IEvent = ICallbackP2<Sender_ * const, Args_ * const>;
+			template <typename Instance_> using Event = CallbackP2<Instance_, Sender_ * const, Args_ * const>;
 
 		private:
 			IEvent *_event;
@@ -31,9 +31,9 @@ namespace eos {
 				_enabled {false} {
 			}
 
-			void raise(Args_ * const args) const {
+			void raise(Sender_ * const sender, Args_ * const args) const {
 				if (isEnabled())
-					_event->execute(args);
+					_event->execute(sender, args);
 			}
 
 			inline bool isEnabled() const {
@@ -56,6 +56,10 @@ namespace eos {
 
 			inline void disable() {
 				_enabled = false;
+			}
+
+			inline void operator ()(Sender_ * const sender, Args_ * const args) {
+				raise(sender, args);
 			}
 	};
 
@@ -136,6 +140,14 @@ namespace eos {
 
 			void disable(Id_ id) {
 				_enabled &= ~(1 << unsigned(id));
+			}
+
+			inline void operator() (Id_ id) {
+				raise(id);
+			}
+
+			inline void operator() (Id_ id, Args_ * const args) {
+				raise(id, args);
 			}
 	};
 }

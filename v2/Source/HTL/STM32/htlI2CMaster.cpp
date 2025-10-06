@@ -107,12 +107,13 @@ void I2CMasterDevice::notifyTxCompleted(
 
 	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
+			.id = NotifyID::txCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length
 			}
 		};
-		_erNotify.raise(NotifyID::txCompleted, &args);
+		_erNotify.raise(this, &args);
 	}
 }
 
@@ -128,21 +129,22 @@ void I2CMasterDevice::notifyRxCompleted(
 
 	if (_erNotify.isEnabled()) {
 		NotifyEventArgs args = {
+			.id = NotifyID::rxCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length
 			}
 		};
-		_erNotify.raise(NotifyID::rxCompleted, &args);
+		_erNotify.raise(this, &args);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Transmiteis un bloc de dades en modus polling
+/// \brief    Transmiteix un bloc de dades en modus polling
 /// \param    addr: L'adressa del esclau.
 /// \param    buffer: El buffer de dades.
-/// \param    bufferSize: El nombre de bytes en el buffer.
+/// \param    bufferSize: El nombre de bytes en el buffer de dades.
 /// \param    timeout: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 ///
@@ -278,7 +280,7 @@ Result I2CMasterDevice::receive(
 /// \brief    Inicia la transmissio de dades en modus interrupcio.
 /// \param    addr: Adressa del esclau.
 /// \param    buffer: Adressa del buffer de dades.
-/// \param    length: Nombre de bytes en el buffer de dades.
+/// \param    length: Nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio.
 ///
 Result I2CMasterDevice::transmit_IRQ(
@@ -311,7 +313,7 @@ Result I2CMasterDevice::transmit_IRQ(
 /// \brief    Inicia la transmissio de dades en modus interrupcio.
 /// \param    addr: Adressa del esclau.
 /// \param    buffer: Adressa del buffer de dades.
-/// \param    bufferSize: Tamany del buffer en bytes.
+/// \param    bufferSize: Tamany del buffer de dades en bytes.
 /// \return   El resultat de l'operacio.
 ///
 Result I2CMasterDevice::receive_IRQ(

@@ -100,7 +100,7 @@ Result SerialDriver::receive(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Espera que finalitzi les operacions pendents.
+/// \brief    Espera que finalitzin les operacions pendents.
 /// \param    timeout: Tamps maxim d'espera.
 /// \return   El nombre de bytes transferits i el resultat.
 /// \notes    En cas de timeout, s'aborta la comunicacio.

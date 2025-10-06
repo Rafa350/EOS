@@ -4,7 +4,6 @@
 
 
 using namespace eos;
-using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -12,7 +11,7 @@ using namespace htl;
 /// \param    devI2C: El dispositiu I2C a utilitzar.
 ///
 SerialDriver_I2CSlave::SerialDriver_I2CSlave(
-	DevI2C *devI2C) :
+	htl::i2c::I2CSlaveDevice * devI2C) :
 
 	_devI2C {devI2C},
 	_i2cNotifyEvent {*this, &SerialDriver_I2CSlave::i2cNotifyEventHandler} {
@@ -27,8 +26,6 @@ SerialDriver_I2CSlave::SerialDriver_I2CSlave(
 ///
 bool SerialDriver_I2CSlave::onInitialize() {
 
-	eosAssert(_devI2C != nullptr);
-
     _devI2C->setNotifyEvent(_i2cNotifyEvent);
     return _devI2C->listen_IRQ(true).isSuccess();
 }
@@ -39,8 +36,6 @@ bool SerialDriver_I2CSlave::onInitialize() {
 /// \return   True si tot es correcte.
 ///
 bool SerialDriver_I2CSlave::onDeinitialize() {
-
-	eosAssert(_devI2C != nullptr);
 
 	_devI2C->disableNotifyEvent();
 	return _devI2C->abort().isSuccess();
@@ -93,8 +88,6 @@ bool SerialDriver_I2CSlave::onReceive(
 ///
 bool SerialDriver_I2CSlave::onAbort() {
 
-	eosAssert(_devI2C != nullptr);
-
 	return
 		_devI2C->abort().isSuccess() &&
 		_devI2C->listen_IRQ(true).isSuccess();
@@ -102,15 +95,16 @@ bool SerialDriver_I2CSlave::onAbort() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Rebles notificacions del dispositiu I2C.
+/// \brief    Rebl es notificacions del dispositiu I2C.
 /// \param    id: Identificador del event.
 /// \param    args: Parametres del event.
 ///
 void SerialDriver_I2CSlave::i2cNotifyEventHandler(
-	I2CNotifyID id,
-	I2CNotifyEventArgs * const args) {
+	htl::i2c::I2CSlaveDevice * const sender,
+	htl::i2c::NotifyEventArgs * const args) {
 
 	eosAssert(args != nullptr);
+	eosAssert(sender == _devI2C);
 
 	// En cas de transmissio procesa les notificacions de transmissio
 	//
@@ -118,14 +112,14 @@ void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 
 		// Notifica l'inici de la transmissio de dades.
 		//
-		if (id == I2CNotifyID::txStart) {
+		if (args->id == htl::i2c::NotifyID::txStart) {
 			args->txStart.buffer = _buffer;
 			args->txStart.length = _bufferSize;
 		}
 
 		// Notifica el final de la transmissio de dades.
 		//
-		else if (id == I2CNotifyID::txCompleted)
+		else if (args->id == htl::i2c::NotifyID::txCompleted)
 			notifyTxCompleted(args->txCompleted.length, args->irq);
 	}
 
@@ -135,14 +129,14 @@ void SerialDriver_I2CSlave::i2cNotifyEventHandler(
 
 		// Notifica l'inici de la recepcio de dades.
 		//
-		if (id == I2CNotifyID::rxStart) {
+		if (args->id == htl::i2c::NotifyID::rxStart) {
 			args->rxStart.buffer = _buffer;
 			args->rxStart.bufferSize = _bufferSize;
 		}
 
 		// Notifica el final de la Recepcio de dades.
 		//
-		else if (id == I2CNotifyID::rxCompleted)
+		else if (args->id == htl::i2c::NotifyID::rxCompleted)
 			notifyRxCompleted(args->rxCompleted.length, args->irq);
 	}
 }

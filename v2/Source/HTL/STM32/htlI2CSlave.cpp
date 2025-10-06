@@ -9,18 +9,6 @@ using namespace htl::bits;
 using namespace htl::i2c;
 
 
-static void setTimming(I2C_TypeDef *i2c, uint8_t prescaler, uint8_t scldel,
-        uint8_t sdadel, uint8_t sclh, uint8_t scll);
-static void setClockSource(I2C_TypeDef *i2c, ClockSource clockSource);
-static ClockSource getClockSource(I2C_TypeDef *i2c);
-static void enable(I2C_TypeDef *i2c);
-static void disable(I2C_TypeDef *i2c);
-static void enableListenInterrupts(I2C_TypeDef *i2c);
-static void enableTransmitInterrupts(I2C_TypeDef *i2c);
-static void enableReceiveInterrupts(I2C_TypeDef *i2c);
-static void disableInterrupts(I2C_TypeDef *i2c);
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    i2c: Registres hardware del modul I2C.
@@ -50,9 +38,9 @@ Result I2CSlaveDevice::initialize(
 	if (_state == State::reset) {
 
 		activate();
-		disable(_i2c);
-		disableInterrupts(_i2c);
-		setTimming(_i2c, prescaler, scldel, sdadel, sclh, scll);
+		disable();
+		disableInterrupts();
+		setTimming(prescaler, scldel, sdadel, sclh, scll);
 
 		// Configura l'adressa I2C
 		//
@@ -83,8 +71,8 @@ Result I2CSlaveDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
-		disable(_i2c);
-		disableInterrupts(_i2c);
+		disable();
+		disableInterrupts();
 		deactivate();
 
 		_state = State::reset;
@@ -117,7 +105,7 @@ Result I2CSlaveDevice::setNotifyEvent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura el modul en modus d'escolta.
+/// \brief    Configura el modul en modus d'escolta amb interrupcions.
 /// \param    restart: Reinicia l'escolta al finalitzar la transmissio.
 ///
 Result I2CSlaveDevice::listen_IRQ(
@@ -129,8 +117,8 @@ Result I2CSlaveDevice::listen_IRQ(
 
         // Canvia l'estat a 'listen'
 		//
-		enable(_i2c);
-		enableListenInterrupts(_i2c);
+		enable();
+		enableListenInterrupts();
 		_restart = restart;
 		_state = State::listen;
 
@@ -157,8 +145,8 @@ Result I2CSlaveDevice::abort() {
 
 		// Torna a l'estat 'ready'
 		//
-		disable(_i2c);
-		disableInterrupts(_i2c);
+		disable();
+		disableInterrupts();
 		_state = State::ready;
 
 		return Results::success;
@@ -207,7 +195,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 
 		// Desabilita les interrupcions
 		//
-		disableInterrupts(_i2c);
+		disableInterrupts();
 
         // Notifica la coincidencia en l'adressa.
         //
@@ -233,7 +221,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 			//
 			set(_i2c->ISR, I2C_ISR_TXE);
 
-			enableTransmitInterrupts(_i2c);
+			enableTransmitInterrupts();
 			_state = State::transmiting;
     	}
 
@@ -248,7 +236,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 			_buffer = nullptr;
 	        notifyRxStart(_buffer, _dataCount, true);
 
-        	enableReceiveInterrupts(_i2c);
+        	enableReceiveInterrupts();
         	_state = State::receiving;
     	}
 
@@ -299,13 +287,13 @@ void I2CSlaveDevice::interruptServiceReceive() {
 
         // Torna a activar el modus listen si s'escau.
         //
-        disableInterrupts(_i2c);
+        disableInterrupts();
         if (_restart) {
-        	enableListenInterrupts(_i2c);
+        	enableListenInterrupts();
         	_state = State::listen;
         }
         else {
-    		disable(_i2c);
+    		disable();
         	_state = State::ready;
         }
 	}
@@ -344,13 +332,13 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 
     	// Torna a activar el modus listen si s'escau.
     	//
-    	disableInterrupts(_i2c);
+    	disableInterrupts();
     	if (_restart) {
-    		enableListenInterrupts(_i2c);
+    		enableListenInterrupts();
     		_state = State::listen;
     	}
     	else {
-    		disable(_i2c);
+    		disable();
     		_state = State::ready;
     	}
     }
@@ -376,31 +364,28 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 /// ----------------------------------------------------------------------
 /// \brief    Notifica la coincidencia amb l'adressa del esclau.
 /// \param    addr: L'adressa.
-/// \param    irq: Indica si es genera desde una interrupcio.
+/// \param    irq: Indica si es notifica desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyAddressMatch(
     uint16_t addr,
     bool irq) {
 
-	auto id = NotifyID::addressMatch;
-
-    if (_erNotify.isEnabled(id)) {
-        NotifyEventArgs args = {
-            .irq = irq,
-            .addressMatch {
-                .addr = addr
-            }
-        };
-        _erNotify.raise(id, &args);
-    }
+	NotifyEventArgs args = {
+		.id = NotifyID::addressMatch,
+		.irq = irq,
+		.addressMatch {
+			.addr = addr
+		}
+	};
+	_erNotify.raise(this, &args);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica l'inici de la recepcio de dades.
 /// \param    buffer: El buffer de dades
-/// \param    bufferSize: El tamany del buffer en bytes.
-/// \param    irq: Indica si es genera desde una interrupcio.
+/// \param    bufferSize: El tamany del buffer de dades en bytes.
+/// \param    irq: Indica si esnotifica desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyRxStart(
     uint8_t * &buffer,
@@ -408,13 +393,14 @@ void I2CSlaveDevice::notifyRxStart(
     bool irq) {
 
 	NotifyEventArgs args = {
+		.id = NotifyID::rxStart,
 		.irq = irq,
 		.rxStart {
 			.buffer = nullptr,
 			.bufferSize = 0
 		}
 	};
-	_erNotify.raise(NotifyID::rxStart, &args);
+	_erNotify.raise(this, &args);
 	buffer = args.rxStart.buffer;
 	bufferSize = args.rxStart.bufferSize;
 }
@@ -423,19 +409,20 @@ void I2CSlaveDevice::notifyRxStart(
 /// ----------------------------------------------------------------------
 /// \brief    Notifica que ha finalitzat la recepcio de dades.
 /// \param    length: Nombre de bytes rebuts.
-/// \param    irq: Indica si es genera desde una interrupcio.
+/// \param    irq: Indica si es notifica desde una interrupcio.
 ///
 void I2CSlaveDevice::notifyRxCompleted(
     unsigned length,
     bool irq) {
 
 	NotifyEventArgs args = {
+		.id = NotifyID::rxCompleted,
 		.irq = irq,
 		.rxCompleted {
 			.length = length
 		}
 	};
-	_erNotify.raise(NotifyID::rxCompleted, &args);
+	_erNotify.raise(this, &args);
 }
 
 
@@ -451,13 +438,14 @@ void I2CSlaveDevice::notifyTxStart(
     bool irq) {
 
 	NotifyEventArgs args = {
+		.id = NotifyID::txStart,
 		.irq = irq,
 		.txStart {
 			.buffer = nullptr,
 			.length = 0
 		}
 	};
-	_erNotify.raise(NotifyID::txStart, &args);
+	_erNotify.raise(this, &args);
 	buffer = args.txStart.buffer;
 	length = args.txStart.length;
 }
@@ -473,126 +461,22 @@ void I2CSlaveDevice::notifyTxCompleted(
     bool irq) {
 
 	NotifyEventArgs args = {
+		.id = NotifyID::txCompleted,
 		.irq = irq,
 		.txCompleted {
 			.length = length
 		}
 	};
-	_erNotify.raise(NotifyID::txCompleted, &args);
+	_erNotify.raise(this, &args);
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona el rellotge.
-/// \param    i2c: Els registres de hardware del dispositiu.
-/// \param    clockSource: El rellotge.
-///
-static void setClockSource(
-    I2C_TypeDef *i2c,
-    ClockSource clockSource) {
-
-#if defined(EOS_PLATFORM_STM32G0)
-
-    uint32_t pos;
-    uint32_t msk;
-
-    switch (reinterpret_cast<uint32_t>(i2c)) {
-        #if defined(HTL_I2C1_EXIST)
-        case I2C1_BASE:
-            pos = RCC_CCIPR_I2C1SEL_Pos;
-            msk = RCC_CCIPR_I2C1SEL_Msk;
-            break;
-        #endif
-
-        #if defined(HTL_I2C2_EXIST) && defined(RCC_CCIPR_ISC2SEL_Pos)
-        case I2C2_BASE:
-            pos = RCC_CCIPR_I2C2SEL_Pos;
-            msk = RCC_CCIPR_I2C2SEL_Msk;
-            break;
-        #endif
-
-        default:
-            return;
-    }
-
-    uint32_t tmp = RCC->CCIPR;
-    tmp &= ~msk;
-    switch (clockSource) {
-        case ClockSource::sysclk:
-            tmp |= (1 << pos) & msk;
-            break;
-
-        case ClockSource::hsi16:
-            tmp |= (2 << pos) & msk;
-            break;
-
-        default:
-            return;
-    }
-    RCC->CCIPR = tmp;
-#else
-#error "Unknown platform"
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura els parametres de temporitzacio.
-/// \param    i2c: Els registres de hardware del dispositiu.
-/// \param    prescaler: Divisor del rellotge.
-/// \param    scldel:
-/// \param    sdadel:
-/// \param    sclh:
-/// \param    scll:
-///
-static void setTimming(
-    I2C_TypeDef *i2c,
-    uint8_t prescaler,
-    uint8_t scldel,
-    uint8_t sdadel,
-    uint8_t sclh,
-    uint8_t scll) {
-
-    i2c->TIMINGR =
-        ((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
-        ((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
-        ((sdadel << I2C_TIMINGR_SDADEL_Pos) & I2C_TIMINGR_SDADEL_Msk) |
-        ((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
-        ((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita les comunicacions.
-/// \param    i2c: Els registres de hardware del dispositiu.
-///
-static void enable(
-	I2C_TypeDef *i2c) {
-
-	set(i2c->CR1, I2C_CR1_PE);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desabilita les comunicacions.
-/// \param    i2c: Els registres de hardware del dispositiu.
-///
-static void disable(
-	I2C_TypeDef *i2c) {
-
-	clear(i2c->CR1, I2C_CR1_PE);
-}
-
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les interrupcions per espera
-/// \param    i2c: Registres del dispositiu.
 ///
-static void enableListenInterrupts(
-	I2C_TypeDef *i2c) {
+void I2CSlaveDevice::enableListenInterrupts() {
 
-	set(i2c->CR1,
+	set(_i2c->CR1,
         I2C_CR1_ADDRIE |     // Habilita ADDR
         I2C_CR1_ERRIE);      // Habilita ERR
 }
@@ -600,12 +484,10 @@ static void enableListenInterrupts(
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les interrupcions per transmissio
-/// \param    i2c: Registres del dispositiu.
 ///
-static void enableTransmitInterrupts(
-	I2C_TypeDef *i2c) {
+void I2CSlaveDevice::enableTransmitInterrupts() {
 
-	set(i2c->CR1,
+	set(_i2c->CR1,
 		I2C_CR1_TXIE |       // Habilita TX
 		I2C_CR1_STOPIE |     // Habilita STOP
 		I2C_CR1_NACKIE |     // Habilita NACK
@@ -615,12 +497,10 @@ static void enableTransmitInterrupts(
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les interrupcions per recepcio
-/// \param    i2c: Registres del dispositiu.
 ///
-static void enableReceiveInterrupts(
-	I2C_TypeDef *i2c) {
+void I2CSlaveDevice::enableReceiveInterrupts() {
 
-	set(i2c->CR1,
+	set(_i2c->CR1,
 		I2C_CR1_RXIE |       // Habilita RX
 		I2C_CR1_STOPIE |     // Habilita STOP
 		I2C_CR1_ERRIE);      // Habilita ERR
@@ -629,12 +509,10 @@ static void enableReceiveInterrupts(
 
 /// ----------------------------------------------------------------------
 /// \brief    Desabilita les interrupcions.
-/// \param    i2c: Registres del dispositiu.
 ///
-static void disableInterrupts(
-	I2C_TypeDef *i2c) {
+void I2CSlaveDevice::disableInterrupts() {
 
-	clear(i2c->CR1,
+	clear(_i2c->CR1,
 		I2C_CR1_RXIE |       // Desabilita RX
 		I2C_CR1_TXIE |       // Desabilita TX
 		I2C_CR1_ADDRIE |     // Deshabilita ADDR

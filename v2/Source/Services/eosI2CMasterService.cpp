@@ -11,7 +11,7 @@ using namespace htl::i2c;
 /// \brief    Constructor l'objecte.
 ///
 I2CMasterService::I2CMasterService(
-	DevI2C *devI2C):
+	htl::i2c::I2CMasterDevice *devI2C):
 
 	_devI2C {devI2C},
 	_devI2CNotifyEvent {*this, &I2CMasterService::devI2CNotifyEventHandler},
@@ -103,7 +103,6 @@ void I2CMasterService::onExecute() {
 	};
 	_transactionQueue.push(tr, unsigned(-1));
 
-
 	while (!stopSignal()) {
 
 		Transaction transaction;
@@ -151,10 +150,10 @@ void I2CMasterService::onExecute() {
 /// \param    args: Els parametres de la notificacio.
 ///
 void I2CMasterService::devI2CNotifyEventHandler(
-	htl::i2c::NotifyID id,
+	htl::i2c::I2CMasterDevice * const sender,
 	htl::i2c::NotifyEventArgs * const args) {
 
-	switch (id) {
+	switch (args->id) {
 		case htl::i2c::NotifyID::txCompleted:
 			if (args->irq)
 				_txFinished.releaseISR();

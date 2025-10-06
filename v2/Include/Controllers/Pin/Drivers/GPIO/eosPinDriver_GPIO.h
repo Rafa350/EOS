@@ -15,14 +15,11 @@ namespace eos {
     /// \brief Clase que implementa del driver del pin amb acces directe a GPIO
     ///
     class PinDriver_GPIO final: public PinDriver {
-        public:
-            using Pin = htl::gpio::PinDevice;
-
         private:
-            const Pin * const _pin;
+            htl::gpio::PinDevice * const _pin;
 
         public:
-            PinDriver_GPIO(Pin *pin);
+            PinDriver_GPIO(htl::gpio::PinDevice *pin);
             void set() override;
             void clear() override;
             void toggle() override;
@@ -56,7 +53,7 @@ namespace eos {
                 return pin_::read();
             }
     };
-    
+
 }
 
 

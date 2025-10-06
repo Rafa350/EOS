@@ -179,9 +179,10 @@ namespace htl {
 			error        ///< Error de comunicacio.
 		};
 
-		/// Parametres de la notificacio.
+		/// Parametres del event de notificacio.
 		///
 		struct NotifyEventArgs {
+			NotifyID id;                   ///< Identificador de la notificacio
 			bool irq;                      ///< Indica si es notifica desde una interrupcio.
 			union {
 				struct {
@@ -195,7 +196,9 @@ namespace htl {
 			};
 		};
 
-		using NotifyEventRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+		// Event de notificacio
+		//
+		using NotifyEventRaiser = eos::EventRaiser<UARTDevice, NotifyEventArgs>;
 		using INotifyEvent = NotifyEventRaiser::IEvent;
 		template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 

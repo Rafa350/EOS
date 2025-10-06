@@ -82,8 +82,9 @@ add_library(${CMAKE_PROJECT_NAME} STATIC)
 
 # Sources
 #
-add_subdirectory("HTLMod")
-#add_subdirectory(System)
+add_subdirectory("HTL")
+add_subdirectory("Services")
+add_subdirectory("System")
 
 # Include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${include_dirs})

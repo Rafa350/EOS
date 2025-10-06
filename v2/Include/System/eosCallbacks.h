@@ -15,6 +15,9 @@ namespace eos {
 			virtual ~ICallbackP0() {
 			}
 			virtual void execute() const = 0;
+			inline void operator()() const {
+			    execute();
+			}
 	};
 
 	template <typename Instance_>
@@ -42,6 +45,9 @@ namespace eos {
             virtual ~ICallbackP1() {
             }
             virtual void execute(Param1_ p1) const = 0;
+			inline void operator()(Param1_ p1) const {
+			    execute(p1);
+			}
     };
 
     template <typename Instance_, typename Param1_>
@@ -69,6 +75,9 @@ namespace eos {
             virtual ~ICallbackP2() {
             }
             virtual void execute(Param1_ p1, Param2_ p2) const = 0;
+			inline void operator()(Param1_ p1, Param2_ p2) const {
+				execute(p1, p2);
+			}
     };
 
     template <typename Instance_, typename Param1_, typename Param2_>
@@ -90,19 +99,22 @@ namespace eos {
     };
 
 
-    template <typename param1_, typename param2_, typename param3_>
+    template <typename Param1_, typename Param2_, typename Param3_>
     class ICallbackP3 {
         public:
             virtual ~ICallbackP3() {
             }
-            virtual void execute(param1_ p1, param2_ p2, param3_ p3) const = 0;
+            virtual void execute(Param1_ p1, Param2_ p2, Param3_ p3) const = 0;
+			inline void operator()(Param1_ p1, Param2_ p2, Param3_ p3) const {
+				execute(p1, p2, p3);
+			}
     };
 
-    template <typename Instance_, typename param1_, typename param2_, typename param3_>
-    class CallbackP3: public ICallbackP3<param1_, param2_, param3_> {
+    template <typename Instance_, typename Param1_, typename Param2_, typename Param3_>
+    class CallbackP3: public ICallbackP3<Param1_, Param2_, Param3_> {
         public:
 			using RInstance = Instance_ &;
-    	    using Method = void (Instance_::*)(param1_, param2_, param3_);
+    	    using Method = void (Instance_::*)(Param1_, Param2_, Param3_);
         private:
             RInstance const _instance;
             Method const _method;
@@ -111,25 +123,28 @@ namespace eos {
             	_instance {instance},
 				_method {method} {
             }
-            void execute(param1_ p1, param2_ p2, param3_ p3) const override {
+            void execute(Param1_ p1, Param2_ p2, Param3_ p3) const override {
                 (_instance.*_method)(p1, p2, p3);
             }
     };
 
 
-    template <typename param1_, typename param2_, typename param3_, typename param4_>
+    template <typename Param1_, typename Param2_, typename Param3_, typename Param4_>
     class ICallbackP4 {
         public:
             virtual ~ICallbackP4() {
             }
-            virtual void execute(param1_ p1, param2_ p2, param3_ p3, param4_ p4) const = 0;
+            virtual void execute(Param1_ p1, Param2_ p2, Param3_ p3, Param4_ p4) const = 0;
+			inline void operator()(Param1_ p1, Param2_ p2, Param3_ p3, Param4_ p4) const {
+				execute(p1, p2, p3, p4);
+			}
     };
 
-    template <typename Instance_, typename param1_, typename param2_, typename param3_, typename param4_>
-    class CallbackP4: public ICallbackP4<param1_, param2_, param3_, param4_> {
+    template <typename Instance_, typename Param1_, typename Param2_, typename Param3_, typename Param4_>
+    class CallbackP4: public ICallbackP4<Param1_, Param2_, Param3_, Param4_> {
         public:
 			using RInstance = Instance_ &;
-    	    using Method = void (Instance_::*)(param1_, param2_, param3_, param4_);
+    	    using Method = void (Instance_::*)(Param1_, Param2_, Param3_, Param4_);
         private:
             RInstance const _instance;
             Method const _method;
@@ -138,33 +153,36 @@ namespace eos {
             	_instance {instance},
 				_method {method} {
             }
-            void execute(param1_ p1, param2_ p2, param3_ p3, param4_ p4) const override {
+            void execute(Param1_ p1, Param2_ p2, Param3_ p3, Param4_ p4) const override {
                 (_instance.*_method)(p1, p2, p3, p4);
             }
     };
 
 
-    template <typename R_, typename P1_>
+    template <typename Result_, typename Param1_>
     class ICallbackP1R {
         public:
             virtual ~ICallbackP1R() {
             }
-            virtual R_ execute(P1_ p1) const = 0;
+            virtual Result_ execute(Param1_ p1) const = 0;
+			inline Result_ operator()(Param1_ p1) const {
+				return execute(p1);
+			}
     };
 
-    template <typename C_, typename R_, typename P1_>
-    class CallbackP1R: public ICallbackP1R<R_, P1_> {
+    template <typename Instance_, typename Result_, typename Param1_>
+    class CallbackP1R: public ICallbackP1R<Result_, Param1_> {
         public:
-            using Method = R_ (C_::*)(P1_);
+            using Method = Result_ (Instance_::*)(Param1_);
         private:
-            C_ &_instance;
+            Instance_ &_instance;
             Method _method;
         public:
-            inline CallbackP1R(C_ &instance, Method method):
+            inline CallbackP1R(Instance_ &instance, Method method):
             	_instance {instance},
 				_method {method} {
             }
-            R_ execute(P1_ p1) const override {
+            Result_ execute(Param1_ p1) const override {
                 return (_instance.*_method)(p1);
             }
     };

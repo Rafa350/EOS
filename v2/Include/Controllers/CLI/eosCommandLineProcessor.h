@@ -80,4 +80,4 @@ namespace eos {
 }
 
 
-#endif // __eosCOmmandLineProcessor__
+#endif // __eosCommandLineProcessor__

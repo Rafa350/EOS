@@ -15,13 +15,16 @@ namespace htl {
 				static TickGenerator _instance;
 				volatile unsigned _tickCounter;
 				htl::tmr::NotifyEvent<TickGenerator> _tmrNotifyEvent;
+
 			public:
 				static constexpr TickGenerator* pInst = &_instance;
                 static constexpr TickGenerator& rInst = _instance;
+
 			private:
 				TickGenerator();
 				TickGenerator(const TickGenerator&) = delete;
-				void tmrNotifyEventHandler(htl::tmr::NotifyID id, htl::tmr::NotifyEventArgs * const args);
+				void tmrNotifyEventHandler(htl::tmr::TMRDevice * const sender, htl::tmr::NotifyEventArgs * const args);
+
 			public:
 				void initialize(unsigned frequency);
 				void deinitialize();

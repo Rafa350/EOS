@@ -10,24 +10,16 @@
 namespace eos {
 
 	class SerialDriver_I2CSlave: public SerialDriver {
-	    public:
-            using DevI2C = htl::i2c::I2CSlaveDevice;
-
-	    private:
-            using I2CNotifyID = htl::i2c::NotifyID;
-	        using I2CNotifyEvent = htl::i2c::SlaveNotifyEvent<SerialDriver_I2CSlave>;
-	        using I2CNotifyEventArgs = htl::i2c::NotifyEventArgs;
-
 		protected:
-			DevI2C * const _devI2C;
+			htl::i2c::I2CSlaveDevice * const _devI2C;
 
 		private:
-			I2CNotifyEvent _i2cNotifyEvent;
+			htl::i2c::SlaveNotifyEvent<SerialDriver_I2CSlave> _i2cNotifyEvent;
 			uint8_t *_buffer;
 			unsigned _bufferSize;
 
 		private:
-			void i2cNotifyEventHandler(I2CNotifyID id, I2CNotifyEventArgs * const args);
+			void i2cNotifyEventHandler(htl::i2c::I2CSlaveDevice *sender, htl::i2c::NotifyEventArgs * const args);
 
 		protected:
             bool onInitialize() override;
@@ -37,7 +29,7 @@ namespace eos {
             bool onAbort() override;
 
 		public:
-			SerialDriver_I2CSlave(DevI2C *devI2C);
+			SerialDriver_I2CSlave(htl::i2c::I2CSlaveDevice *devI2C);
 	};
 }
 

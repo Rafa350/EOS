@@ -16,6 +16,7 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart1> {
 				static constexpr uint32_t usartAddr = USART1_BASE;
+
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR2);
 				static constexpr uint32_t activatePos = RCC_APBENR2_USART1EN_Pos;
 
@@ -32,6 +33,7 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart2> {
 				static constexpr uint32_t usartAddr = USART2_BASE;
+
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART2EN_Pos;
 
@@ -54,6 +56,7 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart3> {
 				static constexpr uint32_t usartAddr = USART3_BASE;
+
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART3EN_Pos;
 
@@ -77,6 +80,7 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart4> {
 				static constexpr uint32_t usartAddr = USART4_BASE;
+
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART4EN_Pos;
 
@@ -89,6 +93,7 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart5> {
 				static constexpr uint32_t usartAddr = USART5_BASE;
+
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART5EN_Pos;
 
@@ -101,6 +106,7 @@ namespace htl {
 			template <>
 			struct UARTTraits<DeviceID::uart6> {
 				static constexpr uint32_t usartAddr = USART6_BASE;
+
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_USART6EN_Pos;
 

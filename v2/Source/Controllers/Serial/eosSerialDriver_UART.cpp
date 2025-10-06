@@ -4,7 +4,6 @@
 
 
 using namespace eos;
-using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -12,7 +11,7 @@ using namespace htl;
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
 SerialDriver_UART::SerialDriver_UART(
-	DevUART *devUART):
+	htl::uart::UARTDevice *devUART):
 
 	_devUART {devUART},
 	_uartNotifyEvent {*this, &SerialDriver_UART::uartNotifyEventHandler} {
@@ -27,8 +26,6 @@ SerialDriver_UART::SerialDriver_UART(
 ///
 bool SerialDriver_UART::onInitialize() {
 
-	eosAssert(_devUART != nullptr);
-
 	_devUART->setNotifyEvent(_uartNotifyEvent);
     return true;
 }
@@ -39,8 +36,6 @@ bool SerialDriver_UART::onInitialize() {
 /// \return   True si tot es correcte.
 ///
 bool SerialDriver_UART::onDeinitialize() {
-
-	eosAssert(_devUART != nullptr);
 
 	_devUART->disableNotifyEvent();
     return true;
@@ -59,7 +54,6 @@ bool SerialDriver_UART::onTransmit(
 
 	eosAssert(buffer != nullptr);
 	eosAssert(length > 0);
-	eosAssert(_devUART != nullptr);
 
     return _devUART->transmit_IRQ(buffer, length).isSuccess();
 }
@@ -77,7 +71,6 @@ bool SerialDriver_UART::onReceive(
 
 	eosAssert(buffer != nullptr);
 	eosAssert(bufferSize > 0);
-	eosAssert(_devUART != nullptr);
 
 	return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }
@@ -88,8 +81,6 @@ bool SerialDriver_UART::onReceive(
 /// \return   True si tot es correcte.
 ///
 bool SerialDriver_UART::onAbort() {
-
-	eosAssert(_devUART != nullptr);
 
 	switch (getState()) {
 		case State::receiving:
@@ -106,36 +97,38 @@ bool SerialDriver_UART::onAbort() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Reb les notificacions del UART
+/// \param    sender: El remitent.
 /// \param    args: Parametres del event.
 ///
 void SerialDriver_UART::uartNotifyEventHandler(
-	UARTNotifyID id,
-	UARTNotifyEventArgs * const args) {
+	htl::uart::UARTDevice *sender,
+	htl::uart::NotifyEventArgs * const args) {
 
 	eosAssert(args != nullptr);
+	eosAssert(sender == _devUART);
 
-	switch (id) {
+	switch (args->id) {
 
 		// Notificacio del final de la transmissio
 		//
-		case UARTNotifyID::txCompleted:
+		case htl::uart::NotifyID::txCompleted:
 		    notifyTxCompleted(args->txCompleted.length, args->irq);
 			break;
 
     	// Notificacio del final de la recepcio
 		//
-		case UARTNotifyID::rxCompleted:
+		case htl::uart::NotifyID::rxCompleted:
 		    notifyRxCompleted(args->rxCompleted.length, args->irq);
 			break;
 
     	// Notificacio un error en la comunicacio
 		//
-		case UARTNotifyID::error:
+		case htl::uart::NotifyID::error:
 			break;
 
     	// Notificacio nula
 		//
-		case UARTNotifyID::null:
+		case htl::uart::NotifyID::null:
 			break;
 	}
 }

@@ -25,8 +25,6 @@ namespace eos {
 			};
             using ITransactionEvent = ICallbackP2<const I2CMasterService*, const TransactionEventArgs&>;
             template <typename Instance_> using TransactionEvent = CallbackP2<Instance_, const I2CMasterService*, const TransactionEventArgs&>;
-            using DevI2C = htl::i2c::I2CMasterDevice;
-            using DevI2CNotifyEvent = htl::i2c::MasterNotifyEvent<I2CMasterService>;
 
 		private:
 			struct Transaction {
@@ -41,8 +39,8 @@ namespace eos {
 			using TransactionQueue = Queue<Transaction>;
 
 		private:
-			DevI2C *_devI2C;
-			DevI2CNotifyEvent _devI2CNotifyEvent;
+			htl::i2c::I2CMasterDevice *_devI2C;
+			htl::i2c::MasterNotifyEvent<I2CMasterService> _devI2CNotifyEvent;
 			TransactionQueue _transactionQueue;
 			Semaphore _txFinished;
 			unsigned _txFinishedLength;
@@ -56,13 +54,13 @@ namespace eos {
     		static constexpr uint32_t minStackSize = 256;
 
 		private:
-    		void devI2CNotifyEventHandler(htl::i2c::NotifyID id, htl::i2c::NotifyEventArgs * const args);
+    		void devI2CNotifyEventHandler(htl::i2c::I2CMasterDevice * const sender, htl::i2c::NotifyEventArgs * const args);
 
 		protected:
 			void onExecute() override;
 
 		public:
-			I2CMasterService(DevI2C *devI2C);
+			I2CMasterService(htl::i2c::I2CMasterDevice *devI2C);
 
 			bool startTransaction(htl::i2c::I2CAddr addr, const uint8_t *txBuffer, unsigned txLength, ITransactionEvent &event, unsigned blockTime = -1);
             bool startTransaction(htl::i2c::I2CAddr addr, const uint8_t *txBuffer, unsigned txLength, uint8_t *rxBuffer, unsigned rxBufferSize, ITransactionEvent &event, unsigned blockTime = -1);

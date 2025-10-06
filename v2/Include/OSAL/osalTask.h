@@ -44,6 +44,10 @@ void osalTaskResume(HTask hTask);
 void osalTaskSetPriority(HTask hTask, uint8_t priority);
 void osalTaskYield(void);
 unsigned osalTaskGetStackHighWaterMark(void);
+void osalTaskNotifyWait(bool clear, unsigned blockTime);
+void osalTaskNotifyRelease(unsigned blockTime);
+void osalTaskNotifyReleaseISR();
+
 
 
 #ifdef	__cplusplus

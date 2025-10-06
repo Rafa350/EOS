@@ -4,11 +4,11 @@
 using namespace eos;
 
 
-#define PATTERN_MASK    0b00001111
-
-
 /// ----------------------------------------------------------------------
 /// \brief Constructor
+/// \param    drvINA: Entrada de la senyal A (PHASE-A)
+/// \param    drvINB: Entrada de la senyal B (PHASE-B)
+/// \param    drvSW: Entrada del switch
 ///
 SelectorService::SelectorService(
     PinDriver *drvINA,
@@ -82,7 +82,7 @@ void SelectorService::onExecute() {
 			}
 		}
 
-		Task::delay(50);
+		Task::delay(_delay);
 	}
 }
 
@@ -112,19 +112,19 @@ bool SelectorService::scanEncoder() {
 
     // Comprova la entrada INA
     //
-    _shiftA = ((_shiftA << 1) | getINA()) & PATTERN_MASK;
+    _shiftA = ((_shiftA << 1) | getINA()) & _patternMask;
     if (_shiftA == _patternA) {
         _transition = (uint8_t)((_transition << 2) | ((_shiftA & 1) ? 0x00 : 0x01));
-        _patternA = ~_patternA & PATTERN_MASK;
+        _patternA = ~_patternA & _patternMask;
         moved = true;
     }
 
     // Comprova la entrada INB
     //
-    _shiftB = ((_shiftB << 1) | getINB()) & PATTERN_MASK;
+    _shiftB = ((_shiftB << 1) | getINB()) & _patternMask;
     if (_shiftB == _patternB) {
         _transition = (uint8_t)((_transition << 2) | ((_shiftB & 1) ? 0x02 : 0x03));
-        _patternB = ~_patternB & PATTERN_MASK;
+        _patternB = ~_patternB & _patternMask;
         moved = true;
     }
 
@@ -139,10 +139,10 @@ bool SelectorService::scanEncoder() {
 
     // Comprova la entrada SW
     //
-    _shiftSW = ((_shiftSW << 1) | getSW()) & PATTERN_MASK;
+    _shiftSW = ((_shiftSW << 1) | getSW()) & _patternMask;
     if (_shiftSW == _patternSW) {
         _button = (_shiftSW & 1) == 0;
-        _patternSW = ~_patternSW & PATTERN_MASK;
+        _patternSW = ~_patternSW & _patternMask;
         pressed = true;
     }
 

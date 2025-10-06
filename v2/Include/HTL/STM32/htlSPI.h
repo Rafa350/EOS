@@ -113,10 +113,11 @@ namespace htl {
 		};
 
         struct NotifyEventArgs {
+        	NotifyID id;
             bool irq;
         };
 
-        using NotifyEventRaiser = eos::NotifyEventRaiser<NotifyID, NotifyEventArgs>;
+        using NotifyEventRaiser = eos::EventRaiser<SPIDevice, NotifyEventArgs>;
         using INotifyEvent = NotifyEventRaiser::IEvent;
         template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 

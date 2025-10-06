@@ -4,7 +4,6 @@
 
 
 using namespace eos;
-using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -12,9 +11,9 @@ using namespace htl;
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
 SerialDriver_UARTDMA::SerialDriver_UARTDMA(
-	DevUART *devUART,
-	DevDMA *devDMAtx,
-	DevDMA *devDMArx):
+	htl::uart::UARTDevice *devUART,
+	htl::dma::DMADevice *devDMAtx,
+	htl::dma::DMADevice *devDMArx):
 
 	SerialDriver_UART(devUART),
 	_devDMAtx {devDMAtx},

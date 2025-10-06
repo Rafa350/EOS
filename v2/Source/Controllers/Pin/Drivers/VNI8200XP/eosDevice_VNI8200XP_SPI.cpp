@@ -17,9 +17,9 @@ static uint8_t calcParity(uint8_t data);
 /// \param    pinOUTEN: El pin OUTEN
 ///
 Device_VNI8200XP_SPI::Device_VNI8200XP_SPI(
-    DevSPI *devSPI,
-    Pin *pinSS,
-    Pin *pinOUTEN):
+    htl::spi::SPIDevice *devSPI,
+    htl::gpio::PinDevice *pinSS,
+    htl::gpio::PinDevice *pinOUTEN):
 
     Device_VNI8200XP(),
     _state {State::reset},

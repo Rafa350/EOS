@@ -939,13 +939,14 @@ void UARTDevice::notifyTxCompleted(
 	bool irq) {
 
 	NotifyEventArgs args = {
+		.id = NotifyID::txCompleted,
 		.irq = irq,
 		.txCompleted {
 			.buffer = buffer,
 			.length = length
 		}
 	};
-	_erNotify.raise(NotifyID::txCompleted, &args);
+	_erNotify.raise(this, &args);
 }
 
 
@@ -961,13 +962,14 @@ void UARTDevice::notifyRxCompleted(
 	bool irq) {
 
 	NotifyEventArgs args = {
+		.id = NotifyID::rxCompleted,
 		.irq = irq,
 		.rxCompleted {
 			.buffer = buffer,
 			.length = length
 		}
 	};
-	_erNotify.raise(NotifyID::rxCompleted, &args);
+	_erNotify.raise(this, &args);
 }
 
 

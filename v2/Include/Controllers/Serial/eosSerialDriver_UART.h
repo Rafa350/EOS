@@ -10,22 +10,14 @@
 namespace eos {
 
 	class SerialDriver_UART: public SerialDriver {
-	    public:
-            using DevUART = htl::uart::UARTDevice;
-
-	    private:
-            using UARTNotifyID = htl::uart::NotifyID;
-	        using UARTNotifyEvent = htl::uart::NotifyEvent<SerialDriver_UART>;
-	        using UARTNotifyEventArgs = htl::uart::NotifyEventArgs;
-
 		protected:
-			DevUART * const _devUART;
+			htl::uart::UARTDevice * const _devUART;
 
 		private:
-			UARTNotifyEvent _uartNotifyEvent;
+			htl::uart::NotifyEvent<SerialDriver_UART> _uartNotifyEvent;
 
 		private:
-			void uartNotifyEventHandler(UARTNotifyID, UARTNotifyEventArgs * const args);
+			void uartNotifyEventHandler(htl::uart::UARTDevice*, htl::uart::NotifyEventArgs * const args);
 
 		protected:
             bool onInitialize() override;
@@ -35,7 +27,7 @@ namespace eos {
             bool onAbort() override;
 
 		public:
-			SerialDriver_UART(DevUART *devUART);
+			SerialDriver_UART(htl::uart::UARTDevice *devUART);
 	};
 }
 

@@ -11,6 +11,8 @@
 
 namespace eos {
 
+	/// \brief Servei que gestiona un encoder rotatiou
+	///
     class SelectorService final: public Service {
         public:
             struct ChangedEventArgs {
@@ -21,6 +23,9 @@ namespace eos {
             template <typename Instance_> using ChangedEvent = CallbackP2<Instance_, const SelectorService*, const ChangedEventArgs&>;
 
         private:
+            static constexpr unsigned _delay = 50;
+            static constexpr uint8_t _patternMask = 0b00001111;
+
             PinDriver * const _drvINA;
             PinDriver * const _drvINB;
             PinDriver * const _drvSW;
