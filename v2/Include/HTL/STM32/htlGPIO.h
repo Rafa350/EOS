@@ -206,8 +206,10 @@ namespace htl {
         }
 
 		void initialize(GPIO_TypeDef * const gpio, PinMask mask, const InitInfo *info);
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
 		void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
 		void deinitialize(GPIO_TypeDef * const gpio, PinBit bit);
+#endif
 
 		void initInput(GPIO_TypeDef * const gpio, PinMask mask, PullUpDown pupd);
 		void initInput(GPIO_TypeDef * const gpio, PinBit bit, PullUpDown pupd);
@@ -264,8 +266,9 @@ namespace htl {
 			public:
 				void initInput(PinMask mask, PullUpDown pupd) const;
 				void initOutput(PinMask mask, OutputType type, PullUpDown pupd, Speed speed = Speed::medium) const;
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
 				void deinitialize() const;
-
+#endif
 				void set(PinMask mask) const {
 					_gpio->BSRR = mask;
 				}
@@ -376,7 +379,9 @@ namespace htl {
                 void initAlternate(OutputType outputType, PullUpDown pupd, Speed speed, AlternateFunction af) const;
                 void initAnalogic() const;
                 void initialize(const InitInfo &info) const;
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
                 void deinitialize() const;
+#endif
 
 				void set() const {
                     _gpio->BSRR = _mask;

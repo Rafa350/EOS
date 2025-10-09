@@ -327,8 +327,9 @@ namespace htl {
 #endif
 			public:
 				eos::Result initialize();
+#if HTL_UART_OPTION_DEACTIVATE == 1
 				eos::Result deinitialize();
-
+#endif
 				eos::Result setProtocol(WordBits wordBits, Parity parity,
 				        StopBits stopBits, Handsake handlsake) const;
 				eos::Result setTimming(BaudMode baudMode, uint32_t rate, OverSampling oversampling) const;

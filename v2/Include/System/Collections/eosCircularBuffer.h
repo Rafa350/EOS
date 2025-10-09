@@ -38,6 +38,16 @@ namespace eos {
 				_count = 0;
 			}
 
+			bool peek(Element &element) {
+
+				if (_count > 0) {
+					element = *_getPtr;
+					return true;
+				}
+				else
+					return false;
+			}
+
 			bool put(Element element) {
 				if (_count < _size) {
 					_count++;

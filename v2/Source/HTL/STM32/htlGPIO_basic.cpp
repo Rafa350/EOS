@@ -348,6 +348,7 @@ void htl::gpio::initAnalogic(
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    mask: Mascara dels pins a desinicialitzar.
 ///
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
 void htl::gpio::deinitialize(
 	GPIO_TypeDef * const gpio,
 	PinMask mask) {
@@ -358,6 +359,7 @@ void htl::gpio::deinitialize(
             deinitialize(gpio, PinBit(b));
     }
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -366,11 +368,13 @@ void htl::gpio::deinitialize(
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    bit: El bit del pin a desinicialitzar.
 ///
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
 void htl::gpio::deinitialize(
 	GPIO_TypeDef * const gpio,
 	PinBit bit) {
 
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

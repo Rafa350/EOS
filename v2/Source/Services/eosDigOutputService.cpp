@@ -161,7 +161,7 @@ void DigOutputService::notifyChanged(
 	if (_erNotify.isEnabled(NotifyID::changed)) {
 		NotifyEventArgs args = {
 			.changed = {
-				.output = output
+				.output = output,
 			}
 		};
 		_erNotify.raise(NotifyID::changed, &args);

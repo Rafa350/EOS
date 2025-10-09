@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.0)
 
-list(APPEND SOURCES
+target_sources(${TARGET_NAME} PUBLIC 
 	${CMAKE_CURRENT_SOURCE_DIR}/htl.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/htlClock.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/htlDMA.cpp
@@ -16,6 +16,9 @@ list(APPEND SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/htlUART.cpp
 )
 
-target_sources(${CMAKE_PROJECT_NAME} PUBLIC 
-	${SOURCES}
+if (${PLATFORM_NAME} EQUAL "STM32F429ZI")
+target_sources(${TARGET_NAME} PUBLIC 
+	${CMAKE_CURRENT_SOURCE_DIR}/htlDMA2D.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/htlLTDC.cpp
 )
+endif()

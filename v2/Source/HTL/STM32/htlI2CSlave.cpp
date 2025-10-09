@@ -39,7 +39,9 @@ Result I2CSlaveDevice::initialize(
 
 		activate();
 		disable();
+#if HTL_I2C_OPTION_IRQ == 1
 		disableInterrupts();
+#endif
 		setTimming(prescaler, scldel, sdadel, sclh, scll);
 
 		// Configura l'adressa I2C
@@ -67,14 +69,16 @@ Result I2CSlaveDevice::initialize(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el modul.
 ///
+#if HTL_I2C_OPTION_DEACTIVATE == 1
 Result I2CSlaveDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
 		disable();
+#if HTL_I2C_OPTION_IRQ == 1
 		disableInterrupts();
+#endif
 		deactivate();
-
 		_state = State::reset;
 
 		return Results::success;
@@ -83,6 +87,7 @@ Result I2CSlaveDevice::deinitialize() {
 	else
 		return Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -108,6 +113,7 @@ Result I2CSlaveDevice::setNotifyEvent(
 /// \brief    Configura el modul en modus d'escolta amb interrupcions.
 /// \param    restart: Reinicia l'escolta al finalitzar la transmissio.
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 Result I2CSlaveDevice::listen_IRQ(
 	bool restart) {
 
@@ -131,6 +137,7 @@ Result I2CSlaveDevice::listen_IRQ(
 	else
 		return Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -146,7 +153,9 @@ Result I2CSlaveDevice::abort() {
 		// Torna a l'estat 'ready'
 		//
 		disable();
+#if HTL_I2C_OPTION_IRQ == 1
 		disableInterrupts();
+#endif
 		_state = State::ready;
 
 		return Results::success;
@@ -160,6 +169,7 @@ Result I2CSlaveDevice::abort() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::interruptService() {
 
 	switch (_state) {
@@ -179,11 +189,13 @@ void I2CSlaveDevice::interruptService() {
 			break;
 	}
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions per l'estat 'listen'
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::interruptServiceListen() {
 
 	auto CR1 = _i2c->CR1;
@@ -247,11 +259,13 @@ void I2CSlaveDevice::interruptServiceListen() {
         _i2c->ICR = I2C_ICR_ADDRCF;
 	}
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions per l'estat 'receiving'
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::interruptServiceReceive() {
 
 	auto CR1 = _i2c->CR1;
@@ -298,11 +312,13 @@ void I2CSlaveDevice::interruptServiceReceive() {
         }
 	}
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions per l'estat 'transmiting'
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::interruptServiceTransmit() {
 
 	auto CR1 = _i2c->CR1;
@@ -359,6 +375,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 			_i2c->TXDR = 0xFF;
 	}
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -474,17 +491,20 @@ void I2CSlaveDevice::notifyTxCompleted(
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les interrupcions per espera
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::enableListenInterrupts() {
 
 	set(_i2c->CR1,
         I2C_CR1_ADDRIE |     // Habilita ADDR
         I2C_CR1_ERRIE);      // Habilita ERR
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les interrupcions per transmissio
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::enableTransmitInterrupts() {
 
 	set(_i2c->CR1,
@@ -493,11 +513,13 @@ void I2CSlaveDevice::enableTransmitInterrupts() {
 		I2C_CR1_NACKIE |     // Habilita NACK
 		I2C_CR1_ERRIE);      // Habilita ERR
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les interrupcions per recepcio
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::enableReceiveInterrupts() {
 
 	set(_i2c->CR1,
@@ -505,11 +527,13 @@ void I2CSlaveDevice::enableReceiveInterrupts() {
 		I2C_CR1_STOPIE |     // Habilita STOP
 		I2C_CR1_ERRIE);      // Habilita ERR
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desabilita les interrupcions.
 ///
+#if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::disableInterrupts() {
 
 	clear(_i2c->CR1,
@@ -521,3 +545,4 @@ void I2CSlaveDevice::disableInterrupts() {
 		I2C_CR1_NACKIE |     // Deshabilita NACK
 		I2C_CR1_ERRIE);      // Deshabilita ERR
 }
+#endif

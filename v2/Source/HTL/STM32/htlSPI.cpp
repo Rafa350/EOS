@@ -91,6 +91,7 @@ Result SPIDevice::initialize(
 /// \brief    Desinicialitza el modul SPI.
 /// \return   El resultat de l'operacio.
 ///
+#if HTL_SPI_OPTION_DEACTIVATE == 1
 Result SPIDevice::deinitialize() {
 
 	if (_state == State::ready) {
@@ -105,6 +106,7 @@ Result SPIDevice::deinitialize() {
 	else
 		return Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

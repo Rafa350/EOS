@@ -13,6 +13,20 @@
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
 
+// Default options
+//
+#ifndef HTL_I2C_OPTION_IRQ
+	#define HTL_I2C_OPTION_IRQ HTL_I2C_DEFAULT_OPTION_IRQ
+#endif
+
+#ifndef HTL_I2C_OPTION_DMA
+	#define HTL_I2C_OPTION_DMA HTL_I2C_DEFAULT_OPTION_DMA
+#endif
+
+#ifndef HTL_I2C_OPTION_DEACTIVATE
+	#define HTL_I2C_OPTION_DEACTIVATE HTL_I2C_DEFAULT_OPTION_DEACTIVATE
+#endif
+
 
 namespace htl {
 
@@ -132,7 +146,9 @@ namespace htl {
 			}
 
 			protected: virtual void activate() = 0;
+#if HTL_I2C_OPTION_DEACTIVATE == 1
 			protected: virtual void deactivate() = 0;
+#endif
 			protected: virtual void reset() = 0;
 		};
 
@@ -164,6 +180,7 @@ namespace htl {
                 void notifyTxStart(uint8_t * &buffer, unsigned &length, bool irq);
                 void notifyTxCompleted(unsigned length, bool irq);
 
+#if HTL_I2C_OPTION_IRQ == 1
                 void enableListenInterrupts();
                 void enableTransmitInterrupts();
                 void enableReceiveInterrupts();
@@ -172,14 +189,20 @@ namespace htl {
 				void interruptServiceListen();
 				void interruptServiceReceive();
 				void interruptServiceTransmit();
+#endif
 
 			protected:
 				I2CSlaveDevice(I2C_TypeDef *i2c);
+
+#if HTL_I2C_OPTION_IRQ == 1
 				void interruptService();
+#endif
 
 			public:
 				eos::Result initialize(I2CAddr addr, uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll);
+#if HTL_I2C_OPTION_DEACTIVATE == 1
 				eos::Result deinitialize();
+#endif
 
 				eos::Result setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
 
@@ -196,7 +219,9 @@ namespace htl {
 				}
 
 				eos::Result listen(unsigned timeout);
+#if HTL_I2C_OPTION_IRQ == 1
 				eos::Result listen_IRQ(bool restart);
+#endif
 				eos::Result abort();
 
 				/// Obte l'estat del dispositiu.
@@ -229,9 +254,11 @@ namespace htl {
 				void notifyTxCompleted(unsigned length, bool irq);
 				void notifyRxCompleted(unsigned length, bool irq);
 
+#if HTL_I2C_OPTION_IRQ == 1
 				void enableTransmitInterrupts();
 				void enableReceiveInterrupts();
 				void disableInterrupts();
+#endif
 
 				void startTransmit(I2CAddr addr, unsigned count, unsigned maxCount);
 				void startReceive(I2CAddr addr, unsigned count, unsigned maxCount);
@@ -247,14 +274,19 @@ namespace htl {
 
 			protected:
 				I2CMasterDevice(I2C_TypeDef *i2c);
+
+#if HTL_I2C_OPTION_IRQ == 1
 				void interruptService();
 				void interruptServiceTransmit();
 				void interruptServiceReceive();
+#endif
 
 			public:
 				eos::Result initialize(uint8_t prescaler, uint8_t scldel, uint8_t sdadel,
 					uint8_t sclh, uint8_t scll);
+#if HTL_I2C_OPTION_DEACTIVATE == 1
 				eos::Result deinitialize();
+#endif
 
 				eos::Result setNotifyEvent(IMasterNotifyEvent &event, bool enabled = true);
 
@@ -273,8 +305,10 @@ namespace htl {
 				eos::Result transmit(I2CAddr addr, const uint8_t *buffer, unsigned length, unsigned timeout);
 				eos::Result receive(I2CAddr addr, uint8_t *buffer, unsigned bufferSize, unsigned timeout);
 
+#if HTL_I2C_OPTION_IRQ == 1
 				eos::Result transmit_IRQ(I2CAddr addr, const uint8_t *buffer, unsigned length);
 				eos::Result receive_IRQ(I2CAddr addr, uint8_t *buffer, unsigned bufferSize);
+#endif
 
 				/// Obte l'estat del dispositiu.
 				///
@@ -325,11 +359,12 @@ namespace htl {
 					*p |= 1 << _activatePos;
 					__DSB();
 				}
+#if HTL_I2C_OPTION_DEACTIVATE == 1
 				void deactivate() override {
 					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
 					*p &= ~(1 << _activatePos);
 				}
-
+#endif
                 void reset() override {
                     auto p = reinterpret_cast<uint32_t *>(_resetAddr);
                     *p |= 1 << _resetPos;
@@ -341,9 +376,11 @@ namespace htl {
                 }
 
 			public:
+#if HTL_I2C_OPTION_IRQ == 1
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
+#endif
 
 				template <typename pin_>
 				void inline initPinSCL() {
@@ -421,19 +458,23 @@ namespace htl {
 					__DSB();
 				}
 
+#if HTL_I2C_OPTION_DEACTIVATE == 1
 				void deactivate() override {
 					uint32_t *p = reinterpret_cast<uint32_t *>(_activateAddr);
 					*p &= ~(1 << _activatePos);
 				}
+#endif
 
 				void reset() override {
 
 				}
 
 			public:
+#if HTL_I2C_OPTION_IRQ == 1
 				inline static void interruptHandler() {
 					_instance.interruptService();
 				}
+#endif
 
 				template <typename pin_>
 				void inline initPinSCL() {

@@ -58,6 +58,7 @@ Result I2CMasterDevice::initialize(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el dispositiu.
 ///
+#if HTL_I2C_OPTION_DEACTIVATE == 1
 Result I2CMasterDevice::deinitialize() {
 
 	if (_state == State::ready) {
@@ -74,6 +75,7 @@ Result I2CMasterDevice::deinitialize() {
 	else
 		return Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

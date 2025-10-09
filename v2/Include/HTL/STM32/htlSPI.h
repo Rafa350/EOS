@@ -142,9 +142,11 @@ namespace htl {
 				void activate() const {
 					activateImpl();
 				}
+#if HTL_SPI_OPTION_DEACTIVATE == 1
 				void deactivate() const {
 					deactivateImpl();
 				}
+#endif
 
 			protected:
 				SPIDevice(SPI_TypeDef *spi);
@@ -156,7 +158,9 @@ namespace htl {
 				void interruptService();
 
 				virtual void activateImpl() const = 0;
+#if HTL_SPI_OPTION_DEACTIVATE == 1
 				virtual void deactivateImpl() const = 0;
+#endif
 
 				void enable() const;
 				void disable() const;
@@ -191,7 +195,9 @@ namespace htl {
 				    return initialize(Mode::master, clkPolarity, clkPhase,
 				            size, firstBit, clkDivider);
 				}
+#if HTL_SPI_OPTION_DEACTIVATE == 1
 				eos::Result deinitialize();
+#endif
 
 				void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
 					_erNotify.set(event, enabled);
@@ -261,10 +267,12 @@ namespace htl {
 					bits::set(*p, 1UL << _activatePos);
 					__DSB();
 				}
+#if HTL_SPI_OPTION_DEACTIVATE == 1
 				void deactivateImpl() const override {
 					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
 					bits::clear(*p, 1UL << _activatePos);
 				}
+#endif
 
 			public:
 				static void interruptHandler() {

@@ -54,9 +54,11 @@ void PortDevice::initOutput(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el dispositiu.
 ///
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
 void PortDevice::deinitialize() const {
 
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -147,13 +149,13 @@ void PinDevice::initAlternate(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el pin i el deixa als valor per defecte.
 ///
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
 void PinDevice::deinitialize() const {
 
-#if HTL_GPIO_OPTIONS == 1
 	deactivate();
-#endif
 	htl::gpio::deinitialize(_gpio, _mask);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

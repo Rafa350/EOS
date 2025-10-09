@@ -8,30 +8,30 @@
 
 // Opcions per defecte del modul GPIO
 //
-#define HTL_GPIO_DEFAULT_OPTION_DEACTIVATE       1
+#define HTL_GPIO_DEFAULT_OPTION_DEACTIVATE       0
 
 // Opcions per defecte pel modul SPI
 //
 #define HTL_SPI_DEFAULT_OPTION_IRQ               1
 #define HTL_SPI_DEFAULT_OPTION_DMA               1
-#define HTL_SPI_DEFAULT_OPTION_DEACTIVATE        1
+#define HTL_SPI_DEFAULT_OPTION_DEACTIVATE        0
 
 // Opcions per defecte pel modul I2C
 //
 #define HTL_I2C_DEFAULT_OPTION_IRQ               1
 #define HTL_I2C_DEFAULT_OPTION_DMA               1
-#define HTL_I2C_DEFAULT_OPTION_DEACTIVATE        1
+#define HTL_I2C_DEFAULT_OPTION_DEACTIVATE        0
 
 // Opcions per defecte pel modul UART
 //
 #define HTL_UART_DEFAULT_OPTION_IRQ              1
 #define HTL_UART_DEFAULT_OPTION_DMA              1
 #define HTL_UART_DEFAULT_OPTION_FIFO             0
-#define HTL_UART_DEFAULT_OPTION_DEACTIVATE       1
+#define HTL_UART_DEFAULT_OPTION_DEACTIVATE       0
 
 // Opcions per defecte del modul DMA
 //
-#define HTL_DMA_DEFAULT_OPTION_DEACTIVATE        1
+#define HTL_DMA_DEFAULT_OPTION_DEACTIVATE        0
 
 
 // Comprova l'existencia dels moduls GPIO
@@ -316,7 +316,7 @@
 	#include "HTL/STM32/htlTMR.h"
 #endif
 #if defined(HTL_MODULE_UART)
-	#include "HST/STM32/htlUART.h"
+	#include "HTL/STM32/htlUART.h"
 #endif
 
 

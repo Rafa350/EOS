@@ -81,14 +81,13 @@ eos::Result UARTDevice::initialize() {
 /// \brief    Desinicialitza el modul.
 /// \return   El resultat de l'operacio.
 ///
+#if HTL_UART_OPTION_DEACTIVATE == 1
 eos::Result UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
 		disable();
-#if HTL_UART_OPTION_DEACTIVATE == 1
 		deactivate();
-#endif
 
 		_state = State::reset;
 
@@ -98,6 +97,7 @@ eos::Result UARTDevice::deinitialize() {
 	else
 		return eos::Results::errorState;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
