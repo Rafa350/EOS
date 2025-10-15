@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosTimer__
 #define	__eosTimer__
 

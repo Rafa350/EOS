@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosSemaphore__
 #define	__eosSemaphore__
 

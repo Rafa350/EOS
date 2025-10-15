@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
+#include "System/Core/eosKernel.h"
 
 #include <cmath>
 
@@ -295,11 +296,11 @@ void DigInputService::onInitialize(
 ///
 void DigInputService::onExecute() {
 
-    unsigned lastWeakTime = Task::getTickCount();
+    unsigned lastWeakTime = Kernel::pInst->getTickCount();
 
     while (!stopSignal()) {
 
-		Task::delay(_scanPeriod, lastWeakTime);
+		getTask()->delay(_scanPeriod, lastWeakTime);
 
 		notifyBeforeScan();
 

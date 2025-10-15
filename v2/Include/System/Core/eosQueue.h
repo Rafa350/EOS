@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosQueue__
 #define __eosQueue__
 

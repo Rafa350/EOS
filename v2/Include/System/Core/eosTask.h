@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosTask__
 #define	__eosTask__
 
@@ -32,22 +33,24 @@ namespace eos {
                 high
             };
 
+            struct Info {
+            	char * const name;
+            	Priority proirity;
+            };
+
             Task(unsigned stackSize, Priority priority, const char *name, ITaskCallback *taskCallback, void *taskParams);
             virtual ~Task();
 
-            static void delay(unsigned time);
-            static void delay(unsigned time, unsigned& weakTime);
-            static unsigned getTickCount();
+            void delay(unsigned time);
+            void delay(unsigned time, unsigned& weakTime);
             static void enterCriticalSection();
             static void exitCriticalSection();
-            static void startAll();
-            static void suspendAll();
-            static void resumeAll();
             static bool waitNotification(unsigned blockTime);
             static bool raiseNotification(unsigned blockTime);
             static void raiseNotificationISR();
             static void yield();
             static void yieldISR();
+            void getTaskInfo(Info &info) const;
 
         private:
             HTask _hTask;

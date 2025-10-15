@@ -3,6 +3,7 @@
 #include "Services/eosService.h"
 #include "System/eosRTOSApplication.h"
 #include "System/Core/eosTask.h"
+#include "System/Core/eosKernel.h"
 
 
 using namespace eos;
@@ -71,7 +72,7 @@ void RTOSApplication::onRun() {
     // Inicia el planificador i totes les tasques
     //
     _running = true;
-    Task::startAll();
+    Kernel::pInst->startScheduler(); // Ja no retorna mai mes
     _running = false;
 }
 

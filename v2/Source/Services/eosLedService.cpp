@@ -2,6 +2,7 @@
 #include "htl/htlGPIO.h"
 #include "Services/eosLedService.h"
 #include "System/Core/eosTask.h"
+#include "System/Core/eosKernel.h"
 
 
 using namespace eos;
@@ -48,7 +49,7 @@ void LedService::onExecute() {
     if (_pinLED2 != nullptr)
         _pinLED2->clear();
 
-    auto weakTime = Task::getTickCount();
+    auto weakTime = Kernel::pInst->getTickCount();
 
     while (!stopSignal()) {
 
@@ -58,6 +59,6 @@ void LedService::onExecute() {
 		if (_pinLED2 != nullptr)
 			_pinLED2->toggle();
 
-		Task::delay(500, weakTime);
+		getTask()->delay(500, weakTime);
 	}
 }

@@ -106,17 +106,6 @@ void Task::function(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retorna el numero te ticks transcurreguts desde la
-///           inicialitzacio del sistema.
-/// \return   El numero de ticks.
-///
-unsigned Task::getTickCount() {
-
-    return osalGetTickCount();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Retarda la tasca actual un numero determinat de milisegons.
 /// \param    time: El numero de milisegons a retardar.
 ///
@@ -179,33 +168,6 @@ void Task::exitCriticalSection() {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Inicia tots els fils d'execucio.
-///
-void Task::startAll() {
-
-    osalStartScheduler();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Suspend tots els fils d'execucio. Impedeix el canvi de tasca
-///
-void Task::suspendAll() {
-
-    osalSuspendAll();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Activa tots els fils d'execucio
-///
-void Task::resumeAll() {
-
-    osalResumeAll();
-}
-
-
 void Task::yield() {
 
     osalTaskYield();
@@ -215,4 +177,14 @@ void Task::yield() {
 void Task::yieldISR() {
 
     //osalTaskYield();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte informacio d'una tasca.
+/// \param    info: La informacio de la tasca.
+///
+void Task::getTaskInfo(
+	Info &info) const {
+
 }

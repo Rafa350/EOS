@@ -9,6 +9,7 @@ using namespace eos;
 
 
 constexpr const char *serviceName = "Service";
+constexpr unsigned serviceStackSize = 256;
 
 
 /// ----------------------------------------------------------------------
@@ -32,7 +33,7 @@ void Service::start() {
 		ServiceParams params = {
 			.name = serviceName,
 			.priority = Task::Priority::normal,
-			.stackSize = 256
+			.stackSize = serviceStackSize
 		};
 
 		onInitialize(params);
