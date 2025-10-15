@@ -147,13 +147,16 @@ void DigInputService::setScanPeriod(
 void DigInputService::notifyChanged(
     DigInput *input) {
 
-    if (_erNotify.isEnabled(NotifyID::changed)) {
+    if (_erNotify.isEnabled()) {
+
     	NotifyEventArgs args = {
-    		.changed {
-    			.input = input
+    		.id {NotifyID::changed},
+			.changed {
+    			.input {input}
     		}
     	};
-    	_erNotify.raise(NotifyID::changed, &args);
+
+    	_erNotify(this, &args);
     }
 }
 
@@ -163,8 +166,14 @@ void DigInputService::notifyChanged(
 ///
 void DigInputService::notifyBeforeScan() {
 
-	if (_erNotify.isEnabled(NotifyID::beforeScan))
-    	_erNotify.raise(NotifyID::beforeScan);
+	if (_erNotify.isEnabled()) {
+
+		NotifyEventArgs args = {
+			.id {NotifyID::beforeScan}
+		};
+
+    	_erNotify(this, &args);
+	}
 }
 
 
@@ -175,13 +184,16 @@ void DigInputService::notifyBeforeScan() {
 void DigInputService::notifyInitialize(
 	ServiceParams *params) {
 
-	if (_erNotify.isEnabled(NotifyID::initialize)) {
+	if (_erNotify.isEnabled()) {
+
 		NotifyEventArgs args = {
+			.id {NotifyID::initialize},
 			.initialize {
-				.params = params
+				.params {params}
 			}
 		};
-		_erNotify.raise(NotifyID::initialize, &args);
+
+		_erNotify(this, &args);
 	}
 }
 
@@ -294,13 +306,13 @@ void DigInputService::onExecute() {
 		if (scanInputs()) {
 			for (auto input: _inputs) {
 
-				auto i = static_cast<Input*>(input);
+				auto inp = static_cast<Input*>(input);
 
 				bool s = getInterruptState();
 				if (s)
 					disableInterrupts();
 
-				bool flag = i->readFlag();
+				bool flag = inp->readFlag();
 
 				if (s)
 					enableInterrupts();
@@ -325,9 +337,9 @@ bool DigInputService::scanInputs() {
     //
     for (auto input: _inputs) {
 
-        auto i = static_cast<Input*>(input);
-        if (i->scanMode == Input::ScanMode::polling)
-        	changed |= i->scan();
+        auto inp = static_cast<Input*>(input);
+        if (inp->scanMode == Input::ScanMode::polling)
+        	changed |= inp->scan();
     }
 
     return changed;
@@ -346,8 +358,8 @@ bool DigInputService::read(
 
     Task::enterCriticalSection();
 
-    auto i = static_cast<const Input*>(input);
-    auto value = i->getState();
+    auto inp = static_cast<const Input*>(input);
+    auto value = inp->getState();
 
     Task::exitCriticalSection();
 
@@ -369,8 +381,8 @@ uint32_t DigInputService::getEdges(
 
     Task::enterCriticalSection();
 
-    auto i = static_cast<Input*>(input);
-    auto edges = i->getEdges(clear);
+    auto inp = static_cast<Input*>(input);
+    auto edges = inp->getEdges(clear);
 
     Task::exitCriticalSection();
 

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 4.0)
 
-target_sources(${TARGET_NAME} PUBLIC 
+# 
+# Afegeix els fonts comuns a totes les plataformes STM32
+#
+target_sources(${EOS_HTL_TARGET_NAME} PUBLIC 
 	${CMAKE_CURRENT_SOURCE_DIR}/htl.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/htlClock.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/htlDMA.cpp
@@ -16,8 +19,12 @@ target_sources(${TARGET_NAME} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/htlUART.cpp
 )
 
+
+#
+# Afegeix els fonts per plataformes especifiques que suportin LTDC
+#
 if (${PLATFORM_NAME} EQUAL "STM32F429ZI")
-target_sources(${TARGET_NAME} PUBLIC 
+target_sources(${EOS_HTL_TARGET_NAME} PUBLIC 
 	${CMAKE_CURRENT_SOURCE_DIR}/htlDMA2D.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/htlLTDC.cpp
 )

@@ -37,6 +37,7 @@ namespace eos {
 				initialize
 			};
 			struct NotifyEventArgs {
+				NotifyID const id;
 				union {
 					struct {
 						DigInput * const input;
@@ -46,13 +47,13 @@ namespace eos {
 					} initialize;
 				};
 			};
-			using ER = NotifyEventRaiser<NotifyID, NotifyEventArgs>;
-			using INotifyEvent = ER::IEvent;
-			template <typename Instance_> using NotifyEvent = ER::Event<Instance_>;
+			using NotifyEventRaiser = EventRaiser<DigInputService, NotifyEventArgs>;
+			using INotifyEvent = NotifyEventRaiser::IEvent;
+			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
         private:
     		DigInputList _inputs;
-    		ER _erNotify;
+    		NotifyEventRaiser _erNotify;
             unsigned _scanPeriod;
 
         private:
@@ -88,12 +89,6 @@ namespace eos {
             }
             inline void disableNotifyEvent() {
             	_erNotify.disable();
-            }
-            inline void enableNotifyID(NotifyID id) {
-            	_erNotify.enable(id);
-            }
-            inline void disableNotifyID(NotifyID id) {
-            	_erNotify.disable(id);
             }
     };
 }

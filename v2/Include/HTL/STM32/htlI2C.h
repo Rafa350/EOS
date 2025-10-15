@@ -88,8 +88,8 @@ namespace htl {
         };
 
         struct NotifyEventArgs {
-        	NotifyID id;                ///< Identificador de la notificacio
-            bool irq;                   ///< True si la notificacio s'ha generat en una interrupcio.
+        	NotifyID const id;          ///< Identificador de la notificacio
+            bool const irq;             ///< True si la notificacio s'ha generat en una interrupcio.
             union {
                 struct {
                     I2CAddr addr;       ///< L'adressa coincident.

@@ -43,9 +43,9 @@ namespace eos {
             static void startAll();
             static void suspendAll();
             static void resumeAll();
-            static bool notificationTake(unsigned blockTime);
-            static bool notificationGive();
-            static void notificationGiveISR();
+            static bool waitNotification(unsigned blockTime);
+            static bool raiseNotification(unsigned blockTime);
+            static void raiseNotificationISR();
             static void yield();
             static void yieldISR();
 

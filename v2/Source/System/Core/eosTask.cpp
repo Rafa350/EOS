@@ -143,14 +143,21 @@ void Task::delay(
 /// ----------------------------------------------------------------------
 /// \brief    Espera una notificacio interna de la tasca.
 /// \param    blockTime: Temps maxim de bloqueig en milisegons.
-/// \return   True si hi ha notificacio, false en cas contrari.
+/// \return   True si es correcte, false en cas de timeout o error
 ///
-bool Task::notificationTake(
+bool Task::waitNotification(
     unsigned blockTime) {
 
-	// Millorar a traves de OSAL
-    TickType_t ticks = blockTime == ((unsigned)-1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return ulTaskNotifyTake(pdTRUE, ticks) != 0;
+	return osalTaskWaitNotification(true, blockTime);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Envia una notificacio
+///
+void Task::raiseNotificationISR() {
+
+	osalTaskRaiseNotificationISR();
 }
 
 

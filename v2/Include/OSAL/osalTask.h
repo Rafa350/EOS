@@ -44,9 +44,9 @@ void osalTaskResume(HTask hTask);
 void osalTaskSetPriority(HTask hTask, uint8_t priority);
 void osalTaskYield(void);
 unsigned osalTaskGetStackHighWaterMark(void);
-void osalTaskNotifyWait(bool clear, unsigned blockTime);
-void osalTaskNotifyRelease(unsigned blockTime);
-void osalTaskNotifyReleaseISR();
+bool osalTaskWaitNotification(bool clear, unsigned blockTime);
+bool osalTaskRaiseNotification(unsigned blockTime);
+void osalTaskRaiseNotificationISR();
 
 
 

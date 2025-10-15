@@ -9,69 +9,97 @@
 
 
 namespace eos {
+#ifdef EOS_USE_FULL_NAMESPACE
+    namespace system {
+        namespace collections {
+#endif
 
-    template <typename Element>
-	class CircularBuffer {
-		private:
-			Element *_buffer;
-			Element *_getPtr;
-			Element *_putPtr;
-			unsigned _size;
-			unsigned _count;
+			template <typename T_>
+			class CircularBuffer {
+				public:
+					using ValueType = T_;
+					using Pointer = ValueType*;
+					using Reference = ValueType&;
 
-		public:
-			CircularBuffer(Element *buffer, unsigned size):
-				_buffer {buffer},
-				_getPtr {buffer},
-				_putPtr {buffer},
-				_size {size},
-				_count {0} {
-			}
+				private:
+					Pointer _buffer;
+					Pointer _getPtr;
+					Pointer _putPtr;
+					unsigned _size;
+					unsigned _count;
 
-			inline unsigned getCount() const {return _count; }
-			inline bool isFull() const { return _count == _size; }
-			inline bool isEmpty() const { return _count == 0; }
+				public:
+					CircularBuffer(Pointer buffer, unsigned size):
+						_buffer {buffer},
+						_getPtr {buffer},
+						_putPtr {buffer},
+						_size {size},
+						_count {0} {
+					}
 
-			void purge() {
-				_putPtr = _buffer;
-				_getPtr = _buffer;
-				_count = 0;
-			}
+					inline unsigned getCount() const {
+						return _count;
+					}
 
-			bool peek(Element &element) {
+					inline bool isFull() const {
+						return _count == _size;
+					}
 
-				if (_count > 0) {
-					element = *_getPtr;
-					return true;
-				}
-				else
-					return false;
-			}
+					inline bool isEmpty() const {
+						return _count == 0;
+					}
 
-			bool put(Element element) {
-				if (_count < _size) {
-					_count++;
-					*_putPtr++ = element;
-					if (_putPtr == _buffer + _size)
+					void purge() {
 						_putPtr = _buffer;
-					return true;
-				}
-				else
-					return false;
-			}
-
-			bool get(Element &element) {
-				if (_count > 0) {
-					_count--;
-					element = *_getPtr++;
-					if (_getPtr == _buffer + _size)
 						_getPtr = _buffer;
-					return true;
-				}
-				else
-					return false;
-			}
-	};
+						_count = 0;
+					}
+
+					bool peek(Reference element) {
+						if (_count > 0) {
+							element = *_getPtr;
+							return true;
+						}
+						else
+							return false;
+					}
+
+					bool pop() {
+						if (_count > 0) {
+							_count--;
+							_getPtr++;
+							if (_getPtr == _buffer + _size)
+								_getPtr = _buffer;
+							return true;
+						}
+						else
+							return false;
+					}
+
+					bool pop(Reference element) {
+						if (peek(element))
+							return pop();
+						else
+							return false;
+					}
+
+					bool push(ValueType element) {
+						if (_count < _size) {
+							*_putPtr = element;
+							_count++;
+							_putPtr++;
+							if (_putPtr == _buffer + _size)
+								_putPtr = _buffer;
+							return true;
+						}
+						else
+							return false;
+					}
+			};
+#ifdef EOS_USE_FULL_NAMESPACE
+        }
+    }
+#endif
 }
 
 

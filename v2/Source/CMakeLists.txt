@@ -25,7 +25,6 @@ message("")
 message("+-------------------------------------------------------------------------")
 message("| Target info:")
 message("|     Platform         : ${PLATFORM_NAME}")
-message("|     Target file name : ${TARGET_NAME}")
 message("|")
 message("| Build info:")
 message("|     Build type       : ${CMAKE_BUILD_TYPE}")
@@ -70,18 +69,23 @@ set(PROJ_PATH
 	
 set(EOS_PATH  
 	${CMAKE_CURRENT_SOURCE_DIR}/..)
+	
+set(EOS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
+set(EOS_SOURCE_DIR "${EOS_ROOT}/Source")
+set(EOS_INCLUDE_DIR "${EOS_ROOT}/Include")
+set(EOS_LIBRARY_DIR "${EOS_ROOT}/Library")
 
 
 # Include directories
 #
-set(include_dirs
+set(EOS_INCLUDE_DIRS
     ${PROJ_PATH}/../BuildCMake
-    ${EOS_PATH}/Include
-    ${EOS_PATH}/Library/STM32G0/CMSIS_CORE/Include
-    ${EOS_PATH}/Library/STM32G0/CMSIS_DEVICE/Include
-    ${EOS_PATH}/Library/STM32G0/FreeRTOS/Include
-    ${EOS_PATH}/Library/STM32G0/FreeRTOS/Portable/GCC/ARM_CM0
-    ${EOS_PATH}/Library/STM32G0/FreeRTOS/CMSIS_RTOS_V2
+    ${EOS_INCLUDE_DIR}
+    ${EOS_LIBRARY_DIR}/STM32G0/CMSIS_CORE/Include
+    ${EOS_LIBRARY_DIR}/STM32G0/CMSIS_DEVICE/Include
+    ${EOS_LIBRARY_DIR}/STM32G0/FreeRTOS/Include
+    ${EOS_LIBRARY_DIR}/STM32G0/FreeRTOS/Portable/GCC/ARM_CM0
+    ${EOS_LIBRARY_DIR}/STM32G0/FreeRTOS/CMSIS_RTOS_V2
 )
 
 
@@ -92,27 +96,5 @@ set(symbol_definitions
     -DEOS_NO_INCLUDE_BOARD
 )
 
-# Target
-#
-add_library(${TARGET_NAME} STATIC)
 
 add_subdirectory("HTL")
-#add_subdirectory("Services")
-#add_subdirectory("System")
-
-target_include_directories(${TARGET_NAME} PRIVATE 
-	${include_dirs})
-
-target_compile_definitions(${TARGET_NAME} PRIVATE 
-	${symbol_definitions})
-
-target_compile_options(${TARGET_NAME} PRIVATE
-    ${CPU_PARAMETERS}
-    -Wall
-    -Wextra
-    -Wpedantic
-    -Wno-unused-parameter
-
-    # Full debug configuration
-    -Og -g3 -ggdb
-)

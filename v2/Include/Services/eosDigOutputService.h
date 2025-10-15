@@ -60,15 +60,16 @@ namespace eos {
     			changed
     		};
 			struct NotifyEventArgs {
+    			NotifyID const id;
     			union {
     				struct {
     					DigOutput * const output;
     				} changed;
     			};
 			};
-			using ER = NotifyEventRaiser<NotifyID, NotifyEventArgs>;
-			using INotifyEvent = ER::IEvent;
-			template <typename Instance_> using NotifyEvent = ER::Event<Instance_>;
+			using NotifyEventRaiser = EventRaiser<DigOutputService, NotifyEventArgs>;
+			using INotifyEvent = NotifyEventRaiser::IEvent;
+			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
 
 		private:
             enum class CommandID {
@@ -98,7 +99,7 @@ namespace eos {
             DigOutputList1 _outputs;
             DigOutputList2 _pending;
 
-            ER _erNotify;
+            NotifyEventRaiser _erNotify;
             volatile unsigned _timeCounter;
             unsigned _nextTimeLimit;
             CommandQueue _commandQueue;

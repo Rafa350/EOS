@@ -90,24 +90,26 @@ unsigned osalTaskGetStackHighWaterMark(void) {
 }
 
 
-unsigned osalNotifyWait(
+bool osalTaskWaitNotification(
 	bool clear,
 	unsigned blockTime) {
 
-//	TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+	TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
 //	return ulTaskNotifyTake(clear, blockTicks);
-	return 0;
+	return true;
 }
 
 
-void osalTaskNotifyRelease(
+bool osalTaskRaiseNotification(
 	unsigned blockTime) {
 
 	//xTaskNotify();
+
+	return false;
 }
 
 
-void osalTaskNotifyReleaseISR(
+void osalTaskRaiseNotificationISR(
 	HTask hTask) {
 
 	portBASE_TYPE taskWoken = pdFALSE;

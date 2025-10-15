@@ -442,86 +442,6 @@ namespace htl {
         PinDeviceX<portID_, pinID_> PinDeviceX<portID_, pinID_>::_instance;
 
 
-		enum class NotifyID {
-			null,
-			risingEdge,
-			fallingEdge
-		};
-
-		struct NotifyEventArgs {
-			NotifyID id;
-			bool isr;
-			union {
-				struct {
-
-				} RissingEdge;
-				struct {
-
-				} FallingEdge;
-			};
-		};
-
-		class PinInterrupt;
-		using INotifyEvent = eos::ICallbackP2<const PinInterrupt*, NotifyEventArgs&>;
-		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, const PinInterrupt*, NotifyEventArgs&>;
-
-		class PinInterrupt {
-			private:
-				uint8_t const _portNum;
-				uint8_t const _pinNum;
-				INotifyEvent *_notifyEvent;
-				bool _notifyEventEnabled;
-
-			private:
-				PinInterrupt(const PinInterrupt &) = delete;
-				PinInterrupt & operator = (const PinInterrupt &) = delete;
-				void notifyRisingEdge() const;
-				void notifyFallingEdge() const;
-
-			protected:
-				PinInterrupt(GPIO_TypeDef *gpio, PinID pinID);
-				void interruptService() const;
-
-			public:
-				void enableInterruptPin(Edge edge) const;
-				void disableInterruptPin() const;
-
-				void setNotifyEvent(INotifyEvent &event, bool enabled = true);
-
-				inline void enableNotifyEvent() {
-					_notifyEventEnabled = _notifyEvent != nullptr;
-				}
-
-				inline void disableEventEvent() {
-					_notifyEventEnabled = false;
-				}
-		};
-
-		template <PortID portID_, PinID pinID_>
-		class PinInterruptX final: public PinInterrupt {
-			private:
-				using PortTraits = internal::PortTraits<portID_>;
-			private:
-				static constexpr uint32_t _gpioAddr = PortTraits::gpioAddr;
-				static PinInterruptX _instance;
-			public:
-				static constexpr PortID portID = portID_;
-				static constexpr PinID pinID = pinID_;
-				static constexpr PinInterruptX *pInst = &_instance;
-                static constexpr PinInterruptX &rInst = _instance;
-			private:
-				PinInterruptX():
-					PinInterrupt(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), pinID_) {
-				}
-			public:
-				inline static void interruptHandler() {
-					_instance.interruptService();
-				}
-		};
-
-		template <PortID portID_, PinID pinID_>
-		PinInterruptX<portID_, pinID_> PinInterruptX<portID_, pinID_>::_instance;
-
 #ifdef HTL_GPIOA_EXIST
         typedef PortDeviceX<PortID::portA> PortA;
 #endif
@@ -796,6 +716,7 @@ namespace htl {
 			template <PortID portId_>
 			PinMask PortActivator<portId_>::_mask {0};
 
+#ifndef EOS_PLATFORM_STM32G0
 #ifdef HTL_GPIOA_EXIST
 			template<>
 			struct PortTraits<PortID::portA> {
@@ -806,9 +727,6 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOAEN_Pos;
-#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOAEN_Pos;
 #endif
 			};
 #endif
@@ -822,9 +740,6 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOBEN_Pos;
-#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOBEN_Pos;
 #endif
 			};
 #endif
@@ -838,9 +753,6 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOCEN_Pos;
-#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOCEN_Pos;
 #endif
 			};
 #endif
@@ -854,9 +766,6 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIODEN_Pos;
-#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activatePos = RCC_IOPENR_GPIODEN_Pos;
 #endif
 			};
 #endif
@@ -880,9 +789,6 @@ namespace htl {
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, AHB1ENR);
 				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOFEN_Pos;
-#elif defined(EOS_PLATFORM_STM32G0)
-				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);
-				static constexpr uint32_t activatePos = RCC_IOPENR_GPIOFEN_Pos;
 #endif
 			};
 #endif
@@ -935,6 +841,7 @@ namespace htl {
 				static constexpr uint32_t activatePos = RCC_AHB1ENR_GPIOKEN_Pos;
 #endif
 			};
+#endif
 #endif
 
 			template <>
@@ -1035,6 +942,31 @@ namespace htl {
 		}
 	}
 }
+
+#if defined(EOS_PLATFORM_STM32G030)
+	#include "htl/STM32/G0/htlGPIO_Traits.h"
+
+#elif defined(EOS_PLATFORM_STM32G031)
+	#include "htl/STM32/G0/htlGPIO_Traits.h"
+
+#elif defined(EOS_PLATFORM_STM32G071)
+	#include "htl/STM32/G0/htlGPIO_Traits.h"
+
+#elif defined(EOS_PLATFORM_STM32G0B1)
+	#include "htl/STM32/G0/htlGPIO_Traits.h"
+
+#elif defined(EOS_PLATFORM_STM32F030)
+
+#elif defined(EOS_PLATFORM_STM32F429)
+	#include "htl/STM32/F4/htlGPIO_Traits.h"
+
+#elif defined(EOS_PLATFORM_STM32F746)
+	#include "htl/STM32/F7/htlGPIO_Traits.h"
+
+#else
+    #error "Unknown platform"
+#endif
+
 
 
 #endif // __STM32_htlGPIO__

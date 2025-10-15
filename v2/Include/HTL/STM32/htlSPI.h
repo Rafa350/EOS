@@ -113,8 +113,8 @@ namespace htl {
 		};
 
         struct NotifyEventArgs {
-        	NotifyID id;
-            bool irq;
+        	NotifyID const id;
+            bool const irq;
         };
 
         using NotifyEventRaiser = eos::EventRaiser<SPIDevice, NotifyEventArgs>;

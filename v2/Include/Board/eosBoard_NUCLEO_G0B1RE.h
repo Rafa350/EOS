@@ -39,7 +39,7 @@
 
 #define LED1_PortID               htl::gpio::PortID::portA
 #define LED1_PinID                htl::gpio::PinID::pin5
-#define LED1_Pin                  htl::gpio::PinX<LED1_PortID, LED1_PinID>
+#define LED1_Pin                  htl::gpio::PinDeviceX<LED1_PortID, LED1_PinID>
 #define LED1_Instance             LED1_Pin::pInst
 #define LED1_StateON              true
 #define LED1_StateOFF             false
@@ -61,7 +61,7 @@
 
 #define SW1_PortID           htl::gpio::PortID::portC
 #define SW1_PinID            htl::gpio::PinID::pin13
-#define SW1_Pin              htl::gpio::PinX<SW1_PortID, SW1_PinID>
+#define SW1_Pin              htl::gpio::PinDeviceX<SW1_PortID, SW1_PinID>
 #define SW1_Instance         SW1_Pin::pInst
 #define SW1_StateON          true
 #define SW1_StateOF          false
@@ -73,7 +73,7 @@
 
 
 // -----------------------------------------------------------------------
-// SIO (Comunicacio serie a traver del depurador)
+// SIO (Comunicacio serie a traves del depurador)
 // -----------------------------------------------------------------------
 //
 #ifdef USE_SIO
@@ -85,7 +85,7 @@
 #define SIO_TX_Pin                htl::gpio::PinA2
 #define SIO_RX_Pin                htl::gpio::PinA3
 
-#endif // USE_DEBUG_UART
+#endif // USE_SIO
 
 
 // -----------------------------------------------------------------------
@@ -123,7 +123,7 @@
 #define CN7_34_Pin  		 htl::gpio::PinB1
 #define CN7_36_Pin  		 htl::gpio::PinB11
 #define CN7_38_Pin  		 htl::gpio::PinB12
-#endif
+#endif // USE_ARDUINO
 
 #endif // USE_CN7
 
@@ -170,7 +170,7 @@
 #define CN10_33_Pin  		 htl::gpio::PinA10
 #define CN10_35_Pin  		 htl::gpio::PinC4
 #define CN10_37_Pin  		 htl::gpio::PinC5
-#endif
+#endif // USE_ARDUINO
 
 #endif // USE_CN10
 

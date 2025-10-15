@@ -158,13 +158,18 @@ void DigOutputService::removeOutputs() {
 void DigOutputService::notifyChanged(
 	DigOutput *output) {
 
-	if (_erNotify.isEnabled(NotifyID::changed)) {
+    eosAssert(output != nullptr);
+
+	if (_erNotify.isEnabled()) {
+
 		NotifyEventArgs args = {
-			.changed = {
-				.output = output,
+			.id {NotifyID::changed},
+			.changed {
+				.output {output}
 			}
 		};
-		_erNotify.raise(NotifyID::changed, &args);
+
+		_erNotify(this, &args);
 	}
 }
 
@@ -178,10 +183,10 @@ void DigOutputService::updateNextTimeLimit() {
     unsigned timeLimit = std::numeric_limits<unsigned>::max();
 
     for (auto output: _outputs) {
-    	auto o = static_cast<Output*>(output);
-        if ((o->state != Output::State::idle) &&
-            (o->timeLimit < timeLimit))
-            timeLimit = o->timeLimit;
+    	auto out = static_cast<Output*>(output);
+        if ((out->state != Output::State::idle) &&
+            (out->timeLimit < timeLimit))
+            timeLimit = out->timeLimit;
     }
 
     if (timeLimit < std::numeric_limits<unsigned>::max())
@@ -209,12 +214,14 @@ bool DigOutputService::hasExpired(
 void DigOutputService::setOutput(
 	DigOutput *output) {
 
-	auto o = static_cast<Output*>(output);
+    eosAssert(output != nullptr);
 
-	auto drv = o->drv;
+    auto out = static_cast<Output*>(output);
+
+	auto drv = out->drv;
     if (drv->read() == false) {
     	drv->set();
-    	notifyChanged(o);
+    	notifyChanged(out);
     }
 }
 
@@ -226,12 +233,14 @@ void DigOutputService::setOutput(
 void DigOutputService::clearOutput(
 	DigOutput *output) {
 
-	auto o = static_cast<Output*>(output);
+    eosAssert(output != nullptr);
 
-	auto drv = o->drv;
+    auto out = static_cast<Output*>(output);
+
+	auto drv = out->drv;
 	if (drv->read() == true) {
     	drv->clear();
-    	notifyChanged(o);
+    	notifyChanged(out);
     }
 }
 
@@ -243,11 +252,13 @@ void DigOutputService::clearOutput(
 void DigOutputService::toggleOutput(
 	DigOutput *output) {
 
-	auto o = static_cast<Output*>(output);
+    eosAssert(output != nullptr);
 
-	auto drv = o->drv;
+    auto out = static_cast<Output*>(output);
+
+	auto drv = out->drv;
 	drv->toggle();
-   	notifyChanged(o);
+   	notifyChanged(out);
 }
 
 
@@ -261,8 +272,8 @@ void DigOutputService::set(
     eosAssert(output != nullptr);
 
     Command command = {
-        .id = CommandID::set,
-        .output = output
+        .id {CommandID::set},
+        .output {output}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -279,8 +290,8 @@ void DigOutputService::clear(
     eosAssert(output != nullptr);
 
     Command command = {
-        .id = CommandID::clear,
-        .output = output
+        .id {CommandID::clear},
+        .output {output}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -297,8 +308,8 @@ void DigOutputService::toggle(
     eosAssert(output != nullptr);
 
     Command command = {
-        .id = CommandID::toggle,
-        .output = output
+        .id {CommandID::toggle},
+        .output {output}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -317,8 +328,8 @@ void DigOutputService::write(
     eosAssert(output != nullptr);
 
     Command command = {
-        .id = state ? CommandID::set : CommandID::clear,
-        .output = output
+        .id {state ? CommandID::set : CommandID::clear},
+        .output {output}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -337,9 +348,9 @@ void DigOutputService::pulse(
     eosAssert(output != nullptr);
 
     Command command = {
-        .id = CommandID::pulse,
-        .output = output,
-        .time1 = std::max(width, minPulseWidth)
+        .id {CommandID::pulse},
+        .output {output},
+        .time1 {std::max(width, minPulseWidth)}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -360,10 +371,10 @@ void DigOutputService::delayedPulse(
     eosAssert(output != nullptr);
 
     Command command = {
-        .id = CommandID::delayedPulse,
-        .output = output,
-        .time1 = std::max(delay, minDelay),
-        .time2 = std::max(width, minPulseWidth)
+        .id {CommandID::delayedPulse},
+        .output {output},
+        .time1 {std::max(delay, minDelay)},
+        .time2 {std::max(width, minPulseWidth)}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -384,8 +395,8 @@ bool DigOutputService::read(
     if (s)
     	disableInterrupts();
 
-    auto o = static_cast<Output*>(output);
-    bool pinState = o->drv->read();
+    auto out = static_cast<Output*>(output);
+    bool pinState = out->drv->read();
 
     if (s)
     	enableInterrupts();
@@ -476,10 +487,10 @@ void DigOutputService::processClear(
 
     eosAssert(output != nullptr);
 
-    auto o = static_cast<Output*>(output);
+    auto out = static_cast<Output*>(output);
 
-    clearOutput(o);
-   	o->state = Output::State::idle;
+    clearOutput(out);
+   	out->state = Output::State::idle;
 }
 
 
@@ -492,10 +503,10 @@ void DigOutputService::processSet(
 
     eosAssert(output != nullptr);
 
-	auto o = static_cast<Output*>(output);
+	auto out = static_cast<Output*>(output);
 
-	setOutput(o);
-   	o->state = Output::State::idle;
+	setOutput(out);
+   	out->state = Output::State::idle;
 }
 
 
@@ -508,10 +519,10 @@ void DigOutputService::processToggle(
 
     eosAssert(output != nullptr);
 
-    auto o = static_cast<Output*>(output);
+    auto out = static_cast<Output*>(output);
 
-    toggleOutput(o);
-    o->state = Output::State::idle;
+    toggleOutput(out);
+    out->state = Output::State::idle;
 }
 
 
@@ -526,12 +537,12 @@ void DigOutputService::processPulse(
 
     eosAssert(output != nullptr);
 
-    auto o = static_cast<Output*>(output);
+    auto out = static_cast<Output*>(output);
 
-    if (o->state == Output::State::idle)
-    	toggleOutput(o);
-    o->state = Output::State::pulse;
-    o->timeLimit = _timeCounter + pulseWidth;
+    if (out->state == Output::State::idle)
+    	toggleOutput(out);
+    out->state = Output::State::pulse;
+    out->timeLimit = _timeCounter + pulseWidth;
 }
 
 
@@ -546,10 +557,10 @@ void DigOutputService::processDelayedSet(
 
     eosAssert(output != nullptr);
 
-	auto o = static_cast<Output*>(output);
+	auto out = static_cast<Output*>(output);
 
-	o->state = Output::State::delayedSet;
-    o->timeLimit = _timeCounter + delay;
+	out->state = Output::State::delayedSet;
+    out->timeLimit = _timeCounter + delay;
 }
 
 
@@ -564,10 +575,10 @@ void DigOutputService::processDelayedClear(
 
     eosAssert(output != nullptr);
 
-    auto o = static_cast<Output*>(output);
+    auto out = static_cast<Output*>(output);
 
-    o->state = Output::State::delayedClear;
-    o->timeLimit = _timeCounter + delay;
+    out->state = Output::State::delayedClear;
+    out->timeLimit = _timeCounter + delay;
 }
 
 
@@ -582,10 +593,10 @@ void DigOutputService::processDelayedToggle(
 
     eosAssert(output != nullptr);
 
-	auto o = static_cast<Output*>(output);
+	auto out = static_cast<Output*>(output);
 
-	o->state = Output::State::delayedToggle;
-    o->timeLimit = _timeCounter + delay;
+	out->state = Output::State::delayedToggle;
+    out->timeLimit = _timeCounter + delay;
 }
 
 
@@ -602,12 +613,12 @@ void DigOutputService::processDelayedPulse(
 
     eosAssert(output != nullptr);
 
-	auto o = static_cast<Output*>(output);
+	auto out = static_cast<Output*>(output);
 
-    o->state = Output::State::delayedPulse;
+    out->state = Output::State::delayedPulse;
     auto tc = _timeCounter;
-    o->timeLimit = tc + delay;
-    o->timeLimit2 = tc + delay + pulseWidth;
+    out->timeLimit = tc + delay;
+    out->timeLimit2 = tc + delay + pulseWidth;
 }
 
 
@@ -617,37 +628,37 @@ void DigOutputService::processDelayedPulse(
 void DigOutputService::processTick() {
 
     for (auto output: _outputs) {
-    	auto o = static_cast<Output*>(output);
-		if (hasExpired(o->timeLimit))
-			switch (o->state) {
+    	auto out = static_cast<Output*>(output);
+		if (hasExpired(out->timeLimit))
+			switch (out->state) {
+				case Output::State::idle:
+					break;
+
 				case Output::State::pulse:
-					toggleOutput(o);
-					o->state = Output::State::idle;
+					toggleOutput(out);
+					out->state = Output::State::idle;
 					break;
 
 				case Output::State::delayedSet:
-					setOutput(o);
-					o->state = Output::State::idle;
+					setOutput(out);
+					out->state = Output::State::idle;
 					break;
 
 				case Output::State::delayedClear:
-					clearOutput(o);
-					o->state = Output::State::idle;
+					clearOutput(out);
+					out->state = Output::State::idle;
 					break;
 
 				case Output::State::delayedToggle:
-					toggleOutput(o);
-					o->state = Output::State::idle;
+					toggleOutput(out);
+					out->state = Output::State::idle;
 					break;
 
 				case Output::State::delayedPulse:
-					toggleOutput(o);
-					o->timeLimit = o->timeLimit2;
-					o->state = Output::State::pulse;
+					toggleOutput(out);
+					out->timeLimit = out->timeLimit2;
+					out->state = Output::State::pulse;
 					break;
-
-				default:
-				    break;
 			}
     }
 }
@@ -664,7 +675,7 @@ void DigOutputService::tickISR() {
 	_timeCounter += 1;
 
     Command command = {
-        .id = CommandID::tick
+        .id {CommandID::tick}
     };
 
     // Es porta el missatge en la cua, per procesar-l'ho en la tasca,
