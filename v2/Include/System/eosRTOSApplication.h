@@ -50,7 +50,11 @@ namespace eos {
             RTOSApplication();
 
             virtual void onExecute() = 0;
-            virtual void initApplication(ApplicationParams &params);
+            virtual void onInitialize(ApplicationParams &params);
+
+            inline Task* getTask() const {
+            	return _appTask;
+            }
 
         public:
             void addService(Service *service);

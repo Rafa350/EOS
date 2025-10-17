@@ -6,6 +6,14 @@
 #include "task.h"
 
 
+#if configNUM_THREAD_LOCAL_STORAGE_POINTERS == 0
+#error "configNUM_THREAD_LOCAL_STORAGE_POINTERS ha de ser distinto de 0"
+#endif
+
+
+#define TAG_INDEX_DATA 0
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Crea una tasca.
 /// \param    info: Parametres d'inicialitzacio.
@@ -28,6 +36,8 @@ HTask osalTaskCreate(
         (TaskHandle_t*) &hTask) != pdPASS)
 		return NULL;
 
+    vTaskSetThreadLocalStoragePointer((TaskHandle_t) hTask, TAG_INDEX_DATA, info->ptrData);
+
    	return hTask;
 }
 
@@ -43,6 +53,10 @@ void osalTaskDestroy(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Suspend l'execucio de la tasca.
+/// \param    hTask: El handler de la tasca.
+///
 void osalTaskSuspend(
 	HTask hTask) {
 
@@ -50,6 +64,10 @@ void osalTaskSuspend(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Resumeix l'execucio de la tasca.
+/// \param    hTask: El handler de la tasca.
+///
 void osalTaskResume(
 	HTask hTask) {
 
@@ -80,6 +98,7 @@ void osalTaskYield(void) {
 	taskYIELD();
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief    Retorna la marca de nivell de la pila.
 /// \return   El resultat.
@@ -92,18 +111,15 @@ unsigned osalTaskGetStackHighWaterMark(void) {
 
 bool osalTaskWaitNotification(
 	bool clear,
-	unsigned blockTime) {
+	unsigned waitTime) {
 
-	TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-//	return ulTaskNotifyTake(clear, blockTicks);
-	return true;
+    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+	return ulTaskNotifyTake(clear ? pdTRUE : pdFALSE, waitTicks);
 }
 
 
 bool osalTaskRaiseNotification(
 	unsigned blockTime) {
-
-	//xTaskNotify();
 
 	return false;
 }
@@ -114,6 +130,28 @@ void osalTaskRaiseNotificationISR(
 
 	portBASE_TYPE taskWoken = pdFALSE;
 
-	if (xTaskNotifyFromISR((TaskHandle_t)hTask, 0, eNoAction, &taskWoken) == pdPASS)
-		portEND_SWITCHING_ISR(taskWoken);
+	vTaskNotifyGiveFromISR((TaskHandle_t) hTask, &taskWoken);
+	portYIELD_FROM_ISR(taskWoken);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el punter a les dades de la tasca.
+/// \param    hTask: El handler de la tasca.
+/// \param    El punter.
+///
+void* osalGetPtrData(
+	HTask hTask) {
+
+	return pvTaskGetThreadLocalStoragePointer(hTask, TAG_INDEX_DATA);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el handler de la tasca en execucio.
+/// \return   El handler.
+///
+HTask osalGetCurrentTask(void) {
+
+	return (HTask) xTaskGetCurrentTaskHandle();
 }

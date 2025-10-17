@@ -42,17 +42,17 @@ void osalSemaphoreDestroy(
 /// \brief    Espera en un semafor fins que s'alliveri, o fins el temps
 ///           maxim d'espera.
 /// \param    hSemaphore: El handler del semafor.
-/// \param    blockTime: Temps maxim de bloqueig en ms.
+/// \param    waitTime: Temps maxim de bloqueig en ms.
 /// \return   True si es correcte. False en cas d'error o timeout.
 ///
 bool osalSemaphoreWait(
 	HSemaphore hSemaphore,
-	unsigned blockTime) {
+	unsigned waitTime) {
 
 	eosAssert(hSemaphore != NULL);
 
-	TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xSemaphoreTake((SemaphoreHandle_t) hSemaphore, blockTicks) == pdTRUE;
+    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    return xSemaphoreTake((SemaphoreHandle_t) hSemaphore, waitTicks) == pdTRUE;
 }
 
 

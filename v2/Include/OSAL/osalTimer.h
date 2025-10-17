@@ -34,11 +34,11 @@ typedef struct {
 
 
 HTimer osalTimerCreate(const TimerInitializeInfo *info);
-bool osalTimerDestroy(HTimer hTimer, unsigned blockTime);
+bool osalTimerDestroy(HTimer hTimer, unsigned waitTime);
 
-bool osalTimerStart(HTimer hTimer, unsigned time, unsigned blockTime);
+bool osalTimerStart(HTimer hTimer, unsigned time, unsigned waitTime);
 bool osalTimerStartISR(HTimer hTimer, unsigned time);
-bool osalTimerStop(HTimer hTimer, unsigned blockTime);
+bool osalTimerStop(HTimer hTimer, unsigned waitTime);
 
 bool osalTimerIsActive(HTimer hTimer);
 void* osalTimerGetContext(HTimer hTimer);

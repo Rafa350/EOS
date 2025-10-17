@@ -97,6 +97,11 @@ void osalDelay(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Suspen l'execucio de la tasca actual, durant un periode de temps.
+/// \param    time: Temps en ms.
+/// \param    lastTick: Ultim tick.
+///
 void osalDelayUntil(
 	unsigned time,
 	unsigned* lastTick) {

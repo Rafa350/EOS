@@ -1,12 +1,11 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosKernel.h"
 
 #include <cmath>
-
-#include "HTL/htlINT.h"
 
 
 namespace eos {
@@ -103,7 +102,7 @@ using namespace htl;
 using namespace htl::irq;
 
 
-constexpr const char *serviceName = "DigInput";
+constexpr const char *serviceName = "DigInputs";
 constexpr Task::Priority servicePriority = Task::Priority::normal;
 constexpr unsigned serviceStackSize = 128;
 
@@ -296,11 +295,11 @@ void DigInputService::onInitialize(
 ///
 void DigInputService::onExecute() {
 
-    unsigned lastWeakTime = Kernel::pInst->getTickCount();
+    unsigned lastTick = Kernel::pInst->getTickCount();
 
     while (!stopSignal()) {
 
-		getTask()->delay(_scanPeriod, lastWeakTime);
+		Task::delay(_scanPeriod, lastTick);
 
 		notifyBeforeScan();
 

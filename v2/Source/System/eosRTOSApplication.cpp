@@ -38,7 +38,7 @@ void RTOSApplication::appTaskCallbackHandler(
 /// \brief    Inicialitza els parametres de l'aplicacio.
 /// \param    params: Els parametres.
 ///
-void RTOSApplication::initApplication(
+void RTOSApplication::onInitialize(
 	ApplicationParams &params) {
 
 }
@@ -54,7 +54,7 @@ void RTOSApplication::onRun() {
 		.priority = applicationPriority
 	};
 
-	initApplication(params);
+	onInitialize(params);
 
 	_appTask = new Task(
 		params.stackSize,

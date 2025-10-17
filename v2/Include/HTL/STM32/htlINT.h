@@ -86,6 +86,24 @@ namespace htl {
             if (state)
                 __enable_irq();
         }
+
+        class IrqSwitch {
+        	private:
+        		bool _restoreState;
+        	public:
+        		inline IrqSwitch() {
+        			_restoreState = __get_PRIMASK() == 0;
+        		}
+        		inline void enable() {
+        			__enable_irq();
+        		}
+        		inline void disable() {
+        			__disable_irq();
+        		}
+        		void restore() {
+        			restoreInterrupts(_restoreState);
+        		}
+        };
 	}
 }
 

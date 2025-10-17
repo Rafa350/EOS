@@ -4,12 +4,12 @@
 
 
 #include "eos.h"
-#include "System/eosCallbacks.h"
 #include "System/eosResults.h"
-#include "System/Core/eosSemaphore.h"
 
 
 namespace eos {
+
+	class Task;
 
 	/// \brief Driver per comunicacions serie.
 	///
@@ -24,8 +24,8 @@ namespace eos {
 
         private:
             State _state;
-            Semaphore _txFinished;
-            Semaphore _rxFinished;
+            Task *_task;
+            volatile bool _finished;
             unsigned _txCount;
             unsigned _rxCount;
 
@@ -50,7 +50,7 @@ namespace eos {
 
 			Result transmit(const uint8_t *buffer, unsigned length);
             Result receive(uint8_t *buffer, unsigned bufferSize);
-            ResultU32 wait(unsigned timeout);
+            ResultU32 wait(unsigned waitTime);
             Result abort();
 
 			inline bool isReady() const { return _state == State::ready; }

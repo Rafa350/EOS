@@ -59,6 +59,6 @@ void LedService::onExecute() {
 		if (_pinLED2 != nullptr)
 			_pinLED2->toggle();
 
-		getTask()->delay(500, weakTime);
+		Task::delay(500, weakTime);
 	}
 }

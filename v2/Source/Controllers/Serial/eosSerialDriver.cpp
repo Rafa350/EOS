@@ -1,6 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Serial/eosSerialDriver.h"
+#include "HTL/htlINT.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -55,6 +57,8 @@ Result SerialDriver::transmit(
 		return Results::errorParameter;
 
 	else if (_state == State::ready) {
+		_finished = false;
+		_task = nullptr;
     	if (onTransmit(buffer, length)) {
     		_state = State::transmiting;
     		return Results::success;
@@ -86,6 +90,8 @@ Result SerialDriver::receive(
 		return Results::errorParameter;
 
 	else if (_state == State::ready) {
+		_finished = false;
+		_task = nullptr;
     	if (onReceive(buffer, bufferSize)) {
     		_state = State::receiving;
     		return Results::success;
@@ -101,27 +107,48 @@ Result SerialDriver::receive(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que finalitzin les operacions pendents.
-/// \param    timeout: Tamps maxim d'espera.
+/// \param    waitTime: Tamps d'espera.
 /// \return   El nombre de bytes transferits i el resultat.
 /// \notes    En cas de timeout, s'aborta la comunicacio.
 ///
 ResultU32 SerialDriver::wait(
-	unsigned timeout) {
+	unsigned waitTime) {
 
 	if (_state == State::receiving) {
-		if (_rxFinished.wait(timeout))
+
+		htl::irq::disableInterrupts();
+		if (_finished) {
+			htl::irq::enableInterrupts();
 			return ResultU32(Results::success, _rxCount);
+		}
 		else {
-			abort();
-			return Results::timeout;
+			_task = Task::getExecutingTask();
+			htl::irq::enableInterrupts();
+			if (Task::waitNotification(waitTime))
+				return ResultU32(Results::success, _rxCount);
+			else {
+				abort();
+				return Results::timeout;
+			}
 		}
 	}
+
 	else if (_state == State::transmiting) {
-		if (_txFinished.wait(timeout))
+
+		htl::irq::disableInterrupts();
+		if (_finished) {
+			htl::irq::enableInterrupts();
 			return ResultU32(Results::success, _txCount);
+		}
 		else {
-			abort();
-			return Results::timeout;
+			_task = Task::getExecutingTask();
+			htl::irq::enableInterrupts();
+			if (Task::waitNotification(waitTime))
+				return ResultU32(Results::success, _txCount);
+			else {
+				abort();
+				return Results::timeout;
+			}
 		}
 	}
 	else
@@ -158,10 +185,12 @@ void SerialDriver::notifyTxCompleted(
 	bool irq) {
 
     if (_state == State::transmiting) {
-        if (irq)
-        	_txFinished.releaseISR();
-        else
-        	_txFinished.release();
+
+    	if (_task == nullptr)
+    		_finished = true;
+    	else
+    		_task->raiseNotificationISR();
+
         _txCount = length;
         _state = State::ready;
     }
@@ -178,11 +207,13 @@ void SerialDriver::notifyRxCompleted(
 	bool irq) {
 
     if (_state == State::receiving) {
-        if (irq)
-        	_rxFinished.releaseISR();
-        else
-        	_rxFinished.release();
-        _rxCount = length;
+
+    	if (_task == nullptr)
+    		_finished = true;
+    	else
+    		_task->raiseNotificationISR();
+
+    	_rxCount = length;
         _state = State::ready;
     }
 }

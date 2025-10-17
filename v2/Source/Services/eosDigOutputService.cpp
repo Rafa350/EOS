@@ -40,7 +40,7 @@ using namespace htl;
 using namespace htl::irq;
 
 
-constexpr const char *serviceName = "DigOutput";
+constexpr const char *serviceName = "DigOutputs";
 constexpr Task::Priority servicePriority = Task::Priority::normal;
 constexpr unsigned serviceStackSize = 128;
 

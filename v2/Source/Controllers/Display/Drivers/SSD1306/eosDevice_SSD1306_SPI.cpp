@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
-#include "System/Core/eosTask.h"
+#include "OSAL/osalKernel.h"
 
 
 using namespace eos;
@@ -50,9 +50,9 @@ void Device_SSD1306_SPI::initialize(
     _pinCS->set();
     if (_pinRST != nullptr) {
         _pinRST->clear();
-        Task::delay(100);
+        osalDelay(100);
         _pinRST->set();
-        Task::delay(1000);
+        osalDelay(1000);
     }
 
     writeScript(script, scriptSize);

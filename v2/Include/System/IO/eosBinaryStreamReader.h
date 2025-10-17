@@ -19,6 +19,10 @@ namespace eos {
         public:
             BinaryStreamReader(const uint8_t *buffer, unsigned size);
 
+            inline void reset() {
+            	_ptr = _begin;
+            }
+
             inline uint8_t peek() const {
                 return *_ptr;
             }

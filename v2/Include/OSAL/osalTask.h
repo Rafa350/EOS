@@ -16,12 +16,13 @@ typedef struct OSAL_TASK_DATA* HTask;
 typedef uint32_t TaskOptions;
 typedef void (*TaskFunction)(void* params);
 
-typedef struct {                       // Parametres d'inicialitzacio
-	const char* name;                  // -Nom
-	TaskFunction function;             // -Funcio a executar
-	void* params;                      // -Parametres de la funcio
-	unsigned stackSize;                // -Tamany de la pila
-	TaskOptions options;               // -Opcions
+typedef struct {                  // Parametres d'inicialitzacio
+	const char* name;             // -Nom
+	TaskFunction function;        // -Funcio a executar
+	void* params;                 // -Parametres de la funcio
+	unsigned stackSize;           // -Tamany de la pila
+	TaskOptions options;          // -Opcions
+	void *ptrData;                // -Punter auxiliar per dades de l'aplicacio
 } TaskInitializeInfo;
 
 
@@ -41,12 +42,14 @@ HTask osalTaskCreate(const TaskInitializeInfo *info);
 void osalTaskDestroy(HTask hTask);
 void osalTaskSuspend(HTask hTask);
 void osalTaskResume(HTask hTask);
+void* osalGetPtrData(HTask hTask);
 void osalTaskSetPriority(HTask hTask, uint8_t priority);
 void osalTaskYield(void);
 unsigned osalTaskGetStackHighWaterMark(void);
-bool osalTaskWaitNotification(bool clear, unsigned blockTime);
-bool osalTaskRaiseNotification(unsigned blockTime);
-void osalTaskRaiseNotificationISR();
+bool osalTaskWaitNotification(bool clear, unsigned waitTime);
+bool osalTaskRaiseNotification(unsigned waitTime);
+void osalTaskRaiseNotificationISR(HTask hTask);
+HTask osalGetCurrentTask(void);
 
 
 

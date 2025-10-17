@@ -27,8 +27,7 @@ Task::Task(
     void *taskParams):
 
     _taskCallback {taskCallback},
-    _taskParams {taskParams},
-	_weakTime {0} {
+    _taskParams {taskParams} {
 
     eosAssert(taskCallback != nullptr);
 
@@ -60,6 +59,7 @@ Task::Task(
 
     info.function = function;
     info.params = this;
+    info.ptrData = this;
 
     _hTask = osalTaskCreate(&info);
     eosAssert(_hTask != nullptr);
@@ -84,30 +84,38 @@ Task::~Task() {
 void Task::function(
     void *params) {
 
-    Task *task = reinterpret_cast<Task*>(params);
-    if (task && task->_taskCallback) {
+    auto task = reinterpret_cast<Task*>(params);
+    if ((task != nullptr) && (task->_taskCallback != nullptr)) {
 
-        task->_weakTime = osalGetTickCount();
-
-        TaskCallbackArgs args;
-        args.task = task;
-        args.params = task->_taskParams;
-
-        // Executa la funcio callback
-        //
+        TaskCallbackArgs args = {
+        	.task = task,
+        	.params = task->_taskParams
+        };
         task->_taskCallback->execute(args);
     }
 
     // Destrueix la propia tasca perque no s'executi mes
     //
-    osalTaskDestroy(NULL);
+    osalTaskDestroy(nullptr);
     task->_hTask = nullptr;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retarda la tasca actual un numero determinat de milisegons.
+/// \brief    Obte la tasca en execucio.
+/// \return   El resultat.
+///
+Task* Task::getExecutingTask() {
+
+	auto hTask = osalGetCurrentTask();
+	return static_cast<Task*>(osalGetPtrData(hTask));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Retard en milisegons.
 /// \param    time: El numero de milisegons a retardar.
+/// \remarks  S'aplica a la tasca que s'esta executant.
 ///
 void Task::delay(
     unsigned time) {
@@ -117,9 +125,10 @@ void Task::delay(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retarda la tasca actual un numero determinat de milisegons.
+/// \brief    Retard en milisegons.
 /// \param    time: El numero de milisegons a retardar.
 /// \param    weakTime: El valor de contador de ticks actualitzat.
+/// \remarks  S'aplica a la tasca que s'esta executant.
 ///
 void Task::delay(
     unsigned time,
@@ -130,9 +139,10 @@ void Task::delay(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Espera una notificacio interna de la tasca.
+/// \brief    Espera una notificacio interna.
 /// \param    blockTime: Temps maxim de bloqueig en milisegons.
 /// \return   True si es correcte, false en cas de timeout o error
+/// \remarks  S'aplica a la tasca que s'esta executant.
 ///
 bool Task::waitNotification(
     unsigned blockTime) {
@@ -142,11 +152,11 @@ bool Task::waitNotification(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Envia una notificacio
+/// \brief    Envia una notificacio interna.
 ///
 void Task::raiseNotificationISR() {
 
-	osalTaskRaiseNotificationISR();
+	osalTaskRaiseNotificationISR(_hTask);
 }
 
 
@@ -165,26 +175,4 @@ void Task::enterCriticalSection() {
 void Task::exitCriticalSection() {
 
     osalExitCritical();
-}
-
-
-void Task::yield() {
-
-    osalTaskYield();
-}
-
-
-void Task::yieldISR() {
-
-    //osalTaskYield();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte informacio d'una tasca.
-/// \param    info: La informacio de la tasca.
-///
-void Task::getTaskInfo(
-	Info &info) const {
-
 }
