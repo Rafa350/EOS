@@ -9,22 +9,23 @@
 
 namespace eos {
 
-	enum class PenStyle {
-		null,
-		solid
-	};
-
-	enum class PenCapStyle {
-
-	};
-
-	enum class PenJoinStyle {
-
-	};
-
 	class Pen final {
+		public:
+			enum class Style {
+				null,
+				solid
+			};
+
+			enum class CapStyle {
+
+			};
+
+			enum class JoinStyle {
+
+			};
+
 		private:
-			PenStyle _style;
+			Style _style;
 			Color _color;
 			int16_t _thickness;
 
@@ -39,8 +40,8 @@ namespace eos {
 
 			inline Color getColor() const { return _color; }
 			inline int16_t getThickness() const { return _thickness; }
-			inline PenStyle getStyle() const { return _style; }
+			inline Style getStyle() const { return _style; }
 
-			inline bool isNull() const { return _style == PenStyle::null; }
+			inline bool isNull() const { return _style == Style::null; }
 	};
 }

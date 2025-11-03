@@ -78,7 +78,7 @@ Task::~Task() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa la funcio de la tasca.
-/// \param    params: El parametre de la tasca.
+/// \param    params: En aquest cas es el punter 'this'
 /// \remarks  No retorna mai.
 ///
 void Task::function(
@@ -140,14 +140,24 @@ void Task::delay(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera una notificacio interna.
-/// \param    blockTime: Temps maxim de bloqueig en milisegons.
+/// \param    waitTime: Temps d'espera en ms
 /// \return   True si es correcte, false en cas de timeout o error
 /// \remarks  S'aplica a la tasca que s'esta executant.
 ///
 bool Task::waitNotification(
-    unsigned blockTime) {
+	bool clear,
+    unsigned waitTime) {
 
-	return osalTaskWaitNotification(true, blockTime);
+	return osalTaskWaitNotification(clear, waitTime);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Envia una notificacio interna.
+///
+void Task::raiseNotification() {
+
+	osalTaskRaiseNotification(_hTask);
 }
 
 

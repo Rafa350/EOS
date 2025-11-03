@@ -34,6 +34,7 @@ namespace htl {
 			p1,
 			p2,
 			p3,
+#if defined(STM32F4) || defined(STM32F7)
 			p4,
 			p5,
 			p6,
@@ -46,17 +47,25 @@ namespace htl {
 			p13,
 			p14,
 			p15
+#endif
 		};
 
+#if defined(STM32F4) || defined(STM32F7)
 		enum class SubPriority {
 			sp0,
 			sp1,
 			sp2,
 			sp3
 		};
+#endif
 
+#if defined(STM32G0)
+		void setInterruptVectorPriority(VectorID vector, Priority priority);
+
+#elif defined(STM32F4) || defined(STM32F7)
 		void setInterruptVectorPriority(VectorID vector, Priority priority,
 		        SubPriority subPriority = SubPriority::sp0);
+#endif
 
 		inline void enableInterruptVector(
 			VectorID vector) {

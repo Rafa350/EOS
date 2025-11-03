@@ -716,7 +716,7 @@ namespace htl {
 			template <PortID portId_>
 			PinMask PortActivator<portId_>::_mask {0};
 
-#ifndef EOS_PLATFORM_STM32G0
+#if !defined(EOS_PLATFORM_STM32G0) && !defined(EOS_PLATFORM_STM32F7)
 #ifdef HTL_GPIOA_EXIST
 			template<>
 			struct PortTraits<PortID::portA> {

@@ -17,21 +17,43 @@ namespace eos {
             uint8_t * _ptr;
 
         public:
-            BinaryStreamWriter(uint8_t *buffer, unsigned size);
+            BinaryStreamWriter(uint8_t *buffer, unsigned bufferSize);
 
-            void clear() { _ptr = _begin; }
+            inline void clear() {
+            	_ptr = _begin;
+            }
 
             bool writeU8(uint8_t data);
-            bool writeU16(uint16_t data);
-            bool writeU32(uint32_t data);
-            inline bool writeI8(int8_t data) { return writeU8(static_cast<uint8_t>(data)); }
-            inline bool writeI16(int16_t data) { return writeU8(static_cast<uint16_t>(data)); }
-            inline bool writeI32(int32_t data) { return writeU8(static_cast<uint32_t>(data)); }
-            bool write(const uint8_t *data, unsigned size);
-            inline bool write(bool data) { return writeU8(static_cast<uint8_t>(data)); }
 
-            inline const uint8_t * data() const { return _begin; }
-            inline unsigned length() const { return _ptr - _begin; }
+            bool writeU16(uint16_t data);
+
+            bool writeU32(uint32_t data);
+
+            inline bool writeI8(int8_t data) {
+            	return writeU8(static_cast<uint8_t>(data));
+            }
+
+            inline bool writeI16(int16_t data) {
+            	return writeU8(static_cast<uint16_t>(data));
+            }
+
+            inline bool writeI32(int32_t data) {
+            	return writeU8(static_cast<uint32_t>(data));
+            }
+
+            bool write(const uint8_t *data, unsigned size);
+
+            inline bool write(bool data) {
+            	return writeU8(static_cast<uint8_t>(data));
+            }
+
+            inline const uint8_t * data() const {
+            	return _begin;
+            }
+
+            inline unsigned length() const {
+            	return _ptr - _begin;
+            }
     };
 
 }

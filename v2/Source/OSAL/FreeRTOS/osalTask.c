@@ -6,8 +6,8 @@
 #include "task.h"
 
 
-#if configNUM_THREAD_LOCAL_STORAGE_POINTERS == 0
-#error "configNUM_THREAD_LOCAL_STORAGE_POINTERS ha de ser distinto de 0"
+#if configNUM_THREAD_LOCAL_STORAGE_POINTERS < 1
+#error "configNUM_THREAD_LOCAL_STORAGE_POINTERS ha de ser mayor que 0"
 #endif
 
 
@@ -109,6 +109,11 @@ unsigned osalTaskGetStackHighWaterMark(void) {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Espera una notificacio directa.
+/// \param    clear: Borrat de contadors.
+/// \param    waitTime: Temps d'espera.
+///
 bool osalTaskWaitNotification(
 	bool clear,
 	unsigned waitTime) {
@@ -118,13 +123,22 @@ bool osalTaskWaitNotification(
 }
 
 
-bool osalTaskRaiseNotification(
-	unsigned blockTime) {
+/// ----------------------------------------------------------------------
+/// \brief    Envia una notificacio directe a la tasca.
+/// \param    hTask: Hander de la tasca.
+///
+void osalTaskRaiseNotification(
+	HTask hTask) {
 
-	return false;
+	xTaskNotifyGive((TaskHandle_t) hTask);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Envia una notificacio directe a la tasca, desde dins
+///           d'una interrupcio.
+/// \param    hTask: Hander de la tasca.
+///
 void osalTaskRaiseNotificationISR(
 	HTask hTask) {
 
@@ -143,7 +157,7 @@ void osalTaskRaiseNotificationISR(
 void* osalGetPtrData(
 	HTask hTask) {
 
-	return pvTaskGetThreadLocalStoragePointer(hTask, TAG_INDEX_DATA);
+	return pvTaskGetThreadLocalStoragePointer((TaskHandle_t)hTask, TAG_INDEX_DATA);
 }
 
 

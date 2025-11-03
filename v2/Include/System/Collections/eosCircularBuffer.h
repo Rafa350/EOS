@@ -17,9 +17,10 @@ namespace eos {
 			template <typename T_>
 			class CircularBuffer {
 				public:
-					using ValueType = T_;
-					using Pointer = ValueType*;
-					using Reference = ValueType&;
+					using Pointer = T_*;
+					using CPointer = T_ const *;
+					using Reference = T_&;
+					using CReference = T_ const &;
 
 				private:
 					Pointer _buffer;
@@ -83,7 +84,7 @@ namespace eos {
 							return false;
 					}
 
-					bool push(ValueType element) {
+					bool push(CReference element) {
 						if (_count < _size) {
 							*_putPtr = element;
 							_count++;

@@ -17,7 +17,7 @@ HMutex osalMutexCreate() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Destrueix un mutex.
-/// \param   hMutex: El handler del mutex.
+/// \param    hMutex: El handler del mutex.
 ///
 void osalMutexDestroy(
     HMutex hMutex) {
@@ -30,18 +30,18 @@ void osalMutexDestroy(
 
 /// ----------------------------------------------------------------------
 /// \brief    Bloqueja el mutex, o espera que es pugui fer.
-/// \param    hMutes: El handler del mutes.
+/// \param    hMutex: El handler del mutex.
 /// \param    blockTime: Temps maxim de bloqueig.
-/// \return   True si tot es correcte.
+/// \return   True si tot es correcte. False en cas de timeout
 ///
 bool osalMutexWait(
     HMutex hMutex,
-    unsigned blockTime) {
+    unsigned waitTime) {
 
 	eosAssert(hMutex != NULL);
 
-	TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-	return xSemaphoreTake((SemaphoreHandle_t) hMutex, blockTicks) == pdTRUE;
+	TickType_t waitTicks = (waitTime == ((unsigned)-1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+	return xSemaphoreTake((SemaphoreHandle_t) hMutex, waitTicks) == pdTRUE;
 }
 
 

@@ -12,10 +12,10 @@ using namespace eos;
 /// \brief    Constructor de l'objecte. Crea un rectangle buit
 ///
 Rect::Rect():
-	_x(0),
-	_y(0),
-	_width(0),
-	_height(0) {
+	_x {0},
+	_y {0},
+	_width {0},
+	_height {0} {
 }
 
 
@@ -32,10 +32,10 @@ Rect::Rect(
 	int16_t width,
 	int16_t height):
 
-	_x(x),
-	_y(y),
-	_width(width),
-	_height(height) {
+	_x {x},
+	_y {y},
+	_width {width},
+	_height {height} {
 
 	eosAssert(width >= 0);
 	eosAssert(height >= 0);
@@ -51,10 +51,10 @@ Rect::Rect(
 	const Point &p,
 	const Size &s):
 
-	_x(p.getX()),
-	_y(p.getY()),
-	_width(s.getWidth()),
-	_height(s.getHeight()) {
+	_x {p.getX()},
+	_y {p.getY()},
+	_width {s.getWidth()},
+	_height{s.getHeight()} {
 }
 
 
@@ -66,10 +66,10 @@ Rect::Rect(
 Rect::Rect(
 	const Size &s):
 
-	_x(0),
-	_y(0),
-	_width(s.getWidth()),
-	_height(s.getHeight()) {
+	_x {0},
+	_y {0},
+	_width {s.getWidth()},
+	_height{s.getHeight()} {
 
 }
 

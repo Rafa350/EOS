@@ -524,12 +524,12 @@ void TMRDevice::interruptService() {
 ///
 void TMRDevice::notifyTrigger() {
 
-	if (_erNotify.isEnabled()) {
-		NotifyEventArgs args = {
-			.id = NotifyID::trigger,
-			.isr = true
+	if (_erNotification.isEnabled()) {
+		NotificationEventArgs args = {
+			.id {NotificationID::trigger},
+			.isr {true}
 		};
-		_erNotify.raise(this, &args);
+		_erNotification.raise(this, &args);
 	}
 }
 
@@ -539,11 +539,11 @@ void TMRDevice::notifyTrigger() {
 ///
 void TMRDevice::notifyUpdate() {
 
-	if (_erNotify.isEnabled()) {
-		NotifyEventArgs args = {
-			.id = NotifyID::update,
-			.isr = true
+	if (_erNotification.isEnabled()) {
+		NotificationEventArgs args = {
+			.id {NotificationID::update},
+			.isr {true}
 		};
-		_erNotify.raise(this, &args);
+		_erNotification.raise(this, &args);
 	}
 }

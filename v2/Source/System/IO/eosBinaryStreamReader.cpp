@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "System/IO/eosBinaryStreamReader.h"
 
 
@@ -143,9 +142,6 @@ bool BinaryStreamReader::readI32(
 bool BinaryStreamReader::read(
 	uint8_t *data,
 	unsigned size) {
-
-    eosAssert(data != nullptr);
-    eosAssert(size > 0);
 
 	if ((_ptr + size) <= _end) {
 		memcpy(data, _ptr, size);

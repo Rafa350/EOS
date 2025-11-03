@@ -32,7 +32,7 @@ namespace eos {
     		State _state;
     		Task * _task;
     		TaskCallback<Service> _taskCallback;
-    		bool _stopSignal;
+    		volatile bool _stopSignal;
 
     	private:
     		void taskCallbackHandler(const TaskCallbackArgs &args);

@@ -21,7 +21,7 @@ TickGenerator TickGenerator::_instance;
 ///
 TickGenerator::TickGenerator():
 	_tickCounter {0},
-	_tmrNotifyEvent {*this, &TickGenerator::tmrNotifyEventHandler} {
+	_tmrNotificationEvent {*this, &TickGenerator::tmrNotificationEventHandler} {
 
 }
 
@@ -44,10 +44,10 @@ void TickGenerator::initialize(
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
 	__devTMR->initialize(clkDiv, prescaler, limit, 0);
-	__devTMR->setNotifyEvent(_tmrNotifyEvent, true);
+	__devTMR->setNotificationEvent(_tmrNotificationEvent, true);
 
 	enableInterruptVector(irq::VectorID::tmr14);
-	setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::p7);
+	setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::p3);
 
 	start();
 }
@@ -60,7 +60,7 @@ void TickGenerator::deinitialize() {
 
     stop();
 
-	__devTMR->disableNotifyEvent();
+	__devTMR->disableNotificationEvent();
 
 	disableInterruptVector(irq::VectorID::tmr14);
 }
@@ -116,11 +116,11 @@ void TickGenerator::wait(
 /// \param    sender: El temporitzadort que envia la notificacio.
 /// \param    args: Parametres de la notificacio.
 ///
-void TickGenerator::tmrNotifyEventHandler(
+void TickGenerator::tmrNotificationEventHandler(
 	htl::tmr::TMRDevice * const sender,
-	htl::tmr::NotifyEventArgs * const args) {
+	htl::tmr::NotificationEventArgs * const args) {
 
-	if (args->id == htl::tmr::NotifyID::update)
+	if (args->id == htl::tmr::NotificationID::update)
 		_tickCounter += 1;
 }
 

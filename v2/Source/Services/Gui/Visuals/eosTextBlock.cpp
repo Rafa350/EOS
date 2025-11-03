@@ -38,7 +38,7 @@ static const TextBlockStyle *pStyle = &style;
 ///
 TextBlock::TextBlock():
 
-	_text(Font(String(pStyle->fontName), pStyle->fontHeight, pStyle->fontStyle), TextAlign::center) {
+	_text(Font(String(pStyle->fontName), pStyle->fontHeight, pStyle->fontStyle), Text::Align::center) {
 
 	setHorizontalAlignment(HorizontalAlignment::center);
 	setVerticalAlignment(VerticalAlignment::center);
@@ -101,7 +101,7 @@ void TextBlock::setTextBackground(
 /// \param    value: L'aliniacio.
 ///
 void TextBlock::setTextAlign(
-	TextAlign value) {
+	Text::Align value) {
 
 	if (_text.getAlign() != value) {
 		_text.setAlign(value);

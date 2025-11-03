@@ -9,32 +9,6 @@
 #include "HTL/htlINT.h"
 
 
-namespace eos {
-
-    class Output final: public DigOutput {
-
-    	public: enum class State {
-			idle,
-			pulse,
-			delayedSet,
-			delayedClear,
-			delayedToggle,
-			delayedPulse,
-		};
-
-        public: PinDriver * const drv;
-        public: State state;
-        public: unsigned timeLimit;
-        public: unsigned timeLimit2;
-
-        public: Output(PinDriver *pinDrv):
-			drv {pinDrv},
-			state{State::idle} {
-		}
-    };
-}
-
-
 using namespace eos;
 using namespace htl;
 using namespace htl::irq;
@@ -42,7 +16,7 @@ using namespace htl::irq;
 
 constexpr const char *serviceName = "DigOutputs";
 constexpr Task::Priority servicePriority = Task::Priority::normal;
-constexpr unsigned serviceStackSize = 128;
+constexpr unsigned serviceStackSize = 164;
 
 constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
 constexpr unsigned minDelay = DigOutputService_MinDelay;
@@ -73,11 +47,11 @@ DigOutputService::~DigOutputService() {
 /// \return   La sortida.
 ///
 DigOutput* DigOutputService::makeOutput(
-    PinDriver *pinDrv) {
+    PinDriver *drv) {
 
-    eosAssert(pinDrv != nullptr);
+    eosAssert(drv != nullptr);
 
-    return new Output(pinDrv);
+    return new Output(drv);
 }
 
 
@@ -156,109 +130,20 @@ void DigOutputService::removeOutputs() {
 /// \param    output: La sortida.
 ///
 void DigOutputService::notifyChanged(
-	DigOutput *output) {
+	Output *output) {
 
-    eosAssert(output != nullptr);
+	if (_erNotification.isEnabled()) {
 
-	if (_erNotify.isEnabled()) {
-
-		NotifyEventArgs args = {
-			.id {NotifyID::changed},
+    	NotificationEventArgs args = {
+			.id {NotificationID::changed},
 			.changed {
-				.output {output}
+				.output {output},
+				.value {output->getValue()}
 			}
 		};
 
-		_erNotify(this, &args);
+		_erNotification(this, &args);
 	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Actualitza el proper temps limit
-/// \return   El resultat.
-///
-void DigOutputService::updateNextTimeLimit() {
-
-    unsigned timeLimit = std::numeric_limits<unsigned>::max();
-
-    for (auto output: _outputs) {
-    	auto out = static_cast<Output*>(output);
-        if ((out->state != Output::State::idle) &&
-            (out->timeLimit < timeLimit))
-            timeLimit = out->timeLimit;
-    }
-
-    if (timeLimit < std::numeric_limits<unsigned>::max())
-        _nextTimeLimit = timeLimit;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si ha expirat el temps.
-/// \param    timeLimit: El temps limit.
-/// \return   True si ha sobrepasat el temps.
-///
-bool DigOutputService::hasExpired(
-    unsigned timeLimit) const {
-
-    auto delta = timeLimit - _timeCounter;
-    return static_cast<int>(delta) <= 0;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Posa l'estat d'una sortida set.
-/// \param    output: La sortida.
-///
-void DigOutputService::setOutput(
-	DigOutput *output) {
-
-    eosAssert(output != nullptr);
-
-    auto out = static_cast<Output*>(output);
-
-	auto drv = out->drv;
-    if (drv->read() == false) {
-    	drv->set();
-    	notifyChanged(out);
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Posa l'estat d'una sortida clr.
-/// \param    output: La sortida.
-///
-void DigOutputService::clearOutput(
-	DigOutput *output) {
-
-    eosAssert(output != nullptr);
-
-    auto out = static_cast<Output*>(output);
-
-	auto drv = out->drv;
-	if (drv->read() == true) {
-    	drv->clear();
-    	notifyChanged(out);
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inverteix l'estat d'una sortida.
-/// \param    output: La sortida.
-///
-void DigOutputService::toggleOutput(
-	DigOutput *output) {
-
-    eosAssert(output != nullptr);
-
-    auto out = static_cast<Output*>(output);
-
-	auto drv = out->drv;
-	drv->toggle();
-   	notifyChanged(out);
 }
 
 
@@ -273,7 +158,7 @@ void DigOutputService::set(
 
     Command command = {
         .id {CommandID::set},
-        .output {output}
+        .output {static_cast<Output*>(output)}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -291,7 +176,7 @@ void DigOutputService::clear(
 
     Command command = {
         .id {CommandID::clear},
-        .output {output}
+        .output {static_cast<Output*>(output)}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -309,7 +194,7 @@ void DigOutputService::toggle(
 
     Command command = {
         .id {CommandID::toggle},
-        .output {output}
+        .output {static_cast<Output*>(output)}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -329,7 +214,7 @@ void DigOutputService::write(
 
     Command command = {
         .id {state ? CommandID::set : CommandID::clear},
-        .output {output}
+        .output {static_cast<Output*>(output)}
     };
 
     _commandQueue.push(command, unsigned(-1));
@@ -349,7 +234,7 @@ void DigOutputService::pulse(
 
     Command command = {
         .id {CommandID::pulse},
-        .output {output},
+        .output {static_cast<Output*>(output)},
         .time1 {std::max(width, minPulseWidth)}
     };
 
@@ -372,7 +257,7 @@ void DigOutputService::delayedPulse(
 
     Command command = {
         .id {CommandID::delayedPulse},
-        .output {output},
+        .output {static_cast<Output*>(output)},
         .time1 {std::max(delay, minDelay)},
         .time2 {std::max(width, minPulseWidth)}
     };
@@ -382,7 +267,7 @@ void DigOutputService::delayedPulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix l'estat actual d'una sortida.
+/// \brief    Llegeix el valor d'una sortida.
 /// \param    output: La sortida.
 /// \return   L'estat de la sortida.
 ///
@@ -396,12 +281,12 @@ bool DigOutputService::read(
     	disableInterrupts();
 
     auto out = static_cast<Output*>(output);
-    bool pinState = out->drv->read();
+    bool value = out->getValue();
 
     if (s)
     	enableInterrupts();
 
-    return pinState;
+    return value;
 }
 
 
@@ -483,14 +368,12 @@ void DigOutputService::commandDispatcher(
 /// \param    output: La sortida.
 ///
 void DigOutputService::processClear(
-    DigOutput *output) {
+    Output *output) {
 
-    eosAssert(output != nullptr);
-
-    auto out = static_cast<Output*>(output);
-
-    clearOutput(out);
-   	out->state = Output::State::idle;
+	if (output->getValue()) {
+		output->clear();
+		notifyChanged(output);
+	}
 }
 
 
@@ -499,14 +382,12 @@ void DigOutputService::processClear(
 /// \param    output: La sortida.
 ///
 void DigOutputService::processSet(
-    DigOutput *output) {
+    Output *output) {
 
-    eosAssert(output != nullptr);
-
-	auto out = static_cast<Output*>(output);
-
-	setOutput(out);
-   	out->state = Output::State::idle;
+	if (!output->getValue()) {
+		output->set();
+		notifyChanged(output);
+	}
 }
 
 
@@ -515,14 +396,10 @@ void DigOutputService::processSet(
 /// \param    output: La sortida.
 ///
 void DigOutputService::processToggle(
-    DigOutput *output) {
+    Output *output) {
 
-    eosAssert(output != nullptr);
-
-    auto out = static_cast<Output*>(output);
-
-    toggleOutput(out);
-    out->state = Output::State::idle;
+	output->toggle();
+	notifyChanged(output);
 }
 
 
@@ -532,17 +409,13 @@ void DigOutputService::processToggle(
 /// \param    pulseWidth: L'amplada del puls.
 ///
 void DigOutputService::processPulse(
-    DigOutput *output,
+    Output *output,
     unsigned pulseWidth) {
 
-    eosAssert(output != nullptr);
-
-    auto out = static_cast<Output*>(output);
-
-    if (out->state == Output::State::idle)
-    	toggleOutput(out);
-    out->state = Output::State::pulse;
-    out->timeLimit = _timeCounter + pulseWidth;
+	bool oldValue = output->getValue();
+	output->pulse(_timeCounter, pulseWidth);
+	if (oldValue != output->getValue())
+		notifyChanged(output);
 }
 
 
@@ -552,15 +425,9 @@ void DigOutputService::processPulse(
 /// \param    delay: El retard.
 ///
 void DigOutputService::processDelayedSet(
-    DigOutput *output,
+    Output *output,
     unsigned delay) {
 
-    eosAssert(output != nullptr);
-
-	auto out = static_cast<Output*>(output);
-
-	out->state = Output::State::delayedSet;
-    out->timeLimit = _timeCounter + delay;
 }
 
 
@@ -570,15 +437,9 @@ void DigOutputService::processDelayedSet(
 /// \param    delay: El retard.
 ///
 void DigOutputService::processDelayedClear(
-    DigOutput *output,
+    Output *output,
     unsigned delay) {
 
-    eosAssert(output != nullptr);
-
-    auto out = static_cast<Output*>(output);
-
-    out->state = Output::State::delayedClear;
-    out->timeLimit = _timeCounter + delay;
 }
 
 
@@ -588,15 +449,9 @@ void DigOutputService::processDelayedClear(
 /// \param    delay: El retard.
 ///
 void DigOutputService::processDelayedToggle(
-    DigOutput *output,
+    Output *output,
     unsigned delay) {
 
-    eosAssert(output != nullptr);
-
-	auto out = static_cast<Output*>(output);
-
-	out->state = Output::State::delayedToggle;
-    out->timeLimit = _timeCounter + delay;
 }
 
 
@@ -607,18 +462,11 @@ void DigOutputService::processDelayedToggle(
 /// \param    pulseWidth: L'amplada del puls.
 ///
 void DigOutputService::processDelayedPulse(
-    DigOutput *output,
+    Output *output,
     unsigned delay,
     unsigned pulseWidth) {
 
-    eosAssert(output != nullptr);
-
-	auto out = static_cast<Output*>(output);
-
-    out->state = Output::State::delayedPulse;
-    auto tc = _timeCounter;
-    out->timeLimit = tc + delay;
-    out->timeLimit2 = tc + delay + pulseWidth;
+	output->delayedPulse(_timeCounter, delay, pulseWidth);
 }
 
 
@@ -627,40 +475,14 @@ void DigOutputService::processDelayedPulse(
 ///
 void DigOutputService::processTick() {
 
-    for (auto output: _outputs) {
-    	auto out = static_cast<Output*>(output);
-		if (hasExpired(out->timeLimit))
-			switch (out->state) {
-				case Output::State::idle:
-					break;
+	for (auto o: _outputs) {
+    	auto output = static_cast<Output*>(o);
 
-				case Output::State::pulse:
-					toggleOutput(out);
-					out->state = Output::State::idle;
-					break;
-
-				case Output::State::delayedSet:
-					setOutput(out);
-					out->state = Output::State::idle;
-					break;
-
-				case Output::State::delayedClear:
-					clearOutput(out);
-					out->state = Output::State::idle;
-					break;
-
-				case Output::State::delayedToggle:
-					toggleOutput(out);
-					out->state = Output::State::idle;
-					break;
-
-				case Output::State::delayedPulse:
-					toggleOutput(out);
-					out->timeLimit = out->timeLimit2;
-					out->state = Output::State::pulse;
-					break;
-			}
-    }
+    	bool oldValue = output->getValue();
+		output->tick(_timeCounter);
+		if (oldValue != output->getValue())
+			notifyChanged(output);
+	}
 }
 
 
@@ -682,4 +504,206 @@ void DigOutputService::tickISR() {
     // fora de la interrupcio.
     //
     _commandQueue.pushISR(command);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Contructor
+/// \param    dev: El driver del pin.
+///
+DigOutputService::Output::Output(
+	PinDriver *drv):
+
+	_drv {drv},
+	_value {drv->read()},
+	_state{State::idle} {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el valor actual de la sortida.
+/// \return   El valor.
+///
+bool DigOutputService::Output::getValue() const {
+
+	return _value;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un nou valor en la sortida.
+/// \param    value: El nou valor.
+///
+void DigOutputService::Output::write(
+	bool value) {
+
+	_value = value;
+	_drv->write(value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu el valor true en la sortida.
+///
+void DigOutputService::Output::set() {
+
+	write(true);
+	_state = State::idle;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu el valor false en la sortida.
+///
+void DigOutputService::Output::clear() {
+
+	write(false);
+	_state = State::idle;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inverteix el valor de la sortida.
+///
+void DigOutputService::Output::toggle() {
+
+	write(!_value);
+	_state = State::idle;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un puls en la sortida.
+/// \param    time: El temps actual.
+/// \param    pulse: Durada del puls.
+///
+void DigOutputService::Output::pulse(
+	unsigned time,
+	unsigned pulse) {
+
+	if (_state == State::idle)
+		write(!_value);
+
+	_pulseEndTime = time + pulse;
+	_state = State::pulse;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posa la sortida al valor true despres d'un retard.
+/// \param    time: El temps actual.
+/// \param    delay: Durada del retard.
+///
+void DigOutputService::Output::delayedSet(
+	unsigned time,
+	unsigned delay) {
+
+	_delayEndTime = time + delay;
+	_state = State::delayedSet;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posa la sortida al valor false despres d'un retard.
+/// \param    time: El temps actual.
+/// \param    delay: Durada del retard.
+///
+void DigOutputService::Output::delayedClear(
+	unsigned time,
+	unsigned delay) {
+
+	_delayEndTime = time + delay;
+	_state = State::delayedClear;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inverteix el valor despres d'un retard.
+/// \param    time: El temps actual.
+/// \param    delay: Durada del retard.
+///
+void DigOutputService::Output::delayedToggle(
+	unsigned time,
+	unsigned delay) {
+
+	_delayEndTime = time + delay;
+	_state = State::delayedToggle;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un puls retardat en la sortida.
+/// \param    time: El temps actual.
+/// \brief    delay: Durada del retard.
+/// \param    pulse: Durada del puls.
+///
+void DigOutputService::Output::delayedPulse(
+	unsigned time,
+	unsigned delay,
+	unsigned pulse) {
+
+	_delayEndTime = time + delay;
+	_pulseEndTime = time + delay + pulse;
+	_state = State::delayedPulse;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa els temps.
+/// \param    time: El temps actual.
+///
+void DigOutputService::Output::tick(
+	unsigned time) {
+
+	switch (_state) {
+		case State::pulse:
+			if (hasExpired(time, _pulseEndTime)) {
+				write(!_value);
+				_state = State::idle;
+			}
+			break;
+
+		case State::delayedSet:
+			if (hasExpired(time, _delayEndTime)) {
+				write(true);
+				_state = State::idle;
+			}
+			break;
+
+		case State::delayedClear:
+			if (hasExpired(time, _delayEndTime)) {
+				write(false);
+				_state = State::idle;
+			}
+			break;
+
+		case State::delayedToggle:
+			if (hasExpired(time, _delayEndTime)) {
+				write(!_value);
+				_state = State::idle;
+			}
+			break;
+
+		case State::delayedPulse:
+			if (hasExpired(time, _delayEndTime)) {
+				write(!_value);
+				_state = State::pulse;
+			}
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el temps ha expirat.
+/// \param    time: Temp actual.
+/// \param    endTime: Temps limit.
+/// \return   True si el temps actual es posterior al temps limit.
+///
+bool DigOutputService::Output::hasExpired(
+	unsigned time,
+	unsigned endTime) {
+
+	auto delta = endTime - time;
+	return static_cast<int>(delta) <= 0;
 }

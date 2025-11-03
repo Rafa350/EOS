@@ -5,88 +5,72 @@
 
 #include "eos.h"
 #include "OSAL/osalMutex.h"
-#include <System/Collections/eosCircularBuffer.h>
-
-#include <type_traits>
+#include "System/eosEvents.h"
+#include <System/Collections/eosIntrusiveForwardList.h>
 
 
 namespace eos {
 
-	template <typename MessageID_>
+	template <typename Message_>
 	class MessageBus {
+		public:
+			using SubscriptionEventRaiser = EventRaiser<MessageBus, Message_>;
+			using ISubscriptionEvent = typename SubscriptionEventRaiser::IEvent;
+			template <typename Instance_> using SubscriptionEvent = typename SubscriptionEventRaiser::Event<Instance_>;
 
-	    HMutex _mutex;
-		CircularBuffer<uint8_t> _buffer;
-		unsigned _bufferSize;
+		private:
+			class Subscription;
+		    using SubscriptionList = IntrusiveForwardList<Subscription, 0>;
+		    using SubscriptionListNode = IntrusiveForwardListNode<Subscription, 0>;
 
-		static_assert(std::is_enum_v<MessageID_>, "Ha de ser un enumerador.");
+		    class Subscription: public SubscriptionListNode {
+		    	private:
+				    SubscriptionEventRaiser _er;
+
+		    	public:
+				    Subscription(ISubscriptionEvent &event, bool enabled) {
+				    	_er.set(event, enabled);
+				    }
+				    void publish(MessageBus * const sender, Message_ &message) {
+				    	_er(sender, &message);
+				    }
+			};
+
+		private:
+		    SubscriptionList _subscriptions;
+			HMutex _mutex;
 
 		public:
-			MessageBus(uint8_t *buffer, unsigned bufferSize) :
-				_buffer {buffer, bufferSize},
-				_bufferSize {bufferSize},
+			MessageBus() :
 				_mutex {osalMutexCreate()} {
 			}
 
-			template <typename Args_>
-			bool send(MessageID_ id, Args_ const &args, unsigned blockTime) {
+			/// \brief  Afegeix un subscriptor a la llista.
+			/// \param  event: Event de la subscripcio..
+		    /// \param  enabled: Trus si l'event esta habilitat.
+			///
+			void subscribe(ISubscriptionEvent &event, bool enabled) {
 
-				bool result = false;
-
-				osalMutexWait(_mutex, blockTime);
-
-				if ((_bufferSize - _buffer.getCount()) >= (sizeof(MessageID_) + sizeof(Args_))) {
-
-					unsigned count;
-					uint8_t * p;
-
-					count = sizeof(id);
-					p = (uint8_t*) &id;
-					while (count--)
-						_buffer.put(*p++);
-
-					count = sizeof(Args_);
-					p = (uint8_t*) &args;
-					while (count--)
-						_buffer.put(*p++);
-
-					result = true;
-				}
-
-				osalMutexRelease(_mutex);
-
-				return result;
+				auto subscription = new Subscription(event, enabled);
+				_subscriptions.pushFront(subscription);
 			}
 
-			bool receive(MessageID_ &id, unsigned blockTime) {
+			/// \brief  Publica un missatge i el distribueix immediatament a tots els
+			///         subscriptors.
+			/// \param  message: El missatge a publicar.
+			/// \param  waitIme: El tempsaa maxim d'espera.
+			/// \return True si tot es correcte, false en cas d'error o timeout.
+			///
+			bool publish(Message_ &message, unsigned waitTime) {
 
 				bool result = false;
 
-				uint8_t data;
-
-				if (_buffer.peek(data)) {
-					id = (MessageID_) data;
-					result = true;
+				if (osalMutexWait(_mutex, waitTime)) {
+					for (auto subscription: _subscriptions)
+						subscription->publish(this, message);
+					osalMutexRelease(_mutex);
 				}
 
-				return result;
-			}
-
-			template <typename Args_>
-			bool read(Args_ &args) {
-
-				bool result = false;
-
-/*				MessageID_ id;
-				memcpy(&id, pPop, sizeof(id));
-				if (id != Message_::id)
-					return false;
-
-				pPop += sizeof(MessageID_);
-
-				memcpy(&args, pPop, sizeof(Args_));
-				pPop += sizeof(Args_);
-*/
 				return result;
 			}
 	};

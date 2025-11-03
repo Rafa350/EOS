@@ -12,7 +12,7 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 Brush::Brush() :
-	_style(BrushStyle::null),
+	_style(Style::null),
 	_color(Colors::transparent) {
 }
 
@@ -24,7 +24,7 @@ Brush::Brush() :
 Brush::Brush(
 	Color color):
 
-	_style(BrushStyle::solid),
+	_style(Style::solid),
 	_color(color) {
 }
 

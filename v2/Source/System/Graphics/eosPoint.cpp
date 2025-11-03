@@ -24,8 +24,8 @@ Point::Point(
 	int16_t x,
 	int16_t y):
 
-	_x(x),
-	_y(y) {
+	_x {x},
+	_y {y} {
 }
 
 
@@ -36,8 +36,8 @@ Point::Point(
 Point::Point(
 	const Point &p):
 
-	_x(p._x),
-	_y(p._y) {
+	_x {p._x},
+	_y {p._y} {
 }
 
 
@@ -48,8 +48,8 @@ Point::Point(
 Point::Point(
 	const Point&& p) :
 
-	_x(p._x),
-	_y(p._y) {
+	_x {p._x},
+	_y {p._y} {
 
 }
 

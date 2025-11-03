@@ -9,6 +9,8 @@
     #define EOS_TOOLCHAIN_XC32
 	#define EOS_TOOLCHAIN_DETECTED 1
 
+	#define __PACKED__
+
 
 // GNU CPP ARM compiler
 //
@@ -16,12 +18,16 @@
     #define EOS_TOOLCHAIN_GNU
 	#define EOS_TOOLCHAIN_DETECTED 1
 
+	#define __PACKED__ __attribute__((packed))
+
 
 // Microsoft CPP compiler
 //
 #elif defined(_MSC_VER)
     #define EOS_TOOLCHAIN_MVC
 	#define EOS_TOOLCHAIN_DETECTED 1
+
+	#define __PACKED__
 
 
 // Unknown compiler

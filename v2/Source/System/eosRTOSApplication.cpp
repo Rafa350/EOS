@@ -25,7 +25,7 @@ RTOSApplication::RTOSApplication() :
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Hander de la tasca.
+/// \brief    Callback de la tasca de l'aplicacio.
 ///
 void RTOSApplication::appTaskCallbackHandler(
 	const TaskCallbackArgs &args) {
@@ -45,7 +45,7 @@ void RTOSApplication::onInitialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa els serveix en en execucio.
+/// \brief    Posa l'aplicacio i els serveix en en execucio.
 ///
 void RTOSApplication::onRun() {
 
@@ -80,9 +80,6 @@ void RTOSApplication::onRun() {
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix un servei a l'aplicacio.
 /// \param    service: EL servei.
-/// \param    priority: La prioritat.
-/// \param    stackSize: Tamany del stack.
-/// \param    name: Nom del servei.
 ///
 void RTOSApplication::addService(
 	Service *service) {

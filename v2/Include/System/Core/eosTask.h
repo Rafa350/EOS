@@ -52,7 +52,8 @@ namespace eos {
             static void enterCriticalSection();
             static void exitCriticalSection();
 
-            static bool waitNotification(unsigned blockTime);
+            static bool waitNotification(bool clear, unsigned waitTime);
+            void raiseNotification();
             void raiseNotificationISR();
     };
 

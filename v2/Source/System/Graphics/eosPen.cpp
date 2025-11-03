@@ -13,7 +13,7 @@ using namespace eos;
 ///
 Pen::Pen() :
 
-	_style(PenStyle::null),
+	_style(Style::null),
 	_color(Colors::transparent),
 	_thickness(0) {
 
@@ -29,7 +29,7 @@ Pen::Pen(
 	Color color,
 	int thickness):
 
-	_style(PenStyle::solid),
+	_style(Style::solid),
 	_color(color),
 	_thickness(thickness) {
 

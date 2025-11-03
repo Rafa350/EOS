@@ -66,7 +66,7 @@ bool osalQueuePut(
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    unsigned waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
     return xQueueSendToBack((QueueHandle_t) hQueue, element,  waitTicks) == pdPASS;
 }
 
@@ -108,7 +108,7 @@ bool osalQueueGet(
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    unsigned waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
     return xQueueReceive((QueueHandle_t)hQueue, element, waitTicks) == pdPASS;
 }
 

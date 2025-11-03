@@ -51,7 +51,7 @@ bool osalSemaphoreWait(
 
 	eosAssert(hSemaphore != NULL);
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    unsigned waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
     return xSemaphoreTake((SemaphoreHandle_t) hSemaphore, waitTicks) == pdTRUE;
 }
 

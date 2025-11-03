@@ -12,20 +12,17 @@ using namespace eos;
 /// \param    orientation: Orientacio.
 /// \param    buffer: El buffer de memoria.
 /// \param    bufferPitch: Amplada en bytes de cada scanline.
-/// \param    mapping: Mapejat de pixels
 ///
 MonoFrameBuffer::MonoFrameBuffer(
     int16_t frameWidth,
     int16_t frameHeight,
     DisplayOrientation orientation,
     uint8_t *buffer,
-    unsigned bufferPitch,
-    Mapping mapping):
+    unsigned bufferPitch):
 
     FrameBuffer(frameWidth, frameHeight, orientation),
     _buffer {buffer},
-    _bufferPitch {bufferPitch},
-    _mapping {mapping} {
+    _bufferPitch {bufferPitch} {
 }
 
 

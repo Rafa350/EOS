@@ -26,9 +26,9 @@ namespace eos {
         public: ScanMode scanMode;
 
         private: PinDriver * const _drv;
-        private: unsigned _pattern;
+        private: uint32_t _pattern;
         private: struct {
-			unsigned state : 1;
+			bool value : 1;
 			unsigned flag : 1;
 			unsigned edges : 30;
 		} _status;
@@ -38,11 +38,11 @@ namespace eos {
 			_drv {pinDrv} {
 
 			if (_drv->read()) {
-				_status.state = 1;
+				_status.value = true;
 				_pattern = _patternActive;
 			}
 			else {
-				_status.state = 0;
+				_status.value = false;
 				_pattern = _patternIdle;
 			}
 			_status.edges = 0;
@@ -58,7 +58,7 @@ namespace eos {
             // Analitza el patro per detectar un flanc positiu
             //
             if ((_pattern & _patternMask) == _patternPosEdge) {
-                _status.state = 1;
+                _status.value = true;
                 _status.edges += 1;
                 _status.flag = 1;
                 return true;
@@ -67,7 +67,7 @@ namespace eos {
             // Analitza el patro per detectar un flanc negatiu
             //
             else if ((_pattern & _patternMask) == _patternNegEdge) {
-                _status.state = 0;
+                _status.value = false;
                 _status.edges += 1;
                 _status.flag = 1;
                 return true;
@@ -77,8 +77,8 @@ namespace eos {
             	return false;
         }
 
-        public: inline bool getState() const {
-        	return _status.state;
+        public: inline bool getValue() const {
+        	return _status.value;
         }
 
         public: inline unsigned getEdges(bool clear) {
@@ -104,9 +104,9 @@ using namespace htl::irq;
 
 constexpr const char *serviceName = "DigInputs";
 constexpr Task::Priority servicePriority = Task::Priority::normal;
-constexpr unsigned serviceStackSize = 128;
+constexpr unsigned serviceStackSize = 160;
 
-constexpr unsigned minScanPeriod = 5;
+constexpr unsigned minScanPeriod = 5;  // Periode d'exploracio en ms
 
 
 /// ----------------------------------------------------------------------
@@ -147,16 +147,19 @@ void DigInputService::setScanPeriod(
 void DigInputService::notifyChanged(
     DigInput *input) {
 
-    if (_erNotify.isEnabled()) {
+    if (_erNotification.isEnabled()) {
 
-    	NotifyEventArgs args = {
-    		.id {NotifyID::changed},
+    	auto i = static_cast<Input*>(input);
+
+    	NotificationEventArgs args = {
+    		.id {NotificationID::changed},
 			.changed {
-    			.input {input}
+    			.input {i},
+				.value {i->getValue()}
     		}
     	};
 
-    	_erNotify(this, &args);
+    	_erNotification(this, &args);
     }
 }
 
@@ -166,13 +169,13 @@ void DigInputService::notifyChanged(
 ///
 void DigInputService::notifyBeforeScan() {
 
-	if (_erNotify.isEnabled()) {
+	if (_erNotification.isEnabled()) {
 
-		NotifyEventArgs args = {
-			.id {NotifyID::beforeScan}
+		NotificationEventArgs args = {
+			.id {NotificationID::beforeScan}
 		};
 
-    	_erNotify(this, &args);
+    	_erNotification(this, &args);
 	}
 }
 
@@ -184,16 +187,16 @@ void DigInputService::notifyBeforeScan() {
 void DigInputService::notifyInitialize(
 	ServiceParams *params) {
 
-	if (_erNotify.isEnabled()) {
+	if (_erNotification.isEnabled()) {
 
-		NotifyEventArgs args = {
-			.id {NotifyID::initialize},
+		NotificationEventArgs args = {
+			.id {NotificationID::initialize},
 			.initialize {
 				.params {params}
 			}
 		};
 
-		_erNotify(this, &args);
+		_erNotification(this, &args);
 	}
 }
 
@@ -227,9 +230,9 @@ void DigInputService::addInput(
 
     // Afegeix l'entrada a la llista
     //
-    auto i = static_cast<Input*>(input);
-    if (!_inputs.contains(i))
-		_inputs.pushFront(i);
+    auto inp = static_cast<Input*>(input);
+    if (!_inputs.contains(inp))
+		_inputs.pushFront(inp);
 
     // Fi de la seccio critica
     //
@@ -250,9 +253,9 @@ void DigInputService::removeInput(
     //
     Task::enterCriticalSection();
 
-    auto i = static_cast<Input*>(input);
-    if (_inputs.contains(i))
-        _inputs.remove(i);
+    auto inp = static_cast<Input*>(input);
+    if (_inputs.contains(inp))
+        _inputs.remove(inp);
 
     // Fi de la seccio critica
     //
@@ -336,10 +339,9 @@ bool DigInputService::scanInputs() {
     // Procesa totes les entrades
     //
     for (auto input: _inputs) {
-
         auto inp = static_cast<Input*>(input);
         if (inp->scanMode == Input::ScanMode::polling)
-        	changed |= inp->scan();
+        	changed = changed || inp->scan();
     }
 
     return changed;
@@ -359,7 +361,7 @@ bool DigInputService::read(
     Task::enterCriticalSection();
 
     auto inp = static_cast<const Input*>(input);
-    auto value = inp->getState();
+    auto value = inp->getValue();
 
     Task::exitCriticalSection();
 

@@ -31,6 +31,11 @@ namespace eos {
 				_enabled {false} {
 			}
 
+			EventRaiser(IEvent *event, bool enabled = true) :
+				_event {event},
+				_enabled {enabled} {
+			}
+
 			void raise(Sender_ * const sender, Args_ * const args) const {
 				if (isEnabled())
 					_event->execute(sender, args);

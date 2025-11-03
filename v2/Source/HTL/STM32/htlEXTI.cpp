@@ -17,6 +17,14 @@ EXTIDevice EXTIDevice::_instance;
 ///
 EXTIDevice::EXTIDevice() {
 
+	EXTI->FTSR1 = 0;
+	EXTI->FTSR2 = 0;
+	EXTI->RTSR1 = 0;
+	EXTI->RTSR2 = 0;
+	EXTI->FPR1 = 0;
+	EXTI->FPR2 = 0;
+	EXTI->RPR1 = 0;
+	EXTI->RPR2 = 0;
 }
 
 
@@ -46,6 +54,14 @@ void EXTIDevice::initGPIO(
 ///
 void EXTIDevice::deinitialize() {
 
+	EXTI->FTSR1 = 0;
+	EXTI->FTSR2 = 0;
+	EXTI->RTSR1 = 0;
+	EXTI->RTSR2 = 0;
+	EXTI->FPR1 = 0;
+	EXTI->FPR2 = 0;
+	EXTI->RPR1 = 0;
+	EXTI->RPR2 = 0;
 }
 
 
@@ -141,6 +157,7 @@ void EXTIDevice::setEdge(
 		bits::set(EXTI->RTSR1, mask);
 	else
 		bits::clear(EXTI->RTSR1, mask);
+	bits::clear(EXTI->RPR1, mask);
 
 	// Configura el registre FTSR1 (Falling Trigger Selection Register)
 	//
@@ -148,6 +165,7 @@ void EXTIDevice::setEdge(
 		bits::set(EXTI->FTSR1, mask);
 	else
 		bits::clear(EXTI->FTSR1, mask);
+	bits::clear(EXTI->FPR1, mask);
 
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 
@@ -177,11 +195,11 @@ void EXTIDevice::setEdge(
 /// \param    enabled: True per habilitar l'event.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result EXTIDevice::setNotifyEvent(
-	INotifyEvent &event,
+eos::Result EXTIDevice::setNotificationEvent(
+	INotificationEvent &event,
 	bool enabled) {
 
-   	_erNotify.set(event, enabled);
+   	_erNotification.set(event, enabled);
    	return Results::success;
 }
 
@@ -197,10 +215,13 @@ void EXTIDevice::interruptService() {
 	auto rmask = EXTI->RPR1 & 0x0000FFFF;
 	if ((fmask | rmask) != 0) {
 
-		if (_erNotify.isEnabled()) {
+		EXTI->FPR1 = fmask; // Borra els flags
+		EXTI->RPR1 = rmask; // Borra els flags
 
-			NotifyEventArgs args = {
-				.id {NotifyID::pinEdge},
+		if (_erNotification.isEnabled()) {
+
+			NotificationEventArgs args = {
+				.id {NotificationID::pinEdge},
 				.irq {true},
 				.pinEdge {
 					.falling {(uint16_t)fmask},
@@ -208,10 +229,7 @@ void EXTIDevice::interruptService() {
 				}
 			};
 
-			_erNotify(this, &args);
+			_erNotification(this, &args);
 		}
-
-		EXTI->FPR1 = fmask; // Borra els flags
-		EXTI->RPR1 = rmask; // Borra els flags
 	}
 }

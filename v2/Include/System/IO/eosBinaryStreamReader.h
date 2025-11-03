@@ -17,7 +17,7 @@ namespace eos {
             const uint8_t * _ptr;
 
         public:
-            BinaryStreamReader(const uint8_t *buffer, unsigned size);
+            BinaryStreamReader(const uint8_t *buffer, unsigned bufferSize);
 
             inline void reset() {
             	_ptr = _begin;
@@ -28,18 +28,24 @@ namespace eos {
             }
 
             bool readU8(uint8_t &data);
+
             bool readU16(uint16_t &data);
+
             bool readU32(uint32_t &data);
+
             bool readI8(int8_t &data);
+
             bool readI16(int16_t &data);
+
             bool readI32(int32_t &data);
+
             bool read(uint8_t *data, unsigned size);
 
             inline bool eof() const {
                 return _ptr == _end;
             }
 
-            inline const uint8_t * data() const {
+            inline const uint8_t *data() const {
                 return _begin;
             }
 

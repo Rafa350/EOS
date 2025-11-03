@@ -109,15 +109,15 @@ namespace htl {
 		};
 
 
-		enum class NotifyID {
+		enum class NotificationID {
 			null,
 			trigger,
 			update,
 			error
 		};
 
-		struct NotifyEventArgs {
-			NotifyID id;
+		struct NotificationEventArgs {
+			NotificationID id;
 			bool isr;
 			union {
 				struct {
@@ -129,9 +129,9 @@ namespace htl {
 
 		class TMRDevice;
 
-		using NotifyEventRaiser = eos::EventRaiser<TMRDevice, NotifyEventArgs>;
-		using INotifyEvent = NotifyEventRaiser::IEvent;
-		template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
+		using NotificationEventRaiser = eos::EventRaiser<TMRDevice, NotificationEventArgs>;
+		using INotificationEvent = NotificationEventRaiser::IEvent;
+		template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 		namespace internal {
 
@@ -152,7 +152,7 @@ namespace htl {
 			private:
 				TIM_TypeDef * const _tim;
 				State _state;
-				NotifyEventRaiser _erNotify;
+				NotificationEventRaiser _erNotification;
 
 			private:
 				TMRDevice(const TMRDevice &) = delete;
@@ -189,14 +189,14 @@ namespace htl {
 				void enableChannel(Channel channel);
 				void disableChannel(Channel channel);
 
-				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-					_erNotify.set(event, enabled);
+				inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
+					_erNotification.set(event, enabled);
 				}
-				inline void enableNotifyEvent() {
-					_erNotify.enable();
+				inline void enableNotificationEvent() {
+					_erNotification.enable();
 				}
-				inline void disableNotifyEvent() {
-					_erNotify.disable();
+				inline void disableNotificationEvent() {
+					_erNotification.disable();
 				}
 				eos::Result start();
 				eos::Result start_IRQ();

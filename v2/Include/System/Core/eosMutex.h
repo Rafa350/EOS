@@ -18,7 +18,7 @@ namespace eos {
 			Mutex();
 			~Mutex();
 
-			bool wait(unsigned blockTime);
+			bool wait(unsigned waitTime);
 			void release();
 	};
 

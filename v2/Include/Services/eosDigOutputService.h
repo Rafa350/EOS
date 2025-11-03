@@ -45,7 +45,7 @@ namespace eos {
     using DigOutputList2 = IntrusiveForwardList<DigOutput, 2>;
     using DigOutputListNode2 = IntrusiveForwardListNode<DigOutput, 2>;
 
-    /// \brief Clase que representa una sortida digital individual
+    /// \brief Clase que representa una sortida digital individual.
     ///
     class DigOutput: public DigOutputListNode1, public DigOutputListNode2  {
     	protected:
@@ -56,22 +56,59 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
 		public:
-    		enum class NotifyID {
+    		enum class NotificationID {
     			changed
     		};
-			struct NotifyEventArgs {
-    			NotifyID const id;
+			struct NotificationEventArgs {
+    			NotificationID const id;
     			union {
     				struct {
     					DigOutput * const output;
+    					bool value;
     				} changed;
     			};
 			};
-			using NotifyEventRaiser = EventRaiser<DigOutputService, NotifyEventArgs>;
-			using INotifyEvent = NotifyEventRaiser::IEvent;
-			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
+			using NotificationEventRaiser = EventRaiser<DigOutputService, NotificationEventArgs>;
+			using INotificationEvent = NotificationEventRaiser::IEvent;
+			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 		private:
+            class Output final: public DigOutput {
+            	public:
+            		enum class State {
+        				idle,
+        				pulse,
+        				delayedSet,
+        				delayedClear,
+        				delayedToggle,
+        				delayedPulse,
+        			};
+
+                private:
+            		PinDriver * const _drv;
+            		bool _value;
+            		State _state;
+            		unsigned _delayEndTime;
+            		unsigned _pulseEndTime;
+
+                private:
+            		static bool hasExpired(unsigned time, unsigned endTime);
+
+                public:
+                	Output(PinDriver *drv);
+        			bool getValue() const;
+        			void set();
+        			void clear();
+        			void toggle();
+        			void pulse(unsigned time, unsigned pulse);
+        			void delayedSet(unsigned time, unsigned delay);
+        			void delayedClear(unsigned time, unsigned delay);
+        			void delayedToggle(unsigned time, unsigned delay);
+        			void delayedPulse(unsigned time, unsigned delay, unsigned pulse);
+        			void write(bool value);
+        			void tick(unsigned time);
+            };
+
             enum class CommandID {
                 set,
                 clear,
@@ -85,7 +122,7 @@ namespace eos {
             };
             struct Command {
                 CommandID id;
-                DigOutput *output;
+                Output *output;
                 unsigned time1;
                 unsigned time2;
             };
@@ -97,35 +134,26 @@ namespace eos {
 
     	private:
             DigOutputList1 _outputs;
-            DigOutputList2 _pending;
 
-            NotifyEventRaiser _erNotify;
+            NotificationEventRaiser _erNotification;
             volatile unsigned _timeCounter;
-            unsigned _nextTimeLimit;
             CommandQueue _commandQueue;
 
         private:
             DigOutputService(const DigOutputService&) = delete;
 
             void commandDispatcher(const Command &command);
-            void processClear(DigOutput *output);
-            void processSet(DigOutput *output);
-            void processToggle(DigOutput *output);
-            void processPulse(DigOutput *output, unsigned width);
-            void processDelayedSet(DigOutput *output, unsigned delay);
-            void processDelayedClear(DigOutput *output, unsigned delay);
-            void processDelayedToggle(DigOutput *output, unsigned delay);
-            void processDelayedPulse(DigOutput *output, unsigned delay, unsigned width);
+            void processClear(Output *output);
+            void processSet(Output *output);
+            void processToggle(Output *output);
+            void processPulse(Output *output, unsigned width);
+            void processDelayedSet(Output *output, unsigned delay);
+            void processDelayedClear(Output *output, unsigned delay);
+            void processDelayedToggle(Output *output, unsigned delay);
+            void processDelayedPulse(Output *output, unsigned delay, unsigned width);
             void processTick();
 
-            void setOutput(DigOutput *output);
-            void clearOutput(DigOutput *output);
-            void toggleOutput(DigOutput *output);
-
-            void notifyChanged(DigOutput *output);
-
-            void updateNextTimeLimit();
-            bool hasExpired(unsigned timeLimit) const;
+            void notifyChanged(Output *output);
 
         protected:
             void onInitialize(ServiceParams &params) override;
@@ -135,20 +163,20 @@ namespace eos {
             DigOutputService();
             ~DigOutputService();
 
-            DigOutput* makeOutput(PinDriver *pinDrv);
+            DigOutput* makeOutput(PinDriver *drv);
 
             void addOutput(DigOutput *output);
             void removeOutput(DigOutput *output);
             void removeOutputs();
 
-            inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-            	_erNotify.set(event, enabled);
+            inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
+            	_erNotification.set(event, enabled);
             }
-            inline void enableNotifyEvent() {
-            	_erNotify.enable();
+            inline void enableNotificationEvent() {
+            	_erNotification.enable();
             }
-            inline void disableNotifyEvent() {
-            	_erNotify.disable();
+            inline void disableNotificationEvent() {
+            	_erNotification.disable();
             }
 
             void set(DigOutput *output);

@@ -22,7 +22,8 @@ Text::Text():
 	_font(Font()),
 	//_background(defaultBackground)),
 	_foreground(Brush(defaultForeground)),
-	_align(TextAlign::center),
+	_horizontalAlign(HorizontalAlign::center),
+	_verticalAlign {VerticalAlign::middle},
 	_width(0),
 	_height(0) {
 }
@@ -35,15 +36,16 @@ Text::Text():
 ///
 Text::Text(
 	const Font &font,
-	TextAlign align):
+	HorizontalAlign align):
 
-	_text(""),
-	_font(font),
+	_text {""},
+	_font {font},
 	//_background(Brush(defaultBackground)),
-	_foreground(Brush(defaultForeground)),
-	_align(align),
-	_width(0),
-	_height(0) {
+	_foreground {Brush(defaultForeground)},
+	_horizontalAlign {align},
+	_verticalAlign {VerticalAlign::middle},
+	_width {0},
+	_height {0} {
 
 }
 
@@ -56,14 +58,15 @@ Text::Text(
 ///
 Text::Text(
 	const Font &font,
-	TextAlign align,
+	HorizontalAlign align,
 	const char *text):
 
-	_text(text),
-	_font(font),
-	//_background(Brush(defaultBackground)),
-	_foreground(Brush(defaultForeground)),
-	_align(align) {
+	_text {text},
+	_font {font},
+	//_background {Brush(defaultBackground)},
+	_foreground {Brush(defaultForeground)},
+	_horizontalAlign {align},
+	_verticalAlign {VerticalAlign::middle} {
 
 	recalcBounds();
 }
@@ -83,6 +86,10 @@ void Text::setText(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el font.
+/// \param    font: El font.
+///
 void Text::setFont(
 	const Font &font) {
 
@@ -97,15 +104,22 @@ void Text::setFont(
 /// \brief    Asigna l'aliniacio.
 /// \param    align: L'aliniacio.
 ///
-void Text::setAlign(
-	TextAlign align) {
+void Text::setHorizontalAlign(
+	HorizontalAlign align) {
 
-	if (_align != align) {
-		_align = align;
-		recalcBounds();
-	}
+	_horizontalAlign = align;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna l'aliniacio vertical.
+/// \param    align: L'aliniacio.
+///
+void Text::setVerticalAlign(
+	VerticalAlign align) {
+
+	_verticalAlign = align;
+}
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la brotxa per pinter el fons
@@ -191,6 +205,40 @@ void Text::draw(
 		}
 	}
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa el text.
+/// \param    graphics: L'objecte grafics on dibuixar.
+/// \param    box: La caixa un dibuixar.
+///
+void Text::draw(
+	const Graphics *graphics,
+	const Rect &box) const {
+
+	int16_t x;
+	int16_t y;
+
+	switch (_horizontalAlign) {
+		default:
+		case HorizontalAlign::left:
+			x = box.getX();
+			break;
+
+		case HorizontalAlign::center:
+			x = box.getX() + ((box.getWidth() - _width) / 2);
+			break;
+
+		case HorizontalAlign::right:
+			x = box.getX() + box.getWidth() - _width;
+			break;
+	}
+
+	y = box.getY() + ((box.getHeight() - _height) / 2);
+
+	draw(graphics, Point(x, y));
+}
+
 
 
 void Text::drawChar(

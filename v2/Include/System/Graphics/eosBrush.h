@@ -9,16 +9,17 @@
 
 namespace eos {
 
-	enum class BrushStyle {
-		null,
-		solid,
-		linearGradient,
-		radialGradient
-	};
-
 	class Brush final {
+		public:
+			enum class Style {
+				null,
+				solid,
+				linearGradient,
+				radialGradient
+			};
+
 		private:
-			BrushStyle _style;
+			Style _style;
 			Color _color;
 
 		public:
@@ -31,9 +32,9 @@ namespace eos {
 			inline bool operator != (const Brush &brush) const { return !(*this == brush); }
 
 			inline Color getColor() const { return _color; }
-			inline BrushStyle getStyle() const { return _style; }
+			inline Style getStyle() const { return _style; }
 
-			inline bool isNull() const { return _style == BrushStyle::null; }
+			inline bool isNull() const { return _style == Style::null; }
 	};
 
 }

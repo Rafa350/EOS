@@ -49,9 +49,6 @@ Result SerialDriver::transmit(
     const uint8_t *buffer,
     unsigned length) {
 
-	eosAssert(buffer != nullptr);
-	eosAssert(length > 0);
-
 	if ((buffer == nullptr) ||
 		(length == 0))
 		return Results::errorParameter;
@@ -81,9 +78,6 @@ Result SerialDriver::transmit(
 Result SerialDriver::receive(
     uint8_t *buffer,
     unsigned bufferSize) {
-
-	eosAssert(buffer != nullptr);
-	eosAssert(bufferSize > 0);
 
 	if ((buffer == nullptr) ||
 		(bufferSize == 0))
@@ -124,7 +118,7 @@ ResultU32 SerialDriver::wait(
 		else {
 			_task = Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (Task::waitNotification(waitTime))
+			if (Task::waitNotification(true, waitTime))
 				return ResultU32(Results::success, _rxCount);
 			else {
 				abort();
@@ -143,7 +137,7 @@ ResultU32 SerialDriver::wait(
 		else {
 			_task = Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (Task::waitNotification(waitTime))
+			if (Task::waitNotification(true, waitTime))
 				return ResultU32(Results::success, _txCount);
 			else {
 				abort();

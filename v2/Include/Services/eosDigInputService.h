@@ -31,29 +31,30 @@ namespace eos {
     //
     class DigInputService final: public Service {
     	public:
-			enum class NotifyID {
+			enum class NotificationID {
 				beforeScan,
 				changed,
 				initialize
 			};
-			struct NotifyEventArgs {
-				NotifyID const id;
+			struct NotificationEventArgs {
+				NotificationID const id;
 				union {
 					struct {
 						DigInput * const input;
+						bool value;
 					} changed;
 					struct {
 						ServiceParams * const params;
 					} initialize;
 				};
 			};
-			using NotifyEventRaiser = EventRaiser<DigInputService, NotifyEventArgs>;
-			using INotifyEvent = NotifyEventRaiser::IEvent;
-			template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
+			using NotificationEventRaiser = EventRaiser<DigInputService, NotificationEventArgs>;
+			using INotificationEvent = NotificationEventRaiser::IEvent;
+			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
         private:
     		DigInputList _inputs;
-    		NotifyEventRaiser _erNotify;
+    		NotificationEventRaiser _erNotification;
             unsigned _scanPeriod;
 
         private:
@@ -81,14 +82,14 @@ namespace eos {
             bool read(const DigInput *input) const;
             uint32_t getEdges(DigInput *input, bool clear = true) const;
 
-            inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-            	_erNotify.set(event, enabled);
+            inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
+            	_erNotification.set(event, enabled);
             }
             inline void enableNotifyEvent() {
-            	_erNotify.enable();
+            	_erNotification.enable();
             }
             inline void disableNotifyEvent() {
-            	_erNotify.disable();
+            	_erNotification.disable();
             }
     };
 }

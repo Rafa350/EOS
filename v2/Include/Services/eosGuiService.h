@@ -74,6 +74,7 @@ namespace eos {
 			#endif
 
 		protected:
+			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
 	};

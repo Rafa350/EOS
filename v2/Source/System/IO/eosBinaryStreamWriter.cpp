@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "System/IO/eosBinaryStreamWriter.h"
 
 
@@ -16,7 +15,7 @@ BinaryStreamWriter::BinaryStreamWriter(
     _begin {buffer},
     _end {buffer + size},
     _ptr {buffer} {
-    
+
 }
 
 
@@ -44,7 +43,7 @@ bool BinaryStreamWriter::writeU8(
 ///
 bool BinaryStreamWriter::writeU16(
     uint16_t value) {
-    
+
     if (_ptr + sizeof(uint16_t) < _end) {
         *_ptr++ = value >> 8;
         *_ptr++ = value;
@@ -62,7 +61,7 @@ bool BinaryStreamWriter::writeU16(
 ///
 bool BinaryStreamWriter::writeU32(
     uint32_t value) {
-    
+
     if (_ptr + sizeof(uint32_t) < _end) {
         *_ptr++ = value >> 24;
         *_ptr++ = value >> 16;
@@ -84,9 +83,6 @@ bool BinaryStreamWriter::writeU32(
 bool BinaryStreamWriter::write(
     const uint8_t *data,
     unsigned size) {
-
-    eosAssert(data != nullptr);
-    eosAssert(size > 0);
 
     if ((_ptr + size ) < _end) {
         memcpy(_ptr, data, size);

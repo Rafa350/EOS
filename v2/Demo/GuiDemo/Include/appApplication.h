@@ -49,7 +49,8 @@ namespace app {
 			eos::VirtualKeyboardEventCallback<MyApplication> _virtualKeyboardEventCallback;
 
 		protected:
-			void onInitialize() override;
+			void onInitialize(ApplicationParams &params) override;
+			void onExecute() override;
 
 			void createMainPanel();
 			eos::Visual *createKeyboardPanel();

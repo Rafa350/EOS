@@ -72,6 +72,10 @@ namespace eos {
             }
 
         public:
+            inline Value_ value() const {
+            	return _value;
+            }
+
             inline operator Value_() const {
             	return _value;
             }

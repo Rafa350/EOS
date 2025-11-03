@@ -523,7 +523,7 @@ bool SPIDevice::waitRxFifoEmpty(
         if (hasTickExpired(expireTime))
             return false;
 
-		uint8_t dummy = read8();
+        read8();
 	}
 
 	return true;
@@ -597,13 +597,4 @@ bool SPIDevice::waitRxNotEmpty(
     }
 
     return true;
-}
-
-
-static void clearOverrunFlag(
-    SPI_TypeDef *spi) {
-
-    uint32_t volatile tmp;
-    tmp = spi->DR;
-    tmp = spi->SR;
 }

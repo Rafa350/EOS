@@ -47,7 +47,7 @@ void osalTaskSetPriority(HTask hTask, uint8_t priority);
 void osalTaskYield(void);
 unsigned osalTaskGetStackHighWaterMark(void);
 bool osalTaskWaitNotification(bool clear, unsigned waitTime);
-bool osalTaskRaiseNotification(unsigned waitTime);
+void osalTaskRaiseNotification(HTask hTask);
 void osalTaskRaiseNotificationISR(HTask hTask);
 HTask osalGetCurrentTask(void);
 

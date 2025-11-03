@@ -1234,6 +1234,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/htlGPIO_Traits.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlGPIO_Traits.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/F7/htlTMR_Traits.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F7/htlTMR_Traits.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosBorder.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosBorder.h</locationURI>

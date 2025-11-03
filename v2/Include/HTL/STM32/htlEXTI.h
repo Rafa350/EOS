@@ -67,11 +67,11 @@ namespace htl {
 
 		class EXTIDevice;
 
-		enum class NotifyID {
+		enum class NotificationID {
 			pinEdge
 		};
-		struct NotifyEventArgs {
-			NotifyID const id;
+		struct NotificationEventArgs {
+			NotificationID const id;
 			bool const irq;
 			union {
 				struct {
@@ -80,9 +80,9 @@ namespace htl {
 				} pinEdge;
 			};
 		};
-		using NotifyEventRaiser = eos::EventRaiser<EXTIDevice, NotifyEventArgs>;
-		using INotifyEvent = NotifyEventRaiser::IEvent;
-        template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
+		using NotificationEventRaiser = eos::EventRaiser<EXTIDevice, NotificationEventArgs>;
+		using INotificationEvent = NotificationEventRaiser::IEvent;
+        template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 		class EXTIDevice final {
 			private:
@@ -93,7 +93,7 @@ namespace htl {
                 static constexpr EXTIDevice &rInst = _instance;
 
             private:
-                NotifyEventRaiser _erNotify;
+                NotificationEventRaiser _erNotification;
 
             private:
                 EXTIDevice();
@@ -108,18 +108,18 @@ namespace htl {
 				void initGPIO(gpio::PortID portID, gpio::PinID pinID, Mode mode, Edge edge);
 				void deinitialize();
 
-				eos::Result setNotifyEvent(INotifyEvent &event, bool enabled = true);
+				eos::Result setNotificationEvent(INotificationEvent &event, bool enabled = true);
 
 				/// Habilita l'event de notificacio.
 				///
-				inline void enableNotifyEvent() {
-					_erNotify.enable();
+				inline void enableNotificationEvent() {
+					_erNotification.enable();
 				}
 
 				/// Deshabilita l'event de notificacio.
 				///
-				inline void disableNotifyEvent() {
-					_erNotify.disable();
+				inline void disableNotificationEvent() {
+					_erNotification.disable();
 				}
 
 				inline static void interruptHandler() {

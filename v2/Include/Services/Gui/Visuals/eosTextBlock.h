@@ -33,7 +33,7 @@ namespace eos {
             void setTextBackground(const Brush &value);
             void setFont(const Font &value);
             void setText(const String &value);
-            void setTextAlign(TextAlign value);
+            void setTextAlign(Text::Align value);
 
             inline const Brush & getForeground() const { return _text.getForeground(); }
             inline const Font & getFont() const { return _text.getFont(); }

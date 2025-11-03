@@ -9,7 +9,7 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa un text.
-/// \param    position: Posicio.
+/// \param    position: Posicio del text
 /// \param    text: El text.
 ///
 void Graphics::paintText(
@@ -17,4 +17,17 @@ void Graphics::paintText(
 	const Text &text) const {
 
 	text.draw(this, position);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa un text.
+/// \param    box: La caixa que conte el text.
+/// \param    text: El text.
+///
+void Graphics::paintText(
+	const Rect &box,
+	const Text &text) const {
+
+	text.draw(this, box);
 }
