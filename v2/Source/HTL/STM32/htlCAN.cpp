@@ -1,0 +1,754 @@
+#include "HTL/htl.h"
+#include "HTL/htlAtomic.h"
+#include "HTL/htlBits.h"
+#include "HTL/STM32/htlCAN.h"
+
+
+using namespace htl::bits;
+using namespace htl::can;
+
+
+// Standard messageID filter element
+//
+struct SF {
+	static constexpr uint32_t SFT_Pos = 30;
+	static constexpr uint32_t SFT_Msk = 0b11 << SFT_Pos;
+
+	static constexpr uint32_t SFEC_Pos = 27;
+	static constexpr uint32_t SFEC_Msk = 0b111 << SFEC_Pos;
+
+	static constexpr uint32_t SFID1_Pos = 16;
+	static constexpr uint32_t SFID1_Msk = 0x7FF << SFID1_Pos;
+
+	static constexpr uint32_t SFID2_Pos = 0;
+	static constexpr uint32_t SFID2_Msk = 0x7FF << SFID2_Pos;
+};
+
+
+// Extended message ID filter element
+//
+struct EF0 {
+	static constexpr uint32_t EFEC_Pos = 29;
+	static constexpr uint32_t EFEC_Msk = 0b111 << EFEC_Pos;
+
+	static constexpr uint32_t EFID1_Pos = 0;
+	static constexpr uint32_t EFID1_Msk = 0x1FFFFFFF << EFID1_Pos;
+};
+
+struct EF1 {
+	static constexpr uint32_t EFT_Pos = 30;
+	static constexpr uint32_t EFT_Msk = 0b11 << EFT_Pos;
+
+	static constexpr uint32_t EFID2_Pos = 0;
+	static constexpr uint32_t EFID2_Msk = 0x1FFFFFFF << EFID2_Pos;
+};
+
+
+// Tx buffer element
+//
+struct T0 {
+	static constexpr uint32_t ESI_Pos = 31;
+	static constexpr uint32_t ESI_Msk = 0b1 << ESI_Pos;
+
+	static constexpr uint32_t XTD_Pos = 30;
+	static constexpr uint32_t XTD_Msk = 0b1 << XTD_Pos;
+
+	static constexpr uint32_t RTR_Pos = 29;
+	static constexpr uint32_t RTR_Msk = 0b1 << RTR_Pos;
+
+	static constexpr uint32_t SID_Pos = 18;
+	static constexpr uint32_t SID_Msk = 0x7FF << SID_Pos;
+
+	static constexpr uint32_t EID_Pos = 0;
+	static constexpr uint32_t EID_Msk = 0x1FFFFFFF << EID_Pos;
+};
+
+struct T1 {
+	static constexpr uint32_t MM_Pos = 24;
+	static constexpr uint32_t MM_Msk = 0xFF << MM_Pos;
+
+	static constexpr uint32_t EFC_Pos = 23;
+	static constexpr uint32_t EFC_Msk = 0b1 << EFC_Pos;
+
+	static constexpr uint32_t FDF_Pos = 21;
+	static constexpr uint32_t FDF_Msk = 0b1 << FDF_Pos;
+
+	static constexpr uint32_t BRS_Pos = 20;
+	static constexpr uint32_t BRS_Msk = 0b1 << BRS_Pos;
+
+	static constexpr uint32_t DLC_Pos = 16;
+	static constexpr uint32_t DLC_Msk = 0b1111 << DLC_Pos;
+};
+
+
+// RX Fifo element
+//
+struct R0 {
+	static constexpr uint32_t ESI_Pos = 31;
+	static constexpr uint32_t ESI_Msk = 0b1 << ESI_Pos;
+
+	static constexpr uint32_t XTD_Pos = 30;
+	static constexpr uint32_t XTD_Msk = 0b1 << XTD_Pos;
+
+	static constexpr uint32_t RTR_Pos = 29;
+	static constexpr uint32_t RTR_Msk = 0b1 << RTR_Pos;
+
+	static constexpr uint32_t SID_Pos = 18;
+	static constexpr uint32_t SID_Msk = 0x7FF << SID_Pos;
+
+	static constexpr uint32_t EID_Pos = 0;
+	static constexpr uint32_t EID_Msk = 0x1FFFFFFF << EID_Pos;
+};
+
+struct R1 {
+	static constexpr uint32_t ANMF_Pos = 31;
+	static constexpr uint32_t ANMF_Msk = 0b1 << ANMF_Pos;
+
+	static constexpr uint32_t FIDX_Pos = 24;
+	static constexpr uint32_t FIDX_Msk = 0x7F << FIDX_Pos;
+
+	static constexpr uint32_t FDF_Pos = 21;
+	static constexpr uint32_t FDF_Msk = 0b1 << FDF_Pos;
+
+	static constexpr uint32_t BRS_Pos = 20;
+	static constexpr uint32_t BRS_Msk = 0b1 << BRS_Pos;
+
+	static constexpr uint32_t DLC_Pos = 16;
+	static constexpr uint32_t DLC_Msk = 0b1111 << DLC_Pos;
+
+	static constexpr uint32_t RXTS_Pos = 0;
+	static constexpr uint32_t RXTS_Msk = 0xFFFF << RXTS_Pos;
+};
+
+
+static const uint8_t __dataLengthTbl[] = {
+	0, 1, 2, 3, 4, 5, 6, 7,
+	8, 12, 16, 20, 24, 32, 48, 64
+};
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    can: Registres de hardware del dispositiu.
+/// \param    ram: Ram de comunicacio del FDCAN
+///
+CANDevice::CANDevice(
+	FDCAN_GlobalTypeDef *can,
+	uint8_t *ram) :
+
+	_can {can},
+	_ram {ram},
+	_state {State::reset} {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el dispositiu.
+/// \param    info: Informacio d'inicialitzacio.
+///
+eos::Result CANDevice::initialize(
+	InitInfo *info) {
+
+	if (_state == State::reset) {
+
+		activate();
+
+		// Surt del modus sleep
+		//
+		clear(_can->CCCR, FDCAN_CCCR_CSR);
+		while (isSet(_can->CCCR, FDCAN_CCCR_CSR))
+			continue;
+
+		// Selecciona modus INIT i espera que acabi
+		//
+		set(_can->CCCR, FDCAN_CCCR_INIT);
+		while (!isSet(_can->CCCR, FDCAN_CCCR_INIT)) {
+		}
+
+		// Habilita el canvi de configuracio
+		//
+		set(_can->CCCR, FDCAN_CCCR_CCE);
+
+		// Configura el registre del divisor del rellotge
+		//
+		if (_can == FDCAN1)
+			FDCAN_CONFIG->CKDIV = (unsigned) info->clockDivider;
+
+		// Configura el registre CCCR
+		//
+		auto CCCR = _can->CCCR;
+
+		clear(CCCR, FDCAN_CCCR_DAR | FDCAN_CCCR_TXP | FDCAN_CCCR_PXHD |
+			FDCAN_CCCR_TEST | FDCAN_CCCR_MON | FDCAN_CCCR_ASM |
+			FDCAN_CCCR_FDOE | FDCAN_CCCR_BRSE);
+
+		if (!info->autoRetransmission)
+			set(CCCR, FDCAN_CCCR_DAR);
+
+		if (info->transmitPause)
+			set(CCCR, FDCAN_CCCR_TXP);
+
+		if (!info->protocolException)
+			set(CCCR, FDCAN_CCCR_PXHD);
+
+		switch (info->frameFormat) {
+			case FrameFormat::fdNoBsr:
+				set(CCCR, FDCAN_CCCR_FDOE);
+				break;
+
+			case FrameFormat::fdBsr:
+				set(CCCR, FDCAN_CCCR_FDOE | FDCAN_CCCR_BRSE);
+				break;
+		}
+
+		switch (info->mode) {
+			case Mode::restricted:
+			    set(CCCR, FDCAN_CCCR_ASM);
+			    break;
+
+			case Mode::internalLoopback:
+		    	set(CCCR, FDCAN_CCCR_TEST);
+	    		set(CCCR, FDCAN_CCCR_MON);
+				break;
+
+			case Mode::externalLoopback:
+	    		set(CCCR, FDCAN_CCCR_TEST);
+				break;
+
+			case Mode::busMonitoring:
+		    	set(CCCR, FDCAN_CCCR_MON);
+		    	break;
+		}
+
+		_can->CCCR = CCCR;
+
+		// Configura el registre TEST
+		//
+		if ((info->mode == Mode::internalLoopback) || (info->mode == Mode::externalLoopback))
+	    	set(_can->TEST, FDCAN_TEST_LBCK);
+		else
+			clear(_can->TEST, FDCAN_TEST_LBCK);
+
+		// Configura el registre NBTP
+		//
+		_can->NBTP =
+			(((uint32_t)info->nominalSyncJumpWidth - 1) << FDCAN_NBTP_NSJW_Pos) |
+		    (((uint32_t)info->nominalTimeSeg1 - 1) << FDCAN_NBTP_NTSEG1_Pos) |
+		    (((uint32_t)info->nominalTimeSeg2 - 1) << FDCAN_NBTP_NTSEG2_Pos) |
+		    (((uint32_t)info->nominalPrescaler - 1) << FDCAN_NBTP_NBRP_Pos);
+
+		// Configura el registre DBTP
+		//
+		if (info->frameFormat == FrameFormat::fdBsr)
+		    _can->DBTP =
+		    	(((uint32_t)info->dataSyncJumpWidth - 1) << FDCAN_DBTP_DSJW_Pos) |
+		        (((uint32_t)info->dataTimeSeg1 - 1) << FDCAN_DBTP_DTSEG1_Pos) |
+		        (((uint32_t)info->dataTimeSeg2 - 1) << FDCAN_DBTP_DTSEG2_Pos) |
+		        (((uint32_t)info->dataPrescaler - 1) << FDCAN_DBTP_DBRP_Pos);
+
+		// Configura el registre TXBC
+		//
+		if (info->qfMode == QFMode::queue)
+			set(_can->TXBC, FDCAN_TXBC_TFQM);
+		else
+			clear(_can->TXBC, FDCAN_TXBC_TFQM);
+
+		// Configura el registre RXGFC
+		//
+		auto RXGFC = _can->RXGFC;
+		clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM | FDCAN_RXGFC_LSS | FDCAN_RXGFC_LSE);
+		set(RXGFC, (info->stdFiltersNbr << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
+		set(RXGFC, (info->extFiltersNbr << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
+		_can->RXGFC = RXGFC;
+
+		// Convenient borrar la ram dels filtres
+		//
+		clearFilters();
+
+		_state = State::ready;
+
+		return eos::Results::success;
+	}
+
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el dispositiu.
+///
+eos::Result CANDevice::deinitialize() {
+
+	if (_state == State::ready) {
+
+		deactivate();
+
+		_state = State::reset;
+
+		return eos::Results::success;
+
+	}
+
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicia la comunicacio.
+///
+eos::Result CANDevice::start() {
+
+	if (_state == State::ready) {
+
+		// Surt del modus INIT
+		//
+		clear(_can->CCCR, FDCAN_CCCR_INIT);
+		while (isSet(_can->CCCR, FDCAN_CCCR_INIT))
+			continue;
+
+		_state = State::running;
+
+		return eos::Results::success;
+	}
+
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza la comunicacio.
+///
+eos::Result CANDevice::stop() {
+
+	if (_state == State::ready) {
+
+		// Entra al modus INIT
+		//
+		set(_can->CCCR, FDCAN_CCCR_INIT);
+		while (!isSet(_can->CCCR, FDCAN_CCCR_INIT))
+			continue;
+
+		// Permet canvis en la configuracio
+		//
+		set(_can->CCCR, FDCAN_CCCR_CCE);
+
+		return eos::Results::success;
+	}
+
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borra tots els filtres
+//
+void CANDevice::clearFilters() {
+
+	auto pStandardFilter = getStandardFilterAddr(0);
+	for (unsigned i = 0; i < 28; i++) {
+		pStandardFilter->SF = 0;
+		pStandardFilter++;
+	}
+
+	auto pExtendedFilter = getExtendedFilterAddr(0);
+	for (unsigned i = 0; i < 8; i++) {
+		pExtendedFilter->EF0 = 0;
+		pExtendedFilter->EF1 = 0;
+		pExtendedFilter++;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura un filtre
+/// \param    filder: Parametres del filtre..
+/// \param    index: Index del filtre.
+/// \return   El resultat de l'operacio.
+///
+eos::Result CANDevice::setFilter(
+	Filter *filter,
+	unsigned index) {
+
+	if (_state == State::ready) {
+
+		// IDs standard 11bits
+		//
+	    if (filter->idType == IdentifierType::standard) {
+
+	    	uint32_t SF = 0;
+	    	set(SF, ((uint32_t)filter->type << SF::SFT_Pos) & SF::SFT_Msk);
+	    	set(SF, ((uint32_t)filter->config << SF::SFEC_Pos) & SF::SFEC_Msk);
+	    	set(SF, (filter->id1 << SF::SFID1_Pos) & SF::SFID1_Msk);
+	    	set(SF, (filter->id2 << SF::SFID2_Pos) & SF::SFID2_Msk);
+
+	    	auto pFilter = getStandardFilterAddr(index);
+	    	pFilter->SF = SF;
+	    }
+
+	    // ID's extesos 29bits
+	    //
+	    else {
+
+	    	uint32_t EF0 = 0;
+	    	set(EF0, ((uint32_t) filter->config << EF0::EFEC_Pos) & EF0::EFEC_Msk);
+	    	set(EF0, (filter->id1 << EF0::EFID1_Pos) & EF0::EFID1_Msk);
+
+	    	uint32_t EF1 = 0;
+	    	set(EF1, ((uint32_t) filter->type << EF1::EFT_Pos) & EF1::EFT_Msk);
+	    	set(EF1, (filter->id2 << EF1::EFID2_Pos) & EF1::EFID2_Msk);
+
+	    	auto pFilter = getExtendedFilterAddr(index);
+	    	pFilter->EF0 = EF0;
+	    	pFilter->EF1 = EF1;
+	    }
+
+	    return eos::Results::success;
+	}
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura els filtres globals.
+/// \param    nonMatchingStd:
+/// \param    nonMatchingExt:
+/// \param    rejectRemoteStd:
+/// \param    rejectRemoteExt:
+/// \return   El resultat de l'operacio.
+///
+eos::Result CANDevice::setGlobalFilter(
+	NonMatchingFrames nonMatchingStd,
+	NonMatchingFrames nonMatchingExt,
+	RejectRemoteFrames rejectRemoteStd,
+	RejectRemoteFrames rejectRemoteExt) {
+
+	if (_state == State::ready) {
+
+		auto RXGFC = _can->RXGFC;
+		clear(RXGFC, FDCAN_RXGFC_ANFS | FDCAN_RXGFC_ANFE | FDCAN_RXGFC_RRFS | FDCAN_RXGFC_RRFE);
+		set(RXGFC, ((uint32_t)nonMatchingStd << FDCAN_RXGFC_ANFS_Pos) & FDCAN_RXGFC_ANFS_Msk);
+		set(RXGFC, ((uint32_t)nonMatchingExt << FDCAN_RXGFC_ANFE_Pos) & FDCAN_RXGFC_ANFE_Msk);
+		set(RXGFC, ((uint32_t)rejectRemoteStd << FDCAN_RXGFC_RRFS_Pos) & FDCAN_RXGFC_RRFS_Msk);
+		set(RXGFC, ((uint32_t)rejectRemoteExt << FDCAN_RXGFC_RRFE_Pos) & FDCAN_RXGFC_RRFE_Msk);
+		_can->RXGFC = RXGFC;
+
+		return eos::Results::success;
+	}
+
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Envia un missatge al bus.
+/// \param    header: Capcelera del missatge.
+/// \param    data: Bloc de dades del missatge.
+/// \\return  El resultat de l'operacio.
+///
+eos::Result CANDevice::send(
+	TxBufferHeader *header,
+	uint8_t *data) {
+
+	if (_state == State::running) {
+
+		// Comprova que el fifo no estigui ple
+		//
+		if (isTxBufferFull())
+			return eos::Results::busy;
+
+		// Obte el index d'insercio del FIFO
+		//
+		auto index = getTxBufferPutIndex();
+
+		// Copia el missatge al FIFO
+		//
+		copyToTxBuffer(header, data, index);
+
+		// Activa la transmissio
+		//
+		_can->TXBAR = 1 << index;
+
+		// Espera el final de transmissio
+		//
+		 while ((_can->TXBTO & (1 << index)) == 0)
+			 continue;
+
+		return eos::Results::success;
+	}
+
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Reb un missatge del bus.
+/// \param    fifo: El fifo.
+/// \param    header: Buffer de la capcelera del missatge.
+/// \param    data: Buffer de les dades del missatge.
+/// \return   El resultat de l'operacio.
+///
+eos::Result CANDevice::receive(
+	RxFifoSelection fifo,
+	RxFifoHeader *header,
+	uint8_t *data) {
+
+	if (_state == State::running) {
+
+		if (isRxFifoNotEmpty(fifo)) {
+
+			unsigned index = getRxFifoGetIndex(fifo);
+
+			copyFromRxFifo(fifo, header, data, index);
+
+			if (fifo == RxFifoSelection::fifo0)
+				_can->RXF0A = index;
+			else
+				_can->RXF1A = index;
+
+			return eos::Results::success;
+		}
+
+		return eos::Results::error;
+	}
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'index d'insercio del TxBuffer
+/// \return   El resultat de l'operacio.
+///
+unsigned CANDevice::getTxBufferPutIndex() const {
+
+	return (_can->TXFQS & FDCAN_TXFQS_TFQPI) >> FDCAN_TXFQS_TFQPI_Pos;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'index d'extraccio del fifo.
+/// \param    fifo: El fifo.
+/// \return   El resultat de l'operacio.
+///
+unsigned CANDevice::getRxFifoGetIndex(
+	RxFifoSelection fifo) const {
+
+	if (fifo == RxFifoSelection::fifo0)
+		return (_can->RXF0S & FDCAN_RXF0S_F0GI_Msk) >> FDCAN_RXF0S_F0GI_Pos;
+	else
+		return (_can->RXF0S & FDCAN_RXF1S_F1GI_Msk) >> FDCAN_RXF1S_F1GI_Pos;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el nombre de elements que es poden insertar en TxBuffer
+/// \return   El resultat.
+///
+unsigned CANDevice::getTxBufferFreeLevel() const {
+
+	return (_can->TXFQS & FDCAN_TXFQS_TFFL) >> FDCAN_TXFQS_TFFL_Pos;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el nombre de elements que es poden retirar de RxFIFO
+/// \return   El resultat.
+///
+unsigned CANDevice::getRxFifoFillLevel(
+	RxFifoSelection fifo) const {
+
+	if (fifo == RxFifoSelection::fifo0)
+		return (_can->RXF0S & FDCAN_RXF0S_F0FL_Msk) >> FDCAN_RXF0S_F0FL_Pos;
+	else
+		return (_can->RXF1S & FDCAN_RXF1S_F1FL) >> FDCAN_RXF1S_F1FL_Pos;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Copia el missatge al TxBuffer
+/// \param    header: La capcelera del missatge.
+/// \param    data: Les dades del missatge
+///
+void CANDevice::copyToTxBuffer(
+	TxBufferHeader *header,
+	uint8_t *data,
+	unsigned index) {
+
+	// Prepara l'element T0 de la capcelera
+	//
+	uint32_t T0 = 0;
+	if (header->errorStateFlag == ErrorStateFlag::passive)
+		set(T0, (1 << T0::ESI_Pos) & T0::ESI_Msk);
+	if (header->idType == IdentifierType::extended)
+		set(T0, (1 << T0::XTD_Pos) & T0::XTD_Msk);
+	if (header->frameType == FrameType::remoteFrame)
+		set(T0, (1 << T0::RTR_Pos) & T0::RTR_Msk);
+	if (header->idType == IdentifierType::extended)
+		set(T0, (header->id << T0::EID_Pos) & T0::EID_Msk);
+	else
+		set(T0, (header->id << T0::SID_Pos) & T0::SID_Msk);
+
+	// Prepara l'element T1 de la capcelera
+	//
+	uint32_t T1 = 0;
+    set(T1, (uint32_t) (header->messageMarker << T1::MM_Pos) & T1::MM_Msk);
+    if (header->txEventFifoControl == TxEventFifoControl::store)
+    	set(T1, (1 << T1::EFC_Pos) & T1::EFC_Msk);
+    if (header->fdFormat == FDFormat::fdcan)
+    	set(T1, (1 << T1::FDF_Pos) & T1::FDF_Msk);
+    if (header->bitrateSwitching == BitrateSwitching::on)
+    	set(T1, (1 << T1::BRS_Pos) & T1::BRS_Msk);
+    set(T1, (uint32_t)((unsigned)header->dataLength << T1::DLC_Pos) & T1::DLC_Msk);
+
+    // Escriu la capcelera en el buffer
+    //
+	auto pBuffer = getTxBufferAddr(index);
+	pBuffer->T0 = T0;
+	pBuffer->T1 = T1;
+
+	// Escriu les dades en el buffer
+	//
+	unsigned bytesRemain = __dataLengthTbl[(unsigned)header->dataLength];
+	unsigned wordCount = 0;
+	unsigned byteCount = 0;
+
+	while (bytesRemain >= 4) {
+
+		pBuffer->data[wordCount] =
+			((uint32_t)data[byteCount + 3] << 24) |
+            ((uint32_t)data[byteCount + 2] << 16) |
+            ((uint32_t)data[byteCount + 1] << 8)  |
+             (uint32_t)data[byteCount];
+
+		byteCount += 4;
+		wordCount += 1;
+
+		bytesRemain -= 4;
+	}
+	switch (bytesRemain) {
+		case 1:
+			pBuffer->data[wordCount] = data[byteCount];
+			break;
+
+		case 2:
+			pBuffer->data[wordCount] =
+	            ((uint32_t)data[byteCount + 1] << 8)  |
+	             (uint32_t)data[byteCount];
+			break;
+
+		case 3:
+			pBuffer->data[wordCount] =
+	            ((uint32_t)data[byteCount + 2] << 16) |
+	            ((uint32_t)data[byteCount + 1] << 8)  |
+	             (uint32_t)data[byteCount];
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Copia el missatge desde el RxFIFO
+/// \param    fifo: El fifo.
+/// \param    header: Buffer de la capcelera del missatge.
+/// \param    data: Buffer de dades del missatge.
+/// \param    index: Index del fifo.
+///
+void CANDevice::copyFromRxFifo(
+	RxFifoSelection fifo,
+	RxFifoHeader *header,
+	uint8_t *data,
+	unsigned index) {
+
+	auto *pBuffer = getRxFifoAddr(fifo, index);
+
+	// Obte la capcelera
+	//
+	header->idType = ((pBuffer->R0 & R0::XTD_Msk) >> R0::XTD_Pos) == 0 ? IdentifierType::standard : IdentifierType::extended;
+	if (header->idType == IdentifierType::extended)
+		header->id = (pBuffer->R0 & R0::EID_Msk) >> R0::EID_Pos;
+	else
+		header->id = (pBuffer->R0 & R0::SID_Msk) >> R0::SID_Pos;
+	header->errorStateFlag = ((pBuffer->R0 & R0::ESI_Msk) >> R0::ESI_Pos) == 0 ? ErrorStateFlag::active : ErrorStateFlag::passive;
+	header->frameType = ((pBuffer->R0 & R0::RTR_Msk) >> R0::RTR_Pos) == 0 ? FrameType::dataFrame : FrameType::remoteFrame;
+	header->filterIndex = (pBuffer->R1 & R1::FIDX_Msk) >> R1::FIDX_Pos;
+	header->dataLength = (DataLength) ((pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos);
+	header->bitrateSwitching = ((pBuffer->R1 & R1::BRS_Msk) >> R1::BRS_Pos) == 0 ? BitrateSwitching::off : BitrateSwitching::on;
+	header->fdFormat = ((pBuffer->R1 & R1::FDF_Msk) >> R1::FDF_Pos) == 0 ? FDFormat::can : FDFormat::fdcan;
+
+	// Obte les dades
+	//
+	uint8_t *p = (uint8_t*) pBuffer->data;
+	for (unsigned i = 0; i < __dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]; i++)
+		data[i] = p[i];
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el punter a un element del buffer de transmissio.
+/// \param    index: Index del element.
+/// \return   El resultat.
+///
+CANDevice::TxBufferElement* CANDevice::getTxBufferAddr(
+	unsigned index) const {
+
+	return (TxBufferElement*) ((unsigned)_ram +
+		offsetof(MessageRam, txBuffer) +
+		sizeof(TxBufferElement) * index);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el punter a un element del fifo de recepcio
+/// \param    fifo: Seleccio del fifo.
+/// \param    index: Index del element.
+/// \return   El resultat.
+///
+CANDevice::RxFifoElement* CANDevice::getRxFifoAddr(
+	RxFifoSelection fifo,
+	unsigned index) const {
+
+	if (fifo == RxFifoSelection::fifo0)
+		return (RxFifoElement*) ((unsigned)_ram +
+			offsetof(MessageRam, rxFifo0) +
+			index * sizeof(RxFifoElement));
+	else
+		return (RxFifoElement*) ((unsigned)_ram +
+			offsetof(MessageRam, rxFifo1) +
+			index * sizeof(RxFifoElement));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el punter a un filtre.
+/// \param    index: Index del filtre.
+/// \return   El resultat.
+///
+CANDevice::StandardFilterElement* CANDevice::getStandardFilterAddr(
+	unsigned index) const {
+
+	return (StandardFilterElement*)((unsigned) _ram +
+		offsetof(MessageRam, standardFilter) +
+		index * sizeof(StandardFilterElement));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el punter a un filtre.
+/// \param    index: Index del filtre.
+/// \return   El resultat.
+///
+CANDevice::ExtendedFilterElement* CANDevice::getExtendedFilterAddr(
+	unsigned index) const {
+
+	return (ExtendedFilterElement*)((unsigned)_ram +
+		offsetof(MessageRam, extendedFilter) +
+		index * sizeof(ExtendedFilterElement));
+}

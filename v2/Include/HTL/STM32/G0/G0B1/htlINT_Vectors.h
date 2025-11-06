@@ -30,6 +30,11 @@ namespace htl {
             exti14 = EXTI4_15_IRQn,
             exti15 = EXTI4_15_IRQn,
 
+			fdcan1_IT0 = TIM16_FDCAN_IT0_IRQn,
+			fdcan2_IT0 = TIM16_FDCAN_IT0_IRQn,
+			fdcan1_IT1 = TIM17_FDCAN_IT1_IRQn,
+			fdcan2_IT1 = TIM17_FDCAN_IT1_IRQn,
+
             spi1 = SPI1_IRQn,
             spi2 = SPI2_3_IRQn,
             spi3 = SPI2_3_IRQn,

@@ -400,6 +400,7 @@ namespace htl {
 #if HTL_UART_OPTION_DEACTIVATE == 1
 				void deactivateImpl() const override {
 					bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
+					__DSB();
 				}
 #endif
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)

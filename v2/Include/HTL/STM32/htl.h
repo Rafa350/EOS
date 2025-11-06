@@ -22,6 +22,12 @@
 #define HTL_I2C_DEFAULT_OPTION_DMA               1
 #define HTL_I2C_DEFAULT_OPTION_DEACTIVATE        0
 
+// Opcions per defecte pel modul FDCAN
+//
+#define HTL_FDCAN_DEFAULT_OPTION_IRQ             1
+#define HTL_FDCAN_DEFAULT_OPTION_DMA             0
+#define HTL_FDCAN_DEFAULT_OPTION_DEACTIVATE      0
+
 // Opcions per defecte pel modul UART
 //
 #define HTL_UART_DEFAULT_OPTION_IRQ              1
@@ -192,6 +198,18 @@
 #endif
 
 
+// Comprova l'existencia dels moduls FDCAN
+//
+#if defined(FDCAN1_BASE)
+	#define HTL_CAN1_EXIST
+#endif
+#if defined(FDCAN2_BASE)
+	#define HTL_CAN2_EXIST
+#endif
+
+
+// Comprova l'existencia dels moduls DMA
+//
 #ifdef DMA1_BASE
     #define HTL_DMA1_EXIST
 #endif

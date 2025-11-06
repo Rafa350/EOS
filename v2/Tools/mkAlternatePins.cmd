@@ -27,5 +27,6 @@ echo Generando variantes para STM32G0B1
 "C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32G0\G0B1\SPI.xml
 "C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32G0\G0B1\TMR.xml
 "C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32G0\G0B1\UART.xml
+"C:\Users\Rafael\Documents\Projectes\Net\EosTools\v2\artifacts\bin\EOSConfigurator\debug\EOSConfigurator.exe" AlternatePins\STM32G0\G0B1\CAN.xml
 
 pause

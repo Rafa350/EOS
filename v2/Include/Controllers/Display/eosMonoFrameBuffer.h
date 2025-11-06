@@ -27,7 +27,7 @@ namespace eos {
             inline unsigned getBufferPitch() const { return _bufferPitch; }
     };
 
-    // Compatible SSD1306
+    // Compatible SSD1306, ST7565
     //
     class MonoFrameBuffer_MappingA final: public MonoFrameBuffer {
     	protected:

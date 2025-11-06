@@ -1,10 +1,8 @@
 #include "HTL/htl.h"
-#include "HTL/STM32/htlUART.h"
-
-
-#include "HTL/htlBits.h"
 #include "HTL/htlAtomic.h"
+#include "HTL/htlBits.h"
 #include "HTL/STM32/htlClock.h"
+#include "HTL/STM32/htlUART.h"
 
 
 using namespace htl::clock;

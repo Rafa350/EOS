@@ -1,0 +1,33 @@
+<alternatePins>
+	<file path="HTL/STM32/G0/G0B1/htlCAN_Pins.h" 
+		  namespace="htl::can::internal"
+	      conditionError="!defined(EOS_PLATFORM_STM32G0B1)"
+		  conditionErrorMessage="Unsupported platform">
+		<device device="DeviceID::can1" condition="defined(HTL_CAN1_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="tx">
+				<pin port="A" pin="12" value="3"/>
+				<pin port="B" pin="9" value="3"/>
+				<pin port="D" pin="13" value="3"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="A" pin="11" value="3"/>
+				<pin port="B" pin="8" value="3"/>
+				<pin port="D" pin="12" value="3"/>
+			</function>
+		</device>
+		<device device="DeviceID::can2" condition="defined(HTL_CAN2_EXIST)" pinFunctionPrefix="PinFunction::">
+			<function pinFunction="tx">
+				<pin port="B" pin="1" value="3"/>
+				<pin port="B" pin="2" value="3"/>
+				<pin port="B" pin="13" value="3"/>
+				<pin port="D" pin="15" value="3"/>
+			</function>
+			<function pinFunction="rx">
+				<pin port="B" pin="0" value="3"/>
+				<pin port="B" pin="5" value="3"/>
+				<pin port="B" pin="12" value="3"/>
+				<pin port="D" pin="14" value="3"/>
+			</function>
+		</device>
+	</file>
+</alternatePins>
