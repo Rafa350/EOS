@@ -3,8 +3,10 @@
 #define __eosBoard_XNUCLEO_OUT11A1__
 
 
-#if defined(USE_XNUCLEO_OUT11A1)
-#define EXIST_XNUCLEO_OUT11A1
+#include "eos.h"
+
+
+#define EOS_HARDWARE_XNUCLEO_OUT11A1
 
 
 #define OUT11A1_SYNC_Pin     ARDUINO_A2_Pin
@@ -19,9 +21,6 @@
 #define OUT11A1_IN8_Pin      ARDUINO_D2_Pin
 #define OUT11A1_OUTEN_Pin    ARDUINO_A1_Pin
 #define OUT11A1_FAULT_Pin    ARDUINO_D15_Pin
-
-
-#endif // USE_XNUCLEO_OUT11A1
 
 
 #endif // __eosBoard_XNUCLEO_OUT11A1__

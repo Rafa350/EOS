@@ -136,15 +136,19 @@
 //
 #ifdef I2C1_BASE
 	#define HTL_I2C1_EXIST
+	#define HTL_I2Cx_EXIST
 #endif
 #ifdef I2C2_BASE
 	#define HTL_I2C2_EXIST
+	#define HTL_I2Cx_EXIST
 #endif
 #ifdef I2C3_BASE
 	#define HTL_I2C3_EXIST
+	#define HTL_I2Cx_EXIST
 #endif
 #ifdef I2C4_BASE
 	#define HTL_I2C4_EXIST
+	#define HTL_I2Cx_EXIST
 #endif
 
 
@@ -152,21 +156,27 @@
 //
 #ifdef SPI1_BASE
 	#define HTL_SPI1_EXIST
+	#define HTL_SPIx_EXIST
 #endif
 #ifdef SPI2_BASE
 	#define HTL_SPI2_EXIST
+	#define HTL_SPIx_EXIST
 #endif
 #ifdef SPI3_BASE
 	#define HTL_SPI3_EXIST
+	#define HTL_SPIx_EXIST
 #endif
 #ifdef SPI4_BASE
 	#define HTL_SPI4_EXIST
+	#define HTL_SPIx_EXIST
 #endif
 #ifdef SPI5_BASE
 	#define HTL_SPI5_EXIST
+	#define HTL_SPIx_EXIST
 #endif
 #ifdef SPI6_BASE
 	#define HTL_SPI6_EXIST
+	#define HTL_SPIx_EXIST
 #endif
 
 
@@ -174,27 +184,35 @@
 //
 #if defined(USART1_BASE) || defined(UART1_BASE)
 	#define HTL_UART1_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART2_BASE) || defined(UART2_BASE)
 	#define HTL_UART2_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART3_BASE) || defined(UART3_BASE)
 	#define HTL_UART3_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART4_BASE) || defined(UART4_BASE)
 	#define HTL_UART4_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART5_BASE) || defined(UART5_BASE)
 	#define HTL_UART5_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART6_BASE) || defined(UART6_BASE)
 	#define HTL_UART6_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART7_BASE) || defined(UART7_BASE)
 	#define HTL_UART7_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART8_BASE) || defined(UART8_BASE)
 	#define HTL_UART8_EXIST
+	#define HTL_UARTx_EXIST
 #endif
 
 
@@ -202,9 +220,11 @@
 //
 #if defined(FDCAN1_BASE)
 	#define HTL_CAN1_EXIST
+	#define HTL_CANx_EXIST
 #endif
 #if defined(FDCAN2_BASE)
 	#define HTL_CAN2_EXIST
+	#define HTL_CANx_EXIST
 #endif
 
 

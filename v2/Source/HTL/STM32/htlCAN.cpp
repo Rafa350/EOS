@@ -1,7 +1,13 @@
 #include "HTL/htl.h"
+
+
+#ifdef HTL_CANx_EXIST
+
+
 #include "HTL/htlAtomic.h"
 #include "HTL/htlBits.h"
 #include "HTL/STM32/htlCAN.h"
+#include "System/eosMath.h"
 
 
 using namespace htl::bits;
@@ -145,10 +151,10 @@ CANDevice::CANDevice(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el dispositiu.
-/// \param    info: Informacio d'inicialitzacio.
+/// \param    params: Parametres d'inicialitzacio.
 ///
 eos::Result CANDevice::initialize(
-	InitInfo *info) {
+	CANDevice::InitParams const * const params) {
 
 	if (_state == State::reset) {
 
@@ -173,7 +179,7 @@ eos::Result CANDevice::initialize(
 		// Configura el registre del divisor del rellotge
 		//
 		if (_can == FDCAN1)
-			FDCAN_CONFIG->CKDIV = (unsigned) info->clockDivider;
+			FDCAN_CONFIG->CKDIV = (unsigned) params->clockDivider;
 
 		// Configura el registre CCCR
 		//
@@ -183,16 +189,19 @@ eos::Result CANDevice::initialize(
 			FDCAN_CCCR_TEST | FDCAN_CCCR_MON | FDCAN_CCCR_ASM |
 			FDCAN_CCCR_FDOE | FDCAN_CCCR_BRSE);
 
-		if (!info->autoRetransmission)
+		if (!params->autoRetransmission)
 			set(CCCR, FDCAN_CCCR_DAR);
 
-		if (info->transmitPause)
+		if (params->transmitPause)
 			set(CCCR, FDCAN_CCCR_TXP);
 
-		if (!info->protocolException)
+		if (!params->protocolException)
 			set(CCCR, FDCAN_CCCR_PXHD);
 
-		switch (info->frameFormat) {
+		switch (params->frameFormat) {
+			case FrameFormat::classic:
+				break;
+
 			case FrameFormat::fdNoBsr:
 				set(CCCR, FDCAN_CCCR_FDOE);
 				break;
@@ -202,7 +211,10 @@ eos::Result CANDevice::initialize(
 				break;
 		}
 
-		switch (info->mode) {
+		switch (params->mode) {
+			case Mode::normal:
+				break;
+
 			case Mode::restricted:
 			    set(CCCR, FDCAN_CCCR_ASM);
 			    break;
@@ -224,8 +236,9 @@ eos::Result CANDevice::initialize(
 		_can->CCCR = CCCR;
 
 		// Configura el registre TEST
+		// -Modus normal/loopback
 		//
-		if ((info->mode == Mode::internalLoopback) || (info->mode == Mode::externalLoopback))
+		if ((params->mode == Mode::internalLoopback) || (params->mode == Mode::externalLoopback))
 	    	set(_can->TEST, FDCAN_TEST_LBCK);
 		else
 			clear(_can->TEST, FDCAN_TEST_LBCK);
@@ -233,33 +246,37 @@ eos::Result CANDevice::initialize(
 		// Configura el registre NBTP
 		//
 		_can->NBTP =
-			(((uint32_t)info->nominalSyncJumpWidth - 1) << FDCAN_NBTP_NSJW_Pos) |
-		    (((uint32_t)info->nominalTimeSeg1 - 1) << FDCAN_NBTP_NTSEG1_Pos) |
-		    (((uint32_t)info->nominalTimeSeg2 - 1) << FDCAN_NBTP_NTSEG2_Pos) |
-		    (((uint32_t)info->nominalPrescaler - 1) << FDCAN_NBTP_NBRP_Pos);
+			(((uint32_t)params->nominalSyncJumpWidth - 1) << FDCAN_NBTP_NSJW_Pos) |
+		    (((uint32_t)params->nominalTimeSeg1 - 1) << FDCAN_NBTP_NTSEG1_Pos) |
+		    (((uint32_t)params->nominalTimeSeg2 - 1) << FDCAN_NBTP_NTSEG2_Pos) |
+		    (((uint32_t)params->nominalPrescaler - 1) << FDCAN_NBTP_NBRP_Pos);
 
 		// Configura el registre DBTP
 		//
-		if (info->frameFormat == FrameFormat::fdBsr)
+		if (params->frameFormat == FrameFormat::fdBsr)
 		    _can->DBTP =
-		    	(((uint32_t)info->dataSyncJumpWidth - 1) << FDCAN_DBTP_DSJW_Pos) |
-		        (((uint32_t)info->dataTimeSeg1 - 1) << FDCAN_DBTP_DTSEG1_Pos) |
-		        (((uint32_t)info->dataTimeSeg2 - 1) << FDCAN_DBTP_DTSEG2_Pos) |
-		        (((uint32_t)info->dataPrescaler - 1) << FDCAN_DBTP_DBRP_Pos);
+		    	(((uint32_t)params->dataSyncJumpWidth - 1) << FDCAN_DBTP_DSJW_Pos) |
+		        (((uint32_t)params->dataTimeSeg1 - 1) << FDCAN_DBTP_DTSEG1_Pos) |
+		        (((uint32_t)params->dataTimeSeg2 - 1) << FDCAN_DBTP_DTSEG2_Pos) |
+		        (((uint32_t)params->dataPrescaler - 1) << FDCAN_DBTP_DBRP_Pos);
 
 		// Configura el registre TXBC
+		// -Modus FIFO/QUEUE
 		//
-		if (info->qfMode == QFMode::queue)
+		if (params->qfMode == QFMode::queue)
 			set(_can->TXBC, FDCAN_TXBC_TFQM);
 		else
 			clear(_can->TXBC, FDCAN_TXBC_TFQM);
 
 		// Configura el registre RXGFC
+		// -Modus sobresciptura del FIFO
+		// -Nombre de filtres estandard
+		// -Nombre de filtes extesos
 		//
 		auto RXGFC = _can->RXGFC;
 		clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM | FDCAN_RXGFC_LSS | FDCAN_RXGFC_LSE);
-		set(RXGFC, (info->stdFiltersNbr << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
-		set(RXGFC, (info->extFiltersNbr << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
+		set(RXGFC, (params->stdFiltersNbr << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
+		set(RXGFC, (params->extFiltersNbr << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
 		_can->RXGFC = RXGFC;
 
 		// Convenient borrar la ram dels filtres
@@ -283,12 +300,12 @@ eos::Result CANDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
+		stop();
 		deactivate();
 
 		_state = State::reset;
 
 		return eos::Results::success;
-
 	}
 
 	else
@@ -298,6 +315,7 @@ eos::Result CANDevice::deinitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia la comunicacio.
+/// \return   El resultat de l'operacio.
 ///
 eos::Result CANDevice::start() {
 
@@ -320,11 +338,46 @@ eos::Result CANDevice::start() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Inicia la comunicacio per interrupcions.
+/// \return   El resultat de l'operacio.
+///
+eos::Result CANDevice::start_IRQ() {
+
+	if (start().isSuccess()) {
+
+		// Habilita interrupcions
+		//
+		set(_can->IE,
+			FDCAN_IE_RF0NE |      // FIFO0 new message
+			FDCAN_IE_RF1NE |      // FIFO1 new message
+			FDCAN_IE_TCE);        // TxBuffer transmission completed
+
+		set(_can->ILE,
+			FDCAN_ILE_EINT0);     // Linia INT0 habilitada
+
+		return eos::Results::success;
+	}
+	else
+		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Finalitza la comunicacio.
 ///
 eos::Result CANDevice::stop() {
 
-	if (_state == State::ready) {
+	if (_state == State::running) {
+
+		// Deshabilita les interrupcions
+		//
+		clear(_can->IE,
+			FDCAN_IE_RF0NE |      // FIFO0 new message
+			FDCAN_IE_RF1NE |      // FIFO1 new message
+			FDCAN_IE_TCE);        // TxBuffer transmission completed
+
+		clear(_can->ILE,
+			FDCAN_ILE_EINT0);     // Linia INT0 deshabilitada
 
 		// Entra al modus INIT
 		//
@@ -447,14 +500,14 @@ eos::Result CANDevice::setGlobalFilter(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Envia un missatge al bus.
-/// \param    header: Capcelera del missatge.
+/// \brief    Afegeix un missatge al fifo/cua i el transmet.
+/// \param    header: Capcelera de transmissio del missatge.
 /// \param    data: Bloc de dades del missatge.
 /// \\return  El resultat de l'operacio.
 ///
-eos::Result CANDevice::send(
-	TxBufferHeader *header,
-	uint8_t *data) {
+eos::Result CANDevice::addTxMessage(
+	const TxHeader *header,
+	const uint8_t *data) {
 
 	if (_state == State::running) {
 
@@ -477,8 +530,8 @@ eos::Result CANDevice::send(
 
 		// Espera el final de transmissio
 		//
-		 while ((_can->TXBTO & (1 << index)) == 0)
-			 continue;
+		// while ((_can->TXBTO & (1 << index)) == 0)
+		//	 continue;
 
 		return eos::Results::success;
 	}
@@ -489,16 +542,18 @@ eos::Result CANDevice::send(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Reb un missatge del bus.
+/// \brief    Obte un missatge del fifo.
 /// \param    fifo: El fifo.
-/// \param    header: Buffer de la capcelera del missatge.
-/// \param    data: Buffer de les dades del missatge.
+/// \param    header: Buffer per la capcelera de recepcio del missatge.
+/// \param    data: Buffer per les dades del missatge.
+/// \param    dataSize: Tamany del buffer de dades.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result CANDevice::receive(
+eos::Result CANDevice::getRxMessage(
 	RxFifoSelection fifo,
-	RxFifoHeader *header,
-	uint8_t *data) {
+	RxHeader *header,
+	uint8_t *data,
+	unsigned dataSize) {
 
 	if (_state == State::running) {
 
@@ -506,7 +561,7 @@ eos::Result CANDevice::receive(
 
 			unsigned index = getRxFifoGetIndex(fifo);
 
-			copyFromRxFifo(fifo, header, data, index);
+			copyFromRxFifo(fifo, header, data, dataSize, index);
 
 			if (fifo == RxFifoSelection::fifo0)
 				_can->RXF0A = index;
@@ -520,6 +575,80 @@ eos::Result CANDevice::receive(
 	}
 	else
 		return eos::Results::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que s'ha rebut un nopu missatge en el RxFIFO
+/// \param    fifl: El fifo.
+/// \param    irq: Indica wqu nla notificacio s'ha produit d'ins d'una interrupcio
+///
+void CANDevice::notifyRxFifoNotEmpty(
+	RxFifoSelection fifo,
+	bool irq) {
+
+	if (_erNotification.isEnabled()) {
+
+		NotificationEventArgs args = {
+			.id {NotificationID::rxFifoNotEmpty},
+			.irq {irq},
+			.rxFifoNotEmpty {
+				.fifo {fifo}
+			}
+		};
+		_erNotification(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que finalitzar la transmissio d'un missatge en TxBuffer
+/// \param    irq: Indica wqu nla notificacio s'ha produit d'ins d'una interrupcio
+///
+void CANDevice::notifyTxCompleted(
+	bool irq) {
+
+	if (_erNotification.isEnabled()) {
+
+		NotificationEventArgs args = {
+			.id {NotificationID::txCompleted},
+			.irq {irq},
+			.txCompleted {
+			}
+		};
+		_erNotification(this, &args);
+	}
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa les interrupcions
+///
+void CANDevice::interruptService() {
+
+	auto IR = _can->IR & _can->IE; // Obte les intrerrupcions actives i habilitades
+	if (IR != 0) {
+
+		// Missatge rebut en RxFIFO0
+		//
+		if (isSet(IR, FDCAN_IR_RF0N)) {
+			set(_can->IR, FDCAN_IR_RF0N);
+			notifyRxFifoNotEmpty(RxFifoSelection::fifo0, true);
+		}
+
+		// Missatge rebut en RxFIFO1
+		//
+		if (isSet(IR, FDCAN_IR_RF1N)) {
+			set(_can->IR, FDCAN_IR_RF1N);
+			notifyRxFifoNotEmpty(RxFifoSelection::fifo1, true);
+		}
+
+		// Transmissio del missatge en TxBuffer completada
+		//
+		if (isSet(IR, FDCAN_IR_TC)) {
+			set(_can->IR, FDCAN_IR_TC);
+			notifyTxCompleted(true);
+		}
+	}
 }
 
 
@@ -578,8 +707,8 @@ unsigned CANDevice::getRxFifoFillLevel(
 /// \param    data: Les dades del missatge
 ///
 void CANDevice::copyToTxBuffer(
-	TxBufferHeader *header,
-	uint8_t *data,
+	const TxHeader *header,
+	const uint8_t *data,
 	unsigned index) {
 
 	// Prepara l'element T0 de la capcelera
@@ -614,7 +743,7 @@ void CANDevice::copyToTxBuffer(
 	pBuffer->T0 = T0;
 	pBuffer->T1 = T1;
 
-	// Escriu les dades en el buffer
+	// Escriu les dades en el buffer. Nomes permet escriptura en modus 32bits.
 	//
 	unsigned bytesRemain = __dataLengthTbl[(unsigned)header->dataLength];
 	unsigned wordCount = 0;
@@ -659,12 +788,14 @@ void CANDevice::copyToTxBuffer(
 /// \param    fifo: El fifo.
 /// \param    header: Buffer de la capcelera del missatge.
 /// \param    data: Buffer de dades del missatge.
+/// \param    dataSize: Tamany del buffer de dades en bytes.
 /// \param    index: Index del fifo.
 ///
 void CANDevice::copyFromRxFifo(
 	RxFifoSelection fifo,
-	RxFifoHeader *header,
+	RxHeader *header,
 	uint8_t *data,
+	unsigned dataSize,
 	unsigned index) {
 
 	auto *pBuffer = getRxFifoAddr(fifo, index);
@@ -683,10 +814,11 @@ void CANDevice::copyFromRxFifo(
 	header->bitrateSwitching = ((pBuffer->R1 & R1::BRS_Msk) >> R1::BRS_Pos) == 0 ? BitrateSwitching::off : BitrateSwitching::on;
 	header->fdFormat = ((pBuffer->R1 & R1::FDF_Msk) >> R1::FDF_Pos) == 0 ? FDFormat::can : FDFormat::fdcan;
 
-	// Obte les dades
+	// Obte les dades. Les lectures en mode 32bits son mes eficients.
 	//
 	uint8_t *p = (uint8_t*) pBuffer->data;
-	for (unsigned i = 0; i < __dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]; i++)
+	unsigned ii = eos::min(dataSize, (unsigned)__dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]);
+	for (unsigned i = 0; i < ii; i++)
 		data[i] = p[i];
 }
 
@@ -752,3 +884,6 @@ CANDevice::ExtendedFilterElement* CANDevice::getExtendedFilterAddr(
 		offsetof(MessageRam, extendedFilter) +
 		index * sizeof(ExtendedFilterElement));
 }
+
+
+#endif // defined(HTL_CANx_EXIST)

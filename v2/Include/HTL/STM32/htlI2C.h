@@ -3,14 +3,15 @@
 #define __STM32_htlI2C__
 
 
-/// \file      htlI2C.h
-/// \author    Rafael Serrano (rsr.openware@gmail.com)
-/// \brief     I2C device manager.
+#include "HTL/htl.h"
+
+
+#ifdef HTL_I2Cx_EXIST
 
 
 // EOS includes
 //
-#include "HTL/STM32/htl.h"
+
 #include "HTL/STM32/htlGPIO.h"
 
 // Default options
@@ -617,6 +618,9 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
+
+
+#endif // defined(HTL_I2Cx_EXIST)
 
 
 #endif // __STM32_htlI2C__

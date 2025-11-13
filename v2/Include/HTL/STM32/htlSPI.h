@@ -3,9 +3,10 @@
 #define __STM32_htlSPI__
 
 
-/// \file      htlSPI.h
-/// \author    Rafael Serrano (rsr.openware@gmail.com)
-/// \brief     SPI device manager.
+#include "HTL/htl.h"
+
+
+#ifdef HTL_SPIx_EXIST
 
 
 // HTL main includes
@@ -40,8 +41,6 @@
 namespace htl {
 
 	namespace spi {
-
-        class SPIDevice;
 
 		enum class DeviceID {
 #ifdef HTL_SPI1_EXIST
@@ -106,25 +105,22 @@ namespace htl {
 			mosi
 		};
 
-        enum class NotifyID {
-		    null,
-		    completed,
-		    error
-		};
-
-        struct NotifyEventArgs {
-        	NotifyID const id;
-            bool const irq;
-        };
-
-        using NotifyEventRaiser = eos::EventRaiser<SPIDevice, NotifyEventArgs>;
-        using INotifyEvent = NotifyEventRaiser::IEvent;
-        template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
-
-
 		class SPIDevice {
 			public:
-				enum class State {
+                enum class NotificationID {
+        		    null,
+        		    completed,
+        		    error
+        		};
+                struct NotificationEventArgs {
+                	NotificationID const id;
+                    bool const irq;
+                };
+                using NotificationEventRaiser = eos::EventRaiser<SPIDevice, NotificationEventArgs>;
+                using INotificationEvent = NotificationEventRaiser::IEvent;
+                template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+
+                enum class State {
 					reset,
 					ready,
 					transmiting
@@ -133,7 +129,7 @@ namespace htl {
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
-				NotifyEventRaiser _erNotify;
+				NotificationEventRaiser _erNotification;
 
 			private:
 				SPIDevice(const SPIDevice &) = delete;
@@ -199,14 +195,14 @@ namespace htl {
 				eos::Result deinitialize();
 #endif
 
-				void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-					_erNotify.set(event, enabled);
+				void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
+					_erNotification.set(event, enabled);
 				}
-				void enableNotifyEvent() {
-					_erNotify.enable();
+				void enableNotificationEvent() {
+					_erNotification.enable();
 				}
-				void disableNotifyEvent() {
-					_erNotify.disable();
+				void disableNotificationEvent() {
+					_erNotification.disable();
 				}
 
 				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
@@ -353,6 +349,9 @@ namespace htl {
 #else
     #error "Unknown platform"
 #endif
+
+
+#endif // defined(HTL_SPIx_EXIST)
 
 
 #endif // __STM32_htlSPI__

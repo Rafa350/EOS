@@ -3,6 +3,9 @@
 #define __eosBoard__
 
 
+#include "eos.h"
+
+
 #if defined(HARDWARE_CUSTOM)
     #include "Board/eosBoard_Custom.h"
 

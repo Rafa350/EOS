@@ -23,6 +23,10 @@ namespace htl {
 
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APBENR1);
 				static constexpr uint32_t activatePos = RCC_APBENR1_FDCANEN_Pos;
+
+				static constexpr uint32_t clockSourceAddr = RCC_BASE + offsetof(RCC_TypeDef, CCIPR2);
+				static constexpr uint32_t clockSourcePos = RCC_CCIPR2_FDCANSEL_Pos;
+				static constexpr uint32_t clockSourceMsk = RCC_CCIPR2_FDCANSEL_Msk;
 			};
 #endif
 

@@ -4,6 +4,11 @@
 
 
 #include "HTL/htl.h"
+
+
+#ifdef HTL_CANx_EXIST
+
+
 #include "HTL/htlBits.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -45,6 +50,12 @@ namespace htl {
 		enum class RxFifoSelection {
 			fifo0,
 			fifo1
+		};
+
+		enum class ClockSource {
+			pclk,
+			pllqclk,
+			hse
 		};
 
 		namespace internal {
@@ -108,7 +119,7 @@ namespace htl {
 			store
 		};
 
-		struct TxBufferHeader {
+		struct TxHeader {
 			Identifier id;
 			IdentifierType idType;
 			DataLength dataLength;
@@ -120,7 +131,7 @@ namespace htl {
 			uint8_t messageMarker;
 		};
 
-		struct RxFifoHeader {
+		struct RxHeader {
 			Identifier id;
 			IdentifierType idType;
 			DataLength dataLength;
@@ -129,6 +140,13 @@ namespace htl {
 			unsigned filterIndex;
 			BitrateSwitching bitrateSwitching;
 			FDFormat fdFormat;
+		};
+
+		struct TxEvent {
+			Identifier id;
+			IdentifierType idType;
+			DataLength dataLength;
+			FrameType frameType;
 		};
 
 		enum class FilterType {
@@ -205,27 +223,47 @@ namespace htl {
 			queue
 		};
 
-		struct InitInfo {
-			ClockDivider clockDivider;
-			FrameFormat frameFormat;
-			Mode mode;
-			bool autoRetransmission;
-			bool transmitPause;
-			bool protocolException;
-			unsigned nominalPrescaler;
-			unsigned nominalSyncJumpWidth;
-			unsigned nominalTimeSeg1;
-			unsigned nominalTimeSeg2;
-			unsigned dataPrescaler;
-			unsigned dataSyncJumpWidth;
-			unsigned dataTimeSeg1;
-			unsigned dataTimeSeg2;
-			unsigned stdFiltersNbr;
-			unsigned extFiltersNbr;
-			QFMode qfMode;
-		};
-
 		class CANDevice {
+			public:
+				struct InitParams {
+					ClockDivider clockDivider;
+					FrameFormat frameFormat;
+					Mode mode;
+					bool autoRetransmission;
+					bool transmitPause;
+					bool protocolException;
+					unsigned nominalPrescaler;
+					unsigned nominalSyncJumpWidth;
+					unsigned nominalTimeSeg1;
+					unsigned nominalTimeSeg2;
+					unsigned dataPrescaler;
+					unsigned dataSyncJumpWidth;
+					unsigned dataTimeSeg1;
+					unsigned dataTimeSeg2;
+					unsigned stdFiltersNbr;
+					unsigned extFiltersNbr;
+					QFMode qfMode;
+				};
+
+				enum class NotificationID {
+					rxFifoNotEmpty,
+					txCompleted
+				};
+				struct NotificationEventArgs {
+					NotificationID id;
+					bool irq;
+					union {
+						struct {
+							RxFifoSelection fifo;
+						} rxFifoNotEmpty;
+						struct {
+						} txCompleted;
+					};
+				};
+				using NotificationEventRaiser = eos::EventRaiser<CANDevice, NotificationEventArgs>;
+				using INotificationEvent = NotificationEventRaiser::IEvent;
+				template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+
 			public:
 				enum class State {
 					reset,
@@ -273,6 +311,7 @@ namespace htl {
 				FDCAN_GlobalTypeDef * const _can;
 				uint8_t * const _ram;
 				State _state;
+				NotificationEventRaiser _erNotification;
 
 			private:
 				inline void activate() {
@@ -283,13 +322,16 @@ namespace htl {
 					deactivateImpl();
 				}
 
+				void notifyRxFifoNotEmpty(RxFifoSelection fifo, bool irq);
+				void notifyTxCompleted(bool irq);
+
 			protected:
 				CANDevice(FDCAN_GlobalTypeDef *can, uint8_t *ram);
 
 				virtual void activateImpl() = 0;
 				virtual void deactivateImpl() = 0;
 
-				void interruptService()
+				void interruptService();
 
 			private:
 				unsigned getTxBufferFreeLevel() const;
@@ -303,22 +345,24 @@ namespace htl {
 				StandardFilterElement* getStandardFilterAddr(unsigned index) const;
 				ExtendedFilterElement* getExtendedFilterAddr(unsigned index) const;
 
-				void copyToTxBuffer(TxBufferHeader *header, uint8_t *data, unsigned index);
-				void copyFromRxFifo(RxFifoSelection fifo, RxFifoHeader *header, uint8_t *data, unsigned index);
+				void copyToTxBuffer(const TxHeader *header, const uint8_t *data, unsigned index);
+				void copyFromRxFifo(RxFifoSelection fifo, RxHeader *header, uint8_t *data, unsigned dataSize, unsigned index);
 
 			public:
-				eos::Result initialize(InitInfo *info);
+				eos::Result initialize(InitParams const * const params);
 				eos::Result deinitialize();
 
 				eos::Result start();
+				eos::Result start_IRQ();
 				eos::Result stop();
 
 				void clearFilters();
 				eos::Result setFilter(Filter *filter, unsigned index);
 				eos::Result setGlobalFilter(NonMatchingFrames nonMatchingStd, NonMatchingFrames nonMatchingExt, RejectRemoteFrames rejectRemoteStd, RejectRemoteFrames rejectRemoteExt);
 
-				eos::Result send(TxBufferHeader *header, uint8_t *data);
-				eos::Result receive(RxFifoSelection fifo, RxFifoHeader *header, uint8_t *data);
+				eos::Result addTxMessage(const TxHeader *header, const uint8_t *data);
+				eos::Result getRxMessage(RxFifoSelection fifo, RxHeader *header, uint8_t *data, unsigned dataSize);
+				eos::Result getTxEvent();
 
 				inline bool isRxFifoEmpty(RxFifoSelection fifo) const {
 					return getRxFifoFillLevel(fifo) == 0;
@@ -335,6 +379,21 @@ namespace htl {
 				inline bool isTxBufferNotFull() const {
 					return getTxBufferFreeLevel() != 0;
 				}
+
+				State getState() const {
+					return _state;
+				}
+
+				inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
+					_erNotification.set(event, enabled);
+				}
+				inline void enableNotificationEvent() {
+					_erNotification.enable();
+				}
+				inline void disableNotificationEvent() {
+					_erNotification.disable();
+				}
+
 		};
 
 		template <DeviceID deviceID_>
@@ -348,6 +407,9 @@ namespace htl {
 				static constexpr auto _ramAddr = CANTraits::ramAddr;
 				static constexpr auto _activateAddr = CANTraits::activateAddr;
 				static constexpr auto _activatePos = CANTraits::activatePos;
+				static constexpr auto _clockSourceAddr = CANTraits::clockSourceAddr;
+				static constexpr auto _clockSourcePos = CANTraits::clockSourcePos;
+				static constexpr auto _clockSourceMsk = CANTraits::clockSourceMsk;
 				static CANDeviceX _instance;
 
 			public:
@@ -383,6 +445,13 @@ namespace htl {
 					auto af = CANPins<PinFunction::rx, pin_::portID, pin_::pinID>::value;
 					pin_::pInst->initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
+
+				void initClockSource(ClockSource clockSource) {
+					uint32_t *p = reinterpret_cast<uint32_t *>(_clockSourceAddr);
+					*p &= ~_clockSourceMsk;
+					*p |= ((uint32_t)clockSource << _clockSourcePos) & _clockSourceMsk;
+				}
+
 #if HTL_FDCAN_OPTION_IRQ == 1
 				inline static void interruptHandler() {
 					_instance.interruptService();
@@ -403,6 +472,9 @@ namespace htl {
     #include "htl/STM32/G0/htlCAN_Traits.h"
     #include "htl/STM32/G0/G0B1/htlCAN_Pins.h"
 #endif
+
+
+#endif // defined(HTL_CANx_EXIST)
 
 
 #endif // __STM32_htlCAN_H

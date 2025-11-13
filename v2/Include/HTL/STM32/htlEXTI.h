@@ -65,26 +65,25 @@ namespace htl {
 			all
 		};
 
-		class EXTIDevice;
-
-		enum class NotificationID {
-			pinEdge
-		};
-		struct NotificationEventArgs {
-			NotificationID const id;
-			bool const irq;
-			union {
-				struct {
-					uint16_t const falling;
-					uint16_t const rissing;
-				} pinEdge;
-			};
-		};
-		using NotificationEventRaiser = eos::EventRaiser<EXTIDevice, NotificationEventArgs>;
-		using INotificationEvent = NotificationEventRaiser::IEvent;
-        template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
-
 		class EXTIDevice final {
+			public:
+        		enum class NotificationID {
+        			pinEdge
+        		};
+        		struct NotificationEventArgs {
+        			NotificationID const id;
+        			bool const irq;
+        			union {
+        				struct {
+        					uint16_t const falling;
+        					uint16_t const rissing;
+        				} pinEdge;
+        			};
+        		};
+        		using NotificationEventRaiser = eos::EventRaiser<EXTIDevice, NotificationEventArgs>;
+        		using INotificationEvent = NotificationEventRaiser::IEvent;
+                template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+
 			private:
 				static EXTIDevice _instance;
 
