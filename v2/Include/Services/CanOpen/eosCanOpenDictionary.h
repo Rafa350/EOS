@@ -33,10 +33,29 @@ namespace eos {
 		uint32_t data;
 	};
 
+	class CanOpenDictionary final {
+		private:
+			const CoDictionaryEntry * const _entries;
+			unsigned const _numEntries;
 
-	constexpr uint32_t makeCobId(uint8_t function, uint8_t nodeId) {
-		return ((function & 0xF) << 7) | (nodeId & 0x7F);
-	}
+		public:
+			CanOpenDictionary(const CoDictionaryEntry *entries, unsigned numEntries);
+
+			unsigned find(uint16_t index, uint8_t subIndex) const;
+
+			unsigned getDataLength(unsigned entryId) const;
+
+			bool canWrite(unsigned entryId) const;
+			bool write(unsigned entryId, unsigned value) const;
+			bool writeU8(unsigned entryId, uint8_t value) const;
+			bool writeU16(unsigned entryId, uint16_t value) const;
+			bool writeU32(unsigned entryId, uint32_t value) const;
+
+			bool canRead(unsigned entryId) const;
+			bool readU8(unsigned entryId, uint8_t &value) const;
+			bool readU16(unsigned entryId, uint16_t &value) const;
+			bool readU32(unsigned entryId, uint32_t &value) const;
+	};
 }
 
 

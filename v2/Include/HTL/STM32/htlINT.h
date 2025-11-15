@@ -60,23 +60,23 @@ namespace htl {
 #endif
 
 #if defined(STM32G0)
-		void setInterruptVectorPriority(VectorID vector, Priority priority);
+		void setInterruptVectorPriority(VectorID vectorId, Priority priority);
 
 #elif defined(STM32F4) || defined(STM32F7)
-		void setInterruptVectorPriority(VectorID vector, Priority priority,
+		void setInterruptVectorPriority(VectorID vectorId, Priority priority,
 		        SubPriority subPriority = SubPriority::sp0);
 #endif
 
 		inline void enableInterruptVector(
-			VectorID vector) {
+			VectorID vectorId) {
 
-			NVIC_EnableIRQ(static_cast<IRQn_Type>(vector));
+			NVIC_EnableIRQ(static_cast<IRQn_Type>(vectorId));
 		}
 
 		inline void disableInterruptVector(
-			VectorID vector) {
+			VectorID vectorId) {
 
-			NVIC_DisableIRQ(static_cast<IRQn_Type>(vector));
+			NVIC_DisableIRQ(static_cast<IRQn_Type>(vectorId));
 		}
 
         inline bool getInterruptState() {

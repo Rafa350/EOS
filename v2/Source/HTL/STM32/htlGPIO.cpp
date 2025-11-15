@@ -73,18 +73,35 @@ PinDevice::PinDevice(
     _gpio {gpio},
     _mask {bit} {
 
-
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
-/// \param    info: Parametres d'inicialitzacio.
+/// \param    params: Parametres d'inicialitzacio.
 ///
 void PinDevice::initialize(
-    const InitInfo &info) const {
+    const InitParams &params) const {
 
-    htl::gpio::initialize(_gpio, _mask, &info);
+    switch(params.mode) {
+        case InitMode::input:
+            initInput(params.input.pupd);
+            break;
+
+        case InitMode::output:
+        	initOutput(params.output.type, params.output.pupd,
+        		params.output.speed, params.output.state);
+            break;
+
+        case InitMode::alternate:
+        	initAlternate(params.alternate.type, params.alternate.pupd,
+        		params.alternate.speed, params.alternate.function);
+            break;
+
+        case InitMode::analogic:
+        	initAnalogic();
+            break;
+    }
 }
 
 

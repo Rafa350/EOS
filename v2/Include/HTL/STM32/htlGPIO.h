@@ -159,40 +159,6 @@ namespace htl {
             analogic
         };
 
-        /// \brief Parametres d'inicialitzacio.
-        ///
-        struct InitInfo {
-            InitMode mode;
-            union {
-                struct {
-                    PullUpDown pupd;
-                } input;
-                struct {
-                    OutputType type;
-                    PullUpDown pupd;
-                    Speed speed;
-                    bool state;
-                } output;
-                struct {
-                    OutputType type;
-                    PullUpDown pupd;
-                    Speed speed;
-                    AlternateFunction function;
-                } alternate;
-                struct {
-                } analogic;
-            };
-        };
-
-        /// \brief Edge interrupcion selection
-        ///
-		enum class Edge {
-            none,
-			falling,
-			rising,
-			all
-		};
-
 		namespace internal {
 
             template <PortID>
@@ -205,7 +171,6 @@ namespace htl {
             struct PinTraits;
         }
 
-		void initialize(GPIO_TypeDef * const gpio, PinMask mask, const InitInfo *info);
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
 		void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
 		void deinitialize(GPIO_TypeDef * const gpio, PinBit bit);
@@ -348,6 +313,29 @@ namespace htl {
         /// brief Clase que representa un pin individual.
         ///
 		class PinDevice {
+			public:
+                struct InitParams {
+                    InitMode mode;
+                    union {
+                        struct {
+                            PullUpDown pupd;
+                        } input;
+                        struct {
+                            OutputType type;
+                            PullUpDown pupd;
+                            Speed speed;
+                            bool state;
+                        } output;
+                        struct {
+                            OutputType type;
+                            PullUpDown pupd;
+                            Speed speed;
+                            AlternateFunction function;
+                        } alternate;
+                        struct {
+                        } analogic;
+                    };
+                };
 			private:
 		        GPIO_TypeDef * const _gpio;
 		        PinMask const _mask;
@@ -378,7 +366,7 @@ namespace htl {
                 void initOutput(OutputType type, PullUpDown pupd, Speed speed, bool state) const;
                 void initAlternate(OutputType outputType, PullUpDown pupd, Speed speed, AlternateFunction af) const;
                 void initAnalogic() const;
-                void initialize(const InitInfo &info) const;
+                void initialize(const InitParams &params) const;
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
                 void deinitialize() const;
 #endif

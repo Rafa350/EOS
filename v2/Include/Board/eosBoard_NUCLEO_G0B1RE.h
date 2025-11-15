@@ -80,7 +80,7 @@
 #define EXIST_SIO
 
 #define SIO_UART_Device           htl::uart::UARTDevice2
-#define SIO_UART_InterruptHandler USART2_IRQHandler
+#define SIO_UART_InterruptHandler USART2_LPUART2_IRQHandler
 #define SIO_UART_IrqVector        htl::irq::VectorID::uart2
 #define SIO_TX_Pin                htl::gpio::PinA2
 #define SIO_RX_Pin                htl::gpio::PinA3

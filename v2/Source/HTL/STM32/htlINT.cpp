@@ -9,13 +9,13 @@
 /// \param    prioriti: La prioritat.
 ///
 void htl::irq::setInterruptVectorPriority(
-    VectorID vectorID,
+    VectorID vectorId,
     Priority priority) {
 
     uint32_t priorityGroup = NVIC_GetPriorityGrouping();
 
     NVIC_SetPriority(
-        static_cast<IRQn_Type>(vectorID),
+        static_cast<IRQn_Type>(vectorId),
         NVIC_EncodePriority(priorityGroup, static_cast<uint32_t>(priority), 0));
 }
 #elif defined(STM32F4) || defined(STM32F7)
@@ -26,7 +26,7 @@ void htl::irq::setInterruptVectorPriority(
 /// \param    subPriority: La subprioritat.
 ///
 void htl::irq::setInterruptVectorPriority(
-    VectorID vectorID,
+    VectorID vectorId,
     Priority priority,
     SubPriority subPriority) {
 

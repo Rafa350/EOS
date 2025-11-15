@@ -51,39 +51,6 @@ using namespace htl::gpio::internal;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza els pins.
-/// \param    gpio: Registres de hardware del GPIO.
-/// \param    mack: mascara de pins
-/// \param    info: Informacio per la inicialitzacio.
-///
-void htl::gpio::initialize(
-    GPIO_TypeDef * const gpio,
-	PinMask mask,
-    const InitInfo *info) {
-
-    switch(info->mode) {
-        case InitMode::input:
-            initInput(gpio, mask, info->input.pupd);
-            break;
-
-        case InitMode::output:
-        	initOutput(gpio, mask, info->output.type, info->output.pupd,
-        		info->output.speed, info->output.state);
-            break;
-
-        case InitMode::alternate:
-        	initAlternate(gpio, mask, info->alternate.type, info->alternate.pupd,
-        		info->alternate.speed, info->alternate.function);
-            break;
-
-        case InitMode::analogic:
-        	initAnalogic(gpio, mask);
-            break;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Inicialitza els pins com a entrades.
 /// \param    gpio: Registres de hardware del GPIO.
 /// \param    mask: Mascara dels pins a inicialitzar.
