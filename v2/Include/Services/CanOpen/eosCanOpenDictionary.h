@@ -9,20 +9,18 @@
 namespace eos {
 
 	enum class CoAccess: uint8_t {
-		rw,
-		ro,
-		wo
+		readWrite,
+		readOnly,
+		writeOnly,
+		constant
 	};
 
 	enum class CoType: uint8_t {
-		u8,
-		u16,
-		u32,
-		b,
-		pu8,
-		pu16,
-		pu32,
-		pb,
+		unsigned8,
+		unsigned16,
+		unsigned32,
+		boolean,
+		bytes
 	};
 
 	struct CoDictionaryEntry {
@@ -52,6 +50,7 @@ namespace eos {
 			bool writeU32(unsigned entryId, uint32_t value) const;
 
 			bool canRead(unsigned entryId) const;
+			bool read(unsigned entryId, unsigned &value) const;
 			bool readU8(unsigned entryId, uint8_t &value) const;
 			bool readU16(unsigned entryId, uint16_t &value) const;
 			bool readU32(unsigned entryId, uint32_t &value) const;

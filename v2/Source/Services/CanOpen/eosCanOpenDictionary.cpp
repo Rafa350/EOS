@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Services/CanOpen/eosCanOpenService.h"
+#include "Services/CanOpen/eosCanOpenDictionary.h"
 
 
 using namespace eos;
@@ -41,25 +41,28 @@ unsigned CanOpenDictionary::find(
 	return (unsigned) -1;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte la longitut en bits de les dades d'una entrada.
+/// \return   El resultat de l'operacio.
+///
 unsigned CanOpenDictionary::getDataLength(
 	unsigned entryId) const {
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
 		switch (entry->type) {
-			case CoType::b:
-			case CoType::pb:
-			case CoType::u8:
-			case CoType::pu8:
-				return 1;
+			case CoType::boolean:
+				return sizeof(bool);
 
-			case CoType::u16:
-			case CoType::pu16:
-				return 2;
+			case CoType::unsigned8:
+				return sizeof(uint8_t);
 
-			case CoType::u32:
-			case CoType::pu32:
-				return 4;
+			case CoType::unsigned16:
+				return sizeof(uint16_t);
+
+			case CoType::unsigned32:
+				return sizeof(uint32_t);
 		}
 	}
 
@@ -78,7 +81,7 @@ bool CanOpenDictionary::canWrite(
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
 		return
-			((entry->access == CoAccess::rw) || (entry->access == CoAccess::wo)) &&
+			((entry->access == CoAccess::readWrite) || (entry->access == CoAccess::writeOnly)) &&
 			(entry->data != 0);
 	}
 
@@ -96,15 +99,23 @@ bool CanOpenDictionary::canRead(
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		return
-			((entry->access == CoAccess::rw) || (entry->access == CoAccess::ro)) &&
-			(entry->data != 0);
+		if (entry->access == CoAccess::constant)
+			return true;
+		else
+			return
+				((entry->access == CoAccess::readWrite) || (entry->access == CoAccess::readOnly)) &&
+				(entry->data != 0);
 	}
 
 	return false;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un valor unsigned en la entrada especificada.
+/// \param    entryId: El identificador de l'entrada.
+/// \param    value: El valor a escriure.
+///
 bool CanOpenDictionary::write(
 	unsigned entryId,
 	unsigned value) const {
@@ -112,13 +123,13 @@ bool CanOpenDictionary::write(
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
 		switch (entry->type) {
-			case CoType::pu8:
+			case CoType::unsigned8:
 				return writeU8(entryId, value);
 
-			case CoType::pu16:
+			case CoType::unsigned16:
 				return writeU16(entryId, value);
 
-			case CoType::pu32:
+			case CoType::unsigned32:
 				return writeU32(entryId, value);
 		}
 	}
@@ -128,7 +139,7 @@ bool CanOpenDictionary::write(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor de 8 bits, en l'entrada especificada.
+/// \brief    Escriu un valor uint8_t, en l'entrada especificada.
 /// \param    El identificador de l'entrada.
 /// \param    El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
@@ -139,7 +150,7 @@ bool CanOpenDictionary::writeU8(
 
 	if (canWrite(entryId)) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::pu8) {
+		if (entry->type == CoType::unsigned8) {
 			*((uint8_t*)entry->data) = value;
 			return true;
 		}
@@ -150,7 +161,7 @@ bool CanOpenDictionary::writeU8(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor de 16 bits, en l'entrada especificada.
+/// \brief    Escriu un valor uint16_t, en l'entrada especificada.
 /// \param    El identificador de l'entrada.
 /// \param    El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
@@ -161,7 +172,7 @@ bool CanOpenDictionary::writeU16(
 
 	if (canWrite(entryId)) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::pu16) {
+		if (entry->type == CoType::unsigned16) {
 			*((uint16_t*)entry->data) = value;
 			return true;
 		}
@@ -172,7 +183,7 @@ bool CanOpenDictionary::writeU16(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor de 32 bits, en l'entrada especificada.
+/// \brief    Escriu un valor uint32_t, en l'entrada especificada.
 /// \param    El identificador de l'entrada.
 /// \param    El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
@@ -183,7 +194,7 @@ bool CanOpenDictionary::writeU32(
 
 	if (canWrite(entryId)) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::pu32) {
+		if (entry->type == CoType::unsigned32) {
 			*((uint32_t*)entry->data) = value;
 			return true;
 		}
@@ -193,14 +204,23 @@ bool CanOpenDictionary::writeU32(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    LLegeix un valor uint8_t
+/// \param    El identificador de l'entrada.
+/// \param    value: El valor retornat.
+/// \return   True si tot es correcte, false en cas contrari.
+///
 bool CanOpenDictionary::readU8(
 	unsigned entryId,
 	uint8_t &value) const {
 
 	if (canRead(entryId)) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::pu8) {
-			value = *((uint8_t*)entry->data);
+		if (entry->type == CoType::unsigned8) {
+			if (entry->access == CoAccess::constant)
+				value = entry->data;
+			else
+				value = *((uint8_t*)entry->data);
 			return true;
 		}
 	}
@@ -209,14 +229,63 @@ bool CanOpenDictionary::readU8(
 }
 
 
+bool CanOpenDictionary::read(
+	unsigned entryId,
+	unsigned &value) const {
+
+	bool result = false;
+
+	if (entryId < _numEntries) {
+		auto entry = &_entries[entryId];
+		switch (entry->type) {
+
+			case CoType::boolean:
+				break;
+
+			case CoType::unsigned8: {
+				uint8_t v;
+				result = readU8(entryId, v);
+				value = v;
+				break;
+			}
+
+			case CoType::unsigned16: {
+				uint16_t v;
+				result = readU16(entryId, v);
+				value = v;
+				break;
+			}
+
+			case CoType::unsigned32: {
+				uint32_t v;
+				result = readU32(entryId, v);
+				value = v;
+				break;
+			}
+		}
+	}
+
+	return result;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    LLegeix un valor uint16_t
+/// \param    El identificador de l'entrada.
+/// \param    value: El valor retornat.
+/// \return   True si tot es correcte, false en cas contrari.
+///
 bool CanOpenDictionary::readU16(
 	unsigned entryId,
 	uint16_t &value) const {
 
 	if (canRead(entryId)) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::pu16) {
-			value = *((uint16_t*)entry->data);
+		if (entry->type == CoType::unsigned16) {
+			if (entry->access == CoAccess::constant)
+				value = entry->data;
+			else
+				value = *((uint16_t*)entry->data);
 			return true;
 		}
 	}
@@ -225,14 +294,23 @@ bool CanOpenDictionary::readU16(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    LLegeix un valor uint32_t
+/// \param    El identificador de l'entrada.
+/// \param    value: El valor retornat.
+/// \return   True si tot es correcte, false en cas contrari.
+///
 bool CanOpenDictionary::readU32(
 	unsigned entryId,
 	uint32_t &value) const {
 
 	if (canRead(entryId)) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::pu32) {
-			value = *((uint32_t*)entry->data);
+		if (entry->type == CoType::unsigned32) {
+			if (entry->access == CoAccess::constant)
+				value = entry->data;
+			else
+				value = *((uint32_t*)entry->data);
 			return true;
 		}
 	}

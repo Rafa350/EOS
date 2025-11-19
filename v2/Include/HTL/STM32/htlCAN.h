@@ -357,6 +357,7 @@ namespace htl {
 				eos::Result stop();
 
 				void clearFilters();
+				void setMaxFilters(unsigned maxStdFilters, unsigned maxExtFilters);
 				eos::Result setFilter(Filter *filter, unsigned index);
 				eos::Result setGlobalFilter(NonMatchingFrames nonMatchingStd, NonMatchingFrames nonMatchingExt, RejectRemoteFrames rejectRemoteStd, RejectRemoteFrames rejectRemoteExt);
 

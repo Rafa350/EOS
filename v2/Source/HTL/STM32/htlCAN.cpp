@@ -433,6 +433,10 @@ eos::Result CANDevice::setFilter(
 		//
 	    if (filter->idType == IdentifierType::standard) {
 
+	    	uint8_t maxIndex = (_can->RXGFC & FDCAN_RXGFC_LSS_Msk) >> FDCAN_RXGFC_LSS_Pos;
+	    	if (index >= maxIndex)
+	    		return eos::Results::error;
+
 	    	uint32_t SF = 0;
 	    	set(SF, ((uint32_t)filter->type << SF::SFT_Pos) & SF::SFT_Msk);
 	    	set(SF, ((uint32_t)filter->config << SF::SFEC_Pos) & SF::SFEC_Msk);
@@ -446,6 +450,10 @@ eos::Result CANDevice::setFilter(
 	    // ID's extesos 29bits
 	    //
 	    else {
+
+	    	uint8_t maxIndex = (_can->RXGFC & FDCAN_RXGFC_LSE_Msk) >> FDCAN_RXGFC_LSE_Pos;
+	    	if (index >= maxIndex)
+	    		return eos::Results::error;
 
 	    	uint32_t EF0 = 0;
 	    	set(EF0, ((uint32_t) filter->config << EF0::EFEC_Pos) & EF0::EFEC_Msk);
@@ -462,6 +470,7 @@ eos::Result CANDevice::setFilter(
 
 	    return eos::Results::success;
 	}
+
 	else
 		return eos::Results::errorState;
 }
