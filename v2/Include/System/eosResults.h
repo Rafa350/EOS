@@ -3,103 +3,119 @@
 #define __eosResults__
 
 
-// STD includes
-//
-#include <type_traits>
-
-
 namespace eos {
 
-	constexpr unsigned SUCCESS_VALUE = 0;
+	template <typename Tag_>
+	class ErrorCodeX {
+		private:
+			const uint8_t _value;
 
-    template <typename Enum_>
-    class ResultBase {
+		private:
+			ErrorCodeX& operator=(const ErrorCodeX&) = delete;
+			ErrorCodeX& operator=(ErrorCodeX&&) = default;
 
-		static_assert(std::is_enum_v<Enum_>);
+		public:
+			constexpr ErrorCodeX(uint8_t value): _value {value} {}
+			constexpr ErrorCodeX(const ErrorCodeX &other): _value {other._value} {}
 
-        private:
-            Enum_ const _result;
+			constexpr explicit operator uint8_t() const { return _value; }
 
-        protected:
-            constexpr ResultBase(Enum_ result) :
-                _result {result} {
-            }
-
-        public:
-            inline operator Enum_() const {
-            	return _result;
-            }
-
-            inline bool operator == (Enum_ result) const {
-            	return _result == result;
-            }
-
-            inline bool operator == (ResultBase result) const {
-            	return _result == result._result;
-            }
-
-            inline bool isSuccess() const {
-            	return (unsigned)_result == SUCCESS_VALUE;
-            }
-    };
-
-
-    template <typename Enum_>
-    class SimpleResult: public ResultBase<Enum_> {
-    	public:
-    		using EnumType = Enum_;
-
-        public:
-            constexpr SimpleResult(Enum_ result) :
-                ResultBase<Enum_> {result} {
-            }
-    };
-
-
-    template <typename Enum_, typename Value_>
-    class ComplexResult: public ResultBase<Enum_> {
-    	public:
-    		using EnumType = Enum_;
-    		using ValueType = Value_;
-
-        private:
-            Value_ const _value;
-
-        public:
-            constexpr ComplexResult(Enum_ status, Value_ value = {}) :
-                ResultBase<Enum_> {status},
-                _value {value} {
-            }
-
-        public:
-            inline Value_ value() const {
-            	return _value;
-            }
-
-            inline operator Value_() const {
-            	return _value;
-            }
-    };
-
-
-	enum class Results {   // Codis d'error
-		success = SUCCESS_VALUE,  // Operacio finalitzada correctament
-		pending,           // Operacio correcte pero pendent de finalitzar
-		timeout,           // S'ha produit timeout
-		busy,              // Ocupat
-		error,             // Error d'operacio
-		errorState,        // Operacio no permesa en l'estat actual
-		errorParameter,    // Error ens els parametres
-		errorUnsupported   // No soportado
+			inline bool operator==(ErrorCodeX other) const { return _value == other._value; }
+            inline bool operator!=(ErrorCodeX other) const { return _value != other._value; }
 	};
 
-	using Result = SimpleResult<Results>;
-	using ResultU8 = ComplexResult<Results, uint8_t>;
-	using ResultU16 = ComplexResult<Results, uint16_t>;
-	using ResultU32 = ComplexResult<Results, uint32_t>;
-	using ResultI8 = ComplexResult<Results, int8_t>;
-	using ResultI16 = ComplexResult<Results, int16_t>;
-	using ResultI32 = ComplexResult<Results, int32_t>;
+	struct ErrorCodeValues {
+		static constexpr uint8_t successBaseValue = 0x00;
+		static constexpr uint8_t errorBaseValue = 0x80;
+	};
+
+	template <typename Tag_>
+	class ResultBaseX {
+		public:
+			using ErrorCode = ErrorCodeX<Tag_>;
+
+		private:
+			ErrorCodeX<Tag_> const _errorCode;
+
+		protected:
+			constexpr ResultBaseX(ErrorCode errorCode): _errorCode {errorCode} {}
+
+		public:
+			operator ErrorCode () const { return _errorCode; }
+
+			ErrorCode errorCode() const { return _errorCode; }
+
+			bool isSuccess() const { return (uint8_t)_errorCode < ErrorCodeValues::errorBaseValue; }
+			bool isError() const { return (uint8_t)_errorCode >= ErrorCodeValues::errorBaseValue; }
+			bool is(ErrorCode errorCode) const { return _errorCode == errorCode; }
+			bool isNot(ErrorCode errorCode) const { return _errorCode != errorCode; }
+	};
+
+	template <typename Tag_>
+	class SimpleResultX: public ResultBaseX<Tag_> {
+		public:
+			using ErrorCode = ErrorCodeX<Tag_>;
+
+		public:
+			constexpr SimpleResultX(ErrorCode errorCode): ResultBaseX<Tag_> {errorCode} {}
+	};
+
+	template <typename Value_, typename Tag_>
+	class ComplexResultX: public ResultBaseX<Tag_> {
+		public:
+			using ErrorCode = ErrorCodeX<Tag_>;
+
+		private:
+			Value_ const _value;
+
+		public:
+			constexpr ComplexResultX(ErrorCode errorCode, Value_ value): ResultBaseX<Tag_> {errorCode}, _value {value} {}
+
+			constexpr explicit operator Value_() const { return _value; }
+
+			Value_ value() const { return _value; }
+	};
+
+
+
+	template <typename Tag_>
+	class StdErrorCodesX {
+		public:
+			using ErrorCode = ErrorCodeX<Tag_>;
+
+		public:
+			static constexpr ErrorCode success           = ErrorCodeValues::successBaseValue + 0; // Operacio finalitzada correctament
+			static constexpr ErrorCode pending           = ErrorCodeValues::successBaseValue + 1; // Operacio correcte pero pendent de finalitzar
+			static constexpr ErrorCode timeout           = ErrorCodeValues::successBaseValue + 2; // S'ha produit timeout
+			static constexpr ErrorCode busy              = ErrorCodeValues::successBaseValue + 3; // Ocupat
+			static constexpr ErrorCode error             = ErrorCodeValues::errorBaseValue + 0;   // Error d'operacio
+			static constexpr ErrorCode errorState        = ErrorCodeValues::errorBaseValue + 1;   // Operacio no permesa en l'estat actual
+			static constexpr ErrorCode errorParameter    = ErrorCodeValues::errorBaseValue + 2;   // Error ens els parametres
+			static constexpr ErrorCode errorUnsupported  = ErrorCodeValues::errorBaseValue + 3;   // No soportado
+	};
+
+	template <typename Tag_>
+	class StdResultX: public SimpleResultX<Tag_>, StdErrorCodesX<Tag_> {
+		public:
+			using ErrorCodes = StdErrorCodesX<Tag_>;
+			using ErrorCode = ErrorCodes::ErrorCode;
+		public:
+			constexpr StdResultX(ErrorCode errorCode): SimpleResultX<Tag_>(errorCode) {}
+	};
+	using Result = StdResultX<struct ResultTag>;
+
+	template <typename Value_, typename Tag_>
+	class StdResultUX: public ComplexResultX<Value_, Tag_>, StdErrorCodesX<Tag_> {
+		public:
+			using ErrorCodes = StdErrorCodesX<Tag_>;
+			using ErrorCode = ErrorCodes::ErrorCode;
+		public:
+			constexpr StdResultUX(ErrorCode errorCode): ComplexResultX<Value_, Tag_>(errorCode, Value_ {}) {}
+			constexpr StdResultUX(ErrorCode errorCode, Value_ value): ComplexResultX<Value_, Tag_>(errorCode, value) {}
+	};
+	using ResultU8 = StdResultUX<uint8_t, struct ResultU8Tag>;
+	using ResultU16 = StdResultUX<uint16_t, struct ResultU16Tag>;
+	using ResultU32 = StdResultUX<uint32_t, struct ResultU32Tag>;
 }
 
 

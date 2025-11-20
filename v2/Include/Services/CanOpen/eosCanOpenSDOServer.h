@@ -3,6 +3,10 @@
 #define __eosCanOpenSDOServer__
 
 
+#include "eos.h"
+#include "System/eosResults.h"
+
+
 namespace eos {
 
 	class CanOpenDictionary;
@@ -25,7 +29,7 @@ namespace eos {
 		public:
 			CanOpenSDOServer(CanOpenDictionary *dictionary);
 
-            void process(const uint8_t *query, uint8_t *response);
+            Result process(const uint8_t *query, uint8_t *response);
             void processInitiateDownloadExpedited(const uint8_t *query, uint8_t *response);
             void processInitiateDownloadNormal(const uint8_t *query, uint8_t *response);
             void processDownloadSegment(const uint8_t *query, uint8_t *response);

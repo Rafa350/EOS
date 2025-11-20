@@ -1,6 +1,6 @@
 #pragma once
 #ifndef __eosCanOpenProtocols__
-#define __eosCasOpenProtocols__
+#define __eosCanOpenProtocols__
 
 
 namespace eos {
@@ -27,11 +27,11 @@ namespace eos {
 
 		// Response
 		static constexpr uint8_t SCS_Pos      = 5;
-		static constexpr uint8_t SCS_Msk      = 0b111 << CCS_Pos;
-		static constexpr uint8_t SCS_ULSEG    = 0 << CCS_Pos;
-		static constexpr uint8_t SCS_DLSEG    = 1 << CCS_Pos;
-		static constexpr uint8_t SCS_UL       = 2 << CCS_Pos;
-		static constexpr uint8_t SCS_DL       = 3 << CCS_Pos;
+		static constexpr uint8_t SCS_Msk      = 0b111 << SCS_Pos;
+		static constexpr uint8_t SCS_ULSEG    = 0 << SCS_Pos;
+		static constexpr uint8_t SCS_DLSEG    = 1 << SCS_Pos;
+		static constexpr uint8_t SCS_UL       = 2 << SCS_Pos;
+		static constexpr uint8_t SCS_DL       = 3 << SCS_Pos;
 
 		// Expedited flag
 		static constexpr uint8_t E_Pos        = 1;
@@ -90,5 +90,5 @@ namespace eos {
 }
 
 
-#endif // __eosCasOpenProtocols__
+#endif // __eosCanOpenProtocols__
 

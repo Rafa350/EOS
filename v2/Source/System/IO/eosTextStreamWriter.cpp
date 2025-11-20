@@ -200,7 +200,7 @@ bool TextStreamWriter::writeChar(
 
 	constexpr unsigned length = sizeof(data);
 	auto writeResult = _stream->write((const uint8_t*)&data, length);
-	return writeResult.isSuccess() && (writeResult == length);
+	return writeResult.isSuccess() && (writeResult.value() == length);
 }
 
 
@@ -218,7 +218,7 @@ bool TextStreamWriter::writeString(
 		unsigned length = strlen(data);
 		if (length > 0) {
 			auto writeResult = _stream->write((const uint8_t*)data, length);
-			return writeResult.isSuccess() && (writeResult == length);
+			return writeResult.isSuccess() && (writeResult.value() == length);
 		}
 	}
 

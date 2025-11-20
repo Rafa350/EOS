@@ -42,10 +42,10 @@ Result SerialStream::initialize(
 	if (_drvSerial == nullptr) {
 		_drvSerial = drvSerial;
 		_drvSerial->initialize();
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 	else
-		return Results::error;
+		return Result::ErrorCodes::error;
 }
 
 
@@ -58,10 +58,10 @@ Result SerialStream::deinitialize() {
 	if (_drvSerial != nullptr) {
 		_drvSerial->deinitialize();
 		_drvSerial = nullptr;
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 	else
-		return Results::error;
+		return Result::ErrorCodes::error;
 }
 
 
@@ -76,21 +76,21 @@ ResultU32 SerialStream::write(
 	unsigned length) {
 
 	if ((data == nullptr) || (length == 0))
-		return Results::errorParameter;
+		return ResultU32::ErrorCodes::errorParameter;
 
 	else if (_drvSerial == nullptr)
-		return Results::errorState;
+		return ResultU32::ErrorCodes::errorState;
 
 	else {
-		if (_drvSerial->transmit(data, length) == Results::busy)
-			return Results::busy;
+		if (_drvSerial->transmit(data, length).is(Result::ErrorCodes::busy))
+			return ResultU32::ErrorCodes::busy;
 		else {
 			auto result = _drvSerial->wait(_txTimeout);
 			if (result.isSuccess())
-				return ResultU32(Results::success, result);
+				return {ResultU32::ErrorCodes::success, result.value()};
 			else {
 				_drvSerial->abort();
-				return Results::timeout;
+				return ResultU32::ErrorCodes::timeout;
 			}
 		}
 	}
@@ -108,20 +108,20 @@ ResultU32 SerialStream::read(
 	unsigned size) {
 
 	if ((data == nullptr) || (size == 0))
-		return Results::errorParameter;
+		return ResultU32::ErrorCodes::errorParameter;
 
 	if (_drvSerial == nullptr)
-		return Results::error;
+		return ResultU32::ErrorCodes::error;
 
 	else {
-		if (_drvSerial->receive(data, size) == Results::busy)
-			return Results::busy;
+		if (_drvSerial->receive(data, size).is(Result::ErrorCodes::busy))
+			return ResultU32::ErrorCodes::busy;
 		else {
 			auto result = _drvSerial->wait(_rxTimeout);
 			if (result.isSuccess())
-				return ResultU32(Results::success, result);
+				return {ResultU32::ErrorCodes::success, result.value()};
 			else
-				return Results::timeout;
+				return ResultU32::ErrorCodes::timeout;
 		}
 	}
 }

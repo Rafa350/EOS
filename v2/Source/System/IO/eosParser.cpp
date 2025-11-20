@@ -41,7 +41,7 @@ char Parser::get() {
 
 	if (ch == EOT) {
 		auto readResult = _stream->read((uint8_t*)&ch, sizeof(char));
-		ch = (readResult.isSuccess() && (readResult == sizeof(char))) ? ch : EOT;
+		ch = (readResult.isSuccess() && (readResult.value() == sizeof(char))) ? ch : EOT;
 	}
 	else
 		_ungetCh = EOT;

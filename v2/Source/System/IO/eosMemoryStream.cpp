@@ -70,7 +70,7 @@ ResultU32 MemoryStream::write(
         _ptr += size;
     }
 
-    return ResultU32(Results::success, size);
+	return {ResultU32::ErrorCodes::success, size};
 }
 
 
@@ -91,6 +91,6 @@ ResultU32 MemoryStream::read(
     	_ptr += size;
     }
 
-	return ResultU32(Results::success, size);
+	return {ResultU32::ErrorCodes::success, size};
 }
 

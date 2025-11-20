@@ -91,7 +91,7 @@ void CanOpenService::onExecute() {
 	while (!stopSignal()) {
 
 		Message msg;
-		while(_queue.pop(msg, 1000)) {
+		while(_queue.pop(msg, (unsigned) -1)) {
 			switch (msg.id) {
 				case MessageID::canReceive: {
 
@@ -101,20 +101,17 @@ void CanOpenService::onExecute() {
 
 					switch (cobid) {
 						case COBID::SDO:
-							if ((nodeId == _nodeId) &&
-								((_nodeState == NodeState::preOperational) || (_nodeState == NodeState::operational))) {
-								_sdoServer.process(msg.canReceive.data, response);
-									; //TODO: sendFrame(COBID::SDOr | nodeId, response, sizeof(response));
-							}
+							if (nodeId == _nodeId)
+								processSDO(msg.canReceive.data, response);
 							break;
 
 						case COBID::NMT:
 							if ((nodeId == _nodeId) || (nodeId == 0))
-								nmtConsumer(msg.canReceive.data);
+								processNMT(msg.canReceive.data);
 							break;
 
 						case COBID::SYNC:
-							syncConsumer();
+							processSYNC();
 							break;
 					}
 					break;
@@ -123,6 +120,8 @@ void CanOpenService::onExecute() {
 			}
 		}
 	}
+
+	_devCAN->stop();
 }
 
 
@@ -210,13 +209,29 @@ void CanOpenService::changeNodeState(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa un SDO
+/// \param    rxData: Les dades de la comanda
+/// \param    txData: Les dades de la resposta.
+///
+void CanOpenService::processSDO(
+	const uint8_t *rxData,
+	uint8_t *txData) {
 
+	if ((_nodeState == NodeState::preOperational) ||
+		(_nodeState == NodeState::operational)) {
+
+		if (_sdoServer.process(rxData, txData).isSuccess())
+			; //TODO: sendFrame(COBID::SDOr | nodeId, response, sizeof(response));
+
+	}
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa SYNC
 ///
-void CanOpenService::syncConsumer() {
+void CanOpenService::processSYNC() {
 
 	if (_nodeState == NodeState::operational) {
 
@@ -254,7 +269,7 @@ void CanOpenService::syncConsumer() {
 /// \brief    Procesa MNT
 /// \param    rxData: Les dades del bloc MNT
 ///
-void CanOpenService::nmtConsumer(
+void CanOpenService::processNMT(
 	const uint8_t *rxData) {
 
 	switch (rxData[0] & NMT0::CS_Msk) {

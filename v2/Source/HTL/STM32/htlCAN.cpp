@@ -285,11 +285,11 @@ eos::Result CANDevice::initialize(
 
 		_state = State::ready;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -305,11 +305,11 @@ eos::Result CANDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -329,11 +329,11 @@ eos::Result CANDevice::start() {
 
 		_state = State::running;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -355,10 +355,10 @@ eos::Result CANDevice::start_IRQ() {
 		set(_can->ILE,
 			FDCAN_ILE_EINT0);     // Linia INT0 habilitada
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -389,11 +389,11 @@ eos::Result CANDevice::stop() {
 		//
 		set(_can->CCCR, FDCAN_CCCR_CCE);
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -435,7 +435,7 @@ eos::Result CANDevice::setFilter(
 
 	    	uint8_t maxIndex = (_can->RXGFC & FDCAN_RXGFC_LSS_Msk) >> FDCAN_RXGFC_LSS_Pos;
 	    	if (index >= maxIndex)
-	    		return eos::Results::error;
+	    		return eos::Result::ErrorCodes::error;
 
 	    	uint32_t SF = 0;
 	    	set(SF, ((uint32_t)filter->type << SF::SFT_Pos) & SF::SFT_Msk);
@@ -453,7 +453,7 @@ eos::Result CANDevice::setFilter(
 
 	    	uint8_t maxIndex = (_can->RXGFC & FDCAN_RXGFC_LSE_Msk) >> FDCAN_RXGFC_LSE_Pos;
 	    	if (index >= maxIndex)
-	    		return eos::Results::error;
+	    		return eos::Result::ErrorCodes::error;
 
 	    	uint32_t EF0 = 0;
 	    	set(EF0, ((uint32_t) filter->config << EF0::EFEC_Pos) & EF0::EFEC_Msk);
@@ -468,11 +468,11 @@ eos::Result CANDevice::setFilter(
 	    	pFilter->EF1 = EF1;
 	    }
 
-	    return eos::Results::success;
+	    return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -500,11 +500,11 @@ eos::Result CANDevice::setGlobalFilter(
 		set(RXGFC, ((uint32_t)rejectRemoteExt << FDCAN_RXGFC_RRFE_Pos) & FDCAN_RXGFC_RRFE_Msk);
 		_can->RXGFC = RXGFC;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -523,7 +523,7 @@ eos::Result CANDevice::addTxMessage(
 		// Comprova que el fifo no estigui ple
 		//
 		if (isTxBufferFull())
-			return eos::Results::busy;
+			return eos::Result::ErrorCodes::busy;
 
 		// Obte el index d'insercio del FIFO
 		//
@@ -542,11 +542,11 @@ eos::Result CANDevice::addTxMessage(
 		// while ((_can->TXBTO & (1 << index)) == 0)
 		//	 continue;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -577,13 +577,13 @@ eos::Result CANDevice::getRxMessage(
 			else
 				_can->RXF1A = index;
 
-			return eos::Results::success;
+			return eos::Result::ErrorCodes::success;
 		}
 
-		return eos::Results::error;
+		return eos::Result::ErrorCodes::error;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 

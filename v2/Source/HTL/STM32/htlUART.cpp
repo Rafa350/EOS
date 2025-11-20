@@ -67,11 +67,11 @@ eos::Result UARTDevice::initialize() {
 
 		_state = State::ready;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -89,11 +89,11 @@ eos::Result UARTDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 #endif
 
@@ -117,10 +117,10 @@ eos::Result UARTDevice::setProtocol(
 		setWordBits(wordBits, parity != Parity::none);
 		setStopBits(stopBits);
 		setHandsake(handsake);
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -303,10 +303,10 @@ eos::Result UARTDevice::setRxTimeout(
 			}
 		}
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 #endif // defined(EOS_PLATFORM_XXX)
 
@@ -382,10 +382,10 @@ eos::Result UARTDevice::setTimming(
 		else
 			_usart->BRR = div;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -402,10 +402,10 @@ eos::Result UARTDevice::setClockSource(
 	if(_state == State::ready){
 
 		setClockSourceImpl(source);
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 #endif // defined(EOS_PLATFORM_XXX)
 
@@ -445,14 +445,14 @@ eos::Result UARTDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? eos::Results::timeout : eos::Results::success;
+		return error ? eos::Result::ErrorCodes::timeout : eos::Result::ErrorCodes::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return eos::Results::busy;
+		return eos::Result::ErrorCodes::busy;
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -478,14 +478,14 @@ eos::Result UARTDevice::transmit_IRQ(
         enable();
         enableTransmissionIRQ();
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return eos::Results::busy;
+		return eos::Result::ErrorCodes::busy;
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 #endif // HTL_UART_OPTION_IRQ == 1
 
@@ -519,14 +519,14 @@ eos::Result UARTDevice::transmit_DMA(
         devDMA->setNotifyEvent(_dmaNotifyEvent, true);
         devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txMaxCount);
 
-        return eos::Results::success;
+        return eos::Result::ErrorCodes::success;
     }
 
     else if ((_state == State::transmiting) || (_state == State::receiving))
-        return eos::Results::busy;
+        return eos::Result::ErrorCodes::busy;
 
     else
-        return eos::Results::errorState;
+        return eos::Result::ErrorCodes::errorState;
 }
 #endif // HTL_UART_OPTION_DMA == 1
 
@@ -540,10 +540,10 @@ eos::Result UARTDevice::abortTransmission() {
 		disableTransmission();
 		disable();
 		_state = State::ready;
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -582,13 +582,13 @@ eos::Result UARTDevice::receive(
 
 		_state = State::ready;
 
-		return error ? eos::Results::timeout : eos::Results::success;
+		return error ? eos::Result::ErrorCodes::timeout : eos::Result::ErrorCodes::success;
 	}
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return eos::Results::busy;
+		return eos::Result::ErrorCodes::busy;
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -614,14 +614,14 @@ eos::Result UARTDevice::receive_IRQ(
 		enable();
 		enableReceptionIRQ();
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return eos::Results::busy;
+		return eos::Result::ErrorCodes::busy;
 
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 #endif // HTL_UART_OPTION_IRQ == 1
 
@@ -639,7 +639,7 @@ eos::Result UARTDevice::receive_DMA(
     uint8_t *buffer,
     unsigned bufferSize) {
 
-	return eos::Results::error;
+	return eos::Result::ErrorCodes::error;
 }
 #endif // HTL_UART_OPTION_DMA == 1
 
@@ -653,10 +653,10 @@ eos::Result UARTDevice::abortReception() {
 		disableReception();
 		disable();
 		_state = State::ready;
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 

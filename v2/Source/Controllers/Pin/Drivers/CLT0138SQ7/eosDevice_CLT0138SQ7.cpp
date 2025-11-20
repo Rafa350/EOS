@@ -55,11 +55,11 @@ Result Device_CLT0138SQ7::initialize() {
 
 		_state = State::ready;
 
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 
 	else
-		return Results::error;
+		return Result::ErrorCodes::error;
 }
 
 
@@ -85,9 +85,9 @@ Result Device_CLT0138SQ7::update() {
 
 		_pinState = rxBuffer[0];
 
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 
 	else
-	    return Results::error;
+	    return Result::ErrorCodes::error;
 }

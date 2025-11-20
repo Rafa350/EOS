@@ -34,10 +34,10 @@ eos::Result TMRDevice::initialize(
 	unsigned repeat) {
 
 	if (!IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) && divider != ClockDivider::_1)
-		return eos::Results::errorParameter;
+		return eos::Result::ErrorCodes::errorParameter;
 
 	if (!IS_TIM_REPETITION_COUNTER_INSTANCE(_tim) && repeat != 0)
-		return eos::Results::errorParameter;
+		return eos::Result::ErrorCodes::errorParameter;
 
 	if (_state == State::reset) {
 
@@ -76,11 +76,11 @@ eos::Result TMRDevice::initialize(
 
 		_state = State::ready;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 
 	else
-		return eos::Results::error;
+		return eos::Result::ErrorCodes::error;
 }
 
 
@@ -90,7 +90,7 @@ eos::Result TMRDevice::initialize(
 eos::Result TMRDevice::deinitialize() {
 
 	if (_state != State::ready)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	clear(_tim->CR1, TIM_CR1_CEN);
 	clear(_tim->DIER, TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
@@ -99,7 +99,7 @@ eos::Result TMRDevice::deinitialize() {
 
 	_state = State::reset;
 
-	return eos::Results::success;
+	return eos::Result::ErrorCodes::success;
 }
 
 
@@ -113,11 +113,11 @@ eos::Result TMRDevice::setPrescaler(
 	unsigned value) {
 
 	if (_state == State::reset)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	_tim->PSC = value;
 
-	return eos::Results::success;
+	return eos::Result::ErrorCodes::success;
 }
 
 
@@ -131,7 +131,7 @@ eos::Result TMRDevice::setLimit(
 	unsigned value) {
 
 	if (_state == State::reset)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	else {
 		if (_state == State::ready)
@@ -140,7 +140,7 @@ eos::Result TMRDevice::setLimit(
 			set(_tim->CR1, TIM_CR1_ARPE);
 		_tim->ARR = value;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 }
 
@@ -155,14 +155,14 @@ eos::Result TMRDevice::setRepeat(
 	unsigned value) {
 
 	if (!IS_TIM_REPETITION_COUNTER_INSTANCE(_tim))
-		return eos::Results::errorUnsupported;
+		return eos::Result::ErrorCodes::errorUnsupported;
 
 	if (_state == State::reset)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	_tim->RCR = value;
 
-	return eos::Results::success;
+	return eos::Result::ErrorCodes::success;
 }
 
 
@@ -192,7 +192,7 @@ eos::Result TMRDevice::configurePwmChannel(
 			return configurePwmChannel4(polarity, compare);
 	}
 
-	return eos::Results::errorParameter;
+	return eos::Result::ErrorCodes::errorParameter;
 }
 
 
@@ -207,10 +207,10 @@ eos::Result TMRDevice::configurePwmChannel1(
 	unsigned compare) {
 
 	if (!IS_TIM_CC1_INSTANCE(_tim))
-		return eos::Results::errorUnsupported;
+		return eos::Result::ErrorCodes::errorUnsupported;
 
 	if (_state != State::ready)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	unsigned CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -228,7 +228,7 @@ eos::Result TMRDevice::configurePwmChannel1(
 
 	_tim->CCR1 = compare;
 
-	return eos::Results::success;
+	return eos::Result::ErrorCodes::success;
 }
 
 
@@ -243,10 +243,10 @@ eos::Result TMRDevice::configurePwmChannel2(
 	unsigned compare) {
 
 	if (!IS_TIM_CC2_INSTANCE(_tim))
-		return eos::Results::errorUnsupported;
+		return eos::Result::ErrorCodes::errorUnsupported;
 
 	if (_state != State::ready)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	unsigned CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -264,7 +264,7 @@ eos::Result TMRDevice::configurePwmChannel2(
 
 	_tim->CCR2 = compare;
 
-	return eos::Results::success;
+	return eos::Result::ErrorCodes::success;
 }
 
 
@@ -279,10 +279,10 @@ eos::Result TMRDevice::configurePwmChannel3(
 	unsigned compare) {
 
 	if (!IS_TIM_CC3_INSTANCE(_tim))
-		return eos::Results::errorUnsupported;
+		return eos::Result::ErrorCodes::errorUnsupported;
 
 	if (_state != State::ready)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	unsigned CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -300,7 +300,7 @@ eos::Result TMRDevice::configurePwmChannel3(
 
 	_tim->CCR3 = compare;
 
-	return eos::Results::success;
+	return eos::Result::ErrorCodes::success;
 }
 
 
@@ -315,10 +315,10 @@ eos::Result TMRDevice::configurePwmChannel4(
 	unsigned compare) {
 
 	if (!IS_TIM_CC4_INSTANCE(_tim))
-		return eos::Results::errorUnsupported;
+		return eos::Result::ErrorCodes::errorUnsupported;
 
 	if (_state != State::ready)
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 
 	unsigned CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -336,7 +336,7 @@ eos::Result TMRDevice::configurePwmChannel4(
 
 	_tim->CCR4 = compare;
 
-	return eos::Results::success;
+	return eos::Result::ErrorCodes::success;
 }
 
 
@@ -424,10 +424,10 @@ eos::Result TMRDevice::start() {
 
 		_state = State::busy;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -442,10 +442,10 @@ eos::Result TMRDevice::start_IRQ() {
 		_tim->DIER |= TIM_DIER_UIE; // Habilita la interrupcio
 		_tim->CR1 |= TIM_CR1_CEN;   // Comença a contar
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -464,10 +464,10 @@ eos::Result TMRDevice::stop() {
 
 		_state = State::ready;
 
-		return eos::Results::success;
+		return eos::Result::ErrorCodes::success;
 	}
 	else
-		return eos::Results::error;
+		return eos::Result::ErrorCodes::error;
 }
 
 

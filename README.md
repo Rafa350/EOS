@@ -16,11 +16,12 @@
 * Based on services.
   * Digital inputs service.
   * Digital outputs service.
-  * GUI service (Graphic User Interface).
-  * FSM service (Finite State Machine).
+  * GUI service (Graphic User Interface). [beta]
+  * FSM service (Finite State Machine). [beta]
   * I2C comunication queue service.
+  * CanOpen service. [beta]
 * Controllers
-  * Driver USB device (MSC, CDC)
+  * Driver USB device (MSC, CDC). [beta]
   * Driver IO (ISO808, CLT0138SQ7, VNI8200XP, CPU-GPIO)
   * Driver display (ILI9341, ILI9341+LTDC, SSD1316,, ST7565, KS0108, Generic RGB, Generic RGB+LTDC)
   * Driver serial (RS232, SPI, I2C)

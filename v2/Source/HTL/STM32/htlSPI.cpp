@@ -80,10 +80,10 @@ Result SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -224,14 +224,14 @@ Result SPIDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Results::error : Results::success;
+		return error ? Result::ErrorCodes::error : Result::ErrorCodes::success;
 	}
 
 	else if (_state == State::transmiting)
-		return Results::busy;
+		return Result::ErrorCodes::busy;
 
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -276,10 +276,10 @@ Result SPIDevice::transmit_DMA(
 		//
 		clear(_spi->CR2, SPI_CR2_TXDMAEN);
 
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 #endif // HTL_SPI_OPTION_DMA == 1
 

@@ -25,9 +25,11 @@ CanOpenSDOServer::CanOpenSDOServer(
 /// \param    query: La consulta
 /// \param    response: La resposta
 ///
-void CanOpenSDOServer::process(
+Result CanOpenSDOServer::process(
 	const uint8_t *query,
 	uint8_t *response) {
+
+	auto result = Result::ErrorCodes::success;
 
 	// Initiate SDO download (Expedited)
 	//
@@ -54,9 +56,12 @@ void CanOpenSDOServer::process(
 	else if ((query[0] & SDO0::CCS_Msk) == SDO0::CCS_UPSEG)
 		processUploadSegment(query, response);
 
-	// Error SDO malformat
+	// Error SDO
 	//
 	else {
+
+		// Prepara la resposta
+		//
 		unsigned errorCode = SdoError::commandSpecifierNotValid;
 		response[0] = SDO0::CCS_ABORT;
 		response[1] = query[1];
@@ -67,6 +72,8 @@ void CanOpenSDOServer::process(
 		response[6] = (errorCode >> 16) & 0xFF;
 		response[7] = (errorCode >> 24) & 0xFF;
 	}
+
+	return result;
 }
 
 
@@ -102,6 +109,8 @@ void CanOpenSDOServer::processInitiateDownloadExpedited(
 	else
 		errorCode = SdoError::objectDoesNotExistInDictionary;
 
+	// Prepara la resposta
+	//
 	response[1] = query[1];
 	response[2] = query[2];
 	response[3] = query[3];
@@ -147,6 +156,8 @@ void CanOpenSDOServer::processInitiateDownloadNormal(
 	else
 		errorCode = SdoError::objectDoesNotExistInDictionary;
 
+	// Prepara la resposta
+	//
 	response[1] = query[1];
 	response[2] = query[2];
 	response[3] = query[3];
@@ -192,8 +203,8 @@ void CanOpenSDOServer::processInitiateUpload(
 	uint16_t index = query[1] | (query[2] << 8);
 	uint8_t subIndex = query[3];
 
-	unsigned value;
-	unsigned length;
+	unsigned value = 0;
+	unsigned length = 0;
 
 	auto entryId = _dictionary->find(index, subIndex);
 	if (entryId != (unsigned) -1) {
@@ -207,18 +218,38 @@ void CanOpenSDOServer::processInitiateUpload(
 	else
 		errorCode = SdoError::objectDoesNotExistInDictionary;
 
+	// Prepara la resposta
+	//
 	response[1] = query[1];
 	response[2] = query[2];
 	response[3] = query[3];
+
 	if (errorCode == SdoError::none) {
+
+		// Comprova la longitut per seleccionar el tipus de transmissio
+		//
 		if (length <= 4) {
+
+			// Expedited
+			//
 			response[0] = SDO0::SCS_UL | SDO0::E_EXP | SDO0::S_SIZE | (((4 - length) << SDO0::SIZE_Pos) & SDO0::SIZE_Msk);
 			response[4] = value & 0xFF;
 			response[5] = (value >> 8) & 0xFF;
 			response[6] = (value >> 16) & 0xFF;
 			response[7] = (value >> 24) & 0xFF;
 		}
+		else {
+
+			// Segmented
+			//
+			response[0] = SDO0::SCS_UL | SDO0::E_SEG | SDO0::S_SIZE;
+			response[4] = length & 0xFF;
+			response[5] = (length >> 8) & 0xFF;
+			response[6] = (length >> 16) & 0xFF;
+			response[7] = (length >> 24) & 0xFF;
+		}
 	}
+
 	else {
 		response[0] = SDO0::CCS_ABORT;
 		response[4] = errorCode & 0xFF;

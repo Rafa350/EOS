@@ -83,10 +83,9 @@ namespace eos {
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
 
-            void syncConsumer();
-
-            void nmtConsumer(const uint8_t *rxData);
-
+            void processSDO(const uint8_t *rxData, uint8_t *txData);
+            void processSYNC();
+            void processNMT(const uint8_t *rxData);
             void processRPDO(const uint8_t *rdData);
 
             unsigned buildTPDO(unsigned tpdoId, uint8_t *buffer, unsigned bufferSize);
