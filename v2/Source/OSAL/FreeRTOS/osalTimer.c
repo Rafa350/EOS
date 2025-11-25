@@ -23,7 +23,7 @@ HTimer osalTimerCreate(
 		1,
 		(info->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
 		(void* const) info->param,
-		info->callback);
+		(TimerCallbackFunction_t)info->callback);
     if (hTimer == NULL)
     	return NULL;
 
@@ -51,7 +51,7 @@ bool osalTimerDestroy(
 
 	eosAssert(hTimer != NULL);
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    TickType_t waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
 	return xTimerDelete((TimerHandle_t)hTimer, waitTicks) == pdPASS;
 }
 
@@ -71,7 +71,7 @@ bool osalTimerStart(
 
 	eosAssert(hTimer != NULL);
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    TickType_t waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
     if (time == 0)
         return xTimerStart((TimerHandle_t)hTimer, waitTicks) == pdPASS;
     else
@@ -116,7 +116,7 @@ bool osalTimerStop(
 
 	eosAssert(hTimer != NULL);
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    TickType_t waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
 	return xTimerStop((TimerHandle_t)hTimer, waitTicks) == pdPASS;
 }
 

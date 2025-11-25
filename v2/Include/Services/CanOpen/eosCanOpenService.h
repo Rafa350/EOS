@@ -38,8 +38,8 @@ namespace eos {
         		};
         	};
 			using NotificationEventRaiser = eos::EventRaiser<CanOpenService, NotificationEventArgs>;
-			using IEvent = NotificationEventRaiser::IEvent;
-			template <typename Instance_> using Event = NotificationEventRaiser::Event<Instance_>;
+			using INotificationEvent = NotificationEventRaiser::IEvent;
+			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
         	enum class NodeType {
 				master,
@@ -55,7 +55,8 @@ namespace eos {
 
 		private:
 			enum class MessageID {
-				canReceive
+				canReceive,
+				entryValueChanged
 			};
 			struct Message {
 				MessageID id;
@@ -64,6 +65,10 @@ namespace eos {
 						uint16_t cobid;
 						uint8_t data[8];
 					} canReceive;
+					struct {
+						unsigned entryId;
+						bool raiseNotification;
+					} entryValueChanged;
 				};
 			};
         	using CANDeviceNotificationEvent = htl::can::CANDevice::NotificationEvent<CanOpenService>;
@@ -94,8 +99,10 @@ namespace eos {
 
             void changeNodeState(NodeState newNodeState);
 
-            void notifyStateChanged();
-            void notifyValueChanged(uint16_t index, uint8_t subIndex);
+            void raiseStateChangedNotification();
+            void raiseValueChangedNotification(uint16_t index, uint8_t subIndex);
+
+            void notifyValueChanged(unsigned entryId, bool raiseNotification);
 
 		protected:
 		    void onInitialize(ServiceParams &params) override;
@@ -112,6 +119,9 @@ namespace eos {
 			void sdoInitiateDownload();
 			void sdoSegmentDownload();
 			void sdoAbort();
+
+			void notifyValueChanged(uint16_t index, uint8_t subIndex, bool raiseNotification = false);
+			void notifyValueChanged(const void *ptr, bool raiseNotification = false);
 
 			void bootUp();
             void heartBeat();

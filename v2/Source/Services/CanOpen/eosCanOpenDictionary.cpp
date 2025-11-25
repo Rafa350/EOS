@@ -43,6 +43,27 @@ unsigned CanOpenDictionary::find(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Busca una entrada en el diccionari.
+/// \param    ptr: L'adressa de la variable
+/// \return   El identificador de la entrada, -1 si no la troba.
+///
+unsigned CanOpenDictionary::find(
+	const void *ptr) const {
+
+	for (unsigned entryId = 0; entryId < _numEntries; entryId++) {
+
+		auto entry = &_entries[entryId];
+
+		if ((entry->data == (uint32_t)ptr) &&
+			(entry->access != CoAccess::constant))
+			return entryId;
+	}
+
+	return (unsigned) -1;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Obte la longitut en bits de les dades d'una entrada.
 /// \return   El resultat de l'operacio.
 ///

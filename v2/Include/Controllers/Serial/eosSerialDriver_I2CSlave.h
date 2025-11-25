@@ -14,12 +14,12 @@ namespace eos {
 			htl::i2c::I2CSlaveDevice * const _devI2C;
 
 		private:
-			htl::i2c::SlaveNotifyEvent<SerialDriver_I2CSlave> _i2cNotifyEvent;
+			htl::i2c::SlaveNotificationEvent<SerialDriver_I2CSlave> _i2cNotificationEvent;
 			uint8_t *_buffer;
 			unsigned _bufferSize;
 
 		private:
-			void i2cNotifyEventHandler(htl::i2c::I2CSlaveDevice *sender, htl::i2c::NotifyEventArgs * const args);
+			void i2cNotificationEventHandler(htl::i2c::I2CSlaveDevice *sender, htl::i2c::NotificationEventArgs * const args);
 
 		protected:
             bool onInitialize() override;

@@ -3,85 +3,83 @@
 #define __eosResults__
 
 
-#include <type_traits>
-
-
 namespace eos {
 
-	template <typename ErrorType_>
+	template <typename Error_>
 	struct ResultTraits;
 
 	template <>
 	struct ResultTraits<uint8_t> {
 
-		using ErrorType = uint8_t;
+		using Error = uint8_t;
+		using ErrorCode = uint8_t;
 
-		static constexpr ErrorType successLO = 0x00;
-		static constexpr ErrorType successHI = 0x3F;
-		static constexpr ErrorType warningLO = 0x40;
-		static constexpr ErrorType warningHI = 0x7F;
-		static constexpr ErrorType errorLO   = 0x80;
-		static constexpr ErrorType errorHI   = 0xFF;
+		static constexpr ErrorCode successLO {0x00};
+		static constexpr ErrorCode successHI {0x3F};
+		static constexpr ErrorCode warningLO {0x40};
+		static constexpr ErrorCode warningHI {0x7F};
+		static constexpr ErrorCode errorLO   {0x80};
+		static constexpr ErrorCode errorHI   {0xFF};
 	};
 
 	template <>
 	struct ResultTraits<uint16_t> {
 
+		using Error = uint16_t;
 		using ErrorType = uint16_t;
 
-		static constexpr ErrorType successLO = 0x0000;
-		static constexpr ErrorType successHI = 0x3FFF;
-		static constexpr ErrorType warningLO = 0x4000;
-		static constexpr ErrorType warningHI = 0x7FFF;
-		static constexpr ErrorType errorLO   = 0x8000;
-		static constexpr ErrorType errorHI   = 0xFFFF;
+		static constexpr ErrorType successLO {0x0000};
+		static constexpr ErrorType successHI {0x3FFF};
+		static constexpr ErrorType warningLO {0x4000};
+		static constexpr ErrorType warningHI {0x7FFF};
+		static constexpr ErrorType errorLO   {0x8000};
+		static constexpr ErrorType errorHI   {0xFFFF};
 	};
 
 	template <>
 	struct ResultTraits<uint32_t> {
 
+		using Error = uint32_t;
 		using ErrorType = uint32_t;
 
-		static constexpr ErrorType successLO = 0x00000000;
-		static constexpr ErrorType successHI = 0x3FFFFFFF;
-		static constexpr ErrorType warningLO = 0x40000000;
-		static constexpr ErrorType warningHI = 0x7FFFFFFF;
-		static constexpr ErrorType errorLO   = 0x80000000;
-		static constexpr ErrorType errorHI   = 0xFFFFFFFF;
+		static constexpr ErrorType successLO {0x00000000};
+		static constexpr ErrorType successHI {0x3FFFFFFF};
+		static constexpr ErrorType warningLO {0x40000000};
+		static constexpr ErrorType warningHI {0x7FFFFFFF};
+		static constexpr ErrorType errorLO   {0x80000000};
+		static constexpr ErrorType errorHI   {0xFFFFFFFF};
 	};
 
 	/// Clase que representa un resultat associat amb un codi d'error
 	///
-	template <typename ErrorType_>
-	class ResultBaseX {
+	template <typename Error_>
+	class ResultBase {
 		private:
-			using Traits = ResultTraits<ErrorType_>;
-
-		public:
-			using ErrorType = Traits::ErrorType;
+			using Traits = ResultTraits<Error_>;
+			using ErrorCode = Traits::ErrorCode;
 
 		private:
-			ErrorType const _error;
+			ErrorCode const _error;
 
 		public:
-			static constexpr ErrorType successLO = Traits::successLO;
-			static constexpr ErrorType successHI = Traits::successHI;
-			static constexpr ErrorType warningLO = Traits::warningLO;
-			static constexpr ErrorType warningHI = Traits::warningHI;
-			static constexpr ErrorType errorLO = Traits::errorLO;
-			static constexpr ErrorType errorHI = Traits::errorHI;
+			static constexpr ErrorCode successLO {Traits::successLO};
+			static constexpr ErrorCode successHI {Traits::successHI};
+			static constexpr ErrorCode warningLO {Traits::warningLO};
+			static constexpr ErrorCode warningHI {Traits::warningHI};
+			static constexpr ErrorCode errorLO {Traits::errorLO};
+			static constexpr ErrorCode errorHI {Traits::errorHI};
 
 		protected:
-			constexpr ResultBaseX(ErrorType error):
+			constexpr ResultBase(ErrorCode error):
 				_error {error} {
 			}
 
 		public:
-			inline operator ErrorType () const {
+			inline operator ErrorCode() const {
 				return _error;
 			}
 
-			inline ErrorType error() const {
+			inline ErrorCode error() const {
 				return _error;
 			}
 
@@ -97,103 +95,114 @@ namespace eos {
 				return (_error >= errorLO) && (_error <= errorHI);
 			}
 
-			inline bool is(const ErrorType error) const {
+			inline bool is(const Error_ error) const {
 				return _error == error;
 			}
 
-			inline bool isNot(const ErrorType error) const {
+			inline bool isNot(const Error_ error) const {
 				return _error != error;
 			}
 	};
 
 	/// Clase que representa un resultat simple associat amb un codi d'error
 	///
-	template <typename ErrorType_>
-	class SimpleResultX: public ResultBaseX<ErrorType_> {
+	template <typename Error_>
+	class SimpleResult: public ResultBase<Error_> {
+		private:
+			using Traits = ResultTraits<Error_>;
+			using ErrorCode = Traits::ErrorCode;
+
 		public:
-			constexpr SimpleResultX(ErrorType_ error):
-				ResultBaseX<ErrorType_> {error} {
+			constexpr SimpleResult(ErrorCode error):
+				ResultBase<Error_> {error} {
 			}
 	};
 
 	/// Clase que representa un resultat complex associat amb un codi d'error i a
 	/// un valor de retorn.
 	///
-	template <typename ErrorType_, typename ValueType_>
-	class ComplexResultX: public ResultBaseX<ErrorType_> {
-		public:
-			using ValueType = ValueType_;
-			using ErrorType = ResultBaseX<ErrorType_>::ErrorType;
+	template <typename Error_, typename Value_>
+	class ComplexResult: public ResultBase<Error_> {
+		private:
+			using Traits = ResultTraits<Error_>;
+			using ErrorCode = Traits::ErrorCode;
 
 		private:
-			ValueType const _value;
+			Value_ const _value;
 
 		public:
-			constexpr ComplexResultX(ErrorType error, ValueType value):
-				ResultBaseX<ErrorType_> {error},
+			constexpr ComplexResult(ErrorCode error, Value_ value):
+				ResultBase<Error_> {error},
 				_value {value} {
 			}
 
-			constexpr explicit operator ValueType() const {
+			inline explicit operator Value_() const {
 				return _value;
 			}
 
-			inline ValueType value() const {
+			inline Value_ value() const {
 				return _value;
 			}
 	};
+
+
 
 	class StdErrorCodes {
-		public:
+		private:
 			using Traits = ResultTraits<uint8_t>;
-			using ErrorType = Traits::ErrorType;
 
 		public:
-			static constexpr ErrorType success           = Traits::successLO + 0; // Operacio finalitzada correctament
-			static constexpr ErrorType pending           = Traits::successLO + 1; // Operacio correcte pero pendent de finalitzar
-			static constexpr ErrorType timeout           = Traits::successLO + 2; // S'ha produit timeout
-			static constexpr ErrorType busy              = Traits::successLO + 3; // Ocupat
-			static constexpr ErrorType error             = Traits::errorLO + 0;   // Error d'operacio
-			static constexpr ErrorType errorState        = Traits::errorLO + 1;   // Operacio no permesa en l'estat actual
-			static constexpr ErrorType errorParameter    = Traits::errorLO + 2;   // Error ens els parametres
-			static constexpr ErrorType errorUnsupported  = Traits::errorLO + 3;   // No soportado
+			using Error = Traits::Error;
+			using ErrorCode = Traits::ErrorCode;
+
+		public:
+			static constexpr ErrorCode success           {Traits::successLO + 0}; // Operacio finalitzada correctament
+			static constexpr ErrorCode pending           {Traits::successLO + 1}; // Operacio correcte pero pendent de finalitzar
+			static constexpr ErrorCode timeout           {Traits::successLO + 2}; // S'ha produit timeout
+			static constexpr ErrorCode busy              {Traits::successLO + 3}; // Ocupat
+			static constexpr ErrorCode error             {Traits::errorLO + 0};   // Error d'operacio
+			static constexpr ErrorCode errorState        {Traits::errorLO + 1};   // Operacio no permesa en l'estat actual
+			static constexpr ErrorCode errorParameter    {Traits::errorLO + 2};   // Error ens els parametres
+			static constexpr ErrorCode errorUnsupported  {Traits::errorLO + 3};   // No soportado
 	};
 
-	class StdSimpleResultX: public SimpleResultX<StdErrorCodes::ErrorType> {
+	template <typename Codes_>
+	class SimpleResultCode: public SimpleResult<typename Codes_::Error>, Codes_ {
+		private:
+			using Error = Codes_::Error;
+			using ErrorCode = Codes_::ErrorCode;
+
 		public:
-			constexpr StdSimpleResultX(StdErrorCodes::ErrorType error):
-				SimpleResultX<StdErrorCodes::ErrorType>(error) {
+			using ErrorCodes = Codes_;
+
+		public:
+			constexpr SimpleResultCode(ErrorCode error):
+				SimpleResult<Error> {error} {
 			}
 	};
+	using Result = SimpleResultCode<StdErrorCodes>;
 
-	class StdResultX: public StdSimpleResultX, StdErrorCodes {
-		public:
-			using ErrorCodes = StdErrorCodes;
+	template <typename Codes_, typename Value_>
+	class ComplexResultCode: public ComplexResult<typename Codes_::Error, Value_>, Codes_ {
+		private:
+			using Error = Codes_::Error;
+			using ErrorCode = Codes_::ErrorCode;
 
 		public:
-			constexpr StdResultX(ErrorCodes::ErrorType error):
-				StdSimpleResultX(error) {
+			using ErrorCodes = Codes_;
+
+		public:
+			constexpr ComplexResultCode(ErrorCode error):
+				ComplexResult<Error, Value_> {error, Value_ {}} {
+			}
+
+			constexpr ComplexResultCode(ErrorCode error, Value_ value):
+				ComplexResult<Error, Value_> {error, value} {
 			}
 	};
-	using Result = StdResultX;
-
-	template <typename ValueType_>
-	class StdResultUX: public ComplexResultX<StdErrorCodes::ErrorType, ValueType_>, StdErrorCodes {
-		public:
-			using ErrorCodes = StdErrorCodes;
-
-		public:
-			constexpr StdResultUX(ErrorCodes::ErrorType error):
-				ComplexResultX<ErrorCodes::ErrorType, ValueType_> {error, ValueType_ {}} {
-			}
-
-			constexpr StdResultUX(ErrorCodes::ErrorType error, ValueType_ value):
-				ComplexResultX<ErrorCodes::ErrorType, ValueType_> {error, value} {
-			}
-	};
-	using ResultU8 = StdResultUX<uint8_t>;
-	using ResultU16 = StdResultUX<uint16_t>;
-	using ResultU32 = StdResultUX<uint32_t>;
+	using ResultU8 = ComplexResultCode<StdErrorCodes, uint8_t>;
+	using ResultU16 = ComplexResultCode<StdErrorCodes, uint16_t>;
+	using ResultU32 = ComplexResultCode<StdErrorCodes, uint32_t>;
 }
 
 

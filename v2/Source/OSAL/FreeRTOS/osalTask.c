@@ -118,7 +118,7 @@ bool osalTaskWaitNotification(
 	bool clear,
 	unsigned waitTime) {
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    TickType_t waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
 	return ulTaskNotifyTake(clear ? pdTRUE : pdFALSE, waitTicks);
 }
 

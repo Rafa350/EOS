@@ -588,11 +588,11 @@ eos::Result CANDevice::getRxMessage(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica que s'ha rebut un nopu missatge en el RxFIFO
+/// \brief    Genera un event de notificacio 'RxFifoNotEmpty'
 /// \param    fifl: El fifo.
 /// \param    irq: Indica wqu nla notificacio s'ha produit d'ins d'una interrupcio
 ///
-void CANDevice::notifyRxFifoNotEmpty(
+void CANDevice::raiseRxFifoNotEmptyNotification(
 	RxFifoSelection fifo,
 	bool irq) {
 
@@ -611,10 +611,10 @@ void CANDevice::notifyRxFifoNotEmpty(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica que finalitzar la transmissio d'un missatge en TxBuffer
+/// \brief    Genera un event de notificacio 'TxCompleted'
 /// \param    irq: Indica wqu nla notificacio s'ha produit d'ins d'una interrupcio
 ///
-void CANDevice::notifyTxCompleted(
+void CANDevice::raiseTxCompletedNotification(
 	bool irq) {
 
 	if (_erNotification.isEnabled()) {
@@ -641,21 +641,21 @@ void CANDevice::interruptService() {
 		//
 		if (isSet(IR, FDCAN_IR_RF0N)) {
 			set(_can->IR, FDCAN_IR_RF0N);
-			notifyRxFifoNotEmpty(RxFifoSelection::fifo0, true);
+			raiseRxFifoNotEmptyNotification(RxFifoSelection::fifo0, true);
 		}
 
 		// Missatge rebut en RxFIFO1
 		//
 		if (isSet(IR, FDCAN_IR_RF1N)) {
 			set(_can->IR, FDCAN_IR_RF1N);
-			notifyRxFifoNotEmpty(RxFifoSelection::fifo1, true);
+			raiseRxFifoNotEmptyNotification(RxFifoSelection::fifo1, true);
 		}
 
 		// Transmissio del missatge en TxBuffer completada
 		//
 		if (isSet(IR, FDCAN_IR_TC)) {
 			set(_can->IR, FDCAN_IR_TC);
-			notifyTxCompleted(true);
+			raiseTxCompletedNotification(true);
 		}
 	}
 }

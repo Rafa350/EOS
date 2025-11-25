@@ -760,7 +760,7 @@ void UARTDevice::txInterruptService() {
 	//
 	if (isSet(CR1, USART_CR1_TCIE) && isSet(ISR, USART_ISR_TC)) {
 		disableTransmission();
-		notifyTxCompleted(_txBuffer, _txCount, true);
+		raiseTxCompletedNotification(_txBuffer, _txCount, true);
 		_state = State::ready;
 	}
 }
@@ -857,7 +857,7 @@ void UARTDevice::rxInterruptService() {
 			_rxBuffer[_rxCount++] = _usart->RDR;
 			if (_rxCount == _rxMaxCount) {
 				disableReception();
-				notifyRxCompleted(_rxBuffer, _rxCount, true);
+				raiseRxCompletedNotification(_rxBuffer, _rxCount, true);
 				_state = State::ready;
 			}
 		}
@@ -869,7 +869,7 @@ void UARTDevice::rxInterruptService() {
 		_usart->ICR = USART_ICR_IDLECF;
 		if (_rxCount > 0) {
 			disableReception();
-			notifyRxCompleted(_rxBuffer, _rxCount, true);
+			raiseRxCompletedNotification(_rxBuffer, _rxCount, true);
 			_state = State::ready;
 		}
 	}
@@ -879,7 +879,7 @@ void UARTDevice::rxInterruptService() {
 	if (isSet(CR1, USART_CR1_RTOIE) && isSet(ISR, USART_ISR_RTOF)) {
 		_usart->ICR = USART_ICR_RTOCF;
 		disableReception();
-		notifyRxCompleted(_rxBuffer, _rxCount, true);
+		raiseRxCompletedNotification(_rxBuffer, _rxCount, true);
 		_state = State::ready;
 	}
 }
@@ -931,7 +931,7 @@ void UARTDevice::dmaNotifyEventHandler(
 /// \param    length: El nombre de bytes de dades.
 /// \param    irq: true si ve d'una interrupcio.
 ///
-void UARTDevice::notifyTxCompleted(
+void UARTDevice::raiseTxCompletedNotification(
 	const uint8_t *buffer,
 	unsigned length,
 	bool irq) {
@@ -954,7 +954,7 @@ void UARTDevice::notifyTxCompleted(
 /// \param    length: El nombre de bytes de dades.
 /// \param    irq: true si ve d'una interrupcio.
 ///
-void UARTDevice::notifyRxCompleted(
+void UARTDevice::raiseRxCompletedNotification(
 	const uint8_t *buffer,
 	unsigned length,
 	bool irq) {

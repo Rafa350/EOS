@@ -150,7 +150,7 @@ bool osalQueuePeek(
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    auto waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    TickType_t waitTicks = (waitTime == ((unsigned) -1)) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
     return xQueuePeek((QueueHandle_t)hQueue, element, waitTicks) == pdPASS;
 }
 

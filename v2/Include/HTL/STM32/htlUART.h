@@ -303,8 +303,8 @@ namespace htl {
 
 				virtual clock::ClockID getUARTClock() const = 0;
 
-				void notifyTxCompleted(const uint8_t *buffer, unsigned length, bool irq);
-				void notifyRxCompleted(const uint8_t *buffer, unsigned length, bool irq);
+				void raiseTxCompletedNotification(const uint8_t *buffer, unsigned length, bool irq);
+				void raiseRxCompletedNotification(const uint8_t *buffer, unsigned length, bool irq);
 #if HTL_UART_OPTION_DMA == 1
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 #endif

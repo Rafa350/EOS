@@ -40,6 +40,7 @@ namespace eos {
 			CanOpenDictionary(const CoDictionaryEntry *entries, unsigned numEntries);
 
 			unsigned find(uint16_t index, uint8_t subIndex) const;
+			unsigned find(const void *ptr) const;
 
 			unsigned getDataLength(unsigned entryId) const;
 

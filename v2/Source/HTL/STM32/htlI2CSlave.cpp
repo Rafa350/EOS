@@ -96,12 +96,12 @@ Result I2CSlaveDevice::deinitialize() {
 /// \param    enabled: Indica si l'habilita.
 /// \return   El resultat de l'operacio.
 ///
-Result I2CSlaveDevice::setNotifyEvent(
-    ISlaveNotifyEvent &event,
+Result I2CSlaveDevice::setNotificationEvent(
+    ISlaveNotificationEvent &event,
     bool enabled) {
 
     if ((_state == State::reset) || (_state == State::ready)) {
-    	_erNotify.set(event, enabled);
+    	_erNotification.set(event, enabled);
     	return Result::ErrorCodes::success;
     }
     else
@@ -214,7 +214,7 @@ void I2CSlaveDevice::interruptServiceListen() {
         uint16_t addr =
             (((ISR & I2C_ISR_ADDCODE_Msk) >> I2C_ISR_ADDCODE_Pos) << 1) |
 			(((ISR & I2C_ISR_DIR_Msk) >> I2C_ISR_DIR_Pos) << 0);
-        notifyAddressMatch(addr, true);
+        raiseAddressMatchNotification(addr, true);
 
         // Si es modus lectura, prepara la transmissio
 		//
@@ -226,7 +226,7 @@ void I2CSlaveDevice::interruptServiceListen() {
     		//
 			_dataCount = 0;
 			_buffer = nullptr;
-			notifyTxStart(_buffer, _dataCount, true);
+			raiseTxStartNotification(_buffer, _dataCount, true);
 
 			// Si NOSTRTECH == 0, fa un flush, en cas contrari
 			// transmet el primer byte
@@ -246,7 +246,7 @@ void I2CSlaveDevice::interruptServiceListen() {
     		//
 			_dataCount = 0;
 			_buffer = nullptr;
-	        notifyRxStart(_buffer, _dataCount, true);
+	        raiseRxStartNotification(_buffer, _dataCount, true);
 
         	enableReceiveInterrupts();
         	_state = State::receiving;
@@ -297,7 +297,7 @@ void I2CSlaveDevice::interruptServiceReceive() {
         // Notifica el final de la recepcio de dades, indicant
 	    // el nombre de bytes rebuts.
 	    //
-        notifyRxCompleted(_xferCount, true);
+        raiseRxCompletedNotification(_xferCount, true);
 
         // Torna a activar el modus listen si s'escau.
         //
@@ -344,7 +344,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 
         // Notifica el final de la transmissio
 		//
-    	notifyTxCompleted(_xferCount, true);
+    	raiseTxCompletedNotification(_xferCount, true);
 
     	// Torna a activar el modus listen si s'escau.
     	//
@@ -383,18 +383,18 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 /// \param    addr: L'adressa.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
-void I2CSlaveDevice::notifyAddressMatch(
+void I2CSlaveDevice::raiseAddressMatchNotification(
     uint16_t addr,
     bool irq) {
 
-	NotifyEventArgs args = {
-		.id = NotifyID::addressMatch,
+	NotificationEventArgs args = {
+		.id = NotificationID::addressMatch,
 		.irq = irq,
 		.addressMatch {
 			.addr = addr
 		}
 	};
-	_erNotify.raise(this, &args);
+	_erNotification.raise(this, &args);
 }
 
 
@@ -404,20 +404,20 @@ void I2CSlaveDevice::notifyAddressMatch(
 /// \param    bufferSize: El tamany del buffer de dades en bytes.
 /// \param    irq: Indica si esnotifica desde una interrupcio.
 ///
-void I2CSlaveDevice::notifyRxStart(
+void I2CSlaveDevice::raiseRxStartNotification(
     uint8_t * &buffer,
     unsigned &bufferSize,
     bool irq) {
 
-	NotifyEventArgs args = {
-		.id = NotifyID::rxStart,
+	NotificationEventArgs args = {
+		.id = NotificationID::rxStart,
 		.irq = irq,
 		.rxStart {
 			.buffer = nullptr,
 			.bufferSize = 0
 		}
 	};
-	_erNotify.raise(this, &args);
+	_erNotification.raise(this, &args);
 	buffer = args.rxStart.buffer;
 	bufferSize = args.rxStart.bufferSize;
 }
@@ -428,18 +428,18 @@ void I2CSlaveDevice::notifyRxStart(
 /// \param    length: Nombre de bytes rebuts.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
-void I2CSlaveDevice::notifyRxCompleted(
+void I2CSlaveDevice::raiseRxCompletedNotification(
     unsigned length,
     bool irq) {
 
-	NotifyEventArgs args = {
-		.id = NotifyID::rxCompleted,
+	NotificationEventArgs args = {
+		.id = NotificationID::rxCompleted,
 		.irq = irq,
 		.rxCompleted {
 			.length = length
 		}
 	};
-	_erNotify.raise(this, &args);
+	_erNotification.raise(this, &args);
 }
 
 
@@ -449,20 +449,20 @@ void I2CSlaveDevice::notifyRxCompleted(
 /// \param    length: Nombre de bytes a transmetre.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
-void I2CSlaveDevice::notifyTxStart(
+void I2CSlaveDevice::raiseTxStartNotification(
     uint8_t * &buffer,
     unsigned &length,
     bool irq) {
 
-	NotifyEventArgs args = {
-		.id = NotifyID::txStart,
+	NotificationEventArgs args = {
+		.id = NotificationID::txStart,
 		.irq = irq,
 		.txStart {
 			.buffer = nullptr,
 			.length = 0
 		}
 	};
-	_erNotify.raise(this, &args);
+	_erNotification.raise(this, &args);
 	buffer = args.txStart.buffer;
 	length = args.txStart.length;
 }
@@ -473,18 +473,18 @@ void I2CSlaveDevice::notifyTxStart(
 /// \param    length: Nombre de bytes transmessos.
 /// \param    irq: Indica si es notifica desde una interrupcio.
 ///
-void I2CSlaveDevice::notifyTxCompleted(
+void I2CSlaveDevice::raiseTxCompletedNotification(
     unsigned length,
     bool irq) {
 
-	NotifyEventArgs args = {
-		.id = NotifyID::txCompleted,
+	NotificationEventArgs args = {
+		.id = NotificationID::txCompleted,
 		.irq = irq,
 		.txCompleted {
 			.length = length
 		}
 	};
-	_erNotify.raise(this, &args);
+	_erNotification.raise(this, &args);
 }
 
 

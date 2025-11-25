@@ -79,7 +79,7 @@ namespace htl {
 
         /// Identificador de la notificacio.
 		///
-        enum class NotifyID {
+        enum class NotificationID {
             addressMatch,    ///< Coindicencia en l'adressa.
             rxStart,         ///< Inici de la recepcio.
             rxCompleted,     ///< Recepcio finalitzada.
@@ -88,8 +88,8 @@ namespace htl {
 			error            ///< S'ha produit un error.
         };
 
-        struct NotifyEventArgs {
-        	NotifyID const id;          ///< Identificador de la notificacio
+        struct NotificationEventArgs {
+        	NotificationID const id;    ///< Identificador de la notificacio
             bool const irq;             ///< True si la notificacio s'ha generat en una interrupcio.
             union {
                 struct {
@@ -113,13 +113,13 @@ namespace htl {
         };
 
 
-        using SlaveNotifyRaiser = eos::EventRaiser<I2CSlaveDevice, NotifyEventArgs>;
-        using ISlaveNotifyEvent = SlaveNotifyRaiser::IEvent;
-        template <typename Instance_> using SlaveNotifyEvent = SlaveNotifyRaiser::Event<Instance_>;
+        using SlaveNotificationRaiser = eos::EventRaiser<I2CSlaveDevice, NotificationEventArgs>;
+        using ISlaveNotificationEvent = SlaveNotificationRaiser::IEvent;
+        template <typename Instance_> using SlaveNotificationEvent = SlaveNotificationRaiser::Event<Instance_>;
 
-        using MasterNotifyRaiser = eos::EventRaiser<I2CMasterDevice, NotifyEventArgs>;
-        using IMasterNotifyEvent = MasterNotifyRaiser::IEvent;
-        template <typename Instance_> using MasterNotifyEvent = MasterNotifyRaiser::Event<Instance_>;
+        using MasterNotificationRaiser = eos::EventRaiser<I2CMasterDevice, NotificationEventArgs>;
+        using IMasterNotificationEvent = MasterNotificationRaiser::IEvent;
+        template <typename Instance_> using MasterNotificationEvent = MasterNotificationRaiser::Event<Instance_>;
 
 
 		class I2CDevice {
@@ -169,17 +169,17 @@ namespace htl {
 				uint8_t *_buffer;
 				unsigned _dataCount;
 				unsigned _xferCount;
-				SlaveNotifyRaiser _erNotify;
+				SlaveNotificationRaiser _erNotification;
 
 			private:
 				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
 				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
 
-                void notifyAddressMatch(I2CAddr addr, bool irq);
-                void notifyRxStart(uint8_t * &buffer, unsigned &bufferSize, bool irq);
-                void notifyRxCompleted(unsigned length, bool irq);
-                void notifyTxStart(uint8_t * &buffer, unsigned &length, bool irq);
-                void notifyTxCompleted(unsigned length, bool irq);
+                void raiseAddressMatchNotification(I2CAddr addr, bool irq);
+                void raiseRxStartNotification(uint8_t * &buffer, unsigned &bufferSize, bool irq);
+                void raiseRxCompletedNotification(unsigned length, bool irq);
+                void raiseTxStartNotification(uint8_t * &buffer, unsigned &length, bool irq);
+                void raiseTxCompletedNotification(unsigned length, bool irq);
 
 #if HTL_I2C_OPTION_IRQ == 1
                 void enableListenInterrupts();
@@ -205,18 +205,18 @@ namespace htl {
 				eos::Result deinitialize();
 #endif
 
-				eos::Result setNotifyEvent(ISlaveNotifyEvent &event, bool enabled = true);
+				eos::Result setNotificationEvent(ISlaveNotificationEvent &event, bool enabled = true);
 
 				/// Habilita l'event de notificacio.
 				///
-				inline void enableNotifyEvent() {
-					_erNotify.enable();
+				inline void enableNotificationEvent() {
+					_erNotification.enable();
 				}
 
 				/// Deshabilita l'event de notificacio.
 				///
-				inline void disableNotifyEvent() {
-					_erNotify.disable();
+				inline void disableNotificationEvent() {
+					_erNotification.disable();
 				}
 
 				eos::Result listen(unsigned timeout);
@@ -243,7 +243,7 @@ namespace htl {
 
 			private:
 				State _state;
-				MasterNotifyRaiser _erNotify;
+				MasterNotificationRaiser _erNotification;
                 uint8_t *_buffer;
                 unsigned _maxCount;
                 unsigned _count;
@@ -252,8 +252,8 @@ namespace htl {
 				I2CMasterDevice(const I2C_TypeDef&) = delete;
 				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
 
-				void notifyTxCompleted(unsigned length, bool irq);
-				void notifyRxCompleted(unsigned length, bool irq);
+				void raiseTxCompletedNotification(unsigned length, bool irq);
+				void raiseRxCompletedNotification(unsigned length, bool irq);
 
 #if HTL_I2C_OPTION_IRQ == 1
 				void enableTransmitInterrupts();
@@ -289,18 +289,18 @@ namespace htl {
 				eos::Result deinitialize();
 #endif
 
-				eos::Result setNotifyEvent(IMasterNotifyEvent &event, bool enabled = true);
+				eos::Result setNotificationEvent(IMasterNotificationEvent &event, bool enabled = true);
 
 				/// Habilita l'event de notificacio.
 				///
-				inline void enableNotifyEvent() {
-					_erNotify.enable();
+				inline void enableNotificationEvent() {
+					_erNotification.enable();
 				}
 
 				/// Deshabilita l'event de notificacio.
 				///
-				inline void disableNotifyEvent() {
-					_erNotify.disable();
+				inline void disableNotificationEvent() {
+					_erNotification.disable();
 				}
 
 				eos::Result transmit(I2CAddr addr, const uint8_t *buffer, unsigned length, unsigned timeout);

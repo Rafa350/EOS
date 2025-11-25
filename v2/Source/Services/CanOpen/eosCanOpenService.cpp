@@ -70,7 +70,7 @@ void CanOpenService::onExecute() {
 		.type = can::FilterType::mask,
 		.config = can::FilterConfig::rxFifo0
     };
-    _devCAN->setFilter(&filter0, 1);
+    _devCAN->setFilter(&filter1, 1);
 
 	// Accepta notificacions del dispositiu.
 	//
@@ -115,8 +115,10 @@ void CanOpenService::onExecute() {
 							break;
 					}
 					break;
-
 				}
+
+				case MessageID::entryValueChanged:
+					break;
 			}
 		}
 	}
@@ -126,9 +128,9 @@ void CanOpenService::onExecute() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica el canvi d'estat
+/// \brief    Genera una notificacio de canvi d'estat
 ///
-void CanOpenService::notifyStateChanged() {
+void CanOpenService::raiseStateChangedNotification() {
 
 	if (_erNotification.isEnabled()) {
 
@@ -142,11 +144,12 @@ void CanOpenService::notifyStateChanged() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica el canvi de valor en una entrada del diccionari
+/// \brief    Genera una notificacio de canvi de valor en una entrada
+///           del diccionari
 /// \param    index: L'index de l'entrada.
 /// \param    sunIndex: El subindex de l'entrada.
 ///
-void CanOpenService::notifyValueChanged(
+void CanOpenService::raiseValueChangedNotification(
 	uint16_t index,
 	uint8_t subIndex) {
 
@@ -204,7 +207,7 @@ void CanOpenService::changeNodeState(
 				break;
 		}
 
-		notifyStateChanged();
+		raiseStateChangedNotification();
 	}
 }
 
@@ -304,6 +307,58 @@ void CanOpenService::processRPDO(
 	if (_nodeState == NodeState::operational) {
 
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que ha canviat un valor del diccionari
+/// \param    index: L'index de la entrada.
+/// \param    aubIndex: Subindex de la entrada.
+/// \param    Indica si cal generar una notificacio.
+///
+void CanOpenService::notifyValueChanged(
+	uint16_t index,
+	uint8_t subIndex,
+	bool raiseNotification) {
+
+	auto entryId = _dictionary->find(index, subIndex);
+	if (entryId != (unsigned) -1)
+		notifyValueChanged(entryId, raiseNotification);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que ha canviat un valor del diccionari
+/// \param    ptr: Punter al valor modificat.
+/// \param    Indica si cal generar una notificacio.
+///
+void CanOpenService::notifyValueChanged(
+	const void *ptr,
+	bool raiseNotification) {
+
+	auto entryId = _dictionary->find(ptr);
+	if (entryId != (unsigned) -1)
+		notifyValueChanged(entryId, raiseNotification);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Notifica que ha canviat un valor del diccionari
+/// \param    entryId: Identificador de la entrada.
+/// \param    Indica si cal generar una notificacio.
+///
+void CanOpenService::notifyValueChanged(
+	unsigned entryId,
+	bool raiseNotification) {
+
+	Message msg = {
+		.id = MessageID::entryValueChanged,
+		.entryValueChanged {
+			.entryId = entryId,
+			.raiseNotification = raiseNotification
+		}
+	};
+	_queue.push(msg, (unsigned) -1);
 }
 
 

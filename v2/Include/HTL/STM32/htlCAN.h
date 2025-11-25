@@ -322,8 +322,8 @@ namespace htl {
 					deactivateImpl();
 				}
 
-				void notifyRxFifoNotEmpty(RxFifoSelection fifo, bool irq);
-				void notifyTxCompleted(bool irq);
+				void raiseRxFifoNotEmptyNotification(RxFifoSelection fifo, bool irq);
+				void raiseTxCompletedNotification(bool irq);
 
 			protected:
 				CANDevice(FDCAN_GlobalTypeDef *can, uint8_t *ram);
