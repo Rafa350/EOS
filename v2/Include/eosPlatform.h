@@ -197,6 +197,9 @@ namespace eos {
 			// PIC32MX4xxxFxxx
             pic32mx460f512l,
 
+			// STM32F0xx
+			stm32f030r8,
+
 			// STM32F429xx
 			stm32f249zi,
 
@@ -220,23 +223,25 @@ namespace eos {
 
 		struct Platform {
 #if defined(EOS_PLATFORM_PIC32MX460F512L)
-            static constexpr PlatformID = PlatformID::pic32mx460f512l;
+            static constexpr PlatformID platformId = PlatformID::pic32mx460f512l;
+#elif defined(EOS_PLATFORM_STM32F030R8)
+            static constexpr PlatformID platformId = PlatformID::stm32f030r8;
 #elif defined(EOS_PLATFORM_STM32F429ZI)
-			static constexpr PlatformID platformID = PlatformID::stm32f429zi;
+			static constexpr PlatformID platformId = PlatformID::stm32f429zi;
 #elif defined(EOS_PLATFORM_STM32F746NG)
-			static constexpr PlatformID platformID = PlatformID::stm32f746ng;
+			static constexpr PlatformID platformId = PlatformID::stm32f746ng;
 #elif defined(EOS_PLATFORM_STM32G031K8)
-			static constexpr PlatformID platformID = PlatformID::stm32g031k8;
+			static constexpr PlatformID platformId = PlatformID::stm32g031k8;
 #elif defined(EOS_PLATFORM_STM32G071K8)
-			static constexpr PlatformID platformID = PlatformID::stm32g071k8;
+			static constexpr PlatformID platformId = PlatformID::stm32g071k8;
 #elif defined(EOS_PLATFORM_STM32G071KB)
-			static constexpr PlatformID platformID = PlatformID::stm32g071kb;
+			static constexpr PlatformID platformId = PlatformID::stm32g071kb;
 #elif defined(EOS_PLATFORM_STM32G071R8)
-			static constexpr PlatformID platformID = PlatformID::stm32g071r8;
+			static constexpr PlatformID platformId = PlatformID::stm32g071r8;
 #elif defined(EOS_PLATFORM_STM32G071RB)
-			static constexpr PlatformID platformID = PlatformID::stm32g071rb;
+			static constexpr PlatformID platformId = PlatformID::stm32g071rb;
 #elif defined(EOS_PLATFORM_STM32G0B1RE)
-			static constexpr PlatformID platformID = PlatformID::stm32g0B1re;
+			static constexpr PlatformID platformId = PlatformID::stm32g0B1re;
 #else
 	#error "Unkonwn platform"
 #endif

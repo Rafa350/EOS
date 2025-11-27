@@ -9,6 +9,45 @@
 #include "HTL/htlINT.h"
 
 
+namespace eos {
+	class Output final: public DigOutput {
+		public:
+			enum class State {
+				idle,
+				pulse,
+				delayedSet,
+				delayedClear,
+				delayedToggle,
+				delayedPulse,
+			};
+
+		private:
+			PinDriver * const _drv;
+			bool _value;
+			State _state;
+			unsigned _delayEndTime;
+			unsigned _pulseEndTime;
+
+		private:
+			static bool hasExpired(unsigned time, unsigned endTime);
+
+		public:
+			Output(PinDriver *drv);
+			bool getValue() const;
+			void set();
+			void clear();
+			void toggle();
+			void pulse(unsigned time, unsigned pulse);
+			void delayedSet(unsigned time, unsigned delay);
+			void delayedClear(unsigned time, unsigned delay);
+			void delayedToggle(unsigned time, unsigned delay);
+			void delayedPulse(unsigned time, unsigned delay, unsigned pulse);
+			void write(bool value);
+			void tick(unsigned time);
+	};
+}
+
+
 using namespace eos;
 using namespace htl;
 using namespace htl::irq;
@@ -129,7 +168,7 @@ void DigOutputService::removeOutputs() {
 /// \brief    Notifica un canvi en l'estat d'una sortida.
 /// \param    output: La sortida.
 ///
-void DigOutputService::notifyChanged(
+void DigOutputService::raiseChangedNotification(
 	Output *output) {
 
 	if (_erNotification.isEnabled()) {
@@ -372,7 +411,7 @@ void DigOutputService::processClear(
 
 	if (output->getValue()) {
 		output->clear();
-		notifyChanged(output);
+		raiseChangedNotification(output);
 	}
 }
 
@@ -386,7 +425,7 @@ void DigOutputService::processSet(
 
 	if (!output->getValue()) {
 		output->set();
-		notifyChanged(output);
+		raiseChangedNotification(output);
 	}
 }
 
@@ -399,7 +438,7 @@ void DigOutputService::processToggle(
     Output *output) {
 
 	output->toggle();
-	notifyChanged(output);
+	raiseChangedNotification(output);
 }
 
 
@@ -415,7 +454,7 @@ void DigOutputService::processPulse(
 	bool oldValue = output->getValue();
 	output->pulse(_timeCounter, pulseWidth);
 	if (oldValue != output->getValue())
-		notifyChanged(output);
+		raiseChangedNotification(output);
 }
 
 
@@ -481,7 +520,7 @@ void DigOutputService::processTick() {
     	bool oldValue = output->getValue();
 		output->tick(_timeCounter);
 		if (oldValue != output->getValue())
-			notifyChanged(output);
+			raiseChangedNotification(output);
 	}
 }
 
@@ -511,7 +550,7 @@ void DigOutputService::tickISR() {
 /// \brief    Contructor
 /// \param    dev: El driver del pin.
 ///
-DigOutputService::Output::Output(
+Output::Output(
 	PinDriver *drv):
 
 	_drv {drv},
@@ -524,7 +563,7 @@ DigOutputService::Output::Output(
 /// \brief    Obte el valor actual de la sortida.
 /// \return   El valor.
 ///
-bool DigOutputService::Output::getValue() const {
+bool Output::getValue() const {
 
 	return _value;
 }
@@ -534,7 +573,7 @@ bool DigOutputService::Output::getValue() const {
 /// \brief    Escriu un nou valor en la sortida.
 /// \param    value: El nou valor.
 ///
-void DigOutputService::Output::write(
+void Output::write(
 	bool value) {
 
 	_value = value;
@@ -545,7 +584,7 @@ void DigOutputService::Output::write(
 /// ----------------------------------------------------------------------
 /// \brief    Escriu el valor true en la sortida.
 ///
-void DigOutputService::Output::set() {
+void Output::set() {
 
 	write(true);
 	_state = State::idle;
@@ -555,7 +594,7 @@ void DigOutputService::Output::set() {
 /// ----------------------------------------------------------------------
 /// \brief    Escriu el valor false en la sortida.
 ///
-void DigOutputService::Output::clear() {
+void Output::clear() {
 
 	write(false);
 	_state = State::idle;
@@ -565,7 +604,7 @@ void DigOutputService::Output::clear() {
 /// ----------------------------------------------------------------------
 /// \brief    Inverteix el valor de la sortida.
 ///
-void DigOutputService::Output::toggle() {
+void Output::toggle() {
 
 	write(!_value);
 	_state = State::idle;
@@ -577,7 +616,7 @@ void DigOutputService::Output::toggle() {
 /// \param    time: El temps actual.
 /// \param    pulse: Durada del puls.
 ///
-void DigOutputService::Output::pulse(
+void Output::pulse(
 	unsigned time,
 	unsigned pulse) {
 
@@ -594,7 +633,7 @@ void DigOutputService::Output::pulse(
 /// \param    time: El temps actual.
 /// \param    delay: Durada del retard.
 ///
-void DigOutputService::Output::delayedSet(
+void Output::delayedSet(
 	unsigned time,
 	unsigned delay) {
 
@@ -608,7 +647,7 @@ void DigOutputService::Output::delayedSet(
 /// \param    time: El temps actual.
 /// \param    delay: Durada del retard.
 ///
-void DigOutputService::Output::delayedClear(
+void Output::delayedClear(
 	unsigned time,
 	unsigned delay) {
 
@@ -622,7 +661,7 @@ void DigOutputService::Output::delayedClear(
 /// \param    time: El temps actual.
 /// \param    delay: Durada del retard.
 ///
-void DigOutputService::Output::delayedToggle(
+void Output::delayedToggle(
 	unsigned time,
 	unsigned delay) {
 
@@ -637,7 +676,7 @@ void DigOutputService::Output::delayedToggle(
 /// \brief    delay: Durada del retard.
 /// \param    pulse: Durada del puls.
 ///
-void DigOutputService::Output::delayedPulse(
+void Output::delayedPulse(
 	unsigned time,
 	unsigned delay,
 	unsigned pulse) {
@@ -652,7 +691,7 @@ void DigOutputService::Output::delayedPulse(
 /// \brief    Procesa els temps.
 /// \param    time: El temps actual.
 ///
-void DigOutputService::Output::tick(
+void Output::tick(
 	unsigned time) {
 
 	switch (_state) {
@@ -700,7 +739,7 @@ void DigOutputService::Output::tick(
 /// \param    endTime: Temps limit.
 /// \return   True si el temps actual es posterior al temps limit.
 ///
-bool DigOutputService::Output::hasExpired(
+bool Output::hasExpired(
 	unsigned time,
 	unsigned endTime) {
 

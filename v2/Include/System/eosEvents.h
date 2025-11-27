@@ -55,6 +55,11 @@ namespace eos {
 				_enabled = true;
 			}
 
+			void set(IEvent *event, bool enabled) {
+				_event = event;
+				_enabled = true;
+			}
+
 			inline void enable() {
 				_enabled = _event != nullptr;
 			}

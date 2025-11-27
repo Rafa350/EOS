@@ -1,12 +1,13 @@
 #pragma once
-#ifndef __eosCanOpenService__
-#define __eosCanOpenService__
+#ifndef __eos_canopen_service__
+#define __eos_canopen_service__
 
 
 #include "eos.h"
 #include "htl/STM32/htlCAN.h"
 #include "Services/eosService.h"
-#include "Services/CanOPen/eosCanOpenSDOServer.h"
+#include "Services/CanOpen/eos_canopen_sdoserver.h"
+#include "Services/CanOpen/eos_canopen_sdoclient.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -77,7 +78,7 @@ namespace eos {
 		private:
 			htl::can::CANDevice * const _devCAN;
         	CANDeviceNotificationEvent _canDeviceNotificationEvent;
-        	const CanOpenDictionary * const _dictionary;
+        	CanOpenDictionary * const _dictionary;
 			uint8_t const _nodeId;
 			NodeType const _nodeType;
 			NodeState _nodeState;
@@ -92,6 +93,7 @@ namespace eos {
             void processSYNC();
             void processNMT(const uint8_t *rxData);
             void processRPDO(const uint8_t *rdData);
+            void processValueChanged(unsigned entryId, bool raiseNotification);
 
             unsigned buildTPDO(unsigned tpdoId, uint8_t *buffer, unsigned bufferSize);
 
@@ -99,8 +101,8 @@ namespace eos {
 
             void changeNodeState(NodeState newNodeState);
 
-            void raiseStateChangedNotification();
-            void raiseValueChangedNotification(uint16_t index, uint8_t subIndex);
+            void raiseStateChangedNotificationEvent();
+            void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex);
 
             void notifyValueChanged(unsigned entryId, bool raiseNotification);
 
@@ -125,6 +127,10 @@ namespace eos {
 
 			void bootUp();
             void heartBeat();
+
+            void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
+            	_erNotification.set(event, enabled);
+            }
 
             inline NodeState getNodeState() const {
             	return _nodeState;

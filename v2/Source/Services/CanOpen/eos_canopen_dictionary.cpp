@@ -1,5 +1,6 @@
 #include "eos.h"
-#include "Services/CanOpen/eosCanOpenDictionary.h"
+#include "Services/CanOpen/eos_canopen_dictionary.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -16,6 +17,25 @@ CanOpenDictionary::CanOpenDictionary(
 	_entries {entries},
 	_numEntries {numEntries} {
 
+}
+
+void CanOpenDictionary::setNotificationEvent(
+	INotificationEvent &event,
+	bool enabled) {
+
+	_erNotification.set(event, enabled);
+}
+
+
+void CanOpenDictionary::enableNotifyEvent() {
+
+	_erNotification.enable();
+}
+
+
+void CanOpenDictionary::disableNotifyEvent() {
+
+	_erNotification.disable();
 }
 
 
@@ -91,13 +111,56 @@ unsigned CanOpenDictionary::getDataLength(
 }
 
 
+uint16_t CanOpenDictionary::getIndex(
+	unsigned entryId) const {
+
+	if (entryId < _numEntries)
+		return _entries[entryId].index;
+	else
+		return 0xFFFF;
+}
+
+
+uint8_t CanOpenDictionary::getSubIndex(
+	unsigned entryId) const {
+
+	if (entryId < _numEntries)
+		return _entries[entryId].subIndex;
+	else
+		return 0xFF;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera una notificacio 'ValueChanged'
+/// \param    entryId: Identificador de la entrada.
+/// \param    oldValue: L'anterior valor de l'entrada.
+///
+void CanOpenDictionary::raiseValueChangedNotification(
+	unsigned entryId,
+	unsigned oldValue) {
+
+	if (_erNotification.isEnabled()) {
+		NotificationEventArgs args = {
+			.id {NotificationID::valueChanged},
+			.valueChanged {
+				.index {_entries[entryId].index},
+				.subIndex {_entries[entryId].subIndex},
+				.oldValue {oldValue}
+			}
+		};
+		_erNotification(this, &args);
+	}
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si es pot escriure en una entrada.
 /// \param    entryId: L'identificador de l'entrada.
 /// \return   True si es pot escriure, false en cas contrari.
 ///
 bool CanOpenDictionary::canWrite(
-	unsigned entryId) const {
+	unsigned entryId) {
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
@@ -139,7 +202,7 @@ bool CanOpenDictionary::canRead(
 ///
 bool CanOpenDictionary::write(
 	unsigned entryId,
-	unsigned value) const {
+	unsigned value) {
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
@@ -167,12 +230,21 @@ bool CanOpenDictionary::write(
 ///
 bool CanOpenDictionary::writeU8(
 	unsigned entryId,
-	uint8_t value) const {
+	uint8_t value) {
 
 	if (canWrite(entryId)) {
 		auto entry = &_entries[entryId];
 		if (entry->type == CoType::unsigned8) {
-			*((uint8_t*)entry->data) = value;
+
+			Task::enterCriticalSection();
+			auto oldValue = *((uint8_t*)entry->data);
+			if (oldValue != value)
+				*((uint8_t*)entry->data) = value;
+			Task::exitCriticalSection();
+
+			if (oldValue != value)
+				raiseValueChangedNotification(entryId, oldValue);
+
 			return true;
 		}
 	}
@@ -189,12 +261,21 @@ bool CanOpenDictionary::writeU8(
 ///
 bool CanOpenDictionary::writeU16(
 	unsigned entryId,
-	uint16_t value) const {
+	uint16_t value) {
 
 	if (canWrite(entryId)) {
 		auto entry = &_entries[entryId];
 		if (entry->type == CoType::unsigned16) {
-			*((uint16_t*)entry->data) = value;
+
+			Task::enterCriticalSection();
+			auto oldValue = *((uint16_t*)entry->data);
+			if (oldValue != value)
+				*((uint16_t*)entry->data) = value;
+			Task::exitCriticalSection();
+
+			if (oldValue != value)
+				raiseValueChangedNotification(entryId, oldValue);
+
 			return true;
 		}
 	}
@@ -211,12 +292,21 @@ bool CanOpenDictionary::writeU16(
 ///
 bool CanOpenDictionary::writeU32(
 	unsigned entryId,
-	uint32_t value) const {
+	uint32_t value) {
 
 	if (canWrite(entryId)) {
 		auto entry = &_entries[entryId];
 		if (entry->type == CoType::unsigned32) {
-			*((uint32_t*)entry->data) = value;
+
+			Task::enterCriticalSection();
+			auto oldValue = *((uint32_t*)entry->data);
+			if (oldValue != value)
+				*((uint32_t*)entry->data) = value;
+			Task::exitCriticalSection();
+
+			if (oldValue != value)
+				raiseValueChangedNotification(entryId, oldValue);
+
 			return true;
 		}
 	}

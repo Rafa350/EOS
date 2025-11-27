@@ -1,7 +1,7 @@
 #include "eos.h"
-#include "Services/CanOpen/eosCanOpenSDOServer.h"
-#include "Services/CanOpen/eosCanOpenDictionary.h"
-#include "Services/CanOpen/eosCanOpenProtocols.h"
+#include "services/canopen/eos_canopen_sdoserver.h"
+#include "services/canopen/eos_canopen_dictionary.h"
+#include "services/canopen/eos_canopen_protocols.h"
 
 
 using namespace eos;
@@ -34,27 +34,27 @@ Result CanOpenSDOServer::process(
 	// Initiate SDO download (Expedited)
 	//
 	if ((query[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_EXP))
-		processInitiateDownloadExpedited(query, response);
+		onInitiateDownloadExpedited(query, response);
 
 	// Initiate SDO download (Normal)
 	//
 	else if ((query[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_SEG))
-		processInitiateDownloadNormal(query, response);
+		onInitiateDownloadNormal(query, response);
 
 	// Download segment
 	//
 	else if ((query[0] & SDO0::CCS_Msk) == SDO0::CCS_DNSEG)
-		processDownloadSegment(query, response);
+		onDownloadSegment(query, response);
 
 	// Initiate SDO upload
 	//
 	else if ((query[0] & SDO0::CCS_Msk) == SDO0::CCS_UP)
-		processInitiateUpload(query, response);
+		onInitiateUpload(query, response);
 
 	// Upload segment
 	//
 	else if ((query[0] & SDO0::CCS_Msk) == SDO0::CCS_UPSEG)
-		processUploadSegment(query, response);
+		onUploadSegment(query, response);
 
 	// Error SDO
 	//
@@ -82,7 +82,7 @@ Result CanOpenSDOServer::process(
 /// \param    query: La consulta
 /// \param    response: La resposta
 ///
-void CanOpenSDOServer::processInitiateDownloadExpedited(
+void CanOpenSDOServer::onInitiateDownloadExpedited(
 	const uint8_t *query,
 	uint8_t *response) {
 
@@ -136,7 +136,7 @@ void CanOpenSDOServer::processInitiateDownloadExpedited(
 /// \param    query: La consulta
 /// \param    response: La resposta
 ///
-void CanOpenSDOServer::processInitiateDownloadNormal(
+void CanOpenSDOServer::onInitiateDownloadNormal(
 	const uint8_t *query,
 	uint8_t *response) {
 
@@ -183,7 +183,7 @@ void CanOpenSDOServer::processInitiateDownloadNormal(
 /// \param    query: La consulta
 /// \param    response: La resposta
 ///
-void CanOpenSDOServer::processDownloadSegment(
+void CanOpenSDOServer::onDownloadSegment(
 	const uint8_t *query,
 	uint8_t *response) {
 }
@@ -194,7 +194,7 @@ void CanOpenSDOServer::processDownloadSegment(
 /// \param    query: La consulta
 /// \param    response: La resposta
 ///
-void CanOpenSDOServer::processInitiateUpload(
+void CanOpenSDOServer::onInitiateUpload(
 	const uint8_t *query,
 	uint8_t *response) {
 
@@ -265,7 +265,7 @@ void CanOpenSDOServer::processInitiateUpload(
 /// \param    query: La consulta
 /// \param    response: La resposta
 ///
-void CanOpenSDOServer::processUploadSegment(
+void CanOpenSDOServer::onUploadSegment(
 	const uint8_t *query,
 	uint8_t *response) {
 }

@@ -52,6 +52,8 @@ namespace eos {
     		DigOutput() = default;
     };
 
+    class Output;
+
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
     class DigOutputService final: public Service {
@@ -73,42 +75,6 @@ namespace eos {
 			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 		private:
-            class Output final: public DigOutput {
-            	public:
-            		enum class State {
-        				idle,
-        				pulse,
-        				delayedSet,
-        				delayedClear,
-        				delayedToggle,
-        				delayedPulse,
-        			};
-
-                private:
-            		PinDriver * const _drv;
-            		bool _value;
-            		State _state;
-            		unsigned _delayEndTime;
-            		unsigned _pulseEndTime;
-
-                private:
-            		static bool hasExpired(unsigned time, unsigned endTime);
-
-                public:
-                	Output(PinDriver *drv);
-        			bool getValue() const;
-        			void set();
-        			void clear();
-        			void toggle();
-        			void pulse(unsigned time, unsigned pulse);
-        			void delayedSet(unsigned time, unsigned delay);
-        			void delayedClear(unsigned time, unsigned delay);
-        			void delayedToggle(unsigned time, unsigned delay);
-        			void delayedPulse(unsigned time, unsigned delay, unsigned pulse);
-        			void write(bool value);
-        			void tick(unsigned time);
-            };
-
             enum class CommandID {
                 set,
                 clear,
@@ -153,7 +119,7 @@ namespace eos {
             void processDelayedPulse(Output *output, unsigned delay, unsigned width);
             void processTick();
 
-            void notifyChanged(Output *output);
+            void raiseChangedNotification(Output *output);
 
         protected:
             void onInitialize(ServiceParams &params) override;

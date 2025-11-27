@@ -14,10 +14,10 @@ namespace eos {
 			htl::i2c::I2CMasterDevice * const _devI2C;
 
 		private:
-			htl::i2c::MasterNotifyEvent<SerialDriver_I2CMaster> _i2cNotifyEvent;
+			htl::i2c::MasterNotificationEvent<SerialDriver_I2CMaster> _i2cNotificationEvent;
 
 		private:
-			void i2cNotifyEventHandler(htl::i2c::I2CMasterDevice *sender, htl::i2c::NotifyEventArgs * const args);
+			void i2cNotificationEventHandler(htl::i2c::I2CMasterDevice *sender, htl::i2c::NotificationEventArgs * const args);
 
 		protected:
             bool onInitialize() override;

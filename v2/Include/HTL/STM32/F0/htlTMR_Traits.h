@@ -23,8 +23,8 @@ namespace htl {
 			template <>
 			struct TMRTraits<DeviceID::tmr1> {
 				static constexpr uint32_t timAddr = TIM1_BASE;
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
-				static constexpr uint32_t enablePos = RCC_APB2ENR_TIM1EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB2ENR);
+				static constexpr uint32_t activatePos = RCC_APB2ENR_TIM1EN_Pos;
 			};
 			#endif
 
@@ -39,8 +39,8 @@ namespace htl {
 			template <>
 			struct TMRTraits<DeviceID::tmr3> {
 				static constexpr uint32_t timAddr = TIM3_BASE;
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM3EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t activatePos = RCC_APB1ENR_TIM3EN_Pos;
 			};
 			#endif
 
@@ -62,8 +62,8 @@ namespace htl {
 			template <>
 			struct TMRTraits<DeviceID::tmr6> {
 				static constexpr uint32_t timAddr = TIM6_BASE;
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM6EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t activatePos = RCC_APB1ENR_TIM6EN_Pos;
 			};
 			#endif
 
@@ -120,8 +120,8 @@ namespace htl {
 			template <>
 			struct TMRTraits<DeviceID::tmr14> {
 				static constexpr uint32_t timAddr = TIM14_BASE;
-				static constexpr uint32_t rccAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
-				static constexpr uint32_t enablePos = RCC_APB1ENR_TIM14EN_Pos;
+				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, APB1ENR);
+				static constexpr uint32_t activatePos = RCC_APB1ENR_TIM14EN_Pos;
 			};
 			#endif
 		}

@@ -47,11 +47,11 @@ Result I2CMasterDevice::initialize(
 
 		_state = State::ready;
 
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -84,17 +84,17 @@ Result I2CMasterDevice::deinitialize() {
 /// \param    enabled: True per habilitar l'event.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result I2CMasterDevice::setNotifyEvent(
-	IMasterNotifyEvent &event,
+eos::Result I2CMasterDevice::setNotificationEvent(
+	IMasterNotificationEvent &event,
 	bool enabled) {
 
     if ((_state == State::reset) || (_state == State::ready)) {
-    	_erNotify.set(event, enabled);
-    	return Results::success;
+    	_erNotification.set(event, enabled);
+    	return Result::ErrorCodes::success;
     }
 
     else
-    	return Results::errorState;
+    	return Result::ErrorCodes::errorState;
 }
 
 
@@ -103,19 +103,19 @@ eos::Result I2CMasterDevice::setNotifyEvent(
 /// \param    length: Nombre de bytes transmissos.
 /// \param    irq: True si es notifica desde una interrupcio.
 ///
-void I2CMasterDevice::notifyTxCompleted(
+void I2CMasterDevice::raiseTxCompletedNotification(
 	unsigned length,
 	bool irq) {
 
-	if (_erNotify.isEnabled()) {
-		NotifyEventArgs args = {
-			.id = NotifyID::txCompleted,
+	if (_erNotification.isEnabled()) {
+		NotificationEventArgs args = {
+			.id = NotificationID::txCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length
 			}
 		};
-		_erNotify.raise(this, &args);
+		_erNotification.raise(this, &args);
 	}
 }
 
@@ -125,19 +125,19 @@ void I2CMasterDevice::notifyTxCompleted(
 /// \param    length: Nombre de bytes rebuts.
 /// \param    irq: True si es notifica desde una interrupcio.
 ///
-void I2CMasterDevice::notifyRxCompleted(
+void I2CMasterDevice::raiseRxCompletedNotification(
 	unsigned length,
 	bool irq) {
 
-	if (_erNotify.isEnabled()) {
-		NotifyEventArgs args = {
-			.id = NotifyID::rxCompleted,
+	if (_erNotification.isEnabled()) {
+		NotificationEventArgs args = {
+			.id = NotificationID::rxCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.length = length
 			}
 		};
-		_erNotify.raise(this, &args);
+		_erNotification.raise(this, &args);
 	}
 }
 
@@ -205,14 +205,14 @@ Result I2CMasterDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Results::error : Results::success;
+		return error ? Result::ErrorCodes::error : Result::ErrorCodes::success;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Results::busy;
+		return Result::ErrorCodes::busy;
 
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -267,14 +267,14 @@ Result I2CMasterDevice::receive(
 		if (!waitSTOPCondition(expireTime))
 			error = true;
 
-		return error ? Results::error : Results::success;
+		return error ? Result::ErrorCodes::error : Result::ErrorCodes::success;
 	}
 
 	else if (_state == State::receiving || _state == State::transmiting)
-		return Results::busy;
+		return Result::ErrorCodes::busy;
 
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -300,14 +300,14 @@ Result I2CMasterDevice::transmit_IRQ(
 		enableTransmitInterrupts();
 		startTransmit(addr, _count, _maxCount);
 
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 
 	else if (_state == State::receiving || _state == State::transmiting)
-		return Results::busy;
+		return Result::ErrorCodes::busy;
 
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -333,14 +333,14 @@ Result I2CMasterDevice::receive_IRQ(
 		enableReceiveInterrupts();
 		startReceive(addr, _count, _maxCount);
 
-		return Results::success;
+		return Result::ErrorCodes::success;
 	}
 
 	else if (_state == State::receiving || _state == State::transmiting)
-		return Results::busy;
+		return Result::ErrorCodes::busy;
 
 	else
-		return Results::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -422,7 +422,7 @@ void I2CMasterDevice::interruptServiceTransmit() {
 		_i2c->ICR = I2C_ICR_STOPCF;
 		_state = State::ready;
 
-		notifyTxCompleted(_count, true);
+		raiseTxCompletedNotification(_count, true);
 	}
 }
 
@@ -467,7 +467,7 @@ void I2CMasterDevice::interruptServiceReceive() {
 		_i2c->ICR = I2C_ICR_STOPCF;
 		_state = State::ready;
 
-		notifyRxCompleted(_count, true);
+		raiseRxCompletedNotification(_count, true);
 	}
 }
 

@@ -6,7 +6,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/eosEvents.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
@@ -16,6 +15,7 @@ namespace eos {
 
     class DigInputService;
     class DigInput;
+    class PinDriver;
 
     using DigInputList = IntrusiveForwardList<DigInput, 0>;
     using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
@@ -25,6 +25,12 @@ namespace eos {
     class DigInput: public DigInputListNode {
     	protected:
     		DigInput() = default;
+
+    	public:
+    	    DigInput(const DigInput&) = delete;
+    	    DigInput& operator=(const DigInput&) = delete;
+    	    DigInput(const DigInput&&) = delete;
+    	    DigInput& operator=(const DigInput&&) = delete;
     };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
@@ -58,10 +64,9 @@ namespace eos {
             unsigned _scanPeriod;
 
         private:
-            bool scanInputs();
-            void notifyChanged(DigInput *input);
-            void notifyBeforeScan();
-            void notifyInitialize(ServiceParams *params);
+            void raiseChangedNotification(DigInput *input);
+            void raiseBeforeScanNotification();
+            void raiseInitializeNotification(ServiceParams *params);
 
         protected:
             void onInitialize(ServiceParams &params) override;
@@ -80,17 +85,11 @@ namespace eos {
             void removeInputs();
 
             bool read(const DigInput *input) const;
-            uint32_t getEdges(DigInput *input, bool clear = true) const;
+            unsigned getEdges(DigInput *input, bool clear = true) const;
 
-            inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
-            	_erNotification.set(event, enabled);
-            }
-            inline void enableNotifyEvent() {
-            	_erNotification.enable();
-            }
-            inline void disableNotifyEvent() {
-            	_erNotification.disable();
-            }
+            void setNotificationEvent(INotificationEvent &event, bool enabled = true);
+            void enableNotifyEvent();
+            void disableNotifyEvent();
     };
 }
 

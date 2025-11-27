@@ -40,7 +40,7 @@ namespace eos {
 
 		private:
 			htl::i2c::I2CMasterDevice *_devI2C;
-			htl::i2c::MasterNotifyEvent<I2CMasterService> _devI2CNotifyEvent;
+			htl::i2c::MasterNotificationEvent<I2CMasterService> _devI2CNotificationEvent;
 			TransactionQueue _transactionQueue;
 			Semaphore _txFinished;
 			unsigned _txFinishedLength;
@@ -54,7 +54,7 @@ namespace eos {
     		static constexpr uint32_t minStackSize = 256;
 
 		private:
-    		void devI2CNotifyEventHandler(htl::i2c::I2CMasterDevice * const sender, htl::i2c::NotifyEventArgs * const args);
+    		void devI2CNotificationEventHandler(htl::i2c::I2CMasterDevice * const sender, htl::i2c::NotificationEventArgs * const args);
 
 		protected:
 			void onExecute() override;

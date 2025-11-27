@@ -34,7 +34,7 @@ namespace htl {
 			p1,
 			p2,
 			p3,
-#if defined(STM32F4) || defined(STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 			p4,
 			p5,
 			p6,
@@ -50,7 +50,7 @@ namespace htl {
 #endif
 		};
 
-#if defined(STM32F4) || defined(STM32F7)
+#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		enum class SubPriority {
 			sp0,
 			sp1,
@@ -59,10 +59,10 @@ namespace htl {
 		};
 #endif
 
-#if defined(STM32G0)
+#if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
 		void setInterruptVectorPriority(VectorID vectorId, Priority priority);
 
-#elif defined(STM32F4) || defined(STM32F7)
+#elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 		void setInterruptVectorPriority(VectorID vectorId, Priority priority,
 		        SubPriority subPriority = SubPriority::sp0);
 #endif

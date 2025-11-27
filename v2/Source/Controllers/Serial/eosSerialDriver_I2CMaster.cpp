@@ -17,7 +17,7 @@ SerialDriver_I2CMaster::SerialDriver_I2CMaster(
 	htl::i2c::I2CMasterDevice * devI2C) :
 
 	_devI2C {devI2C},
-	_i2cNotifyEvent {*this, &SerialDriver_I2CMaster::i2cNotifyEventHandler} {
+	_i2cNotificationEvent {*this, &SerialDriver_I2CMaster::i2cNotificationEventHandler} {
 
 	eosAssert(devI2C != nullptr);
 }
@@ -29,7 +29,7 @@ SerialDriver_I2CMaster::SerialDriver_I2CMaster(
 ///
 bool SerialDriver_I2CMaster::onInitialize() {
 
-    _devI2C->setNotifyEvent(_i2cNotifyEvent);
+    _devI2C->setNotificationEvent(_i2cNotificationEvent);
     return true;
 }
 
@@ -40,7 +40,7 @@ bool SerialDriver_I2CMaster::onInitialize() {
 ///
 bool SerialDriver_I2CMaster::onDeinitialize() {
 
-	_devI2C->disableNotifyEvent();
+	_devI2C->disableNotificationEvent();
 	return true;
 }
 
@@ -94,19 +94,19 @@ bool SerialDriver_I2CMaster::onAbort() {
 /// \param    sender: El remitent
 /// \param    args: Parametres del event.
 ///
-void SerialDriver_I2CMaster::i2cNotifyEventHandler(
+void SerialDriver_I2CMaster::i2cNotificationEventHandler(
 	htl::i2c::I2CMasterDevice * const sender,
-	htl::i2c::NotifyEventArgs * const args) {
+	htl::i2c::NotificationEventArgs * const args) {
 
 	eosAssert(args != nullptr);
 	eosAssert(sender == _devI2C);
 
 	switch(args->id) {
-		case htl::i2c::NotifyID::txCompleted:
+		case htl::i2c::NotificationID::txCompleted:
 			notifyTxCompleted(args->txCompleted.length, args->irq);
 			break;
 
-		case htl::i2c::NotifyID::rxCompleted:
+		case htl::i2c::NotificationID::rxCompleted:
 			notifyRxCompleted(args->rxCompleted.length, args->irq);
 			break;
 	}

@@ -1,7 +1,7 @@
 #include "eos.h"
-#include "Services/CanOpen/eosCanOpenDictionary.h"
-#include "Services/CanOpen/eosCanOpenService.h"
-#include "Services/CanOpen/eosCanOpenProtocols.h"
+#include "services/canopen/eos_canopen_dictionary.h"
+#include "services/canopen/eos_canopen_service.h"
+#include "services/canopen/eos_canopen_protocols.h"
 
 
 using namespace eos;
@@ -93,6 +93,9 @@ void CanOpenService::onExecute() {
 		Message msg;
 		while(_queue.pop(msg, (unsigned) -1)) {
 			switch (msg.id) {
+
+				// S'ha rebut un missatge CANOpen
+				//
 				case MessageID::canReceive: {
 
 					uint8_t response[8];
@@ -117,7 +120,10 @@ void CanOpenService::onExecute() {
 					break;
 				}
 
+				// Ha canviat un valor en el diccionari
+				//
 				case MessageID::entryValueChanged:
+					processValueChanged(msg.entryValueChanged.entryId, msg.entryValueChanged.raiseNotification);
 					break;
 			}
 		}
@@ -130,7 +136,7 @@ void CanOpenService::onExecute() {
 /// ----------------------------------------------------------------------
 /// \brief    Genera una notificacio de canvi d'estat
 ///
-void CanOpenService::raiseStateChangedNotification() {
+void CanOpenService::raiseStateChangedNotificationEvent() {
 
 	if (_erNotification.isEnabled()) {
 
@@ -149,7 +155,7 @@ void CanOpenService::raiseStateChangedNotification() {
 /// \param    index: L'index de l'entrada.
 /// \param    sunIndex: El subindex de l'entrada.
 ///
-void CanOpenService::raiseValueChangedNotification(
+void CanOpenService::raiseValueChangedNotificationEvent(
 	uint16_t index,
 	uint8_t subIndex) {
 
@@ -207,7 +213,7 @@ void CanOpenService::changeNodeState(
 				break;
 		}
 
-		raiseStateChangedNotification();
+		raiseStateChangedNotificationEvent();
 	}
 }
 
@@ -224,9 +230,12 @@ void CanOpenService::processSDO(
 	if ((_nodeState == NodeState::preOperational) ||
 		(_nodeState == NodeState::operational)) {
 
-		if (_sdoServer.process(rxData, txData).isSuccess())
-			; //TODO: sendFrame(COBID::SDOr | nodeId, response, sizeof(response));
-
+		if (_sdoServer.process(rxData, txData).isSuccess()) {
+			; //TODO: sendFrame(COBID::SDOr | nodeId, txData, sizeof(response));
+			uint16_t index = txData[1] | (txData[2] << 8);
+			uint8_t subIndex = txData[3];
+			raiseValueChangedNotificationEvent(index, subIndex);
+		}
 	}
 }
 
@@ -311,6 +320,29 @@ void CanOpenService::processRPDO(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa un canvi en el valor d'una entrada del diccionari
+/// \param    entryId: Identificador de l'entrada.
+/// \param    raiseNotification: Indica si cal generar un event de notificacio.
+///
+void CanOpenService::processValueChanged(
+	unsigned entryId,
+	bool raiseNotification) {
+
+	// Si esta operacional, comprova si cal generar TPDO's
+	//
+	if (_nodeState == NodeState::operational) {
+
+	}
+
+	if (raiseNotification) {
+		auto index = _dictionary->getIndex(entryId);
+		auto subIndex = _dictionary->getSubIndex(entryId);
+		raiseValueChangedNotificationEvent(index, subIndex);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Notifica que ha canviat un valor del diccionari
 /// \param    index: L'index de la entrada.
 /// \param    aubIndex: Subindex de la entrada.
@@ -352,10 +384,10 @@ void CanOpenService::notifyValueChanged(
 	bool raiseNotification) {
 
 	Message msg = {
-		.id = MessageID::entryValueChanged,
+		.id {MessageID::entryValueChanged},
 		.entryValueChanged {
-			.entryId = entryId,
-			.raiseNotification = raiseNotification
+			.entryId {entryId},
+			.raiseNotification {raiseNotification}
 		}
 	};
 	_queue.push(msg, (unsigned) -1);

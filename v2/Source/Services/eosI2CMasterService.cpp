@@ -14,7 +14,7 @@ I2CMasterService::I2CMasterService(
 	htl::i2c::I2CMasterDevice *devI2C):
 
 	_devI2C {devI2C},
-	_devI2CNotifyEvent {*this, &I2CMasterService::devI2CNotifyEventHandler},
+	_devI2CNotificationEvent {*this, &I2CMasterService::devI2CNotificationEventHandler},
 	_transactionQueue {_transactionQueueSize} {
 
 }
@@ -81,7 +81,7 @@ bool I2CMasterService::startTransaction(
 ///
 void I2CMasterService::onExecute() {
 
-	_devI2C->setNotifyEvent(_devI2CNotifyEvent);
+	_devI2C->setNotificationEvent(_devI2CNotificationEvent);
 
 	uint8_t txBufBer[5];
 	txBufBer[0] = 0x50;
@@ -141,7 +141,7 @@ void I2CMasterService::onExecute() {
 
 	}
 
-	_devI2C->disableNotifyEvent();
+	_devI2C->disableNotificationEvent();
 }
 
 
@@ -149,12 +149,12 @@ void I2CMasterService::onExecute() {
 /// \brief    Procesa les notificacions del dispositiu.
 /// \param    args: Els parametres de la notificacio.
 ///
-void I2CMasterService::devI2CNotifyEventHandler(
+void I2CMasterService::devI2CNotificationEventHandler(
 	htl::i2c::I2CMasterDevice * const sender,
-	htl::i2c::NotifyEventArgs * const args) {
+	htl::i2c::NotificationEventArgs * const args) {
 
 	switch (args->id) {
-		case htl::i2c::NotifyID::txCompleted:
+		case htl::i2c::NotificationID::txCompleted:
 			if (args->irq)
 				_txFinished.releaseISR();
 			else
@@ -162,7 +162,7 @@ void I2CMasterService::devI2CNotifyEventHandler(
 			_txFinishedLength = args->txCompleted.length;
 			break;
 
-		case htl::i2c::NotifyID::rxCompleted:
+		case htl::i2c::NotificationID::rxCompleted:
 			if (args->irq)
 				_rxFinished.releaseISR();
 			else

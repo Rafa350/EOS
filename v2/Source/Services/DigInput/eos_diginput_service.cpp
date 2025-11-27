@@ -1,112 +1,21 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosKernel.h"
+#include "eos_diginput_inputs.h"
 
 #include <cmath>
 
 
-namespace eos {
-
-    class Input final: public DigInput {
-
-		private: static constexpr const uint32_t _patternMask    = 0x000000FF;
-		private: static constexpr const uint32_t _patternPosEdge = 0x0000007F;
-		private: static constexpr const uint32_t _patternNegEdge = 0x00000080;
-		private: static constexpr const uint32_t _patternActive  = 0x000000FF;
-		private: static constexpr const uint32_t _patternIdle    = 0x00000000;
-
-    	public: enum class ScanMode {
-			polling,
-			interrupt
-		};
-
-        public: ScanMode scanMode;
-
-        private: PinDriver * const _drv;
-        private: uint32_t _pattern;
-        private: struct {
-			bool value : 1;
-			unsigned flag : 1;
-			unsigned edges : 30;
-		} _status;
-
-
-        public: Input(PinDriver *pinDrv):
-			_drv {pinDrv} {
-
-			if (_drv->read()) {
-				_status.value = true;
-				_pattern = _patternActive;
-			}
-			else {
-				_status.value = false;
-				_pattern = _patternIdle;
-			}
-			_status.edges = 0;
-			_status.flag = 0;
-		}
-
-        public: bool scan() {
-
-        	_pattern <<= 1;
-            if (_drv->read())
-                _pattern |= 1;
-
-            // Analitza el patro per detectar un flanc positiu
-            //
-            if ((_pattern & _patternMask) == _patternPosEdge) {
-                _status.value = true;
-                _status.edges += 1;
-                _status.flag = 1;
-                return true;
-            }
-
-            // Analitza el patro per detectar un flanc negatiu
-            //
-            else if ((_pattern & _patternMask) == _patternNegEdge) {
-                _status.value = false;
-                _status.edges += 1;
-                _status.flag = 1;
-                return true;
-            }
-
-            else
-            	return false;
-        }
-
-        public: inline bool getValue() const {
-        	return _status.value;
-        }
-
-        public: inline unsigned getEdges(bool clear) {
-        	auto edges = _status.edges;
-        	if (clear)
-        		_status.edges = 0;
-        	return edges;
-        }
-
-        public: inline bool readFlag() {
-        	bool flag = _status.flag == 1;
-        	_status.flag = 0;
-        	return flag;
-        }
-    };
-}
-
-
 using namespace eos;
-using namespace htl;
-using namespace htl::irq;
 
 
 constexpr const char *serviceName = "DigInputs";
 constexpr Task::Priority servicePriority = Task::Priority::normal;
 constexpr unsigned serviceStackSize = 160;
 
-constexpr unsigned minScanPeriod = 5;  // Periode d'exploracio en ms
+constexpr unsigned minScanPeriod = 5;  // Periode d'exploracio minim en ms
 
 
 /// ----------------------------------------------------------------------
@@ -141,10 +50,41 @@ void DigInputService::setScanPeriod(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Asigna l'event de notificacio.
+/// \param    event: L'event.
+/// \param    enabled: True per habiliotar el event.
+///
+void DigInputService::setNotificationEvent(
+	INotificationEvent &event,
+	bool enabled) {
+
+	_erNotification.set(event, enabled);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita l'event de notificacio
+//
+void DigInputService::enableNotifyEvent() {
+
+	_erNotification.enable();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita l'event de notificacio
+//
+void DigInputService::disableNotifyEvent() {
+
+	_erNotification.disable();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Notifica un canvi en l'estat d'una entrada.
 /// \param    input: L'entrada.
 ///
-void DigInputService::notifyChanged(
+void DigInputService::raiseChangedNotification(
     DigInput *input) {
 
     if (_erNotification.isEnabled()) {
@@ -167,7 +107,7 @@ void DigInputService::notifyChanged(
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el inici del scaneig de les entrades.
 ///
-void DigInputService::notifyBeforeScan() {
+void DigInputService::raiseBeforeScanNotification() {
 
 	if (_erNotification.isEnabled()) {
 
@@ -184,7 +124,7 @@ void DigInputService::notifyBeforeScan() {
 /// \brief    Notifica la inicialitzacio del servei.
 /// \param    args: Parametres d'inicialitzacio.
 ///
-void DigInputService::notifyInitialize(
+void DigInputService::raiseInitializeNotification(
 	ServiceParams *params) {
 
 	if (_erNotification.isEnabled()) {
@@ -209,8 +149,6 @@ void DigInputService::notifyInitialize(
 DigInput * DigInputService::makeInput(
 	PinDriver * pinDrv) {
 
-    eosAssert(pinDrv != nullptr);
-
     return new Input(pinDrv);
 }
 
@@ -222,20 +160,12 @@ DigInput * DigInputService::makeInput(
 void DigInputService::addInput(
     DigInput *input) {
 
-    eosAssert(input != nullptr);
-
-    // Inici de seccio critica. No es pot permetre accedir durant els canvis
-    //
     Task::enterCriticalSection();
 
-    // Afegeix l'entrada a la llista
-    //
     auto inp = static_cast<Input*>(input);
     if (!_inputs.contains(inp))
 		_inputs.pushFront(inp);
 
-    // Fi de la seccio critica
-    //
     Task::exitCriticalSection();
 }
 
@@ -247,18 +177,12 @@ void DigInputService::addInput(
 void DigInputService::removeInput(
     DigInput *input) {
 
-    eosAssert(input != nullptr);
-
-    // Inici de seccio critica. No es pot permetre accedir durant els canvis
-    //
     Task::enterCriticalSection();
 
     auto inp = static_cast<Input*>(input);
     if (_inputs.contains(inp))
         _inputs.remove(inp);
 
-    // Fi de la seccio critica
-    //
     Task::exitCriticalSection();
 }
 
@@ -289,7 +213,7 @@ void DigInputService::onInitialize(
 	params.priority = servicePriority;
 	params.stackSize = serviceStackSize;
 
-	notifyInitialize(&params);
+	raiseInitializeNotification(&params);
 }
 
 
@@ -304,47 +228,14 @@ void DigInputService::onExecute() {
 
 		Task::delay(_scanPeriod, lastTick);
 
-		notifyBeforeScan();
+		raiseBeforeScanNotification();
 
-		if (scanInputs()) {
-			for (auto input: _inputs) {
-
-				auto inp = static_cast<Input*>(input);
-
-				bool s = getInterruptState();
-				if (s)
-					disableInterrupts();
-
-				bool flag = inp->readFlag();
-
-				if (s)
-					enableInterrupts();
-
-				if (flag)
-					notifyChanged(input);
-			}
+		for (auto input: _inputs) {
+			auto inp = static_cast<Input*>(input);
+			if (inp->scan())
+				raiseChangedNotification(input);
 		}
 	}
-}
-
-
-/// ---------------------------------------------------------------------
-/// \brief    Escaneja l'estat de les entrades.
-/// \return   True si s'han produit canvis en l'estat de les entrades.
-///
-bool DigInputService::scanInputs() {
-
-    bool changed = false;
-
-    // Procesa totes les entrades
-    //
-    for (auto input: _inputs) {
-        auto inp = static_cast<Input*>(input);
-        if (inp->scanMode == Input::ScanMode::polling)
-        	changed = changed || inp->scan();
-    }
-
-    return changed;
 }
 
 
@@ -356,12 +247,10 @@ bool DigInputService::scanInputs() {
 bool DigInputService::read(
     const DigInput *input) const {
 
-    eosAssert(input != nullptr);
-
     Task::enterCriticalSection();
 
     auto inp = static_cast<const Input*>(input);
-    auto value = inp->getValue();
+    bool value = inp->getValue();
 
     Task::exitCriticalSection();
 
@@ -375,16 +264,14 @@ bool DigInputService::read(
 /// \param    clear: Indica si cal borrar el contador.
 /// \return   El nombre de pulsos fins al moment de la lectura.
 ///
-uint32_t DigInputService::getEdges(
+unsigned DigInputService::getEdges(
 	DigInput *input,
 	bool clear) const {
-
-    eosAssert(input != nullptr);
 
     Task::enterCriticalSection();
 
     auto inp = static_cast<Input*>(input);
-    auto edges = inp->getEdges(clear);
+    unsigned edges = inp->getCount(clear);
 
     Task::exitCriticalSection();
 
