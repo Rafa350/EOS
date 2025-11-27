@@ -1,0 +1,24 @@
+Metodes action()
+-Ordenen la realitzacio de l'accio 'action'
+-Gestiona la comprovacio de estat i parametres, etc.
+-Crida al metode onX() per realitzar la accio
+-Publics
+
+Metodes onAction()
+-Implementa la accio 'action'.
+-Interns de la clase (private, protected, protected-virtual).
+-Poden generar events cridant a raiseXEvent().
+-Son cridats per el metodes tipus action(), o per un switch que distribuexi les accions
+
+Metodes raiseXEvent()
+-Genera el event X.
+-Comprova si esta habilitat i crea el paquet d'argumnts del event.
+-Interna de la clase (protected, private)
+
+Metodes notifyX()
+-Notifica a la clase que ha pasat quelcom a fora.
+
+Las clases que implementen tipus Objecte, son NoCopyable
+
+Tots els valor son tipus basics de C/C++ excepte si hi ha hardware implicat on s'utilitza uint8_t, 
+uint16_t o uint32_t, segons convingui.
