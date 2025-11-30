@@ -215,6 +215,9 @@ bool CanOpenDictionary::write(
 
 			case CoType::unsigned32:
 				return writeU32(entryId, value);
+
+			case CoType::boolean:
+				return writeBool(entryId, value);
 		}
 	}
 
@@ -302,6 +305,37 @@ bool CanOpenDictionary::writeU32(
 			auto oldValue = *((uint32_t*)entry->data);
 			if (oldValue != value)
 				*((uint32_t*)entry->data) = value;
+			Task::exitCriticalSection();
+
+			if (oldValue != value)
+				raiseValueChangedNotification(entryId, oldValue);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un valor bool, en l'entrada especificada.
+/// \param    El identificador de l'entrada.
+/// \param    El valor a escriure.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::writeBool(
+	unsigned entryId,
+	bool value) {
+
+	if (canWrite(entryId)) {
+		auto entry = &_entries[entryId];
+		if (entry->type == CoType::boolean) {
+
+			Task::enterCriticalSection();
+			auto oldValue = *((bool*)entry->data);
+			if (oldValue != value)
+				*((bool*)entry->data) = value;
 			Task::exitCriticalSection();
 
 			if (oldValue != value)

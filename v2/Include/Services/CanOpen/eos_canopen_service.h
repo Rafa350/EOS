@@ -15,7 +15,7 @@ namespace eos {
 
 	class CanOpenDictionary;
 
-	class CanOpenService final: public Service {
+	class CanOpenService: public Service {
 		public:
         	enum class NodeState {
         		initializing,
@@ -84,31 +84,29 @@ namespace eos {
 			NodeState _nodeState;
 			MessageQueue _queue;
 			NotificationEventRaiser _erNotification;
-			CanOpenSDOServer _sdoServer;
 
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
 
-            void processSDO(const uint8_t *rxData, uint8_t *txData);
-            void processSYNC();
-            void processNMT(const uint8_t *rxData);
             void processRPDO(const uint8_t *rdData);
             void processValueChanged(unsigned entryId, bool raiseNotification);
 
             unsigned buildTPDO(unsigned tpdoId, uint8_t *buffer, unsigned bufferSize);
 
-            void sendFrame(uint16_t cobid, const uint8_t *txData, unsigned txLength);
-
-            void changeNodeState(NodeState newNodeState);
-
-            void raiseStateChangedNotificationEvent();
-            void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex);
-
-            void notifyValueChanged(unsigned entryId, bool raiseNotification);
+             void notifyValueChanged(unsigned entryId, bool raiseNotification);
 
 		protected:
 		    void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
+
+			virtual void process(uint16_t cobid, const uint8_t *data) = 0;
+
+            void sendFrame(uint16_t cobid, const uint8_t *txData, unsigned txLength);
+
+            void raiseStateChangedNotificationEvent();
+            void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex);
+
+            void changeNodeState(NodeState newNodeState);
 
 		public:
 			CanOpenService(InitParams const &params);
@@ -143,4 +141,4 @@ namespace eos {
 }
 
 
-#endif // __eosCanOpenService__
+#endif // __eos_canopen_service__

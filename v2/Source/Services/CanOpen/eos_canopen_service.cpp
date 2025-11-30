@@ -26,8 +26,7 @@ CanOpenService::CanOpenService(
 	_nodeId {params.nodeId},
 	_nodeType {params.nodeType},
 	_nodeState {NodeState::initializing},
-	_queue {5},
-	_sdoServer(params.dictionary) {
+	_queue {5} {
 
 }
 
@@ -97,7 +96,8 @@ void CanOpenService::onExecute() {
 				// S'ha rebut un missatge CANOpen
 				//
 				case MessageID::canReceive: {
-
+					process(msg.canReceive.cobid, msg.canReceive.data);
+/*
 					uint8_t response[8];
 					uint8_t nodeId = msg.canReceive.cobid & 0x007F;
 					uint16_t cobid = msg.canReceive.cobid & ~0x007F;
@@ -116,7 +116,7 @@ void CanOpenService::onExecute() {
 						case COBID::SYNC:
 							processSYNC();
 							break;
-					}
+					}*/
 					break;
 				}
 
@@ -214,94 +214,6 @@ void CanOpenService::changeNodeState(
 		}
 
 		raiseStateChangedNotificationEvent();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa un SDO
-/// \param    rxData: Les dades de la comanda
-/// \param    txData: Les dades de la resposta.
-///
-void CanOpenService::processSDO(
-	const uint8_t *rxData,
-	uint8_t *txData) {
-
-	if ((_nodeState == NodeState::preOperational) ||
-		(_nodeState == NodeState::operational)) {
-
-		if (_sdoServer.process(rxData, txData).isSuccess()) {
-			; //TODO: sendFrame(COBID::SDOr | nodeId, txData, sizeof(response));
-			uint16_t index = txData[1] | (txData[2] << 8);
-			uint8_t subIndex = txData[3];
-			raiseValueChangedNotificationEvent(index, subIndex);
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa SYNC
-///
-void CanOpenService::processSYNC() {
-
-	if (_nodeState == NodeState::operational) {
-
-		// Comprova si hi han TPDO per enviar
-		//
-		for (unsigned tpdoId = 0; tpdoId < 4; tpdoId++) {
-
-			// Comprova les entrades 0x1800 0x02
-			//
-			auto entryId = _dictionary->find(0x1800 | (tpdoId & 0x03), 0x02);
-			if (entryId != (unsigned) -1) {
-
-				// Existeix una entrada pel TPDO.
-				//
-				uint8_t value;
-				if (_dictionary->readU8(entryId, value)) {
-
-					// Comprova si es sincrona, alesores genera un TPDO
-					//
-					if ((value >= 1) && (value <= 240)) {
-
-						uint8_t txData[8];
-
-						buildTPDO(tpdoId, txData, sizeof(txData));
-						sendFrame(tpdoId | _nodeId, txData, sizeof(txData));
-					}
-				}
-			}
-		}
-	}
-}
-
-
-// -----------------------------------------------------------------------
-/// \brief    Procesa MNT
-/// \param    rxData: Les dades del bloc MNT
-///
-void CanOpenService::processNMT(
-	const uint8_t *rxData) {
-
-	switch (rxData[0] & NMT0::CS_Msk) {
-		case NMT0::CS_START:
-			if ((_nodeState == NodeState::preOperational) ||
-				(_nodeState == NodeState::stoped))
-				changeNodeState(NodeState::operational);
-			break;
-
-		case NMT0::CS_STOP:
-			changeNodeState(NodeState::stoped);
-			break;
-
-		case NMT0::CS_PREOP:
-			changeNodeState(NodeState::preOperational);
-			break;
-
-		case NMT0::CS_RST:
-			changeNodeState(NodeState::initializing);
-			break;
 	}
 }
 

@@ -84,7 +84,7 @@ void DigInputService::disableNotifyEvent() {
 /// \brief    Notifica un canvi en l'estat d'una entrada.
 /// \param    input: L'entrada.
 ///
-void DigInputService::raiseChangedNotification(
+void DigInputService::raiseChangedNotificationEvent(
     DigInput *input) {
 
     if (_erNotification.isEnabled()) {
@@ -107,7 +107,7 @@ void DigInputService::raiseChangedNotification(
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el inici del scaneig de les entrades.
 ///
-void DigInputService::raiseBeforeScanNotification() {
+void DigInputService::raiseBeforeScanNotificationEvent() {
 
 	if (_erNotification.isEnabled()) {
 
@@ -124,7 +124,7 @@ void DigInputService::raiseBeforeScanNotification() {
 /// \brief    Notifica la inicialitzacio del servei.
 /// \param    args: Parametres d'inicialitzacio.
 ///
-void DigInputService::raiseInitializeNotification(
+void DigInputService::raiseInitializeNotificationEvent(
 	ServiceParams *params) {
 
 	if (_erNotification.isEnabled()) {
@@ -213,7 +213,7 @@ void DigInputService::onInitialize(
 	params.priority = servicePriority;
 	params.stackSize = serviceStackSize;
 
-	raiseInitializeNotification(&params);
+	raiseInitializeNotificationEvent(&params);
 }
 
 
@@ -228,12 +228,12 @@ void DigInputService::onExecute() {
 
 		Task::delay(_scanPeriod, lastTick);
 
-		raiseBeforeScanNotification();
+		raiseBeforeScanNotificationEvent();
 
 		for (auto input: _inputs) {
 			auto inp = static_cast<Input*>(input);
 			if (inp->scan())
-				raiseChangedNotification(input);
+				raiseChangedNotificationEvent(input);
 		}
 	}
 }

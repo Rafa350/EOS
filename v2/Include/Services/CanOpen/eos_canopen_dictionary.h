@@ -74,12 +74,14 @@ namespace eos {
 			bool writeU8(unsigned entryId, uint8_t value);
 			bool writeU16(unsigned entryId, uint16_t value);
 			bool writeU32(unsigned entryId, uint32_t value);
+			bool writeBool(unsigned entryId, bool value);
 
 			bool canRead(unsigned entryId) const;
 			bool read(unsigned entryId, unsigned &value) const;
 			bool readU8(unsigned entryId, uint8_t &value) const;
 			bool readU16(unsigned entryId, uint16_t &value) const;
 			bool readU32(unsigned entryId, uint32_t &value) const;
+			bool readBool(unsigned entryId, bool &value) const;
 
 			void setNotificationEvent(INotificationEvent &event, bool enabled = true);
             void enableNotifyEvent();

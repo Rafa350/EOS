@@ -64,9 +64,9 @@ namespace eos {
             unsigned _scanPeriod;
 
         private:
-            void raiseChangedNotification(DigInput *input);
-            void raiseBeforeScanNotification();
-            void raiseInitializeNotification(ServiceParams *params);
+            void raiseChangedNotificationEvent(DigInput *input);
+            void raiseBeforeScanNotificationEvent();
+            void raiseInitializeNotificationEvent(ServiceParams *params);
 
         protected:
             void onInitialize(ServiceParams &params) override;
