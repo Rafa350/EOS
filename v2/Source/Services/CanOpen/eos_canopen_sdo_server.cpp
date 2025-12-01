@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "services/canopen/eos_canopen_sdoserver.h"
+#include "services/canopen/eos_canopen_sdo_server.h"
 #include "services/canopen/eos_canopen_dictionary.h"
 #include "services/canopen/eos_canopen_protocols.h"
 

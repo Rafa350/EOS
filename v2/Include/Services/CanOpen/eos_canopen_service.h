@@ -6,8 +6,6 @@
 #include "eos.h"
 #include "htl/STM32/htlCAN.h"
 #include "Services/eosService.h"
-#include "Services/CanOpen/eos_canopen_sdoserver.h"
-#include "Services/CanOpen/eos_canopen_sdoclient.h"
 #include "System/Core/eosQueue.h"
 
 

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eos_canopen_sdoclient__
-#define __eos_canopen_sdoclient__
+#ifndef __eos_canopen_sdo_client__
+#define __eos_canopen_sdo_client__
 
 
 #include "eos.h"

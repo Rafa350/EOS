@@ -5,7 +5,8 @@
 
 #include "eos.h"
 #include "Services/CanOpen/eos_canopen_service.h"
-#include "Services/CanOpen/eos_canopen_sdoserver.h"
+#include "Services/CanOpen/eos_canopen_sdo_server.h"
+#include "Services/CanOpen/eos_canopen_tpdo_transmitter.h"
 
 
 namespace eos {
@@ -13,6 +14,7 @@ namespace eos {
 	class CanOpenServiceSlave final: public CanOpenService {
 		private:
 			CanOpenSDOServer _sdoServer;
+			CanOpenTPDOTransmitter _tpdoTransmitter;
 
 		private:
 			void processSDO(const uint8_t *data);
@@ -24,6 +26,8 @@ namespace eos {
 
 		public:
 			CanOpenServiceSlave(InitParams const &params);
+
+			void sendTPDO(unsigned tpdoId);
 	};
 }
 

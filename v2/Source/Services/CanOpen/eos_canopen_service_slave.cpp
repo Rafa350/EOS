@@ -15,7 +15,8 @@ CanOpenServiceSlave::CanOpenServiceSlave(
 	InitParams const &params) :
 
 	CanOpenService(params),
-	_sdoServer(params.dictionary) {
+	_sdoServer(params.dictionary),
+	_tpdoTransmitter(params.dictionary) {
 
 }
 
@@ -29,24 +30,18 @@ void CanOpenServiceSlave::process(
 	uint16_t cobid,
 	const uint8_t *data) {
 
-	uint8_t nodeId = cobid & 0x007F;
-	NodeState nodeState = getNodeState();
-
 	switch (cobid & ~0x07F) {
 
 		// Procesa un SDO nomes en estat preOperacional o operacional
 		//
 		case COBID::SDO:
-			if (nodeId == getNodeId() &&
-				((nodeState == NodeState::preOperational) || (nodeState == NodeState::operational)))
-				processSDO(data);
+			processSDO(data);
 			break;
 
 		// Procesa un NMT
 		//
 		case COBID::NMT:
-			if ((nodeId == getNodeId()) || (nodeId == 0))
-				processNMT(data);
+			processNMT(data);
 			break;
 
 		// Procesa un SYNC
@@ -65,15 +60,17 @@ void CanOpenServiceSlave::process(
 void CanOpenServiceSlave::processSDO(
 	const uint8_t *data) {
 
-	uint8_t response[8];
+	auto nodeState = getNodeState();
+	if ((nodeState == NodeState::preOperational) || (nodeState == NodeState::operational)) {
 
-	if (_sdoServer.process(data, response).isSuccess()) {
-		; //TODO: sendFrame(COBID::SDOr | nodeId, response, 8);
-		uint16_t index = response[1] | (response[2] << 8);
-		uint8_t subIndex = response[3];
-		raiseValueChangedNotificationEvent(index, subIndex);
+		uint8_t response[8];
+		if (_sdoServer.process(data, response).isSuccess()) {
+			; //TODO: sendFrame(COBID::SDOr | nodeId, response, 8);
+			uint16_t index = response[1] | (response[2] << 8);
+			uint8_t subIndex = response[3];
+			raiseValueChangedNotificationEvent(index, subIndex);
+		}
 	}
-
 }
 
 
@@ -116,39 +113,17 @@ void CanOpenServiceSlave::processNMT(
 /// \brief    Procesa un SYNC
 ///
 void CanOpenServiceSlave::processSYNC() {
-/*
-	NodeState nodeState = getNodeState();
-
-	if (nodeState == NodeState::operational) {
-
-		// Comprova si hi han TPDO per enviar
-		//
-		for (unsigned tpdoId = 0; tpdoId < 4; tpdoId++) {
-
-			// Comprova les entrades 0x1800 0x02
-			//
-			auto entryId = _dictionary->find(0x1800 | (tpdoId & 0x03), 0x02);
-			if (entryId != (unsigned) -1) {
-
-				// Existeix una entrada pel TPDO.
-				//
-				uint8_t value;
-				if (_dictionary->readU8(entryId, value)) {
-
-					// Comprova si es sincrona, alesores genera un TPDO
-					//
-					if ((value >= 1) && (value <= 240)) {
-
-						uint8_t txData[8];
-
-						buildTPDO(tpdoId, txData, sizeof(txData));
-						sendFrame(tpdoId | _nodeId, txData, sizeof(txData));
-					}
-				}
-			}
-		}
-	}
-	*/
 }
 
 
+void CanOpenServiceSlave::sendTPDO(
+	unsigned tpdoId) {
+
+	if (getNodeState() == NodeState::operational) {
+
+		uint8_t response[8];
+		if (_tpdoTransmitter.process(tpdoId, response).isSuccess()) {
+			; //TODO: sendFrame(COBID::TPDO | nodeId, response, 8);
+		}
+	}
+}
