@@ -11,10 +11,27 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 /// \param    params: Els parametres d'inicialitzacio
 ///
-CanOpenServiceMaster::CanOpenServiceMaster(
+CanOpenMasterService::CanOpenMasterService(
 	InitParams const &params) :
 
 	CanOpenService(params) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa les dades rebudes, tenint en compte l'estat del node
+/// \param    cobid: El COB-ID
+/// \param    data: Les dades a procesar
+///
+void CanOpenMasterService::process(
+	uint16_t cobid, const
+	uint8_t *data) {
+
+	switch (cobid & ~0x007F) {
+		case COBID::HeartBeat:
+			break;
+	}
 
 }
 
@@ -27,7 +44,7 @@ CanOpenServiceMaster::CanOpenServiceMaster(
 /// \param    subIndex: Subindex.
 /// \param    value: El valor.
 ///
-void CanOpenServiceMaster::sdoDownload(
+void CanOpenMasterService::sdoDownload(
 	unsigned nodeId,
 	uint16_t index,
 	uint8_t subIndex,

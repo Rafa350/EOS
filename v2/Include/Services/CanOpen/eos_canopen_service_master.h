@@ -9,12 +9,12 @@
 
 namespace eos {
 
-	class CanOpenServiceMaster final: public CanOpenService {
+	class CanOpenMasterService final: public CanOpenService {
 		protected:
 			void process(uint16_t cobid, const uint8_t *data) override;
 
 		public:
-			CanOpenServiceMaster(InitParams const &params);
+			CanOpenMasterService(InitParams const &params);
 
 			void sdoUpload(unsigned nodeId, uint16_t index, uint8_t subIndex);
 			void sdoInitiateUpload();

@@ -12,6 +12,8 @@ constexpr const char *serviceName = "CanOpen";
 constexpr Task::Priority servicePriority = Task::Priority::normal;
 constexpr unsigned serviceStackSize = 256;
 
+constexpr unsigned defMaxTickCount = 1000;
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
@@ -24,9 +26,10 @@ CanOpenService::CanOpenService(
 	_canDeviceNotificationEvent {*this, &CanOpenService::canDeviceNotificationEventHandler},
 	_dictionary {params.dictionary},
 	_nodeId {params.nodeId},
-	_nodeType {params.nodeType},
 	_nodeState {NodeState::initializing},
-	_queue {5} {
+	_queue {5},
+	_tickCount {0},
+	_maxTickCount {defMaxTickCount} {
 
 }
 
@@ -60,10 +63,10 @@ void CanOpenService::onExecute() {
     };
     _devCAN->setFilter(&filter0, 0);
 
-    // Permet els missatges NMT dirigits especificament al node
+    // Permet els missatges NMT de qualsevol node
 	//
     can::Filter filter1 = {
-       	.id1 = COBID::NMT | (_nodeId & 0x7Fu),
+       	.id1 = COBID::NMT,
        	.id2 = 0x7FFu,
 		.idType = can::IdentifierType::standard,
 		.type = can::FilterType::mask,
@@ -71,7 +74,29 @@ void CanOpenService::onExecute() {
     };
     _devCAN->setFilter(&filter1, 1);
 
-	// Accepta notificacions del dispositiu.
+    // Permet els missatged Headbead de qualsevol node
+	//
+    can::Filter filter2 = {
+       	.id1 = COBID::HeartBeat,
+       	.id2 = 0x0780u,
+		.idType = can::IdentifierType::standard,
+		.type = can::FilterType::mask,
+		.config = can::FilterConfig::rxFifo0
+    };
+    _devCAN->setFilter(&filter2, 2);
+
+    // Permet els missatged SYNC
+	//
+    can::Filter filter3 = {
+       	.id1 = COBID::SYNC,
+       	.id2 = 0x07FFu,
+		.idType = can::IdentifierType::standard,
+		.type = can::FilterType::mask,
+		.config = can::FilterConfig::rxFifo0
+    };
+    _devCAN->setFilter(&filter3, 3);
+
+    // Accepta notificacions del dispositiu.
 	//
 	_devCAN->setNotificationEvent(_canDeviceNotificationEvent);
 
@@ -79,13 +104,15 @@ void CanOpenService::onExecute() {
 	//
 	_devCAN->start_IRQ();
 
+	// Envi a un heartbeat al bus. Com l'estat es initializing, envia un boot-up
+	//
+	sendHeartBeat();
+	while (true)
+		Task::delay(10000);
+
 	// Canvia l'estat a 'preOperational'
 	//
 	changeNodeState(NodeState::preOperational);
-
-	// Envia bootup al bus
-	//
-	bootUp();
 
 	while (!stopSignal()) {
 
@@ -95,35 +122,20 @@ void CanOpenService::onExecute() {
 
 				// S'ha rebut un missatge CANOpen
 				//
-				case MessageID::canReceive: {
+				case MessageID::canReceive:
 					process(msg.canReceive.cobid, msg.canReceive.data);
-/*
-					uint8_t response[8];
-					uint8_t nodeId = msg.canReceive.cobid & 0x007F;
-					uint16_t cobid = msg.canReceive.cobid & ~0x007F;
-
-					switch (cobid) {
-						case COBID::SDO:
-							if (nodeId == _nodeId)
-								processSDO(msg.canReceive.data, response);
-							break;
-
-						case COBID::NMT:
-							if ((nodeId == _nodeId) || (nodeId == 0))
-								processNMT(msg.canReceive.data);
-							break;
-
-						case COBID::SYNC:
-							processSYNC();
-							break;
-					}*/
 					break;
-				}
 
 				// Ha canviat un valor en el diccionari
 				//
 				case MessageID::entryValueChanged:
 					processValueChanged(msg.entryValueChanged.entryId, msg.entryValueChanged.raiseNotification);
+					break;
+
+				// Hi ha que enviar un headbeat.
+				//
+				case MessageID::heartbead:
+					processHeartBeat();
 					break;
 			}
 		}
@@ -255,6 +267,15 @@ void CanOpenService::processValueChanged(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa el heartbeat
+///
+void CanOpenService::processHeartBeat() {
+
+	sendHeartBeat();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Notifica que ha canviat un valor del diccionari
 /// \param    index: L'index de la entrada.
 /// \param    aubIndex: Subindex de la entrada.
@@ -314,61 +335,59 @@ void CanOpenService::notifyValueChanged(
 /// \param    subIndex: Subindex.
 /// \param    value: El valor.
 ///
-void CanOpenService::sdoDownload(
+void CanOpenService::sendSDODownload(
 	unsigned nodeId,
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value) {
 
-	uint8_t txData[8];
-	txData[0] = SDO0::CCS_DN | SDO0::E_EXP | SDO0::S_SIZE | SDO0::SIZE_4;
-	txData[1] = index & 0xFF;
-	txData[2] = index >> 8;
-	txData[3] = subIndex;
-	txData[4] = value & 0xFF;
-	txData[5] = (value >> 8) & 0xFF;
-	txData[6] = (value >> 16) & 0xFF;
-	txData[7] = (value >> 24) & 0xFF;
+	uint8_t data[8];
+	data[0] = SDO0::CCS_DN | SDO0::E_EXP | SDO0::S_SIZE | SDO0::SIZE_4;
+	data[1] = index & 0xFF;
+	data[2] = index >> 8;
+	data[3] = subIndex;
+	data[4] = value & 0xFF;
+	data[5] = (value >> 8) & 0xFF;
+	data[6] = (value >> 16) & 0xFF;
+	data[7] = (value >> 24) & 0xFF;
 
-	sendFrame(COBID::SDO, txData, sizeof(txData));
+	uint16_t cobid = COBID::SDO;
+
+	sendFrame(cobid, data, sizeof(data));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Envia un heartbeat al bus.
 ///
-void CanOpenService::heartBeat() {
+void CanOpenService::sendHeartBeat() {
 
-	uint8_t txData;
+	uint8_t data;
 	switch (_nodeState) {
+		case NodeState::initializing:
+			data = 0;
+			break;
+
 		case NodeState::stoped:
-			txData = 4;
+			data = 4;
 			break;
 
 		case NodeState::preOperational:
-			txData = 0x7F;
+			data = 0x7F;
 			break;
 
 		case NodeState::operational:
-			txData = 5;
+			data = 5;
 			break;
 
 		case NodeState::error:
-			txData = 0x80;
+			data = 0x80;
 			break;
 	}
 
-	sendFrame(COBID::HeartBeat, &txData, sizeof(txData));
-}
+	uint16_t cobid = COBID::HeartBeat | (_nodeId & 0x7F);
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Envia un boot-up al bus.
-///
-void CanOpenService::bootUp() {
-
-	uint8_t txData = 0;
-	sendFrame(COBID::BootUp, &txData, sizeof(txData));
+	sendFrame(cobid, &data, sizeof(data));
 }
 
 
@@ -408,7 +427,7 @@ void CanOpenService::sendFrame(
 			htl::can::DataLength::len1 : htl::can::DataLength::len8;
 
 	htl::can::TxHeader header = {
-		.id = cobid | (_nodeId & 0x7Fu),
+		.id = cobid,
 		.idType = htl::can::IdentifierType::standard,
 		.dataLength = len,
 		.frameType = htl::can::FrameType::dataFrame,
@@ -446,5 +465,21 @@ void CanOpenService::canDeviceNotificationEventHandler(
 			_queue.pushISR(msg);
 
 			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Gestiona les interrupcions tick.
+///
+void CanOpenService::tickISR() {
+
+	_tickCount++;
+	if (_tickCount >= _maxTickCount) {
+		_tickCount = 0;
+
+		Message msg;
+		msg.id = MessageID::heartbead;
+		_queue.pushISR(msg);
 	}
 }

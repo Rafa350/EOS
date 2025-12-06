@@ -14,7 +14,11 @@ using namespace htl::bits;
 using namespace htl::can;
 
 
-// Standard messageID filter element
+constexpr unsigned absoluteMaxStandardFilters = 28;
+constexpr unsigned absoluteMaxExtendedFilters = 8;
+
+
+// Standard message filter element
 //
 struct SF {
 	static constexpr uint32_t SFT_Pos = 30;
@@ -31,7 +35,7 @@ struct SF {
 };
 
 
-// Extended message ID filter element
+// Extended message filter element
 //
 struct EF0 {
 	static constexpr uint32_t EFEC_Pos = 29;
@@ -275,8 +279,8 @@ eos::Result CANDevice::initialize(
 		//
 		auto RXGFC = _can->RXGFC;
 		clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM | FDCAN_RXGFC_LSS | FDCAN_RXGFC_LSE);
-		set(RXGFC, (params->stdFiltersNbr << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
-		set(RXGFC, (params->extFiltersNbr << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
+		set(RXGFC, (eos::min(params->stdFiltersNbr, absoluteMaxStandardFilters) << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
+		set(RXGFC, (eos::min(params->extFiltersNbr, absoluteMaxExtendedFilters) << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
 		_can->RXGFC = RXGFC;
 
 		// Convenient borrar la ram dels filtres
@@ -350,7 +354,8 @@ eos::Result CANDevice::start_IRQ() {
 		set(_can->IE,
 			FDCAN_IE_RF0NE |      // FIFO0 new message
 			FDCAN_IE_RF1NE |      // FIFO1 new message
-			FDCAN_IE_TCE);        // TxBuffer transmission completed
+			FDCAN_IE_TCE |        // TxBuffer transmission completed
+			FDCAN_IE_TCFE);       // TxBuffer transmission cancelada
 
 		set(_can->ILE,
 			FDCAN_ILE_EINT0);     // Linia INT0 habilitada
@@ -374,7 +379,8 @@ eos::Result CANDevice::stop() {
 		clear(_can->IE,
 			FDCAN_IE_RF0NE |      // FIFO0 new message
 			FDCAN_IE_RF1NE |      // FIFO1 new message
-			FDCAN_IE_TCE);        // TxBuffer transmission completed
+			FDCAN_IE_TCE |        // TxBuffer transmission completed
+			FDCAN_IE_TCFE);       // TxBuffer transmission cancelada
 
 		clear(_can->ILE,
 			FDCAN_ILE_EINT0);     // Linia INT0 deshabilitada
@@ -403,13 +409,15 @@ eos::Result CANDevice::stop() {
 void CANDevice::clearFilters() {
 
 	auto pStandardFilter = getStandardFilterAddr(0);
-	for (unsigned i = 0; i < 28; i++) {
+	unsigned maxStandardFilters = (_can->RXGFC & FDCAN_RXGFC_LSS_Msk) >> FDCAN_RXGFC_LSS_Pos;
+	while (maxStandardFilters-- > 0) {
 		pStandardFilter->SF = 0;
 		pStandardFilter++;
 	}
 
 	auto pExtendedFilter = getExtendedFilterAddr(0);
-	for (unsigned i = 0; i < 8; i++) {
+	unsigned maxExtendedFilters = (_can->RXGFC & FDCAN_RXGFC_LSS_Msk) >> FDCAN_RXGFC_LSS_Pos;
+	while (maxExtendedFilters-- > 0) {
 		pExtendedFilter->EF0 = 0;
 		pExtendedFilter->EF1 = 0;
 		pExtendedFilter++;
@@ -533,20 +541,43 @@ eos::Result CANDevice::addTxMessage(
 		//
 		copyToTxBuffer(header, data, index);
 
-		// Activa la transmissio
+		// Activa la transmissio del missatge afeigit
 		//
 		_can->TXBAR = 1 << index;
 
-		// Espera el final de transmissio
+		// Espera que es faci efectiva l'operacio
 		//
-		// while ((_can->TXBTO & (1 << index)) == 0)
-		//	 continue;
+		while (!isSet(_can->TXBRP, (uint32_t)(1 << index)))
+			continue;
 
 		return eos::Result::ErrorCodes::success;
 	}
 
 	else
 		return eos::Result::ErrorCodes::errorState;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Aborta el missatge que esta en proces de transmissio.
+///
+eos::Result CANDevice::abortTxTransmitingMessage() {
+
+	for (auto index = 0u; index < 3; index++) {
+
+		uint32_t msk = 1 << index;
+		if (isSet(_can->TXBRP, msk) && isSet(_can->TXBTO, msk)) {
+
+			_can->TXBCR = msk;
+
+			while (!isSet(_can->TXBCF, msk))
+				continue;
+
+			return eos::Result::ErrorCodes::success;
+		}
+	}
+
+	return eos::Result::ErrorCodes::error;
 }
 
 
@@ -630,6 +661,25 @@ void CANDevice::raiseTxCompletedNotification(
 }
 
 /// ----------------------------------------------------------------------
+/// \brief    Genera un event de notificacio 'TxCancelled'
+/// \param    irq: Indica wqu nla notificacio s'ha produit d'ins d'una interrupcio
+///
+void CANDevice::raiseTxCancelledNotification(
+	bool irq) {
+
+	if (_erNotification.isEnabled()) {
+
+		NotificationEventArgs args = {
+			.id {NotificationID::txCancelled},
+			.irq {irq},
+			.txCancelled {
+			}
+		};
+		_erNotification(this, &args);
+	}
+}
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions
 ///
 void CANDevice::interruptService() {
@@ -657,12 +707,19 @@ void CANDevice::interruptService() {
 			set(_can->IR, FDCAN_IR_TC);
 			raiseTxCompletedNotification(true);
 		}
+
+		// Transmissio del missatge en TxBuffer cancelada
+		//
+		if (isSet(IR, FDCAN_IR_TCF)) {
+			set(_can->IR, FDCAN_IR_TCF);
+			raiseTxCancelledNotification(true);
+		}
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte l'index d'insercio del TxBuffer
+/// \brief    Obte l'index d'insercio del TxFIFO
 /// \return   El resultat de l'operacio.
 ///
 unsigned CANDevice::getTxBufferPutIndex() const {
@@ -672,7 +729,7 @@ unsigned CANDevice::getTxBufferPutIndex() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte l'index d'extraccio del fifo.
+/// \brief    Obte l'index d'extraccio del RxFIFO.
 /// \param    fifo: El fifo.
 /// \return   El resultat de l'operacio.
 ///
@@ -687,16 +744,6 @@ unsigned CANDevice::getRxFifoGetIndex(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el nombre de elements que es poden insertar en TxBuffer
-/// \return   El resultat.
-///
-unsigned CANDevice::getTxBufferFreeLevel() const {
-
-	return (_can->TXFQS & FDCAN_TXFQS_TFFL) >> FDCAN_TXFQS_TFFL_Pos;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Obte el nombre de elements que es poden retirar de RxFIFO
 /// \return   El resultat.
 ///
@@ -707,6 +754,63 @@ unsigned CANDevice::getRxFifoFillLevel(
 		return (_can->RXF0S & FDCAN_RXF0S_F0FL_Msk) >> FDCAN_RXF0S_F0FL_Pos;
 	else
 		return (_can->RXF1S & FDCAN_RXF1S_F1FL) >> FDCAN_RXF1S_F1FL_Pos;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el txBuffer (FIFO/QUEUE) es ple.
+/// \return   True si es ple.
+///
+bool CANDevice::isTxBufferFull() const {
+
+	return isSet(_can->TXFQS, FDCAN_TXFQS_TFQF);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el txBuffer (FIFO/QUEUE) es buit.
+/// \return   True si es buit.
+///
+bool CANDevice::isTxBufferEmpty() const {
+
+	return (_can->TXFQS & FDCAN_TXFQS_TFFL_Msk) == 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera fins que el txBuffer (FIFO/QUEUE) no estigui ple.
+/// \param    timeout: Tamps maxim d'espera.
+/// \return   True si es correcte, false en cas de timeout.
+///
+bool CANDevice::waitTxBufferNotFull(
+	unsigned timeout) {
+
+	auto expireTime = htl::getTick() + timeout;
+    while (isTxBufferFull()) {
+    	if (hasTickExpired(expireTime))
+            return false;
+    }
+
+    return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera fins que el txBuffer (FIFO/QUEUE) estigui buit.
+/// \param    timeout: Tamps maxim d'espera.
+/// \return   True si es correcte, false en cas de timeout.
+///
+bool CANDevice::waitTxBufferEmpty(
+	unsigned timeout) {
+
+	auto expireTime = htl::getTick() + timeout;
+
+    while (!isTxBufferEmpty()) {
+    	if (hasTickExpired(expireTime))
+            return false;
+    }
+
+    return true;
 }
 
 

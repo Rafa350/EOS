@@ -57,7 +57,7 @@ eos::Result CanOpenTPDOTransmitter::process(
 				//
 				if ((value >= 1) && (value <= 240)) {
 
-					buildTPDO(tpdoId, response);
+					//buildTPDO(tpdoId, response);
 				}
 			}
 		}

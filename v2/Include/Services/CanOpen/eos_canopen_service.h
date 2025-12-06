@@ -40,22 +40,17 @@ namespace eos {
 			using INotificationEvent = NotificationEventRaiser::IEvent;
 			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
-        	enum class NodeType {
-				master,
-				slave
-			};
-
 			struct InitParams {
 				htl::can::CANDevice * devCAN;
 				uint8_t nodeId;
-				NodeType nodeType;
 				CanOpenDictionary *dictionary;
 			};
 
 		private:
 			enum class MessageID {
 				canReceive,
-				entryValueChanged
+				entryValueChanged,
+				heartbead
 			};
 			struct Message {
 				MessageID id;
@@ -78,20 +73,22 @@ namespace eos {
         	CANDeviceNotificationEvent _canDeviceNotificationEvent;
         	CanOpenDictionary * const _dictionary;
 			uint8_t const _nodeId;
-			NodeType const _nodeType;
 			NodeState _nodeState;
 			MessageQueue _queue;
 			NotificationEventRaiser _erNotification;
+			unsigned _tickCount;
+			unsigned _maxTickCount;
 
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
 
             void processRPDO(const uint8_t *rdData);
             void processValueChanged(unsigned entryId, bool raiseNotification);
+            void processHeartBeat();
 
             unsigned buildTPDO(unsigned tpdoId, uint8_t *buffer, unsigned bufferSize);
 
-             void notifyValueChanged(unsigned entryId, bool raiseNotification);
+            void notifyValueChanged(unsigned entryId, bool raiseNotification);
 
 		protected:
 		    void onInitialize(ServiceParams &params) override;
@@ -99,7 +96,15 @@ namespace eos {
 
 			virtual void process(uint16_t cobid, const uint8_t *data) = 0;
 
-            void sendFrame(uint16_t cobid, const uint8_t *txData, unsigned txLength);
+			void sendSDOUpload(unsigned nodeId, uint16_t index, uint8_t subIndex);
+			void sendSDOInitiateUpload();
+			void sendSDOSegmentUpload();
+			void sendSDODownload(unsigned nodeId, uint16_t index, uint8_t subindex, uint32_t value);
+			void sendSDOInitiateDownload();
+			void sendSDOSegmentDownload();
+			void sendSDOAbort();
+
+            void sendFrame(uint16_t cobid, const uint8_t *data, unsigned length);
 
             void raiseStateChangedNotificationEvent();
             void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex);
@@ -109,20 +114,10 @@ namespace eos {
 		public:
 			CanOpenService(InitParams const &params);
 
-			void sdoUpload(unsigned nodeId, uint16_t index, uint8_t subIndex);
-			void sdoInitiateUpload();
-			void sdoSegmentUpload();
-			void sdoDownload(unsigned nodeId, uint16_t index, uint8_t subindex, uint32_t value);
-			void sdoDownload(unsigned nodeId, uint16_t index, uint8_t subindex, const uint8_t data, uint32_t length);
-			void sdoInitiateDownload();
-			void sdoSegmentDownload();
-			void sdoAbort();
-
-			void notifyValueChanged(uint16_t index, uint8_t subIndex, bool raiseNotification = false);
+            void notifyValueChanged(uint16_t index, uint8_t subIndex, bool raiseNotification = false);
 			void notifyValueChanged(const void *ptr, bool raiseNotification = false);
 
-			void bootUp();
-            void heartBeat();
+            void tickISR();
 
             void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
             	_erNotification.set(event, enabled);
@@ -135,6 +130,9 @@ namespace eos {
             inline uint16_t getNodeId() const {
             	return _nodeId;
             }
+
+            // TODO: public per test unicament
+            void sendHeartBeat();
 	};
 }
 

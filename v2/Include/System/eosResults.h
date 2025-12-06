@@ -56,7 +56,7 @@ namespace eos {
 	class ResultBase {
 		private:
 			using Traits = ResultTraits<Error_>;
-			using ErrorCode = Traits::ErrorCode;
+			using ErrorCode = typename Traits::ErrorCode;
 
 		private:
 			ErrorCode const _error;
@@ -110,7 +110,7 @@ namespace eos {
 	class SimpleResult: public ResultBase<Error_> {
 		private:
 			using Traits = ResultTraits<Error_>;
-			using ErrorCode = Traits::ErrorCode;
+			using ErrorCode = typename Traits::ErrorCode;
 
 		public:
 			constexpr SimpleResult(ErrorCode error):
@@ -125,7 +125,7 @@ namespace eos {
 	class ComplexResult: public ResultBase<Error_> {
 		private:
 			using Traits = ResultTraits<Error_>;
-			using ErrorCode = Traits::ErrorCode;
+			using ErrorCode = typename Traits::ErrorCode;
 
 		private:
 			Value_ const _value;
@@ -169,8 +169,8 @@ namespace eos {
 	template <typename Codes_>
 	class SimpleResultCode: public SimpleResult<typename Codes_::Error>, Codes_ {
 		private:
-			using Error = Codes_::Error;
-			using ErrorCode = Codes_::ErrorCode;
+			using Error = typename Codes_::Error;
+			using ErrorCode = typename Codes_::ErrorCode;
 
 		public:
 			using ErrorCodes = Codes_;
@@ -185,8 +185,8 @@ namespace eos {
 	template <typename Codes_, typename Value_>
 	class ComplexResultCode: public ComplexResult<typename Codes_::Error, Value_>, Codes_ {
 		private:
-			using Error = Codes_::Error;
-			using ErrorCode = Codes_::ErrorCode;
+			using Error = typename Codes_::Error;
+			using ErrorCode = typename Codes_::ErrorCode;
 
 		public:
 			using ErrorCodes = Codes_;

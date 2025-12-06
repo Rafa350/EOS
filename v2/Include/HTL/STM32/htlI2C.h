@@ -151,6 +151,9 @@ namespace htl {
 			protected: virtual void deactivate() = 0;
 #endif
 			protected: virtual void reset() = 0;
+
+			public:
+				virtual ~I2CDevice() = default;
 		};
 
 		class I2CSlaveDevice: public I2CDevice {

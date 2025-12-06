@@ -30,7 +30,7 @@ void CanOpenServiceSlave::process(
 	uint16_t cobid,
 	const uint8_t *data) {
 
-	switch (cobid & ~0x07F) {
+	switch (cobid & ~0x007F) {
 
 		// Procesa un SDO nomes en estat preOperacional o operacional
 		//

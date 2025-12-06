@@ -69,7 +69,6 @@ namespace eos {
 		static constexpr uint16_t SDO       = 0x600;
 		static constexpr uint16_t SDOr      = 0x580;
 		static constexpr uint16_t HeartBeat = 0x700;
-		static constexpr uint16_t BootUp    = 0x700;
 		static constexpr uint16_t TPDO1     = 0x180;
 		static constexpr uint16_t TPDO2     = 0x280;
 		static constexpr uint16_t TPDO3     = 0x380;

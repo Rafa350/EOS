@@ -247,7 +247,8 @@ namespace htl {
 
 				enum class NotificationID {
 					rxFifoNotEmpty,
-					txCompleted
+					txCompleted,
+					txCancelled
 				};
 				struct NotificationEventArgs {
 					NotificationID id;
@@ -258,6 +259,8 @@ namespace htl {
 						} rxFifoNotEmpty;
 						struct {
 						} txCompleted;
+						struct {
+						} txCancelled;
 					};
 				};
 				using NotificationEventRaiser = eos::EventRaiser<CANDevice, NotificationEventArgs>;
@@ -324,6 +327,7 @@ namespace htl {
 
 				void raiseRxFifoNotEmptyNotification(RxFifoSelection fifo, bool irq);
 				void raiseTxCompletedNotification(bool irq);
+				void raiseTxCancelledNotification(bool irq);
 
 			protected:
 				CANDevice(FDCAN_GlobalTypeDef *can, uint8_t *ram);
@@ -334,7 +338,6 @@ namespace htl {
 				void interruptService();
 
 			private:
-				unsigned getTxBufferFreeLevel() const;
 				TxBufferElement* getTxBufferAddr(unsigned index) const;
 				unsigned getTxBufferPutIndex() const;
 
@@ -364,6 +367,10 @@ namespace htl {
 				eos::Result addTxMessage(const TxHeader *header, const uint8_t *data);
 				eos::Result getRxMessage(RxFifoSelection fifo, RxHeader *header, uint8_t *data, unsigned dataSize);
 				eos::Result getTxEvent();
+				eos::Result abortTxTransmitingMessage();
+
+				bool waitTxBufferNotFull(unsigned timeout);
+				bool waitTxBufferEmpty(unsigned timeout);
 
 				inline bool isRxFifoEmpty(RxFifoSelection fifo) const {
 					return getRxFifoFillLevel(fifo) == 0;
@@ -373,13 +380,8 @@ namespace htl {
 					return getRxFifoFillLevel(fifo) != 0;
 				}
 
-				inline bool isTxBufferFull() const {
-					return getTxBufferFreeLevel() == 0;
-				}
-
-				inline bool isTxBufferNotFull() const {
-					return getTxBufferFreeLevel() != 0;
-				}
+				bool isTxBufferFull() const;
+				bool isTxBufferEmpty() const;
 
 				State getState() const {
 					return _state;
