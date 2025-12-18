@@ -19,6 +19,12 @@ CanOpenDictionary::CanOpenDictionary(
 
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el event 'notification'
+/// \param    event: L'event.
+/// \param    enabled: True si per habiliotar-l'ho
+///
 void CanOpenDictionary::setNotificationEvent(
 	INotificationEvent &event,
 	bool enabled) {
@@ -27,15 +33,52 @@ void CanOpenDictionary::setNotificationEvent(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Habilita el event.
+///
 void CanOpenDictionary::enableNotifyEvent() {
 
 	_erNotification.enable();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita el event.
+///
 void CanOpenDictionary::disableNotifyEvent() {
 
 	_erNotification.disable();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el event 'data'
+/// \param    event: L'event.
+/// \param    enabled: True si per habiliotar-l'ho
+///
+void CanOpenDictionary::setDataEvent(
+	IDataEvent &event,
+	bool enabled) {
+
+	_erData.set(event, enabled);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Habilita el event.
+///
+void CanOpenDictionary::enableDataEvent() {
+
+	_erData.enable();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita el event.
+///
+void CanOpenDictionary::disableDataEvent() {
+
+	_erData.disable();
 }
 
 
@@ -66,6 +109,7 @@ unsigned CanOpenDictionary::find(
 /// \brief    Busca una entrada en el diccionari.
 /// \param    ptr: L'adressa de la variable
 /// \return   El identificador de la entrada, -1 si no la troba.
+/// \remarks  Nomes troba las que son amb acces a una variable real
 ///
 unsigned CanOpenDictionary::find(
 	const void *ptr) const {
@@ -75,7 +119,7 @@ unsigned CanOpenDictionary::find(
 		auto entry = &_entries[entryId];
 
 		if ((entry->data == (uint32_t)ptr) &&
-			(entry->access != CoAccess::constant))
+			((entry->access == CoAccess::roVariable) || (entry->access == CoAccess::rwVariable)))
 			return entryId;
 	}
 
@@ -136,7 +180,7 @@ uint8_t CanOpenDictionary::getSubIndex(
 /// \param    entryId: Identificador de la entrada.
 /// \param    oldValue: L'anterior valor de l'entrada.
 ///
-void CanOpenDictionary::raiseValueChangedNotification(
+void CanOpenDictionary::raiseValueChangedNotificationEvent(
 	unsigned entryId,
 	unsigned oldValue) {
 
@@ -155,18 +199,184 @@ void CanOpenDictionary::raiseValueChangedNotification(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Genera un event 'ReadData'
+/// \param    index: L'index
+/// \param    subIndex: El subindex
+/// \param    value: El valor lleigit.
+///
+void CanOpenDictionary::raiseReadDataEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t &value) {
+
+	if (_erData.isEnabled()) {
+
+		DataEventArgs args;
+
+		args.index = index;
+		args.subIndex = subIndex;
+		args.dataType = DataType::u8;
+		args.dataMode = DataMode::read;
+		args.u8 = value;
+
+		_erData(this, &args);
+
+		value = args.u8;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event 'ReadData'
+/// \param    index: L'index
+/// \param    subIndex: El subindex
+/// \param    value: El valor lleigit.
+///
+void CanOpenDictionary::raiseReadDataEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint16_t &value) {
+
+	if (_erData.isEnabled()) {
+
+		DataEventArgs args;
+
+		args.index = index;
+		args.subIndex = subIndex;
+		args.dataType = DataType::u16;
+		args.dataMode = DataMode::read;
+		args.u16 = value;
+
+		_erData(this, &args);
+
+		value = args.u16;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event 'ReadData'
+/// \param    index: L'index
+/// \param    subIndex: El subindex
+/// \param    value: El valor lleigit.
+///
+void CanOpenDictionary::raiseReadDataEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t &value) {
+
+	if (_erData.isEnabled()) {
+
+		DataEventArgs args;
+
+		args.index = index;
+		args.subIndex = subIndex;
+		args.dataType = DataType::u32;
+		args.dataMode = DataMode::read;
+		args.u32 = value;
+
+		_erData(this, &args);
+
+		value = args.u32;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event 'WriteData'
+/// \param    index: L'index
+/// \param    subIndex: El subindex
+/// \param    value: El valor a escriure.
+///
+void CanOpenDictionary::raiseWriteDataEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t value) {
+
+	if (_erData.isEnabled()) {
+
+		DataEventArgs args;
+
+		args.index = index;
+		args.subIndex = subIndex;
+		args.dataType = DataType::u8;
+		args.dataMode = DataMode::write;
+		args.u8 = value;
+
+		_erData(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event 'WriteData'
+/// \param    index: L'index
+/// \param    subIndex: El subindex
+/// \param    value: El valor a escriure.
+///
+void CanOpenDictionary::raiseWriteDataEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint16_t value) {
+
+	if (_erData.isEnabled()) {
+
+		DataEventArgs args;
+
+		args.index = index;
+		args.subIndex = subIndex;
+		args.dataType = DataType::u16;
+		args.dataMode = DataMode::write;
+		args.u16 = value;
+
+		_erData(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event 'WriteData'
+/// \param    index: L'index
+/// \param    subIndex: El subindex
+/// \param    value: El valor a escriure.
+///
+void CanOpenDictionary::raiseWriteDataEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t value) {
+
+	if (_erData.isEnabled()) {
+
+		DataEventArgs args;
+
+		args.index = index;
+		args.subIndex = subIndex;
+		args.dataType = DataType::u32;
+		args.dataMode = DataMode::write;
+		args.u32 = value;
+
+		_erData(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Comprova si es pot escriure en una entrada.
 /// \param    entryId: L'identificador de l'entrada.
 /// \return   True si es pot escriure, false en cas contrari.
 ///
 bool CanOpenDictionary::canWrite(
-	unsigned entryId) {
+	unsigned entryId) const {
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		return
-			((entry->access == CoAccess::readWrite) || (entry->access == CoAccess::writeOnly)) &&
-			(entry->data != 0);
+		switch (entry->access) {
+			case CoAccess::rwEvent:
+				return true;
+
+			case CoAccess::rwVariable:
+				return entry->data != 0;
+		}
 	}
 
 	return false;
@@ -183,41 +393,15 @@ bool CanOpenDictionary::canRead(
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		if (entry->access == CoAccess::constant)
-			return true;
-		else
-			return
-				((entry->access == CoAccess::readWrite) || (entry->access == CoAccess::readOnly)) &&
-				(entry->data != 0);
-	}
+		switch (entry->access) {
+			case CoAccess::constant:
+			case CoAccess::rwEvent:
+			case CoAccess::roEvent:
+				return true;
 
-	return false;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un valor unsigned en la entrada especificada.
-/// \param    entryId: El identificador de l'entrada.
-/// \param    value: El valor a escriure.
-///
-bool CanOpenDictionary::write(
-	unsigned entryId,
-	unsigned value) {
-
-	if (entryId < _numEntries) {
-		auto entry = &_entries[entryId];
-		switch (entry->type) {
-			case CoType::unsigned8:
-				return writeU8(entryId, value);
-
-			case CoType::unsigned16:
-				return writeU16(entryId, value);
-
-			case CoType::unsigned32:
-				return writeU32(entryId, value);
-
-			case CoType::boolean:
-				return writeBool(entryId, value);
+			case CoAccess::rwVariable:
+			case CoAccess::roVariable:
+				return entry->data != 0;
 		}
 	}
 
@@ -235,24 +419,34 @@ bool CanOpenDictionary::writeU8(
 	unsigned entryId,
 	uint8_t value) {
 
-	if (canWrite(entryId)) {
-		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned8) {
+	bool ok = false;
+
+	auto entry = &_entries[entryId];
+	if (entry->type == CoType::unsigned8) {
+
+		uint8_t oldValue;
+
+		if (entry->access == CoAccess::rwVariable) {
 
 			Task::enterCriticalSection();
-			auto oldValue = *((uint8_t*)entry->data);
-			if (oldValue != value)
-				*((uint8_t*)entry->data) = value;
+			oldValue = *((uint8_t*)entry->data);
+			*((uint8_t*)entry->data) = value;
 			Task::exitCriticalSection();
 
-			if (oldValue != value)
-				raiseValueChangedNotification(entryId, oldValue);
-
-			return true;
+			ok = true;
 		}
+		else if (entry->access == CoAccess::rwEvent) {
+
+			raiseWriteDataEvent(entry->index, entry->subIndex, value);
+
+			ok = true;
+		}
+
+		if (ok && (oldValue != value))
+			raiseValueChangedNotificationEvent(entryId, oldValue);
 	}
 
-	return true;
+	return ok;
 }
 
 
@@ -266,24 +460,34 @@ bool CanOpenDictionary::writeU16(
 	unsigned entryId,
 	uint16_t value) {
 
-	if (canWrite(entryId)) {
-		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned16) {
+	bool ok = false;
+
+	auto entry = &_entries[entryId];
+	if (entry->type == CoType::unsigned16) {
+
+		uint16_t oldValue;
+
+		if (entry->access == CoAccess::rwVariable) {
 
 			Task::enterCriticalSection();
-			auto oldValue = *((uint16_t*)entry->data);
-			if (oldValue != value)
-				*((uint16_t*)entry->data) = value;
+			oldValue = *((uint16_t*)entry->data);
+			*((uint16_t*)entry->data) = value;
 			Task::exitCriticalSection();
 
-			if (oldValue != value)
-				raiseValueChangedNotification(entryId, oldValue);
-
-			return true;
+			ok = true;
 		}
+		else if (entry->access == CoAccess::rwEvent) {
+
+			raiseWriteDataEvent(entry->index, entry->subIndex, value);
+
+			ok = true;
+		}
+
+		if (ok && (oldValue != value))
+			raiseValueChangedNotificationEvent(entryId, oldValue);
 	}
 
-	return false;
+	return ok;
 }
 
 
@@ -297,24 +501,34 @@ bool CanOpenDictionary::writeU32(
 	unsigned entryId,
 	uint32_t value) {
 
-	if (canWrite(entryId)) {
-		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned32) {
+	bool ok = false;
+
+	auto entry = &_entries[entryId];
+	if (entry->type == CoType::unsigned32) {
+
+		uint32_t oldValue;
+
+		if (entry->access == CoAccess::rwVariable) {
 
 			Task::enterCriticalSection();
-			auto oldValue = *((uint32_t*)entry->data);
-			if (oldValue != value)
-				*((uint32_t*)entry->data) = value;
+			oldValue = *((uint32_t*)entry->data);
+			*((uint32_t*)entry->data) = value;
 			Task::exitCriticalSection();
 
-			if (oldValue != value)
-				raiseValueChangedNotification(entryId, oldValue);
-
-			return true;
+			ok = true;
 		}
+		else if (entry->access == CoAccess::rwEvent) {
+
+			raiseWriteDataEvent(entry->index, entry->subIndex, value);
+
+			ok = true;
+		}
+
+		if (ok && (oldValue != value))
+			raiseValueChangedNotificationEvent(entryId, oldValue);
 	}
 
-	return false;
+	return ok;
 }
 
 
@@ -339,7 +553,7 @@ bool CanOpenDictionary::writeBool(
 			Task::exitCriticalSection();
 
 			if (oldValue != value)
-				raiseValueChangedNotification(entryId, oldValue);
+				raiseValueChangedNotificationEvent(entryId, oldValue);
 
 			return true;
 		}
@@ -357,60 +571,36 @@ bool CanOpenDictionary::writeBool(
 ///
 bool CanOpenDictionary::readU8(
 	unsigned entryId,
-	uint8_t &value) const {
+	uint8_t &value) {
 
-	if (canRead(entryId)) {
-		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned8) {
-			if (entry->access == CoAccess::constant)
+	bool ok = false;
+
+	auto entry = &_entries[entryId];
+	if (entry->type == CoType::unsigned8) {
+
+		switch (entry->access) {
+			case CoAccess::constant:
 				value = entry->data;
-			else
-				value = *((uint8_t*)entry->data);
-			return true;
+				ok = true;
+				break;
+
+			case CoAccess::roVariable:
+			case CoAccess::rwVariable:
+				if (entry->data != 0) {
+					value = *((uint8_t*)entry->data);
+					ok = true;
+				}
+				break;
+
+			case CoAccess::roEvent:
+			case CoAccess::rwEvent:
+				raiseReadDataEvent(entry->index, entry->subIndex, value);
+				ok = true;
+				break;
 		}
 	}
 
-	return false;
-}
-
-
-bool CanOpenDictionary::read(
-	unsigned entryId,
-	unsigned &value) const {
-
-	bool result = false;
-
-	if (entryId < _numEntries) {
-		auto entry = &_entries[entryId];
-		switch (entry->type) {
-
-			case CoType::boolean:
-				break;
-
-			case CoType::unsigned8: {
-				uint8_t v;
-				result = readU8(entryId, v);
-				value = v;
-				break;
-			}
-
-			case CoType::unsigned16: {
-				uint16_t v;
-				result = readU16(entryId, v);
-				value = v;
-				break;
-			}
-
-			case CoType::unsigned32: {
-				uint32_t v;
-				result = readU32(entryId, v);
-				value = v;
-				break;
-			}
-		}
-	}
-
-	return result;
+	return ok;
 }
 
 
@@ -422,7 +612,7 @@ bool CanOpenDictionary::read(
 ///
 bool CanOpenDictionary::readU16(
 	unsigned entryId,
-	uint16_t &value) const {
+	uint16_t &value) {
 
 	if (canRead(entryId)) {
 		auto entry = &_entries[entryId];
@@ -447,7 +637,7 @@ bool CanOpenDictionary::readU16(
 ///
 bool CanOpenDictionary::readU32(
 	unsigned entryId,
-	uint32_t &value) const {
+	uint32_t &value) {
 
 	if (canRead(entryId)) {
 		auto entry = &_entries[entryId];

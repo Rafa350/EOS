@@ -64,7 +64,7 @@ Result Device_VNI8200XP_SPI::initialize() {
 
         _state = State::ready;
 
-        return Result::ErrorCodes::success;
+        return Result::ErrorCodes::ok;
     }
     else
         return Result::ErrorCodes::error;
@@ -142,7 +142,7 @@ Result Device_VNI8200XP_SPI::update() {
 
         _state = State::ready;
 
-        return Result::ErrorCodes::success;
+        return Result::ErrorCodes::ok;
     }
 
     else

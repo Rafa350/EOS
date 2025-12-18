@@ -38,7 +38,8 @@ namespace eos {
             ITaskCallback *_taskCallback;
             void *_taskParams;
 
-            static void function(void *params);
+        private:
+            static void taskFunction(void *params);
 
         public:
             Task(unsigned stackSize, Priority priority, const char *name, ITaskCallback *taskCallback, void *taskParams);

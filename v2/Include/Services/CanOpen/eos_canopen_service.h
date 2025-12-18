@@ -7,6 +7,7 @@
 #include "htl/STM32/htlCAN.h"
 #include "Services/eosService.h"
 #include "System/Core/eosQueue.h"
+#include "System/Core/eosTimer.h"
 
 
 namespace eos {
@@ -25,7 +26,8 @@ namespace eos {
 
         	enum class NotificationID {
 				stateChanged,
-				valueChanged
+				valueChanged,
+				sync
 			};
         	struct NotificationEventArgs {
         		NotificationID id;
@@ -36,7 +38,7 @@ namespace eos {
         			} valueChanged;
         		};
         	};
-			using NotificationEventRaiser = eos::EventRaiser<CanOpenService, NotificationEventArgs>;
+			using NotificationEventRaiser = EventRaiser<CanOpenService, NotificationEventArgs>;
 			using INotificationEvent = NotificationEventRaiser::IEvent;
 			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
@@ -49,6 +51,7 @@ namespace eos {
 		private:
 			enum class MessageID {
 				canReceive,
+				canSend,
 				entryValueChanged,
 				heartbead
 			};
@@ -57,82 +60,94 @@ namespace eos {
 				union {
 					struct {
 						uint16_t cobid;
+						uint8_t dataLen;
 						uint8_t data[8];
 					} canReceive;
+					struct {
+						uint16_t cobid;
+						uint8_t dataLen;
+						uint8_t data[8];
+					} canSend;
 					struct {
 						unsigned entryId;
 						bool raiseNotification;
 					} entryValueChanged;
 				};
 			};
-        	using CANDeviceNotificationEvent = htl::can::CANDevice::NotificationEvent<CanOpenService>;
         	using MessageQueue = Queue<Message>;
+
+        	using CANDeviceNotificationEvent = htl::can::CANDevice::NotificationEvent<CanOpenService>;
+        	using TimerEvent = Timer::TimerEvent<CanOpenService>;
 
 		private:
 			htl::can::CANDevice * const _devCAN;
-        	CANDeviceNotificationEvent _canDeviceNotificationEvent;
         	CanOpenDictionary * const _dictionary;
+			TimerEvent _timerEvent;
+			Timer _timer;
+        	CANDeviceNotificationEvent _canDeviceNotificationEvent;
 			uint8_t const _nodeId;
 			NodeState _nodeState;
 			MessageQueue _queue;
 			NotificationEventRaiser _erNotification;
-			unsigned _tickCount;
-			unsigned _maxTickCount;
+			bool _sdoEnabled;
 
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
+            void timerEventHandler(Timer * const sender, Timer::TimerEventArgs * const args);
 
-            void processRPDO(const uint8_t *rdData);
+            void configureHeartbeat();
+            void configureSDO();
+            void configureCANDevice();
+            void configureCANFilters();
+
             void processValueChanged(unsigned entryId, bool raiseNotification);
-            void processHeartBeat();
+            void processSDOFrame(const uint8_t *data);
+			void processNMTFrame(const uint8_t *data);
+			void processSYNCFrame();
+			void processRPDOFrame(uint16_t cobid, const uint8_t *data, unsigned dataLen);
 
-            unsigned buildTPDO(unsigned tpdoId, uint8_t *buffer, unsigned bufferSize);
-
-            void notifyValueChanged(unsigned entryId, bool raiseNotification);
+			void sendBootUp();
+			void sendHeartbeat();
+			void sendTPDO(uint8_t tpdo);
 
 		protected:
-		    void onInitialize(ServiceParams &params) override;
+			CanOpenService(InitParams const &params);
+
+			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
-			virtual void process(uint16_t cobid, const uint8_t *data) = 0;
+			virtual void processFrame(uint16_t cobid, const uint8_t *data, unsigned dataLen);
+            Result sendFrame(uint16_t cobid, const uint8_t *data, unsigned length, unsigned timeout);
 
-			void sendSDOUpload(unsigned nodeId, uint16_t index, uint8_t subIndex);
-			void sendSDOInitiateUpload();
-			void sendSDOSegmentUpload();
-			void sendSDODownload(unsigned nodeId, uint16_t index, uint8_t subindex, uint32_t value);
-			void sendSDOInitiateDownload();
-			void sendSDOSegmentDownload();
-			void sendSDOAbort();
-
-            void sendFrame(uint16_t cobid, const uint8_t *data, unsigned length);
+            bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value) const;
+            bool readU8(uint16_t index, uint8_t &value) const;
+            bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value) const;
+            bool readU16(uint16_t index, uint16_t &value) const;
+            bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value) const;
+            bool readU32(uint16_t index, uint32_t &value) const;
 
             void raiseStateChangedNotificationEvent();
+            void raiseSyncNotificationEvent();
             void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex);
 
             void changeNodeState(NodeState newNodeState);
+            virtual void beforeChangeNodeState();
+            virtual void afterChangeNodeState();
 
 		public:
-			CanOpenService(InitParams const &params);
-
             void notifyValueChanged(uint16_t index, uint8_t subIndex, bool raiseNotification = false);
-			void notifyValueChanged(const void *ptr, bool raiseNotification = false);
-
-            void tickISR();
 
             void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
             	_erNotification.set(event, enabled);
             }
 
-            inline NodeState getNodeState() const {
+            /*inline NodeState getNodeState() const {
             	return _nodeState;
-            }
+            }*/
 
-            inline uint16_t getNodeId() const {
+            /*inline uint16_t getNodeId() const {
             	return _nodeId;
-            }
-
-            // TODO: public per test unicament
-            void sendHeartBeat();
+            }*/
 	};
 }
 

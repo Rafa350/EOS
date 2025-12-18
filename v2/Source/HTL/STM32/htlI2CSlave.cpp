@@ -58,7 +58,7 @@ Result I2CSlaveDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 
 	else
@@ -102,7 +102,7 @@ Result I2CSlaveDevice::setNotificationEvent(
 
     if ((_state == State::reset) || (_state == State::ready)) {
     	_erNotification.set(event, enabled);
-    	return Result::ErrorCodes::success;
+    	return Result::ErrorCodes::ok;
     }
     else
     	return Result::ErrorCodes::errorState;
@@ -128,7 +128,7 @@ Result I2CSlaveDevice::listen_IRQ(
 		_restart = restart;
 		_state = State::listen;
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 
 	else if ((_state == State::listen) || (_state == State::receiving) || (_state == State::transmiting))
@@ -158,7 +158,7 @@ Result I2CSlaveDevice::abort() {
 #endif
 		_state = State::ready;
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 
 	else

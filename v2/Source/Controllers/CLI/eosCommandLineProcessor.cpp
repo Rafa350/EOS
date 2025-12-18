@@ -30,7 +30,7 @@ void CommandLineProcessor::addCommand(
 /// \return   La comanda a procesar. nullptr si no hi ha cap.
 ///
 const CommandDefinition *CommandLineProcessor::process(
-	const char *text) const {
+	const char *text) {
 
 	for (auto command: _commands) {
 
@@ -50,10 +50,11 @@ const CommandDefinition *CommandLineProcessor::process(
 					pt++;
 
 				CommandEventArgs args = {
+					.id = CommandID::command,
 					.command = command,
 					.text = pt
 				};
-				_erCommand.raise(CommandID::command, &args);
+				_erCommand(this, &args);
 			}
 			return command;
 		}

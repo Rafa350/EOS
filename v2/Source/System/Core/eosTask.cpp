@@ -57,7 +57,7 @@ Task::Task(
         	break;
     }
 
-    info.function = function;
+    info.function = taskFunction;
     info.params = this;
     info.ptrData = this;
 
@@ -81,7 +81,7 @@ Task::~Task() {
 /// \param    params: En aquest cas es el punter 'this'
 /// \remarks  No retorna mai.
 ///
-void Task::function(
+void Task::taskFunction(
     void *params) {
 
     auto task = reinterpret_cast<Task*>(params);

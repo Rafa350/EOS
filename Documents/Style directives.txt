@@ -4,7 +4,7 @@ Metodes action()
 -Crida al metode onX() per realitzar la accio
 -Publics
 
-Metodes onAction()
+Metodes onAction(), afterAction() o beforeAction()
 -Implementa la accio 'action'.
 -Interns de la clase (private, protected, protected-virtual).
 -Poden generar events cridant a raiseXEvent().

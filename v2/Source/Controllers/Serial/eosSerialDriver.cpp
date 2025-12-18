@@ -58,7 +58,7 @@ Result SerialDriver::transmit(
 		_task = nullptr;
     	if (onTransmit(buffer, length)) {
     		_state = State::transmiting;
-    		return Result::ErrorCodes::success;
+    		return Result::ErrorCodes::ok;
     	}
     	else
     		return Result::ErrorCodes::error;
@@ -88,7 +88,7 @@ Result SerialDriver::receive(
 		_task = nullptr;
     	if (onReceive(buffer, bufferSize)) {
     		_state = State::receiving;
-    		return Result::ErrorCodes::success;
+    		return Result::ErrorCodes::ok;
     	}
     	else
     		return Result::ErrorCodes::error;
@@ -113,13 +113,13 @@ ResultU32 SerialDriver::wait(
 		htl::irq::disableInterrupts();
 		if (_finished) {
 			htl::irq::enableInterrupts();
-			return {ResultU32::ErrorCodes::success, _rxCount};
+			return {ResultU32::ErrorCodes::ok, _rxCount};
 		}
 		else {
 			_task = Task::getExecutingTask();
 			htl::irq::enableInterrupts();
 			if (Task::waitNotification(true, waitTime))
-				return {ResultU32::ErrorCodes::success, _rxCount};
+				return {ResultU32::ErrorCodes::ok, _rxCount};
 			else {
 				abort();
 				return ResultU32::ErrorCodes::timeout;
@@ -132,13 +132,13 @@ ResultU32 SerialDriver::wait(
 		htl::irq::disableInterrupts();
 		if (_finished) {
 			htl::irq::enableInterrupts();
-			return {ResultU32::ErrorCodes::success, _txCount};
+			return {ResultU32::ErrorCodes::ok, _txCount};
 		}
 		else {
 			_task = Task::getExecutingTask();
 			htl::irq::enableInterrupts();
 			if (Task::waitNotification(true, waitTime))
-				return {ResultU32::ErrorCodes::success, _txCount};
+				return {ResultU32::ErrorCodes::ok, _txCount};
 			else {
 				abort();
 				return ResultU32::ErrorCodes::timeout;
@@ -159,7 +159,7 @@ Result SerialDriver::abort() {
 	if ((_state == State::transmiting) || (_state == State::receiving)) {
 		if (onAbort()) {
 			_state = State::ready;
-			return Result::ErrorCodes::success;
+			return Result::ErrorCodes::ok;
 		}
 		else
 			return Result::ErrorCodes::error;

@@ -83,6 +83,10 @@ namespace eos {
 				return _error;
 			}
 
+			inline bool isOK() const {
+				return _error == successLO;
+			}
+
 			inline bool isSuccess() const {
 				return (_error >= successLO) && (_error <= successHI);
 			}
@@ -156,7 +160,7 @@ namespace eos {
 			using ErrorCode = Traits::ErrorCode;
 
 		public:
-			static constexpr ErrorCode success           {Traits::successLO + 0}; // Operacio finalitzada correctament
+			static constexpr ErrorCode ok                {Traits::successLO + 0}; // Operacio finalitzada correctament
 			static constexpr ErrorCode pending           {Traits::successLO + 1}; // Operacio correcte pero pendent de finalitzar
 			static constexpr ErrorCode timeout           {Traits::successLO + 2}; // S'ha produit timeout
 			static constexpr ErrorCode busy              {Traits::successLO + 3}; // Ocupat

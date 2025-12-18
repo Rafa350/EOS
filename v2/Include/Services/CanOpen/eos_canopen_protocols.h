@@ -12,6 +12,7 @@ namespace eos {
 		static constexpr uint32_t attemptToReadWriteOnlyObject   = 0x0601001;
 		static constexpr uint32_t attemptToWriteReadOnlyObject   = 0x0601001;
 		static constexpr uint32_t objectDoesNotExistInDictionary = 0x0602000;
+		static constexpr uint32_t dataTypeDoesNotMatch           = 0x06070010;
 	};
 
 	struct SDO0 {
@@ -65,14 +66,19 @@ namespace eos {
 	};
 
 	struct COBID {
+		static constexpr uint16_t Msk       = 0x7FF;
 		static constexpr uint16_t NMT       = 0x000;
 		static constexpr uint16_t SDO       = 0x600;
 		static constexpr uint16_t SDOr      = 0x580;
-		static constexpr uint16_t HeartBeat = 0x700;
+		static constexpr uint16_t Heartbeat = 0x700;
 		static constexpr uint16_t TPDO1     = 0x180;
 		static constexpr uint16_t TPDO2     = 0x280;
 		static constexpr uint16_t TPDO3     = 0x380;
 		static constexpr uint16_t TPDO4     = 0x480;
+		static constexpr uint16_t RPDO1     = 0x200;
+		static constexpr uint16_t RPDO2     = 0x300;
+		static constexpr uint16_t RPDO3     = 0x400;
+		static constexpr uint16_t RPDO4     = 0x500;
 		static constexpr uint16_t SYNC      = 0x080;
 	};
 

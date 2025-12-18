@@ -200,7 +200,7 @@ eos::Result EXTIDevice::setNotificationEvent(
 	bool enabled) {
 
    	_erNotification.set(event, enabled);
-   	return Result::ErrorCodes::success;
+   	return Result::ErrorCodes::ok;
 }
 
 

@@ -47,7 +47,7 @@ Result I2CMasterDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 
 	else
@@ -90,7 +90,7 @@ eos::Result I2CMasterDevice::setNotificationEvent(
 
     if ((_state == State::reset) || (_state == State::ready)) {
     	_erNotification.set(event, enabled);
-    	return Result::ErrorCodes::success;
+    	return Result::ErrorCodes::ok;
     }
 
     else
@@ -205,7 +205,7 @@ Result I2CMasterDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Result::ErrorCodes::error : Result::ErrorCodes::success;
+		return error ? Result::ErrorCodes::error : Result::ErrorCodes::ok;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
@@ -267,7 +267,7 @@ Result I2CMasterDevice::receive(
 		if (!waitSTOPCondition(expireTime))
 			error = true;
 
-		return error ? Result::ErrorCodes::error : Result::ErrorCodes::success;
+		return error ? Result::ErrorCodes::error : Result::ErrorCodes::ok;
 	}
 
 	else if (_state == State::receiving || _state == State::transmiting)
@@ -300,7 +300,7 @@ Result I2CMasterDevice::transmit_IRQ(
 		enableTransmitInterrupts();
 		startTransmit(addr, _count, _maxCount);
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 
 	else if (_state == State::receiving || _state == State::transmiting)
@@ -333,7 +333,7 @@ Result I2CMasterDevice::receive_IRQ(
 		enableReceiveInterrupts();
 		startReceive(addr, _count, _maxCount);
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 
 	else if (_state == State::receiving || _state == State::transmiting)

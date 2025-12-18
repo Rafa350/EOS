@@ -96,7 +96,7 @@ Result DMADevice::initMemoryToMemory() {
 		set(tmp, DMA_CCR_MEM2MEM);      // Memoria a memoria
 		_dmadev->dmac->CCR = tmp;
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 	else
 		return Result::ErrorCodes::error;
@@ -187,7 +187,7 @@ Result DMADevice::initMemoryToPeripheral(
         //
         _state = State::ready;
 
-        return Result::ErrorCodes::success;
+        return Result::ErrorCodes::ok;
     }
 
     else
@@ -223,7 +223,7 @@ Result DMADevice::deinitialize() {
         //
         _state = State::reset;
 
-        return Result::ErrorCodes::success;
+        return Result::ErrorCodes::ok;
     }
     else
         return Result::ErrorCodes::error;
@@ -282,7 +282,7 @@ Result DMADevice::start(
         //
         _state = State::transfering;
 
-        return Result::ErrorCodes::success;
+        return Result::ErrorCodes::ok;
     }
     else
         return Result::ErrorCodes::error;
@@ -323,7 +323,7 @@ Result DMADevice::waitForFinish(
         //
         _state = State::ready;
 
-        return expired ? Result::ErrorCodes::timeout : Result::ErrorCodes::success;
+        return expired ? Result::ErrorCodes::timeout : Result::ErrorCodes::ok;
     }
 
     else

@@ -76,7 +76,7 @@ eos::Result TMRDevice::initialize(
 
 		_state = State::ready;
 
-		return eos::Result::ErrorCodes::success;
+		return eos::Result::ErrorCodes::ok;
 	}
 
 	else
@@ -99,7 +99,7 @@ eos::Result TMRDevice::deinitialize() {
 
 	_state = State::reset;
 
-	return eos::Result::ErrorCodes::success;
+	return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -117,7 +117,7 @@ eos::Result TMRDevice::setPrescaler(
 
 	_tim->PSC = value;
 
-	return eos::Result::ErrorCodes::success;
+	return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -140,7 +140,7 @@ eos::Result TMRDevice::setLimit(
 			set(_tim->CR1, TIM_CR1_ARPE);
 		_tim->ARR = value;
 
-		return eos::Result::ErrorCodes::success;
+		return eos::Result::ErrorCodes::ok;
 	}
 }
 
@@ -162,7 +162,7 @@ eos::Result TMRDevice::setRepeat(
 
 	_tim->RCR = value;
 
-	return eos::Result::ErrorCodes::success;
+	return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -228,7 +228,7 @@ eos::Result TMRDevice::configurePwmChannel1(
 
 	_tim->CCR1 = compare;
 
-	return eos::Result::ErrorCodes::success;
+	return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -264,7 +264,7 @@ eos::Result TMRDevice::configurePwmChannel2(
 
 	_tim->CCR2 = compare;
 
-	return eos::Result::ErrorCodes::success;
+	return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -300,7 +300,7 @@ eos::Result TMRDevice::configurePwmChannel3(
 
 	_tim->CCR3 = compare;
 
-	return eos::Result::ErrorCodes::success;
+	return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -336,7 +336,7 @@ eos::Result TMRDevice::configurePwmChannel4(
 
 	_tim->CCR4 = compare;
 
-	return eos::Result::ErrorCodes::success;
+	return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -424,7 +424,7 @@ eos::Result TMRDevice::start() {
 
 		_state = State::busy;
 
-		return eos::Result::ErrorCodes::success;
+		return eos::Result::ErrorCodes::ok;
 	}
 	else
 		return eos::Result::ErrorCodes::errorState;
@@ -442,7 +442,7 @@ eos::Result TMRDevice::start_IRQ() {
 		_tim->DIER |= TIM_DIER_UIE; // Habilita la interrupcio
 		_tim->CR1 |= TIM_CR1_CEN;   // Comença a contar
 
-		return eos::Result::ErrorCodes::success;
+		return eos::Result::ErrorCodes::ok;
 	}
 	else
 		return eos::Result::ErrorCodes::errorState;
@@ -464,7 +464,7 @@ eos::Result TMRDevice::stop() {
 
 		_state = State::ready;
 
-		return eos::Result::ErrorCodes::success;
+		return eos::Result::ErrorCodes::ok;
 	}
 	else
 		return eos::Result::ErrorCodes::error;

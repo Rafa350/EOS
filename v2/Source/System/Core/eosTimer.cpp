@@ -9,15 +9,12 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    autoreload: Indica si repeteix el cicle continuament.
 ///
 Timer::Timer() :
 
     _hTimer {nullptr},
-    _autoreload {false},
-    _timerEvent {nullptr},
-    _timerEventEnabled {false},
-    _param {nullptr} {
+    _autoreload {false} {
+
 }
 
 
@@ -29,27 +26,24 @@ Timer::Timer(
     bool autoreload) :
 
     _hTimer {nullptr},
-    _autoreload {autoreload},
-    _timerEvent {nullptr},
-    _timerEventEnabled {false},
-    _param {nullptr} {
+    _autoreload {autoreload} {
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    autoreload: Indica si repeteix el cicle continuament.
+/// \param    timerCallback: Callback que es crida el final de periode
+/// \param    timerParams: Parametres auxiliars
 ///
 Timer::Timer(
     bool autoreload,
-    ITimerEvent &event,
-    void *param) :
+    ITimerEvent &timerEvent) :
 
     _hTimer {nullptr},
     _autoreload {autoreload},
-    _timerEvent {&event},
-    _timerEventEnabled {true},
-    _param {param} {
+    _erTimerEvent {&timerEvent, true} {
 }
 
 
@@ -60,15 +54,6 @@ Timer::~Timer() {
 
     if (_hTimer != nullptr)
         osalTimerDestroy(_hTimer, 10);
-}
-
-
-void Timer::setTimerEvent(
-    ITimerEvent &event,
-    bool enabled) {
-
-    _timerEvent = &event;
-    _timerEventEnabled = enabled;
 }
 
 
@@ -127,14 +112,13 @@ bool Timer::isActive() const {
 void Timer::timerFunction(
     HTimer hTimer) {
 
-    Timer *timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
-    if ((timer != nullptr) && (timer->_timerEvent != nullptr) && timer->_timerEventEnabled) {
+    auto timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
+    if ((timer != nullptr) && (timer->_erTimerEvent.isEnabled())) {
 
-        TimerEventArgs args {
-        	.param = timer->_param
+        TimerEventArgs args = {
         };
 
-        timer->_timerEvent->execute(timer, args);
+        timer->_erTimerEvent(timer, &args);
     }
 }
 

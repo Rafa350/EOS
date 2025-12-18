@@ -352,6 +352,8 @@ namespace htl {
 				void copyFromRxFifo(RxFifoSelection fifo, RxHeader *header, uint8_t *data, unsigned dataSize, unsigned index);
 
 			public:
+				virtual ~CANDevice() = default;
+
 				eos::Result initialize(InitParams const * const params);
 				eos::Result deinitialize();
 
@@ -367,10 +369,10 @@ namespace htl {
 				eos::Result addTxMessage(const TxHeader *header, const uint8_t *data);
 				eos::Result getRxMessage(RxFifoSelection fifo, RxHeader *header, uint8_t *data, unsigned dataSize);
 				eos::Result getTxEvent();
-				eos::Result abortTxTransmitingMessage();
 
-				bool waitTxBufferNotFull(unsigned timeout);
-				bool waitTxBufferEmpty(unsigned timeout);
+				eos::Result abortTxBufferTransmission();
+				eos::Result waitTxBufferNotFull(unsigned timeout);
+				eos::Result waitTxBufferEmpty(unsigned timeout);
 
 				inline bool isRxFifoEmpty(RxFifoSelection fifo) const {
 					return getRxFifoFillLevel(fifo) == 0;

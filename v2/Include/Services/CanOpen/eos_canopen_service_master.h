@@ -4,26 +4,60 @@
 
 
 #include "eos.h"
+#include "System/eosEvents.h"
 #include "Services/CanOpen/eos_canopen_service.h"
 
 
 namespace eos {
 
 	class CanOpenMasterService final: public CanOpenService {
+		public:
+			struct TPDOReceivedEventArgs {
+				uint16_t cobid;
+				uint8_t dataLen;
+				const uint8_t *data;
+			};
+			using TPDOReceivedEventRaiser = eos::EventRaiser<CanOpenMasterService, TPDOReceivedEventArgs>;
+			using ITPDOReceivedEvent = TPDOReceivedEventRaiser::IEvent;
+			template <typename Instance_> using TPDOReceivedEvent = TPDOReceivedEventRaiser::Event<Instance_>;
+
+		private:
+			TPDOReceivedEventRaiser _erTPDOReceived;
+
 		protected:
-			void process(uint16_t cobid, const uint8_t *data) override;
+			void processFrame(uint16_t cobid, const uint8_t *data, unsigned dataLen) override;
+			void processHeartbeat(uint8_t nodeId, uint8_t status);
+			void processTPDOFrame(uint16_t cobid, const uint8_t *data, unsigned dataLen);
+
+			void raiseTPDOReceivedEvent(uint16_t cobid, const uint8_t *data, unsigned dataLen);
 
 		public:
 			CanOpenMasterService(InitParams const &params);
 
-			void sdoUpload(unsigned nodeId, uint16_t index, uint8_t subIndex);
+			// Operacions SDO
+			//
+			Result sdoUpload(unsigned nodeId, uint16_t index, uint8_t subIndex, unsigned timeout);
 			void sdoInitiateUpload();
 			void sdoSegmentUpload();
-			void sdoDownload(unsigned nodeId, uint16_t index, uint8_t subindex, uint32_t value);
-			void sdoDownload(unsigned nodeId, uint16_t index, uint8_t subindex, const uint8_t data, uint32_t length);
+			Result sdoDownload(unsigned nodeId, uint16_t index, uint8_t subindex, uint32_t value, unsigned timeout);
+			void sdoDownload(unsigned nodeId, uint16_t index, uint8_t subindex, const uint8_t data, uint32_t length, unsigned timeout);
 			void sdoInitiateDownload();
 			void sdoSegmentDownload();
 			void sdoAbort();
+
+			// Operacions NMT
+			//
+			Result nmtStartNode(uint8_t nodeId, unsigned timeout);
+			Result nmtStopNode(uint8_t nodeId);
+			Result nmtEnterPreOperational(uint8_t nodeId);
+			Result nmtResetNode(uint8_t nodeId);
+			Result nmtResetCommunication(uint8_t nodeId);
+
+			// Operacions SYNC
+			//
+			Result sync(unsigned timeout);
+
+			void setTPDOReceivedEvent(ITPDOReceivedEvent &event, bool enabled = true);
 	};
 }
 

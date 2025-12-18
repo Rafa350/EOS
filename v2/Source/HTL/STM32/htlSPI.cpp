@@ -80,7 +80,7 @@ Result SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 	else
 		return Result::ErrorCodes::errorState;
@@ -224,7 +224,7 @@ Result SPIDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Result::ErrorCodes::error : Result::ErrorCodes::success;
+		return error ? Result::ErrorCodes::error : Result::ErrorCodes::ok;
 	}
 
 	else if (_state == State::transmiting)
@@ -276,7 +276,7 @@ Result SPIDevice::transmit_DMA(
 		//
 		clear(_spi->CR2, SPI_CR2_TXDMAEN);
 
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 	else
 		return Result::ErrorCodes::errorState;

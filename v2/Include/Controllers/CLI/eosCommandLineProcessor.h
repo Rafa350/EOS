@@ -23,10 +23,11 @@ namespace eos {
     			command
     		};
 			struct CommandEventArgs {
+    			CommandID const id;
 				const CommandDefinition *command;
 				const char *text;
 			};
-			using CommandEventRaiser = NotifyEventRaiser<CommandID, CommandEventArgs>;
+			using CommandEventRaiser = EventRaiser<CommandLineProcessor, CommandEventArgs>;
 			using ICommandEvent = CommandEventRaiser::IEvent;
 			template <typename Instance_> using CommandEvent = CommandEventRaiser::Event<Instance_>;
 
@@ -48,7 +49,7 @@ namespace eos {
     		}
     		void addCommand(CommandDefinition *definition);
 
-    		const CommandDefinition *process(const char *buffer) const;
+    		const CommandDefinition *process(const char *buffer);
 
     		inline CommandDefinitionList& getCommands() { return _commands; }
 	};

@@ -42,7 +42,7 @@ Result SerialStream::initialize(
 	if (_drvSerial == nullptr) {
 		_drvSerial = drvSerial;
 		_drvSerial->initialize();
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 	else
 		return Result::ErrorCodes::error;
@@ -58,7 +58,7 @@ Result SerialStream::deinitialize() {
 	if (_drvSerial != nullptr) {
 		_drvSerial->deinitialize();
 		_drvSerial = nullptr;
-		return Result::ErrorCodes::success;
+		return Result::ErrorCodes::ok;
 	}
 	else
 		return Result::ErrorCodes::error;
@@ -87,7 +87,7 @@ ResultU32 SerialStream::write(
 		else {
 			auto result = _drvSerial->wait(_txTimeout);
 			if (result.isSuccess())
-				return {ResultU32::ErrorCodes::success, result.value()};
+				return {ResultU32::ErrorCodes::ok, result.value()};
 			else {
 				_drvSerial->abort();
 				return ResultU32::ErrorCodes::timeout;
@@ -119,7 +119,7 @@ ResultU32 SerialStream::read(
 		else {
 			auto result = _drvSerial->wait(_rxTimeout);
 			if (result.isSuccess())
-				return {ResultU32::ErrorCodes::success, result.value()};
+				return {ResultU32::ErrorCodes::ok, result.value()};
 			else
 				return ResultU32::ErrorCodes::timeout;
 		}

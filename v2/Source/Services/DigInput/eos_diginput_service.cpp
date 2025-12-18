@@ -81,7 +81,7 @@ void DigInputService::disableNotifyEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica un canvi en l'estat d'una entrada.
+/// \brief    Genera un event que notifica un canvi en l'estat d'una entrada.
 /// \param    input: L'entrada.
 ///
 void DigInputService::raiseChangedNotificationEvent(
@@ -105,7 +105,7 @@ void DigInputService::raiseChangedNotificationEvent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica el inici del scaneig de les entrades.
+/// \brief    Genera un event que notifica l'inici del scaneig de les entrades.
 ///
 void DigInputService::raiseBeforeScanNotificationEvent() {
 
@@ -121,7 +121,7 @@ void DigInputService::raiseBeforeScanNotificationEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica la inicialitzacio del servei.
+/// \brief    Genera un event que motifica la inicialitzacio del servei.
 /// \param    args: Parametres d'inicialitzacio.
 ///
 void DigInputService::raiseInitializeNotificationEvent(
@@ -228,10 +228,18 @@ void DigInputService::onExecute() {
 
 		Task::delay(_scanPeriod, lastTick);
 
+		// Notifica l'inici de l'escaneig d'entrades
+		//
 		raiseBeforeScanNotificationEvent();
 
+		// Escaneja totes les entradas una a una
+		//
 		for (auto input: _inputs) {
 			auto inp = static_cast<Input*>(input);
+
+			// Escaneja una entrada i si hi canvis,
+			// genera un event de notificacio.
+			//
 			if (inp->scan())
 				raiseChangedNotificationEvent(input);
 		}
