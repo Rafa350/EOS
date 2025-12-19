@@ -14,8 +14,8 @@
 
 
 // Numero maxim d'elements en la cua de comandes
-#ifndef DigOutputService_CommandQueueSize
-    #define DigOutputService_CommandQueueSize 4
+#ifndef DigOutputService_ActionQueueSize
+    #define DigOutputService_ActionQueueSize 4
 #endif
 
 // Retard minim/maxim en ms
@@ -75,7 +75,7 @@ namespace eos {
 			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 		private:
-            enum class CommandID {
+            enum class ActionID {
                 set,
                 clear,
                 toggle,
@@ -86,29 +86,29 @@ namespace eos {
                 delayedPulse,
                 tick
             };
-            struct Command {
-                CommandID id;
+            struct Action {
+                ActionID id;
                 Output *output;
                 unsigned time1;
                 unsigned time2;
             };
 
-            using CommandQueue = Queue<Command>;
+            using ActionQueue = Queue<Action>;
 
 		private:
-            static constexpr unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
+            static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
 
     	private:
             DigOutputList1 _outputs;
 
             NotificationEventRaiser _erNotification;
             volatile unsigned _timeCounter;
-            CommandQueue _commandQueue;
+            ActionQueue _actionQueue;
 
         private:
             DigOutputService(const DigOutputService&) = delete;
 
-            void commandDispatcher(const Command &command);
+            void actionDispatcher(const Action &action);
             void processClear(Output *output);
             void processSet(Output *output);
             void processToggle(Output *output);
@@ -119,7 +119,7 @@ namespace eos {
             void processDelayedPulse(Output *output, unsigned delay, unsigned width);
             void processTick();
 
-            void raiseChangedNotification(Output *output);
+            void raiseChangedNotificationEvent(Output *output);
 
         protected:
             void onInitialize(ServiceParams &params) override;

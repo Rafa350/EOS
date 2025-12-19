@@ -675,7 +675,7 @@ Result CANDevice::abortTxBufferTransmission() {
 			//
 			_can->TXBCR = msk;
 
-			// Espara que es faci efectiva
+			// Espera que es faci efectiva
 			//
 			while (!isSet(_can->TXBCF, msk))
 				continue;

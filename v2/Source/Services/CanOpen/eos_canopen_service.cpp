@@ -320,7 +320,8 @@ void CanOpenService::processFrame(
 	const uint8_t *data,
 	unsigned dataLen) {
 
-	switch (cobid & 0xFF80) {
+	switch (cobid & 0xF80) {
+
 		case COBID::SYNC:
 			processSYNCFrame();
 			break;
@@ -873,6 +874,13 @@ Result CanOpenService::sendFrame(
 	auto result = _devCAN->addTxMessage(&header, data);
 	if (!result.isOK())
 		return result;
+
+	// Espera que es transmiteixi, i si cal aborta la transmissio
+	//
+	if (!_devCAN->waitTxBufferEmpty(timeout).isOK()) {
+		_devCAN->abortTxBufferTransmission();
+		return Result::ErrorCodes::timeout;
+	}
 
 	return Result::ErrorCodes::ok;
 }

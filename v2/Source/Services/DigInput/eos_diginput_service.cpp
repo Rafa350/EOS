@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/eosDigInputService.h"
+#include "Services/DigInput/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosKernel.h"
 #include "eos_diginput_inputs.h"

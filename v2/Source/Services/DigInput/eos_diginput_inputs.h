@@ -3,11 +3,14 @@
 #define __eos_diginput_inputs__
 
 
+// EOS includes
+//
 #include "eos.h"
-#include "Services\eosDigInputService.h"
+#include "Services\DigInput\eosDigInputService.h"
 
 
 namespace eos {
+
 
 	class PinDriver;
 

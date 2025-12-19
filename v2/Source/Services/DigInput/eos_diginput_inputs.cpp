@@ -1,6 +1,6 @@
 #include "eos_diginput_inputs.h"
 #include "Controllers/Pin/eosPinDriver.h"
-#include "Services/eosDigInputService.h"
+#include "Services/DigInput/eosDigInputService.h"
 
 
 using namespace eos;
