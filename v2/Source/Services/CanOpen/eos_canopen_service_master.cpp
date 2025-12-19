@@ -30,7 +30,7 @@ void CanOpenMasterService::processFrame(
 	const uint8_t *data,
 	unsigned dataLen) {
 
-	switch (cobid & 0xFF80) {
+	switch (cobid & 0xF80) {
 		case COBID::Heartbeat:
 			processHeartbeat(cobid & 0x007F, data[0]);
 			break;
@@ -238,7 +238,7 @@ Result CanOpenMasterService::sync(
 
 	uint32_t options;
 	if (readU32(0x1005, 0x00, options) && htl::bits::isSet(options, (uint32_t)(1 << 30)))
-		return sendFrame(COBID::SYNC, nullptr, 0, (unsigned) -1);
+		return sendFrame(options & 0x7FF, nullptr, 0, (unsigned) -1);
 	else
 		return Result::ErrorCodes::error;
 }
