@@ -192,12 +192,8 @@ void DigInputService::removeInput(
 ///
 void DigInputService::removeInputs() {
 
-    // Inici de seccio critica. No es pot permetre accedir durant els canvis
-    //
     Task::enterCriticalSection();
 
-    // Fi de la seccio critica
-    //
     Task::exitCriticalSection();
 }
 

@@ -72,13 +72,13 @@ void CanOpenMasterService::processHeartbeat(
 	uint8_t nodeId,
 	uint8_t state) {
 
-	// Comprova si es un boot-up
+	// Comprova si es preoperational
 	//
 	if (state == 0x7F) {
 
 		// El posa en modus operacional
 		//
-		nmtStartNode(nodeId, 200);
+		nmtStartNode(nodeId, 20);
 	}
 }
 
@@ -153,7 +153,7 @@ Result CanOpenMasterService::nmtStartNode(
 
 	uint8_t data[2] = {
 		0x01,
-		nodeId & 0x7F
+		(uint8_t)(nodeId & 0x7F)
 	};
 
 	return sendFrame(COBID::NMT, data, sizeof(data), timeout);
@@ -170,7 +170,7 @@ Result CanOpenMasterService::nmtStopNode(
 
 	uint8_t data[2] = {
 		0x02,
-		nodeId & 0x7F
+		(uint8_t)(nodeId & 0x7F)
 	};
 
 	return sendFrame(COBID::NMT, data, sizeof(data), 15);
@@ -187,7 +187,7 @@ Result CanOpenMasterService::nmtEnterPreOperational(
 
 	uint8_t data[2] = {
 		0x80,
-		nodeId & 0x7F
+		(uint8_t)(nodeId & 0x7F)
 	};
 
 	return sendFrame(COBID::NMT, data, sizeof(data), 15);
@@ -204,7 +204,7 @@ Result CanOpenMasterService::nmtResetNode(
 
 	uint8_t data[2] = {
 		0x81,
-		nodeId & 0x7F
+		(uint8_t)(nodeId & 0x7F)
 	};
 
 	return sendFrame(COBID::NMT, data, sizeof(data), 15);
@@ -221,7 +221,7 @@ Result CanOpenMasterService::nmtResetCommunication(
 
 	uint8_t data[2] = {
 		0x82,
-		nodeId & 0x7F
+		(uint8_t)(nodeId & 0x7F)
 	};
 
 	return sendFrame(COBID::NMT, data, sizeof(data), 15);
@@ -241,6 +241,25 @@ Result CanOpenMasterService::sync(
 		return sendFrame(options & 0x7FF, nullptr, 0, (unsigned) -1);
 	else
 		return Result::ErrorCodes::error;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge RPDO
+/// \brief    nodeId: El node desti.
+/// \param    rpdoId: El idenfificador del RTPDO.
+/// \param    data: Les dades a transmetre
+/// \param    dataLen: La longitut de les dades a transmetre.
+/// \return   El resultat de l'operacio.
+///
+Result CanOpenMasterService::rpdo(
+		uint8_t nodeId,
+		uint8_t rpdoId,
+		const uint8_t *data,
+		unsigned dataLen,
+		unsigned timeout) {
+
+	return sendFrame(COBID::RPDO1 | (rpdoId << 8) | (nodeId & 0x7F), data, dataLen, timeout);
 }
 
 
@@ -272,7 +291,7 @@ void CanOpenMasterService::raiseTPDOReceivedEvent(
 
 		TPDOReceivedEventArgs args = {
 			.cobid {cobid},
-			.dataLen {dataLen},
+			.dataLen {(uint8_t)dataLen},
 			.data {data}
 		};
 

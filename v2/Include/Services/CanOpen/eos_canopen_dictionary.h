@@ -157,15 +157,23 @@ namespace eos {
 
 			bool canWrite(unsigned entryId) const;
 			bool writeU8(unsigned entryId, uint8_t value);
+			bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value);
 			bool writeU16(unsigned entryId, uint16_t value);
+			bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value);
 			bool writeU32(unsigned entryId, uint32_t value);
+			bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value);
 			bool writeBool(unsigned entryId, bool value);
+			bool writeBool(uint16_t index, uint8_t subIndex, bool value);
 
 			bool canRead(unsigned entryId) const;
 			bool readU8(unsigned entryId, uint8_t &value);
+			bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value);
 			bool readU16(unsigned entryId, uint16_t &value);
+			bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
 			bool readU32(unsigned entryId, uint32_t &value);
+			bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
 			bool readBool(unsigned entryId, bool &value);
+			bool readBool(uint16_t index, uint8_t subIndex, bool &value);
 
 			void setNotificationEvent(INotificationEvent &event, bool enabled = true);
             void enableNotifyEvent();

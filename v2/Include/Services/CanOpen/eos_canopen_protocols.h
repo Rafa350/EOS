@@ -80,6 +80,7 @@ namespace eos {
 		static constexpr uint16_t RPDO3     = 0x400;
 		static constexpr uint16_t RPDO4     = 0x500;
 		static constexpr uint16_t SYNC      = 0x080;
+		static constexpr uint16_t TIME      = 0x100;
 	};
 
 	struct NMT0 {

@@ -188,27 +188,27 @@ namespace eos {
     };
 
 
-    template <typename R_, typename P1_, typename P2_>
+    template <typename Result_, typename Param1_, typename Param2_>
     class ICallbackP2R {
         public:
             virtual ~ICallbackP2R() {
             }
-            virtual R_ execute(P1_ p1, P2_ p2) const = 0;
+            virtual Result_ execute(Param1_ p1, Param2_ p2) const = 0;
     };
 
-    template <typename C_, typename R_, typename P1_, typename P2_>
-    class CallbackP2R: public ICallbackP2R<R_, P1_, P2_> {
+    template <typename Instance_, typename Result_, typename Param1_, typename Param2_>
+    class CallbackP2R: public ICallbackP2R<Result_, Param1_, Param2_> {
         public:
-            using Method = R_ (C_::*)(P1_, P2_);
+            using Method = Result_ (Instance_::*)(Param1_, Param2_);
         private:
-            C_ &_instance;
+            Instance_ &_instance;
             Method _method;
         public:
-            inline CallbackP2R(C_ &instance, Method method):
+            inline CallbackP2R(Instance_ &instance, Method method):
             	_instance {instance},
 				_method {method} {
             }
-            R_ execute(P1_ p1, P2_ p2) const override {
+            Result_ execute(Param1_ p1, Param2_ p2) const override {
                 return (_instance.*_method)(p1, p2);
             }
     };

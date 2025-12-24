@@ -24,14 +24,13 @@ CanOpenService::CanOpenService(
 
     _devCAN {params.devCAN},
 	_dictionary {params.dictionary},
-	_timerEvent {*this, &CanOpenService::timerEventHandler},
-	_timer {true, _timerEvent},
+	_heartbeatTimerEvent {*this, &CanOpenService::heartbeatTimerEventHandler},
+	_heartbeatTimer {true, _heartbeatTimerEvent},
 	_canDeviceNotificationEvent {*this, &CanOpenService::canDeviceNotificationEventHandler},
-	_nodeId {params.nodeId & 0x7F},
+	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
-	_queue {5} {
+	_messageQueue {5} {
 
-	_sdoEnabled = false;
 }
 
 
@@ -55,7 +54,6 @@ void CanOpenService::onExecute() {
 
 	configureCANDevice();
 	configureCANFilters();
-	configureSDO();
 	configureHeartbeat();
 
     // Accepta notificacions del dispositiu.
@@ -66,9 +64,9 @@ void CanOpenService::onExecute() {
 	//
 	_devCAN->start_IRQ();
 
-	// Envia un boot-up
+	// Envia un boot-up (Heartbeat amb estat 'initializing')
 	//
-	sendBootUp();
+	sendHeartbeat();
 	Task::delay(1000);
 
 	// Canvia l'estat a 'preOperational'
@@ -78,7 +76,7 @@ void CanOpenService::onExecute() {
 	while (!stopSignal()) {
 
 		Message msg;
-		while(_queue.pop(msg, (unsigned) -1)) {
+		while(_messageQueue.pop(msg, (unsigned) -1)) {
 			switch (msg.id) {
 
 				// S'ha rebut un missatge CANOpen
@@ -87,13 +85,25 @@ void CanOpenService::onExecute() {
 					processFrame(msg.canReceive.cobid, msg.canReceive.data, msg.canReceive.dataLen);
 					break;
 
-				// Ha canviat un valor en el diccionari
-				//
-				case MessageID::entryValueChanged:
-					processValueChanged(msg.entryValueChanged.entryId, msg.entryValueChanged.raiseNotification);
+				// Escriu un valor de 8 bits al diccionari
+			    //
+				case MessageID::odWriteU8:
+					processWriteU8(msg.odWriteU8.entryId, msg.odWriteU8.value, msg.odWriteU8.mask);
 					break;
 
-				// Hi ha que enviar un headbeat.
+				// Escriu un valor de 8 bits al diccionari
+				//
+				case MessageID::odWriteU16:
+					processWriteU16(msg.odWriteU16.entryId, msg.odWriteU16.value, msg.odWriteU16.mask);
+					break;
+
+				// Escriu un valor de 8 bits al diccionari
+				//
+				case MessageID::odWriteU32:
+					processWriteU8(msg.odWriteU32.entryId, msg.odWriteU32.value, msg.odWriteU32.mask);
+					break;
+
+				// Cal que enviar un headbeat.
 				//
 				case MessageID::heartbead:
 					sendHeartbeat();
@@ -115,24 +125,8 @@ void CanOpenService::onExecute() {
 void CanOpenService::configureHeartbeat() {
 
 	uint16_t interval;
-	if (readU16(0x1017, interval) && interval > 0)
-		_timer.start(interval, (unsigned) -1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura el servidor SDO
-///
-void CanOpenService::configureSDO() {
-
-	uint32_t cobidSDO;
-	uint32_t cobidSDOr;
-
-	if (readU32(0x1200, 0x01, cobidSDO) &&
-		readU32(0x1200, 0x02, cobidSDOr)) {
-
-		_sdoEnabled = true;
-	}
+	if (readU16(0x1017, 0, interval) && interval > 0)
+		_heartbeatTimer.start(interval, (unsigned) -1);
 }
 
 
@@ -183,45 +177,50 @@ void CanOpenService::configureCANFilters() {
 	filter.config = can::FilterConfig::rxFifo0;
 
 	// Accepta els missatges SDO que suporta aquest node
+	// Si existeix l'entrada 1200:1, aleshores hi ha servidor SDO en el node,
+	// en cas contrari no cal definir els filtres.
 	//
-	filter.id1 = COBID::SDO | _nodeId,
-	filter.id2 = 0x7FFu,
-	_devCAN->setFilter(&filter, filterIndex++);
+	uint32_t cobidSDO;
+	if (readU32(0x1200, 0x01, cobidSDO)) {
+		filter.id1 = (cobidSDO & 0x7FF) | _nodeId;
+		filter.id2 = 0x7FFu;
+		_devCAN->setFilter(&filter, filterIndex++);
+	}
 
 	// Accepta els missatges NMT
 	//
-	filter.id1 = COBID::NMT,
-	filter.id2 = 0x7FFu,
+	filter.id1 = COBID::NMT;
+	filter.id2 = 0x7FFu;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges Headbead
 	//
 	filter.id1 = COBID::Heartbeat,
-	filter.id2 = 0x780u,
+	filter.id2 = 0x780u;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges SYNC
 	//
 	filter.id1 = COBID::SYNC,
-	filter.id2 = 0x7FFu,
+	filter.id2 = 0x7FFu;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges TPDO
 	//
 	filter.id1 = COBID::TPDO1,
-	filter.id2 = 0x780u,
+	filter.id2 = 0x780u;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges RPDO suportats per aquest node
 	//
 	filter.id1 = COBID::RPDO1 | _nodeId,
-	filter.id2 = 0x780u,
+	filter.id2 = 0x780u;
 	_devCAN->setFilter(&filter, filterIndex++);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera una notificacio de canvi d'estat
+/// \brief    Genera un evenmt 'StateChangedNotification'
 ///
 void CanOpenService::raiseStateChangedNotificationEvent() {
 
@@ -237,7 +236,7 @@ void CanOpenService::raiseStateChangedNotificationEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera una n otificacio de sincronitzacio
+/// \brief    Genera un event 'SyncNotification'
 ///
 void CanOpenService::raiseSyncNotificationEvent() {
 
@@ -253,14 +252,45 @@ void CanOpenService::raiseSyncNotificationEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera una notificacio de canvi de valor en una entrada
-///           del diccionari
+/// \brief    Genera una event 'ValueChangeRequestNotification'
 /// \param    index: L'index de l'entrada.
 /// \param    sunIndex: El subindex de l'entrada.
+/// \param    value: El valor.
+/// \param    fromBus: True si el canvi s'ha ordenat desde el bus.
+///
+void CanOpenService::raiseValueChangeRequestNotificationEvent(
+		uint16_t index,
+		uint8_t subIndex,
+		uint8_t value,
+		bool fromBus) {
+
+	if (_erNotification.isEnabled()) {
+
+		NotificationEventArgs args = {
+			.id {NotificationID::valueChangeRequest},
+			.valueChangeRequest {
+				.index {index},
+				.subIndex {subIndex},
+				.value {value},
+				.fromBus {fromBus}
+			}
+		};
+
+		_erNotification(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera una event 'ValueChangedNotification'
+/// \param    index: L'index de l'entrada.
+/// \param    sunIndex: El subindex de l'entrada.
+/// \param    fromBus: True si el canvi s'ha ordenat desde el bus.
 ///
 void CanOpenService::raiseValueChangedNotificationEvent(
 	uint16_t index,
-	uint8_t subIndex) {
+	uint8_t subIndex,
+	bool fromBus) {
 
 	if (_erNotification.isEnabled()) {
 
@@ -268,7 +298,8 @@ void CanOpenService::raiseValueChangedNotificationEvent(
 			.id {NotificationID::valueChanged},
 			.valueChanged {
 				.index {index},
-				.subIndex {subIndex}
+				.subIndex {subIndex},
+				.fromBus {fromBus}
 			}
 		};
 
@@ -326,6 +357,9 @@ void CanOpenService::processFrame(
 			processSYNCFrame();
 			break;
 
+		case COBID::TIME:
+			break;
+
 		case COBID::NMT:
 			processNMTFrame(data);
 			break;
@@ -338,7 +372,7 @@ void CanOpenService::processFrame(
 		case COBID::RPDO2:
 		case COBID::RPDO3:
 		case COBID::RPDO4:
-			processRPDOFrame(cobid, data, dataLen);
+			processRPDOFrame(cobid & 0xF80, data, dataLen);
 			break;
 
 		default:
@@ -411,7 +445,6 @@ void CanOpenService::processSDOFrame(
 
 			else {
 				uint8_t size = 4 - ((data[0] & SDO0::SIZE_Msk) >> SDO0::SIZE_Pos);
-				uint32_t value = data[4];
 				switch(size) {
 					case 1: {
 						uint8_t value = data[4];
@@ -466,7 +499,6 @@ void CanOpenService::processSDOFrame(
 
 		uint16_t index = data[1] | (data[2] << 8);
 		uint8_t subIndex = data[3];
-		unsigned value = 0;
 		unsigned length = 0;
 
 		auto entryId = _dictionary->find(index, subIndex);
@@ -559,7 +591,9 @@ void CanOpenService::processSDOFrame(
 
 	// Envia la resposta
 	//
-	sendFrame(COBID::SDOr | _nodeId, response, sizeof(response), defTimeout);
+	uint32_t cobidSDOr;
+	if (readU32(0x1200, 0x02, cobidSDOr))
+		sendFrame((cobidSDOr & 0x7FF) | _nodeId, response, sizeof(response), defTimeout);
 }
 
 
@@ -602,12 +636,120 @@ void CanOpenService::processRPDOFrame(
 	const uint8_t *data,
 	unsigned dataLen) {
 
+	uint32_t rpdoCOBID;
+	if (readU32(0x1400, 0x01, rpdoCOBID) && rpdoCOBID == cobid) {
+
+		const uint8_t *pData = data;
+
+		uint32_t map;
+		if (readU32(0x1600, 0x01, map)) {
+			uint16_t mapIndex = (map >> 16) & 0xFFFF;
+			uint8_t mapSubIndex = (map >> 8) & 0xFF;
+			uint8_t mapLength = (map & 0xFF) / 8;
+			uint32_t value;
+
+			unsigned entryId = _dictionary->find(mapIndex, mapSubIndex);
+			if (entryId != (unsigned) -1) {
+				bool ok = true;
+				switch (mapLength) {
+					case 1: {
+						uint8_t u8 = 0;
+						u8 |= *pData++;
+						value = u8;
+						break;
+					}
+
+					case 2: {
+						uint16_t u16 = 0;
+						u16 |= *pData++;
+						u16 |= *pData++ << 8;
+						value = u16;
+						break;
+					}
+
+					case 4: {
+						uint32_t u32 = 0;
+						u32 |= *pData++;
+						u32 |= *pData++ << 8;
+						u32 |= *pData++ << 16;
+						u32 |= *pData++ << 24;
+						value = u32;
+						break;
+					}
+
+					default:
+						ok = false;
+						break;
+				}
+
+				if (ok)
+					raiseValueChangeRequestNotificationEvent(mapIndex, mapSubIndex, value, true);
+			}
+		}
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una escriptura en el diccionari.
+/// \param    entryId: L'entrada del diccionari.
+/// \param    value: El valor.
+/// \param    mask: Mascara de bits dels bits a canviar.
+///
+void CanOpenService::processWriteU8(
+	unsigned entryId,
+	uint8_t value,
+	uint8_t mask) {
+
+	uint8_t oldValue;
+	if (_dictionary->readU8(entryId, oldValue)) {
+		_dictionary->writeU8(entryId, (oldValue & ~mask) | (value & mask));
+		processValueChanged(entryId, false);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una escriptura en el diccionari.
+/// \param    entryId: L'entrada del diccionari.
+/// \param    value: El valor.
+/// \param    mask: Mascara de bits dels bits a canviar.
+///
+void CanOpenService::processWriteU16(
+	unsigned entryId,
+	uint16_t value,
+	uint16_t mask) {
+
+	uint16_t oldValue;
+	if (_dictionary->readU16(entryId, oldValue)) {
+		_dictionary->writeU16(entryId, (oldValue & ~mask) | (value & mask));
+		processValueChanged(entryId, false);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una escriptura en el diccionari.
+/// \param    entryId: L'entrada del diccionari.
+/// \param    value: El valor.
+/// \param    mask: Mascara de bits dels bits a canviar.
+///
+void CanOpenService::processWriteU32(
+	unsigned entryId,
+	uint32_t value,
+	uint32_t mask) {
+
+	uint32_t oldValue;
+	if (_dictionary->readU32(entryId, oldValue)) {
+		_dictionary->writeU32(entryId, (oldValue & ~mask) | (value & mask));
+		processValueChanged(entryId, false);
+	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa un canvi en el valor d'una entrada del diccionari
-/// \param    entryId: Identificador de l'entrada.
+/// \param    entryId: Identificador de l'entrada que ha canviat de valor.
 /// \param    raiseNotification: Indica si cal generar un event de notificacio.
 ///
 void CanOpenService::processValueChanged(
@@ -623,14 +765,18 @@ void CanOpenService::processValueChanged(
 		uint8_t tpdoMax = 4;
 		for (uint8_t tpdo = 0; tpdo < tpdoMax; tpdo++) {
 
-			uint32_t flags;
-			uint8_t transmissionType;
+			// Verifica que la entrada, estigui mapejada en un TPDO
+			//
+			if (isMapped(tpdo, entryId)) {
+				uint32_t flags;
+				uint8_t transmissionType;
 
-			if (readU32(0x1800 + tpdo, 0x01, flags) &&
-				readU8(0x1800 + tpdo, 0x02, transmissionType)) {
+				if (readU32(0x1800 + tpdo, 0x01, flags) &&
+					readU8(0x1800 + tpdo, 0x02, transmissionType)) {
 
-				if ((transmissionType == 254) && ((flags & (1 << 31)) == 0))
-					sendTPDO(tpdo);
+					if ((transmissionType == 254) && ((flags & (1 << 31)) == 0))
+						sendTPDO(tpdo);
+				}
 			}
 		}
 	}
@@ -638,45 +784,38 @@ void CanOpenService::processValueChanged(
 	if (raiseNotification) {
 		auto index = _dictionary->getIndex(entryId);
 		auto subIndex = _dictionary->getSubIndex(entryId);
-		raiseValueChangedNotificationEvent(index, subIndex);
+		raiseValueChangedNotificationEvent(index, subIndex, false);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica que ha canviat un valor del diccionari
-/// \param    index: L'index de la entrada.
-/// \param    subIndex: Subindex de la entrada.
-/// \param    True si cal generar una notificacio.
+/// \brief    Escriu un valor uint8_t al diccionari
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    value: El valor.
+/// \param    mask: La mascara de bits del valor.
+/// \remarks  La escriptura es posa en cua per un procesament posterior. Si
+///           cal, es genera TPDO.
 ///
-void CanOpenService::notifyValueChanged(
+void CanOpenService::odWriteU8(
 	uint16_t index,
 	uint8_t subIndex,
-	bool raiseNotification) {
+	uint8_t value,
+	uint8_t mask) {
 
 	auto entryId = _dictionary->find(index, subIndex);
-	if (entryId != (unsigned) -1) {
+	if (_dictionary->canWrite(entryId)) {
 		Message msg = {
-			.id {MessageID::entryValueChanged},
-			.entryValueChanged {
+			.id {MessageID::odWriteU8},
+			.odWriteU8 {
 				.entryId {entryId},
-				.raiseNotification {raiseNotification}
+				.value {value},
+				.mask {mask}
 			}
 		};
-		_queue.push(msg, (unsigned) -1);
+		_messageQueue.push(msg, (unsigned) -1);
 	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Envia un 'boot-up' al bus.
-///
-void CanOpenService::sendBootUp() {
-
-	uint16_t cobid = COBID::Heartbeat | (_nodeId & 0x7F);
-	uint8_t data = 0;
-
-	sendFrame(cobid, &data, sizeof(data), defTimeout);
 }
 
 
@@ -689,6 +828,10 @@ void CanOpenService::sendHeartbeat() {
 	uint8_t data = 0;
 
 	switch (_nodeState) {
+		case NodeState::initializing:
+			data = 0;
+			break;
+
 		case NodeState::stoped:
 			data = 4;
 			break;
@@ -704,13 +847,9 @@ void CanOpenService::sendHeartbeat() {
 		case NodeState::error:
 			data = 0x80;
 			break;
-
-		default:
-			break;
 	}
 
-	if (data != 0)
-		sendFrame(cobid, &data, sizeof(data), defTimeout);
+	sendFrame(cobid, &data, sizeof(data), defTimeout);
 }
 
 
@@ -741,58 +880,62 @@ void CanOpenService::sendTPDO(
 				uint8_t mapSubIndex = (mapInfo >> 8) & 0xFF;
 				unsigned mapLength = (mapInfo & 0xFF) / 8;
 
-				switch (mapLength) {
-					case 1:
-						ok = (dataLen + sizeof(uint8_t)) < sizeof(data);
-						if (ok) {
-							uint8_t value;
-							ok = readU8(mapIndex, mapSubIndex, value);
+				auto entryId = _dictionary->find(mapIndex, mapSubIndex);
+				ok = entryId != (unsigned) -1;
+				if (ok) {
+					switch (mapLength) {
+						case 1:
+							ok = (dataLen + sizeof(uint8_t)) < sizeof(data);
 							if (ok) {
-								*(pData++) = value;
-								dataLen += sizeof(uint8_t);
+								uint8_t value;
+								ok = _dictionary->readU8(entryId, value);
+								if (ok) {
+									*(pData++) = value;
+									dataLen += sizeof(uint8_t);
+								}
 							}
-						}
-						break;
+							break;
 
-					case 2:
-						ok = (dataLen + sizeof(uint16_t)) < sizeof(data);
-						if (ok) {
-							uint16_t value;
-							ok = readU16(mapIndex, mapSubIndex, value);
+						case 2:
+							ok = (dataLen + sizeof(uint16_t)) < sizeof(data);
 							if (ok) {
-								*(pData++) = value & 0xFF;
-								*(pData++) = (value >> 8) & 0xFF;
-								dataLen += sizeof(uint16_t);
+								uint16_t value;
+								ok = _dictionary->readU16(entryId, value);
+								if (ok) {
+									*(pData++) = value & 0xFF;
+									*(pData++) = (value >> 8) & 0xFF;
+									dataLen += sizeof(uint16_t);
+								}
 							}
-						}
-						break;
+							break;
 
-					case 4:
-						ok = (dataLen + sizeof(uint32_t)) < sizeof(data);
-						if (ok) {
-							uint32_t value;
-							ok = readU32(mapIndex, mapSubIndex, value);
+						case 4:
+							ok = (dataLen + sizeof(uint32_t)) < sizeof(data);
 							if (ok) {
-								*(pData++) = value & 0xFF;
-								*(pData++) = (value >> 8) & 0xFF;
-								*(pData++) = (value >> 16) & 0xFF;
-								*(pData++) = (value >> 24) & 0xFF;
-								dataLen += sizeof(uint32_t);
+								uint32_t value;
+								ok = _dictionary->readU32(entryId, value);
+								if (ok) {
+									*(pData++) = value & 0xFF;
+									*(pData++) = (value >> 8) & 0xFF;
+									*(pData++) = (value >> 16) & 0xFF;
+									*(pData++) = (value >> 24) & 0xFF;
+									dataLen += sizeof(uint32_t);
+								}
 							}
-						}
-						break;
+							break;
 
-					default:
-						ok = false;
-						break;
+						default:
+							ok = false;
+							break;
+					}
 				}
 			}
 		}
 
 		if (ok) {
-			uint32_t flags;
-			if (readU32(0x1800 + tpdo, 0x01, flags))
-				sendFrame(flags & 0x7FF, data, dataLen, 100);
+			uint32_t cobid;
+			if (readU32(0x1800 + tpdo, 0x01, cobid))
+				sendFrame((cobid & 0x7FF) | _nodeId, data, dataLen, 100);
 		}
 	}
 }
@@ -911,7 +1054,7 @@ void CanOpenService::canDeviceNotificationEventHandler(
 			msg.canReceive.dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
 			msg.canReceive.cobid = rxHeader.id;
 
-			_queue.pushISR(msg);
+			_messageQueue.pushISR(msg);
 
 			break;
 
@@ -926,28 +1069,14 @@ void CanOpenService::canDeviceNotificationEventHandler(
 /// \param    sender: El remitent, en aquest cas el timer.
 /// \param    args: Parametres del event.
 ///
-void CanOpenService::timerEventHandler(
+void CanOpenService::heartbeatTimerEventHandler(
 	Timer * const sender,
 	Timer::TimerEventArgs * const args) {
 
 	Message msg;
 
 	msg.id = MessageID::heartbead;
-	_queue.push(msg, (unsigned) -1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte un valor de 8 bits del diccionari
-/// \param    index: L'index.
-/// \param    value: El valor obtingut.
-/// \return   True si tot es correcte.
-///
-bool CanOpenService::readU8(
-	uint16_t index,
-	uint8_t &value) const {
-
-    return readU8(index, 0, value);
+	_messageQueue.push(msg, (unsigned) -1);
 }
 
 
@@ -969,20 +1098,6 @@ bool CanOpenService::readU8(
 		return false;
 	else
 		return _dictionary->readU8(entryId, value);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte un valor de 16 bits del diccionari
-/// \param    index: L'index.
-/// \param    value: El valor obtingut.
-/// \return   True si tot es correcte.
-///
-bool CanOpenService::readU16(
-	uint16_t index,
-	uint16_t &value) const {
-
-    return readU16(index, 0, value);
 }
 
 
@@ -1025,4 +1140,53 @@ bool CanOpenService::readU32(
 		return false;
 	else
 		return _dictionary->readU32(entryId, value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix un valor de 8 bits del diccionari
+/// \param    index: L'index.
+/// \param    subIndex: EWl subindex.
+/// \param    El valor lleigit.
+/// \return   True si tot es correcte.
+///
+bool CanOpenService::odReadU8(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t &value) {
+
+	auto entryId = _dictionary->find(index, subIndex);
+	if (entryId == (unsigned) -1)
+		return false;
+	else
+		return _dictionary->readU8(entryId, value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si una entrada esta mapejada en un TPDO
+/// \param    tpdo: El TPDO
+/// \param    entryId: El identificador de l'entrada.
+/// \return   True si esta mapejada.
+///
+bool CanOpenService::isMapped(
+	unsigned tpdo,
+	unsigned entryId) {
+
+	uint8_t numMaps;
+	if (readU8(0x1A00 + tpdo, 0, numMaps)) {
+		for (auto i = 0; i < numMaps; i++) {
+
+			uint32_t map;
+			if (readU32(0x1A00 + tpdo, i + 1, map)) {
+
+				uint16_t mapIndex = (map >> 16) & 0xFFFF;
+				uint8_t mapSubIndex = (map >> 8) & 0xFF;
+				if (entryId == _dictionary->find(mapIndex, mapSubIndex))
+					return true;
+			}
+		}
+	}
+
+	return false;
 }

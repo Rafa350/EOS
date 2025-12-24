@@ -5,6 +5,10 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    params: Parametres d'inicialitzacio.
+///
 CanOpenSlaveService::CanOpenSlaveService(
 	InitParams const &params):
 	CanOpenService(params) {

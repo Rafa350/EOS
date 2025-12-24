@@ -368,18 +368,26 @@ void CanOpenDictionary::raiseWriteDataEvent(
 bool CanOpenDictionary::canWrite(
 	unsigned entryId) const {
 
+	bool result = false;
+
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
+
 		switch (entry->access) {
 			case CoAccess::rwEvent:
-				return true;
+				result = true;
+				break;
 
 			case CoAccess::rwVariable:
-				return entry->data != 0;
+				result = entry->data != 0;
+				break;
+
+			default:
+				break;
 		}
 	}
 
-	return false;
+	return result;
 }
 
 
@@ -391,28 +399,30 @@ bool CanOpenDictionary::canWrite(
 bool CanOpenDictionary::canRead(
 	unsigned entryId) const {
 
+	bool result = false;
+
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
 		switch (entry->access) {
-			case CoAccess::constant:
-			case CoAccess::rwEvent:
-			case CoAccess::roEvent:
-				return true;
-
 			case CoAccess::rwVariable:
 			case CoAccess::roVariable:
-				return entry->data != 0;
+				result = entry->data != 0;
+				break;
+
+			default:
+				result = true;
+				break;
 		}
 	}
 
-	return false;
+	return result;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Escriu un valor uint8_t, en l'entrada especificada.
-/// \param    El identificador de l'entrada.
-/// \param    El valor a escriure.
+/// \param    entryId: El identificador de l'entrada.
+/// \param    value: El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
 bool CanOpenDictionary::writeU8(
@@ -421,32 +431,51 @@ bool CanOpenDictionary::writeU8(
 
 	bool ok = false;
 
-	auto entry = &_entries[entryId];
-	if (entry->type == CoType::unsigned8) {
+	if (entryId < _numEntries) {
+		auto entry = &_entries[entryId];
+		if (entry->type == CoType::unsigned8) {
 
-		uint8_t oldValue;
+			uint8_t oldValue;
 
-		if (entry->access == CoAccess::rwVariable) {
+			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-			Task::enterCriticalSection();
-			oldValue = *((uint8_t*)entry->data);
-			*((uint8_t*)entry->data) = value;
-			Task::exitCriticalSection();
+				Task::enterCriticalSection();
+				oldValue = *((uint8_t*)entry->data);
+				*((uint8_t*)entry->data) = value;
+				Task::exitCriticalSection();
 
-			ok = true;
+				ok = true;
+			}
+			else if (entry->access == CoAccess::rwEvent) {
+
+				oldValue = ~value;
+				raiseWriteDataEvent(entry->index, entry->subIndex, value);
+
+				ok = true;
+			}
+
+			if (ok && (oldValue != value))
+				raiseValueChangedNotificationEvent(entryId, oldValue);
 		}
-		else if (entry->access == CoAccess::rwEvent) {
-
-			raiseWriteDataEvent(entry->index, entry->subIndex, value);
-
-			ok = true;
-		}
-
-		if (ok && (oldValue != value))
-			raiseValueChangedNotificationEvent(entryId, oldValue);
 	}
 
 	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un valor uint8_t, en l'entrada especificada.
+/// \param    index: L'index de l'entrada.
+/// \param    subIndex: El subindex de l'entrada.
+/// \param    value: El valor a escriure.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::writeU8(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t value) {
+
+	return writeU8(find(index, subIndex), value);
 }
 
 
@@ -462,32 +491,51 @@ bool CanOpenDictionary::writeU16(
 
 	bool ok = false;
 
-	auto entry = &_entries[entryId];
-	if (entry->type == CoType::unsigned16) {
+	if (entryId < _numEntries) {
+		auto entry = &_entries[entryId];
+		if (entry->type == CoType::unsigned16) {
 
-		uint16_t oldValue;
+			uint16_t oldValue;
 
-		if (entry->access == CoAccess::rwVariable) {
+			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-			Task::enterCriticalSection();
-			oldValue = *((uint16_t*)entry->data);
-			*((uint16_t*)entry->data) = value;
-			Task::exitCriticalSection();
+				Task::enterCriticalSection();
+				oldValue = *((uint16_t*)entry->data);
+				*((uint16_t*)entry->data) = value;
+				Task::exitCriticalSection();
 
-			ok = true;
+				ok = true;
+			}
+			else if (entry->access == CoAccess::rwEvent) {
+
+				oldValue = ~value;
+				raiseWriteDataEvent(entry->index, entry->subIndex, value);
+
+				ok = true;
+			}
+
+			if (ok && (oldValue != value))
+				raiseValueChangedNotificationEvent(entryId, oldValue);
 		}
-		else if (entry->access == CoAccess::rwEvent) {
-
-			raiseWriteDataEvent(entry->index, entry->subIndex, value);
-
-			ok = true;
-		}
-
-		if (ok && (oldValue != value))
-			raiseValueChangedNotificationEvent(entryId, oldValue);
 	}
 
 	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un valor uint16_t, en l'entrada especificada.
+/// \param    index: L'index de l'entrada.
+/// \param    subIndex: El subindex de l'entrada.
+/// \param    value: El valor a escriure.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::writeU16(
+	uint16_t index,
+	uint8_t subIndex,
+	uint16_t value) {
+
+	return writeU16(find(index, subIndex), value);
 }
 
 
@@ -503,32 +551,51 @@ bool CanOpenDictionary::writeU32(
 
 	bool ok = false;
 
-	auto entry = &_entries[entryId];
-	if (entry->type == CoType::unsigned32) {
+	if (entryId < _numEntries) {
+		auto entry = &_entries[entryId];
+		if (entry->type == CoType::unsigned32) {
 
-		uint32_t oldValue;
+			uint32_t oldValue;
 
-		if (entry->access == CoAccess::rwVariable) {
+			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-			Task::enterCriticalSection();
-			oldValue = *((uint32_t*)entry->data);
-			*((uint32_t*)entry->data) = value;
-			Task::exitCriticalSection();
+				Task::enterCriticalSection();
+				oldValue = *((uint32_t*)entry->data);
+				*((uint32_t*)entry->data) = value;
+				Task::exitCriticalSection();
 
-			ok = true;
+				ok = true;
+			}
+			else if (entry->access == CoAccess::rwEvent) {
+
+				oldValue = ~value;
+				raiseWriteDataEvent(entry->index, entry->subIndex, value);
+
+				ok = true;
+			}
+
+			if (ok && (oldValue != value))
+				raiseValueChangedNotificationEvent(entryId, oldValue);
 		}
-		else if (entry->access == CoAccess::rwEvent) {
-
-			raiseWriteDataEvent(entry->index, entry->subIndex, value);
-
-			ok = true;
-		}
-
-		if (ok && (oldValue != value))
-			raiseValueChangedNotificationEvent(entryId, oldValue);
 	}
 
 	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un valor uint32_t, en l'entrada especificada.
+/// \param    index: L'index de l'entrada.
+/// \param    subIndex: El subindex de l'entrada.
+/// \param    value: El valor a escriure.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::writeU32(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t value) {
+
+	return writeU32(find(index, subIndex), value);
 }
 
 
@@ -542,30 +609,52 @@ bool CanOpenDictionary::writeBool(
 	unsigned entryId,
 	bool value) {
 
-	if (canWrite(entryId)) {
+	bool ok = false;
+
+	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
 		if (entry->type == CoType::boolean) {
 
-			Task::enterCriticalSection();
-			auto oldValue = *((bool*)entry->data);
-			if (oldValue != value)
+			bool oldValue;
+
+			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
+
+				Task::enterCriticalSection();
+				oldValue = *((bool*)entry->data);
 				*((bool*)entry->data) = value;
-			Task::exitCriticalSection();
+				Task::exitCriticalSection();
 
-			if (oldValue != value)
+				ok = true;
+			}
+
+			if (ok && (oldValue != value))
 				raiseValueChangedNotificationEvent(entryId, oldValue);
-
-			return true;
 		}
 	}
 
-	return false;
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un valor bool, en l'entrada especificada.
+/// \param    index: L'index de l'entrada.
+/// \param    subIndex: El subindex de l'entrada.
+/// \param    value: El valor a escriure.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::writeBool(
+	uint16_t index,
+	uint8_t subIndex,
+	bool value) {
+
+	return writeBool(find(index, subIndex), value);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    LLegeix un valor uint8_t
-/// \param    El identificador de l'entrada.
+/// \param    entryId: L'identificador de l'entrada.
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
@@ -575,28 +664,74 @@ bool CanOpenDictionary::readU8(
 
 	bool ok = false;
 
-	auto entry = &_entries[entryId];
-	if (entry->type == CoType::unsigned8) {
+	if (entryId < _numEntries) {
+		auto entry = &_entries[entryId];
+		if (entry->type == CoType::unsigned8) {
 
-		switch (entry->access) {
-			case CoAccess::constant:
-				value = entry->data;
-				ok = true;
-				break;
-
-			case CoAccess::roVariable:
-			case CoAccess::rwVariable:
-				if (entry->data != 0) {
-					value = *((uint8_t*)entry->data);
+			switch (entry->access) {
+				case CoAccess::constant:
+					value = entry->data;
 					ok = true;
-				}
-				break;
+					break;
 
-			case CoAccess::roEvent:
-			case CoAccess::rwEvent:
-				raiseReadDataEvent(entry->index, entry->subIndex, value);
-				ok = true;
-				break;
+				case CoAccess::roVariable:
+				case CoAccess::rwVariable:
+					if (entry->data != 0) {
+						value = *((uint8_t*)entry->data);
+						ok = true;
+					}
+					break;
+
+				case CoAccess::roEvent:
+				case CoAccess::rwEvent:
+					raiseReadDataEvent(entry->index, entry->subIndex, value);
+					ok = true;
+					break;
+			}
+		}
+	}
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    LLegeix un valor uint8_t
+/// \param    index: L'index de l'entrada.
+/// \param    subIndex: El subindex de l'entrada.
+/// \param    value: El valor retornat.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::readU8(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t &value) {
+
+	return readU8(find(index, subIndex), value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    LLegeix un valor uint16_t
+/// \param    entryId: El identificador de l'entrada.
+/// \param    value: El valor retornat.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::readU16(
+	unsigned entryId,
+	uint16_t &value) {
+
+	bool ok = false;
+
+	if (entryId < _numEntries) {
+		auto entry = &_entries[entryId];
+		if (entry->type == CoType::unsigned16) {
+			if (entry->access == CoAccess::constant)
+				value = entry->data;
+			else
+				value = *((uint16_t*)entry->data);
+
+			ok = true;
 		}
 	}
 
@@ -606,32 +741,23 @@ bool CanOpenDictionary::readU8(
 
 /// ----------------------------------------------------------------------
 /// \brief    LLegeix un valor uint16_t
-/// \param    El identificador de l'entrada.
+/// \param    index: L'index de l'entrada.
+/// \param    subIndex: El subindex de l'entrada.
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
 bool CanOpenDictionary::readU16(
-	unsigned entryId,
+	uint16_t index,
+	uint8_t subIndex,
 	uint16_t &value) {
 
-	if (canRead(entryId)) {
-		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned16) {
-			if (entry->access == CoAccess::constant)
-				value = entry->data;
-			else
-				value = *((uint16_t*)entry->data);
-			return true;
-		}
-	}
-
-	return false;
+	return readU16(find(index, subIndex), value);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    LLegeix un valor uint32_t
-/// \param    El identificador de l'entrada.
+/// \param    entryId: El identificador de l'entrada.
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
@@ -639,16 +765,36 @@ bool CanOpenDictionary::readU32(
 	unsigned entryId,
 	uint32_t &value) {
 
-	if (canRead(entryId)) {
+	bool ok = false;
+
+	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
+
 		if (entry->type == CoType::unsigned32) {
 			if (entry->access == CoAccess::constant)
 				value = entry->data;
 			else
 				value = *((uint32_t*)entry->data);
-			return true;
+
+			ok = true;
 		}
 	}
 
-	return false;
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    LLegeix un valor uint32_t
+/// \param    index: L'index de l'entrada.
+/// \param    subIndex: El subindex de l'entrada.
+/// \param    value: El valor retornat.
+/// \return   True si tot es correcte, false en cas contrari.
+///
+bool CanOpenDictionary::readU32(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t &value) {
+
+	return readU32(find(index, subIndex), value);
 }

@@ -57,6 +57,10 @@ namespace eos {
 			//
 			Result sync(unsigned timeout);
 
+			// Operacions RPDO
+			//
+			Result rpdo(uint8_t nodeId, uint8_t rpdoId, const uint8_t *data, unsigned dataLen, unsigned timeout);
+
 			void setTPDOReceivedEvent(ITPDOReceivedEvent &event, bool enabled = true);
 	};
 }

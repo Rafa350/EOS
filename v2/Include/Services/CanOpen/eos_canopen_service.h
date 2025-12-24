@@ -26,6 +26,7 @@ namespace eos {
 
         	enum class NotificationID {
 				stateChanged,
+				valueChangeRequest,
 				valueChanged,
 				sync
 			};
@@ -35,7 +36,14 @@ namespace eos {
         			struct {
         				uint16_t index;
         				uint8_t subIndex;
+        				bool fromBus;
         			} valueChanged;
+        			struct {
+        				uint16_t index;
+        				uint8_t subIndex;
+        				uint32_t value;
+        				bool fromBus;
+        			} valueChangeRequest;
         		};
         	};
 			using NotificationEventRaiser = EventRaiser<CanOpenService, NotificationEventArgs>;
@@ -52,7 +60,10 @@ namespace eos {
 			enum class MessageID {
 				canReceive,
 				canSend,
-				entryValueChanged,
+				odChanged,
+				odWriteU8,
+				odWriteU16,
+				odWriteU32,
 				heartbead
 			};
 			struct Message {
@@ -70,8 +81,22 @@ namespace eos {
 					} canSend;
 					struct {
 						unsigned entryId;
-						bool raiseNotification;
-					} entryValueChanged;
+						uint8_t value;
+						uint8_t mask;
+					} odWriteU8;
+					struct {
+						unsigned entryId;
+						uint16_t value;
+						uint16_t mask;
+					} odWriteU16;
+					struct {
+						unsigned entryId;
+						uint32_t value;
+						uint32_t mask;
+					} odWriteU32;
+					struct {
+						unsigned entryId;
+					} odChanged;
 				};
 			};
         	using MessageQueue = Queue<Message>;
@@ -82,18 +107,17 @@ namespace eos {
 		private:
 			htl::can::CANDevice * const _devCAN;
         	CanOpenDictionary * const _dictionary;
-			TimerEvent _timerEvent;
-			Timer _timer;
+			TimerEvent _heartbeatTimerEvent;
+			Timer _heartbeatTimer;
         	CANDeviceNotificationEvent _canDeviceNotificationEvent;
 			uint8_t const _nodeId;
 			NodeState _nodeState;
-			MessageQueue _queue;
+			MessageQueue _messageQueue;
 			NotificationEventRaiser _erNotification;
-			bool _sdoEnabled;
 
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
-            void timerEventHandler(Timer * const sender, Timer::TimerEventArgs * const args);
+            void heartbeatTimerEventHandler(Timer * const sender, Timer::TimerEventArgs * const args);
 
             void configureHeartbeat();
             void configureSDO();
@@ -101,14 +125,18 @@ namespace eos {
             void configureCANFilters();
 
             void processValueChanged(unsigned entryId, bool raiseNotification);
+            void processWriteU8(unsigned entryId, uint8_t value, uint8_t mask);
+            void processWriteU16(unsigned entryId, uint16_t value, uint16_t mask);
+            void processWriteU32(unsigned entryId, uint32_t value, uint32_t mask);
             void processSDOFrame(const uint8_t *data);
 			void processNMTFrame(const uint8_t *data);
 			void processSYNCFrame();
 			void processRPDOFrame(uint16_t cobid, const uint8_t *data, unsigned dataLen);
 
-			void sendBootUp();
 			void sendHeartbeat();
 			void sendTPDO(uint8_t tpdo);
+
+			bool isMapped(unsigned tpdo, unsigned entryId);
 
 		protected:
 			CanOpenService(InitParams const &params);
@@ -120,34 +148,28 @@ namespace eos {
             Result sendFrame(uint16_t cobid, const uint8_t *data, unsigned length, unsigned timeout);
 
             bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value) const;
-            bool readU8(uint16_t index, uint8_t &value) const;
             bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value) const;
-            bool readU16(uint16_t index, uint16_t &value) const;
             bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value) const;
-            bool readU32(uint16_t index, uint32_t &value) const;
 
             void raiseStateChangedNotificationEvent();
             void raiseSyncNotificationEvent();
-            void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex);
+            void raiseValueChangeRequestNotificationEvent(uint16_t index, uint8_t subIndex, uint8_t value, bool fromBus);
+            void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex, bool fromBus);
 
             void changeNodeState(NodeState newNodeState);
             virtual void beforeChangeNodeState();
             virtual void afterChangeNodeState();
 
 		public:
-            void notifyValueChanged(uint16_t index, uint8_t subIndex, bool raiseNotification = false);
+            void odWriteU8(uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask);
+            void odWriteU16(uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask);
+            void odWriteU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask);
+
+            bool odReadU8(uint16_t index, uint8_t subIndex, uint8_t &value);
 
             void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
             	_erNotification.set(event, enabled);
             }
-
-            /*inline NodeState getNodeState() const {
-            	return _nodeState;
-            }*/
-
-            /*inline uint16_t getNodeId() const {
-            	return _nodeId;
-            }*/
 	};
 }
 
