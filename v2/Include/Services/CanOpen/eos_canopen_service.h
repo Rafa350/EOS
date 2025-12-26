@@ -58,13 +58,18 @@ namespace eos {
 
 		private:
 			enum class MessageID {
-				canReceive,
-				canSend,
-				odChanged,
+				canFrameReceived,
+				canSendFrame,
 				odWriteU8,
 				odWriteU16,
 				odWriteU32,
-				heartbead
+				odWriteBool,
+				sendHeartbeat,
+				coSYNCReceived,
+				coNMTReceived,
+				coTIMEReceived,
+				coSDOReceived,
+				coRPDOReceived
 			};
 			struct Message {
 				MessageID id;
@@ -73,12 +78,12 @@ namespace eos {
 						uint16_t cobid;
 						uint8_t dataLen;
 						uint8_t data[8];
-					} canReceive;
+					} canFrameReceived;
 					struct {
 						uint16_t cobid;
 						uint8_t dataLen;
 						uint8_t data[8];
-					} canSend;
+					} canSendFrame;
 					struct {
 						unsigned entryId;
 						uint8_t value;
@@ -96,7 +101,23 @@ namespace eos {
 					} odWriteU32;
 					struct {
 						unsigned entryId;
-					} odChanged;
+						bool value;
+					} odWriteBool;
+					struct {
+						uint8_t data;
+					} coSYNCReceived;
+					struct {
+						uint8_t command;
+						uint8_t nodeId;
+					} coNMTReceived;
+					struct {
+						uint8_t data[8];
+					} coSDOReceived;
+					struct {
+						uint16_t cobid;
+						uint8_t dataLen;
+						uint8_t data[8];
+					} coRPDOReceived;
 				};
 			};
         	using MessageQueue = Queue<Message>;
@@ -120,7 +141,6 @@ namespace eos {
             void heartbeatTimerEventHandler(Timer * const sender, Timer::TimerEventArgs * const args);
 
             void configureHeartbeat();
-            void configureSDO();
             void configureCANDevice();
             void configureCANFilters();
 
@@ -128,10 +148,11 @@ namespace eos {
             void processWriteU8(unsigned entryId, uint8_t value, uint8_t mask);
             void processWriteU16(unsigned entryId, uint16_t value, uint16_t mask);
             void processWriteU32(unsigned entryId, uint32_t value, uint32_t mask);
-            void processSDOFrame(const uint8_t *data);
-			void processNMTFrame(const uint8_t *data);
-			void processSYNCFrame();
-			void processRPDOFrame(uint16_t cobid, const uint8_t *data, unsigned dataLen);
+            void processSDO(const uint8_t *data);
+			void processNMT(uint8_t command, uint8_t nodeId);
+			void processSYNC();
+			void processTIME();
+			void processRPDO(uint16_t cobid, const uint8_t *data, unsigned dataLen);
 
 			void sendHeartbeat();
 			void sendTPDO(uint8_t tpdo);
@@ -146,10 +167,6 @@ namespace eos {
 
 			virtual void processFrame(uint16_t cobid, const uint8_t *data, unsigned dataLen);
             Result sendFrame(uint16_t cobid, const uint8_t *data, unsigned length, unsigned timeout);
-
-            bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value) const;
-            bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value) const;
-            bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value) const;
 
             void raiseStateChangedNotificationEvent();
             void raiseSyncNotificationEvent();
@@ -166,6 +183,8 @@ namespace eos {
             void odWriteU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask);
 
             bool odReadU8(uint16_t index, uint8_t subIndex, uint8_t &value);
+            bool odReadU16(uint16_t index, uint8_t subIndex, uint16_t &value);
+            bool odReadU32(uint16_t index, uint8_t subIndex, uint32_t &value);
 
             void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
             	_erNotification.set(event, enabled);

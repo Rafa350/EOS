@@ -79,10 +79,36 @@ void CanOpenService::onExecute() {
 		while(_messageQueue.pop(msg, (unsigned) -1)) {
 			switch (msg.id) {
 
-				// S'ha rebut un missatge CANOpen
+				case MessageID::coSYNCReceived:
+					processSYNC();
+					break;
+
+				case MessageID::coTIMEReceived:
+					processTIME();
+					break;
+
+				case MessageID::coNMTReceived:
+					processNMT(msg.coNMTReceived.command, msg.coNMTReceived.nodeId);
+					break;
+
+				case MessageID::coSDOReceived:
+					processSDO(msg.coSDOReceived.data);
+					break;
+
+				case MessageID::coRPDOReceived:
+					processRPDO(msg.coRPDOReceived.cobid, msg.coRPDOReceived.data, msg.coRPDOReceived.dataLen);
+					break;
+
+				// S'ha rebut una trama CANOpen
 				//
-				case MessageID::canReceive:
-					processFrame(msg.canReceive.cobid, msg.canReceive.data, msg.canReceive.dataLen);
+				case MessageID::canFrameReceived:
+					processFrame(msg.canFrameReceived.cobid, msg.canFrameReceived.data, msg.canFrameReceived.dataLen);
+					break;
+
+				// Envia un trama CANOpen
+				//
+				case MessageID::canSendFrame:
+					sendFrame(msg.canSendFrame.cobid, msg.canSendFrame.data, msg.canSendFrame.dataLen, 20);
 					break;
 
 				// Escriu un valor de 8 bits al diccionari
@@ -105,7 +131,7 @@ void CanOpenService::onExecute() {
 
 				// Cal que enviar un headbeat.
 				//
-				case MessageID::heartbead:
+				case MessageID::sendHeartbeat:
 					sendHeartbeat();
 					break;
 
@@ -125,7 +151,7 @@ void CanOpenService::onExecute() {
 void CanOpenService::configureHeartbeat() {
 
 	uint16_t interval;
-	if (readU16(0x1017, 0, interval) && interval > 0)
+	if (_dictionary->readU16(0x1017, 0, interval) && interval > 0)
 		_heartbeatTimer.start(interval, (unsigned) -1);
 }
 
@@ -181,8 +207,8 @@ void CanOpenService::configureCANFilters() {
 	// en cas contrari no cal definir els filtres.
 	//
 	uint32_t cobidSDO;
-	if (readU32(0x1200, 0x01, cobidSDO)) {
-		filter.id1 = (cobidSDO & 0x7FF) | _nodeId;
+	if (_dictionary->readU32(0x1200, 0x01, cobidSDO)) {
+		filter.id1 = (cobidSDO & 0x780) | _nodeId;
 		filter.id2 = 0x7FFu;
 		_devCAN->setFilter(&filter, filterIndex++);
 	}
@@ -353,26 +379,15 @@ void CanOpenService::processFrame(
 
 	switch (cobid & 0xF80) {
 
-		case COBID::SYNC:
-			processSYNCFrame();
-			break;
-
-		case COBID::TIME:
-			break;
-
-		case COBID::NMT:
-			processNMTFrame(data);
-			break;
-
 		case COBID::SDO:
-			processSDOFrame(data);
+			processSDO(data);
 			break;
 
 		case COBID::RPDO1:
 		case COBID::RPDO2:
 		case COBID::RPDO3:
 		case COBID::RPDO4:
-			processRPDOFrame(cobid & 0xF80, data, dataLen);
+			processRPDO(cobid & 0xF80, data, dataLen);
 			break;
 
 		default:
@@ -383,13 +398,15 @@ void CanOpenService::processFrame(
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa una trama NMT
-/// \param    data: Dades del missatge.
+/// \param    command: La comanda NMT
+/// \param    nodeId: El identificador del node on aplicar la comanda
 ///
-void CanOpenService::processNMTFrame(
-	const uint8_t *data) {
+void CanOpenService::processNMT(
+	uint8_t command,
+	uint8_t nodeId) {
 
-	if (data[1] == _nodeId) {
-		switch (data[0]) {
+	if (nodeId == _nodeId) {
+		switch (command) {
 			case 0x01:
 				changeNodeState(NodeState::operational);
 				break;
@@ -416,7 +433,7 @@ void CanOpenService::processNMTFrame(
 /// \brief    Procesa una trama SDO
 /// \param    data: Dades del missatge.
 ///
-void CanOpenService::processSDOFrame(
+void CanOpenService::processSDO(
 	const uint8_t *data) {
 
 	uint8_t response[8];
@@ -592,15 +609,23 @@ void CanOpenService::processSDOFrame(
 	// Envia la resposta
 	//
 	uint32_t cobidSDOr;
-	if (readU32(0x1200, 0x02, cobidSDOr))
+	if (_dictionary->readU32(0x1200, 0x02, cobidSDOr))
 		sendFrame((cobidSDOr & 0x7FF) | _nodeId, response, sizeof(response), defTimeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa una trama TIME
+///
+void CanOpenService::processTIME() {
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa una trama SYNC
 ///
-void CanOpenService::processSYNCFrame() {
+void CanOpenService::processSYNC() {
 
 	if (_nodeState == NodeState::operational) {
 
@@ -615,8 +640,8 @@ void CanOpenService::processSYNCFrame() {
 			uint32_t flags;
 			uint8_t transmissionType;
 
-			if (readU32(0x1800 + tpdo, 0x01, flags) &&
-				readU8(0x1800 + tpdo, 0x02, transmissionType)) {
+			if (_dictionary->readU32(0x1800 + tpdo, 0x01, flags) &&
+				_dictionary->readU8(0x1800 + tpdo, 0x02, transmissionType)) {
 
 				if ((transmissionType <= 240) && ((flags & (1 << 31)) == 0))
 					sendTPDO(tpdo);
@@ -631,18 +656,18 @@ void CanOpenService::processSYNCFrame() {
 /// \param    cobid: El COB-ID
 /// \param    data: Dades del missatge.
 ///
-void CanOpenService::processRPDOFrame(
+void CanOpenService::processRPDO(
 	uint16_t cobid,
 	const uint8_t *data,
 	unsigned dataLen) {
 
 	uint32_t rpdoCOBID;
-	if (readU32(0x1400, 0x01, rpdoCOBID) && rpdoCOBID == cobid) {
+	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && rpdoCOBID == cobid) {
 
 		const uint8_t *pData = data;
 
 		uint32_t map;
-		if (readU32(0x1600, 0x01, map)) {
+		if (_dictionary->readU32(0x1600, 0x01, map)) {
 			uint16_t mapIndex = (map >> 16) & 0xFFFF;
 			uint8_t mapSubIndex = (map >> 8) & 0xFF;
 			uint8_t mapLength = (map & 0xFF) / 8;
@@ -771,8 +796,8 @@ void CanOpenService::processValueChanged(
 				uint32_t flags;
 				uint8_t transmissionType;
 
-				if (readU32(0x1800 + tpdo, 0x01, flags) &&
-					readU8(0x1800 + tpdo, 0x02, transmissionType)) {
+				if (_dictionary->readU32(0x1800 + tpdo, 0x01, flags) &&
+					_dictionary->readU8(0x1800 + tpdo, 0x02, transmissionType)) {
 
 					if ((transmissionType == 254) && ((flags & (1 << 31)) == 0))
 						sendTPDO(tpdo);
@@ -861,7 +886,7 @@ void CanOpenService::sendTPDO(
 	uint8_t tpdo) {
 
 	uint8_t maxCount;
-	if (readU8(0x1A00 | tpdo, 0x00, maxCount) && maxCount > 0) {
+	if (_dictionary->readU8(0x1A00 | tpdo, 0x00, maxCount) && maxCount > 0) {
 
 		uint8_t data[8];
 		uint8_t *pData = data;
@@ -873,7 +898,7 @@ void CanOpenService::sendTPDO(
 		for (auto count = 0; (count < maxCount) && ok; count++) {
 
 			uint32_t mapInfo;
-			ok = readU32(0x1A00 | tpdo, count + 1, mapInfo);
+			ok = _dictionary->readU32(0x1A00 | tpdo, count + 1, mapInfo);
 			if (ok) {
 
 				uint16_t mapIndex = (mapInfo >> 16) & 0xFFFF;
@@ -934,7 +959,7 @@ void CanOpenService::sendTPDO(
 
 		if (ok) {
 			uint32_t cobid;
-			if (readU32(0x1800 + tpdo, 0x01, cobid))
+			if (_dictionary->readU32(0x1800 + tpdo, 0x01, cobid))
 				sendFrame((cobid & 0x7FF) | _nodeId, data, dataLen, 100);
 		}
 	}
@@ -1043,20 +1068,60 @@ void CanOpenService::canDeviceNotificationEventHandler(
 	};
 
 	switch (args->id) {
-		case htl::can::CANDevice::NotificationID::rxFifoNotEmpty:
-
-			Message msg;
+		case htl::can::CANDevice::NotificationID::rxFifoNotEmpty: {
 
 			htl::can::RxHeader rxHeader;
-			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, msg.canReceive.data, sizeof(msg.canReceive.data));
+			uint8_t data[8];
 
-			msg.id = MessageID::canReceive;
-			msg.canReceive.dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
-			msg.canReceive.cobid = rxHeader.id;
+			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, data, sizeof(data));
+			uint8_t dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
 
-			_messageQueue.pushISR(msg);
+			Message msg;
+			if (rxHeader.id == COBID::NMT) {
+				msg.id = MessageID::coNMTReceived;
+				msg.coNMTReceived.command = data[0];
+				msg.coNMTReceived.nodeId = data[1];
+				_messageQueue.pushISR(msg);
+			}
+
+			else if (rxHeader.id == COBID::SYNC) {
+				msg.id = MessageID::coSYNCReceived;
+				msg.coSYNCReceived.data = dataLen == 1 ? data[0] : 0;
+				_messageQueue.pushISR(msg);
+			}
+
+			else if (rxHeader.id == COBID::TIME) {
+				msg.id = MessageID::coTIMEReceived;
+				_messageQueue.pushISR(msg);
+			}
+
+			else if ((rxHeader.id & 0xF80) == COBID::SDO) {
+				msg.id = MessageID::coSDOReceived;
+				memcpy(msg.coSDOReceived.data, data, dataLen);
+				_messageQueue.pushISR(msg);
+			}
+
+			else if (((rxHeader.id & 0xF80) == COBID::RPDO1) ||
+					 ((rxHeader.id & 0xF80) == COBID::RPDO2) ||
+					 ((rxHeader.id & 0xF80) == COBID::RPDO3) ||
+					 ((rxHeader.id & 0xF80) == COBID::RPDO4)) {
+				msg.id = MessageID::coRPDOReceived;
+				msg.coRPDOReceived.cobid = rxHeader.id & 0xF80;
+				msg.coRPDOReceived.dataLen = dataLen;
+				memcpy(msg.coRPDOReceived.data, data, dataLen);
+				_messageQueue.pushISR(msg);
+			}
+
+			else {
+				msg.id = MessageID::canFrameReceived;
+				msg.canFrameReceived.cobid = rxHeader.id;
+				msg.canFrameReceived.dataLen = dataLen;
+				memcpy(msg.canFrameReceived.data, data, dataLen);
+				_messageQueue.pushISR(msg);
+			}
 
 			break;
+		}
 
 		default:
 			break;
@@ -1075,78 +1140,15 @@ void CanOpenService::heartbeatTimerEventHandler(
 
 	Message msg;
 
-	msg.id = MessageID::heartbead;
+	msg.id = MessageID::sendHeartbeat;
 	_messageQueue.push(msg, (unsigned) -1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte un valor de 8 bits del diccionari
-/// \param    index: L'index.
-/// \param    subIndex: El subindex.
-/// \param    value: El valor obtingut.
-/// \return   True si tot es correcte.
-///
-bool CanOpenService::readU8(
-	uint16_t index,
-	uint8_t subIndex,
-	uint8_t &value) const {
-
-	auto entryId = _dictionary->find(index, subIndex);
-
-	if (entryId == (unsigned) -1)
-		return false;
-	else
-		return _dictionary->readU8(entryId, value);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte un valor de 16 bits del diccionari
-/// \param    index: L'index.
-/// \param    subIndex: El subindex.
-/// \param    value: El valor obtingut.
-/// \return   True si tot es correcte.
-///
-bool CanOpenService::readU16(
-	uint16_t index,
-	uint8_t subIndex,
-	uint16_t &value) const {
-
-	auto entryId = _dictionary->find(index, subIndex);
-
-	if (entryId == (unsigned) -1)
-		return false;
-	else
-		return _dictionary->readU16(entryId, value);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte un valor de 32 bits del diccionari
-/// \param    index: L'index.
-/// \param    subIndex: El subindex.
-/// \param    value: El valor obtingut.
-/// \return   True si tot es correcte.
-///
-bool CanOpenService::readU32(
-	uint16_t index,
-	uint8_t subIndex,
-	uint32_t &value) const {
-
-	auto entryId = _dictionary->find(index, subIndex);
-
-	if (entryId == (unsigned) -1)
-		return false;
-	else
-		return _dictionary->readU32(entryId, value);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Llegeix un valor de 8 bits del diccionari
 /// \param    index: L'index.
-/// \param    subIndex: EWl subindex.
+/// \param    subIndex: El subindex.
 /// \param    El valor lleigit.
 /// \return   True si tot es correcte.
 ///
@@ -1155,11 +1157,39 @@ bool CanOpenService::odReadU8(
 	uint8_t subIndex,
 	uint8_t &value) {
 
-	auto entryId = _dictionary->find(index, subIndex);
-	if (entryId == (unsigned) -1)
-		return false;
-	else
-		return _dictionary->readU8(entryId, value);
+	return _dictionary->readU8(index, subIndex, value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix un valor de 16 bits del diccionari
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    El valor lleigit.
+/// \return   True si tot es correcte.
+///
+bool CanOpenService::odReadU16(
+	uint16_t index,
+	uint8_t subIndex,
+	uint16_t &value) {
+
+	return _dictionary->readU16(index, subIndex, value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix un valor de 32 bits del diccionari
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    El valor lleigit.
+/// \return   True si tot es correcte.
+///
+bool CanOpenService::odReadU32(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t &value) {
+
+	return _dictionary->readU32(index, subIndex, value);
 }
 
 
@@ -1174,11 +1204,11 @@ bool CanOpenService::isMapped(
 	unsigned entryId) {
 
 	uint8_t numMaps;
-	if (readU8(0x1A00 + tpdo, 0, numMaps)) {
+	if (_dictionary->readU8(0x1A00 + tpdo, 0, numMaps)) {
 		for (auto i = 0; i < numMaps; i++) {
 
 			uint32_t map;
-			if (readU32(0x1A00 + tpdo, i + 1, map)) {
+			if (_dictionary->readU32(0x1A00 + tpdo, i + 1, map)) {
 
 				uint16_t mapIndex = (map >> 16) & 0xFFFF;
 				uint8_t mapSubIndex = (map >> 8) & 0xFF;
