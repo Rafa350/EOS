@@ -29,8 +29,7 @@ CanOpenService::CanOpenService(
 	_canDeviceNotificationEvent {*this, &CanOpenService::canDeviceNotificationEventHandler},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
-	_messageQueue {5} {
-
+	_messageQueue {10} {
 }
 
 
@@ -66,8 +65,7 @@ void CanOpenService::onExecute() {
 
 	// Envia un boot-up (Heartbeat amb estat 'initializing')
 	//
-	sendHeartbeat();
-	Task::delay(1000);
+	emitHeartbeat((unsigned) -1);
 
 	// Canvia l'estat a 'preOperational'
 	//
@@ -79,60 +77,34 @@ void CanOpenService::onExecute() {
 		while(_messageQueue.pop(msg, (unsigned) -1)) {
 			switch (msg.id) {
 
-				case MessageID::coSYNCReceived:
-					processSYNC();
-					break;
-
-				case MessageID::coTIMEReceived:
-					processTIME();
-					break;
-
-				case MessageID::coNMTReceived:
-					processNMT(msg.coNMTReceived.command, msg.coNMTReceived.nodeId);
-					break;
-
-				case MessageID::coSDOReceived:
-					processSDO(msg.coSDOReceived.data);
-					break;
-
-				case MessageID::coRPDOReceived:
-					processRPDO(msg.coRPDOReceived.cobid, msg.coRPDOReceived.data, msg.coRPDOReceived.dataLen);
-					break;
-
 				// S'ha rebut una trama CANOpen
 				//
-				case MessageID::canFrameReceived:
-					processFrame(msg.canFrameReceived.cobid, msg.canFrameReceived.data, msg.canFrameReceived.dataLen);
+				case MessageID::frameReceived:
+					processFrame(CobID(msg.frameReceived.cobid), msg.frameReceived.data, msg.frameReceived.dataLen);
 					break;
 
 				// Envia un trama CANOpen
 				//
-				case MessageID::canSendFrame:
-					sendFrame(msg.canSendFrame.cobid, msg.canSendFrame.data, msg.canSendFrame.dataLen, 20);
+				case MessageID::sendFrame:
+					sendFrame(CobID(msg.sendFrame.cobid), msg.sendFrame.data, msg.sendFrame.dataLen, 20);
 					break;
 
 				// Escriu un valor de 8 bits al diccionari
 			    //
-				case MessageID::odWriteU8:
-					processWriteU8(msg.odWriteU8.entryId, msg.odWriteU8.value, msg.odWriteU8.mask);
+				case MessageID::writeU8:
+					processWriteU8(msg.writeU8.entryId, msg.writeU8.value, msg.writeU8.mask);
 					break;
 
-				// Escriu un valor de 8 bits al diccionari
+				// Escriu un valor de 16 bits al diccionari
 				//
-				case MessageID::odWriteU16:
-					processWriteU16(msg.odWriteU16.entryId, msg.odWriteU16.value, msg.odWriteU16.mask);
+				case MessageID::writeU16:
+					processWriteU16(msg.writeU16.entryId, msg.writeU16.value, msg.writeU16.mask);
 					break;
 
-				// Escriu un valor de 8 bits al diccionari
+				// Escriu un valor de 32 bits al diccionari
 				//
-				case MessageID::odWriteU32:
-					processWriteU8(msg.odWriteU32.entryId, msg.odWriteU32.value, msg.odWriteU32.mask);
-					break;
-
-				// Cal que enviar un headbeat.
-				//
-				case MessageID::sendHeartbeat:
-					sendHeartbeat();
+				case MessageID::writeU32:
+					processWriteU8(msg.writeU32.entryId, msg.writeU32.value, msg.writeU32.mask);
 					break;
 
 				default:
@@ -219,7 +191,7 @@ void CanOpenService::configureCANFilters() {
 	filter.id2 = 0x7FFu;
 	_devCAN->setFilter(&filter, filterIndex++);
 
-	// Accepta els missatges Headbead
+	// Accepta els missatges Headbead, sense importar el nodeId
 	//
 	filter.id1 = COBID::Heartbeat,
 	filter.id2 = 0x780u;
@@ -231,7 +203,7 @@ void CanOpenService::configureCANFilters() {
 	filter.id2 = 0x7FFu;
 	_devCAN->setFilter(&filter, filterIndex++);
 
-	// Accepta els missatges TPDO
+	// Accepta els missatges TPDO, sense importar el nodeId
 	//
 	filter.id1 = COBID::TPDO1,
 	filter.id2 = 0x780u;
@@ -262,17 +234,16 @@ void CanOpenService::raiseStateChangedNotificationEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'SyncNotification'
+/// \brief    Genera un event 'SYNCReceived'
 ///
-void CanOpenService::raiseSyncNotificationEvent() {
+void CanOpenService::raiseSYNCReceivedEvent() {
 
-	if (_erNotification.isEnabled()) {
+	if (_erSYNCReceived.isEnabled()) {
 
-		NotificationEventArgs args = {
-			.id {NotificationID::sync}
+		SYNCReceivedEventArgs args = {
 		};
 
-		_erNotification(this, &args);
+		_erSYNCReceived(this, &args);
 	}
 }
 
@@ -335,6 +306,49 @@ void CanOpenService::raiseValueChangedNotificationEvent(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Genera un event TPDOReceived.
+/// \param    cobId: El COBID del TPDO
+/// \param    data: Les dades.
+/// \param    dataLen: La longitut de les dades.
+///
+void CanOpenService::raiseTPDOReceivedEvent(
+	CobID cobId,
+	const uint8_t *data,
+	unsigned dataLen) {
+
+	if (_erTPDOReceived.isEnabled()) {
+
+		TPDOReceivedEventArgs args = {
+			.cobId {cobId},
+			.dataLen {(uint8_t)dataLen},
+			.data {data}
+		};
+
+		_erTPDOReceived(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event HeartbeatReceived.
+///
+void CanOpenService::raiseHeartbeatReceivedEvent(
+	uint8_t nodeId,
+	NodeState state) {
+
+	if (_erHeartbeatReceived.isEnabled()) {
+
+		HeartbeatReceivedEventArgs args = {
+			.nodeId {nodeId},
+			.state {state}
+		};
+
+		_erHeartbeatReceived(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Realitza el canvi d'estat i notifica els canvis
 /// \param    newNodeState: El nou estat
 ///
@@ -368,36 +382,78 @@ void CanOpenService::afterChangeNodeState() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa una trama
-/// \param    cobid: El cobid de la trama.
+/// \param    cobId: El cobid de la trama.
 /// \param    data: Les dades de la trama.
 /// \param    dataLen: Longitut de les dades en bytes.
 ///
 void CanOpenService::processFrame(
-	uint16_t cobid,
+	CobID cobId,
 	const uint8_t *data,
 	unsigned dataLen) {
 
-	switch (cobid & 0xF80) {
+	if (cobId.isNMT())
+		processNMT(data[0], data[1]);
 
-		case COBID::SDO:
-			processSDO(data);
-			break;
+	else if (cobId.isSYNC())
+		processSYNC();
 
-		case COBID::RPDO1:
-		case COBID::RPDO2:
-		case COBID::RPDO3:
-		case COBID::RPDO4:
-			processRPDO(cobid & 0xF80, data, dataLen);
-			break;
+	else if (cobId.isTIME())
+		processTIME();
 
-		default:
-			break;
-	}
+	else if (cobId.isHeartbeat())
+		processHeartbeat(cobId.nodeId(), data[0]);
+
+	else if (cobId.base() == COBID::SDO)
+		processSDO(data);
+
+	else if ((cobId.base() == COBID::RPDO1) ||
+		     (cobId.base() == COBID::RPDO2) ||
+		     (cobId.base() == COBID::RPDO3) ||
+		     (cobId.base() == COBID::RPDO4))
+		processRPDO(cobId, data, dataLen);
+
+	else if ((cobId.base() == COBID::TPDO1) ||
+		     (cobId.base() == COBID::TPDO2) ||
+		     (cobId.base() == COBID::TPDO3) ||
+		     (cobId.base() == COBID::TPDO4))
+	    processTPDO(cobId, data, dataLen);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una trama NMT
+/// \brief    Procesa els missatges Heartbeat.
+/// \param    nodeId: El node origen del missatge.
+/// \param    state: L'estat del node.
+///
+void CanOpenService::processHeartbeat(
+	uint8_t nodeId,
+	uint8_t state) {
+
+	NodeState nodeState = NodeState::error;
+	switch (state) {
+		case 0x00: // boot-up
+			nodeState = NodeState::initializing;
+			break;
+
+		case 0x04: // stopped
+			nodeState = NodeState::stoped;
+			break;
+
+		case 0x05: // operational
+			nodeState = NodeState::operational;
+			break;
+
+		case 0x7F: // preoperational
+			nodeState = NodeState::preOperational;
+			break;
+	}
+
+	raiseHeartbeatReceivedEvent(nodeId, nodeState);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa els missatges NMT
 /// \param    command: La comanda NMT
 /// \param    nodeId: El identificador del node on aplicar la comanda
 ///
@@ -430,7 +486,7 @@ void CanOpenService::processNMT(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una trama SDO
+/// \brief    Procesa els missatges SDO
 /// \param    data: Dades del missatge.
 ///
 void CanOpenService::processSDO(
@@ -610,12 +666,12 @@ void CanOpenService::processSDO(
 	//
 	uint32_t cobidSDOr;
 	if (_dictionary->readU32(0x1200, 0x02, cobidSDOr))
-		sendFrame((cobidSDOr & 0x7FF) | _nodeId, response, sizeof(response), defTimeout);
+		sendFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), defTimeout);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una trama TIME
+/// \brief    Procesa els missatges TIME
 ///
 void CanOpenService::processTIME() {
 
@@ -623,13 +679,13 @@ void CanOpenService::processTIME() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una trama SYNC
+/// \brief    Procesa els missatges SYNC
 ///
 void CanOpenService::processSYNC() {
 
-	if (_nodeState == NodeState::operational) {
+	raiseSYNCReceivedEvent();
 
-		raiseSyncNotificationEvent();
+	if (_nodeState == NodeState::operational) {
 
 		// Comprova les  entrades 0x1800 per si hi han TPDOs sincrons
 		// per enviar
@@ -652,17 +708,31 @@ void CanOpenService::processSYNC() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una trama RPDO
+/// \brief    Procesa els missatges TPDO
+/// \param    cobid: El COB-ID
+/// \param    data: Dades del missatge.
+///
+void CanOpenService::processTPDO(
+	CobID cobId,
+	const uint8_t *data,
+	unsigned dataLen) {
+
+	raiseTPDOReceivedEvent(cobId, data, dataLen);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa els missatges RPDO
 /// \param    cobid: El COB-ID
 /// \param    data: Dades del missatge.
 ///
 void CanOpenService::processRPDO(
-	uint16_t cobid,
+	CobID cobId,
 	const uint8_t *data,
 	unsigned dataLen) {
 
 	uint32_t rpdoCOBID;
-	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && rpdoCOBID == cobid) {
+	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && rpdoCOBID == cobId.base()) {
 
 		const uint8_t *pData = data;
 
@@ -781,8 +851,6 @@ void CanOpenService::processValueChanged(
 	unsigned entryId,
 	bool raiseNotification) {
 
-	// Procesa TPDO's asociat a event de cavi de valor
-	//
 	if (_nodeState == NodeState::operational) {
 
 		// Comprova les entrades 0x1800 per si hi ha TPDO asincrones
@@ -823,7 +891,7 @@ void CanOpenService::processValueChanged(
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
 ///
-void CanOpenService::odWriteU8(
+void CanOpenService::writeU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value,
@@ -832,8 +900,8 @@ void CanOpenService::odWriteU8(
 	auto entryId = _dictionary->find(index, subIndex);
 	if (_dictionary->canWrite(entryId)) {
 		Message msg = {
-			.id {MessageID::odWriteU8},
-			.odWriteU8 {
+			.id {MessageID::writeU8},
+			.writeU8 {
 				.entryId {entryId},
 				.value {value},
 				.mask {mask}
@@ -845,36 +913,50 @@ void CanOpenService::odWriteU8(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Envia un 'heartbeat' al bus.
+/// \brief    Llegeix un valor de 8 bits del diccionari
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    El valor lleigit.
+/// \return   True si tot es correcte.
 ///
-void CanOpenService::sendHeartbeat() {
+bool CanOpenService::readU8(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t &value) {
 
-	uint16_t cobid = COBID::Heartbeat | (_nodeId & 0x7F);
-	uint8_t data = 0;
+	return _dictionary->readU8(index, subIndex, value);
+}
 
-	switch (_nodeState) {
-		case NodeState::initializing:
-			data = 0;
-			break;
 
-		case NodeState::stoped:
-			data = 4;
-			break;
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix un valor de 16 bits del diccionari
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    El valor lleigit.
+/// \return   True si tot es correcte.
+///
+bool CanOpenService::readU16(
+	uint16_t index,
+	uint8_t subIndex,
+	uint16_t &value) {
 
-		case NodeState::preOperational:
-			data = 0x7F;
-			break;
+	return _dictionary->readU16(index, subIndex, value);
+}
 
-		case NodeState::operational:
-			data = 5;
-			break;
 
-		case NodeState::error:
-			data = 0x80;
-			break;
-	}
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix un valor de 32 bits del diccionari
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    El valor lleigit.
+/// \return   True si tot es correcte.
+///
+bool CanOpenService::readU32(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t &value) {
 
-	sendFrame(cobid, &data, sizeof(data), defTimeout);
+	return _dictionary->readU32(index, subIndex, value);
 }
 
 
@@ -960,7 +1042,7 @@ void CanOpenService::sendTPDO(
 		if (ok) {
 			uint32_t cobid;
 			if (_dictionary->readU32(0x1800 + tpdo, 0x01, cobid))
-				sendFrame((cobid & 0x7FF) | _nodeId, data, dataLen, 100);
+				sendFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, 100);
 		}
 	}
 }
@@ -968,13 +1050,13 @@ void CanOpenService::sendTPDO(
 
 /// ----------------------------------------------------------------------
 /// \brief    Transmet una trama.
-/// \param    cobid: El identificador.
+/// \param    cobId: El identificador.
 /// \param    data: Les dades.
 /// \param    timeout: Temps maxim d'espera.
 /// \return   True si tot es correcte.
 ///
 Result CanOpenService::sendFrame(
-	uint16_t cobid,
+	CobID cobId,
 	const uint8_t *data,
 	unsigned length,
 	unsigned timeout) {
@@ -1026,7 +1108,7 @@ Result CanOpenService::sendFrame(
 	}
 
 	htl::can::TxHeader header = {
-		.id = cobid,
+		.id = (uint16_t)  cobId,
 		.idType = htl::can::IdentifierType::standard,
 		.dataLength = len,
 		.frameType = htl::can::FrameType::dataFrame,
@@ -1070,55 +1152,16 @@ void CanOpenService::canDeviceNotificationEventHandler(
 	switch (args->id) {
 		case htl::can::CANDevice::NotificationID::rxFifoNotEmpty: {
 
+			Message msg;
 			htl::can::RxHeader rxHeader;
-			uint8_t data[8];
 
-			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, data, sizeof(data));
+			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, msg.frameReceived.data, sizeof(msg.frameReceived));
 			uint8_t dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
 
-			Message msg;
-			if (rxHeader.id == COBID::NMT) {
-				msg.id = MessageID::coNMTReceived;
-				msg.coNMTReceived.command = data[0];
-				msg.coNMTReceived.nodeId = data[1];
-				_messageQueue.pushISR(msg);
-			}
-
-			else if (rxHeader.id == COBID::SYNC) {
-				msg.id = MessageID::coSYNCReceived;
-				msg.coSYNCReceived.data = dataLen == 1 ? data[0] : 0;
-				_messageQueue.pushISR(msg);
-			}
-
-			else if (rxHeader.id == COBID::TIME) {
-				msg.id = MessageID::coTIMEReceived;
-				_messageQueue.pushISR(msg);
-			}
-
-			else if ((rxHeader.id & 0xF80) == COBID::SDO) {
-				msg.id = MessageID::coSDOReceived;
-				memcpy(msg.coSDOReceived.data, data, dataLen);
-				_messageQueue.pushISR(msg);
-			}
-
-			else if (((rxHeader.id & 0xF80) == COBID::RPDO1) ||
-					 ((rxHeader.id & 0xF80) == COBID::RPDO2) ||
-					 ((rxHeader.id & 0xF80) == COBID::RPDO3) ||
-					 ((rxHeader.id & 0xF80) == COBID::RPDO4)) {
-				msg.id = MessageID::coRPDOReceived;
-				msg.coRPDOReceived.cobid = rxHeader.id & 0xF80;
-				msg.coRPDOReceived.dataLen = dataLen;
-				memcpy(msg.coRPDOReceived.data, data, dataLen);
-				_messageQueue.pushISR(msg);
-			}
-
-			else {
-				msg.id = MessageID::canFrameReceived;
-				msg.canFrameReceived.cobid = rxHeader.id;
-				msg.canFrameReceived.dataLen = dataLen;
-				memcpy(msg.canFrameReceived.data, data, dataLen);
-				_messageQueue.pushISR(msg);
-			}
+			msg.id = MessageID::frameReceived;
+			msg.frameReceived.cobid = rxHeader.id;
+			msg.frameReceived.dataLen = dataLen;
+			_messageQueue.pushISR(msg);
 
 			break;
 		}
@@ -1138,58 +1181,219 @@ void CanOpenService::heartbeatTimerEventHandler(
 	Timer * const sender,
 	Timer::TimerEventArgs * const args) {
 
-	Message msg;
-
-	msg.id = MessageID::sendHeartbeat;
-	_messageQueue.push(msg, (unsigned) -1);
+	emitHeartbeat((unsigned) -1);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix un valor de 8 bits del diccionari
-/// \param    index: L'index.
-/// \param    subIndex: El subindex.
-/// \param    El valor lleigit.
-/// \return   True si tot es correcte.
+/// \brief    Genera un missatge 'heartbeat'
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-bool CanOpenService::odReadU8(
-	uint16_t index,
-	uint8_t subIndex,
-	uint8_t &value) {
+Result CanOpenService::emitHeartbeat(
+	unsigned timeout) {
 
-	return _dictionary->readU8(index, subIndex, value);
+	uint8_t data = 0;
+	switch (_nodeState) {
+		case NodeState::initializing:
+			data = 0;
+			break;
+
+		case NodeState::stoped:
+			data = 4;
+			break;
+
+		case NodeState::preOperational:
+			data = 0x7F;
+			break;
+
+		case NodeState::operational:
+			data = 5;
+			break;
+
+		case NodeState::error:
+			data = 0x80;
+			break;
+	}
+
+	Message msg = {
+		.id { MessageID::sendFrame},
+		.sendFrame {
+			.cobid {CobID::makeHeartbeat(_nodeId)},
+			.dataLen {1},
+			.data {data}
+		}
+	};
+
+	if (_messageQueue.push(msg, timeout))
+		return Result::ErrorCodes::ok;
+
+	return Result::ErrorCodes::error;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix un valor de 16 bits del diccionari
-/// \param    index: L'index.
-/// \param    subIndex: El subindex.
-/// \param    El valor lleigit.
-/// \return   True si tot es correcte.
+/// \brief    Genera un missatge SYNC
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-bool CanOpenService::odReadU16(
-	uint16_t index,
-	uint8_t subIndex,
-	uint16_t &value) {
+Result CanOpenService::emitSYNC(
+	unsigned timeout) {
 
-	return _dictionary->readU16(index, subIndex, value);
+	uint32_t options;
+	if (_dictionary->readU32(0x1005, 0x00, options) &&
+		htl::bits::isSet(options, (uint32_t)(1 << 30))) {
+
+		Message msg = {
+			.id { MessageID::sendFrame},
+			.sendFrame {
+				.cobid {CobID(options & 0x007F)},
+				.dataLen {0}
+			}
+		};
+		if (_messageQueue.push(msg, timeout))
+			return Result::ErrorCodes::ok;
+	}
+
+	return Result::ErrorCodes::error;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix un valor de 32 bits del diccionari
-/// \param    index: L'index.
-/// \param    subIndex: El subindex.
-/// \param    El valor lleigit.
-/// \return   True si tot es correcte.
+/// \brief    Genera un missatge NMT.
+/// \param    command: La comanda.
+/// \param    nodeId: Node destinatari.
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-bool CanOpenService::odReadU32(
-	uint16_t index,
-	uint8_t subIndex,
-	uint32_t &value) {
+Result CanOpenService::emitNMT(
+	uint8_t command,
+	uint8_t nodeId,
+	unsigned timeout) {
 
-	return _dictionary->readU32(index, subIndex, value);
+	Message msg = {
+		.id {MessageID::sendFrame},
+		.sendFrame {
+			.cobid {CobID::makeNMT()},
+			.dataLen {2},
+			.data {command, nodeId}
+		}
+	};
+	if (_messageQueue.push(msg, timeout))
+		return Result::ErrorCodes::ok;
+
+	return Result::ErrorCodes::error;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge NMT per posar un node en
+///           estat 'operational'.
+/// \param    nodeId: Node destinatari.
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::emitNMT_StartNode(
+	uint8_t nodeId,
+	unsigned timeout) {
+
+	return emitNMT(0x01, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge NMT per posar un node en estat 'stoped'
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+///
+Result CanOpenService::emitNMT_StopNode(
+	uint8_t nodeId,
+	unsigned timeout) {
+
+	return emitNMT(0x02, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge NMT per posar un node en
+///           estat 'pre-operational'.
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::emitNMT_EnterPreOperational(
+	uint8_t nodeId,
+	unsigned timeout) {
+
+	return emitNMT(0x80, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge NMT per reiniciar un node.
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::emitNMT_ResetNode(
+	uint8_t nodeId,
+	unsigned timeout) {
+
+	return emitNMT(0x81, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge NMT per reiniciar nomes les
+///           comunicacions d'un node.
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::emitNMT_ResetCommunication(
+	uint8_t nodeId,
+	unsigned timeout) {
+
+	return emitNMT(0x82, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge RPDO
+/// \brief    nodeId: El node desti.
+/// \param    rpdoId: El idenfificador del RTPDO.
+/// \param    data: Les dades a transmetre
+/// \param    dataLen: La longitut de les dades a transmetre.
+/// \return   El resultat de l'operacio.
+///
+Result CanOpenService::emitRPDO(
+		uint8_t nodeId,
+		uint8_t rpdoId,
+		const uint8_t *data,
+		unsigned dataLen,
+		unsigned timeout) {
+
+	Message msg = {
+		.id {MessageID::sendFrame},
+		.sendFrame {
+			.cobid {CobID(COBID::RPDO1, ((uint16_t)rpdoId << 8) | ((uint16_t)nodeId & 0x007F))},
+			.dataLen {(uint8_t)dataLen}
+		}
+	};
+	memcpy(msg.sendFrame.data, data, dataLen);
+
+	if (_messageQueue.push(msg,  timeout))
+		return Result::ErrorCodes::ok;
+
+	return Result::ErrorCodes::error;
 }
 
 
