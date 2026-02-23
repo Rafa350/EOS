@@ -5,6 +5,7 @@
 
 // EOS includes
 //
+#include "HTL/htlDevice.h"
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -65,7 +66,7 @@ namespace htl {
 			all
 		};
 
-		class EXTIDevice final {
+		class EXTIDevice final: public Device {
 			public:
         		enum class NotificationID {
         			pinEdge

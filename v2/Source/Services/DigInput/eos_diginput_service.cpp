@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "Services/DigInput/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosKernel.h"
@@ -142,31 +141,23 @@ void DigInputService::raiseInitializeNotificationEvent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Crea una entrada.
-/// \param    pinDrv: El driver del pin.
+/// \brief    Afegeix una entrada el servei.
+/// \param    drv: El driver del pin.
+/// \param    tag: Etiqueta opcional
 /// \return   L'entrada.
 ///
-DigInput * DigInputService::makeInput(
-	PinDriver * pinDrv) {
-
-    return new Input(pinDrv);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Afegeix una entrada al servei.
-/// \param    input: L'entrada a afeigir.
-///
-void DigInputService::addInput(
-    DigInput *input) {
+DigInput * DigInputService::addInput(
+	PinDriver *drv,
+	unsigned tag) {
 
     Task::enterCriticalSection();
 
-    auto inp = static_cast<Input*>(input);
-    if (!_inputs.contains(inp))
-		_inputs.pushFront(inp);
+    auto input = new Input(drv, tag);
+	_inputs.pushFront(input);
 
     Task::exitCriticalSection();
+
+    return input;
 }
 
 
@@ -193,7 +184,7 @@ void DigInputService::removeInput(
 void DigInputService::removeInputs() {
 
     Task::enterCriticalSection();
-
+    _inputs.clear();
     Task::exitCriticalSection();
 }
 

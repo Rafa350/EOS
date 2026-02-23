@@ -23,14 +23,20 @@ namespace eos {
     /// \brief Clase que implementa una entrada digitals
     //
     class DigInput: public DigInputListNode {
+    	private:
+    		unsigned const _tag;
+
     	protected:
-    		DigInput() = default;
+    		DigInput(unsigned tag) : _tag {tag} {}
 
     	public:
     	    DigInput(const DigInput&) = delete;
-    	    DigInput& operator=(const DigInput&) = delete;
     	    DigInput(const DigInput&&) = delete;
+
+    	    DigInput& operator=(const DigInput&) = delete;
     	    DigInput& operator=(const DigInput&&) = delete;
+
+    	    inline unsigned getTag() const { return _tag; }
     };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
@@ -74,13 +80,16 @@ namespace eos {
 
         public:
             DigInputService();
+            DigInputService(const DigInputService&) = delete;
+            DigInputService(const DigInputService&&) = delete;
             ~DigInputService();
+
+            DigInputService& operator=(const DigInputService&) = delete;
+    	    DigInputService& operator=(const DigInputService&&) = delete;
 
             void setScanPeriod(unsigned scanPeriod);
 
-            DigInput* makeInput(PinDriver* pinDrv);
-
-            void addInput(DigInput *input);
+            DigInput* addInput(PinDriver *drv, unsigned tag = 0);
             void removeInput(DigInput *input);
             void removeInputs();
 

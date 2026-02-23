@@ -12,6 +12,7 @@
 //
 #include "HTL/htl.h"
 #include "HTL/htlBits.h"
+#include "HTL/htlDevice.h"
 #include "HTL/STM32/htlClock.h"
 
 
@@ -215,7 +216,7 @@ namespace htl {
 
 		/// Clase que implementa el dispositiu de comunicacio UART.
         ///
-		class UARTDevice {
+		class UARTDevice: Device {
 			public:
 #if HTL_UART_OPTION_DMA == 1
                 using DevDMA = dma::DMADevice;
@@ -251,9 +252,6 @@ namespace htl {
 #endif
 
 			private:
-				UARTDevice(const UARTDevice &) = delete;
-				UARTDevice & operator = (const UARTDevice &) = delete;
-
 				void setWordBits(WordBits wordBits, bool useParity) const;
 				void setStopBits(StopBits wordBits) const;
 				void setParity(Parity parity) const;
@@ -424,30 +422,95 @@ namespace htl {
 				template <typename pin_>
 				void initPinTX() {
 					auto af = UARTPins<PinFunction::tx, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				void initPinRX() {
 					auto af = UARTPins<PinFunction::rx, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				void initPinCTS() {
 					auto af = UARTPins<PinFunction::cts, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				void initPinRTS() {
 					auto af = UARTPins<PinFunction::rts, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 		};
 
 		template <DeviceID deviceID_>
 		UARTDeviceX<deviceID_> UARTDeviceX<deviceID_>::_instance;
+
+
+		/// Clase/Template per gestionar l'inicialitzacio d'un UART
+		///
+		template <DeviceID deviceID_>
+		class UARTInitializer final {
+			public:
+				static inline void initialize() {
+
+				}
+
+#if HTL_UART_OPTION_DEACTIVATE == 1
+				static inline void deactivate() {
+
+				}
+#endif
+
+		};
+
+
+		/// Clase/Template per gestionar l'activacio d'un UART
+		///
+		template <DeviceID deviceID_>
+		class UARTActivator final {
+			private:
+				using UARTTraits = internal::UARTTraits<deviceID_>;
+
+            private:
+				static constexpr auto _addr = UARTTraits::activateAddr;
+				static constexpr auto _pos = UARTTraits::activatePos;
+
+			public:
+				static inline void activate() {
+					bits::set(*reinterpret_cast<uint32_t *>(_addr), 1UL << _pos);
+					__DSB();
+				}
+
+#if HTL_UART_OPTION_DEACTIVATE == 1
+				static inline void deactivate() {
+					bits::clear(*reinterpret_cast<uint32_t *>(_addr),  1UL << _pos);
+					__DSB();
+				}
+#endif
+		};
+
+
+		template <DeviceID deviceID_>
+		class UART final {
+			public:
+				static constexpr DeviceID deviceID = deviceID_;
+
+			public:
+				static inline void initialize() {
+					UARTActivator<deviceID_>::activate();
+					UARTInitializer<deviceID_>::initialize();
+				}
+
+#if HTL_UART_OPTION_DEACTIVATE == 1
+				static inline void deinitialize() {
+					UARTInitializer<deviceID_>::deinialize();
+					UARTActivator<deviceID_>::deactivate();
+				}
+#endif
+
+		};
 
 
 #ifdef HTL_UART1_EXIST

@@ -62,21 +62,6 @@ void PortDevice::deinitialize() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    gpio: Registres de hardware
-/// \param    bit: El bit del pin.
-///
-PinDevice::PinDevice(
-    GPIO_TypeDef *gpio,
-    PinBit bit) :
-
-    _gpio {gpio},
-    _mask {bit} {
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.
 /// \param    params: Parametres d'inicialitzacio.
 ///
@@ -103,73 +88,3 @@ void PinDevice::initialize(
             break;
     }
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el pin com entrada digital.
-/// \param    pupd: Reesistencies pull up/down.
-///
-void PinDevice::initInput(
-	PullUpDown pupd) const {
-
-	activate();
-	htl::gpio::initInput(_gpio, _mask, pupd);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com sortida digital.
-/// \parAM    type: El tipus de sortida.
-/// \param    pupd: Resistencies pull up/down.
-/// \param    speed: Velocitat de conmutacio.
-/// \param    state: L'estat inicial de la sortida.
-///
-void PinDevice::initOutput(
-	OutputType type,
-	PullUpDown pupd,
-	Speed speed,
-	bool state) const {
-
-	activate();
-	htl::gpio::initOutput(_gpio, _mask, type, pupd, speed, state);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el pin com a entrada/sortida analogica.
-///
-void PinDevice::initAnalogic() const {
-
-	activate();
-	htl::gpio::initAnalogic(_gpio, _mask);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin com entrada/sortida alternativa.
-/// \param    type: El tipus de sortida.
-/// \param    pupd: Resistencies pull pu/down
-/// \param    speed: Velocitat de conmutacio.
-/// \param    af: La funcio alternativa.
-///
-void PinDevice::initAlternate(
-	OutputType type,
-	PullUpDown pupd,
-	Speed speed,
-	AlternateFunction af) const {
-
-	activate();
-	htl::gpio::initAlternate(_gpio, _mask, type, pupd, speed, af);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desinicialitza el pin i el deixa als valor per defecte.
-///
-#if HTL_GPIO_OPTION_DEACTIVATE == 1
-void PinDevice::deinitialize() const {
-
-	deactivate();
-	htl::gpio::deinitialize(_gpio, _mask);
-}
-#endif

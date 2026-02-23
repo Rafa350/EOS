@@ -12,7 +12,7 @@ namespace eos {
 		static constexpr uint32_t attemptToReadWriteOnlyObject   = 0x0601001;
 		static constexpr uint32_t attemptToWriteReadOnlyObject   = 0x0601001;
 		static constexpr uint32_t objectDoesNotExistInDictionary = 0x0602000;
-		static constexpr uint32_t dataTypeDoesNotMatch           = 0x06070010;
+		static constexpr uint32_t dataTypeDoesNotMatch           = 0x0607010;
 	};
 
 	struct SDO0 {

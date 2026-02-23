@@ -11,7 +11,7 @@
 
 // EOS includes
 //
-
+#include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
 
 // Default options
@@ -122,38 +122,37 @@ namespace htl {
         template <typename Instance_> using MasterNotificationEvent = MasterNotificationRaiser::Event<Instance_>;
 
 
-		class I2CDevice {
-		    protected: I2C_TypeDef * const _i2c;
+		class I2CDevice: public Device {
+		    protected:
+        		I2C_TypeDef * const _i2c;
 
-			protected: I2CDevice(I2C_TypeDef *i2c):
-				_i2c {i2c} {
-			}
+			protected:
+        		I2CDevice(I2C_TypeDef *i2c):
+        			_i2c {i2c} {
+        		}
 
-			protected: inline void enable() {
-				htl::bits::set(_i2c->CR1, I2C_CR1_PE);
-			}
+        		inline void enable() {
+        			htl::bits::set(_i2c->CR1, I2C_CR1_PE);
+        		}
 
-			protected: inline void disable() {
-				htl::bits::clear(_i2c->CR1, I2C_CR1_PE);
-			}
+        		inline void disable() {
+        			htl::bits::clear(_i2c->CR1, I2C_CR1_PE);
+        		}
 
-			protected: void setTimming(uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll) {
-				_i2c->TIMINGR =
-					((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
-					((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
-					((sdadel << I2C_TIMINGR_SDADEL_Pos) & I2C_TIMINGR_SDADEL_Msk) |
-					((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
-					((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
-			}
+				void setTimming(uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll) {
+					_i2c->TIMINGR =
+							((prescaler << I2C_TIMINGR_PRESC_Pos) & I2C_TIMINGR_PRESC_Msk) |
+							((scldel << I2C_TIMINGR_SCLDEL_Pos) & I2C_TIMINGR_SCLDEL_Msk) |
+							((sdadel << I2C_TIMINGR_SDADEL_Pos) & I2C_TIMINGR_SDADEL_Msk) |
+							((sclh << I2C_TIMINGR_SCLH_Pos) & I2C_TIMINGR_SCLH_Msk) |
+							((scll << I2C_TIMINGR_SCLL_Pos) & I2C_TIMINGR_SCLL_Msk);
+				}
 
-			protected: virtual void activate() = 0;
+				virtual void activate() = 0;
 #if HTL_I2C_OPTION_DEACTIVATE == 1
-			protected: virtual void deactivate() = 0;
+				virtual void deactivate() = 0;
 #endif
-			protected: virtual void reset() = 0;
-
-			public:
-				virtual ~I2CDevice() = default;
+				virtual void reset() = 0;
 		};
 
 		class I2CSlaveDevice: public I2CDevice {
@@ -175,9 +174,6 @@ namespace htl {
 				SlaveNotificationRaiser _erNotification;
 
 			private:
-				I2CSlaveDevice(const I2CSlaveDevice &) = delete;
-				I2CSlaveDevice & operator = (const I2CSlaveDevice &) = delete;
-
                 void raiseAddressMatchNotification(I2CAddr addr, bool irq);
                 void raiseRxStartNotification(uint8_t * &buffer, unsigned &bufferSize, bool irq);
                 void raiseRxCompletedNotification(unsigned length, bool irq);
@@ -252,9 +248,6 @@ namespace htl {
                 unsigned _count;
 
 			private:
-				I2CMasterDevice(const I2C_TypeDef&) = delete;
-				I2CMasterDevice & operator = (const I2CMasterDevice &) = delete;
-
 				void raiseTxCompletedNotification(unsigned length, bool irq);
 				void raiseRxCompletedNotification(unsigned length, bool irq);
 

@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "System/Core/eosTask.h"
 #include "Services/DigOutput/eosDigOutputService.h"
 #include "eos_digoutput_outputs.h"
@@ -21,8 +20,10 @@ constexpr unsigned minDelay = DigOutputService_MinDelay;
 /// \param    dev: El driver del pin.
 ///
 Output::Output(
-	PinDriver *drv):
+	PinDriver *drv,
+	unsigned tag):
 
+	DigOutput {tag},
 	_drv {drv},
 	_value {drv->read()},
 	_state{State::idle} {

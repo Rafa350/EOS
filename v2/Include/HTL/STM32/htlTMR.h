@@ -5,6 +5,7 @@
 
 // EOS includes
 //
+#include "HTL/htlDevice.h"
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -139,7 +140,7 @@ namespace htl {
 			struct TMRTraits;
 		}
 
-		class TMRDevice {
+		class TMRDevice: Device {
 			public:
 				enum class State {
 					reset,
@@ -155,8 +156,6 @@ namespace htl {
 				NotificationEventRaiser _erNotification;
 
 			private:
-				TMRDevice(const TMRDevice &) = delete;
-				TMRDevice & operator = (const TMRDevice &) = delete;
 				void notifyTrigger();
 				void notifyUpdate();
 

@@ -24,7 +24,7 @@ namespace eos {
 			unsigned _count;
 
         public:
-        	Input(PinDriver *pinDrv);
+        	Input(PinDriver *drv, unsigned tag = 0);
 
         	bool scan();
         	bool getValue() const;

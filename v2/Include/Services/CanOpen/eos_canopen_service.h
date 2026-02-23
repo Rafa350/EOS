@@ -50,7 +50,7 @@ namespace eos {
 			static constexpr CobID makeHeartbeat(NodeID nodeId) { return CobID(_baseHeartbeat, nodeId); }
 	};
 
-	class CanOpenService: public Service {
+	class CanOpenService final: public Service {
 		public:
         	enum class NodeState {
         		initializing,
@@ -61,29 +61,30 @@ namespace eos {
         	};
 
         	enum class NotificationID {
-				stateChanged,
-				valueChangeRequest,
-				valueChanged
+				stateChanged
 			};
         	struct NotificationEventArgs {
         		NotificationID id;
         		union {
-        			struct {
-        				uint16_t index;
-        				uint8_t subIndex;
-        				bool fromBus;
-        			} valueChanged;
-        			struct {
-        				uint16_t index;
-        				uint8_t subIndex;
-        				uint32_t value;
-        				bool fromBus;
-        			} valueChangeRequest;
         		};
         	};
 			using NotificationEventRaiser = EventRaiser<CanOpenService, NotificationEventArgs>;
 			using INotificationEvent = NotificationEventRaiser::IEvent;
 			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+
+			struct WriteRequestEventArgs {
+				uint16_t index;
+				uint8_t subIndex;
+				union {
+					uint8_t u8;
+					uint16_t u16;
+					uint32_t u32;
+					bool b;
+				} value;
+			};
+			using WriteRequestEventRaiser = EventRaiser<CanOpenService, WriteRequestEventArgs>;
+			using IWriteRequestEvent = WriteRequestEventRaiser::IEvent;
+			template <typename Instance_> using WriteRequestEvent = WriteRequestEventRaiser::Event<Instance_>;
 
 			struct TPDOReceivedEventArgs {
 				CobID cobId;
@@ -116,16 +117,16 @@ namespace eos {
 
 		private:
 			enum class MessageID {
+				entryChanged,
 				frameReceived,
-				sendFrame,
-				writeU8,
-				writeU16,
-				writeU32,
-				writeBool
+				sendFrame
 			};
 			struct Message {
 				MessageID id;
 				union {
+					struct {
+						unsigned entryId;
+					} entryChanged;
 					struct {
 						uint16_t cobid;
 						uint8_t dataLen;
@@ -136,25 +137,6 @@ namespace eos {
 						uint8_t dataLen;
 						uint8_t data[8];
 					} sendFrame;
-					struct {
-						unsigned entryId;
-						uint8_t value;
-						uint8_t mask;
-					} writeU8;
-					struct {
-						unsigned entryId;
-						uint16_t value;
-						uint16_t mask;
-					} writeU16;
-					struct {
-						unsigned entryId;
-						uint32_t value;
-						uint32_t mask;
-					} writeU32;
-					struct {
-						unsigned entryId;
-						bool value;
-					} writeBool;
 				};
 			};
         	using MessageQueue = Queue<Message>;
@@ -172,6 +154,7 @@ namespace eos {
 			NodeState _nodeState;
 			MessageQueue _messageQueue;
 			NotificationEventRaiser _erNotification;
+			WriteRequestEventRaiser _erWriteRequest;
 			TPDOReceivedEventRaiser _erTPDOReceived;
         	SYNCReceivedEventRaiser _erSYNCReceived;
         	HeartbeatReceivedEventRaiser _erHeartbeatReceived;
@@ -185,10 +168,7 @@ namespace eos {
             void configureCANFilters();
 
 			void processFrame(CobID cobId, const uint8_t *data, unsigned dataLen);
-            void processValueChanged(unsigned entryId, bool raiseNotification);
-            void processWriteU8(unsigned entryId, uint8_t value, uint8_t mask);
-            void processWriteU16(unsigned entryId, uint16_t value, uint16_t mask);
-            void processWriteU32(unsigned entryId, uint32_t value, uint32_t mask);
+            void processEntryChanged(unsigned entryId);
             void processSDO(const uint8_t *data);
 			void processNMT(uint8_t command, uint8_t nodeId);
 			void processSYNC();
@@ -206,65 +186,62 @@ namespace eos {
 			void onExecute() override;
 
             Result sendFrame(CobID cobId, const uint8_t *data, unsigned length, unsigned timeout);
+			Result emitHeartbeat(unsigned timeout);
+			Result emitNMT(uint8_t command, NodeID nodeId, unsigned timeout);
 
             void raiseStateChangedNotificationEvent();
-            void raiseValueChangeRequestNotificationEvent(uint16_t index, uint8_t subIndex, uint8_t value, bool fromBus);
-            void raiseValueChangedNotificationEvent(uint16_t index, uint8_t subIndex, bool fromBus);
+
+            void raiseWriteU8RequestEvent(uint16_t index, uint8_t subIndex, uint8_t value);
+            void raiseWriteU16RequestEvent(uint16_t index, uint8_t subIndex, uint16_t value);
+            void raiseWriteU32RequestEvent(uint16_t index, uint8_t subIndex, uint32_t value);
+
             void raiseSYNCReceivedEvent();
 			void raiseTPDOReceivedEvent(CobID cobId, const uint8_t *data, unsigned dataLen);
 			void raiseHeartbeatReceivedEvent(NodeID nodeId, NodeState state);
 
             void changeNodeState(NodeState newNodeState);
-            virtual void beforeChangeNodeState();
-            virtual void afterChangeNodeState();
 
 		public:
 			CanOpenService(InitParams const &params);
+			CanOpenService(const CanOpenService &) = delete;
+			CanOpenService(const CanOpenService &&) = delete;
 
-            // Operacions amb el dicionary
+            // Lectura i escriptura en el dicionari local
             //
-            void writeU8(uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask);
-            void writeU16(uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask);
-            void writeU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask);
+            bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask);
+            bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask);
+            bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask);
             bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value);
             bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
             bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
 
-            // Operacions SYNC
+            // Lectura i escriptura en el dicionari remot
             //
-            Result emitSYNC(unsigned timeout);
 
-            // Operacions SDO
-			//
-			Result emitSDO_Upload(unsigned nodeId, uint16_t index, uint8_t subIndex, unsigned timeout);
-			Result emitSDO_InitiateUpload(unsigned timeout);
-			Result emitSDO_SegmentUpload(unsigned timeout);
-			Result emitSDO_Download(unsigned nodeId, uint16_t index, uint8_t subindex, uint32_t value, unsigned timeout);
-			Result emitSDO_Download(unsigned nodeId, uint16_t index, uint8_t subindex, const uint8_t data, uint32_t length, unsigned timeout);
-			Result emitSDO_InitiateDownload(unsigned timeout);
-			Result emitSDO_SegmentDownload(unsigned timeout);
-			Result emitSDO_Abort(unsigned timeout);
+            // Canvia l'estat d'un node remot
+            //
+			Result start(NodeID nodeId, unsigned timeout);
+			Result stop(NodeID nodeId, unsigned timeout);
+			Result enterPreOperational(NodeID nodeId, unsigned timeout);
+			Result resetNode(NodeID nodeId, unsigned timeout);
+			Result resetCommunication(NodeID nodeId, unsigned timeout);
 
-			// Operacions NMT
-			//
-			Result emitNMT(uint8_t command, NodeID nodeId, unsigned timeout);
-			Result emitNMT_StartNode(NodeID nodeId, unsigned timeout);
-			Result emitNMT_StopNode(NodeID nodeId, unsigned timeout);
-			Result emitNMT_EnterPreOperational(NodeID nodeId, unsigned timeout);
-			Result emitNMT_ResetNode(NodeID nodeId, unsigned timeout);
-			Result emitNMT_ResetCommunication(NodeID nodeId, unsigned timeout);
+            // Senyal de sincronitzacio al bus
+            //
+            Result synchronize(unsigned timeout);
 
-			// Operacio heartbeat
-			//
-			Result emitHeartbeat(unsigned timeout);
-
-			// Operacions RPDO
+			// Emet missatges RPDO
 			//
 			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, unsigned dataLen, unsigned timeout);
 
+			// Events
+			//
             inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
             	_erNotification.set(event, enabled);
             }
+			inline void setWriteRequestEvent(IWriteRequestEvent &event, bool enabled = true) {
+            	_erWriteRequest.set(event, enabled);
+			}
 			inline void setSYNCReceivedEvent(ISYNCReceivedEvent &event, bool enabled = true) {
             	_erSYNCReceived.set(event, enabled);
 			}

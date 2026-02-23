@@ -48,8 +48,19 @@ namespace eos {
     /// \brief Clase que representa una sortida digital individual.
     ///
     class DigOutput: public DigOutputListNode1, public DigOutputListNode2  {
+    	private:
+    		unsigned _tag;
+
     	protected:
-    		DigOutput() = default;
+    		DigOutput(unsigned tag): _tag {tag} {}
+
+    	public:
+    	    DigOutput(const DigOutput&) = delete;
+    	    DigOutput& operator=(const DigOutput&) = delete;
+    	    DigOutput(const DigOutput&&) = delete;
+    	    DigOutput& operator=(const DigOutput&&) = delete;
+
+    	    inline unsigned getTag() const { return _tag; }
     };
 
     class Output;
@@ -106,8 +117,6 @@ namespace eos {
             ActionQueue _actionQueue;
 
         private:
-            DigOutputService(const DigOutputService&) = delete;
-
             void actionDispatcher(const Action &action);
             void processClear(Output *output);
             void processSet(Output *output);
@@ -127,11 +136,14 @@ namespace eos {
 
         public:
             DigOutputService();
+            DigOutputService(const DigOutputService&) = delete;
+            DigOutputService(const DigOutputService&&) = delete;
             ~DigOutputService();
 
-            DigOutput* makeOutput(PinDriver *drv);
+            DigOutputService& operator=(const DigOutputService&) = delete;
+    	    DigOutputService& operator=(const DigOutputService&&) = delete;
 
-            void addOutput(DigOutput *output);
+            DigOutput* addOutput(PinDriver *drv, unsigned tag = 0);
             void removeOutput(DigOutput *output);
             void removeOutputs();
 

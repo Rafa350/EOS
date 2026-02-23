@@ -4,7 +4,7 @@
 
 
 #include "HTL/htl.h"
-
+#include "HTL/htlDevice.h"
 
 // Default options
 //
@@ -146,7 +146,7 @@ namespace htl {
             extern const DMADEV_TypeDef __dmadev17;
         }
 
-		class DMADevice {
+		class DMADevice: public Device {
 		    public:
 		        enum class State {
 		            reset,
@@ -161,9 +161,6 @@ namespace htl {
                 bool _notifyEventEnabled;
 
             private:
-                DMADevice(const DMADevice &) = delete;
-                DMADevice & operator = (const DMADevice &) = delete;
-
                 void notifyTransferCompleted(bool irq);
                 void notifyHalfTransfer(bool irq);
 

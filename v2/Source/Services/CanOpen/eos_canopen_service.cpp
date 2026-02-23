@@ -66,6 +66,7 @@ void CanOpenService::onExecute() {
 	// Envia un boot-up (Heartbeat amb estat 'initializing')
 	//
 	emitHeartbeat((unsigned) -1);
+	Task::delay(500);
 
 	// Canvia l'estat a 'preOperational'
 	//
@@ -77,34 +78,22 @@ void CanOpenService::onExecute() {
 		while(_messageQueue.pop(msg, (unsigned) -1)) {
 			switch (msg.id) {
 
+				// Ha canviat una entrada del diccionari
+				//
+				case MessageID::entryChanged:
+					processEntryChanged(msg.entryChanged.entryId);
+					break;
+
 				// S'ha rebut una trama CANOpen
 				//
 				case MessageID::frameReceived:
 					processFrame(CobID(msg.frameReceived.cobid), msg.frameReceived.data, msg.frameReceived.dataLen);
 					break;
 
-				// Envia un trama CANOpen
+				// Cal enviar un trama CANOpen
 				//
 				case MessageID::sendFrame:
 					sendFrame(CobID(msg.sendFrame.cobid), msg.sendFrame.data, msg.sendFrame.dataLen, 20);
-					break;
-
-				// Escriu un valor de 8 bits al diccionari
-			    //
-				case MessageID::writeU8:
-					processWriteU8(msg.writeU8.entryId, msg.writeU8.value, msg.writeU8.mask);
-					break;
-
-				// Escriu un valor de 16 bits al diccionari
-				//
-				case MessageID::writeU16:
-					processWriteU16(msg.writeU16.entryId, msg.writeU16.value, msg.writeU16.mask);
-					break;
-
-				// Escriu un valor de 32 bits al diccionari
-				//
-				case MessageID::writeU32:
-					processWriteU8(msg.writeU32.entryId, msg.writeU32.value, msg.writeU32.mask);
 					break;
 
 				default:
@@ -218,7 +207,7 @@ void CanOpenService::configureCANFilters() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un evenmt 'StateChangedNotification'
+/// \brief    Genera un event 'Notification'
 ///
 void CanOpenService::raiseStateChangedNotificationEvent() {
 
@@ -249,58 +238,79 @@ void CanOpenService::raiseSYNCReceivedEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera una event 'ValueChangeRequestNotification'
-/// \param    index: L'index de l'entrada.
-/// \param    sunIndex: El subindex de l'entrada.
+/// \brief    Genera un event 'WriteRequest'
+/// \param    index: El index
+/// \param    subIndex: El subindex.
 /// \param    value: El valor.
-/// \param    fromBus: True si el canvi s'ha ordenat desde el bus.
 ///
-void CanOpenService::raiseValueChangeRequestNotificationEvent(
-		uint16_t index,
-		uint8_t subIndex,
-		uint8_t value,
-		bool fromBus) {
+void CanOpenService::raiseWriteU8RequestEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t value) {
 
-	if (_erNotification.isEnabled()) {
+	if (_erWriteRequest.isEnabled()) {
 
-		NotificationEventArgs args = {
-			.id {NotificationID::valueChangeRequest},
-			.valueChangeRequest {
-				.index {index},
-				.subIndex {subIndex},
-				.value {value},
-				.fromBus {fromBus}
+		WriteRequestEventArgs args = {
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u8 {value}
 			}
 		};
 
-		_erNotification(this, &args);
+		_erWriteRequest(this, &args);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera una event 'ValueChangedNotification'
-/// \param    index: L'index de l'entrada.
-/// \param    sunIndex: El subindex de l'entrada.
-/// \param    fromBus: True si el canvi s'ha ordenat desde el bus.
+/// \brief    Genera un event  'WriteRequest'
+/// \param    index: El index
+/// \param    subIndex: El subindex.
+/// \param    value: El valor.
 ///
-void CanOpenService::raiseValueChangedNotificationEvent(
+void CanOpenService::raiseWriteU16RequestEvent(
 	uint16_t index,
 	uint8_t subIndex,
-	bool fromBus) {
+	uint16_t value) {
 
-	if (_erNotification.isEnabled()) {
+	if (_erWriteRequest.isEnabled()) {
 
-		NotificationEventArgs args = {
-			.id {NotificationID::valueChanged},
-			.valueChanged {
-				.index {index},
-				.subIndex {subIndex},
-				.fromBus {fromBus}
+		WriteRequestEventArgs args = {
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u16 {value}
 			}
 		};
 
-		_erNotification(this, &args);
+		_erWriteRequest(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event  'WriteRequest'
+/// \param    index: El index
+/// \param    subIndex: El subindex.
+/// \param    value: El valor.
+///
+void CanOpenService::raiseWriteU32RequestEvent(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t value) {
+
+	if (_erWriteRequest.isEnabled()) {
+
+		WriteRequestEventArgs args = {
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u32 {value}
+			}
+		};
+
+		_erWriteRequest(this, &args);
 	}
 }
 
@@ -356,27 +366,43 @@ void CanOpenService::changeNodeState(
 	NodeState newNodeState) {
 
 	if (_nodeState != newNodeState) {
-		beforeChangeNodeState();
 		_nodeState = newNodeState;
-		afterChangeNodeState();
+		raiseStateChangedNotificationEvent();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesos previs al canvi d'estat del node.
+/// \brief    Procesa un canvi en el valor d'una entrada del diccionari
+/// \param    entryId: Identificador de l'entrada que ha canviat de valor.
 ///
-void CanOpenService::beforeChangeNodeState() {
+void CanOpenService::processEntryChanged(
+	unsigned entryId) {
 
-}
+	// Si esta en modus operacional, comprova si cal generar TPDO's
+	//
+	if (_nodeState == NodeState::operational) {
 
+		// Comprova les entrades 0x1800 per si hi ha TPDO asincrones
+		//
+		uint8_t tpdoMax = 4;
+		for (uint8_t tpdo = 0; tpdo < tpdoMax; tpdo++) {
 
-/// ----------------------------------------------------------------------
-/// \brief    Procesos posteriors al canvi d'estat del node.
-///
-void CanOpenService::afterChangeNodeState() {
+			// Verifica que la entrada, estigui mapejada en un TPDO
+			//
+			if (isMapped(tpdo, entryId)) {
+				uint32_t flags;
+				uint8_t transmissionType;
 
-	raiseStateChangedNotificationEvent();
+				if (_dictionary->readU32(0x1800 + tpdo, 0x01, flags) &&
+					_dictionary->readU8(0x1800 + tpdo, 0x02, transmissionType)) {
+
+					if ((transmissionType == 254) && ((flags & (1 << 31)) == 0))
+						sendTPDO(tpdo);
+				}
+			}
+		}
+	}
 }
 
 
@@ -518,23 +544,24 @@ void CanOpenService::processSDO(
 
 			else {
 				uint8_t size = 4 - ((data[0] & SDO0::SIZE_Msk) >> SDO0::SIZE_Pos);
-				switch(size) {
-					case 1: {
+				CoType type = _dictionary->getType(entryId);
+				switch (type) {
+					case CoType::unsigned8: {
 						uint8_t value = data[4];
-						_dictionary->writeU8(entryId, value);
+						raiseWriteU8RequestEvent(index, subIndex, value);
 						break;
 					}
 
-					case 2: {
+					case CoType::unsigned16: {
 						uint16_t value = (data[4] << 8) | (data[5] << 16);
-						_dictionary->writeU16(entryId, value);
+						raiseWriteU16RequestEvent(index, subIndex, value);
 						break;
 					}
 
-					case 4: {
+					case CoType::unsigned32: {
 						uint32_t value = data[4] | (data[5] << 8) | (data[6] << 16) |
 								(data[7] << 24);
-						_dictionary->writeU32(entryId, value);
+						raiseWriteU32RequestEvent(index, subIndex, value);
 						break;
 					}
 
@@ -581,16 +608,16 @@ void CanOpenService::processSDO(
 			if (!_dictionary->canRead(entryId))
 				errorCode = SdoError::attemptToWriteReadOnlyObject;
 			else {
-				length = _dictionary->getDataLength(entryId);
-				switch (length) {
-					case 1: {
+				CoType type = _dictionary->getType(entryId);
+				switch (type) {
+					case CoType::unsigned8: {
 						uint8_t value;
 						_dictionary->readU8(entryId, value);
 						response[4] = value;
 						break;
 					}
 
-					case 2: {
+					case CoType::unsigned16: {
 						uint16_t value;
 						_dictionary->readU16(entryId, value);
 						response[4] = value & 0xFF;
@@ -598,7 +625,7 @@ void CanOpenService::processSDO(
 						break;
 					}
 
-					case 4: {
+					case CoType::unsigned32: {
 						uint32_t value;
 						_dictionary->readU32(entryId, value);
 						response[4] = value & 0xFF;
@@ -717,6 +744,9 @@ void CanOpenService::processTPDO(
 	const uint8_t *data,
 	unsigned dataLen) {
 
+	// Notifica a l'aplicacio que hi ha un TPDO per procesar provinent d'un
+	// node remot
+	//
 	raiseTPDOReceivedEvent(cobId, data, dataLen);
 }
 
@@ -732,188 +762,172 @@ void CanOpenService::processRPDO(
 	unsigned dataLen) {
 
 	uint32_t rpdoCOBID;
-	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && rpdoCOBID == cobId.base()) {
+	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && (rpdoCOBID == cobId.base())) {
 
 		const uint8_t *pData = data;
 
 		uint32_t map;
 		if (_dictionary->readU32(0x1600, 0x01, map)) {
-			uint16_t mapIndex = (map >> 16) & 0xFFFF;
-			uint8_t mapSubIndex = (map >> 8) & 0xFF;
-			uint8_t mapLength = (map & 0xFF) / 8;
-			uint32_t value;
 
-			unsigned entryId = _dictionary->find(mapIndex, mapSubIndex);
+			uint16_t index = (map >> 16) & 0xFFFF;
+			uint8_t subIndex = (map >> 8) & 0xFF;
+			uint8_t size = (map & 0xFF) / 8;
+
+			unsigned entryId = _dictionary->find(index, subIndex);
 			if (entryId != (unsigned) -1) {
-				bool ok = true;
-				switch (mapLength) {
-					case 1: {
-						uint8_t u8 = 0;
-						u8 |= *pData++;
-						value = u8;
+
+				CoType type = _dictionary->getType(entryId);
+				switch (type) {
+					case CoType::unsigned8:
+						if (size == sizeof(uint8_t)) {
+							uint8_t value = 0;
+							value |= *pData++;
+							raiseWriteU8RequestEvent(index, subIndex, value);
+						}
 						break;
-					}
 
-					case 2: {
-						uint16_t u16 = 0;
-						u16 |= *pData++;
-						u16 |= *pData++ << 8;
-						value = u16;
+					case CoType::unsigned16:
+						if (size == sizeof(uint16_t)) {
+							uint16_t value = 0;
+							value |= *pData++;
+							value |= *pData++ << 8;
+							raiseWriteU16RequestEvent(index, subIndex, value);
+						}
 						break;
-					}
 
-					case 4: {
-						uint32_t u32 = 0;
-						u32 |= *pData++;
-						u32 |= *pData++ << 8;
-						u32 |= *pData++ << 16;
-						u32 |= *pData++ << 24;
-						value = u32;
+					case CoType::unsigned32:
+						if (size == sizeof(uint32_t)) {
+							uint32_t value = 0;
+							value |= *pData++;
+							value |= *pData++ << 8;
+							value |= *pData++ << 16;
+							value |= *pData++ << 24;
+							raiseWriteU32RequestEvent(index, subIndex, value);
+						}
 						break;
-					}
-
-					default:
-						ok = false;
-						break;
-				}
-
-				if (ok)
-					raiseValueChangeRequestNotificationEvent(mapIndex, mapSubIndex, value, true);
-			}
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa una escriptura en el diccionari.
-/// \param    entryId: L'entrada del diccionari.
-/// \param    value: El valor.
-/// \param    mask: Mascara de bits dels bits a canviar.
-///
-void CanOpenService::processWriteU8(
-	unsigned entryId,
-	uint8_t value,
-	uint8_t mask) {
-
-	uint8_t oldValue;
-	if (_dictionary->readU8(entryId, oldValue)) {
-		_dictionary->writeU8(entryId, (oldValue & ~mask) | (value & mask));
-		processValueChanged(entryId, false);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa una escriptura en el diccionari.
-/// \param    entryId: L'entrada del diccionari.
-/// \param    value: El valor.
-/// \param    mask: Mascara de bits dels bits a canviar.
-///
-void CanOpenService::processWriteU16(
-	unsigned entryId,
-	uint16_t value,
-	uint16_t mask) {
-
-	uint16_t oldValue;
-	if (_dictionary->readU16(entryId, oldValue)) {
-		_dictionary->writeU16(entryId, (oldValue & ~mask) | (value & mask));
-		processValueChanged(entryId, false);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa una escriptura en el diccionari.
-/// \param    entryId: L'entrada del diccionari.
-/// \param    value: El valor.
-/// \param    mask: Mascara de bits dels bits a canviar.
-///
-void CanOpenService::processWriteU32(
-	unsigned entryId,
-	uint32_t value,
-	uint32_t mask) {
-
-	uint32_t oldValue;
-	if (_dictionary->readU32(entryId, oldValue)) {
-		_dictionary->writeU32(entryId, (oldValue & ~mask) | (value & mask));
-		processValueChanged(entryId, false);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa un canvi en el valor d'una entrada del diccionari
-/// \param    entryId: Identificador de l'entrada que ha canviat de valor.
-/// \param    raiseNotification: Indica si cal generar un event de notificacio.
-///
-void CanOpenService::processValueChanged(
-	unsigned entryId,
-	bool raiseNotification) {
-
-	if (_nodeState == NodeState::operational) {
-
-		// Comprova les entrades 0x1800 per si hi ha TPDO asincrones
-		//
-		uint8_t tpdoMax = 4;
-		for (uint8_t tpdo = 0; tpdo < tpdoMax; tpdo++) {
-
-			// Verifica que la entrada, estigui mapejada en un TPDO
-			//
-			if (isMapped(tpdo, entryId)) {
-				uint32_t flags;
-				uint8_t transmissionType;
-
-				if (_dictionary->readU32(0x1800 + tpdo, 0x01, flags) &&
-					_dictionary->readU8(0x1800 + tpdo, 0x02, transmissionType)) {
-
-					if ((transmissionType == 254) && ((flags & (1 << 31)) == 0))
-						sendTPDO(tpdo);
 				}
 			}
 		}
 	}
-
-	if (raiseNotification) {
-		auto index = _dictionary->getIndex(entryId);
-		auto subIndex = _dictionary->getSubIndex(entryId);
-		raiseValueChangedNotificationEvent(index, subIndex, false);
-	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor uint8_t al diccionari
+/// \brief    Escriu un valor uint8_t al diccionari local
 /// \param    index: L'index.
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 /// \param    mask: La mascara de bits del valor.
+/// \return   True si tot es correcte.
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
 ///
-void CanOpenService::writeU8(
+bool CanOpenService::writeU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value,
 	uint8_t mask) {
 
+	auto ok = false;
+
 	auto entryId = _dictionary->find(index, subIndex);
-	if (_dictionary->canWrite(entryId)) {
-		Message msg = {
-			.id {MessageID::writeU8},
-			.writeU8 {
-				.entryId {entryId},
-				.value {value},
-				.mask {mask}
+	if (entryId != (unsigned) -1)
+		if (_dictionary->canWrite(entryId)) {
+			uint8_t oldValue;
+			if (_dictionary->readU8(entryId, oldValue))
+				if (_dictionary->writeU8(entryId, (oldValue & ~mask) | (value & mask))) {
+					Message msg = {
+						.id {MessageID::entryChanged},
+						.entryChanged {
+							.entryId {entryId}
+						}
+					};
+					ok = _messageQueue.push(msg, (unsigned) -1);
+				}
 			}
-		};
-		_messageQueue.push(msg, (unsigned) -1);
-	}
+
+	return ok;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix un valor de 8 bits del diccionari
+/// \brief    Escriu un valor uint16_t al diccionari local
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    value: El valor.
+/// \param    mask: La mascara de bits del valor.
+/// \return   True si tot es correcte.
+/// \remarks  La escriptura es posa en cua per un procesament posterior. Si
+///           cal, es genera TPDO.
+///
+bool CanOpenService::writeU16(
+	uint16_t index,
+	uint8_t subIndex,
+	uint16_t value,
+	uint16_t mask) {
+
+	auto ok = false;
+
+	auto entryId = _dictionary->find(index, subIndex);
+	if (entryId != (unsigned) -1)
+		if (_dictionary->canWrite(entryId)) {
+			uint16_t oldValue;
+			if (_dictionary->readU16(entryId, oldValue))
+				if (_dictionary->writeU16(entryId, (oldValue & ~mask) | (value & mask))) {
+					Message msg = {
+						.id {MessageID::entryChanged},
+						.entryChanged {
+							.entryId {entryId}
+						}
+					};
+					ok = _messageQueue.push(msg, (unsigned) -1);
+				}
+			}
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un valor uint32_t al diccionari local
+/// \param    index: L'index.
+/// \param    subIndex: El subindex.
+/// \param    value: El valor.
+/// \param    mask: La mascara de bits del valor.
+/// \return   True si tot es correcte.
+/// \remarks  La escriptura es posa en cua per un procesament posterior. Si
+///           cal, es genera TPDO.
+///
+bool CanOpenService::writeU32(
+	uint16_t index,
+	uint8_t subIndex,
+	uint32_t value,
+	uint32_t mask) {
+
+	auto ok = false;
+
+	auto entryId = _dictionary->find(index, subIndex);
+	if (entryId != (unsigned) -1)
+		if (_dictionary->canWrite(entryId)) {
+			uint32_t oldValue;
+			if (_dictionary->readU32(entryId, oldValue))
+				if (_dictionary->writeU32(entryId, (oldValue & ~mask) | (value & mask))) {
+					Message msg = {
+						.id {MessageID::entryChanged},
+						.entryChanged {
+							.entryId {entryId}
+						}
+					};
+					ok = _messageQueue.push(msg, (unsigned) -1);
+				}
+			}
+
+	return ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix un valor de uint8_t del diccionari local
 /// \param    index: L'index.
 /// \param    subIndex: El subindex.
 /// \param    El valor lleigit.
@@ -929,7 +943,7 @@ bool CanOpenService::readU8(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix un valor de 16 bits del diccionari
+/// \brief    Llegeix un valor uint16_t del diccionari local
 /// \param    index: L'index.
 /// \param    subIndex: El subindex.
 /// \param    El valor lleigit.
@@ -945,7 +959,7 @@ bool CanOpenService::readU16(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix un valor de 32 bits del diccionari
+/// \brief    Llegeix un valor uint32_t del diccionari local
 /// \param    index: L'index.
 /// \param    subIndex: El subindex.
 /// \param    El valor lleigit.
@@ -957,6 +971,123 @@ bool CanOpenService::readU32(
 	uint32_t &value) {
 
 	return _dictionary->readU32(index, subIndex, value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posa un node en estat 'operational'.
+/// \param    nodeId: Node destinatari.
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::start(
+	NodeID nodeId,
+	unsigned timeout) {
+
+	if (nodeId == _nodeId)
+		return Result::ErrorCodes::errorParameter;
+	else
+		return emitNMT(0x01, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posar un node en estat 'stoped'
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+///
+Result CanOpenService::stop(
+	NodeID nodeId,
+	unsigned timeout) {
+
+	if (nodeId == _nodeId)
+		return Result::ErrorCodes::errorParameter;
+	else
+		return emitNMT(0x02, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posar un node en estat 'pre-operational'.
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::enterPreOperational(
+	NodeID nodeId,
+	unsigned timeout) {
+
+	if (nodeId == _nodeId)
+		return Result::ErrorCodes::errorParameter;
+	else
+		return emitNMT(0x80, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza un node un node.
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::resetNode(
+	NodeID nodeId,
+	unsigned timeout) {
+
+	if (nodeId == _nodeId)
+		return Result::ErrorCodes::errorParameter;
+	else
+		return emitNMT(0x81, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza les comunicacions d'un node.
+/// \param    nodeId: Node destinatati
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::resetCommunication(
+	NodeID nodeId,
+	unsigned timeout) {
+
+	if (nodeId == _nodeId)
+		return Result::ErrorCodes::errorParameter;
+	else
+		return emitNMT(0x82, nodeId, timeout);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Senyal de sincronitzacio el bus
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::synchronize(
+	unsigned timeout) {
+
+	uint32_t options;
+	if (_dictionary->readU32(0x1005, 0x00, options) &&
+		htl::bits::isSet(options, (uint32_t)(1 << 30))) {
+
+		Message msg = {
+			.id { MessageID::sendFrame},
+			.sendFrame {
+				.cobid {CobID(options & 0x007F)},
+				.dataLen {0}
+			}
+		};
+		if (_messageQueue.push(msg, timeout))
+			return Result::ErrorCodes::ok;
+	}
+
+	return Result::ErrorCodes::error;
 }
 
 
@@ -1234,34 +1365,6 @@ Result CanOpenService::emitHeartbeat(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un missatge SYNC
-/// \param    timeout: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-Result CanOpenService::emitSYNC(
-	unsigned timeout) {
-
-	uint32_t options;
-	if (_dictionary->readU32(0x1005, 0x00, options) &&
-		htl::bits::isSet(options, (uint32_t)(1 << 30))) {
-
-		Message msg = {
-			.id { MessageID::sendFrame},
-			.sendFrame {
-				.cobid {CobID(options & 0x007F)},
-				.dataLen {0}
-			}
-		};
-		if (_messageQueue.push(msg, timeout))
-			return Result::ErrorCodes::ok;
-	}
-
-	return Result::ErrorCodes::error;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Genera un missatge NMT.
 /// \param    command: La comanda.
 /// \param    nodeId: Node destinatari.
@@ -1286,83 +1389,6 @@ Result CanOpenService::emitNMT(
 		return Result::ErrorCodes::ok;
 
 	return Result::ErrorCodes::error;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un missatge NMT per posar un node en
-///           estat 'operational'.
-/// \param    nodeId: Node destinatari.
-/// \param    timeout: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-Result CanOpenService::emitNMT_StartNode(
-	uint8_t nodeId,
-	unsigned timeout) {
-
-	return emitNMT(0x01, nodeId, timeout);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un missatge NMT per posar un node en estat 'stoped'
-/// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-///
-Result CanOpenService::emitNMT_StopNode(
-	uint8_t nodeId,
-	unsigned timeout) {
-
-	return emitNMT(0x02, nodeId, timeout);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un missatge NMT per posar un node en
-///           estat 'pre-operational'.
-/// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-Result CanOpenService::emitNMT_EnterPreOperational(
-	uint8_t nodeId,
-	unsigned timeout) {
-
-	return emitNMT(0x80, nodeId, timeout);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un missatge NMT per reiniciar un node.
-/// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-Result CanOpenService::emitNMT_ResetNode(
-	uint8_t nodeId,
-	unsigned timeout) {
-
-	return emitNMT(0x81, nodeId, timeout);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un missatge NMT per reiniciar nomes les
-///           comunicacions d'un node.
-/// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-Result CanOpenService::emitNMT_ResetCommunication(
-	uint8_t nodeId,
-	unsigned timeout) {
-
-	return emitNMT(0x82, nodeId, timeout);
 }
 
 

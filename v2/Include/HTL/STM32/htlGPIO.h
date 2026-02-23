@@ -10,6 +10,8 @@
 
 // EOS includes
 //
+#include "HTL/htl.h"
+#include "HTL/htlDevice.h"
 #include "HTL/htlBits.h"
 #include "HTL/STM32/htl.h"
 
@@ -162,13 +164,13 @@ namespace htl {
 		namespace internal {
 
             template <PortID>
-            class PortActivator;
-
-            template <PortID>
             struct PortTraits;
 
             template <PinID>
             struct PinTraits;
+
+            template <PortID>
+            struct PortActivator;
         }
 
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
@@ -188,28 +190,11 @@ namespace htl {
 		void initAlternate(GPIO_TypeDef * const gpio, PinMask mask, OutputType type, PullUpDown pull, Speed speed, AlternateFunction af);
 		void initAlternate(GPIO_TypeDef * const gpio, PinBit bit, OutputType type, PullUpDown pull, Speed speed, AlternateFunction af);
 
-		template <PortID portID_, PinID pinID_>
-		void initAlternate(OutputType type, PullUpDown pupd, Speed speed, AlternateFunction af) {
-
-			using PortTraits = internal::PortTraits<portID_>;
-            using PinTraits = internal::PinTraits<pinID_>;
-            using PortActivator = internal::PortActivator<portID_>;
-
-            PortActivator::activate(PinMask(PinTraits::mask));
-
-            auto gpio = reinterpret_cast<GPIO_TypeDef*>(PortTraits::gpioAddr);
-            initAlternate(gpio, PinBit(PinTraits::bit), type, pupd, speed, af);
-		}
-
         /// brief Clase que representa un port.
         ///
-		class PortDevice {
+		class PortDevice: public Device {
 			private:
 				GPIO_TypeDef * const _gpio;
-
-			private:
-				PortDevice(const PortDevice &) = delete;
-				PortDevice & operator = (const PortDevice &) = delete;
 
 			private:
 				void activate(PinMask mask) const {
@@ -305,14 +290,13 @@ namespace htl {
                     _instance.interruptService();
                 }
         };
-
         template <PortID portID_>
         PortDeviceX<portID_> PortDeviceX<portID_>::_instance;
 
 
         /// brief Clase que representa un pin individual.
         ///
-		class PinDevice {
+		class PinDevice: public Device {
 			public:
                 struct InitParams {
                     InitMode mode;
@@ -336,73 +320,83 @@ namespace htl {
                         } analogic;
                     };
                 };
-			private:
-		        GPIO_TypeDef * const _gpio;
-		        PinMask const _mask;
 
 			private:
-				PinDevice(const PinDevice &) = delete;
-				PinDevice & operator = (const PinDevice &) = delete;
-
-			private:
-                inline void activate() const {
-                	activateImpl();
-                }
+                virtual void initInputImpl(PullUpDown pupd) const = 0;
+                virtual void initOutputImpl(OutputType type, PullUpDown pupd, Speed speed, bool state) const = 0;
+                virtual void initAlternateImpl(OutputType outputType, PullUpDown pupd, Speed speed, AlternateFunction af) const = 0;
+                virtual void initAnalogicImpl() const = 0;
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
-                inline void deactivate() const {
-                	deactivateImpl();
-                }
+                virtual void deinitializeImpl() const = 0;
 #endif
+		        virtual void setImpl() const = 0;
+		        virtual void clearImpl() const = 0;
+		        virtual void toggleImpl() const = 0;
+		        virtual void writeImpl(bool state) const = 0;
+		        virtual bool readImpl() const = 0;
 
 			protected:
-                PinDevice(GPIO_TypeDef *gpio, PinBit bit);
+                constexpr PinDevice() = default;
 
-                virtual void activateImpl() const = 0;
-#if HTL_GPIO_OPTION_DEACTIVATE == 1
-                virtual void deactivateImpl() const = 0;
-#endif
 			public:
-                void initInput(PullUpDown pupd) const;
-                void initOutput(OutputType type, PullUpDown pupd, Speed speed, bool state) const;
-                void initAlternate(OutputType outputType, PullUpDown pupd, Speed speed, AlternateFunction af) const;
-                void initAnalogic() const;
+                inline void initInput(PullUpDown pupd) const {
+                	initInputImpl(pupd);
+                }
+
+                inline void initOutput(OutputType type, PullUpDown pupd, Speed speed, bool state) const {
+                	initOutputImpl(type, pupd, speed, state);
+                }
+
+                inline void initAlternate(OutputType type, PullUpDown pupd, Speed speed, AlternateFunction af) const {
+                	initAlternateImpl(type, pupd, speed, af);
+                }
+
+                inline void initAnalogic() const {
+                	initAnalogicImpl();
+                }
+
                 void initialize(const InitParams &params) const;
+
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
-                void deinitialize() const;
+                inline void deinitialize() const {
+                	deinitializeImpl();
+                }
 #endif
 
-				void set() const {
-                    _gpio->BSRR = _mask;
+				inline void set() const {
+					setImpl();
 				}
-				void clear() const {
-                    _gpio->BSRR = _mask << 16;
+
+				inline void clear() const {
+					clearImpl();
 				}
-				void toggle() const {
-					  auto odr = _gpio->ODR;
-					  _gpio->BSRR = ((odr & _mask) << 16) | (~odr & _mask);
+
+				inline void toggle() const {
+					toggleImpl();
 				}
-				void write(bool state) const {
-                    _gpio->BSRR = state ? _mask : _mask << 16;
+
+				inline void write(bool state) const {
+					writeImpl(state);
 				}
-				bool read() const {
-					return (_gpio->IDR & _mask) != 0;
+
+				inline bool read() const {
+					return readImpl();
 				}
 		};
 
-        /// brief Clase que representa un pin individual.
+		template <PortID, PinID>
+		class GPIOPin;
+
+
+        /// brief Clase/Template que representa un pin individual especific.
         ///
         template <PortID portID_, PinID pinID_>
         class PinDeviceX final: public PinDevice {
             private:
-                using PortTraits = internal::PortTraits<portID_>;
-                using PinTraits = internal::PinTraits<pinID_>;
-                using PortActivator = internal::PortActivator<portID_>;
+                using Pin = GPIOPin<portID_, pinID_>;
 
             private:
                 static PinDeviceX _instance;
-                static constexpr auto _mask = PinTraits::mask;
-                static constexpr auto _bit = PinTraits::bit;
-                static constexpr auto _gpioAddr = PortTraits::gpioAddr;
 
             public:
                 static constexpr auto portID = portID_;
@@ -411,23 +405,247 @@ namespace htl {
                 static constexpr PinDeviceX &rInst = _instance;
 
             private:
-                PinDeviceX():
-                    PinDevice(reinterpret_cast<GPIO_TypeDef*>(_gpioAddr), PinBit(_bit)) {
+                constexpr PinDeviceX() = default;
+
+                void initInputImpl(PullUpDown pupd) const override {
+                	Pin::initInput(pupd);
                 }
 
-            protected:
-                void activateImpl() const override {
-                	PortActivator::activate(PinMask(_mask));
+                void initOutputImpl(OutputType type, PullUpDown pupd, Speed speed, bool state) const override {
+                	Pin::initOutput(type, pupd, speed, state);
                 }
+
+                void initAlternateImpl(OutputType type, PullUpDown pupd, Speed speed, AlternateFunction af) const override {
+                	Pin::initAlternate(type, pupd, speed, af);
+                }
+
+                void initAnalogicImpl() const override {
+                	Pin::initAnalogic();
+                }
+
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
-                void deactivateImpl() const override {
-                	PortActivator::deactivate(PinMask(_mask));
+                void deinitializeImpl() const override {
+                	Pin::deinitialize();
                 }
+#endif
+
+                void setImpl() const override {
+		        	Pin::set();
+		        }
+
+		        void clearImpl() const override {
+		        	Pin::clear();
+		        }
+
+		        void toggleImpl() const override {
+		        	Pin::toggle();
+		        }
+
+		        void writeImpl(bool state) const override {
+		        	Pin::write(state);
+		        }
+
+		        bool readImpl() const override {
+		        	return Pin::read();
+		        }
+        };
+        template <PortID portID_, PinID pinID_>
+        PinDeviceX<portID_, pinID_> PinDeviceX<portID_, pinID_>::_instance;
+
+
+        /// Clase/Template que gestiona l'inicialitzacio del GPIO
+        ///
+        template <PortID portID_, PinID pinID_>
+        class GPIOInitializer final {
+			private:
+				using PortTraits = internal::PortTraits<portID_>;
+                using PinTraits = internal::PinTraits<pinID_>;
+
+        	private:
+                static constexpr auto _bit = PinTraits::bit;
+                static constexpr auto _gpioAddr = PortTraits::gpioAddr;
+
+        	public:
+                static constexpr auto portID = portID_;
+                static constexpr auto pinID = pinID_;
+
+        	public:
+        		static inline void initInput(PullUpDown pupd) {
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+                    htl::gpio::initInput(gpio, _bit, pupd);
+        		}
+
+        		static inline void initOutput(OutputType type, PullUpDown pupd, Speed speed, bool state) {
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+                    htl::gpio::initOutput(gpio, _bit, type, pupd, speed, state);
+        		}
+
+        		static inline void initAlternate(OutputType type, PullUpDown pupd, Speed speed, AlternateFunction af) {
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+        			htl::gpio::initAlternate(gpio, _bit, type, pupd, speed, af);
+        		}
+
+        		static inline void initAnalogic() {
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+                    htl::gpio::initAnalogic(gpio, _bit);
+        		}
+
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+        		static inline void deinitialize() {
+
+        		}
 #endif
         };
 
+
+        /// Clase/Template que gestiona l'activacio i desactivacio del GPIO
+        ///
+        template <PortID portID_>
+        class GPIOActivator final {
+			private:
+				using PortTraits = internal::PortTraits<portID_>;
+
+            private:
+				static constexpr auto _addr = PortTraits::activateAddr;
+				static constexpr auto _pos = PortTraits::activatePos;
+
+            private:
+				static uint16_t _usedPins;
+
+        	public:
+                static constexpr auto portID = portID_;
+
+        	public:
+				static void activate(PinBit bit) {
+					if (!_usedPins) {
+						bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
+						__DSB();
+					}
+					bits::set(_usedPins, (uint16_t) (1 << bit));
+				}
+
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+				static void deactivate(PinBit bit) {
+                    bits::clear(_usedPins, (uint16_t) (1 << bit));
+					if (!_usedPins) {
+						bits::clear(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
+						__DSB();
+					}
+				}
+#endif
+        };
+		template <PortID portID_>
+		uint16_t GPIOActivator<portID_>::_usedPins {0};
+
+
+		/// Clase/Template que gestiona el control dels pins individuals
+		///
         template <PortID portID_, PinID pinID_>
-        PinDeviceX<portID_, pinID_> PinDeviceX<portID_, pinID_>::_instance;
+        class GPIOPin final {
+        	private:
+                using PortTraits = internal::PortTraits<portID_>;
+                using PinTraits = internal::PinTraits<pinID_>;
+
+        	private:
+                static constexpr auto _bit = PinTraits::bit;
+                static constexpr auto _gpioAddr = PortTraits::gpioAddr;
+
+        	public:
+                static constexpr auto portID = portID_;
+                static constexpr auto pinID = pinID_;
+
+        	public:
+                static inline void initInput(PullUpDown pupd) {
+                    GPIOActivator<portID_>::activate(_bit);
+                    GPIOInitializer<portID_, pinID_>::initInput(pupd);
+                }
+
+                static inline void initOutput(OutputType type, PullUpDown pupd, Speed speed, bool state) {
+                    GPIOActivator<portID_>::activate(_bit);
+                    GPIOInitializer<portID_, pinID_>::initOutput(type, pupd, speed, state);
+                }
+
+                static inline void initAlternate(OutputType outputType, PullUpDown pupd, Speed speed, AlternateFunction af) {
+                    GPIOActivator<portID_>::activate(_bit);
+                    GPIOInitializer<portID_, pinID_>::initAlternate(outputType, pupd, speed, af);
+                }
+
+                static inline void initAnalogic() {
+                    GPIOActivator<portID_>::activate(_bit);
+                    GPIOInitializer<portID_, pinID_>::initAnalogic();
+                }
+
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+                static inline void deinitialize() {
+                	GPIOInitializer<portID_, pinID_>::deinitialize();
+                    GPIOActivator<portID_>::deactivate(_bit);
+                }
+#endif
+
+                static inline void set() {
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+                    gpio->BSRR = 1 << _bit;
+				}
+
+				static inline void clear() {
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+					gpio->BSRR = 1 << (_bit + 16);
+				}
+
+				static inline void toggle() {
+                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+				    auto odr = gpio->ODR;
+				    gpio->BSRR = (odr & (1 << (_bit + 16))) | (~odr & (1 << _bit));
+				}
+
+				static inline void write(bool state) {
+	                 auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+                     gpio->BSRR = state ? (1 << _bit) : 1 << (_bit + 16);
+				}
+
+				static inline bool read() {
+	                 auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
+					 return (gpio->IDR & (1 << _bit)) != 0;
+				}
+        };
+
+#ifdef HTL_GPIOA_EXIST
+        using GPIOPinA0 = GPIOPin<PortID::portA, PinID::pin0>;
+        using GPIOPinA1 = GPIOPin<PortID::portA, PinID::pin1>;
+        using GPIOPinA2 = GPIOPin<PortID::portA, PinID::pin2>;
+        using GPIOPinA3 = GPIOPin<PortID::portA, PinID::pin3>;
+        using GPIOPinA4 = GPIOPin<PortID::portA, PinID::pin4>;
+        using GPIOPinA5 = GPIOPin<PortID::portA, PinID::pin5>;
+        using GPIOPinA6 = GPIOPin<PortID::portA, PinID::pin6>;
+        using GPIOPinA7 = GPIOPin<PortID::portA, PinID::pin7>;
+        using GPIOPinA8 = GPIOPin<PortID::portA, PinID::pin8>;
+        using GPIOPinA9 = GPIOPin<PortID::portA, PinID::pin9>;
+        using GPIOPinA10 = GPIOPin<PortID::portA, PinID::pin10>;
+        using GPIOPinA11 = GPIOPin<PortID::portA, PinID::pin11>;
+        using GPIOPinA12 = GPIOPin<PortID::portA, PinID::pin12>;
+        using GPIOPinA13 = GPIOPin<PortID::portA, PinID::pin13>;
+        using GPIOPinA14 = GPIOPin<PortID::portA, PinID::pin14>;
+        using GPIOPinA15 = GPIOPin<PortID::portA, PinID::pin15>;
+#endif
+
+#ifdef HTL_GPIOB_EXIST
+        using GPIOPinB0 = GPIOPin<PortID::portB, PinID::pin0>;
+        using GPIOPinB1 = GPIOPin<PortID::portB, PinID::pin1>;
+        using GPIOPinB2 = GPIOPin<PortID::portB, PinID::pin2>;
+        using GPIOPinB3 = GPIOPin<PortID::portB, PinID::pin3>;
+        using GPIOPinB4 = GPIOPin<PortID::portB, PinID::pin4>;
+        using GPIOPinB5 = GPIOPin<PortID::portB, PinID::pin5>;
+        using GPIOPinB6 = GPIOPin<PortID::portB, PinID::pin6>;
+        using GPIOPinB7 = GPIOPin<PortID::portB, PinID::pin7>;
+        using GPIOPinB8 = GPIOPin<PortID::portB, PinID::pin8>;
+        using GPIOPinB9 = GPIOPin<PortID::portB, PinID::pin9>;
+        using GPIOPinB10 = GPIOPin<PortID::portB, PinID::pin10>;
+        using GPIOPinB11 = GPIOPin<PortID::portB, PinID::pin11>;
+        using GPIOPinB12 = GPIOPin<PortID::portB, PinID::pin12>;
+        using GPIOPinB13 = GPIOPin<PortID::portB, PinID::pin13>;
+        using GPIOPinB14 = GPIOPin<PortID::portB, PinID::pin14>;
+        using GPIOPinB15 = GPIOPin<PortID::portB, PinID::pin15>;
+#endif
 
 
 #ifdef HTL_GPIOA_EXIST
@@ -834,98 +1052,98 @@ namespace htl {
 
 			template <>
 			struct PinTraits<PinID::pin0> {
-		        static constexpr uint16_t mask {1 << 0};
-		        static constexpr uint8_t bit {0};
+		        static constexpr PinMask mask {1 << 0};
+		        static constexpr PinBit bit {0};
 			};
 
             template <>
 			struct PinTraits<PinID::pin1> {
-                static constexpr uint16_t mask {1 << 1};
-                static constexpr uint8_t bit {1};
+                static constexpr PinMask mask {1 << 1};
+                static constexpr PinBit bit {1};
             };
 
             template <>
             struct PinTraits<PinID::pin2> {
-                static constexpr uint16_t mask {1 << 2};
-                static constexpr uint8_t bit {2};
+                static constexpr PinMask mask {1 << 2};
+                static constexpr PinBit bit {2};
             };
 
             template <>
             struct PinTraits<PinID::pin3> {
-                static constexpr uint16_t mask {1 << 3};
-                static constexpr uint8_t bit {3};
+                static constexpr PinMask mask {1 << 3};
+                static constexpr PinBit bit {3};
             };
 
             template <>
             struct PinTraits<PinID::pin4> {
-                static constexpr uint16_t mask {1 << 4};
-                static constexpr uint8_t bit {4};
+                static constexpr PinMask mask {1 << 4};
+                static constexpr PinBit bit {4};
             };
 
             template <>
             struct PinTraits<PinID::pin5> {
-                static constexpr uint16_t mask {1 << 5};
-                static constexpr uint8_t bit {5};
+                static constexpr PinMask mask {1 << 5};
+                static constexpr PinBit bit {5};
             };
 
             template <>
             struct PinTraits<PinID::pin6> {
-                static constexpr uint16_t mask {1 << 6};
-                static constexpr uint8_t bit {6};
+                static constexpr PinMask mask {1 << 6};
+                static constexpr PinBit bit {6};
             };
 
             template <>
             struct PinTraits<PinID::pin7> {
-                static constexpr uint16_t mask {1 << 7};
-                static constexpr uint8_t bit {7};
+                static constexpr PinMask mask {1 << 7};
+                static constexpr PinBit bit {7};
             };
 
             template <>
             struct PinTraits<PinID::pin8> {
-                static constexpr uint16_t mask {1 << 8};
-                static constexpr uint8_t bit {8};
+                static constexpr PinMask mask {1 << 8};
+                static constexpr PinBit bit {8};
             };
 
             template <>
             struct PinTraits<PinID::pin9> {
-                static constexpr uint16_t mask {1 << 9};
-                static constexpr uint8_t bit {9};
+                static constexpr PinMask mask {1 << 9};
+                static constexpr PinBit bit {9};
             };
 
             template <>
             struct PinTraits<PinID::pin10> {
-                static constexpr uint16_t mask {1 << 10};
-                static constexpr uint8_t bit {10};
+                static constexpr PinMask mask {1 << 10};
+                static constexpr PinBit bit {10};
             };
 
             template <>
             struct PinTraits<PinID::pin11> {
-                static constexpr uint16_t mask {1 << 11};
-                static constexpr uint8_t bit {11};
+                static constexpr PinMask mask {1 << 11};
+                static constexpr PinBit bit {11};
             };
 
             template <>
             struct PinTraits<PinID::pin12> {
-                static constexpr uint16_t mask {1 << 12};
-                static constexpr uint8_t bit {12};
+                static constexpr PinMask mask {1 << 12};
+                static constexpr PinBit bit {12};
             };
 
             template <>
             struct PinTraits<PinID::pin13> {
-                static constexpr uint16_t mask {1 << 13};
-                static constexpr uint8_t bit {13};
+                static constexpr PinMask mask {1 << 13};
+                static constexpr PinBit bit {13};
             };
 
             template <>
             struct PinTraits<PinID::pin14> {
-                static constexpr uint16_t mask {1 << 14};
-                static constexpr uint8_t bit {14};
+                static constexpr PinMask mask {1 << 14};
+                static constexpr PinBit bit {14};
             };
 
             template <>
             struct PinTraits<PinID::pin15> {
-                static constexpr uint16_t mask {1 << 15};
-                static constexpr uint8_t bit {15};
+                static constexpr PinMask mask {1 << 15};
+                static constexpr PinBit bit {15};
             };
 		}
 	}

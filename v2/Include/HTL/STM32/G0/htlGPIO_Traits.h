@@ -19,7 +19,7 @@ namespace htl {
 	namespace gpio {
 		namespace internal {
 #ifdef HTL_GPIOA_EXIST
-			template<>
+			template <>
 			struct PortTraits<PortID::portA> {
 				static constexpr uint32_t gpioAddr = GPIOA_BASE;
 				static constexpr uint32_t activateAddr = RCC_BASE + offsetof(RCC_TypeDef, IOPENR);

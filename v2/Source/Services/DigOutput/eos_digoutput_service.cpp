@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "Services/DigOutput/eosDigOutputService.h"
 #include "System/Core/eosTask.h"
 
@@ -44,34 +43,23 @@ DigOutputService::~DigOutputService() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Crea una una sortida.
+/// \brief    Crea i afegeix una sortida.
 /// \param    pinDrv: El driver del pin
+/// \param    tag: Etiqueta opcional
 /// \return   La sortida.
 ///
-DigOutput* DigOutputService::makeOutput(
-    PinDriver *drv) {
-
-    eosAssert(drv != nullptr);
-
-    return new Output(drv);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Afegeig una sortida al servei.
-/// \param    output: La sortida a afeigir.
-///
-void DigOutputService::addOutput(
-    DigOutput *output) {
-
-    eosAssert(output != nullptr);
+DigOutput* DigOutputService::addOutput(
+    PinDriver *drv,
+	unsigned tag) {
 
     Task::enterCriticalSection();
 
-    if (!_outputs.contains(output))
-		_outputs.pushFront(output);
+    auto output = new Output(drv, tag);
+	_outputs.pushFront(output);
 
     Task::exitCriticalSection();
+
+    return output;
 }
 
 
@@ -83,8 +71,6 @@ void DigOutputService::addOutput(
 ///
 void DigOutputService::removeOutput(
     DigOutput *output) {
-
-    eosAssert(output != nullptr);
 
     Task::enterCriticalSection();
 
@@ -139,8 +125,6 @@ void DigOutputService::raiseChangedNotificationEvent(
 void DigOutputService::set(
     DigOutput *output) {
 
-    eosAssert(output != nullptr);
-
     Action action = {
         .id {ActionID::set},
         .output {static_cast<Output*>(output)}
@@ -157,8 +141,6 @@ void DigOutputService::set(
 void DigOutputService::clear(
     DigOutput *output) {
 
-    eosAssert(output != nullptr);
-
     Action action = {
         .id {ActionID::clear},
         .output {static_cast<Output*>(output)}
@@ -174,8 +156,6 @@ void DigOutputService::clear(
 ///
 void DigOutputService::toggle(
     DigOutput *output) {
-
-    eosAssert(output != nullptr);
 
     Action action = {
         .id {ActionID::toggle},
@@ -195,8 +175,6 @@ void DigOutputService::write(
     DigOutput *output,
     bool state) {
 
-    eosAssert(output != nullptr);
-
     Action action = {
         .id {state ? ActionID::set : ActionID::clear},
         .output {static_cast<Output*>(output)}
@@ -214,8 +192,6 @@ void DigOutputService::write(
 void DigOutputService::pulse(
     DigOutput *output,
     unsigned width) {
-
-    eosAssert(output != nullptr);
 
     Action action = {
         .id {ActionID::pulse},
@@ -238,8 +214,6 @@ void DigOutputService::delayedPulse(
     unsigned delay,
     unsigned width) {
 
-    eosAssert(output != nullptr);
-
     Action action = {
         .id {ActionID::delayedPulse},
         .output {static_cast<Output*>(output)},
@@ -258,8 +232,6 @@ void DigOutputService::delayedPulse(
 ///
 bool DigOutputService::read(
 	DigOutput *output) {
-
-    eosAssert(output != nullptr);
 
     Task::enterCriticalSection();
 

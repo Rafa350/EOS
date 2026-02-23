@@ -11,6 +11,7 @@
 
 // HTL main includes
 //
+#include "HTL/htlDevice.h"
 #include "HTL/htlBits.h"
 #include "HTL/STM32/htl.h"
 
@@ -105,7 +106,7 @@ namespace htl {
 			mosi
 		};
 
-		class SPIDevice {
+		class SPIDevice: Device {
 			public:
                 enum class NotificationID {
         		    null,
@@ -132,9 +133,6 @@ namespace htl {
 				NotificationEventRaiser _erNotification;
 
 			private:
-				SPIDevice(const SPIDevice &) = delete;
-				SPIDevice & operator = (const SPIDevice &) = delete;
-
 				void activate() const {
 					activateImpl();
 				}
@@ -185,6 +183,7 @@ namespace htl {
 #endif
 
 			public:
+				virtual ~SPIDevice() = default;
 				eos::Result initMaster(ClkPolarity clkPolarity,
                         ClkPhase clkPhase, WordSize size, FirstBit firstBit,
                         ClockDivider clkDivider) {
@@ -278,17 +277,17 @@ namespace htl {
 				template <typename pin_>
 				void initPinSCK() {
 				    auto af = SPIPins<PinFunction::sck, pin_::portID, pin_::pinID>::value;
-				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMOSI() {
 					auto af = SPIPins<PinFunction::mosi, pin_::portID, pin_::pinID>::value;
-					gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 				template <typename pin_>
 				void initPinMISO() {
 					auto af = SPIPins<PinFunction::miso, pin_::portID, pin_::pinID>::value;
-					gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 		};
 

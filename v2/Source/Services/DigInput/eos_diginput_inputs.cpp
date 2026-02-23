@@ -15,12 +15,14 @@ static constexpr uint32_t patternIdle    = 0x00000000;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
-/// \param    pinDev: Driver del pin.
+/// \param    drv: Driver del pin.
 ///
 Input::Input(
-	PinDriver *pinDrv):
+	PinDriver *drv,
+	unsigned tag):
 
-	_drv {pinDrv} {
+	DigInput {tag},
+	_drv {drv} {
 
 	_value = _drv->read();
 	_pattern = _value ? patternActive : patternIdle;

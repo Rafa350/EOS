@@ -34,8 +34,6 @@
 #define CONST_U32(index, subIndex, data) \
 	{index, subIndex, CoType::unsigned32, CoAccess::constant, data}
 
-#define EV_RW_BOOL(index, subIndex) \
-	{index, subIndex, CoType::boolean, CoAccess::rwEvent, 0}
 #define EV_RW_U8(index, subIndex) \
 	{index, subIndex, CoType::unsigned8, CoAccess::rwEvent, 0}
 #define EV_RW_U16(index, subIndex) \
@@ -43,8 +41,6 @@
 #define EV_RW_U32(index, subIndex) \
 	{index, subIndex, CoType::unsigned32, CoAccess::rwEvent, 0}
 
-#define EV_RO_BOOL(index, subIndex) \
-	{index, subIndex, CoType::boolean, CoAccess::roEvent, 0}
 #define EV_RO_U8(index, subIndex) \
 	{index, subIndex, CoType::unsigned8, CoAccess::roEvent, 0}
 #define EV_RO_U16(index, subIndex) \
@@ -70,8 +66,7 @@ namespace eos {
 		unsigned8,
 		unsigned16,
 		unsigned32,
-		boolean,
-		bytes
+		unknown
 	};
 
 	struct CoDictionaryEntry {
@@ -84,66 +79,53 @@ namespace eos {
 
 	class CanOpenDictionary final {
 		public:
-			enum class NotificationID {
-				valueChanged
+			union DataValue {
+				uint8_t u8;
+				uint16_t u16;
+				uint32_t u32;
+				bool b;
 			};
-			struct NotificationEventArgs {
-				NotificationID id;
-				union {
-					struct {
-						uint16_t index;
-						uint8_t subIndex;
-						unsigned oldValue;
-					} valueChanged;
-				};
-			};
-			using NotificationEventRaiser = eos::EventRaiser<CanOpenDictionary, NotificationEventArgs>;
-			using INotificationEvent = NotificationEventRaiser::IEvent;
-			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
-			enum class DataMode {
+			enum class AccessMode {
 				read,
 				write
 			};
-			enum class DataType  {
-				u8,
-				u16,
-				u32,
-				b
-			};
-			struct DataEventArgs {
-				DataMode dataMode;
-				DataType dataType;
+			struct AccessEventArgs {
+				AccessMode access;
 				uint16_t index;
 				uint8_t subIndex;
-				union {
-					uint8_t u8;
-					uint16_t u16;
-					uint32_t u32;
-					bool b;
-				};
+				DataValue value;
 			};
-			using DataEventRaiser = eos::EventRaiser<CanOpenDictionary, DataEventArgs>;
-			using IDataEvent = DataEventRaiser::IEvent;
-			template <typename Instance_> using DataEvent = DataEventRaiser::Event<Instance_>;
+			using AccessEventRaiser = eos::EventRaiser<CanOpenDictionary, AccessEventArgs>;
+			using IAccessEvent = AccessEventRaiser::IEvent;
+			template <typename Instance_> using AccessEvent = AccessEventRaiser::Event<Instance_>;
+
+			struct ChangedEventArgs {
+				uint16_t index;
+				uint8_t subIndex;
+				DataValue oldValue;
+				DataValue newValue;
+			};
+			using ChangedEventRaiser = eos::EventRaiser<CanOpenDictionary, ChangedEventArgs>;
+			using IChangedEvent = ChangedEventRaiser::IEvent;
+			template <typename Instance_> using ChangedEvent = ChangedEventRaiser::Event<Instance_>;
 
 		private:
 			const CoDictionaryEntry * const _entries;
 			unsigned const _numEntries;
-			NotificationEventRaiser _erNotification;
-			DataEventRaiser _erData;
+			AccessEventRaiser _erAccess;
+			ChangedEventRaiser _erChanged;
 
 		private:
-			void raiseValueChangedNotificationEvent(unsigned entryId, unsigned oldValue);
-			void raiseWriteDataEvent(uint16_t index, uint8_t subIndex, uint8_t value);
-			void raiseWriteDataEvent(uint16_t index, uint8_t subIndex, uint16_t value);
-     		void raiseWriteDataEvent(uint16_t index, uint8_t subIndex, uint32_t value);
-			void raiseWriteDataEvent(uint16_t index, uint8_t subIndex, bool value);
-			void raiseReadDataEvent(uint16_t index, uint8_t subIndex, uint8_t &value);
-			void raiseReadDataEvent(uint16_t index, uint8_t subIndex, uint16_t &value);
-     		void raiseReadDataEvent(uint16_t index, uint8_t subIndex, uint32_t &value);
-			void raiseReadDataEvent(uint16_t index, uint8_t subIndex, bool &value);
-
+			void raiseChangedU8Event(uint16_t index, uint8_t subIndex, uint8_t oldValue, uint8_t newValue);
+			void raiseChangedU16Event(uint16_t index, uint8_t subIndex, uint16_t oldValue, uint16_t newValue);
+			void raiseChangedU32Event(uint16_t index, uint8_t subIndex, uint32_t oldValue, uint32_t newValue);
+			void raiseWriteU8AccessEvent(uint16_t index, uint8_t subIndex, uint8_t value);
+			void raiseWriteU16AccessEvent(uint16_t index, uint8_t subIndex, uint16_t value);
+     		void raiseWriteU32AccessEvent(uint16_t index, uint8_t subIndex, uint32_t value);
+			void raiseReadU8AccessEvent(uint16_t index, uint8_t subIndex, uint8_t &value);
+			void raiseReadU16AccessEvent(uint16_t index, uint8_t subIndex, uint16_t &value);
+     		void raiseReadU32AccessEvent(uint16_t index, uint8_t subIndex, uint32_t &value);
 
 		public:
 			CanOpenDictionary(const CoDictionaryEntry *entries, unsigned numEntries);
@@ -151,9 +133,7 @@ namespace eos {
 			unsigned find(uint16_t index, uint8_t subIndex) const;
 			unsigned find(const void *ptr) const;
 
-			unsigned getDataLength(unsigned entryId) const;
-			uint16_t getIndex(unsigned entryId) const;
-			uint8_t getSubIndex(unsigned entryId) const;
+			CoType getType(unsigned entryId) const;
 
 			bool canWrite(unsigned entryId) const;
 			bool writeU8(unsigned entryId, uint8_t value);
@@ -162,8 +142,6 @@ namespace eos {
 			bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value);
 			bool writeU32(unsigned entryId, uint32_t value);
 			bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value);
-			bool writeBool(unsigned entryId, bool value);
-			bool writeBool(uint16_t index, uint8_t subIndex, bool value);
 
 			bool canRead(unsigned entryId) const;
 			bool readU8(unsigned entryId, uint8_t &value);
@@ -172,16 +150,9 @@ namespace eos {
 			bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
 			bool readU32(unsigned entryId, uint32_t &value);
 			bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
-			bool readBool(unsigned entryId, bool &value);
-			bool readBool(uint16_t index, uint8_t subIndex, bool &value);
 
-			void setNotificationEvent(INotificationEvent &event, bool enabled = true);
-            void enableNotifyEvent();
-            void disableNotifyEvent();
-
-            void setDataEvent(IDataEvent &event, bool enabled = true);
-            void enableDataEvent();
-            void disableDataEvent();
+            void setAccessEvent(IAccessEvent &event);
+            void setChangedEvent(IChangedEvent &event);
 	};
 }
 

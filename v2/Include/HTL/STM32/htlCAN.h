@@ -10,6 +10,7 @@
 
 
 #include "HTL/htlBits.h"
+#include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
 
 
@@ -223,7 +224,7 @@ namespace htl {
 			queue
 		};
 
-		class CANDevice {
+		class CANDevice: Device {
 			public:
 				struct InitParams {
 					ClockDivider clockDivider;
@@ -442,13 +443,13 @@ namespace htl {
 				template <typename pin_>
 				void initPinTX() {
 					auto af = CANPins<PinFunction::tx, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				void initPinRX() {
 					auto af = CANPins<PinFunction::rx, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				void initClockSource(ClockSource clockSource) {

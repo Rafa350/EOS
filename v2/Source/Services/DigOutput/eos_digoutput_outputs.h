@@ -35,7 +35,8 @@ namespace eos {
 			static bool hasExpired(unsigned time, unsigned endTime);
 
 		public:
-			Output(PinDriver *drv);
+			Output(PinDriver *drv, unsigned tag);
+
 			bool getValue() const;
 			void set();
 			void clear();

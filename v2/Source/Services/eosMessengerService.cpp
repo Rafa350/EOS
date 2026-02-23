@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Services/eosMessengerService.h"
+#include "Services/Messenger/eosMessengerService.h"
 #include "System/Core/eosTask.h"
 
 

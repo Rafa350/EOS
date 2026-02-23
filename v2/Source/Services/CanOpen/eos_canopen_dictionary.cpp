@@ -7,7 +7,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Contructor.
+/// \brief    Constructor.
 /// \param    entries: Les entrades del diccionari.
 /// \param    numEntries: El nombre d'entrades en el diccionary.
 ///
@@ -21,64 +21,24 @@ CanOpenDictionary::CanOpenDictionary(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el event 'notification'
+/// \brief    Asigna el event 'Changed'
 /// \param    event: L'event.
-/// \param    enabled: True si per habiliotar-l'ho
 ///
-void CanOpenDictionary::setNotificationEvent(
-	INotificationEvent &event,
-	bool enabled) {
+void CanOpenDictionary::setChangedEvent(
+	IChangedEvent &event) {
 
-	_erNotification.set(event, enabled);
+	_erChanged.set(event);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Habilita el event.
-///
-void CanOpenDictionary::enableNotifyEvent() {
-
-	_erNotification.enable();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Deshabilita el event.
-///
-void CanOpenDictionary::disableNotifyEvent() {
-
-	_erNotification.disable();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el event 'data'
+/// \brief    Asigna el event 'Access'
 /// \param    event: L'event.
-/// \param    enabled: True si per habiliotar-l'ho
 ///
-void CanOpenDictionary::setDataEvent(
-	IDataEvent &event,
-	bool enabled) {
+void CanOpenDictionary::setAccessEvent(
+	IAccessEvent &event) {
 
-	_erData.set(event, enabled);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita el event.
-///
-void CanOpenDictionary::enableDataEvent() {
-
-	_erData.enable();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Deshabilita el event.
-///
-void CanOpenDictionary::disableDataEvent() {
-
-	_erData.disable();
+	_erAccess.set(event);
 }
 
 
@@ -128,235 +88,186 @@ unsigned CanOpenDictionary::find(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte la longitut en bits de les dades d'una entrada.
-/// \return   El resultat de l'operacio.
+/// \brieg    Obte el tipus de l'entrada.
+/// \param    entryId: El identificador de la entrada.
+/// \return   El tipus de la entrada.
 ///
-unsigned CanOpenDictionary::getDataLength(
+CoType CanOpenDictionary::getType(
 	unsigned entryId) const {
 
-	if (entryId < _numEntries) {
-		auto entry = &_entries[entryId];
-		switch (entry->type) {
-			case CoType::boolean:
-				return sizeof(bool);
+	if (entryId < _numEntries)
+		return _entries[entryId].type;
+	else
+		return CoType::unknown;
+}
 
-			case CoType::unsigned8:
-				return sizeof(uint8_t);
 
-			case CoType::unsigned16:
-				return sizeof(uint16_t);
+/// ----------------------------------------------------------------------
+/// \brief    Genera un event 'Changed'
+/// \param    index: L'index.
+/// \param    subIndex: El dubindex.
+/// \param    oldValue: El valor abans del canvi.
+/// \param    newValue: El nou valor.
+///
+void CanOpenDictionary::raiseChangedU8Event(
+	uint16_t index,
+	uint8_t subIndex,
+	uint8_t oldValue,
+	uint8_t newValue) {
 
-			case CoType::unsigned32:
-				return sizeof(uint32_t);
+	ChangedEventArgs args = {
+		.index {index},
+		.subIndex {subIndex},
+		.oldValue {
+			.u8 {oldValue}
+		},
+		.newValue {
+			.u8 {newValue}
 		}
-	}
+	};
 
-	return 0;
-}
-
-
-uint16_t CanOpenDictionary::getIndex(
-	unsigned entryId) const {
-
-	if (entryId < _numEntries)
-		return _entries[entryId].index;
-	else
-		return 0xFFFF;
-}
-
-
-uint8_t CanOpenDictionary::getSubIndex(
-	unsigned entryId) const {
-
-	if (entryId < _numEntries)
-		return _entries[entryId].subIndex;
-	else
-		return 0xFF;
+	_erChanged(this, &args);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera una notificacio 'ValueChanged'
-/// \param    entryId: Identificador de la entrada.
-/// \param    oldValue: L'anterior valor de l'entrada.
-///
-void CanOpenDictionary::raiseValueChangedNotificationEvent(
-	unsigned entryId,
-	unsigned oldValue) {
-
-	if (_erNotification.isEnabled()) {
-		NotificationEventArgs args = {
-			.id {NotificationID::valueChanged},
-			.valueChanged {
-				.index {_entries[entryId].index},
-				.subIndex {_entries[entryId].subIndex},
-				.oldValue {oldValue}
-			}
-		};
-		_erNotification(this, &args);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un event 'ReadData'
+/// \brief    Genera un event 'Access'
 /// \param    index: L'index
 /// \param    subIndex: El subindex
 /// \param    value: El valor lleigit.
 ///
-void CanOpenDictionary::raiseReadDataEvent(
+void CanOpenDictionary::raiseReadU8AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t &value) {
 
-	if (_erData.isEnabled()) {
+	AccessEventArgs args = {
+		.access {AccessMode::read},
+		.index {index},
+		.subIndex {subIndex},
+		.value {
+			.u8 {value}
+		}
+	};
 
-		DataEventArgs args;
+	_erAccess(this, &args);
 
-		args.index = index;
-		args.subIndex = subIndex;
-		args.dataType = DataType::u8;
-		args.dataMode = DataMode::read;
-		args.u8 = value;
-
-		_erData(this, &args);
-
-		value = args.u8;
-	}
+	value = args.value.u8;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'ReadData'
+/// \brief    Genera un event 'Access'
 /// \param    index: L'index
 /// \param    subIndex: El subindex
 /// \param    value: El valor lleigit.
 ///
-void CanOpenDictionary::raiseReadDataEvent(
+void CanOpenDictionary::raiseReadU16AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t &value) {
 
-	if (_erData.isEnabled()) {
+	AccessEventArgs args = {
+		.access {AccessMode::read},
+		.index {index},
+		.subIndex {subIndex},
+		.value {
+			.u16 {value}
+		}
+	};
 
-		DataEventArgs args;
+	_erAccess(this, &args);
 
-		args.index = index;
-		args.subIndex = subIndex;
-		args.dataType = DataType::u16;
-		args.dataMode = DataMode::read;
-		args.u16 = value;
-
-		_erData(this, &args);
-
-		value = args.u16;
-	}
+	value = args.value.u16;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'ReadData'
+/// \brief    Genera un event 'Access'
 /// \param    index: L'index
 /// \param    subIndex: El subindex
 /// \param    value: El valor lleigit.
 ///
-void CanOpenDictionary::raiseReadDataEvent(
+void CanOpenDictionary::raiseReadU32AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t &value) {
 
-	if (_erData.isEnabled()) {
+	AccessEventArgs args = {
+		.access {AccessMode::read},
+		.index {index},
+		.subIndex {subIndex},
+		.value {
+			.u32 {value}
+		}
+	};
 
-		DataEventArgs args;
+	_erAccess(this, &args);
 
-		args.index = index;
-		args.subIndex = subIndex;
-		args.dataType = DataType::u32;
-		args.dataMode = DataMode::read;
-		args.u32 = value;
-
-		_erData(this, &args);
-
-		value = args.u32;
-	}
+	value = args.value.u32;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'WriteData'
+/// \brief    Genera un event 'Access'
 /// \param    index: L'index
 /// \param    subIndex: El subindex
 /// \param    value: El valor a escriure.
 ///
-void CanOpenDictionary::raiseWriteDataEvent(
+void CanOpenDictionary::raiseWriteU8AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value) {
 
-	if (_erData.isEnabled()) {
+	AccessEventArgs args;
+	args.access = AccessMode::write;
+	args.index = index;
+	args.subIndex = subIndex;
+	args.value.u8 = value;
 
-		DataEventArgs args;
-
-		args.index = index;
-		args.subIndex = subIndex;
-		args.dataType = DataType::u8;
-		args.dataMode = DataMode::write;
-		args.u8 = value;
-
-		_erData(this, &args);
-	}
+	_erAccess(this, &args);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'WriteData'
+/// \brief    Genera un event 'Access'
 /// \param    index: L'index
 /// \param    subIndex: El subindex
 /// \param    value: El valor a escriure.
 ///
-void CanOpenDictionary::raiseWriteDataEvent(
+void CanOpenDictionary::raiseWriteU16AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t value) {
 
-	if (_erData.isEnabled()) {
+	AccessEventArgs args;
+	args.access = AccessMode::write;
+	args.index = index;
+	args.subIndex = subIndex;
+	args.value.u16 = value;
 
-		DataEventArgs args;
-
-		args.index = index;
-		args.subIndex = subIndex;
-		args.dataType = DataType::u16;
-		args.dataMode = DataMode::write;
-		args.u16 = value;
-
-		_erData(this, &args);
-	}
+	_erAccess(this, &args);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'WriteData'
+/// \brief    Genera un event 'Access'
 /// \param    index: L'index
 /// \param    subIndex: El subindex
 /// \param    value: El valor a escriure.
 ///
-void CanOpenDictionary::raiseWriteDataEvent(
+void CanOpenDictionary::raiseWriteU32AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value) {
 
-	if (_erData.isEnabled()) {
+	AccessEventArgs args;
+	args.access = AccessMode::write;
+	args.index = index;
+	args.subIndex = subIndex;
+	args.value.u32 = value;
 
-		DataEventArgs args;
-
-		args.index = index;
-		args.subIndex = subIndex;
-		args.dataType = DataType::u32;
-		args.dataMode = DataMode::write;
-		args.u32 = value;
-
-		_erData(this, &args);
-	}
+	_erAccess(this, &args);
 }
 
 
@@ -449,13 +360,13 @@ bool CanOpenDictionary::writeU8(
 			else if (entry->access == CoAccess::rwEvent) {
 
 				oldValue = ~value;
-				raiseWriteDataEvent(entry->index, entry->subIndex, value);
+				raiseWriteU8AccessEvent(entry->index, entry->subIndex, value);
 
 				ok = true;
 			}
 
 			if (ok && (oldValue != value))
-				raiseValueChangedNotificationEvent(entryId, oldValue);
+				raiseChangedU8Event(entry->index, entry->subIndex, oldValue, value);
 		}
 	}
 
@@ -509,13 +420,13 @@ bool CanOpenDictionary::writeU16(
 			else if (entry->access == CoAccess::rwEvent) {
 
 				oldValue = ~value;
-				raiseWriteDataEvent(entry->index, entry->subIndex, value);
+				raiseWriteU16AccessEvent(entry->index, entry->subIndex, value);
 
 				ok = true;
 			}
 
 			if (ok && (oldValue != value))
-				raiseValueChangedNotificationEvent(entryId, oldValue);
+				raiseChangedU16Event(entry->index, entry->subIndex, oldValue, value);
 		}
 	}
 
@@ -569,13 +480,13 @@ bool CanOpenDictionary::writeU32(
 			else if (entry->access == CoAccess::rwEvent) {
 
 				oldValue = ~value;
-				raiseWriteDataEvent(entry->index, entry->subIndex, value);
+				raiseWriteU32AccessEvent(entry->index, entry->subIndex, value);
 
 				ok = true;
 			}
 
 			if (ok && (oldValue != value))
-				raiseValueChangedNotificationEvent(entryId, oldValue);
+				raiseChangedU32Event(entry->index, entry->subIndex, oldValue, value);
 		}
 	}
 
@@ -596,59 +507,6 @@ bool CanOpenDictionary::writeU32(
 	uint32_t value) {
 
 	return writeU32(find(index, subIndex), value);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un valor bool, en l'entrada especificada.
-/// \param    El identificador de l'entrada.
-/// \param    El valor a escriure.
-/// \return   True si tot es correcte, false en cas contrari.
-///
-bool CanOpenDictionary::writeBool(
-	unsigned entryId,
-	bool value) {
-
-	bool ok = false;
-
-	if (entryId < _numEntries) {
-		auto entry = &_entries[entryId];
-		if (entry->type == CoType::boolean) {
-
-			bool oldValue;
-
-			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
-
-				Task::enterCriticalSection();
-				oldValue = *((bool*)entry->data);
-				*((bool*)entry->data) = value;
-				Task::exitCriticalSection();
-
-				ok = true;
-			}
-
-			if (ok && (oldValue != value))
-				raiseValueChangedNotificationEvent(entryId, oldValue);
-		}
-	}
-
-	return ok;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un valor bool, en l'entrada especificada.
-/// \param    index: L'index de l'entrada.
-/// \param    subIndex: El subindex de l'entrada.
-/// \param    value: El valor a escriure.
-/// \return   True si tot es correcte, false en cas contrari.
-///
-bool CanOpenDictionary::writeBool(
-	uint16_t index,
-	uint8_t subIndex,
-	bool value) {
-
-	return writeBool(find(index, subIndex), value);
 }
 
 
@@ -684,7 +542,7 @@ bool CanOpenDictionary::readU8(
 
 				case CoAccess::roEvent:
 				case CoAccess::rwEvent:
-					raiseReadDataEvent(entry->index, entry->subIndex, value);
+					raiseReadU8AccessEvent(entry->index, entry->subIndex, value);
 					ok = true;
 					break;
 			}

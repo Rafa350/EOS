@@ -31,9 +31,6 @@ using namespace htl::spi;
 #endif
 
 
-static void clearOverrunFlag(SPI_TypeDef *spi);
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    spi: Registres hardware del modul SPI.
