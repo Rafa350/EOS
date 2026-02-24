@@ -382,19 +382,19 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
-				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
-				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				void inline initPinSMBA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::smba, pin_::portID, pin_::pinID>::value;
-				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				void initClockSource(ClockSource clockSource) {
@@ -476,13 +476,13 @@ namespace htl {
 				template <typename pin_>
 				void inline initPinSCL() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::scl, pin_::portID, pin_::pinID>::value;
-				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				template <typename pin_>
 				void inline initPinSDA() {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::sda, pin_::portID, pin_::pinID>::value;
-				    gpio::initAlternate<pin_::portID, pin_::pinID>(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
+				    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(gpio::OutputType::openDrain, gpio::PullUpDown::none, gpio::Speed::fast, af);
 				}
 
 				void initClockSource(ClockSource clockSource) {

@@ -7,14 +7,6 @@
 using namespace eos;
 
 
-constexpr const char *serviceName = "DigOutputs";
-constexpr Task::Priority servicePriority = Task::Priority::normal;
-constexpr unsigned serviceStackSize = 164;
-
-constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
-constexpr unsigned minDelay = DigOutputService_MinDelay;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Contructor
 /// \param    dev: El driver del pin.

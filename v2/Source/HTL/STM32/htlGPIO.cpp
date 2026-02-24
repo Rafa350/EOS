@@ -4,87 +4,351 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-using namespace htl;
+struct MODE {
+	static constexpr uint32_t Mask      = 0b11;
+	static constexpr uint32_t INPUT     = 0b00;
+	static constexpr uint32_t OUTPUT    = 0b01;
+	static constexpr uint32_t ALTERNATE = 0b10;
+	static constexpr uint32_t ANALOGIC  = 0b11;
+};
+
+struct PUPD {
+	static constexpr uint32_t Mask = 0b11;
+	static constexpr uint32_t NONE = 0b00;
+	static constexpr uint32_t UP   = 0b01;
+	static constexpr uint32_t DOWN = 0b10;
+};
+
+struct OTYPE {
+	static constexpr uint32_t Mask = 0b1;
+	static constexpr uint32_t PP   = 0b0;
+	static constexpr uint32_t OD   = 0b1;
+};
+
+struct OSPEED {
+	static constexpr uint32_t Mask   = 0b11;
+	static constexpr uint32_t LOW    = 0b00;
+	static constexpr uint32_t MEDIUM = 0b01;
+	static constexpr uint32_t HIGH   = 0b10;
+	static constexpr uint32_t FAST   = 0b11;
+};
+
+struct AF {
+	static constexpr uint32_t Mask = 0b1111;
+};
+
+
+using namespace htl::bits;
 using namespace htl::gpio;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    gpio: Registres hardware del modul GPIO.
-///
-PortDevice::PortDevice(
-	GPIO_TypeDef *gpio):
+static uint32_t convert(Speed speed);
+static uint32_t convert(OutputType type);
+static uint32_t convert(PullUpDown pupd);
 
-	_gpio {gpio} {
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza els pins com a entrades.
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    mask: Mascara dels pins a inicialitzar.
+/// \param    pupd: Resistencies pull up/down.
+///
+void GPIOUtils::initInput(
+    GPIO_TypeDef * const gpio,
+    PinMask mask,
+	PullUpDown pupd) {
+
+    auto m = (uint16_t) mask;
+    for (auto b = 0; b < 16; b++) {
+        if ((m & (1 << b)) != 0)
+            initInput(gpio, PinBit(b), pupd);
+    }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio com entrades.
-/// \param    mask: Mascara de pins a configurar.
-/// \param    pupd: Resistencies pull up/down.
+/// \brief    Inicialitza un pin com a entrada.
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    bit: El bit del pin a inicialitzar.
+/// \param    Resistencies pull up/down.
 ///
-void PortDevice::initInput(
-	PinMask mask,
-	PullUpDown pupd) const {
+void GPIOUtils::initInput(
+	GPIO_TypeDef * const gpio,
+	PinBit bit,
+	PullUpDown pupd) {
 
-	activate(mask);
-	htl::gpio::initInput(_gpio, mask, pupd);
+	auto a = startAtomic();
+
+    auto b = (uint8_t) bit;
+
+    // Configura el pin com a entrada digital
+    //
+    auto MODER = gpio->MODER;
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::INPUT << (b * 2));
+    gpio->MODER = MODER;
+
+    // Configura les resistencies pull UP/DOWN
+    //
+    auto PUPDR = gpio->PUPDR;
+    clear(PUPDR, PUPD::Mask << (b * 2));
+    set(PUPDR, convert(pupd) << (b * 2));
+    gpio->PUPDR = PUPDR;
+
+    endAtomic(a);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio com sortides.
-/// \param    mask: Mascara de pins a configurar.
-/// \param    type: El tipus de sortida.
+/// \brief    Inicialitza els pins com sortides.
+/// \param    gpio: Els registres de hardware del GPIO.
+/// \param    mask: Mascara dels pins a inicialitzar.
+/// \param    type: Tipus de sortida.
 /// \param    pupd: Resistencies pull up/down.
-/// \param    speed: Opcions de velocitat.
+/// \param    speed: Velocitat de conmutacio.
 ///
-void PortDevice::initOutput(
-	PinMask mask,
+void GPIOUtils::initOutput(
+    GPIO_TypeDef * const gpio,
+    PinMask mask,
+    OutputType type,
+	PullUpDown pupd,
+    Speed speed) {
+
+    auto m = (uint16_t) mask;
+    for (auto b = 0; b < 16; b++) {
+        if ((m & (1 << b)) != 0)
+            initOutput(gpio, PinBit(b), type, pupd, speed, false);
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza un pin com sortida.
+/// \param    gpio: Els registres de hardware del GPIO.
+/// \param    bit: El bit del pin a inicialitzar.
+/// \param    mode: Tipus de sortida.
+/// \param    speed: Velocitat de conmutacio.
+/// \param    state: L'estat inicial del pin.
+///
+void GPIOUtils::initOutput(
+	GPIO_TypeDef * const gpio,
+	PinBit bit,
 	OutputType type,
 	PullUpDown pupd,
-	Speed speed) const {
+	Speed speed,
+	bool state) {
 
-	activate(mask);
-	htl::gpio::initOutput(_gpio, mask, type, pupd, speed, false);
+	auto a = startAtomic();
+
+    auto b = (uint8_t) bit;
+
+    // Configura el pin com sortida digital
+    //
+    auto MODER = gpio->MODER;
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::OUTPUT << (b * 2));
+    gpio->MODER = MODER;
+
+    // Configura el driver de sortida
+    //
+    auto OTYPER = gpio->OTYPER;
+    clear(OTYPER, OTYPE::Mask << b);
+    set(OTYPER, convert(type) << b);
+    gpio->OTYPER = OTYPER;
+
+    // Configura la resistencia pull UP
+    //
+    auto PUPDR = gpio->PUPDR;
+    clear(PUPDR, PUPD::Mask << (b * 2));
+    set(PUPDR, convert(pupd) << (b * 2));
+    gpio->PUPDR = PUPDR;
+
+    // Configura la velocitat de conmutacio
+    //
+    auto OSPEEDR = gpio->OSPEEDR;
+    clear(OSPEEDR, OSPEED::Mask << (b * 2));
+    set(OSPEEDR, convert(speed) << (b * 2));
+    gpio->OSPEEDR = OSPEEDR;
+
+    // Configura l'estat de sortida
+    //
+   	set(gpio->BSRR, 1UL << (b + (state ? 0 : 16)));
+
+    endAtomic(a);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desinicialitza el dispositiu.
+/// \brief    Inicialitza un pin com i/o sortida alternatiu.
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    bit: El bit del pin a inicialitzar.
+/// \param    type: Tipus de sortida.
+/// \param    pupd: Resistencies pull UD/DN
+/// \param    speed: Velocitat de conmutacio.
+/// \param    af: La funcio alternativa.
+///
+void GPIOUtils::initAlternate(
+    GPIO_TypeDef * const gpio,
+    PinBit bit,
+    OutputType type,
+	PullUpDown pupd,
+    Speed speed,
+    AlternateFunction af) {
+
+	auto a = startAtomic();
+
+    auto b = uint8_t(bit);
+
+    // Configura el pin com entrada/sortida alternativa
+    //
+    auto MODER = gpio->MODER;
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::ALTERNATE << (b * 2));
+    gpio->MODER = MODER;
+
+    // Configura el driver de sortida
+    //
+    auto OTYPER = gpio->OTYPER;
+    clear(OTYPER, OTYPE::Mask << b);
+    set(OTYPER, convert(type) << b);
+    gpio->OTYPER = OTYPER;
+
+    // Configura la resistencia pull UP
+    //
+    auto PUPDR = gpio->PUPDR;
+    clear(PUPDR, PUPD::Mask << (b * 2));
+    set(PUPDR, convert(pupd) << (b * 2));
+    gpio->PUPDR = PUPDR;
+
+    // Configura la velocitat de conmutacio
+    //
+    auto OSPEEDR = gpio->OSPEEDR;
+    clear(OSPEEDR, OSPEED::Mask << (b * 2));
+    set(OSPEEDR, convert(speed) << (b * 2));
+    gpio->OSPEEDR = OSPEEDR;
+
+    // Selecciona la funcio alternativa
+    //
+    auto AFR = gpio->AFR[b >> 3];
+    clear(AFR, AF::Mask << ((b & 0x07) * 4)) ;
+    set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
+    gpio->AFR[b >> 3] = AFR;
+
+    endAtomic(a);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza un pin entrada analogica
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    bit: Bit del pin a inicialitzar.
+///
+void GPIOUtils::initAnalogic(
+	GPIO_TypeDef * const gpio,
+	PinBit bit) {
+
+    auto b = uint8_t(bit);
+
+    auto a = startAtomic();
+
+    // Configura el pin com entrada analogica
+    //
+    auto MODER = gpio->MODER;
+    clear(MODER, MODE::Mask << (b * 2));
+    set(MODER, MODE::ANALOGIC << (b * 2));
+    gpio->MODER = MODER;
+
+    endAtomic(a);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza els pins. Els deixa en la seva configuracio
+///           per defecte.
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    mask: Mascara dels pins a desinicialitzar.
 ///
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
-void PortDevice::deinitialize() const {
+void GPIOUtils::deinitialize(
+	GPIO_TypeDef * const gpio,
+	PinMask mask) {
+
+    auto m = (uint16_t) mask;
+    for (auto b = 0; b < 16; b++) {
+        if ((m & (1 << b)) != 0)
+            deinitialize(gpio, PinBit(b));
+    }
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza un pin. El deixa en la seva configuracio
+///           per defecte.
+/// \param    gpio: Registres de hardware del GPIO.
+/// \param    bit: El bit del pin a desinicialitzar.
+///
+#if HTL_GPIO_OPTION_DEACTIVATE == 1
+void GPIOUtils::deinitialize(
+	GPIO_TypeDef * const gpio,
+	PinBit bit) {
 
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio.
-/// \param    params: Parametres d'inicialitzacio.
+/// \brief    Converteix OutputType a uint32_t
+/// \param    mode: El valor a convertir.
+/// \return   El resultat.
 ///
-void PinDevice::initialize(
-    const InitParams &params) const {
+uint32_t convert(
+	htl::gpio::OutputType type) {
 
-    switch(params.mode) {
-        case InitMode::input:
-            initInput(params.input.pupd);
-            break;
+	return type == OutputType::pushPull ? OTYPE::PP : OTYPE::OD;
+}
 
-        case InitMode::output:
-        	initOutput(params.output.type, params.output.pupd,
-        		params.output.speed, params.output.state);
-            break;
 
-        case InitMode::alternate:
-        	initAlternate(params.alternate.type, params.alternate.pupd,
-        		params.alternate.speed, params.alternate.function);
-            break;
+/// ----------------------------------------------------------------------
+/// \brief    Converteix Speed a uint32_t
+/// \param    speed: El valor a convertir.
+/// \return   El resultat.
+///
+uint32_t convert(
+	htl::gpio::Speed speed) {
 
-        case InitMode::analogic:
-        	initAnalogic();
-            break;
+    switch (speed) {
+    	case Speed::low:
+    	    return OSPEED::LOW;
+
+    	case Speed::medium:
+    	    return OSPEED::MEDIUM;
+
+    	case Speed::high:
+    	    return OSPEED::HIGH;
+
+    	default:
+    	    return OSPEED::FAST;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Converteix el valor PullUp a uint32_t
+/// \param    pupd: El valor a convertir
+/// \return   El resultat.
+///
+uint32_t convert(
+	htl::gpio::PullUpDown pupd)  {
+
+	switch (pupd) {
+		case PullUpDown::up:
+			return PUPD::UP;
+
+		case PullUpDown::down:
+			return PUPD::DOWN;
+
+		default:
+			return PUPD::NONE;
+	}
 }
