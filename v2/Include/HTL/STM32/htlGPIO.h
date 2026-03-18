@@ -180,7 +180,6 @@ namespace htl {
 				static void initOutput(GPIO_TypeDef * const gpio, PinBit bit, OutputType, PullUpDown pupd, Speed speed, bool state);
 				static void initAnalogic(GPIO_TypeDef * const gpio, PinBit bit);
 				static void initAlternate(GPIO_TypeDef * const gpio, PinBit bit, OutputType type, PullUpDown pull, Speed speed, AlternateFunction af);
-
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
 				static void deinitialize(GPIO_TypeDef * const gpio, PinMask mask);
 				static void deinitialize(GPIO_TypeDef * const gpio, PinBit bit);
@@ -305,20 +304,26 @@ namespace htl {
 
         	public:
 				static void activate(PinMask mask) {
+					auto pm = __get_PRIMASK();
+					__disable_irq();
 					if (!_usedPins) {
 						bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
 						__DSB();
 					}
 					bits::set(_usedPins, (uint16_t) mask);
+					__set_PRIMASK(pm);
 				}
 
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
 				static void deactivate(PinMask mask) {
+					auto pm = __get_PRIMASK();
+					__disable_irq();
                     bits::clear(_usedPins, (uint16_t) mask);
 					if (!_usedPins) {
 						bits::clear(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
 						__DSB();
 					}
+					__set_PRIMASK(pm);
 				}
 #endif
         };
@@ -353,28 +358,26 @@ namespace htl {
 				}
 
 				static inline void set(PinMask mask) {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					gpio->BSRR = mask;
+                    reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = mask;
 				}
 
 				static inline void clear(PinMask mask) {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					gpio->BSRR = mask << 16;
+					reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = mask << 16;
 				}
 
 				static inline void toggle(PinMask mask) {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					gpio->ODR ^= mask;
+                    auto pm = __get_PRIMASK();
+                    __disable_irq();
+                    reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->ODR ^= mask;
+					__set_PRIMASK(pm);
 				}
 
 				static inline uint16_t read(PinMask mask) {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					return gpio->IDR & (uint16_t) mask;
+					return reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->IDR & (uint16_t) mask;
 				}
 
 				static inline void write(PinMask mask, uint16_t state) {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                    gpio->BSRR = ((~state & mask) << 16) | (state & mask);
+					reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = ((~state & mask) << 16) | (state & mask);
 				}
 		};
 
@@ -395,7 +398,6 @@ namespace htl {
                 using Initializer = GPIOPinInitializer<portID_, pinID_>;
 
         	private:
-                static constexpr auto _bit = PinTraits::bit;
                 static constexpr auto _mask = PinMask(1 << PinTraits::bit);
                 static constexpr auto _gpioAddr = PortTraits::gpioAddr;
 
@@ -428,29 +430,26 @@ namespace htl {
 #endif
 
                 static inline void set() {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                    gpio->BSRR = _mask;
+                    reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = _mask;
 				}
 
 				static inline void clear() {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					gpio->BSRR = _mask << 16;
+                    reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = _mask << 16;
 				}
 
 				static inline void toggle() {
-                    auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-				    auto odr = gpio->ODR;
-				    gpio->BSRR = (odr & (1 << (_bit + 16))) | (~odr & (1 << _bit));
+                    auto pm = __get_PRIMASK();
+                    __disable_irq();
+                    reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->ODR ^= _mask;
+				    __set_PRIMASK(pm);
 				}
 
 				static inline void write(bool state) {
-	                 auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-                     gpio->BSRR = state ? (1 << _bit) : 1 << (_bit + 16);
+	                 reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = state ? _mask : _mask << 16;
 				}
 
 				static inline bool read() {
-	                 auto gpio = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr);
-					 return (gpio->IDR & (1 << _bit)) != 0;
+					 return (reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->IDR & _mask) != 0;
 				}
         };
 
@@ -521,16 +520,10 @@ namespace htl {
 
 				inline void write(PinMask mask, uint16_t state) const {
 					writeImpl(mask, state);
-					//_gpio->ODR = mask;
-				}
-
-				inline void write(PinMask clearMask, PinMask setMask) const {
-				    //_gpio->BSRR = (clearMask << 16) | setMask;
 				}
 
 				inline void write(PinBit bit, bool state) const {
 					writeImpl(PinMask(bit), state ? 1 << bit : 0);
-					//_gpio->BSRR = 1 << (bit + (state ? 0 : 16));
 				}
 		};
 
@@ -578,9 +571,8 @@ namespace htl {
                 	return Port::read(mask);
                 }
 
-            public:
-                static void interruptHandler() {
-                    _instance.interruptService();
+                void writeImpl(PinMask mask, uint16_t state) const override {
+                	Port::write(mask, state);
                 }
         };
         template <PortID portID_>
@@ -720,37 +712,37 @@ namespace htl {
 
 
 #ifdef HTL_GPIOA_EXIST
-        typedef PortDeviceX<PortID::portA> PortA;
+        using PortA = PortDeviceX<PortID::portA>;
 #endif
 #ifdef HTL_GPIOB_EXIST
-        typedef PortDeviceX<PortID::portB> PortB;
+        using PortB = PortDeviceX<PortID::portB>;
 #endif
 #ifdef HTL_GPIOC_EXIST
-        typedef PortDeviceX<PortID::portC> PortC;
+        using PortC = PortDeviceX<PortID::portC>;
 #endif
 #ifdef HTL_GPIOD_EXIST
-        typedef PortDeviceX<PortID::portD> PortD;
+        using PortD = PortDeviceX<PortID::portD>;
 #endif
 #ifdef HTL_GPIOE_EXIST
-        typedef PortDeviceX<PortID::portE> PortE;
+        using PortE = PortDeviceX<PortID::portE>;
 #endif
 #ifdef HTL_GPIOF_EXIST
-        typedef PortDeviceX<PortID::portF> PortF;
+        using PortF = PortDeviceX<PortID::portF>;
 #endif
 #ifdef HTL_GPIOG_EXIST
-        typedef PortDeviceX<PortID::portG> PortG;
+        using PortG = PortDeviceX<PortID::portG>;
 #endif
 #ifdef HTL_GPIOH_EXIST
-        typedef PortDeviceX<PortID::portH> PortH;
+        using PortH = PortDeviceX<PortID::portH>;
 #endif
 #ifdef HTL_GPIOI_EXIST
-        typedef PortDeviceX<PortID::portI> PortI;
+        using PortI = PortDeviceX<PortID::portI>;
 #endif
 #ifdef HTL_GPIOJ_EXIST
-        typedef PortDeviceX<PortID::portJ> PortJ;
+        using PortJ = PortDeviceX<PortID::portJ>;
 #endif
 #ifdef HTL_GPIOK_EXIST
-        typedef PortDeviceX<PortID::portK> PortK;
+        using PortK = PortDeviceX<PortID::portK>;
 #endif
 
 #ifdef HTL_GPIOA_EXIST

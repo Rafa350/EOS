@@ -247,25 +247,25 @@ namespace htl {
 				template <typename pin_>
 				void initPinCH1(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed) {
 				    auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch1, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(type, pupd, speed, af);
+				    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH2(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed) {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch2, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternatet(type, pupd, speed, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternatet(type, pupd, speed, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH3(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed) {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch3, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(type, pupd, speed, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 				}
 
 				template <typename pin_>
 				inline void initPinCH4(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed) {
 					auto af = internal::PinFunctionInfo<deviceID_, PinFunction::ch4, pin_::portID, pin_::pinID>::value;
-					pin_::pInst->initAlternate(type, pupd, speed, af);
+					gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 				}
 		};
 
