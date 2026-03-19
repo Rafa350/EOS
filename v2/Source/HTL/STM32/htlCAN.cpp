@@ -280,8 +280,8 @@ Result CANDevice::initialize(
 		//
 		auto RXGFC = _can->RXGFC;
 		clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM | FDCAN_RXGFC_LSS | FDCAN_RXGFC_LSE);
-		set(RXGFC, (eos::min(params->stdFiltersNbr, absoluteMaxStandardFilters) << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
-		set(RXGFC, (eos::min(params->extFiltersNbr, absoluteMaxExtendedFilters) << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
+		set(RXGFC, (Math::min(params->stdFiltersNbr, absoluteMaxStandardFilters) << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
+		set(RXGFC, (Math::min(params->extFiltersNbr, absoluteMaxExtendedFilters) << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
 		_can->RXGFC = RXGFC;
 
 		// Convenient borrar la ram dels filtres
@@ -953,7 +953,7 @@ void CANDevice::copyFromRxFifo(
 	// Obte les dades. Les lectures en mode 32bits son mes eficients.
 	//
 	uint8_t *p = (uint8_t*) pBuffer->data;
-	unsigned ii = eos::min(dataSize, (unsigned)__dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]);
+	unsigned ii = Math::min(dataSize, (unsigned)__dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]);
 	for (unsigned i = 0; i < ii; i++)
 		data[i] = p[i];
 }

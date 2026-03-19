@@ -11,23 +11,19 @@ using namespace eos;
 /// \param    application: L'aplicacio.
 ///
 MessengerService::MessengerService():
-	Service() {
+	Service(),
+	_messageQueue{10} {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Afegeix un bus al servei.
-/// \param    bus: El bus a afeigir.
+/// \brief    Executa les tasques del servei.
 ///
-void MessengerService::addPublisher(
-    Publisher *publisher) {
-
-    _publishers.pushFront(publisher);
-}
-
-
 void MessengerService::onExecute() {
 
-    while (!stopSignal())
-        Task::delay(1000);
+    while (!stopSignal()) {
+    	Message message;
+    	while (_messageQueue.pop(message, (unsigned) -1)) {
+    	}
+    }
 }

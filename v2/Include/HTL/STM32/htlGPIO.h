@@ -13,7 +13,6 @@
 #include "HTL/htl.h"
 #include "HTL/htlDevice.h"
 #include "HTL/htlBits.h"
-#include "HTL/STM32/htl.h"
 
 
 // Default options
@@ -152,14 +151,6 @@ namespace htl {
 			openDrain
 		};
 
-		/// Modus d'inicialitzacio.
-		///
-        enum class InitMode {
-            input,
-            output,
-            alternate,
-            analogic
-        };
 
 		namespace internal {
 
@@ -746,40 +737,40 @@ namespace htl {
 #endif
 
 #ifdef HTL_GPIOA_EXIST
-        typedef PinDeviceX<PortID::portA, PinID::pin0> PinA0;
-        typedef PinDeviceX<PortID::portA, PinID::pin1> PinA1;
-        typedef PinDeviceX<PortID::portA, PinID::pin2> PinA2;
-        typedef PinDeviceX<PortID::portA, PinID::pin3> PinA3;
-        typedef PinDeviceX<PortID::portA, PinID::pin4> PinA4;
-        typedef PinDeviceX<PortID::portA, PinID::pin5> PinA5;
-        typedef PinDeviceX<PortID::portA, PinID::pin6> PinA6;
-        typedef PinDeviceX<PortID::portA, PinID::pin7> PinA7;
-        typedef PinDeviceX<PortID::portA, PinID::pin8> PinA8;
-        typedef PinDeviceX<PortID::portA, PinID::pin9> PinA9;
-        typedef PinDeviceX<PortID::portA, PinID::pin10> PinA10;
-        typedef PinDeviceX<PortID::portA, PinID::pin11> PinA11;
-        typedef PinDeviceX<PortID::portA, PinID::pin12> PinA12;
-        typedef PinDeviceX<PortID::portA, PinID::pin13> PinA13;
-        typedef PinDeviceX<PortID::portA, PinID::pin14> PinA14;
-        typedef PinDeviceX<PortID::portA, PinID::pin15> PinA15;
+        using PinA0 = PinDeviceX<PortID::portA, PinID::pin0>;
+        using PinA1 = PinDeviceX<PortID::portA, PinID::pin1>;
+        using PinA2 = PinDeviceX<PortID::portA, PinID::pin2>;
+        using PinA3 = PinDeviceX<PortID::portA, PinID::pin3>;
+        using PinA4 = PinDeviceX<PortID::portA, PinID::pin4>;
+        using PinA5 = PinDeviceX<PortID::portA, PinID::pin5>;
+        using PinA6 = PinDeviceX<PortID::portA, PinID::pin6>;
+        using PinA7 = PinDeviceX<PortID::portA, PinID::pin7>;
+        using PinA8 = PinDeviceX<PortID::portA, PinID::pin8>;
+        using PinA9 = PinDeviceX<PortID::portA, PinID::pin9>;
+        using PinA10 = PinDeviceX<PortID::portA, PinID::pin10>;
+        using PinA11 = PinDeviceX<PortID::portA, PinID::pin11>;
+        using PinA12 = PinDeviceX<PortID::portA, PinID::pin12>;
+        using PinA13 = PinDeviceX<PortID::portA, PinID::pin13>;
+        using PinA14 = PinDeviceX<PortID::portA, PinID::pin14>;
+        using PinA15 = PinDeviceX<PortID::portA, PinID::pin15>;
 #endif
 #ifdef HTL_GPIOB_EXIST
-        typedef PinDeviceX<PortID::portB, PinID::pin0> PinB0;
-        typedef PinDeviceX<PortID::portB, PinID::pin1> PinB1;
-        typedef PinDeviceX<PortID::portB, PinID::pin2> PinB2;
-        typedef PinDeviceX<PortID::portB, PinID::pin3> PinB3;
-        typedef PinDeviceX<PortID::portB, PinID::pin4> PinB4;
-        typedef PinDeviceX<PortID::portB, PinID::pin5> PinB5;
-        typedef PinDeviceX<PortID::portB, PinID::pin6> PinB6;
-        typedef PinDeviceX<PortID::portB, PinID::pin7> PinB7;
-        typedef PinDeviceX<PortID::portB, PinID::pin8> PinB8;
-        typedef PinDeviceX<PortID::portB, PinID::pin9> PinB9;
-        typedef PinDeviceX<PortID::portB, PinID::pin10> PinB10;
-        typedef PinDeviceX<PortID::portB, PinID::pin11> PinB11;
-        typedef PinDeviceX<PortID::portB, PinID::pin12> PinB12;
-        typedef PinDeviceX<PortID::portB, PinID::pin13> PinB13;
-        typedef PinDeviceX<PortID::portB, PinID::pin14> PinB14;
-        typedef PinDeviceX<PortID::portB, PinID::pin15> PinB15;
+        using PinB0 = PinDeviceX<PortID::portB, PinID::pin0>;
+        using PinB1 = PinDeviceX<PortID::portB, PinID::pin1>;
+        using PinB2 = PinDeviceX<PortID::portB, PinID::pin2>;
+        using PinB3 = PinDeviceX<PortID::portB, PinID::pin3>;
+        using PinB4 = PinDeviceX<PortID::portB, PinID::pin4>;
+        using PinB5 = PinDeviceX<PortID::portB, PinID::pin5>;
+        using PinB6 = PinDeviceX<PortID::portB, PinID::pin6>;
+        using PinB7 = PinDeviceX<PortID::portB, PinID::pin7>;
+        using PinB8 = PinDeviceX<PortID::portB, PinID::pin8>;
+        using PinB9 = PinDeviceX<PortID::portB, PinID::pin9>;
+        using PinB10 = PinDeviceX<PortID::portB, PinID::pin10>;
+        using PinB11 = PinDeviceX<PortID::portB, PinID::pin11>;
+        using PinB12 = PinDeviceX<PortID::portB, PinID::pin12>;
+        using PinB13 = PinDeviceX<PortID::portB, PinID::pin13>;
+        using PinB14 = PinDeviceX<PortID::portB, PinID::pin14>;
+        using PinB15 = PinDeviceX<PortID::portB, PinID::pin15>;
 #endif
 #ifdef HTL_GPIOC_EXIST
         typedef PinDeviceX<PortID::portC, PinID::pin0> PinC0;

@@ -15,14 +15,14 @@ namespace eos {
 
     class MessengerService final: public Service {
     	private:
-    		struct RawMessage {
+    		struct Message {
     			uint16_t id;
     			void *payload;
     		};
-    		using RawMessageQueue = Queue<RawMessage>;
+    		using MessageQueue = Queue<Message>;
 
     	private:
-    		RawMessageQueue _rawMessageQueue;
+    		MessageQueue _messageQueue;
 
     	protected:
             void onExecute() override;

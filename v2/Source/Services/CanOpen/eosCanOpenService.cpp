@@ -1,7 +1,7 @@
 #include "eos.h"
-#include "services/canopen/eos_canopen_dictionary.h"
-#include "services/canopen/eos_canopen_service.h"
-#include "services/canopen/eos_canopen_protocols.h"
+#include "Services/canopen/eos_canopen_dictionary.h"
+#include "Services/CanOpen/eosCanOpenService.h"
+#include "Services/canopen/eos_canopen_protocols.h"
 
 
 using namespace eos;
@@ -1064,35 +1064,7 @@ Result CanOpenService::resetCommunication(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Senyal de sincronitzacio el bus
-/// \param    timeout: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-Result CanOpenService::synchronize(
-	unsigned timeout) {
-
-	uint32_t options;
-	if (_dictionary->readU32(0x1005, 0x00, options) &&
-		htl::bits::isSet(options, (uint32_t)(1 << 30))) {
-
-		Message msg = {
-			.id { MessageID::sendFrame},
-			.sendFrame {
-				.cobid {CobID(options & 0x007F)},
-				.dataLen {0}
-			}
-		};
-		if (_messageQueue.push(msg, timeout))
-			return Result::ErrorCodes::ok;
-	}
-
-	return Result::ErrorCodes::error;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Envia un TPDOx
+/// \brief    Envia un TPDOx al bus
 /// \param    tpdo: El identificador del TPDOx
 ///
 void CanOpenService::sendTPDO(
@@ -1387,6 +1359,34 @@ Result CanOpenService::emitNMT(
 	};
 	if (_messageQueue.push(msg, timeout))
 		return Result::ErrorCodes::ok;
+
+	return Result::ErrorCodes::error;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera un missatge SYNC
+/// \param    timeout: El temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+Result CanOpenService::emitSYNC(
+	unsigned timeout) {
+
+	uint32_t options;
+	if (_dictionary->readU32(0x1005, 0x00, options) &&
+		htl::bits::isSet(options, (uint32_t)(1 << 30))) {
+
+		Message msg = {
+			.id { MessageID::sendFrame},
+			.sendFrame {
+				.cobid {CobID(options & 0x007F)},
+				.dataLen {0}
+			}
+		};
+		if (_messageQueue.push(msg, timeout))
+			return Result::ErrorCodes::ok;
+	}
 
 	return Result::ErrorCodes::error;
 }

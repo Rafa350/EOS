@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eos_canopen_service__
-#define __eos_canopen_service__
+#ifndef __eosCanOpenService__
+#define __eosCanOpenService__
 
 
 #include "eos.h"
@@ -228,7 +228,7 @@ namespace eos {
 
             // Senyal de sincronitzacio al bus
             //
-            Result synchronize(unsigned timeout);
+            Result emitSYNC(unsigned timeout);
 
 			// Emet missatges RPDO
 			//
@@ -255,4 +255,4 @@ namespace eos {
 }
 
 
-#endif // __eos_canopen_service__
+#endif // __eosCanOpenService__
