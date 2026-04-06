@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Services/canopen/eos_canopen_dictionary.h"
+#include "Services/CanOpen/eosCanOpenDictionary.h"
 #include "Services/CanOpen/eosCanOpenService.h"
 #include "Services/canopen/eos_canopen_protocols.h"
 
@@ -804,6 +804,9 @@ void CanOpenService::processRPDO(
 							value |= *pData++ << 24;
 							raiseWriteU32RequestEvent(index, subIndex, value);
 						}
+						break;
+
+					default:
 						break;
 				}
 			}

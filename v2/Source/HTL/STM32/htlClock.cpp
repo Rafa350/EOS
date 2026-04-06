@@ -3,16 +3,6 @@
 #include "HTL/STM32/htlClock.h"
 
 
-#if defined(EOS_PLATFORM_STM32G0)
-#define RCC_CFGR_SW_HSISYS        (0UL << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_HSE           (1UL << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_PLLRCLK       (2UL << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_LSI           (3UL << RCC_CFGR_SW_Pos)
-#define RCC_CFGR_SW_LSE           (4UL << RCC_CFGR_SW_Pos)
-#define RCC_PLLCFGR_PLLSRC_HSI16  (2UL << RCC_PLLCFGR_PLLSRC_Pos)
-#endif
-
-
 using namespace htl::bits;
 using namespace htl::clock;
 
@@ -241,7 +231,7 @@ void ClockDevice::disablePLL() const {
 		continue;
 
 #if defined(EOS_PLATFORM_STM32G0)
-	clear(RCC->PLLCFGR, RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLQEN | RCC_PLLCFGR_PLLREN);
+	clear(RCC->PLLCFGR, RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLQEN | RCC_PLLCFGR_PLLREN | RCC_PLLCFGR_PLLSRC);
 #endif
 }
 
@@ -425,7 +415,7 @@ bool ClockDevice::configurePLL(
 		case PLLsource::hsi16:
             if (!isHSI16Enabled())
                 return false;
-			set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSI16);
+			set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSI);
 			break;
 
 		case PLLsource::hse:

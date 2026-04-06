@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Services/CanOpen/eos_canopen_dictionary.h"
+#include "Services/CanOpen/eosCanOpenDictionary.h"
 #include "System/Core/eosTask.h"
 
 

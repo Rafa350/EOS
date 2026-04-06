@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eos_canopen_dictionary__
-#define __eos_canopen_dictionary__
+#ifndef __eosCanOpenDictionary__
+#define __eosCanOpenDictionary__
 
 
 #include "eos.h"
@@ -157,4 +157,4 @@ namespace eos {
 }
 
 
-#endif // __eos_canopen_dictionary__
+#endif // __eosCanOpenDictionary__

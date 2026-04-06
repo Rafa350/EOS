@@ -370,6 +370,10 @@ namespace htl {
 				static inline void write(PinMask mask, uint16_t state) {
 					reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->BSRR = ((~state & mask) << 16) | (state & mask);
 				}
+
+				static inline void lock() {
+
+				}
 		};
 
 		/// \brief   Gestiona un pin del GPIO
@@ -441,6 +445,13 @@ namespace htl {
 
 				static inline bool read() {
 					 return (reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->IDR & _mask) != 0;
+				}
+
+				static inline void lock() {
+	                 reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->LCKR = (1 << 16) | _mask;
+	                 reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->LCKR = (0 << 16) | _mask;
+	                 reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->LCKR = (1 << 16) | _mask;
+	                 auto dummy = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->LCKR;
 				}
         };
 
