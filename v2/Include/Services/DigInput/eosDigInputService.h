@@ -89,9 +89,10 @@ namespace eos {
 
             void setScanPeriod(unsigned scanPeriod);
 
-            DigInput* addInput(PinDriver *drv, unsigned tag = 0);
+            DigInput* addInput(PinDriver *drv, unsigned tag = (unsigned) -1);
             void removeInput(DigInput *input);
             void removeInputs();
+            DigInput *getInput(unsigned tag) const;
 
             bool read(const DigInput *input) const;
             unsigned getEdges(DigInput *input, bool clear = true) const;

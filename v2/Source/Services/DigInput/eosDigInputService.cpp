@@ -190,6 +190,22 @@ void DigInputService::removeInputs() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte l'entrada amb el tag especificat.
+/// \param    tag: El tag de l'entrada a buscar.
+/// \return   L'entrada, o nullptr si no la troba.
+///
+DigInput *DigInputService::getInput(
+	unsigned tag) const {
+
+	for (auto input: _inputs)
+		if (input->getTag() == tag)
+			return input;
+
+	return nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicialitza els parametres del servei.
 /// \param    params: Els parametres.
 ///

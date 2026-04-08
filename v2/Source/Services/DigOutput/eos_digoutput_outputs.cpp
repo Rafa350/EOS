@@ -1,21 +1,17 @@
 #include "eos.h"
-#include "System/Core/eosTask.h"
 #include "Services/DigOutput/eosDigOutputService.h"
 #include "eos_digoutput_outputs.h"
-
-
-using namespace eos;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Contructor
 /// \param    dev: El driver del pin.
 ///
-Output::Output(
-	PinDriver *drv,
+eos::Output::Output(
+	eos::PinDriver *drv,
 	unsigned tag):
 
-	DigOutput {tag},
+	eos::DigOutput {tag},
 	_drv {drv},
 	_value {drv->read()},
 	_state{State::idle} {
@@ -26,7 +22,7 @@ Output::Output(
 /// \brief    Obte el valor actual de la sortida.
 /// \return   El valor.
 ///
-bool Output::getValue() const {
+bool eos::Output::getValue() const {
 
 	return _value;
 }
@@ -36,7 +32,7 @@ bool Output::getValue() const {
 /// \brief    Escriu un nou valor en la sortida.
 /// \param    value: El nou valor.
 ///
-void Output::write(
+void eos::Output::write(
 	bool value) {
 
 	if (_value != value) {
@@ -49,7 +45,7 @@ void Output::write(
 /// ----------------------------------------------------------------------
 /// \brief    Escriu el valor true en la sortida.
 ///
-void Output::set() {
+void eos::Output::set() {
 
 	write(true);
 	_state = State::idle;
@@ -59,7 +55,7 @@ void Output::set() {
 /// ----------------------------------------------------------------------
 /// \brief    Escriu el valor false en la sortida.
 ///
-void Output::clear() {
+void eos::Output::clear() {
 
 	write(false);
 	_state = State::idle;
@@ -69,7 +65,7 @@ void Output::clear() {
 /// ----------------------------------------------------------------------
 /// \brief    Inverteix el valor de la sortida.
 ///
-void Output::toggle() {
+void eos::Output::toggle() {
 
 	write(!_value);
 	_state = State::idle;
@@ -81,7 +77,7 @@ void Output::toggle() {
 /// \param    time: El temps actual.
 /// \param    pulse: Durada del puls.
 ///
-void Output::pulse(
+void eos::Output::pulse(
 	unsigned time,
 	unsigned pulse) {
 
@@ -98,7 +94,7 @@ void Output::pulse(
 /// \param    time: El temps actual.
 /// \param    delay: Durada del retard.
 ///
-void Output::delayedSet(
+void eos::Output::delayedSet(
 	unsigned time,
 	unsigned delay) {
 
@@ -112,7 +108,7 @@ void Output::delayedSet(
 /// \param    time: El temps actual.
 /// \param    delay: Durada del retard.
 ///
-void Output::delayedClear(
+void eos::Output::delayedClear(
 	unsigned time,
 	unsigned delay) {
 
@@ -126,7 +122,7 @@ void Output::delayedClear(
 /// \param    time: El temps actual.
 /// \param    delay: Durada del retard.
 ///
-void Output::delayedToggle(
+void eos::Output::delayedToggle(
 	unsigned time,
 	unsigned delay) {
 
@@ -141,7 +137,7 @@ void Output::delayedToggle(
 /// \brief    delay: Durada del retard.
 /// \param    pulse: Durada del puls.
 ///
-void Output::delayedPulse(
+void eos::Output::delayedPulse(
 	unsigned time,
 	unsigned delay,
 	unsigned pulse) {
@@ -156,7 +152,7 @@ void Output::delayedPulse(
 /// \brief    Procesa els temps.
 /// \param    time: El temps actual.
 ///
-void Output::tick(
+void eos::Output::tick(
 	unsigned time) {
 
 	switch (_state) {
@@ -207,7 +203,7 @@ void Output::tick(
 /// \param    endTime: Temps limit.
 /// \return   True si el temps actual es posterior al temps limit.
 ///
-bool Output::hasExpired(
+bool eos::Output::hasExpired(
 	unsigned time,
 	unsigned endTime) {
 

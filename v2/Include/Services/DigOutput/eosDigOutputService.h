@@ -34,20 +34,20 @@
 #   define DigOutputService_MaxPulseWidth 1000000
 #endif
 
+// Modus segur (Verificacio complerta de parametres critics, es mes lent i ocupa mes flash)
+#define DigOutputService_SafeMode 0
+
 
 namespace eos {
 
     class DigOutput;
 
-    using DigOutputList1 = IntrusiveForwardList<DigOutput, 1>;
-    using DigOutputListNode1 = IntrusiveForwardListNode<DigOutput, 1>;
-
-    using DigOutputList2 = IntrusiveForwardList<DigOutput, 2>;
-    using DigOutputListNode2 = IntrusiveForwardListNode<DigOutput, 2>;
+    using DigOutputList = IntrusiveForwardList<DigOutput, 0>;
+    using DigOutputListNode = IntrusiveForwardListNode<DigOutput, 0>;
 
     /// \brief Clase que representa una sortida digital individual.
     ///
-    class DigOutput: public DigOutputListNode1, public DigOutputListNode2  {
+    class DigOutput: public DigOutputListNode {
     	private:
     		unsigned _tag;
 
@@ -56,8 +56,9 @@ namespace eos {
 
     	public:
     	    DigOutput(const DigOutput&) = delete;
-    	    DigOutput& operator=(const DigOutput&) = delete;
     	    DigOutput(const DigOutput&&) = delete;
+
+    	    DigOutput& operator=(const DigOutput&) = delete;
     	    DigOutput& operator=(const DigOutput&&) = delete;
 
     	    inline unsigned getTag() const { return _tag; }
@@ -110,14 +111,14 @@ namespace eos {
             static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
 
     	private:
-            DigOutputList1 _outputs;
+            DigOutputList _outputs;
 
             NotificationEventRaiser _erNotification;
             volatile unsigned _timeCounter;
             ActionQueue _actionQueue;
 
         private:
-            void actionDispatcher(const Action &action);
+            void processAction(const Action &action);
             void processClear(Output *output);
             void processSet(Output *output);
             void processToggle(Output *output);
@@ -143,9 +144,11 @@ namespace eos {
             DigOutputService& operator=(const DigOutputService&) = delete;
     	    DigOutputService& operator=(const DigOutputService&&) = delete;
 
-            DigOutput* addOutput(PinDriver *drv, unsigned tag = 0);
+            DigOutput* addOutput(PinDriver *drv, unsigned tag = (unsigned) -1);
             void removeOutput(DigOutput *output);
             void removeOutputs();
+            bool containsOutput(DigOutput *output) const;
+            DigOutput *getOutput(unsigned tag) const;
 
             inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
             	_erNotification.set(event, enabled);

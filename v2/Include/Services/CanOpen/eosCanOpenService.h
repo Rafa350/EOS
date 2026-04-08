@@ -6,7 +6,7 @@
 #include "eos.h"
 #include "htl/STM32/htlCAN.h"
 #include "Services/eosService.h"
-#include "services/canopen/eos_canopen_protocols.h"
+#include "services/CanOpen/eosCanOpenProtocol.h"
 #include "System/Core/eosQueue.h"
 #include "System/Core/eosTimer.h"
 
@@ -217,6 +217,12 @@ namespace eos {
 
             // Lectura i escriptura en el dicionari remot
             //
+            bool writeU8(NodeID nodeId, uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask);
+            bool writeU16(NodeID nodeId, uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask);
+            bool writeU32(NodeID nodeId, uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask);
+            bool readU8(NodeID nodeId, uint16_t index, uint8_t subIndex, uint8_t &value);
+            bool readU16(NodeID nodeId, uint16_t index, uint8_t subIndex, uint16_t &value);
+            bool readU32(NodeID nodeId, uint16_t index, uint8_t subIndex, uint32_t &value);
 
             // Canvia l'estat d'un node remot
             //

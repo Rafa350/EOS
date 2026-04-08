@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eos_canopen_protocols__
-#define __eos_canopen_protocols__
+#ifndef __eosCanOpenProtocol__
+#define __eosCanOpenProtocol__
 
 
 namespace eos {
@@ -96,5 +96,5 @@ namespace eos {
 }
 
 
-#endif // __eos_canopen_protocols__
+#endif // __eosCanOpenProtocol__
 

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eos_canopen_sdoserver__
-#define __eos_canopen_sdoserver__
+#ifndef __eosCanOpenSdoServer__
+#define __eosCanOpenSdoServer__
 
 
 #include "eos.h"
@@ -35,4 +35,4 @@ namespace eos {
 }
 
 
-#endif // __eos_canopen_sdoserver__
+#endif // __eosCanOpenSdoServer__

@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
-#include "Services/CanOpen/eos_canopen_sdoserver.h"
-#include "Services/CanOPen/eos_canopen_protocols.h"
+#include "Services/CanOpen/eosCanOpenSdoServer.h"
+#include "Services/CanOPen/eosCanOpenProtocol.h"
 
 
 using namespace eos;
