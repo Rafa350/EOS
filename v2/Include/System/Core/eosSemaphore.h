@@ -6,23 +6,28 @@
 // EOS includes
 //
 #include "eos.h"
-#include "OSAL/osalSemaphore.h"
+#include "RTOS/rtosMiliseconds.h"
+#include "RTOS/rtosSemaphore.h"
 
 
 namespace eos {
 
     class Semaphore {
         private:
-            HSemaphore _hSemaphore;
+    		rtos::Semaphore _semaphore;
 
         public:
-            Semaphore();
-            Semaphore(unsigned maxCount);
-            ~Semaphore();
+            inline bool wait(uint32_t blockTime) const {
+            	return _semaphore.wait(rtos::Miliseconds(blockTime));
+            }
 
-            bool wait(unsigned blockTime) const;
-            void release() const;
-            void releaseISR() const;
+            inline void release() const {
+            	_semaphore.release();
+            }
+
+            inline void releaseISR() const {
+            	_semaphore.releaseISR();
+            }
     };
 }
 

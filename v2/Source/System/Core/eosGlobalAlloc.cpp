@@ -1,6 +1,5 @@
 #include "eos.h"
-#include "eosAssert.h"
-#include "OSAL/osalHeap.h"
+#include "RTOS/rtosHeap.h"
 
 
 /// ----------------------------------------------------------------------
@@ -10,30 +9,23 @@
 void* operator new(
     size_t size) {
 
-    eosAssert(size > 0);
-
-    void *p = osalHeapAlloc(nullptr, size);
-    eosAssert(p != nullptr);
-
-    return p;
+    return rtos::Heap::allocate(size);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Operador delete global.
-/// \param    p: Punter al bloc de memoria a alliberar.
+/// \param    ptr: Punter al bloc de memoria a alliberar.
 ///
 void operator delete(
-    void *p) {
+    void *ptr) {
 
-    eosAssert(p != nullptr);
-
-    osalHeapFree(nullptr, p);
+    rtos::Heap::deallocate(ptr);
 }
 
 
 void operator delete(
-	void *p,
+	void *ptr,
 	size_t size) {
 
 }

@@ -384,11 +384,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosGuiService.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosGuiService.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Services/eosLedService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosLedService.h</locationURI>
@@ -754,6 +749,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosGuiService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiService.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosMsgQueue.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosMsgQueue.h</locationURI>
@@ -952,6 +952,11 @@
 			<name>src/Framework/EOS/HTL/STM32/htl.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htl.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlClock.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlClock.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlDMA2D.cpp</name>
@@ -1372,11 +1377,6 @@
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/HTL/STM32/F7/htlClock.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/F7/htlClock.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosBorder.cpp</name>

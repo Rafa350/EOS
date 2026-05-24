@@ -201,7 +201,7 @@ namespace eos {
 			stm32f030r8,
 
 			// STM32F429xx
-			stm32f249zi,
+			stm32f429zi,
 
 			// STM32F7446xx
 			stm32f746ng,

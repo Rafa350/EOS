@@ -1,7 +1,6 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "System/Core/eosHeapAllocator.h"
-#include "OSAL/osalHeap.h"
+#include "RTOS/rtosHeap.h"
 
 
 using namespace eos;
@@ -13,14 +12,9 @@ using namespace eos;
 /// \return   Punter al bloc de memoria. nullptr en cas d'error.
 ///
 void* MemoryHeapAllocator::allocate(
-    int size) {
+    uint32_t size) {
 
-    eosAssert(size > 0);
-
-    void* p = osalHeapAlloc(NULL, size);
-    eosAssert(p != nullptr);
-
-    return p;
+    return rtos::Heap::allocate(size);
 }
 
 
@@ -29,18 +23,8 @@ void* MemoryHeapAllocator::allocate(
 /// \param    p: Punter al bloc de memoria.
 ///
 void MemoryHeapAllocator::deallocate(
-    void *p) {
+    void *ptr) {
 
-    eosAssert(p != nullptr);
-
-    osalHeapFree(NULL, p);
+	rtos::Heap::deallocate(ptr);
 }
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'adresa del bloc de memoria
-/// \return   El resultat.
-///
-void* MemoryHeapAllocator::getAddr() const {
-
-	return nullptr;
-}

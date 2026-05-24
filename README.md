@@ -5,6 +5,8 @@
 * FreeRTOS scheduler.
 * HTL module.
   * Independent HTL (HAL Template Library) with minimal overload. C++20
+* RTOS module.
+  * Independent library for RTOS (FreeRTOS)
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
   * Color displays: ARGB8888, RGB888, RGB565, L8 (Optional CLUT) color scheme.

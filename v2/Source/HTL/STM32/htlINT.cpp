@@ -33,7 +33,7 @@ void htl::irq::setInterruptVectorPriority(
     uint32_t priorityGroup = NVIC_GetPriorityGrouping();
 
     NVIC_SetPriority(
-        static_cast<IRQn_Type>(vectorID),
+        static_cast<IRQn_Type>(vectorId),
         NVIC_EncodePriority(priorityGroup, static_cast<uint32_t>(priority),
         		static_cast<uint32_t>(subPriority)));
 }

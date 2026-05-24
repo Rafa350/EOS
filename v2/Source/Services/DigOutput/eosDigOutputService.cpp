@@ -6,10 +6,14 @@
 #include "eos_digoutput_outputs.h"
 
 
+// Parametres de la tasca del servei
+//
 constexpr const char *serviceName = "DigOutputs";
 constexpr eos::Task::Priority servicePriority = eos::Task::Priority::normal;
 constexpr unsigned serviceStackSize = 164;
 
+// Parametres de configuracio del servei
+//
 constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
 constexpr unsigned minDelay = DigOutputService_MinDelay;
 
@@ -43,12 +47,12 @@ eos::DigOutput* eos::DigOutputService::addOutput(
     eos::PinDriver *drv,
 	unsigned tag) {
 
-    Task::enterCriticalSection();
+    eos::Task::enterCriticalSection();
 
     auto output = new Output(drv, tag);
 	_outputs.pushFront(output);
 
-    Task::exitCriticalSection();
+    eos::Task::exitCriticalSection();
 
     return output;
 }
@@ -90,7 +94,7 @@ void eos::DigOutputService::removeOutputs() {
 /// ----------------------------------------------------------------------
 /// \brief    Comprova si la sortida pertany al servei.
 /// \param    output: La sortida.
-/// \return   TRue si pertany, false en cas contrari.
+/// \return   True si pertany, false en cas contrari.
 ///
 bool eos::DigOutputService::containsOutput(
 	eos::DigOutput *output) const {

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosHeapAllocator__
 #define	__eosHeapAllocator__
 
@@ -11,14 +12,8 @@ namespace eos {
 
     class MemoryHeapAllocator {
         public:
-    		MemoryHeapAllocator(int size);
-    		~MemoryHeapAllocator();
-
-            void* allocate(int size);
-            void deallocate(void* p);
-
-            void* getAddr() const;
-            int getSize() const;
+            void * allocate(uint32_t size);
+            void deallocate(void *ptr);
     };
 
     template <typename T_, int size_>
@@ -31,14 +26,11 @@ namespace eos {
             	_allocator(size_) {}
 
             inline T_* allocate() {
-                void* p = _allocator.allocate(sizeof(T_));
-                eosAssert(p != nullptr);
-                return static_cast<T_*>(p);
+                return static_cast<T_*>(_allocator.allocate(sizeof(T_)));
             }
 
-            inline void deallocate(T_* p) {
-            	eosAssert(p != nullptr);
-                _allocator.deallocate(p);
+            inline void deallocate(T_* ptr) {
+                _allocator.deallocate(ptr);
             }
     };
 

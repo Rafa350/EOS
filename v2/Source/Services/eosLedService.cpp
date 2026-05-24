@@ -49,7 +49,7 @@ void LedService::onExecute() {
     if (_pinLED2 != nullptr)
         _pinLED2->clear();
 
-    auto weakTime = Kernel::pInst->getTickCount();
+    unsigned weakTime = Kernel::pInst->getTickCount();
 
     while (!stopSignal()) {
 

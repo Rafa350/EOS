@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "hal/halSYS.h"
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_rcc.h"
 #include "stm32f7xx_hal_rcc_ex.h"
@@ -96,8 +95,6 @@ static void enableCache() {
 void appInitialize() {
 
 	enableCache();
-
-    halSYSInitialize();
 
 	initializeCLK();
 	initializeSDRAM();

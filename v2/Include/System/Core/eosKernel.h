@@ -24,7 +24,7 @@ namespace eos {
 			void suspendAll();
 			void resumeAll();
 
-			unsigned getTickCount() const;
+			uint32_t getTickCount() const;
 	};
 }
 

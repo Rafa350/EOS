@@ -1,5 +1,6 @@
 #include "eos.h"
-#include "OSAL/osalKernel.h"
+#include "RTOS/rtosKernel.h"
+#include "RTOS/rtosTicks.h"
 #include "System/Core/eosKernel.h"
 
 
@@ -23,7 +24,7 @@ Kernel::Kernel() {
 ///
 void Kernel::startScheduler() {
 
-    osalStartScheduler();
+    rtos::Kernel::startScheduler();
 }
 
 
@@ -32,6 +33,7 @@ void Kernel::startScheduler() {
 ///
 void Kernel::suspendAll() {
 
+	rtos::Kernel::stopScheduler();
 }
 
 
@@ -40,6 +42,7 @@ void Kernel::suspendAll() {
 ///
 void Kernel::resumeAll() {
 
+	rtos::Kernel::resumeAll();
 }
 
 
@@ -48,7 +51,7 @@ void Kernel::resumeAll() {
 ///           inicialitzacio del sistema.
 /// \return   El numero de ticks.
 ///
-unsigned Kernel::getTickCount() const {
+uint32_t Kernel::getTickCount() const {
 
-    return osalGetTickCount();
+    return rtos::Kernel::getTickCount();
 }
