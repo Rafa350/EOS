@@ -30,6 +30,7 @@ namespace rtos {
 			void * _handler;
 			ITaskCallback * const _taskCallback;
 			void * const _taskParams;
+			uint32_t _lastWeakTick;
 
 		private:
             static void taskFunction(void *params);
@@ -43,7 +44,8 @@ namespace rtos {
 
             static void delay(Ticks ticks);
             static void delay(Miliseconds time);
-            static void delay(Miliseconds time, unsigned& weakTime);
+            static void delayUntil(Ticks ticks);
+            static void delayUntil(Miliseconds time);
 
             static void enterCriticalSection();
             static void exitCriticalSection();

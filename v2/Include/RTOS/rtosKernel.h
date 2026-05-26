@@ -10,6 +10,13 @@ namespace rtos {
 	class Ticks;
 
 	class Kernel final {
+		public:
+			enum class State {
+				stopped,
+				running,
+				suspended
+			};
+
 		private:
 			static void tickHandler();
 
@@ -25,5 +32,10 @@ namespace rtos {
 
 			static void enterCritical();
 			static void exitCritical();
+
+			static State getState();
+			inline static bool isRunning() {
+				return  getState() == State::running;
+			}
 	};
 }

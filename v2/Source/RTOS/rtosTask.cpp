@@ -56,6 +56,8 @@ rtos::Task::Task(
 ///
 rtos::Task::~Task() {
 
+	// Comprova que el handler no s'hagi destruit previament
+	//
 	if (_handler != nullptr)
 		vTaskDelete(static_cast<TaskHandle_t>(_handler));
 }
@@ -84,6 +86,32 @@ void rtos::Task::delay(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Retarda la tasca actual finst el temps relatiu indicat, desde
+///           l'ultima activacio de la tasca
+/// \param    time: Temps d'espera en ticks
+///
+void rtos::Task::delayUntil(
+	Ticks ticks) {
+
+	Task *task = Task::getExecutingTask();
+	vTaskDelayUntil(&task->_lastWeakTick, ticks);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Retarda la tasca actual finst el temps relatiu indicat, desde
+///           l'ultima activacio de la tasca
+/// \param    time: Temps d'espera en milisegons
+///
+void rtos::Task::delayUntil(
+	Miliseconds time) {
+
+	Task *task = Task::getExecutingTask();
+	vTaskDelayUntil(&task->_lastWeakTick, time.asTicks());
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Funcio de la tasca que executa el RTOS
 /// \param    params: Parametres de la tasca. En aquest cas es
 ///           el punter 'this' del objecte 'Task'
@@ -95,6 +123,8 @@ void rtos::Task::taskFunction(
     if ((task != nullptr) &&
     	(task->_handler != nullptr) &&
 		(task->_taskCallback != nullptr)) {
+
+    	task->_lastWeakTick = xTaskGetTickCount();
 
         TaskCallbackArgs args = {
         	.task = task,

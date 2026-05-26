@@ -6,24 +6,39 @@
 #include "task.h"
 
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicia el planificador
+///
 void rtos::Kernel::startScheduler(){
 
-	vTaskStartScheduler();
+	if (xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED)
+		vTaskStartScheduler();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Para el planificador
+///
 void rtos::Kernel::stopScheduler() {
 
-	vTaskEndScheduler();
+	if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+		vTaskEndScheduler();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Entra en una seccio critica.
+///
 void rtos::Kernel::enterCritical() {
 
     taskENTER_CRITICAL();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Surt d'una seccio critica.
+///
 void rtos::Kernel::exitCritical() {
 
 	taskEXIT_CRITICAL();
@@ -37,4 +52,18 @@ void rtos::Kernel::exitCritical() {
 rtos::Ticks rtos::Kernel::getTickCount() {
 
 	return rtos::Ticks(xTaskGetTickCount());
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estat del planificador.
+/// \return   L'estat.
+///
+rtos::Kernel::State rtos::Kernel::getState() {
+
+	switch (xTaskGetSchedulerState()) {
+		case taskSCHEDULER_RUNNING: return State::running;
+		case taskSCHEDULER_SUSPENDED: return State::suspended;
+		default: return State::stopped;
+	}
 }

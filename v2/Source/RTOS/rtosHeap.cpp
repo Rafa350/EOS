@@ -3,8 +3,26 @@
 #include "FreeRTOS.h"
 
 
+#define RTOS_HEAP_USE_SAFEMODE 0
+
+
 uint32_t rtos::Heap::_allocateCount = 0;
 uint32_t rtos::Heap::_deallocateCount = 0;
+
+
+#if RTOS_HEAP_USE_SAFEMODE == 1
+constexpr uint32_t headGuard = 0x0F1E2D3C;
+constexpr uint32_t tailGuard = 0x5B5A6978;
+
+struct Head {
+	uint32_t guard;
+	uint32_t size;
+};
+
+struct Tail {
+	uint32_t guard;
+};
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -15,11 +33,28 @@ uint32_t rtos::Heap::_deallocateCount = 0;
 void * rtos::Heap::allocate(
 	uint32_t size) {
 
+#if RTOS_HEAP_USE_SAFEMODE == 1
+
+	void *ptr = pvPortMalloc(sizeof(Head) + size + sizeof(Tail));
+
+	Head *head = (Head*) ptr;
+	head->guard = headGuard;
+	head->size = size;
+
+	Tail *tail = (Tail*) ((uint8_t*)ptr + sizeof(Head) + size);
+	tail->guard = tailGuard;
+
+	return (void*) ((uint8_t*)ptr + sizeof(Head));
+
+#else
+
 	void *ptr = pvPortMalloc(size);
 	if (ptr)
 		_allocateCount++;
 
 	return ptr;
+
+#endif
 }
 
 

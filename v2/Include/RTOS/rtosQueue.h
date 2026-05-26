@@ -8,7 +8,7 @@ namespace rtos {
 
 	class Miliseconds;
 
-	class Queue {
+	class Queue final {
 		private:
 			void * const _handler;
 
