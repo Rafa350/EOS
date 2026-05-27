@@ -10,7 +10,7 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 Service::Service():
-	_taskCallback {*this, &Service::taskCallbackHandler},
+	_taskEvent {*this, &Service::taskEventHandler},
 	_task {nullptr},
 	_state {State::stop},
 	_stopSignal {false} {
@@ -47,7 +47,7 @@ void Service::start() {
 			params.stackDepth,
 			params.priority,
 			params.name,
-			_taskCallback);
+			_taskEvent);
 		_state = State::run;
 	}
 }
@@ -79,9 +79,9 @@ bool Service::stopSignal() const {
 /// \brief    Handler de la tasca.
 /// \params   args: Parametres.
 ///
-void Service::taskCallbackHandler(
+void Service::taskEventHandler(
 	rtos::Task *task,
-	rtos::TaskCallbackArgs &args) {
+	rtos::TaskEventArgs *args) {
 
 	onStarted();
 	onExecute();

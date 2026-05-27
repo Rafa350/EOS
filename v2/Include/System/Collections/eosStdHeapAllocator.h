@@ -1,10 +1,8 @@
-#ifndef __eosStdHeapAllocator__
-#define __eosStdHeapAllocator__
-
+#pragma once
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "OSAL/osalHeap.h"
+#include "RTOS/rtosHeap.h"
 
 
 namespace eos {
@@ -36,14 +34,12 @@ namespace eos {
 					}
 
 				private:
-					void* alloc(int size) {
-						void *p = osalHeapAlloc(NULL, size);
-						eosAssert(p != nullptr);
-						return p;
+					inline void* alloc(uint32_t size) const {
+						return rtos::Heap::allocate(size);
 					}
 
-					void free(void *p) {
-						osalHeapFree(NULL, p);
+					inline void free(void *ptr) const {
+						rtos::Heap::deallocate(ptr);
 					}
 			};
 
@@ -62,5 +58,3 @@ namespace eos {
     }
 #endif
 }
-
-#endif // __eosStdHeapAllocator__

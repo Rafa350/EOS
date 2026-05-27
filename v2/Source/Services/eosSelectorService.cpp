@@ -1,3 +1,5 @@
+#include "RTOS/rtosTask.h"
+#include "RTOS/rtosTime.h"
 #include "Services/eosSelectorService.h"
 
 
@@ -82,7 +84,7 @@ void SelectorService::onExecute() {
 			}
 		}
 
-		Task::delay(_delay);
+		rtos::Task::delay(rtos::Time::fromMiliseconds(_delay));
 	}
 }
 

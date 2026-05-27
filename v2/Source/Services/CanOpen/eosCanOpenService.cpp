@@ -25,8 +25,8 @@ CanOpenService::CanOpenService(
 
     _devCAN {params.devCAN},
 	_dictionary {params.dictionary},
-	_heartbeatTimerCallback {*this, &CanOpenService::heartbeatTimerCallbackHandler},
-	_heartbeatTimer {rtos::Timer::Mode::autoRestart, nullptr, _heartbeatTimerCallback},
+	_heartbeatTimerEvent {*this, &CanOpenService::heartbeatTimerEventHandler},
+	_heartbeatTimer {rtos::Timer::Mode::autoRestart, nullptr, _heartbeatTimerEvent},
 	_canDeviceNotificationEvent {*this, &CanOpenService::canDeviceNotificationEventHandler},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
@@ -114,7 +114,7 @@ void CanOpenService::configureHeartbeat() {
 
 	uint16_t interval;
 	if (_dictionary->readU16(0x1017, 0, interval) && interval > 0)
-		_heartbeatTimer.start(rtos::Time::fromMiliseconds(interval), rtos::Time::Infinite());
+		_heartbeatTimer.start(rtos::Time::fromMiliseconds(interval), rtos::Time::infinite());
 }
 
 
@@ -1281,12 +1281,12 @@ void CanOpenService::canDeviceNotificationEventHandler(
 
 /// ----------------------------------------------------------------------
 /// \brief    Gestiona l'event del temporitzador.
-/// \param    sender: El remitent, en aquest cas el timer.
+/// \param    timer: El remitent, en aquest cas el timer.
 /// \param    args: Parametres del event.
 ///
-void CanOpenService::heartbeatTimerCallbackHandler(
+void CanOpenService::heartbeatTimerEventHandler(
 	rtos::Timer *timer,
-	rtos::TimerCallbackArgs &args) {
+	rtos::TimerEventArgs *args) {
 
 	emitHeartbeat((unsigned) -1);
 }

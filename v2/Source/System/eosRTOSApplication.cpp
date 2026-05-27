@@ -12,7 +12,7 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 RTOSApplication::RTOSApplication() :
-	_taskCallback (*this, &RTOSApplication::taskCallbackHandler),
+	_taskEvent (*this, &RTOSApplication::taskEventHandler),
 	_task {nullptr},
 	_running {false} {
 }
@@ -31,9 +31,9 @@ RTOSApplication::~RTOSApplication(){
 /// ----------------------------------------------------------------------
 /// \brief    Callback de la tasca de l'aplicacio.
 ///
-void RTOSApplication::taskCallbackHandler(
+void RTOSApplication::taskEventHandler(
 	rtos::Task *task,
-	rtos::TaskCallbackArgs &args) {
+	rtos::TaskEventArgs *args) {
 
 	onExecute();
 }
@@ -66,7 +66,7 @@ void RTOSApplication::onRun() {
 		params.stackDepth,
 		params.priority,
 		params.name,
-		_taskCallback);
+		_taskEvent);
 
     // Inicia els serveis que s'hagin afeigit abans del inici del
 	// planificador.

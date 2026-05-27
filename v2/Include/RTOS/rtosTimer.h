@@ -10,10 +10,10 @@ namespace rtos {
 	class Time;
 	class Timer;
 
-	struct TimerCallbackArgs {
+	struct TimerEventArgs {
     };
-    using ITimerCallback = eos::ICallbackP2<Timer*, TimerCallbackArgs&>;
-    template <typename Instance_> using TimerCallback = eos::CallbackP2<Instance_, Timer*, TimerCallbackArgs&>;
+    using ITimerEvent = eos::ICallbackP2<Timer*, TimerEventArgs*>;
+    template <typename Instance_> using TimerEvent = eos::CallbackP2<Instance_, Timer*, TimerEventArgs*>;
 
     class Timer final {
     	public:
@@ -27,7 +27,7 @@ namespace rtos {
     		using Function = void (*)(Handler);
 
 		private:
-			ITimerCallback * const _callback;
+			ITimerEvent * const _timerEvent;
 			Handler const _handler;
 
 		private:
@@ -36,7 +36,7 @@ namespace rtos {
 			static void timerFunction(Handler handler);
 
 		public:
-			Timer(Mode mode, const char *name, ITimerCallback &callback);
+			Timer(Mode mode, const char *name, ITimerEvent &timerEvent);
 			~Timer();
 
 			bool start(Time interval, Time blockTime) const;

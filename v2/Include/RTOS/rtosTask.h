@@ -10,10 +10,10 @@ namespace rtos {
 	class Time;
 	class Task;
 
-    struct TaskCallbackArgs {
+    struct TaskEventArgs {
     };
-    using ITaskCallback = eos::ICallbackP2<Task*, TaskCallbackArgs&>;
-    template <typename Instance_> using TaskCallback = eos::CallbackP2<Instance_, Task*, TaskCallbackArgs&>;
+    using ITaskEvent = eos::ICallbackP2<Task*, TaskEventArgs*>;
+    template <typename Instance_> using TaskEvent = eos::CallbackP2<Instance_, Task*, TaskEventArgs*>;
 
 	class Task final {
 		public:
@@ -32,7 +32,7 @@ namespace rtos {
 			using Function = void(*)(void*);
 
 		private:
-			ITaskCallback * const _callback;
+			ITaskEvent * const _taskEvent;
 			void * const _handler;
 			uint32_t _lastWeakTick;
 
@@ -44,7 +44,7 @@ namespace rtos {
 
 		public:
 			Task(uint32_t stackDepth, Priority priority, const char *name,
-				ITaskCallback &callback);
+				ITaskEvent &taskEvent);
 			~Task();
 
 		public:

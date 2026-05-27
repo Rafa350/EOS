@@ -16,11 +16,11 @@ namespace rtos {
 			}
 
 		public:
-			static Time Zero() {
+			inline static Time zero() {
 				return Time(0);
 			}
 
-			static Time Infinite() {
+			inline static Time infinite() {
 				return Time(0xFFFFFFFF);
 			}
 

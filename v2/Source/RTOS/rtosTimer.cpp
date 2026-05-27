@@ -10,16 +10,16 @@ static constexpr const char *defaultName = "Timer";
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    callback: Funcio callback.
-/// \params   params: Parametres de la funcio callback.
-/// \param    mode: Modus de funcionament
+/// \param    mode: Modus de funcionament.
+/// \param    name: Nom del temporitzador.
+/// \param    timerEvent: El event 'Timer'.
 ///
 rtos::Timer::Timer(
 	Mode mode,
 	const char *name,
-	ITimerCallback &callback):
+	ITimerEvent &timerEvent):
 
-	_callback {&callback},
+	_timerEvent {&timerEvent},
 	_handler {createHandler(timerFunction, this, mode, name)} {
 }
 
@@ -141,9 +141,9 @@ void rtos::Timer::timerFunction(
 	rtos::Timer *timer = static_cast<rtos::Timer*>(
 		pvTimerGetTimerID(static_cast<TimerHandle_t>(handler)));
 
-	if (timer->_callback != nullptr) {
-		TimerCallbackArgs args = {
+	if (timer->_timerEvent != nullptr) {
+		TimerEventArgs args = {
 		};
-		timer->_callback->execute(timer, args);
+		timer->_timerEvent->execute(timer, &args);
 	}
 }

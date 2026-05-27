@@ -32,13 +32,13 @@ namespace eos {
 			static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
 
     	private:
-    		rtos::TaskCallback<Service> _taskCallback;
+    		rtos::TaskEvent<Service> _taskEvent;
     		rtos::Task *_task;
     		State _state;
     		volatile bool _stopSignal;
 
     	private:
-    		void taskCallbackHandler(rtos::Task *task, rtos::TaskCallbackArgs &args);
+    		void taskEventHandler(rtos::Task *task, rtos::TaskEventArgs *args);
 
         protected:
             Service();

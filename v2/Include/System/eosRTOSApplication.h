@@ -37,7 +37,7 @@ namespace eos {
             static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
 
         private:
-            rtos::TaskCallback<RTOSApplication> _taskCallback;
+            rtos::TaskEvent<RTOSApplication> _taskEvent;
             rtos::Task *_task;
             bool _running;
 
@@ -47,7 +47,7 @@ namespace eos {
             RTOSApplication(const RTOSApplication&) = delete;
             RTOSApplication& operator=(const RTOSApplication&) = delete;
 
-            void taskCallbackHandler(rtos::Task *task, rtos::TaskCallbackArgs &args);
+            void taskEventHandler(rtos::Task *task, rtos::TaskEventArgs *args);
             void onRun() override;
 
         protected:

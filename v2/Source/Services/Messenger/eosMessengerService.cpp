@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "Services/Messenger/eosMessengerService.h"
-#include "System/Core/eosTask.h"
 
 
 using namespace eos;

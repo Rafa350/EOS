@@ -28,9 +28,9 @@ rtos::Task::Task(
 	uint32_t stackDepth,
 	Priority priority,
 	const char *name,
-	ITaskCallback &callback):
+	ITaskEvent &taskEvent):
 
-	_callback {&callback},
+	_taskEvent {&taskEvent},
 	_handler {createHandler(taskFunction, this, stackDepth, priority, name)} {
 }
 
@@ -161,15 +161,13 @@ void rtos::Task::taskFunction(
 
     Task *task = static_cast<Task*>(params);
     if ((task != nullptr) &&
-		(task->_callback != nullptr)) {
+		(task->_taskEvent != nullptr)) {
 
     	task->_lastWeakTick = xTaskGetTickCount();
 
-    	if (task->_callback != nullptr) {
-			TaskCallbackArgs args = {
-			};
-			task->_callback->execute(task, args);
-    	}
+		TaskEventArgs args = {
+		};
+		task->_taskEvent->execute(task, &args);
 
         while (true)
         	vTaskSuspend(nullptr);
