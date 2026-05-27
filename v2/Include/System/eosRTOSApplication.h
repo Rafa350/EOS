@@ -4,12 +4,9 @@
 // EOS includes
 //
 #include "eos.h"
+#include "RTOS/rtosTask.h"
 #include "System/eosApplicationBase.h"
-#include "System/eosCallbacks.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
-#include "System/Core/eosTask.h"
-#include "System/Core/eosTimer.h"
-
 
 
 namespace eos {
@@ -29,32 +26,36 @@ namespace eos {
 
         protected:
             struct ApplicationParams {
-            	unsigned stackSize;
-            	Task::Priority priority;
+            	uint32_t stackDepth;
+            	rtos::Task::Priority priority;
+            	const char *name;
             };
 
         private:
-            ServiceInfoList _serviceInfoList;
+            static constexpr const char *_defaultName = "Application";
+            static constexpr unsigned _defaultStackDepth = 256;
+            static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
+
+        private:
+            rtos::TaskCallback<RTOSApplication> _taskCallback;
+            rtos::Task *_task;
             bool _running;
-            Task *_appTask;
-            TaskCallback<RTOSApplication> _appTaskCallback;
+
+            ServiceInfoList _serviceInfoList;
 
         private:
             RTOSApplication(const RTOSApplication&) = delete;
             RTOSApplication& operator=(const RTOSApplication&) = delete;
 
-            void appTaskCallbackHandler(const TaskCallbackArgs &args);
+            void taskCallbackHandler(rtos::Task *task, rtos::TaskCallbackArgs &args);
             void onRun() override;
 
         protected:
             RTOSApplication();
+            ~RTOSApplication();
 
             virtual void onExecute() = 0;
             virtual void onInitialize(ApplicationParams &params);
-
-            inline Task* getTask() const {
-            	return _appTask;
-            }
 
         public:
             void addService(Service *service);

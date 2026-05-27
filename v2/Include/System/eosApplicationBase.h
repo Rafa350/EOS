@@ -4,12 +4,9 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosCallbacks.h"
 
 
 namespace eos {
-
-    class Service;
 
     /// \brief Clase que representa l'aplicacio.
     ///

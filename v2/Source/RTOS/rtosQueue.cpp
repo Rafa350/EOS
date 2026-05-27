@@ -1,6 +1,5 @@
-#include "RTOS/rtosMiliseconds.h"
+#include "RTOS/rtosTime.h"
 #include "RTOS/rtosQueue.h"
-#include "RTOS/rtosTicks.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"
@@ -46,10 +45,10 @@ void rtos::Queue::clear() const {
 ///
 bool rtos::Queue::put(
 	const void *element,
-	Miliseconds blockTime) const {
+	Time blockTime) const {
 
     return xQueueSendToBack(static_cast<QueueHandle_t>(_handler), element,
-    	blockTime.asTicks()) == pdPASS;
+    	blockTime.toTicks()) == pdPASS;
 }
 
 
@@ -79,10 +78,10 @@ bool rtos::Queue::putISR(
 ///
 bool rtos::Queue::get(
 	void *element,
-	Miliseconds blockTime) const {
+	Time blockTime) const {
 
     return xQueueReceive(static_cast<QueueHandle_t>(_handler), element,
-    	blockTime.asTicks()) == pdPASS;
+    	blockTime.toTicks()) == pdPASS;
 }
 
 
@@ -105,10 +104,10 @@ bool rtos::Queue::getISR(
 
 bool rtos::Queue::peek(
 	void *element,
-	Miliseconds blockTime) const {
+	Time blockTime) const {
 
     return xQueuePeek(static_cast<QueueHandle_t>(_handler), element,
-    	blockTime.asTicks()) == pdPASS;
+    	blockTime.toTicks()) == pdPASS;
 }
 
 

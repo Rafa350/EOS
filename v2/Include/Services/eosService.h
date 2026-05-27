@@ -1,13 +1,11 @@
 #pragma once
-#ifndef __eosService__
-#define __eosService__
 
 
 // EOS includes
 //
 #include "eos.h"
+#include "RTOS/rtosTask.h"
 #include "System/eosEvents.h"
-#include "System/Core/eosTask.h"
 
 
 namespace eos {
@@ -24,18 +22,23 @@ namespace eos {
     	protected:
 			struct ServiceParams {
 				const char *name;
-				Task::Priority priority;
-				unsigned stackSize;
+				rtos::Task::Priority priority;
+				uint32_t stackDepth;
 			};
 
     	private:
+			static constexpr const char *_defaultName = "Service";
+			static constexpr unsigned _defaultStackDepth = 256;
+			static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
+
+    	private:
+    		rtos::TaskCallback<Service> _taskCallback;
+    		rtos::Task *_task;
     		State _state;
-    		Task * _task;
-    		TaskCallback<Service> _taskCallback;
     		volatile bool _stopSignal;
 
     	private:
-    		void taskCallbackHandler(const TaskCallbackArgs &args);
+    		void taskCallbackHandler(rtos::Task *task, rtos::TaskCallbackArgs &args);
 
         protected:
             Service();
@@ -50,10 +53,9 @@ namespace eos {
             virtual void onInitialize(ServiceParams &params);
 
             bool stopSignal() const;
-            inline Task * getTask() const { return _task; }
 
         public:
-            virtual ~Service() = default;
+            virtual ~Service();
 
             void start();
             void stop();
@@ -62,6 +64,3 @@ namespace eos {
     };
 
 }
-
-
-#endif // __eosService__

@@ -1,6 +1,6 @@
-#include "RTOS/rtosMiliseconds.h"
+#include "eosAssert.h"
+#include "RTOS/rtosTime.h"
 #include "RTOS/rtosTask.h"
-#include "RTOS/rtosTicks.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -11,7 +11,10 @@
 #endif
 
 
-static constexpr BaseType_t idxThis = 0;
+static constexpr uint32_t idxThis = 0;
+static constexpr const char *defaultName = "Task";
+
+static uint32_t getPriorityValue(rtos::Task::Priority priority);
 
 
 /// ----------------------------------------------------------------------
@@ -20,34 +23,15 @@ static constexpr BaseType_t idxThis = 0;
 /// \param    priority: La prioritat.
 /// \param    name: Nom de la tasca.
 /// \param    taskCallback: Callback de la tasca.
-/// \param    taskParams: Parametres a pasar a la tasca.
 ///
 rtos::Task::Task(
 	uint32_t stackDepth,
 	Priority priority,
 	const char *name,
-	ITaskCallback *taskCallback,
-	void *taskParams):
+	ITaskCallback &callback):
 
-	_taskCallback {taskCallback},
-	_taskParams {taskParams} {
-
-	// Crea la tasca
-	//
-    xTaskCreate(
-        taskFunction,
-        name == nullptr ? "" : name,
-        stackDepth,
-        this,
-        tskIDLE_PRIORITY + ((UBaseType_t) priority),
-        reinterpret_cast<TaskHandle_t*>(&_handler));
-
-    // Guarda el punter 'this' per recuperacio posterior en 'getExecutingTask'
-    //
-    vTaskSetThreadLocalStoragePointer(
-    	static_cast<TaskHandle_t>(_handler),
-		idxThis,
-		this);
+	_callback {&callback},
+	_handler {createHandler(taskFunction, this, stackDepth, priority, name)} {
 }
 
 
@@ -56,21 +40,25 @@ rtos::Task::Task(
 ///
 rtos::Task::~Task() {
 
-	// Comprova que el handler no s'hagi destruit previament
-	//
-	if (_handler != nullptr)
-		vTaskDelete(static_cast<TaskHandle_t>(_handler));
+	destroyHandler(_handler);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retarda la tasca actual.
-/// \param    time: Temps d'espera en ticks
-///
-void rtos::Task::delay(
-	Ticks ticks) {
+/// \brief    Suspend l'execucio de la tasca.
+//
+void rtos::Task::suspend() const {
 
-	vTaskDelay(ticks);
+	vTaskSuspend(static_cast<TaskHandle_t>(_handler));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Resumeix l'execucio de la tasca.
+//
+void rtos::Task::resume() const {
+
+	vTaskResume(static_cast<TaskHandle_t>(_handler));
 }
 
 
@@ -79,22 +67,9 @@ void rtos::Task::delay(
 /// \param    time: Temps d'espera en milisegons
 ///
 void rtos::Task::delay(
-	Miliseconds time) {
+	Time time) {
 
-	vTaskDelay(time.asTicks());
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Retarda la tasca actual finst el temps relatiu indicat, desde
-///           l'ultima activacio de la tasca
-/// \param    time: Temps d'espera en ticks
-///
-void rtos::Task::delayUntil(
-	Ticks ticks) {
-
-	Task *task = Task::getExecutingTask();
-	vTaskDelayUntil(&task->_lastWeakTick, ticks);
+	vTaskDelay(time.toTicks());
 }
 
 
@@ -104,10 +79,75 @@ void rtos::Task::delayUntil(
 /// \param    time: Temps d'espera en milisegons
 ///
 void rtos::Task::delayUntil(
-	Miliseconds time) {
+	Time time) {
 
 	Task *task = Task::getExecutingTask();
-	vTaskDelayUntil(&task->_lastWeakTick, time.asTicks());
+	vTaskDelayUntil(&task->_lastWeakTick, time.toTicks());
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera una notificacio.
+/// \param    clear:
+/// \param    blockTime: Temps maxim de bloqueig en milisegons.
+/// \return   True si tot es correcte.
+///
+bool rtos::Task::waitNotification(
+	bool clear,
+	Time blockTime) {
+
+	return ulTaskNotifyTake(clear ? pdTRUE : pdFALSE, blockTime.toTicks());
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera una notificacio.
+///
+void rtos::Task::raiseNotification() {
+
+	xTaskNotifyGive(static_cast<TaskHandle_t>(_handler));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Genera una notificacio d'ins d'un ISR
+///
+void rtos::Task::raiseNotificationISR() {
+
+	portBASE_TYPE taskWoken = pdFALSE;
+	vTaskNotifyGiveFromISR(static_cast<TaskHandle_t>(_handler), &taskWoken);
+	portYIELD_FROM_ISR(taskWoken);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Canvia la prioritat de la tasca.
+/// \param    priority: La nova prioritat.
+///
+void rtos::Task::setPriority(
+	Priority priority) const {
+
+	vTaskPrioritySet(
+        static_cast<TaskHandle_t>(_handler),
+        getPriorityValue(priority));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Entrada a una seccio critica.
+///
+void rtos::Task::enterCriticalSection() {
+
+	taskENTER_CRITICAL();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Sortida d'una seccio critica.
+///
+void rtos::Task::exitCriticalSection() {
+
+    taskEXIT_CRITICAL();
 }
 
 
@@ -121,22 +161,19 @@ void rtos::Task::taskFunction(
 
     Task *task = static_cast<Task*>(params);
     if ((task != nullptr) &&
-    	(task->_handler != nullptr) &&
-		(task->_taskCallback != nullptr)) {
+		(task->_callback != nullptr)) {
 
     	task->_lastWeakTick = xTaskGetTickCount();
 
-        TaskCallbackArgs args = {
-        	.task = task,
-        	.params = task->_taskParams
-        };
-        task->_taskCallback->execute(args);
-    }
+    	if (task->_callback != nullptr) {
+			TaskCallbackArgs args = {
+			};
+			task->_callback->execute(task, args);
+    	}
 
-    // Destrueix la propia tasca perque no s'executi mes
-    //
-    vTaskDelete(static_cast<TaskHandle_t>(task->_handler));
-    task->_handler = nullptr;
+        while (true)
+        	vTaskSuspend(nullptr);
+    }
 }
 
 
@@ -152,3 +189,62 @@ rtos::Task* rtos::Task::getExecutingTask() {
 			idxThis));
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Crea el handler de la tasca.
+//  \param    function: Funcio callback de la tasca.
+/// \param    task: La tasca que s'esta creant.
+/// \param    stackDepht: profunditat de la pila.
+/// \param    priority: Prioridat.
+///
+rtos::Task::Handler rtos::Task::createHandler(
+	Function function,
+	Task *task,
+	uint32_t stackDepth,
+	Priority priority,
+	const char *name) {
+
+	TaskHandle_t handler;
+
+    xTaskCreate(
+        function,
+        name == nullptr ? defaultName : name,
+        stackDepth,
+        task,
+        getPriorityValue(priority),
+        &handler);
+
+    // Guarda el punter 'this' per recuperacio posterior en 'getExecutingTask'
+    //
+    vTaskSetThreadLocalStoragePointer(
+    	handler,
+		idxThis,
+		task);
+
+    return handler;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Destrueix el handler de la tasca,.
+/// \param    handler: El handler.
+///
+void rtos::Task::destroyHandler(
+	Handler handler) {
+
+	vTaskSuspend(static_cast<TaskHandle_t>(handler));
+	vTaskDelete(static_cast<TaskHandle_t>(handler));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Calcula el valor de prioritat per RTOS
+/// \param    priority: Prioritat.
+/// \return   Valor numeric de la prioritat.
+///
+static uint32_t getPriorityValue(
+	rtos::Task::Priority priority) {
+
+	return tskIDLE_PRIORITY +
+		(uint32_t)priority - (uint32_t)rtos::Task::Priority::idle;
+}

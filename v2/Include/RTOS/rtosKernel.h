@@ -6,8 +6,7 @@
 
 namespace rtos {
 
-	class Miliseconds;
-	class Ticks;
+	class Time;
 
 	class Kernel final {
 		public:
@@ -27,11 +26,8 @@ namespace rtos {
 			static void suspendAll();
 			static void resumeAll();
 
-			static Ticks getTickCount();
-			static Miliseconds getTickTime();
-
-			static void enterCritical();
-			static void exitCritical();
+			static uint32_t getTickCount();
+			static Time getTickTime();
 
 			static State getState();
 			inline static bool isRunning() {

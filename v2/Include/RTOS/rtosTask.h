@@ -7,51 +7,62 @@
 
 namespace rtos {
 
-	class Miliseconds;
+	class Time;
 	class Task;
-	class Ticks;
 
     struct TaskCallbackArgs {
-        Task *task;
-        void *params;
     };
-    using ITaskCallback = eos::ICallbackP1<const TaskCallbackArgs&>;
-    template <typename Instance_> using TaskCallback = eos::CallbackP1<Instance_, const TaskCallbackArgs&>;
+    using ITaskCallback = eos::ICallbackP2<Task*, TaskCallbackArgs&>;
+    template <typename Instance_> using TaskCallback = eos::CallbackP2<Instance_, Task*, TaskCallbackArgs&>;
 
 	class Task final {
 		public:
 			enum class Priority {
-				high,
-				normal,
+				idle = 0,
 				low,
-				idle
+				belowNormal,
+				normal,
+				aboveNormal,
+				hight,
+				realTime
 			};
+
 		private:
-			void * _handler;
-			ITaskCallback * const _taskCallback;
-			void * const _taskParams;
+			using Handler = void *;
+			using Function = void(*)(void*);
+
+		private:
+			ITaskCallback * const _callback;
+			void * const _handler;
 			uint32_t _lastWeakTick;
 
 		private:
+			static Handler createHandler(Function function, Task *task,
+				uint32_t stackDepth, Priority priority, const char *name);
+			static void destroyHandler(Handler handler);
             static void taskFunction(void *params);
 
 		public:
-			Task(uint32_t stackDepth, Priority proirity, const char *name, ITaskCallback *taskCallback, void *taskParams);
+			Task(uint32_t stackDepth, Priority priority, const char *name,
+				ITaskCallback &callback);
 			~Task();
 
 		public:
             static Task* getExecutingTask();
 
-            static void delay(Ticks ticks);
-            static void delay(Miliseconds time);
-            static void delayUntil(Ticks ticks);
-            static void delayUntil(Miliseconds time);
+            static void delay(Time time);
+            static void delayUntil(Time time);
 
             static void enterCriticalSection();
             static void exitCriticalSection();
 
-            static bool waitNotification(bool clear, unsigned waitTime);
+            static bool waitNotification(bool clear, Time blockTime);
             void raiseNotification();
             void raiseNotificationISR();
+
+            void suspend() const;
+            void resume() const;
+
+            void setPriority(Priority priority) const;
 	};
 }

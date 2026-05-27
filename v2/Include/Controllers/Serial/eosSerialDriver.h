@@ -1,15 +1,12 @@
 #pragma once
-#ifndef __eosSerialDriver__
-#define __eosSerialDriver__
 
 
 #include "eos.h"
+#include "RTOS/rtosTask.h"
 #include "System/eosResults.h"
 
 
 namespace eos {
-
-	class Task;
 
 	/// \brief Driver per comunicacions serie.
 	///
@@ -24,7 +21,7 @@ namespace eos {
 
         private:
             State _state;
-            Task *_task;
+            rtos::Task *_task;
             volatile bool _finished;
             unsigned _txCount;
             unsigned _rxCount;
@@ -57,6 +54,3 @@ namespace eos {
             inline bool isBusy() const { return _state != State::ready; }
 	};
 }
-
-
-#endif // __eosSerialDriver__

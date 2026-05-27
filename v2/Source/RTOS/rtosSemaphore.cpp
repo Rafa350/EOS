@@ -1,6 +1,5 @@
-#include "RTOS/rtosMiliseconds.h"
+#include "RTOS/rtosTime.h"
 #include "RTOS/rtosSemaphore.h"
-#include "RTOS/rtosTicks.h"
 
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -30,10 +29,10 @@ rtos::Semaphore::~Semaphore() {
 /// \return   True si es correcte. False en cas d'error o timeout.
 ///
 bool rtos::Semaphore::wait(
-	Miliseconds blockTime) const {
+	Time blockTime) const {
 
 	return xSemaphoreTake(static_cast<SemaphoreHandle_t>(_handler),
-		blockTime.asTicks()) == pdTRUE;
+		blockTime.toTicks()) == pdTRUE;
 }
 
 

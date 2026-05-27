@@ -1,7 +1,7 @@
 #include "eos.h"
+#include "RTOS/rtosTask.h"
 #include "Services/DigOutput/eosDigOutputService.h"
 #include "System/eosMath.h"
-#include "System/Core/eosTask.h"
 
 #include "eos_digoutput_outputs.h"
 
@@ -9,8 +9,8 @@
 // Parametres de la tasca del servei
 //
 constexpr const char *serviceName = "DigOutputs";
-constexpr eos::Task::Priority servicePriority = eos::Task::Priority::normal;
-constexpr unsigned serviceStackSize = 164;
+constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
+constexpr uint32_t serviceStackDepth = 164;
 
 // Parametres de configuracio del servei
 //
@@ -47,12 +47,12 @@ eos::DigOutput* eos::DigOutputService::addOutput(
     eos::PinDriver *drv,
 	unsigned tag) {
 
-    eos::Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
 
     auto output = new Output(drv, tag);
 	_outputs.pushFront(output);
 
-    eos::Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 
     return output;
 }
@@ -67,12 +67,12 @@ eos::DigOutput* eos::DigOutputService::addOutput(
 void eos::DigOutputService::removeOutput(
     eos::DigOutput *output) {
 
-    eos::Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
 
     if (_outputs.contains(output))
         _outputs.remove(output);
 
-    eos::Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 }
 
 
@@ -83,11 +83,11 @@ void eos::DigOutputService::removeOutput(
 ///
 void eos::DigOutputService::removeOutputs() {
 
-    eos::Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
 
    	_outputs.clear();
 
-    eos::Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 }
 
 
@@ -103,11 +103,11 @@ bool eos::DigOutputService::containsOutput(
 
 	if (output != nullptr) {
 
-		eos::Task::enterCriticalSection();
+		rtos::Task::enterCriticalSection();
 
 		result = _outputs.contains(output);
 
-		eos::Task::exitCriticalSection();
+		rtos::Task::exitCriticalSection();
 	}
 
 	return result;
@@ -318,12 +318,12 @@ bool eos::DigOutputService::read(
 	if (containsOutput(output)) {
 #endif
 
-		Task::enterCriticalSection();
+		rtos::Task::enterCriticalSection();
 
 		auto out = static_cast<Output*>(output);
 		bool value = out->getValue();
 
-		Task::exitCriticalSection();
+		rtos::Task::exitCriticalSection();
 
 		return value;
 
@@ -343,7 +343,7 @@ void eos::DigOutputService::onInitialize(
 	eos::Service::ServiceParams &params) {
 
 	params.name = serviceName;
-	params.stackSize = serviceStackSize;
+	params.stackDepth = serviceStackDepth;
 	params.priority = servicePriority;
 }
 

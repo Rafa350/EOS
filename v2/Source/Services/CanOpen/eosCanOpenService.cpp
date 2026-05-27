@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "RTOS/rtosTime.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
 #include "Services/CanOpen/eosCanOpenService.h"
 #include "Services/canopen/eosCanOpenProtocol.h"
@@ -9,8 +10,8 @@ using namespace htl;
 
 
 constexpr const char *serviceName = "CanOpen";
-constexpr Task::Priority servicePriority = Task::Priority::normal;
-constexpr unsigned serviceStackSize = 256;
+constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
+constexpr unsigned serviceStackDepth = 256;
 
 constexpr unsigned defTimeout = 25;
 
@@ -24,8 +25,8 @@ CanOpenService::CanOpenService(
 
     _devCAN {params.devCAN},
 	_dictionary {params.dictionary},
-	_heartbeatTimerEvent {*this, &CanOpenService::heartbeatTimerEventHandler},
-	_heartbeatTimer {true, _heartbeatTimerEvent},
+	_heartbeatTimerCallback {*this, &CanOpenService::heartbeatTimerCallbackHandler},
+	_heartbeatTimer {rtos::Timer::Mode::autoRestart, nullptr, _heartbeatTimerCallback},
 	_canDeviceNotificationEvent {*this, &CanOpenService::canDeviceNotificationEventHandler},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
@@ -41,7 +42,7 @@ void CanOpenService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = serviceName;
-	params.stackSize = serviceStackSize;
+	params.stackDepth = serviceStackDepth;
 	params.priority = servicePriority;
 }
 
@@ -66,7 +67,7 @@ void CanOpenService::onExecute() {
 	// Envia un boot-up (Heartbeat amb estat 'initializing')
 	//
 	emitHeartbeat((unsigned) -1);
-	Task::delay(500);
+	rtos::Task::delay(rtos::Time::fromMiliseconds(500));
 
 	// Canvia l'estat a 'preOperational'
 	//
@@ -113,7 +114,7 @@ void CanOpenService::configureHeartbeat() {
 
 	uint16_t interval;
 	if (_dictionary->readU16(0x1017, 0, interval) && interval > 0)
-		_heartbeatTimer.start(interval, (unsigned) -1);
+		_heartbeatTimer.start(rtos::Time::fromMiliseconds(interval), rtos::Time::Infinite());
 }
 
 
@@ -1283,9 +1284,9 @@ void CanOpenService::canDeviceNotificationEventHandler(
 /// \param    sender: El remitent, en aquest cas el timer.
 /// \param    args: Parametres del event.
 ///
-void CanOpenService::heartbeatTimerEventHandler(
-	Timer * const sender,
-	Timer::TimerEventArgs * const args) {
+void CanOpenService::heartbeatTimerCallbackHandler(
+	rtos::Timer *timer,
+	rtos::TimerCallbackArgs &args) {
 
 	emitHeartbeat((unsigned) -1);
 }

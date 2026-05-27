@@ -1,34 +1,39 @@
 #include "eos.h"
-#include "eosAssert.h"
+#include "RTOS/rtosKernel.h"
+#include "RTOS/rtosTask.h"
 #include "Services/eosService.h"
 #include "System/eosRTOSApplication.h"
-#include "System/Core/eosTask.h"
-#include "System/Core/eosKernel.h"
 
 
 using namespace eos;
-
-
-constexpr const char *applicationName = "Application";
-constexpr unsigned applicationStackSize = 256;
-constexpr Task::Priority applicationPriority = Task::Priority::normal;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
 RTOSApplication::RTOSApplication() :
-	_running {false},
-	_appTask {nullptr},
-	_appTaskCallback (*this, &RTOSApplication::appTaskCallbackHandler) {
+	_taskCallback (*this, &RTOSApplication::taskCallbackHandler),
+	_task {nullptr},
+	_running {false} {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Descrutor.
+///
+RTOSApplication::~RTOSApplication(){
+
+	if (_task != nullptr)
+		delete _task;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Callback de la tasca de l'aplicacio.
 ///
-void RTOSApplication::appTaskCallbackHandler(
-	const TaskCallbackArgs &args) {
+void RTOSApplication::taskCallbackHandler(
+	rtos::Task *task,
+	rtos::TaskCallbackArgs &args) {
 
 	onExecute();
 }
@@ -50,18 +55,18 @@ void RTOSApplication::onInitialize(
 void RTOSApplication::onRun() {
 
 	ApplicationParams params = {
-		.stackSize = applicationStackSize,
-		.priority = applicationPriority
+		.stackDepth = _defaultStackDepth,
+		.priority = _defaultPriority,
+		.name = _defaultName
 	};
 
 	onInitialize(params);
 
-	_appTask = new Task(
-		params.stackSize,
+	_task = new rtos::Task(
+		params.stackDepth,
 		params.priority,
-		applicationName,
-		&_appTaskCallback,
-		nullptr);
+		params.name,
+		_taskCallback);
 
     // Inicia els serveis que s'hagin afeigit abans del inici del
 	// planificador.
@@ -72,7 +77,8 @@ void RTOSApplication::onRun() {
     // Inicia el planificador i totes les tasques
     //
     _running = true;
-    Kernel::pInst->startScheduler(); // Ja no retorna mai mes
+    rtos::Kernel::startScheduler(); // Ja no retorna mai mes
+
     _running = false;
 }
 
@@ -83,8 +89,6 @@ void RTOSApplication::onRun() {
 ///
 void RTOSApplication::addService(
 	Service *service) {
-
-	eosAssert(service != nullptr);
 
 	auto si = new ServiceInfo;
 	eosAssert(si != nullptr);
@@ -103,8 +107,6 @@ void RTOSApplication::addService(
 ///
 void RTOSApplication::removeService(
     Service *service) {
-
-    eosAssert(service != nullptr);
 
     /*for (auto si: _serviceInfoList) {
     	if (si->service == service) {

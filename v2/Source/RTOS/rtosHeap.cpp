@@ -73,10 +73,20 @@ void rtos::Heap::deallocate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el nombre de bytes del heap.
+/// \brief    Obte l'adressa del magatzem
+/// \return   L'adressa.
+///
+void * rtos::Heap::getStoragePtr() {
+
+	return nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el nombre de bytes del magetzem.
 /// ºreturn   El valor.
 ///
-uint32_t rtos::Heap::getSize() {
+uint32_t rtos::Heap::getStorageSize() {
 
 	return configTOTAL_HEAP_SIZE;
 }

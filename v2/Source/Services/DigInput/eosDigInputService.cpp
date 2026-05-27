@@ -1,7 +1,7 @@
 #include "eos.h"
+#include "RTOS/rtosTime.h"
+#include "RTOS/rtosTask.h"
 #include "Services/DigInput/eosDigInputService.h"
-#include "System/Core/eosTask.h"
-#include "System/Core/eosKernel.h"
 #include "eos_diginput_inputs.h"
 
 #include <cmath>
@@ -11,8 +11,8 @@ using namespace eos;
 
 
 constexpr const char *serviceName = "DigInputs";
-constexpr Task::Priority servicePriority = Task::Priority::normal;
-constexpr unsigned serviceStackSize = 160;
+constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
+constexpr unsigned serviceStackDepth = 160;
 
 constexpr unsigned minScanPeriod = 5;  // Periode d'exploracio minim en ms
 
@@ -150,12 +150,12 @@ DigInput * DigInputService::addInput(
 	PinDriver *drv,
 	unsigned tag) {
 
-    Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
 
     auto input = new Input(drv, tag);
 	_inputs.pushFront(input);
 
-    Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 
     return input;
 }
@@ -168,13 +168,13 @@ DigInput * DigInputService::addInput(
 void DigInputService::removeInput(
     DigInput *input) {
 
-    Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
 
     auto inp = static_cast<Input*>(input);
     if (_inputs.contains(inp))
         _inputs.remove(inp);
 
-    Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 }
 
 
@@ -183,9 +183,9 @@ void DigInputService::removeInput(
 ///
 void DigInputService::removeInputs() {
 
-    Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
     _inputs.clear();
-    Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 }
 
 
@@ -214,7 +214,7 @@ void DigInputService::onInitialize(
 
 	params.name = serviceName;
 	params.priority = servicePriority;
-	params.stackSize = serviceStackSize;
+	params.stackDepth = serviceStackDepth;
 
 	raiseInitializeNotificationEvent(&params);
 }
@@ -225,11 +225,9 @@ void DigInputService::onInitialize(
 ///
 void DigInputService::onExecute() {
 
-    unsigned lastTick = Kernel::pInst->getTickCount();
-
     while (!stopSignal()) {
 
-		Task::delay(_scanPeriod, lastTick);
+		rtos::Task::delayUntil(rtos::Time::fromMiliseconds(_scanPeriod));
 
 		// Notifica l'inici de l'escaneig d'entrades
 		//
@@ -258,12 +256,12 @@ void DigInputService::onExecute() {
 bool DigInputService::read(
     const DigInput *input) const {
 
-    Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
 
     auto inp = static_cast<const Input*>(input);
     bool value = inp->getValue();
 
-    Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 
     return value;
 }
@@ -279,12 +277,12 @@ unsigned DigInputService::getEdges(
 	DigInput *input,
 	bool clear) const {
 
-    Task::enterCriticalSection();
+    rtos::Task::enterCriticalSection();
 
     auto inp = static_cast<Input*>(input);
     unsigned edges = inp->getCount(clear);
 
-    Task::exitCriticalSection();
+    rtos::Task::exitCriticalSection();
 
     return edges;
 }

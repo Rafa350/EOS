@@ -1,8 +1,8 @@
 #include "eos.h"
-#include "htl/htlGPIO.h"
+#include "HTL/htlGPIO.h"
+#include "RTOS/rtosTime.h"
+#include "RTOS/rtosTask.h"
 #include "Services/eosLedService.h"
-#include "System/Core/eosTask.h"
-#include "System/Core/eosKernel.h"
 
 
 using namespace eos;
@@ -10,8 +10,8 @@ using namespace htl;
 
 
 constexpr const char *serviceName = "Led";
-constexpr unsigned serviceStackSize = 96;
-constexpr Task::Priority servicePriority = Task::Priority::low;
+constexpr uint32_t serviceStackDepth = 96;
+constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::low;
 
 
 /// ----------------------------------------------------------------------
@@ -34,7 +34,7 @@ void LedService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = serviceName;
-	params.stackSize = serviceStackSize;
+	params.stackDepth = serviceStackDepth;
 	params.priority = servicePriority;
 }
 
@@ -49,8 +49,6 @@ void LedService::onExecute() {
     if (_pinLED2 != nullptr)
         _pinLED2->clear();
 
-    unsigned weakTime = Kernel::pInst->getTickCount();
-
     while (!stopSignal()) {
 
 		if (_pinLED1 != nullptr)
@@ -59,6 +57,6 @@ void LedService::onExecute() {
 		if (_pinLED2 != nullptr)
 			_pinLED2->toggle();
 
-		Task::delay(500, weakTime);
+		rtos::Task::delayUntil(rtos::Time::fromMiliseconds(500));
 	}
 }

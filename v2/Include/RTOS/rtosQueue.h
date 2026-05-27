@@ -6,7 +6,7 @@
 
 namespace rtos {
 
-	class Miliseconds;
+	class Time;
 
 	class Queue final {
 		private:
@@ -17,11 +17,11 @@ namespace rtos {
 			~Queue();
 
 			void clear() const;
-			bool put(const void *element, Miliseconds blockTime) const;
+			bool put(const void *element, Time blockTime) const;
 			bool putISR(const void *element) const;
-			bool get(void *element, Miliseconds blockTime) const;
+			bool get(void *element, Time blockTime) const;
 			bool getISR(void *element) const;
-			bool peek(void *element, Miliseconds blockTime) const;
+			bool peek(void *element, Time blockTime) const;
 			bool peekISR(void *element) const;
 
             bool isEmpty() const;

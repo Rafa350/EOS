@@ -1,6 +1,6 @@
 #include "eos.h"
+#include "RTOS/rtosTask.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
-#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -350,10 +350,10 @@ bool CanOpenDictionary::writeU8(
 
 			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-				Task::enterCriticalSection();
+				rtos::Task::enterCriticalSection();
 				oldValue = *((uint8_t*)entry->data);
 				*((uint8_t*)entry->data) = value;
-				Task::exitCriticalSection();
+				rtos::Task::exitCriticalSection();
 
 				ok = true;
 			}
@@ -410,10 +410,10 @@ bool CanOpenDictionary::writeU16(
 
 			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-				Task::enterCriticalSection();
+				rtos::Task::enterCriticalSection();
 				oldValue = *((uint16_t*)entry->data);
 				*((uint16_t*)entry->data) = value;
-				Task::exitCriticalSection();
+				rtos::Task::exitCriticalSection();
 
 				ok = true;
 			}
@@ -470,10 +470,10 @@ bool CanOpenDictionary::writeU32(
 
 			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-				Task::enterCriticalSection();
+				rtos::Task::enterCriticalSection();
 				oldValue = *((uint32_t*)entry->data);
 				*((uint32_t*)entry->data) = value;
-				Task::exitCriticalSection();
+				rtos::Task::exitCriticalSection();
 
 				ok = true;
 			}

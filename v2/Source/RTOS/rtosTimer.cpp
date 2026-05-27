@@ -1,35 +1,26 @@
-#include "RTOS/rtosMiliseconds.h"
-#include "RTOS/rtosTicks.h"
+#include "RTOS/rtosTime.h"
 #include "RTOS/rtosTimer.h"
 
 #include "FreeRTOS.h"
 #include "timers.h"
 
 
+static constexpr const char *defaultName = "Timer";
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    timerCallback: Funcio callback.
-/// \params   timerParams: Parametres de la funcio callback.
+/// \param    callback: Funcio callback.
+/// \params   params: Parametres de la funcio callback.
 /// \param    mode: Modus de funcionament
 ///
 rtos::Timer::Timer(
-	ITimerCallback *callback,
-	void *params,
-	Mode mode):
+	Mode mode,
+	const char *name,
+	ITimerCallback &callback):
 
-	_callback {callback},
-	_params {params} {
-
-	_handler = xTimerCreate(
-		(const char*)"",
-		1,
-		mode == Mode::autoRestart ? pdTRUE : pdFALSE,
-		this,
-		reinterpret_cast<TimerCallbackFunction_t>(timerFunction));
-
-	// Para el temporitzador, per que FreeRTOS el crea en marxa.
-    //
-    xTimerStop(static_cast<TimerHandle_t>(_handler), 0);
+	_callback {&callback},
+	_handler {createHandler(timerFunction, this, mode, name)} {
 }
 
 
@@ -38,46 +29,48 @@ rtos::Timer::Timer(
 ///
 rtos::Timer::~Timer() {
 
-	xTimerDelete(static_cast<TimerHandle_t>(_handler), rtos::Miliseconds(0));
+	destroyHandler(_handler);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el temporitzador.
-/// \param    interval: El temps en milisegons.
+/// \param    interval: El temps en milisegons. Si es zero, es mante
+///           el interval actual
 /// \param    blockTime: Temps maxim de bloqueig.
 /// \return   TRue si tot es correcte.
 ///
 bool rtos::Timer::start(
-	rtos::Miliseconds interval,
-	rtos::Miliseconds blockTime) {
+	rtos::Time interval,
+	rtos::Time blockTime) const {
 
-    if (interval == 0)
+    if (interval.isZero())
         return xTimerStart(static_cast<TimerHandle_t>(_handler),
-        	blockTime.asTicks()) == pdPASS;
+        	blockTime.toTicks()) == pdPASS;
     else
         return xTimerChangePeriod(static_cast<TimerHandle_t>(_handler),
-        	interval.asTicks(), blockTime.asTicks()) == pdPASS;
+        	interval.toTicks(), blockTime.toTicks()) == pdPASS;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el temporitzador d'ind d'un ISR
-/// \param    interval: El temps en milisegons.
-/// \return   TRue si tot es correcte.
+/// \param    interval: El temps en milisegons. Si es zero, es mante
+///           el interval actual.
+/// \return   Tuue si tot es correcte.
 ///
 bool rtos::Timer::startISR(
-	rtos::Miliseconds interval) {
+	rtos::Time interval) const {
 
 	bool result;
 
     portBASE_TYPE task = pdFALSE;
-    if (interval == 0)
+    if (interval.isZero())
         result = xTimerStartFromISR(static_cast<TimerHandle_t>(_handler),
         	&task) == pdPASS;
     else
         result = xTimerChangePeriodFromISR(static_cast<TimerHandle_t>(_handler),
-        	interval.asTicks(), &task) == pdPASS;
+        	interval.toTicks(), &task) == pdPASS;
     portEND_SWITCHING_ISR(task);
 
     return result;
@@ -90,10 +83,10 @@ bool rtos::Timer::startISR(
 /// \return   TRue si tot es correcte.
 ///
 bool rtos::Timer::stop(
-	rtos::Miliseconds blockTime) {
+	rtos::Time blockTime) const {
 
 	return xTimerStop(static_cast<TimerHandle_t>(_handler),
-		blockTime.asTicks()) == pdPASS;
+		blockTime.toTicks()) == pdPASS;
 }
 
 
@@ -108,19 +101,49 @@ bool rtos::Timer::isActive() const {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Funcio auxiliar per crear el handler del timer.
+/// \param    function: La funcio callback.
+/// \param    timer: El temporitzador que s'esta creant.
+/// \param    mode: El modus de treball.
+///
+rtos::Timer::Handler rtos::Timer::createHandler(
+	Function function,
+	Timer *timer,
+	Mode mode,
+	const char *name) {
+
+	return xTimerCreate(
+		name == nullptr ? defaultName : name,
+		1,
+		mode == rtos::Timer::Mode::autoRestart ? pdTRUE : pdFALSE,
+		timer,
+		reinterpret_cast<TimerCallbackFunction_t>(function));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Destrueix el handler del timer.
+///
+void rtos::Timer::destroyHandler(
+	Handler handler) {
+
+	xTimerDelete(static_cast<TimerHandle_t>(handler), 0);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Funcio callback del temporitzador.
-/// \param    hTimer: Handler del timer.
+/// \param    handler: Handler del timer.
 ///
 void rtos::Timer::timerFunction(
-	void *hTimer) {
+	Handler handler) {
 
 	rtos::Timer *timer = static_cast<rtos::Timer*>(
-		pvTimerGetTimerID(static_cast<TimerHandle_t>(hTimer)));
+		pvTimerGetTimerID(static_cast<TimerHandle_t>(handler)));
 
-	TimerCallbackArgs args = {
-		.timer = timer,
-		.params = timer->_params
-	};
-
-	timer->_callback->execute(args);
+	if (timer->_callback != nullptr) {
+		TimerCallbackArgs args = {
+		};
+		timer->_callback->execute(timer, args);
+	}
 }

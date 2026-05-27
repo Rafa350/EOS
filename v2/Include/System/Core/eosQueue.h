@@ -6,7 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "RTOS/rtosMiliseconds.h"
+#include "RTOS/rtosTime.h"
 #include "RTOS/rtosQueue.h"
 
 
@@ -34,7 +34,7 @@ namespace eos {
             /// \return True si ha finalitzat l'operacio correctament.
             ///
             inline bool push(const T_ &element, uint32_t blockTime) const {
-            	return _queue.put(&element, rtos::Miliseconds(blockTime));
+            	return _queue.put(&element, rtos::Time::fromMiliseconds(blockTime));
             }
 
             /// \brief Afegeix un element en la cua des d'una interrupcio
@@ -51,7 +51,7 @@ namespace eos {
             /// \return True si ha finalitzat l'operacio correctament.
             ///
             inline bool pop(T_ &element, uint32_t blockTime) const {
-            	return _queue.get(&element, rtos::Miliseconds(blockTime));
+            	return _queue.get(&element, rtos::Time::fromMiliseconds(blockTime));
             }
 
             /// \brief Obte un element de la cua sense treurel
@@ -60,7 +60,7 @@ namespace eos {
             /// \return True si ha finalitzat l'operacio correctament.
             ///
             inline bool peek(T_ &element, uint32_t blockTime) const {
-                return _queue.peek(&element, rtos::Miliseconds(blockTime));
+                return _queue.peek(&element, rtos::Time(blockTime));
             }
     };
 

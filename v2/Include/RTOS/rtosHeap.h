@@ -15,7 +15,8 @@ namespace rtos {
 			static void *allocate(uint32_t size);
 			static void deallocate(void *ptr);
 
-			static uint32_t getSize();
+			static void * getStoragePtr();
+			static uint32_t getStorageSize();
 			static uint32_t getAllocatedSize();
 			static uint32_t getAvailableSize();
 

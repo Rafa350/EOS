@@ -6,7 +6,7 @@
 
 namespace rtos {
 
-	class Miliseconds;
+	class Time;
 
 	class Semaphore final {
         private:
@@ -16,7 +16,7 @@ namespace rtos {
             Semaphore();
             ~Semaphore();
 
-            bool wait(Miliseconds blockTime) const;
+            bool wait(Time blockTime) const;
             void release() const;
             void releaseISR() const;
 	};

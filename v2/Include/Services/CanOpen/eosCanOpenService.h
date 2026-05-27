@@ -4,11 +4,11 @@
 
 
 #include "eos.h"
-#include "htl/STM32/htlCAN.h"
+#include "HTL/STM32/htlCAN.h"
+#include "RTOS/rtosTimer.h"
 #include "Services/eosService.h"
 #include "services/CanOpen/eosCanOpenProtocol.h"
 #include "System/Core/eosQueue.h"
-#include "System/Core/eosTimer.h"
 
 
 namespace eos {
@@ -142,13 +142,12 @@ namespace eos {
         	using MessageQueue = Queue<Message>;
 
         	using CANDeviceNotificationEvent = htl::can::CANDevice::NotificationEvent<CanOpenService>;
-        	using TimerEvent = Timer::TimerEvent<CanOpenService>;
 
 		private:
 			htl::can::CANDevice * const _devCAN;
         	CanOpenDictionary * const _dictionary;
-			TimerEvent _heartbeatTimerEvent;
-			Timer _heartbeatTimer;
+			rtos::TimerCallback<CanOpenService> _heartbeatTimerCallback;
+			rtos::Timer _heartbeatTimer;
         	CANDeviceNotificationEvent _canDeviceNotificationEvent;
 			NodeID const _nodeId;
 			NodeState _nodeState;
@@ -161,7 +160,7 @@ namespace eos {
 
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
-            void heartbeatTimerEventHandler(Timer * const sender, Timer::TimerEventArgs * const args);
+            void heartbeatTimerCallbackHandler(rtos::Timer *timer, rtos::TimerCallbackArgs &args);
 
             void configureHeartbeat();
             void configureCANDevice();

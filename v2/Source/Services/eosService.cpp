@@ -1,25 +1,29 @@
 #include "eos.h"
-#include "eosAssert.h"
 #include "Services/eosService.h"
 #include "System/eosRTOSApplication.h"
-#include "System/Core/eosTask.h"
 
 
 using namespace eos;
-
-
-constexpr const char *serviceName = "Service";
-constexpr unsigned serviceStackSize = 256;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
 Service::Service():
-	_state {State::stop},
-	_task {nullptr},
 	_taskCallback {*this, &Service::taskCallbackHandler},
+	_task {nullptr},
+	_state {State::stop},
 	_stopSignal {false} {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Destructor.
+///
+Service::~Service() {
+
+	if (_task != nullptr)
+		delete _task;
 }
 
 
@@ -31,20 +35,19 @@ void Service::start() {
 	if (_state == State::stop) {
 
 		ServiceParams params = {
-			.name = serviceName,
-			.priority = Task::Priority::normal,
-			.stackSize = serviceStackSize
+			.name = _defaultName,
+			.priority = _defaultPriority,
+			.stackDepth = _defaultStackDepth
 		};
 
 		onInitialize(params);
 
 		onStart();
-		_task = new Task(
-				params.stackSize,
-				params.priority,
-				params.name,
-				&_taskCallback,
-				nullptr);
+		_task = new rtos::Task(
+			params.stackDepth,
+			params.priority,
+			params.name,
+			_taskCallback);
 		_state = State::run;
 	}
 }
@@ -77,7 +80,8 @@ bool Service::stopSignal() const {
 /// \params   args: Parametres.
 ///
 void Service::taskCallbackHandler(
-	const TaskCallbackArgs &args) {
+	rtos::Task *task,
+	rtos::TaskCallbackArgs &args) {
 
 	onStarted();
 	onExecute();

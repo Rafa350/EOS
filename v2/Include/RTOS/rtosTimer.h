@@ -7,15 +7,13 @@
 
 namespace rtos {
 
-	class Miliseconds;
+	class Time;
 	class Timer;
 
 	struct TimerCallbackArgs {
-        Timer *timer;
-        void *params;
     };
-    using ITimerCallback = eos::ICallbackP1<const TimerCallbackArgs&>;
-    template <typename Instance_> using TimerCallback = eos::CallbackP1<Instance_, const TimerCallbackArgs&>;
+    using ITimerCallback = eos::ICallbackP2<Timer*, TimerCallbackArgs&>;
+    template <typename Instance_> using TimerCallback = eos::CallbackP2<Instance_, Timer*, TimerCallbackArgs&>;
 
     class Timer final {
     	public:
@@ -24,21 +22,28 @@ namespace rtos {
 				autoRestart
     		};
 
-		private:
-			void * _handler;
-			ITimerCallback * const _callback;
-			void * const _params;
+    	private:
+    		using Handler = void*;
+    		using Function = void (*)(Handler);
 
 		private:
-			static void timerFunction(void *hTimer);
+			ITimerCallback * const _callback;
+			Handler const _handler;
+
+		private:
+			static Handler createHandler(Function function, Timer *timer, Mode mode, const char *name);
+			static void destroyHandler(Handler handler);
+			static void timerFunction(Handler handler);
 
 		public:
-			Timer(ITimerCallback *callback, void *pParams, Mode mode);
+			Timer(Mode mode, const char *name, ITimerCallback &callback);
 			~Timer();
 
-			bool start(Miliseconds interval, Miliseconds blockTime);
-			bool startISR(Miliseconds interval);
-			bool stop(Miliseconds blockTime);
+			bool start(Time interval, Time blockTime) const;
+			bool startISR(Time interval) const;
+			bool restart(Time blockTime) const;
+			bool restartISR() const;
+			bool stop(Time blockTime) const;
 
 			bool isActive() const;
 	};
