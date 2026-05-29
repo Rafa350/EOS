@@ -22,16 +22,17 @@ static uint32_t getPriorityValue(rtos::Task::Priority priority);
 /// \param    stackDepth: Profunditat del stack.
 /// \param    priority: La prioritat.
 /// \param    name: Nom de la tasca.
-/// \param    taskCallback: Callback de la tasca.
+/// \param    event: Event d'execucio de la tasca
 ///
 rtos::Task::Task(
 	uint32_t stackDepth,
 	Priority priority,
 	const char *name,
-	ITaskEvent &taskEvent):
+	IEvent &event):
 
-	_taskEvent {&taskEvent},
-	_handler {createHandler(taskFunction, this, stackDepth, priority, name)} {
+	_event {&event},
+	_handler {createHandler(this, taskFunction, stackDepth, priority, name)},
+	_lastWeakTick {0} {
 }
 
 
@@ -40,7 +41,36 @@ rtos::Task::Task(
 ///
 rtos::Task::~Task() {
 
-	destroyHandler(_handler);
+	kill();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estat.
+/// \return   L'estat.
+///
+rtos::Task::State rtos::Task::getState() const {
+
+	TaskHandle_t hTask = static_cast<TaskHandle_t>(_handler);
+	switch (eTaskGetState(hTask)) {
+		case eRunning:
+			return State::running;
+
+		case eReady:
+			return State::ready;
+
+		case eBlocked:
+			return State::blocked;
+
+		case eSuspended:
+			return State::suspended;
+
+		case eDeleted:
+			return State::killed;
+
+		default:
+			return State::unknown;
+	}
 }
 
 
@@ -49,7 +79,8 @@ rtos::Task::~Task() {
 //
 void rtos::Task::suspend() const {
 
-	vTaskSuspend(static_cast<TaskHandle_t>(_handler));
+	TaskHandle_t hTask = static_cast<TaskHandle_t>(_handler);
+	vTaskSuspend(hTask);
 }
 
 
@@ -58,7 +89,22 @@ void rtos::Task::suspend() const {
 //
 void rtos::Task::resume() const {
 
-	vTaskResume(static_cast<TaskHandle_t>(_handler));
+	TaskHandle_t hTask = static_cast<TaskHandle_t>(_handler);
+	vTaskResume(hTask);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza permanentment l'execucio de la tasca.
+//
+void rtos::Task::kill() const {
+
+	if (isAlive()) {
+		Task::enterCriticalSection();
+		if (isAlive())
+			destroyHandler(_handler);
+		Task::exitCriticalSection();
+	}
 }
 
 
@@ -82,7 +128,11 @@ void rtos::Task::delayUntil(
 	Time time) {
 
 	Task *task = Task::getExecutingTask();
-	vTaskDelayUntil(&task->_lastWeakTick, time.toTicks());
+	if (task != nullptr) {
+		if (task->_lastWeakTick == 0)
+	    	task->_lastWeakTick = xTaskGetTickCount();
+		vTaskDelayUntil(&task->_lastWeakTick, time.toTicks());
+	}
 }
 
 
@@ -105,7 +155,8 @@ bool rtos::Task::waitNotification(
 ///
 void rtos::Task::raiseNotification() {
 
-	xTaskNotifyGive(static_cast<TaskHandle_t>(_handler));
+	TaskHandle_t hTask = static_cast<TaskHandle_t>(_handler);
+	xTaskNotifyGive(hTask);
 }
 
 
@@ -114,8 +165,9 @@ void rtos::Task::raiseNotification() {
 ///
 void rtos::Task::raiseNotificationISR() {
 
-	portBASE_TYPE taskWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(static_cast<TaskHandle_t>(_handler), &taskWoken);
+	TaskHandle_t hTask = static_cast<TaskHandle_t>(_handler);
+	BaseType_t taskWoken = pdFALSE;
+	vTaskNotifyGiveFromISR(hTask, &taskWoken);
 	portYIELD_FROM_ISR(taskWoken);
 }
 
@@ -127,9 +179,18 @@ void rtos::Task::raiseNotificationISR() {
 void rtos::Task::setPriority(
 	Priority priority) const {
 
-	vTaskPrioritySet(
-        static_cast<TaskHandle_t>(_handler),
-        getPriorityValue(priority));
+	TaskHandle_t hTask = static_cast<TaskHandle_t>(_handler);
+	vTaskPrioritySet(hTask, getPriorityValue(priority));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si la tasca es viva.
+/// \return   True si no esta 'Deleted'
+///
+bool rtos::Task::isAlive() const {
+
+	return getState() != State::killed;
 }
 
 
@@ -160,18 +221,19 @@ void rtos::Task::taskFunction(
 	void *params) {
 
     Task *task = static_cast<Task*>(params);
-    if ((task != nullptr) &&
-		(task->_taskEvent != nullptr)) {
+    if (task != nullptr) {
 
     	task->_lastWeakTick = xTaskGetTickCount();
 
-		TaskEventArgs args = {
-		};
-		task->_taskEvent->execute(task, &args);
+		if (task->_event != nullptr) {
 
-        while (true)
-        	vTaskSuspend(nullptr);
+			EventArgs args = {
+			};
+			task->_event->execute(task, &args);
+		}
     }
+
+    destroyHandler(nullptr);
 }
 
 
@@ -196,49 +258,54 @@ rtos::Task* rtos::Task::getExecutingTask() {
 /// \param    priority: Prioridat.
 ///
 rtos::Task::Handler rtos::Task::createHandler(
-	Function function,
 	Task *task,
+	Function function,
 	uint32_t stackDepth,
 	Priority priority,
 	const char *name) {
 
-	TaskHandle_t handler;
+	TaskHandle_t hTask;
 
-    xTaskCreate(
+    if ((xTaskCreate(
         function,
         name == nullptr ? defaultName : name,
         stackDepth,
         task,
         getPriorityValue(priority),
-        &handler);
+        &hTask) != pdPASS) || (hTask == nullptr))
+    	return nullptr;
 
     // Guarda el punter 'this' per recuperacio posterior en 'getExecutingTask'
     //
-    vTaskSetThreadLocalStoragePointer(
-    	handler,
-		idxThis,
-		task);
+    vTaskSetThreadLocalStoragePointer(hTask, idxThis, task);
 
-    return handler;
+    return static_cast<Handler>(hTask);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Destrueix el handler de la tasca,.
-/// \param    handler: El handler.
+/// \brief    Destrueix el handler de la tasca.
+/// \param    handler: El handler
 ///
 void rtos::Task::destroyHandler(
 	Handler handler) {
 
-	vTaskSuspend(static_cast<TaskHandle_t>(handler));
-	vTaskDelete(static_cast<TaskHandle_t>(handler));
+	TaskHandle_t hTask =
+		handler == nullptr ?
+			xTaskGetCurrentTaskHandle() :
+			static_cast<TaskHandle_t>(handler);
+
+	vTaskSetThreadLocalStoragePointer(hTask, idxThis, nullptr);
+	vTaskDelete(hTask);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Calcula el valor de prioritat per RTOS
+/// \brief    Calcula el valor de prioritat per RTOS.
 /// \param    priority: Prioritat.
 /// \return   Valor numeric de la prioritat.
+/// \notes    Atencio: El valor del enumerador Priority esta definit i no es
+///           por canviar sense motiu.
 ///
 static uint32_t getPriorityValue(
 	rtos::Task::Priority priority) {

@@ -9,6 +9,8 @@
 uint32_t rtos::Heap::_allocateCount = 0;
 uint32_t rtos::Heap::_deallocateCount = 0;
 
+uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+
 
 #if RTOS_HEAP_USE_SAFEMODE == 1
 constexpr uint32_t headGuard = 0x0F1E2D3C;
@@ -78,7 +80,7 @@ void rtos::Heap::deallocate(
 ///
 void * rtos::Heap::getStoragePtr() {
 
-	return nullptr;
+	return ucHeap;
 }
 
 

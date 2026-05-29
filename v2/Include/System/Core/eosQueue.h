@@ -62,6 +62,10 @@ namespace eos {
             inline bool peek(T_ &element, uint32_t blockTime) const {
                 return _queue.peek(&element, rtos::Time(blockTime));
             }
+
+            inline uint32_t getCount() const {
+            	return _queue.getCount();
+            }
     };
 
 }

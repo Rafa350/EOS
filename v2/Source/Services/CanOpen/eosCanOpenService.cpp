@@ -1286,7 +1286,7 @@ void CanOpenService::canDeviceNotificationEventHandler(
 ///
 void CanOpenService::heartbeatTimerEventHandler(
 	rtos::Timer *timer,
-	rtos::TimerEventArgs *args) {
+	rtos::Timer::EventArgs *args) {
 
 	emitHeartbeat((unsigned) -1);
 }

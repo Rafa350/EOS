@@ -3,6 +3,7 @@
 
 #include "FreeRTOS.h"
 #include "timers.h"
+#include "atomic.h"
 
 
 static constexpr const char *defaultName = "Timer";
@@ -12,15 +13,17 @@ static constexpr const char *defaultName = "Timer";
 /// \brief    Constructor.
 /// \param    mode: Modus de funcionament.
 /// \param    name: Nom del temporitzador.
-/// \param    timerEvent: El event 'Timer'.
+/// \param    event: El event 'Timer'.
 ///
 rtos::Timer::Timer(
 	Mode mode,
 	const char *name,
-	ITimerEvent &timerEvent):
+	IEvent &event):
 
-	_timerEvent {&timerEvent},
-	_handler {createHandler(timerFunction, this, mode, name)} {
+	_event {&event},
+	_handler {createHandler(timerFunction, this, mode, name)},
+	_destroying {false},
+	_executingCallback {0} {
 }
 
 
@@ -29,7 +32,14 @@ rtos::Timer::Timer(
 ///
 rtos::Timer::~Timer() {
 
-	destroyHandler(_handler);
+	_destroying = true;
+
+	xTimerStop(static_cast<TimerHandle_t>(_handler), 0);
+
+	while (_executingCallback != 0)
+		taskYIELD();
+
+	xTimerDelete(static_cast<TimerHandle_t>(_handler), 0);
 }
 
 
@@ -122,16 +132,6 @@ rtos::Timer::Handler rtos::Timer::createHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Destrueix el handler del timer.
-///
-void rtos::Timer::destroyHandler(
-	Handler handler) {
-
-	xTimerDelete(static_cast<TimerHandle_t>(handler), 0);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Funcio callback del temporitzador.
 /// \param    handler: Handler del timer.
 ///
@@ -141,9 +141,16 @@ void rtos::Timer::timerFunction(
 	rtos::Timer *timer = static_cast<rtos::Timer*>(
 		pvTimerGetTimerID(static_cast<TimerHandle_t>(handler)));
 
-	if (timer->_timerEvent != nullptr) {
-		TimerEventArgs args = {
-		};
-		timer->_timerEvent->execute(timer, &args);
+	if (!timer->_destroying) {
+
+		Atomic_Increment_u32(&timer->_executingCallback);
+
+		if (timer->_event != nullptr) {
+			EventArgs args = {
+			};
+			timer->_event->execute(timer, &args);
+		}
+
+		Atomic_Decrement_u32(&timer->_executingCallback);
 	}
 }

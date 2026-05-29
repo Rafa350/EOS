@@ -8,12 +8,6 @@
 namespace rtos {
 
 	class Time;
-	class Timer;
-
-	struct TimerEventArgs {
-    };
-    using ITimerEvent = eos::ICallbackP2<Timer*, TimerEventArgs*>;
-    template <typename Instance_> using TimerEvent = eos::CallbackP2<Instance_, Timer*, TimerEventArgs*>;
 
     class Timer final {
     	public:
@@ -22,21 +16,32 @@ namespace rtos {
 				autoRestart
     		};
 
+    		struct EventArgs {
+    	    };
+    	    using IEvent = eos::ICallbackP2<Timer*, EventArgs*>;
+    	    template <typename Instance_> using Event = eos::CallbackP2<Instance_, Timer*, EventArgs*>;
+
     	private:
     		using Handler = void*;
     		using Function = void (*)(Handler);
 
 		private:
-			ITimerEvent * const _timerEvent;
+			IEvent * const _event;
 			Handler const _handler;
+			volatile bool _destroying;
+			volatile uint32_t _executingCallback;
 
 		private:
+			Timer(const Timer&) = delete;
+			Timer(Timer&&) = delete;
+			Timer& operator=(const Timer&) = delete;
+			Timer& operator=(Timer&&) = delete;
+
 			static Handler createHandler(Function function, Timer *timer, Mode mode, const char *name);
-			static void destroyHandler(Handler handler);
 			static void timerFunction(Handler handler);
 
 		public:
-			Timer(Mode mode, const char *name, ITimerEvent &timerEvent);
+			Timer(Mode mode, const char *name, IEvent &event);
 			~Timer();
 
 			bool start(Time interval, Time blockTime) const;
@@ -44,7 +49,8 @@ namespace rtos {
 			bool restart(Time blockTime) const;
 			bool restartISR() const;
 			bool stop(Time blockTime) const;
+			bool stopISR() const;
 
-			bool isActive() const;
+			[[nodiscard]] bool isActive() const;
 	};
 }

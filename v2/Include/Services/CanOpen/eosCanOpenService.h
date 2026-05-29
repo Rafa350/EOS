@@ -146,7 +146,7 @@ namespace eos {
 		private:
 			htl::can::CANDevice * const _devCAN;
         	CanOpenDictionary * const _dictionary;
-			rtos::TimerEvent<CanOpenService> _heartbeatTimerEvent;
+			rtos::Timer::Event<CanOpenService> _heartbeatTimerEvent;
 			rtos::Timer _heartbeatTimer;
         	CANDeviceNotificationEvent _canDeviceNotificationEvent;
 			NodeID const _nodeId;
@@ -160,7 +160,7 @@ namespace eos {
 
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
-            void heartbeatTimerEventHandler(rtos::Timer *timer, rtos::TimerEventArgs *args);
+            void heartbeatTimerEventHandler(rtos::Timer *timer, rtos::Timer::EventArgs *args);
 
             void configureHeartbeat();
             void configureCANDevice();

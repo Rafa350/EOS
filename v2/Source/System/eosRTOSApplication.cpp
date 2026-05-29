@@ -33,7 +33,7 @@ RTOSApplication::~RTOSApplication(){
 ///
 void RTOSApplication::taskEventHandler(
 	rtos::Task *task,
-	rtos::TaskEventArgs *args) {
+	rtos::Task::EventArgs *args) {
 
 	onExecute();
 }

@@ -8,12 +8,6 @@
 namespace rtos {
 
 	class Time;
-	class Task;
-
-    struct TaskEventArgs {
-    };
-    using ITaskEvent = eos::ICallbackP2<Task*, TaskEventArgs*>;
-    template <typename Instance_> using TaskEvent = eos::CallbackP2<Instance_, Task*, TaskEventArgs*>;
 
 	class Task final {
 		public:
@@ -23,32 +17,52 @@ namespace rtos {
 				belowNormal,
 				normal,
 				aboveNormal,
-				hight,
+				high,
 				realTime
 			};
+
+			enum class State {
+				ready,
+				running,
+				suspended,
+				blocked,
+				killed,
+				unknown
+			};
+
+			struct EventArgs {
+		    };
+		    using IEvent = eos::ICallbackP2<Task*, EventArgs*>;
+		    template <typename Instance_> using Event = eos::CallbackP2<Instance_, Task*, EventArgs*>;
 
 		private:
 			using Handler = void *;
 			using Function = void(*)(void*);
 
 		private:
-			ITaskEvent * const _taskEvent;
-			void * const _handler;
+			IEvent * const _event;
+			Handler const _handler;
 			uint32_t _lastWeakTick;
 
 		private:
-			static Handler createHandler(Function function, Task *task,
+			Task(const Task&) = delete;
+			Task(Task&&) = delete;
+			Task& operator=(const Task&) = delete;
+			Task& operator=(Task&&) = delete;
+
+			static Handler createHandler(Task *task, Function function,
 				uint32_t stackDepth, Priority priority, const char *name);
 			static void destroyHandler(Handler handler);
             static void taskFunction(void *params);
 
 		public:
 			Task(uint32_t stackDepth, Priority priority, const char *name,
-				ITaskEvent &taskEvent);
+				IEvent &event);
 			~Task();
 
 		public:
-            static Task* getExecutingTask();
+			[[nodiscard]] static Task* getExecutingTask();
+			[[nodiscard]] State getState() const;
 
             static void delay(Time time);
             static void delayUntil(Time time);
@@ -62,6 +76,9 @@ namespace rtos {
 
             void suspend() const;
             void resume() const;
+            void kill() const;
+
+            [[nodiscard]] bool isAlive() const;
 
             void setPriority(Priority priority) const;
 	};

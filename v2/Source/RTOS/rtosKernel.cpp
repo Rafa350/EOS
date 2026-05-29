@@ -41,8 +41,13 @@ uint32_t rtos::Kernel::getTickCount() {
 rtos::Kernel::State rtos::Kernel::getState() {
 
 	switch (xTaskGetSchedulerState()) {
-		case taskSCHEDULER_RUNNING: return State::running;
-		case taskSCHEDULER_SUSPENDED: return State::suspended;
-		default: return State::stopped;
+		case taskSCHEDULER_RUNNING:
+			return State::running;
+
+		case taskSCHEDULER_SUSPENDED:
+			return State::suspended;
+
+		default:
+			return State::stopped;
 	}
 }

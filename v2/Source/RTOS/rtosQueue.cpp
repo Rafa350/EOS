@@ -53,7 +53,7 @@ bool rtos::Queue::put(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Afegeix un element a la cua d'ins d'un ISR
+/// \brief    Afegeix un element a la cua. Utilitzar unicament en ISR.
 /// \param    element: L'element a afeigir.
 /// \return   True si tot es correcte.
 ///
@@ -72,7 +72,7 @@ bool rtos::Queue::putISR(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte un element de la cua.
-/// \param    element: L'exelent a extreure
+/// \param    element: Buffer per l'exelent a extreure
 /// \param    blockTime: Tamps maxim de bloqueig.
 /// \return   TYrue si tot es correcte.
 ///
@@ -86,8 +86,8 @@ bool rtos::Queue::get(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte un element de la cua d'ins d'un ISR
-/// \param    element: L'exelent a extreure
+/// \brief    Obte un element de la cua. Utilitzar unicament en ISR.
+/// \param    element: Buffer per l'exelent a extreure.
 /// \return   TYrue si tot es correcte.
 ///
 bool rtos::Queue::getISR(
@@ -98,10 +98,17 @@ bool rtos::Queue::getISR(
     	element, &taskWoken) == pdPASS;
     if (result)
     	portEND_SWITCHING_ISR(taskWoken);
+
     return result;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte un element de la cua, pero sense retirar-lo.
+/// \param    element: Buffer per l'element a extreure.
+/// \param    blockTime: Tamps maxim de bloqueig.
+/// \return   True si tot es correcte.
+///
 bool rtos::Queue::peek(
 	void *element,
 	Time blockTime) const {
@@ -111,6 +118,12 @@ bool rtos::Queue::peek(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte un element de la cua, pero sense retirar-lo.
+///           Utilitzar unicament en un ISR.
+/// \param    element: Buffer per l'element a extreure.
+/// \return   True si tot es correcte.
+///
 bool rtos::Queue::peekISR(
 	void *element) const {
 
@@ -130,7 +143,7 @@ bool rtos::Queue::isEmpty() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si la cua es buida d'ind d'un ISR
+/// \brief    Comprova si la cua es buida. Untilitzar unicament en ISR.
 /// \return   True si es buida.
 ///
 bool rtos::Queue::isEmptyISR() const {
@@ -150,7 +163,8 @@ uint32_t rtos::Queue::getCount() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el nombre d'elementsa en la cua, d'ins d'un ISR
+/// \brief    Obte el nombre d'elementsa en la cua. Utilitzar
+///           unicament en ISR.
 /// \returnn  El nombre d'elements.
 ///
 uint32_t rtos::Queue::getCountISR() const {

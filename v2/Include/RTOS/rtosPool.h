@@ -6,8 +6,6 @@
 
 namespace rtos {
 
-	/// \brief Pool de memoria generic
-    ///
     class Pool {
         private:
             uint8_t *_blocks;

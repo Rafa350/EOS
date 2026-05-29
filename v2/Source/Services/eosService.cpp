@@ -81,7 +81,7 @@ bool Service::stopSignal() const {
 ///
 void Service::taskEventHandler(
 	rtos::Task *task,
-	rtos::TaskEventArgs *args) {
+	rtos::Task::EventArgs *args) {
 
 	onStarted();
 	onExecute();
