@@ -20,7 +20,7 @@ eos::MessagePublisher::MessagePublisher(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::MessagePublisher::publish(
-	const MessagePayload &payload,
+	void *payload,
 	uint32_t blockTime) {
 
 	if (_service != nullptr)

@@ -32,8 +32,6 @@ DigInputService::DigInputService():
 /// \brief    Destructor.
 ///
 DigInputService::~DigInputService() {
-
-	removeInputs();
 }
 
 
@@ -158,34 +156,6 @@ DigInput * DigInputService::addInput(
     rtos::Task::exitCriticalSection();
 
     return input;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Elimina una entrada del servei.
-/// \param    input: La entrada a eliminar.
-///
-void DigInputService::removeInput(
-    DigInput *input) {
-
-    rtos::Task::enterCriticalSection();
-
-    auto inp = static_cast<Input*>(input);
-    if (_inputs.contains(inp))
-        _inputs.remove(inp);
-
-    rtos::Task::exitCriticalSection();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Elimina totes les entrades del servei.
-///
-void DigInputService::removeInputs() {
-
-    rtos::Task::enterCriticalSection();
-    _inputs.clear();
-    rtos::Task::exitCriticalSection();
 }
 
 

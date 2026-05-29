@@ -8,6 +8,8 @@
 namespace eos {
 
 	struct MessageSubscriberEventArgs {
+		TopicID topicId;
+		void *payload;
 	};
 	using IMessageSubscriberEvent = eos::ICallbackP2<MessageSubscriber*, MessageSubscriberEventArgs*>;
 	template <typename Instance_> using MessageSubscriberEvent = eos::CallbackP2<Instance_, MessageSubscriber*, MessageSubscriberEventArgs*>;
@@ -21,13 +23,16 @@ namespace eos {
 		public:
 			MessageSubscriber(TopicID topicId, IMessageSubscriberEvent &event);
 
-			void dispatch(const MessagePayload &payload);
+			void dispatch(void *payload);
 
 			inline TopicID getTopicId() const {
 				return _topicId;
 			}
 
-		friend void MessengerService::addSubscriber(MessageSubscriber*);
-		friend void MessengerService::removeSubscriber(MessageSubscriber*);
+			inline MessengerService *getService() const {
+				return _service;
+			}
+
+		friend MessengerService;
 	};
 }

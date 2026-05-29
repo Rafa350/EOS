@@ -33,7 +33,6 @@ eos::DigOutputService::DigOutputService():
 ///
 eos::DigOutputService::~DigOutputService() {
 
-	removeOutputs();
 }
 
 
@@ -55,39 +54,6 @@ eos::DigOutput* eos::DigOutputService::addOutput(
     rtos::Task::exitCriticalSection();
 
     return output;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Elimina una sortida del servei.
-/// \param    output: La sortida a eliminar.
-/// \remarks  Nomes es poden eliminar sortides, quan el servei no
-///           esta inicialitzat.
-///
-void eos::DigOutputService::removeOutput(
-    eos::DigOutput *output) {
-
-    rtos::Task::enterCriticalSection();
-
-    if (_outputs.contains(output))
-        _outputs.remove(output);
-
-    rtos::Task::exitCriticalSection();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Elimina totes les sortides del servei.
-/// \remarks  Nomes es poden eliminar sortides, quan el servei
-///           no esta inicialitzat.
-///
-void eos::DigOutputService::removeOutputs() {
-
-    rtos::Task::enterCriticalSection();
-
-   	_outputs.clear();
-
-    rtos::Task::exitCriticalSection();
 }
 
 

@@ -145,8 +145,6 @@ namespace eos {
     	    DigOutputService& operator=(const DigOutputService&&) = delete;
 
             DigOutput* addOutput(PinDriver *drv, unsigned tag = (unsigned) -1);
-            void removeOutput(DigOutput *output);
-            void removeOutputs();
             bool containsOutput(DigOutput *output) const;
             DigOutput *getOutput(unsigned tag) const;
 

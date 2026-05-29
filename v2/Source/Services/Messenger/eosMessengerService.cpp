@@ -11,7 +11,7 @@
 eos::MessengerService::MessengerService(
 	uint32_t queueCapacity):
 
-	_queue {queueCapacity} {
+	_actionQueue {queueCapacity} {
 }
 
 
@@ -20,21 +20,50 @@ eos::MessengerService::MessengerService(
 /// \param    publisher: El publicador.
 ///
 void eos::MessengerService::addPublisher(
-	MessagePublisher *publisher) {
+	MessagePublisher *publisher,
+	uint32_t blockTime) {
 
-	if (publisher->_service == nullptr) {
-		_publisherList.add(publisher);
-		publisher->_service = this;
+	rtos::Task::enterCriticalSection();
+
+	if (publisher->getService() == nullptr) {
+
+		Action action = {
+			.actionId = ActionID::addPublisher,
+			.addPublisher {
+				.publisher = publisher
+			}
+		};
+
+		_actionQueue.push(action, blockTime);
 	}
+
+	rtos::Task::exitCriticalSection();
 }
 
-void eos::MessengerService::removePublisher(
-	MessagePublisher *publisher) {
 
-	if (publisher->_service == this) {
-		publisher->_service = nullptr;
-		_publisherList.remove(publisher);
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix un subscripto. al servei.
+/// \param    subscriber: El subscriptor.
+///
+void eos::MessengerService::addSubscriber(
+	MessageSubscriber *subscriber,
+	uint32_t blockTime) {
+
+	rtos::Task::enterCriticalSection();
+
+	if (subscriber->getService() == nullptr) {
+
+		Action action = {
+			.actionId = ActionID::addSubscriber,
+			.addSubscriber {
+				.subscriber = subscriber
+			}
+		};
+
+		_actionQueue.push(action, blockTime);
 	}
+
+	rtos::Task::exitCriticalSection();
 }
 
 
@@ -47,21 +76,29 @@ void eos::MessengerService::removePublisher(
 ///
 bool eos::MessengerService::publish(
 	MessagePublisher *publisher,
-	const MessagePayload &payload,
+	void *payload,
 	uint32_t blockTime) {
 
-	if (_publisherList.contains(publisher)) {
+	bool result = false;
 
-		QueueItem item = {
-			.publisher = publisher,
-			.payload = &payload
+	rtos::Task::enterCriticalSection();
+
+	if (publisher->getService() == this) {
+
+		Action action = {
+			.actionId = ActionID::publish,
+			.publish {
+				.publisher = publisher,
+				.payload = &payload
+			}
 		};
 
-		return _queue.push(item, blockTime);
+		result = _actionQueue.push(action, blockTime);
 	}
 
-	else
-		return false;
+    rtos::Task::exitCriticalSection();
+
+	return result;
 }
 
 
@@ -72,17 +109,57 @@ void eos::MessengerService::onExecute() {
 
     while (!stopSignal()) {
 
-    	// Espera que hagin publicadors en la cua
-    	//
-    	QueueItem queueItem;
-    	while (_queue.pop(queueItem, 0xFFFFFFFF)) {
-    		auto publisher = queueItem.publisher;
-    		for (auto subscriber: _subscriberList) {
-    			if (publisher->getTopicId() == subscriber->getTopicId()) {
-    	    		auto payload = queueItem.payload;
-    	    		subscriber->dispatch(*payload);
-    			}
+    	Action action;
+    	while (_actionQueue.pop(action, 0xFFFFFFFF)) {
+    		switch (action.actionId) {
+    			case ActionID::addPublisher:
+    				processAddPublisher(action.addPublisher.publisher);
+    				break;
+
+    			case ActionID::addSubscriber:
+    				processAddSubscriber(action.addSubscriber.subscriber);
+    				break;
+
+    			case ActionID::publish:
+    				processPublish(action.publish.publisher, action.publish.payload);
+    				break;
     		}
     	}
     }
+}
+
+
+void eos::MessengerService::processAddPublisher(
+	MessagePublisher *publisher) {
+
+	rtos::Task::enterCriticalSection();
+
+	_publisherList.add(publisher);
+	publisher->_service = this;
+
+	rtos::Task::exitCriticalSection();
+}
+
+
+void eos::MessengerService::processAddSubscriber(
+	MessageSubscriber *subscriber) {
+
+	rtos::Task::enterCriticalSection();
+
+	_subscriberList.add(subscriber);
+	subscriber->_service = this;
+
+	rtos::Task::exitCriticalSection();
+}
+
+
+void eos::MessengerService::processPublish(
+	MessagePublisher *publisher,
+	void *payload) {
+
+	for (auto subscriber: _subscriberList) {
+		if (publisher->getTopicId() == subscriber->getTopicId()) {
+    		subscriber->dispatch(payload);
+		}
+	}
 }

@@ -17,14 +17,17 @@ namespace eos {
 		public:
 			MessagePublisher(TopicID topicId);
 
-			void publish(const MessagePayload &payload, uint32_t blockTime);
+			void publish(void *payload, uint32_t blockTime);
 
-			TopicID getTopicId() const {
+			inline MessengerService *getService() const {
+				return _service;
+			}
+
+			inline TopicID getTopicId() const {
 				return _topicId;
 			}
 
-		friend void MessengerService::addPublisher(MessagePublisher*);
-		friend void MessengerService::removePublisher(MessagePublisher*);
+		friend MessengerService;
 	};
 
 }

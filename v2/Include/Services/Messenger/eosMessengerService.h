@@ -22,20 +22,40 @@ namespace eos {
     using MessageSubscriberListNode = IntrusiveForwardListNode<MessageSubscriber, 0>;
 
     using TopicID = uint32_t;
-    using MessagePayload = void*;
 
 	class MessengerService final: public Service {
 		private:
-    		struct QueueItem {
-    			MessagePublisher *publisher;
-				const MessagePayload *payload;
+    		enum class ActionID {
+    			addPublisher,
+				addSubscriber,
+				publish
     		};
-    		using Queue = eos::Queue<QueueItem>;
+    		struct Action {
+    			ActionID actionId;
+    			union {
+					struct {
+    					MessagePublisher *publisher;
+    				} addPublisher;
+    				struct {
+    					MessageSubscriber *subscriber;
+    				} addSubscriber;
+    				struct {
+    					MessagePublisher *publisher;
+    					void *payload;
+    				} publish;
+    			};
+    		};
+    		using ActionQueue = eos::Queue<Action>;
 
 		private:
     		MessagePublisherList _publisherList;
     		MessageSubscriberList _subscriberList;
-    		Queue _queue;
+    		ActionQueue _actionQueue;
+
+		private:
+    		void processAddPublisher(MessagePublisher *publisher);
+    		void processAddSubscriber(MessageSubscriber *subscriber);
+    		void processPublish(MessagePublisher *publisher, void *payload);
 
     	protected:
             void onExecute() override;
@@ -43,13 +63,9 @@ namespace eos {
         public:
             MessengerService(uint32_t queueCapacity);
 
-            void addPublisher(MessagePublisher *publisher);
-            void addSubscriber(MessageSubscriber *subscriber);
-
-            void removePublisher(MessagePublisher *publisher);
-            void removeSubscriber(MessageSubscriber *subscriber);
-
-            bool publish(MessagePublisher *publisher, const MessagePayload &payload, uint32_t blockTime);
+            void addPublisher(MessagePublisher *publisher, uint32_t blockTime);
+            void addSubscriber(MessageSubscriber *subscriber, uint32_t blockTime);
+            bool publish(MessagePublisher *publisher, void *payload, uint32_t blockTime);
     };
 
 }
