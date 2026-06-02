@@ -1,15 +1,15 @@
 #pragma once
+#ifndef __eosMessagePublisher__
+#define __eosMessagePublisher__
 
 
 #include "eos.h"
 #include "Services/Messenger/eosMessengerService.h"
-#include "System/Core/eosQueue.h"
 
 
 namespace eos {
 
 	class MessagePublisher: public MessagePublisherListNode {
-
 		private:
 			MessengerService * _service;
 			TopicID const _topicId;
@@ -17,7 +17,7 @@ namespace eos {
 		public:
 			MessagePublisher(TopicID topicId);
 
-			void publish(void *payload, uint32_t blockTime);
+			void publish(Message *message, uint32_t blockTime);
 
 			inline MessengerService *getService() const {
 				return _service;
@@ -27,7 +27,10 @@ namespace eos {
 				return _topicId;
 			}
 
-		friend MessengerService;
+        friend void __link(MessengerService *service, MessagePublisher *publisher);
 	};
 
 }
+
+
+#endif // __eosMessagePublisher__

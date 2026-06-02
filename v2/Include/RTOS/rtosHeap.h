@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosHeap__
+#define __rtosHeap__
 
 
 #include "eos.h"
@@ -20,12 +22,15 @@ namespace rtos {
 			static uint32_t getAllocatedSize();
 			static uint32_t getAvailableSize();
 
-			static uint32_t getAllocateCount() {
+			inline static uint32_t getAllocateCount() {
 				return _allocateCount;
 			}
 
-			static uint32_t getDeallocateCount() {
+			inline static uint32_t getDeallocateCount() {
 				return _deallocateCount;
 			}
 	};
 }
+
+
+#endif // __rtosHeap__

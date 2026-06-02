@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosPool__
+#define __rtosPool__
 
 
 #include "eos.h"
@@ -96,3 +98,5 @@ namespace rtos {
     */
 }
 
+
+#endif // __rtosPool__

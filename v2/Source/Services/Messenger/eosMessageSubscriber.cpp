@@ -18,11 +18,11 @@ eos::MessageSubscriber::MessageSubscriber(
 
 
 void eos::MessageSubscriber::dispatch(
-	void *payload) {
+	Message *message) {
 
 	MessageSubscriberEventArgs args = {
 		.topicId = _topicId,
-		.payload = &payload
+		.message = message
 	};
 
 	_event->execute(this, &args);

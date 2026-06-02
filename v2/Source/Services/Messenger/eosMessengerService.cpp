@@ -4,6 +4,12 @@
 #include "Services/Messenger/eosMessageSubscriber.h"
 
 
+namespace eos {
+	void __link(MessengerService *service, MessagePublisher *publisher);
+	void __link(MessengerService *service, MessageSubscriber *subscriber);
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param    application: L'aplicacio.
@@ -23,21 +29,13 @@ void eos::MessengerService::addPublisher(
 	MessagePublisher *publisher,
 	uint32_t blockTime) {
 
-	rtos::Task::enterCriticalSection();
-
-	if (publisher->getService() == nullptr) {
-
-		Action action = {
-			.actionId = ActionID::addPublisher,
-			.addPublisher {
-				.publisher = publisher
-			}
-		};
-
-		_actionQueue.push(action, blockTime);
-	}
-
-	rtos::Task::exitCriticalSection();
+	Action action = {
+		.actionId = ActionID::addPublisher,
+		.addPublisher {
+			.publisher = publisher
+		}
+	};
+	_actionQueue.push(action, blockTime);
 }
 
 
@@ -49,56 +47,36 @@ void eos::MessengerService::addSubscriber(
 	MessageSubscriber *subscriber,
 	uint32_t blockTime) {
 
-	rtos::Task::enterCriticalSection();
-
-	if (subscriber->getService() == nullptr) {
-
-		Action action = {
-			.actionId = ActionID::addSubscriber,
-			.addSubscriber {
-				.subscriber = subscriber
-			}
-		};
-
-		_actionQueue.push(action, blockTime);
-	}
-
-	rtos::Task::exitCriticalSection();
+	Action action = {
+		.actionId = ActionID::addSubscriber,
+		.addSubscriber {
+			.subscriber = subscriber
+		}
+	};
+	_actionQueue.push(action, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Envia una publicacio per la seva distribucio.
 /// \param    publisher: El publicador.
-/// \param    payload: El contingut de la publicacio.
+/// \param    message: El missatge per publicar.
 /// \param    blockTime: Temps maxim de bloqueig.
 /// \notes    El publicador cal que estigui previament registrat en el servei.
 ///
 bool eos::MessengerService::publish(
 	MessagePublisher *publisher,
-	void *payload,
+	Message *message,
 	uint32_t blockTime) {
 
-	bool result = false;
-
-	rtos::Task::enterCriticalSection();
-
-	if (publisher->getService() == this) {
-
-		Action action = {
-			.actionId = ActionID::publish,
-			.publish {
-				.publisher = publisher,
-				.payload = &payload
-			}
-		};
-
-		result = _actionQueue.push(action, blockTime);
-	}
-
-    rtos::Task::exitCriticalSection();
-
-	return result;
+	Action action = {
+		.actionId = ActionID::publish,
+		.publish {
+			.publisher = publisher,
+			.message = message
+		}
+	};
+	return _actionQueue.push(action, blockTime);
 }
 
 
@@ -121,7 +99,7 @@ void eos::MessengerService::onExecute() {
     				break;
 
     			case ActionID::publish:
-    				processPublish(action.publish.publisher, action.publish.payload);
+    				processPublish(action.publish.publisher, action.publish.message);
     				break;
     		}
     	}
@@ -129,37 +107,73 @@ void eos::MessengerService::onExecute() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix un publicador al servei.
+/// \param    publisher: El publicador.
+///
 void eos::MessengerService::processAddPublisher(
 	MessagePublisher *publisher) {
 
 	rtos::Task::enterCriticalSection();
 
-	_publisherList.add(publisher);
-	publisher->_service = this;
+	if ((publisher != nullptr) &&
+		(publisher->getService() == nullptr))
+		__link(this, publisher);
 
 	rtos::Task::exitCriticalSection();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix un subscriptor al servei.
+/// \param    subscriber: El subscriptor.
+///
 void eos::MessengerService::processAddSubscriber(
 	MessageSubscriber *subscriber) {
 
 	rtos::Task::enterCriticalSection();
 
-	_subscriberList.add(subscriber);
-	subscriber->_service = this;
+	if ((subscriber != nullptr) &&
+		(subscriber->getService() == nullptr))
+		__link(this, subscriber);
 
 	rtos::Task::exitCriticalSection();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Envia una publicaciop als seus subscriptors.
+/// \param    publisher: El publicador.
+/// \param    payload: La publicacio.
+///
 void eos::MessengerService::processPublish(
 	MessagePublisher *publisher,
-	void *payload) {
+	Message *message) {
 
-	for (auto subscriber: _subscriberList) {
-		if (publisher->getTopicId() == subscriber->getTopicId()) {
-    		subscriber->dispatch(payload);
+	if ((publisher != nullptr) &&
+		(publisher->getService() == this)) {
+
+		for (auto subscriber: _subscriberList) {
+			if (publisher->getTopicId() == subscriber->getTopicId()) {
+				subscriber->dispatch(message);
+			}
 		}
 	}
+}
+
+
+void eos::__link(
+	MessengerService *service,
+	MessagePublisher *publisher) {
+
+	publisher->_service = service;
+	service->_publisherList.add(publisher);
+}
+
+void eos::__link(
+	MessengerService *service,
+	MessageSubscriber *subscriber) {
+
+	subscriber->_service = service;
+	service->_subscriberList.add(subscriber);
 }

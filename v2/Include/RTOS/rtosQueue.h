@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosQueue__
+#define __rtosQueue__
 
 
 #include "eos.h"
@@ -31,3 +33,6 @@ namespace rtos {
             uint32_t getCountISR() const;
 	};
 }
+
+
+#endif // __rtosQueue__

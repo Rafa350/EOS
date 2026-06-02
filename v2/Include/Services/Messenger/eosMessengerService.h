@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosMessengerService__
+#define __eosMessengerService__
 
 
 // EOS includes
@@ -23,6 +25,14 @@ namespace eos {
 
     using TopicID = uint32_t;
 
+    class Message {
+    	protected:
+    	    Message(const Message&) = delete;
+    	    Message(Message&&) = default;
+    	    Message& operator=(const Message&) = delete;
+    	    Message& operator=(Message&&) = default;
+    };
+
 	class MessengerService final: public Service {
 		private:
     		enum class ActionID {
@@ -41,7 +51,7 @@ namespace eos {
     				} addSubscriber;
     				struct {
     					MessagePublisher *publisher;
-    					void *payload;
+    					Message *message;
     				} publish;
     			};
     		};
@@ -55,7 +65,7 @@ namespace eos {
 		private:
     		void processAddPublisher(MessagePublisher *publisher);
     		void processAddSubscriber(MessageSubscriber *subscriber);
-    		void processPublish(MessagePublisher *publisher, void *payload);
+    		void processPublish(MessagePublisher *publisher, Message *message);
 
     	protected:
             void onExecute() override;
@@ -65,7 +75,13 @@ namespace eos {
 
             void addPublisher(MessagePublisher *publisher, uint32_t blockTime);
             void addSubscriber(MessageSubscriber *subscriber, uint32_t blockTime);
-            bool publish(MessagePublisher *publisher, void *payload, uint32_t blockTime);
+            bool publish(MessagePublisher *publisher, Message *message, uint32_t blockTime);
+
+        friend void __link(MessengerService *service, MessagePublisher *publisher);
+        friend void __link(MessengerService *service, MessageSubscriber *subscriber);
     };
 
 }
+
+
+#endif // __eosMessengerService__

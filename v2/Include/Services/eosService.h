@@ -43,7 +43,9 @@ namespace eos {
         protected:
             Service();
             Service(const Service&) = delete;
+            Service(const Service&&) = delete;
             Service& operator=(const Service&) = delete;
+            Service& operator=(const Service&&) = delete;
 
             virtual void onStart();
             virtual void onStarted();

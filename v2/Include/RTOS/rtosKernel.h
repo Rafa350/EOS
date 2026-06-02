@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosKernel__
+#define __rtosKernel__
 
 
 #include "eos.h"
@@ -35,3 +37,6 @@ namespace rtos {
 			}
 	};
 }
+
+
+#endif // __rtosKernel__

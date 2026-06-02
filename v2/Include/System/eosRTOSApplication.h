@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosRTOSApplication__
+#define __eosRTOSApplication__
 
 
 // EOS includes
@@ -65,3 +67,4 @@ namespace eos {
 }
 
 
+#endif // __eosRTOSApplication__

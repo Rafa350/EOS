@@ -11,18 +11,19 @@ eos::MessagePublisher::MessagePublisher(
 
 	_service {nullptr},
 	_topicId {topicId} {
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Publica un element.
-/// \param    payload: L'element a publicar.
+/// \param    message: El missatge a publicar.
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::MessagePublisher::publish(
-	void *payload,
+	Message *message,
 	uint32_t blockTime) {
 
 	if (_service != nullptr)
-		_service->publish(this, payload, blockTime);
+		_service->publish(this, message, blockTime);
 }

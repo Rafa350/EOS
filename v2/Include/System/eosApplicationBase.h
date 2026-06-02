@@ -11,9 +11,11 @@ namespace eos {
     /// \brief Clase que representa l'aplicacio.
     ///
     class ApplicationBase {
-        private:
+        protected:
             ApplicationBase(const ApplicationBase&) = delete;
+            ApplicationBase(const ApplicationBase&&) = delete;
             ApplicationBase& operator=(const ApplicationBase&) = delete;
+            ApplicationBase& operator=(const ApplicationBase&&) = delete;
 
         protected:
             ApplicationBase();

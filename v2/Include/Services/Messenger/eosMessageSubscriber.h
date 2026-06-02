@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __eosMessageSubscriber__
+#define __eosMessageSubscriber__
 
 
 #include "eos.h"
@@ -9,7 +11,7 @@ namespace eos {
 
 	struct MessageSubscriberEventArgs {
 		TopicID topicId;
-		void *payload;
+		Message *message;
 	};
 	using IMessageSubscriberEvent = eos::ICallbackP2<MessageSubscriber*, MessageSubscriberEventArgs*>;
 	template <typename Instance_> using MessageSubscriberEvent = eos::CallbackP2<Instance_, MessageSubscriber*, MessageSubscriberEventArgs*>;
@@ -23,7 +25,7 @@ namespace eos {
 		public:
 			MessageSubscriber(TopicID topicId, IMessageSubscriberEvent &event);
 
-			void dispatch(void *payload);
+			void dispatch(Message *message);
 
 			inline TopicID getTopicId() const {
 				return _topicId;
@@ -33,6 +35,9 @@ namespace eos {
 				return _service;
 			}
 
-		friend MessengerService;
+		friend void __link(MessengerService *service, MessageSubscriber *subscriber);
 	};
 }
+
+
+#endif // __eosMessageSubscriber__
