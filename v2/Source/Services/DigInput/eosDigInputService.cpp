@@ -146,13 +146,12 @@ void DigInputService::raiseInitializeNotificationEvent(
 ///
 DigInput * DigInputService::addInput(
 	PinDriver *drv,
-	unsigned tag) {
-
-    rtos::Task::enterCriticalSection();
+	uint32_t tag) {
 
     auto input = new Input(drv, tag);
-	_inputs.pushFront(input);
 
+    rtos::Task::enterCriticalSection();
+	_inputs.pushFront(input);
     rtos::Task::exitCriticalSection();
 
     return input;
@@ -165,7 +164,7 @@ DigInput * DigInputService::addInput(
 /// \return   L'entrada, o nullptr si no la troba.
 ///
 DigInput *DigInputService::getInput(
-	unsigned tag) const {
+	uint32_t tag) const {
 
 	for (auto input: _inputs)
 		if (input->getTag() == tag)

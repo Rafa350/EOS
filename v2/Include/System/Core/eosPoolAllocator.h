@@ -4,105 +4,43 @@
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosSingleton.h"
+#include "RTOS/rtosPool.h"
 
 
 namespace eos {
 
-	/// \brief Pool de memoria generic
-    ///
-    class MemoryPoolAllocator {
-        private:
-            uint8_t *_blocks;
-            uint8_t *_nextBlock;
-            int _blockSize;
-            int _maxBlocks;
-            int _freeBlocks;
-            int _initializedBlocks;
-
-        public:
-            MemoryPoolAllocator(int blockSize, int maxBlocks);
-            ~MemoryPoolAllocator();
-
-            void* allocate();
-            void deallocate(void* p);
-
-            inline void* getAddr() const {
-            	return _blocks;
-            }
-
-            inline unsigned getSize() const {
-            	return _blockSize * _maxBlocks;
-            }
-
-            inline int getBlockSize() const {
-            	return _blockSize;
-            }
-
-            inline int getUsedBlocks() const {
-            	return _maxBlocks - _freeBlocks;
-            }
-
-            inline int getFreeBlocks() const {
-            	return _freeBlocks;
-            }
-
-        private:
-            uint8_t* addrFromIndex(int i) const;
-            int indexFromAddr(const uint8_t* p) const;
-    };
-
-
-    /// \brief Pool de memoria
-    ///
-    template <typename T_, int maxBlocks_>
-    class PoolAllocator {
-
+    /// \brief Pool de memoria per un tipus concret d'objecte
+    /// \param Type_: Tipus d'objecte.
+	/// \param numBlocks_: Nombre de blocs disponibles en el pool.
+	///
+    template <typename Type_, uint32_t maxBlocks_>
+    class PoolAllocator final {
     	private:
-    		MemoryPoolAllocator _allocator;
+    		rtos::Pool _pool;
 
     	public:
+    		PoolAllocator(): _pool(sizeof(Type_), maxBlocks_) { }
 
-    		PoolAllocator():
-            	_allocator(sizeof(T_), maxBlocks_) {
-            }
-
-    		inline T_* allocate() {
-    			void* p = _allocator.allocate();
-    			eosAssert(p != nullptr);
-            	return static_cast<T_*>(p);
-            }
-
-    		inline void deallocate(T_* p) {
-    			eosAssert(p != nullptr);
-            	_allocator.deallocate(p);
-            }
+    		inline Type_* allocate() { return static_cast<Type_*>(_pool.allocate()); }
+    		inline void deallocate(Type_* ptr) { _pool.deallocate(ptr); }
     };
 
-    /// \brief Base pels objectes del pool de memoria
+    /// \brief Base pels objectes amb pool de memoria
+    /// \param Type_: Tipus d'objecte.
+	/// \param numBlocks_: Nombre de blocs disponibles en el pool.
     ///
-    template <typename T_, int maxBlocks_>
+    template <typename Type_, uint32_t maxBlocks_>
     class PoolAllocatable {
     	private:
-    		typedef Singleton<PoolAllocator<T_, maxBlocks_>> Allocator;
+    		static PoolAllocator<Type_, maxBlocks_> _allocator;
 
     	public:
-        	void* operator new(unsigned size) {
-
-        		eosAssert(size == sizeof(T_));
-
-        		auto &allocator = Allocator::instance();
-        		return allocator.allocate();
-        	}
-
-        	void operator delete(void *p) {
-
-        		eosAssert(p != nullptr);
-
-        		auto &allocator = Allocator::instance();
-        		allocator.deallocate(static_cast<T_*>(p));
-        	}
+        	inline void* operator new(size_t size) { return _allocator.allocate(); }
+        	inline void operator delete(void *ptr) { _allocator.deallocate(static_cast<Type_*>(ptr)); }
     };
+
+    template <typename Type_, uint32_t maxBlocks_>
+    PoolAllocator<Type_, maxBlocks_> PoolAllocatable<Type_, maxBlocks_>::_allocator;
 }
 
 

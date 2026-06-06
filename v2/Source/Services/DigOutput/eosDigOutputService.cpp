@@ -14,8 +14,8 @@ constexpr uint32_t serviceStackDepth = 164;
 
 // Parametres de configuracio del servei
 //
-constexpr unsigned minPulseWidth = DigOutputService_MinPulseWidth;
-constexpr unsigned minDelay = DigOutputService_MinDelay;
+constexpr uint32_t minPulseWidth = DigOutputService_MinPulseWidth;
+constexpr uint32_t minDelay = DigOutputService_MinDelay;
 
 
 /// ----------------------------------------------------------------------
@@ -44,7 +44,7 @@ eos::DigOutputService::~DigOutputService() {
 ///
 eos::DigOutput* eos::DigOutputService::addOutput(
     eos::PinDriver *drv,
-	unsigned tag) {
+	uint32_t tag) {
 
     rtos::Task::enterCriticalSection();
 
@@ -85,7 +85,7 @@ bool eos::DigOutputService::containsOutput(
 /// \return   La sortida, o nullptr si no la troba.
 ///
 eos::DigOutput *eos::DigOutputService::getOutput(
-	unsigned tag) const {
+	uint32_t tag) const {
 
 	for (auto output: _outputs)
 		if (output->getTag() == tag)
@@ -222,7 +222,7 @@ void eos::DigOutputService::write(
 ///
 void eos::DigOutputService::pulse(
     eos::DigOutput *output,
-    unsigned width) {
+    uint32_t width) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -250,8 +250,8 @@ void eos::DigOutputService::pulse(
 ///
 void eos::DigOutputService::delayedPulse(
     eos::DigOutput *output,
-    unsigned delay,
-    unsigned width) {
+    uint32_t delay,
+    uint32_t width) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -421,7 +421,7 @@ void eos::DigOutputService::processToggle(
 ///
 void eos::DigOutputService::processPulse(
     eos::Output *output,
-    unsigned pulseWidth) {
+    uint32_t pulseWidth) {
 
 	bool oldValue = output->getValue();
 	output->pulse(_timeCounter, pulseWidth);
@@ -437,7 +437,7 @@ void eos::DigOutputService::processPulse(
 ///
 void eos::DigOutputService::processDelayedSet(
     eos::Output *output,
-    unsigned delay) {
+    uint32_t delay) {
 
 }
 
@@ -449,7 +449,7 @@ void eos::DigOutputService::processDelayedSet(
 ///
 void eos::DigOutputService::processDelayedClear(
     eos::Output *output,
-    unsigned delay) {
+    uint32_t delay) {
 
 }
 
@@ -461,7 +461,7 @@ void eos::DigOutputService::processDelayedClear(
 ///
 void eos::DigOutputService::processDelayedToggle(
     eos::Output *output,
-    unsigned delay) {
+    uint32_t delay) {
 
 }
 
@@ -474,8 +474,8 @@ void eos::DigOutputService::processDelayedToggle(
 ///
 void eos::DigOutputService::processDelayedPulse(
     eos::Output *output,
-    unsigned delay,
-    unsigned pulseWidth) {
+    uint32_t delay,
+    uint32_t pulseWidth) {
 
 	output->delayedPulse(_timeCounter, delay, pulseWidth);
 }

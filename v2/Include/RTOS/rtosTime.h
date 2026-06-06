@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosTime__
+#define __rtosTime__
 
 
 #include "eos.h"
@@ -51,3 +53,6 @@ namespace rtos {
 			}
 	};
 }
+
+
+#endif // __rtosTime__

@@ -7,6 +7,8 @@
 #include "RTOS/rtosPool.h"
 #include "RTOS/rtosTask.h"
 
+#include "FreeRTOS.h"
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
@@ -27,8 +29,14 @@ rtos::Pool::Pool(
     if (_blockSize < sizeof(uint32_t))
         _blockSize = sizeof(uint32_t);
 
-    _blocks = static_cast<uint8_t*>(rtos::Heap::allocate(_blockSize * _maxBlocks));
+    // Ajusta el tamany del bloc per que quedi aliniat
+    //
+#if portBYTE_ALIGNMENT != 1
+	if (blockSize & portBYTE_ALIGNMENT_MASK)
+		blockSize += portBYTE_ALIGNMENT - (blockSize & portBYTE_ALIGNMENT_MASK);
+#endif
 
+    _blocks = static_cast<uint8_t*>(rtos::Heap::allocate(_blockSize * _maxBlocks));
     _nextBlock = _blocks;
 }
 
@@ -91,6 +99,18 @@ void rtos::Pool::deallocate(
     _freeBlocks += 1;
 
     rtos::Task::exitCriticalSection();
+}
+
+
+uint32_t rtos::Pool::getAllocatedSize() {
+
+	return (_maxBlocks - _freeBlocks) * _blockSize;
+}
+
+
+uint32_t rtos::Pool::getAvailableSize() {
+
+	return _freeBlocks * _blockSize;
 }
 
 

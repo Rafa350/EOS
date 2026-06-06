@@ -19,7 +19,7 @@ static constexpr uint32_t patternIdle    = 0x00000000;
 ///
 Input::Input(
 	PinDriver *drv,
-	unsigned tag):
+	uint32_t tag):
 
 	DigInput {tag},
 	_drv {drv} {
@@ -36,7 +36,7 @@ Input::Input(
 ///
 bool Input::scan() {
 
-	unsigned oldCount = _count;
+	uint32_t oldCount = _count;
 
 	// Actualitza el patro de lectura
 	//
@@ -77,10 +77,10 @@ bool Input::getValue() const {
 /// \param    clear: Indica si cal borrar el contador.
 /// \return   El valor del contador.
 ///
-unsigned Input::getCount(
+uint32_t Input::getCount(
 	bool clear) {
 
-	unsigned count = _count;
+	uint32_t count = _count;
 	if (clear)
 		_count = 0;
 	return count;

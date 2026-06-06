@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosTimer__
+#define __rtosTimer__
 
 
 #include "eos.h"
@@ -54,3 +56,6 @@ namespace rtos {
 			[[nodiscard]] bool isActive() const;
 	};
 }
+
+
+#endif // __rtosTimer__

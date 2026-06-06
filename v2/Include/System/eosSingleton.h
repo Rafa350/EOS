@@ -1,26 +1,30 @@
+#pragma once
 #ifndef __eosSingleton__
 #define __eosSingleton__
 
 
 namespace eos {
 
-    // TODO: Revisar la utilitat
-
-	template <typename T_>
-	class Singleton {
+	template <typename Type_>
+	class Singleton final {
 		private:
-			Singleton() {}
-			~Singleton() {}
+			static Singleton _instance;
+
+		private:
+			Singleton() = default;
+			Singleton(const Singleton&) = delete;
+			Singleton(const Singleton&&) = delete;
+
+			Singleton& operator = (const Singleton&) = delete;
+			Singleton& operator = (const Singleton&&) = delete;
 
 		public:
-			static T_& instance() {
-				static T_ s;
-				return s;
-			}
-
-			Singleton(const Singleton&) = delete;
-			Singleton& operator = (const Singleton&) = delete;
+			static constexpr Type_ *pInst = &_instance;
+			static constexpr Type_ &rInst = _instance;
 	};
+
+	template <typename Type_>
+	Singleton<Type_> Singleton<Type_>::_instance;
 }
 
 

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosSemaphore__
+#define __rtosSemaphore__
 
 
 #include "eos.h"
@@ -21,3 +23,6 @@ namespace rtos {
             void releaseISR() const;
 	};
 }
+
+
+#endif // __rtosSemaphore__

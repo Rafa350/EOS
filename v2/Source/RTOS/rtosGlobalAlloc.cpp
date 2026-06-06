@@ -15,6 +15,20 @@ void* operator new(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Operador placement new global.
+/// \param    size: Tamany en bytes de la memoria a reservar.
+/// \param    ptr: Punter a la memoria ya reservada.
+/// \return   Punter al bloc de memoria o nullptr en cas d'error.
+///
+void * operator new (
+	size_t size,
+	void *ptr) {
+
+	return ptr;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Operador delete global.
 /// \param    ptr: Punter al bloc de memoria a alliberar.
 ///

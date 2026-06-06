@@ -49,10 +49,10 @@ namespace eos {
     ///
     class DigOutput: public DigOutputListNode {
     	private:
-    		unsigned _tag;
+    		uint32_t _tag;
 
     	protected:
-    		DigOutput(unsigned tag): _tag {tag} {}
+    		DigOutput(uint32_t tag): _tag {tag} {}
 
     	public:
     	    DigOutput(const DigOutput&) = delete;
@@ -61,7 +61,7 @@ namespace eos {
     	    DigOutput& operator=(const DigOutput&) = delete;
     	    DigOutput& operator=(const DigOutput&&) = delete;
 
-    	    inline unsigned getTag() const { return _tag; }
+    	    inline uint32_t getTag() const { return _tag; }
     };
 
     class Output;
@@ -101,8 +101,8 @@ namespace eos {
             struct Action {
                 ActionID id;
                 Output *output;
-                unsigned time1;
-                unsigned time2;
+                uint32_t time1;
+                uint32_t time2;
             };
 
             using ActionQueue = Queue<Action>;
@@ -114,7 +114,7 @@ namespace eos {
             DigOutputList _outputs;
 
             NotificationEventRaiser _erNotification;
-            volatile unsigned _timeCounter;
+            volatile uint32_t _timeCounter;
             ActionQueue _actionQueue;
 
         private:
@@ -122,11 +122,11 @@ namespace eos {
             void processClear(Output *output);
             void processSet(Output *output);
             void processToggle(Output *output);
-            void processPulse(Output *output, unsigned width);
-            void processDelayedSet(Output *output, unsigned delay);
-            void processDelayedClear(Output *output, unsigned delay);
-            void processDelayedToggle(Output *output, unsigned delay);
-            void processDelayedPulse(Output *output, unsigned delay, unsigned width);
+            void processPulse(Output *output, uint32_t width);
+            void processDelayedSet(Output *output, uint32_t delay);
+            void processDelayedClear(Output *output, uint32_t delay);
+            void processDelayedToggle(Output *output, uint32_t delay);
+            void processDelayedPulse(Output *output, uint32_t delay, uint32_t width);
             void processTick();
 
             void raiseChangedNotificationEvent(Output *output);
@@ -144,9 +144,9 @@ namespace eos {
             DigOutputService& operator=(const DigOutputService&) = delete;
     	    DigOutputService& operator=(const DigOutputService&&) = delete;
 
-            DigOutput* addOutput(PinDriver *drv, unsigned tag = (unsigned) -1);
+            DigOutput* addOutput(PinDriver *drv, uint32_t tag = 0xFFFFFFFF);
             bool containsOutput(DigOutput *output) const;
-            DigOutput *getOutput(unsigned tag) const;
+            DigOutput *getOutput(uint32_t tag) const;
 
             inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
             	_erNotification.set(event, enabled);
@@ -162,14 +162,14 @@ namespace eos {
             void clear(DigOutput *output);
             void write(DigOutput *output, bool pinState);
             void toggle(DigOutput *output);
-            void pulse(DigOutput *output, unsigned width);
-            void delayedSet(DigOutput *output, unsigned delay);
-            void delayedClear(DigOutput *output, unsigned delay);
-            void delayedToggle(DigOutput *output, unsigned delay);
-            void delayedPulse(DigOutput *output, unsigned delay, unsigned pulseWidth);
+            void pulse(DigOutput *output, uint32_t width);
+            void delayedSet(DigOutput *output, uint32_t delay);
+            void delayedClear(DigOutput *output, uint32_t delay);
+            void delayedToggle(DigOutput *output, uint32_t delay);
+            void delayedPulse(DigOutput *output, uint32_t delay, uint32_t pulseWidth);
             bool read(DigOutput *ouput);
 
-            void tick(unsigned blockTime);
+            void tick(uint32_t blockTime);
             void tickISR();
     };
 }

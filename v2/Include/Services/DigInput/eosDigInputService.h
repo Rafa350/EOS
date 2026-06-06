@@ -24,10 +24,10 @@ namespace eos {
     //
     class DigInput: public DigInputListNode {
     	private:
-    		unsigned const _tag;
+    		uint32_t const _tag;
 
     	protected:
-    		DigInput(unsigned tag) : _tag {tag} {}
+    		DigInput(uint32_t tag) : _tag {tag} {}
 
     	public:
     	    DigInput(const DigInput&) = delete;
@@ -36,7 +36,7 @@ namespace eos {
     	    DigInput& operator=(const DigInput&) = delete;
     	    DigInput& operator=(const DigInput&&) = delete;
 
-    	    inline unsigned getTag() const { return _tag; }
+    	    inline uint32_t getTag() const { return _tag; }
     };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
@@ -67,7 +67,7 @@ namespace eos {
         private:
     		DigInputList _inputs;
     		NotificationEventRaiser _erNotification;
-            unsigned _scanPeriod;
+            uint32_t _scanPeriod;
 
         private:
             void raiseChangedNotificationEvent(DigInput *input);
@@ -89,8 +89,8 @@ namespace eos {
 
             void setScanPeriod(unsigned scanPeriod);
 
-            DigInput* addInput(PinDriver *drv, unsigned tag = (unsigned) -1);
-            DigInput *getInput(unsigned tag) const;
+            DigInput* addInput(PinDriver *drv, uint32_t tag = 0xFFFFFFFF);
+            DigInput *getInput(uint32_t tag) const;
 
             bool read(const DigInput *input) const;
             unsigned getEdges(DigInput *input, bool clear = true) const;

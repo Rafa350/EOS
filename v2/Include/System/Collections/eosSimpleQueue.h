@@ -69,7 +69,7 @@ namespace eos {
                     /// Extreu un element de la cua.
                     /// \return L'element.
                     ///
-                    CReference dequeue() {
+                    Value dequeue() {
                     	eosAsert(_count > 0);
                    		Reference element = _container[_iget];
                     	_count--;

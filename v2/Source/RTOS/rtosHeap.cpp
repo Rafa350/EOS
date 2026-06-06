@@ -35,6 +35,7 @@ struct Tail {
 void * rtos::Heap::allocate(
 	uint32_t size) {
 
+
 #if RTOS_HEAP_USE_SAFEMODE == 1
 
 	void *ptr = pvPortMalloc(sizeof(Head) + size + sizeof(Tail));

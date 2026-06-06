@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __rtosTask__
+#define __rtosTask__
 
 
 #include "eos.h"
@@ -83,3 +85,6 @@ namespace rtos {
             void setPriority(Priority priority) const;
 	};
 }
+
+
+#endif // __rtosTask__

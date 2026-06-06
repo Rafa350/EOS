@@ -21,14 +21,14 @@ namespace eos {
 			PinDriver * const _drv;
         	uint32_t _pattern;
 			bool _value;
-			unsigned _count;
+			uint32_t _count;
 
         public:
-        	Input(PinDriver *drv, unsigned tag = 0);
+        	Input(PinDriver *drv, uint32_t tag = 0xFFFFFFFF);
 
         	bool scan();
         	bool getValue() const;
-        	unsigned getCount(bool clear);
+        	uint32_t getCount(bool clear);
     };
 
 }
