@@ -48,7 +48,7 @@ void Service::start() {
 			params.priority,
 			params.name,
 			_taskEvent);
-		_state = State::run;
+		_state = State::run; //******** Aqui?
 	}
 }
 
@@ -83,6 +83,7 @@ void Service::taskEventHandler(
 	rtos::Task *task,
 	rtos::Task::EventArgs *args) {
 
+	_state = State::run; //********* O aqui?
 	onStarted();
 	onExecute();
 	_state = State::stop;

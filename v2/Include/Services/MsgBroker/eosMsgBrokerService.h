@@ -11,6 +11,12 @@
 #include "System/Core/eosQueue.h"
 
 
+// Numero maxim d'elements en la cua d'accions
+#ifndef MsgBrokerService_ActionQueueSize
+    #define MsgBrokerService_ActionQueueSize 5
+#endif
+
+
 namespace eos {
 
 	class MsgPublisher;
@@ -49,6 +55,9 @@ namespace eos {
     			};
     		};
     		using ActionQueue = eos::Queue<Action>;
+
+		private:
+    		static constexpr uint32_t _actionQueueSize = MsgBrokerService_ActionQueueSize;
 
 		private:
     		MsgPublisherList _publisherList;

@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "RTOS/rtosKernel.h""
 #include "Services/MsgBroker/eosMsgBrokerService.h"
 #include "Services/MsgBroker/eosMsgPublisher.h"
 #include "Services/MsgBroker/eosMsgSubscriber.h"
@@ -10,16 +11,13 @@ namespace eos {
 }
 
 
-constexpr uint32_t actionQueueSize = 5;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param    queueCapacity: Tamany de la cua interna.
 ///
 eos::MsgBrokerService::MsgBrokerService():
 
-	_actionQueue {actionQueueSize} {
+	_actionQueue {_actionQueueSize} {
 }
 
 
@@ -33,14 +31,26 @@ bool eos::MsgBrokerService::addPublisher(
 	MsgPublisher *publisher,
 	uint32_t blockTime) {
 
-	Action action = {
-		.actionId = ActionID::addPublisher,
-		.addPublisher {
-			.publisher = publisher
-		}
-	};
+	// Si el kernel esta en marxa, afegeix de forma asincrona
+	//
+	if ((rtos::Kernel::getState() == rtos::Kernel::State::running) &&
+		getState() == eos::Service::State::run) {
 
-	return _actionQueue.push(action, blockTime);
+		Action action = {
+			.actionId = ActionID::addPublisher,
+			.addPublisher {
+				.publisher = publisher
+			}
+		};
+
+		return _actionQueue.push(action, blockTime);
+	}
+
+	else {
+
+		processAddPublisher(publisher);
+		return true;
+	}
 }
 
 
@@ -54,14 +64,26 @@ bool eos::MsgBrokerService::addSubscriber(
 	MsgSubscriber *subscriber,
 	uint32_t blockTime) {
 
-	Action action = {
-		.actionId = ActionID::addSubscriber,
-		.addSubscriber {
-			.subscriber = subscriber
-		}
-	};
+	// Si el kernel esta en marxa, afegeix de forma asincrona
+	//
+	if ((rtos::Kernel::getState() == rtos::Kernel::State::running) &&
+		getState() == eos::Service::State::run) {
 
-	return _actionQueue.push(action, blockTime);
+		Action action = {
+			.actionId = ActionID::addSubscriber,
+			.addSubscriber {
+				.subscriber = subscriber
+			}
+		};
+
+		return _actionQueue.push(action, blockTime);
+	}
+
+	else {
+
+		processAddSubscriber(subscriber);
+		return true;
+	}
 }
 
 

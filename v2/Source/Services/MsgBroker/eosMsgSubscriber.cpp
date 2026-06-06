@@ -11,6 +11,7 @@ eos::MsgSubscriber::MsgSubscriber(
 	MsgTopic topic,
 	IMsgSubscriberEvent &event):
 
+    _service {nullptr},
 	_topic {topic},
 	_event {&event} {
 

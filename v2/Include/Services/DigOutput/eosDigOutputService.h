@@ -13,7 +13,7 @@
 #include "System/Core/eosQueue.h"
 
 
-// Numero maxim d'elements en la cua de comandes
+// Numero maxim d'elements en la cua d'accions
 #ifndef DigOutputService_ActionQueueSize
     #define DigOutputService_ActionQueueSize 4
 #endif
