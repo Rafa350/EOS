@@ -7,27 +7,39 @@
 //
 #include "eos.h"
 #include "Services/eosService.h"
-#include "System/eosEvents.h"
+#include "System/eosCallbacks.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 
 
 namespace eos {
 
+	// Declaracions Forward
+	//
     class DigInputService;
     class DigInput;
     class PinDriver;
 
+    // Definicio de handlers
+    //
+    using DigInputHandler = DigInput*;
+    using DigInputServiceHandler = DigInputService*;
+
+    // Declaracions per les llistes
+    //
     using DigInputList = IntrusiveForwardList<DigInput, 0>;
     using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
 
-    /// \brief Clase que implementa una entrada digitals
+    /// \brief Clase que implementa una entrada digital
     //
     class DigInput: public DigInputListNode {
+    	public:
+    		using Tag = uint32_t;
+
     	private:
-    		uint32_t const _tag;
+    		Tag const _tag;
 
     	protected:
-    		DigInput(uint32_t tag) : _tag {tag} {}
+    		inline DigInput(Tag tag): _tag {tag} { }
 
     	public:
     	    DigInput(const DigInput&) = delete;
@@ -36,42 +48,32 @@ namespace eos {
     	    DigInput& operator=(const DigInput&) = delete;
     	    DigInput& operator=(const DigInput&&) = delete;
 
-    	    inline uint32_t getTag() const { return _tag; }
+    	    inline Tag getTag() const { return _tag; }
     };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
     class DigInputService final: public Service {
     	public:
-			enum class NotificationID {
-				beforeScan,
-				changed,
-				initialize
+			using IBeforeScanEvent = ICallbackP1<DigInputService*>;
+			template <typename Instance_> using BeforeScanEvent = CallbackP1<Instance_, DigInputService*>;
+
+			struct InputChangedEventArgs {
+				DigInput::Tag tag;
+				bool value;
 			};
-			struct NotificationEventArgs {
-				NotificationID const id;
-				union {
-					struct {
-						DigInput * const input;
-						bool value;
-					} changed;
-					struct {
-						ServiceParams * const params;
-					} initialize;
-				};
-			};
-			using NotificationEventRaiser = EventRaiser<DigInputService, NotificationEventArgs>;
-			using INotificationEvent = NotificationEventRaiser::IEvent;
-			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+			using IInputChangedEvent = ICallbackP2<DigInputService*, InputChangedEventArgs*>;
+			template <typename Instance_> using InputChangedEvent = CallbackP2<Instance_, DigInputService*, InputChangedEventArgs*>;
 
         private:
     		DigInputList _inputs;
-    		NotificationEventRaiser _erNotification;
+    		IInputChangedEvent *_inputChangedEvent;
+    		IBeforeScanEvent *_beforeScanEvent;
             uint32_t _scanPeriod;
 
         private:
-            void raiseChangedNotificationEvent(DigInput *input);
-            void raiseBeforeScanNotificationEvent();
+            void onInputChanged(DigInput *input);
+            void beforeScan();
             void raiseInitializeNotificationEvent(ServiceParams *params);
 
         protected:
@@ -82,23 +84,33 @@ namespace eos {
             DigInputService();
             DigInputService(const DigInputService&) = delete;
             DigInputService(const DigInputService&&) = delete;
-            ~DigInputService();
 
             DigInputService& operator=(const DigInputService&) = delete;
     	    DigInputService& operator=(const DigInputService&&) = delete;
 
-            void setScanPeriod(unsigned scanPeriod);
+            void setScanPeriod(uint32_t scanPeriod);
 
-            DigInput* addInput(PinDriver *drv, uint32_t tag = 0xFFFFFFFF);
-            DigInput *getInput(uint32_t tag) const;
+            DigInput * addInput(PinDriver *drv, DigInput::Tag tag);
+            DigInput * getInput(DigInput::Tag tag) const;
 
             bool read(const DigInput *input) const;
-            unsigned getEdges(DigInput *input, bool clear = true) const;
+            uint32_t getEdges(DigInput *input, bool clear = true) const;
 
-            void setNotificationEvent(INotificationEvent &event, bool enabled = true);
-            void enableNotifyEvent();
-            void disableNotifyEvent();
+            inline void setInputChangedEvent(IInputChangedEvent &event) {
+            	_inputChangedEvent = &event;
+            }
+            inline void clearInputChangedEvent() {
+            	_inputChangedEvent = nullptr;
+            }
+
+            inline void setBeforeScanEvent(IBeforeScanEvent &event) {
+            	_beforeScanEvent = &event;
+            }
+            inline void clearBeforeScanEvent() {
+            	_beforeScanEvent = nullptr;
+            }
     };
+
 }
 
 

@@ -210,7 +210,7 @@ void eos::__link(
 	MsgPublisher *publisher) {
 
 	publisher->_service = service;
-	service->_publisherList.add(publisher);
+	service->_publisherList.pushFront(publisher);
 }
 
 
@@ -224,5 +224,5 @@ void eos::__link(
 	MsgSubscriber *subscriber) {
 
 	subscriber->_service = service;
-	service->_subscriberList.add(subscriber);
+	service->_subscriberList.pushFront(subscriber);
 }

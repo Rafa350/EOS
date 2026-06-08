@@ -13,8 +13,8 @@ namespace eos {
 		MsgTopic topic;
 		void *payload;
 	};
-	using IMsgSubscriberEvent = eos::ICallbackP2<MsgSubscriber*, MsgSubscriberEventArgs*>;
-	template <typename Instance_> using MsgSubscriberEvent = eos::CallbackP2<Instance_, MsgSubscriber*, MsgSubscriberEventArgs*>;
+	using IMsgSubscriberEvent = eos::ICallbackP2<MsgSubscriber * const, MsgSubscriberEventArgs * const>;
+	template <typename Instance_> using MsgSubscriberEvent = eos::CallbackP2<Instance_, MsgSubscriber * const, MsgSubscriberEventArgs * const>;
 
 	class MsgSubscriber: public MsgSubscriberListNode {
 		private:

@@ -14,24 +14,17 @@ constexpr const char *serviceName = "DigInputs";
 constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
 constexpr unsigned serviceStackDepth = 160;
 
-constexpr unsigned minScanPeriod = 5;  // Periode d'exploracio minim en ms
+constexpr uint32_t minScanPeriod = 5;  // Periode d'exploracio minim en ms
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    application: The application.
-/// \params   settings: Conmfigurationparameters.
 ///
 DigInputService::DigInputService():
     Service(),
+	_inputChangedEvent {nullptr},
+	_beforeScanEvent {nullptr},
     _scanPeriod {minScanPeriod} {
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Destructor.
-///
-DigInputService::~DigInputService() {
 }
 
 
@@ -40,80 +33,41 @@ DigInputService::~DigInputService() {
 /// \param    scanPeriod: El period en milisegons.
 ///
 void DigInputService::setScanPeriod(
-    unsigned scanPeriod) {
+    uint32_t scanPeriod) {
 
     _scanPeriod = std::max(scanPeriod, minScanPeriod);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna l'event de notificacio.
-/// \param    event: L'event.
-/// \param    enabled: True per habiliotar el event.
-///
-void DigInputService::setNotificationEvent(
-	INotificationEvent &event,
-	bool enabled) {
-
-	_erNotification.set(event, enabled);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Habilita l'event de notificacio
-//
-void DigInputService::enableNotifyEvent() {
-
-	_erNotification.enable();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Deshabilita l'event de notificacio
-//
-void DigInputService::disableNotifyEvent() {
-
-	_erNotification.disable();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un event que notifica un canvi en l'estat d'una entrada.
+/// \brief    Genera un event quant canvia l'estat d'una entrada.
 /// \param    input: L'entrada.
 ///
-void DigInputService::raiseChangedNotificationEvent(
+void DigInputService::onInputChanged(
     DigInput *input) {
 
-    if (_erNotification.isEnabled()) {
+	if (_inputChangedEvent != nullptr) {
 
     	auto i = static_cast<Input*>(input);
 
-    	NotificationEventArgs args = {
-    		.id {NotificationID::changed},
-			.changed {
-    			.input {i},
-				.value {i->getValue()}
-    		}
+    	InputChangedEventArgs args = {
+   			.tag {i->getTag()},
+			.value {i->getValue()}
     	};
 
-    	_erNotification(this, &args);
+    	_inputChangedEvent->execute(this, &args);
     }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event que notifica l'inici del scaneig de les entrades.
+/// \brief    Genera un event abans del inici de l'exploracio de
+///           les entrades.
 ///
-void DigInputService::raiseBeforeScanNotificationEvent() {
+void DigInputService::beforeScan() {
 
-	if (_erNotification.isEnabled()) {
-
-		NotificationEventArgs args = {
-			.id {NotificationID::beforeScan}
-		};
-
-    	_erNotification(this, &args);
-	}
+	if (_beforeScanEvent != nullptr)
+		_beforeScanEvent->execute(this);
 }
 
 
@@ -124,7 +78,7 @@ void DigInputService::raiseBeforeScanNotificationEvent() {
 void DigInputService::raiseInitializeNotificationEvent(
 	ServiceParams *params) {
 
-	if (_erNotification.isEnabled()) {
+	/*if (_notificationEvent != nullptr) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::initialize},
@@ -133,8 +87,9 @@ void DigInputService::raiseInitializeNotificationEvent(
 			}
 		};
 
-		_erNotification(this, &args);
+		_notificationEvent->execute(this, &args);
 	}
+	*/
 }
 
 
@@ -166,11 +121,17 @@ DigInput * DigInputService::addInput(
 DigInput *DigInputService::getInput(
 	uint32_t tag) const {
 
-	for (auto input: _inputs)
-		if (input->getTag() == tag)
-			return input;
+	DigInput *result = nullptr;
 
-	return nullptr;
+	rtos::Task::enterCriticalSection();
+	for (auto input: _inputs)
+		if (input->getTag() == tag) {
+			result = input;
+			break;
+		}
+	rtos::Task::exitCriticalSection();
+
+	return result;
 }
 
 
@@ -200,7 +161,7 @@ void DigInputService::onExecute() {
 
 		// Notifica l'inici de l'escaneig d'entrades
 		//
-		raiseBeforeScanNotificationEvent();
+		beforeScan();
 
 		// Escaneja totes les entradas una a una
 		//
@@ -211,7 +172,7 @@ void DigInputService::onExecute() {
 			// genera un event de notificacio.
 			//
 			if (inp->scan())
-				raiseChangedNotificationEvent(input);
+				onInputChanged(input);
 		}
 	}
 }
@@ -228,7 +189,7 @@ bool DigInputService::read(
     rtos::Task::enterCriticalSection();
 
     auto inp = static_cast<const Input*>(input);
-    bool value = inp->getValue();
+    auto value = inp->getValue();
 
     rtos::Task::exitCriticalSection();
 
@@ -242,14 +203,14 @@ bool DigInputService::read(
 /// \param    clear: Indica si cal borrar el contador.
 /// \return   El nombre de pulsos fins al moment de la lectura.
 ///
-unsigned DigInputService::getEdges(
+uint32_t DigInputService::getEdges(
 	DigInput *input,
 	bool clear) const {
 
     rtos::Task::enterCriticalSection();
 
     auto inp = static_cast<Input*>(input);
-    unsigned edges = inp->getCount(clear);
+    auto edges = inp->getCount(clear);
 
     rtos::Task::exitCriticalSection();
 

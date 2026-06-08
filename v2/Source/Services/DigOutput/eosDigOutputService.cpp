@@ -22,16 +22,9 @@ constexpr uint32_t minDelay = DigOutputService_MinDelay;
 /// \brief    Constructor.
 ///
 eos::DigOutputService::DigOutputService():
+	_outputChangedEvent {nullptr},
 	_timeCounter {0},
 	_actionQueue {_actionQueueSize} {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Destructor de l'objecte.
-///
-eos::DigOutputService::~DigOutputService() {
 
 }
 
@@ -44,7 +37,7 @@ eos::DigOutputService::~DigOutputService() {
 ///
 eos::DigOutput* eos::DigOutputService::addOutput(
     eos::PinDriver *drv,
-	uint32_t tag) {
+	eos::DigOutput::Tag tag) {
 
     rtos::Task::enterCriticalSection();
 
@@ -85,7 +78,7 @@ bool eos::DigOutputService::containsOutput(
 /// \return   La sortida, o nullptr si no la troba.
 ///
 eos::DigOutput *eos::DigOutputService::getOutput(
-	uint32_t tag) const {
+	eos::DigOutput::Tag tag) const {
 
 	for (auto output: _outputs)
 		if (output->getTag() == tag)
@@ -99,20 +92,17 @@ eos::DigOutput *eos::DigOutputService::getOutput(
 /// \brief    Notifica un canvi en l'estat d'una sortida.
 /// \param    output: La sortida.
 ///
-void eos::DigOutputService::raiseChangedNotificationEvent(
+void eos::DigOutputService::onOutputChanged(
 	eos::Output *output) {
 
-	if (_erNotification.isEnabled()) {
+	if (_outputChangedEvent != nullptr) {
 
-    	NotificationEventArgs args = {
-			.id {NotificationID::changed},
-			.changed {
-				.output {output},
-				.value {output->getValue()}
-			}
+    	OutputChangedEventArgs args = {
+			.tag {output->getTag()},
+			.value {output->getValue()}
 		};
 
-		_erNotification(this, &args);
+		_outputChangedEvent->execute(this, &args);
 	}
 }
 
@@ -383,7 +373,7 @@ void eos::DigOutputService::processClear(
 
 	if (output->getValue()) {
 		output->clear();
-		raiseChangedNotificationEvent(output);
+		onOutputChanged(output);
 	}
 }
 
@@ -397,7 +387,7 @@ void eos::DigOutputService::processSet(
 
 	if (!output->getValue()) {
 		output->set();
-		raiseChangedNotificationEvent(output);
+		onOutputChanged(output);
 	}
 }
 
@@ -410,7 +400,7 @@ void eos::DigOutputService::processToggle(
     eos::Output *output) {
 
 	output->toggle();
-	raiseChangedNotificationEvent(output);
+	onOutputChanged(output);
 }
 
 
@@ -426,7 +416,7 @@ void eos::DigOutputService::processPulse(
 	bool oldValue = output->getValue();
 	output->pulse(_timeCounter, pulseWidth);
 	if (oldValue != output->getValue())
-		raiseChangedNotificationEvent(output);
+		onOutputChanged(output);
 }
 
 
@@ -492,7 +482,7 @@ void eos::DigOutputService::processTick() {
     	bool oldValue = output->getValue();
 		output->tick(_timeCounter);
 		if (oldValue != output->getValue())
-			raiseChangedNotificationEvent(output);
+			onOutputChanged(output);
 	}
 }
 

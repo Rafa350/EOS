@@ -48,11 +48,14 @@ namespace eos {
     /// \brief Clase que representa una sortida digital individual.
     ///
     class DigOutput: public DigOutputListNode {
+    	public:
+    		using Tag = uint32_t;
+
     	private:
     		uint32_t _tag;
 
     	protected:
-    		DigOutput(uint32_t tag): _tag {tag} {}
+    		DigOutput(Tag tag): _tag {tag} {}
 
     	public:
     	    DigOutput(const DigOutput&) = delete;
@@ -61,7 +64,7 @@ namespace eos {
     	    DigOutput& operator=(const DigOutput&) = delete;
     	    DigOutput& operator=(const DigOutput&&) = delete;
 
-    	    inline uint32_t getTag() const { return _tag; }
+    	    inline Tag getTag() const { return _tag; }
     };
 
     class Output;
@@ -70,21 +73,12 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
 		public:
-    		enum class NotificationID {
-    			changed
-    		};
-			struct NotificationEventArgs {
-    			NotificationID const id;
-    			union {
-    				struct {
-    					DigOutput * const output;
-    					bool value;
-    				} changed;
-    			};
+			struct OutputChangedEventArgs {
+     			DigOutput::Tag tag;
+				bool value;
 			};
-			using NotificationEventRaiser = EventRaiser<DigOutputService, NotificationEventArgs>;
-			using INotificationEvent = NotificationEventRaiser::IEvent;
-			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+			using IOutputChangedEvent = ICallbackP2<DigOutputService*, OutputChangedEventArgs*>;
+			template <typename Instance_> using OutputChangedEvent = CallbackP2<Instance_, DigOutputService*, OutputChangedEventArgs*>;
 
 		private:
             enum class ActionID {
@@ -113,7 +107,7 @@ namespace eos {
     	private:
             DigOutputList _outputs;
 
-            NotificationEventRaiser _erNotification;
+            IOutputChangedEvent * _outputChangedEvent;
             volatile uint32_t _timeCounter;
             ActionQueue _actionQueue;
 
@@ -129,7 +123,7 @@ namespace eos {
             void processDelayedPulse(Output *output, uint32_t delay, uint32_t width);
             void processTick();
 
-            void raiseChangedNotificationEvent(Output *output);
+            void onOutputChanged(Output *output);
 
         protected:
             void onInitialize(ServiceParams &params) override;
@@ -139,23 +133,19 @@ namespace eos {
             DigOutputService();
             DigOutputService(const DigOutputService&) = delete;
             DigOutputService(const DigOutputService&&) = delete;
-            ~DigOutputService();
 
             DigOutputService& operator=(const DigOutputService&) = delete;
     	    DigOutputService& operator=(const DigOutputService&&) = delete;
 
-            DigOutput* addOutput(PinDriver *drv, uint32_t tag = 0xFFFFFFFF);
+            DigOutput* addOutput(PinDriver *drv, DigOutput::Tag tag);
             bool containsOutput(DigOutput *output) const;
-            DigOutput *getOutput(uint32_t tag) const;
+            DigOutput *getOutput(DigOutput::Tag tag) const;
 
-            inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
-            	_erNotification.set(event, enabled);
+            inline void setOutputChangedEvent(IOutputChangedEvent &event) {
+            	_outputChangedEvent = &event;
             }
-            inline void enableNotificationEvent() {
-            	_erNotification.enable();
-            }
-            inline void disableNotificationEvent() {
-            	_erNotification.disable();
+            inline void clearOutputChangedEvent() {
+            	_outputChangedEvent = nullptr;
             }
 
             void set(DigOutput *output);

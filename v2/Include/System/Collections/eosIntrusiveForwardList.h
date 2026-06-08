@@ -106,10 +106,6 @@ namespace eos {
                        n->_next = nullptr;
                     }
 
-                    inline void add(ValueType element) {
-                    	remove(element);
-                    }
-
                     void remove(ValueType element) {
                         NodeType p = nullptr;
                         for (auto n = _first; n != nullptr; n = n->_next) {
