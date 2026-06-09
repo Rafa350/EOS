@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "RTOS/rtosHeap.h"
 
 #include "FreeRTOS.h"

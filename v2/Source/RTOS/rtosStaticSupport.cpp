@@ -1,3 +1,5 @@
+#include "eos.h"
+
 #include "FreeRTOS.h"
 
 

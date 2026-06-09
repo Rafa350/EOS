@@ -8,7 +8,6 @@
 #include "eos.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
-#include "System/eosEvents.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Core/eosQueue.h"
 

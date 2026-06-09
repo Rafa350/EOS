@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 #include "Services/DigOutput/eosDigOutputService.h"
 #include "System/eosMath.h"
@@ -39,12 +40,12 @@ eos::DigOutput* eos::DigOutputService::addOutput(
     eos::PinDriver *drv,
 	eos::DigOutput::Tag tag) {
 
-    rtos::Task::enterCriticalSection();
+    rtos::CriticalSection::enter();
 
     auto output = new Output(drv, tag);
 	_outputs.pushFront(output);
 
-    rtos::Task::exitCriticalSection();
+    rtos::CriticalSection::exit();
 
     return output;
 }
@@ -62,11 +63,11 @@ bool eos::DigOutputService::containsOutput(
 
 	if (output != nullptr) {
 
-		rtos::Task::enterCriticalSection();
+		rtos::CriticalSection::enter();
 
 		result = _outputs.contains(output);
 
-		rtos::Task::exitCriticalSection();
+		rtos::CriticalSection::exit();
 	}
 
 	return result;
@@ -274,12 +275,12 @@ bool eos::DigOutputService::read(
 	if (containsOutput(output)) {
 #endif
 
-		rtos::Task::enterCriticalSection();
+		rtos::CriticalSection::enter();
 
 		auto out = static_cast<Output*>(output);
 		bool value = out->getValue();
 
-		rtos::Task::exitCriticalSection();
+		rtos::CriticalSection::exit();
 
 		return value;
 

@@ -1,5 +1,6 @@
 #include "eos.h"
-#include "RTOS/rtosKernel.h""
+#include "RTOS/rtosCriticalSection.h"
+#include "RTOS/rtosKernel.h"
 #include "Services/MsgBroker/eosMsgBrokerService.h"
 #include "Services/MsgBroker/eosMsgPublisher.h"
 #include "Services/MsgBroker/eosMsgSubscriber.h"
@@ -150,13 +151,13 @@ void eos::MsgBrokerService::onExecute() {
 void eos::MsgBrokerService::processAddPublisher(
 	MsgPublisher *publisher) {
 
-	rtos::Task::enterCriticalSection();
+	rtos::CriticalSection::enter();
 
 	if ((publisher != nullptr) &&
 		(publisher->getService() == nullptr))
 		__link(this, publisher);
 
-	rtos::Task::exitCriticalSection();
+	rtos::CriticalSection::exit();
 }
 
 
@@ -167,13 +168,13 @@ void eos::MsgBrokerService::processAddPublisher(
 void eos::MsgBrokerService::processAddSubscriber(
 	MsgSubscriber *subscriber) {
 
-	rtos::Task::enterCriticalSection();
+	rtos::CriticalSection::enter();
 
 	if ((subscriber != nullptr) &&
 		(subscriber->getService() == nullptr))
 		__link(this, subscriber);
 
-	rtos::Task::exitCriticalSection();
+	rtos::CriticalSection::exit();
 }
 
 

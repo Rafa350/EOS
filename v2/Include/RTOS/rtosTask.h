@@ -69,9 +69,6 @@ namespace rtos {
             static void delay(Time time);
             static void delayUntil(Time time);
 
-            static void enterCriticalSection();
-            static void exitCriticalSection();
-
             static bool waitNotification(bool clear, Time blockTime);
             void raiseNotification();
             void raiseNotificationISR();

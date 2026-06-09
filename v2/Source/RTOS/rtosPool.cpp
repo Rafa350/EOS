@@ -3,9 +3,9 @@
 // Ben Kenwright - School of Computer Science - Newcastle University
 
 #include "eos.h"
+#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosHeap.h"
 #include "RTOS/rtosPool.h"
-#include "RTOS/rtosTask.h"
 
 #include "FreeRTOS.h"
 
@@ -58,7 +58,7 @@ void *rtos::Pool::allocate() {
 
     void *ptr = nullptr;
 
-    rtos::Task::enterCriticalSection();
+    rtos::CriticalSection::enter();
 
     if (_initializedBlocks < _maxBlocks) {
         uint32_t *p = reinterpret_cast<uint32_t*>(addrFromIndex(_initializedBlocks));
@@ -75,7 +75,7 @@ void *rtos::Pool::allocate() {
             _nextBlock = nullptr;
     }
 
-    rtos::Task::exitCriticalSection();
+    rtos::CriticalSection::exit();
 
     return ptr;
 }
@@ -88,7 +88,7 @@ void *rtos::Pool::allocate() {
 void rtos::Pool::deallocate(
     void *ptr) {
 
-    rtos::Task::enterCriticalSection();
+    rtos::CriticalSection::enter();
 
     if (_nextBlock != nullptr)
         *(static_cast<uint32_t*>(ptr)) = indexFromAddr(_nextBlock);
@@ -98,7 +98,7 @@ void rtos::Pool::deallocate(
     _nextBlock = static_cast<uint8_t*>(ptr);
     _freeBlocks += 1;
 
-    rtos::Task::exitCriticalSection();
+    rtos::CriticalSection::exit();
 }
 
 

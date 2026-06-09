@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosQueue.h"
 

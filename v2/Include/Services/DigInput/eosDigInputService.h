@@ -13,7 +13,7 @@
 
 namespace eos {
 
-	// Declaracions Forward
+	// Declaracions forward
 	//
     class DigInputService;
     class DigInput;
@@ -30,7 +30,7 @@ namespace eos {
     using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
 
     /// \brief Clase que implementa una entrada digital
-    //
+    ///
     class DigInput: public DigInputListNode {
     	public:
     		using Tag = uint32_t;

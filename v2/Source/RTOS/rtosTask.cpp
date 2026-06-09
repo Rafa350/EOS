@@ -1,6 +1,8 @@
+#include "eos.h"
 #include "eosAssert.h"
-#include "RTOS/rtosTime.h"
+#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
+#include "RTOS/rtosTime.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -100,10 +102,10 @@ void rtos::Task::resume() const {
 void rtos::Task::kill() const {
 
 	if (isAlive()) {
-		Task::enterCriticalSection();
+		CriticalSection::enter();
 		if (isAlive())
 			destroyHandler(_handler);
-		Task::exitCriticalSection();
+		CriticalSection::exit();
 	}
 }
 
@@ -191,24 +193,6 @@ void rtos::Task::setPriority(
 bool rtos::Task::isAlive() const {
 
 	return getState() != State::killed;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Entrada a una seccio critica.
-///
-void rtos::Task::enterCriticalSection() {
-
-	taskENTER_CRITICAL();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Sortida d'una seccio critica.
-///
-void rtos::Task::exitCriticalSection() {
-
-    taskEXIT_CRITICAL();
 }
 
 

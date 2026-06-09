@@ -1,6 +1,7 @@
 #include "eos.h"
-#include "RTOS/rtosTime.h"
+#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
+#include "RTOS/rtosTime.h"
 #include "Services/DigInput/eosDigInputService.h"
 #include "eos_diginput_inputs.h"
 
@@ -105,9 +106,9 @@ DigInput * DigInputService::addInput(
 
     auto input = new Input(drv, tag);
 
-    rtos::Task::enterCriticalSection();
+    rtos::CriticalSection::enter();
 	_inputs.pushFront(input);
-    rtos::Task::exitCriticalSection();
+    rtos::CriticalSection::exit();
 
     return input;
 }
@@ -123,13 +124,13 @@ DigInput *DigInputService::getInput(
 
 	DigInput *result = nullptr;
 
-	rtos::Task::enterCriticalSection();
+	rtos::CriticalSection::enter();
 	for (auto input: _inputs)
 		if (input->getTag() == tag) {
 			result = input;
 			break;
 		}
-	rtos::Task::exitCriticalSection();
+	rtos::CriticalSection::exit();
 
 	return result;
 }
@@ -186,12 +187,12 @@ void DigInputService::onExecute() {
 bool DigInputService::read(
     const DigInput *input) const {
 
-    rtos::Task::enterCriticalSection();
+    rtos::CriticalSection::enter();
 
     auto inp = static_cast<const Input*>(input);
     auto value = inp->getValue();
 
-    rtos::Task::exitCriticalSection();
+    rtos::CriticalSection::exit();
 
     return value;
 }
@@ -207,12 +208,12 @@ uint32_t DigInputService::getEdges(
 	DigInput *input,
 	bool clear) const {
 
-    rtos::Task::enterCriticalSection();
+    rtos::CriticalSection::enter();
 
     auto inp = static_cast<Input*>(input);
     auto edges = inp->getCount(clear);
 
-    rtos::Task::exitCriticalSection();
+    rtos::CriticalSection::exit();
 
     return edges;
 }
