@@ -212,13 +212,13 @@ void CanOpenService::configureCANFilters() {
 ///
 void CanOpenService::raiseStateChangedNotificationEvent() {
 
-	if (_erNotification.isEnabled()) {
+	if (_notificationEvent != nullptr) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::stateChanged}
 		};
 
-		_erNotification(this, &args);
+		_notificationEvent->execute(this, &args);
 	}
 }
 
@@ -244,12 +244,12 @@ void CanOpenService::raiseSYNCReceivedEvent() {
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 ///
-void CanOpenService::raiseWriteU8RequestEvent(
+void CanOpenService::onWriteU8Request(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value) {
 
-	if (_erWriteRequest.isEnabled()) {
+	if (_writeRequestEvent != nullptr) {
 
 		WriteRequestEventArgs args = {
 			.index {index},
@@ -259,7 +259,7 @@ void CanOpenService::raiseWriteU8RequestEvent(
 			}
 		};
 
-		_erWriteRequest(this, &args);
+		_writeRequestEvent->execute(this, &args);
 	}
 }
 
@@ -270,12 +270,12 @@ void CanOpenService::raiseWriteU8RequestEvent(
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 ///
-void CanOpenService::raiseWriteU16RequestEvent(
+void CanOpenService::onWriteU16Request(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t value) {
 
-	if (_erWriteRequest.isEnabled()) {
+	if (_writeRequestEvent != nullptr) {
 
 		WriteRequestEventArgs args = {
 			.index {index},
@@ -285,7 +285,7 @@ void CanOpenService::raiseWriteU16RequestEvent(
 			}
 		};
 
-		_erWriteRequest(this, &args);
+		_writeRequestEvent->execute(this, &args);
 	}
 }
 
@@ -296,12 +296,12 @@ void CanOpenService::raiseWriteU16RequestEvent(
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 ///
-void CanOpenService::raiseWriteU32RequestEvent(
+void CanOpenService::onWriteU32Request(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value) {
 
-	if (_erWriteRequest.isEnabled()) {
+	if (_writeRequestEvent != nullptr) {
 
 		WriteRequestEventArgs args = {
 			.index {index},
@@ -311,7 +311,7 @@ void CanOpenService::raiseWriteU32RequestEvent(
 			}
 		};
 
-		_erWriteRequest(this, &args);
+		_writeRequestEvent->execute(this, &args);
 	}
 }
 
@@ -549,20 +549,20 @@ void CanOpenService::processSDO(
 				switch (type) {
 					case CoType::unsigned8: {
 						uint8_t value = data[4];
-						raiseWriteU8RequestEvent(index, subIndex, value);
+						onWriteU8Request(index, subIndex, value);
 						break;
 					}
 
 					case CoType::unsigned16: {
 						uint16_t value = (data[4] << 8) | (data[5] << 16);
-						raiseWriteU16RequestEvent(index, subIndex, value);
+						onWriteU16Request(index, subIndex, value);
 						break;
 					}
 
 					case CoType::unsigned32: {
 						uint32_t value = data[4] | (data[5] << 8) | (data[6] << 16) |
 								(data[7] << 24);
-						raiseWriteU32RequestEvent(index, subIndex, value);
+						onWriteU32Request(index, subIndex, value);
 						break;
 					}
 
@@ -783,7 +783,7 @@ void CanOpenService::processRPDO(
 						if (size == sizeof(uint8_t)) {
 							uint8_t value = 0;
 							value |= *pData++;
-							raiseWriteU8RequestEvent(index, subIndex, value);
+							onWriteU8Request(index, subIndex, value);
 						}
 						break;
 
@@ -792,7 +792,7 @@ void CanOpenService::processRPDO(
 							uint16_t value = 0;
 							value |= *pData++;
 							value |= *pData++ << 8;
-							raiseWriteU16RequestEvent(index, subIndex, value);
+							onWriteU16Request(index, subIndex, value);
 						}
 						break;
 
@@ -803,7 +803,7 @@ void CanOpenService::processRPDO(
 							value |= *pData++ << 8;
 							value |= *pData++ << 16;
 							value |= *pData++ << 24;
-							raiseWriteU32RequestEvent(index, subIndex, value);
+							onWriteU32Request(index, subIndex, value);
 						}
 						break;
 

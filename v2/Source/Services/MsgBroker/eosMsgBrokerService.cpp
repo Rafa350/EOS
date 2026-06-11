@@ -99,7 +99,7 @@ bool eos::MsgBrokerService::addSubscriber(
 bool eos::MsgBrokerService::publish(
 	MsgPublisher *publisher,
 	MsgTopic topic,
-	MsgPayload payload,
+	MsgPayload *payload,
 	uint32_t blockTime) {
 
 	Action action = {
@@ -187,7 +187,7 @@ void eos::MsgBrokerService::processAddSubscriber(
 void eos::MsgBrokerService::processPublish(
 	MsgPublisher *publisher,
 	MsgTopic topic,
-	MsgPayload payload) {
+	MsgPayload *payload) {
 
 	if ((publisher != nullptr) &&
 		(publisher->getService() == this)) {

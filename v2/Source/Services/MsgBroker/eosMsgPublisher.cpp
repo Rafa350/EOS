@@ -21,7 +21,7 @@ eos::MsgPublisher::MsgPublisher() :
 ///
 bool eos::MsgPublisher::publish(
 	MsgTopic topic,
-	MsgPayload payload,
+	MsgPayload *payload,
 	uint32_t blockTime) {
 
 	return _service->publish(this, topic, payload, blockTime);

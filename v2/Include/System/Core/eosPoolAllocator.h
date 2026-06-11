@@ -35,8 +35,10 @@ namespace eos {
     		static PoolAllocator<Type_, maxBlocks_> _allocator;
 
     	public:
-        	inline void* operator new(size_t size) { return _allocator.allocate(); }
-        	inline void operator delete(void *ptr) { _allocator.deallocate(static_cast<Type_*>(ptr)); }
+    		virtual ~PoolAllocatable() = default;
+
+        	inline static void* operator new(size_t size) { return _allocator.allocate(); }
+        	inline static void operator delete(void *ptr) { _allocator.deallocate(static_cast<Type_*>(ptr)); }
     };
 
     template <typename Type_, uint32_t maxBlocks_>

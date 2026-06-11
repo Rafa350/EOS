@@ -5,7 +5,6 @@
 //
 #include "eos.h"
 #include "RTOS/rtosTask.h"
-#include "System/eosEvents.h"
 
 
 namespace eos {

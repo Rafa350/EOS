@@ -29,7 +29,11 @@ namespace eos {
     using MsgSubscriberListNode = IntrusiveForwardListNode<MsgSubscriber, 0>;
 
     using MsgTopic = uint32_t;
-    using MsgPayload = void*;
+
+    class MsgPayload {
+    	public:
+    		virtual ~MsgPayload() = default; // **** Ha de ser virtual ****
+    };
 
 	class MsgBrokerService final: public Service {
 		private:
@@ -50,7 +54,7 @@ namespace eos {
     				struct {
     					MsgPublisher *publisher;
     					MsgTopic topic;
-    					MsgPayload payload;
+    					MsgPayload *payload;
     				} publish;
     			};
     		};
@@ -67,7 +71,7 @@ namespace eos {
 		private:
     		void processAddPublisher(MsgPublisher *publisher);
     		void processAddSubscriber(MsgSubscriber *subscriber);
-    		void processPublish(MsgPublisher *publisher, MsgTopic topic, MsgPayload payload);
+    		void processPublish(MsgPublisher *publisher, MsgTopic topic, MsgPayload *payload);
 
     	protected:
             void onExecute() override;
@@ -77,7 +81,7 @@ namespace eos {
 
             bool addPublisher(MsgPublisher *publisher, uint32_t blockTime);
             bool addSubscriber(MsgSubscriber *subscriber, uint32_t blockTime);
-            bool publish(MsgPublisher *publisher, MsgTopic topic, MsgPayload payload, uint32_t blockTime);
+            bool publish(MsgPublisher *publisher, MsgTopic topic, MsgPayload *payload, uint32_t blockTime);
 
         friend void __link(MsgBrokerService *service, MsgPublisher *publisher);
         friend void __link(MsgBrokerService *service, MsgSubscriber *subscriber);

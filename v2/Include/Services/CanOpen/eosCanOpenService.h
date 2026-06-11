@@ -68,9 +68,8 @@ namespace eos {
         		union {
         		};
         	};
-			using NotificationEventRaiser = EventRaiser<CanOpenService, NotificationEventArgs>;
-			using INotificationEvent = NotificationEventRaiser::IEvent;
-			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+			using INotificationEvent = ICallbackP2<CanOpenService*, NotificationEventArgs*>;
+			template <typename Instance_> using NotificationEvent = CallbackP2<Instance_, CanOpenService*, NotificationEventArgs*>;
 
 			struct WriteRequestEventArgs {
 				uint16_t index;
@@ -82,9 +81,8 @@ namespace eos {
 					bool b;
 				} value;
 			};
-			using WriteRequestEventRaiser = EventRaiser<CanOpenService, WriteRequestEventArgs>;
-			using IWriteRequestEvent = WriteRequestEventRaiser::IEvent;
-			template <typename Instance_> using WriteRequestEvent = WriteRequestEventRaiser::Event<Instance_>;
+			using IWriteRequestEvent = ICallbackP2<CanOpenService*, WriteRequestEventArgs*>;
+			template <typename Instance_> using WriteRequestEvent = CallbackP2<Instance_, CanOpenService*, WriteRequestEventArgs*>;
 
 			struct TPDOReceivedEventArgs {
 				CobID cobId;
@@ -152,8 +150,8 @@ namespace eos {
 			NodeID const _nodeId;
 			NodeState _nodeState;
 			MessageQueue _messageQueue;
-			NotificationEventRaiser _erNotification;
-			WriteRequestEventRaiser _erWriteRequest;
+			INotificationEvent *_notificationEvent;
+			IWriteRequestEvent *_writeRequestEvent;
 			TPDOReceivedEventRaiser _erTPDOReceived;
         	SYNCReceivedEventRaiser _erSYNCReceived;
         	HeartbeatReceivedEventRaiser _erHeartbeatReceived;
@@ -190,9 +188,9 @@ namespace eos {
 
             void raiseStateChangedNotificationEvent();
 
-            void raiseWriteU8RequestEvent(uint16_t index, uint8_t subIndex, uint8_t value);
-            void raiseWriteU16RequestEvent(uint16_t index, uint8_t subIndex, uint16_t value);
-            void raiseWriteU32RequestEvent(uint16_t index, uint8_t subIndex, uint32_t value);
+            void onWriteU8Request(uint16_t index, uint8_t subIndex, uint8_t value);
+            void onWriteU16Request(uint16_t index, uint8_t subIndex, uint16_t value);
+            void onWriteU32Request(uint16_t index, uint8_t subIndex, uint32_t value);
 
             void raiseSYNCReceivedEvent();
 			void raiseTPDOReceivedEvent(CobID cobId, const uint8_t *data, unsigned dataLen);
@@ -241,12 +239,20 @@ namespace eos {
 
 			// Events
 			//
-            inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
-            	_erNotification.set(event, enabled);
+            inline void setNotificationEvent(INotificationEvent &event) {
+            	_notificationEvent = &event;
             }
+            inline void clearNotificationEvent() {
+            	_notificationEvent = nullptr;
+            }
+
 			inline void setWriteRequestEvent(IWriteRequestEvent &event, bool enabled = true) {
-            	_erWriteRequest.set(event, enabled);
+            	_writeRequestEvent = &event;
 			}
+			inline void clearWriteRequestEvent() {
+				_writeRequestEvent = nullptr;
+			}
+
 			inline void setSYNCReceivedEvent(ISYNCReceivedEvent &event, bool enabled = true) {
             	_erSYNCReceived.set(event, enabled);
 			}

@@ -120,7 +120,7 @@ DigInput * DigInputService::addInput(
 /// \return   L'entrada, o nullptr si no la troba.
 ///
 DigInput *DigInputService::getInput(
-	uint32_t tag) const {
+	DigInput::Tag tag) const {
 
 	DigInput *result = nullptr;
 

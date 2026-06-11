@@ -17,13 +17,13 @@ namespace eos {
 			MsgPublisher();
 			virtual ~MsgPublisher() = default;
 
-			bool publish(MsgTopic topic, MsgPayload payload, uint32_t blockTime);
+			bool publish(MsgTopic topic, MsgPayload *payload, uint32_t blockTime);
 
 			inline MsgBrokerService *getService() const {
 				return _service;
 			}
 
-			virtual void done(MsgPayload payload) = 0;
+			virtual void done(MsgPayload *payload) = 0;
 
         friend void __link(MsgBrokerService *service, MsgPublisher *publisher);
 	};

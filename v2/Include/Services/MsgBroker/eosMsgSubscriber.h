@@ -11,10 +11,10 @@ namespace eos {
 
 	struct MsgSubscriberEventArgs {
 		MsgTopic topic;
-		void *payload;
+		MsgPayload *payload;
 	};
-	using IMsgSubscriberEvent = eos::ICallbackP2<MsgSubscriber * const, MsgSubscriberEventArgs * const>;
-	template <typename Instance_> using MsgSubscriberEvent = eos::CallbackP2<Instance_, MsgSubscriber * const, MsgSubscriberEventArgs * const>;
+	using IMsgSubscriberEvent = eos::ICallbackP2<MsgSubscriber*, MsgSubscriberEventArgs*>;
+	template <typename Instance_> using MsgSubscriberEvent = eos::CallbackP2<Instance_, MsgSubscriber*, MsgSubscriberEventArgs*>;
 
 	class MsgSubscriber: public MsgSubscriberListNode {
 		private:
@@ -25,10 +25,10 @@ namespace eos {
 		public:
 			MsgSubscriber(MsgTopic topic, IMsgSubscriberEvent &event);
 
-			void dispatch(MsgPayload payload);
+			void dispatch(MsgPayload *payload);
 
 			inline bool canAccept(MsgTopic topic) const {
-				return _topic == topic;
+				return (_topic == 0) || (_topic == topic);
 			}
 
 			inline MsgBrokerService *getService() const {

@@ -23,7 +23,7 @@ eos::MsgSubscriber::MsgSubscriber(
 /// \param    payload: Contingut de la subscripcio.
 ///
 void eos::MsgSubscriber::dispatch(
-	MsgPayload payload) {
+	MsgPayload *payload) {
 
 	MsgSubscriberEventArgs args = {
 		.topic = _topic,
