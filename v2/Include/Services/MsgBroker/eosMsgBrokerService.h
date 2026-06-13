@@ -30,11 +30,17 @@ namespace eos {
 
     using MsgTopic = uint32_t;
 
+    /// \brief Base per tots els payloads
+    /// \remarks El destructor cal que sigui sempre virtual
+    ///
     class MsgPayload {
     	public:
-    		virtual ~MsgPayload() = default; // **** Ha de ser virtual ****
+    		virtual ~MsgPayload() = default;
     };
 
+    /// \brief Servei de distribucio de missatges basat en la tipologia
+    //         publicador/subscriptor.
+    //
 	class MsgBrokerService final: public Service {
 		private:
     		enum class ActionID {

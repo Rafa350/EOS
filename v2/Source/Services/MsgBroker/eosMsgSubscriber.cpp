@@ -9,26 +9,40 @@
 ///
 eos::MsgSubscriber::MsgSubscriber(
 	MsgTopic topic,
-	IMsgSubscriberEvent &event):
+	ISubscriptionEvent &subscriptionEvent):
 
     _service {nullptr},
 	_topic {topic},
-	_event {&event} {
+	_subscriptionEvent {&subscriptionEvent} {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event
+/// \brief    Genera el event 'Subscription'
+/// \param    payload: El payload.
+///
+void eos::MsgSubscriber::onSubscription(
+	MsgPayload *payload) {
+
+	if (_subscriptionEvent != nullptr) {
+
+		SubscriptionEventArgs args = {
+			.topic = _topic,
+			.payload = payload
+		};
+
+		_subscriptionEvent->execute(this, &args);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Despacha el payload.
 /// \param    payload: Contingut de la subscripcio.
 ///
 void eos::MsgSubscriber::dispatch(
 	MsgPayload *payload) {
 
-	MsgSubscriberEventArgs args = {
-		.topic = _topic,
-		.payload = payload
-	};
-
-	_event->execute(this, &args);
+	onSubscription(payload);
 }

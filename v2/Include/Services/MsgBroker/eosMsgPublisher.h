@@ -9,12 +9,16 @@
 
 namespace eos {
 
+	/// \brief Representa un publicador.
+	///
 	class MsgPublisher: public MsgPublisherListNode {
 		private:
 			MsgBrokerService *_service;
 
 		public:
 			MsgPublisher();
+			MsgPublisher(const MsgPublisher&) = delete;
+			MsgPublisher(const MsgPublisher&&) = delete;
 			virtual ~MsgPublisher() = default;
 
 			bool publish(MsgTopic topic, MsgPayload *payload, uint32_t blockTime);

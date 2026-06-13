@@ -47,14 +47,11 @@ namespace eos {
     /// \brief Clase que representa una sortida digital individual.
     ///
     class DigOutput: public DigOutputListNode {
-    	public:
-    		using Tag = uint32_t;
-
     	private:
     		uint32_t _tag;
 
     	protected:
-    		DigOutput(Tag tag): _tag {tag} {}
+    		DigOutput(uint32_t tag): _tag {tag} {}
 
     	public:
     	    DigOutput(const DigOutput&) = delete;
@@ -63,7 +60,7 @@ namespace eos {
     	    DigOutput& operator=(const DigOutput&) = delete;
     	    DigOutput& operator=(const DigOutput&&) = delete;
 
-    	    inline Tag getTag() const { return _tag; }
+    	    inline uint32_t getTag() const { return _tag; }
     };
 
     class Output;
@@ -73,7 +70,7 @@ namespace eos {
     class DigOutputService final: public Service {
 		public:
 			struct OutputChangedEventArgs {
-     			DigOutput::Tag tag;
+     			uint32_t tag;
 				bool value;
 			};
 			using IOutputChangedEvent = ICallbackP2<DigOutputService*, OutputChangedEventArgs*>;
@@ -136,9 +133,9 @@ namespace eos {
             DigOutputService& operator=(const DigOutputService&) = delete;
     	    DigOutputService& operator=(const DigOutputService&&) = delete;
 
-            DigOutput* addOutput(PinDriver *drv, DigOutput::Tag tag);
+            DigOutput* addOutput(PinDriver *drv, uint32_t tag);
             bool containsOutput(DigOutput *output) const;
-            DigOutput *getOutput(DigOutput::Tag tag) const;
+            DigOutput *getOutput(uint32_t tag) const;
 
             inline void setOutputChangedEvent(IOutputChangedEvent &event) {
             	_outputChangedEvent = &event;

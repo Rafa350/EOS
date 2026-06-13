@@ -120,16 +120,18 @@ DigInput * DigInputService::addInput(
 /// \return   L'entrada, o nullptr si no la troba.
 ///
 DigInput *DigInputService::getInput(
-	DigInput::Tag tag) const {
+	uint32_t tag) const {
 
 	DigInput *result = nullptr;
 
 	rtos::CriticalSection::enter();
+
 	for (auto input: _inputs)
 		if (input->getTag() == tag) {
 			result = input;
 			break;
 		}
+
 	rtos::CriticalSection::exit();
 
 	return result;

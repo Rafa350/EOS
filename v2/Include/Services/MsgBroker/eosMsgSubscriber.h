@@ -9,21 +9,30 @@
 
 namespace eos {
 
-	struct MsgSubscriberEventArgs {
-		MsgTopic topic;
-		MsgPayload *payload;
-	};
-	using IMsgSubscriberEvent = eos::ICallbackP2<MsgSubscriber*, MsgSubscriberEventArgs*>;
-	template <typename Instance_> using MsgSubscriberEvent = eos::CallbackP2<Instance_, MsgSubscriber*, MsgSubscriberEventArgs*>;
-
+	/// \brief Representa un subscriptor
+	///
 	class MsgSubscriber: public MsgSubscriberListNode {
+		public:
+			struct SubscriptionEventArgs {
+				MsgTopic topic;
+				MsgPayload *payload;
+			};
+			using ISubscriptionEvent = eos::ICallbackP2<MsgSubscriber*, SubscriptionEventArgs*>;
+			template <typename Instance_> using SubscriptionEvent = eos::CallbackP2<Instance_, MsgSubscriber*, SubscriptionEventArgs*>;
+
 		private:
 			MsgBrokerService *_service;
 			MsgTopic const _topic;
-			IMsgSubscriberEvent * const _event;
+			ISubscriptionEvent * const _subscriptionEvent;
+
+		protected:
+			virtual void onSubscription(MsgPayload *payload);
 
 		public:
-			MsgSubscriber(MsgTopic topic, IMsgSubscriberEvent &event);
+			MsgSubscriber(MsgTopic topic, ISubscriptionEvent &event);
+			MsgSubscriber(const MsgSubscriber&) = delete;
+			MsgSubscriber(const MsgSubscriber&&) = delete;
+			virtual ~MsgSubscriber() = default;
 
 			void dispatch(MsgPayload *payload);
 

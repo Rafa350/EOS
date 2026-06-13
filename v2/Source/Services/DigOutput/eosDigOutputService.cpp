@@ -38,7 +38,7 @@ eos::DigOutputService::DigOutputService():
 ///
 eos::DigOutput* eos::DigOutputService::addOutput(
     eos::PinDriver *drv,
-	eos::DigOutput::Tag tag) {
+	uint32_t tag) {
 
     rtos::CriticalSection::enter();
 
@@ -79,18 +79,27 @@ bool eos::DigOutputService::containsOutput(
 /// \return   La sortida, o nullptr si no la troba.
 ///
 eos::DigOutput *eos::DigOutputService::getOutput(
-	eos::DigOutput::Tag tag) const {
+	uint32_t tag) const {
+
+	DigOutput *result = nullptr;
+
+	rtos::CriticalSection::enter();
 
 	for (auto output: _outputs)
-		if (output->getTag() == tag)
-			return output;
+		if (output->getTag() == tag) {
+			result = output;
+			break;
+		}
 
-	return nullptr;
+	rtos::CriticalSection::exit();
+
+	return result;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Notifica un canvi en l'estat d'una sortida.
+/// \brief    Es crida quant la sortida especificada ha canviat el
+///           seu valor. Genera un event 'OutputChanged'
 /// \param    output: La sortida.
 ///
 void eos::DigOutputService::onOutputChanged(
@@ -109,7 +118,7 @@ void eos::DigOutputService::onOutputChanged(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa la sortida en estat ACTIU.
+/// \brief    Posa la sortida en estat ACTIVE.
 /// \param    output: La sortida.
 ///
 void eos::DigOutputService::set(

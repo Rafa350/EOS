@@ -32,14 +32,11 @@ namespace eos {
     /// \brief Clase que implementa una entrada digital
     ///
     class DigInput: public DigInputListNode {
-    	public:
-    		using Tag = uint32_t;
-
     	private:
-    		Tag const _tag;
+    		uint32_t const _tag;
 
     	protected:
-    		inline DigInput(Tag tag): _tag {tag} { }
+    		inline DigInput(uint32_t tag): _tag {tag} { }
 
     	public:
     	    DigInput(const DigInput&) = delete;
@@ -48,7 +45,7 @@ namespace eos {
     	    DigInput& operator=(const DigInput&) = delete;
     	    DigInput& operator=(const DigInput&&) = delete;
 
-    	    inline Tag getTag() const { return _tag; }
+    	    inline uint32_t getTag() const { return _tag; }
     };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
@@ -59,7 +56,7 @@ namespace eos {
 			template <typename Instance_> using BeforeScanEvent = CallbackP1<Instance_, DigInputService*>;
 
 			struct InputChangedEventArgs {
-				DigInput::Tag tag;
+				uint32_t tag;
 				bool value;
 			};
 			using IInputChangedEvent = ICallbackP2<DigInputService*, InputChangedEventArgs*>;
@@ -90,8 +87,8 @@ namespace eos {
 
             void setScanPeriod(uint32_t scanPeriod);
 
-            DigInput * addInput(PinDriver *drv, DigInput::Tag tag);
-            DigInput * getInput(DigInput::Tag tag) const;
+            DigInput * addInput(PinDriver *drv, uint32_t tag);
+            DigInput * getInput(uint32_t tag) const;
 
             bool read(const DigInput *input) const;
             uint32_t getEdges(DigInput *input, bool clear = true) const;

@@ -24,7 +24,7 @@ namespace eos {
 			uint32_t _count;
 
         public:
-        	Input(PinDriver *drv, DigInput::Tag tag = 0xFFFFFFFF);
+        	Input(PinDriver *drv, uint32_t tag = 0xFFFFFFFF);
 
         	bool scan();
         	bool getValue() const;
