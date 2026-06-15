@@ -6,8 +6,8 @@
 /// \brief    Constructor
 ///
 eos::MsgDispatcherService::MsgDispatcherService():
-	_dispatchFinishedEvent {nullptr},
-	_actionQueue {5} {
+	_actionQueue {10},
+	_dispatchFinishedEvent {nullptr} {
 
 }
 
