@@ -1,8 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "RTOS/rtosTime.h"
 #include "RTOS/rtosTask.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
+#include "System/eosTime.h"
 
 
 using namespace eos;
@@ -51,9 +51,9 @@ void Device_SSD1306_SPI::initialize(
     _pinCS->set();
     if (_pinRST != nullptr) {
         _pinRST->clear();
-        rtos::Task::delay(rtos::Time::fromMiliseconds(100));
+        rtos::Task::delay(Time::fromMiliseconds(100));
         _pinRST->set();
-        rtos::Task::delay(rtos::Time::fromMiliseconds(500));
+        rtos::Task::delay(Time::fromMiliseconds(500));
     }
 
     writeScript(script, scriptSize);

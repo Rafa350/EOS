@@ -3,6 +3,7 @@
 #include "RTOS/rtosTask.h"
 #include "Services/DigOutput/eosDigOutputService.h"
 #include "System/eosMath.h"
+#include "System/eosTime.h"
 
 #include "eos_digoutput_outputs.h"
 
@@ -133,7 +134,7 @@ void eos::DigOutputService::set(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, unsigned(-1));
+		_actionQueue.push(action, Time::infinite());
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -157,7 +158,7 @@ void eos::DigOutputService::clear(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, unsigned(-1));
+		_actionQueue.push(action, Time::infinite());
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -181,7 +182,7 @@ void eos::DigOutputService::toggle(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, unsigned(-1));
+		_actionQueue.push(action, Time::infinite());
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -207,7 +208,7 @@ void eos::DigOutputService::write(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, unsigned(-1));
+		_actionQueue.push(action, Time::infinite());
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -234,7 +235,7 @@ void eos::DigOutputService::pulse(
 			.time1 {eos::Math::max(width, minPulseWidth)}
 		};
 
-		_actionQueue.push(action, unsigned(-1));
+		_actionQueue.push(action, Time::infinite());
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -264,7 +265,7 @@ void eos::DigOutputService::delayedPulse(
 			.time2 {eos::Math::max(width, minPulseWidth)}
 		};
 
-		_actionQueue.push(action, unsigned(-1));
+		_actionQueue.push(action, Time::infinite());
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -321,7 +322,7 @@ void eos::DigOutputService::onExecute() {
 
 	while (!stopSignal()) {
 		Action action;
-		while (_actionQueue.pop(action, (unsigned) -1))
+		while (_actionQueue.pop(action, Time::infinite()))
 			processAction(action);
 	}
 }

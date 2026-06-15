@@ -3,6 +3,7 @@
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 #include "RTOS/rtosTime.h"
+#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -115,9 +116,9 @@ void rtos::Task::kill() const {
 /// \param    time: Temps d'espera en milisegons
 ///
 void rtos::Task::delay(
-	Time time) {
+	eos::Time time) {
 
-	vTaskDelay(time.toTicks());
+	vTaskDelay(rtos::toTicks(time));
 }
 
 
@@ -127,13 +128,13 @@ void rtos::Task::delay(
 /// \param    time: Temps d'espera en milisegons
 ///
 void rtos::Task::delayUntil(
-	Time time) {
+	eos::Time time) {
 
 	Task *task = Task::getExecutingTask();
 	if (task != nullptr) {
 		if (task->_lastWeakTick == 0)
 	    	task->_lastWeakTick = xTaskGetTickCount();
-		vTaskDelayUntil(&task->_lastWeakTick, time.toTicks());
+		vTaskDelayUntil(&task->_lastWeakTick, rtos::toTicks(time));
 	}
 }
 
@@ -146,9 +147,9 @@ void rtos::Task::delayUntil(
 ///
 bool rtos::Task::waitNotification(
 	bool clear,
-	Time blockTime) {
+	eos::Time blockTime) {
 
-	return ulTaskNotifyTake(clear ? pdTRUE : pdFALSE, blockTime.toTicks());
+	return ulTaskNotifyTake(clear ? pdTRUE : pdFALSE, rtos::toTicks(blockTime));
 }
 
 

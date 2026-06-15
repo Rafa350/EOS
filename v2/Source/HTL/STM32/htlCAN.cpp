@@ -15,8 +15,8 @@ using namespace htl::bits;
 using namespace htl::can;
 
 
-constexpr unsigned absoluteMaxStandardFilters = 28;
-constexpr unsigned absoluteMaxExtendedFilters = 8;
+constexpr uint32_t absoluteMaxStandardFilters = 28;
+constexpr uint32_t absoluteMaxExtendedFilters = 8;
 
 
 // Standard message filter element
@@ -434,7 +434,7 @@ void CANDevice::clearFilters() {
 ///
 Result CANDevice::setFilter(
 	Filter *filter,
-	unsigned index) {
+	uint32_t index) {
 
 	if (_state == State::ready) {
 
@@ -572,7 +572,7 @@ Result CANDevice::getRxMessage(
 	RxFifoSelection fifo,
 	RxHeader *header,
 	uint8_t *data,
-	unsigned dataSize) {
+	uint32_t dataSize) {
 
 	if (_state == State::running) {
 
@@ -731,7 +731,7 @@ void CANDevice::interruptService() {
 /// \brief    Obte l'index d'insercio del TxFIFO
 /// \return   El resultat de l'operacio.
 ///
-unsigned CANDevice::getTxBufferPutIndex() const {
+uint32_t CANDevice::getTxBufferPutIndex() const {
 
 	return (_can->TXFQS & FDCAN_TXFQS_TFQPI) >> FDCAN_TXFQS_TFQPI_Pos;
 }
@@ -742,7 +742,7 @@ unsigned CANDevice::getTxBufferPutIndex() const {
 /// \param    fifo: El fifo.
 /// \return   El resultat de l'operacio.
 ///
-unsigned CANDevice::getRxFifoGetIndex(
+uint32_t CANDevice::getRxFifoGetIndex(
 	RxFifoSelection fifo) const {
 
 	if (fifo == RxFifoSelection::fifo0)
@@ -756,7 +756,7 @@ unsigned CANDevice::getRxFifoGetIndex(
 /// \brief    Obte el nombre de elements que es poden retirar de RxFIFO
 /// \return   El resultat.
 ///
-unsigned CANDevice::getRxFifoFillLevel(
+uint32_t CANDevice::getRxFifoFillLevel(
 	RxFifoSelection fifo) const {
 
 	if (fifo == RxFifoSelection::fifo0)
@@ -796,14 +796,14 @@ bool CANDevice::isTxBufferEmpty() const {
 /// \return   True si es correcte, false en cas de timeout.
 ///
 Result CANDevice::waitTxBufferNotFull(
-	unsigned timeout) {
+	Time timeout) {
 
-	if (timeout == (unsigned) -1) {
+	if (timeout.isInfinite()) {
 		while (isTxBufferFull())
 			continue;
 	}
 	else {
-		auto expireTime = htl::getTick() + timeout;
+		auto expireTime = htl::getTick() + timeout.toMiliseconds();
 		while (isTxBufferFull()) {
 			if (hasTickExpired(expireTime))
 				return Result::ErrorCodes::timeout;
@@ -819,14 +819,14 @@ Result CANDevice::waitTxBufferNotFull(
 /// \return   True si es correcte, false en cas de timeout.
 ///
 Result CANDevice::waitTxBufferEmpty(
-	unsigned timeout) {
+	eos::Time timeout) {
 
-	if (timeout == (unsigned) -1) {
+	if (timeout.isInfinite()) {
 		while (!isTxBufferEmpty())
 			continue;
 	}
 	else {
-		auto expireTime = htl::getTick() + timeout;
+		auto expireTime = htl::getTick() + timeout.toMiliseconds();
 		while (!isTxBufferEmpty()) {
 			if (hasTickExpired(expireTime))
 				return Result::ErrorCodes::timeout;
@@ -845,7 +845,7 @@ Result CANDevice::waitTxBufferEmpty(
 void CANDevice::copyToTxBuffer(
 	const TxHeader *header,
 	const uint8_t *data,
-	unsigned index) {
+	uint32_t index) {
 
 	// Prepara l'element T0 de la capcelera
 	//
@@ -931,8 +931,8 @@ void CANDevice::copyFromRxFifo(
 	RxFifoSelection fifo,
 	RxHeader *header,
 	uint8_t *data,
-	unsigned dataSize,
-	unsigned index) {
+	uint32_t dataSize,
+	uint32_t index) {
 
 	auto *pBuffer = getRxFifoAddr(fifo, index);
 
@@ -953,8 +953,8 @@ void CANDevice::copyFromRxFifo(
 	// Obte les dades. Les lectures en mode 32bits son mes eficients.
 	//
 	uint8_t *p = (uint8_t*) pBuffer->data;
-	unsigned ii = Math::min(dataSize, (unsigned)__dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]);
-	for (unsigned i = 0; i < ii; i++)
+	uint32_t ii = Math::min(dataSize, (uint32_t)__dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]);
+	for (uint32_t i = 0; i < ii; i++)
 		data[i] = p[i];
 }
 
@@ -965,9 +965,9 @@ void CANDevice::copyFromRxFifo(
 /// \return   El resultat.
 ///
 CANDevice::TxBufferElement* CANDevice::getTxBufferAddr(
-	unsigned index) const {
+	uint32_t index) const {
 
-	return (TxBufferElement*) ((unsigned)_ram +
+	return (TxBufferElement*) ((uint32_t)_ram +
 		offsetof(MessageRam, txBuffer) +
 		sizeof(TxBufferElement) * index);
 }
@@ -981,14 +981,14 @@ CANDevice::TxBufferElement* CANDevice::getTxBufferAddr(
 ///
 CANDevice::RxFifoElement* CANDevice::getRxFifoAddr(
 	RxFifoSelection fifo,
-	unsigned index) const {
+	uint32_t index) const {
 
 	if (fifo == RxFifoSelection::fifo0)
-		return (RxFifoElement*) ((unsigned)_ram +
+		return (RxFifoElement*) ((uint32_t)_ram +
 			offsetof(MessageRam, rxFifo0) +
 			index * sizeof(RxFifoElement));
 	else
-		return (RxFifoElement*) ((unsigned)_ram +
+		return (RxFifoElement*) ((uint32_t)_ram +
 			offsetof(MessageRam, rxFifo1) +
 			index * sizeof(RxFifoElement));
 }
@@ -1000,9 +1000,9 @@ CANDevice::RxFifoElement* CANDevice::getRxFifoAddr(
 /// \return   El resultat.
 ///
 CANDevice::StandardFilterElement* CANDevice::getStandardFilterAddr(
-	unsigned index) const {
+	uint32_t index) const {
 
-	return (StandardFilterElement*)((unsigned) _ram +
+	return (StandardFilterElement*)((uint32_t) _ram +
 		offsetof(MessageRam, standardFilter) +
 		index * sizeof(StandardFilterElement));
 }
@@ -1014,9 +1014,9 @@ CANDevice::StandardFilterElement* CANDevice::getStandardFilterAddr(
 /// \return   El resultat.
 ///
 CANDevice::ExtendedFilterElement* CANDevice::getExtendedFilterAddr(
-	unsigned index) const {
+	uint32_t index) const {
 
-	return (ExtendedFilterElement*)((unsigned)_ram +
+	return (ExtendedFilterElement*)((uint32_t)_ram +
 		offsetof(MessageRam, extendedFilter) +
 		index * sizeof(ExtendedFilterElement));
 }

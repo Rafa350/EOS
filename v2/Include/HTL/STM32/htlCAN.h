@@ -12,6 +12,7 @@
 #include "HTL/htlBits.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
+#include "System/eosTime.h"
 
 
 // Default options
@@ -233,16 +234,16 @@ namespace htl {
 					bool autoRetransmission;
 					bool transmitPause;
 					bool protocolException;
-					unsigned nominalPrescaler;
-					unsigned nominalSyncJumpWidth;
-					unsigned nominalTimeSeg1;
-					unsigned nominalTimeSeg2;
-					unsigned dataPrescaler;
-					unsigned dataSyncJumpWidth;
-					unsigned dataTimeSeg1;
-					unsigned dataTimeSeg2;
-					unsigned stdFiltersNbr;
-					unsigned extFiltersNbr;
+					uint32_t nominalPrescaler;
+					uint32_t nominalSyncJumpWidth;
+					uint32_t nominalTimeSeg1;
+					uint32_t nominalTimeSeg2;
+					uint32_t dataPrescaler;
+					uint32_t dataSyncJumpWidth;
+					uint32_t dataTimeSeg1;
+					uint32_t dataTimeSeg2;
+					uint32_t stdFiltersNbr;
+					uint32_t extFiltersNbr;
 					QFMode qfMode;
 				};
 
@@ -339,18 +340,18 @@ namespace htl {
 				void interruptService();
 
 			private:
-				TxBufferElement* getTxBufferAddr(unsigned index) const;
-				unsigned getTxBufferPutIndex() const;
+				TxBufferElement* getTxBufferAddr(uint32_t index) const;
+				uint32_t getTxBufferPutIndex() const;
 
-				unsigned getRxFifoFillLevel(RxFifoSelection fifo) const;
-				RxFifoElement* getRxFifoAddr(RxFifoSelection selection, unsigned index) const;
-				unsigned getRxFifoGetIndex(RxFifoSelection) const;
+				uint32_t getRxFifoFillLevel(RxFifoSelection fifo) const;
+				RxFifoElement* getRxFifoAddr(RxFifoSelection selection, uint32_t index) const;
+				uint32_t getRxFifoGetIndex(RxFifoSelection) const;
 
-				StandardFilterElement* getStandardFilterAddr(unsigned index) const;
-				ExtendedFilterElement* getExtendedFilterAddr(unsigned index) const;
+				StandardFilterElement* getStandardFilterAddr(uint32_t index) const;
+				ExtendedFilterElement* getExtendedFilterAddr(uint32_t index) const;
 
-				void copyToTxBuffer(const TxHeader *header, const uint8_t *data, unsigned index);
-				void copyFromRxFifo(RxFifoSelection fifo, RxHeader *header, uint8_t *data, unsigned dataSize, unsigned index);
+				void copyToTxBuffer(const TxHeader *header, const uint8_t *data, uint32_t index);
+				void copyFromRxFifo(RxFifoSelection fifo, RxHeader *header, uint8_t *data, uint32_t dataSize, uint32_t index);
 
 			public:
 				virtual ~CANDevice() = default;
@@ -363,17 +364,17 @@ namespace htl {
 				eos::Result stop();
 
 				void clearFilters();
-				void setMaxFilters(unsigned maxStdFilters, unsigned maxExtFilters);
-				eos::Result setFilter(Filter *filter, unsigned index);
+				void setMaxFilters(uint32_t maxStdFilters, uint32_t maxExtFilters);
+				eos::Result setFilter(Filter *filter, uint32_t index);
 				eos::Result setGlobalFilter(NonMatchingFrames nonMatchingStd, NonMatchingFrames nonMatchingExt, RejectRemoteFrames rejectRemoteStd, RejectRemoteFrames rejectRemoteExt);
 
 				eos::Result addTxMessage(const TxHeader *header, const uint8_t *data);
-				eos::Result getRxMessage(RxFifoSelection fifo, RxHeader *header, uint8_t *data, unsigned dataSize);
+				eos::Result getRxMessage(RxFifoSelection fifo, RxHeader *header, uint8_t *data, uint32_t dataSize);
 				eos::Result getTxEvent();
 
 				eos::Result abortTxBufferTransmission();
-				eos::Result waitTxBufferNotFull(unsigned timeout);
-				eos::Result waitTxBufferEmpty(unsigned timeout);
+				eos::Result waitTxBufferNotFull(eos::Time timeout);
+				eos::Result waitTxBufferEmpty(eos::Time timeout);
 
 				inline bool isRxFifoEmpty(RxFifoSelection fifo) const {
 					return getRxFifoFillLevel(fifo) == 0;

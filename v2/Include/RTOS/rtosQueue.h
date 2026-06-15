@@ -6,9 +6,13 @@
 #include "eos.h"
 
 
-namespace rtos {
+namespace eos {
 
 	class Time;
+}
+
+
+namespace rtos {
 
 	class Queue final {
 		private:
@@ -19,11 +23,11 @@ namespace rtos {
 			~Queue();
 
 			void clear() const;
-			bool put(const void *element, Time blockTime) const;
+			bool put(const void *element, eos::Time blockTime) const;
 			bool putISR(const void *element) const;
-			bool get(void *element, Time blockTime) const;
+			bool get(void *element, eos::Time blockTime) const;
 			bool getISR(void *element) const;
-			bool peek(void *element, Time blockTime) const;
+			bool peek(void *element, eos::Time blockTime) const;
 			bool peekISR(void *element) const;
 
             bool isEmpty() const;

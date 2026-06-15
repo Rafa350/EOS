@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Services/MsgDispatcher/eosMsgDispatcherService.h"
+#include "System/eosTime.h"
 
 
 /// ----------------------------------------------------------------------
@@ -19,7 +20,7 @@ eos::MsgDispatcherService::MsgDispatcherService():
 ///
 void eos::MsgDispatcherService::addListenerImpl(
 	MsgListener *listener,
-	uint32_t blockTime) {
+	Time blockTime) {
 
 	Action action = {
 		.id {ActionID::addListener},
@@ -41,7 +42,7 @@ void eos::MsgDispatcherService::addListenerImpl(
 void eos::MsgDispatcherService::postImpl(
 	uint32_t typeId,
 	Message *message,
-	uint32_t blockTime) {
+	Time blockTime) {
 
 	Action action = {
 		.id {ActionID::postMessage},
@@ -76,7 +77,7 @@ void eos::MsgDispatcherService::onExecute() {
 	while (!stopSignal()) {
 
 		Action action;
-		while (_actionQueue.pop(action, 1000)) {
+		while (_actionQueue.pop(action, Time::fromMiliseconds(1000))) {
 
 			switch (action.id) {
 				case ActionID::postMessage: {

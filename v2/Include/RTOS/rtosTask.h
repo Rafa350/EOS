@@ -7,9 +7,13 @@
 #include "System/eosCallbacks.h"
 
 
-namespace rtos {
+namespace eos {
 
 	class Time;
+}
+
+
+namespace rtos {
 
 	class Task final {
 		public:
@@ -66,10 +70,10 @@ namespace rtos {
 			[[nodiscard]] static Task* getExecutingTask();
 			[[nodiscard]] State getState() const;
 
-            static void delay(Time time);
-            static void delayUntil(Time time);
+            static void delay(eos::Time time);
+            static void delayUntil(eos::Time time);
 
-            static bool waitNotification(bool clear, Time blockTime);
+            static bool waitNotification(bool clear, eos::Time blockTime);
             void raiseNotification();
             void raiseNotificationISR();
 

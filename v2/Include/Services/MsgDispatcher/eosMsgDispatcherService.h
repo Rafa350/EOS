@@ -12,6 +12,8 @@
 
 namespace eos {
 
+	class Time;
+
 	/// \brief Base de tots els missatges
 	//
 	class Message {
@@ -103,8 +105,8 @@ namespace eos {
 			IDispatchFinishedEvent *_dispatchFinishedEvent;
 
 		private:
-			void postImpl(uint32_t typeId, Message *message, uint32_t blockTime);
-			void addListenerImpl(MsgListener *lister, uint32_t blockTime);
+			void postImpl(uint32_t typeId, Message *message, Time blockTime);
+			void addListenerImpl(MsgListener *lister, Time blockTime);
 
 		protected:
 			void onExecute() override;
@@ -114,12 +116,12 @@ namespace eos {
 			MsgDispatcherService();
 
 			template <typename Message_>
-			void addListener(MsgListenerX<Message_> *listener, uint32_t blockTime) {
+			void addListener(MsgListenerX<Message_> *listener, Time blockTime) {
 				addListenerImpl(listener, blockTime);
 			}
 
 			template <typename Message_>
-			void post(Message_ *message, uint32_t blockTime) {
+			void post(Message_ *message, Time blockTime) {
 				postImpl(MessageID<Message_>::typeId, message, blockTime);
 			}
 

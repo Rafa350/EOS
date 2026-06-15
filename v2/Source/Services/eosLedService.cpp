@@ -3,6 +3,7 @@
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosTask.h"
 #include "Services/eosLedService.h"
+#include "System/eosTime.h"
 
 
 using namespace eos;
@@ -57,6 +58,6 @@ void LedService::onExecute() {
 		if (_pinLED2 != nullptr)
 			_pinLED2->toggle();
 
-		rtos::Task::delayUntil(rtos::Time::fromMiliseconds(500));
+		rtos::Task::delayUntil(eos::Time::fromMiliseconds(500));
 	}
 }

@@ -1,11 +1,10 @@
 #include "eos.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
-#include "RTOS/rtosTime.h"
 #include "Services/DigInput/eosDigInputService.h"
+#include "System/eosMath.h"
+#include "System/eosTime.h"
 #include "eos_diginput_inputs.h"
-
-#include <cmath>
 
 
 using namespace eos;
@@ -36,7 +35,7 @@ DigInputService::DigInputService():
 void DigInputService::setScanPeriod(
     uint32_t scanPeriod) {
 
-    _scanPeriod = std::max(scanPeriod, minScanPeriod);
+    _scanPeriod = Math::max(scanPeriod, minScanPeriod);
 }
 
 
@@ -160,7 +159,7 @@ void DigInputService::onExecute() {
 
     while (!stopSignal()) {
 
-		rtos::Task::delayUntil(rtos::Time::fromMiliseconds(_scanPeriod));
+		rtos::Task::delayUntil(Time::fromMiliseconds(_scanPeriod));
 
 		// Notifica l'inici de l'escaneig d'entrades
 		//

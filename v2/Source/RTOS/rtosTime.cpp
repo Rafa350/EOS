@@ -1,15 +1,19 @@
 #include "eos.h"
 #include "RTOS/rtosTime.h"
+#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el temps en ticks.
+/// \brief    Obte el temps en ticks d'un valor de temps en milisegons.
+/// \param    Time: El valor de temps
 /// \return   El resultat de l'operacio.
-/// \remarks  Mante el valor MAX_DELAY, durant la conversio.
 ///
-uint32_t rtos::Time::toTicks() const {
+uint32_t rtos::toTicks(
+	eos::Time time) {
 
-    return _ms == portMAX_DELAY ? portMAX_DELAY : _ms / portTICK_PERIOD_MS;
+    return time.isInfinite() ?
+    		portMAX_DELAY :
+			time.toMiliseconds() / portTICK_PERIOD_MS;
 }

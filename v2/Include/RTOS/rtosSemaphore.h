@@ -6,9 +6,13 @@
 #include "eos.h"
 
 
-namespace rtos {
+namespace eos {
 
 	class Time;
+}
+
+
+namespace rtos {
 
 	class Semaphore final {
         private:
@@ -18,7 +22,7 @@ namespace rtos {
             Semaphore();
             ~Semaphore();
 
-            bool wait(Time blockTime) const;
+            bool wait(eos::Time blockTime) const;
             void release() const;
             void releaseISR() const;
 	};

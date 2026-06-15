@@ -6,8 +6,8 @@
 // EOS includes
 //
 #include "eos.h"
-#include "RTOS/rtosTime.h"
 #include "RTOS/rtosQueue.h"
+#include "System/eosTime.h"
 
 
 namespace eos {
@@ -33,8 +33,8 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool push(const T_ &element, uint32_t blockTime) const {
-            	return _queue.put(&element, rtos::Time::fromMiliseconds(blockTime));
+            inline bool push(const T_ &element, Time blockTime) const {
+            	return _queue.put(&element, blockTime);
             }
 
             /// \brief Afegeix un element en la cua des d'una interrupcio
@@ -50,8 +50,8 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool pop(T_ &element, uint32_t blockTime) const {
-            	return _queue.get(&element, rtos::Time::fromMiliseconds(blockTime));
+            inline bool pop(T_ &element, Time blockTime) const {
+            	return _queue.get(&element, blockTime);
             }
 
             /// \brief Obte un element de la cua sense treurel
@@ -59,8 +59,8 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool peek(T_ &element, uint32_t blockTime) const {
-                return _queue.peek(&element, rtos::Time(blockTime));
+            inline bool peek(T_ &element, Time blockTime) const {
+                return _queue.peek(&element, blockTime);
             }
 
             inline uint32_t getCount() const {

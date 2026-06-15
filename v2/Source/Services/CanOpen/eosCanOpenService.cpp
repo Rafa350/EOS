@@ -1,8 +1,8 @@
 #include "eos.h"
-#include "RTOS/rtosTime.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
 #include "Services/CanOpen/eosCanOpenService.h"
 #include "Services/canopen/eosCanOpenProtocol.h"
+#include "System/eosTime.h"
 
 
 using namespace eos;
@@ -66,8 +66,8 @@ void CanOpenService::onExecute() {
 
 	// Envia un boot-up (Heartbeat amb estat 'initializing')
 	//
-	emitHeartbeat((unsigned) -1);
-	rtos::Task::delay(rtos::Time::fromMiliseconds(500));
+	emitHeartbeat(Time::infinite());
+	rtos::Task::delay(Time::fromMiliseconds(500));
 
 	// Canvia l'estat a 'preOperational'
 	//
@@ -76,7 +76,7 @@ void CanOpenService::onExecute() {
 	while (!stopSignal()) {
 
 		Message msg;
-		while(_messageQueue.pop(msg, (unsigned) -1)) {
+		while(_messageQueue.pop(msg, Time::fromMiliseconds(1000))) {
 			switch (msg.id) {
 
 				// Ha canviat una entrada del diccionari
@@ -94,7 +94,7 @@ void CanOpenService::onExecute() {
 				// Cal enviar un trama CANOpen
 				//
 				case MessageID::sendFrame:
-					sendFrame(CobID(msg.sendFrame.cobid), msg.sendFrame.data, msg.sendFrame.dataLen, 20);
+					sendFrame(CobID(msg.sendFrame.cobid), msg.sendFrame.data, msg.sendFrame.dataLen, Time::fromMiliseconds(20));
 					break;
 
 				default:
@@ -114,7 +114,7 @@ void CanOpenService::configureHeartbeat() {
 
 	uint16_t interval;
 	if (_dictionary->readU16(0x1017, 0, interval) && interval > 0)
-		_heartbeatTimer.start(rtos::Time::fromMiliseconds(interval), rtos::Time::infinite());
+		_heartbeatTimer.start(Time::fromMiliseconds(interval), Time::infinite());
 }
 
 
@@ -694,7 +694,7 @@ void CanOpenService::processSDO(
 	//
 	uint32_t cobidSDOr;
 	if (_dictionary->readU32(0x1200, 0x02, cobidSDOr))
-		sendFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), defTimeout);
+		sendFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), Time::fromMiliseconds(defTimeout));
 }
 
 
@@ -846,7 +846,7 @@ bool CanOpenService::writeU8(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, (unsigned) -1);
+					ok = _messageQueue.push(msg, Time::infinite());
 				}
 			}
 
@@ -884,7 +884,7 @@ bool CanOpenService::writeU16(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, (unsigned) -1);
+					ok = _messageQueue.push(msg, Time::infinite());
 				}
 			}
 
@@ -922,7 +922,7 @@ bool CanOpenService::writeU32(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, (unsigned) -1);
+					ok = _messageQueue.push(msg, Time::infinite());
 				}
 			}
 
@@ -987,7 +987,7 @@ bool CanOpenService::readU32(
 ///
 Result CanOpenService::start(
 	NodeID nodeId,
-	unsigned timeout) {
+	Time timeout) {
 
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
@@ -1004,7 +1004,7 @@ Result CanOpenService::start(
 ///
 Result CanOpenService::stop(
 	NodeID nodeId,
-	unsigned timeout) {
+	Time timeout) {
 
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
@@ -1022,7 +1022,7 @@ Result CanOpenService::stop(
 ///
 Result CanOpenService::enterPreOperational(
 	NodeID nodeId,
-	unsigned timeout) {
+	Time timeout) {
 
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
@@ -1040,7 +1040,7 @@ Result CanOpenService::enterPreOperational(
 ///
 Result CanOpenService::resetNode(
 	NodeID nodeId,
-	unsigned timeout) {
+	Time timeout) {
 
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
@@ -1058,7 +1058,7 @@ Result CanOpenService::resetNode(
 ///
 Result CanOpenService::resetCommunication(
 	NodeID nodeId,
-	unsigned timeout) {
+	Time timeout) {
 
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
@@ -1149,7 +1149,7 @@ void CanOpenService::sendTPDO(
 		if (ok) {
 			uint32_t cobid;
 			if (_dictionary->readU32(0x1800 + tpdo, 0x01, cobid))
-				sendFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, 100);
+				sendFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, Time::fromMiliseconds(100));
 		}
 	}
 }
@@ -1166,7 +1166,7 @@ Result CanOpenService::sendFrame(
 	CobID cobId,
 	const uint8_t *data,
 	unsigned length,
-	unsigned timeout) {
+	Time timeout) {
 
 	// Espera que el buffer no estigui ple
 	//
@@ -1288,7 +1288,7 @@ void CanOpenService::heartbeatTimerEventHandler(
 	rtos::Timer *timer,
 	rtos::Timer::EventArgs *args) {
 
-	emitHeartbeat((unsigned) -1);
+	emitHeartbeat(Time::infinite());
 }
 
 
@@ -1299,7 +1299,7 @@ void CanOpenService::heartbeatTimerEventHandler(
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 Result CanOpenService::emitHeartbeat(
-	unsigned timeout) {
+	Time timeout) {
 
 	uint8_t data = 0;
 	switch (_nodeState) {
@@ -1351,7 +1351,7 @@ Result CanOpenService::emitHeartbeat(
 Result CanOpenService::emitNMT(
 	uint8_t command,
 	uint8_t nodeId,
-	unsigned timeout) {
+	Time timeout) {
 
 	Message msg = {
 		.id {MessageID::sendFrame},
@@ -1375,7 +1375,7 @@ Result CanOpenService::emitNMT(
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 Result CanOpenService::emitSYNC(
-	unsigned timeout) {
+	Time timeout) {
 
 	uint32_t options;
 	if (_dictionary->readU32(0x1005, 0x00, options) &&
@@ -1405,11 +1405,11 @@ Result CanOpenService::emitSYNC(
 /// \return   El resultat de l'operacio.
 ///
 Result CanOpenService::emitRPDO(
-		uint8_t nodeId,
-		uint8_t rpdoId,
-		const uint8_t *data,
-		unsigned dataLen,
-		unsigned timeout) {
+	uint8_t nodeId,
+	uint8_t rpdoId,
+	const uint8_t *data,
+	unsigned dataLen,
+	Time timeout) {
 
 	Message msg = {
 		.id {MessageID::sendFrame},

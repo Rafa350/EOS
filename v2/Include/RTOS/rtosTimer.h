@@ -7,9 +7,13 @@
 #include "System/eosCallbacks.h"
 
 
-namespace rtos {
+namespace eos {
 
 	class Time;
+}
+
+
+namespace rtos {
 
     class Timer final {
     	public:
@@ -46,11 +50,11 @@ namespace rtos {
 			Timer(Mode mode, const char *name, IEvent &event);
 			~Timer();
 
-			bool start(Time interval, Time blockTime) const;
-			bool startISR(Time interval) const;
-			bool restart(Time blockTime) const;
+			bool start(eos::Time interval, eos::Time blockTime) const;
+			bool startISR(eos::Time interval) const;
+			bool restart(eos::Time blockTime) const;
 			bool restartISR() const;
-			bool stop(Time blockTime) const;
+			bool stop(eos::Time blockTime) const;
 			bool stopISR() const;
 
 			[[nodiscard]] bool isActive() const;

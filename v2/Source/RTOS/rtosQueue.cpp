@@ -1,6 +1,8 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosQueue.h"
+#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"
@@ -46,10 +48,10 @@ void rtos::Queue::clear() const {
 ///
 bool rtos::Queue::put(
 	const void *element,
-	Time blockTime) const {
+	eos::Time blockTime) const {
 
     return xQueueSendToBack(static_cast<QueueHandle_t>(_handler), element,
-    	blockTime.toTicks()) == pdPASS;
+    	rtos::toTicks(blockTime)) == pdPASS;
 }
 
 
@@ -79,10 +81,10 @@ bool rtos::Queue::putISR(
 ///
 bool rtos::Queue::get(
 	void *element,
-	Time blockTime) const {
+	eos::Time blockTime) const {
 
     return xQueueReceive(static_cast<QueueHandle_t>(_handler), element,
-    	blockTime.toTicks()) == pdPASS;
+    	rtos::toTicks(blockTime)) == pdPASS;
 }
 
 
@@ -112,10 +114,10 @@ bool rtos::Queue::getISR(
 ///
 bool rtos::Queue::peek(
 	void *element,
-	Time blockTime) const {
+	eos::Time blockTime) const {
 
     return xQueuePeek(static_cast<QueueHandle_t>(_handler), element,
-    	blockTime.toTicks()) == pdPASS;
+    	rtos::toTicks(blockTime)) == pdPASS;
 }
 
 

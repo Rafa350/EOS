@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosSemaphore.h"
+#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -30,10 +31,10 @@ rtos::Semaphore::~Semaphore() {
 /// \return   True si es correcte. False en cas d'error o timeout.
 ///
 bool rtos::Semaphore::wait(
-	Time blockTime) const {
+	eos::Time blockTime) const {
 
 	return xSemaphoreTake(static_cast<SemaphoreHandle_t>(_handler),
-		blockTime.toTicks()) == pdTRUE;
+		rtos::toTicks(blockTime)) == pdTRUE;
 }
 
 

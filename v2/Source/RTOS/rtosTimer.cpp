@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosTimer.h"
+#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 #include "timers.h"
@@ -52,15 +53,15 @@ rtos::Timer::~Timer() {
 /// \return   TRue si tot es correcte.
 ///
 bool rtos::Timer::start(
-	rtos::Time interval,
-	rtos::Time blockTime) const {
+	eos::Time interval,
+	eos::Time blockTime) const {
 
     if (interval.isZero())
         return xTimerStart(static_cast<TimerHandle_t>(_handler),
-        	blockTime.toTicks()) == pdPASS;
+        	rtos::toTicks(blockTime)) == pdPASS;
     else
         return xTimerChangePeriod(static_cast<TimerHandle_t>(_handler),
-        	interval.toTicks(), blockTime.toTicks()) == pdPASS;
+        	rtos::toTicks(interval), rtos::toTicks(blockTime)) == pdPASS;
 }
 
 
@@ -71,7 +72,7 @@ bool rtos::Timer::start(
 /// \return   Tuue si tot es correcte.
 ///
 bool rtos::Timer::startISR(
-	rtos::Time interval) const {
+	eos::Time interval) const {
 
 	bool result;
 
@@ -81,7 +82,7 @@ bool rtos::Timer::startISR(
         	&task) == pdPASS;
     else
         result = xTimerChangePeriodFromISR(static_cast<TimerHandle_t>(_handler),
-        	interval.toTicks(), &task) == pdPASS;
+        	rtos::toTicks(interval), &task) == pdPASS;
     portEND_SWITCHING_ISR(task);
 
     return result;
@@ -94,10 +95,10 @@ bool rtos::Timer::startISR(
 /// \return   TRue si tot es correcte.
 ///
 bool rtos::Timer::stop(
-	rtos::Time blockTime) const {
+	eos::Time blockTime) const {
 
 	return xTimerStop(static_cast<TimerHandle_t>(_handler),
-		blockTime.toTicks()) == pdPASS;
+		rtos::toTicks(blockTime)) == pdPASS;
 }
 
 

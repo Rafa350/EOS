@@ -1,6 +1,7 @@
 #include "RTOS/rtosTask.h"
-#include "RTOS/rtosTime.h"
 #include "Services/eosSelectorService.h"
+#include "System/eosTime.h"
+
 
 
 using namespace eos;
@@ -84,7 +85,7 @@ void SelectorService::onExecute() {
 			}
 		}
 
-		rtos::Task::delay(rtos::Time::fromMiliseconds(_delay));
+		rtos::Task::delay(Time::fromMiliseconds(_delay));
 	}
 }
 

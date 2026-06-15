@@ -3,6 +3,7 @@
 #include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlINT.h"
 #include "RTOS/rtosTime.h"
+#include "System/eosTime.h"
 
 
 using namespace eos;
@@ -118,7 +119,7 @@ ResultU32 SerialDriver::wait(
 		else {
 			_task = rtos::Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (rtos::Task::waitNotification(true, rtos::Time::fromMiliseconds(waitTime)))
+			if (rtos::Task::waitNotification(true, Time::fromMiliseconds(waitTime)))
 				return {ResultU32::ErrorCodes::ok, _rxCount};
 			else {
 				abort();
@@ -137,7 +138,7 @@ ResultU32 SerialDriver::wait(
 		else {
 			_task = rtos::Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (rtos::Task::waitNotification(true, rtos::Time::fromMiliseconds(waitTime)))
+			if (rtos::Task::waitNotification(true, Time::fromMiliseconds(waitTime)))
 				return {ResultU32::ErrorCodes::ok, _txCount};
 			else {
 				abort();

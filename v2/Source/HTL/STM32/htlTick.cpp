@@ -31,15 +31,15 @@ TickGenerator::TickGenerator():
 /// \param    frequency: Frequencia.
 ///
 void TickGenerator::initialize(
-    unsigned frequency) {
+    uint32_t frequency) {
 
 	auto clk = ClockDevice::pInst;
 
-	unsigned limit = 1000;
+	uint32_t limit = 1000;
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-	unsigned prescaler = (clk->getClockFrequency(clock::ClockID::pclk1) / frequency) - 1;
+	uint32_t prescaler = (clk->getClockFrequency(clock::ClockID::pclk1) / frequency) - 1;
 #elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
-	unsigned prescaler = (clk->getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
+	uint32_t prescaler = (clk->getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
 #endif
 	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
 
@@ -88,7 +88,7 @@ void TickGenerator::stop() {
 /// \brief    Obte el valor del contador de ticks
 /// \return   El valor del contador
 //
-unsigned TickGenerator::getTick() {
+uint32_t TickGenerator::getTick() {
 
     //disableInterrupts();
 	auto tick = _tickCounter;
@@ -103,7 +103,7 @@ unsigned TickGenerator::getTick() {
 /// \param    ticks: El nombre de tics
 ///
 void TickGenerator::wait(
-	unsigned ticks) {
+	uint32_t ticks) {
 
 	auto lastTick = getTick() + ticks;
 	while (static_cast<int>(lastTick - getTick()) > 0)

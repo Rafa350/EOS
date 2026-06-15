@@ -8,6 +8,7 @@
 #include "RTOS/rtosTimer.h"
 #include "Services/eosService.h"
 #include "services/CanOpen/eosCanOpenProtocol.h"
+#include "System/eosTime.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -182,9 +183,9 @@ namespace eos {
 			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
-            Result sendFrame(CobID cobId, const uint8_t *data, unsigned length, unsigned timeout);
-			Result emitHeartbeat(unsigned timeout);
-			Result emitNMT(uint8_t command, NodeID nodeId, unsigned timeout);
+            Result sendFrame(CobID cobId, const uint8_t *data, unsigned length, Time timeout);
+			Result emitHeartbeat(Time timeout);
+			Result emitNMT(uint8_t command, NodeID nodeId, Time timeout);
 
             void raiseStateChangedNotificationEvent();
 
@@ -223,19 +224,19 @@ namespace eos {
 
             // Canvia l'estat d'un node remot
             //
-			Result start(NodeID nodeId, unsigned timeout);
-			Result stop(NodeID nodeId, unsigned timeout);
-			Result enterPreOperational(NodeID nodeId, unsigned timeout);
-			Result resetNode(NodeID nodeId, unsigned timeout);
-			Result resetCommunication(NodeID nodeId, unsigned timeout);
+			Result start(NodeID nodeId, Time timeout);
+			Result stop(NodeID nodeId, Time timeout);
+			Result enterPreOperational(NodeID nodeId, Time timeout);
+			Result resetNode(NodeID nodeId, Time timeout);
+			Result resetCommunication(NodeID nodeId, Time timeout);
 
             // Senyal de sincronitzacio al bus
             //
-            Result emitSYNC(unsigned timeout);
+            Result emitSYNC(Time timeout);
 
 			// Emet missatges RPDO
 			//
-			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, unsigned dataLen, unsigned timeout);
+			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, unsigned dataLen, Time timeout);
 
 			// Events
 			//
@@ -256,9 +257,11 @@ namespace eos {
 			inline void setSYNCReceivedEvent(ISYNCReceivedEvent &event, bool enabled = true) {
             	_erSYNCReceived.set(event, enabled);
 			}
+
 			inline void setTPDOReceivedEvent(ITPDOReceivedEvent &event, bool enabled = true) {
             	_erTPDOReceived.set(event, enabled);
 			}
+
 			inline void setHeartbeatReceivedEvent(IHeartbeatReceivedEvent &event, bool enabled = true) {
             	_erHeartbeatReceived.set(event, enabled);
 			}
