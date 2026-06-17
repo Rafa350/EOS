@@ -1,14 +1,9 @@
-cmake_minimum_required(VERSION 4.0)
+add_subdirectory("CanOpen")
+add_subdirectory("DigInput")
+add_subdirectory("DigOutput")
+add_subdirectory("MsgDispatcher")
 
-
-list(APPEND SOURCES
-	${CMAKE_CURRENT_SOURCE_DIR}/eosDigInputService.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/eosLedService.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/eosDigOutputService.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/eosService.cpp
+target_sources(${TARGET_NAME} PUBLIC 
+    eosLedService.cpp
+    eosService.cpp
 )
-
-
-target_sources(${CMAKE_PROJECT_NAME} PUBLIC 
-	${SOURCES}
-)	

@@ -8,7 +8,7 @@
 ///
 eos::MsgListener::MsgListener(
 	uint32_t typeId) :
-	typeId {typeId} {
+	_typeId {typeId} {
 
 }
 

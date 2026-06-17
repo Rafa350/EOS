@@ -56,6 +56,11 @@ void eos::MsgDispatcherService::postImpl(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Es crida quant ha acabat de despatxar el missatge a tots
+///           els listeners
+/// \param    message: El missatge.
+///
 void eos::MsgDispatcherService::onDispatchFinished(
 	Message *message) {
 
@@ -86,8 +91,9 @@ void eos::MsgDispatcherService::onExecute() {
 					auto message = action.postMessage.message;
 
 					for (auto listener: _listenerList)
-						if (listener->typeId == typeId)
+						if (listener->getTypeId() == typeId) {
 							listener->dispatch(message);
+						}
 
 					onDispatchFinished(message);
 				}

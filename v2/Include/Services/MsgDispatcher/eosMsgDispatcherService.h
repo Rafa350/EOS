@@ -30,8 +30,8 @@ namespace eos {
 	/// \brief Base dels listeners dels missatges
     //
 	class MsgListener: public MsgListenerListNode {
-		public:
-    		uint32_t const typeId;
+		private:
+    		uint32_t const _typeId;
 
 		protected:
 			virtual void dispatchImpl(Message *message) = 0;
@@ -44,6 +44,10 @@ namespace eos {
 
 			inline void dispatch(Message *message) {
 				dispatchImpl(message);
+			}
+
+			inline uint32_t getTypeId() const {
+				return _typeId;
 			}
 	};
 

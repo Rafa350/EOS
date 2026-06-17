@@ -12,11 +12,11 @@ namespace eos {
 	//
 	class Time final {
 		private:
-			uint32_t const _ms;
+			uint32_t const _value;
 
 		private:
 			inline Time(uint32_t miliseconds):
-				_ms {miliseconds} {
+				_value {miliseconds} {
 			}
 
 		public:
@@ -37,19 +37,19 @@ namespace eos {
 			}
 
 			inline uint32_t toMiliseconds() const {
-				return _ms;
+				return _value;
 			}
 
 			inline uint32_t toSeconds() const {
-				return _ms / 1000;
+				return _value / 1000;
 			}
 
 			inline bool isZero() const {
-				return _ms == 0;
+				return _value == 0;
 			}
 
 			inline bool isInfinite() const {
-				return _ms == 0xFFFFFFFF;
+				return _value == 0xFFFFFFFF;
 			}
 	};
 }

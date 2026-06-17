@@ -61,6 +61,7 @@ namespace eos {
             void start();
             void stop();
 
+            inline rtos::Task * getTask() const { return _task; }
             inline State getState() const { return _state; }
     };
 
