@@ -28,11 +28,11 @@ namespace eos {
 			PinDriver * const _drv;
 			bool _value;
 			State _state;
-			unsigned _delayEndTime;
-			unsigned _pulseEndTime;
+			Time _delayEndTime;
+			Time _pulseEndTime;
 
 		private:
-			static bool hasExpired(unsigned time, unsigned endTime);
+			static bool hasExpired(Time time, Time endTime);
 
 		public:
 			Output(PinDriver *drv, unsigned tag);
@@ -41,13 +41,13 @@ namespace eos {
 			void set();
 			void clear();
 			void toggle();
-			void pulse(unsigned time, unsigned pulse);
-			void delayedSet(unsigned time, unsigned delay);
-			void delayedClear(unsigned time, unsigned delay);
-			void delayedToggle(unsigned time, unsigned delay);
-			void delayedPulse(unsigned time, unsigned delay, unsigned pulse);
+			void pulse(Time time, Time pulse);
+			void delayedSet(Time time, Time delay);
+			void delayedClear(Time time, Time delay);
+			void delayedToggle(Time time, Time delay);
+			void delayedPulse(Time time, Time delay, Time pulse);
 			void write(bool value);
-			void tick(unsigned time);
+			void tick(Time time);
 	};
 
 }

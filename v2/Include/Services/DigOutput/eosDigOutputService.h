@@ -76,6 +76,16 @@ namespace eos {
 			using IOutputChangedEvent = ICallbackP2<DigOutputService*, OutputChangedEventArgs*>;
 			template <typename Instance_> using OutputChangedEvent = CallbackP2<Instance_, DigOutputService*, OutputChangedEventArgs*>;
 
+        private:
+            static constexpr const char *_serviceName = "DigOutputs";
+            static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::normal;
+            static constexpr uint32_t _serviceStackDepth = 164;
+            static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
+
+        public:
+            static constexpr Time minPulseWidth = Time::fromMiliseconds(DigOutputService_MinPulseWidth);
+            static constexpr Time minDelay =Time::fromMiliseconds(DigOutputService_MinDelay);
+
 		private:
             enum class ActionID {
                 set,
@@ -91,20 +101,17 @@ namespace eos {
             struct Action {
                 ActionID id;
                 Output *output;
-                uint32_t time1;
-                uint32_t time2;
+                Time time1;
+                Time time2;
             };
 
             using ActionQueue = Queue<Action>;
-
-		private:
-            static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
 
     	private:
             DigOutputList _outputs;
 
             IOutputChangedEvent * _outputChangedEvent;
-            volatile uint32_t _timeCounter;
+            Time _timeCounter;
             ActionQueue _actionQueue;
 
         private:
@@ -112,11 +119,11 @@ namespace eos {
             void processClear(Output *output);
             void processSet(Output *output);
             void processToggle(Output *output);
-            void processPulse(Output *output, uint32_t width);
-            void processDelayedSet(Output *output, uint32_t delay);
-            void processDelayedClear(Output *output, uint32_t delay);
-            void processDelayedToggle(Output *output, uint32_t delay);
-            void processDelayedPulse(Output *output, uint32_t delay, uint32_t width);
+            void processPulse(Output *output, Time width);
+            void processDelayedSet(Output *output, Time delay);
+            void processDelayedClear(Output *output, Time delay);
+            void processDelayedToggle(Output *output, Time delay);
+            void processDelayedPulse(Output *output, Time delay, Time width);
             void processTick();
 
             void onOutputChanged(Output *output);
@@ -148,14 +155,14 @@ namespace eos {
             void clear(DigOutput *output);
             void write(DigOutput *output, bool pinState);
             void toggle(DigOutput *output);
-            void pulse(DigOutput *output, uint32_t width);
-            void delayedSet(DigOutput *output, uint32_t delay);
-            void delayedClear(DigOutput *output, uint32_t delay);
-            void delayedToggle(DigOutput *output, uint32_t delay);
-            void delayedPulse(DigOutput *output, uint32_t delay, uint32_t pulseWidth);
+            void pulse(DigOutput *output, Time width);
+            void delayedSet(DigOutput *output, Time delay);
+            void delayedClear(DigOutput *output, Time delay);
+            void delayedToggle(DigOutput *output, Time delay);
+            void delayedPulse(DigOutput *output, Time delay, Time pulseWidth);
             bool read(DigOutput *ouput);
 
-            void tick(uint32_t blockTime);
+            void tick(Time blockTime);
             void tickISR();
     };
 }

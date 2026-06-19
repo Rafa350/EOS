@@ -10,13 +10,6 @@
 using namespace eos;
 
 
-constexpr const char *serviceName = "DigInputs";
-constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
-constexpr unsigned serviceStackDepth = 160;
-
-constexpr uint32_t minScanPeriod = 5;  // Periode d'exploracio minim en ms
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
@@ -24,7 +17,7 @@ DigInputService::DigInputService():
     Service(),
 	_inputChangedEvent {nullptr},
 	_beforeScanEvent {nullptr},
-    _scanPeriod {minScanPeriod} {
+    _scanPeriod {_minScanPeriod} {
 }
 
 
@@ -33,9 +26,9 @@ DigInputService::DigInputService():
 /// \param    scanPeriod: El period en milisegons.
 ///
 void DigInputService::setScanPeriod(
-    uint32_t scanPeriod) {
+    Time scanPeriod) {
 
-    _scanPeriod = Math::max(scanPeriod, minScanPeriod);
+    _scanPeriod = Math::max(scanPeriod, _minScanPeriod);
 }
 
 
@@ -144,9 +137,9 @@ DigInput *DigInputService::getInput(
 void DigInputService::onInitialize(
 	ServiceParams &params) {
 
-	params.name = serviceName;
-	params.priority = servicePriority;
-	params.stackDepth = serviceStackDepth;
+	params.name = _serviceName;
+	params.priority = _servicePriority;
+	params.stackDepth = _serviceStackDepth;
 
 	raiseInitializeNotificationEvent(&params);
 }
@@ -159,7 +152,7 @@ void DigInputService::onExecute() {
 
     while (!stopSignal()) {
 
-		rtos::Task::delayUntil(Time::fromMiliseconds(_scanPeriod));
+		rtos::Task::delayUntil(_scanPeriod);
 
 		// Notifica l'inici de l'escaneig d'entrades
 		//

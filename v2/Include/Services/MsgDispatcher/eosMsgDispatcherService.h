@@ -85,6 +85,9 @@ namespace eos {
 			template <typename Instance_> using DispatchFinishedEvent = CallbackP2<Instance_, MsgDispatcherService*, DispatchFinishedEventArgs*>;
 
 		private:
+			static constexpr uint32_t _actionQueueSize = 10;
+
+		private:
 			enum class ActionID {
 				addListener,
 				postMessage

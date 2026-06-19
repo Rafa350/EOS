@@ -8,31 +8,33 @@
 
 namespace eos {
 
-	/// \brief Clase per valors de temps en milisegons
-	//
+	/// \brief Clase que encapsula el temps en milisegons
+	///
 	class Time final {
 		private:
-			uint32_t const _value;
+			uint32_t _value;
 
 		private:
-			inline Time(uint32_t miliseconds):
+			inline constexpr Time(uint32_t miliseconds):
 				_value {miliseconds} {
 			}
 
 		public:
-			inline static Time zero() {
-				return Time(0);
+			inline constexpr Time():
+				_value{0} {
 			}
 
-			inline static Time infinite() {
-				return Time(0xFFFFFFFF);
+			inline constexpr Time(const Time &other) :
+				_value {other._value} {
 			}
 
-			inline static Time fromMiliseconds(uint32_t miliseconds) {
+			~Time() = default;
+
+			inline static constexpr Time fromMiliseconds(uint32_t miliseconds) {
 				return Time(miliseconds);
 			}
 
-			inline static Time fromSeconds(uint32_t seconds) {
+			inline static constexpr Time fromSeconds(uint32_t seconds) {
 				return Time(seconds * 1000);
 			}
 
@@ -51,6 +53,68 @@ namespace eos {
 			inline bool isInfinite() const {
 				return _value == 0xFFFFFFFF;
 			}
+
+			/// Operador aritmetic +
+			///
+			inline Time operator + (Time other) {
+				return Time(_value + other._value);
+			}
+
+			/// Operador aritmetic -
+			///
+			inline Time operator - (Time other) {
+				return Time(_value - other._value);
+			}
+
+			/// Operador d'assignacio =
+			///
+			inline Time& operator = (Time other) {
+				_value = other._value;
+				return *this;
+			}
+
+			/// Operador d'assignacio +=
+			///
+			inline Time& operator += (Time other) {
+				_value += other._value;
+				return *this;
+			}
+
+			/// Operador d'assignacio -=
+			///
+			inline Time& operator -= (Time other) {
+				_value -= other._value;
+				return *this;
+			}
+
+			/// Operador de comparacio ==
+			///
+			inline friend bool operator == (Time a, Time b) {
+				return a._value == b._value;
+			}
+
+			/// Operador de comparacio <
+			///
+			inline friend bool operator < (Time a, Time b) {
+				return a._value < b._value;
+			}
+
+			/// Operador de comparacio >
+			///
+			inline friend bool operator > (Time a, Time b) {
+				return a._value > b._value;
+			}
+	};
+
+	/// \brief Constants de temps predefinides
+	///
+	struct Times {
+		static constexpr Time zero = Time::fromMiliseconds(0);
+		static constexpr Time infinite = Time::fromMiliseconds(0xFFFFFFFF);
+		static constexpr Time second = Time::fromMiliseconds(1 * 1000);
+		static constexpr Time minute = Time::fromMiliseconds(60 * 1000);
+		static constexpr Time hour = Time::fromMiliseconds(60 * 60 * 1000);
+		static constexpr Time day = Time::fromMiliseconds(24 * 60 * 60 * 1000);
 	};
 }
 

@@ -7,7 +7,7 @@
 /// \brief    Constructor
 ///
 eos::MsgDispatcherService::MsgDispatcherService():
-	_actionQueue {10},
+	_actionQueue {_actionQueueSize},
 	_dispatchFinishedEvent {nullptr} {
 
 }

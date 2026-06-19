@@ -8,24 +8,12 @@
 #include "eos_digoutput_outputs.h"
 
 
-// Parametres de la tasca del servei
-//
-constexpr const char *serviceName = "DigOutputs";
-constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
-constexpr uint32_t serviceStackDepth = 164;
-
-// Parametres de configuracio del servei
-//
-constexpr uint32_t minPulseWidth = DigOutputService_MinPulseWidth;
-constexpr uint32_t minDelay = DigOutputService_MinDelay;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
 eos::DigOutputService::DigOutputService():
 	_outputChangedEvent {nullptr},
-	_timeCounter {0},
+	_timeCounter {Time::fromMiliseconds(0)},
 	_actionQueue {_actionQueueSize} {
 
 }
@@ -134,7 +122,7 @@ void eos::DigOutputService::set(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Time::infinite());
+		_actionQueue.push(action, Times::infinite);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -158,7 +146,7 @@ void eos::DigOutputService::clear(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Time::infinite());
+		_actionQueue.push(action, Times::infinite);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -182,7 +170,7 @@ void eos::DigOutputService::toggle(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Time::infinite());
+		_actionQueue.push(action, Times::infinite);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -208,7 +196,7 @@ void eos::DigOutputService::write(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Time::infinite());
+		_actionQueue.push(action, Times::infinite);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -223,7 +211,7 @@ void eos::DigOutputService::write(
 ///
 void eos::DigOutputService::pulse(
     eos::DigOutput *output,
-    uint32_t width) {
+    eos::Time width) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -235,7 +223,7 @@ void eos::DigOutputService::pulse(
 			.time1 {eos::Math::max(width, minPulseWidth)}
 		};
 
-		_actionQueue.push(action, Time::infinite());
+		_actionQueue.push(action, Times::infinite);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -251,8 +239,8 @@ void eos::DigOutputService::pulse(
 ///
 void eos::DigOutputService::delayedPulse(
     eos::DigOutput *output,
-    uint32_t delay,
-    uint32_t width) {
+    eos::Time delay,
+    eos::Time width) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -265,7 +253,7 @@ void eos::DigOutputService::delayedPulse(
 			.time2 {eos::Math::max(width, minPulseWidth)}
 		};
 
-		_actionQueue.push(action, Time::infinite());
+		_actionQueue.push(action, Times::infinite);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -309,9 +297,9 @@ bool eos::DigOutputService::read(
 void eos::DigOutputService::onInitialize(
 	eos::Service::ServiceParams &params) {
 
-	params.name = serviceName;
-	params.stackDepth = serviceStackDepth;
-	params.priority = servicePriority;
+	params.name = _serviceName;
+	params.stackDepth = _serviceStackDepth;
+	params.priority = _servicePriority;
 }
 
 
@@ -322,7 +310,7 @@ void eos::DigOutputService::onExecute() {
 
 	while (!stopSignal()) {
 		Action action;
-		while (_actionQueue.pop(action, Time::infinite()))
+		while (_actionQueue.pop(action, Times::infinite))
 			processAction(action);
 	}
 }
@@ -422,7 +410,7 @@ void eos::DigOutputService::processToggle(
 ///
 void eos::DigOutputService::processPulse(
     eos::Output *output,
-    uint32_t pulseWidth) {
+    eos::Time pulseWidth) {
 
 	bool oldValue = output->getValue();
 	output->pulse(_timeCounter, pulseWidth);
@@ -438,7 +426,7 @@ void eos::DigOutputService::processPulse(
 ///
 void eos::DigOutputService::processDelayedSet(
     eos::Output *output,
-    uint32_t delay) {
+    eos::Time delay) {
 
 }
 
@@ -450,7 +438,7 @@ void eos::DigOutputService::processDelayedSet(
 ///
 void eos::DigOutputService::processDelayedClear(
     eos::Output *output,
-    uint32_t delay) {
+    eos::Time delay) {
 
 }
 
@@ -462,7 +450,7 @@ void eos::DigOutputService::processDelayedClear(
 ///
 void eos::DigOutputService::processDelayedToggle(
     eos::Output *output,
-    uint32_t delay) {
+    eos::Time delay) {
 
 }
 
@@ -475,8 +463,8 @@ void eos::DigOutputService::processDelayedToggle(
 ///
 void eos::DigOutputService::processDelayedPulse(
     eos::Output *output,
-    uint32_t delay,
-    uint32_t pulseWidth) {
+    eos::Time delay,
+    eos::Time pulseWidth) {
 
 	output->delayedPulse(_timeCounter, delay, pulseWidth);
 }
@@ -506,7 +494,7 @@ void eos::DigOutputService::tickISR() {
 
 	// Incrementa el contador de temps
 	//
-	_timeCounter += 1;
+	_timeCounter += Time::fromMiliseconds(1);
 
     Action action = {
         .id {ActionID::tick}

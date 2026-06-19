@@ -66,7 +66,7 @@ void CanOpenService::onExecute() {
 
 	// Envia un boot-up (Heartbeat amb estat 'initializing')
 	//
-	emitHeartbeat(Time::infinite());
+	emitHeartbeat(Times::infinite);
 	rtos::Task::delay(Time::fromMiliseconds(500));
 
 	// Canvia l'estat a 'preOperational'
@@ -114,7 +114,7 @@ void CanOpenService::configureHeartbeat() {
 
 	uint16_t interval;
 	if (_dictionary->readU16(0x1017, 0, interval) && interval > 0)
-		_heartbeatTimer.start(Time::fromMiliseconds(interval), Time::infinite());
+		_heartbeatTimer.start(Time::fromMiliseconds(interval), Times::infinite);
 }
 
 
@@ -846,7 +846,7 @@ bool CanOpenService::writeU8(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, Time::infinite());
+					ok = _messageQueue.push(msg, Times::infinite);
 				}
 			}
 
@@ -884,7 +884,7 @@ bool CanOpenService::writeU16(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, Time::infinite());
+					ok = _messageQueue.push(msg, Times::infinite);
 				}
 			}
 
@@ -922,7 +922,7 @@ bool CanOpenService::writeU32(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, Time::infinite());
+					ok = _messageQueue.push(msg, Times::infinite);
 				}
 			}
 
@@ -1288,7 +1288,7 @@ void CanOpenService::heartbeatTimerEventHandler(
 	rtos::Timer *timer,
 	rtos::Timer::EventArgs *args) {
 
-	emitHeartbeat(Time::infinite());
+	emitHeartbeat(Times::infinite);
 }
 
 

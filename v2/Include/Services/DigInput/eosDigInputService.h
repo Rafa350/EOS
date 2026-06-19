@@ -8,6 +8,7 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
+#include "System/eosTime.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 
 
@@ -63,10 +64,16 @@ namespace eos {
 			template <typename Instance_> using InputChangedEvent = CallbackP2<Instance_, DigInputService*, InputChangedEventArgs*>;
 
         private:
+            static constexpr const char *_serviceName = "DigInputs";
+            static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::normal;
+            static constexpr uint32_t _serviceStackDepth = 160;
+            static constexpr Time _minScanPeriod = Time::fromMiliseconds(5);         
+
+        private:
     		DigInputList _inputs;
     		IInputChangedEvent *_inputChangedEvent;
     		IBeforeScanEvent *_beforeScanEvent;
-            uint32_t _scanPeriod;
+            Time _scanPeriod;
 
         private:
             void onInputChanged(DigInput *input);
@@ -85,7 +92,7 @@ namespace eos {
             DigInputService& operator=(const DigInputService&) = delete;
     	    DigInputService& operator=(const DigInputService&&) = delete;
 
-            void setScanPeriod(uint32_t scanPeriod);
+            void setScanPeriod(Time scanPeriod);
 
             DigInput * addInput(PinDriver *drv, uint32_t tag);
             DigInput * getInput(uint32_t tag) const;

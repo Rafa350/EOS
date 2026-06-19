@@ -78,8 +78,8 @@ void eos::Output::toggle() {
 /// \param    pulse: Durada del puls.
 ///
 void eos::Output::pulse(
-	unsigned time,
-	unsigned pulse) {
+	eos::Time time,
+	eos::Time pulse) {
 
 	if (_state == State::idle)
 		write(!_value);
@@ -95,8 +95,8 @@ void eos::Output::pulse(
 /// \param    delay: Durada del retard.
 ///
 void eos::Output::delayedSet(
-	unsigned time,
-	unsigned delay) {
+	eos::Time time,
+	eos::Time delay) {
 
 	_delayEndTime = time + delay;
 	_state = State::delayedSet;
@@ -109,8 +109,8 @@ void eos::Output::delayedSet(
 /// \param    delay: Durada del retard.
 ///
 void eos::Output::delayedClear(
-	unsigned time,
-	unsigned delay) {
+	eos::Time time,
+	eos::Time delay) {
 
 	_delayEndTime = time + delay;
 	_state = State::delayedClear;
@@ -123,8 +123,8 @@ void eos::Output::delayedClear(
 /// \param    delay: Durada del retard.
 ///
 void eos::Output::delayedToggle(
-	unsigned time,
-	unsigned delay) {
+	eos::Time time,
+	eos::Time delay) {
 
 	_delayEndTime = time + delay;
 	_state = State::delayedToggle;
@@ -138,9 +138,9 @@ void eos::Output::delayedToggle(
 /// \param    pulse: Durada del puls.
 ///
 void eos::Output::delayedPulse(
-	unsigned time,
-	unsigned delay,
-	unsigned pulse) {
+	eos::Time time,
+	eos::Time delay,
+	eos::Time pulse) {
 
 	_delayEndTime = time + delay;
 	_pulseEndTime = time + delay + pulse;
@@ -153,7 +153,7 @@ void eos::Output::delayedPulse(
 /// \param    time: El temps actual.
 ///
 void eos::Output::tick(
-	unsigned time) {
+	eos::Time time) {
 
 	switch (_state) {
 		case State::idle:
@@ -204,9 +204,9 @@ void eos::Output::tick(
 /// \return   True si el temps actual es posterior al temps limit.
 ///
 bool eos::Output::hasExpired(
-	unsigned time,
-	unsigned endTime) {
+	eos::Time time,
+	eos::Time endTime) {
 
 	auto delta = endTime - time;
-	return static_cast<int>(delta) <= 0;
+	return static_cast<int>(delta.toMiliseconds()) <= 0;
 }
