@@ -1,7 +1,6 @@
-#add_subdirectory("Fonts")
+add_subdirectory("Fonts")
 
 target_sources(${TARGET_NAME} PUBLIC 
-	eosBitmap.cpp
 	eosBrush.cpp
 	eosColor.cpp
 	eosColorMath.cpp

@@ -1,9 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosPoolAllocator.h"
+#include "RTOS/rtosHeap.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosBitmap.h"
-#include "OSAL/osalHeap.h"
 
 
 using namespace eos;
@@ -91,7 +90,7 @@ Bitmap::Bitmap(
 
 	// Reserva memoria pel bitmap
 	//
-	_impl->pixels = osalHeapAlloc(NULL, numPixels * pixelSize);
+	_impl->pixels = rtos::Heap::allocate(numPixels * pixelSize);
 	eosAssert(_impl->pixels != nullptr);
 
 	// Crea el contingut del bitmap
@@ -195,7 +194,7 @@ Bitmap::Bitmap(
 Bitmap::~Bitmap() {
 
 	if (_impl->allocated && (_impl->pixels != nullptr))
-		osalHeapFree(NULL, _impl->pixels);
+		rtos::Heap::deallocate(_impl->pixels);
 }
 
 
