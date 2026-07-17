@@ -6,7 +6,6 @@
 #include "System/eosTime.h"
 
 
-using namespace eos;
 using namespace htl;
 
 
@@ -18,20 +17,22 @@ constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::low;
 /// ----------------------------------------------------------------------
 /// \brief Contructor de l'objecte.
 ///
-LedService::LedService(
+eos::LedService::LedService(
      Pin *pinLED1,
      Pin *pinLED2) :
 
 	 Service(),
 	 _pinLED1 {pinLED1},
-	 _pinLED2 {pinLED2} {
+	 _pinLED2 {pinLED2},
+	 _modeLED1 {LedMode::blinkSlow},
+	 _modeLED2 {LedMode::blinkSlow} {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza els parametres del servei.
 ///
-void LedService::onInitialize(
+void eos::LedService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = serviceName;
@@ -40,10 +41,28 @@ void LedService::onInitialize(
 }
 
 
+void eos::LedService::setLed1Mode(
+	LedMode value) {
+
+	if (_modeLED1 != value) {
+		_modeLED1 = value;
+	}
+}
+
+
+void eos::LedService::setLed2Mode(
+	LedMode value) {
+
+	if (_modeLED2 != value) {
+		_modeLED2 = value;
+	}
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief 	  Tasca del servei.
 ///
-void LedService::onExecute() {
+void eos::LedService::onExecute() {
 
     if (_pinLED1 != nullptr)
         _pinLED1->set();

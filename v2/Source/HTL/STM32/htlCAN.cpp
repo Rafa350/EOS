@@ -4,14 +4,11 @@
 #ifdef HTL_CANx_EXIST
 
 
-#include "HTL/htlAtomic.h"
-#include "HTL/htlBits.h"
 #include "HTL/STM32/htlCAN.h"
+#include "System/eosBits.h"
 #include "System/eosMath.h"
 
 
-using namespace eos;
-using namespace htl::bits;
 using namespace htl::can;
 
 
@@ -158,7 +155,7 @@ CANDevice::CANDevice(
 /// \brief    Inicialitza el dispositiu.
 /// \param    params: Parametres d'inicialitzacio.
 ///
-Result CANDevice::initialize(
+eos::Result CANDevice::initialize(
 	CANDevice::InitParams const * const params) {
 
 	if (_state == State::reset) {
@@ -167,19 +164,19 @@ Result CANDevice::initialize(
 
 		// Surt del modus sleep
 		//
-		clear(_can->CCCR, FDCAN_CCCR_CSR);
-		while (isSet(_can->CCCR, FDCAN_CCCR_CSR))
+		eos::Bits::clear(_can->CCCR, FDCAN_CCCR_CSR);
+		while (eos::Bits::isSet(_can->CCCR, FDCAN_CCCR_CSR))
 			continue;
 
 		// Selecciona modus INIT i espera que acabi
 		//
-		set(_can->CCCR, FDCAN_CCCR_INIT);
-		while (!isSet(_can->CCCR, FDCAN_CCCR_INIT))
+		eos::Bits::set(_can->CCCR, FDCAN_CCCR_INIT);
+		while (!eos::Bits::isSet(_can->CCCR, FDCAN_CCCR_INIT))
 			continue;
 
 		// Habilita el canvi de configuracio
 		//
-		set(_can->CCCR, FDCAN_CCCR_CCE);
+		eos::Bits::set(_can->CCCR, FDCAN_CCCR_CCE);
 
 		// Configura el registre del divisor del rellotge
 		//
@@ -190,29 +187,29 @@ Result CANDevice::initialize(
 		//
 		auto CCCR = _can->CCCR;
 
-		clear(CCCR, FDCAN_CCCR_DAR | FDCAN_CCCR_TXP | FDCAN_CCCR_PXHD |
+		eos::Bits::clear(CCCR, FDCAN_CCCR_DAR | FDCAN_CCCR_TXP | FDCAN_CCCR_PXHD |
 			FDCAN_CCCR_TEST | FDCAN_CCCR_MON | FDCAN_CCCR_ASM |
 			FDCAN_CCCR_FDOE | FDCAN_CCCR_BRSE);
 
 		if (!params->autoRetransmission)
-			set(CCCR, FDCAN_CCCR_DAR);
+			eos::Bits::set(CCCR, FDCAN_CCCR_DAR);
 
 		if (params->transmitPause)
-			set(CCCR, FDCAN_CCCR_TXP);
+			eos::Bits::set(CCCR, FDCAN_CCCR_TXP);
 
 		if (!params->protocolException)
-			set(CCCR, FDCAN_CCCR_PXHD);
+			eos::Bits::set(CCCR, FDCAN_CCCR_PXHD);
 
 		switch (params->frameFormat) {
 			case FrameFormat::classic:
 				break;
 
 			case FrameFormat::fdNoBsr:
-				set(CCCR, FDCAN_CCCR_FDOE);
+				eos::Bits::set(CCCR, FDCAN_CCCR_FDOE);
 				break;
 
 			case FrameFormat::fdBsr:
-				set(CCCR, FDCAN_CCCR_FDOE | FDCAN_CCCR_BRSE);
+				eos::Bits::set(CCCR, FDCAN_CCCR_FDOE | FDCAN_CCCR_BRSE);
 				break;
 		}
 
@@ -221,20 +218,20 @@ Result CANDevice::initialize(
 				break;
 
 			case Mode::restricted:
-			    set(CCCR, FDCAN_CCCR_ASM);
+				eos::Bits::set(CCCR, FDCAN_CCCR_ASM);
 			    break;
 
 			case Mode::internalLoopback:
-		    	set(CCCR, FDCAN_CCCR_TEST);
-	    		set(CCCR, FDCAN_CCCR_MON);
+				eos::Bits::set(CCCR, FDCAN_CCCR_TEST);
+				eos::Bits::set(CCCR, FDCAN_CCCR_MON);
 				break;
 
 			case Mode::externalLoopback:
-	    		set(CCCR, FDCAN_CCCR_TEST);
+				eos::Bits::set(CCCR, FDCAN_CCCR_TEST);
 				break;
 
 			case Mode::busMonitoring:
-		    	set(CCCR, FDCAN_CCCR_MON);
+				eos::Bits::set(CCCR, FDCAN_CCCR_MON);
 		    	break;
 		}
 
@@ -244,9 +241,9 @@ Result CANDevice::initialize(
 		// -Modus normal/loopback
 		//
 		if ((params->mode == Mode::internalLoopback) || (params->mode == Mode::externalLoopback))
-	    	set(_can->TEST, FDCAN_TEST_LBCK);
+			eos::Bits::set(_can->TEST, FDCAN_TEST_LBCK);
 		else
-			clear(_can->TEST, FDCAN_TEST_LBCK);
+			eos::Bits::clear(_can->TEST, FDCAN_TEST_LBCK);
 
 		// Configura el registre NBTP
 		//
@@ -269,9 +266,9 @@ Result CANDevice::initialize(
 		// -Modus FIFO/QUEUE
 		//
 		if (params->qfMode == QFMode::queue)
-			set(_can->TXBC, FDCAN_TXBC_TFQM);
+			eos::Bits::set(_can->TXBC, FDCAN_TXBC_TFQM);
 		else
-			clear(_can->TXBC, FDCAN_TXBC_TFQM);
+			eos::Bits::clear(_can->TXBC, FDCAN_TXBC_TFQM);
 
 		// Configura el registre RXGFC
 		// -Modus sobresciptura del FIFO
@@ -279,9 +276,9 @@ Result CANDevice::initialize(
 		// -Nombre de filtes extesos
 		//
 		auto RXGFC = _can->RXGFC;
-		clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM | FDCAN_RXGFC_LSS | FDCAN_RXGFC_LSE);
-		set(RXGFC, (Math::min(params->stdFiltersNbr, absoluteMaxStandardFilters) << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
-		set(RXGFC, (Math::min(params->extFiltersNbr, absoluteMaxExtendedFilters) << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
+		eos::Bits::clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM | FDCAN_RXGFC_LSS | FDCAN_RXGFC_LSE);
+		eos::Bits::set(RXGFC, (eos::Math::min(params->stdFiltersNbr, absoluteMaxStandardFilters) << FDCAN_RXGFC_LSS_Pos) & FDCAN_RXGFC_LSS_Msk);
+		eos::Bits::set(RXGFC, (eos::Math::min(params->extFiltersNbr, absoluteMaxExtendedFilters) << FDCAN_RXGFC_LSE_Pos) & FDCAN_RXGFC_LSE_Msk);
 		_can->RXGFC = RXGFC;
 
 		// Convenient borrar la ram dels filtres
@@ -290,18 +287,18 @@ Result CANDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el dispositiu.
 ///
-Result CANDevice::deinitialize() {
+eos::Result CANDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -310,11 +307,11 @@ Result CANDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -322,23 +319,23 @@ Result CANDevice::deinitialize() {
 /// \brief    Inicia la comunicacio.
 /// \return   El resultat de l'operacio.
 ///
-Result CANDevice::start() {
+eos::Result CANDevice::start() {
 
 	if (_state == State::ready) {
 
 		// Surt del modus INIT
 		//
-		clear(_can->CCCR, FDCAN_CCCR_INIT);
-		while (isSet(_can->CCCR, FDCAN_CCCR_INIT))
+		eos::Bits::clear(_can->CCCR, FDCAN_CCCR_INIT);
+		while (htl::bits::isSet(_can->CCCR, FDCAN_CCCR_INIT))
 			continue;
 
 		_state = State::running;
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -346,61 +343,61 @@ Result CANDevice::start() {
 /// \brief    Inicia la comunicacio per interrupcions.
 /// \return   El resultat de l'operacio.
 ///
-Result CANDevice::start_IRQ() {
+eos::Result CANDevice::start_IRQ() {
 
 	if (start().isSuccess()) {
 
 		// Habilita interrupcions
 		//
-		set(_can->IE,
+		eos::Bits::set(_can->IE,
 			FDCAN_IE_RF0NE |      // FIFO0 new message
 			FDCAN_IE_RF1NE |      // FIFO1 new message
 			FDCAN_IE_TCE |        // TxBuffer transmission completed
 			FDCAN_IE_TCFE);       // TxBuffer transmission cancelada
 
-		set(_can->ILE,
+		eos::Bits::set(_can->ILE,
 			FDCAN_ILE_EINT0);     // Linia INT0 habilitada
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza la comunicacio.
 ///
-Result CANDevice::stop() {
+eos::Result CANDevice::stop() {
 
 	if (_state == State::running) {
 
 		// Deshabilita les interrupcions
 		//
-		clear(_can->IE,
+		htl::bits::clear(_can->IE,
 			FDCAN_IE_RF0NE |      // FIFO0 new message
 			FDCAN_IE_RF1NE |      // FIFO1 new message
 			FDCAN_IE_TCE |        // TxBuffer transmission completed
 			FDCAN_IE_TCFE);       // TxBuffer transmission cancelada
 
-		clear(_can->ILE,
+		htl::bits::clear(_can->ILE,
 			FDCAN_ILE_EINT0);     // Linia INT0 deshabilitada
 
 		// Entra al modus INIT
 		//
-		set(_can->CCCR, FDCAN_CCCR_INIT);
-		while (!isSet(_can->CCCR, FDCAN_CCCR_INIT))
+		htl::bits::set(_can->CCCR, FDCAN_CCCR_INIT);
+		while (!htl::bits::isSet(_can->CCCR, FDCAN_CCCR_INIT))
 			continue;
 
 		// Permet canvis en la configuracio
 		//
-		set(_can->CCCR, FDCAN_CCCR_CCE);
+		htl::bits::set(_can->CCCR, FDCAN_CCCR_CCE);
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -432,7 +429,7 @@ void CANDevice::clearFilters() {
 /// \param    index: Index del filtre.
 /// \return   El resultat de l'operacio.
 ///
-Result CANDevice::setFilter(
+eos::Result CANDevice::setFilter(
 	Filter *filter,
 	uint32_t index) {
 
@@ -447,10 +444,10 @@ Result CANDevice::setFilter(
 	    		return eos::Result::ErrorCodes::error;
 
 	    	uint32_t SF = 0;
-	    	set(SF, ((uint32_t)filter->type << SF::SFT_Pos) & SF::SFT_Msk);
-	    	set(SF, ((uint32_t)filter->config << SF::SFEC_Pos) & SF::SFEC_Msk);
-	    	set(SF, (filter->id1 << SF::SFID1_Pos) & SF::SFID1_Msk);
-	    	set(SF, (filter->id2 << SF::SFID2_Pos) & SF::SFID2_Msk);
+	    	htl::bits::set(SF, ((uint32_t)filter->type << SF::SFT_Pos) & SF::SFT_Msk);
+	    	htl::bits::set(SF, ((uint32_t)filter->config << SF::SFEC_Pos) & SF::SFEC_Msk);
+	    	htl::bits::set(SF, (filter->id1 << SF::SFID1_Pos) & SF::SFID1_Msk);
+	    	htl::bits::set(SF, (filter->id2 << SF::SFID2_Pos) & SF::SFID2_Msk);
 
 	    	auto pFilter = getStandardFilterAddr(index);
 	    	pFilter->SF = SF;
@@ -465,23 +462,23 @@ Result CANDevice::setFilter(
 	    		return eos::Result::ErrorCodes::error;
 
 	    	uint32_t EF0 = 0;
-	    	set(EF0, ((uint32_t) filter->config << EF0::EFEC_Pos) & EF0::EFEC_Msk);
-	    	set(EF0, (filter->id1 << EF0::EFID1_Pos) & EF0::EFID1_Msk);
+	    	htl::bits::set(EF0, ((uint32_t) filter->config << EF0::EFEC_Pos) & EF0::EFEC_Msk);
+	    	htl::bits::set(EF0, (filter->id1 << EF0::EFID1_Pos) & EF0::EFID1_Msk);
 
 	    	uint32_t EF1 = 0;
-	    	set(EF1, ((uint32_t) filter->type << EF1::EFT_Pos) & EF1::EFT_Msk);
-	    	set(EF1, (filter->id2 << EF1::EFID2_Pos) & EF1::EFID2_Msk);
+	    	htl::bits::set(EF1, ((uint32_t) filter->type << EF1::EFT_Pos) & EF1::EFT_Msk);
+	    	htl::bits::set(EF1, (filter->id2 << EF1::EFID2_Pos) & EF1::EFID2_Msk);
 
 	    	auto pFilter = getExtendedFilterAddr(index);
 	    	pFilter->EF0 = EF0;
 	    	pFilter->EF1 = EF1;
 	    }
 
-	    return Result::ErrorCodes::ok;
+	    return eos::Result::ErrorCodes::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -493,7 +490,7 @@ Result CANDevice::setFilter(
 /// \param    rejectRemoteExt:
 /// \return   El resultat de l'operacio.
 ///
-Result CANDevice::setGlobalFilter(
+eos::Result CANDevice::setGlobalFilter(
 	NonMatchingFrames nonMatchingStd,
 	NonMatchingFrames nonMatchingExt,
 	RejectRemoteFrames rejectRemoteStd,
@@ -502,19 +499,19 @@ Result CANDevice::setGlobalFilter(
 	if (_state == State::ready) {
 
 		auto RXGFC = _can->RXGFC;
-		clear(RXGFC, FDCAN_RXGFC_ANFS | FDCAN_RXGFC_ANFE | FDCAN_RXGFC_RRFS | FDCAN_RXGFC_RRFE);
-		clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM);
-		set(RXGFC, ((uint32_t)nonMatchingStd << FDCAN_RXGFC_ANFS_Pos) & FDCAN_RXGFC_ANFS_Msk);
-		set(RXGFC, ((uint32_t)nonMatchingExt << FDCAN_RXGFC_ANFE_Pos) & FDCAN_RXGFC_ANFE_Msk);
-		set(RXGFC, ((uint32_t)rejectRemoteStd << FDCAN_RXGFC_RRFS_Pos) & FDCAN_RXGFC_RRFS_Msk);
-		set(RXGFC, ((uint32_t)rejectRemoteExt << FDCAN_RXGFC_RRFE_Pos) & FDCAN_RXGFC_RRFE_Msk);
+		htl::bits::clear(RXGFC, FDCAN_RXGFC_ANFS | FDCAN_RXGFC_ANFE | FDCAN_RXGFC_RRFS | FDCAN_RXGFC_RRFE);
+		htl::bits::clear(RXGFC, FDCAN_RXGFC_F0OM | FDCAN_RXGFC_F1OM);
+		htl::bits::set(RXGFC, ((uint32_t)nonMatchingStd << FDCAN_RXGFC_ANFS_Pos) & FDCAN_RXGFC_ANFS_Msk);
+		htl::bits::set(RXGFC, ((uint32_t)nonMatchingExt << FDCAN_RXGFC_ANFE_Pos) & FDCAN_RXGFC_ANFE_Msk);
+		htl::bits::set(RXGFC, ((uint32_t)rejectRemoteStd << FDCAN_RXGFC_RRFS_Pos) & FDCAN_RXGFC_RRFS_Msk);
+		htl::bits::set(RXGFC, ((uint32_t)rejectRemoteExt << FDCAN_RXGFC_RRFE_Pos) & FDCAN_RXGFC_RRFE_Msk);
 		_can->RXGFC = RXGFC;
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -524,7 +521,7 @@ Result CANDevice::setGlobalFilter(
 /// \param    data: Bloc de dades del missatge.
 /// \\return  El resultat de l'operacio.
 ///
-Result CANDevice::addTxMessage(
+eos::Result CANDevice::addTxMessage(
 	const TxHeader *header,
 	const uint8_t *data) {
 
@@ -549,14 +546,14 @@ Result CANDevice::addTxMessage(
 
 		// Espera que es faci efectiva l'operacio
 		//
-		while (!isSet(_can->TXBRP, (uint32_t)(1 << index)))
+		while (!htl::bits::isSet(_can->TXBRP, (uint32_t)(1 << index)))
 			continue;
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -568,7 +565,7 @@ Result CANDevice::addTxMessage(
 /// \param    dataSize: Tamany del buffer de dades.
 /// \return   El resultat de l'operacio.
 ///
-Result CANDevice::getRxMessage(
+eos::Result CANDevice::getRxMessage(
 	RxFifoSelection fifo,
 	RxHeader *header,
 	uint8_t *data,
@@ -587,13 +584,13 @@ Result CANDevice::getRxMessage(
 			else
 				_can->RXF1A = index;
 
-			return Result::ErrorCodes::ok;
+			return eos::Result::ErrorCodes::ok;
 		}
 
-		return Result::ErrorCodes::error;
+		return eos::Result::ErrorCodes::error;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -606,7 +603,7 @@ void CANDevice::raiseRxFifoNotEmptyNotification(
 	RxFifoSelection fifo,
 	bool irq) {
 
-	if (_erNotification.isEnabled()) {
+	if (_notificationEvent != nullptr) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::rxFifoNotEmpty},
@@ -615,7 +612,7 @@ void CANDevice::raiseRxFifoNotEmptyNotification(
 				.fifo {fifo}
 			}
 		};
-		_erNotification(this, &args);
+		_notificationEvent->execute(this, &args);
 	}
 }
 
@@ -627,7 +624,7 @@ void CANDevice::raiseRxFifoNotEmptyNotification(
 void CANDevice::raiseTxCompletedNotification(
 	bool irq) {
 
-	if (_erNotification.isEnabled()) {
+	if (_notificationEvent != nullptr) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::txCompleted},
@@ -635,7 +632,7 @@ void CANDevice::raiseTxCompletedNotification(
 			.txCompleted {
 			}
 		};
-		_erNotification(this, &args);
+		_notificationEvent->execute(this, &args);
 	}
 }
 
@@ -646,7 +643,7 @@ void CANDevice::raiseTxCompletedNotification(
 void CANDevice::raiseTxCancelledNotification(
 	bool irq) {
 
-	if (_erNotification.isEnabled()) {
+	if (_notificationEvent != nullptr) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::txCancelled},
@@ -654,7 +651,7 @@ void CANDevice::raiseTxCancelledNotification(
 			.txCancelled {
 			}
 		};
-		_erNotification(this, &args);
+		_notificationEvent->execute(this, &args);
 	}
 }
 
@@ -662,14 +659,14 @@ void CANDevice::raiseTxCancelledNotification(
 /// ----------------------------------------------------------------------
 /// \brief    Aborta el missatge que esta en proces de transmissio.
 ///
-Result CANDevice::abortTxBufferTransmission() {
+eos::Result CANDevice::abortTxBufferTransmission() {
 
 	// Busca el buffer que esta transmetent
 	//
 	for (auto index = 0u; index < 3; index++) {
 
 		uint32_t msk = 1 << index;
-		if (isSet(_can->TXBRP, msk) && !isSet(_can->TXBTO, msk)) {
+		if (htl::bits::isSet(_can->TXBRP, msk) && !htl::bits::isSet(_can->TXBTO, msk)) {
 
 			// Cancela la transmissio
 			//
@@ -677,14 +674,14 @@ Result CANDevice::abortTxBufferTransmission() {
 
 			// Espera que es faci efectiva
 			//
-			while (!isSet(_can->TXBCF, msk))
+			while (!htl::bits::isSet(_can->TXBCF, msk))
 				continue;
 
-			return Result::ErrorCodes::ok;
+			return eos::Result::ErrorCodes::ok;
 		}
 	}
 
-	return Result::ErrorCodes::error;
+	return eos::Result::ErrorCodes::error;
 }
 
 
@@ -698,29 +695,29 @@ void CANDevice::interruptService() {
 
 		// Missatge rebut en RxFIFO0
 		//
-		if (isSet(IR, FDCAN_IR_RF0N)) {
-			set(_can->IR, FDCAN_IR_RF0N);
+		if (eos::Bits::isSet(IR, FDCAN_IR_RF0N)) {
+			eos::Bits::set(_can->IR, FDCAN_IR_RF0N);
 			raiseRxFifoNotEmptyNotification(RxFifoSelection::fifo0, true);
 		}
 
 		// Missatge rebut en RxFIFO1
 		//
-		if (isSet(IR, FDCAN_IR_RF1N)) {
-			set(_can->IR, FDCAN_IR_RF1N);
+		if (eos::Bits::isSet(IR, FDCAN_IR_RF1N)) {
+			eos::Bits::set(_can->IR, FDCAN_IR_RF1N);
 			raiseRxFifoNotEmptyNotification(RxFifoSelection::fifo1, true);
 		}
 
 		// Transmissio del missatge en TxBuffer completada
 		//
-		if (isSet(IR, FDCAN_IR_TC)) {
-			set(_can->IR, FDCAN_IR_TC);
+		if (eos::Bits::isSet(IR, FDCAN_IR_TC)) {
+			eos::Bits::set(_can->IR, FDCAN_IR_TC);
 			raiseTxCompletedNotification(true);
 		}
 
 		// Transmissio del missatge en TxBuffer cancelada
 		//
-		if (isSet(IR, FDCAN_IR_TCF)) {
-			set(_can->IR, FDCAN_IR_TCF);
+		if (eos::Bits::isSet(IR, FDCAN_IR_TCF)) {
+			eos::Bits::set(_can->IR, FDCAN_IR_TCF);
 			raiseTxCancelledNotification(true);
 		}
 	}
@@ -774,7 +771,7 @@ bool CANDevice::isTxBufferFull() const {
 
 	// Llegeix el bit TFQF, que ha de set 1
 	//
-	return isSet(_can->TXFQS, FDCAN_TXFQS_TFQF);
+	return htl::bits::isSet(_can->TXFQS, FDCAN_TXFQS_TFQF);
 }
 
 
@@ -795,8 +792,8 @@ bool CANDevice::isTxBufferEmpty() const {
 /// \param    timeout: Tamps maxim d'espera.
 /// \return   True si es correcte, false en cas de timeout.
 ///
-Result CANDevice::waitTxBufferNotFull(
-	Time timeout) {
+eos::Result CANDevice::waitTxBufferNotFull(
+	eos::Time timeout) {
 
 	if (timeout.isInfinite()) {
 		while (isTxBufferFull())
@@ -806,10 +803,10 @@ Result CANDevice::waitTxBufferNotFull(
 		auto expireTime = htl::getTick() + timeout.toMiliseconds();
 		while (isTxBufferFull()) {
 			if (hasTickExpired(expireTime))
-				return Result::ErrorCodes::timeout;
+				return eos::Result::ErrorCodes::timeout;
 		}
 	}
-    return Result::ErrorCodes::ok;
+    return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -818,7 +815,7 @@ Result CANDevice::waitTxBufferNotFull(
 /// \param    timeout: Tamps maxim d'espera.
 /// \return   True si es correcte, false en cas de timeout.
 ///
-Result CANDevice::waitTxBufferEmpty(
+eos::Result CANDevice::waitTxBufferEmpty(
 	eos::Time timeout) {
 
 	if (timeout.isInfinite()) {
@@ -829,11 +826,11 @@ Result CANDevice::waitTxBufferEmpty(
 		auto expireTime = htl::getTick() + timeout.toMiliseconds();
 		while (!isTxBufferEmpty()) {
 			if (hasTickExpired(expireTime))
-				return Result::ErrorCodes::timeout;
+				return eos::Result::ErrorCodes::timeout;
 		}
 	}
 
-    return Result::ErrorCodes::ok;
+    return eos::Result::ErrorCodes::ok;
 }
 
 
@@ -851,27 +848,27 @@ void CANDevice::copyToTxBuffer(
 	//
 	uint32_t T0 = 0;
 	if (header->errorStateFlag == ErrorStateFlag::passive)
-		set(T0, (1 << T0::ESI_Pos) & T0::ESI_Msk);
+		htl::bits::set(T0, (1 << T0::ESI_Pos) & T0::ESI_Msk);
 	if (header->idType == IdentifierType::extended)
-		set(T0, (1 << T0::XTD_Pos) & T0::XTD_Msk);
+		htl::bits::set(T0, (1 << T0::XTD_Pos) & T0::XTD_Msk);
 	if (header->frameType == FrameType::remoteFrame)
-		set(T0, (1 << T0::RTR_Pos) & T0::RTR_Msk);
+		htl::bits::set(T0, (1 << T0::RTR_Pos) & T0::RTR_Msk);
 	if (header->idType == IdentifierType::extended)
-		set(T0, (header->id << T0::EID_Pos) & T0::EID_Msk);
+		htl::bits::set(T0, (header->id << T0::EID_Pos) & T0::EID_Msk);
 	else
-		set(T0, (header->id << T0::SID_Pos) & T0::SID_Msk);
+		htl::bits::set(T0, (header->id << T0::SID_Pos) & T0::SID_Msk);
 
 	// Prepara l'element T1 de la capcelera
 	//
 	uint32_t T1 = 0;
-    set(T1, (uint32_t) (header->messageMarker << T1::MM_Pos) & T1::MM_Msk);
+	htl::bits::set(T1, (uint32_t) (header->messageMarker << T1::MM_Pos) & T1::MM_Msk);
     if (header->txEventFifoControl == TxEventFifoControl::store)
-    	set(T1, (1 << T1::EFC_Pos) & T1::EFC_Msk);
+    	htl::bits::set(T1, (1 << T1::EFC_Pos) & T1::EFC_Msk);
     if (header->fdFormat == FDFormat::fdcan)
-    	set(T1, (1 << T1::FDF_Pos) & T1::FDF_Msk);
+    	htl::bits::set(T1, (1 << T1::FDF_Pos) & T1::FDF_Msk);
     if (header->bitrateSwitching == BitrateSwitching::on)
-    	set(T1, (1 << T1::BRS_Pos) & T1::BRS_Msk);
-    set(T1, (uint32_t)((unsigned)header->dataLength << T1::DLC_Pos) & T1::DLC_Msk);
+    	htl::bits::set(T1, (1 << T1::BRS_Pos) & T1::BRS_Msk);
+    htl::bits::set(T1, (uint32_t)((unsigned)header->dataLength << T1::DLC_Pos) & T1::DLC_Msk);
 
     // Escriu la capcelera en el buffer
     //
@@ -953,7 +950,7 @@ void CANDevice::copyFromRxFifo(
 	// Obte les dades. Les lectures en mode 32bits son mes eficients.
 	//
 	uint8_t *p = (uint8_t*) pBuffer->data;
-	uint32_t ii = Math::min(dataSize, (uint32_t)__dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]);
+	uint32_t ii = eos::Math::min(dataSize, (uint32_t)__dataLengthTbl[(pBuffer->R1 & R1::DLC_Msk) >> R1::DLC_Pos]);
 	for (uint32_t i = 0; i < ii; i++)
 		data[i] = p[i];
 }

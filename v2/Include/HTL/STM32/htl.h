@@ -77,7 +77,7 @@
 #endif
 
 
-// Comprova l'esistencia dels moduls TIM
+// Comprova l'existencia dels moduls TIM
 //
 #ifdef TIM1_BASE
 	#define HTL_TMR1_EXIST

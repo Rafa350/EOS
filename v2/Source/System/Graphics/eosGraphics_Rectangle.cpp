@@ -3,8 +3,7 @@
 #include "System/Graphics/eosPen.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosGraphics.h"
-
-#include <cmath>
+#include "System/eosMath.h"
 
 
 using namespace eos;
@@ -39,7 +38,7 @@ void Graphics::paintRectangle(
 		if (penVisible) {
 			Color color = pen.getColor();
 			int16_t thickness = pen.getThickness();
-			if (thickness < std::min(std::abs(x2 - x1), std::abs(y2 - y1)) / 2) {
+			if (thickness < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
 				if (thickness > 1) {
 					fillRectangle(x1, y1, x2, y1 + thickness, color);
 					fillRectangle(x1, y2 - thickness, x2, y2, color);
@@ -77,9 +76,9 @@ void Graphics::drawRectangle(
 	// Normalitza les coordinades.
 	//
     if (x1 > x2)
-        std::swap(x1, x2);
+        Math::swap(x1, x2);
     if (y1 > y2)
-        std::swap(y1, y2);
+        Math::swap(y1, y2);
 
     int16_t xx1, xx2, yy1, yy2;
 
@@ -132,9 +131,9 @@ void Graphics::fillRectangle(
 	// Normalitza les coordinades.
 	//
     if (x1 > x2)
-        std::swap(x1, x2);
+        Math::swap(x1, x2);
     if (y1 > y2)
-        std::swap(y1, y2);
+        Math::swap(y1, y2);
 
     // Dibuixa el rectangle si es visible
     //

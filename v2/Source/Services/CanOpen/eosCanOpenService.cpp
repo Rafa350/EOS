@@ -58,7 +58,7 @@ void CanOpenService::onExecute() {
 
     // Accepta notificacions del dispositiu.
 	//
-	_devCAN->setNotificationEvent(_canDeviceNotificationEvent);
+	_devCAN->enableNotificationEvent(_canDeviceNotificationEvent);
 
 	// Inicia el dispositiu FCAN en modus interrupcio.
 	//

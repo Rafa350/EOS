@@ -33,6 +33,7 @@ namespace eos {
 
 		private:
 			const char *_text;
+			uint32_t _textLength;
 			Font _font;
 			Brush _background;
 			Brush _foreground;
@@ -48,16 +49,16 @@ namespace eos {
 		public:
 			Text();
 			Text(const Font &font, HorizontalAlign align);
-			Text(const Font &font, HorizontalAlign align, const char *text);
+			Text(const Font &font, HorizontalAlign align, const char *text, uint32_t textLength);
 
-			void setText(const char *text);
+			void setText(const char *text, uint32_t textLength);
 			void setFont(const Font &font);
 			void setHorizontalAlign(HorizontalAlign align);
 			void setVerticalAlign(VerticalAlign align);
 			void setBackground(const Brush &background);
 			void setForeground(const Brush &foreground);
 
-			const char* getText() const { return _text; }
+			//const char* getText() const { return _text; }
 			const Font& getFont() const { return _font; }
 			HorizontalAlign getHorizontalAlign() const { return _horizontalAlign; }
 			VerticalAlign getVerticalAlign() const { return _verticalAlign; }

@@ -18,14 +18,15 @@ static constexpr Color defaultForeground = Colors::black;
 ///
 Text::Text():
 
-	_text(""),
-	_font(Font()),
+	_text {""},
+	_textLength {0},
+	_font {Font()},
 	//_background(defaultBackground)),
-	_foreground(Brush(defaultForeground)),
-	_horizontalAlign(HorizontalAlign::center),
+	_foreground {Brush(defaultForeground)},
+	_horizontalAlign {HorizontalAlign::center},
 	_verticalAlign {VerticalAlign::middle},
-	_width(0),
-	_height(0) {
+	_width {0},
+	_height {0} {
 }
 
 
@@ -39,6 +40,7 @@ Text::Text(
 	HorizontalAlign align):
 
 	_text {""},
+	_textLength {0},
 	_font {font},
 	//_background(Brush(defaultBackground)),
 	_foreground {Brush(defaultForeground)},
@@ -59,9 +61,11 @@ Text::Text(
 Text::Text(
 	const Font &font,
 	HorizontalAlign align,
-	const char *text):
+	const char *text,
+	uint32_t textLength):
 
 	_text {text},
+	_textLength {textLength == -1 ? strlen(text) : textLength},
 	_font {font},
 	//_background {Brush(defaultBackground)},
 	_foreground {Brush(defaultForeground)},
@@ -77,10 +81,12 @@ Text::Text(
 /// \param    text: El text.
 ///
 void Text::setText(
-	const char *text) {
+	const char *text,
+	uint32_t textLength) {
 
 	if (_text != text) {
 		_text = text;
+		_textLength = (textLength == -1) ? strlen(text) : textLength;
 		recalcBounds();
 	}
 }
@@ -153,7 +159,7 @@ void Text::recalcBounds() {
 
 	const char *p = _text;
 	if (p != nullptr) {
-		int i = strlen(p);
+		int i = _textLength;
 		while(i > 1) {
 			_width += _font.getCharAdvance(*p++);
 			i--;
@@ -180,7 +186,7 @@ void Text::draw(
 	const Point &position) const {
 
 	const char* p = _text;
-	unsigned l = strlen(p);
+	unsigned l = _textLength;
 
 	if (l > 0) {
 
@@ -209,8 +215,8 @@ void Text::draw(
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa el text.
-/// \param    graphics: L'objecte grafics on dibuixar.
-/// \param    box: La caixa un dibuixar.
+/// \param    graphics: L'objecte grafic on dibuixar.
+/// \param    box: La caixa on dibuixar.
 ///
 void Text::draw(
 	const Graphics *graphics,

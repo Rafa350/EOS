@@ -34,6 +34,7 @@ namespace eos {
 		al88,      ///< A8 + L8             (16 bits AL)
 		al44,      ///< A4 + L4             (8 bits AL)
 		l8,        ///< L8                  (8 bits L)
+		l4,        ///> L4                  (4 bits L)
 		l1         ///< L1                  (1 bit L)
 	};
 
@@ -234,6 +235,32 @@ namespace eos {
 		static constexpr unsigned maskG = 0x00;
 		static constexpr unsigned maskB = 0x00;
 		static constexpr unsigned maskL = 0xFF;
+		static constexpr unsigned shiftA = 0;
+		static constexpr unsigned shiftR = 0;
+		static constexpr unsigned shiftG = 0;
+		static constexpr unsigned shiftB = 0;
+		static constexpr unsigned shiftL = 0;
+		static constexpr unsigned adjA = 0;
+		static constexpr unsigned adjR = 0;
+		static constexpr unsigned adjG = 0;
+		static constexpr unsigned adjB = 0;
+		static constexpr unsigned adjL = 0;
+	};
+
+	template <>
+	struct ColorTrait<ColorFormat::l4> {
+		using Pixel = uint8_t;
+		static constexpr ColorFormat format = ColorFormat::l4;
+		static constexpr ColorType type = ColorType::grayscale;
+		static constexpr int bits = 4;
+		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr bool isColor = false;
+		static constexpr bool hasAlpha = false;
+		static constexpr unsigned maskA = 0x00;
+		static constexpr unsigned maskR = 0x00;
+		static constexpr unsigned maskG = 0x00;
+		static constexpr unsigned maskB = 0x00;
+		static constexpr unsigned maskL = 0x0F;
 		static constexpr unsigned shiftA = 0;
 		static constexpr unsigned shiftR = 0;
 		static constexpr unsigned shiftG = 0;
@@ -544,6 +571,7 @@ namespace eos {
 	using ColorRGB888 = Color_x<ColorFormat::rgb888>;
 	using ColorRGB565 = Color_x<ColorFormat::rgb565>;
 	using ColorL8 = Color_x<ColorFormat::l8>;
+	using ColorL4 = Color_x<ColorFormat::l4>;
 	using ColorL1 = Color_x<ColorFormat::l1>;
 	using Color = Color_x<EOS_COLOR_FORMAT>;
 

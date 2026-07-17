@@ -13,6 +13,7 @@ namespace eos {
 		private:
 			Color::Pixel * const _buffer;
 			int16_t const _framePitch;
+			
 		protected:
             void put(int16_t x, int16_t y, Color color) override;
             void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;

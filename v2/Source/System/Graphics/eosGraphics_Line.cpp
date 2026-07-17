@@ -4,6 +4,7 @@
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPen.h"
 #include "System/Graphics/eosPoint.h"
+#include "System/eosMath.h"
 
 
 #include <cmath>
@@ -64,7 +65,7 @@ void Graphics::drawLine(
 		//
 		if (x1 == x2) {
 			if (y1 > y2)
-				std::swap(y1, y2);
+				Math::swap(y1, y2);
 			_driver->setVPixels(x1, y1, y2 - y1 + 1, color);
 		}
 
@@ -72,7 +73,7 @@ void Graphics::drawLine(
 		//
 		else if (y1 == y2) {
 			if (x1 > x2)
-				std::swap(x1, x2);
+				Math::swap(x1, x2);
 			_driver->setHPixels(x1, y1, x2 - x1 + 1, color);
 		}
 
@@ -276,7 +277,7 @@ void Graphics::drawHLine(
 	if (clipHLine(x1, x2, y)) {
 
 		if (x1 > x2)
-			std::swap(x1, x2);
+			Math::swap(x1, x2);
 
 		_driver->setHPixels(x1, y, x2 - x1 + 1, color);
 	}
@@ -305,7 +306,7 @@ void Graphics::drawVLine(
 	if (clipVLine(x, y1, y2)) {
 
 		if (y1 > y2)
-			std::swap(y1, y2);
+			Math::swap(y1, y2);
 
 		_driver->setVPixels(x, y1, y2 - y1 + 1, color);
 	}

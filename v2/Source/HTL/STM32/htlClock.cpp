@@ -3,17 +3,13 @@
 #include "HTL/STM32/htlClock.h"
 
 
-using namespace htl::bits;
-using namespace htl::clock;
-
-
-ClockDevice ClockDevice::_instance;
+htl::clock::ClockDevice htl::clock::ClockDevice::_instance;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor per defecte del dispositiu.
 ///
-ClockDevice::ClockDevice() {
+htl::clock::ClockDevice::ClockDevice() {
 
 }
 
@@ -21,9 +17,9 @@ ClockDevice::ClockDevice() {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el oscilador LSE
 ///
-void ClockDevice::enableLSE() const {
+void htl::clock::ClockDevice::enableLSE() const {
 
-	set(RCC->BDCR, RCC_BDCR_LSEON);
+	htl::bits::set(RCC->BDCR, RCC_BDCR_LSEON);
 	while (!isLSEEnabled())
 		continue;
 }
@@ -32,9 +28,9 @@ void ClockDevice::enableLSE() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el oscilador LSE
 ///
-void ClockDevice::disableLSE() const {
+void htl::clock::ClockDevice::disableLSE() const {
 
-	clear(RCC->BDCR, RCC_BDCR_LSEON);
+	htl::bits::clear(RCC->BDCR, RCC_BDCR_LSEON);
 	while (isLSEEnabled())
 		continue;
 }
@@ -44,9 +40,9 @@ void ClockDevice::disableLSE() const {
 /// \brief    Comprova si el oscilador LSE esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool ClockDevice::isLSEEnabled() const {
+bool htl::clock::ClockDevice::isLSEEnabled() const {
 
-	return isSet(RCC->BDCR, RCC_BDCR_LSERDY);
+	return htl::bits::isSet(RCC->BDCR, RCC_BDCR_LSERDY);
 }
 
 
@@ -54,15 +50,15 @@ bool ClockDevice::isLSEEnabled() const {
 /// \brief    Activa el oscilador HSE
 /// \param    bypass: Indica si utilitza un rellotge extern
 ///
-void ClockDevice::enableHSE(
+void htl::clock::ClockDevice::enableHSE(
 	HSEBypass bypass) const {
 
 	if (bypass == HSEBypass::enabled)
-		set(RCC->CR, RCC_CR_HSEBYP);
+		htl::bits::set(RCC->CR, RCC_CR_HSEBYP);
 	else
-		clear(RCC->CR, RCC_CR_HSEBYP);
+		htl::bits::clear(RCC->CR, RCC_CR_HSEBYP);
 
-	set(RCC->CR, RCC_CR_HSEON);
+	htl::bits::set(RCC->CR, RCC_CR_HSEON);
 	while (!isHSEEnabled())
 		continue;
 }
@@ -71,9 +67,9 @@ void ClockDevice::enableHSE(
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el oscilador HSE
 ///
-void ClockDevice::disableHSE() const {
+void htl::clock::ClockDevice::disableHSE() const {
 
-	clear(RCC->CR, RCC_CR_HSEON);
+	htl::bits::clear(RCC->CR, RCC_CR_HSEON);
 	while (isHSEEnabled())
 		continue;
 }
@@ -83,7 +79,7 @@ void ClockDevice::disableHSE() const {
 /// \brief    Comprova si el oscilador HSE esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool ClockDevice::isHSEEnabled() const {
+bool htl::clock::ClockDevice::isHSEEnabled() const {
 
     return (RCC->CR & RCC_CR_HSERDY) != 0;
 }
@@ -92,9 +88,9 @@ bool ClockDevice::isHSEEnabled() const {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el oscilador LSI
 ///
-void ClockDevice::enableLSI() const {
+void htl::clock::ClockDevice::enableLSI() const {
 
-	set(RCC->CR, RCC_CSR_LSION);
+	htl::bits::set(RCC->CR, RCC_CSR_LSION);
 	while (!isLSIEnabled())
 		continue;
 }
@@ -103,9 +99,9 @@ void ClockDevice::enableLSI() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el oscilador LSI
 ///
-void ClockDevice::disableLSI() const {
+void htl::clock::ClockDevice::disableLSI() const {
 
-	clear(RCC->CR, RCC_CSR_LSION);
+	htl::bits::clear(RCC->CR, RCC_CSR_LSION);
 	while (isLSIEnabled())
 		continue;
 }
@@ -115,9 +111,9 @@ void ClockDevice::disableLSI() const {
 /// \brief    Comprova si el oscilador LSI esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool ClockDevice::isLSIEnabled() const {
+bool htl::clock::ClockDevice::isLSIEnabled() const {
 
-	return isSet(RCC->CSR, RCC_CSR_LSION);
+	return htl::bits::isSet(RCC->CSR, RCC_CSR_LSION);
 }
 
 
@@ -127,9 +123,9 @@ bool ClockDevice::isLSIEnabled() const {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el oscilador HSI
 ///
-void ClockDevice::enableHSI() const {
+void htl::clock::ClockDevice::enableHSI() const {
 
-	set(RCC->CR, RCC_CR_HSION);
+	htl::bits::set(RCC->CR, RCC_CR_HSION);
 	while (!isHSIEnabled())
 		continue;
 }
@@ -142,9 +138,9 @@ void ClockDevice::enableHSI() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el oscilador HSI
 ///
-void ClockDevice::disableHSI() const {
+void htl::clock::ClockDevice::disableHSI() const {
 
-	clear(RCC->CR, RCC_CR_HSION);
+	htl::bits::clear(RCC->CR, RCC_CR_HSION);
 	while (isHSIEnabled())
 		continue;
 }
@@ -158,9 +154,9 @@ void ClockDevice::disableHSI() const {
 /// \brief    Comprova si el oscilador HSI esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool ClockDevice::isHSIEnabled() const {
+bool htl::clock::ClockDevice::isHSIEnabled() const {
 
-	return isSet(RCC->CR, RCC_CR_HSION);
+	return htl::bits::isSet(RCC->CR, RCC_CR_HSION);
 }
 #endif
 
@@ -170,17 +166,17 @@ bool ClockDevice::isHSIEnabled() const {
 /// \brief    Activa el oscilador HSI16
 /// \param    kernelMode: Selecciona el modus kernel.
 ///
-void ClockDevice::enableHSI16(
+void htl::clock::ClockDevice::enableHSI16(
 	bool kernelMode) const {
 
-	set(RCC->CR, RCC_CR_HSION);
+	htl::bits::set(RCC->CR, RCC_CR_HSION);
 	while (!isHSI16Enabled())
 		continue;
 
 	if (kernelMode)
-		set(RCC->CR, RCC_CR_HSIKERON);
+		htl::bits::set(RCC->CR, RCC_CR_HSIKERON);
 	else
-		clear(RCC->CR, RCC_CR_HSIKERON);
+		htl::bits::clear(RCC->CR, RCC_CR_HSIKERON);
 }
 #endif
 
@@ -189,9 +185,9 @@ void ClockDevice::enableHSI16(
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el oscilador HSI16
 ///
-void ClockDevice::disableHSI16() const {
+void htl::clock::ClockDevice::disableHSI16() const {
 
-	clear(RCC->CR, RCC_CR_HSION);
+	htl::bits::clear(RCC->CR, RCC_CR_HSION);
 	while (isHSI16Enabled())
 		continue;
 }
@@ -203,9 +199,9 @@ void ClockDevice::disableHSI16() const {
 /// \brief    Comprova si el oscilador HSI16 esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool ClockDevice::isHSI16Enabled() const {
+bool htl::clock::ClockDevice::isHSI16Enabled() const {
 
-	return isSet(RCC->CR, RCC_CR_HSION);
+	return htl::bits::isSet(RCC->CR, RCC_CR_HSION);
 }
 #endif
 
@@ -213,9 +209,9 @@ bool ClockDevice::isHSI16Enabled() const {
 /// ----------------------------------------------------------------------
 /// \brief    Activa el PLL
 ///
-void ClockDevice::enablePLL() const {
+void htl::clock::ClockDevice::enablePLL() const {
 
-	set(RCC->CR, RCC_CR_PLLON);
+	htl::bits::set(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) == 0)
 		continue;
 }
@@ -224,14 +220,16 @@ void ClockDevice::enablePLL() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el PLL
 ///
-void ClockDevice::disablePLL() const {
+void htl::clock::ClockDevice::disablePLL() const {
 
-	clear(RCC->CR, RCC_CR_PLLON);
+	htl::bits::clear(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
 		continue;
 
 #if defined(EOS_PLATFORM_STM32G0)
-	clear(RCC->PLLCFGR, RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLQEN | RCC_PLLCFGR_PLLREN | RCC_PLLCFGR_PLLSRC);
+	htl::bits::clear(RCC->PLLCFGR,
+			RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLQEN |
+			RCC_PLLCFGR_PLLREN | RCC_PLLCFGR_PLLSRC);
 #endif
 }
 
@@ -240,9 +238,10 @@ void ClockDevice::disablePLL() const {
 /// \brief    Comprova si el PLL esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool ClockDevice::isPLLEnabled() const {
+bool htl::clock::ClockDevice::isPLLEnabled() const {
 
-    return (isSet(RCC->CR, RCC_CR_PLLON) && isSet(RCC->CR, RCC_CR_PLLRDY));
+    return (htl::bits::isSet(RCC->CR, RCC_CR_PLLON) &&
+    		htl::bits::isSet(RCC->CR, RCC_CR_PLLRDY));
 }
 
 
@@ -250,9 +249,9 @@ bool ClockDevice::isPLLEnabled() const {
 /// ----------------------------------------------------------------------
 /// \brief    Habilita el PLLSAI
 ///
-void ClockDevice::enablePLLSAI() const {
+void htl::clock::ClockDevice::enablePLLSAI() const {
 
-	set(RCC->CFGR, RCC_CR_PLLSAION);
+	htl::bits::set(RCC->CFGR, RCC_CR_PLLSAION);
 	while (!isPLLSAIEnabled())
 		continue;
 }
@@ -263,9 +262,9 @@ void ClockDevice::enablePLLSAI() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desabilita el PLLSAI
 ///
-void ClockDevice::disablePLLSAI() const {
+void htl::clock::ClockDevice::disablePLLSAI() const {
 
-	clear(RCC->CFGR, RCC_CR_PLLSAION);
+	htl::bits::clear(RCC->CFGR, RCC_CR_PLLSAION);
 	while (isPLLSAIEnabled())
 		continue;
 }
@@ -277,9 +276,9 @@ void ClockDevice::disablePLLSAI() const {
 /// \brief    Comprova si el PLLSAI esta actiu.
 /// \return   True si esta actiu, false en cas contrari.
 ///
-bool ClockDevice::isPLLSAIEnabled() const {
+bool htl::clock::ClockDevice::isPLLSAIEnabled() const {
 
-	return isSet(RCC->CR, RCC_CR_PLLSAIRDY);
+	return htl::bits::isSet(RCC->CR, RCC_CR_PLLSAIRDY);
 }
 #endif
 
@@ -292,7 +291,7 @@ bool ClockDevice::isPLLSAIEnabled() const {
 /// \param    divider: Factor de divisio (M)
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool ClockDevice::configurePLL(
+bool htl::clock::ClockDevice::configurePLL(
 	PLLsource source,
 	unsigned multiplier,
 	unsigned divider) const {
@@ -311,14 +310,14 @@ bool ClockDevice::configurePLL(
 
 	if (source == PLLsource::hse) {
 		auto CFGR2 = RCC->CFGR2;
-		clear(CFGR2, RCC_CFGR2_PREDIV);
-		set(CFGR2, ((divider - 1) << RCC_CFGR2_PREDIV_Pos) & RCC_CFGR2_PREDIV_Msk);
+		htl::bits::clear(CFGR2, RCC_CFGR2_PREDIV);
+		htl::bits::set(CFGR2, ((divider - 1) << RCC_CFGR2_PREDIV_Pos) & RCC_CFGR2_PREDIV_Msk);
 		RCC->CFGR2 = CFGR2;
 	}
 
 	auto CFGR = RCC->CFGR;
-	clear(CFGR, RCC_CFGR_PLLMUL);
-	set(CFGR, ((multiplier - 1) << RCC_CFGR_PLLMUL_Pos) & RCC_CFGR_PLLMUL_Msk);
+	htl::bits::clear(CFGR, RCC_CFGR_PLLMUL);
+	htl::bits::set(CFGR, ((multiplier - 1) << RCC_CFGR_PLLMUL_Pos) & RCC_CFGR_PLLMUL_Msk);
 	RCC->CFGR = CFGR;
 
 	return true;
@@ -335,7 +334,7 @@ bool ClockDevice::configurePLL(
 /// \param    divQ: Factor de divisio de la sortida Q
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool ClockDevice::configurePLL(
+bool htl::clock::ClockDevice::configurePLL(
 	PLLsource source,
 	unsigned multiplier,
 	unsigned divider,
@@ -355,27 +354,27 @@ bool ClockDevice::configurePLL(
 		case PLLsource::hsi:
             if (!isHSIEnabled())
                 return false;
-			set(PLLCFGR, (uint32_t) RCC_PLLCFGR_PLLSRC_HSI);
+            htl::bits::set(PLLCFGR, (uint32_t) RCC_PLLCFGR_PLLSRC_HSI);
 			break;
 
 		case PLLsource::hse:
 			if (!isHSEEnabled())
 				return false;
-			set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSE);
+			htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSE);
 			break;
 	}
-	set(PLLCFGR, (divider << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
-	set(PLLCFGR, (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
+	htl::bits::set(PLLCFGR, (divider << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
+	htl::bits::set(PLLCFGR, (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
 
 	// Configura el divisor P
 	//
-	clear(PLLCFGR, RCC_PLLCFGR_PLLP);
-	set(PLLCFGR, ((uint32_t) divP << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP_Msk);
+	htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLP);
+	htl::bits::set(PLLCFGR, ((uint32_t) divP << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP_Msk);
 
 	// Configura el divisor Q
 	//
-	clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
-	set(PLLCFGR, ((2 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ_Msk);
+	htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
+	htl::bits::set(PLLCFGR, ((2 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ_Msk);
 
 	RCC->PLLCFGR = PLLCFGR;
 
@@ -394,7 +393,7 @@ bool ClockDevice::configurePLL(
 /// \param    divR: Factor de divisio de la sortida R
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool ClockDevice::configurePLL(
+bool htl::clock::ClockDevice::configurePLL(
 		PLLsource source,
 		unsigned multiplier,
 		unsigned divider,
@@ -410,51 +409,51 @@ bool ClockDevice::configurePLL(
 
     auto PLLCFGR = RCC->PLLCFGR;
 
-	clear(PLLCFGR, RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLM | RCC_PLLCFGR_PLLN);
+    htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLM | RCC_PLLCFGR_PLLN);
 	switch (source) {
 		case PLLsource::hsi16:
             if (!isHSI16Enabled())
                 return false;
-			set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSI);
+            htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSI);
 			break;
 
 		case PLLsource::hse:
 			if (!isHSEEnabled())
 				return false;
-			set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSE);
+			htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSE);
 			break;
 	}
-	set(PLLCFGR, ((divider - 1) << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
-	set(PLLCFGR,  (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
+	htl::bits::set(PLLCFGR, ((divider - 1) << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
+	htl::bits::set(PLLCFGR,  (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
 
 	// Configura el divisor P
 	//
 	if (divP == PLLPdivider::disabled)
-		clear(PLLCFGR, RCC_PLLCFGR_PLLPEN);
+		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLPEN);
 	else {
-		clear(PLLCFGR, RCC_PLLCFGR_PLLP);
-		set(PLLCFGR, ((1 + (uint32_t) divP) << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP);
-		set(PLLCFGR, RCC_PLLCFGR_PLLPEN);
+		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLP);
+		htl::bits::set(PLLCFGR, ((1 + (uint32_t) divP) << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP);
+		htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLPEN);
 	}
 
 	// Configura el divisor Q
 	//
 	if (divQ == PLLQdivider::disabled)
-		clear(PLLCFGR, RCC_PLLCFGR_PLLQEN);
+		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLQEN);
 	else {
-		clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
-		set(PLLCFGR, ((1 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ);
-		set(PLLCFGR, RCC_PLLCFGR_PLLQEN);
+		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
+		htl::bits::set(PLLCFGR, ((1 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ);
+		htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLQEN);
 	}
 
 	// Configura el divisor R
 	//
 	if (divR == PLLRdivider::disabled)
-		clear(PLLCFGR, RCC_PLLCFGR_PLLREN);
+		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLREN);
 	else {
-		clear(PLLCFGR, RCC_PLLCFGR_PLLR);
-		set(PLLCFGR, ((1 + (uint32_t) divR) << RCC_PLLCFGR_PLLR_Pos) & RCC_PLLCFGR_PLLR);
-		set(PLLCFGR, RCC_PLLCFGR_PLLREN);
+		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLR);
+		htl::bits::set(PLLCFGR, ((1 + (uint32_t) divR) << RCC_PLLCFGR_PLLR_Pos) & RCC_PLLCFGR_PLLR);
+		htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLREN);
 	}
 
 	RCC->PLLCFGR = PLLCFGR;
@@ -472,7 +471,7 @@ bool ClockDevice::configurePLL(
 /// \param    divR: Factor de divisio de la sortida R
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool ClockDevice::configurePLLSAI(
+bool htl::clock::ClockDevice::configurePLLSAI(
 		unsigned multiplier,
 		PLLQdivider divQ,
 		PLLRdivider divR) const {
@@ -511,7 +510,7 @@ bool ClockDevice::configurePLLSAI(
 /// \param    source: El rellotge a seleccionar.
 /// \remarks  El posen els prescalers AHB, APB
 ///
-bool ClockDevice::selectSystemClock(
+bool htl::clock::ClockDevice::selectSystemClock(
 	SystemClockSource source) const {
 
 	auto CFGR = RCC->CFGR;
@@ -558,7 +557,7 @@ bool ClockDevice::selectSystemClock(
 /// \return   True si tot es correcte, false en cas contrari.
 /// \remarks  El posen els prescalers AHB, APB1 i APB2 a la maxima divisio
 ///
-bool ClockDevice::selectSystemClock(
+bool htl::clock::ClockDevice::selectSystemClock(
 	SystemClockSource source,
 	FlashLatency fl) const {
 
@@ -621,7 +620,7 @@ bool ClockDevice::selectSystemClock(
 /// \param    fl: Latencia de la memoria FLASH
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool ClockDevice::selectSystemClock(
+bool htl::clock::ClockDevice::selectSystemClock(
 	SystemClockSource source,
 	FlashLatency fl) const {
 
@@ -631,8 +630,8 @@ bool ClockDevice::selectSystemClock(
 	// Si la latencia actual es mes baixa que la indicada, la puja
 	//
 	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) < (uint32_t) fl) {
-		clear(ACR, FLASH_ACR_LATENCY);
-		set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		htl::bits::clear(ACR, FLASH_ACR_LATENCY);
+		htl::bits::set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
 		FLASH->ACR = ACR;
 
 		while ((FLASH->ACR & FLASH_ACR_LATENCY) != ((uint32_t)fl << FLASH_ACR_LATENCY_Pos))
@@ -641,37 +640,37 @@ bool ClockDevice::selectSystemClock(
 
 	// Inicialitza els divisor al valor mes alt
 	//
-	set(CFGR, 15UL << RCC_CFGR_HPRE_Pos);
-	set(CFGR, 7UL << RCC_CFGR_PPRE_Pos);
+	htl::bits::set(CFGR, 15UL << RCC_CFGR_HPRE_Pos);
+	htl::bits::set(CFGR, 7UL << RCC_CFGR_PPRE_Pos);
 
-	clear(CFGR, RCC_CFGR_SW);
+	htl::bits::clear(CFGR, RCC_CFGR_SW);
 	switch (source) {
 		case SystemClockSource::hse:
 			if (!isHSEEnabled())
 				return false;
-			set(CFGR, RCC_CFGR_SW_HSE);
+			htl::bits::set(CFGR, RCC_CFGR_SW_HSE);
 			break;
 
 		case SystemClockSource::lsi:
 			if (!isLSIEnabled())
 				return false;
-			set(CFGR, RCC_CFGR_SW_LSI);
+			htl::bits::set(CFGR, RCC_CFGR_SW_LSI);
 			break;
 
 		case SystemClockSource::lse:
 			if (!isLSEEnabled())
 				return false;
-			set(CFGR, RCC_CFGR_SW_LSE);
+			htl::bits::set(CFGR, RCC_CFGR_SW_LSE);
 			break;
 
 		case SystemClockSource::pllrclk:
             if (!isPLLEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN) == 0))
                 return false;
-			set(CFGR, RCC_CFGR_SW_PLLRCLK);
+            htl::bits::set(CFGR, RCC_CFGR_SW_PLLRCLK);
 			break;
 
 		case SystemClockSource::hsisys:
-			set(CFGR, RCC_CFGR_SW_HSISYS);
+			htl::bits::set(CFGR, RCC_CFGR_SW_HSISYS);
 			break;
 	}
 
@@ -683,8 +682,8 @@ bool ClockDevice::selectSystemClock(
 	// Si la latencia actual es mes alta que la indicada, la baixa
 	//
 	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) > (uint32_t) fl) {
-		clear(ACR, FLASH_ACR_LATENCY);
-		set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		htl::bits::clear(ACR, FLASH_ACR_LATENCY);
+		htl::bits::set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
 		FLASH->ACR = ACR;
 
 		while ((FLASH->ACR & FLASH_ACR_LATENCY) != ((uint32_t)fl << FLASH_ACR_LATENCY_Pos))
@@ -701,17 +700,17 @@ bool ClockDevice::selectSystemClock(
 /// \param    prescaler: Valor del prescaler.
 /// \remarks  El posen els prescalers APB1 i APB2 a la maxima divisio
 ///
-void ClockDevice::setAHBPrescaler(
+void htl::clock::ClockDevice::setAHBPrescaler(
 	AHBPrescaler prescaler) const {
 
 	auto CFGR = RCC->CFGR;
-	clear(CFGR, RCC_CFGR_HPRE);
+	htl::bits::clear(CFGR, RCC_CFGR_HPRE);
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 	set(CFGR, 7UL << RCC_CFGR_PPRE1_Pos);
 	set(CFGR, 7UL << RCC_CFGR_PPRE2_Pos);
 #endif
 	if (prescaler != AHBPrescaler::div1)
-		set(CFGR, ((7 + (uint32_t) prescaler) << RCC_CFGR_HPRE_Pos) & RCC_CFGR_HPRE_Msk);
+		htl::bits::set(CFGR, ((7 + (uint32_t) prescaler) << RCC_CFGR_HPRE_Pos) & RCC_CFGR_HPRE_Msk);
 	RCC->CFGR = CFGR;
 }
 
@@ -725,9 +724,9 @@ void ClockDevice::setAPB1Prescaler(
 	APBPrescaler prescaler) const {
 
 	auto CFGR = RCC->CFGR;
-	clear(CFGR, RCC_CFGR_PPRE1);
+	htl::bits::clear(CFGR, RCC_CFGR_PPRE1);
 	if (prescaler != APBPrescaler::div1)
-		set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE1_Pos) & RCC_CFGR_PPRE1_Msk);
+		htl::bits::set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE1_Pos) & RCC_CFGR_PPRE1_Msk);
 	RCC->CFGR = CFGR;
 }
 #endif
@@ -738,7 +737,7 @@ void ClockDevice::setAPB1Prescaler(
 /// \brief    Selecciona el prescaler del clock APB2
 /// \param    prescaler: Valor del prescaler.
 ///
-void ClockDevice::setAPB2Prescaler(
+void htl::clock::ClockDevice::setAPB2Prescaler(
 	APBPrescaler prescaler) const {
 
 	auto CFGR = RCC->CFGR;
@@ -756,13 +755,13 @@ void ClockDevice::setAPB2Prescaler(
 /// \brief    Selecciona el prescaler del clock APB
 /// \param    prescaler: Valor del prescaler.
 ///
-void ClockDevice::setAPBPrescaler(
+void htl::clock::ClockDevice::setAPBPrescaler(
 	APBPrescaler prescaler) const {
 
 	auto CFGR = RCC->CFGR;
-	clear(CFGR, RCC_CFGR_PPRE);
+	htl::bits::clear(CFGR, RCC_CFGR_PPRE);
 	if (prescaler != APBPrescaler::div1)
-		set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE_Pos) & RCC_CFGR_PPRE_Msk);
+		htl::bits::set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE_Pos) & RCC_CFGR_PPRE_Msk);
 	RCC->CFGR = CFGR;
 }
 #endif
@@ -774,7 +773,7 @@ void ClockDevice::setAPBPrescaler(
 /// \return   La frequencia en hertz. 0 en cas d'error.
 ///
 #if defined(EOS_PLATFORM_STM32F0)
-unsigned ClockDevice::getClockFrequency(
+unsigned htl::clock::ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
 	static const uint8_t shiftAHB[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
@@ -833,7 +832,7 @@ unsigned ClockDevice::getClockFrequency(
 
 
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-unsigned ClockDevice::getClockFrequency(
+unsigned htl::clock::ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
 	static const uint8_t shiftAHB[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
@@ -911,7 +910,7 @@ unsigned ClockDevice::getClockFrequency(
 
 
 #elif defined(EOS_PLATFORM_STM32G0)
-unsigned ClockDevice::getClockFrequency(
+unsigned htl::clock::ClockDevice::getClockFrequency(
 	ClockID clockID) const {
 
 	static const uint8_t shiftAHB[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};

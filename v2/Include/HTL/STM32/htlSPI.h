@@ -311,11 +311,9 @@ namespace htl {
 #endif
 #ifdef HTL_SPI6_EXIST
 		typedef SPIDeviceX<DeviceID::spi6> SPIDevice6;
-	#endif
-
+#endif
 	}
 }
-
 
 
 #if defined(EOS_PLATFORM_STM32G030)

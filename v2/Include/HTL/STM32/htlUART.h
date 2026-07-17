@@ -10,8 +10,8 @@
 
 // HTL main include (Include options)
 //
+#include "System/eosBits.h"
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlClock.h"
 
@@ -188,20 +188,19 @@ namespace htl {
 			union {
 				struct {
 					const uint8_t *buffer; ///< Dades transmeses.
-					unsigned length;       ///< Nombre de bytes transmessos.
+					uint32_t length;       ///< Nombre de bytes transmessos.
 				} txCompleted;             ///< Parametres de 'TxComplete'
 				struct {
 					const uint8_t *buffer; ///< Dades rebudes.
-					unsigned length;       ///< Nombre de bytes rebuts.
+					uint32_t length;       ///< Nombre de bytes rebuts.
 				} rxCompleted;             ///< Parametres de 'RxComplete'
 			};
 		};
 
 		// Event de notificacio
 		//
-		using NotifyEventRaiser = eos::EventRaiser<UARTDevice, NotifyEventArgs>;
-		using INotifyEvent = NotifyEventRaiser::IEvent;
-		template <typename Instance_> using NotifyEvent = NotifyEventRaiser::Event<Instance_>;
+		using INotifyEvent = eos::ICallbackP2<UARTDevice*, NotifyEventArgs*>;
+		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, UARTDevice*, NotifyEventArgs*>;
 
 		namespace internal {
 
@@ -241,12 +240,12 @@ namespace htl {
 				USART_TypeDef * const _usart;   ///< Instancia del dispositiu.
 				State _state;                   ///< Estat actual.
 				uint8_t *_rxBuffer;             ///< Buffer de recepcio.
-				unsigned _rxCount;              ///< Contador de bytes rebuts.
-				unsigned _rxMaxCount;           ///< Maxim del contador de bytes rebuts.
+				uint32_t _rxCount;              ///< Contador de bytes rebuts.
+				uint32_t _rxMaxCount;           ///< Maxim del contador de bytes rebuts.
 				const uint8_t *_txBuffer;       ///< Buffer de transmissio.
-				unsigned _txCount;              ///< Contador de bytes transmesos.
-				unsigned _txMaxCount;           ///< Maxim del contador de bytes rebuts.
-				NotifyEventRaiser _erNotify;    ///< Event de notificacio
+				uint32_t _txCount;              ///< Contador de bytes transmesos.
+				uint32_t _txMaxCount;           ///< Maxim del contador de bytes rebuts.
+				INotifyEvent *_notifyEvent;     ///< Event de notificacio
 #if HTL_UART_OPTION_DMA == 1
 				DMANotifyEvent _dmaNotifyEvent; ///< Event de notificacio del DMA.
 #endif
@@ -301,8 +300,8 @@ namespace htl {
 
 				virtual clock::ClockID getUARTClock() const = 0;
 
-				void raiseTxCompletedNotification(const uint8_t *buffer, unsigned length, bool irq);
-				void raiseRxCompletedNotification(const uint8_t *buffer, unsigned length, bool irq);
+				void raiseTxCompletedNotification(const uint8_t *buffer, uint32_t length, bool irq);
+				void raiseRxCompletedNotification(const uint8_t *buffer, uint32_t length, bool irq);
 #if HTL_UART_OPTION_DMA == 1
 				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
 #endif
@@ -338,26 +337,23 @@ namespace htl {
 				eos::Result setRxTimeout(unsigned timeout) const;
 #endif
 
-				inline void setNotifyEvent(INotifyEvent &event, bool enabled = true) {
-					_erNotify.set(event, enabled);
-				}
-				inline void enableNotifyEvent() {
-					_erNotify.enable();
+				inline void enableNotifyEvent(INotifyEvent &event) {
+					_notifyEvent = &event;
 				}
 				inline void disableNotifyEvent() {
-					_erNotify.disable();
+					_notifyEvent = nullptr;
 				}
 
-				eos::Result transmit(const uint8_t *buffer, unsigned length, unsigned timeout);
-				eos::Result receive(uint8_t *buffer, unsigned bufferSize, unsigned timeout);
+				eos::Result transmit(const uint8_t *buffer, uint32_t length, unsigned timeout);
+				eos::Result receive(uint8_t *buffer, uint32_t bufferSize, unsigned timeout);
 
 #if HTL_UART_OPTION_IRQ == 1
-				eos::Result transmit_IRQ(const uint8_t *buffer, unsigned length);
-				eos::Result receive_IRQ(uint8_t *buffer, unsigned bufferSize);
+				eos::Result transmit_IRQ(const uint8_t *buffer, uint32_t length);
+				eos::Result receive_IRQ(uint8_t *buffer, uint32_t bufferSize);
 #endif
 #if HTL_UART_OPTION_DMA == 1
-				eos::Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, unsigned length);
-				eos::Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, unsigned bufferSize);
+				eos::Result transmit_DMA(dma::DMADevice *devDMA, const uint8_t *buffer, uint32_t length);
+				eos::Result receive_DMA(dma::DMADevice *devDMA, uint8_t *buffer, uint32_t bufferSize);
 #endif
 				eos::Result abortTransmission();
 				eos::Result abortReception();
@@ -479,13 +475,13 @@ namespace htl {
 
 			public:
 				static inline void activate() {
-					bits::set(*reinterpret_cast<uint32_t *>(_addr), 1UL << _pos);
+					eos::Bits::set(*reinterpret_cast<uint32_t *>(_addr), 1UL << _pos);
 					__DSB();
 				}
 
 #if HTL_UART_OPTION_DEACTIVATE == 1
 				static inline void deactivate() {
-					bits::clear(*reinterpret_cast<uint32_t *>(_addr),  1UL << _pos);
+					eos::Bits::clear(*reinterpret_cast<uint32_t *>(_addr),  1UL << _pos);
 					__DSB();
 				}
 #endif

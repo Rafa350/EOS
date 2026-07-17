@@ -109,9 +109,11 @@ void eos::DigOutputService::onOutputChanged(
 /// ----------------------------------------------------------------------
 /// \brief    Posa la sortida en estat ACTIVE.
 /// \param    output: La sortida.
+/// \param    blocTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::set(
-    eos::DigOutput *output) {
+    eos::DigOutput *output,
+	eos::Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (_outputs.contains(output)) {
@@ -122,7 +124,7 @@ void eos::DigOutputService::set(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Times::infinite);
+		_actionQueue.push(action, blockTime);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -133,9 +135,11 @@ void eos::DigOutputService::set(
 /// ----------------------------------------------------------------------
 /// \brief    Posa la sortida en estat IDLE.
 /// \param    output: La sortida.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::clear(
-    eos::DigOutput *output) {
+    eos::DigOutput *output,
+	eos::Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -146,7 +150,7 @@ void eos::DigOutputService::clear(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Times::infinite);
+		_actionQueue.push(action, blockTime);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -157,9 +161,11 @@ void eos::DigOutputService::clear(
 /// ----------------------------------------------------------------------
 /// \brief    Inverteix l'estat de la sortida.
 /// \param    output: La sortida.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::toggle(
-    eos::DigOutput *output) {
+    eos::DigOutput *output,
+	eos::Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -170,7 +176,7 @@ void eos::DigOutputService::toggle(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Times::infinite);
+		_actionQueue.push(action, blockTime);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -182,10 +188,12 @@ void eos::DigOutputService::toggle(
 /// \brief    Asigna l'estat de la sortida.
 /// \param    output: La sortida.
 /// \param    state: L'estat a asignar.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::write(
     eos::DigOutput *output,
-    bool state) {
+    bool state,
+	eos::Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -196,7 +204,7 @@ void eos::DigOutputService::write(
 			.output {static_cast<Output*>(output)}
 		};
 
-		_actionQueue.push(action, Times::infinite);
+		_actionQueue.push(action, blockTime);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -208,10 +216,12 @@ void eos::DigOutputService::write(
 /// \brief    Genera un puls de conmutacio.
 /// \param    output: La sortida.
 /// \param    width: L'amplada del puls.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::pulse(
     eos::DigOutput *output,
-    eos::Time width) {
+    eos::Time width,
+	eos::Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -223,7 +233,7 @@ void eos::DigOutputService::pulse(
 			.time1 {eos::Math::max(width, minPulseWidth)}
 		};
 
-		_actionQueue.push(action, Times::infinite);
+		_actionQueue.push(action, blockTime);
 
 #if DigOutputService_SafeMode == 1
 	}
@@ -236,11 +246,13 @@ void eos::DigOutputService::pulse(
 /// \param    output: La sortida.
 /// \param    delay: El retard del puls.
 /// \param    width: L'amplada del puls.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::delayedPulse(
     eos::DigOutput *output,
     eos::Time delay,
-    eos::Time width) {
+    eos::Time width,
+	eos::Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -253,7 +265,7 @@ void eos::DigOutputService::delayedPulse(
 			.time2 {eos::Math::max(width, minPulseWidth)}
 		};
 
-		_actionQueue.push(action, Times::infinite);
+		_actionQueue.push(action, blockTime);
 
 #if DigOutputService_SafeMode == 1
 	}

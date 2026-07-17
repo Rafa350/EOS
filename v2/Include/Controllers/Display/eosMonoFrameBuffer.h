@@ -12,7 +12,7 @@ namespace eos {
     class MonoFrameBuffer: public FrameBuffer {
         private:
             uint8_t * const _buffer;
-            unsigned const _bufferPitch;
+            int16_t const _bufferPitch;
 
 		protected:
             void put(int16_t x, int16_t y, Color color) override;
@@ -21,10 +21,10 @@ namespace eos {
             void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
 
         public:
-            MonoFrameBuffer(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation, uint8_t *buffer, unsigned bufferPitch);
+            MonoFrameBuffer(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation, uint8_t *buffer, int16_t bufferPitch);
 
             inline uint8_t *getBuffer() const override { return _buffer; }
-            inline unsigned getBufferPitch() const { return _bufferPitch; }
+            inline int16_t getBufferPitch() const { return _bufferPitch; }
     };
 
     // Compatible SSD1306, ST7565
@@ -35,7 +35,7 @@ namespace eos {
             void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
 
     	public:
-            MonoFrameBuffer_MappingA(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation, uint8_t *buffer, unsigned bufferPitch);
+            MonoFrameBuffer_MappingA(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation, uint8_t *buffer, int16_t bufferPitch);
     };
 }
 

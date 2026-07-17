@@ -1,12 +1,6 @@
 #include "HTL/htl.h"
 #include "HTL/htlTick.h"
 
-//import htl.tick;
-
-
-using namespace htl;
-
-
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitzacio.

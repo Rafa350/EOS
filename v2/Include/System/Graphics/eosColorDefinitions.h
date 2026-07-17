@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __eosColorDefinitions__
 #define __eosColorDefinitions__
 

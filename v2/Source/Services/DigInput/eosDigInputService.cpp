@@ -7,13 +7,10 @@
 #include "eos_diginput_inputs.h"
 
 
-using namespace eos;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-DigInputService::DigInputService():
+eos::DigInputService::DigInputService():
     Service(),
 	_inputChangedEvent {nullptr},
 	_beforeScanEvent {nullptr},
@@ -25,8 +22,8 @@ DigInputService::DigInputService():
 /// \brief    Asigna el periode d'escaneig.
 /// \param    scanPeriod: El period en milisegons.
 ///
-void DigInputService::setScanPeriod(
-    Time scanPeriod) {
+void eos::DigInputService::setScanPeriod(
+    eos::Time scanPeriod) {
 
     _scanPeriod = Math::max(scanPeriod, _minScanPeriod);
 }
@@ -36,8 +33,8 @@ void DigInputService::setScanPeriod(
 /// \brief    Genera un event quant canvia l'estat d'una entrada.
 /// \param    input: L'entrada.
 ///
-void DigInputService::onInputChanged(
-    DigInput *input) {
+void eos::DigInputService::onInputChanged(
+    eos::DigInput *input) {
 
 	if (_inputChangedEvent != nullptr) {
 
@@ -57,7 +54,7 @@ void DigInputService::onInputChanged(
 /// \brief    Genera un event abans del inici de l'exploracio de
 ///           les entrades.
 ///
-void DigInputService::beforeScan() {
+void eos::DigInputService::beforeScan() {
 
 	if (_beforeScanEvent != nullptr)
 		_beforeScanEvent->execute(this);
@@ -68,7 +65,7 @@ void DigInputService::beforeScan() {
 /// \brief    Genera un event que motifica la inicialitzacio del servei.
 /// \param    args: Parametres d'inicialitzacio.
 ///
-void DigInputService::raiseInitializeNotificationEvent(
+void eos::DigInputService::raiseInitializeNotificationEvent(
 	ServiceParams *params) {
 
 	/*if (_notificationEvent != nullptr) {
@@ -92,8 +89,8 @@ void DigInputService::raiseInitializeNotificationEvent(
 /// \param    tag: Etiqueta opcional
 /// \return   L'entrada.
 ///
-DigInput * DigInputService::addInput(
-	PinDriver *drv,
+eos::DigInput * eos::DigInputService::addInput(
+	eos::PinDriver *drv,
 	uint32_t tag) {
 
     auto input = new Input(drv, tag);
@@ -111,10 +108,10 @@ DigInput * DigInputService::addInput(
 /// \param    tag: El tag de l'entrada a buscar.
 /// \return   L'entrada, o nullptr si no la troba.
 ///
-DigInput *DigInputService::getInput(
+eos::DigInput *eos::DigInputService::getInput(
 	uint32_t tag) const {
 
-	DigInput *result = nullptr;
+	eos::DigInput *result = nullptr;
 
 	rtos::CriticalSection::enter();
 
@@ -134,7 +131,7 @@ DigInput *DigInputService::getInput(
 /// \brief    Inicialitza els parametres del servei.
 /// \param    params: Els parametres.
 ///
-void DigInputService::onInitialize(
+void eos::DigInputService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = _serviceName;
@@ -148,7 +145,7 @@ void DigInputService::onInitialize(
 /// ----------------------------------------------------------------------
 /// \brief    Tasca del servei
 ///
-void DigInputService::onExecute() {
+void eos::DigInputService::onExecute() {
 
     while (!stopSignal()) {
 
@@ -178,8 +175,8 @@ void DigInputService::onExecute() {
 /// \param    input: La entrada.
 /// \return   True si esta en estat ACTIVE, false en cas contrari.
 ///
-bool DigInputService::read(
-    const DigInput *input) const {
+bool eos::DigInputService::read(
+    const eos::DigInput *input) const {
 
     rtos::CriticalSection::enter();
 
@@ -198,8 +195,8 @@ bool DigInputService::read(
 /// \param    clear: Indica si cal borrar el contador.
 /// \return   El nombre de pulsos fins al moment de la lectura.
 ///
-uint32_t DigInputService::getEdges(
-	DigInput *input,
+uint32_t eos::DigInputService::getEdges(
+	eos::DigInput *input,
 	bool clear) const {
 
     rtos::CriticalSection::enter();

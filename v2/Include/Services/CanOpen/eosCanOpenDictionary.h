@@ -66,6 +66,7 @@ namespace eos {
 		unsigned8,
 		unsigned16,
 		unsigned32,
+		boolean,
 		unknown
 	};
 

@@ -3,6 +3,8 @@
 #define __eosMath__
 
 
+#include <cmath>
+
 namespace eos {
 
 	class Math final {
@@ -31,6 +33,18 @@ namespace eos {
 				a = b;
 				b = x;
 			}
+
+			template <typename T>
+			inline static T abs(T v) {
+				return std::abs(v);
+			}
+
+			static constexpr uint32_t maxU32 = 0xFFFFFFFF;
+			static constexpr uint32_t maxU16 = 0xFFFF;
+			static constexpr uint32_t maxU8  = 0xFF;
+			static constexpr uint32_t minU32 = 0x00000000;
+			static constexpr uint32_t minU16 = 0x0000;
+			static constexpr uint32_t minU8  = 0x00;
 	};
 }
 

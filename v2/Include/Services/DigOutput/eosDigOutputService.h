@@ -151,15 +151,15 @@ namespace eos {
             	_outputChangedEvent = nullptr;
             }
 
-            void set(DigOutput *output);
-            void clear(DigOutput *output);
-            void write(DigOutput *output, bool pinState);
-            void toggle(DigOutput *output);
-            void pulse(DigOutput *output, Time width);
-            void delayedSet(DigOutput *output, Time delay);
-            void delayedClear(DigOutput *output, Time delay);
-            void delayedToggle(DigOutput *output, Time delay);
-            void delayedPulse(DigOutput *output, Time delay, Time pulseWidth);
+            void set(DigOutput *output, Time blockTime);
+            void clear(DigOutput *output, Time blockTime);
+            void write(DigOutput *output, bool pinState, Time blockTime);
+            void toggle(DigOutput *output, Time blockTime);
+            void pulse(DigOutput *output, Time width, Time blockTime);
+            void delayedSet(DigOutput *output, Time delay, Time blockTime);
+            void delayedClear(DigOutput *output, Time delay, Time blockTime);
+            void delayedToggle(DigOutput *output, Time delay, Time blockTime);
+            void delayedPulse(DigOutput *output, Time delay, Time pulseWidth, Time blockTime);
             bool read(DigOutput *ouput);
 
             void tick(Time blockTime);

@@ -18,7 +18,7 @@ MonoFrameBuffer::MonoFrameBuffer(
     int16_t frameHeight,
     DisplayOrientation orientation,
     uint8_t *buffer,
-    unsigned bufferPitch):
+    int16_t bufferPitch):
 
     FrameBuffer(frameWidth, frameHeight, orientation),
     _buffer {buffer},

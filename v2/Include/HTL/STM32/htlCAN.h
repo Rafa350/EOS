@@ -9,7 +9,6 @@
 #ifdef HTL_CANx_EXIST
 
 
-#include "HTL/htlBits.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
 #include "System/eosTime.h"
@@ -265,9 +264,8 @@ namespace htl {
 						} txCancelled;
 					};
 				};
-				using NotificationEventRaiser = eos::EventRaiser<CANDevice, NotificationEventArgs>;
-				using INotificationEvent = NotificationEventRaiser::IEvent;
-				template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+				using INotificationEvent = eos::ICallbackP2<CANDevice*, NotificationEventArgs*>;
+				template <typename Instance_> using NotificationEvent = eos::CallbackP2<Instance_, CANDevice*, NotificationEventArgs*>;
 
 			public:
 				enum class State {
@@ -316,7 +314,7 @@ namespace htl {
 				FDCAN_GlobalTypeDef * const _can;
 				uint8_t * const _ram;
 				State _state;
-				NotificationEventRaiser _erNotification;
+				INotificationEvent *_notificationEvent;
 
 			private:
 				inline void activate() {
@@ -391,14 +389,11 @@ namespace htl {
 					return _state;
 				}
 
-				inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
-					_erNotification.set(event, enabled);
-				}
-				inline void enableNotificationEvent() {
-					_erNotification.enable();
+				inline void enableNotificationEvent(INotificationEvent &event) {
+					_notificationEvent = &event;
 				}
 				inline void disableNotificationEvent() {
-					_erNotification.disable();
+					_notificationEvent = nullptr;
 				}
 
 		};

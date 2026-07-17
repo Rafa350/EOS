@@ -96,7 +96,7 @@ bool TextStreamWriter::writeU8Hex(uint8_t data) {
 	eosAssert(_stream != nullptr);
 
 	char buffer[16];
-	int len = snprintf(buffer, sizeof(buffer), "%2X", data);
+	int len = snprintf(buffer, sizeof(buffer), "%02X", data);
 	if (len) {
 		_stream->write((const uint8_t*)buffer, len);
 		return true;
@@ -116,7 +116,7 @@ bool TextStreamWriter::writeU16Hex(uint16_t data) {
 	eosAssert(_stream != nullptr);
 
 	char buffer[16];
-	int len = snprintf(buffer, sizeof(buffer), "%4X", data);
+	int len = snprintf(buffer, sizeof(buffer), "%04X", data);
 	if (len) {
 		_stream->write((const uint8_t*)buffer, len);
 		return true;
@@ -136,7 +136,7 @@ bool TextStreamWriter::writeU32Hex(uint32_t data) {
 	eosAssert(_stream != nullptr);
 
 	char buffer[16];
-	int len = snprintf(buffer, sizeof(buffer), "%8lX", data);
+	int len = snprintf(buffer, sizeof(buffer), "%08lX", data);
 	if (len) {
 		_stream->write((const uint8_t*)buffer, len);
 		return true;

@@ -1,3 +1,6 @@
+# ------------------------------------------------------------------------
+# Afegeix els moduls RTOS
+
 target_sources(${TARGET_NAME} PUBLIC
     rtosCriticalSection.cpp
     rtosGlobalAlloc.cpp
@@ -12,6 +15,10 @@ target_sources(${TARGET_NAME} PUBLIC
     rtosTimer.cpp
 )
 
+
+# ------------------------------------------------------------------------
+# Afegeix els moduls especifics per FreeRTOS
+#
 set(FREERTOS_DIR ${LIB_DIR}/FreeRTOS)
 
 target_sources(${TARGET_NAME} PUBLIC 
@@ -20,6 +27,9 @@ target_sources(${TARGET_NAME} PUBLIC
     ${FREERTOS_DIR}/tasks.c
     ${FREERTOS_DIR}/timers.c
     ${FREERTOS_DIR}/portable/MemMang/heap_1.c
-    ${FREERTOS_DIR}/portable/GCC/ARM_CM0/port.c
     FreeRTOS/rtosHooks.cpp
+)
+
+target_sources(${TARGET_NAME} PUBLIC 
+    ${FREERTOS_DIR}/portable/GCC/ARM_CM0/port.c
 )
