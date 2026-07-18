@@ -6,8 +6,8 @@
 // EOS includes
 //
 #include "eos.h"
+#include "eosTime.h"
 #include "RTOS/rtosQueue.h"
-#include "System/eosTime.h"
 
 
 namespace eos {

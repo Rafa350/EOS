@@ -9,9 +9,9 @@
 #ifdef HTL_CANx_EXIST
 
 
+#include "eosTime.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "System/eosTime.h"
 
 
 // Default options

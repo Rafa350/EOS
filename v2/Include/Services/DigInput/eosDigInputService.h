@@ -6,9 +6,9 @@
 // EOS includes
 //
 #include "eos.h"
+#include "eosCallbacks.h"
+#include "eosTime.h"
 #include "Services/eosService.h"
-#include "System/eosCallbacks.h"
-#include "System/eosTime.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 
 
@@ -67,7 +67,7 @@ namespace eos {
             static constexpr const char *_serviceName = "DigInputs";
             static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::normal;
             static constexpr uint32_t _serviceStackDepth = 160;
-            static constexpr Time _minScanPeriod = Time::fromMiliseconds(5);         
+            static constexpr Time _minScanPeriod = Time::fromMiliseconds(5);
 
         private:
     		DigInputList _inputs;

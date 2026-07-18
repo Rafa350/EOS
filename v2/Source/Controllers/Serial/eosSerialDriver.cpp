@@ -1,9 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "eosTime.h"
 #include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlINT.h"
 #include "RTOS/rtosTime.h"
-#include "System/eosTime.h"
 
 
 using namespace eos;

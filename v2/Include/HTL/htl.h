@@ -4,7 +4,7 @@
 
 
 #include "eos.h"
-#include "System/eosResults.h"
+#include "eosResults.h"
 #include "System/eosEvents.h"
 
 

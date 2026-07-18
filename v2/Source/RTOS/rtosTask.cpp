@@ -1,9 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "eosTime.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 #include "RTOS/rtosTime.h"
-#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 #include "task.h"

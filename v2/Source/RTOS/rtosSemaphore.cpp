@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosSemaphore.h"
-#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 #include "semphr.h"

@@ -4,7 +4,7 @@
 
 
 #include "eos.h"
-#include "System/eosCallbacks.h"
+#include "eosCallbacks.h"
 
 
 namespace eos {

@@ -3,11 +3,6 @@
 #define __eosCallbacks__
 
 
-// EOS includes
-//
-#include "eos.h"
-
-
 namespace eos {
 
 	class ICallbackP0 {

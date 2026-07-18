@@ -1,6 +1,6 @@
 #include "eos.h"
+#include "eosTime.h"
 #include "RTOS/rtosTime.h"
-#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 

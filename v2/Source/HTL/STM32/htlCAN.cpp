@@ -4,9 +4,9 @@
 #ifdef HTL_CANx_EXIST
 
 
+#include "eosBits.h"
+#include "eosMath.h"
 #include "HTL/STM32/htlCAN.h"
-#include "System/eosBits.h"
-#include "System/eosMath.h"
 
 
 using namespace htl::can;

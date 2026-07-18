@@ -4,8 +4,8 @@
 
 
 #include "eos.h"
+#include "eosResults.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
-#include "System/eosResults.h"
 
 
 namespace eos {

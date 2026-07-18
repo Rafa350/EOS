@@ -4,9 +4,7 @@
 #include "HTL/STM32/htlDMA.h"
 
 
-using namespace eos;
 using namespace htl;
-using namespace htl::bits;
 using namespace htl::spi;
 
 
@@ -55,7 +53,7 @@ SPIDevice::SPIDevice(
 /// \param    clkDivider: Divisor de frequencia.
 /// \return   El resultat de l'operacio.
 ///
-Result SPIDevice::initialize(
+eos::Result SPIDevice::initialize(
 	Mode mode,
 	ClkPolarity clkPolarity,
 	ClkPhase clkPhase,
@@ -77,10 +75,10 @@ Result SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -89,7 +87,7 @@ Result SPIDevice::initialize(
 /// \return   El resultat de l'operacio.
 ///
 #if HTL_SPI_OPTION_DEACTIVATE == 1
-Result SPIDevice::deinitialize() {
+eos::Result SPIDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -98,10 +96,10 @@ Result SPIDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return Results::success;
+		return eos::Results::success;
 	}
 	else
-		return Results::errorState;
+		return eos::Results::errorState;
 }
 #endif
 
@@ -114,17 +112,17 @@ Result SPIDevice::deinitialize() {
 /// \param    timeout: Temps maxim d'espera en ms.
 /// \return   El resultat de l'operacio.
 ///
-Result SPIDevice::transmit(
+eos::Result SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
 	unsigned bufferSize,
-	unsigned timeout) {
+	eos::Time timeout) {
 
 	if (_state == State::ready) {
 
 		_state = State::transmiting;
 
-		auto expireTime = htl::getTick() + timeout;
+		auto expireTime = htl::getTick() + timeout.toMiliseconds();
 
 #if defined(EOS_PLATFORM_STM32G0)
 		bool len8 = (_spi->CR2 & SPI_CR2_DS) == SPI_CR2_DS_LEN8;
@@ -221,14 +219,14 @@ Result SPIDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Result::ErrorCodes::error : Result::ErrorCodes::ok;
+		return error ? eos::Result::ErrorCodes::error : eos::Result::ErrorCodes::ok;
 	}
 
 	else if (_state == State::transmiting)
-		return Result::ErrorCodes::busy;
+		return eos::Result::ErrorCodes::busy;
 
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 
 
@@ -240,7 +238,7 @@ Result SPIDevice::transmit(
 /// \param    bufferSize: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio.
 ///
-Result SPIDevice::transmit_DMA(
+eos::Result SPIDevice::transmit_DMA(
     htl::dma::DMADevice *devTxDMA,
     const uint8_t *txBuffer,
     unsigned bufferSize) {
@@ -249,7 +247,7 @@ Result SPIDevice::transmit_DMA(
 
 		// Habilita les transferencies per DMA
 		//
-		set(_spi->CR2, SPI_CR2_TXDMAEN);
+		eos::Bits::set(_spi->CR2, SPI_CR2_TXDMAEN);
 
 		// Habilita la comunicacio
 		//
@@ -271,12 +269,12 @@ Result SPIDevice::transmit_DMA(
 
 		// Deshabilita la transfertencia per DMA
 		//
-		clear(_spi->CR2, SPI_CR2_TXDMAEN);
+		eos::Bits::clear(_spi->CR2, SPI_CR2_TXDMAEN);
 
-		return Result::ErrorCodes::ok;
+		return eos::Result::ErrorCodes::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return eos::Result::ErrorCodes::errorState;
 }
 #endif // HTL_SPI_OPTION_DMA == 1
 
@@ -286,7 +284,7 @@ Result SPIDevice::transmit_DMA(
 ///
 void SPIDevice::enable() const {
 
-    set(_spi->CR1, SPI_CR1_SPE);
+    eos::Bits::set(_spi->CR1, SPI_CR1_SPE);
 }
 
 
@@ -306,7 +304,7 @@ void SPIDevice::disable() const {
     while ((_spi->SR & SPI_SR_BSY) != 0)
         continue;
 
-    clear(_spi->CR1, SPI_CR1_SPE);
+    eos::Bits::clear(_spi->CR1, SPI_CR1_SPE);
 
     while ((_spi->SR & SPI_SR_FRLVL) != 0)
         read8();
@@ -325,8 +323,8 @@ void SPIDevice::setClockDivider(
 	ClockDivider clkDivider) const {
 
 	auto CR1 = _spi->CR1;
-	clear(CR1, SPI_CR1_BR);
-	set(CR1, ((uint32_t) clkDivider << SPI_CR1_BR_Pos) & SPI_CR1_BR_Msk);
+	eos::Bits::clear(CR1, SPI_CR1_BR);
+	eos::Bits::set(CR1, ((uint32_t) clkDivider << SPI_CR1_BR_Pos) & SPI_CR1_BR_Msk);
 	_spi->CR1 = CR1;
 }
 
@@ -341,12 +339,12 @@ void SPIDevice::setMode(
     // Configura el registre CR1
     //
 	auto CR1 = _spi->CR1;
-	clear(CR1,
+	eos::Bits::clear(CR1,
 		SPI_CR1_CRCEN |      // Deshabilita CRC
 		SPI_CR1_BIDIMODE |   // Deshabilita modus bitireccional
 		SPI_CR1_RXONLY);     // Desabilita modus lectura
 	if (mode == Mode::master)
-		set(CR1,
+		eos::Bits::set(CR1,
 			SPI_CR1_MSTR |   // Habilita modus master
 			SPI_CR1_SSI |    // Habilita seleccio d'esclau per software
 			SPI_CR1_SSM);    // Habilita control del esclau per software
@@ -355,7 +353,7 @@ void SPIDevice::setMode(
 	// Configura el registre CR2
 	//
 	auto CR2 = _spi->CR2;
-	clear(CR2,
+	eos::Bits::clear(CR2,
 #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 	    SPI_CR2_NSSP |       // Deshabilita puls entre tramas
 #endif
@@ -372,9 +370,9 @@ void SPIDevice::setClkPolarity(
 	ClkPolarity polarity) const {
 
 	if (polarity == ClkPolarity::high)
-		set(_spi->CR1, SPI_CR1_CPOL);
+		eos::Bits::set(_spi->CR1, SPI_CR1_CPOL);
 	else
-		clear(_spi->CR1, SPI_CR1_CPOL);
+		eos::Bits::clear(_spi->CR1, SPI_CR1_CPOL);
 }
 
 
@@ -386,9 +384,9 @@ void SPIDevice::setClkPhase(
 	ClkPhase phase) const {
 
 	if (phase == ClkPhase::edge2)
-		set(_spi->CR1, SPI_CR1_CPHA);
+		eos::Bits::set(_spi->CR1, SPI_CR1_CPHA);
 	else
-		clear(_spi->CR1, SPI_CR1_CPHA);
+		eos::Bits::clear(_spi->CR1, SPI_CR1_CPHA);
 }
 
 
@@ -407,8 +405,8 @@ void SPIDevice::setWordSize(
 
 #elif defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 	auto CR2 = _spi->CR2;
-	clear(CR2, SPI_CR2_DS | SPI_CR2_FRXTH);
-	set(CR2, size == WordSize::ws8 ?
+	eos::Bits::clear(CR2, SPI_CR2_DS | SPI_CR2_FRXTH);
+	eos::Bits::set(CR2, size == WordSize::ws8 ?
 		SPI_CR2_DS_LEN8 | SPI_CR2_FRXTH :
 		SPI_CR2_DS_LEN16);
 	_spi->CR2 = CR2;
@@ -427,9 +425,9 @@ void SPIDevice::setFirstBit(
 	FirstBit firstBit) const {
 
 	if (firstBit == FirstBit::lsb)
-		set(_spi->CR1, SPI_CR1_LSBFIRST);
+		eos::Bits::set(_spi->CR1, SPI_CR1_LSBFIRST);
 	else
-		clear(_spi->CR1, SPI_CR1_LSBFIRST);
+		eos::Bits::clear(_spi->CR1, SPI_CR1_LSBFIRST);
 }
 
 
@@ -483,7 +481,7 @@ uint16_t SPIDevice::read16() const {
 ///
 bool SPIDevice::isTxEmpty() const {
 
-	return isSet(_spi->SR, SPI_SR_TXE);
+	return eos::Bits::isSet(_spi->SR, SPI_SR_TXE);
 }
 
 
@@ -493,7 +491,7 @@ bool SPIDevice::isTxEmpty() const {
 ///
 bool SPIDevice::isRxNotEmpty() const {
 
-	return isSet(_spi->SR, SPI_SR_RXNE);
+	return eos::Bits::isSet(_spi->SR, SPI_SR_RXNE);
 };
 
 
@@ -503,7 +501,7 @@ bool SPIDevice::isRxNotEmpty() const {
 ///
 bool SPIDevice::isSPIBusy() const {
 
-	return isSet(_spi->SR, SPI_SR_BSY);
+	return eos::Bits::isSet(_spi->SR, SPI_SR_BSY);
 }
 
 

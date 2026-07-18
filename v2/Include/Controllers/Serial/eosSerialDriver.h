@@ -2,8 +2,8 @@
 
 
 #include "eos.h"
+#include "eosResults.h"
 #include "RTOS/rtosTask.h"
-#include "System/eosResults.h"
 
 
 namespace eos {

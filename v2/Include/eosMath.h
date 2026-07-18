@@ -5,6 +5,7 @@
 
 #include <cmath>
 
+
 namespace eos {
 
 	class Math final {

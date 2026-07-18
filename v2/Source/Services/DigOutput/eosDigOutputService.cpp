@@ -1,9 +1,9 @@
 #include "eos.h"
+#include "eosMath.h"
+#include "eosTime.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 #include "Services/DigOutput/eosDigOutputService.h"
-#include "System/eosMath.h"
-#include "System/eosTime.h"
 
 #include "eos_digoutput_outputs.h"
 

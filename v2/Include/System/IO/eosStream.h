@@ -1,7 +1,7 @@
 #pragma once
 
 #include "eos.h"
-#include "System/eosResults.h"
+#include "eosResults.h"
 
 
 namespace eos {

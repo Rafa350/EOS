@@ -4,11 +4,11 @@
 
 
 #include "eos.h"
+#include "eosTime.h"
 #include "HTL/STM32/htlCAN.h"
 #include "RTOS/rtosTimer.h"
 #include "Services/eosService.h"
 #include "services/CanOpen/eosCanOpenProtocol.h"
-#include "System/eosTime.h"
 #include "System/Core/eosQueue.h"
 
 

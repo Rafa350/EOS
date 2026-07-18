@@ -1,9 +1,9 @@
 #include "eos.h"
+#include "eosTime.h"
 #include "HTL/htlGPIO.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosTask.h"
 #include "Services/eosLedService.h"
-#include "System/eosTime.h"
 
 
 using namespace htl;

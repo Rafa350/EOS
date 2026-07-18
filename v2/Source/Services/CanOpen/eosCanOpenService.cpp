@@ -1,8 +1,8 @@
 #include "eos.h"
+#include "eosTime.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
 #include "Services/CanOpen/eosCanOpenService.h"
 #include "Services/canopen/eosCanOpenProtocol.h"
-#include "System/eosTime.h"
 
 
 using namespace eos;

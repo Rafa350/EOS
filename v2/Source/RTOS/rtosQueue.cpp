@@ -2,7 +2,6 @@
 #include "eosAssert.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosQueue.h"
-#include "System/eosTime.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"

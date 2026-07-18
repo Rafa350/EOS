@@ -6,7 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosCallbacks.h"
+#include "eosCallbacks.h"
 
 // STD includes
 //

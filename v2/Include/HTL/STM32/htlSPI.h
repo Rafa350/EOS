@@ -9,11 +9,9 @@
 #ifdef HTL_SPIx_EXIST
 
 
-// HTL main includes
-//
+#include "eosBits.h"
+#include "eosTime.h"
 #include "HTL/htlDevice.h"
-#include "HTL/htlBits.h"
-#include "HTL/STM32/htl.h"
 
 
 // Default options
@@ -205,13 +203,13 @@ namespace htl {
 				}
 
 				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
-				        unsigned bufferSize, unsigned timeout);
+				        unsigned bufferSize, eos::Time timeout);
 				eos::Result receive(uint8_t *rxBuffer, unsigned bufferSize,
-				        unsigned timeout)  {
+				        eos::Time timeout)  {
 					return transmit(nullptr, rxBuffer, bufferSize, timeout);
 				}
                 eos::Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
-                        unsigned timeout) {
+                        eos::Time timeout) {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }
 
@@ -259,13 +257,13 @@ namespace htl {
 			protected:
 				void activateImpl() const override {
 					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
-					bits::set(*p, 1UL << _activatePos);
+					eos::Bits::set(*p, 1UL << _activatePos);
 					__DSB();
 				}
 #if HTL_SPI_OPTION_DEACTIVATE == 1
 				void deactivateImpl() const override {
 					auto p = reinterpret_cast<uint32_t *>(_activateAddr);
-					bits::clear(*p, 1UL << _activatePos);
+					eos::Bits::clear(*p, 1UL << _activatePos);
 				}
 #endif
 

@@ -10,7 +10,7 @@
 
 // HTL main include (Include options)
 //
-#include "System/eosBits.h"
+#include "eosBits.h"
 #include "HTL/htl.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlClock.h"
