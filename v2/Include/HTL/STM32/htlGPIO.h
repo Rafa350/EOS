@@ -10,9 +10,9 @@
 
 // EOS includes
 //
+#include "eosBits.h"
 #include "HTL/htl.h"
 #include "HTL/htlDevice.h"
-#include "HTL/htlBits.h"
 
 
 // Default options
@@ -298,10 +298,10 @@ namespace htl {
 					auto pm = __get_PRIMASK();
 					__disable_irq();
 					if (!_usedPins) {
-						bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
+						eos::Bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
 						__DSB();
 					}
-					bits::set(_usedPins, (uint16_t) mask);
+					eos::Bits::set(_usedPins, (uint16_t) mask);
 					__set_PRIMASK(pm);
 				}
 
@@ -309,9 +309,9 @@ namespace htl {
 				static void deactivate(PinMask mask) {
 					auto pm = __get_PRIMASK();
 					__disable_irq();
-                    bits::clear(_usedPins, (uint16_t) mask);
+                    eos::Bits::clear(_usedPins, (uint16_t) mask);
 					if (!_usedPins) {
-						bits::clear(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
+						eos::Bits::clear(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
 						__DSB();
 					}
 					__set_PRIMASK(pm);

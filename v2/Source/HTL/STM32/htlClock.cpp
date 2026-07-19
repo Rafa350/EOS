@@ -1,5 +1,5 @@
+#include "eosBits.h"
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/STM32/htlClock.h"
 
 
@@ -19,7 +19,7 @@ htl::clock::ClockDevice::ClockDevice() {
 ///
 void htl::clock::ClockDevice::enableLSE() const {
 
-	htl::bits::set(RCC->BDCR, RCC_BDCR_LSEON);
+	eos::Bits::set(RCC->BDCR, RCC_BDCR_LSEON);
 	while (!isLSEEnabled())
 		continue;
 }
@@ -30,7 +30,7 @@ void htl::clock::ClockDevice::enableLSE() const {
 ///
 void htl::clock::ClockDevice::disableLSE() const {
 
-	htl::bits::clear(RCC->BDCR, RCC_BDCR_LSEON);
+	eos::Bits::clear(RCC->BDCR, RCC_BDCR_LSEON);
 	while (isLSEEnabled())
 		continue;
 }
@@ -42,7 +42,7 @@ void htl::clock::ClockDevice::disableLSE() const {
 ///
 bool htl::clock::ClockDevice::isLSEEnabled() const {
 
-	return htl::bits::isSet(RCC->BDCR, RCC_BDCR_LSERDY);
+	return eos::Bits::isSet(RCC->BDCR, RCC_BDCR_LSERDY);
 }
 
 
@@ -54,11 +54,11 @@ void htl::clock::ClockDevice::enableHSE(
 	HSEBypass bypass) const {
 
 	if (bypass == HSEBypass::enabled)
-		htl::bits::set(RCC->CR, RCC_CR_HSEBYP);
+		eos::Bits::set(RCC->CR, RCC_CR_HSEBYP);
 	else
-		htl::bits::clear(RCC->CR, RCC_CR_HSEBYP);
+		eos::Bits::clear(RCC->CR, RCC_CR_HSEBYP);
 
-	htl::bits::set(RCC->CR, RCC_CR_HSEON);
+	eos::Bits::set(RCC->CR, RCC_CR_HSEON);
 	while (!isHSEEnabled())
 		continue;
 }
@@ -69,7 +69,7 @@ void htl::clock::ClockDevice::enableHSE(
 ///
 void htl::clock::ClockDevice::disableHSE() const {
 
-	htl::bits::clear(RCC->CR, RCC_CR_HSEON);
+	eos::Bits::clear(RCC->CR, RCC_CR_HSEON);
 	while (isHSEEnabled())
 		continue;
 }
@@ -90,7 +90,7 @@ bool htl::clock::ClockDevice::isHSEEnabled() const {
 ///
 void htl::clock::ClockDevice::enableLSI() const {
 
-	htl::bits::set(RCC->CR, RCC_CSR_LSION);
+	eos::Bits::set(RCC->CR, RCC_CSR_LSION);
 	while (!isLSIEnabled())
 		continue;
 }
@@ -101,7 +101,7 @@ void htl::clock::ClockDevice::enableLSI() const {
 ///
 void htl::clock::ClockDevice::disableLSI() const {
 
-	htl::bits::clear(RCC->CR, RCC_CSR_LSION);
+	eos::Bits::clear(RCC->CR, RCC_CSR_LSION);
 	while (isLSIEnabled())
 		continue;
 }
@@ -113,7 +113,7 @@ void htl::clock::ClockDevice::disableLSI() const {
 ///
 bool htl::clock::ClockDevice::isLSIEnabled() const {
 
-	return htl::bits::isSet(RCC->CSR, RCC_CSR_LSION);
+	return eos::Bits::isSet(RCC->CSR, RCC_CSR_LSION);
 }
 
 
@@ -169,14 +169,14 @@ bool htl::clock::ClockDevice::isHSIEnabled() const {
 void htl::clock::ClockDevice::enableHSI16(
 	bool kernelMode) const {
 
-	htl::bits::set(RCC->CR, RCC_CR_HSION);
+	eos::Bits::set(RCC->CR, RCC_CR_HSION);
 	while (!isHSI16Enabled())
 		continue;
 
 	if (kernelMode)
-		htl::bits::set(RCC->CR, RCC_CR_HSIKERON);
+		eos::Bits::set(RCC->CR, RCC_CR_HSIKERON);
 	else
-		htl::bits::clear(RCC->CR, RCC_CR_HSIKERON);
+		eos::Bits::clear(RCC->CR, RCC_CR_HSIKERON);
 }
 #endif
 
@@ -187,7 +187,7 @@ void htl::clock::ClockDevice::enableHSI16(
 ///
 void htl::clock::ClockDevice::disableHSI16() const {
 
-	htl::bits::clear(RCC->CR, RCC_CR_HSION);
+	eos::Bits::clear(RCC->CR, RCC_CR_HSION);
 	while (isHSI16Enabled())
 		continue;
 }
@@ -201,7 +201,7 @@ void htl::clock::ClockDevice::disableHSI16() const {
 ///
 bool htl::clock::ClockDevice::isHSI16Enabled() const {
 
-	return htl::bits::isSet(RCC->CR, RCC_CR_HSION);
+	return eos::Bits::isSet(RCC->CR, RCC_CR_HSION);
 }
 #endif
 
@@ -211,7 +211,7 @@ bool htl::clock::ClockDevice::isHSI16Enabled() const {
 ///
 void htl::clock::ClockDevice::enablePLL() const {
 
-	htl::bits::set(RCC->CR, RCC_CR_PLLON);
+	eos::Bits::set(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) == 0)
 		continue;
 }
@@ -222,12 +222,12 @@ void htl::clock::ClockDevice::enablePLL() const {
 ///
 void htl::clock::ClockDevice::disablePLL() const {
 
-	htl::bits::clear(RCC->CR, RCC_CR_PLLON);
+	eos::Bits::clear(RCC->CR, RCC_CR_PLLON);
 	while ((RCC->CR & RCC_CR_PLLRDY) != 0)
 		continue;
 
 #if defined(EOS_PLATFORM_STM32G0)
-	htl::bits::clear(RCC->PLLCFGR,
+	eos::Bits::clear(RCC->PLLCFGR,
 			RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLQEN |
 			RCC_PLLCFGR_PLLREN | RCC_PLLCFGR_PLLSRC);
 #endif
@@ -240,8 +240,8 @@ void htl::clock::ClockDevice::disablePLL() const {
 ///
 bool htl::clock::ClockDevice::isPLLEnabled() const {
 
-    return (htl::bits::isSet(RCC->CR, RCC_CR_PLLON) &&
-    		htl::bits::isSet(RCC->CR, RCC_CR_PLLRDY));
+    return (eos::Bits::isSet(RCC->CR, RCC_CR_PLLON) &&
+    		eos::Bits::isSet(RCC->CR, RCC_CR_PLLRDY));
 }
 
 
@@ -409,51 +409,51 @@ bool htl::clock::ClockDevice::configurePLL(
 
     auto PLLCFGR = RCC->PLLCFGR;
 
-    htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLM | RCC_PLLCFGR_PLLN);
+    eos::Bits::clear(PLLCFGR, RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLM | RCC_PLLCFGR_PLLN);
 	switch (source) {
 		case PLLsource::hsi16:
             if (!isHSI16Enabled())
                 return false;
-            htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSI);
+            eos::Bits::set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSI);
 			break;
 
 		case PLLsource::hse:
 			if (!isHSEEnabled())
 				return false;
-			htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSE);
+			eos::Bits::set(PLLCFGR, RCC_PLLCFGR_PLLSRC_HSE);
 			break;
 	}
-	htl::bits::set(PLLCFGR, ((divider - 1) << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
-	htl::bits::set(PLLCFGR,  (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
+	eos::Bits::set(PLLCFGR, ((divider - 1) << RCC_PLLCFGR_PLLM_Pos) & RCC_PLLCFGR_PLLM_Msk);
+	eos::Bits::set(PLLCFGR,  (multiplier << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN_Msk);
 
 	// Configura el divisor P
 	//
 	if (divP == PLLPdivider::disabled)
-		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLPEN);
+		eos::Bits::clear(PLLCFGR, RCC_PLLCFGR_PLLPEN);
 	else {
-		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLP);
-		htl::bits::set(PLLCFGR, ((1 + (uint32_t) divP) << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP);
-		htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLPEN);
+		eos::Bits::clear(PLLCFGR, RCC_PLLCFGR_PLLP);
+		eos::Bits::set(PLLCFGR, ((1 + (uint32_t) divP) << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP);
+		eos::Bits::set(PLLCFGR, RCC_PLLCFGR_PLLPEN);
 	}
 
 	// Configura el divisor Q
 	//
 	if (divQ == PLLQdivider::disabled)
-		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLQEN);
+		eos::Bits::clear(PLLCFGR, RCC_PLLCFGR_PLLQEN);
 	else {
-		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
-		htl::bits::set(PLLCFGR, ((1 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ);
-		htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLQEN);
+		eos::Bits::clear(PLLCFGR, RCC_PLLCFGR_PLLQ);
+		eos::Bits::set(PLLCFGR, ((1 + (uint32_t) divQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ);
+		eos::Bits::set(PLLCFGR, RCC_PLLCFGR_PLLQEN);
 	}
 
 	// Configura el divisor R
 	//
 	if (divR == PLLRdivider::disabled)
-		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLREN);
+		eos::Bits::clear(PLLCFGR, RCC_PLLCFGR_PLLREN);
 	else {
-		htl::bits::clear(PLLCFGR, RCC_PLLCFGR_PLLR);
-		htl::bits::set(PLLCFGR, ((1 + (uint32_t) divR) << RCC_PLLCFGR_PLLR_Pos) & RCC_PLLCFGR_PLLR);
-		htl::bits::set(PLLCFGR, RCC_PLLCFGR_PLLREN);
+		eos::Bits::clear(PLLCFGR, RCC_PLLCFGR_PLLR);
+		eos::Bits::set(PLLCFGR, ((1 + (uint32_t) divR) << RCC_PLLCFGR_PLLR_Pos) & RCC_PLLCFGR_PLLR);
+		eos::Bits::set(PLLCFGR, RCC_PLLCFGR_PLLREN);
 	}
 
 	RCC->PLLCFGR = PLLCFGR;
@@ -630,8 +630,8 @@ bool htl::clock::ClockDevice::selectSystemClock(
 	// Si la latencia actual es mes baixa que la indicada, la puja
 	//
 	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) < (uint32_t) fl) {
-		htl::bits::clear(ACR, FLASH_ACR_LATENCY);
-		htl::bits::set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		eos::Bits::clear(ACR, FLASH_ACR_LATENCY);
+		eos::Bits::set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
 		FLASH->ACR = ACR;
 
 		while ((FLASH->ACR & FLASH_ACR_LATENCY) != ((uint32_t)fl << FLASH_ACR_LATENCY_Pos))
@@ -640,37 +640,37 @@ bool htl::clock::ClockDevice::selectSystemClock(
 
 	// Inicialitza els divisor al valor mes alt
 	//
-	htl::bits::set(CFGR, 15UL << RCC_CFGR_HPRE_Pos);
-	htl::bits::set(CFGR, 7UL << RCC_CFGR_PPRE_Pos);
+	eos::Bits::set(CFGR, 15UL << RCC_CFGR_HPRE_Pos);
+	eos::Bits::set(CFGR, 7UL << RCC_CFGR_PPRE_Pos);
 
-	htl::bits::clear(CFGR, RCC_CFGR_SW);
+	eos::Bits::clear(CFGR, RCC_CFGR_SW);
 	switch (source) {
 		case SystemClockSource::hse:
 			if (!isHSEEnabled())
 				return false;
-			htl::bits::set(CFGR, RCC_CFGR_SW_HSE);
+			eos::Bits::set(CFGR, RCC_CFGR_SW_HSE);
 			break;
 
 		case SystemClockSource::lsi:
 			if (!isLSIEnabled())
 				return false;
-			htl::bits::set(CFGR, RCC_CFGR_SW_LSI);
+			eos::Bits::set(CFGR, RCC_CFGR_SW_LSI);
 			break;
 
 		case SystemClockSource::lse:
 			if (!isLSEEnabled())
 				return false;
-			htl::bits::set(CFGR, RCC_CFGR_SW_LSE);
+			eos::Bits::set(CFGR, RCC_CFGR_SW_LSE);
 			break;
 
 		case SystemClockSource::pllrclk:
             if (!isPLLEnabled() || ((RCC->PLLCFGR & RCC_PLLCFGR_PLLREN) == 0))
                 return false;
-            htl::bits::set(CFGR, RCC_CFGR_SW_PLLRCLK);
+            eos::Bits::set(CFGR, RCC_CFGR_SW_PLLRCLK);
 			break;
 
 		case SystemClockSource::hsisys:
-			htl::bits::set(CFGR, RCC_CFGR_SW_HSISYS);
+			eos::Bits::set(CFGR, RCC_CFGR_SW_HSISYS);
 			break;
 	}
 
@@ -682,8 +682,8 @@ bool htl::clock::ClockDevice::selectSystemClock(
 	// Si la latencia actual es mes alta que la indicada, la baixa
 	//
 	if (((ACR & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos) > (uint32_t) fl) {
-		htl::bits::clear(ACR, FLASH_ACR_LATENCY);
-		htl::bits::set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
+		eos::Bits::clear(ACR, FLASH_ACR_LATENCY);
+		eos::Bits::set(ACR, ((uint32_t)fl << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
 		FLASH->ACR = ACR;
 
 		while ((FLASH->ACR & FLASH_ACR_LATENCY) != ((uint32_t)fl << FLASH_ACR_LATENCY_Pos))
@@ -704,13 +704,13 @@ void htl::clock::ClockDevice::setAHBPrescaler(
 	AHBPrescaler prescaler) const {
 
 	auto CFGR = RCC->CFGR;
-	htl::bits::clear(CFGR, RCC_CFGR_HPRE);
+	eos::Bits::clear(CFGR, RCC_CFGR_HPRE);
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 	set(CFGR, 7UL << RCC_CFGR_PPRE1_Pos);
 	set(CFGR, 7UL << RCC_CFGR_PPRE2_Pos);
 #endif
 	if (prescaler != AHBPrescaler::div1)
-		htl::bits::set(CFGR, ((7 + (uint32_t) prescaler) << RCC_CFGR_HPRE_Pos) & RCC_CFGR_HPRE_Msk);
+		eos::Bits::set(CFGR, ((7 + (uint32_t) prescaler) << RCC_CFGR_HPRE_Pos) & RCC_CFGR_HPRE_Msk);
 	RCC->CFGR = CFGR;
 }
 
@@ -759,9 +759,9 @@ void htl::clock::ClockDevice::setAPBPrescaler(
 	APBPrescaler prescaler) const {
 
 	auto CFGR = RCC->CFGR;
-	htl::bits::clear(CFGR, RCC_CFGR_PPRE);
+	eos::Bits::clear(CFGR, RCC_CFGR_PPRE);
 	if (prescaler != APBPrescaler::div1)
-		htl::bits::set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE_Pos) & RCC_CFGR_PPRE_Msk);
+		eos::Bits::set(CFGR, ((3 + (uint32_t) prescaler) << RCC_CFGR_PPRE_Pos) & RCC_CFGR_PPRE_Msk);
 	RCC->CFGR = CFGR;
 }
 #endif

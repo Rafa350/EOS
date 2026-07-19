@@ -3,6 +3,7 @@
 #define __eosMath__
 
 
+#include <cstdint>
 #include <cmath>
 
 

@@ -1,11 +1,9 @@
-#include "HTL/htl.h"
-#include "HTL/htlBits.h"
+#include "eosBits.h"
 #include "HTL/STM32/htlDMA.h"
 
 
 using namespace eos;
 using namespace htl;
-using namespace htl::bits;
 using namespace htl::dma;
 using namespace htl::dma::internal;
 
@@ -90,10 +88,10 @@ Result DMADevice::initMemoryToMemory() {
         disable(_dmadev);
 
 		uint32_t tmp = _dmadev->dmac->CCR;
-		clear(tmp, DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
+		eos::Bits::clear(tmp, DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
 				DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
 				DMA_CCR_EN);
-		set(tmp, DMA_CCR_MEM2MEM);      // Memoria a memoria
+		eos::Bits::set(tmp, DMA_CCR_MEM2MEM);      // Memoria a memoria
 		_dmadev->dmac->CCR = tmp;
 
 		return Result::ErrorCodes::ok;
@@ -136,19 +134,19 @@ Result DMADevice::initMemoryToPeripheral(
 
         // Transferencia de memoria a periferic
         //
-        clear(tmp, DMA_CCR_DIR | DMA_CCR_MEM2MEM);
-        set(tmp, 1UL << DMA_CCR_DIR_Pos);
+        eos::Bits::clear(tmp, DMA_CCR_DIR | DMA_CCR_MEM2MEM);
+        eos::Bits::set(tmp, 1UL << DMA_CCR_DIR_Pos);
 
         // Selecciona el modus de transferencia
         //
         tmp &= ~DMA_CCR_CIRC_Msk;
         if (mode == TransferMode::circular)
-            set(tmp, 1UL << DMA_CCR_CIRC_Pos);
+        	eos::Bits::set(tmp, 1UL << DMA_CCR_CIRC_Pos);
 
         // Selecciona la prioritat
         //
-        clear(tmp, DMA_CCR_PL);
-        set(tmp, ((uint32_t)priority << DMA_CCR_PL_Pos) & DMA_CCR_PL_Msk);
+        eos::Bits::clear(tmp, DMA_CCR_PL);
+        eos::Bits::set(tmp, ((uint32_t)priority << DMA_CCR_PL_Pos) & DMA_CCR_PL_Msk);
 
         // Parametres de access a la memoria
         //
@@ -179,8 +177,8 @@ Result DMADevice::initMemoryToPeripheral(
         // Selecciona el dispositiu de fa la solicitut DMA
         //
         tmp = _dmadev->muxc->CCR;
-        clear(tmp, DMAMUX_CxCR_DMAREQ_ID);
-        set(tmp, (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos));
+        eos::Bits::clear(tmp, DMAMUX_CxCR_DMAREQ_ID);
+        eos::Bits::set(tmp, (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos));
         _dmadev->muxc->CCR = tmp;
 
         // Canvia l'estat a 'ready'
@@ -408,7 +406,7 @@ void DMADevice::notifyHalfTransfer(
 static inline void enableTransferCompleteInterrupt(
     const DMADEV_TypeDef *dmadev) {
 
-    set(dmadev->dmac->CCR, DMA_CCR_TCIE);
+	eos::Bits::set(dmadev->dmac->CCR, DMA_CCR_TCIE);
 }
 
 
@@ -419,7 +417,7 @@ static inline void enableTransferCompleteInterrupt(
 static inline void enableHalfTransferInterrupt(
     const DMADEV_TypeDef *dmadev) {
 
-    set(dmadev->dmac->CCR, DMA_CCR_HTIE);
+	eos::Bits::set(dmadev->dmac->CCR, DMA_CCR_HTIE);
 }
 
 
@@ -430,7 +428,7 @@ static inline void enableHalfTransferInterrupt(
 static inline void enableTransferErrorInterrupt(
     const DMADEV_TypeDef *dmadev) {
 
-    set(dmadev->dmac->CCR, DMA_CCR_TEIE);
+	eos::Bits::set(dmadev->dmac->CCR, DMA_CCR_TEIE);
 }
 
 
@@ -441,7 +439,7 @@ static inline void enableTransferErrorInterrupt(
 static void disableAllInterrupts(
     const DMADEV_TypeDef *dmadev) {
 
-    clear(dmadev->dmac->CCR, DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
+	eos::Bits::clear(dmadev->dmac->CCR, DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
 }
 
 

@@ -11,6 +11,7 @@
 
 // EOS includes
 //
+#include "eosBits.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -132,11 +133,11 @@ namespace htl {
         		}
 
         		inline void enable() {
-        			htl::bits::set(_i2c->CR1, I2C_CR1_PE);
+        			eos::Bits::set(_i2c->CR1, I2C_CR1_PE);
         		}
 
         		inline void disable() {
-        			htl::bits::clear(_i2c->CR1, I2C_CR1_PE);
+        			eos::Bits::clear(_i2c->CR1, I2C_CR1_PE);
         		}
 
 				void setTimming(uint8_t prescaler, uint8_t scldel, uint8_t sdadel, uint8_t sclh, uint8_t scll) {

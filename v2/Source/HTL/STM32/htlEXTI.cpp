@@ -1,5 +1,5 @@
+#include "eosBits.h"
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/STM32/htlEXTI.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -105,16 +105,16 @@ void EXTIDevice::setMode(
 	// Configura el registre IMR (Interrupt Mask Register);
 	//
 	if ((mode == Mode::interrupt) || (mode == Mode::all))
-		bits::set(EXTI->IMR1, mask);
+		eos::Bits::set(EXTI->IMR1, mask);
 	else
-		bits::clear(EXTI->IMR1, mask);
+		eos::Bits::clear(EXTI->IMR1, mask);
 
 	// Configura el registre EMR (Event Mask Register);
 	//
 	if ((mode == Mode::event) || (mode == Mode::all))
-		bits::set(EXTI->EMR1, mask);
+		eos::Bits::set(EXTI->EMR1, mask);
 	else
-		bits::clear(EXTI->EMR1, mask);
+		eos::Bits::clear(EXTI->EMR1, mask);
 
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 
@@ -154,18 +154,18 @@ void EXTIDevice::setEdge(
 	// Configura el registre RTSR (Rising Trigger Selection Register)
 	//
 	if ((edge == Edge::rissing) || (edge == Edge::all))
-		bits::set(EXTI->RTSR1, mask);
+		eos::Bits::set(EXTI->RTSR1, mask);
 	else
-		bits::clear(EXTI->RTSR1, mask);
-	bits::clear(EXTI->RPR1, mask);
+		eos::Bits::clear(EXTI->RTSR1, mask);
+	eos::Bits::clear(EXTI->RPR1, mask);
 
 	// Configura el registre FTSR1 (Falling Trigger Selection Register)
 	//
 	if ((edge == Edge::falling) || (edge == Edge::all))
-		bits::set(EXTI->FTSR1, mask);
+		eos::Bits::set(EXTI->FTSR1, mask);
 	else
-		bits::clear(EXTI->FTSR1, mask);
-	bits::clear(EXTI->FPR1, mask);
+		eos::Bits::clear(EXTI->FTSR1, mask);
+	eos::Bits::clear(EXTI->FPR1, mask);
 
 #elif defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
 

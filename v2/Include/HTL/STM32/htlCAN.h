@@ -9,6 +9,7 @@
 #ifdef HTL_CANx_EXIST
 
 
+#include "eosBits.h"
 #include "eosTime.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
@@ -426,12 +427,12 @@ namespace htl {
 
 			protected:
 				void activateImpl() override {
-					bits::set(*reinterpret_cast<uint32_t *>(_activateAddr), 1UL << _activatePos);
+					eos::Bits::set(*reinterpret_cast<uint32_t *>(_activateAddr), 1UL << _activatePos);
 					__DSB();
 				}
 
 				void deactivateImpl() override {
-					bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
+					eos::Bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
 					__DSB();
 				}
 

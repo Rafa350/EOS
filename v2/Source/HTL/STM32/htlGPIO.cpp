@@ -1,5 +1,4 @@
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/htlAtomic.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -38,7 +37,6 @@ struct AF {
 };
 
 
-using namespace htl::bits;
 using namespace htl::gpio;
 
 
@@ -84,15 +82,15 @@ void GPIOUtils::initInput(
     // Configura el pin com a entrada digital
     //
     auto MODER = gpio->MODER;
-    clear(MODER, MODE::Mask << (b * 2));
-    set(MODER, MODE::INPUT << (b * 2));
+    eos::Bits::clear(MODER, MODE::Mask << (b * 2));
+    eos::Bits::set(MODER, MODE::INPUT << (b * 2));
     gpio->MODER = MODER;
 
     // Configura les resistencies pull UP/DOWN
     //
     auto PUPDR = gpio->PUPDR;
-    clear(PUPDR, PUPD::Mask << (b * 2));
-    set(PUPDR, convert(pupd) << (b * 2));
+    eos::Bits::clear(PUPDR, PUPD::Mask << (b * 2));
+    eos::Bits::set(PUPDR, convert(pupd) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     endAtomic(a);
@@ -145,34 +143,34 @@ void GPIOUtils::initOutput(
     // Configura el pin com sortida digital
     //
     auto MODER = gpio->MODER;
-    clear(MODER, MODE::Mask << (b * 2));
-    set(MODER, MODE::OUTPUT << (b * 2));
+    eos::Bits::clear(MODER, MODE::Mask << (b * 2));
+    eos::Bits::set(MODER, MODE::OUTPUT << (b * 2));
     gpio->MODER = MODER;
 
     // Configura el driver de sortida
     //
     auto OTYPER = gpio->OTYPER;
-    clear(OTYPER, OTYPE::Mask << b);
-    set(OTYPER, convert(type) << b);
+    eos::Bits::clear(OTYPER, OTYPE::Mask << b);
+    eos::Bits::set(OTYPER, convert(type) << b);
     gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
     auto PUPDR = gpio->PUPDR;
-    clear(PUPDR, PUPD::Mask << (b * 2));
-    set(PUPDR, convert(pupd) << (b * 2));
+    eos::Bits::clear(PUPDR, PUPD::Mask << (b * 2));
+    eos::Bits::set(PUPDR, convert(pupd) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
     auto OSPEEDR = gpio->OSPEEDR;
-    clear(OSPEEDR, OSPEED::Mask << (b * 2));
-    set(OSPEEDR, convert(speed) << (b * 2));
+    eos::Bits::clear(OSPEEDR, OSPEED::Mask << (b * 2));
+    eos::Bits::set(OSPEEDR, convert(speed) << (b * 2));
     gpio->OSPEEDR = OSPEEDR;
 
     // Configura l'estat de sortida
     //
-   	set(gpio->BSRR, 1UL << (b + (state ? 0 : 16)));
+    eos::Bits::set(gpio->BSRR, 1UL << (b + (state ? 0 : 16)));
 
     endAtomic(a);
 }
@@ -202,36 +200,36 @@ void GPIOUtils::initAlternate(
     // Configura el pin com entrada/sortida alternativa
     //
     auto MODER = gpio->MODER;
-    clear(MODER, MODE::Mask << (b * 2));
-    set(MODER, MODE::ALTERNATE << (b * 2));
+    eos::Bits::clear(MODER, MODE::Mask << (b * 2));
+    eos::Bits::set(MODER, MODE::ALTERNATE << (b * 2));
     gpio->MODER = MODER;
 
     // Configura el driver de sortida
     //
     auto OTYPER = gpio->OTYPER;
-    clear(OTYPER, OTYPE::Mask << b);
-    set(OTYPER, convert(type) << b);
+    eos::Bits::clear(OTYPER, OTYPE::Mask << b);
+    eos::Bits::set(OTYPER, convert(type) << b);
     gpio->OTYPER = OTYPER;
 
     // Configura la resistencia pull UP
     //
     auto PUPDR = gpio->PUPDR;
-    clear(PUPDR, PUPD::Mask << (b * 2));
-    set(PUPDR, convert(pupd) << (b * 2));
+    eos::Bits::clear(PUPDR, PUPD::Mask << (b * 2));
+    eos::Bits::set(PUPDR, convert(pupd) << (b * 2));
     gpio->PUPDR = PUPDR;
 
     // Configura la velocitat de conmutacio
     //
     auto OSPEEDR = gpio->OSPEEDR;
-    clear(OSPEEDR, OSPEED::Mask << (b * 2));
-    set(OSPEEDR, convert(speed) << (b * 2));
+    eos::Bits::clear(OSPEEDR, OSPEED::Mask << (b * 2));
+    eos::Bits::set(OSPEEDR, convert(speed) << (b * 2));
     gpio->OSPEEDR = OSPEEDR;
 
     // Selecciona la funcio alternativa
     //
     auto AFR = gpio->AFR[b >> 3];
-    clear(AFR, AF::Mask << ((b & 0x07) * 4)) ;
-    set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
+    eos::Bits::clear(AFR, AF::Mask << ((b & 0x07) * 4)) ;
+    eos::Bits::set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
     gpio->AFR[b >> 3] = AFR;
 
     endAtomic(a);
@@ -254,8 +252,8 @@ void GPIOUtils::initAnalogic(
     // Configura el pin com entrada analogica
     //
     auto MODER = gpio->MODER;
-    clear(MODER, MODE::Mask << (b * 2));
-    set(MODER, MODE::ANALOGIC << (b * 2));
+    eos::Bits::clear(MODER, MODE::Mask << (b * 2));
+    eos::Bits::set(MODER, MODE::ANALOGIC << (b * 2));
     gpio->MODER = MODER;
 
     endAtomic(a);

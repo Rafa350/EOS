@@ -388,12 +388,12 @@ namespace htl {
 
 			protected:
 				void activateImpl() const override {
-					bits::set(*reinterpret_cast<uint32_t *>(_activateAddr), 1UL << _activatePos);
+					eos::Bits::set(*reinterpret_cast<uint32_t *>(_activateAddr), 1UL << _activatePos);
 					__DSB();
 				}
 #if HTL_UART_OPTION_DEACTIVATE == 1
 				void deactivateImpl() const override {
-					bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
+					eos::Bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
 					__DSB();
 				}
 #endif
@@ -690,8 +690,8 @@ namespace htl::uart {
 		constexpr auto clockSourcePos = UARTTraits::clockSourcePos;
 
 		auto reg = reinterpret_cast<volatile uint32_t*>(clockSourceAddr);
-		bits::clear(*reg, clockSourceMsk);
-		bits::set(*reg, ((uint32_t) source << clockSourcePos) & clockSourceMsk);
+		eos::Bits::clear(*reg, clockSourceMsk);
+		eos::Bits::set(*reg, ((uint32_t) source << clockSourcePos) & clockSourceMsk);
 	}
 }
 #endif

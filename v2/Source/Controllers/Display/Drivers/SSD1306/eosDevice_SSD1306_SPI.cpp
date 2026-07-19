@@ -1,8 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "eosTime.h"
 #include "RTOS/rtosTask.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
-#include "System/eosTime.h"
 
 
 using namespace eos;
@@ -80,7 +80,7 @@ void Device_SSD1306_SPI::writeCommand(
 
     _pinDC->clear();
     _pinCS->clear();
-    _devSPI->transmit(data, dataSize, 1000);
+    _devSPI->transmit(data, dataSize, eos::Time::fromMiliseconds(100));
     _pinCS->set();
 }
 
@@ -96,6 +96,6 @@ void Device_SSD1306_SPI::writeData(
 
     _pinDC->set();
     _pinCS->clear();
-    _devSPI->transmit(data, dataSize, 1000);
+    _devSPI->transmit(data, dataSize, eos::Time::fromMiliseconds(100));
     _pinCS->set();
 }

@@ -4,8 +4,8 @@
 
 
 #include "eos.h"
+#include "eosCallbacks.h"
 #include "Services/Forms/eosVisual.h"
-#include "System/eosCallbacks.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosPoint.h"

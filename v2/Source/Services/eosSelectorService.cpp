@@ -1,6 +1,7 @@
+#include "eos.h"
+#include "eosTime.h"
 #include "RTOS/rtosTask.h"
 #include "Services/eosSelectorService.h"
-#include "System/eosTime.h"
 
 
 

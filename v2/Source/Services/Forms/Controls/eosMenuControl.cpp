@@ -1,7 +1,7 @@
 #include "eos.h"
+#include "eosMath.h"
 #include "Services/Forms/Controls/eosMenuControl.h"
 #include "Services/Forms/eosForm.h"
-#include "System/eosMath.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"

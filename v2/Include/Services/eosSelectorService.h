@@ -4,8 +4,8 @@
 
 
 #include "eos.h"
+#include "eosCallbacks.h"
 #include "Controllers/Pin/Drivers/GPIO/eosPinDriver_GPIO.h"
-#include "System/eosCallbacks.h"
 #include "Services/eosService.h"
 
 

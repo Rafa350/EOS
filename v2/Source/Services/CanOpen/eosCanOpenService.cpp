@@ -1379,7 +1379,7 @@ Result CanOpenService::emitSYNC(
 
 	uint32_t options;
 	if (_dictionary->readU32(0x1005, 0x00, options) &&
-		htl::bits::isSet(options, (uint32_t)(1 << 30))) {
+		eos::Bits::isSet(options, (uint32_t)(1 << 30))) {
 
 		Message msg = {
 			.id { MessageID::sendFrame},

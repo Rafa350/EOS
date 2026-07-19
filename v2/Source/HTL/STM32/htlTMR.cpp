@@ -1,10 +1,9 @@
+#include "eosBits.h"
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/STM32/htlTMR.h"
 
 
 using namespace htl;
-using namespace bits;
 using namespace htl::tmr;
 
 
@@ -49,24 +48,24 @@ eos::Result TMRDevice::initialize(
 		// -Inicilitza el divisor del rellotge.
 		//
 		auto CR1 = _tim->CR1;
-		clear(CR1, TIM_CR1_CEN | TIM_CR1_ARPE);
+		eos::Bits::clear(CR1, TIM_CR1_CEN | TIM_CR1_ARPE);
 		if (IS_TIM_CLOCK_DIVISION_INSTANCE(_tim)) {
-			clear(CR1, TIM_CR1_CKD);
+			eos::Bits::clear(CR1, TIM_CR1_CKD);
 			switch (divider) {
 				case ClockDivider::_1:
 					break;
 
 				case ClockDivider::_2:
-					set(CR1, TIM_CR1_CKD_0);
+					eos::Bits::set(CR1, TIM_CR1_CKD_0);
 					break;
 
 				case ClockDivider::_4:
-					set(CR1, TIM_CR1_CKD_1);
+					eos::Bits::set(CR1, TIM_CR1_CKD_1);
 					break;
 			}
 		}
-		set(CR1, TIM_CR1_DIR);
-		set(CR1, 0UL << TIM_CR1_CMS_Pos);
+		eos::Bits::set(CR1, TIM_CR1_DIR);
+		eos::Bits::set(CR1, 0UL << TIM_CR1_CMS_Pos);
 		_tim->CR1 = CR1;
 
 		_tim->PSC = prescaler;
@@ -92,8 +91,8 @@ eos::Result TMRDevice::deinitialize() {
 	if (_state != State::ready)
 		return eos::Result::ErrorCodes::errorState;
 
-	clear(_tim->CR1, TIM_CR1_CEN);
-	clear(_tim->DIER, TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
+	eos::Bits::clear(_tim->CR1, TIM_CR1_CEN);
+	eos::Bits::clear(_tim->DIER, TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
 
 	deactivate();
 
@@ -135,9 +134,9 @@ eos::Result TMRDevice::setLimit(
 
 	else {
 		if (_state == State::ready)
-			clear(_tim->CR1, TIM_CR1_ARPE);
+			eos::Bits::clear(_tim->CR1, TIM_CR1_ARPE);
 		else
-			set(_tim->CR1, TIM_CR1_ARPE);
+			eos::Bits::set(_tim->CR1, TIM_CR1_ARPE);
 		_tim->ARR = value;
 
 		return eos::Result::ErrorCodes::ok;

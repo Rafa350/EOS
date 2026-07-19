@@ -1,10 +1,10 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "eosMath.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPen.h"
 #include "System/Graphics/eosPoint.h"
-#include "System/eosMath.h"
 
 
 #include <cmath>

@@ -2,7 +2,7 @@
 
 
 #include "eos.h"
-#include "System/eosCallbacks.h"
+#include "eosCallbacks.h"
 #include "System/Graphics/eosColor.h"
 #include "Services/Forms/eosControl.h"
 

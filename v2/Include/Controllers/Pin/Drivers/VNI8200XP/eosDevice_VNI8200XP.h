@@ -4,9 +4,9 @@
 
 
 #include "eos.h"
+#include "eosResults.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
-#include "System/eosResults.h"
 
 
 namespace eos {

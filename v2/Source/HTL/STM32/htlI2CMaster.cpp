@@ -1,12 +1,12 @@
+#include "eosBits.h"
+#include "eosMath.h"
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/STM32/htlI2C.h"
 
-#include <cmath>
+//#include <cmath>
 
 
 using namespace eos;
-using namespace htl::bits;
 using namespace htl::i2c;
 
 
@@ -165,7 +165,7 @@ Result I2CMasterDevice::transmit(
 
 		unsigned bufferCount = 0;
 
-		unsigned blockSize = std::min(bufferSize, (unsigned)255);
+		unsigned blockSize = eos::Math::min(bufferSize, (unsigned)255);
 		unsigned blockCount = 0;
 
 		startTransmit(addr, bufferCount, bufferSize);
@@ -193,7 +193,7 @@ Result I2CMasterDevice::transmit(
 				while (!isTxCompleteReload())
 					continue;
 
-				blockSize = std::min(bufferSize - bufferCount, (unsigned)255);
+				blockSize = eos::Math::min(bufferSize - bufferCount, (unsigned)255);
 				blockCount = 0;
 
 				startTransmit(addr, bufferCount, bufferSize);
@@ -236,7 +236,7 @@ Result I2CMasterDevice::receive(
 
 		unsigned bufferCount = 0;
 
-		unsigned blockSize = std::min(bufferSize, (unsigned)255);
+		unsigned blockSize = eos::Math::min(bufferSize, (unsigned)255);
 		unsigned blockCount = 0;
 
 		startReceive(addr, bufferCount, bufferSize);
@@ -257,7 +257,7 @@ Result I2CMasterDevice::receive(
 			//
 			if ((bufferCount < bufferSize) && (blockCount == blockSize)) {
 
-				blockSize = std::min(bufferSize - bufferCount, (unsigned)255);
+				blockSize = eos::Math::min(bufferSize - bufferCount, (unsigned)255);
 				blockCount = 0;
 			}
 		}
@@ -375,7 +375,7 @@ void I2CMasterDevice::interruptServiceTransmit() {
 	// Event NACK.
 	// Error al transmetre dades al esclau.
 	//
-	if (isSet(CR1, I2C_CR1_NACKIE) && isSet(ISR, I2C_ISR_NACKF)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_NACKIE) && eos::Bits::isSet(ISR, I2C_ISR_NACKF)) {
 
 		// Borra el flag
 		//
@@ -383,16 +383,18 @@ void I2CMasterDevice::interruptServiceTransmit() {
 
 		// Flush TX
 		//
-		if (isSet(ISR, I2C_ISR_TXIS))
+		if (eos::Bits::isSet(ISR, I2C_ISR_TXIS))
 			_i2c->TXDR = 0;
-		if (isSet(ISR, I2C_ISR_TXE))
-        	set(_i2c->ISR, I2C_ISR_TXE);
+		if (eos::Bits::isSet(ISR, I2C_ISR_TXE))
+			eos::Bits::set(_i2c->ISR, I2C_ISR_TXE);
 	}
 
 	// Event TXI.
 	// El registre dades es buit, cal transmitre el seguent byte
 	//
-	else if (isSet(CR1, I2C_CR1_TXIE) && isSet(ISR, I2C_ISR_TXIS) && !isSet(ISR, I2C_ISR_TC)) {
+	else if (eos::Bits::isSet(CR1, I2C_CR1_TXIE) &&
+			 eos::Bits::isSet(ISR, I2C_ISR_TXIS) &&
+			 !eos::Bits::isSet(ISR, I2C_ISR_TC)) {
 
 		_i2c->TXDR = _buffer[_count++];
 	}
@@ -400,7 +402,7 @@ void I2CMasterDevice::interruptServiceTransmit() {
 	// Event TC.
 	// Transferencia completada. No mes es genera interrupcio si AUTOEND=0
 	//
-	else if (isSet(CR1, I2C_CR1_TCIE) && isSet(ISR, I2C_ISR_TC)) {
+	else if (eos::Bits::isSet(CR1, I2C_CR1_TCIE) && eos::Bits::isSet(ISR, I2C_ISR_TC)) {
 
 	}
 
@@ -408,7 +410,7 @@ void I2CMasterDevice::interruptServiceTransmit() {
 	// Transmissio del bloc de 255 bytes finalitzat, pero
 	// en queden mes de pendents de transmetre
 	//
-	else if (isSet(CR1, I2C_CR1_TCIE) && isSet(ISR, I2C_ISR_TCR)) {
+	else if (eos::Bits::isSet(CR1, I2C_CR1_TCIE) && eos::Bits::isSet(ISR, I2C_ISR_TCR)) {
 
 		startTransmit(0, _count, _maxCount);
 	}
@@ -416,7 +418,7 @@ void I2CMasterDevice::interruptServiceTransmit() {
 	// Event STOP.
 	// S'ha detectat una condicio stop.
 	//
-	else if (isSet(CR1, I2C_CR1_STOPIE) && isSet(ISR, I2C_ISR_STOPF)) {
+	else if (eos::Bits::isSet(CR1, I2C_CR1_STOPIE) && eos::Bits::isSet(ISR, I2C_ISR_STOPF)) {
 
 		disableInterrupts();
 		_i2c->ICR = I2C_ICR_STOPCF;
@@ -438,7 +440,7 @@ void I2CMasterDevice::interruptServiceReceive() {
 	// Event RXIE.
 	// El buffer de recepcio no es buit
 	//
-	if (isSet(CR1, I2C_CR1_RXIE) && isSet(ISR, I2C_ISR_RXNE)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_RXIE) && eos::Bits::isSet(ISR, I2C_ISR_RXNE)) {
 
 		_buffer[_count++] = _i2c->RXDR;
 	}
@@ -446,7 +448,7 @@ void I2CMasterDevice::interruptServiceReceive() {
 	// Event TC.
 	// Recepcio complerta
 	//
-	else if (isSet(CR1, I2C_CR1_TCIE) && isSet(ISR, I2C_ISR_TC)) {
+	else if (eos::Bits::isSet(CR1, I2C_CR1_TCIE) && eos::Bits::isSet(ISR, I2C_ISR_TC)) {
 
 	}
 
@@ -454,14 +456,14 @@ void I2CMasterDevice::interruptServiceReceive() {
 	// Recepcio complerta del bloc, pero queden bytes pendents. Cal
 	// tornar a reiniciar
 	//
-	else if (isSet(CR1, I2C_CR1_TCIE) && isSet(ISR, I2C_ISR_TCR)) {
+	else if (eos::Bits::isSet(CR1, I2C_CR1_TCIE) && eos::Bits::isSet(ISR, I2C_ISR_TCR)) {
 
 		startReceive(0, _count, _maxCount);
 	}
 
 	// Event STOP
 	//
-	else if (isSet(CR1, I2C_CR1_STOPIE) && isSet(ISR, I2C_ISR_STOPF)) {
+	else if (eos::Bits::isSet(CR1, I2C_CR1_STOPIE) && eos::Bits::isSet(ISR, I2C_ISR_STOPF)) {
 
 		disableInterrupts();
 		_i2c->ICR = I2C_ICR_STOPCF;
@@ -486,32 +488,32 @@ void I2CMasterDevice::startTransmit(
 	auto length = maxCount - count;
 
 	auto CR2 = _i2c->CR2;
-	clear(CR2, I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND);
+	eos::Bits::clear(CR2, I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND);
 
 	// Si el bloc es menor o igual a 255 bytes, aleshores transmet
 	// totes les dades d'una tirada en un sol bloc
 	// i genera el STOP automaticament al final
 	//
 	if (length <= 255) {
-		set(CR2, (length << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
-		set(CR2, I2C_CR2_AUTOEND); // Genera stop automaticament, no genera TC
+		eos::Bits::set(CR2, (length << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+		eos::Bits::set(CR2, I2C_CR2_AUTOEND); // Genera stop automaticament, no genera TC
 	}
 
 	// En cas contrari, transmet de 255 bytes,
 	// genere TCR al final, per continuar amb el seguent bloc
 	//
 	else {
-		set(CR2, (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
-		set(CR2, I2C_CR2_RELOAD); // Genera TCR per carregar el seguent bloc
+		eos::Bits::set(CR2, (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+		eos::Bits::set(CR2, I2C_CR2_RELOAD); // Genera TCR per carregar el seguent bloc
 	}
 
 	// Si es tracta del inici de la transmissio, genera una
 	// condicio START i transmet l'adressa I2C del esclau.
 	//
 	if (count == 0) {
-		clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10 | I2C_CR2_RD_WRN);
-		set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
-     	set(CR2, I2C_CR2_START);
+		eos::Bits::clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10 | I2C_CR2_RD_WRN);
+		eos::Bits::set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
+		eos::Bits::set(CR2, I2C_CR2_START);
 	}
 
 	_i2c->CR2 = CR2;
@@ -532,24 +534,24 @@ void I2CMasterDevice::startReceive(
 	auto length = maxCount - count;
 
 	auto CR2 = _i2c->CR2;
-    clear(CR2, I2C_CR2_NBYTES_Msk | I2C_CR2_RELOAD | I2C_CR2_AUTOEND);
+	eos::Bits::clear(CR2, I2C_CR2_NBYTES_Msk | I2C_CR2_RELOAD | I2C_CR2_AUTOEND);
     if (length <= 255) {
-        set(CR2, (length << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
-    	set(CR2, I2C_CR2_AUTOEND);
+    	eos::Bits::set(CR2, (length << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+    	eos::Bits::set(CR2, I2C_CR2_AUTOEND);
     }
     else {
-        set(CR2, (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
-        set(CR2, I2C_CR2_RELOAD);
+    	eos::Bits::set(CR2, (255 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk);
+    	eos::Bits::set(CR2, I2C_CR2_RELOAD);
     }
 
     // Si es tracta del inici de la recepcio, genera una
 	// condicio START i transmet l'adressa I2C del esclau.
 	//
 	if (count == 0) {
-		clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10);
-		set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
-		set(CR2, I2C_CR2_RD_WRN);
-     	set(CR2, I2C_CR2_START);
+		eos::Bits::clear(CR2, I2C_CR2_SADD | I2C_CR2_ADD10);
+		eos::Bits::set(CR2, (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk);
+		eos::Bits::set(CR2, I2C_CR2_RD_WRN);
+		eos::Bits::set(CR2, I2C_CR2_START);
 	}
 	_i2c->CR2 = CR2;
 }
@@ -564,7 +566,7 @@ void I2CMasterDevice::enableTransmitInterrupts() {
 		I2C_ICR_NACKCF | // Borra flag NACK
 		I2C_ICR_STOPCF;  // Borra flag STOP
 
-	set(_i2c->CR1,
+	eos::Bits::set(_i2c->CR1,
 		I2C_CR1_ERRIE |  // Habilita ERR
 		I2C_CR1_TXIE |   // Habilita TX
 		I2C_CR1_NACKIE | // Habilita NACK
@@ -582,7 +584,7 @@ void I2CMasterDevice::enableReceiveInterrupts() {
 		I2C_ICR_NACKCF | // Borra flag NACK
 		I2C_ICR_STOPCF;  // Borra flag STOP
 
-	set(_i2c->CR1,
+	eos::Bits::set(_i2c->CR1,
 		I2C_CR1_ERRIE |  // Habilita ERR
 		I2C_CR1_RXIE |   // Habilita RX
 		I2C_CR1_NACKIE | // Habilita NACK
@@ -596,7 +598,7 @@ void I2CMasterDevice::enableReceiveInterrupts() {
 ///
 void I2CMasterDevice::disableInterrupts() {
 
-    clear(_i2c->CR1,
+	eos::Bits::clear(_i2c->CR1,
 		I2C_CR1_ERRIE |  // Deshabilita ERR
 		I2C_CR1_NACKIE | // Deshabilita NACK
 		I2C_CR1_TCIE |   // Deshabilita TC/TCR
@@ -663,7 +665,7 @@ bool I2CMasterDevice::waitSTOPCondition(
 ///
 bool I2CMasterDevice::isRxNotEmpty() const {
 
-	return isSet(_i2c->ISR, I2C_ISR_RXNE);
+	return eos::Bits::isSet(_i2c->ISR, I2C_ISR_RXNE);
 }
 
 /// ----------------------------------------------------------------------
@@ -672,7 +674,7 @@ bool I2CMasterDevice::isRxNotEmpty() const {
 ///
 bool I2CMasterDevice::isTxEmpty() const {
 
-	return isSet(_i2c->ISR, I2C_ISR_TXIS);
+	return eos::Bits::isSet(_i2c->ISR, I2C_ISR_TXIS);
 }
 
 /// ----------------------------------------------------------------------
@@ -681,7 +683,7 @@ bool I2CMasterDevice::isTxEmpty() const {
 ///
 bool I2CMasterDevice::isTxCompleteReload() const {
 
-	return isSet(_i2c->ISR, I2C_ISR_TCR);
+	return eos::Bits::isSet(_i2c->ISR, I2C_ISR_TCR);
 }
 
 /// ----------------------------------------------------------------------
@@ -690,6 +692,6 @@ bool I2CMasterDevice::isTxCompleteReload() const {
 ///
 bool I2CMasterDevice::isSTOPCondition() const {
 
-	return isSet(_i2c->ISR, I2C_ISR_STOPF);
+	return eos::Bits::isSet(_i2c->ISR, I2C_ISR_STOPF);
 }
 
