@@ -102,7 +102,7 @@ bool SerialDriver_UART::onAbort() {
 ///
 void SerialDriver_UART::uartNotifyEventHandler(
 	htl::uart::UARTDevice *sender,
-	htl::uart::NotifyEventArgs * const args) {
+	htl::uart::UARTDevice::NotifyEventArgs *args) {
 
 	eosAssert(args != nullptr);
 	eosAssert(sender == _devUART);
@@ -111,24 +111,24 @@ void SerialDriver_UART::uartNotifyEventHandler(
 
 		// Notificacio del final de la transmissio
 		//
-		case htl::uart::NotifyID::txCompleted:
+		case htl::uart::UARTDevice::NotifyID::txCompleted:
 		    notifyTxCompleted(args->txCompleted.length, args->irq);
 			break;
 
     	// Notificacio del final de la recepcio
 		//
-		case htl::uart::NotifyID::rxCompleted:
+		case htl::uart::UARTDevice::NotifyID::rxCompleted:
 		    notifyRxCompleted(args->rxCompleted.length, args->irq);
 			break;
 
     	// Notificacio un error en la comunicacio
 		//
-		case htl::uart::NotifyID::error:
+		case htl::uart::UARTDevice::NotifyID::error:
 			break;
 
     	// Notificacio nula
 		//
-		case htl::uart::NotifyID::null:
+		case htl::uart::UARTDevice::NotifyID::null:
 			break;
 	}
 }

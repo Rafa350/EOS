@@ -1,4 +1,3 @@
-#include "eosBits.h"
 #include "HTL/htl.h"
 #include "HTL/htlAtomic.h"
 #include "HTL/STM32/htlClock.h"
@@ -413,15 +412,16 @@ eos::Result uart::UARTDevice::setClockSource(
 /// \brief    Transmiteix un bloc de dades.
 /// \param    buffer: El bloc de dades.
 /// \param    length: La longitut del bloc en bytes.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 eos::Result uart::UARTDevice::transmit(
 	const uint8_t *buffer,
 	uint32_t length,
-	unsigned timeout) {
+	eos::Time blockTime) {
 
 	if (_state == State::ready) {
 
-		unsigned expireTime = getTick() + timeout;
+		unsigned expireTime = getTick() + blockTime.toMiliseconds();
 		bool error = false;
 
 		_state = State::transmiting;
@@ -550,19 +550,19 @@ eos::Result uart::UARTDevice::abortTransmission() {
 /// \brief    Reb en bloc de dades.
 /// \param    buffer: Buffer de recepcio de dades.
 /// \param    bufferSize: Tamany del buffer en bytes.
-/// \param    timeout: Temps maxim de bloqueig.
+/// \param    blockTime: Temps maxim de bloqueig.
 /// \return   El resultat.
 ///
 eos::Result uart::UARTDevice::receive(
 	uint8_t *buffer,
 	uint32_t bufferSize,
-	unsigned timeout) {
+	eos::Time blockTime) {
 
 	if (_state == State::ready) {
 
 		_state = State::receiving;
 
-		auto expireTime = getTick() + timeout;
+		auto expireTime = getTick() + blockTime.toMiliseconds();
 		bool error = false;
 
 		enable();
@@ -669,7 +669,7 @@ void uart::UARTDevice::interruptService() {
 #if defined(xEOS_PLATFORM_STM32G0)
 	uint32_t all = USART_ISR_TXE_TXFNF | USART_ISR_TC | USART_ISR_RXNE_RXFNE |
 		USART_ISR_IDLE | USART_ISR_RTOF;
-	if (!Bits::isAnySet(_usart->ISR, all))
+	if (!eos::Bits::isAnySet(_usart->ISR, all))
 		return;
 #endif
 

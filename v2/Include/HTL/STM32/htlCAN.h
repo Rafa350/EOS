@@ -265,8 +265,8 @@ namespace htl {
 						} txCancelled;
 					};
 				};
-				using INotificationEvent = eos::ICallbackP2<CANDevice*, NotificationEventArgs*>;
-				template <typename Instance_> using NotificationEvent = eos::CallbackP2<Instance_, CANDevice*, NotificationEventArgs*>;
+				using INotificationEvent = IEvent<CANDevice, NotificationEventArgs>;
+				template <typename Instance_> using NotificationEvent = Event<Instance_, CANDevice, NotificationEventArgs>;
 
 			public:
 				enum class State {

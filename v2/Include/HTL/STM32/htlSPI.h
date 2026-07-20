@@ -115,9 +115,8 @@ namespace htl {
                 	NotificationID const id;
                     bool const irq;
                 };
-                using NotificationEventRaiser = eos::EventRaiser<SPIDevice, NotificationEventArgs>;
-                using INotificationEvent = NotificationEventRaiser::IEvent;
-                template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+                using INotificationEvent = IEvent<SPIDevice, NotificationEventArgs>;
+                template <typename Instance_> using NotificationEvent = Event<Instance_, SPIDevice, NotificationEventArgs>;
 
                 enum class State {
 					reset,
@@ -128,7 +127,7 @@ namespace htl {
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
-				NotificationEventRaiser _erNotification;
+				INotificationEvent *_notificationEvent;
 
 			private:
 				void activate() const {
@@ -192,14 +191,11 @@ namespace htl {
 				eos::Result deinitialize();
 #endif
 
-				void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
-					_erNotification.set(event, enabled);
+				inline void enableNotificationEvent(INotificationEvent &event) {
+					_notificationEvent = &event;
 				}
-				void enableNotificationEvent() {
-					_erNotification.enable();
-				}
-				void disableNotificationEvent() {
-					_erNotification.disable();
+				inline void disableNotificationEvent() {
+					_notificationEvent = nullptr;
 				}
 
 				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,

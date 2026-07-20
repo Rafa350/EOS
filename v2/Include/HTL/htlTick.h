@@ -12,9 +12,12 @@ namespace htl {
 
 		class TickGenerator {
 			private:
+				using TMRDeviceNotificationEvent = htl::tmr::TMRDevice::NotificationEvent<TickGenerator>;
+
+			private:
 				static TickGenerator _instance;
 				volatile uint32_t _tickCounter;
-				htl::tmr::NotificationEvent<TickGenerator> _tmrNotificationEvent;
+				TMRDeviceNotificationEvent _tmrNotificationEvent;
 
 			public:
 				static constexpr TickGenerator* pInst = &_instance;
@@ -23,7 +26,7 @@ namespace htl {
 			private:
 				TickGenerator();
 				TickGenerator(const TickGenerator&) = delete;
-				void tmrNotificationEventHandler(htl::tmr::TMRDevice * const sender, htl::tmr::NotificationEventArgs * const args);
+				void tmrNotificationEventHandler(htl::tmr::TMRDevice *sender, htl::tmr::TMRDevice::NotificationEventArgs *args);
 
 			public:
 				void initialize(uint32_t frequency);

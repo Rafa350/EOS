@@ -146,7 +146,8 @@ CANDevice::CANDevice(
 
 	_can {can},
 	_ram {ram},
-	_state {State::reset} {
+	_state {State::reset},
+	_notificationEvent {nullptr} {
 
 }
 

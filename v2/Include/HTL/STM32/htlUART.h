@@ -11,6 +11,7 @@
 // HTL main include (Include options)
 //
 #include "eosBits.h"
+#include "eosTime.h"
 #include "HTL/htl.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlClock.h"
@@ -171,37 +172,6 @@ namespace htl {
 			de
 		};
 
-		/// Identificador de la notificacio
-		///
-		enum class NotifyID {
-			null,
-			rxCompleted, ///< Recepcio complerta.
-			txCompleted, ///< Transmissio complerta.
-			error        ///< Error de comunicacio.
-		};
-
-		/// Parametres del event de notificacio.
-		///
-		struct NotifyEventArgs {
-			NotifyID id;                   ///< Identificador de la notificacio
-			bool irq;                      ///< Indica si es notifica desde una interrupcio.
-			union {
-				struct {
-					const uint8_t *buffer; ///< Dades transmeses.
-					uint32_t length;       ///< Nombre de bytes transmessos.
-				} txCompleted;             ///< Parametres de 'TxComplete'
-				struct {
-					const uint8_t *buffer; ///< Dades rebudes.
-					uint32_t length;       ///< Nombre de bytes rebuts.
-				} rxCompleted;             ///< Parametres de 'RxComplete'
-			};
-		};
-
-		// Event de notificacio
-		//
-		using INotifyEvent = eos::ICallbackP2<UARTDevice*, NotifyEventArgs*>;
-		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, UARTDevice*, NotifyEventArgs*>;
-
 		namespace internal {
 
 			template <DeviceID>
@@ -216,6 +186,38 @@ namespace htl {
 		/// Clase que implementa el dispositiu de comunicacio UART.
         ///
 		class UARTDevice: Device {
+			public:
+				/// Identificador de la notificacio
+				///
+				enum class NotifyID {
+					null,
+					rxCompleted, ///< Recepcio complerta.
+					txCompleted, ///< Transmissio complerta.
+					error        ///< Error de comunicacio.
+				};
+
+				/// Parametres del event de notificacio.
+				///
+				struct NotifyEventArgs {
+					NotifyID id;                   ///< Identificador de la notificacio
+					bool irq;                      ///< Indica si es notifica desde una interrupcio.
+					union {
+						struct {
+							const uint8_t *buffer; ///< Dades transmeses.
+							uint32_t length;       ///< Nombre de bytes transmessos.
+						} txCompleted;             ///< Parametres de 'TxComplete'
+						struct {
+							const uint8_t *buffer; ///< Dades rebudes.
+							uint32_t length;       ///< Nombre de bytes rebuts.
+						} rxCompleted;             ///< Parametres de 'RxComplete'
+					};
+				};
+
+				// Event de notificacio
+				//
+				using INotifyEvent = IEvent<UARTDevice, NotifyEventArgs>;
+				template <typename Instance_> using NotifyEvent = Event<Instance_, UARTDevice, NotifyEventArgs>;
+
 			public:
 #if HTL_UART_OPTION_DMA == 1
                 using DevDMA = dma::DMADevice;
@@ -344,8 +346,8 @@ namespace htl {
 					_notifyEvent = nullptr;
 				}
 
-				eos::Result transmit(const uint8_t *buffer, uint32_t length, unsigned timeout);
-				eos::Result receive(uint8_t *buffer, uint32_t bufferSize, unsigned timeout);
+				eos::Result transmit(const uint8_t *buffer, uint32_t length, eos::Time blockTime);
+				eos::Result receive(uint8_t *buffer, uint32_t bufferSize, eos::Time blockTime);
 
 #if HTL_UART_OPTION_IRQ == 1
 				eos::Result transmit_IRQ(const uint8_t *buffer, uint32_t length);

@@ -192,6 +192,10 @@ eos::Result SPIDevice::transmit(
             count += len8 ? 1 : 2;
 		}
 
+		// TODO: Comprovar si en full duples es transmit l'ultim byte, ja
+		// que la recepcio va desplaçada un byte respecte la transmissio. Mirsr
+		// si cal transmetre un byte 0x00 per rebre l'ultim byte
+
 		if (!error) {
 #if defined(EOS_PLATFORM_STM32G0) || defined(EOS_PLATFORM_STM32F7)
 			// Espera que es buidin els fifos

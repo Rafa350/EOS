@@ -110,31 +110,7 @@ namespace htl {
 		};
 
 
-		enum class NotificationID {
-			null,
-			trigger,
-			update,
-			error
-		};
-
-		struct NotificationEventArgs {
-			NotificationID id;
-			bool isr;
-			union {
-				struct {
-				} trigger;
-				struct {
-				} update;
-			};
-		};
-
-		class TMRDevice;
-
-		using NotificationEventRaiser = eos::EventRaiser<TMRDevice, NotificationEventArgs>;
-		using INotificationEvent = NotificationEventRaiser::IEvent;
-		template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
-
-		namespace internal {
+    	namespace internal {
 
 			template <DeviceID>
 			struct TMRTraits;
@@ -142,6 +118,25 @@ namespace htl {
 
 		class TMRDevice: Device {
 			public:
+				enum class NotificationID {
+					null,
+					trigger,
+					update,
+					error
+				};
+				struct NotificationEventArgs {
+					NotificationID id;
+					bool isr;
+					union {
+						struct {
+						} trigger;
+						struct {
+						} update;
+					};
+				};
+				using INotificationEvent = IEvent<TMRDevice, NotificationEventArgs>;
+				template <typename Instance_> using NotificationEvent = Event<Instance_, TMRDevice, NotificationEventArgs>;
+
 				enum class State {
 					reset,
 					ready,
@@ -153,7 +148,7 @@ namespace htl {
 			private:
 				TIM_TypeDef * const _tim;
 				State _state;
-				NotificationEventRaiser _erNotification;
+				INotificationEvent *_notificationEvent;
 
 			private:
 				void notifyTrigger();
@@ -188,14 +183,11 @@ namespace htl {
 				void enableChannel(Channel channel);
 				void disableChannel(Channel channel);
 
-				inline void setNotificationEvent(INotificationEvent &event, bool enabled = true) {
-					_erNotification.set(event, enabled);
-				}
-				inline void enableNotificationEvent() {
-					_erNotification.enable();
+				inline void enableNotificationEvent(INotificationEvent &event) {
+					_notificationEvent = &event;
 				}
 				inline void disableNotificationEvent() {
-					_erNotification.disable();
+					_notificationEvent = nullptr;
 				}
 				eos::Result start();
 				eos::Result start_IRQ();

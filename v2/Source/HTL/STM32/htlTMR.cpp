@@ -523,12 +523,12 @@ void TMRDevice::interruptService() {
 ///
 void TMRDevice::notifyTrigger() {
 
-	if (_erNotification.isEnabled()) {
+	if (_notificationEvent != nullptr) {
 		NotificationEventArgs args = {
 			.id {NotificationID::trigger},
 			.isr {true}
 		};
-		_erNotification.raise(this, &args);
+		_notificationEvent->execute(this, &args);
 	}
 }
 
@@ -538,11 +538,11 @@ void TMRDevice::notifyTrigger() {
 ///
 void TMRDevice::notifyUpdate() {
 
-	if (_erNotification.isEnabled()) {
+	if (_notificationEvent != nullptr) {
 		NotificationEventArgs args = {
 			.id {NotificationID::update},
 			.isr {true}
 		};
-		_erNotification.raise(this, &args);
+		_notificationEvent->execute(this, &args);
 	}
 }
