@@ -33,12 +33,12 @@ namespace eos {
             	return writeU8(static_cast<uint8_t>(data));
             }
 
-            inline bool writeI16(int16_t data) {
-            	return writeU8(static_cast<uint16_t>(data));
+            inline bool writI16(int16_t data) {
+            	return writeU16(static_cast<uint16_t>(data));
             }
 
             inline bool writeI32(int32_t data) {
-            	return writeU8(static_cast<uint32_t>(data));
+            	return writeU32(static_cast<uint32_t>(data));
             }
 
             bool write(const uint8_t *data, unsigned size);

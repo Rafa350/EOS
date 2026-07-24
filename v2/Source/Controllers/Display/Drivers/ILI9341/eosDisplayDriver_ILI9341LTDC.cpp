@@ -2,10 +2,9 @@
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
-#include "HAL/halINT.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "HTL/STM32/htlGPIO.h"
-#include "System/Core/eosTask.h"
+#include "RTOS/rtosTask.h"
 
 
 using namespace eos;
@@ -51,7 +50,7 @@ void DisplayDriver_ILI9341LTDC::enable() {
 
 	_devLTDC->enable();
 	_devILI9341->writeCommand(CMD_SLEEP_OUT);
-	Task::delay(120);
+	rtos::Task::delay(eos::Time::fromMiliseconds(120));
 	_devILI9341->writeCommand(CMD_DISPLAY_ON);
 }
 
@@ -63,7 +62,7 @@ void DisplayDriver_ILI9341LTDC::disable() {
 
 	_devILI9341->writeCommand(CMD_DISPLAY_OFF);
 	_devILI9341->writeCommand(CMD_ENTER_SLEEP_MODE);
-	Task::delay(120);
+	rtos::Task::delay(eos::Time::fromMiliseconds(120));
 	_devLTDC->disable();
 }
 

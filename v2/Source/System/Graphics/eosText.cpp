@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosGraphics.h"
@@ -65,7 +66,7 @@ Text::Text(
 	uint32_t textLength):
 
 	_text {text},
-	_textLength {textLength == -1 ? strlen(text) : textLength},
+	_textLength {(textLength == eos::Math::maxU32) ? strlen(text) : textLength},
 	_font {font},
 	//_background {Brush(defaultBackground)},
 	_foreground {Brush(defaultForeground)},
@@ -79,16 +80,28 @@ Text::Text(
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el text a formatejar.
 /// \param    text: El text.
+/// \param    textLength: La longitut del text.
 ///
-void Text::setText(
+void eos::Text::setText(
 	const char *text,
 	uint32_t textLength) {
 
 	if (_text != text) {
 		_text = text;
-		_textLength = (textLength == -1) ? strlen(text) : textLength;
+		_textLength = (textLength == eos::Math::maxU32) ? strlen(text) : textLength;
 		recalcBounds();
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el text a formatejar.
+/// \param    text: El text.
+///
+void eos::Text::setText(
+	const char *text) {
+
+	setText(text, eos::Math::maxU32);
 }
 
 

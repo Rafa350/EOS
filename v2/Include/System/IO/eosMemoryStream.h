@@ -16,18 +16,18 @@ namespace eos {
 
     	public:
             MemoryStream();
-            MemoryStream(uint8_t *buffer, unsigned size);
+            MemoryStream(uint8_t *buffer, uint32_t size);
 
-            Result initialize(uint8_t *buffer, unsigned size);
+            Result initialize(uint8_t *buffer, uint32_t size);
 
-            unsigned getPosition() const;
-            void setPosition(unsigned position);
+            uint32_t getPosition() const;
+            void setPosition(uint32_t position);
 
-    		ResultU32 write(const uint8_t *data, unsigned length) override;
-    		ResultU32 read(uint8_t *data, unsigned size) override;
+    		ResultU32 write(const uint8_t *buffer, uint32_t length) override;
+    		ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
 
             inline uint8_t *data() const { return _begin; }
-            inline unsigned size() const { return _end - _begin; }
+            inline uint32_t size() const { return _end - _begin; }
     };
 
 }

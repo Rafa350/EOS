@@ -24,7 +24,7 @@ MemoryStream::MemoryStream():
 ///
 MemoryStream::MemoryStream(
     uint8_t* buffer,
-    unsigned size):
+    uint32_t size):
 
     _begin {buffer},
     _end {buffer + size},
@@ -36,7 +36,7 @@ MemoryStream::MemoryStream(
 /// \brief    Obte la posicio actual de lectura/escriptura.
 /// \return   La posicio.
 ///
-unsigned MemoryStream::getPosition() const {
+uint32_t MemoryStream::getPosition() const {
 
 	return _ptr - _begin;
 }
@@ -46,7 +46,7 @@ unsigned MemoryStream::getPosition() const {
 /// \param    position: La nova posicio. No pot sortir dels limits del buffer.
 ///
 void MemoryStream::setPosition(
-	unsigned position) {
+	uint32_t position) {
 
 	if ((_begin + position) < _end)
 		_ptr = _begin + position;
@@ -55,42 +55,44 @@ void MemoryStream::setPosition(
 
 /// ----------------------------------------------------------------------
 /// \brief    Escriu dades en el stream.
-/// \param    data: Dades a escriure.
+/// \param    buffer: Dades a escriure.
+/// \param    length: Longitut de dades en bytes.
 /// \return   El nombre de bytes escrits i el resultat de l'operacio
 ///
 ResultU32 MemoryStream::write(
-    const uint8_t *data,
-    unsigned size) {
+    const uint8_t *buffer,
+    uint32_t length) {
 
-    if (_ptr + size >= _end)
-        size = _end - _ptr;
+    if (_ptr + length >= _end)
+        length = _end - _ptr;
 
-    if (size > 0) {
-        memcpy(_ptr, data, size);
-        _ptr += size;
+    if (length > 0) {
+        memcpy(_ptr, buffer, length);
+        _ptr += length;
     }
 
-	return {ResultU32::ErrorCodes::ok, size};
+	return {ResultU32::ErrorCodes::ok, length};
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    llegeix dades del stream.
-/// \param    data: Buffer on deixar les dades lleigides.
+/// \param    buffer: Buffer on deixar les dades lleigides.
+/// \param    bufferSize: Tamany del buffer en bytes.
 /// \return   El nombre de bytes lleigits i el resultat de l'operacio
 ///
 ResultU32 MemoryStream::read(
-	uint8_t *data,
-	unsigned size) {
+	uint8_t *buffer,
+	uint32_t bufferSize) {
 
-    if (_ptr + size >= _end)
-        size = _end - _ptr;
+    if (_ptr + bufferSize >= _end)
+        bufferSize = _end - _ptr;
 
-    if (size > 0) {
-    	memcpy(data, _ptr, size);
-    	_ptr += size;
+    if (bufferSize > 0) {
+    	memcpy(buffer, _ptr, bufferSize);
+    	_ptr += bufferSize;
     }
 
-	return {ResultU32::ErrorCodes::ok, size};
+	return {ResultU32::ErrorCodes::ok, bufferSize};
 }
 

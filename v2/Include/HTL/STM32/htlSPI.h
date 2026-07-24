@@ -199,12 +199,12 @@ namespace htl {
 				}
 
 				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
-				        unsigned bufferSize, eos::Time timeout);
-				eos::Result receive(uint8_t *rxBuffer, unsigned bufferSize,
+				        uint32_t bufferSize, eos::Time timeout);
+				eos::Result receive(uint8_t *rxBuffer, uint32_t bufferSize,
 				        eos::Time timeout)  {
 					return transmit(nullptr, rxBuffer, bufferSize, timeout);
 				}
-                eos::Result transmit(const uint8_t *txBuffer, unsigned bufferSize,
+                eos::Result transmit(const uint8_t *txBuffer, uint32_t bufferSize,
                         eos::Time timeout) {
                     return transmit(txBuffer, nullptr, bufferSize, timeout);
                 }

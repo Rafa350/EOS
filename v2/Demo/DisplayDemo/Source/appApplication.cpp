@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Services/eosLedService.h"
+#include "RTOS/rtosTask.h"
 
 #include "appApplication.h"
 #include "appDisplayService.h"
@@ -37,7 +38,7 @@ void MyApplication::onExecute() {
     // Executa els serveis indefinidament
     //
     while (true)
-    	Task::delay(1000);
+    	rtos::Task::delay(eos::Time::fromMiliseconds(1000));
 }
 
 

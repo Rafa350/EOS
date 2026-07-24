@@ -14,13 +14,14 @@ namespace htl {
 			template <typename Instance_, typename sender_, typename args_>
 			using Event = eos::CallbackP2<Instance_, sender_*, args_*>;
 
+		protected:
+			Device () = default;
+
 		public:
 			Device (const Device &) = delete;
 			Device (const Device &&) = delete;
 			Device & operator = (const Device &) = delete;
-
-		protected:
-			Device () = default;
+			Device & operator = (const Device &&) = delete;
 			virtual ~Device () = default;
 	};
 }

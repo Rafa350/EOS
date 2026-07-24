@@ -1,10 +1,9 @@
+#include "eosBits.h"
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/STM32/htlLTDC.h"
 
 
 using namespace htl;
-using namespace htl::bits;
 using namespace htl::ltdc;
 
 
@@ -23,7 +22,7 @@ LTDCDevice::LTDCDevice() {
 ///
 void LTDCDevice::activate() {
 
-	set(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
+	eos::Bits::set(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
 	__DSB();
 }
 
@@ -33,7 +32,7 @@ void LTDCDevice::activate() {
 ///
 void LTDCDevice::deactivate() {
 
-	clear(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
+	eos::Bits::clear(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
 }
 
 
@@ -127,13 +126,13 @@ void LTDCDevice::reload() {
 	// Si el LTDC no esta actiu, fa una actualitzacio immediata
 	//
 	if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
-		set(LTDC->SRCR, LTDC_SRCR_IMR);
+		eos::Bits::set(LTDC->SRCR, LTDC_SRCR_IMR);
 
 	// En cas contrari, fa l'actualitzacio durant la sincronitzacio
 	// vertical, i espera que finalitzi.
 	//
 	else {
-		set(LTDC->SRCR, LTDC_SRCR_VBR);
+		eos::Bits::set(LTDC->SRCR, LTDC_SRCR_VBR);
 		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) != 0)
 			continue;
 		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
@@ -246,14 +245,14 @@ void LTDCLayerDevice::setCLUTTable(
 
 	if ((_layer->CR & LTDC_LxCR_LEN) == 0) {
 		if (rgb == nullptr)
-			clear(_layer->CR, LTDC_LxCR_CLUTEN);
+			eos::Bits::clear(_layer->CR, LTDC_LxCR_CLUTEN);
 		else {
 			for (uint32_t i = 0; i < 256; i++)
 				_layer->CLUTWR = (i << LTDC_LxCLUTWR_CLUTADD_Pos) | (*rgb++ & 0x00FFFFFF);
-			set(_layer->CR, LTDC_LxCR_CLUTEN);
+			eos::Bits::set(_layer->CR, LTDC_LxCR_CLUTEN);
 		}
 
-		set(LTDC->SRCR, LTDC_SRCR_IMR);
+		eos::Bits::set(LTDC->SRCR, LTDC_SRCR_IMR);
 	}
 }
 
@@ -263,7 +262,7 @@ void LTDCLayerDevice::setCLUTTable(
 ///
 void LTDCLayerDevice::disableCLUTTable() {
 
-	clear(_layer->CR, LTDC_LxCR_CLUTEN);
+	eos::Bits::clear(_layer->CR, LTDC_LxCR_CLUTEN);
 }
 
 

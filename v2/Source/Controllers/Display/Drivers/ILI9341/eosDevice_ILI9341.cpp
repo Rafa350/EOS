@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosTask.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
+#include "RTOS\rtosTask.h"
 
 
 using namespace eos;
@@ -33,7 +33,7 @@ void Device_ILI9341::writeScript(
     while ((c = *p++) != OP_END) {
         switch (c) {
             case OP_DELAY:
-                Task::delay(*p++);
+                rtos::Task::delay(eos::Time::fromMiliseconds(*p++));
                 break;
 
             default:

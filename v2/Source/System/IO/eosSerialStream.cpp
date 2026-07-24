@@ -73,7 +73,7 @@ Result SerialStream::deinitialize() {
 //
 ResultU32 SerialStream::write(
 	const uint8_t *data,
-	unsigned length) {
+	uint32_t length) {
 
 	if ((data == nullptr) || (length == 0))
 		return ResultU32::ErrorCodes::errorParameter;
@@ -85,7 +85,7 @@ ResultU32 SerialStream::write(
 		if (_drvSerial->transmit(data, length).is(Result::ErrorCodes::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(_txTimeout);
+			auto result = _drvSerial->wait(_txTimeout.toMiliseconds());
 			if (result.isSuccess())
 				return {ResultU32::ErrorCodes::ok, result.value()};
 			else {
@@ -105,7 +105,7 @@ ResultU32 SerialStream::write(
 ///
 ResultU32 SerialStream::read(
 	uint8_t *data,
-	unsigned size) {
+	uint32_t size) {
 
 	if ((data == nullptr) || (size == 0))
 		return ResultU32::ErrorCodes::errorParameter;
@@ -117,7 +117,7 @@ ResultU32 SerialStream::read(
 		if (_drvSerial->receive(data, size).is(Result::ErrorCodes::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(_rxTimeout);
+			auto result = _drvSerial->wait(_rxTimeout.toMiliseconds());
 			if (result.isSuccess())
 				return {ResultU32::ErrorCodes::ok, result.value()};
 			else

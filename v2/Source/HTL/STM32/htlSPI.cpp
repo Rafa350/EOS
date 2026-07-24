@@ -114,7 +114,7 @@ eos::Result SPIDevice::deinitialize() {
 eos::Result SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
-	unsigned bufferSize,
+	uint32_t bufferSize,
 	eos::Time timeout) {
 
 	if (_state == State::ready) {
@@ -298,7 +298,7 @@ void SPIDevice::enable() const {
 void SPIDevice::disable() const {
 
 #if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-	clear(_spi->CR1, SPI_CR1_SPE);
+	eos::Bits::clear(_spi->CR1, SPI_CR1_SPE);
 
 #elif defined(EOS_PLATFORM_STM32G0)
     while ((_spi->SR & SPI_SR_FTLVL) != 0)
@@ -402,9 +402,9 @@ void SPIDevice::setWordSize(
 
 #if defined(EOS_PLATFORM_STM32F4)
 	if (size == WordSize::ws16)
-		set(_spi->CR1, SPI_CR1_DFF);
+		eos::Bits::set(_spi->CR1, SPI_CR1_DFF);
 	else
-		clear(_spi->CR1, SPI_CR1_DFF);
+		eos::Bits::clear(_spi->CR1, SPI_CR1_DFF);
 
 #elif defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 	auto CR2 = _spi->CR2;

@@ -11,7 +11,7 @@ namespace eos {
 
     /// \brief Objecte per escriure en un stream.
     ///
-    class TextStreamWriter {
+    class TextStreamWriter final {
         private:
     		Stream *_stream;
 

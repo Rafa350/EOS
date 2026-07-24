@@ -30,6 +30,7 @@
 #define configUSE_TIME_SLICING                  1
 #define configUSE_NEWLIB_REENTRANT              0
 #define configENABLE_BACKWARD_COMPATIBILITY     0
+#define configNUM_THREAD_LOCAL_STORAGE_POINTERS 1
 
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK                     1
@@ -84,7 +85,7 @@ Only API functions that end in ...FromISR() can be used within interrupts. */
 #define INCLUDE_xTaskGetIdleTaskHandle          0
 #define INCLUDE_xTimerGetTimerDaemonTaskHandle  0
 #define INCLUDE_pcTaskGetTaskName               0
-#define INCLUDE_eTaskGetState                   0
+#define INCLUDE_eTaskGetState                   1
 #define INCLUDE_xEventGroupSetBitFromISR        0
 #define INCLUDE_xTimerPendFunctionCall          0
 

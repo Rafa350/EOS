@@ -51,6 +51,7 @@ namespace eos {
 			Text(const Font &font, HorizontalAlign align);
 			Text(const Font &font, HorizontalAlign align, const char *text, uint32_t textLength);
 
+			void setText(const char *text);
 			void setText(const char *text, uint32_t textLength);
 			void setFont(const Font &font);
 			void setHorizontalAlign(HorizontalAlign align);

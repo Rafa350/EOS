@@ -1,11 +1,10 @@
 #include "eosAssert.h"
+#include "eosBits.h"
 #include "HTL/htl.h"
-#include "HTL/htlBits.h"
 #include "HTL/STM32/htlI2C.h"
 
 
 using namespace eos;
-using namespace htl::bits;
 using namespace htl::i2c;
 
 
@@ -46,15 +45,15 @@ Result I2CSlaveDevice::initialize(
 
 		// Configura l'adressa I2C
 		//
-		modify(_i2c->OAR1,
+		eos::Bits::modify(_i2c->OAR1,
 			I2C_OAR1_OA1_Msk | I2C_OAR1_OA1EN,
 			((addr << I2C_OAR1_OA1_Pos) & I2C_OAR1_OA1_Msk) | I2C_OAR1_OA1EN);
 
-		clear(_i2c->OAR2, I2C_OAR2_OA2EN);
+		eos::Bits::clear(_i2c->OAR2, I2C_OAR2_OA2EN);
 
 		// Configura els parametres de comunicacio i protocol
 		//
-		clear(_i2c->CR1, I2C_CR1_NOSTRETCH | I2C_CR1_SBC);
+		eos::Bits::clear(_i2c->CR1, I2C_CR1_NOSTRETCH | I2C_CR1_SBC);
 
 		_state = State::ready;
 
@@ -203,7 +202,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 
 	// S'ha detectat coincidencia amb l'adressa.
 	//
-	if (isSet(CR1, I2C_CR1_ADDRIE) && isSet(ISR, I2C_ISR_ADDR)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_ADDRIE) && eos::Bits::isSet(ISR, I2C_ISR_ADDR)) {
 
 		// Desabilita les interrupcions
 		//
@@ -218,7 +217,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 
         // Si es modus lectura, prepara la transmissio
 		//
-		if (isSet(ISR, I2C_ISR_DIR)) {
+		if (eos::Bits::isSet(ISR, I2C_ISR_DIR)) {
 
     		// Notifica l'inici de la transmissio de primer bloc. Obte
 			// el punter al buffer de dades i el nombre de bytes
@@ -231,7 +230,7 @@ void I2CSlaveDevice::interruptServiceListen() {
 			// Si NOSTRTECH == 0, fa un flush, en cas contrari
 			// transmet el primer byte
 			//
-			set(_i2c->ISR, I2C_ISR_TXE);
+			eos::Bits::set(_i2c->ISR, I2C_ISR_TXE);
 
 			enableTransmitInterrupts();
 			_state = State::transmiting;
@@ -273,7 +272,7 @@ void I2CSlaveDevice::interruptServiceReceive() {
 
 	// El registre de recepcio de dades no es buit
 	//
-	if (isSet(CR1, I2C_CR1_RXIE) && isSet(ISR, I2C_ISR_RXNE)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_RXIE) && eos::Bits::isSet(ISR, I2C_ISR_RXNE)) {
 
 		// Llegeix aqui per borrar el flag RXNE
 		//
@@ -288,7 +287,7 @@ void I2CSlaveDevice::interruptServiceReceive() {
 
 	// Deteccio de la condicio STOP
 	//
-	if (isSet(CR1, I2C_CR1_STOPIE) && isSet(ISR, I2C_ISR_STOPF)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_STOPIE) && eos::Bits::isSet(ISR, I2C_ISR_STOPF)) {
 
 		// Borra el flag STOP
 		//
@@ -327,7 +326,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 	// S'ha detectat un NACK. Despres el MASTER generara una
 	// condicio STOP.
 	//
-	if (isSet(CR1, I2C_CR1_NACKIE) && isSet(ISR, I2C_ISR_NACKF)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_NACKIE) && eos::Bits::isSet(ISR, I2C_ISR_NACKF)) {
 
 		// Borra el flag NACK
 		//
@@ -336,7 +335,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 
 	// S'ha detectat la condicio STOP
 	//
-	if (isSet(CR1, I2C_CR1_STOPIE) && isSet(ISR, I2C_ISR_STOPF)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_STOPIE) && eos::Bits::isSet(ISR, I2C_ISR_STOPF)) {
 
 		// Borra el flag STOP
 		//
@@ -361,7 +360,7 @@ void I2CSlaveDevice::interruptServiceTransmit() {
 
 	// El registre de transmissio de dades es buit
 	//
-	if (isSet(CR1, I2C_CR1_TXIE) && isSet(ISR, I2C_ISR_TXIS)) {
+	if (eos::Bits::isSet(CR1, I2C_CR1_TXIE) && eos::Bits::isSet(ISR, I2C_ISR_TXIS)) {
 
 		if (_dataCount > 0) {
 			_i2c->TXDR = *_buffer++;
@@ -494,7 +493,7 @@ void I2CSlaveDevice::raiseTxCompletedNotification(
 #if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::enableListenInterrupts() {
 
-	set(_i2c->CR1,
+	eos::Bits::set(_i2c->CR1,
         I2C_CR1_ADDRIE |     // Habilita ADDR
         I2C_CR1_ERRIE);      // Habilita ERR
 }
@@ -507,7 +506,7 @@ void I2CSlaveDevice::enableListenInterrupts() {
 #if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::enableTransmitInterrupts() {
 
-	set(_i2c->CR1,
+	eos::Bits::set(_i2c->CR1,
 		I2C_CR1_TXIE |       // Habilita TX
 		I2C_CR1_STOPIE |     // Habilita STOP
 		I2C_CR1_NACKIE |     // Habilita NACK
@@ -522,7 +521,7 @@ void I2CSlaveDevice::enableTransmitInterrupts() {
 #if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::enableReceiveInterrupts() {
 
-	set(_i2c->CR1,
+	eos::Bits::set(_i2c->CR1,
 		I2C_CR1_RXIE |       // Habilita RX
 		I2C_CR1_STOPIE |     // Habilita STOP
 		I2C_CR1_ERRIE);      // Habilita ERR
@@ -536,7 +535,7 @@ void I2CSlaveDevice::enableReceiveInterrupts() {
 #if HTL_I2C_OPTION_IRQ == 1
 void I2CSlaveDevice::disableInterrupts() {
 
-	clear(_i2c->CR1,
+	eos::Bits::clear(_i2c->CR1,
 		I2C_CR1_RXIE |       // Desabilita RX
 		I2C_CR1_TXIE |       // Desabilita TX
 		I2C_CR1_ADDRIE |     // Deshabilita ADDR

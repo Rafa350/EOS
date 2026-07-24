@@ -169,7 +169,7 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/OSAL</name>
+			<name>inc/Framework/EOS/RTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -239,7 +239,7 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL</name>
+			<name>src/Framework/EOS/RTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -329,24 +329,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlTMR.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
+			<name>inc/Framework/EOS/RTOS/rtosKernel.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalHeap.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/RTOS/rtosKernel.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/OSAL/osalKernel.h</name>
+			<name>inc/Framework/EOS/RTOS/rtosTask.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalKernel.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/OSAL/osalTask.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTask.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/OSAL/osalTimer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTimer.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/RTOS/rtosTask.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/eosDigOutputService.h</name>
@@ -419,9 +409,49 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS</name>
+			<name>src/Framework/EOS/RTOS/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosCriticalSection.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosCriticalSection.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosGlobalAlloc.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosGlobalAlloc.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosHeap.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosHeap.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosKernel.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosKernel.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosPool.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosPool.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosSemaphore.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosSemaphore.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosTask.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosTask.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/RTOS/rtosTime.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/rtosTime.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosLedService.cpp</name>
@@ -779,11 +809,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HTL/STM32/htlGPIO_basic.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_basic.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HTL/STM32/htlLTDC.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlLTDC.cpp</locationURI>
@@ -804,29 +829,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlTick.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
+			<name>src/Framework/EOS/RTOS/FreeRTOS/rtosHooks.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalHeap.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalKernel.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTimer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTimer.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/RTOS/FreeRTOS/rtosHooks.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
@@ -834,29 +839,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosGlobalAlloc.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/System/Core/eosHeapAllocator.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosHeapAllocator.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Core/eosPoolAllocator.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosPoolAllocator.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Core/eosTimer.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTimer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts</name>
@@ -969,9 +954,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HTL/STM32/F4/htlClock.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/F4/htlGPIO_Traits.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlClock.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/F4/htlGPIO_Traits.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HTL/STM32/F4/htlINT_Vectors.h</name>

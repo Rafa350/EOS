@@ -5,12 +5,7 @@
 
 #include "eos.h"
 #include "eosCallbacks.h"
-
-
-namespace eos {
-
-	class Time;
-}
+#include "eosTime.h"
 
 
 namespace rtos {

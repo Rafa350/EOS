@@ -948,7 +948,7 @@ namespace htl {
 
         namespace internal {
 
-#if !defined(EOS_PLATFORM_STM32G0) && !defined(EOS_PLATFORM_STM32F7)
+#if !defined(EOS_PLATFORM_STM32G0) && !defined(EOS_PLATFORM_STM32F4) && !defined(EOS_PLATFORM_STM32F7)
 #ifdef HTL_GPIOA_EXIST
 			template<>
 			struct PortTraits<PortID::portA> {

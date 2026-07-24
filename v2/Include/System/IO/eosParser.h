@@ -9,7 +9,7 @@
 
 namespace eos {
 
-	class Parser {
+	class Parser final {
 		private:
 			Stream * const _stream;
 			char _ungetCh;

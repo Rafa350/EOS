@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "System/eosString.h"
-#include "System/Core/eosTask.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosBitmap.h"
@@ -66,6 +65,18 @@ static uint32_t __rand(void) {
 #define __srand(a)  srand(a)
 #define __rand()    rand()
 #endif
+
+
+static void delayMS(
+	uint32_t ms) {
+
+	rtos::Task::delay(eos::Time::fromMiliseconds(ms));
+}
+
+static uint32_t getTickCount() {
+
+	return htl::getTick();
+}
 
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
@@ -163,7 +174,7 @@ static inline Color __getRandomColor() {
 /// \param application: Aplicacio al que pertany el servei.
 ///
 DisplayService::DisplayService():
-	_text(Font("Consolas", 14, FontStyle::regular), TextAlign::left),
+	_text(Font("Consolas", 14, FontStyle::regular), Text::HorizontalAlign::left),
 	_orientation(0) {
 
 	_text.setForeground(Brush(Colors::yellow));
@@ -198,7 +209,7 @@ void DisplayService::onExecute() {
     auto devSPI = DISPLAY_SPI_Device::pInst;
     devSPI->initPinSCK<DISPLAY_SCK_Pin>();
     devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
-    devSPI->initialize(spi::Mode::master, spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::ws8, spi::FirstBit::msb, spi::ClockDivider::div8);
+    devSPI->initMaster(spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::ws8, spi::FirstBit::msb, spi::ClockDivider::div8);
 
 	// Inicialitza el dispositiu ILI9341
 	//
@@ -387,7 +398,7 @@ void DisplayService::onExecute() {
 		// Show results
 		//
 		drawBackground("Results");
-		Task::delay(250);
+		rtos::Task::delay(eos::Time::fromMiliseconds(250));
 
 		char lineBuffer[30];
 		int y = 35;
@@ -424,7 +435,7 @@ void DisplayService::onExecute() {
 		_text.setText(lineBuffer);
 		_graphics->paintText(Point(10, y), _text); y += 20;
 
-		Task::delay(5000);
+		rtos::Task::delay(eos::Time::fromMiliseconds(5000));
 		#endif
     }
 }
@@ -441,7 +452,7 @@ void DisplayService::drawBackground(
     _graphics->drawRectangle(0, 0, _maxX, _maxY, Colors::red);
     _graphics->drawLine(_maxX, 20, 0, 20, Colors::red);
 
-    _text.setText(title);
+    _text.setText(title, -1);
     _graphics->paintText(Point(4, 0), _text);
 
     _graphics->drawRectangle(7, 27, _maxX - 10, _maxY - 10, Colors::red);
@@ -451,7 +462,7 @@ void DisplayService::drawBackground(
 void DisplayService::testColors() {
 
 	drawBackground("Colors");
-	Task::delay(250);
+	rtos::Task::delay(eos::Time::fromMiliseconds(250));
 
 	_graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
@@ -489,7 +500,7 @@ void DisplayService::testColors() {
 		_graphics->fillRectangle(x + i, y + hh + 150,  x + i,  y + 150 + h,  RGB(255 - c, 255 - c, 255 - c));
 	}
 
-	Task::delay(2500);
+	delayMS(2500);
 }
 
 /// ----------------------------------------------------------------------
@@ -501,7 +512,7 @@ void DisplayService::testOpacity() {
 	constexpr int dd = w / 2;
 
 	drawBackground("Opacity");
-	Task::delay(250);
+	delayMS(250);
 
 	uint8_t opacity = 128;
 
@@ -523,7 +534,7 @@ void DisplayService::testOpacity() {
 		y += dd;
 	}
 
-	Task::delay(2500);
+	delayMS(2500);
 }
 
 
@@ -535,12 +546,12 @@ void DisplayService::testPoints() {
 	int ticks;
 
 	drawBackground("Random points");
-	Task::delay(250);
+	delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
     __srand(seed);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 50000; i++) {
         int x = __rand() % _maxX;
         int y = __rand() % _maxY;
@@ -548,8 +559,8 @@ void DisplayService::testPoints() {
         Color c = __getRandomColor();
         _graphics->drawPoint(x, y, c);
     }
-    _pointsTicks = Task::getTickCount() - ticks;
-    Task::delay(250);
+    _pointsTicks = getTickCount() - ticks;
+    delayMS(250);
 
     __srand(seed);
     for (int i = 0; i < 50000; i++) {
@@ -561,9 +572,9 @@ void DisplayService::testPoints() {
         _graphics->drawPoint(x, y, Colors::black);
     }
 
-    Task::delay(250);
+    delayMS(250);
 
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
 }
 
 
@@ -577,10 +588,10 @@ void DisplayService::testLines() {
 	// Vertical lines
     //
     drawBackground("Vertical lines");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 5000; i++) {
         int x = __rand() % _maxX;
         int y1 = __rand() % _maxY;
@@ -589,16 +600,16 @@ void DisplayService::testLines() {
         Color c = __getRandomColor();
         _graphics->drawVLine(x, y1, y2, c);
     }
-    _verticalLinesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _verticalLinesTicks = getTickCount() - ticks;
+    delayMS(1000);
 
     // Horizontal lines
     //
     drawBackground("Horizontal lines");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 5000; i++) {
         int x1 = __rand() % _maxX;
         int x2 = __rand() % _maxY;
@@ -607,16 +618,16 @@ void DisplayService::testLines() {
         Color c = __getRandomColor();
         _graphics->drawHLine(x1, x2, y, c);
     }
-    _horizontalLinesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _horizontalLinesTicks = getTickCount() - ticks;
+    delayMS(1000);
 
     // Lines
     //
     drawBackground("Random lines");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 5000; i++) {
         int x1 = __rand() % _maxX;
         int y1 = __rand() % _maxY;
@@ -626,8 +637,8 @@ void DisplayService::testLines() {
         Color c = __getRandomColor();
         _graphics->drawLine(x1, y1, x2, y2, c);
     }
-    _linesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _linesTicks = getTickCount() - ticks;
+    delayMS(1000);
 }
 
 
@@ -639,13 +650,13 @@ void DisplayService::testThickLines() {
 	// Thick lines
     //
     drawBackground("Thick lines");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
     _graphics->drawLine(10, 10, 200, 376, 5, Colors::white);
 
-    Task::delay(1000);
+    delayMS(1000);
 }
 
 
@@ -659,10 +670,10 @@ void DisplayService::testRectangles() {
 	// Restangles buits
 	//
 	drawBackground("Rectangles");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 1000; i++) {
         int x1 = __rand() % _maxX;
         int y1 = __rand() % _maxY;
@@ -672,16 +683,16 @@ void DisplayService::testRectangles() {
         Color c = __getRandomColor();
         _graphics->drawRectangle(x1, y1, x2, y2, c);
     }
-    _rectanglesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _rectanglesTicks = getTickCount() - ticks;
+    delayMS(1000);
 
     // Rectangles plens
     //
     drawBackground("Filled rectangles");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 1000; i++) {
         int x1 = __rand() % _maxX;
         int y1 = __rand() % _maxY;
@@ -691,8 +702,8 @@ void DisplayService::testRectangles() {
         Color c = __getRandomColor();
         _graphics->fillRectangle(x1, y1, x2, y2, c);
     }
-    _filledRectanglesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _filledRectanglesTicks = getTickCount() - ticks;
+    delayMS(1000);
 }
 
 
@@ -706,10 +717,10 @@ void DisplayService::testEllipses() {
     // El·lipses buides
     //
     drawBackground("Ellipses");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 1000; i++) {
         int cx = __rand() % _maxX;
         int cy = __rand() % _maxY;
@@ -719,16 +730,16 @@ void DisplayService::testEllipses() {
         Color c = __getRandomColor();
         _graphics->drawEllipse(cx - rx, cy - ry, cx + rx, cy + ry, c);
     }
-    _ellipsesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _ellipsesTicks = getTickCount() - ticks;
+    delayMS(1000);
 
     // Elipses plenes
     //
     drawBackground("Filled ellipses");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 1000; i++) {
         int cx = __rand() % _maxX;
         int cy = __rand() % _maxY;
@@ -738,8 +749,8 @@ void DisplayService::testEllipses() {
         Color c = __getRandomColor();
        	_graphics->fillEllipse(cx - rx, cy - ry, cx + rx, cy + ry, c);
     }
-    _filledEllipsesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _filledEllipsesTicks = getTickCount() - ticks;
+    delayMS(1000);
 }
 
 
@@ -761,32 +772,32 @@ void DisplayService::testPolygons() {
     // Poligons buides
     //
     drawBackground("Polygons");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 1; i++) {
 
         Color c = __getRandomColor();
     	_graphics->drawPolygon(__points, 6, c);
     }
-    _polygonsTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _polygonsTicks = getTickCount() - ticks;
+    delayMS(1000);
 
     // Elipses plenes
     //
     drawBackground("Filled polygons");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
     for (int i = 0; i < 1; i++) {
 
     	Color c = __getRandomColor();
     	_graphics->fillPolygon(__points, 6, c);
     }
-    _filledPolygonsTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _filledPolygonsTicks = getTickCount() - ticks;
+    delayMS(1000);
 }
 
 
@@ -808,11 +819,11 @@ void DisplayService::testBitmaps() {
 	Bitmap bitmap(width, height, ColorFormat::rgb565, &data[6]);
 
 	drawBackground("Bitmaps");
-    Task::delay(250);
+    delayMS(250);
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
-    ticks = Task::getTickCount();
+    ticks = getTickCount();
 
     int x = (_maxX + 1) / 2;
     int y = (_maxY + 1) / 2;
@@ -821,6 +832,6 @@ void DisplayService::testBitmaps() {
 		y - bitmap.getHeight() / 2,
 		bitmap);
 
-    _bitmapTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    _bitmapTicks = getTickCount() - ticks;
+    delayMS(1000);
 }

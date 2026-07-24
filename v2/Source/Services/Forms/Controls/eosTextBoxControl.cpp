@@ -37,11 +37,14 @@ void eos::TextBoxControl::onRender(
 
 	Control::onRender(graphics);
 
-	Text text;
-	text.setHorizontalAlign(eos::Text::HorizontalAlign::center);
-    text.setForeground(Brush(_textColor));
-    text.setBackground(Brush(getBackgroundColor()));
-	text.setText(_text, (uint32_t) -1);
+	if (_text != nullptr) {
 
-	graphics->paintText(Rect(getPosition(), getSize()), text);
+		Text text;
+		text.setHorizontalAlign(eos::Text::HorizontalAlign::center);
+		text.setForeground(Brush(_textColor));
+		text.setBackground(Brush(getBackgroundColor()));
+		text.setText(_text, (uint32_t) -1);
+
+		graphics->paintText(Rect(getPosition(), getSize()), text);
+	}
 }

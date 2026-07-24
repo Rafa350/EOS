@@ -1,6 +1,7 @@
 #pragma once
 
 #include "eos.h"
+#include "eosTime.h"
 #include "Controllers/Serial/eosSerialDriver.h"
 #include "System/IO/eosStream.h"
 
@@ -11,8 +12,8 @@ namespace eos {
 
 		private:
 			SerialDriver *_drvSerial;
-			unsigned _txTimeout = unsigned(-1);
-			unsigned _rxTimeout = unsigned(-1);
+			Time _txTimeout = Times::infinite;
+			Time _rxTimeout = Times::infinite;
 
 		public:
 			SerialStream();
@@ -21,14 +22,14 @@ namespace eos {
 			Result initialize(SerialDriver *drvSerial);
 			Result deinitialize();
 
-			inline void setWriteTimeout(unsigned timeout) {
+			inline void setWriteTimeout(Time timeout) {
 				_txTimeout = timeout;
 			}
-			inline void setReadTimeout(unsigned timeout) {
+			inline void setReadTimeout(Time timeout) {
 				_rxTimeout = timeout;
 			}
 
-			ResultU32 write(const uint8_t *data, unsigned length) override;
-			ResultU32 read(uint8_t *data, unsigned size) override;
+			ResultU32 write(const uint8_t *buffer, uint32_t length) override;
+			ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
 	};
 }

@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
-#include "System/Core/eosTask.h"
+#include "RTOS/rtosTask.h"
 
 
 using namespace eos;
@@ -42,9 +42,9 @@ void Device_ILI9341_SPI::initialize(
     _pinCS->set();
     if (_pinRST != nullptr) {
         _pinRST->clear();
-        Task::delay(20);
+        rtos::Task::delay(Time::fromMiliseconds(20));
         _pinRST->set();
-        Task::delay(120);
+        rtos::Task::delay(Time::fromMiliseconds(120));
         _pinRST->set();
     }
 
@@ -70,7 +70,7 @@ void Device_ILI9341_SPI::writeCommand(
 
     _pinCS->clear();
     _pinRS->clear();
-    _devSPI->transmit(&data, 1, 1000);
+    _devSPI->transmit(&data, 1, Time::fromMiliseconds(1000));
     _pinCS->set();
 }
 
@@ -84,7 +84,7 @@ void Device_ILI9341_SPI::writeData(
 
     _pinCS->clear();
     _pinRS->set();
-    _devSPI->transmit(&data, 1, 1000);
+    _devSPI->transmit(&data, 1, Time::fromMiliseconds(1000));
     _pinCS->set();
 }
 
@@ -100,7 +100,7 @@ void Device_ILI9341_SPI::writeData(
 
     _pinCS->clear();
     _pinRS->set();
-    _devSPI->transmit(data, dataSize, 1000);
+    _devSPI->transmit(data, dataSize, Time::fromMiliseconds(1000));
     _pinCS->set();
 }
 
