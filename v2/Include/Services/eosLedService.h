@@ -19,29 +19,43 @@ namespace eos {
 	        enum class LedMode {
 	        	on,
 				off,
-				blinkSlow,
-				blinkFast,
+				slowBlink,
+				mediumBlink,
+				fastBlink,
 				flash1,
-				flass2,
+				flash2,
 				flash3,
 				flash4
 	        };
 
 	    private:
-	        Pin * const _pinLED1;
-	        Pin * const _pinLED2;
-	        LedMode _modeLED1;
-	        LedMode _modeLED2;
+	        static constexpr const char *_serviceName = "Led";
+	        static constexpr uint32_t _serviceStackDepth = 96;
+	        static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::low;
+
+	        static constexpr Time _stepInterval  = Time::fromMiliseconds(150);
+	        static constexpr Time _slowBlinkInterval = Time::fromMiliseconds(1000);
+	        static constexpr Time _mediumBlinkInterval = Time::fromMiliseconds(500);
+	        static constexpr Time _fastBlinkInterval = Time::fromMiliseconds(250);
+
+	        static constexpr uint16_t _flash1Pattern    = 0b0000000001001111;
+	        static constexpr uint16_t _flash2Pattern    = 0b0000000101001111;
+	        static constexpr uint16_t _flash3Pattern    = 0b0000010101001111;
+	        static constexpr uint16_t _flash4Pattern    = 0b0001010101001111;
+
+	    private:
+	        Pin * const _pinLED;
+	        LedMode _mode;
+	        uint8_t _step;
 
 		protected:
 			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
 		public:
-			LedService(Pin *pinLED1, Pin *pinLED2 = nullptr);
+			LedService(Pin *pinLED);
 
-			void setLed1Mode(LedMode value);
-			void setLed2Mode(LedMode value);
+			void setLedMode(LedMode value);
 	};
 
 }

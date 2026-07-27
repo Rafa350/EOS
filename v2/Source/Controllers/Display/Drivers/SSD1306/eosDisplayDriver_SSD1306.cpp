@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HTL/htlTick.h"
-#include "Controllers/Display/eosMonoFrameBuffer.h"
+#include "Controllers/Display/eosL1FrameBuffer.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 
@@ -15,7 +15,7 @@ using namespace htl;
 ///
 DisplayDriver_SSD1306::DisplayDriver_SSD1306(
     Device_SSD1306 *device,
-	FrameBuffer *frameBuffer):
+	L1FrameBuffer *frameBuffer):
 
     _device {device},
 	_frameBuffer {frameBuffer} {

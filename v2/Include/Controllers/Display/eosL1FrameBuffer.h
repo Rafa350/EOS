@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __eosMonoFrameBuffer__
-#define __eosMonoFrameBuffer__
+#ifndef __eosL1FrameBuffer__
+#define __eosL1FrameBuffer__
 
 
 #include "eos.h"
@@ -9,7 +9,7 @@
 
 namespace eos {
 
-    class MonoFrameBuffer: public FrameBuffer {
+    class L1FrameBuffer final: public FrameBuffer {
         private:
             uint8_t * const _buffer;
             int16_t const _bufferPitch;
@@ -21,23 +21,13 @@ namespace eos {
             void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
 
         public:
-            MonoFrameBuffer(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation, uint8_t *buffer, int16_t bufferPitch);
+            L1FrameBuffer(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation, uint8_t *buffer, int16_t bufferPitch);
 
             inline uint8_t *getBuffer() const override { return _buffer; }
             inline int16_t getBufferPitch() const { return _bufferPitch; }
     };
 
-    // Compatible SSD1306, ST7565
-    //
-    class MonoFrameBuffer_MappingA final: public MonoFrameBuffer {
-    	protected:
-            void put(int16_t x, int16_t y, Color color) override;
-            void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
-
-    	public:
-            MonoFrameBuffer_MappingA(int16_t frameWidth, int16_t frameHeight, DisplayOrientation orientation, uint8_t *buffer, int16_t bufferPitch);
-    };
 }
 
 
-#endif // __eosMonoFrameBuffer__
+#endif // __eosL1FrameBuffer__

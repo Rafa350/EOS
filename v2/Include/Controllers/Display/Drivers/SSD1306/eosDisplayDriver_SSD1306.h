@@ -5,21 +5,21 @@
 
 #include "eos.h"
 #include "Controllers/Display/eosDisplayDriver.h"
-#include "Controllers/Display/eosFrameBuffer.h"
+#include "Controllers/Display/eosL1FrameBuffer.h"
 #include "System/Graphics/eosColor.h"
 
 
 namespace eos {
-    
+
     class Device_SSD1306;
 
     class DisplayDriver_SSD1306: public DisplayDriver {
     	private:
             Device_SSD1306 * const _device;
-			FrameBuffer * const _frameBuffer;
+			L1FrameBuffer * const _frameBuffer;
 
     	public:
-            DisplayDriver_SSD1306(Device_SSD1306 *device, FrameBuffer *frameBuffer);
+            DisplayDriver_SSD1306(Device_SSD1306 *device, L1FrameBuffer *frameBuffer);
 
             void initialize() override;
             void deinitialize() override;

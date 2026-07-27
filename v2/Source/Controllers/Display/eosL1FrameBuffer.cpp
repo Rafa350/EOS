@@ -1,8 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/eosMonoFrameBuffer.h"
-
-
-using namespace eos;
+#include "Controllers/Display/eosL1FrameBuffer.h"
 
 
 /// ----------------------------------------------------------------------
@@ -13,7 +10,7 @@ using namespace eos;
 /// \param    buffer: El buffer de memoria.
 /// \param    bufferPitch: Amplada en bytes de cada scanline.
 ///
-MonoFrameBuffer::MonoFrameBuffer(
+eos::L1FrameBuffer::L1FrameBuffer(
     int16_t frameWidth,
     int16_t frameHeight,
     DisplayOrientation orientation,
@@ -32,16 +29,16 @@ MonoFrameBuffer::MonoFrameBuffer(
 /// \param    y: Coordinada y de la posicio
 /// \param    color: Color del pixel.
 ///
-void MonoFrameBuffer::put(
+void eos::L1FrameBuffer::put(
 	int16_t x,
 	int16_t y,
 	Color color) {
 
 	uint8_t *byte = reinterpret_cast<uint8_t*>(uint32_t(_buffer) + ((y >> 3) * _bufferPitch) + x);
-	if (color.getL() > 127)
-		*byte |= 1 << (y & 7);    // L>127 -> Color blanc
+	if (color.getL())
+		*byte |= 1 << (y & 7);
 	else
-		*byte &= ~(1 << (y & 7)); // L<128 -> Color negre
+		*byte &= ~(1 << (y & 7));
 }
 
 
@@ -53,7 +50,7 @@ void MonoFrameBuffer::put(
 /// \param    height: Alçada de la regio.
 /// \param    color: Color.
 ///
-void MonoFrameBuffer::fill(
+void eos::L1FrameBuffer::fill(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -67,7 +64,7 @@ void MonoFrameBuffer::fill(
 }
 
 
-void MonoFrameBuffer::copy(
+void eos::L1FrameBuffer::copy(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -77,7 +74,8 @@ void MonoFrameBuffer::copy(
 
 }
 
-void MonoFrameBuffer::copy(
+
+void eos::L1FrameBuffer::copy(
 	int16_t x,
 	int16_t y,
 	int16_t width,

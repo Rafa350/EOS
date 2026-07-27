@@ -175,6 +175,7 @@ namespace eos {
 	struct ColorTrait<ColorFormat::al88> {
 		using Pixel = uint16_t;
 		static constexpr ColorFormat format = ColorFormat::al88;
+		static constexpr ColorType type = ColorType::grayscale;
 		static constexpr int bits = 16;
 		static constexpr int bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = true;
@@ -202,22 +203,21 @@ namespace eos {
 		static constexpr ColorType type = ColorType::grayscale;
 		static constexpr int bits = 8;
 		static constexpr int bytes = (bits + 7) / 8;
-		static constexpr bool isColor = false;
 		static constexpr bool hasAlpha = true;
 		static constexpr unsigned maskA = 0xF0;
-		static constexpr unsigned maskR = 0x00;
-		static constexpr unsigned maskG = 0x00;
-		static constexpr unsigned maskB = 0x00;
+		//static constexpr unsigned maskR = 0x00;
+		//static constexpr unsigned maskG = 0x00;
+		//static constexpr unsigned maskB = 0x00;
 		static constexpr unsigned maskL = 0x0F;
 		static constexpr unsigned shiftA = 4;
-		static constexpr unsigned shiftR = 0;
-		static constexpr unsigned shiftG = 0;
-		static constexpr unsigned shiftB = 0;
+		//static constexpr unsigned shiftR = 0;
+		//static constexpr unsigned shiftG = 0;
+		//static constexpr unsigned shiftB = 0;
 		static constexpr unsigned shiftL = 0;
 		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
+		//static constexpr unsigned adjR = 0;
+		//static constexpr unsigned adjG = 0;
+		//static constexpr unsigned adjB = 0;
 		static constexpr unsigned adjL = 0;
 	};
 
@@ -226,25 +226,24 @@ namespace eos {
 		using Pixel = uint8_t;
 		static constexpr ColorFormat format = ColorFormat::l8;
 		static constexpr ColorType type = ColorType::grayscale;
-		static constexpr int bits = 8;
-		static constexpr int bytes = (bits + 7) / 8;
-		static constexpr bool isColor = false;
+		static constexpr uint32_t bits = 8;
+		static constexpr uint32_t bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = false;
-		static constexpr unsigned maskA = 0x00;
-		static constexpr unsigned maskR = 0x00;
-		static constexpr unsigned maskG = 0x00;
-		static constexpr unsigned maskB = 0x00;
-		static constexpr unsigned maskL = 0xFF;
-		static constexpr unsigned shiftA = 0;
-		static constexpr unsigned shiftR = 0;
-		static constexpr unsigned shiftG = 0;
-		static constexpr unsigned shiftB = 0;
-		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
-		static constexpr unsigned adjL = 0;
+		//static constexpr uint32_t maskA = 0x00;
+		//static constexpr uint32_t maskR = 0x00;
+		//static constexpr uint32_t maskG = 0x00;
+		//static constexpr uint32_t maskB = 0x00;
+		static constexpr uint32_t maskL = 0xFF;
+		//static constexpr uint32_t shiftA = 0;
+		//static constexpr uint32_t shiftR = 0;
+		//static constexpr uint32_t shiftG = 0;
+		//static constexpr uint32_t shiftB = 0;
+		static constexpr uint32_t shiftL = 0;
+		//static constexpr uint32_t adjA = 0;
+		//static constexpr uint32_t adjR = 0;
+		//static constexpr uint32_t adjG = 0;
+		//static constexpr uint32_t adjB = 0;
+		static constexpr uint32_t adjL = 0;
 	};
 
 	template <>
@@ -254,22 +253,21 @@ namespace eos {
 		static constexpr ColorType type = ColorType::grayscale;
 		static constexpr int bits = 4;
 		static constexpr int bytes = (bits + 7) / 8;
-		static constexpr bool isColor = false;
 		static constexpr bool hasAlpha = false;
-		static constexpr unsigned maskA = 0x00;
-		static constexpr unsigned maskR = 0x00;
-		static constexpr unsigned maskG = 0x00;
-		static constexpr unsigned maskB = 0x00;
+		//static constexpr unsigned maskA = 0x00;
+		//static constexpr unsigned maskR = 0x00;
+		//static constexpr unsigned maskG = 0x00;
+		//static constexpr unsigned maskB = 0x00;
 		static constexpr unsigned maskL = 0x0F;
-		static constexpr unsigned shiftA = 0;
-		static constexpr unsigned shiftR = 0;
-		static constexpr unsigned shiftG = 0;
-		static constexpr unsigned shiftB = 0;
+		//static constexpr unsigned shiftA = 0;
+		//static constexpr unsigned shiftR = 0;
+		//static constexpr unsigned shiftG = 0;
+		//static constexpr unsigned shiftB = 0;
 		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
+		//static constexpr unsigned adjA = 0;
+		//static constexpr unsigned adjR = 0;
+		//static constexpr unsigned adjG = 0;
+		//static constexpr unsigned adjB = 0;
 		static constexpr unsigned adjL = 0;
 	};
 
@@ -277,13 +275,13 @@ namespace eos {
 	struct ColorTrait<ColorFormat::l1> {
 		using Pixel = uint8_t;
 		static constexpr ColorFormat format = ColorFormat::l1;
-		static constexpr ColorType type = ColorType::palette;
-		static constexpr int bits = 1;
-		static constexpr int bytes = (bits + 7) / 8;
+		static constexpr ColorType type = ColorType::grayscale;
+		static constexpr uint32_t bits = 1;
+		static constexpr uint32_t bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = false;
-		static constexpr unsigned maskL = 0;
-		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjL = 0;
+		static constexpr uint32_t maskL = 0x01;
+		static constexpr uint32_t shiftL = 0;
+		static constexpr uint32_t adjL = 0;
 	};
 
 	template <ColorFormat format_>

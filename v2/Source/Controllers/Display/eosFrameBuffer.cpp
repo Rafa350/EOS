@@ -1,11 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "eosMath.h"
 #include "Controllers/Display/eosFrameBuffer.h"
-
-#include <cmath>
-
-
-using namespace eos;
 
 
 /// ----------------------------------------------------------------------
@@ -14,7 +10,7 @@ using namespace eos;
 /// \param    frameHeight: Alçada.
 /// \param    orientation: Orientacio inicial.
 ///
-FrameBuffer::FrameBuffer(
+eos::FrameBuffer::FrameBuffer(
 	int16_t frameWidth,
 	int16_t frameHeight,
 	DisplayOrientation orientation) :
@@ -31,7 +27,7 @@ FrameBuffer::FrameBuffer(
 /// \brief    Canvia l'orientacio de la imatge.
 /// \param    orientation: L'orientacio.
 ///
-void FrameBuffer::setOrientation(
+void eos::FrameBuffer::setOrientation(
 	DisplayOrientation orientation) {
 
 	_orientation = orientation;
@@ -57,7 +53,7 @@ void FrameBuffer::setOrientation(
 /// \param    x: Coordinada x.
 /// \param    y: Coordinada y.
 ///
-void FrameBuffer::transform(
+void eos::FrameBuffer::transform(
 	int16_t &x,
 	int16_t &y) const {
 
@@ -98,7 +94,7 @@ void FrameBuffer::transform(
 /// \param    y2: Coordinada y inferior.
 /// \remarks  Les coordinades son retornades en forma normalitzada.
 ///
-void FrameBuffer::transform(
+void eos::FrameBuffer::transform(
 	int16_t &x1,
 	int16_t &y1,
 	int16_t &x2,
@@ -145,10 +141,10 @@ void FrameBuffer::transform(
 
 	// Normalitza el resultat
 	//
-	x1 = std::min(xx1, xx2);
-	y1 = std::min(yy1, yy2);
-	x2 = std::max(xx1, xx2);
-	y2 = std::max(yy1, yy2);
+	x1 = eos::Math::min(xx1, xx2);
+	y1 = eos::Math::min(yy1, yy2);
+	x2 = eos::Math::max(xx1, xx2);
+	y2 = eos::Math::max(yy1, yy2);
 }
 
 
@@ -156,7 +152,7 @@ void FrameBuffer::transform(
 /// \brief    Borra la imatge.
 /// \param    color: Color de borrat.
 ///
-void FrameBuffer::clear(
+void eos::FrameBuffer::clear(
 	Color color) {
 
 	fill(0, 0, _frameWidth, _frameHeight, color);
@@ -169,7 +165,7 @@ void FrameBuffer::clear(
 /// \param    y: Coordinada Y del pìxel.
 /// \param    color: Color.
 ///
-void FrameBuffer::setPixel(
+void eos::FrameBuffer::setPixel(
 	int16_t x,
 	int16_t y,
 	Color color) {
@@ -189,7 +185,7 @@ void FrameBuffer::setPixel(
 /// \param    height: Alçada de la regio.
 /// \param    color: Color.
 ///
-void FrameBuffer::setPixels(
+void eos::FrameBuffer::setPixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -203,10 +199,10 @@ void FrameBuffer::setPixels(
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = std::max(x1, (int16_t)0);
-	y1 = std::max(y1, (int16_t)0);
-	x2 = std::min(x2, _maxX);
-	y2 = std::min(y2, _maxY);
+	x1 = eos::Math::max(x1, (int16_t)0);
+	y1 = eos::Math::max(y1, (int16_t)0);
+	x2 = eos::Math::min(x2, _maxX);
+	y2 = eos::Math::min(y2, _maxY);
 
 	// Cas que nomes sigui un pixel
 	//
@@ -233,7 +229,7 @@ void FrameBuffer::setPixels(
 /// \param    colors: Array de colors.
 /// \param    pitch: El pitch del array de colors.
 ///
-void FrameBuffer::setPixels(
+void eos::FrameBuffer::setPixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -257,7 +253,7 @@ void FrameBuffer::setPixels(
 /// \param    colorFormat: Format de la llista de colors.
 /// \param    colorPitch: Pitch de la llista de colors.
 ///
-void FrameBuffer::setPixels(
+void eos::FrameBuffer::setPixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -273,10 +269,10 @@ void FrameBuffer::setPixels(
 
 	// Retalla al tamany de pantalla
 	//
-	x1 = std::max(x1, (int16_t)0);
-	y1 = std::max(y1, (int16_t)0);
-	x2 = std::min(x2, _maxX);
-	y2 = std::min(y2, _maxY);
+	x1 = eos::Math::max(x1, (int16_t)0);
+	y1 = eos::Math::max(y1, (int16_t)0);
+	x2 = eos::Math::min(x2, _maxX);
+	y2 = eos::Math::min(y2, _maxY);
 
 	if ((x1 <= x2) && (y1 <= y2)) {
 		transform(x1, y1, x2, y2);

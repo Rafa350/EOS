@@ -9,23 +9,16 @@
 using namespace htl;
 
 
-constexpr const char *serviceName = "Led";
-constexpr uint32_t serviceStackDepth = 96;
-constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::low;
-
-
 /// ----------------------------------------------------------------------
-/// \brief Contructor de l'objecte.
+/// \brief    Contructor de l'objecte.
+/// \param    pinLED: El pin del LED
 ///
 eos::LedService::LedService(
-     Pin *pinLED1,
-     Pin *pinLED2) :
+     Pin *pinLED) :
 
 	 Service(),
-	 _pinLED1 {pinLED1},
-	 _pinLED2 {pinLED2},
-	 _modeLED1 {LedMode::blinkSlow},
-	 _modeLED2 {LedMode::blinkSlow} {
+	 _pinLED {pinLED},
+	 _mode {LedMode::mediumBlink} {
 }
 
 
@@ -35,26 +28,17 @@ eos::LedService::LedService(
 void eos::LedService::onInitialize(
 	ServiceParams &params) {
 
-	params.name = serviceName;
-	params.stackDepth = serviceStackDepth;
-	params.priority = servicePriority;
+	params.name = _serviceName;
+	params.stackDepth = _serviceStackDepth;
+	params.priority = _servicePriority;
 }
 
 
-void eos::LedService::setLed1Mode(
+void eos::LedService::setLedMode(
 	LedMode value) {
 
-	if (_modeLED1 != value) {
-		_modeLED1 = value;
-	}
-}
-
-
-void eos::LedService::setLed2Mode(
-	LedMode value) {
-
-	if (_modeLED2 != value) {
-		_modeLED2 = value;
+	if (_mode != value) {
+		_mode = value;
 	}
 }
 
@@ -64,19 +48,64 @@ void eos::LedService::setLed2Mode(
 ///
 void eos::LedService::onExecute() {
 
-    if (_pinLED1 != nullptr)
-        _pinLED1->set();
-    if (_pinLED2 != nullptr)
-        _pinLED2->clear();
+    _pinLED->clear();
+
+    _step = 0;
 
     while (!stopSignal()) {
 
-		if (_pinLED1 != nullptr)
-			_pinLED1->toggle();
+    	switch (_mode) {
+    		case LedMode::on:
+    			_pinLED->set();
+    			rtos::Task::delayUntil(Time::fromMiliseconds(1000));
+    			break;
 
-		if (_pinLED2 != nullptr)
-			_pinLED2->toggle();
+    		case LedMode::off:
+    			_pinLED->clear();
+    			rtos::Task::delayUntil(Time::fromMiliseconds(1000));
+    			break;
 
-		rtos::Task::delayUntil(eos::Time::fromMiliseconds(500));
+    		case LedMode::slowBlink:
+    		case LedMode::mediumBlink:
+    		case LedMode::fastBlink: {
+    			auto interval = _slowBlinkInterval;
+    			switch (_mode) {
+    				case LedMode::mediumBlink:
+    					interval = _mediumBlinkInterval;
+    					break;
+
+    				case LedMode::fastBlink:
+    					interval = _fastBlinkInterval;
+    					break;
+    			}
+    			_pinLED->toggle();
+    			rtos::Task::delayUntil(interval);
+    			break;
+    		}
+
+    		case LedMode::flash1:
+    		case LedMode::flash2:
+    		case LedMode::flash3:
+    		case LedMode::flash4: {
+    		    auto pattern = _flash1Pattern;
+    			switch (_mode) {
+    	    		case LedMode::flash2:
+    	    			pattern = _flash2Pattern;
+    	    			break;
+
+    	    		case LedMode::flash3:
+    	    			pattern = _flash3Pattern;
+    	    			break;
+
+    	    		case LedMode::flash4:
+    	    			pattern = _flash4Pattern;
+    	    			break;
+    			}
+    			_pinLED->write((pattern & (1 << _step)) != 0);
+    			_step = (_step + 1) & 0x0F;
+    			rtos::Task::delayUntil(_stepInterval);
+    			break;
+    		}
+    	}
 	}
 }
