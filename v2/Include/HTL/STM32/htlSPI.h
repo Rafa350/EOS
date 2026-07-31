@@ -10,6 +10,7 @@
 
 
 #include "eosBits.h"
+#include "eosEvents.h"
 #include "eosTime.h"
 #include "HTL/htlDevice.h"
 
@@ -115,8 +116,9 @@ namespace htl {
                 	NotificationID const id;
                     bool const irq;
                 };
-                using INotificationEvent = IEvent<SPIDevice, NotificationEventArgs>;
-                template <typename Instance_> using NotificationEvent = Event<Instance_, SPIDevice, NotificationEventArgs>;
+                using NotificationEventRaiser = eos::EventRaiser<SPIDevice, NotificationEventArgs>;
+                using INotificationEvent = NotificationEventRaiser::IEvent;
+                template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
                 enum class State {
 					reset,
@@ -127,7 +129,7 @@ namespace htl {
 			private:
 				SPI_TypeDef * const _spi;
 				State _state;
-				INotificationEvent *_notificationEvent;
+				NotificationEventRaiser _notificationEventRaiser;
 
 			private:
 				void activate() const {
@@ -192,10 +194,10 @@ namespace htl {
 #endif
 
 				inline void enableNotificationEvent(INotificationEvent &event) {
-					_notificationEvent = &event;
+					_notificationEventRaiser.enable(event);
 				}
 				inline void disableNotificationEvent() {
-					_notificationEvent = nullptr;
+					_notificationEventRaiser.disable();
 				}
 
 				eos::Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
@@ -310,39 +312,39 @@ namespace htl {
 }
 
 
-#if defined(EOS_PLATFORM_STM32G030)
-    #include "htl/STM32/G0/G030/htlSPI_Pins.h"
-	#include "htl/STM32/G0/htlSPI_Traits.h"
-
-#elif defined(EOS_PLATFORM_STM32G031)
-    #include "htl/STM32/G0/G031/htlSPI_Pins.h"
-	#include "htl/STM32/G0/htlSPI_Traits.h"
-
-#elif defined(EOS_PLATFORM_STM32G071)
-    #include "htl/STM32/G0/G071/htlSPI_Pins.h"
-	#include "htl/STM32/G0/htlSPI_Traits.h"
-
-#elif defined(EOS_PLATFORM_STM32G0B1)
-    #include "htl/STM32/G0/G0B1/htlSPI_Pins.h"
-	#include "htl/STM32/G0/htlSPI_Traits.h"
-
-#elif defined(EOS_PLATFORM_STM32F030)
-    #include "htl/STM32/F0/F030/htlSPI_Pins.h"
-
+#if defined(EOS_PLATFORM_STM32F0)
+	#include "htl/STM32/F0/htlSPI_Traits.h"
 #elif defined(EOS_PLATFORM_STM32F429)
-    #include "htl/STM32/F4/F429/htlSPI_Pins.h"
 	#include "htl/STM32/F4/htlSPI_Traits.h"
-
 #elif defined(EOS_PLATFORM_STM32F746)
-    #include "htl/STM32/F7/F746/htlSPI_Pins.h"
 	#include "htl/STM32/F7/htlSPI_Traits.h"
-
+#elif defined(EOS_PLATFORM_STM32G0)
+	#include "htl/STM32/G0/htlSPI_Traits.h"
 #else
     #error "Unknown platform"
 #endif
 
 
-#endif // defined(HTL_SPIx_EXIST)
+#if defined(EOS_PLATFORM_STM32F030)
+    #include "htl/STM32/F0/F030/htlSPI_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F429)
+    #include "htl/STM32/F4/F429/htlSPI_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F746)
+    #include "htl/STM32/F7/F746/htlSPI_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G030)
+    #include "htl/STM32/G0/G030/htlSPI_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G031)
+    #include "htl/STM32/G0/G031/htlSPI_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G071)
+    #include "htl/STM32/G0/G071/htlSPI_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G0B1)
+    #include "htl/STM32/G0/G0B1/htlSPI_Pins.h"
+#else
+    #error "Unknown platform"
+#endif
 
 
-#endif // __STM32_htlSPI__
+#endif // ifdef HTL_SPIx_EXIST
+
+
+#endif // ifndef __STM32_htlSPI__

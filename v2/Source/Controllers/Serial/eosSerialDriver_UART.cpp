@@ -14,7 +14,7 @@ SerialDriver_UART::SerialDriver_UART(
 	htl::uart::UARTDevice *devUART):
 
 	_devUART {devUART},
-	_uartNotifyEvent {*this, &SerialDriver_UART::uartNotifyEventHandler} {
+	_uartNotificationEvent {*this, &SerialDriver_UART::uartNotificationEventHandler} {
 
 	eosAssert(devUART != nullptr);
 }
@@ -26,7 +26,7 @@ SerialDriver_UART::SerialDriver_UART(
 ///
 bool SerialDriver_UART::onInitialize() {
 
-	_devUART->enableNotifyEvent(_uartNotifyEvent);
+	_devUART->enableNotificationEvent(_uartNotificationEvent);
     return true;
 }
 
@@ -37,7 +37,7 @@ bool SerialDriver_UART::onInitialize() {
 ///
 bool SerialDriver_UART::onDeinitialize() {
 
-	_devUART->disableNotifyEvent();
+	_devUART->disableNotificationEvent();
     return true;
 }
 
@@ -100,9 +100,9 @@ bool SerialDriver_UART::onAbort() {
 /// \param    sender: El remitent.
 /// \param    args: Parametres del event.
 ///
-void SerialDriver_UART::uartNotifyEventHandler(
+void SerialDriver_UART::uartNotificationEventHandler(
 	htl::uart::UARTDevice *sender,
-	htl::uart::UARTDevice::NotifyEventArgs *args) {
+	htl::uart::UARTDevice::NotificationEventArgs *args) {
 
 	eosAssert(args != nullptr);
 	eosAssert(sender == _devUART);
@@ -111,24 +111,24 @@ void SerialDriver_UART::uartNotifyEventHandler(
 
 		// Notificacio del final de la transmissio
 		//
-		case htl::uart::UARTDevice::NotifyID::txCompleted:
+		case htl::uart::UARTDevice::NotificationID::txCompleted:
 		    notifyTxCompleted(args->txCompleted.length, args->irq);
 			break;
 
     	// Notificacio del final de la recepcio
 		//
-		case htl::uart::UARTDevice::NotifyID::rxCompleted:
+		case htl::uart::UARTDevice::NotificationID::rxCompleted:
 		    notifyRxCompleted(args->rxCompleted.length, args->irq);
 			break;
 
     	// Notificacio un error en la comunicacio
 		//
-		case htl::uart::UARTDevice::NotifyID::error:
+		case htl::uart::UARTDevice::NotificationID::error:
 			break;
 
     	// Notificacio nula
 		//
-		case htl::uart::UARTDevice::NotifyID::null:
+		case htl::uart::UARTDevice::NotificationID::null:
 			break;
 	}
 }

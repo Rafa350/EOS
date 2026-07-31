@@ -69,8 +69,9 @@ namespace eos {
         		union {
         		};
         	};
-			using INotificationEvent = ICallbackP2<CanOpenService*, NotificationEventArgs*>;
-			template <typename Instance_> using NotificationEvent = CallbackP2<Instance_, CanOpenService*, NotificationEventArgs*>;
+        	using NotificationEventRaiser = EventRaiser<CanOpenService, NotificationEventArgs>;
+			using INotificationEvent = NotificationEventRaiser::IEvent;
+			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 			struct WriteRequestEventArgs {
 				uint16_t index;
@@ -82,21 +83,22 @@ namespace eos {
 					bool b;
 				} value;
 			};
-			using IWriteRequestEvent = ICallbackP2<CanOpenService*, WriteRequestEventArgs*>;
-			template <typename Instance_> using WriteRequestEvent = CallbackP2<Instance_, CanOpenService*, WriteRequestEventArgs*>;
+			using WriteRequestEventRaiser = EventRaiser<CanOpenService, WriteRequestEventArgs>;
+			using IWriteRequestEvent = WriteRequestEventRaiser::IEvent;
+			template <typename Instance_> using WriteRequestEvent = WriteRequestEventRaiser::Event<Instance_>;
 
 			struct TPDOReceivedEventArgs {
 				CobID cobId;
 				uint8_t dataLen;
 				const uint8_t *data;
 			};
-			using TPDOReceivedEventRaiser = eos::EventRaiser<CanOpenService, TPDOReceivedEventArgs>;
+			using TPDOReceivedEventRaiser = EventRaiser<CanOpenService, TPDOReceivedEventArgs>;
 			using ITPDOReceivedEvent = TPDOReceivedEventRaiser::IEvent;
 			template <typename Instance_> using TPDOReceivedEvent = TPDOReceivedEventRaiser::Event<Instance_>;
 
 			struct SYNCReceivedEventArgs {
 			};
-			using SYNCReceivedEventRaiser = eos::EventRaiser<CanOpenService, SYNCReceivedEventArgs>;
+			using SYNCReceivedEventRaiser = EventRaiser<CanOpenService, SYNCReceivedEventArgs>;
 			using ISYNCReceivedEvent = SYNCReceivedEventRaiser::IEvent;
 			template <typename Instance_> using SYNCReceivedEvent = SYNCReceivedEventRaiser::Event<Instance_>;
 
@@ -104,7 +106,7 @@ namespace eos {
 				NodeID nodeId;
 				NodeState state;
 			};
-			using HeartbeatReceivedEventRaiser = eos::EventRaiser<CanOpenService, HeartbeatReceivedEventArgs>;
+			using HeartbeatReceivedEventRaiser = EventRaiser<CanOpenService, HeartbeatReceivedEventArgs>;
 			using IHeartbeatReceivedEvent = HeartbeatReceivedEventRaiser::IEvent;
 			template <typename Instance_> using HeartbeatReceivedEvent = HeartbeatReceivedEventRaiser::Event<Instance_>;
 
@@ -151,11 +153,11 @@ namespace eos {
 			NodeID const _nodeId;
 			NodeState _nodeState;
 			MessageQueue _messageQueue;
-			INotificationEvent *_notificationEvent;
-			IWriteRequestEvent *_writeRequestEvent;
-			TPDOReceivedEventRaiser _erTPDOReceived;
-        	SYNCReceivedEventRaiser _erSYNCReceived;
-        	HeartbeatReceivedEventRaiser _erHeartbeatReceived;
+			NotificationEventRaiser _notificationEventRaiser;
+			WriteRequestEventRaiser _writeRequestEventRaiser;
+			TPDOReceivedEventRaiser _tpdoReceivedEventRaiser;
+        	SYNCReceivedEventRaiser _syncReceivedEventRaiser;
+        	HeartbeatReceivedEventRaiser _heartbeatReceivedEventRaiser;
 
 		private:
             void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
@@ -240,30 +242,42 @@ namespace eos {
 
 			// Events
 			//
-            inline void setNotificationEvent(INotificationEvent &event) {
-            	_notificationEvent = &event;
+            inline void senableNotificationEvent(INotificationEvent &event) {
+            	_notificationEventRaiser.enable(event);
             }
-            inline void clearNotificationEvent() {
-            	_notificationEvent = nullptr;
+            inline void disableNotificationEvent() {
+            	_notificationEventRaiser.disable();
             }
 
-			inline void setWriteRequestEvent(IWriteRequestEvent &event, bool enabled = true) {
-            	_writeRequestEvent = &event;
+			inline void enableWriteRequestEvent(IWriteRequestEvent &event) {
+            	_writeRequestEventRaiser.enable(event);
 			}
-			inline void clearWriteRequestEvent() {
-				_writeRequestEvent = nullptr;
-			}
-
-			inline void setSYNCReceivedEvent(ISYNCReceivedEvent &event, bool enabled = true) {
-            	_erSYNCReceived.set(event, enabled);
+			inline void disableWriteRequestEvent() {
+				_writeRequestEventRaiser.disable();
 			}
 
-			inline void setTPDOReceivedEvent(ITPDOReceivedEvent &event, bool enabled = true) {
-            	_erTPDOReceived.set(event, enabled);
+			inline void enableSYNCReceivedEvent(ISYNCReceivedEvent &event) {
+            	_syncReceivedEventRaiser.enable(event);
 			}
 
-			inline void setHeartbeatReceivedEvent(IHeartbeatReceivedEvent &event, bool enabled = true) {
-            	_erHeartbeatReceived.set(event, enabled);
+			inline void disableSYNCReceivedEvent() {
+            	_syncReceivedEventRaiser.disable();
+			}
+
+			inline void enableTPDOReceivedEvent(ITPDOReceivedEvent &event) {
+            	_tpdoReceivedEventRaiser.enable(event);
+			}
+
+			inline void disableTPDOReceivedEvent() {
+            	_tpdoReceivedEventRaiser.disable();
+			}
+
+			inline void enableHeartbeatReceivedEvent(IHeartbeatReceivedEvent &event) {
+            	_heartbeatReceivedEventRaiser.enable(event);
+			}
+
+			inline void disbleHeartbeatReceivedEvent() {
+            	_heartbeatReceivedEventRaiser.disable();
 			}
 	};
 }

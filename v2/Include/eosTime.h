@@ -3,7 +3,7 @@
 #define __eosTime__
 
 
-#include "eos.h"
+#include <cstdint>
 
 
 namespace eos {

@@ -4,12 +4,7 @@
 
 
 #include "eos.h"
-
-
-namespace eos {
-
-	class Time;
-}
+#include "eosTime.h"
 
 
 namespace rtos {

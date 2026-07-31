@@ -100,17 +100,17 @@ namespace eos {
             bool read(const DigInput *input) const;
             uint32_t getEdges(DigInput *input, bool clear = true) const;
 
-            inline void setInputChangedEvent(IInputChangedEvent &event) {
+            inline void enableInputChangedEvent(IInputChangedEvent &event) {
             	_inputChangedEvent = &event;
             }
-            inline void clearInputChangedEvent() {
+            inline void disableInputChangedEvent() {
             	_inputChangedEvent = nullptr;
             }
 
-            inline void setBeforeScanEvent(IBeforeScanEvent &event) {
+            inline void enableBeforeScanEvent(IBeforeScanEvent &event) {
             	_beforeScanEvent = &event;
             }
-            inline void clearBeforeScanEvent() {
+            inline void disableBeforeScanEvent() {
             	_beforeScanEvent = nullptr;
             }
     };

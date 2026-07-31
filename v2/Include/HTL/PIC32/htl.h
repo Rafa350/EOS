@@ -3,7 +3,14 @@
 #define __PIC32_htl__
 
 
-#include "HTL/htl.h"
+#ifndef __htl__
+    #include "HTL/htl.h"
+#endif
+
+
+#ifdef EOS_TOOLCHAIN_XC32
+    #include "xc.h"
+#endif
 
 
 // Comprova l'existencia dels moduls GPIO

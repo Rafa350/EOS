@@ -12,6 +12,7 @@
 //
 #include "eosBits.h"
 #include "eosTime.h"
+#include "eosEvents.h"
 #include "HTL/htl.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlClock.h"
@@ -189,7 +190,7 @@ namespace htl {
 			public:
 				/// Identificador de la notificacio
 				///
-				enum class NotifyID {
+				enum class NotificationID {
 					null,
 					rxCompleted, ///< Recepcio complerta.
 					txCompleted, ///< Transmissio complerta.
@@ -198,8 +199,8 @@ namespace htl {
 
 				/// Parametres del event de notificacio.
 				///
-				struct NotifyEventArgs {
-					NotifyID id;                   ///< Identificador de la notificacio
+				struct NotificationEventArgs {
+					NotificationID id;             ///< Identificador de la notificacio
 					bool irq;                      ///< Indica si es notifica desde una interrupcio.
 					union {
 						struct {
@@ -215,14 +216,11 @@ namespace htl {
 
 				// Event de notificacio
 				//
-				using INotifyEvent = IEvent<UARTDevice, NotifyEventArgs>;
-				template <typename Instance_> using NotifyEvent = Event<Instance_, UARTDevice, NotifyEventArgs>;
+				using NotificationEventRaiser = eos::EventRaiser<UARTDevice, NotificationEventArgs>;
+				using INotificationEvent = NotificationEventRaiser::IEvent;
+				template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 			public:
-#if HTL_UART_OPTION_DMA == 1
-                using DevDMA = dma::DMADevice;
-#endif
-
                 /// Estats en que es troba el dispositiu.
                 ///
 				enum class State {
@@ -234,8 +232,8 @@ namespace htl {
 
 			private:
 #if HTL_UART_OPTION_DMA == 1
-				using DMANotifyEvent = dma::NotifyEvent<UARTDevice>;
-				using DMANotifyEventArgs = dma::NotifyEventArgs;
+				using DMANotificationEvent = dma::DMADevice::NotificationEvent<UARTDevice>;
+				using DMANotificationEventArgs = dma::DMADevice::NotificationEventArgs;
 #endif
 
 			private:
@@ -247,9 +245,9 @@ namespace htl {
 				const uint8_t *_txBuffer;       ///< Buffer de transmissio.
 				uint32_t _txCount;              ///< Contador de bytes transmesos.
 				uint32_t _txMaxCount;           ///< Maxim del contador de bytes rebuts.
-				INotifyEvent *_notifyEvent;     ///< Event de notificacio
+				NotificationEventRaiser _notificationEventRaiser;   ///< Event de notificacio
 #if HTL_UART_OPTION_DMA == 1
-				DMANotifyEvent _dmaNotifyEvent; ///< Event de notificacio del DMA.
+				DMANotificationEvent _dmaNotificationEvent; ///< Event de notificacio del DMA.
 #endif
 
 			private:
@@ -305,7 +303,7 @@ namespace htl {
 				void raiseTxCompletedNotification(const uint8_t *buffer, uint32_t length, bool irq);
 				void raiseRxCompletedNotification(const uint8_t *buffer, uint32_t length, bool irq);
 #if HTL_UART_OPTION_DMA == 1
-				void dmaNotifyEventHandler(DevDMA *devDMA, DMANotifyEventArgs &args);
+				void dmaNotificationEventHandler(dma::DMADevice *devDMA, dma::DMADevice::NotificationEventArgs *args);
 #endif
 
 			protected:
@@ -339,11 +337,11 @@ namespace htl {
 				eos::Result setRxTimeout(unsigned timeout) const;
 #endif
 
-				inline void enableNotifyEvent(INotifyEvent &event) {
-					_notifyEvent = &event;
+				inline void enableNotificationEvent(INotificationEvent &event) {
+					_notificationEventRaiser.enable(event);
 				}
-				inline void disableNotifyEvent() {
-					_notifyEvent = nullptr;
+				inline void disableNotificationEvent() {
+					_notificationEventRaiser.disable();
 				}
 
 				eos::Result transmit(const uint8_t *buffer, uint32_t length, eos::Time blockTime);

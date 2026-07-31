@@ -10,6 +10,8 @@
 
 
 #include "eosBits.h"
+#include "eosEvents.h"
+#include "eosResults.h"
 #include "eosTime.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
@@ -265,8 +267,9 @@ namespace htl {
 						} txCancelled;
 					};
 				};
-				using INotificationEvent = IEvent<CANDevice, NotificationEventArgs>;
-				template <typename Instance_> using NotificationEvent = Event<Instance_, CANDevice, NotificationEventArgs>;
+				using NotificationEventRaiser = eos::EventRaiser<CANDevice, NotificationEventArgs>;
+				using INotificationEvent = NotificationEventRaiser::IEvent;
+				template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 			public:
 				enum class State {
@@ -315,7 +318,7 @@ namespace htl {
 				FDCAN_GlobalTypeDef * const _can;
 				uint8_t * const _ram;
 				State _state;
-				INotificationEvent *_notificationEvent;
+				NotificationEventRaiser _notificationEventRaiser;
 
 			private:
 				inline void activate() {
@@ -391,10 +394,10 @@ namespace htl {
 				}
 
 				inline void enableNotificationEvent(INotificationEvent &event) {
-					_notificationEvent = &event;
+					_notificationEventRaiser.enable(event);
 				}
 				inline void disableNotificationEvent() {
-					_notificationEvent = nullptr;
+					_notificationEventRaiser.disable();
 				}
 
 		};
@@ -471,13 +474,17 @@ namespace htl {
 }
 
 
-#if defined(EOS_PLATFORM_STM32G0B1)
+#if defined(EOS_PLATFORM_STM32G0)
     #include "htl/STM32/G0/htlCAN_Traits.h"
+#endif
+
+
+#if defined(EOS_PLATFORM_STM32G0B1)
     #include "htl/STM32/G0/G0B1/htlCAN_Pins.h"
 #endif
 
 
-#endif // defined(HTL_CANx_EXIST)
+#endif // ifdef HTL_CANx_EXIST
 
 
-#endif // __STM32_htlCAN_H
+#endif // ifdef __STM32_htlCAN__

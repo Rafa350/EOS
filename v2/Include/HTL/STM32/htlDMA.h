@@ -4,7 +4,15 @@
 
 
 #include "HTL/htl.h"
+
+
+#ifdef HTL_DMAx_EXIST
+
+
+#include "eosEvents.h"
+#include "eosResults.h"
 #include "HTL/htlDevice.h"
+
 
 // Default options
 //
@@ -110,23 +118,6 @@ namespace htl {
             veryHight
 		};
 
-
-        enum class NotifyID {
-            null,
-            half,
-            completed,
-            error
-        };
-
-        struct NotifyEventArgs {
-            NotifyID id;
-            bool irq;
-        };
-
-        class DMADevice;
-        using INotifyEvent = eos::ICallbackP2<DMADevice*, NotifyEventArgs&>;
-        template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, DMADevice*, NotifyEventArgs&>;
-
         namespace internal {
             typedef struct {
                 DMA_TypeDef * const dma;
@@ -148,6 +139,20 @@ namespace htl {
 
 		class DMADevice: public Device {
 		    public:
+		        enum class NotificationID {
+		            null,
+		            half,
+		            completed,
+		            error
+		        };
+		        struct NotificationEventArgs {
+		            NotificationID id;
+		            bool irq;
+		        };
+		        using NotificationEventRaiser = eos::EventRaiser<DMADevice, NotificationEventArgs>;
+		        using INotificationEvent = NotificationEventRaiser::IEvent;
+		        template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+
 		        enum class State {
 		            reset,
 		            ready,
@@ -157,8 +162,7 @@ namespace htl {
 			private:
 		        const internal::DMADEV_TypeDef * const _dmadev;
 				State _state;
-                INotifyEvent *_notifyEvent;
-                bool _notifyEventEnabled;
+                NotificationEventRaiser _notificationEventRaiser;
 
             private:
                 void notifyTransferCompleted(bool irq);
@@ -195,12 +199,11 @@ namespace htl {
                         TransferMode mode, RequestID requestID);
                 eos::Result deinitialize();
 
-                void setNotifyEvent(INotifyEvent &event, bool enabled = true);
-                inline void enableNotifyEvent() {
-                    _notifyEventEnabled = _notifyEvent != nullptr;
+                inline void enableNotificationEvent(INotificationEvent &event) {
+                    _notificationEventRaiser.enable(event);
                 }
-                inline void disableNotifyEvent() {
-                    _notifyEventEnabled = false;
+                inline void disableNotificationEvent() {
+                    _notificationEventRaiser.disable();
                 }
 
                 eos::Result start(const uint8_t *src, uint8_t *dst, unsigned size);
@@ -331,4 +334,7 @@ namespace htl {
 }
 
 
-#endif // __STM32__htlDMA__
+#endif // ifdef HTL_DMAx_EXIST
+
+
+#endif // ifndef __STM32__htlDMA__

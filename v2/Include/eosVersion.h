@@ -9,10 +9,10 @@
 #define EOS_BUILD            100
 
 
-#include <stdint.h>
-
-
 #ifdef __cplusplus
+
+#include <cstdint>
+
 namespace eos {
 	namespace build {
 
@@ -24,7 +24,8 @@ namespace eos {
 		};
 	}
 }
-#endif
+
+#endif // __cplusplus
 
 
 #endif // __eosVersion__

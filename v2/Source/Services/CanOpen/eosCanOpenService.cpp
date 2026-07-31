@@ -212,13 +212,13 @@ void CanOpenService::configureCANFilters() {
 ///
 void CanOpenService::raiseStateChangedNotificationEvent() {
 
-	if (_notificationEvent != nullptr) {
+	if (_notificationEventRaiser) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::stateChanged}
 		};
 
-		_notificationEvent->execute(this, &args);
+		_notificationEventRaiser(this, &args);
 	}
 }
 
@@ -228,12 +228,12 @@ void CanOpenService::raiseStateChangedNotificationEvent() {
 ///
 void CanOpenService::raiseSYNCReceivedEvent() {
 
-	if (_erSYNCReceived.isEnabled()) {
+	if (_syncReceivedEventRaiser) {
 
 		SYNCReceivedEventArgs args = {
 		};
 
-		_erSYNCReceived(this, &args);
+		_syncReceivedEventRaiser(this, &args);
 	}
 }
 
@@ -249,7 +249,7 @@ void CanOpenService::onWriteU8Request(
 	uint8_t subIndex,
 	uint8_t value) {
 
-	if (_writeRequestEvent != nullptr) {
+	if (_writeRequestEventRaiser) {
 
 		WriteRequestEventArgs args = {
 			.index {index},
@@ -259,7 +259,7 @@ void CanOpenService::onWriteU8Request(
 			}
 		};
 
-		_writeRequestEvent->execute(this, &args);
+		_writeRequestEventRaiser(this, &args);
 	}
 }
 
@@ -275,7 +275,7 @@ void CanOpenService::onWriteU16Request(
 	uint8_t subIndex,
 	uint16_t value) {
 
-	if (_writeRequestEvent != nullptr) {
+	if (_writeRequestEventRaiser) {
 
 		WriteRequestEventArgs args = {
 			.index {index},
@@ -285,7 +285,7 @@ void CanOpenService::onWriteU16Request(
 			}
 		};
 
-		_writeRequestEvent->execute(this, &args);
+		_writeRequestEventRaiser(this, &args);
 	}
 }
 
@@ -301,7 +301,7 @@ void CanOpenService::onWriteU32Request(
 	uint8_t subIndex,
 	uint32_t value) {
 
-	if (_writeRequestEvent != nullptr) {
+	if (_writeRequestEventRaiser) {
 
 		WriteRequestEventArgs args = {
 			.index {index},
@@ -311,7 +311,7 @@ void CanOpenService::onWriteU32Request(
 			}
 		};
 
-		_writeRequestEvent->execute(this, &args);
+		_writeRequestEventRaiser(this, &args);
 	}
 }
 
@@ -327,7 +327,7 @@ void CanOpenService::raiseTPDOReceivedEvent(
 	const uint8_t *data,
 	unsigned dataLen) {
 
-	if (_erTPDOReceived.isEnabled()) {
+	if (_tpdoReceivedEventRaiser) {
 
 		TPDOReceivedEventArgs args = {
 			.cobId {cobId},
@@ -335,7 +335,7 @@ void CanOpenService::raiseTPDOReceivedEvent(
 			.data {data}
 		};
 
-		_erTPDOReceived(this, &args);
+		_tpdoReceivedEventRaiser(this, &args);
 	}
 }
 
@@ -347,14 +347,14 @@ void CanOpenService::raiseHeartbeatReceivedEvent(
 	uint8_t nodeId,
 	NodeState state) {
 
-	if (_erHeartbeatReceived.isEnabled()) {
+	if (_heartbeatReceivedEventRaiser) {
 
 		HeartbeatReceivedEventArgs args = {
 			.nodeId {nodeId},
 			.state {state}
 		};
 
-		_erHeartbeatReceived(this, &args);
+		_heartbeatReceivedEventRaiser(this, &args);
 	}
 }
 

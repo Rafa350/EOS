@@ -14,10 +14,10 @@ namespace eos {
 			htl::uart::UARTDevice * const _devUART;
 
 		private:
-			htl::uart::UARTDevice::NotifyEvent<SerialDriver_UART> _uartNotifyEvent;
+			htl::uart::UARTDevice::NotificationEvent<SerialDriver_UART> _uartNotificationEvent;
 
 		private:
-			void uartNotifyEventHandler(htl::uart::UARTDevice *sender, htl::uart::UARTDevice::NotifyEventArgs *args);
+			void uartNotificationEventHandler(htl::uart::UARTDevice *sender, htl::uart::UARTDevice::NotificationEventArgs *args);
 
 		protected:
             bool onInitialize() override;

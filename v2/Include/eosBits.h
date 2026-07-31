@@ -105,7 +105,7 @@ namespace eos {
 			}
 	};
 
-} // namespace htl
+}
 
 
 #endif // __eosBits__

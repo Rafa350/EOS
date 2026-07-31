@@ -16,7 +16,7 @@ namespace eos {
 	};
 
 	template <typename Instance_>
-	class CallbackP0: public ICallbackP0 {
+	class CallbackP0 final: public ICallbackP0 {
 		public:
 			using RInstance = Instance_ &;
 			using Method = void (Instance_::*)();
@@ -46,7 +46,7 @@ namespace eos {
     };
 
     template <typename Instance_, typename Param1_>
-    class CallbackP1: public ICallbackP1<Param1_> {
+    class CallbackP1 final: public ICallbackP1<Param1_> {
         public:
 			using RInstance = Instance_ &;
             using Method = void (Instance_::*)(Param1_);
@@ -76,7 +76,7 @@ namespace eos {
     };
 
     template <typename Instance_, typename Param1_, typename Param2_>
-    class CallbackP2: public ICallbackP2<Param1_, Param2_> {
+    class CallbackP2 final: public ICallbackP2<Param1_, Param2_> {
         public:
 			using RInstance = Instance_ &;
     	    using Method = void (Instance_::*)(Param1_, Param2_);
@@ -106,7 +106,7 @@ namespace eos {
     };
 
     template <typename Instance_, typename Param1_, typename Param2_, typename Param3_>
-    class CallbackP3: public ICallbackP3<Param1_, Param2_, Param3_> {
+    class CallbackP3 final: public ICallbackP3<Param1_, Param2_, Param3_> {
         public:
 			using RInstance = Instance_ &;
     	    using Method = void (Instance_::*)(Param1_, Param2_, Param3_);
@@ -136,7 +136,7 @@ namespace eos {
     };
 
     template <typename Instance_, typename Param1_, typename Param2_, typename Param3_, typename Param4_>
-    class CallbackP4: public ICallbackP4<Param1_, Param2_, Param3_, Param4_> {
+    class CallbackP4 final: public ICallbackP4<Param1_, Param2_, Param3_, Param4_> {
         public:
 			using RInstance = Instance_ &;
     	    using Method = void (Instance_::*)(Param1_, Param2_, Param3_, Param4_);
@@ -166,7 +166,7 @@ namespace eos {
     };
 
     template <typename Instance_, typename Result_, typename Param1_>
-    class CallbackP1R: public ICallbackP1R<Result_, Param1_> {
+    class CallbackP1R final: public ICallbackP1R<Result_, Param1_> {
         public:
             using Method = Result_ (Instance_::*)(Param1_);
         private:
@@ -192,7 +192,7 @@ namespace eos {
     };
 
     template <typename Instance_, typename Result_, typename Param1_, typename Param2_>
-    class CallbackP2R: public ICallbackP2R<Result_, Param1_, Param2_> {
+    class CallbackP2R final: public ICallbackP2R<Result_, Param1_, Param2_> {
         public:
             using Method = Result_ (Instance_::*)(Param1_, Param2_);
         private:

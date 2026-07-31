@@ -23,6 +23,7 @@ eos::MenuControl::MenuControl(
 	const uint8_t *descriptor):
 
     Control {position, size},
+
     _textColor {Colors::white},
     _selectedTextColor {Colors::black},
 	_selectedBackgroundColor {Colors::white},

@@ -6,7 +6,10 @@
 /// \brief    Constructor.
 ///
 eos::Form::Form():
+
 	Visual {Point(), Size()},
+
+	_activeControl {nullptr},
 	_dataContext {nullptr} {
 
 }
@@ -20,6 +23,7 @@ eos::Form::Form(
 	void *dataContext):
 
 	Visual {Point(), Size()},
+
 	_dataContext {dataContext} {
 
 }

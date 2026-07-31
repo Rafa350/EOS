@@ -3,10 +3,17 @@
 #define __STM32_htlTMR__
 
 
+#include "HTL/htl.h"
+
+
+#ifdef HTL_TMRx_EXIST
+
+
 // EOS includes
 //
+#include "eosEvents.h"
+#include "eosResults.h"
 #include "HTL/htlDevice.h"
-#include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
 
 
@@ -134,8 +141,9 @@ namespace htl {
 						} update;
 					};
 				};
-				using INotificationEvent = IEvent<TMRDevice, NotificationEventArgs>;
-				template <typename Instance_> using NotificationEvent = Event<Instance_, TMRDevice, NotificationEventArgs>;
+				using NotificationEventRaiser = eos::EventRaiser<TMRDevice, NotificationEventArgs>;
+				using INotificationEvent = NotificationEventRaiser::IEvent;
+				template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
 				enum class State {
 					reset,
@@ -148,7 +156,7 @@ namespace htl {
 			private:
 				TIM_TypeDef * const _tim;
 				State _state;
-				INotificationEvent *_notificationEvent;
+				NotificationEventRaiser _notificationEventRaiser;
 
 			private:
 				void notifyTrigger();
@@ -184,10 +192,10 @@ namespace htl {
 				void disableChannel(Channel channel);
 
 				inline void enableNotificationEvent(INotificationEvent &event) {
-					_notificationEvent = &event;
+					_notificationEventRaiser.enable(event);
 				}
 				inline void disableNotificationEvent() {
-					_notificationEvent = nullptr;
+					_notificationEventRaiser.disable();
 				}
 				eos::Result start();
 				eos::Result start_IRQ();
@@ -321,37 +329,39 @@ namespace htl {
 }
 
 
-#if defined(EOS_PLATFORM_STM32G030)
-	#include "htl/STM32/G0/htlTMR_Traits.h"
-    #include "htl/STM32/G0/G030/htlTMR_Pins.h"
-
-#elif defined(EOS_PLATFORM_STM32G031)
-	#include "htl/STM32/G0/htlTMR_Traits.h"
-    #include "htl/STM32/G0/G031/htlTMR_Pins.h"
-
-#elif defined(EOS_PLATFORM_STM32G071)
-	#include "htl/STM32/G0/htlTMR_Traits.h"
-    #include "htl/STM32/G0/G071/htlTMR_Pins.h"
-
-#elif defined(EOS_PLATFORM_STM32G0B1)
-	#include "htl/STM32/G0/htlTMR_Traits.h"
-    #include "htl/STM32/G0/G0B1/htlTMR_Pins.h"
-
-#elif defined(EOS_PLATFORM_STM32F030)
+#if defined(EOS_PLATFORM_STM32G0)
+#	include "htl/STM32/G0/htlTMR_Traits.h"
+#elif defined(EOS_PLATFORM_STM32F0)
 	#include "htl/STM32/F0/htlTMR_Traits.h"
-    #include "htl/STM32/F0/F030/htlTMR_Pins.h"
-
 #elif defined(EOS_PLATFORM_STM32F429)
 	#include "htl/STM32/F4/htlTMR_Traits.h"
-    #include "htl/STM32/F4/F429/htlTMR_Pins.h"
-
 #elif defined(EOS_PLATFORM_STM32F746)
 	#include "htl/STM32/F7/htlTMR_Traits.h"
-    #include "htl/STM32/F7/F746/htlTMR_Pins.h"
-
 #else
     #error "Unknown platform"
 #endif
 
 
-#endif // __STM32_htlTMR__
+#if defined(EOS_PLATFORM_STM32F030)
+    #include "htl/STM32/F0/F030/htlTMR_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F429)
+    #include "htl/STM32/F4/F429/htlTMR_Pins.h"
+#elif defined(EOS_PLATFORM_STM32F746)
+    #include "htl/STM32/F7/F746/htlTMR_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G030)
+    #include "htl/STM32/G0/G030/htlTMR_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G031)
+    #include "htl/STM32/G0/G031/htlTMR_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G071)
+    #include "htl/STM32/G0/G071/htlTMR_Pins.h"
+#elif defined(EOS_PLATFORM_STM32G0B1)
+    #include "htl/STM32/G0/G0B1/htlTMR_Pins.h"
+#else
+    #error "Unknown platform"
+#endif
+
+
+#endif // ifdef HTL_TMRx_EXIST
+
+
+#endif // ifndef __STM32_htlTMR__

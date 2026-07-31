@@ -17,7 +17,7 @@ uart::UARTDevice::UARTDevice(
 	_usart {usart},
 	_state {State::reset}
 #if HTL_UART_OPTION_DMA == 1
-	, _dmaNotifyEvent {*this, &UARTDevice::dmaNotifyEventHandler}
+	, _dmaNotificationEvent {*this, &UARTDevice::dmaNotificationEventHandler}
 #endif
 	{
 }
@@ -515,7 +515,7 @@ eos::Result uart::UARTDevice::transmit_DMA(
 
         // Inicia la transferencia per DMA
         //
-        devDMA->setNotifyEvent(_dmaNotifyEvent, true);
+        devDMA->enableNotificationEvent(_dmaNotificationEvent);
         devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txMaxCount);
 
         return eos::Result::ErrorCodes::ok;
@@ -902,30 +902,30 @@ void uart::UARTDevice::rxInterruptService() {
 #if HTL_UART_OPTION_DMA == 1
 /// ----------------------------------------------------------------------
 /// \brief    Reb les notificacions del DMA
-/// \param    devDMA: El dispositiu DMA que genera l'event.
+/// \param    sender: El dispositiu DMA que genera l'event.
 /// \param    args: Parametres del event.
 ///
-void uart::UARTDevice::dmaNotifyEventHandler(
-    DevDMA *devDMA,
-    DMANotifyEventArgs &args) {
+void uart::UARTDevice::dmaNotificationEventHandler(
+    dma::DMADevice *sender,
+    dma::DMADevice::NotificationEventArgs *args) {
 
-    switch (args.id) {
+    switch (args->id) {
 
         // Transmissio complerta de tots els bytes.
         //
-        case htl::dma::NotifyID::completed: {
+        case htl::dma::DMADevice::NotificationID::completed: {
             _txCount = _txMaxCount;
             _usart->ICR = USART_ICR_TCCF;
             auto a = startAtomic();
             eos::Bits::set(_usart->CR1, USART_CR1_TCIE);
             endAtomic(a);
-            devDMA->disableNotifyEvent();
+            sender->disableNotificationEvent();
             break;
         }
 
         // Error en la transmissio DMA.
         //
-        case htl::dma::NotifyID::error:
+        case htl::dma::DMADevice::NotificationID::error:
             break;
 
         default:
@@ -946,10 +946,10 @@ void uart::UARTDevice::raiseTxCompletedNotification(
 	uint32_t length,
 	bool irq) {
 
-	if (_notifyEvent != nullptr) {
+	if (_notificationEventRaiser) {
 
-		NotifyEventArgs args = {
-			.id = NotifyID::txCompleted,
+		NotificationEventArgs args = {
+			.id = NotificationID::txCompleted,
 			.irq = irq,
 			.txCompleted {
 				.buffer = buffer,
@@ -957,7 +957,7 @@ void uart::UARTDevice::raiseTxCompletedNotification(
 			}
 		};
 
-		_notifyEvent->execute(this, &args);
+		_notificationEventRaiser(this, &args);
 	}
 }
 
@@ -973,10 +973,10 @@ void uart::UARTDevice::raiseRxCompletedNotification(
 	uint32_t length,
 	bool irq) {
 
-	if (_notifyEvent != nullptr) {
+	if (_notificationEventRaiser) {
 
-		NotifyEventArgs args = {
-			.id = NotifyID::rxCompleted,
+		NotificationEventArgs args = {
+			.id = NotificationID::rxCompleted,
 			.irq = irq,
 			.rxCompleted {
 				.buffer = buffer,
@@ -984,7 +984,7 @@ void uart::UARTDevice::raiseRxCompletedNotification(
 			}
 		};
 
-		_notifyEvent->execute(this, &args);
+		_notificationEventRaiser(this, &args);
 	}
 }
 

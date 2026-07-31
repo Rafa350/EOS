@@ -146,8 +146,7 @@ CANDevice::CANDevice(
 
 	_can {can},
 	_ram {ram},
-	_state {State::reset},
-	_notificationEvent {nullptr} {
+	_state {State::reset} {
 
 }
 
@@ -604,7 +603,7 @@ void CANDevice::raiseRxFifoNotEmptyNotification(
 	RxFifoSelection fifo,
 	bool irq) {
 
-	if (_notificationEvent != nullptr) {
+	if (_notificationEventRaiser) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::rxFifoNotEmpty},
@@ -613,7 +612,7 @@ void CANDevice::raiseRxFifoNotEmptyNotification(
 				.fifo {fifo}
 			}
 		};
-		_notificationEvent->execute(this, &args);
+		_notificationEventRaiser(this, &args);
 	}
 }
 
@@ -625,7 +624,7 @@ void CANDevice::raiseRxFifoNotEmptyNotification(
 void CANDevice::raiseTxCompletedNotification(
 	bool irq) {
 
-	if (_notificationEvent != nullptr) {
+	if (_notificationEventRaiser) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::txCompleted},
@@ -633,7 +632,7 @@ void CANDevice::raiseTxCompletedNotification(
 			.txCompleted {
 			}
 		};
-		_notificationEvent->execute(this, &args);
+		_notificationEventRaiser(this, &args);
 	}
 }
 
@@ -644,7 +643,7 @@ void CANDevice::raiseTxCompletedNotification(
 void CANDevice::raiseTxCancelledNotification(
 	bool irq) {
 
-	if (_notificationEvent != nullptr) {
+	if (_notificationEventRaiser) {
 
 		NotificationEventArgs args = {
 			.id {NotificationID::txCancelled},
@@ -652,7 +651,7 @@ void CANDevice::raiseTxCancelledNotification(
 			.txCancelled {
 			}
 		};
-		_notificationEvent->execute(this, &args);
+		_notificationEventRaiser(this, &args);
 	}
 }
 

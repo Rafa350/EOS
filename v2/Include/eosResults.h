@@ -3,6 +3,9 @@
 #define __eosResults__
 
 
+#include <cstdint>
+
+
 namespace eos {
 
 	template <typename Error_>

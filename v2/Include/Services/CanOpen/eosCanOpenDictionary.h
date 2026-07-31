@@ -4,7 +4,7 @@
 
 
 #include "eos.h"
-#include "System/eosEvents.h"
+#include "eosEvents.h"
 
 
 #define VAR_RW_BOOL(index, subIndex, data) \
@@ -114,8 +114,8 @@ namespace eos {
 		private:
 			const CoDictionaryEntry * const _entries;
 			unsigned const _numEntries;
-			AccessEventRaiser _erAccess;
-			ChangedEventRaiser _erChanged;
+			AccessEventRaiser _accessEventRaiser;
+			ChangedEventRaiser _changedEventRaiser;
 
 		private:
 			void raiseChangedU8Event(uint16_t index, uint8_t subIndex, uint8_t oldValue, uint8_t newValue);
@@ -152,8 +152,12 @@ namespace eos {
 			bool readU32(unsigned entryId, uint32_t &value);
 			bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
 
-            void setAccessEvent(IAccessEvent &event);
-            void setChangedEvent(IChangedEvent &event);
+            inline void enableAccessEvent(IAccessEvent &event) {
+            	_accessEventRaiser.enable(event);
+            }
+            inline void enableChangedEvent(IChangedEvent &event) {
+            	_changedEventRaiser.enable(event);
+            }
 	};
 }
 

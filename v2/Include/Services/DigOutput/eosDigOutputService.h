@@ -144,10 +144,10 @@ namespace eos {
             bool containsOutput(DigOutput *output) const;
             DigOutput *getOutput(uint32_t tag) const;
 
-            inline void setOutputChangedEvent(IOutputChangedEvent &event) {
+            inline void enableOutputChangedEvent(IOutputChangedEvent &event) {
             	_outputChangedEvent = &event;
             }
-            inline void clearOutputChangedEvent() {
+            inline void disableOutputChangedEvent() {
             	_outputChangedEvent = nullptr;
             }
 

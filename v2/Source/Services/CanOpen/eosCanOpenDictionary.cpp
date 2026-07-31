@@ -21,28 +21,6 @@ CanOpenDictionary::CanOpenDictionary(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el event 'Changed'
-/// \param    event: L'event.
-///
-void CanOpenDictionary::setChangedEvent(
-	IChangedEvent &event) {
-
-	_erChanged.set(event);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el event 'Access'
-/// \param    event: L'event.
-///
-void CanOpenDictionary::setAccessEvent(
-	IAccessEvent &event) {
-
-	_erAccess.set(event);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Busca una entrada en el diccionari.
 /// \param    index: L'index de l'entrada.
 /// \param    subIndex: El subindex de l'entrada.
@@ -115,18 +93,21 @@ void CanOpenDictionary::raiseChangedU8Event(
 	uint8_t oldValue,
 	uint8_t newValue) {
 
-	ChangedEventArgs args = {
-		.index {index},
-		.subIndex {subIndex},
-		.oldValue {
-			.u8 {oldValue}
-		},
-		.newValue {
-			.u8 {newValue}
-		}
-	};
+	if (_changedEventRaiser) {
 
-	_erChanged(this, &args);
+		ChangedEventArgs args = {
+			.index {index},
+			.subIndex {subIndex},
+			.oldValue {
+				.u8 {oldValue}
+			},
+			.newValue {
+				.u8 {newValue}
+			}
+		};
+
+		_changedEventRaiser(this, &args);
+	}
 }
 
 
@@ -141,18 +122,21 @@ void CanOpenDictionary::raiseReadU8AccessEvent(
 	uint8_t subIndex,
 	uint8_t &value) {
 
-	AccessEventArgs args = {
-		.access {AccessMode::read},
-		.index {index},
-		.subIndex {subIndex},
-		.value {
-			.u8 {value}
-		}
-	};
+	if (_accessEventRaiser) {
 
-	_erAccess(this, &args);
+		AccessEventArgs args = {
+			.access {AccessMode::read},
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u8 {value}
+			}
+		};
 
-	value = args.value.u8;
+		_accessEventRaiser(this, &args);
+
+	   value = args.value.u8;
+	}
 }
 
 
@@ -167,18 +151,21 @@ void CanOpenDictionary::raiseReadU16AccessEvent(
 	uint8_t subIndex,
 	uint16_t &value) {
 
-	AccessEventArgs args = {
-		.access {AccessMode::read},
-		.index {index},
-		.subIndex {subIndex},
-		.value {
-			.u16 {value}
-		}
-	};
+	if (_accessEventRaiser) {
 
-	_erAccess(this, &args);
+		AccessEventArgs args = {
+			.access {AccessMode::read},
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u16 {value}
+			}
+		};
 
-	value = args.value.u16;
+		_accessEventRaiser(this, &args);
+
+		value = args.value.u16;
+	}
 }
 
 
@@ -193,18 +180,21 @@ void CanOpenDictionary::raiseReadU32AccessEvent(
 	uint8_t subIndex,
 	uint32_t &value) {
 
-	AccessEventArgs args = {
-		.access {AccessMode::read},
-		.index {index},
-		.subIndex {subIndex},
-		.value {
-			.u32 {value}
-		}
-	};
+	if (_accessEventRaiser) {
 
-	_erAccess(this, &args);
+		AccessEventArgs args = {
+			.access {AccessMode::read},
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u32 {value}
+			}
+		};
 
-	value = args.value.u32;
+		_accessEventRaiser(this, &args);
+
+		value = args.value.u32;
+	}
 }
 
 
@@ -219,13 +209,19 @@ void CanOpenDictionary::raiseWriteU8AccessEvent(
 	uint8_t subIndex,
 	uint8_t value) {
 
-	AccessEventArgs args;
-	args.access = AccessMode::write;
-	args.index = index;
-	args.subIndex = subIndex;
-	args.value.u8 = value;
+	if (_accessEventRaiser) {
 
-	_erAccess(this, &args);
+		AccessEventArgs args = {
+			.access {AccessMode::write},
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u8 {value}
+			}
+		};
+
+		_accessEventRaiser(this, &args);
+	}
 }
 
 
@@ -240,13 +236,16 @@ void CanOpenDictionary::raiseWriteU16AccessEvent(
 	uint8_t subIndex,
 	uint16_t value) {
 
-	AccessEventArgs args;
-	args.access = AccessMode::write;
-	args.index = index;
-	args.subIndex = subIndex;
-	args.value.u16 = value;
+	if (_accessEventRaiser) {
 
-	_erAccess(this, &args);
+		AccessEventArgs args;
+		args.access = AccessMode::write;
+		args.index = index;
+		args.subIndex = subIndex;
+		args.value.u16 = value;
+
+	_accessEventRaiser(this, &args);
+	}
 }
 
 
@@ -261,13 +260,19 @@ void CanOpenDictionary::raiseWriteU32AccessEvent(
 	uint8_t subIndex,
 	uint32_t value) {
 
-	AccessEventArgs args;
-	args.access = AccessMode::write;
-	args.index = index;
-	args.subIndex = subIndex;
-	args.value.u32 = value;
+	if (_accessEventRaiser) {
 
-	_erAccess(this, &args);
+		AccessEventArgs args = {
+			.access {AccessMode::write},
+			.index {index},
+			.subIndex {subIndex},
+			.value {
+				.u32 {value}
+			}
+		};
+
+		_accessEventRaiser(this, &args);
+	}
 }
 
 

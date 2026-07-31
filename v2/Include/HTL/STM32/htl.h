@@ -3,7 +3,10 @@
 #define __STM32_htl__
 
 
+#ifndef __htl__
 #include "HTL/htl.h"
+#endif
+#include "HTL/STM32/htlPlatform.h"
 
 
 // Opcions per defecte del modul GPIO
@@ -130,6 +133,17 @@
 #ifdef TIM17_BASE
 	#define HTL_TMR17_EXIST
 #endif
+#if defined(HTL_TMR1_EXIST) || defined(HTL_TMR2_EXIST) || \
+    defined(HTL_TMR3_EXIST) || defined(HTL_TMR4_EXIST) || \
+    defined(HTL_TMR5_EXIST) || defined(HTL_TMR6_EXIST) || \
+    defined(HTL_TMR7_EXIST) || defined(HTL_TMR8_EXIST) || \
+    defined(HTL_TMR9_EXIST) || defined(HTL_TMR10_EXIST) || \
+    defined(HTL_TMR11_EXIST) || defined(HTL_TMR12_EXIST) || \
+    defined(HTL_TMR13_EXIST) || defined(HTL_TMR14_EXIST) || \
+    defined(HTL_TMR15_EXIST) || defined(HTL_TMR16_EXIST) || \
+    defined(HTL_TMR17_EXIST)
+	#define HTL_TMRx_EXIST
+#endif
 
 
 // Comprova l'existencia dels moduls I2C
@@ -184,46 +198,44 @@
 //
 #if defined(USART1_BASE) || defined(UART1_BASE)
 	#define HTL_UART1_EXIST
-	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART2_BASE) || defined(UART2_BASE)
 	#define HTL_UART2_EXIST
-	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART3_BASE) || defined(UART3_BASE)
 	#define HTL_UART3_EXIST
-	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART4_BASE) || defined(UART4_BASE)
 	#define HTL_UART4_EXIST
-	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART5_BASE) || defined(UART5_BASE)
 	#define HTL_UART5_EXIST
-	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART6_BASE) || defined(UART6_BASE)
 	#define HTL_UART6_EXIST
-	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART7_BASE) || defined(UART7_BASE)
 	#define HTL_UART7_EXIST
-	#define HTL_UARTx_EXIST
 #endif
 #if defined(USART8_BASE) || defined(UART8_BASE)
 	#define HTL_UART8_EXIST
+#endif
+#if defined(HTL_UART1_EXIST) || defined(HTL_UART2_EXIST) || \
+	defined(HTL_UART3_EXIST) || defined(HTL_UART4_EXIST) || \
+	defined(HTL_UART5_EXIST) || defined(HTL_UART6_EXIST) || \
+	defined(HTL_UART7_EXIST) || defined(HTL_UART8_EXIST)
 	#define HTL_UARTx_EXIST
 #endif
-
 
 // Comprova l'existencia dels moduls FDCAN
 //
 #if defined(FDCAN1_BASE)
 	#define HTL_CAN1_EXIST
-	#define HTL_CANx_EXIST
 #endif
 #if defined(FDCAN2_BASE)
 	#define HTL_CAN2_EXIST
+#endif
+#if defined(HTL_CAN1_EXIST) || defined(HTL_CAN2_EXIST)
 	#define HTL_CANx_EXIST
 #endif
 
@@ -235,6 +247,9 @@
 #endif
 #ifdef DMA2_BASE
     #define HTL_DMA2_EXIST
+#endif
+#if defined(HTL_DMA1_EXIST) || defined(HTL_DMA2_EXIST)
+	#define HTL_DMAx_EXIST
 #endif
 
 #ifdef DMA1_Channel1_BASE

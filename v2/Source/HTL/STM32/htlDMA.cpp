@@ -203,8 +203,7 @@ Result DMADevice::deinitialize() {
     //
     if (_state == State::ready) {
 
-        _notifyEvent = nullptr;
-        _notifyEventEnabled = false;
+        _notificationEventRaiser.disable();
 
         // Deshabilita el canal.
         //
@@ -225,20 +224,6 @@ Result DMADevice::deinitialize() {
     }
     else
         return Result::ErrorCodes::error;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona l'event de notificacio.
-/// \param    event: L'event.
-/// \param    enabled: Indica si esta habilitat.
-//
-void DMADevice::setNotifyEvent(
-    INotifyEvent &event,
-    bool enabled) {
-
-    _notifyEvent = &event;
-    _notifyEventEnabled = enabled;
 }
 
 
@@ -372,12 +357,14 @@ void DMADevice::interruptService() {
 void DMADevice::notifyTransferCompleted(
     bool irq) {
 
-    if (_notifyEventEnabled) {
-        NotifyEventArgs args = {
-            .id = NotifyID::completed,
+    if (_notificationEventRaiser) {
+
+        NotificationEventArgs args = {
+            .id = NotificationID::completed,
             .irq = irq
         };
-        _notifyEvent->execute(this, args);
+
+        _notificationEventRaiser(this, &args);
     }
 }
 
@@ -389,12 +376,14 @@ void DMADevice::notifyTransferCompleted(
 void DMADevice::notifyHalfTransfer(
     bool irq) {
 
-    if (_notifyEventEnabled) {
-        NotifyEventArgs args = {
-            .id = NotifyID::half,
+    if (_notificationEventRaiser) {
+
+        NotificationEventArgs args = {
+            .id = NotificationID::half,
             .irq = irq
         };
-        _notifyEvent->execute(this, args);
+
+        _notificationEventRaiser(this, &args);
     }
 }
 

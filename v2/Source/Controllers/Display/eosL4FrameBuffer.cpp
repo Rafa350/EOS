@@ -1,8 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/eosL1FrameBuffer.h"
-
-
-using namespace eos;
+#include "Controllers/Display/eosL4FrameBuffer.h"
 
 
 /// ----------------------------------------------------------------------
@@ -13,7 +10,7 @@ using namespace eos;
 /// \param    buffer: El buffer de memoria.
 /// \param    bufferPitch: Amplada en bytes de cada scanline.
 ///
-L1FrameBuffer::L1FrameBuffer(
+eos::L4FrameBuffer::L4FrameBuffer(
     int16_t frameWidth,
     int16_t frameHeight,
     DisplayOrientation orientation,
@@ -32,16 +29,17 @@ L1FrameBuffer::L1FrameBuffer(
 /// \param    y: Coordinada y de la posicio
 /// \param    color: Color del pixel.
 ///
-void L1FrameBuffer::put(
+void eos::L4FrameBuffer::put(
 	int16_t x,
 	int16_t y,
 	Color color) {
 
-	uint8_t *byte = reinterpret_cast<uint8_t*>(uint32_t(_buffer) + ((y >> 3) * _bufferPitch) + x);
-	if (color.getL())
-		*byte |= 1 << (y & 7);
+	uint8_t *byte = _buffer + (y * _bufferPitch) + (x >> 1);
+
+	if (x & 1)
+		*byte = (*byte & 0xF0) | color.getL();
 	else
-		*byte &= ~(1 << (y & 7));
+		*byte = (*byte & 0x0F) | (color.getL() << 4);
 }
 
 
@@ -53,7 +51,7 @@ void L1FrameBuffer::put(
 /// \param    height: Alçada de la regio.
 /// \param    color: Color.
 ///
-void L1FrameBuffer::fill(
+void eos::L4FrameBuffer::fill(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -67,7 +65,7 @@ void L1FrameBuffer::fill(
 }
 
 
-void L1FrameBuffer::copy(
+void eos::L4FrameBuffer::copy(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -77,7 +75,8 @@ void L1FrameBuffer::copy(
 
 }
 
-void L1FrameBuffer::copy(
+
+void eos::L4FrameBuffer::copy(
 	int16_t x,
 	int16_t y,
 	int16_t width,

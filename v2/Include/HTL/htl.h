@@ -4,8 +4,6 @@
 
 
 #include "eos.h"
-#include "eosResults.h"
-#include "System/eosEvents.h"
 
 
 #if defined(EOS_PLATFORM_PIC32MX) || \
