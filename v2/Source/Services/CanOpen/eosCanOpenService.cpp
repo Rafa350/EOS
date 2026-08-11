@@ -822,6 +822,7 @@ void CanOpenService::processRPDO(
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 /// \param    mask: La mascara de bits del valor.
+/// \param    blockTime: Temps maxim de bloqueig.
 /// \return   True si tot es correcte.
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
@@ -830,7 +831,8 @@ bool CanOpenService::writeU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value,
-	uint8_t mask) {
+	uint8_t mask,
+	Time blockTime) {
 
 	auto ok = false;
 
@@ -846,7 +848,7 @@ bool CanOpenService::writeU8(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, Times::infinite);
+					ok = _messageQueue.push(msg, blockTime);
 				}
 			}
 
@@ -860,6 +862,7 @@ bool CanOpenService::writeU8(
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 /// \param    mask: La mascara de bits del valor.
+/// \param    blockTime: Temps maxim de bloqueig.
 /// \return   True si tot es correcte.
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
@@ -868,7 +871,8 @@ bool CanOpenService::writeU16(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t value,
-	uint16_t mask) {
+	uint16_t mask,
+	Time blockTime) {
 
 	auto ok = false;
 
@@ -884,7 +888,7 @@ bool CanOpenService::writeU16(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, Times::infinite);
+					ok = _messageQueue.push(msg, blockTime);
 				}
 			}
 
@@ -898,6 +902,7 @@ bool CanOpenService::writeU16(
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 /// \param    mask: La mascara de bits del valor.
+/// \param    blockTime: Temps maxim de bloqueig.
 /// \return   True si tot es correcte.
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
@@ -906,7 +911,8 @@ bool CanOpenService::writeU32(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value,
-	uint32_t mask) {
+	uint32_t mask,
+	Time blockTime) {
 
 	auto ok = false;
 
@@ -922,7 +928,7 @@ bool CanOpenService::writeU32(
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, Times::infinite);
+					ok = _messageQueue.push(msg, blockTime);
 				}
 			}
 
@@ -989,8 +995,11 @@ Result CanOpenService::start(
 	NodeID nodeId,
 	Time timeout) {
 
+	// Comprova que de veritat sigui un node remot
+	//
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
+
 	else
 		return emitNMT(0x01, nodeId, timeout);
 }
@@ -1006,8 +1015,11 @@ Result CanOpenService::stop(
 	NodeID nodeId,
 	Time timeout) {
 
+	// Comprova que de veritat sigui un node remot
+	//
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
+
 	else
 		return emitNMT(0x02, nodeId, timeout);
 }
@@ -1024,8 +1036,11 @@ Result CanOpenService::enterPreOperational(
 	NodeID nodeId,
 	Time timeout) {
 
+	// Comprova que de veritat sigui un node remot
+	//
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
+
 	else
 		return emitNMT(0x80, nodeId, timeout);
 }
@@ -1042,8 +1057,11 @@ Result CanOpenService::resetNode(
 	NodeID nodeId,
 	Time timeout) {
 
+	// Comprova que de veritat sigui un node remot
+	//
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
+
 	else
 		return emitNMT(0x81, nodeId, timeout);
 }
@@ -1060,8 +1078,11 @@ Result CanOpenService::resetCommunication(
 	NodeID nodeId,
 	Time timeout) {
 
+	// Comprova que de veritat sigui un node remot
+	//
 	if (nodeId == _nodeId)
 		return Result::ErrorCodes::errorParameter;
+
 	else
 		return emitNMT(0x82, nodeId, timeout);
 }

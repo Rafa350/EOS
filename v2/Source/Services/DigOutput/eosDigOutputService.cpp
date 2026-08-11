@@ -12,7 +12,6 @@
 /// \brief    Constructor.
 ///
 eos::DigOutputService::DigOutputService():
-	_outputChangedEvent {nullptr},
 	_timeCounter {Time::fromMiliseconds(0)},
 	_actionQueue {_actionQueueSize} {
 
@@ -94,14 +93,14 @@ eos::DigOutput *eos::DigOutputService::getOutput(
 void eos::DigOutputService::onOutputChanged(
 	eos::Output *output) {
 
-	if (_outputChangedEvent != nullptr) {
+	if (_outputChangedEventRaiser) {
 
     	OutputChangedEventArgs args = {
 			.tag {output->getTag()},
 			.value {output->getValue()}
 		};
 
-		_outputChangedEvent->execute(this, &args);
+		_outputChangedEventRaiser(this, &args);
 	}
 }
 

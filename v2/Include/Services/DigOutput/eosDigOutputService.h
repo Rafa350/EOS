@@ -6,6 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "eosEvents.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
@@ -73,8 +74,9 @@ namespace eos {
      			uint32_t tag;
 				bool value;
 			};
-			using IOutputChangedEvent = ICallbackP2<DigOutputService*, OutputChangedEventArgs*>;
-			template <typename Instance_> using OutputChangedEvent = CallbackP2<Instance_, DigOutputService*, OutputChangedEventArgs*>;
+			using OutputChangedEventRaiser = EventRaiser<DigOutputService, OutputChangedEventArgs>;
+			using IOutputChangedEvent = OutputChangedEventRaiser::IEvent;
+			template <typename Instance_> using OutputChangedEvent = OutputChangedEventRaiser::Event<Instance_>;
 
         private:
             static constexpr const char *_serviceName = "DigOutputs";
@@ -110,7 +112,7 @@ namespace eos {
     	private:
             DigOutputList _outputs;
 
-            IOutputChangedEvent * _outputChangedEvent;
+            OutputChangedEventRaiser _outputChangedEventRaiser;
             Time _timeCounter;
             ActionQueue _actionQueue;
 
@@ -145,10 +147,10 @@ namespace eos {
             DigOutput *getOutput(uint32_t tag) const;
 
             inline void enableOutputChangedEvent(IOutputChangedEvent &event) {
-            	_outputChangedEvent = &event;
+            	_outputChangedEventRaiser.enable(event);
             }
             inline void disableOutputChangedEvent() {
-            	_outputChangedEvent = nullptr;
+            	_outputChangedEventRaiser.disable();
             }
 
             void set(DigOutput *output, Time blockTime);

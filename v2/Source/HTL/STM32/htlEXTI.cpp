@@ -190,21 +190,6 @@ void EXTIDevice::setEdge(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el event de notificacio.
-/// \param    event: L'event.
-/// \param    enabled: True per habilitar l'event.
-/// \return   El resultat de l'operacio.
-///
-eos::Result EXTIDevice::setNotificationEvent(
-	INotificationEvent &event,
-	bool enabled) {
-
-   	_erNotification.set(event, enabled);
-   	return Result::ErrorCodes::ok;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.
 ///
 void EXTIDevice::interruptService() {

@@ -25,9 +25,9 @@ namespace htl {
 	void deinitialize();
 
 	unsigned getTick();
-	void waitTicks(unsigned ticks);
-	void waitToTick(unsigned tick);
-	bool hasTickExpired(unsigned tick);
+	void waitTicks(uint32_t ticks);
+	void waitToTick(uint32_t tick);
+	bool hasTickExpired(uint32_t tick);
 }
 
 

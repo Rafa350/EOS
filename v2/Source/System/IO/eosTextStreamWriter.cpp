@@ -6,13 +6,10 @@
 #include <stdio.h>
 
 
-using namespace eos;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Construeix l'objecte amb els valors inicials.
 ///
-TextStreamWriter::TextStreamWriter() :
+eos::TextStreamWriter::TextStreamWriter() :
 
     _stream {nullptr} {
 }
@@ -22,7 +19,7 @@ TextStreamWriter::TextStreamWriter() :
 /// \brief    Construeix l'objecte i l'inicialitza
 /// \param    stream: El stream d'escriptura.
 ///
-TextStreamWriter::TextStreamWriter(
+eos::TextStreamWriter::TextStreamWriter(
 	Stream *stream):
 
 	_stream {stream} {
@@ -35,7 +32,7 @@ TextStreamWriter::TextStreamWriter(
 /// \brief    Inicialitza l'objecte.
 /// \param    stream: El stream d'escriptura.
 ///
-void TextStreamWriter::initialize(
+void eos::TextStreamWriter::initialize(
 	Stream *stream) {
 
 	eosAssert(stream != nullptr);
@@ -49,7 +46,7 @@ void TextStreamWriter::initialize(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeU8(uint8_t data) {
+bool eos::TextStreamWriter::writeU8(uint8_t data) {
 
 	return writeU32(data);
 }
@@ -60,7 +57,7 @@ bool TextStreamWriter::writeU8(uint8_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeU16(uint16_t data) {
+bool eos::TextStreamWriter::writeU16(uint16_t data) {
 
 	return writeU32(data);
 }
@@ -71,7 +68,7 @@ bool TextStreamWriter::writeU16(uint16_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeU32(uint32_t data) {
+bool eos::TextStreamWriter::writeU32(uint32_t data) {
 
 	eosAssert(_stream != nullptr);
 
@@ -91,7 +88,7 @@ bool TextStreamWriter::writeU32(uint32_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeU8Hex(uint8_t data) {
+bool eos::TextStreamWriter::writeU8Hex(uint8_t data) {
 
 	eosAssert(_stream != nullptr);
 
@@ -111,7 +108,7 @@ bool TextStreamWriter::writeU8Hex(uint8_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeU16Hex(uint16_t data) {
+bool eos::TextStreamWriter::writeU16Hex(uint16_t data) {
 
 	eosAssert(_stream != nullptr);
 
@@ -131,7 +128,7 @@ bool TextStreamWriter::writeU16Hex(uint16_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeU32Hex(uint32_t data) {
+bool eos::TextStreamWriter::writeU32Hex(uint32_t data) {
 
 	eosAssert(_stream != nullptr);
 
@@ -151,7 +148,7 @@ bool TextStreamWriter::writeU32Hex(uint32_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeI8(int8_t data) {
+bool eos::TextStreamWriter::writeI8(int8_t data) {
 
 	return writeI32(data);
 }
@@ -162,7 +159,7 @@ bool TextStreamWriter::writeI8(int8_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeI16(int16_t data) {
+bool eos::TextStreamWriter::writeI16(int16_t data) {
 
 	return writeI32(data);
 }
@@ -173,7 +170,7 @@ bool TextStreamWriter::writeI16(int16_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeI32(int32_t data) {
+bool eos::TextStreamWriter::writeI32(int32_t data) {
 
 	eosAssert(_stream != nullptr);
 
@@ -193,7 +190,7 @@ bool TextStreamWriter::writeI32(int32_t data) {
 /// \param    data: El caracter a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeChar(
+bool eos::TextStreamWriter::writeChar(
 	char data) {
 
 	eosAssert(_stream != nullptr);
@@ -209,7 +206,7 @@ bool TextStreamWriter::writeChar(
 /// \param    data: La cadena a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeString(
+bool eos::TextStreamWriter::writeString(
 	const char *data) {
 
 	eosAssert(_stream != nullptr);
@@ -231,7 +228,7 @@ bool TextStreamWriter::writeString(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool TextStreamWriter::writeBool(bool data) {
+bool eos::TextStreamWriter::writeBool(bool data) {
 
 	eosAssert(_stream != nullptr);
 

@@ -28,7 +28,7 @@ SerialDriver_UARTDMA::SerialDriver_UARTDMA(
 ///
 bool SerialDriver_UARTDMA::onTransmit(
 	const uint8_t *buffer,
-	unsigned bufferSize) {
+	uint32_t bufferSize) {
 
     return _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize).isSuccess();
 }
@@ -41,7 +41,7 @@ bool SerialDriver_UARTDMA::onTransmit(
 ///
 bool SerialDriver_UARTDMA::onReceive(
 	uint8_t *buffer,
-	unsigned bufferSize) {
+	uint32_t bufferSize) {
 
     return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }

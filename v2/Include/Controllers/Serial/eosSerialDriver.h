@@ -29,14 +29,14 @@ namespace eos {
 		protected:
             SerialDriver();
 
-            void notifyTxCompleted(unsigned length, bool irq);
-            void notifyRxCompleted(unsigned length, bool irq);
+            void notifyTxCompleted(uint32_t length, bool irq);
+            void notifyRxCompleted(uint32_t length, bool irq);
             State getState() const { return _state; }
 
 			virtual bool onInitialize() = 0;
 			virtual bool onDeinitialize() = 0;
-			virtual bool onTransmit(const uint8_t *buffer, unsigned length) = 0;
-			virtual bool onReceive(uint8_t *buffer, unsigned bufferSize) = 0;
+			virtual bool onTransmit(const uint8_t *buffer, uint32_t length) = 0;
+			virtual bool onReceive(uint8_t *buffer, uint32_t bufferSize) = 0;
 			virtual bool onAbort() = 0;
 
 		public:

@@ -8,6 +8,9 @@
 
 namespace eos {
 
+	struct NullEventArgs {
+	};
+
 	template <typename Sender_, typename Args_>
 	class EventRaiser final {
 		public:

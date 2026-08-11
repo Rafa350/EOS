@@ -84,12 +84,11 @@ Result I2CMasterDevice::deinitialize() {
 /// \param    enabled: True per habilitar l'event.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result I2CMasterDevice::setNotificationEvent(
-	IMasterNotificationEvent &event,
-	bool enabled) {
+eos::Result I2CMasterDevice::enableNotificationEvent(
+	IMasterNotificationEvent &event) {
 
     if ((_state == State::reset) || (_state == State::ready)) {
-    	_erNotification.set(event, enabled);
+    	_erNotification.enable(event);
     	return Result::ErrorCodes::ok;
     }
 

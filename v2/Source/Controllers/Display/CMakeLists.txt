@@ -14,7 +14,7 @@ if(EOS_USE_DRIVER_ILI9341 OR
        EOS_USE_DRIVER_SSD1306 OR
        EOS_USE_DRIVER_ST7565)
         target_sources(${TARGET_NAME} PRIVATE
-            eosMonoFrameBuffer.cpp
+            eosL1FrameBuffer.cpp
         )
 
     elseif(EOS_USE_DRIVER_ILI9341 OR

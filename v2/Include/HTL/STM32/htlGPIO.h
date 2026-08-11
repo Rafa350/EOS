@@ -455,6 +455,24 @@ namespace htl {
 				}
         };
 
+#ifdef HTL_GPIOA_EXIST
+        using GPIOPA0 = GPIOPin<PortID::portA, PinID::pin0>;
+        using GPIOPA1 = GPIOPin<PortID::portA, PinID::pin1>;
+        using GPIOPA2 = GPIOPin<PortID::portA, PinID::pin2>;
+        using GPIOPA3 = GPIOPin<PortID::portA, PinID::pin3>;
+        using GPIOPA4 = GPIOPin<PortID::portA, PinID::pin4>;
+        using GPIOPA5 = GPIOPin<PortID::portA, PinID::pin5>;
+        using GPIOPA6 = GPIOPin<PortID::portA, PinID::pin6>;
+        using GPIOPA7 = GPIOPin<PortID::portA, PinID::pin7>;
+        using GPIOPA8 = GPIOPin<PortID::portA, PinID::pin8>;
+        using GPIOPA9 = GPIOPin<PortID::portA, PinID::pin9>;
+        using GPIOPA10 = GPIOPin<PortID::portA, PinID::pin10>;
+        using GPIOPA11 = GPIOPin<PortID::portA, PinID::pin11>;
+        using GPIOPA12 = GPIOPin<PortID::portA, PinID::pin12>;
+        using GPIOPA13 = GPIOPin<PortID::portA, PinID::pin13>;
+        using GPIOPA14 = GPIOPin<PortID::portA, PinID::pin14>;
+        using GPIOPA15 = GPIOPin<PortID::portA, PinID::pin15>;
+#endif
 
         /// brief Clase que representa un port.
         ///
@@ -579,6 +597,40 @@ namespace htl {
         };
         template <PortID portID_>
         PortDeviceX<portID_> PortDeviceX<portID_>::_instance;
+
+#ifdef HTL_GPIOA_EXIST
+        using PortA = PortDeviceX<PortID::portA>;
+#endif
+#ifdef HTL_GPIOB_EXIST
+        using PortB = PortDeviceX<PortID::portB>;
+#endif
+#ifdef HTL_GPIOC_EXIST
+        using PortC = PortDeviceX<PortID::portC>;
+#endif
+#ifdef HTL_GPIOD_EXIST
+        using PortD = PortDeviceX<PortID::portD>;
+#endif
+#ifdef HTL_GPIOE_EXIST
+        using PortE = PortDeviceX<PortID::portE>;
+#endif
+#ifdef HTL_GPIOF_EXIST
+        using PortF = PortDeviceX<PortID::portF>;
+#endif
+#ifdef HTL_GPIOG_EXIST
+        using PortG = PortDeviceX<PortID::portG>;
+#endif
+#ifdef HTL_GPIOH_EXIST
+        using PortH = PortDeviceX<PortID::portH>;
+#endif
+#ifdef HTL_GPIOI_EXIST
+        using PortI = PortDeviceX<PortID::portI>;
+#endif
+#ifdef HTL_GPIOJ_EXIST
+        using PortJ = PortDeviceX<PortID::portJ>;
+#endif
+#ifdef HTL_GPIOK_EXIST
+        using PortK = PortDeviceX<PortID::portK>;
+#endif
 
 
         /// brief Clase que representa un pin individual.
@@ -712,44 +764,7 @@ namespace htl {
         template <PortID portID_, PinID pinID_>
         PinDeviceX<portID_, pinID_> PinDeviceX<portID_, pinID_>::_instance;
 
-
 #ifdef HTL_GPIOA_EXIST
-        using PortA = PortDeviceX<PortID::portA>;
-#endif
-#ifdef HTL_GPIOB_EXIST
-        using PortB = PortDeviceX<PortID::portB>;
-#endif
-#ifdef HTL_GPIOC_EXIST
-        using PortC = PortDeviceX<PortID::portC>;
-#endif
-#ifdef HTL_GPIOD_EXIST
-        using PortD = PortDeviceX<PortID::portD>;
-#endif
-#ifdef HTL_GPIOE_EXIST
-        using PortE = PortDeviceX<PortID::portE>;
-#endif
-#ifdef HTL_GPIOF_EXIST
-        using PortF = PortDeviceX<PortID::portF>;
-#endif
-#ifdef HTL_GPIOG_EXIST
-        using PortG = PortDeviceX<PortID::portG>;
-#endif
-#ifdef HTL_GPIOH_EXIST
-        using PortH = PortDeviceX<PortID::portH>;
-#endif
-#ifdef HTL_GPIOI_EXIST
-        using PortI = PortDeviceX<PortID::portI>;
-#endif
-#ifdef HTL_GPIOJ_EXIST
-        using PortJ = PortDeviceX<PortID::portJ>;
-#endif
-#ifdef HTL_GPIOK_EXIST
-        using PortK = PortDeviceX<PortID::portK>;
-#endif
-
-#ifdef HTL_GPIOA_EXIST
-        using GPIOPA0 = GPIOPin<PortID::portA, PinID::pin0>;
-
         using PinA0 = PinDeviceX<PortID::portA, PinID::pin0>;
         using PinA1 = PinDeviceX<PortID::portA, PinID::pin1>;
         using PinA2 = PinDeviceX<PortID::portA, PinID::pin2>;

@@ -12,6 +12,8 @@
 // EOS includes
 //
 #include "eosBits.h"
+#include "eosEvents.h"
+#include "eosResults.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -205,16 +207,9 @@ namespace htl {
 				eos::Result deinitialize();
 #endif
 
-				eos::Result setNotificationEvent(ISlaveNotificationEvent &event, bool enabled = true);
-
-				/// Habilita l'event de notificacio.
-				///
-				inline void enableNotificationEvent() {
-					_erNotification.enable();
+				void inline enableNotificationEvent(ISlaveNotificationEvent &event) {
+					_erNotification.enable(event);
 				}
-
-				/// Deshabilita l'event de notificacio.
-				///
 				inline void disableNotificationEvent() {
 					_erNotification.disable();
 				}
@@ -286,16 +281,7 @@ namespace htl {
 				eos::Result deinitialize();
 #endif
 
-				eos::Result setNotificationEvent(IMasterNotificationEvent &event, bool enabled = true);
-
-				/// Habilita l'event de notificacio.
-				///
-				inline void enableNotificationEvent() {
-					_erNotification.enable();
-				}
-
-				/// Deshabilita l'event de notificacio.
-				///
+				eos::Result enableNotificationEvent(IMasterNotificationEvent &event);
 				inline void disableNotificationEvent() {
 					_erNotification.disable();
 				}

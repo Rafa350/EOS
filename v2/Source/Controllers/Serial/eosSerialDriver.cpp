@@ -176,7 +176,7 @@ Result SerialDriver::abort() {
 /// \param    irq: True si es crida des d'una interrupcio.
 ///
 void SerialDriver::notifyTxCompleted(
-	unsigned length,
+	uint32_t length,
 	bool irq) {
 
     if (_state == State::transmiting) {
@@ -198,7 +198,7 @@ void SerialDriver::notifyTxCompleted(
 /// \param    irq: True si es crida des d'una interrupcio.
 ///
 void SerialDriver::notifyRxCompleted(
-	unsigned length,
+	uint32_t length,
 	bool irq) {
 
     if (_state == State::receiving) {

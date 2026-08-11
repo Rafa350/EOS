@@ -6,12 +6,11 @@
 
 
 using namespace htl;
-using namespace htl::clock;
 using namespace htl::tick;
 
 
 using DevTMR = HTL_TICK_TIMER;
-constexpr DevTMR *__devTMR = DevTMR::pInst;
+
 
 TickGenerator TickGenerator::_instance;
 
@@ -21,7 +20,8 @@ TickGenerator TickGenerator::_instance;
 ///
 TickGenerator::TickGenerator():
 	_tickCounter {0},
-	_tmrNotificationEvent {*this, &TickGenerator::tmrNotificationEventHandler} {
+	_devTMR {DevTMR::pInst},
+	_devTMR_NotificationEvent {*this, &TickGenerator::devTMR_NotificationEventHandler} {
 
 }
 
@@ -31,20 +31,14 @@ TickGenerator::TickGenerator():
 /// \param    frequency: Frequencia.
 ///
 void TickGenerator::initialize(
-    uint32_t frequency) {
+    uint32_t frequency,
+	uint32_t divider) {
 
-	auto clk = ClockDevice::pInst;
+	auto clk = htl::clock::ClockDevice::pInst;
+	uint32_t prescaler = (clk->getClockFrequency(htl::clock::ClockID::pclk) / frequency) - 1;
 
-	uint32_t limit = 1000;
-#if defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-	uint32_t prescaler = (clk->getClockFrequency(clock::ClockID::pclk1) / frequency) - 1;
-#elif defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32G0)
-	uint32_t prescaler = (clk->getClockFrequency(clock::ClockID::pclk) / frequency) - 1;
-#endif
-	tmr::ClockDivider clkDiv = tmr::ClockDivider::_1;
-
-	__devTMR->initialize(clkDiv, prescaler, limit, 0);
-	__devTMR->enableNotificationEvent(_tmrNotificationEvent);
+	_devTMR->initialize(tmr::ClockDivider::_1, prescaler, divider, 0);
+	_devTMR->enableNotificationEvent(_devTMR_NotificationEvent);
 
 	enableInterruptVector(irq::VectorID::tmr14);
 	setInterruptVectorPriority(irq::VectorID::tmr14, irq::Priority::p3);
@@ -60,7 +54,7 @@ void TickGenerator::deinitialize() {
 
     stop();
 
-	__devTMR->disableNotificationEvent();
+	_devTMR->disableNotificationEvent();
 
 	disableInterruptVector(irq::VectorID::tmr14);
 }
@@ -71,7 +65,7 @@ void TickGenerator::deinitialize() {
 ///
 void TickGenerator::start() {
 
-    __devTMR->start_IRQ();
+    _devTMR->start_IRQ();
 }
 
 
@@ -80,7 +74,7 @@ void TickGenerator::start() {
 ///
 void TickGenerator::stop() {
 
-    __devTMR->stop();
+    _devTMR->stop();
 }
 
 
@@ -116,7 +110,7 @@ void TickGenerator::wait(
 /// \param    sender: El temporitzadort que envia la notificacio.
 /// \param    args: Parametres de la notificacio.
 ///
-void TickGenerator::tmrNotificationEventHandler(
+void TickGenerator::devTMR_NotificationEventHandler(
 	htl::tmr::TMRDevice *sender,
 	htl::tmr::TMRDevice::NotificationEventArgs *args) {
 
@@ -130,5 +124,5 @@ void TickGenerator::tmrNotificationEventHandler(
 ///
 extern "C" void TIM14_IRQHandler(void) {
 
-    __devTMR->interruptHandler();
+    DevTMR::interruptHandler();
 }

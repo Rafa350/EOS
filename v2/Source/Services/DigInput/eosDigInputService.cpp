@@ -12,8 +12,6 @@
 ///
 eos::DigInputService::DigInputService():
     Service(),
-	_inputChangedEvent {nullptr},
-	_beforeScanEvent {nullptr},
     _scanPeriod {_minScanPeriod} {
 }
 
@@ -36,7 +34,7 @@ void eos::DigInputService::setScanPeriod(
 void eos::DigInputService::onInputChanged(
     eos::DigInput *input) {
 
-	if (_inputChangedEvent != nullptr) {
+	if (_inputChangedEventRaiser) {
 
     	auto i = static_cast<Input*>(input);
 
@@ -45,7 +43,7 @@ void eos::DigInputService::onInputChanged(
 			.value {i->getValue()}
     	};
 
-    	_inputChangedEvent->execute(this, &args);
+    	_inputChangedEventRaiser(this, &args);
     }
 }
 
@@ -56,30 +54,8 @@ void eos::DigInputService::onInputChanged(
 ///
 void eos::DigInputService::beforeScan() {
 
-	if (_beforeScanEvent != nullptr)
-		_beforeScanEvent->execute(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un event que motifica la inicialitzacio del servei.
-/// \param    args: Parametres d'inicialitzacio.
-///
-void eos::DigInputService::raiseInitializeNotificationEvent(
-	ServiceParams *params) {
-
-	/*if (_notificationEvent != nullptr) {
-
-		NotificationEventArgs args = {
-			.id {NotificationID::initialize},
-			.initialize {
-				.params {params}
-			}
-		};
-
-		_notificationEvent->execute(this, &args);
-	}
-	*/
+	if (_beforeScanEventRaiser)
+		_beforeScanEventRaiser(this, nullptr);
 }
 
 
@@ -137,8 +113,6 @@ void eos::DigInputService::onInitialize(
 	params.name = _serviceName;
 	params.priority = _servicePriority;
 	params.stackDepth = _serviceStackDepth;
-
-	raiseInitializeNotificationEvent(&params);
 }
 
 

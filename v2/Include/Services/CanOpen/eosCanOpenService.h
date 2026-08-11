@@ -4,6 +4,7 @@
 
 
 #include "eos.h"
+#include "eosEvents.h"
 #include "eosTime.h"
 #include "HTL/STM32/htlCAN.h"
 #include "RTOS/rtosTimer.h"
@@ -208,9 +209,9 @@ namespace eos {
 
             // Lectura i escriptura en el dicionari local
             //
-            bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask);
-            bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask);
-            bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask);
+            bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask, Time blockTime);
+            bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask, Time blockTime);
+            bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask, Time blockTime);
             bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value);
             bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
             bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
@@ -242,7 +243,7 @@ namespace eos {
 
 			// Events
 			//
-            inline void senableNotificationEvent(INotificationEvent &event) {
+            inline void enableNotificationEvent(INotificationEvent &event) {
             	_notificationEventRaiser.enable(event);
             }
             inline void disableNotificationEvent() {
@@ -259,7 +260,6 @@ namespace eos {
 			inline void enableSYNCReceivedEvent(ISYNCReceivedEvent &event) {
             	_syncReceivedEventRaiser.enable(event);
 			}
-
 			inline void disableSYNCReceivedEvent() {
             	_syncReceivedEventRaiser.disable();
 			}
@@ -267,7 +267,6 @@ namespace eos {
 			inline void enableTPDOReceivedEvent(ITPDOReceivedEvent &event) {
             	_tpdoReceivedEventRaiser.enable(event);
 			}
-
 			inline void disableTPDOReceivedEvent() {
             	_tpdoReceivedEventRaiser.disable();
 			}
@@ -275,7 +274,6 @@ namespace eos {
 			inline void enableHeartbeatReceivedEvent(IHeartbeatReceivedEvent &event) {
             	_heartbeatReceivedEventRaiser.enable(event);
 			}
-
 			inline void disbleHeartbeatReceivedEvent() {
             	_heartbeatReceivedEventRaiser.disable();
 			}

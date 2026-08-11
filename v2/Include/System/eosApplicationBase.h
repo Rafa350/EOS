@@ -27,6 +27,7 @@ namespace eos {
 
         public:
             virtual ~ApplicationBase() = default;
+
             void run();
     };
 }

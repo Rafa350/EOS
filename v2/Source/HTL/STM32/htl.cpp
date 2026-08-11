@@ -7,7 +7,9 @@
 ///
 void htl::initialize() {
 
-	tick::TickGenerator::pInst->initialize(1000000);
+	tick::TickGenerator::pInst->initialize(
+		1000000,  // Frequencia del timer a 1MHz
+		1000);    // Divisor per generar els tiks cada 1ms
 }
 
 
@@ -36,7 +38,7 @@ unsigned htl::getTick() {
 /// \param    ticks: El nombre de ticks.
 ///
 void htl::waitTicks(
-	unsigned ticks) {
+	uint32_t ticks) {
 
     tick::TickGenerator::pInst->wait(ticks);
 }
@@ -48,8 +50,8 @@ void htl::waitTicks(
 /// \return   true si ja ha expirat.
 ///
 bool htl::hasTickExpired(
-    unsigned tick) {
+    uint32_t tick) {
 
-    return static_cast<int>(tick - htl::getTick()) <= 0;
+    return static_cast<int>(tick - getTick()) <= 0;
 }
 

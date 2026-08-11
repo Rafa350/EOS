@@ -7,12 +7,12 @@
 namespace htl {
 
 	inline unsigned startAtomic() {
-		unsigned pm =  __get_PRIMASK();
+		uint32_t pm =  __get_PRIMASK();
 		__set_PRIMASK(1);
 		return pm;
 	}
 
-	inline void endAtomic(unsigned pm) {
+	inline void endAtomic(uint32_t pm) {
 		__set_PRIMASK(pm);
 	}
 

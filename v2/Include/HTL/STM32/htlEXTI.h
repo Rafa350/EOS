@@ -5,6 +5,7 @@
 
 // EOS includes
 //
+#include "eosEvents.h"
 #include "HTL/htlDevice.h"
 #include "HTL/STM32/htl.h"
 #include "HTL/STM32/htlGPIO.h"
@@ -108,16 +109,9 @@ namespace htl {
 				void initGPIO(gpio::PortID portID, gpio::PinID pinID, Mode mode, Edge edge);
 				void deinitialize();
 
-				eos::Result setNotificationEvent(INotificationEvent &event, bool enabled = true);
-
-				/// Habilita l'event de notificacio.
-				///
-				inline void enableNotificationEvent() {
-					_erNotification.enable();
+				inline void enableNotificationEvent(INotificationEvent &event) {
+					_erNotification.enable(event);
 				}
-
-				/// Deshabilita l'event de notificacio.
-				///
 				inline void disableNotificationEvent() {
 					_erNotification.disable();
 				}

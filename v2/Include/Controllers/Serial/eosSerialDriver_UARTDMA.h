@@ -15,8 +15,8 @@ namespace eos {
 	        htl::dma::DMADevice * const _devDMArx;
 
 	    private:
-            bool onTransmit(const uint8_t *buffer, unsigned length) override;
-            bool onReceive(uint8_t *buffer, unsigned bufferSize) override;
+            bool onTransmit(const uint8_t *buffer, uint32_t length) override;
+            bool onReceive(uint8_t *buffer, uint32_t bufferSize) override;
 
 	    public:
             SerialDriver_UARTDMA(htl::uart::UARTDevice *devUART, htl::dma::DMADevice *devDMAtx, htl::dma::DMADevice *devDMArx);

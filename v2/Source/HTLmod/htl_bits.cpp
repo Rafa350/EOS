@@ -1,4 +1,4 @@
-export module htl.bits;
+export module htl_bits;
 
 
 export namespace htl {

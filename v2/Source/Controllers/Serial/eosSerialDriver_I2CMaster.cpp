@@ -29,7 +29,7 @@ SerialDriver_I2CMaster::SerialDriver_I2CMaster(
 ///
 bool SerialDriver_I2CMaster::onInitialize() {
 
-    _devI2C->setNotificationEvent(_i2cNotificationEvent);
+    _devI2C->enableNotificationEvent(_i2cNotificationEvent);
     return true;
 }
 

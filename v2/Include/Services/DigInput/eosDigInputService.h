@@ -6,7 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "eosCallbacks.h"
+#include "eosEvents.h"
 #include "eosTime.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
@@ -53,15 +53,17 @@ namespace eos {
     //
     class DigInputService final: public Service {
     	public:
-			using IBeforeScanEvent = ICallbackP1<DigInputService*>;
-			template <typename Instance_> using BeforeScanEvent = CallbackP1<Instance_, DigInputService*>;
+    		using BeforeScanEventRaiser = EventRaiser<DigInputService, NullEventArgs*>;
+			using IBeforeScanEvent = BeforeScanEventRaiser::IEvent;
+			template <typename Instance_> using BeforeScanEvent = BeforeScanEventRaiser::Event<Instance_>;
 
 			struct InputChangedEventArgs {
 				uint32_t tag;
 				bool value;
 			};
-			using IInputChangedEvent = ICallbackP2<DigInputService*, InputChangedEventArgs*>;
-			template <typename Instance_> using InputChangedEvent = CallbackP2<Instance_, DigInputService*, InputChangedEventArgs*>;
+			using InputChangedEventRaiser = EventRaiser<DigInputService, InputChangedEventArgs>;
+			using IInputChangedEvent = InputChangedEventRaiser::IEvent;
+			template <typename Instance_> using InputChangedEvent = InputChangedEventRaiser::Event<Instance_>;
 
         private:
             static constexpr const char *_serviceName = "DigInputs";
@@ -71,14 +73,13 @@ namespace eos {
 
         private:
     		DigInputList _inputs;
-    		IInputChangedEvent *_inputChangedEvent;
-    		IBeforeScanEvent *_beforeScanEvent;
+    		InputChangedEventRaiser _inputChangedEventRaiser;
+    		BeforeScanEventRaiser _beforeScanEventRaiser;
             Time _scanPeriod;
 
         private:
             void onInputChanged(DigInput *input);
             void beforeScan();
-            void raiseInitializeNotificationEvent(ServiceParams *params);
 
         protected:
             void onInitialize(ServiceParams &params) override;
@@ -101,17 +102,17 @@ namespace eos {
             uint32_t getEdges(DigInput *input, bool clear = true) const;
 
             inline void enableInputChangedEvent(IInputChangedEvent &event) {
-            	_inputChangedEvent = &event;
+            	_inputChangedEventRaiser.enable(event);
             }
             inline void disableInputChangedEvent() {
-            	_inputChangedEvent = nullptr;
+            	_inputChangedEventRaiser.disable();
             }
 
             inline void enableBeforeScanEvent(IBeforeScanEvent &event) {
-            	_beforeScanEvent = &event;
+            	_beforeScanEventRaiser.enable(event);
             }
             inline void disableBeforeScanEvent() {
-            	_beforeScanEvent = nullptr;
+            	_beforeScanEventRaiser.disable();
             }
     };
 

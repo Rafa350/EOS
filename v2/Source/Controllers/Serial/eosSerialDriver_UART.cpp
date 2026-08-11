@@ -3,18 +3,15 @@
 #include "Controllers/Serial/eosSerialDriver_UART.h"
 
 
-using namespace eos;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
-SerialDriver_UART::SerialDriver_UART(
+eos::SerialDriver_UART::SerialDriver_UART(
 	htl::uart::UARTDevice *devUART):
 
 	_devUART {devUART},
-	_uartNotificationEvent {*this, &SerialDriver_UART::uartNotificationEventHandler} {
+	_devUART_notificationEvent {*this, &SerialDriver_UART::devUART_notificationEventHandler} {
 
 	eosAssert(devUART != nullptr);
 }
@@ -24,9 +21,9 @@ SerialDriver_UART::SerialDriver_UART(
 /// \brief    Procesa la inicialitzacio del driver.
 /// \return   True si tot es correcte.
 ///
-bool SerialDriver_UART::onInitialize() {
+bool eos::SerialDriver_UART::onInitialize() {
 
-	_devUART->enableNotificationEvent(_uartNotificationEvent);
+	_devUART->enableNotificationEvent(_devUART_notificationEvent);
     return true;
 }
 
@@ -35,7 +32,7 @@ bool SerialDriver_UART::onInitialize() {
 /// \brief    Procesa la desinicialitzacio del driver.
 /// \return   True si tot es correcte.
 ///
-bool SerialDriver_UART::onDeinitialize() {
+bool eos::SerialDriver_UART::onDeinitialize() {
 
 	_devUART->disableNotificationEvent();
     return true;
@@ -48,9 +45,9 @@ bool SerialDriver_UART::onDeinitialize() {
 /// \param    length: Nombre de bytes a transmetre.
 /// \return   True si tot es correcte.
 ///
-bool SerialDriver_UART::onTransmit(
+bool eos::SerialDriver_UART::onTransmit(
 	const uint8_t *buffer,
-	unsigned length) {
+	uint32_t length) {
 
 	eosAssert(buffer != nullptr);
 	eosAssert(length > 0);
@@ -65,9 +62,9 @@ bool SerialDriver_UART::onTransmit(
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
 /// \return   True si tot es correcte.
 ///
-bool SerialDriver_UART::onReceive(
+bool eos::SerialDriver_UART::onReceive(
 	uint8_t *buffer,
-	unsigned bufferSize) {
+	uint32_t bufferSize) {
 
 	eosAssert(buffer != nullptr);
 	eosAssert(bufferSize > 0);
@@ -80,7 +77,7 @@ bool SerialDriver_UART::onReceive(
 /// \brief    Aborta l'operacio en curs.
 /// \return   True si tot es correcte.
 ///
-bool SerialDriver_UART::onAbort() {
+bool eos::SerialDriver_UART::onAbort() {
 
 	switch (getState()) {
 		case State::receiving:
@@ -100,7 +97,7 @@ bool SerialDriver_UART::onAbort() {
 /// \param    sender: El remitent.
 /// \param    args: Parametres del event.
 ///
-void SerialDriver_UART::uartNotificationEventHandler(
+void eos::SerialDriver_UART::devUART_notificationEventHandler(
 	htl::uart::UARTDevice *sender,
 	htl::uart::UARTDevice::NotificationEventArgs *args) {
 

@@ -12,6 +12,13 @@ namespace eos {
     /// \brief Objecte per escriure en un stream.
     ///
     class TextStreamWriter final {
+
+    	public:
+    		static constexpr const char *newLine = "\r\n";
+    		static constexpr char cr = '\r';
+    		static constexpr char lf = '\n';
+    		static constexpr char tab = '\t';
+
         private:
     		Stream *_stream;
 
@@ -33,6 +40,36 @@ namespace eos {
             bool writeChar(char data);
             bool writeString(const char *data);
             bool writeBool(bool data);
+
+            inline TextStreamWriter& operator << (const uint8_t data) {
+
+            	writeU8(data);
+            	return *this;
+            }
+
+            inline TextStreamWriter& operator << (const uint16_t data) {
+
+            	writeU16(data);
+            	return *this;
+            }
+
+            inline TextStreamWriter& operator << (const uint32_t data) {
+
+            	writeU32(data);
+            	return *this;
+            }
+
+            inline TextStreamWriter& operator << (const char data) {
+
+            	writeChar(data);
+            	return *this;
+            }
+
+            inline TextStreamWriter& operator << (const char *data) {
+
+            	writeString(data);
+            	return *this;
+            }
     };
 
 }
