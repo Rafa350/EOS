@@ -215,7 +215,10 @@ void CanOpenService::raiseStateChangedNotificationEvent() {
 	if (_notificationEventRaiser) {
 
 		NotificationEventArgs args = {
-			.id {NotificationID::stateChanged}
+			.id {NotificationID::stateChanged},
+			.stateChanged {
+				.state {_nodeState}
+			}
 		};
 
 		_notificationEventRaiser(this, &args);

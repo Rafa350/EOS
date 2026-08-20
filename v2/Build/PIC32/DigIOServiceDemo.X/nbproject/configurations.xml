@@ -55,9 +55,13 @@
             <itemPath>../../../Include/OSAL/osalMutex.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
+            <logicalFolder name="f1" displayName="DigInput" projectFiles="true">
+              <itemPath>../../../Include/Services/DigInput/eosDigInputService.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="f2" displayName="DigOutput" projectFiles="true">
+              <itemPath>../../../Include/Services/DigOutput/eosDigOutputService.h</itemPath>
+            </logicalFolder>
             <itemPath>../../../Include/Services/eosService.h</itemPath>
-            <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
-            <itemPath>../../../Include/Services/eosDigOutputService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
@@ -72,7 +76,6 @@
               <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
               <itemPath>../../../Include/System/Core/eosTimer.h</itemPath>
             </logicalFolder>
-            <itemPath>../../../Include/System/eosCallbacks.h</itemPath>
             <itemPath>../../../Include/System/eosString.h</itemPath>
             <itemPath>../../../Include/System/eosApplicationBase.h</itemPath>
             <itemPath>../../../Include/System/eosRTOSApplication.h</itemPath>
@@ -82,6 +85,7 @@
           <itemPath>../../../Include/eosPlatform.h</itemPath>
           <itemPath>../../../Include/eosToolchain.h</itemPath>
           <itemPath>../../../Include/eosBoard.h</itemPath>
+          <itemPath>../../../Include/eosCallbacks.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -208,7 +212,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>4.60</languageToolchainVersion>
+        <languageToolchainVersion>5.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -410,7 +414,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>4.60</languageToolchainVersion>
+        <languageToolchainVersion>5.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>

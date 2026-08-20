@@ -53,7 +53,7 @@ bool SerialDriver_I2CMaster::onDeinitialize() {
 ///
 bool SerialDriver_I2CMaster::onTransmit(
 	const uint8_t *buffer,
-	unsigned length) {
+	uint32_t length) {
 
 	eosAssert(buffer != nullptr);
 	eosAssert(length != 0);
@@ -70,7 +70,7 @@ bool SerialDriver_I2CMaster::onTransmit(
 ///
 bool SerialDriver_I2CMaster::onReceive(
 	uint8_t *buffer,
-	unsigned bufferSize) {
+	uint32_t bufferSize) {
 
 	eosAssert(buffer != nullptr);
 	eosAssert(bufferSize != 0);

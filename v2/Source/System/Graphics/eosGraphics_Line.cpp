@@ -1,13 +1,12 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "eosMath.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPen.h"
 #include "System/Graphics/eosPoint.h"
 
 
-#include <cmath>
+import EosMath;
 
 
 using namespace eos;
@@ -182,14 +181,14 @@ void Graphics::drawLine(
 
 		int16_t e2, x2, y2;
 
-		int16_t dx = std::abs(x1 - x0);
+		int16_t dx = Math::abs(x1 - x0);
 		int16_t sx = x0 < x1 ? 1 : -1;
-		int16_t dy = std::abs(y1 - y0);
+		int16_t dy = Math::abs(y1 - y0);
 		int16_t sy = y0 < y1 ? 1 : -1;
 
 		int16_t err = dx - dy;
 		float wd = thickness;
-		float ed = dx + dy == 0 ? 1.0f : sqrt((float)(dx * dx) + (float)(dy * dy));
+		float ed = dx + dy == 0 ? 1.0f : Math::sqrt((float)(dx * dx) + (float)(dy * dy));
 
 		// Pixel loop
 		//
@@ -198,7 +197,7 @@ void Graphics::drawLine(
 
 			Color c;
 			if constexpr (Color::type == ColorType::rgb) {
-				uint8_t alpha = 255 - (uint8_t)std::max(0.0f, 255.0f * (std::abs(err - dx + dy) / ed - wd + 1.0f));
+				uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(err - dx + dy) / ed - wd + 1.0f));
 				c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
 			}
 			else
@@ -215,7 +214,7 @@ void Graphics::drawLine(
 
 					Color c;
 					if constexpr (Color::type == ColorType::rgb) {
-						uint8_t alpha = 255 - (uint8_t)std::max(0.0f, 255.0f * (std::abs(e2) / ed - wd + 1.0f));
+						uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
 						c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
 					}
 					else
@@ -237,7 +236,7 @@ void Graphics::drawLine(
 
 					Color c;
 					if constexpr (Color::type == ColorType::rgb) {
-						uint8_t alpha = 255 - (uint8_t)std::max(0.0f, 255.0f * (std::abs(e2) / ed - wd + 1.0f));
+						uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
 						c = Color::fromARGB(alpha, color.getR(), color.getG(), color.getB());
 					}
 					else

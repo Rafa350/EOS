@@ -22,8 +22,8 @@ namespace eos {
 		protected:
             bool onInitialize() override;
             bool onDeinitialize() override;
-            bool onTransmit(const uint8_t *buffer, unsigned length) override;
-            bool onReceive(uint8_t *buffer, unsigned bufferSize) override;
+            bool onTransmit(const uint8_t *buffer, uint32_t length) override;
+            bool onReceive(uint8_t *buffer, uint32_t bufferSize) override;
             bool onAbort() override;
 
 		public:

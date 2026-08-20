@@ -45,8 +45,8 @@ namespace eos {
 			void initialize();
 			void deinitialize();
 
-			Result transmit(const uint8_t *buffer, unsigned length);
-            Result receive(uint8_t *buffer, unsigned bufferSize);
+			Result transmit(const uint8_t *buffer, uint32_t length);
+            Result receive(uint8_t *buffer, uint32_t bufferSize);
             ResultU32 wait(unsigned waitTime);
             Result abort();
 

@@ -1,9 +1,11 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "eosMath.h"
 #include "System/Graphics/eosPen.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosGraphics.h"
+
+
+import EosMath;
 
 
 using namespace eos;

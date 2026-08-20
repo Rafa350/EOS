@@ -68,6 +68,9 @@ namespace eos {
         	struct NotificationEventArgs {
         		NotificationID id;
         		union {
+        			struct {
+        				NodeState state;
+        			} stateChanged;
         		};
         	};
         	using NotificationEventRaiser = EventRaiser<CanOpenService, NotificationEventArgs>;

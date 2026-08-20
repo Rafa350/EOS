@@ -3,12 +3,12 @@
 
 
 #include "eos.h"
+#include "eosCallbacks.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlTMR.h"
-#include "Services/eosDigInputService.h"
-#include "Services/eosDigOutputService.h"
+#include "Services/DigInput/eosDigInputService.h"
+#include "Services/DigOutput/eosDigOutputService.h"
 #include "System/eosRTOSApplication.h"
-#include "System/eosCallbacks.h"
 
 
 namespace app {

@@ -48,7 +48,7 @@ void SerialDriver::deinitialize() {
 ///
 Result SerialDriver::transmit(
     const uint8_t *buffer,
-    unsigned length) {
+    uint32_t length) {
 
 	if ((buffer == nullptr) ||
 		(length == 0))
@@ -78,7 +78,7 @@ Result SerialDriver::transmit(
 ///
 Result SerialDriver::receive(
     uint8_t *buffer,
-    unsigned bufferSize) {
+    uint32_t bufferSize) {
 
 	if ((buffer == nullptr) ||
 		(bufferSize == 0))
