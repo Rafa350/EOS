@@ -1,8 +1,10 @@
-export module EosMath;
-
+module;
 
 #include <cstdint>
 #include <cmath>
+
+
+export module EosMath;
 
 
 export namespace eos {
@@ -84,7 +86,7 @@ inline void eos::Math::swap(
 /// ----------------------------------------------------------------------
 /// \brief    Obte el valor absolut d'un nombre.
 /// \param    v: El nombre.
-/// \return   El valor absolut del nombre.
+/// \return   El resultat de l'operacio.
 ///
 template <typename T>
 inline T eos::Math::abs(
@@ -95,9 +97,9 @@ inline T eos::Math::abs(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el valor l'arrel quadrada d'un nombre.
+/// \brief    Obte el valor de l'arrel quadrada d'un nombre.
 /// \param    v: El nombre.
-/// \return   El resultat.
+/// \return   El resultat de l'operacio.
 ///
 template <typename T>
 inline T eos::Math::sqrt(

@@ -1,7 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "eosMath.h"
 #include "Controllers/Display/eosFrameBuffer.h"
+
+
+import EosMath;
 
 
 /// ----------------------------------------------------------------------

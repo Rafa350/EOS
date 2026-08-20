@@ -1,10 +1,12 @@
 #include "eos.h"
-#include "eosMath.h"
 #include "eosTime.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 #include "Services/DigInput/eosDigInputService.h"
 #include "eos_diginput_inputs.h"
+
+
+import EosMath;
 
 
 /// ----------------------------------------------------------------------
