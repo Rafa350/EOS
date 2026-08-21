@@ -58,13 +58,23 @@ inline T eos::Math::max(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte els 8 bits LSB d'un valor de 16 bits.
+/// \param    v: El valor de 16 bits
+/// \return   Els 8 bits LSB
+///
 inline uint8_t eos::Math::loByte(
-	uint16_t b) {
+	uint16_t v) {
 
-	return (uint8_t) b;
+	return (uint8_t) v;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte els 8 bits MSB d'un valor de 16 bits.
+/// \param    v: El valor de 16 bits.
+/// \return   Els 8 bits MSB.
+///
 inline uint8_t eos::Math::hiByte(
 	uint16_t b) {
 
@@ -72,6 +82,11 @@ inline uint8_t eos::Math::hiByte(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Intervancia dos valors.
+/// \param    a: El primer valor.
+/// \param    b: El segon valor.
+///
 template <typename T>
 inline void eos::Math::swap(
 	T &a,
