@@ -30,6 +30,8 @@ namespace eos {
     using DigInputList = IntrusiveForwardList<DigInput, 0>;
     using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
 
+    class Input;
+
     /// \brief Clase que implementa una entrada digital
     ///
     class DigInput: public DigInputListNode {
@@ -58,7 +60,7 @@ namespace eos {
 			template <typename Instance_> using BeforeScanEvent = BeforeScanEventRaiser::Event<Instance_>;
 
 			struct InputChangedEventArgs {
-				uint32_t tag;
+				DigInput *input;
 				bool value;
 			};
 			using InputChangedEventRaiser = EventRaiser<DigInputService, InputChangedEventArgs>;
@@ -78,7 +80,7 @@ namespace eos {
             Time _scanPeriod;
 
         private:
-            void onInputChanged(DigInput *input);
+            void onInputChanged(Input *input);
             void beforeScan();
 
         protected:

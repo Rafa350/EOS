@@ -3,17 +3,15 @@
 #include "Services/CanOpen/eosCanOpenDictionary.h"
 
 
-using namespace eos;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    entries: Les entrades del diccionari.
 /// \param    numEntries: El nombre d'entrades en el diccionary.
 ///
-CanOpenDictionary::CanOpenDictionary(
+eos::CanOpenDictionary::CanOpenDictionary(
 	const CoDictionaryEntry *entries,
-	unsigned numEntries):
+	uint32_t numEntries):
+
 	_entries {entries},
 	_numEntries {numEntries} {
 
@@ -26,11 +24,11 @@ CanOpenDictionary::CanOpenDictionary(
 /// \param    subIndex: El subindex de l'entrada.
 /// \return   El identificador de la entrada, -1 si no la troba.
 ///
-unsigned CanOpenDictionary::find(
+uint32_t eos::CanOpenDictionary::find(
 	uint16_t index,
 	uint8_t subIndex) const {
 
-	for (unsigned entryId = 0; entryId < _numEntries; entryId++) {
+	for (uint32_t entryId = 0; entryId < _numEntries; entryId++) {
 
 		auto entry = &_entries[entryId];
 
@@ -39,7 +37,7 @@ unsigned CanOpenDictionary::find(
 			return entryId;
 	}
 
-	return (unsigned) -1;
+	return (uint32_t) -1;
 }
 
 
@@ -49,10 +47,10 @@ unsigned CanOpenDictionary::find(
 /// \return   El identificador de la entrada, -1 si no la troba.
 /// \remarks  Nomes troba las que son amb acces a una variable real
 ///
-unsigned CanOpenDictionary::find(
+uint32_t eos::CanOpenDictionary::find(
 	const void *ptr) const {
 
-	for (unsigned entryId = 0; entryId < _numEntries; entryId++) {
+	for (uint32_t entryId = 0; entryId < _numEntries; entryId++) {
 
 		auto entry = &_entries[entryId];
 
@@ -61,7 +59,7 @@ unsigned CanOpenDictionary::find(
 			return entryId;
 	}
 
-	return (unsigned) -1;
+	return (uint32_t) -1;
 }
 
 
@@ -70,8 +68,8 @@ unsigned CanOpenDictionary::find(
 /// \param    entryId: El identificador de la entrada.
 /// \return   El tipus de la entrada.
 ///
-CoType CanOpenDictionary::getType(
-	unsigned entryId) const {
+eos::CoType eos::CanOpenDictionary::getType(
+	uint32_t entryId) const {
 
 	if (entryId < _numEntries)
 		return _entries[entryId].type;
@@ -87,7 +85,7 @@ CoType CanOpenDictionary::getType(
 /// \param    oldValue: El valor abans del canvi.
 /// \param    newValue: El nou valor.
 ///
-void CanOpenDictionary::raiseChangedU8Event(
+void eos::CanOpenDictionary::onChangedU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t oldValue,
@@ -117,7 +115,7 @@ void CanOpenDictionary::raiseChangedU8Event(
 /// \param    subIndex: El subindex
 /// \param    value: El valor lleigit.
 ///
-void CanOpenDictionary::raiseReadU8AccessEvent(
+void eos::CanOpenDictionary::raiseReadU8AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t &value) {
@@ -146,7 +144,7 @@ void CanOpenDictionary::raiseReadU8AccessEvent(
 /// \param    subIndex: El subindex
 /// \param    value: El valor lleigit.
 ///
-void CanOpenDictionary::raiseReadU16AccessEvent(
+void eos::CanOpenDictionary::raiseReadU16AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t &value) {
@@ -175,7 +173,7 @@ void CanOpenDictionary::raiseReadU16AccessEvent(
 /// \param    subIndex: El subindex
 /// \param    value: El valor lleigit.
 ///
-void CanOpenDictionary::raiseReadU32AccessEvent(
+void eos::CanOpenDictionary::raiseReadU32AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t &value) {
@@ -204,7 +202,7 @@ void CanOpenDictionary::raiseReadU32AccessEvent(
 /// \param    subIndex: El subindex
 /// \param    value: El valor a escriure.
 ///
-void CanOpenDictionary::raiseWriteU8AccessEvent(
+void eos::CanOpenDictionary::raiseWriteU8AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value) {
@@ -231,7 +229,7 @@ void CanOpenDictionary::raiseWriteU8AccessEvent(
 /// \param    subIndex: El subindex
 /// \param    value: El valor a escriure.
 ///
-void CanOpenDictionary::raiseWriteU16AccessEvent(
+void eos::CanOpenDictionary::raiseWriteU16AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t value) {
@@ -244,7 +242,7 @@ void CanOpenDictionary::raiseWriteU16AccessEvent(
 		args.subIndex = subIndex;
 		args.value.u16 = value;
 
-	_accessEventRaiser(this, &args);
+		_accessEventRaiser(this, &args);
 	}
 }
 
@@ -255,7 +253,7 @@ void CanOpenDictionary::raiseWriteU16AccessEvent(
 /// \param    subIndex: El subindex
 /// \param    value: El valor a escriure.
 ///
-void CanOpenDictionary::raiseWriteU32AccessEvent(
+void eos::CanOpenDictionary::raiseWriteU32AccessEvent(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value) {
@@ -281,8 +279,8 @@ void CanOpenDictionary::raiseWriteU32AccessEvent(
 /// \param    entryId: L'identificador de l'entrada.
 /// \return   True si es pot escriure, false en cas contrari.
 ///
-bool CanOpenDictionary::canWrite(
-	unsigned entryId) const {
+bool eos::CanOpenDictionary::canWrite(
+	uint32_t entryId) const {
 
 	bool result = false;
 
@@ -312,8 +310,8 @@ bool CanOpenDictionary::canWrite(
 /// \param    entryId: L'identificador de l'entrada.
 /// \return   True si es pot lleigit, false en cas contrari.
 ///
-bool CanOpenDictionary::canRead(
-	unsigned entryId) const {
+bool eos::CanOpenDictionary::canRead(
+	uint32_t entryId) const {
 
 	bool result = false;
 
@@ -341,8 +339,8 @@ bool CanOpenDictionary::canRead(
 /// \param    value: El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::writeU8(
-	unsigned entryId,
+bool eos::CanOpenDictionary::writeU8(
+	uint32_t entryId,
 	uint8_t value) {
 
 	bool ok = false;
@@ -371,7 +369,7 @@ bool CanOpenDictionary::writeU8(
 			}
 
 			if (ok && (oldValue != value))
-				raiseChangedU8Event(entry->index, entry->subIndex, oldValue, value);
+				onChangedU8(entry->index, entry->subIndex, oldValue, value);
 		}
 	}
 
@@ -386,7 +384,7 @@ bool CanOpenDictionary::writeU8(
 /// \param    value: El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::writeU8(
+bool eos::CanOpenDictionary::writeU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value) {
@@ -401,8 +399,8 @@ bool CanOpenDictionary::writeU8(
 /// \param    El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::writeU16(
-	unsigned entryId,
+bool eos::CanOpenDictionary::writeU16(
+	uint32_t entryId,
 	uint16_t value) {
 
 	bool ok = false;
@@ -431,7 +429,7 @@ bool CanOpenDictionary::writeU16(
 			}
 
 			if (ok && (oldValue != value))
-				raiseChangedU16Event(entry->index, entry->subIndex, oldValue, value);
+				onChangedU16(entry->index, entry->subIndex, oldValue, value);
 		}
 	}
 
@@ -446,7 +444,7 @@ bool CanOpenDictionary::writeU16(
 /// \param    value: El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::writeU16(
+bool eos::CanOpenDictionary::writeU16(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t value) {
@@ -461,8 +459,8 @@ bool CanOpenDictionary::writeU16(
 /// \param    El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::writeU32(
-	unsigned entryId,
+bool eos::CanOpenDictionary::writeU32(
+	uint32_t entryId,
 	uint32_t value) {
 
 	bool ok = false;
@@ -491,7 +489,7 @@ bool CanOpenDictionary::writeU32(
 			}
 
 			if (ok && (oldValue != value))
-				raiseChangedU32Event(entry->index, entry->subIndex, oldValue, value);
+				onChangedU32(entry->index, entry->subIndex, oldValue, value);
 		}
 	}
 
@@ -506,7 +504,7 @@ bool CanOpenDictionary::writeU32(
 /// \param    value: El valor a escriure.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::writeU32(
+bool eos::CanOpenDictionary::writeU32(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value) {
@@ -521,8 +519,8 @@ bool CanOpenDictionary::writeU32(
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::readU8(
-	unsigned entryId,
+bool eos::CanOpenDictionary::readU8(
+	uint32_t entryId,
 	uint8_t &value) {
 
 	bool ok = false;
@@ -565,7 +563,7 @@ bool CanOpenDictionary::readU8(
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::readU8(
+bool eos::CanOpenDictionary::readU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t &value) {
@@ -580,8 +578,8 @@ bool CanOpenDictionary::readU8(
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::readU16(
-	unsigned entryId,
+bool eos::CanOpenDictionary::readU16(
+	uint32_t entryId,
 	uint16_t &value) {
 
 	bool ok = false;
@@ -609,7 +607,7 @@ bool CanOpenDictionary::readU16(
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::readU16(
+bool eos::CanOpenDictionary::readU16(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t &value) {
@@ -624,8 +622,8 @@ bool CanOpenDictionary::readU16(
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::readU32(
-	unsigned entryId,
+bool eos::CanOpenDictionary::readU32(
+	uint32_t entryId,
 	uint32_t &value) {
 
 	bool ok = false;
@@ -654,7 +652,7 @@ bool CanOpenDictionary::readU32(
 /// \param    value: El valor retornat.
 /// \return   True si tot es correcte, false en cas contrari.
 ///
-bool CanOpenDictionary::readU32(
+bool eos::CanOpenDictionary::readU32(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t &value) {

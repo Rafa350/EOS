@@ -97,7 +97,7 @@ void eos::DigOutputService::onOutputChanged(
 	if (_outputChangedEventRaiser) {
 
     	OutputChangedEventArgs args = {
-			.tag {output->getTag()},
+			.output {output},
 			.value {output->getValue()}
 		};
 

@@ -3,14 +3,11 @@
 #include "Controllers/Serial/eosSerialDriver_UARTDMA.h"
 
 
-using namespace eos;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
-SerialDriver_UARTDMA::SerialDriver_UARTDMA(
+eos::SerialDriver_UARTDMA::SerialDriver_UARTDMA(
 	htl::uart::UARTDevice *devUART,
 	htl::dma::DMADevice *devDMAtx,
 	htl::dma::DMADevice *devDMArx):
@@ -26,7 +23,7 @@ SerialDriver_UARTDMA::SerialDriver_UARTDMA(
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: Nombre de bytes en el buffer de dades..
 ///
-bool SerialDriver_UARTDMA::onTransmit(
+bool eos::SerialDriver_UARTDMA::onTransmit(
 	const uint8_t *buffer,
 	uint32_t bufferSize) {
 
@@ -39,7 +36,7 @@ bool SerialDriver_UARTDMA::onTransmit(
 /// \param    buffer: El buffer de dades.
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
 ///
-bool SerialDriver_UARTDMA::onReceive(
+bool eos::SerialDriver_UARTDMA::onReceive(
 	uint8_t *buffer,
 	uint32_t bufferSize) {
 

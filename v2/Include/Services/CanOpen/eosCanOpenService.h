@@ -146,14 +146,12 @@ namespace eos {
 			};
         	using MessageQueue = Queue<Message>;
 
-        	using CANDeviceNotificationEvent = htl::can::CANDevice::NotificationEvent<CanOpenService>;
-
 		private:
 			htl::can::CANDevice * const _devCAN;
         	CanOpenDictionary * const _dictionary;
 			rtos::Timer::Event<CanOpenService> _heartbeatTimerEvent;
 			rtos::Timer _heartbeatTimer;
-        	CANDeviceNotificationEvent _canDeviceNotificationEvent;
+			htl::can::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			NodeID const _nodeId;
 			NodeState _nodeState;
 			MessageQueue _messageQueue;
@@ -164,7 +162,7 @@ namespace eos {
         	HeartbeatReceivedEventRaiser _heartbeatReceivedEventRaiser;
 
 		private:
-            void canDeviceNotificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
+            void canDevice_notificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
             void heartbeatTimerEventHandler(rtos::Timer *timer, rtos::Timer::EventArgs *args);
 
             void configureHeartbeat();
@@ -183,7 +181,7 @@ namespace eos {
 
 			void sendTPDO(uint8_t tpdo);
 
-			bool isMapped(unsigned tpdo, unsigned entryId);
+			bool isMapped(uint8_t tpdo, uint32_t entryId);
 
 		protected:
 			void onInitialize(ServiceParams &params) override;

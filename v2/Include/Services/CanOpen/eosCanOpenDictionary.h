@@ -113,43 +113,45 @@ namespace eos {
 
 		private:
 			const CoDictionaryEntry * const _entries;
-			unsigned const _numEntries;
+			uint32_t const _numEntries;
 			AccessEventRaiser _accessEventRaiser;
 			ChangedEventRaiser _changedEventRaiser;
 
 		private:
-			void raiseChangedU8Event(uint16_t index, uint8_t subIndex, uint8_t oldValue, uint8_t newValue);
-			void raiseChangedU16Event(uint16_t index, uint8_t subIndex, uint16_t oldValue, uint16_t newValue);
-			void raiseChangedU32Event(uint16_t index, uint8_t subIndex, uint32_t oldValue, uint32_t newValue);
+			void onChangedU8(uint16_t index, uint8_t subIndex, uint8_t oldValue, uint8_t newValue);
+			void onChangedU16(uint16_t index, uint8_t subIndex, uint16_t oldValue, uint16_t newValue);
+			void onChangedU32(uint16_t index, uint8_t subIndex, uint32_t oldValue, uint32_t newValue);
+
 			void raiseWriteU8AccessEvent(uint16_t index, uint8_t subIndex, uint8_t value);
 			void raiseWriteU16AccessEvent(uint16_t index, uint8_t subIndex, uint16_t value);
      		void raiseWriteU32AccessEvent(uint16_t index, uint8_t subIndex, uint32_t value);
-			void raiseReadU8AccessEvent(uint16_t index, uint8_t subIndex, uint8_t &value);
+
+     		void raiseReadU8AccessEvent(uint16_t index, uint8_t subIndex, uint8_t &value);
 			void raiseReadU16AccessEvent(uint16_t index, uint8_t subIndex, uint16_t &value);
      		void raiseReadU32AccessEvent(uint16_t index, uint8_t subIndex, uint32_t &value);
 
 		public:
-			CanOpenDictionary(const CoDictionaryEntry *entries, unsigned numEntries);
+			CanOpenDictionary(const CoDictionaryEntry *entries, uint32_t numEntries);
 
-			unsigned find(uint16_t index, uint8_t subIndex) const;
-			unsigned find(const void *ptr) const;
+			uint32_t find(uint16_t index, uint8_t subIndex) const;
+			uint32_t find(const void *ptr) const;
 
-			CoType getType(unsigned entryId) const;
+			CoType getType(uint32_t entryId) const;
 
-			bool canWrite(unsigned entryId) const;
-			bool writeU8(unsigned entryId, uint8_t value);
+			bool canWrite(uint32_t entryId) const;
+			bool writeU8(uint32_t entryId, uint8_t value);
 			bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value);
-			bool writeU16(unsigned entryId, uint16_t value);
+			bool writeU16(uint32_t entryId, uint16_t value);
 			bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value);
-			bool writeU32(unsigned entryId, uint32_t value);
+			bool writeU32(uint32_t entryId, uint32_t value);
 			bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value);
 
-			bool canRead(unsigned entryId) const;
-			bool readU8(unsigned entryId, uint8_t &value);
+			bool canRead(uint32_t entryId) const;
+			bool readU8(uint32_t entryId, uint8_t &value);
 			bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value);
-			bool readU16(unsigned entryId, uint16_t &value);
+			bool readU16(uint32_t entryId, uint16_t &value);
 			bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
-			bool readU32(unsigned entryId, uint32_t &value);
+			bool readU32(uint32_t entryId, uint32_t &value);
 			bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
 
             inline void enableAccessEvent(IAccessEvent &event) {

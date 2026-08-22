@@ -71,7 +71,7 @@ namespace eos {
     class DigOutputService final: public Service {
 		public:
 			struct OutputChangedEventArgs {
-     			uint32_t tag;
+     			DigOutput *output;
 				bool value;
 			};
 			using OutputChangedEventRaiser = EventRaiser<DigOutputService, OutputChangedEventArgs>;

@@ -27,7 +27,7 @@ CanOpenService::CanOpenService(
 	_dictionary {params.dictionary},
 	_heartbeatTimerEvent {*this, &CanOpenService::heartbeatTimerEventHandler},
 	_heartbeatTimer {rtos::Timer::Mode::autoRestart, nullptr, _heartbeatTimerEvent},
-	_canDeviceNotificationEvent {*this, &CanOpenService::canDeviceNotificationEventHandler},
+	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
 	_messageQueue {10} {
@@ -58,7 +58,7 @@ void CanOpenService::onExecute() {
 
     // Accepta notificacions del dispositiu.
 	//
-	_devCAN->enableNotificationEvent(_canDeviceNotificationEvent);
+	_devCAN->enableNotificationEvent(_canDevice_notificationEvent);
 
 	// Inicia el dispositiu FCAN en modus interrupcio.
 	//
@@ -840,7 +840,7 @@ bool CanOpenService::writeU8(
 	auto ok = false;
 
 	auto entryId = _dictionary->find(index, subIndex);
-	if (entryId != (unsigned) -1)
+	if (entryId != (typeof(entryId)) -1)
 		if (_dictionary->canWrite(entryId)) {
 			uint8_t oldValue;
 			if (_dictionary->readU8(entryId, oldValue))
@@ -920,7 +920,7 @@ bool CanOpenService::writeU32(
 	auto ok = false;
 
 	auto entryId = _dictionary->find(index, subIndex);
-	if (entryId != (unsigned) -1)
+	if (entryId != (typeof(entryId)) -1)
 		if (_dictionary->canWrite(entryId)) {
 			uint32_t oldValue;
 			if (_dictionary->readU32(entryId, oldValue))
@@ -1272,7 +1272,7 @@ Result CanOpenService::sendFrame(
 /// \param    sender: El remitent. En aquest cas el modulCAN
 /// \param    aregs: Els parametres del missatge.
 ///
-void CanOpenService::canDeviceNotificationEventHandler(
+void CanOpenService::canDevice_notificationEventHandler(
 	htl::can::CANDevice * const sender,
 	htl::can::CANDevice::NotificationEventArgs * const args) {
 
@@ -1317,7 +1317,7 @@ void CanOpenService::heartbeatTimerEventHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un missatge 'heartbeat'
+/// \brief    Emet un missatge 'heartbeat'
 /// \param    timeout: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
@@ -1365,7 +1365,7 @@ Result CanOpenService::emitHeartbeat(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un missatge NMT.
+/// \brief    Emet un missatge NMT.
 /// \param    command: La comanda.
 /// \param    nodeId: Node destinatari.
 /// \param    timeout: El temps maxim d'espera.
@@ -1393,7 +1393,7 @@ Result CanOpenService::emitNMT(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un missatge SYNC
+/// \brief    Emet un missatge SYNC
 /// \param    timeout: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
@@ -1421,7 +1421,7 @@ Result CanOpenService::emitSYNC(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un missatge RPDO
+/// \brief    Emet un missatge RPDO
 /// \brief    nodeId: El node desti.
 /// \param    rpdoId: El idenfificador del RTPDO.
 /// \param    data: Les dades a transmetre
@@ -1458,8 +1458,8 @@ Result CanOpenService::emitRPDO(
 /// \return   True si esta mapejada.
 ///
 bool CanOpenService::isMapped(
-	unsigned tpdo,
-	unsigned entryId) {
+	uint8_t tpdo,
+	uint32_t entryId) {
 
 	uint8_t numMaps;
 	if (_dictionary->readU8(0x1A00 + tpdo, 0, numMaps)) {

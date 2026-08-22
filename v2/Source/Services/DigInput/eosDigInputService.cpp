@@ -34,15 +34,13 @@ void eos::DigInputService::setScanPeriod(
 /// \param    input: L'entrada.
 ///
 void eos::DigInputService::onInputChanged(
-    eos::DigInput *input) {
+    eos::Input *input) {
 
 	if (_inputChangedEventRaiser) {
 
-    	auto i = static_cast<Input*>(input);
-
     	InputChangedEventArgs args = {
-   			.tag {i->getTag()},
-			.value {i->getValue()}
+   			.input {input},
+			.value {input->getValue()}
     	};
 
     	_inputChangedEventRaiser(this, &args);
@@ -140,7 +138,7 @@ void eos::DigInputService::onExecute() {
 			// genera un event de notificacio.
 			//
 			if (inp->scan())
-				onInputChanged(input);
+				onInputChanged(static_cast<Input*>(input));
 		}
 	}
 }
