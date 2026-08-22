@@ -1,6 +1,8 @@
-#include "eosBits.h"
 #include "HTL/htl.h"
 #include "HTL/STM32/htlClock.h"
+
+
+import Eos.Bits;
 
 
 htl::clock::ClockDevice htl::clock::ClockDevice::_instance;

@@ -5,13 +5,9 @@
 #include "Services/canopen/eosCanOpenProtocol.h"
 
 
-using namespace eos;
-using namespace htl;
-
-
 constexpr const char *serviceName = "CanOpen";
 constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
-constexpr unsigned serviceStackDepth = 256;
+constexpr uint32_t serviceStackDepth = 256;
 
 constexpr unsigned defTimeout = 25;
 
@@ -20,7 +16,7 @@ constexpr unsigned defTimeout = 25;
 /// \brief    Constructor del objecte.
 /// \param    params: Els parametres d'inicialitzacio
 ///
-CanOpenService::CanOpenService(
+eos::CanOpenService::CanOpenService(
 	InitParams const &params) :
 
     _devCAN {params.devCAN},
@@ -30,7 +26,7 @@ CanOpenService::CanOpenService(
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
-	_messageQueue {10} {
+	_actionQueue {10} {
 }
 
 
@@ -38,7 +34,7 @@ CanOpenService::CanOpenService(
 /// \brief    Inicialitzacio del servei.
 /// \param    params: Parametres d'inicialitzacio.
 ///
-void CanOpenService::onInitialize(
+void eos::CanOpenService::onInitialize(
 	ServiceParams &params) {
 
 	params.name = serviceName;
@@ -50,7 +46,7 @@ void CanOpenService::onInitialize(
 /// ----------------------------------------------------------------------
 /// \brief    Executa els procesos del servei.
 ///
-void CanOpenService::onExecute() {
+void eos::CanOpenService::onExecute() {
 
 	configureCANDevice();
 	configureCANFilters();
@@ -75,26 +71,26 @@ void CanOpenService::onExecute() {
 
 	while (!stopSignal()) {
 
-		Message msg;
-		while(_messageQueue.pop(msg, Time::fromMiliseconds(1000))) {
+		Action msg;
+		while(_actionQueue.pop(msg, Time::fromMiliseconds(1000))) {
 			switch (msg.id) {
 
 				// Ha canviat una entrada del diccionari
 				//
-				case MessageID::entryChanged:
+				case ActionID::entryChanged:
 					processEntryChanged(msg.entryChanged.entryId);
 					break;
 
 				// S'ha rebut una trama CANOpen
 				//
-				case MessageID::frameReceived:
+				case ActionID::frameReceived:
 					processFrame(CobID(msg.frameReceived.cobid), msg.frameReceived.data, msg.frameReceived.dataLen);
 					break;
 
 				// Cal enviar un trama CANOpen
 				//
-				case MessageID::sendFrame:
-					sendFrame(CobID(msg.sendFrame.cobid), msg.sendFrame.data, msg.sendFrame.dataLen, Time::fromMiliseconds(20));
+				case ActionID::frameToSend:
+					sendFrame(CobID(msg.frameToSend.cobid), msg.frameToSend.data, msg.frameToSend.dataLen, Time::fromMiliseconds(20));
 					break;
 
 				default:
@@ -110,7 +106,7 @@ void CanOpenService::onExecute() {
 /// ----------------------------------------------------------------------
 /// \brief    Configura la generacio de heartbeat.
 ///
-void CanOpenService::configureHeartbeat() {
+void eos::CanOpenService::configureHeartbeat() {
 
 	uint16_t interval;
 	if (_dictionary->readU16(0x1017, 0, interval) && interval > 0)
@@ -121,12 +117,12 @@ void CanOpenService::configureHeartbeat() {
 /// ----------------------------------------------------------------------
 /// \brief    Configura el dispositiu CAN
 ///
-void CanOpenService::configureCANDevice() {
+void eos::CanOpenService::configureCANDevice() {
 
-    can::CANDevice::InitParams initParams = {
-    	.clockDivider = can::ClockDivider::div1,
-		.frameFormat = can::FrameFormat::classic,
-		.mode = can::Mode::normal,
+    htl::can::CANDevice::InitParams initParams = {
+    	.clockDivider = htl::can::ClockDivider::div1,
+		.frameFormat = htl::can::FrameFormat::classic,
+		.mode = htl::can::Mode::normal,
 		.autoRetransmission = true,
 		.transmitPause = true,
 		.protocolException = false,
@@ -140,7 +136,7 @@ void CanOpenService::configureCANDevice() {
 		.dataTimeSeg2 = 4,
 		.stdFiltersNbr = 6, // Nombre de filtres utilitzats
 		.extFiltersNbr = 0,
-		.qfMode = can::QFMode::fifo
+		.qfMode = htl::can::QFMode::fifo
     };
     _devCAN->initialize(&initParams);
 
@@ -155,14 +151,14 @@ void CanOpenService::configureCANDevice() {
 /// ----------------------------------------------------------------------
 /// \brief    Configura els filtres CAN
 ///
-void CanOpenService::configureCANFilters() {
+void eos::CanOpenService::configureCANFilters() {
 
 	unsigned filterIndex = 0;
 
-	can::Filter filter;
-	filter.idType = can::IdentifierType::standard;
-	filter.type = can::FilterType::mask;
-	filter.config = can::FilterConfig::rxFifo0;
+	htl::can::Filter filter;
+	filter.idType = htl::can::IdentifierType::standard;
+	filter.type = htl::can::FilterType::mask;
+	filter.config = htl::can::FilterConfig::rxFifo0;
 
 	// Accepta els missatges SDO que suporta aquest node
 	// Si existeix l'entrada 1200:1, aleshores hi ha servidor SDO en el node,
@@ -210,7 +206,7 @@ void CanOpenService::configureCANFilters() {
 /// ----------------------------------------------------------------------
 /// \brief    Genera un event 'Notification'
 ///
-void CanOpenService::raiseStateChangedNotificationEvent() {
+void eos::CanOpenService::raiseStateChangedNotificationEvent() {
 
 	if (_notificationEventRaiser) {
 
@@ -229,7 +225,7 @@ void CanOpenService::raiseStateChangedNotificationEvent() {
 /// ----------------------------------------------------------------------
 /// \brief    Genera un event 'SYNCReceived'
 ///
-void CanOpenService::raiseSYNCReceivedEvent() {
+void eos::CanOpenService::raiseSYNCReceivedEvent() {
 
 	if (_syncReceivedEventRaiser) {
 
@@ -247,7 +243,7 @@ void CanOpenService::raiseSYNCReceivedEvent() {
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 ///
-void CanOpenService::onWriteU8Request(
+void eos::CanOpenService::onWriteU8Request(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value) {
@@ -273,7 +269,7 @@ void CanOpenService::onWriteU8Request(
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 ///
-void CanOpenService::onWriteU16Request(
+void eos::CanOpenService::onWriteU16Request(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t value) {
@@ -299,7 +295,7 @@ void CanOpenService::onWriteU16Request(
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
 ///
-void CanOpenService::onWriteU32Request(
+void eos::CanOpenService::onWriteU32Request(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value) {
@@ -325,7 +321,7 @@ void CanOpenService::onWriteU32Request(
 /// \param    data: Les dades.
 /// \param    dataLen: La longitut de les dades.
 ///
-void CanOpenService::raiseTPDOReceivedEvent(
+void eos::CanOpenService::raiseTPDOReceivedEvent(
 	CobID cobId,
 	const uint8_t *data,
 	unsigned dataLen) {
@@ -346,7 +342,7 @@ void CanOpenService::raiseTPDOReceivedEvent(
 /// ----------------------------------------------------------------------
 /// \brief    Genera un event HeartbeatReceived.
 ///
-void CanOpenService::raiseHeartbeatReceivedEvent(
+void eos::CanOpenService::raiseHeartbeatReceivedEvent(
 	uint8_t nodeId,
 	NodeState state) {
 
@@ -366,7 +362,7 @@ void CanOpenService::raiseHeartbeatReceivedEvent(
 /// \brief    Realitza el canvi d'estat i notifica els canvis
 /// \param    newNodeState: El nou estat
 ///
-void CanOpenService::changeNodeState(
+void eos::CanOpenService::changeNodeState(
 	NodeState newNodeState) {
 
 	if (_nodeState != newNodeState) {
@@ -380,7 +376,7 @@ void CanOpenService::changeNodeState(
 /// \brief    Procesa un canvi en el valor d'una entrada del diccionari
 /// \param    entryId: Identificador de l'entrada que ha canviat de valor.
 ///
-void CanOpenService::processEntryChanged(
+void eos::CanOpenService::processEntryChanged(
 	unsigned entryId) {
 
 	// Si esta en modus operacional, comprova si cal generar TPDO's
@@ -416,7 +412,7 @@ void CanOpenService::processEntryChanged(
 /// \param    data: Les dades de la trama.
 /// \param    dataLen: Longitut de les dades en bytes.
 ///
-void CanOpenService::processFrame(
+void eos::CanOpenService::processFrame(
 	CobID cobId,
 	const uint8_t *data,
 	unsigned dataLen) {
@@ -455,7 +451,7 @@ void CanOpenService::processFrame(
 /// \param    nodeId: El node origen del missatge.
 /// \param    state: L'estat del node.
 ///
-void CanOpenService::processHeartbeat(
+void eos::CanOpenService::processHeartbeat(
 	uint8_t nodeId,
 	uint8_t state) {
 
@@ -487,7 +483,7 @@ void CanOpenService::processHeartbeat(
 /// \param    command: La comanda NMT
 /// \param    nodeId: El identificador del node on aplicar la comanda
 ///
-void CanOpenService::processNMT(
+void eos::CanOpenService::processNMT(
 	uint8_t command,
 	uint8_t nodeId) {
 
@@ -519,7 +515,7 @@ void CanOpenService::processNMT(
 /// \brief    Procesa els missatges SDO
 /// \param    data: Dades del missatge.
 ///
-void CanOpenService::processSDO(
+void eos::CanOpenService::processSDO(
 	const uint8_t *data) {
 
 	uint8_t response[8];
@@ -539,7 +535,7 @@ void CanOpenService::processSDO(
 		uint8_t subIndex = data[3];
 
 		auto entryId = _dictionary->find(index, subIndex);
-		if (entryId == (unsigned) -1)
+		if (entryId == (typeof(entryId)) -1)
 			errorCode = SdoError::objectDoesNotExistInDictionary;
 
 		else {
@@ -704,7 +700,7 @@ void CanOpenService::processSDO(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa els missatges TIME
 ///
-void CanOpenService::processTIME() {
+void eos::CanOpenService::processTIME() {
 
 }
 
@@ -712,7 +708,7 @@ void CanOpenService::processTIME() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa els missatges SYNC
 ///
-void CanOpenService::processSYNC() {
+void eos::CanOpenService::processSYNC() {
 
 	raiseSYNCReceivedEvent();
 
@@ -743,7 +739,7 @@ void CanOpenService::processSYNC() {
 /// \param    cobid: El COB-ID
 /// \param    data: Dades del missatge.
 ///
-void CanOpenService::processTPDO(
+void eos::CanOpenService::processTPDO(
 	CobID cobId,
 	const uint8_t *data,
 	unsigned dataLen) {
@@ -760,7 +756,7 @@ void CanOpenService::processTPDO(
 /// \param    cobid: El COB-ID
 /// \param    data: Dades del missatge.
 ///
-void CanOpenService::processRPDO(
+void eos::CanOpenService::processRPDO(
 	CobID cobId,
 	const uint8_t *data,
 	unsigned dataLen) {
@@ -830,7 +826,7 @@ void CanOpenService::processRPDO(
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
 ///
-bool CanOpenService::writeU8(
+bool eos::CanOpenService::writeU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t value,
@@ -845,13 +841,13 @@ bool CanOpenService::writeU8(
 			uint8_t oldValue;
 			if (_dictionary->readU8(entryId, oldValue))
 				if (_dictionary->writeU8(entryId, (oldValue & ~mask) | (value & mask))) {
-					Message msg = {
-						.id {MessageID::entryChanged},
+					Action msg = {
+						.id {ActionID::entryChanged},
 						.entryChanged {
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, blockTime);
+					ok = _actionQueue.push(msg, blockTime);
 				}
 			}
 
@@ -870,7 +866,7 @@ bool CanOpenService::writeU8(
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
 ///
-bool CanOpenService::writeU16(
+bool eos::CanOpenService::writeU16(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t value,
@@ -885,13 +881,13 @@ bool CanOpenService::writeU16(
 			uint16_t oldValue;
 			if (_dictionary->readU16(entryId, oldValue))
 				if (_dictionary->writeU16(entryId, (oldValue & ~mask) | (value & mask))) {
-					Message msg = {
-						.id {MessageID::entryChanged},
+					Action msg = {
+						.id {ActionID::entryChanged},
 						.entryChanged {
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, blockTime);
+					ok = _actionQueue.push(msg, blockTime);
 				}
 			}
 
@@ -910,7 +906,7 @@ bool CanOpenService::writeU16(
 /// \remarks  La escriptura es posa en cua per un procesament posterior. Si
 ///           cal, es genera TPDO.
 ///
-bool CanOpenService::writeU32(
+bool eos::CanOpenService::writeU32(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t value,
@@ -925,13 +921,13 @@ bool CanOpenService::writeU32(
 			uint32_t oldValue;
 			if (_dictionary->readU32(entryId, oldValue))
 				if (_dictionary->writeU32(entryId, (oldValue & ~mask) | (value & mask))) {
-					Message msg = {
-						.id {MessageID::entryChanged},
+					Action msg = {
+						.id {ActionID::entryChanged},
 						.entryChanged {
 							.entryId {entryId}
 						}
 					};
-					ok = _messageQueue.push(msg, blockTime);
+					ok = _actionQueue.push(msg, blockTime);
 				}
 			}
 
@@ -946,7 +942,7 @@ bool CanOpenService::writeU32(
 /// \param    El valor lleigit.
 /// \return   True si tot es correcte.
 ///
-bool CanOpenService::readU8(
+bool eos::CanOpenService::readU8(
 	uint16_t index,
 	uint8_t subIndex,
 	uint8_t &value) {
@@ -962,7 +958,7 @@ bool CanOpenService::readU8(
 /// \param    El valor lleigit.
 /// \return   True si tot es correcte.
 ///
-bool CanOpenService::readU16(
+bool eos::CanOpenService::readU16(
 	uint16_t index,
 	uint8_t subIndex,
 	uint16_t &value) {
@@ -978,7 +974,7 @@ bool CanOpenService::readU16(
 /// \param    El valor lleigit.
 /// \return   True si tot es correcte.
 ///
-bool CanOpenService::readU32(
+bool eos::CanOpenService::readU32(
 	uint16_t index,
 	uint8_t subIndex,
 	uint32_t &value) {
@@ -994,14 +990,14 @@ bool CanOpenService::readU32(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-Result CanOpenService::start(
+eos::Result eos::CanOpenService::start(
 	NodeID nodeId,
 	Time timeout) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return Result::ErrorCodes::errorParameter;
+		return eos::Result::ErrorCodes::errorParameter;
 
 	else
 		return emitNMT(0x01, nodeId, timeout);
@@ -1014,14 +1010,14 @@ Result CanOpenService::start(
 /// \param    timeout: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 ///
-Result CanOpenService::stop(
+eos::Result eos::CanOpenService::stop(
 	NodeID nodeId,
 	Time timeout) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return Result::ErrorCodes::errorParameter;
+		return eos::Result::ErrorCodes::errorParameter;
 
 	else
 		return emitNMT(0x02, nodeId, timeout);
@@ -1035,14 +1031,14 @@ Result CanOpenService::stop(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-Result CanOpenService::enterPreOperational(
+eos::Result eos::CanOpenService::enterPreOperational(
 	NodeID nodeId,
 	Time timeout) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return Result::ErrorCodes::errorParameter;
+		return eos::Result::ErrorCodes::errorParameter;
 
 	else
 		return emitNMT(0x80, nodeId, timeout);
@@ -1056,14 +1052,14 @@ Result CanOpenService::enterPreOperational(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-Result CanOpenService::resetNode(
+eos::Result eos::CanOpenService::resetNode(
 	NodeID nodeId,
 	Time timeout) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return Result::ErrorCodes::errorParameter;
+		return eos::Result::ErrorCodes::errorParameter;
 
 	else
 		return emitNMT(0x81, nodeId, timeout);
@@ -1077,14 +1073,14 @@ Result CanOpenService::resetNode(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-Result CanOpenService::resetCommunication(
+eos::Result eos::CanOpenService::resetCommunication(
 	NodeID nodeId,
 	Time timeout) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return Result::ErrorCodes::errorParameter;
+		return eos::Result::ErrorCodes::errorParameter;
 
 	else
 		return emitNMT(0x82, nodeId, timeout);
@@ -1095,7 +1091,7 @@ Result CanOpenService::resetCommunication(
 /// \brief    Envia un TPDOx al bus
 /// \param    tpdo: El identificador del TPDOx
 ///
-void CanOpenService::sendTPDO(
+void eos::CanOpenService::sendTPDO(
 	uint8_t tpdo) {
 
 	uint8_t maxCount;
@@ -1186,7 +1182,7 @@ void CanOpenService::sendTPDO(
 /// \param    timeout: Temps maxim d'espera.
 /// \return   True si tot es correcte.
 ///
-Result CanOpenService::sendFrame(
+eos::Result eos::CanOpenService::sendFrame(
 	CobID cobId,
 	const uint8_t *data,
 	unsigned length,
@@ -1272,7 +1268,7 @@ Result CanOpenService::sendFrame(
 /// \param    sender: El remitent. En aquest cas el modulCAN
 /// \param    aregs: Els parametres del missatge.
 ///
-void CanOpenService::canDevice_notificationEventHandler(
+void eos::CanOpenService::canDevice_notificationEventHandler(
 	htl::can::CANDevice * const sender,
 	htl::can::CANDevice::NotificationEventArgs * const args) {
 
@@ -1283,16 +1279,16 @@ void CanOpenService::canDevice_notificationEventHandler(
 	switch (args->id) {
 		case htl::can::CANDevice::NotificationID::rxFifoNotEmpty: {
 
-			Message msg;
+			Action msg;
 			htl::can::RxHeader rxHeader;
 
 			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, msg.frameReceived.data, sizeof(msg.frameReceived));
 			uint8_t dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
 
-			msg.id = MessageID::frameReceived;
+			msg.id = ActionID::frameReceived;
 			msg.frameReceived.cobid = rxHeader.id;
 			msg.frameReceived.dataLen = dataLen;
-			_messageQueue.pushISR(msg);
+			_actionQueue.pushISR(msg);
 
 			break;
 		}
@@ -1308,7 +1304,7 @@ void CanOpenService::canDevice_notificationEventHandler(
 /// \param    timer: El remitent, en aquest cas el timer.
 /// \param    args: Parametres del event.
 ///
-void CanOpenService::heartbeatTimerEventHandler(
+void eos::CanOpenService::heartbeatTimerEventHandler(
 	rtos::Timer *timer,
 	rtos::Timer::EventArgs *args) {
 
@@ -1322,7 +1318,7 @@ void CanOpenService::heartbeatTimerEventHandler(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-Result CanOpenService::emitHeartbeat(
+eos::Result eos::CanOpenService::emitHeartbeat(
 	Time timeout) {
 
 	uint8_t data = 0;
@@ -1348,19 +1344,19 @@ Result CanOpenService::emitHeartbeat(
 			break;
 	}
 
-	Message msg = {
-		.id { MessageID::sendFrame},
-		.sendFrame {
+	Action action = {
+		.id { ActionID::frameToSend},
+		.frameToSend {
 			.cobid {CobID::makeHeartbeat(_nodeId)},
 			.dataLen {1},
 			.data {data}
 		}
 	};
 
-	if (_messageQueue.push(msg, timeout))
-		return Result::ErrorCodes::ok;
+	if (_actionQueue.push(action, timeout))
+		return eos::Result::ErrorCodes::ok;
 
-	return Result::ErrorCodes::error;
+	return eos::Result::ErrorCodes::error;
 }
 
 
@@ -1372,20 +1368,20 @@ Result CanOpenService::emitHeartbeat(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-Result CanOpenService::emitNMT(
+eos::Result eos::CanOpenService::emitNMT(
 	uint8_t command,
 	uint8_t nodeId,
 	Time timeout) {
 
-	Message msg = {
-		.id {MessageID::sendFrame},
-		.sendFrame {
+	Action action = {
+		.id {ActionID::frameToSend},
+		.frameToSend {
 			.cobid {CobID::makeNMT()},
 			.dataLen {2},
 			.data {command, nodeId}
 		}
 	};
-	if (_messageQueue.push(msg, timeout))
+	if (_actionQueue.push(action, timeout))
 		return Result::ErrorCodes::ok;
 
 	return Result::ErrorCodes::error;
@@ -1398,21 +1394,21 @@ Result CanOpenService::emitNMT(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-Result CanOpenService::emitSYNC(
+eos::Result eos::CanOpenService::emitSYNC(
 	Time timeout) {
 
 	uint32_t options;
 	if (_dictionary->readU32(0x1005, 0x00, options) &&
 		eos::Bits::isSet(options, (uint32_t)(1 << 30))) {
 
-		Message msg = {
-			.id { MessageID::sendFrame},
-			.sendFrame {
+		Action action = {
+			.id { ActionID::frameToSend},
+			.frameToSend {
 				.cobid {CobID(options & 0x007F)},
 				.dataLen {0}
 			}
 		};
-		if (_messageQueue.push(msg, timeout))
+		if (_actionQueue.push(action, timeout))
 			return Result::ErrorCodes::ok;
 	}
 
@@ -1428,23 +1424,23 @@ Result CanOpenService::emitSYNC(
 /// \param    dataLen: La longitut de les dades a transmetre.
 /// \return   El resultat de l'operacio.
 ///
-Result CanOpenService::emitRPDO(
+eos::Result eos::CanOpenService::emitRPDO(
 	uint8_t nodeId,
 	uint8_t rpdoId,
 	const uint8_t *data,
 	unsigned dataLen,
 	Time timeout) {
 
-	Message msg = {
-		.id {MessageID::sendFrame},
-		.sendFrame {
+	Action action = {
+		.id {ActionID::frameToSend},
+		.frameToSend {
 			.cobid {CobID(COBID::RPDO1, ((uint16_t)rpdoId << 8) | ((uint16_t)nodeId & 0x007F))},
 			.dataLen {(uint8_t)dataLen}
 		}
 	};
-	memcpy(msg.sendFrame.data, data, dataLen);
+	memcpy(action.frameToSend.data, data, dataLen);
 
-	if (_messageQueue.push(msg,  timeout))
+	if (_actionQueue.push(action, timeout))
 		return Result::ErrorCodes::ok;
 
 	return Result::ErrorCodes::error;
@@ -1457,7 +1453,7 @@ Result CanOpenService::emitRPDO(
 /// \param    entryId: El identificador de l'entrada.
 /// \return   True si esta mapejada.
 ///
-bool CanOpenService::isMapped(
+bool eos::CanOpenService::isMapped(
 	uint8_t tpdo,
 	uint32_t entryId) {
 

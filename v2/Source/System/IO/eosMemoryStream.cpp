@@ -1,6 +1,40 @@
+module;
+
+
 #include "eos.h"
-#include "eosAssert.h"
-#include "System/IO/eosMemoryStream.h"
+#include "System/IO/eosStream.h"
+
+
+export module Eos.IO.MemoryStream;
+
+
+export namespace eos {
+
+	/// \brief Stream en memoria de tamany fix.
+	///
+    class MemoryStream final: public Stream {
+        private:
+            uint8_t * const _begin;
+            uint8_t * const _end;
+            uint8_t *_ptr;
+
+    	public:
+            MemoryStream();
+            MemoryStream(uint8_t *buffer, uint32_t size);
+
+            Result initialize(uint8_t *buffer, uint32_t size);
+
+            uint32_t getPosition() const;
+            void setPosition(uint32_t position);
+
+    		ResultU32 write(const uint8_t *buffer, uint32_t length) override;
+    		ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
+
+            uint8_t *data() const;
+            uint32_t size() const;
+    };
+
+}
 
 
 /// ----------------------------------------------------------------------
@@ -91,5 +125,15 @@ eos::ResultU32 eos::MemoryStream::read(
     }
 
 	return {ResultU32::ErrorCodes::ok, bufferSize};
+}
+
+
+inline uint8_t *eos::MemoryStream::data() const {
+	return _begin;
+}
+
+
+inline uint32_t eos::MemoryStream::size() const {
+	return _end - _begin;
 }
 

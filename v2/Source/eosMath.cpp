@@ -4,7 +4,7 @@ module;
 #include <cmath>
 
 
-export module EosMath;
+export module Eos.Math;
 
 
 export namespace eos {
@@ -12,22 +12,26 @@ export namespace eos {
 	class Math final {
 		public:
 			template <typename T>
-			inline static T min(T a, T b);
+			static T min(T a, T b);
 
 			template <typename T>
-			inline static T max(T a, T b);
+			static T max(T a, T b);
 
-			inline static uint8_t loByte(uint16_t b);
-			inline static uint8_t hiByte(uint16_t b);
+			static uint8_t loByte(uint16_t b);
+			static uint8_t hiByte(uint16_t b);
 
-			template <typename T>
-			inline static void swap(T &a, T &b);
-
-			template <typename T>
-			inline static T abs(T v);
+			static void unPack(uint16_t data, uint8_t &b1, uint8_t &b0);
+			static void unPack(uint32_t data, uint8_t &b3, uint8_t &b2, uint8_t &b1, uint8_t &b0);
+			static void unPack(uint32_t data, uint16_t &w1, uint16_t &w0);
 
 			template <typename T>
-			inline static T sqrt(T v);
+			static void swap(T &a, T &b);
+
+			template <typename T>
+			static T abs(T v);
+
+			template <typename T>
+			static T sqrt(T v);
 
 			static constexpr uint32_t maxU32 = 0xFFFFFFFF;
 			static constexpr uint32_t maxU16 = 0xFFFF;
@@ -39,7 +43,12 @@ export namespace eos {
 }
 
 
-
+/// ----------------------------------------------------------------------
+/// \brief    Obte el minim de dos valors.
+/// \param    a: Primer valor.
+/// \param    b: Segon valor.
+/// \return   El valor minim.
+///
 template <typename T>
 inline T eos::Math::min(
 	T a,
@@ -49,6 +58,12 @@ inline T eos::Math::min(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte el maxim de dos valors.
+/// \param    a: Primer valor.
+/// \param    b: Segon valor.
+/// \return   El valor maxim.
+///
 template <typename T>
 inline T eos::Math::max(
 	T a,
@@ -79,6 +94,60 @@ inline uint8_t eos::Math::hiByte(
 	uint16_t b) {
 
 	return (uint8_t) (b >> 8);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Separa un uint16_t en dos uint8_t
+/// \param    data: El valor d'entrada.
+/// \param    b1: Els bits b15 a b8.
+/// \param    b0: Els bits b7 a b0.
+///
+void eos::Math::unPack(
+	uint16_t data,
+	uint8_t &b1,
+	uint8_t &b0) {
+
+	b1 = (data >> 8) & 0x0F;
+	b0 = (data >> 0) & 0x0F;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Separa un uint32_t en quatre uint8_t
+/// \param    data: El valor d'entrada.
+/// \param    b3: Els bits b31 a b24.
+/// \param    b2: Els bits b23 a b16.
+/// \param    b1: Els bits b15 a b8.
+/// \param    b0: Els bits b7 a b0.
+///
+void eos::Math::unPack(
+	uint32_t data,
+	uint8_t &b3,
+	uint8_t &b2,
+	uint8_t &b1,
+	uint8_t &b0) {
+
+	b3 = (data >> 24) & 0xFF;
+	b2 = (data >> 16) & 0xFF;
+	b1 = (data >> 8) & 0xFF;
+	b0 = (data >> 0) & 0xFF;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Separa un uint32_t en dos uint16_t
+/// \param    data: El valor d'entrada.
+/// \param    w1: Els bits b31 a b16.
+/// \param    w0: Els bits b15 a b0.
+///
+void eos::Math::unPack(
+	uint32_t data,
+	uint16_t &w1,
+	uint16_t &w0) {
+
+	w1 = (data >> 16) & 0xFFFF;
+	w0 = (data >> 0) & 0xFFFF;
 }
 
 

@@ -6,7 +6,7 @@
 #include "eos_digoutput_outputs.h"
 
 
-import EosMath;
+import Eos.Math;
 
 
 /// ----------------------------------------------------------------------

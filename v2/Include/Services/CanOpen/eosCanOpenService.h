@@ -121,13 +121,13 @@ namespace eos {
 			};
 
 		private:
-			enum class MessageID {
+			enum class ActionID {
 				entryChanged,
 				frameReceived,
-				sendFrame
+				frameToSend
 			};
-			struct Message {
-				MessageID id;
+			struct Action {
+				ActionID id;
 				union {
 					struct {
 						unsigned entryId;
@@ -141,10 +141,10 @@ namespace eos {
 						uint16_t cobid;
 						uint8_t dataLen;
 						uint8_t data[8];
-					} sendFrame;
+					} frameToSend;
 				};
 			};
-        	using MessageQueue = Queue<Message>;
+        	using ActionQueue = Queue<Action>;
 
 		private:
 			htl::can::CANDevice * const _devCAN;
@@ -154,7 +154,7 @@ namespace eos {
 			htl::can::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			NodeID const _nodeId;
 			NodeState _nodeState;
-			MessageQueue _messageQueue;
+			ActionQueue _actionQueue;
 			NotificationEventRaiser _notificationEventRaiser;
 			WriteRequestEventRaiser _writeRequestEventRaiser;
 			TPDOReceivedEventRaiser _tpdoReceivedEventRaiser;

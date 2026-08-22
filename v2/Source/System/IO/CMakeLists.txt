@@ -5,8 +5,11 @@ target_sources(${TARGET_NAME} PUBLIC
 #	eosFile.cpp
 #	eosFileStream.cpp
 #	eosFileSystem.cpp
-	eosMemoryStream.cpp
 	eosParser.cpp
 	eosSerialStream.cpp
 	eosTextStreamWriter.cpp
 )
+
+target_sources(${TARGET_NAME} PUBLIC
+    FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    eosMeoryStream.cpp)

@@ -5,8 +5,10 @@
 
 
 #include "eosBits.h"
-#include "eosMath.h"
 #include "HTL/STM32/htlCAN.h"
+
+
+import Eos.Math;
 
 
 using namespace htl::can;

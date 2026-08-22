@@ -3,7 +3,7 @@ module;
 #include <type_traits>
 
 
-export module EosBits;
+export module Eos.Bits;
 
 
 export namespace eos {

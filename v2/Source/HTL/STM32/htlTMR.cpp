@@ -3,6 +3,9 @@
 #include "HTL/STM32/htlTMR.h"
 
 
+//import EosBits;
+
+
 using namespace htl;
 using namespace htl::tmr;
 

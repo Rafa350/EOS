@@ -6,7 +6,7 @@
 #include "eos_diginput_inputs.h"
 
 
-import EosMath;
+import Eos.Math;
 
 
 /// ----------------------------------------------------------------------
