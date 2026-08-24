@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "eosMath.h"
 #include "Services/Forms/Controls/eosMenuControl.h"
 #include "Services/Forms/eosForm.h"
 #include "System/Graphics/eosBrush.h"
@@ -10,6 +9,9 @@
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosText.h"
+
+
+import Eos.Math;
 
 
 /// ----------------------------------------------------------------------

@@ -93,6 +93,14 @@ inline void htl::Reg<T_, addr_>::write(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Llegeix el valor d'un camp d'ins d'un registre
+/// \tparam   T_:El tipus de dades del registre.
+/// \tparam   addr_: L'adressa del registre.
+/// \tparamm  pos_: Posicio del camp en bits.
+/// \tparam   width_: Amplada del camp en bits.
+/// \return   El valor del camp.
+///
 template <typename T_, uint32_t addr_, uint32_t pos_, uint32_t width_>
 inline T_ htl::RegField<T_, addr_, pos_, width_>::read() {
 
@@ -103,6 +111,14 @@ inline T_ htl::RegField<T_, addr_, pos_, width_>::read() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Escriu el valor d'un camp d'ins d'un registre
+/// \tparam   T_:El tipus de dades del registre.
+/// \tparam   addr_: L'adressa del registre.
+/// \tparamm  pos_: Posicio del camp en bits.
+/// \tparam   width_: Amplada del camp en bits.
+/// \param    value: El valor del camp.
+///
 template <typename T_, uint32_t addr_, uint32_t pos_, uint32_t width_>
 inline void htl::RegField<T_, addr_, pos_, width_>::write(
 	T_ value) {

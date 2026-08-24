@@ -1,7 +1,9 @@
 #include "eos.h"
-#include "eosMath.h"
 #include "Services/Forms/eosForm.h"
 #include "Services/Forms/Controls/eosNumericControl.h"
+
+
+import Eos.Math;
 
 
 /// ----------------------------------------------------------------------

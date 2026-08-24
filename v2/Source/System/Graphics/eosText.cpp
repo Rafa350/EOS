@@ -1,10 +1,12 @@
 #include "eos.h"
-#include "eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosText.h"
+
+
+import Eos.Math;
 
 
 using namespace eos;

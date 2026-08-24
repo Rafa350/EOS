@@ -5,7 +5,7 @@
 #include "System/Graphics/eosGraphics.h"
 
 
-import EosMath;
+import Eos.Math;
 
 
 using namespace eos;

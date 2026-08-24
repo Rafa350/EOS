@@ -1,3 +1,14 @@
+# Afegeix els moduls C++
+#
+target_sources(${TARGET_NAME} PUBLIC
+    FILE_SET cxx_modules 
+    TYPE CXX_MODULES 
+    FILES
+        eosMemoryStream.cpp)
+    
+ 
+# Afegeix els fonts C++
+# 
 target_sources(${TARGET_NAME} PUBLIC 
 	eosBinaryStreamReader.cpp
 	eosBinaryStreamWriter.cpp
@@ -9,7 +20,3 @@ target_sources(${TARGET_NAME} PUBLIC
 	eosSerialStream.cpp
 	eosTextStreamWriter.cpp
 )
-
-target_sources(${TARGET_NAME} PUBLIC
-    FILE_SET cxx_modules TYPE CXX_MODULES FILES
-    eosMeoryStream.cpp)

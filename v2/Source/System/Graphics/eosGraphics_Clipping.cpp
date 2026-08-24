@@ -7,7 +7,7 @@
 #include "Controllers/Display/eosDisplayDriver.h"
 
 
-import EosMath;
+import Eos.Math;
 
 
 using namespace eos;

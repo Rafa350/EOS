@@ -3,7 +3,7 @@
 #include "Controllers/Display/eosFrameBuffer.h"
 
 
-import EosMath;
+import Eos.Math;
 
 
 /// ----------------------------------------------------------------------

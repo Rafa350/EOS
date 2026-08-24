@@ -1,9 +1,9 @@
 #include "eosBits.h"
-#include "eosMath.h"
 #include "HTL/htl.h"
 #include "HTL/STM32/htlI2C.h"
 
-//#include <cmath>
+
+import Eos.Math;
 
 
 using namespace eos;

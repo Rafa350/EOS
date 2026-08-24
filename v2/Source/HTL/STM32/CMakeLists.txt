@@ -41,16 +41,6 @@ endif()
 
 
 # ------------------------------------------------------------------------
-# Afegeix el modul DMA2D
-#
-if(EOS_USE_HTL_DMA2D)
-target_sources(${TARGET_NAME} PUBLIC 
-    htlDMA2D.cpp
-)
-endif()
-
-
-# ------------------------------------------------------------------------
 # Afegeix el modul EXTI
 #
 if(EOS_USE_HTL_EXTI)

@@ -3,7 +3,7 @@
 #include "System/Graphics/eosSize.h"
 
 
-import EosMath;
+import Eos.Math;
 
 
 using namespace eos;
