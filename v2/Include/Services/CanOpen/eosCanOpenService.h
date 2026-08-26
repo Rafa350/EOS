@@ -108,7 +108,7 @@ namespace eos {
 
 			struct HeartbeatReceivedEventArgs {
 				NodeID nodeId;
-				NodeState state;
+				NodeState nodeState;
 			};
 			using HeartbeatReceivedEventRaiser = EventRaiser<CanOpenService, HeartbeatReceivedEventArgs>;
 			using IHeartbeatReceivedEvent = HeartbeatReceivedEventRaiser::IEvent;
@@ -121,30 +121,42 @@ namespace eos {
 			};
 
 		private:
-			enum class ActionID {
+			static constexpr uint32_t _messageQueueSize = 15;
+			static constexpr uint32_t _canFrameSize = 8;
+
+		private:
+			enum class MessageID {
 				entryChanged,
 				frameReceived,
-				frameToSend
+				sendFrame,
+				changeNodeState
 			};
-			struct Action {
-				ActionID id;
+			struct EntryChanged {
+				uint32_t entryId;
+			};
+			struct FrameReceived {
+				uint16_t cobid;
+				uint8_t dataLen;
+				uint8_t data[_canFrameSize];
+			};
+			struct SendFrame {
+				uint16_t cobid;
+				uint8_t dataLen;
+				uint8_t data[_canFrameSize];
+			};
+			struct ChangeNodeState {
+				NodeState nodeState;
+			};
+			struct Message {
+				MessageID id;
 				union {
-					struct {
-						unsigned entryId;
-					} entryChanged;
-					struct {
-						uint16_t cobid;
-						uint8_t dataLen;
-						uint8_t data[8];
-					} frameReceived;
-					struct {
-						uint16_t cobid;
-						uint8_t dataLen;
-						uint8_t data[8];
-					} frameToSend;
+					EntryChanged entryChanged;
+					FrameReceived frameReceived;
+					SendFrame sendFrame;
+					ChangeNodeState changeNodeState;
 				};
 			};
-        	using ActionQueue = Queue<Action>;
+        	using MessageQueue = Queue<Message>;
 
 		private:
 			htl::can::CANDevice * const _devCAN;
@@ -154,7 +166,7 @@ namespace eos {
 			htl::can::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			NodeID const _nodeId;
 			NodeState _nodeState;
-			ActionQueue _actionQueue;
+			MessageQueue _messageQueue;
 			NotificationEventRaiser _notificationEventRaiser;
 			WriteRequestEventRaiser _writeRequestEventRaiser;
 			TPDOReceivedEventRaiser _tpdoReceivedEventRaiser;
@@ -169,37 +181,40 @@ namespace eos {
             void configureCANDevice();
             void configureCANFilters();
 
-			void processFrame(CobID cobId, const uint8_t *data, unsigned dataLen);
-            void processEntryChanged(unsigned entryId);
+			void processFrameReceived(const FrameReceived &msg);
+            void processEntryChanged(const EntryChanged &msg);
+            void processChangeNodeState(const ChangeNodeState &msg);
+            void processSendFrame(const SendFrame &msg);
+
             void processSDO(const uint8_t *data);
-			void processNMT(uint8_t command, uint8_t nodeId);
+			void processNMT(uint8_t command, NodeID nodeId);
 			void processSYNC();
 			void processTIME();
 			void processHeartbeat(NodeID nodeId, uint8_t state);
-			void processTPDO(CobID cobId, const uint8_t *data, unsigned dataLen);
-			void processRPDO(CobID cobId, const uint8_t *data, unsigned dataLen);
+			void processTPDO(CobID cobId, const uint8_t *data, uint32_t dataLen);
+			void processRPDO(CobID cobId, const uint8_t *data, uint32_t dataLen);
 
 			void sendTPDO(uint8_t tpdo);
 
 			bool isMapped(uint8_t tpdo, uint32_t entryId);
 
+			Result sendFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
+
 		protected:
 			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
-            Result sendFrame(CobID cobId, const uint8_t *data, unsigned length, Time timeout);
-			Result emitHeartbeat(Time timeout);
-			Result emitNMT(uint8_t command, NodeID nodeId, Time timeout);
+            Result emitHeartbeat(Time blockTime);
+			Result emitNMT(uint8_t command, NodeID nodeId, Time blockTime);
 
-            void raiseStateChangedNotificationEvent();
+            void onNodeStateChanged();
 
             void onWriteU8Request(uint16_t index, uint8_t subIndex, uint8_t value);
             void onWriteU16Request(uint16_t index, uint8_t subIndex, uint16_t value);
             void onWriteU32Request(uint16_t index, uint8_t subIndex, uint32_t value);
-
-            void raiseSYNCReceivedEvent();
-			void raiseTPDOReceivedEvent(CobID cobId, const uint8_t *data, unsigned dataLen);
-			void raiseHeartbeatReceivedEvent(NodeID nodeId, NodeState state);
+            void onSYNCReceived();
+			void onTPDOReceived(CobID cobId, const uint8_t *data, uint32_t dataLen);
+			void onHeartbeatReceived(NodeID nodeId, NodeState nodeState);
 
             void changeNodeState(NodeState newNodeState);
 
@@ -207,6 +222,10 @@ namespace eos {
 			CanOpenService(InitParams const &params);
 			CanOpenService(const CanOpenService &) = delete;
 			CanOpenService(const CanOpenService &&) = delete;
+
+			Result setNodeState(NodeState nodeState, Time blockTime);
+			NodeState getNodeState() const;
+			NodeID getNodeId() const;
 
             // Lectura i escriptura en el dicionari local
             //
@@ -228,11 +247,11 @@ namespace eos {
 
             // Canvia l'estat d'un node remot
             //
-			Result start(NodeID nodeId, Time timeout);
-			Result stop(NodeID nodeId, Time timeout);
-			Result enterPreOperational(NodeID nodeId, Time timeout);
-			Result resetNode(NodeID nodeId, Time timeout);
-			Result resetCommunication(NodeID nodeId, Time timeout);
+			Result start(NodeID nodeId, Time blockTime);
+			Result stop(NodeID nodeId, Time blockTime);
+			Result enterPreOperational(NodeID nodeId, Time blockTime);
+			Result resetNode(NodeID nodeId, Time blockTime);
+			Result resetCommunication(NodeID nodeId, Time blockTime);
 
             // Senyal de sincronitzacio al bus
             //
@@ -240,44 +259,28 @@ namespace eos {
 
 			// Emet missatges RPDO
 			//
-			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, unsigned dataLen, Time timeout);
+			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, uint32_t dataLen, Time timeout);
 
-			// Events
+			// Emet una trama
 			//
-            inline void enableNotificationEvent(INotificationEvent &event) {
-            	_notificationEventRaiser.enable(event);
-            }
-            inline void disableNotificationEvent() {
-            	_notificationEventRaiser.disable();
-            }
+			Result emitFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
 
-			inline void enableWriteRequestEvent(IWriteRequestEvent &event) {
-            	_writeRequestEventRaiser.enable(event);
-			}
-			inline void disableWriteRequestEvent() {
-				_writeRequestEventRaiser.disable();
-			}
+			// Habilita i deshabilita els events
+			//
+            void enableNotificationEvent(INotificationEvent &event);
+            void disableNotificationEvent();
 
-			inline void enableSYNCReceivedEvent(ISYNCReceivedEvent &event) {
-            	_syncReceivedEventRaiser.enable(event);
-			}
-			inline void disableSYNCReceivedEvent() {
-            	_syncReceivedEventRaiser.disable();
-			}
+			void enableWriteRequestEvent(IWriteRequestEvent &event);
+			void disableWriteRequestEvent();
 
-			inline void enableTPDOReceivedEvent(ITPDOReceivedEvent &event) {
-            	_tpdoReceivedEventRaiser.enable(event);
-			}
-			inline void disableTPDOReceivedEvent() {
-            	_tpdoReceivedEventRaiser.disable();
-			}
+			void enableSYNCReceivedEvent(ISYNCReceivedEvent &event);
+			void disableSYNCReceivedEvent();
 
-			inline void enableHeartbeatReceivedEvent(IHeartbeatReceivedEvent &event) {
-            	_heartbeatReceivedEventRaiser.enable(event);
-			}
-			inline void disbleHeartbeatReceivedEvent() {
-            	_heartbeatReceivedEventRaiser.disable();
-			}
+			void enableTPDOReceivedEvent(ITPDOReceivedEvent &event);
+			void disableTPDOReceivedEvent();
+
+			void enableHeartbeatReceivedEvent(IHeartbeatReceivedEvent &event);
+			void disbleHeartbeatReceivedEvent();
 	};
 }
 

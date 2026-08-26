@@ -1,6 +1,36 @@
+module;
+
 #include "eos.h"
 #include "eosTime.h"
-#include "Controllers/EEPROM/Drivers/eosEEPROMDriver_25AA010A.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlSPI.h"
+
+
+export module Eos.Driver.EEPROM_25AA010A;
+
+import Eos.Driver.EEPROM;
+
+
+export namespace eos {
+
+	class EEPROMDriver_25AA010A final: public EEPROMDriver {
+		private:
+            htl::spi::SPIDevice * const _devSPI;
+            htl::gpio::PinDevice * const _pinCS;
+
+		private:
+            uint8_t readState();
+
+		public:
+            EEPROMDriver_25AA010A(htl::spi::SPIDevice *spi, htl::gpio::PinDevice *pinCS);
+
+            void read(uint32_t addr, uint8_t *data, uint32_t dataLength) override;
+			void write(uint32_t addr, const uint8_t *data, uint32_t dataLength) override;
+
+			void enableWrite();
+            void disableWrite();
+	};
+}
 
 
 static constexpr eos::Time __timeout = eos::Time::fromMiliseconds(100);
@@ -12,8 +42,8 @@ static constexpr eos::Time __timeout = eos::Time::fromMiliseconds(100);
 /// \param    pinCD: El pin CS.
 ///
 eos::EEPROMDriver_25AA010A::EEPROMDriver_25AA010A(
-	DevSPI *devSPI,
-	Pin *pinCS):
+	htl::spi::SPIDevice *devSPI,
+	htl::gpio::PinDevice *pinCS):
 
 	_devSPI {devSPI},
 	_pinCS {pinCS} {

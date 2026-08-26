@@ -1,5 +1,11 @@
-add_subdirectory("Drivers")
+# Afegeix els moduls C++
+#
+target_sources(${TARGET_NAME} PUBLIC
+    FILE_SET cxx_modules 
+    TYPE CXX_MODULES 
+    FILES
+        eosEEPROMDriver.cpp)
 
-target_sources(${TARGET_NAME} PRIVATE
-    eosEEPROMDriver.cpp
-)
+# Afegeix subdirectoris
+#
+add_subdirectory("Drivers")

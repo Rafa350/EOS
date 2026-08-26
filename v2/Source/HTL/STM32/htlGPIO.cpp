@@ -1,6 +1,8 @@
 #include "HTL/htl.h"
-#include "HTL/htlAtomic.h"
 #include "HTL/STM32/htlGPIO.h"
+
+
+import Htl.Atomic;
 
 
 struct MODE {

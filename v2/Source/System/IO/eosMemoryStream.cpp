@@ -19,10 +19,7 @@ export namespace eos {
             uint8_t *_ptr;
 
     	public:
-            MemoryStream();
-            MemoryStream(uint8_t *buffer, uint32_t size);
-
-            Result initialize(uint8_t *buffer, uint32_t size);
+            MemoryStream(uint8_t *buffer, uint32_t bufferSize);
 
             uint32_t getPosition() const;
             void setPosition(uint32_t position);
@@ -30,20 +27,9 @@ export namespace eos {
     		ResultU32 write(const uint8_t *buffer, uint32_t length) override;
     		ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
 
-            uint8_t *data() const;
-            uint32_t size() const;
+            uint8_t *buffer() const;
+            uint32_t bufferSize() const;
     };
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Construeix l'objecte.
-///
-eos::MemoryStream::MemoryStream():
-	_begin {nullptr},
-	_end {nullptr},
-	_ptr {nullptr} {
 
 }
 
@@ -51,14 +37,14 @@ eos::MemoryStream::MemoryStream():
 /// ----------------------------------------------------------------------
 /// \brief   Construeix l'objecte i l'inicialitza.
 /// \param   buffer: Buffer de dades del stream.
-/// \param   size: Tamany del buffer en bytes.
+/// \param   bufferSize: Tamany del buffer en bytes.
 ///
 eos::MemoryStream::MemoryStream(
     uint8_t* buffer,
-    uint32_t size):
+    uint32_t bufferSize):
 
     _begin {buffer},
-    _end {buffer + size},
+    _end {buffer + bufferSize},
 	_ptr {buffer} {
 }
 
@@ -128,12 +114,22 @@ eos::ResultU32 eos::MemoryStream::read(
 }
 
 
-inline uint8_t *eos::MemoryStream::data() const {
+/// ----------------------------------------------------------------------
+/// \brief    Obte el punter al buffer intern de dades.
+/// \return   El punter.
+///
+inline uint8_t *eos::MemoryStream::buffer() const {
+
 	return _begin;
 }
 
 
-inline uint32_t eos::MemoryStream::size() const {
+/// ----------------------------------------------------------------------
+/// \brief    Obte el tamany buffer intern de dades en bytes.
+/// \return   El tamany.
+///
+inline uint32_t eos::MemoryStream::bufferSize() const {
+
 	return _end - _begin;
 }
 

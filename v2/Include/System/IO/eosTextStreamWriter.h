@@ -12,7 +12,6 @@ namespace eos {
     /// \brief Objecte per escriure en un stream.
     ///
     class TextStreamWriter final {
-
     	public:
     		static constexpr const char *newLine = "\r\n";
     		static constexpr char cr = '\r';

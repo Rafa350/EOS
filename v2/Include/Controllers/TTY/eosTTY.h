@@ -45,9 +45,9 @@ namespace eos {
 			void writeU8Hex(uint8_t value);
 			void writeU16Hex(uint16_t value);
 			void writeU32Hex(uint32_t value);
-			void writeI8(uint8_t value);
-			void writeI16(uint16_t value);
-			void writeI32(uint32_t value);
+			void writeI8(int8_t value);
+			void writeI16(int16_t value);
+			void writeI32(int32_t value);
 
 			uint32_t read(char *buffer, uint32_t bufferSize);
 

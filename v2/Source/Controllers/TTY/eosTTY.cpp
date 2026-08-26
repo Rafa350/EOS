@@ -235,7 +235,7 @@ void eos::TTY::cursorLeft(
 
 		_writer.writeString("\x1B[");
 		_writer.writeU8(columns);
-		_writer.writeString("D");
+		_writer.writeChar('D');
 	}
 }
 
@@ -254,7 +254,7 @@ void eos::TTY::cursorRight(
 
 		_writer.writeString("\x1B[");
 		_writer.writeU8(columns);
-		_writer.writeString("C");
+		_writer.writeChar('C');
 	}
 }
 
@@ -273,7 +273,7 @@ void eos::TTY::cursorUp(
 
 		_writer.writeString("\x1B[");
 		_writer.writeU8(rows);
-		_writer.writeString("A");
+		_writer.writeChar('A');
 	}
 }
 
@@ -292,7 +292,7 @@ void eos::TTY::cursorDown(
 
 		_writer.writeString("\x1B[");
 		_writer.writeU8(rows);
-		_writer.writeString("B");
+		_writer.writeChar('B');
 	}
 }
 
@@ -304,6 +304,12 @@ void eos::TTY::clear() {
 
 	_column = 0;
 	_row = 0;
+
+	_writer.writeString("\x1B[8;");
+	_writer.writeU8(_numRows);
+	_writer.writeChar(';');
+	_writer.writeU8(_numColumns);
+	_writer.writeChar('t');
 
 	_writer.writeString("\x1B[H\x1B[2J");
 }
@@ -340,7 +346,7 @@ void eos::TTY::setTextColor(
 	if (hi)
 		_writer.writeString("1;");
 	_writer.writeU8(30 + ((uint8_t) color));
-	_writer.writeString("m");
+	_writer.writeChar('m');
 }
 
 
@@ -357,7 +363,7 @@ void eos::TTY::setBackgroundColor(
 	if (hi)
 		_writer.writeString("1;");
 	_writer.writeU8(40 + ((uint8_t) color));
-	_writer.writeString("m");
+	_writer.writeChar('m');
 }
 
 

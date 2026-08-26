@@ -1,3 +1,12 @@
+# Afegeix els moduls C++
+#
+target_sources(${TARGET_NAME} PUBLIC
+    FILE_SET cxx_modules 
+    TYPE CXX_MODULES 
+    FILES
+        htlAtomic.cpp)
+
+
 # ------------------------------------------------------------------------
 # Afegeix els moduls comuns
 #

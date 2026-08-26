@@ -1,7 +1,9 @@
 #include "HTL/htl.h"
-#include "HTL/htlAtomic.h"
 #include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlUART.h"
+
+
+import Htl.Atomic;
 
 
 /// ----------------------------------------------------------------------

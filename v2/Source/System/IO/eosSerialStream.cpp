@@ -1,15 +1,36 @@
+module;
+
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/IO/eosSerialStream.h"
+#include "eosTime.h"
+#include "eosResults.h"
+#include "Controllers/Serial/eosSerialDriver.h"
+#include "System/IO/eosStream.h"
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Construeix l'objecte.
-///
-eos::SerialStream::SerialStream() :
+export module Eos.IO.SerialStream;
 
-	_drvSerial {nullptr} {
+
+export namespace eos {
+
+	class SerialStream: public Stream {
+
+		private:
+			SerialDriver * const _drvSerial;
+			Time _txTimeout = Times::infinite;
+			Time _rxTimeout = Times::infinite;
+
+		public:
+			SerialStream(SerialDriver *drvSerial);
+
+			void setWriteTimeout(Time blockTime);
+			void setReadTimeout(Time blockTime);
+
+			ResultU32 write(const uint8_t *buffer, uint32_t length) override;
+			ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
+	};
 }
+
 
 
 /// ----------------------------------------------------------------------
@@ -19,46 +40,29 @@ eos::SerialStream::SerialStream() :
 eos::SerialStream::SerialStream(
 	SerialDriver *drvSerial) :
 
-	_drvSerial {nullptr} {
-
-	initialize(drvSerial);
+	_drvSerial {drvSerial} {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el stream.
-/// \param    drvSerial:: El driver del canal serie.
-/// \return   El resultat de l'operacio.
+/// \brief    Asigna el valor del temps maxim de bloqueig d'escriptura.
+/// \param    blockTime: El valor.
 ///
-eos::Result eos::SerialStream::initialize(
-	SerialDriver *drvSerial) {
+inline void eos::SerialStream::setWriteTimeout(
+	Time blockTime) {
 
-	eosAssert(drvSerial != nullptr);
-	eosAssert(_drvSerial == nullptr);
-
-	if (_drvSerial == nullptr) {
-		_drvSerial = drvSerial;
-		_drvSerial->initialize();
-		return Result::ErrorCodes::ok;
-	}
-	else
-		return Result::ErrorCodes::error;
+	_txTimeout = blockTime;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Deinicialitza el stream.
-/// \return   El resultat de l'operacio.
+/// \brief    Asigna el valor del temps maxim de bloqueig de lectura.
+/// \param    blockTime: El valor.
 ///
-eos::Result eos::SerialStream::deinitialize() {
+inline void eos::SerialStream::setReadTimeout(
+	Time blockTime) {
 
-	if (_drvSerial != nullptr) {
-		_drvSerial->deinitialize();
-		_drvSerial = nullptr;
-		return Result::ErrorCodes::ok;
-	}
-	else
-		return Result::ErrorCodes::error;
+	_rxTimeout = blockTime;
 }
 
 

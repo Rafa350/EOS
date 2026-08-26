@@ -5,6 +5,9 @@
 #include "Services/canopen/eosCanOpenProtocol.h"
 
 
+import Eos.Math;
+
+
 constexpr const char *serviceName = "CanOpen";
 constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
 constexpr uint32_t serviceStackDepth = 256;
@@ -26,7 +29,71 @@ eos::CanOpenService::CanOpenService(
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
-	_actionQueue {10} {
+	_messageQueue {_messageQueueSize} {
+}
+
+
+void eos::CanOpenService::enableNotificationEvent(
+	INotificationEvent &event) {
+
+	_notificationEventRaiser.enable(event);
+}
+
+
+void eos::CanOpenService::disableNotificationEvent() {
+
+	_notificationEventRaiser.disable();
+}
+
+
+void eos::CanOpenService::enableWriteRequestEvent(
+	IWriteRequestEvent &event) {
+
+	_writeRequestEventRaiser.enable(event);
+}
+
+
+void eos::CanOpenService::disableWriteRequestEvent() {
+
+	_writeRequestEventRaiser.disable();
+}
+
+
+void eos::CanOpenService::enableSYNCReceivedEvent(
+	ISYNCReceivedEvent &event) {
+
+	_syncReceivedEventRaiser.enable(event);
+}
+
+
+void eos::CanOpenService::disableSYNCReceivedEvent() {
+	_syncReceivedEventRaiser.disable();
+}
+
+
+void eos::CanOpenService::enableTPDOReceivedEvent(
+	ITPDOReceivedEvent &event) {
+
+	_tpdoReceivedEventRaiser.enable(event);
+}
+
+
+void eos::CanOpenService::disableTPDOReceivedEvent() {
+
+	_tpdoReceivedEventRaiser.disable();
+}
+
+
+void eos::CanOpenService::enableHeartbeatReceivedEvent(
+	IHeartbeatReceivedEvent &event) {
+
+	_heartbeatReceivedEventRaiser.enable(event);
+}
+
+
+void eos::CanOpenService::disbleHeartbeatReceivedEvent() {
+
+	_heartbeatReceivedEventRaiser.disable();
 }
 
 
@@ -71,26 +138,32 @@ void eos::CanOpenService::onExecute() {
 
 	while (!stopSignal()) {
 
-		Action msg;
-		while(_actionQueue.pop(msg, Time::fromMiliseconds(1000))) {
-			switch (msg.id) {
+		Message message;
+		while(_messageQueue.pop(message, Time::fromMiliseconds(1000))) {
+			switch (message.id) {
 
 				// Ha canviat una entrada del diccionari
 				//
-				case ActionID::entryChanged:
-					processEntryChanged(msg.entryChanged.entryId);
+				case MessageID::entryChanged:
+					processEntryChanged(message.entryChanged);
+					break;
+
+				// Canvia l'estat del node.
+				//
+				case MessageID::changeNodeState:
+					processChangeNodeState(message.changeNodeState);
 					break;
 
 				// S'ha rebut una trama CANOpen
 				//
-				case ActionID::frameReceived:
-					processFrame(CobID(msg.frameReceived.cobid), msg.frameReceived.data, msg.frameReceived.dataLen);
+				case MessageID::frameReceived:
+					processFrameReceived(message.frameReceived);
 					break;
 
 				// Cal enviar un trama CANOpen
 				//
-				case ActionID::frameToSend:
-					sendFrame(CobID(msg.frameToSend.cobid), msg.frameToSend.data, msg.frameToSend.dataLen, Time::fromMiliseconds(20));
+				case MessageID::sendFrame:
+					processSendFrame(message.sendFrame);
 					break;
 
 				default:
@@ -204,9 +277,9 @@ void eos::CanOpenService::configureCANFilters() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'Notification'
+/// \brief    Es crida quant l'estat del node canvia.
 ///
-void eos::CanOpenService::raiseStateChangedNotificationEvent() {
+void eos::CanOpenService::onNodeStateChanged() {
 
 	if (_notificationEventRaiser) {
 
@@ -223,9 +296,9 @@ void eos::CanOpenService::raiseStateChangedNotificationEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'SYNCReceived'
+/// \brief    Es crida quant es reb un SYNC desde un node remot.
 ///
-void eos::CanOpenService::raiseSYNCReceivedEvent() {
+void eos::CanOpenService::onSYNCReceived() {
 
 	if (_syncReceivedEventRaiser) {
 
@@ -238,7 +311,8 @@ void eos::CanOpenService::raiseSYNCReceivedEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event 'WriteRequest'
+/// \brief    Es crida quan es fa una sol·licitut d'escriptura desde
+///           un node remot.
 /// \param    index: El index
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
@@ -264,7 +338,8 @@ void eos::CanOpenService::onWriteU8Request(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event  'WriteRequest'
+/// \brief    Es crida quan es fa una sol·licitut d'escriptura desde un
+///           node remot.
 /// \param    index: El index
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
@@ -290,7 +365,8 @@ void eos::CanOpenService::onWriteU16Request(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event  'WriteRequest'
+/// \brief    Es crida quan es fa una sol·licitut d'escriptura desde un
+///           node remot.
 /// \param    index: El index
 /// \param    subIndex: El subindex.
 /// \param    value: El valor.
@@ -316,15 +392,15 @@ void eos::CanOpenService::onWriteU32Request(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event TPDOReceived.
+/// \brief    Ec crida quant es reb un TPDO d'un node remot
 /// \param    cobId: El COBID del TPDO
 /// \param    data: Les dades.
 /// \param    dataLen: La longitut de les dades.
 ///
-void eos::CanOpenService::raiseTPDOReceivedEvent(
+void eos::CanOpenService::onTPDOReceived(
 	CobID cobId,
 	const uint8_t *data,
-	unsigned dataLen) {
+	uint32_t dataLen) {
 
 	if (_tpdoReceivedEventRaiser) {
 
@@ -340,17 +416,19 @@ void eos::CanOpenService::raiseTPDOReceivedEvent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un event HeartbeatReceived.
+/// \brief    Es crida quan es reb un Heartbeat desde un node remot
+/// \param    nodeId: El node emisor
+/// \param    state: L'estat del node emisor.
 ///
-void eos::CanOpenService::raiseHeartbeatReceivedEvent(
-	uint8_t nodeId,
-	NodeState state) {
+void eos::CanOpenService::onHeartbeatReceived(
+	NodeID nodeId,
+	NodeState nodeState) {
 
 	if (_heartbeatReceivedEventRaiser) {
 
 		HeartbeatReceivedEventArgs args = {
 			.nodeId {nodeId},
-			.state {state}
+			.nodeState {nodeState}
 		};
 
 		_heartbeatReceivedEventRaiser(this, &args);
@@ -367,17 +445,17 @@ void eos::CanOpenService::changeNodeState(
 
 	if (_nodeState != newNodeState) {
 		_nodeState = newNodeState;
-		raiseStateChangedNotificationEvent();
+		onNodeStateChanged();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa un canvi en el valor d'una entrada del diccionari
-/// \param    entryId: Identificador de l'entrada que ha canviat de valor.
+/// \brief    Procesa el missatge 'entryChanged'
+/// \param    msg: Els parametres del missatge.
 ///
 void eos::CanOpenService::processEntryChanged(
-	unsigned entryId) {
+	const EntryChanged &msg) {
 
 	// Si esta en modus operacional, comprova si cal generar TPDO's
 	//
@@ -390,7 +468,7 @@ void eos::CanOpenService::processEntryChanged(
 
 			// Verifica que la entrada, estigui mapejada en un TPDO
 			//
-			if (isMapped(tpdo, entryId)) {
+			if (isMapped(tpdo, msg.entryId)) {
 				uint32_t flags;
 				uint8_t transmissionType;
 
@@ -407,18 +485,39 @@ void eos::CanOpenService::processEntryChanged(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa una trama
-/// \param    cobId: El cobid de la trama.
-/// \param    data: Les dades de la trama.
-/// \param    dataLen: Longitut de les dades en bytes.
+/// \brief    Procesa el missatge 'changeNodeState'
+/// \param    msg: Els parametres del missatge.
 ///
-void eos::CanOpenService::processFrame(
-	CobID cobId,
-	const uint8_t *data,
-	unsigned dataLen) {
+void eos::CanOpenService::processChangeNodeState(
+	const ChangeNodeState &msg) {
+
+	changeNodeState(msg.nodeState);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el missatge 'sendFrame'
+/// \param    msg: Els parametres del missatge.
+///
+void eos::CanOpenService::processSendFrame(
+	const SendFrame &msg) {
+
+	sendFrame(CobID(msg.cobid), msg.data, msg.dataLen, Time::fromMiliseconds(20));
+}
+
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el missatge 'FrameReceived'
+/// \param    msg: Els parammetres del missatge.
+///
+void eos::CanOpenService::processFrameReceived(
+	const FrameReceived &msg) {
+
+	CobID cobId(msg.cobid);
 
 	if (cobId.isNMT())
-		processNMT(data[0], data[1]);
+		processNMT(msg.data[0], msg.data[1]);
 
 	else if (cobId.isSYNC())
 		processSYNC();
@@ -427,22 +526,22 @@ void eos::CanOpenService::processFrame(
 		processTIME();
 
 	else if (cobId.isHeartbeat())
-		processHeartbeat(cobId.nodeId(), data[0]);
+		processHeartbeat(cobId.nodeId(), msg.data[0]);
 
 	else if (cobId.base() == COBID::SDO)
-		processSDO(data);
+		processSDO(msg.data);
 
 	else if ((cobId.base() == COBID::RPDO1) ||
 		     (cobId.base() == COBID::RPDO2) ||
 		     (cobId.base() == COBID::RPDO3) ||
 		     (cobId.base() == COBID::RPDO4))
-		processRPDO(cobId, data, dataLen);
+		processRPDO(cobId, msg.data, msg.dataLen);
 
 	else if ((cobId.base() == COBID::TPDO1) ||
 		     (cobId.base() == COBID::TPDO2) ||
 		     (cobId.base() == COBID::TPDO3) ||
 		     (cobId.base() == COBID::TPDO4))
-	    processTPDO(cobId, data, dataLen);
+	    processTPDO(cobId, msg.data, msg.dataLen);
 }
 
 
@@ -452,7 +551,7 @@ void eos::CanOpenService::processFrame(
 /// \param    state: L'estat del node.
 ///
 void eos::CanOpenService::processHeartbeat(
-	uint8_t nodeId,
+	NodeID nodeId,
 	uint8_t state) {
 
 	NodeState nodeState = NodeState::error;
@@ -474,7 +573,7 @@ void eos::CanOpenService::processHeartbeat(
 			break;
 	}
 
-	raiseHeartbeatReceivedEvent(nodeId, nodeState);
+	onHeartbeatReceived(nodeId, nodeState);
 }
 
 
@@ -485,7 +584,7 @@ void eos::CanOpenService::processHeartbeat(
 ///
 void eos::CanOpenService::processNMT(
 	uint8_t command,
-	uint8_t nodeId) {
+	NodeID nodeId) {
 
 	if (nodeId == _nodeId) {
 		switch (command) {
@@ -710,7 +809,7 @@ void eos::CanOpenService::processTIME() {
 ///
 void eos::CanOpenService::processSYNC() {
 
-	raiseSYNCReceivedEvent();
+	onSYNCReceived();
 
 	if (_nodeState == NodeState::operational) {
 
@@ -742,12 +841,12 @@ void eos::CanOpenService::processSYNC() {
 void eos::CanOpenService::processTPDO(
 	CobID cobId,
 	const uint8_t *data,
-	unsigned dataLen) {
+	uint32_t dataLen) {
 
 	// Notifica a l'aplicacio que hi ha un TPDO per procesar provinent d'un
 	// node remot
 	//
-	raiseTPDOReceivedEvent(cobId, data, dataLen);
+	onTPDOReceived(cobId, data, dataLen);
 }
 
 
@@ -759,7 +858,7 @@ void eos::CanOpenService::processTPDO(
 void eos::CanOpenService::processRPDO(
 	CobID cobId,
 	const uint8_t *data,
-	unsigned dataLen) {
+	uint32_t dataLen) {
 
 	uint32_t rpdoCOBID;
 	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && (rpdoCOBID == cobId.base())) {
@@ -773,8 +872,8 @@ void eos::CanOpenService::processRPDO(
 			uint8_t subIndex = (map >> 8) & 0xFF;
 			uint8_t size = (map & 0xFF) / 8;
 
-			unsigned entryId = _dictionary->find(index, subIndex);
-			if (entryId != (unsigned) -1) {
+			auto entryId = _dictionary->find(index, subIndex);
+			if (entryId != (typeof(entryId)) -1) {
 
 				CoType type = _dictionary->getType(entryId);
 				switch (type) {
@@ -816,6 +915,40 @@ void eos::CanOpenService::processRPDO(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Canvia l'estat del node.
+/// \param    nodeState: El nou estat.
+/// \param    blockTime: Temps maxim de bloqueig.
+/// \return   El resultat de l'operacio.
+///
+eos::Result eos::CanOpenService::setNodeState(
+	NodeState nodeState,
+	Time blockTime) {
+
+	Message message = {
+		.id {MessageID::changeNodeState},
+		.changeNodeState {
+			.nodeState {nodeState}
+		}
+	};
+
+	if (_messageQueue.push(message, blockTime))
+		return eos::Result::ErrorCodes::ok;
+
+	return eos::Result::ErrorCodes::error;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estat del node.
+/// \return   L'estat.
+///
+eos::CanOpenService::NodeState eos::CanOpenService::getNodeState() const {
+
+	return _nodeState;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Escriu un valor uint8_t al diccionari local
 /// \param    index: L'index.
 /// \param    subIndex: El subindex.
@@ -841,13 +974,13 @@ bool eos::CanOpenService::writeU8(
 			uint8_t oldValue;
 			if (_dictionary->readU8(entryId, oldValue))
 				if (_dictionary->writeU8(entryId, (oldValue & ~mask) | (value & mask))) {
-					Action msg = {
-						.id {ActionID::entryChanged},
+					Message message = {
+						.id {MessageID::entryChanged},
 						.entryChanged {
 							.entryId {entryId}
 						}
 					};
-					ok = _actionQueue.push(msg, blockTime);
+					ok = _messageQueue.push(message, blockTime);
 				}
 			}
 
@@ -881,13 +1014,13 @@ bool eos::CanOpenService::writeU16(
 			uint16_t oldValue;
 			if (_dictionary->readU16(entryId, oldValue))
 				if (_dictionary->writeU16(entryId, (oldValue & ~mask) | (value & mask))) {
-					Action msg = {
-						.id {ActionID::entryChanged},
+					Message message = {
+						.id {MessageID::entryChanged},
 						.entryChanged {
 							.entryId {entryId}
 						}
 					};
-					ok = _actionQueue.push(msg, blockTime);
+					ok = _messageQueue.push(message, blockTime);
 				}
 			}
 
@@ -921,13 +1054,13 @@ bool eos::CanOpenService::writeU32(
 			uint32_t oldValue;
 			if (_dictionary->readU32(entryId, oldValue))
 				if (_dictionary->writeU32(entryId, (oldValue & ~mask) | (value & mask))) {
-					Action msg = {
-						.id {ActionID::entryChanged},
+					Message message = {
+						.id {MessageID::entryChanged},
 						.entryChanged {
 							.entryId {entryId}
 						}
 					};
-					ok = _actionQueue.push(msg, blockTime);
+					ok = _messageQueue.push(message, blockTime);
 				}
 			}
 
@@ -986,13 +1119,13 @@ bool eos::CanOpenService::readU32(
 /// ----------------------------------------------------------------------
 /// \brief    Posa un node en estat 'operational'.
 /// \param    nodeId: Node destinatari.
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTie: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::Result eos::CanOpenService::start(
 	NodeID nodeId,
-	Time timeout) {
+	Time blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1000,19 +1133,19 @@ eos::Result eos::CanOpenService::start(
 		return eos::Result::ErrorCodes::errorParameter;
 
 	else
-		return emitNMT(0x01, nodeId, timeout);
+		return emitNMT(0x01, nodeId, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Posar un node en estat 'stoped'
 /// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 ///
 eos::Result eos::CanOpenService::stop(
 	NodeID nodeId,
-	Time timeout) {
+	Time blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1020,20 +1153,20 @@ eos::Result eos::CanOpenService::stop(
 		return eos::Result::ErrorCodes::errorParameter;
 
 	else
-		return emitNMT(0x02, nodeId, timeout);
+		return emitNMT(0x02, nodeId, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Posar un node en estat 'pre-operational'.
 /// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::Result eos::CanOpenService::enterPreOperational(
 	NodeID nodeId,
-	Time timeout) {
+	Time blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1041,20 +1174,20 @@ eos::Result eos::CanOpenService::enterPreOperational(
 		return eos::Result::ErrorCodes::errorParameter;
 
 	else
-		return emitNMT(0x80, nodeId, timeout);
+		return emitNMT(0x80, nodeId, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza un node un node.
 /// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::Result eos::CanOpenService::resetNode(
 	NodeID nodeId,
-	Time timeout) {
+	Time blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1062,20 +1195,20 @@ eos::Result eos::CanOpenService::resetNode(
 		return eos::Result::ErrorCodes::errorParameter;
 
 	else
-		return emitNMT(0x81, nodeId, timeout);
+		return emitNMT(0x81, nodeId, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza les comunicacions d'un node.
 /// \param    nodeId: Node destinatati
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::Result eos::CanOpenService::resetCommunication(
 	NodeID nodeId,
-	Time timeout) {
+	Time blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1083,7 +1216,7 @@ eos::Result eos::CanOpenService::resetCommunication(
 		return eos::Result::ErrorCodes::errorParameter;
 
 	else
-		return emitNMT(0x82, nodeId, timeout);
+		return emitNMT(0x82, nodeId, blockTime);
 }
 
 
@@ -1179,18 +1312,18 @@ void eos::CanOpenService::sendTPDO(
 /// \brief    Transmet una trama.
 /// \param    cobId: El identificador.
 /// \param    data: Les dades.
-/// \param    timeout: Temps maxim d'espera.
+/// \param    blockTime: Temps maxim d'espera.
 /// \return   True si tot es correcte.
 ///
 eos::Result eos::CanOpenService::sendFrame(
 	CobID cobId,
 	const uint8_t *data,
-	unsigned length,
-	Time timeout) {
+	uint32_t length,
+	Time blockTime) {
 
 	// Espera que el buffer no estigui ple
 	//
-	if (!_devCAN->waitTxBufferNotFull(timeout).isOK())
+	if (!_devCAN->waitTxBufferNotFull(blockTime).isOK())
 		return Result::ErrorCodes::busy;
 
 	// Prepara la trama
@@ -1230,8 +1363,7 @@ eos::Result eos::CanOpenService::sendFrame(
 			break;
 
 		default:
-			len = htl::can::DataLength::len0;
-			break;
+			return Result::ErrorCodes::errorParameter;
 	}
 
 	htl::can::TxHeader header = {
@@ -1254,7 +1386,7 @@ eos::Result eos::CanOpenService::sendFrame(
 
 	// Espera que es transmiteixi, i si cal aborta la transmissio
 	//
-	if (!_devCAN->waitTxBufferEmpty(timeout).isOK()) {
+	if (!_devCAN->waitTxBufferEmpty(blockTime).isOK()) {
 		_devCAN->abortTxBufferTransmission();
 		return Result::ErrorCodes::timeout;
 	}
@@ -1264,9 +1396,10 @@ eos::Result eos::CanOpenService::sendFrame(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Gestiona l'event de notificacio del modul CAN
-/// \param    sender: El remitent. En aquest cas el modulCAN
+/// \brief    Gestiona l'event de notificacio del modul CAN.
+/// \param    sender: El remitent. En aquest cas el modulCAN.
 /// \param    aregs: Els parametres del missatge.
+/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
 void eos::CanOpenService::canDevice_notificationEventHandler(
 	htl::can::CANDevice * const sender,
@@ -1279,16 +1412,16 @@ void eos::CanOpenService::canDevice_notificationEventHandler(
 	switch (args->id) {
 		case htl::can::CANDevice::NotificationID::rxFifoNotEmpty: {
 
-			Action msg;
+			Message message;
 			htl::can::RxHeader rxHeader;
 
-			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, msg.frameReceived.data, sizeof(msg.frameReceived));
+			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, message.frameReceived.data, sizeof(message.frameReceived));
 			uint8_t dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
 
-			msg.id = ActionID::frameReceived;
-			msg.frameReceived.cobid = rxHeader.id;
-			msg.frameReceived.dataLen = dataLen;
-			_actionQueue.pushISR(msg);
+			message.id = MessageID::frameReceived;
+			message.frameReceived.cobid = rxHeader.id;
+			message.frameReceived.dataLen = dataLen;
+			_messageQueue.pushISR(message);
 
 			break;
 		}
@@ -1313,50 +1446,69 @@ void eos::CanOpenService::heartbeatTimerEventHandler(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Emet una trama
+/// \param    cobId: El identificador.
+/// \param    data: Les dades.
+/// \param    length: La longitut de les dades en bytes.
+/// \param    blockTime: Temps maxim d'espera.
+/// \return   El resultat de l'operacio.
+/// \remarks  L'ordre es posa en cua per execucio posterior.
+///
+eos::Result eos::CanOpenService::emitFrame(
+	CobID cobId,
+	const uint8_t *data,
+	uint32_t length,
+	Time blockTime) {
+
+	if (length > _canFrameSize)
+		return eos::Result::ErrorCodes::errorParameter;
+
+	Message message;
+	message.id = MessageID::sendFrame;
+	message.sendFrame.cobid = cobId;
+	message.sendFrame.dataLen = length;
+	if ((length > 0) && (data != nullptr))
+		memcpy(message.sendFrame.data, data, length);
+
+	return _messageQueue.push(message, blockTime);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Emet un missatge 'heartbeat'
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::Result eos::CanOpenService::emitHeartbeat(
-	Time timeout) {
+	Time blockTime) {
 
-	uint8_t data = 0;
+	uint8_t data[1];
 	switch (_nodeState) {
 		case NodeState::initializing:
-			data = 0;
+			data[0] = 0;
 			break;
 
 		case NodeState::stoped:
-			data = 4;
+			data[0] = 4;
 			break;
 
 		case NodeState::preOperational:
-			data = 0x7F;
+			data[0] = 0x7F;
 			break;
 
 		case NodeState::operational:
-			data = 5;
+			data[0] = 5;
 			break;
 
 		case NodeState::error:
-			data = 0x80;
+			data[0] = 0x80;
 			break;
 	}
 
-	Action action = {
-		.id { ActionID::frameToSend},
-		.frameToSend {
-			.cobid {CobID::makeHeartbeat(_nodeId)},
-			.dataLen {1},
-			.data {data}
-		}
-	};
+	CobID cobId = CobID::makeHeartbeat(_nodeId);
 
-	if (_actionQueue.push(action, timeout))
-		return eos::Result::ErrorCodes::ok;
-
-	return eos::Result::ErrorCodes::error;
+	return emitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 
@@ -1364,52 +1516,41 @@ eos::Result eos::CanOpenService::emitHeartbeat(
 /// \brief    Emet un missatge NMT.
 /// \param    command: La comanda.
 /// \param    nodeId: Node destinatari.
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::Result eos::CanOpenService::emitNMT(
 	uint8_t command,
 	uint8_t nodeId,
-	Time timeout) {
+	Time blockTime) {
 
-	Action action = {
-		.id {ActionID::frameToSend},
-		.frameToSend {
-			.cobid {CobID::makeNMT()},
-			.dataLen {2},
-			.data {command, nodeId}
-		}
-	};
-	if (_actionQueue.push(action, timeout))
-		return Result::ErrorCodes::ok;
+	uint8_t data[2];
+	data[0] = command;
+	data[1] = nodeId;
 
-	return Result::ErrorCodes::error;
+	CobID cobId = CobID::makeNMT();
+
+	return emitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Emet un missatge SYNC
-/// \param    timeout: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::Result eos::CanOpenService::emitSYNC(
-	Time timeout) {
+	Time blockTime) {
 
 	uint32_t options;
 	if (_dictionary->readU32(0x1005, 0x00, options) &&
 		eos::Bits::isSet(options, (uint32_t)(1 << 30))) {
 
-		Action action = {
-			.id { ActionID::frameToSend},
-			.frameToSend {
-				.cobid {CobID(options & 0x007F)},
-				.dataLen {0}
-			}
-		};
-		if (_actionQueue.push(action, timeout))
-			return Result::ErrorCodes::ok;
+		CobID cobId = CobID(options & 0x007F);
+
+		return emitFrame(cobId, nullptr, 0, blockTime);
 	}
 
 	return Result::ErrorCodes::error;
@@ -1425,22 +1566,22 @@ eos::Result eos::CanOpenService::emitSYNC(
 /// \return   El resultat de l'operacio.
 ///
 eos::Result eos::CanOpenService::emitRPDO(
-	uint8_t nodeId,
+	NodeID nodeId,
 	uint8_t rpdoId,
 	const uint8_t *data,
-	unsigned dataLen,
+	uint32_t dataLen,
 	Time timeout) {
 
-	Action action = {
-		.id {ActionID::frameToSend},
-		.frameToSend {
+	Message message = {
+		.id {MessageID::sendFrame},
+		.sendFrame {
 			.cobid {CobID(COBID::RPDO1, ((uint16_t)rpdoId << 8) | ((uint16_t)nodeId & 0x007F))},
 			.dataLen {(uint8_t)dataLen}
 		}
 	};
-	memcpy(action.frameToSend.data, data, dataLen);
+	memcpy(message.sendFrame.data, data, dataLen);
 
-	if (_actionQueue.push(action, timeout))
+	if (_messageQueue.push(message, timeout))
 		return Result::ErrorCodes::ok;
 
 	return Result::ErrorCodes::error;
