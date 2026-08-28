@@ -161,8 +161,6 @@ namespace eos {
 		private:
 			htl::can::CANDevice * const _devCAN;
         	CanOpenDictionary * const _dictionary;
-			rtos::Timer::Event<CanOpenService> _heartbeatTimerEvent;
-			rtos::Timer _heartbeatTimer;
 			htl::can::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			NodeID const _nodeId;
 			NodeState _nodeState;
@@ -173,11 +171,14 @@ namespace eos {
         	SYNCReceivedEventRaiser _syncReceivedEventRaiser;
         	HeartbeatReceivedEventRaiser _heartbeatReceivedEventRaiser;
 
+        	void *_heartbeatProducer;
+        	void *_nmtMaster;
+
 		private:
             void canDevice_notificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
-            void heartbeatTimerEventHandler(rtos::Timer *timer, rtos::Timer::EventArgs *args);
 
             void configureHeartbeat();
+            void configureNmtMaster();
             void configureCANDevice();
             void configureCANFilters();
 
@@ -204,7 +205,6 @@ namespace eos {
 			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
-            Result emitHeartbeat(Time blockTime);
 			Result emitNMT(uint8_t command, NodeID nodeId, Time blockTime);
 
             void onNodeStateChanged();
@@ -236,7 +236,7 @@ namespace eos {
             bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
             bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
 
-            // Lectura i escriptura en el dicionari remot
+            // Lectura i escriptura en el dicionari remot (Via protocol SDO)
             //
             bool writeU8(NodeID nodeId, uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask);
             bool writeU16(NodeID nodeId, uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask);
@@ -245,7 +245,7 @@ namespace eos {
             bool readU16(NodeID nodeId, uint16_t index, uint8_t subIndex, uint16_t &value);
             bool readU32(NodeID nodeId, uint16_t index, uint8_t subIndex, uint32_t &value);
 
-            // Canvia l'estat d'un node remot
+            // Canvia l'estat d'un node remot (Via protocol NMT)
             //
 			Result start(NodeID nodeId, Time blockTime);
 			Result stop(NodeID nodeId, Time blockTime);

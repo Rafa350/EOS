@@ -15,12 +15,11 @@ eos::TTY::TTY(
 	uint8_t numColumns) :
 
 	_stream {stream},
+	_writer {stream},
 	_numRows {numRows},
 	_numColumns {numColumns},
 	_row {0},
 	_column {0} {
-
-	_writer.initialize(stream);
 }
 
 

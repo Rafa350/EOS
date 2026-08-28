@@ -22,10 +22,7 @@ namespace eos {
     		Stream *_stream;
 
         public:
-            TextStreamWriter();
             TextStreamWriter(Stream *stream);
-
-            void initialize(Stream *stream);
 
             bool writeU8(uint8_t data);
             bool writeU16(uint16_t data);

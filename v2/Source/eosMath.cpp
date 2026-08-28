@@ -33,12 +33,12 @@ export namespace eos {
 			template <typename T>
 			static T sqrt(T v);
 
-			static constexpr uint32_t maxU32 = 0xFFFFFFFF;
-			static constexpr uint32_t maxU16 = 0xFFFF;
-			static constexpr uint32_t maxU8  = 0xFF;
-			static constexpr uint32_t minU32 = 0x00000000;
-			static constexpr uint32_t minU16 = 0x0000;
-			static constexpr uint32_t minU8  = 0x00;
+			static constexpr uint32_t maxU32 = std::numeric_limits<uint32_t>::max();
+			static constexpr uint32_t maxU16 = std::numeric_limits<uint16_t>::max();
+			static constexpr uint32_t maxU8  = std::numeric_limits<uint8_t>::max();
+			static constexpr uint32_t minU32 = std::numeric_limits<uint32_t>::min();
+			static constexpr uint32_t minU16 = std::numeric_limits<uint16_t>::min();
+			static constexpr uint32_t minU8  = std::numeric_limits<uint8_t>::min();
 	};
 }
 
@@ -54,7 +54,7 @@ inline T eos::Math::min(
 	T a,
 	T b) {
 
-	return a < b ? a : b;
+	return std::min(a, b);
 }
 
 
@@ -69,7 +69,7 @@ inline T eos::Math::max(
 	T a,
 	T b) {
 
-	return a > b ? a : b;
+	return std::max(a, b);
 }
 
 
@@ -161,9 +161,7 @@ inline void eos::Math::swap(
 	T &a,
 	T &b) {
 
-	auto x{a};
-	a = b;
-	b = x;
+	std::swap(a, b);
 }
 
 

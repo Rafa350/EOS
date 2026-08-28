@@ -1,6 +1,7 @@
 module;
 
 #include "eos.h"
+#include "eosResults.h"
 #include "eosTime.h"
 #include "RTOS/rtosTimer.h"
 #include "Services/CanOPen/eosCanOpenService.h"
@@ -24,9 +25,14 @@ export namespace eos {
 		public:
 			CanOpenHeartbeatProducer(CanOpenService *service);
 
-			bool start();
-			bool start(Time interval);
-			bool stop();
+			Result sendBoot();
+			Result sendBeat();
+
+			Result start();
+			Result start(Time interval);
+			Result stop();
+
+			bool isActive() const;
 	};
 }
 
@@ -47,9 +53,9 @@ eos::CanOpenHeartbeatProducer::CanOpenHeartbeatProducer(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia la produccio amb l'interval per defecte.
-/// \return   True si tot es correcte i la produccio s'ha iniciat.
+/// \return   El resultat de l'operacio.
 ///
-bool eos::CanOpenHeartbeatProducer::start() {
+eos::Result eos::CanOpenHeartbeatProducer::start() {
 
 	if (!_active) {
 		uint16_t interval;
@@ -58,7 +64,7 @@ bool eos::CanOpenHeartbeatProducer::start() {
 				_active = true;
 	}
 
-	return _active;
+	return _active ? Result::ErrorCodes::ok : Result::ErrorCodes::error;
 }
 
 
@@ -67,7 +73,7 @@ bool eos::CanOpenHeartbeatProducer::start() {
 /// \param    interval: Interval entre beats.
 /// \return   True si tot es correcte i la produccio s'ha iniciat.
 ///
-bool eos::CanOpenHeartbeatProducer::start(
+eos::Result eos::CanOpenHeartbeatProducer::start(
 	Time interval) {
 
 	if (!_active) {
@@ -75,7 +81,7 @@ bool eos::CanOpenHeartbeatProducer::start(
 			_active = true;
 	}
 
-	return _active;
+	return _active ? Result::ErrorCodes::ok : Result::ErrorCodes::error;
 }
 
 
@@ -83,13 +89,23 @@ bool eos::CanOpenHeartbeatProducer::start(
 /// \brief    Finalitza la produccio.
 /// \return   True si tot es correcte i la produccio s'ha parat.
 ///
-bool eos::CanOpenHeartbeatProducer::stop() {
+eos::Result eos::CanOpenHeartbeatProducer::stop() {
 
 	if (_active)
 		if (_timer.stop(Time::fromMiliseconds(100)))
 			_active = false;
 
-	return !_active;
+	return _active ? Result::ErrorCodes::error : Result::ErrorCodes::ok;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Indica si esta actiu i generant beats.
+/// \return   True si esta actiu.
+///
+inline bool eos::CanOpenHeartbeatProducer::isActive() const {
+
+	return _active;
 }
 
 
@@ -101,6 +117,30 @@ bool eos::CanOpenHeartbeatProducer::stop() {
 void eos::CanOpenHeartbeatProducer::timerEventHandler(
 	rtos::Timer *timer,
 	rtos::Timer::EventArgs *args) {
+
+	sendBeat();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Emet el boot
+/// \return   El resultat de l'operacio.
+/// \remarks  Nomes es permet si el node esta en estat 'initializing'
+///
+eos::Result eos::CanOpenHeartbeatProducer::sendBoot() {
+
+	if (_service->getNodeState() != eos::CanOpenService::NodeState::initializing)
+		return eos::Result::ErrorCodes::errorState;
+	else
+		return sendBeat();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Emet el beat
+/// \return   El resultat de l'operacio.
+///
+eos::Result eos::CanOpenHeartbeatProducer::sendBeat() {
 
 	uint8_t data[1];
 	switch (_service->getNodeState()) {
@@ -127,7 +167,7 @@ void eos::CanOpenHeartbeatProducer::timerEventHandler(
 
 	CobID cobId = CobID::makeHeartbeat(_service->getNodeId());
 
-	_service->emitFrame(
+	return _service->emitFrame(
 		cobId,
 		data,
 		sizeof(data),

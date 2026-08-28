@@ -1,11 +1,14 @@
 #include "eos.h"
 #include "eosTime.h"
+#include "rtos/rtosTask.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
 #include "Services/CanOpen/eosCanOpenService.h"
 #include "Services/canopen/eosCanOpenProtocol.h"
 
 
 import Eos.Math;
+import Eos.Services.CanOpen.HeartbeatProducer;
+import Eos.Services.CanOpen.NmtMaster;
 
 
 constexpr const char *serviceName = "CanOpen";
@@ -24,12 +27,13 @@ eos::CanOpenService::CanOpenService(
 
     _devCAN {params.devCAN},
 	_dictionary {params.dictionary},
-	_heartbeatTimerEvent {*this, &CanOpenService::heartbeatTimerEventHandler},
-	_heartbeatTimer {rtos::Timer::Mode::autoRestart, nullptr, _heartbeatTimerEvent},
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
-	_messageQueue {_messageQueueSize} {
+	_messageQueue {_messageQueueSize},
+
+	_heartbeatProducer {nullptr},
+	_nmtMaster {nullptr}{
 }
 
 
@@ -118,6 +122,7 @@ void eos::CanOpenService::onExecute() {
 	configureCANDevice();
 	configureCANFilters();
 	configureHeartbeat();
+	configureNmtMaster();
 
     // Accepta notificacions del dispositiu.
 	//
@@ -127,10 +132,11 @@ void eos::CanOpenService::onExecute() {
 	//
 	_devCAN->start_IRQ();
 
-	// Envia un boot-up (Heartbeat amb estat 'initializing')
+	// Emet bootup i espera 500ms
 	//
-	emitHeartbeat(Times::infinite);
-	rtos::Task::delay(Time::fromMiliseconds(500));
+	auto hb = reinterpret_cast<CanOpenHeartbeatProducer*>(_heartbeatProducer);
+	hb->sendBoot();
+	rtos::Task::delay(eos::Time::fromMiliseconds(500));
 
 	// Canvia l'estat a 'preOperational'
 	//
@@ -177,13 +183,25 @@ void eos::CanOpenService::onExecute() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura la generacio de heartbeat.
+/// \brief    Configura el productor de heartbeat.
 ///
 void eos::CanOpenService::configureHeartbeat() {
 
-	uint16_t interval;
-	if (_dictionary->readU16(0x1017, 0, interval) && interval > 0)
-		_heartbeatTimer.start(Time::fromMiliseconds(interval), Times::infinite);
+	auto heartbeatProducer = new CanOpenHeartbeatProducer(this);
+	heartbeatProducer->start();
+
+	_heartbeatProducer = heartbeatProducer;
+}
+
+
+/// ----------------------------------------------------------------------
+// \brief     Configura el MNT Master.
+///
+void eos::CanOpenService::configureNmtMaster() {
+
+	auto nmtMaster = new CanOpenNmtMaster(this);
+
+	_nmtMaster = nmtMaster;
 }
 
 
@@ -586,7 +604,7 @@ void eos::CanOpenService::processNMT(
 	uint8_t command,
 	NodeID nodeId) {
 
-	if (nodeId == _nodeId) {
+	if ((nodeId == _nodeId) || (nodeId == 0)) {
 		switch (command) {
 			case 0x01:
 				changeNodeState(NodeState::operational);
@@ -945,6 +963,12 @@ eos::Result eos::CanOpenService::setNodeState(
 eos::CanOpenService::NodeState eos::CanOpenService::getNodeState() const {
 
 	return _nodeState;
+}
+
+
+eos::NodeID eos::CanOpenService::getNodeId() const {
+
+	return _nodeId;
 }
 
 
@@ -1433,19 +1457,6 @@ void eos::CanOpenService::canDevice_notificationEventHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Gestiona l'event del temporitzador.
-/// \param    timer: El remitent, en aquest cas el timer.
-/// \param    args: Parametres del event.
-///
-void eos::CanOpenService::heartbeatTimerEventHandler(
-	rtos::Timer *timer,
-	rtos::Timer::EventArgs *args) {
-
-	emitHeartbeat(Times::infinite);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Emet una trama
 /// \param    cobId: El identificador.
 /// \param    data: Les dades.
@@ -1475,44 +1486,6 @@ eos::Result eos::CanOpenService::emitFrame(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Emet un missatge 'heartbeat'
-/// \param    blockTime: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-eos::Result eos::CanOpenService::emitHeartbeat(
-	Time blockTime) {
-
-	uint8_t data[1];
-	switch (_nodeState) {
-		case NodeState::initializing:
-			data[0] = 0;
-			break;
-
-		case NodeState::stoped:
-			data[0] = 4;
-			break;
-
-		case NodeState::preOperational:
-			data[0] = 0x7F;
-			break;
-
-		case NodeState::operational:
-			data[0] = 5;
-			break;
-
-		case NodeState::error:
-			data[0] = 0x80;
-			break;
-	}
-
-	CobID cobId = CobID::makeHeartbeat(_nodeId);
-
-	return emitFrame(cobId, data, sizeof(data), blockTime);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Emet un missatge NMT.
 /// \param    command: La comanda.
 /// \param    nodeId: Node destinatari.
@@ -1531,7 +1504,11 @@ eos::Result eos::CanOpenService::emitNMT(
 
 	CobID cobId = CobID::makeNMT();
 
-	return emitFrame(cobId, data, sizeof(data), blockTime);
+	auto nmtMaster = reinterpret_cast<CanOpenNmtMaster*>(_nmtMaster);
+	if (nmtMaster != nullptr)
+		return nmtMaster->sendCommand(nodeId, (CanOpenNmtMaster::Command)command, blockTime);
+	else
+		return Result::ErrorCodes::errorUnsupported;
 }
 
 

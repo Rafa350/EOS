@@ -7,15 +7,6 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Construeix l'objecte amb els valors inicials.
-///
-eos::TextStreamWriter::TextStreamWriter() :
-
-    _stream {nullptr} {
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Construeix l'objecte i l'inicialitza
 /// \param    stream: El stream d'escriptura.
 ///
@@ -25,19 +16,6 @@ eos::TextStreamWriter::TextStreamWriter(
 	_stream {stream} {
 
 	eosAssert(stream != nullptr);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza l'objecte.
-/// \param    stream: El stream d'escriptura.
-///
-void eos::TextStreamWriter::initialize(
-	Stream *stream) {
-
-	eosAssert(stream != nullptr);
-
-	_stream = stream;
 }
 
 

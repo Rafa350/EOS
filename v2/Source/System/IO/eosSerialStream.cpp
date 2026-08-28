@@ -23,8 +23,8 @@ export namespace eos {
 		public:
 			SerialStream(SerialDriver *drvSerial);
 
-			void setWriteTimeout(Time blockTime);
-			void setReadTimeout(Time blockTime);
+			void setWriteTimeout(Time timeout);
+			void setReadTimeout(Time timeout);
 
 			ResultU32 write(const uint8_t *buffer, uint32_t length) override;
 			ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
@@ -45,24 +45,24 @@ eos::SerialStream::SerialStream(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el valor del temps maxim de bloqueig d'escriptura.
-/// \param    blockTime: El valor.
+/// \brief    Asigna el timeout d'escriptura.
+/// \param    timeout: El valor.
 ///
 inline void eos::SerialStream::setWriteTimeout(
-	Time blockTime) {
+	Time timeout) {
 
-	_txTimeout = blockTime;
+	_txTimeout = timeout;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el valor del temps maxim de bloqueig de lectura.
-/// \param    blockTime: El valor.
+/// \brief    Asigna el timeout de lectura.
+/// \param    timeout: El valor.
 ///
 inline void eos::SerialStream::setReadTimeout(
-	Time blockTime) {
+	Time timeout) {
 
-	_rxTimeout = blockTime;
+	_rxTimeout = timeout;
 }
 
 
