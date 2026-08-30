@@ -58,6 +58,11 @@ export namespace eos {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Activa els bits especificats en la mascara.
+/// \param    var: La variable.
+/// \param    mask: La mascara.
+///
 template<std::unsigned_integral T_>
 inline void eos::Bits::set(
 	volatile T_ &var,
@@ -67,6 +72,11 @@ inline void eos::Bits::set(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Activa els bits especificats en la mascara.
+/// \param    var: La variable.
+/// \param    mask: La mascara.
+///
 template<std::unsigned_integral T_>
 inline void eos::Bits::set(
 	T_ &var,
@@ -77,7 +87,9 @@ inline void eos::Bits::set(
 
 
 template<std::unsigned_integral T_>
-inline void eos::Bits::clear(volatile T_ &var, T_ mask) {
+inline void eos::Bits::clear(
+	volatile T_ &var,
+	T_ mask) {
 
 	var &= ~mask;
 }

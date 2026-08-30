@@ -26,7 +26,7 @@ export namespace eos {
 		public:
 			CanOpenNmtMaster(CanOpenService *service);
 
-			Result sendCommand(NodeID nodeId, Command command, Time blockTime);
+			Result emitCommand(NodeID nodeId, Command command, Time blockTime);
 	};
 
 }
@@ -50,7 +50,7 @@ eos::CanOpenNmtMaster::CanOpenNmtMaster(
 /// \param    command: La comanda.
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
-eos::Result eos::CanOpenNmtMaster::sendCommand(
+eos::Result eos::CanOpenNmtMaster::emitCommand(
 	NodeID nodeId,
 	Command command,
 	Time blockTime) {

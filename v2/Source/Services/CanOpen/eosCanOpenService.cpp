@@ -13,7 +13,7 @@ import Eos.Services.CanOpen.NmtMaster;
 
 constexpr const char *serviceName = "CanOpen";
 constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
-constexpr uint32_t serviceStackDepth = 256;
+constexpr uint32_t serviceStackDepth = 256 + 64;
 
 constexpr unsigned defTimeout = 25;
 
@@ -572,26 +572,30 @@ void eos::CanOpenService::processHeartbeat(
 	NodeID nodeId,
 	uint8_t state) {
 
-	NodeState nodeState = NodeState::error;
-	switch (state) {
-		case 0x00: // boot-up
-			nodeState = NodeState::initializing;
-			break;
+	if ((_nodeState == NodeState::preOperational) ||
+		(_nodeState == NodeState::operational)) {
 
-		case 0x04: // stopped
-			nodeState = NodeState::stoped;
-			break;
+		NodeState nodeState = NodeState::error;
+		switch (state) {
+			case 0x00: // boot-up
+				nodeState = NodeState::initializing;
+				break;
 
-		case 0x05: // operational
-			nodeState = NodeState::operational;
-			break;
+			case 0x04: // stopped
+				nodeState = NodeState::stoped;
+				break;
 
-		case 0x7F: // preoperational
-			nodeState = NodeState::preOperational;
-			break;
+			case 0x05: // operational
+				nodeState = NodeState::operational;
+				break;
+
+			case 0x7F: // preoperational
+				nodeState = NodeState::preOperational;
+				break;
+		}
+
+	    onHeartbeatReceived(nodeId, nodeState);
 	}
-
-	onHeartbeatReceived(nodeId, nodeState);
 }
 
 
@@ -604,25 +608,30 @@ void eos::CanOpenService::processNMT(
 	uint8_t command,
 	NodeID nodeId) {
 
-	if ((nodeId == _nodeId) || (nodeId == 0)) {
-		switch (command) {
-			case 0x01:
-				changeNodeState(NodeState::operational);
-				break;
+	if ((_nodeState == NodeState::preOperational) ||
+		(_nodeState == NodeState::operational) ||
+		(_nodeState == NodeState::stoped)) {
 
-			case 0x02:
-				changeNodeState(NodeState::stoped);
-				break;
+		if ((nodeId == _nodeId) || (nodeId == 0)) {
+			switch (command) {
+				case 0x01:
+					changeNodeState(NodeState::operational);
+					break;
 
-			case 0x80:
-				changeNodeState(NodeState::preOperational);
-				break;
+				case 0x02:
+					changeNodeState(NodeState::stoped);
+					break;
 
-			case 0x81:
-				break;
+				case 0x80:
+					changeNodeState(NodeState::preOperational);
+					break;
 
-			case 0x82:
-				break;
+				case 0x81:
+					break;
+
+				case 0x82:
+					break;
+			}
 		}
 	}
 }
@@ -827,9 +836,9 @@ void eos::CanOpenService::processTIME() {
 ///
 void eos::CanOpenService::processSYNC() {
 
-	onSYNCReceived();
-
 	if (_nodeState == NodeState::operational) {
+
+		onSYNCReceived();
 
 		// Comprova les  entrades 0x1800 per si hi han TPDOs sincrons
 		// per enviar
@@ -861,10 +870,13 @@ void eos::CanOpenService::processTPDO(
 	const uint8_t *data,
 	uint32_t dataLen) {
 
-	// Notifica a l'aplicacio que hi ha un TPDO per procesar provinent d'un
-	// node remot
-	//
-	onTPDOReceived(cobId, data, dataLen);
+	if (_nodeState == NodeState::operational) {
+
+		// Notifica a l'aplicacio que hi ha un TPDO per procesar provinent d'un
+		// node remot
+		//
+		onTPDOReceived(cobId, data, dataLen);
+	}
 }
 
 
@@ -966,6 +978,10 @@ eos::CanOpenService::NodeState eos::CanOpenService::getNodeState() const {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'identificador del node.
+/// \return   El identificador del node.
+///
 eos::NodeID eos::CanOpenService::getNodeId() const {
 
 	return _nodeId;
@@ -1506,7 +1522,7 @@ eos::Result eos::CanOpenService::emitNMT(
 
 	auto nmtMaster = reinterpret_cast<CanOpenNmtMaster*>(_nmtMaster);
 	if (nmtMaster != nullptr)
-		return nmtMaster->sendCommand(nodeId, (CanOpenNmtMaster::Command)command, blockTime);
+		return nmtMaster->emitCommand(nodeId, (CanOpenNmtMaster::Command)command, blockTime);
 	else
 		return Result::ErrorCodes::errorUnsupported;
 }
