@@ -126,9 +126,10 @@ namespace eos {
 
 		private:
 			enum class MessageID {
+				initialized,
 				entryChanged,
 				frameReceived,
-				sendFrame,
+				transmitFrame,
 				changeNodeState
 			};
 			struct EntryChanged {
@@ -139,7 +140,7 @@ namespace eos {
 				uint8_t dataLen;
 				uint8_t data[_canFrameSize];
 			};
-			struct SendFrame {
+			struct TransmitFrame {
 				uint16_t cobid;
 				uint8_t dataLen;
 				uint8_t data[_canFrameSize];
@@ -152,7 +153,7 @@ namespace eos {
 				union {
 					EntryChanged entryChanged;
 					FrameReceived frameReceived;
-					SendFrame sendFrame;
+					TransmitFrame transmitFrame;
 					ChangeNodeState changeNodeState;
 				};
 			};
@@ -160,8 +161,10 @@ namespace eos {
 
 		private:
 			htl::can::CANDevice * const _devCAN;
-        	CanOpenDictionary * const _dictionary;
 			htl::can::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
+			rtos::Timer::Event<CanOpenService> _timer_notificationEvent;
+			rtos::Timer _timer;
+        	CanOpenDictionary * const _dictionary;
 			NodeID const _nodeId;
 			NodeState _nodeState;
 			MessageQueue _messageQueue;
@@ -171,35 +174,38 @@ namespace eos {
         	SYNCReceivedEventRaiser _syncReceivedEventRaiser;
         	HeartbeatReceivedEventRaiser _heartbeatReceivedEventRaiser;
 
-        	void *_heartbeatProducer;
-        	void *_nmtMaster;
-
 		private:
-            void canDevice_notificationEventHandler(htl::can::CANDevice * const sender, htl::can::CANDevice::NotificationEventArgs * const args);
+            void canDevice_notificationEventHandler(htl::can::CANDevice *sender, htl::can::CANDevice::NotificationEventArgs *args);
+			void timer_notificationEventHandler(rtos::Timer *timer, rtos::Timer::EventArgs *args);
 
-            void configureHeartbeat();
-            void configureNmtMaster();
             void configureCANDevice();
             void configureCANFilters();
+            void configureHeartbeat();
 
-			void processFrameReceived(const FrameReceived &msg);
-            void processEntryChanged(const EntryChanged &msg);
-            void processChangeNodeState(const ChangeNodeState &msg);
-            void processSendFrame(const SendFrame &msg);
+            void processMessage(const Message &message);
+            void processMessage_Initialized();
+			void processMessage_FrameReceived(const FrameReceived &args);
+			void processMessage_FrameReceived_NMT(const FrameReceived &args);
+			void processMessage_FrameReceived_Heartbeat(const FrameReceived &args);
+			void processMessage_FrameReceived_TPDO(const FrameReceived &args);
+			void processMessage_FrameReceived_SYNC(const FrameReceived &args);
+			void processMessage_FrameReceived_TIME(const FrameReceived &args);
+            void processMessage_FrameReceived_SDO(const FrameReceived &args);
+			void processMessage_FrameReceived_RPDO(const FrameReceived &args);
+            void processMessage_EntryChanged(const EntryChanged &args);
+            void processMessage_ChangeNodeState(const ChangeNodeState &args);
+            void processMessage_TransmitFrame(const TransmitFrame &args);
+
+            Result postMessage_TransmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
 
             void processSDO(const uint8_t *data);
-			void processNMT(uint8_t command, NodeID nodeId);
-			void processSYNC();
-			void processTIME();
-			void processHeartbeat(NodeID nodeId, uint8_t state);
-			void processTPDO(CobID cobId, const uint8_t *data, uint32_t dataLen);
 			void processRPDO(CobID cobId, const uint8_t *data, uint32_t dataLen);
 
 			void sendTPDO(uint8_t tpdo);
 
 			bool isMapped(uint8_t tpdo, uint32_t entryId);
 
-			Result sendFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
+			Result transmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
 
 		protected:
 			void onInitialize(ServiceParams &params) override;
@@ -236,7 +242,7 @@ namespace eos {
             bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
             bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
 
-            // Lectura i escriptura en el dicionari remot (Via protocol SDO)
+            // Lectura i escriptura en el dicionari remot (Protocol SDO)
             //
             bool writeU8(NodeID nodeId, uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask);
             bool writeU16(NodeID nodeId, uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask);
@@ -245,7 +251,7 @@ namespace eos {
             bool readU16(NodeID nodeId, uint16_t index, uint8_t subIndex, uint16_t &value);
             bool readU32(NodeID nodeId, uint16_t index, uint8_t subIndex, uint32_t &value);
 
-            // Canvia l'estat d'un node remot (Via protocol NMT)
+            // Canvia l'estat d'un node remot (Protocol NMT)
             //
 			Result start(NodeID nodeId, Time blockTime);
 			Result stop(NodeID nodeId, Time blockTime);
@@ -253,17 +259,13 @@ namespace eos {
 			Result resetNode(NodeID nodeId, Time blockTime);
 			Result resetCommunication(NodeID nodeId, Time blockTime);
 
-            // Senyal de sincronitzacio al bus
+            // Senyal de sincronitzacio al bus (Protocol SYNC)
             //
             Result emitSYNC(Time timeout);
 
 			// Emet missatges RPDO
 			//
 			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, uint32_t dataLen, Time timeout);
-
-			// Emet una trama
-			//
-			Result emitFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
 
 			// Habilita i deshabilita els events
 			//

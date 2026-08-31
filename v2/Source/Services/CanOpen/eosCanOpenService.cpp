@@ -7,8 +7,6 @@
 
 
 import Eos.Math;
-import Eos.Services.CanOpen.HeartbeatProducer;
-import Eos.Services.CanOpen.NmtMaster;
 
 
 constexpr const char *serviceName = "CanOpen";
@@ -26,14 +24,68 @@ eos::CanOpenService::CanOpenService(
 	InitParams const &params) :
 
     _devCAN {params.devCAN},
-	_dictionary {params.dictionary},
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
+	_timer_notificationEvent {*this, &CanOpenService::timer_notificationEventHandler},
+	_timer {rtos::Timer::Mode::autoRestart, nullptr, _timer_notificationEvent},
+	_dictionary {params.dictionary},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
-	_messageQueue {_messageQueueSize},
+	_messageQueue {_messageQueueSize} {
+}
 
-	_heartbeatProducer {nullptr},
-	_nmtMaster {nullptr}{
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio del servei.
+/// \param    params: Parametres d'inicialitzacio.
+///
+void eos::CanOpenService::onInitialize(
+	ServiceParams &params) {
+
+	params.name = serviceName;
+	params.stackDepth = serviceStackDepth;
+	params.priority = servicePriority;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Executa els procesos del servei.
+///
+void eos::CanOpenService::onExecute() {
+
+	// Configura les comunicacions CAN
+	//
+	configureCANDevice();
+	configureCANFilters();
+
+	// Configura la generacio de heartbeat
+	//
+	configureHeartbeat();
+
+    // Inicia les comunicacions CAN
+	//
+	_devCAN->enableNotificationEvent(_canDevice_notificationEvent);
+	_devCAN->start_IRQ();
+
+	// Genera el missatge 'initialized' i el porta a la cua
+	//
+	Message msg;
+	msg.id = MessageID::initialized;
+	_messageQueue.push(msg, eos::Times::infinite);
+
+	// Repeteix mentre no es canceli la tasca
+	//
+	while (!stopSignal()) {
+
+		// Procesa els missatges de la cua
+		//
+		Message message;
+		while(_messageQueue.pop(message, Time::fromMiliseconds(1000)))
+			processMessage(message);
+	}
+
+	// Finalitza les comunicacions CAN
+	//
+	_devCAN->stop();
 }
 
 
@@ -102,106 +154,19 @@ void eos::CanOpenService::disbleHeartbeatReceivedEvent() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio del servei.
-/// \param    params: Parametres d'inicialitzacio.
-///
-void eos::CanOpenService::onInitialize(
-	ServiceParams &params) {
-
-	params.name = serviceName;
-	params.stackDepth = serviceStackDepth;
-	params.priority = servicePriority;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Executa els procesos del servei.
-///
-void eos::CanOpenService::onExecute() {
-
-	configureCANDevice();
-	configureCANFilters();
-	configureHeartbeat();
-	configureNmtMaster();
-
-    // Accepta notificacions del dispositiu.
-	//
-	_devCAN->enableNotificationEvent(_canDevice_notificationEvent);
-
-	// Inicia el dispositiu FCAN en modus interrupcio.
-	//
-	_devCAN->start_IRQ();
-
-	// Emet bootup i espera 500ms
-	//
-	auto hb = reinterpret_cast<CanOpenHeartbeatProducer*>(_heartbeatProducer);
-	hb->sendBoot();
-	rtos::Task::delay(eos::Time::fromMiliseconds(500));
-
-	// Canvia l'estat a 'preOperational'
-	//
-	changeNodeState(NodeState::preOperational);
-
-	while (!stopSignal()) {
-
-		Message message;
-		while(_messageQueue.pop(message, Time::fromMiliseconds(1000))) {
-			switch (message.id) {
-
-				// Ha canviat una entrada del diccionari
-				//
-				case MessageID::entryChanged:
-					processEntryChanged(message.entryChanged);
-					break;
-
-				// Canvia l'estat del node.
-				//
-				case MessageID::changeNodeState:
-					processChangeNodeState(message.changeNodeState);
-					break;
-
-				// S'ha rebut una trama CANOpen
-				//
-				case MessageID::frameReceived:
-					processFrameReceived(message.frameReceived);
-					break;
-
-				// Cal enviar un trama CANOpen
-				//
-				case MessageID::sendFrame:
-					processSendFrame(message.sendFrame);
-					break;
-
-				default:
-					break;
-			}
-		}
-	}
-
-	_devCAN->stop();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Configura el productor de heartbeat.
+/// \brief    Configura la produccio dels heartbeats.
 ///
 void eos::CanOpenService::configureHeartbeat() {
 
-	auto heartbeatProducer = new CanOpenHeartbeatProducer(this);
-	heartbeatProducer->start();
+	// Obte l'interval entre beats.
+	//
+	uint16_t interval;
+	if (readU16(0x1017, 0, interval) && interval > 0) {
 
-	_heartbeatProducer = heartbeatProducer;
-}
-
-
-/// ----------------------------------------------------------------------
-// \brief     Configura el MNT Master.
-///
-void eos::CanOpenService::configureNmtMaster() {
-
-	auto nmtMaster = new CanOpenNmtMaster(this);
-
-	_nmtMaster = nmtMaster;
+		// Activa el temporitzador
+		//
+		_timer.start(Time::fromMiliseconds(interval), Time::fromMiliseconds(100));
+	}
 }
 
 
@@ -469,11 +434,73 @@ void eos::CanOpenService::changeNodeState(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el missatge 'entryChanged'
-/// \param    msg: Els parametres del missatge.
+/// \brief    Procesa els missatges
+/// \param    message: El missatge a procesar.
 ///
-void eos::CanOpenService::processEntryChanged(
-	const EntryChanged &msg) {
+void eos::CanOpenService::processMessage(
+	const Message &message) {
+
+	switch (message.id) {
+
+		// Notifica que el node s'acaba d'inicialitzar.
+		//
+		case MessageID::initialized:
+			processMessage_Initialized();
+			break;
+
+		// Notifica que ha canviat una entrada del diccionari
+		//
+		case MessageID::entryChanged:
+			processMessage_EntryChanged(message.entryChanged);
+			break;
+
+		// Notifica que s'ha rebut una trama CANOpen
+		//
+		case MessageID::frameReceived:
+			processMessage_FrameReceived(message.frameReceived);
+			break;
+
+		// Ordena canviar l'estat del node.
+		//
+		case MessageID::changeNodeState:
+			processMessage_ChangeNodeState(message.changeNodeState);
+			break;
+
+		// Ordena enviar enviar un trama CANOpen
+		//
+		case MessageID::transmitFrame:
+			processMessage_TransmitFrame(message.transmitFrame);
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el missatge 'initialized'
+///
+void eos::CanOpenService::processMessage_Initialized() {
+
+	// Emet un boot-up
+	//
+	uint8_t data[1];
+	data[0] =  0;
+
+	CobID cobId = CobID::makeHeartbeat(_nodeId);
+
+	transmitFrame(cobId, data, sizeof(data), Time::fromMiliseconds(100));
+
+	// Canvia l'estat a 'preOperational'
+	//
+	changeNodeState(NodeState::preOperational);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el missatge 'entryChanged'
+/// \param    args: Els parametres del missatge.
+///
+void eos::CanOpenService::processMessage_EntryChanged(
+	const EntryChanged &args) {
 
 	// Si esta en modus operacional, comprova si cal generar TPDO's
 	//
@@ -486,7 +513,7 @@ void eos::CanOpenService::processEntryChanged(
 
 			// Verifica que la entrada, estigui mapejada en un TPDO
 			//
-			if (isMapped(tpdo, msg.entryId)) {
+			if (isMapped(tpdo, args.entryId)) {
 				uint32_t flags;
 				uint8_t transmissionType;
 
@@ -504,73 +531,77 @@ void eos::CanOpenService::processEntryChanged(
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el missatge 'changeNodeState'
-/// \param    msg: Els parametres del missatge.
+/// \param    args: Els parametres del missatge.
 ///
-void eos::CanOpenService::processChangeNodeState(
-	const ChangeNodeState &msg) {
+void eos::CanOpenService::processMessage_ChangeNodeState(
+	const ChangeNodeState &args) {
 
-	changeNodeState(msg.nodeState);
+	changeNodeState(args.nodeState);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el missatge 'sendFrame'
-/// \param    msg: Els parametres del missatge.
+/// \param    args: Els parametres del missatge.
 ///
-void eos::CanOpenService::processSendFrame(
-	const SendFrame &msg) {
+void eos::CanOpenService::processMessage_TransmitFrame(
+	const TransmitFrame &args) {
 
-	sendFrame(CobID(msg.cobid), msg.data, msg.dataLen, Time::fromMiliseconds(20));
+	transmitFrame(
+		CobID(args.cobid),
+		args.data,
+		args.dataLen,
+		Time::fromMiliseconds(50));
 }
-
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el missatge 'FrameReceived'
-/// \param    msg: Els parammetres del missatge.
+/// \param    args: Els parammetres del missatge.
 ///
-void eos::CanOpenService::processFrameReceived(
-	const FrameReceived &msg) {
+void eos::CanOpenService::processMessage_FrameReceived(
+	const FrameReceived &args) {
 
-	CobID cobId(msg.cobid);
+	CobID cobId(args.cobid);
 
 	if (cobId.isNMT())
-		processNMT(msg.data[0], msg.data[1]);
+		processMessage_FrameReceived_NMT(args);
 
 	else if (cobId.isSYNC())
-		processSYNC();
+		processMessage_FrameReceived_SYNC(args);
 
 	else if (cobId.isTIME())
-		processTIME();
+		processMessage_FrameReceived_TIME(args);
 
 	else if (cobId.isHeartbeat())
-		processHeartbeat(cobId.nodeId(), msg.data[0]);
+		processMessage_FrameReceived_Heartbeat(args);
 
 	else if (cobId.base() == COBID::SDO)
-		processSDO(msg.data);
+		processMessage_FrameReceived_SDO(args);
 
 	else if ((cobId.base() == COBID::RPDO1) ||
 		     (cobId.base() == COBID::RPDO2) ||
 		     (cobId.base() == COBID::RPDO3) ||
 		     (cobId.base() == COBID::RPDO4))
-		processRPDO(cobId, msg.data, msg.dataLen);
+		processMessage_FrameReceived_RPDO(args);
 
 	else if ((cobId.base() == COBID::TPDO1) ||
 		     (cobId.base() == COBID::TPDO2) ||
 		     (cobId.base() == COBID::TPDO3) ||
 		     (cobId.base() == COBID::TPDO4))
-	    processTPDO(cobId, msg.data, msg.dataLen);
+	    processMessage_FrameReceived_TPDO(args);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges Heartbeat.
-/// \param    nodeId: El node origen del missatge.
-/// \param    state: L'estat del node.
+/// \brief    Procesa el missatge 'FrameReceived' Heartbeat.
+/// \param    args: Parametres del missatge
 ///
-void eos::CanOpenService::processHeartbeat(
-	NodeID nodeId,
-	uint8_t state) {
+void eos::CanOpenService::processMessage_FrameReceived_Heartbeat(
+	const FrameReceived &args) {
+
+	auto state = args.data[0];
+	auto nodeId = CobID(args.cobid).nodeId();
 
 	if ((_nodeState == NodeState::preOperational) ||
 		(_nodeState == NodeState::operational)) {
@@ -600,20 +631,21 @@ void eos::CanOpenService::processHeartbeat(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges NMT
-/// \param    command: La comanda NMT
-/// \param    nodeId: El identificador del node on aplicar la comanda
+/// \brief    Procesa el missatge 'FrameReceived' NMT
+/// \param    args: Parametres del missatge
 ///
-void eos::CanOpenService::processNMT(
-	uint8_t command,
-	NodeID nodeId) {
+void eos::CanOpenService::processMessage_FrameReceived_NMT(
+	const FrameReceived &args) {
+
+	auto comand = args.data[0];
+	auto nodeId = args.data[1];
 
 	if ((_nodeState == NodeState::preOperational) ||
 		(_nodeState == NodeState::operational) ||
 		(_nodeState == NodeState::stoped)) {
 
 		if ((nodeId == _nodeId) || (nodeId == 0)) {
-			switch (command) {
+			switch (comand) {
 				case 0x01:
 					changeNodeState(NodeState::operational);
 					break;
@@ -638,11 +670,11 @@ void eos::CanOpenService::processNMT(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges SDO
-/// \param    data: Dades del missatge.
+/// \brief    Procesa el missatge 'FrameReceived' SDO
+/// \param    args: Parametres del missatge
 ///
-void eos::CanOpenService::processSDO(
-	const uint8_t *data) {
+void eos::CanOpenService::processMessage_FrameReceived_SDO(
+	const FrameReceived &args) {
 
 	uint8_t response[8];
 	uint32_t errorCode = SdoError::none;
@@ -655,10 +687,10 @@ void eos::CanOpenService::processSDO(
 
 	// Initiate SDO download (Expedited)
 	//
-	else if ((data[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_EXP)) {
+	else if ((args.data[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_EXP)) {
 
-		uint16_t index = data[1] | (data[2] << 8);
-		uint8_t subIndex = data[3];
+		uint16_t index = args.data[1] | (args.data[2] << 8);
+		uint8_t subIndex = args.data[3];
 
 		auto entryId = _dictionary->find(index, subIndex);
 		if (entryId == (typeof(entryId)) -1)
@@ -669,24 +701,24 @@ void eos::CanOpenService::processSDO(
 				errorCode = SdoError::attemptToWriteReadOnlyObject;
 
 			else {
-				uint8_t size = 4 - ((data[0] & SDO0::SIZE_Msk) >> SDO0::SIZE_Pos);
+				uint8_t size = 4 - ((args.data[0] & SDO0::SIZE_Msk) >> SDO0::SIZE_Pos);
 				CoType type = _dictionary->getType(entryId);
 				switch (type) {
 					case CoType::unsigned8: {
-						uint8_t value = data[4];
+						uint8_t value = args.data[4];
 						onWriteU8Request(index, subIndex, value);
 						break;
 					}
 
 					case CoType::unsigned16: {
-						uint16_t value = (data[4] << 8) | (data[5] << 16);
+						uint16_t value = (args.data[4] << 8) | (args.data[5] << 16);
 						onWriteU16Request(index, subIndex, value);
 						break;
 					}
 
 					case CoType::unsigned32: {
-						uint32_t value = data[4] | (data[5] << 8) | (data[6] << 16) |
-								(data[7] << 24);
+						uint32_t value = args.data[4] | (args.data[5] << 8) | (args.data[6] << 16) |
+								(args.data[7] << 24);
 						onWriteU32Request(index, subIndex, value);
 						break;
 					}
@@ -709,22 +741,22 @@ void eos::CanOpenService::processSDO(
 
 	// Initiate SDO download (Normal)
 	//
-	else if ((data[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_SEG)) {
+	else if ((args.data[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_SEG)) {
 		//onInitiateDownloadNormal(query, response);
 	}
 
 	// Download segment
 	//
-	else if ((data[0] & SDO0::CCS_Msk) == SDO0::CCS_DNSEG) {
+	else if ((args.data[0] & SDO0::CCS_Msk) == SDO0::CCS_DNSEG) {
 		//onDownloadSegment(query, response);
 	}
 
 	// Initiate SDO upload
 	//
-	else if ((data[0] & SDO0::CCS_Msk) == SDO0::CCS_UP) {
+	else if ((args.data[0] & SDO0::CCS_Msk) == SDO0::CCS_UP) {
 
-		uint16_t index = data[1] | (data[2] << 8);
-		uint8_t subIndex = data[3];
+		uint16_t index = args.data[1] | (args.data[2] << 8);
+		uint8_t subIndex = args.data[3];
 		unsigned length = 0;
 
 		auto entryId = _dictionary->find(index, subIndex);
@@ -793,7 +825,7 @@ void eos::CanOpenService::processSDO(
 
 	// Upload segment
 	//
-	else if ((data[0] & SDO0::CCS_Msk) == SDO0::CCS_UPSEG) {
+	else if ((args.data[0] & SDO0::CCS_Msk) == SDO0::CCS_UPSEG) {
 		//onUploadSegment(query, response);
 	}
 
@@ -804,9 +836,9 @@ void eos::CanOpenService::processSDO(
 
 	// Prepara la resposta
 	//
-	response[1] = data[1];
-	response[2] = data[2];
-	response[3] = data[3];
+	response[1] = args.data[1];
+	response[2] = args.data[2];
+	response[3] = args.data[3];
 	if (errorCode != SdoError::none) {
 		response[0] = SDO0::CCS_ABORT;
 		response[4] = errorCode & 0xFF;
@@ -819,22 +851,26 @@ void eos::CanOpenService::processSDO(
 	//
 	uint32_t cobidSDOr;
 	if (_dictionary->readU32(0x1200, 0x02, cobidSDOr))
-		sendFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), Time::fromMiliseconds(defTimeout));
+		transmitFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), Time::fromMiliseconds(defTimeout));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges TIME
+/// \brief    Procesa el missatge 'FrameReceived' TIME
+/// \param    args: Parametres del missatge
 ///
-void eos::CanOpenService::processTIME() {
+void eos::CanOpenService::processMessage_FrameReceived_TIME(
+	const FrameReceived &args) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges SYNC
+/// \brief    Procesa el missatge 'FrameReceived' SYNC
+/// \param    args: Parametres del missatge
 ///
-void eos::CanOpenService::processSYNC() {
+void eos::CanOpenService::processMessage_FrameReceived_SYNC(
+	const FrameReceived &args) {
 
 	if (_nodeState == NodeState::operational) {
 
@@ -861,39 +897,35 @@ void eos::CanOpenService::processSYNC() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges TPDO
-/// \param    cobid: El COB-ID
-/// \param    data: Dades del missatge.
+/// \brief    Procesa els missatges 'FrameReceived' TPDO
+/// \param    args: Parametres del missatge
 ///
-void eos::CanOpenService::processTPDO(
-	CobID cobId,
-	const uint8_t *data,
-	uint32_t dataLen) {
+void eos::CanOpenService::processMessage_FrameReceived_TPDO(
+	const FrameReceived &args) {
 
 	if (_nodeState == NodeState::operational) {
 
 		// Notifica a l'aplicacio que hi ha un TPDO per procesar provinent d'un
 		// node remot
 		//
-		onTPDOReceived(cobId, data, dataLen);
+		onTPDOReceived(CobID(args.cobid), args.data, args.dataLen);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges RPDO
-/// \param    cobid: El COB-ID
-/// \param    data: Dades del missatge.
+/// \brief    Procesa el missatge 'FrameReceived' RPDO
+/// \param    args: Parametres del missatge
 ///
-void eos::CanOpenService::processRPDO(
-	CobID cobId,
-	const uint8_t *data,
-	uint32_t dataLen) {
+void eos::CanOpenService::processMessage_FrameReceived_RPDO(
+	const FrameReceived &args) {
+
+	auto cobId = CobID(args.cobid);
 
 	uint32_t rpdoCOBID;
 	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && (rpdoCOBID == cobId.base())) {
 
-		const uint8_t *pData = data;
+		const uint8_t *pData = args.data;
 
 		uint32_t map;
 		if (_dictionary->readU32(0x1600, 0x01, map)) {
@@ -996,8 +1028,7 @@ eos::NodeID eos::CanOpenService::getNodeId() const {
 /// \param    mask: La mascara de bits del valor.
 /// \param    blockTime: Temps maxim de bloqueig.
 /// \return   True si tot es correcte.
-/// \remarks  La escriptura es posa en cua per un procesament posterior. Si
-///           cal, es genera TPDO.
+/// \remarks  La notificacio 'EntryChanged' es posa en cua.
 ///
 bool eos::CanOpenService::writeU8(
 	uint16_t index,
@@ -1036,8 +1067,7 @@ bool eos::CanOpenService::writeU8(
 /// \param    mask: La mascara de bits del valor.
 /// \param    blockTime: Temps maxim de bloqueig.
 /// \return   True si tot es correcte.
-/// \remarks  La escriptura es posa en cua per un procesament posterior. Si
-///           cal, es genera TPDO.
+/// \remarks  La notificacio 'EntryChanged' es posa en cua.
 ///
 bool eos::CanOpenService::writeU16(
 	uint16_t index,
@@ -1076,8 +1106,7 @@ bool eos::CanOpenService::writeU16(
 /// \param    mask: La mascara de bits del valor.
 /// \param    blockTime: Temps maxim de bloqueig.
 /// \return   True si tot es correcte.
-/// \remarks  La escriptura es posa en cua per un procesament posterior. Si
-///           cal, es genera TPDO.
+/// \remarks  La notificacio 'EntryChanged' es posa en cua.
 ///
 bool eos::CanOpenService::writeU32(
 	uint16_t index,
@@ -1159,7 +1188,7 @@ bool eos::CanOpenService::readU32(
 /// ----------------------------------------------------------------------
 /// \brief    Posa un node en estat 'operational'.
 /// \param    nodeId: Node destinatari.
-/// \param    blockTie: El temps maxim d'espera.
+/// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
@@ -1172,8 +1201,15 @@ eos::Result eos::CanOpenService::start(
 	if (nodeId == _nodeId)
 		return eos::Result::ErrorCodes::errorParameter;
 
-	else
-		return emitNMT(0x01, nodeId, blockTime);
+	// Emet la comanda NMT Start
+	//
+	uint8_t data[2];
+	data[0] = 0x01;
+	data[1] = nodeId;
+
+	CobID cobId = CobID::makeNMT();
+
+	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 
@@ -1192,8 +1228,15 @@ eos::Result eos::CanOpenService::stop(
 	if (nodeId == _nodeId)
 		return eos::Result::ErrorCodes::errorParameter;
 
-	else
-		return emitNMT(0x02, nodeId, blockTime);
+	// Emet la comanda NMT Stop
+	//
+	uint8_t data[2];
+	data[0] = 0x02;
+	data[1] = nodeId;
+
+	CobID cobId = CobID::makeNMT();
+
+	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 
@@ -1213,13 +1256,20 @@ eos::Result eos::CanOpenService::enterPreOperational(
 	if (nodeId == _nodeId)
 		return eos::Result::ErrorCodes::errorParameter;
 
-	else
-		return emitNMT(0x80, nodeId, blockTime);
+	// Emet la comanda NMT Enter Pre-Operational
+	//
+	uint8_t data[2];
+	data[0] = 0x80;
+	data[1] = nodeId;
+
+	CobID cobId = CobID::makeNMT();
+
+	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza un node un node.
+/// \brief    Reseteja un node..
 /// \param    nodeId: Node destinatati
 /// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
@@ -1234,13 +1284,20 @@ eos::Result eos::CanOpenService::resetNode(
 	if (nodeId == _nodeId)
 		return eos::Result::ErrorCodes::errorParameter;
 
-	else
-		return emitNMT(0x81, nodeId, blockTime);
+	// Emet la comanda NMT Reset Node
+	//
+	uint8_t data[2];
+	data[0] = 0x81;
+	data[1] = nodeId;
+
+	CobID cobId = CobID::makeNMT();
+
+	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza les comunicacions d'un node.
+/// \brief    Reseteja les comunicacions d'un node.
 /// \param    nodeId: Node destinatati
 /// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
@@ -1255,8 +1312,15 @@ eos::Result eos::CanOpenService::resetCommunication(
 	if (nodeId == _nodeId)
 		return eos::Result::ErrorCodes::errorParameter;
 
-	else
-		return emitNMT(0x82, nodeId, blockTime);
+	// Emet la comanda NMT Rerset Comunication
+	//
+	uint8_t data[2];
+	data[0] = 0x82;
+	data[1] = nodeId;
+
+	CobID cobId = CobID::makeNMT();
+
+	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 
@@ -1342,7 +1406,7 @@ void eos::CanOpenService::sendTPDO(
 		if (ok) {
 			uint32_t cobid;
 			if (_dictionary->readU32(0x1800 + tpdo, 0x01, cobid))
-				sendFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, Time::fromMiliseconds(100));
+				transmitFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, Time::fromMiliseconds(100));
 		}
 	}
 }
@@ -1355,7 +1419,7 @@ void eos::CanOpenService::sendTPDO(
 /// \param    blockTime: Temps maxim d'espera.
 /// \return   True si tot es correcte.
 ///
-eos::Result eos::CanOpenService::sendFrame(
+eos::Result eos::CanOpenService::transmitFrame(
 	CobID cobId,
 	const uint8_t *data,
 	uint32_t length,
@@ -1436,14 +1500,51 @@ eos::Result eos::CanOpenService::sendFrame(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa els events de notificacio del temporitzador.
+/// \param    sender: El remitent del missatge.
+/// \param    args: Parametres del event.
+///
+void eos::CanOpenService::timer_notificationEventHandler(
+	rtos::Timer *sender,
+	rtos::Timer::EventArgs *args) {
+
+	uint8_t data[1];
+	switch (_nodeState) {
+		case CanOpenService::NodeState::stoped:
+			data[0] = 4;
+			break;
+
+		case CanOpenService::NodeState::preOperational:
+			data[0] = 0x7F;
+			break;
+
+		case CanOpenService::NodeState::operational:
+			data[0] = 5;
+			break;
+
+		case CanOpenService::NodeState::error:
+			data[0] = 0x80;
+			break;
+
+		default:
+			return;
+	}
+
+	CobID cobId = CobID::makeHeartbeat(_nodeId);
+
+	postMessage_TransmitFrame(cobId, data, sizeof(data), Time::fromMiliseconds(100));
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Gestiona l'event de notificacio del modul CAN.
 /// \param    sender: El remitent. En aquest cas el modulCAN.
 /// \param    aregs: Els parametres del missatge.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
 void eos::CanOpenService::canDevice_notificationEventHandler(
-	htl::can::CANDevice * const sender,
-	htl::can::CANDevice::NotificationEventArgs * const args) {
+	htl::can::CANDevice *sender,
+	htl::can::CANDevice::NotificationEventArgs *args) {
 
 	static const uint8_t dataLenTbl[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64
@@ -1481,7 +1582,7 @@ void eos::CanOpenService::canDevice_notificationEventHandler(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-eos::Result eos::CanOpenService::emitFrame(
+eos::Result eos::CanOpenService::postMessage_TransmitFrame(
 	CobID cobId,
 	const uint8_t *data,
 	uint32_t length,
@@ -1491,40 +1592,13 @@ eos::Result eos::CanOpenService::emitFrame(
 		return eos::Result::ErrorCodes::errorParameter;
 
 	Message message;
-	message.id = MessageID::sendFrame;
-	message.sendFrame.cobid = cobId;
-	message.sendFrame.dataLen = length;
+	message.id = MessageID::transmitFrame;
+	message.transmitFrame.cobid = cobId;
+	message.transmitFrame.dataLen = length;
 	if ((length > 0) && (data != nullptr))
-		memcpy(message.sendFrame.data, data, length);
+		memcpy(message.transmitFrame.data, data, length);
 
-	return _messageQueue.push(message, blockTime);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Emet un missatge NMT.
-/// \param    command: La comanda.
-/// \param    nodeId: Node destinatari.
-/// \param    blockTime: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-eos::Result eos::CanOpenService::emitNMT(
-	uint8_t command,
-	uint8_t nodeId,
-	Time blockTime) {
-
-	uint8_t data[2];
-	data[0] = command;
-	data[1] = nodeId;
-
-	CobID cobId = CobID::makeNMT();
-
-	auto nmtMaster = reinterpret_cast<CanOpenNmtMaster*>(_nmtMaster);
-	if (nmtMaster != nullptr)
-		return nmtMaster->emitCommand(nodeId, (CanOpenNmtMaster::Command)command, blockTime);
-	else
-		return Result::ErrorCodes::errorUnsupported;
+	return _messageQueue.push(message, blockTime) ? Result::ErrorCodes::ok : Result::ErrorCodes::timeout;
 }
 
 
@@ -1543,7 +1617,7 @@ eos::Result eos::CanOpenService::emitSYNC(
 
 		CobID cobId = CobID(options & 0x007F);
 
-		return emitFrame(cobId, nullptr, 0, blockTime);
+		return postMessage_TransmitFrame(cobId, nullptr, 0, blockTime);
 	}
 
 	return Result::ErrorCodes::error;
@@ -1566,13 +1640,13 @@ eos::Result eos::CanOpenService::emitRPDO(
 	Time timeout) {
 
 	Message message = {
-		.id {MessageID::sendFrame},
-		.sendFrame {
+		.id {MessageID::transmitFrame},
+		.transmitFrame {
 			.cobid {CobID(COBID::RPDO1, ((uint16_t)rpdoId << 8) | ((uint16_t)nodeId & 0x007F))},
 			.dataLen {(uint8_t)dataLen}
 		}
 	};
-	memcpy(message.sendFrame.data, data, dataLen);
+	memcpy(message.transmitFrame.data, data, dataLen);
 
 	if (_messageQueue.push(message, timeout))
 		return Result::ErrorCodes::ok;
