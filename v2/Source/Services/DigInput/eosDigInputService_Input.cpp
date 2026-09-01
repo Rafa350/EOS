@@ -1,16 +1,40 @@
-#include "eos_diginput_inputs.h"
+module;
+
+
+#include "eos.h"
 #include "Controllers/Pin/eosPinDriver.h"
-#include "Services/DigInput/eosDigInputService.h"
 
 
-using namespace eos;
+module Eos.Services.DigInput;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    tag: Etiqueta d'identificacio.
+///
+eos::DigInput::DigInput(
+	uint32_t tag):
+
+	_tag {tag} {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'etiqueta d'identificacio de l'entrada.
+/// \return   El valor de l'etiqueta.
+///
+uint32_t eos::DigInput::getTag() const {
+
+	return _tag;
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param    drv: Driver del pin.
 ///
-Input::Input(
+eos::DigInputImpl::DigInputImpl(
 	PinDriver *drv,
 	uint32_t tag):
 
@@ -27,7 +51,7 @@ Input::Input(
 /// \brief    Escaneja la entrada i comprova si hi han canvis.
 /// \return   True si hi han canvis, false en cas contrari.
 ///
-bool Input::scan() {
+bool eos::DigInputImpl::scan() {
 
 	uint32_t oldCount = _count;
 
@@ -59,7 +83,7 @@ bool Input::scan() {
 /// \brief    Obte el valor de l'entrada.
 /// \return   True per estat actiu.
 ///
-bool Input::getValue() const {
+bool eos::DigInputImpl::getValue() const {
 
 	return _value;
 }
@@ -70,7 +94,7 @@ bool Input::getValue() const {
 /// \param    clear: Indica si cal borrar el contador.
 /// \return   El valor del contador.
 ///
-uint32_t Input::getCount(
+uint32_t eos::DigInputImpl::getCount(
 	bool clear) {
 
 	uint32_t count = _count;

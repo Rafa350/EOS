@@ -1,184 +1,147 @@
+module;
+
+
 #include "eos.h"
+#include "eosEvents.h"
 #include "eosTime.h"
-#include "RTOS/rtosCriticalSection.h"
-#include "RTOS/rtosTask.h"
-#include "Services/DigInput/eosDigInputService.h"
-#include "eos_diginput_inputs.h"
+#include "Controllers/Pin/eosPinDriver.h"
+#include "Services/eosService.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
+#include "System/Core/eosQueue.h"
+
+
+export module Eos.Services.DigInput;
 
 
 import Eos.Math;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-///
-eos::DigInputService::DigInputService():
-    Service(),
-    _scanPeriod {_minScanPeriod} {
+export namespace eos {
+
+	// Declaracions forward
+	//
+    class DigInputService;
+    class DigInput;
+
+    // Definicio de handlers
+    //
+    using DigInputHandler = DigInput*;
+    using DigInputServiceHandler = DigInputService*;
+
+    // Declaracions per les llistes
+    //
+    using DigInputList = IntrusiveForwardList<DigInput, 0>;
+    using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
+
+    /// \brief Clase que implementa una entrada digital
+    ///
+    class DigInput: public DigInputListNode {
+    	private:
+    		uint32_t const _tag;
+
+    	protected:
+    		DigInput(uint32_t tag);
+
+    	public:
+    		static constexpr uint32_t nullTag = eos::Math::maxU32;
+
+    	public:
+    	    DigInput(const DigInput&) = delete;
+    	    DigInput(const DigInput&&) = delete;
+
+    	    DigInput& operator=(const DigInput&) = delete;
+    	    DigInput& operator=(const DigInput&&) = delete;
+
+    	    uint32_t getTag() const;
+    };
+
+    class DigInputImpl;
+
+    /// \brief Clase que implementa el servei de gestio d'entrades digitals
+    //
+    class DigInputService final: public Service {
+    	public:
+    		using BeforeScanEventRaiser = EventRaiser<DigInputService, NullEventArgs*>;
+			using IBeforeScanEvent = BeforeScanEventRaiser::IEvent;
+			template <typename Instance_> using BeforeScanEvent = BeforeScanEventRaiser::Event<Instance_>;
+
+			struct InputChangedEventArgs {
+				DigInput *input;
+				bool value;
+			};
+			using InputChangedEventRaiser = EventRaiser<DigInputService, InputChangedEventArgs>;
+			using IInputChangedEvent = InputChangedEventRaiser::IEvent;
+			template <typename Instance_> using InputChangedEvent = InputChangedEventRaiser::Event<Instance_>;
+
+        private:
+            static constexpr const char *_serviceName = "DigInputs";
+            static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::normal;
+            static constexpr uint32_t _serviceStackDepth = 160;
+            static constexpr Time _minScanPeriod = Time::fromMiliseconds(5);
+
+        private:
+    		DigInputList _inputs;
+    		InputChangedEventRaiser _inputChangedEventRaiser;
+    		BeforeScanEventRaiser _beforeScanEventRaiser;
+            Time _scanPeriod;
+
+        private:
+            void onInputChanged(DigInputImpl *input);
+            void beforeScan();
+
+        protected:
+            void onInitialize(ServiceParams &params) override;
+            void onExecute() override;
+
+        public:
+            DigInputService();
+            DigInputService(const DigInputService&) = delete;
+            DigInputService(const DigInputService&&) = delete;
+            ~DigInputService();
+
+            DigInputService& operator=(const DigInputService&) = delete;
+    	    DigInputService& operator=(const DigInputService&&) = delete;
+
+            void setScanPeriod(Time scanPeriod);
+
+            DigInput * addInput(PinDriver *drv, uint32_t tag);
+            DigInput * getInput(uint32_t tag) const;
+
+            bool read(const DigInput *input) const;
+            uint32_t getEdges(DigInput *input, bool clear = true) const;
+
+            void enableInputChangedEvent(IInputChangedEvent &event);
+            void disableInputChangedEvent();
+            void enableBeforeScanEvent(IBeforeScanEvent &event);
+            void disableBeforeScanEvent();
+    };
+
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el periode d'escaneig.
-/// \param    scanPeriod: El period en milisegons.
-///
-void eos::DigInputService::setScanPeriod(
-    eos::Time scanPeriod) {
+namespace eos {
 
-    _scanPeriod = Math::max(scanPeriod, _minScanPeriod);
-}
+    /// \brief Clase que gestiona una entrada digital
+    //
+	class DigInputImpl final: public DigInput {
+		private:
+			static constexpr uint32_t _patternMask    = 0x000000FF;
+			static constexpr uint32_t _patternPosEdge = 0x0000007F;
+			static constexpr uint32_t _patternNegEdge = 0x00000080;
+			static constexpr uint32_t _patternActive  = 0x000000FF;
+			static constexpr uint32_t _patternIdle    = 0x00000000;
 
+        private:
+			PinDriver * const _drv;
+        	uint32_t _pattern;
+			bool _value;
+			uint32_t _count;
 
-/// ----------------------------------------------------------------------
-/// \brief    Genera un event quant canvia l'estat d'una entrada.
-/// \param    input: L'entrada.
-///
-void eos::DigInputService::onInputChanged(
-    eos::Input *input) {
+        public:
+        	DigInputImpl(PinDriver *drv, uint32_t tag);
 
-	if (_inputChangedEventRaiser) {
-
-    	InputChangedEventArgs args = {
-   			.input {input},
-			.value {input->getValue()}
-    	};
-
-    	_inputChangedEventRaiser(this, &args);
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un event abans del inici de l'exploracio de
-///           les entrades.
-///
-void eos::DigInputService::beforeScan() {
-
-	if (_beforeScanEventRaiser)
-		_beforeScanEventRaiser(this, nullptr);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Afegeix una entrada el servei.
-/// \param    drv: El driver del pin.
-/// \param    tag: Etiqueta opcional
-/// \return   L'entrada.
-///
-eos::DigInput * eos::DigInputService::addInput(
-	eos::PinDriver *drv,
-	uint32_t tag) {
-
-    auto input = new Input(drv, tag);
-
-    rtos::CriticalSection::enter();
-	_inputs.pushFront(input);
-    rtos::CriticalSection::exit();
-
-    return input;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'entrada amb el tag especificat.
-/// \param    tag: El tag de l'entrada a buscar.
-/// \return   L'entrada, o nullptr si no la troba.
-///
-eos::DigInput *eos::DigInputService::getInput(
-	uint32_t tag) const {
-
-	eos::DigInput *result = nullptr;
-
-	rtos::CriticalSection::enter();
-
-	for (auto input: _inputs)
-		if (input->getTag() == tag) {
-			result = input;
-			break;
-		}
-
-	rtos::CriticalSection::exit();
-
-	return result;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els parametres del servei.
-/// \param    params: Els parametres.
-///
-void eos::DigInputService::onInitialize(
-	ServiceParams &params) {
-
-	params.name = _serviceName;
-	params.priority = _servicePriority;
-	params.stackDepth = _serviceStackDepth;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Tasca del servei
-///
-void eos::DigInputService::onExecute() {
-
-    while (!stopSignal()) {
-
-		rtos::Task::delayUntil(_scanPeriod);
-
-		// Notifica l'inici de l'escaneig d'entrades
-		//
-		beforeScan();
-
-		// Escaneja totes les entradas una a una
-		//
-		for (auto input: _inputs) {
-			auto inp = static_cast<Input*>(input);
-
-			// Escaneja una entrada i si hi canvis,
-			// genera un event de notificacio.
-			//
-			if (inp->scan())
-				onInputChanged(static_cast<Input*>(input));
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'estat de l'entrada.
-/// \param    input: La entrada.
-/// \return   True si esta en estat ACTIVE, false en cas contrari.
-///
-bool eos::DigInputService::read(
-    const eos::DigInput *input) const {
-
-    rtos::CriticalSection::enter();
-
-    auto inp = static_cast<const Input*>(input);
-    auto value = inp->getValue();
-
-    rtos::CriticalSection::exit();
-
-    return value;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el contador de pulsos de l'entrada.
-/// \param    input: La entrada.
-/// \param    clear: Indica si cal borrar el contador.
-/// \return   El nombre de pulsos fins al moment de la lectura.
-///
-uint32_t eos::DigInputService::getEdges(
-	eos::DigInput *input,
-	bool clear) const {
-
-    rtos::CriticalSection::enter();
-
-    auto inp = static_cast<Input*>(input);
-    auto edges = inp->getCount(clear);
-
-    rtos::CriticalSection::exit();
-
-    return edges;
+        	bool scan();
+        	bool getValue() const;
+        	uint32_t getCount(bool clear);
+    };
 }

@@ -1,519 +1,216 @@
-#include "eos.h"
+module;
+
+
+#include "eosEvents.h"
 #include "eosTime.h"
+#include "Controllers/Pin/eosPinDriver.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
-#include "Services/DigOutput/eosDigOutputService.h"
-#include "eos_digoutput_outputs.h"
+#include "Services/eosService.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
+#include "System/Core/eosQueue.h"
+
+
+// Numero maxim d'elements en la cua d'accions
+#ifndef DigOutputService_ActionQueueSize
+    #define DigOutputService_ActionQueueSize 4
+#endif
+
+// Retard minim/maxim en ms
+#ifndef DigOutputService_MinDelay
+    #define DigOutputService_MinDelay 50
+#endif
+#ifndef DigOutputService_MaxDelay
+    #define DigOutputService_MaxDelay 1000000
+#endif
+
+// Amplada minima/maxima en ms
+#ifndef DigOutputService_MinPulseWidth
+#   define DigOutputService_MinPulseWidth 50
+#endif
+#ifndef DigOutputService_MinPulseWidth
+#   define DigOutputService_MaxPulseWidth 1000000
+#endif
+
+// Modus segur (Verificacio complerta de parametres critics, es mes lent i ocupa mes flash)
+#define DigOutputService_SafeMode 0
+
+
+export module Eos.Services.DigOutput;
 
 
 import Eos.Math;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-///
-eos::DigOutputService::DigOutputService():
-	_timeCounter {Time::fromMiliseconds(0)},
-	_actionQueue {_actionQueueSize} {
+export namespace eos {
 
-}
+    class DigOutput;
 
+    using DigOutputList = IntrusiveForwardList<DigOutput, 0>;
+    using DigOutputListNode = IntrusiveForwardListNode<DigOutput, 0>;
 
-/// ----------------------------------------------------------------------
-/// \brief    Crea i afegeix una sortida.
-/// \param    pinDrv: El driver del pin
-/// \param    tag: Etiqueta opcional
-/// \return   La sortida.
-///
-eos::DigOutput* eos::DigOutputService::addOutput(
-    eos::PinDriver *drv,
-	uint32_t tag) {
+    /// \brief Clase que representa una sortida digital individual.
+    ///
+    class DigOutput: public DigOutputListNode {
+    	private:
+    		uint32_t _tag;
 
-    rtos::CriticalSection::enter();
+    	protected:
+    		DigOutput(uint32_t tag);
 
-    auto output = new Output(drv, tag);
-	_outputs.pushFront(output);
+    	public:
+    	    DigOutput(const DigOutput&) = delete;
+    	    DigOutput(const DigOutput&&) = delete;
 
-    rtos::CriticalSection::exit();
+    	    DigOutput& operator=(const DigOutput&) = delete;
+    	    DigOutput& operator=(const DigOutput&&) = delete;
 
-    return output;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si la sortida pertany al servei.
-/// \param    output: La sortida.
-/// \return   True si pertany, false en cas contrari.
-///
-bool eos::DigOutputService::containsOutput(
-	eos::DigOutput *output) const {
-
-	bool result = false;
-
-	if (output != nullptr) {
-
-		rtos::CriticalSection::enter();
-
-		result = _outputs.contains(output);
-
-		rtos::CriticalSection::exit();
-	}
-
-	return result;
-}
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte la sortida amb el tag especificat.
-/// \param    tag: El tag de l'entrada a buscar.
-/// \return   La sortida, o nullptr si no la troba.
-///
-eos::DigOutput *eos::DigOutputService::getOutput(
-	uint32_t tag) const {
-
-	DigOutput *result = nullptr;
-
-	rtos::CriticalSection::enter();
-
-	for (auto output: _outputs)
-		if (output->getTag() == tag) {
-			result = output;
-			break;
-		}
-
-	rtos::CriticalSection::exit();
-
-	return result;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Es crida quant la sortida especificada ha canviat el
-///           seu valor. Genera un event 'OutputChanged'
-/// \param    output: La sortida.
-///
-void eos::DigOutputService::onOutputChanged(
-	eos::Output *output) {
-
-	if (_outputChangedEventRaiser) {
-
-    	OutputChangedEventArgs args = {
-			.output {output},
-			.value {output->getValue()}
-		};
-
-		_outputChangedEventRaiser(this, &args);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Posa la sortida en estat ACTIVE.
-/// \param    output: La sortida.
-/// \param    blocTime: Temps maxim de bloqueig.
-///
-void eos::DigOutputService::set(
-    eos::DigOutput *output,
-	eos::Time blockTime) {
-
-#if DigOutputService_SafeMode == 1
-	if (_outputs.contains(output)) {
-#endif
-
-		Action action = {
-			.id {ActionID::set},
-			.output {static_cast<Output*>(output)}
-		};
-
-		_actionQueue.push(action, blockTime);
-
-#if DigOutputService_SafeMode == 1
-	}
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Posa la sortida en estat IDLE.
-/// \param    output: La sortida.
-/// \param    blockTime: Temps maxim de bloqueig.
-///
-void eos::DigOutputService::clear(
-    eos::DigOutput *output,
-	eos::Time blockTime) {
-
-#if DigOutputService_SafeMode == 1
-	if (containsOutput(output)) {
-#endif
-
-		Action action = {
-			.id {ActionID::clear},
-			.output {static_cast<Output*>(output)}
-		};
-
-		_actionQueue.push(action, blockTime);
-
-#if DigOutputService_SafeMode == 1
-	}
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inverteix l'estat de la sortida.
-/// \param    output: La sortida.
-/// \param    blockTime: Temps maxim de bloqueig.
-///
-void eos::DigOutputService::toggle(
-    eos::DigOutput *output,
-	eos::Time blockTime) {
-
-#if DigOutputService_SafeMode == 1
-	if (containsOutput(output)) {
-#endif
-
-		Action action = {
-			.id {ActionID::toggle},
-			.output {static_cast<Output*>(output)}
-		};
-
-		_actionQueue.push(action, blockTime);
-
-#if DigOutputService_SafeMode == 1
-	}
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna l'estat de la sortida.
-/// \param    output: La sortida.
-/// \param    state: L'estat a asignar.
-/// \param    blockTime: Temps maxim de bloqueig.
-///
-void eos::DigOutputService::write(
-    eos::DigOutput *output,
-    bool state,
-	eos::Time blockTime) {
-
-#if DigOutputService_SafeMode == 1
-	if (containsOutput(output)) {
-#endif
-
-		Action action = {
-			.id {state ? ActionID::set : ActionID::clear},
-			.output {static_cast<Output*>(output)}
-		};
-
-		_actionQueue.push(action, blockTime);
-
-#if DigOutputService_SafeMode == 1
-	}
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un puls de conmutacio.
-/// \param    output: La sortida.
-/// \param    width: L'amplada del puls.
-/// \param    blockTime: Temps maxim de bloqueig.
-///
-void eos::DigOutputService::pulse(
-    eos::DigOutput *output,
-    eos::Time width,
-	eos::Time blockTime) {
-
-#if DigOutputService_SafeMode == 1
-	if (containsOutput(output)) {
-#endif
-
-		Action action = {
-			.id {ActionID::pulse},
-			.output {static_cast<Output*>(output)},
-			.time1 {eos::Math::max(width, minPulseWidth)}
-		};
-
-		_actionQueue.push(action, blockTime);
-
-#if DigOutputService_SafeMode == 1
-	}
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Genera un puls de conmutacio retardat.
-/// \param    output: La sortida.
-/// \param    delay: El retard del puls.
-/// \param    width: L'amplada del puls.
-/// \param    blockTime: Temps maxim de bloqueig.
-///
-void eos::DigOutputService::delayedPulse(
-    eos::DigOutput *output,
-    eos::Time delay,
-    eos::Time width,
-	eos::Time blockTime) {
-
-#if DigOutputService_SafeMode == 1
-	if (containsOutput(output)) {
-#endif
-
-		Action action = {
-			.id {ActionID::delayedPulse},
-			.output {static_cast<Output*>(output)},
-			.time1 {eos::Math::max(delay, minDelay)},
-			.time2 {eos::Math::max(width, minPulseWidth)}
-		};
-
-		_actionQueue.push(action, blockTime);
-
-#if DigOutputService_SafeMode == 1
-	}
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Llegeix el valor d'una sortida.
-/// \param    output: La sortida.
-/// \return   L'estat de la sortida.
-///
-bool eos::DigOutputService::read(
-	eos::DigOutput *output) {
-
-#if DigOutputService_SafeMode == 1
-	if (containsOutput(output)) {
-#endif
-
-		rtos::CriticalSection::enter();
-
-		auto out = static_cast<Output*>(output);
-		bool value = out->getValue();
-
-		rtos::CriticalSection::exit();
-
-		return value;
-
-#if DigOutputService_SafeMode == 1
-	}
-	else
-		return false;
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els parametres del servei.
-/// \param    params: Els parametres.
-///
-void eos::DigOutputService::onInitialize(
-	eos::Service::ServiceParams &params) {
-
-	params.name = _serviceName;
-	params.stackDepth = _serviceStackDepth;
-	params.priority = _servicePriority;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Tasca del servei.
-///
-void eos::DigOutputService::onExecute() {
-
-	while (!stopSignal()) {
-		Action action;
-		while (_actionQueue.pop(action, Times::infinite))
-			processAction(action);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa les accions.
-/// \param    action: L'accio.
-///
-void eos::DigOutputService::processAction(
-	const Action &action) {
-
-    switch (action.id) {
-        case ActionID::set:
-            processSet(action.output);
-            break;
-
-        case ActionID::clear:
-            processClear(action.output);
-            break;
-
-        case ActionID::toggle:
-            processToggle(action.output);
-            break;
-
-        case ActionID::pulse:
-            processPulse(action.output, action.time1);
-            break;
-
-        case ActionID::delayedSet:
-            processDelayedSet(action.output, action.time1);
-            break;
-
-        case ActionID::delayedClear:
-            processDelayedClear(action.output, action.time1);
-            break;
-
-        case ActionID::delayedToggle:
-            processDelayedToggle(action.output, action.time1);
-            break;
-
-        case ActionID::delayedPulse:
-            processDelayedPulse(action.output, action.time1, action.time2);
-            break;
-
-        case ActionID::tick:
-            processTick();
-            break;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'clear'
-/// \param    output: La sortida.
-///
-void eos::DigOutputService::processClear(
-    eos::Output *output) {
-
-	if (output->getValue()) {
-		output->clear();
-		onOutputChanged(output);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'set'
-/// \param    output: La sortida.
-///
-void eos::DigOutputService::processSet(
-    eos::Output *output) {
-
-	if (!output->getValue()) {
-		output->set();
-		onOutputChanged(output);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'toggle'
-/// \param    output: La sortida.
-///
-void eos::DigOutputService::processToggle(
-    eos::Output *output) {
-
-	output->toggle();
-	onOutputChanged(output);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'pulse'.
-/// \param    output: La sortida.
-/// \param    pulseWidth: L'amplada del puls.
-///
-void eos::DigOutputService::processPulse(
-    eos::Output *output,
-    eos::Time pulseWidth) {
-
-	bool oldValue = output->getValue();
-	output->pulse(_timeCounter, pulseWidth);
-	if (oldValue != output->getValue())
-		onOutputChanged(output);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedSet'.
-/// \param    output: La sortida.
-/// \param    delay: El retard.
-///
-void eos::DigOutputService::processDelayedSet(
-    eos::Output *output,
-    eos::Time delay) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedClear'.
-/// \param    output: La sortida.
-/// \param    delay: El retard.
-///
-void eos::DigOutputService::processDelayedClear(
-    eos::Output *output,
-    eos::Time delay) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedToggle'.
-/// \param    output: La sortida.
-/// \param    delay: El retard.
-///
-void eos::DigOutputService::processDelayedToggle(
-    eos::Output *output,
-    eos::Time delay) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedPulse'.
-/// \param    output: La sortida.
-/// \param    delay: El retard del puls.
-/// \param    pulseWidth: L'amplada del puls.
-///
-void eos::DigOutputService::processDelayedPulse(
-    eos::Output *output,
-    eos::Time delay,
-    eos::Time pulseWidth) {
-
-	output->delayedPulse(_timeCounter, delay, pulseWidth);
-}
-
-
-/// ---------------------------------------------------------------------
-/// \brief    Procesa la comanda 'tick'
-///
-void eos::DigOutputService::processTick() {
-
-	for (auto o: _outputs) {
-    	auto output = static_cast<Output*>(o);
-
-    	bool oldValue = output->getValue();
-		output->tick(_timeCounter);
-		if (oldValue != output->getValue())
-			onOutputChanged(output);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio del temportitzador
-/// \remarks  ATENCIO: Es procesa dins d'una interrupcio.
-///
-void eos::DigOutputService::tickISR() {
-
-	// Incrementa el contador de temps
-	//
-	_timeCounter += Time::fromMiliseconds(1);
-
-    Action action = {
-        .id {ActionID::tick}
+    	    uint32_t getTag() const;
     };
 
-    // Es porta el missatge en la cua, per procesar-l'ho en la tasca,
-    // fora de la interrupcio.
-    //
-    _actionQueue.pushISR(action);
+    class DigOutputImpl;
+
+    /// \brief Clase que implementa el servei de gestio de sortides digitals.
+    ///
+    class DigOutputService final: public Service {
+		public:
+			struct OutputChangedEventArgs {
+     			DigOutput *output;
+				bool value;
+			};
+			using OutputChangedEventRaiser = EventRaiser<DigOutputService, OutputChangedEventArgs>;
+			using IOutputChangedEvent = OutputChangedEventRaiser::IEvent;
+			template <typename Instance_> using OutputChangedEvent = OutputChangedEventRaiser::Event<Instance_>;
+
+        private:
+            static constexpr const char *_serviceName = "DigOutputs";
+            static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::normal;
+            static constexpr uint32_t _serviceStackDepth = 164;
+            static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
+
+        public:
+            static constexpr Time minPulseWidth = Time::fromMiliseconds(DigOutputService_MinPulseWidth);
+            static constexpr Time minDelay =Time::fromMiliseconds(DigOutputService_MinDelay);
+
+		private:
+            enum class ActionID {
+                set,
+                clear,
+                toggle,
+                pulse,
+                delayedSet,
+                delayedClear,
+                delayedToggle,
+                delayedPulse,
+                tick
+            };
+            struct Action {
+                ActionID id;
+                DigOutputImpl *output;
+                Time time1;
+                Time time2;
+            };
+
+            using ActionQueue = Queue<Action>;
+
+    	private:
+            DigOutputList _outputs;
+
+            OutputChangedEventRaiser _outputChangedEventRaiser;
+            Time _timeCounter;
+            ActionQueue _actionQueue;
+
+        private:
+            void processAction(const Action &action);
+            void processClear(DigOutputImpl *output);
+            void processSet(DigOutputImpl *output);
+            void processToggle(DigOutputImpl *output);
+            void processPulse(DigOutputImpl *output, Time width);
+            void processDelayedSet(DigOutputImpl *output, Time delay);
+            void processDelayedClear(DigOutputImpl *output, Time delay);
+            void processDelayedToggle(DigOutputImpl *output, Time delay);
+            void processDelayedPulse(DigOutputImpl *output, Time delay, Time width);
+            void processTick();
+
+            void onOutputChanged(DigOutputImpl *output);
+
+        protected:
+            void onInitialize(ServiceParams &params) override;
+            void onExecute() override;
+
+        public:
+            DigOutputService();
+            DigOutputService(const DigOutputService&) = delete;
+            DigOutputService(const DigOutputService&&) = delete;
+
+            DigOutputService& operator=(const DigOutputService&) = delete;
+    	    DigOutputService& operator=(const DigOutputService&&) = delete;
+
+            DigOutput* addOutput(PinDriver *drv, uint32_t tag);
+            bool containsOutput(DigOutput *output) const;
+            DigOutput *getOutput(uint32_t tag) const;
+
+            inline void enableOutputChangedEvent(IOutputChangedEvent &event) {
+            	_outputChangedEventRaiser.enable(event);
+            }
+            inline void disableOutputChangedEvent() {
+            	_outputChangedEventRaiser.disable();
+            }
+
+            void set(DigOutput *output, Time blockTime);
+            void clear(DigOutput *output, Time blockTime);
+            void write(DigOutput *output, bool pinState, Time blockTime);
+            void toggle(DigOutput *output, Time blockTime);
+            void pulse(DigOutput *output, Time width, Time blockTime);
+            void delayedSet(DigOutput *output, Time delay, Time blockTime);
+            void delayedClear(DigOutput *output, Time delay, Time blockTime);
+            void delayedToggle(DigOutput *output, Time delay, Time blockTime);
+            void delayedPulse(DigOutput *output, Time delay, Time pulseWidth, Time blockTime);
+            bool read(DigOutput *ouput);
+
+            void tick(Time blockTime);
+            void tickISR();
+    };
+}
+
+
+namespace eos {
+
+	class DigOutputImpl final: public DigOutput {
+		public:
+			enum class State {
+				idle,
+				pulse,
+				delayedSet,
+				delayedClear,
+				delayedToggle,
+				delayedPulse,
+			};
+
+		private:
+			PinDriver * const _drv;
+			bool _value;
+			State _state;
+			Time _delayEndTime;
+			Time _pulseEndTime;
+
+		private:
+			static bool hasExpired(Time time, Time endTime);
+
+		public:
+			DigOutputImpl(PinDriver *drv, uint32_t tag);
+
+			bool getValue() const;
+			void set();
+			void clear();
+			void toggle();
+			void pulse(Time time, Time pulse);
+			void delayedSet(Time time, Time delay);
+			void delayedClear(Time time, Time delay);
+			void delayedToggle(Time time, Time delay);
+			void delayedPulse(Time time, Time delay, Time pulse);
+			void write(bool value);
+			void tick(Time time);
+	};
+
 }
