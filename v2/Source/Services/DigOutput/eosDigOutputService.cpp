@@ -6,7 +6,6 @@ module;
 #include "Controllers/Pin/eosPinDriver.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
-#include "Services/eosService.h"
 #include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Core/eosQueue.h"
 
@@ -40,6 +39,7 @@ export module Eos.Services.DigOutput;
 
 
 import Eos.Math;
+import Eos.Services.Service;
 
 
 export namespace eos {

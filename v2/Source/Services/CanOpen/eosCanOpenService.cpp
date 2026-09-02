@@ -1,11 +1,11 @@
 module;
 
+
 #include "eos.h"
 #include "eosTime.h"
 #include "rtos/rtosTask.h"
 #include "HTL/STM32/htlCAN.h"
 #include "RTOS/rtosTimer.h"
-#include "Services/eosService.h"
 #include "Services/CanOpen/eosCanOpenDictionary.h"
 #include "Services/canopen/eosCanOpenProtocol.h"
 #include "System/Core/eosQueue.h"
@@ -15,6 +15,7 @@ export module Eos.Services.CanOpen;
 
 
 import Eos.Math;
+import Eos.Services.Service;
 
 
 export namespace eos {

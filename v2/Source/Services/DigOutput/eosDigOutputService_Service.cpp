@@ -6,7 +6,6 @@ module;
 #include "Controllers/Pin/eosPinDriver.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
-#include "Services/eosService.h"
 
 
 module Eos.Services.DigOutput;

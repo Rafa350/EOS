@@ -9,6 +9,10 @@ module;
 module Eos.Services.DigOutput;
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    tag : Etiqueta d'identificadio del pin.
+///
 eos::DigOutput::DigOutput(
 	uint32_t tag):
 
@@ -17,6 +21,10 @@ eos::DigOutput::DigOutput(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'etiqueta d'identificacio del pin.
+/// \return   El resultat.
+///
 uint32_t eos::DigOutput::getTag() const {
 
 	return _tag;

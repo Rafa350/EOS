@@ -6,10 +6,12 @@ module;
 #include "HTL/htlGPIO.h"
 #include "RTOS/rtosTime.h"
 #include "RTOS/rtosTask.h"
-#include "Services/eosService.h"
 
 
 export module Eos.Services.LedService;
+
+
+import Eos.Services.Service;
 
 
 export namespace eos {

@@ -1,17 +1,77 @@
+module;
+
+
 #include "eos.h"
 #include "RTOS/rtosKernel.h"
 #include "RTOS/rtosTask.h"
-#include "Services/eosService.h"
-#include "System/eosRTOSApplication.h"
+#include "System/Collections/eosIntrusiveForwardList.h"
 
 
-using namespace eos;
+export module Eos.System.Application.RTOS;
+
+
+import Eos.Services.Service;
+import Eos.System.Application;
+
+
+export namespace eos {
+
+    /// \brief Clase que representa l'aplicacio.
+    ///
+    class RTOSApplication: public Application {
+        private:
+            struct ServiceInfo;
+            using ServiceInfoList = IntrusiveForwardList<ServiceInfo, 0>;
+            using ServiceInfoListNode = IntrusiveForwardListNode<ServiceInfo, 0>;
+            struct ServiceInfo: ServiceInfoListNode {
+    			Service *service;
+    		};
+
+        protected:
+            struct ApplicationParams {
+            	uint32_t stackDepth;
+            	rtos::Task::Priority priority;
+            	const char *name;
+            };
+
+        private:
+            static constexpr const char *_defaultName = "Application";
+            static constexpr unsigned _defaultStackDepth = 256;
+            static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
+
+        private:
+            rtos::Task::Event<RTOSApplication> _taskEvent;
+            rtos::Task *_task;
+            bool _running;
+
+            ServiceInfoList _serviceInfoList;
+
+        private:
+            RTOSApplication(const RTOSApplication&) = delete;
+            RTOSApplication& operator=(const RTOSApplication&) = delete;
+
+            void taskEventHandler(rtos::Task *task, rtos::Task::EventArgs *args);
+            void onRun() override;
+
+        protected:
+            RTOSApplication();
+            ~RTOSApplication();
+
+            virtual void onExecute() = 0;
+            virtual void onInitialize(ApplicationParams &params);
+
+        public:
+            void addService(Service *service);
+            void removeService(Service *service);
+            void removeServices();
+    };
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-RTOSApplication::RTOSApplication() :
+eos::RTOSApplication::RTOSApplication() :
 	_taskEvent (*this, &RTOSApplication::taskEventHandler),
 	_task {nullptr},
 	_running {false} {
@@ -21,7 +81,7 @@ RTOSApplication::RTOSApplication() :
 /// ----------------------------------------------------------------------
 /// \brief    Descrutor.
 ///
-RTOSApplication::~RTOSApplication(){
+eos::RTOSApplication::~RTOSApplication(){
 
 	if (_task != nullptr)
 		delete _task;
@@ -31,7 +91,7 @@ RTOSApplication::~RTOSApplication(){
 /// ----------------------------------------------------------------------
 /// \brief    Callback de la tasca de l'aplicacio.
 ///
-void RTOSApplication::taskEventHandler(
+void eos::RTOSApplication::taskEventHandler(
 	rtos::Task *task,
 	rtos::Task::EventArgs *args) {
 
@@ -43,7 +103,7 @@ void RTOSApplication::taskEventHandler(
 /// \brief    Inicialitza els parametres de l'aplicacio.
 /// \param    params: Els parametres.
 ///
-void RTOSApplication::onInitialize(
+void eos::RTOSApplication::onInitialize(
 	ApplicationParams &params) {
 
 }
@@ -52,7 +112,7 @@ void RTOSApplication::onInitialize(
 /// ----------------------------------------------------------------------
 /// \brief    Posa l'aplicacio i els serveix en en execucio.
 ///
-void RTOSApplication::onRun() {
+void eos::RTOSApplication::onRun() {
 
 	ApplicationParams params = {
 		.stackDepth = _defaultStackDepth,
@@ -87,7 +147,7 @@ void RTOSApplication::onRun() {
 /// \brief    Afegeix un servei a l'aplicacio.
 /// \param    service: EL servei.
 ///
-void RTOSApplication::addService(
+void eos::RTOSApplication::addService(
 	Service *service) {
 
 	auto si = new ServiceInfo;
@@ -105,7 +165,7 @@ void RTOSApplication::addService(
 /// \brief    Elimina un servei de l'aplicacio
 /// \param    service: El servei a eliminar.
 ///
-void RTOSApplication::removeService(
+void eos::RTOSApplication::removeService(
     Service *service) {
 
     /*for (auto si: _serviceInfoList) {
@@ -120,7 +180,7 @@ void RTOSApplication::removeService(
 /// ----------------------------------------------------------------------
 /// \brief    Elimina tots els serveis de l'aplicacio.
 ///
-void RTOSApplication::removeServices() {
+void eos::RTOSApplication::removeServices() {
 
 	//_serviceInfoList.clear();
 }

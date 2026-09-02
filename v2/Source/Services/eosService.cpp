@@ -1,6 +1,74 @@
+module;
+
+
 #include "eos.h"
-#include "Services/eosService.h"
-#include "System/eosRTOSApplication.h"
+#include "RTOS/rtosTask.h"
+
+
+export module Eos.Services.Service;
+
+
+import Eos.System.Application;
+
+
+export namespace eos {
+
+    class Service {
+    	public:
+			enum class State {
+				stop,
+				run
+			};
+
+    	protected:
+			struct ServiceParams {
+				const char *name;
+				rtos::Task::Priority priority;
+				uint32_t stackDepth;
+			};
+
+    	private:
+			static constexpr const char *_defaultName = "Service";
+			static constexpr unsigned _defaultStackDepth = 256;
+			static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
+
+    	private:
+    		rtos::Task::Event<Service> _taskEvent;
+    		rtos::Task *_task;
+    		State _state;
+    		volatile bool _stopSignal;
+
+    	private:
+    		void taskEventHandler(rtos::Task *task, rtos::Task::EventArgs *args);
+
+        protected:
+            Service();
+			
+            virtual void onStart();
+            virtual void onStarted();
+            virtual void onStop();
+            virtual void onStopped();
+            virtual void onExecute() = 0;
+            virtual void onInitialize(ServiceParams &params);
+
+            bool stopSignal() const;
+
+        public:
+            Service(const Service&) = delete;
+            Service(const Service&&) = delete;
+            virtual ~Service();
+
+            void start();
+            void stop();
+
+            rtos::Task * getTask() const { return _task; }
+            State getState() const { return _state; }
+
+			Service& operator=(const Service&) = delete;
+            Service& operator=(const Service&&) = delete;
+    };
+
+}
 
 
 /// ----------------------------------------------------------------------
@@ -45,6 +113,7 @@ void eos::Service::start() {
 			params.priority,
 			params.name,
 			_taskEvent);
+
 		_state = State::run; //******** Aqui?
 	}
 }
