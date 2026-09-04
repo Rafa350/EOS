@@ -1,6 +1,33 @@
+module;
+
+
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Serial/eosSerialDriver_UARTDMA.h"
+#include "HTL/htlDMA.h"
+#include "HTL/htlUART.h"
+
+
+export module Eos.Controllers.Serial.UARTDMA;
+
+
+export import Eos.Controllers.Serial.UART;
+
+
+export namespace eos {
+
+	class SerialDriver_UARTDMA: public SerialDriver_UART {
+	    private:
+	        htl::dma::DMADevice * const _devDMAtx;
+	        htl::dma::DMADevice * const _devDMArx;
+
+	    private:
+            bool onTransmit(const uint8_t *buffer, uint32_t length) override;
+            bool onReceive(uint8_t *buffer, uint32_t bufferSize) override;
+
+	    public:
+            SerialDriver_UARTDMA(htl::uart::UARTDevice *devUART, htl::dma::DMADevice *devDMAtx, htl::dma::DMADevice *devDMArx);
+	};
+}
 
 
 /// ----------------------------------------------------------------------

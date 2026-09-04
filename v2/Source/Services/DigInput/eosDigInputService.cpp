@@ -6,7 +6,6 @@ module;
 #include "eosTime.h"
 #include "Controllers/Pin/eosPinDriver.h"
 #include "RTOS/rtosTask.h"
-#include "System/Collections/eosIntrusiveForwardList.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -15,6 +14,7 @@ export module Eos.Services.DigInput;
 
 import Eos.Math;
 import Eos.Services.Service;
+import Eos.System.Collections.IntrusiveForwardList;
 
 
 export namespace eos {

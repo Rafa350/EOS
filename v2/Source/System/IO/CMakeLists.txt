@@ -1,19 +1,14 @@
-target_sources(${TARGET_NAME} PUBLIC
-    FILE_SET cxx_modules 
-    TYPE CXX_MODULES 
-    FILES
-        eosSerialStream.cpp
-        eosMemoryStream.cpp
-)
-    
- 
-target_sources(${TARGET_NAME} PUBLIC 
-	eosBinaryStreamReader.cpp
-	eosBinaryStreamWriter.cpp
-#	eosDirectory.cpp
-#	eosFile.cpp
-#	eosFileStream.cpp
-#	eosFileSystem.cpp
-	eosParser.cpp
-	eosTextStreamWriter.cpp
+target_sources(${TARGET_NAME} 
+    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+        eosStreams.cpp
+#        eosStreamsFile.cpp
+        eosStreamsSerial.cpp
+        eosStreamsMemory.cpp
+     	eosFormatterText.cpp
+	    eosFormatterBinary.cpp
+    	eosParser.cpp
+    PUBLIC
+        eosFormatterBinary_Reader.cpp
+        eosFormatterBinary_Writer.cpp
+        eosFormatterText_Writer.cpp
 )

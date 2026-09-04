@@ -1,5 +1,35 @@
+module;
+
 #include "eos.h"
-#include "System/IO/eosParser.h"
+
+
+export module Eos.System.IO.Parser;
+
+
+import Eos.System.IO.Streams;
+
+
+export namespace eos {
+
+	class Parser final {
+		private:
+			Stream * const _stream;
+			char _ungetCh;
+			bool _finished;
+
+		private:
+			char get();
+			void unget(char ch);
+
+		public:
+			Parser(Stream *stream);
+
+			bool parseU32(uint32_t &value);
+			bool parseBool(bool &value);
+			bool parseChar(char &value);
+			bool isFinished() const { return _finished; }
+	};
+}
 
 
 using namespace eos;

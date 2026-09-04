@@ -8,7 +8,8 @@ module;
 
 export module Eos.Driver.EEPROM_25AA010A;
 
-import Eos.Driver.EEPROM;
+
+export import Eos.Driver.EEPROM;
 
 
 export namespace eos {

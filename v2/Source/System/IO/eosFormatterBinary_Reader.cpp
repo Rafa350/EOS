@@ -1,16 +1,18 @@
+module;
+
+
 #include "eos.h"
-#include "System/IO/eosBinaryStreamReader.h"
 
 
-using namespace eos;
+module Eos.System.IO.Formatters.Binary;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    buffer: Buffer de dades.
-/// \param    size: Tamany del buffer de dades.
+/// \param    size: Tamany del buffer de dades
 ///
-BinaryStreamReader::BinaryStreamReader(
+eos::BinaryReader::BinaryReader(
     const uint8_t *buffer,
     unsigned size):
 
@@ -26,7 +28,7 @@ BinaryStreamReader::BinaryStreamReader(
 /// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::readU8(
+bool eos::BinaryReader::readU8(
     uint8_t &data) {
 
     if (_ptr + sizeof(uint8_t) <= _end) {
@@ -44,7 +46,7 @@ bool BinaryStreamReader::readU8(
 /// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::readU16(
+bool eos::BinaryReader::readU16(
     uint16_t &data) {
 
     if (_ptr + sizeof(uint16_t) <= _end) {
@@ -63,7 +65,7 @@ bool BinaryStreamReader::readU16(
 /// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::readU32(
+bool eos::BinaryReader::readU32(
     uint32_t &data) {
 
     if (_ptr + sizeof(uint32_t) <= _end) {
@@ -84,7 +86,7 @@ bool BinaryStreamReader::readU32(
 /// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::readI8(
+bool eos::BinaryReader::readI8(
     int8_t &data) {
 
     uint8_t v;
@@ -102,7 +104,7 @@ bool BinaryStreamReader::readI8(
 /// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::readI16(
+bool eos::BinaryReader::readI16(
     int16_t &data) {
 
     uint16_t v;
@@ -120,7 +122,7 @@ bool BinaryStreamReader::readI16(
 /// \param    data: El valor a lleigit.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::readI32(
+bool eos::BinaryReader::readI32(
     int32_t &data) {
 
     uint32_t v;
@@ -139,7 +141,7 @@ bool BinaryStreamReader::readI32(
 /// \param    size: El tamany del bloc en bytes.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamReader::read(
+bool eos::BinaryReader::read(
 	uint8_t *data,
 	unsigned size) {
 

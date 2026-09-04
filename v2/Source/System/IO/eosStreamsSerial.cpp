@@ -1,18 +1,21 @@
 module;
 
+
 #include "eos.h"
 #include "eosAssert.h"
 #include "eosTime.h"
 #include "eosResults.h"
-#include "Controllers/Serial/eosSerialDriver.h"
-#include "System/IO/eosStream.h"
 
 
-export module Eos.IO.SerialStream;
+export module Eos.System.IO.Streams.Serial;
+
+
+export import Eos.System.IO.Streams;
+import Eos.Controllers.Serial;
 
 
 export namespace eos {
-
+	
 	class SerialStream: public Stream {
 
 		private:
@@ -32,7 +35,6 @@ export namespace eos {
 }
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief    Construeix l'objecte i l'inicialitza.
 /// \param    drvSerial: El driver del comunicacions serie.
@@ -48,7 +50,7 @@ eos::SerialStream::SerialStream(
 /// \brief    Asigna el timeout d'escriptura.
 /// \param    timeout: El valor.
 ///
-inline void eos::SerialStream::setWriteTimeout(
+void eos::SerialStream::setWriteTimeout(
 	Time timeout) {
 
 	_txTimeout = timeout;
@@ -59,7 +61,7 @@ inline void eos::SerialStream::setWriteTimeout(
 /// \brief    Asigna el timeout de lectura.
 /// \param    timeout: El valor.
 ///
-inline void eos::SerialStream::setReadTimeout(
+void eos::SerialStream::setReadTimeout(
 	Time timeout) {
 
 	_rxTimeout = timeout;
@@ -86,7 +88,7 @@ eos::ResultU32 eos::SerialStream::write(
 		if (_drvSerial->transmit(buffer, length).is(Result::ErrorCodes::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(_txTimeout.toMiliseconds());
+			auto result = _drvSerial->wait(_txTimeout);
 			if (result.isSuccess())
 				return {ResultU32::ErrorCodes::ok, result.value()};
 			else {
@@ -118,7 +120,7 @@ eos::ResultU32 eos::SerialStream::read(
 		if (_drvSerial->receive(buffer, bufferSize).is(Result::ErrorCodes::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(_rxTimeout.toMiliseconds());
+			auto result = _drvSerial->wait(_rxTimeout);
 			if (result.isSuccess())
 				return {ResultU32::ErrorCodes::ok, result.value()};
 			else

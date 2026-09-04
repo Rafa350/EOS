@@ -1,18 +1,72 @@
+module;
+
+
 #include "eos.h"
 #include "eosAssert.h"
+#include "eosResults.h"
 #include "eosTime.h"
-#include "Controllers/Serial/eosSerialDriver.h"
 #include "HTL/htlINT.h"
+#include "RTOS/rtosTask.h"
 #include "RTOS/rtosTime.h"
 
 
-using namespace eos;
+export module Eos.Controllers.Serial;
+
+
+export namespace eos {
+
+	/// \brief Driver per comunicacions serie.
+	///
+	class SerialDriver {
+		public:
+            enum class State {
+                reset,
+                ready,
+                transmiting,
+                receiving
+            };
+
+        private:
+            State _state;
+            rtos::Task *_task;
+            volatile bool _finished;
+            uint32_t _txCount;
+            uint32_t _rxCount;
+
+		protected:
+            SerialDriver();
+
+            void notifyTxCompleted(uint32_t length, bool irq);
+            void notifyRxCompleted(uint32_t length, bool irq);
+            State getState() const { return _state; }
+
+			virtual bool onInitialize() = 0;
+			virtual bool onDeinitialize() = 0;
+			virtual bool onTransmit(const uint8_t *buffer, uint32_t length) = 0;
+			virtual bool onReceive(uint8_t *buffer, uint32_t bufferSize) = 0;
+			virtual bool onAbort() = 0;
+
+		public:
+			virtual ~SerialDriver() = default;
+
+			void initialize();
+			void deinitialize();
+
+			Result transmit(const uint8_t *buffer, uint32_t length);
+            Result receive(uint8_t *buffer, uint32_t bufferSize);
+            ResultU32 wait(Time blockTime);
+            Result abort();
+
+			inline bool isReady() const { return _state == State::ready; }
+            inline bool isBusy() const { return _state != State::ready; }
+	};
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-SerialDriver::SerialDriver() :
+eos::SerialDriver::SerialDriver() :
     _state {State::reset} {
 
 }
@@ -21,7 +75,7 @@ SerialDriver::SerialDriver() :
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void SerialDriver::initialize() {
+void eos::SerialDriver::initialize() {
 
     if (_state == State::reset)
     	if (onInitialize())
@@ -32,7 +86,7 @@ void SerialDriver::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el driver.
 ///
-void SerialDriver::deinitialize() {
+void eos::SerialDriver::deinitialize() {
 
     if (_state == State::ready)
     	if (onDeinitialize())
@@ -46,7 +100,7 @@ void SerialDriver::deinitialize() {
 /// \param    length: Nombre de bytes en el buffer.
 /// \return   El resultat de l'operacio.
 ///
-Result SerialDriver::transmit(
+eos::Result eos::SerialDriver::transmit(
     const uint8_t *buffer,
     uint32_t length) {
 
@@ -76,7 +130,7 @@ Result SerialDriver::transmit(
 /// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-Result SerialDriver::receive(
+eos::Result eos::SerialDriver::receive(
     uint8_t *buffer,
     uint32_t bufferSize) {
 
@@ -102,12 +156,12 @@ Result SerialDriver::receive(
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que finalitzin les operacions pendents.
-/// \param    waitTime: Tamps d'espera.
+/// \param    blockTime: Tamps maxim de bloqueig.
 /// \return   El nombre de bytes transferits i el resultat.
 /// \notes    En cas de timeout, s'aborta la comunicacio.
 ///
-ResultU32 SerialDriver::wait(
-	unsigned waitTime) {
+eos::ResultU32 eos::SerialDriver::wait(
+	Time blockTime) {
 
 	if (_state == State::receiving) {
 
@@ -119,7 +173,7 @@ ResultU32 SerialDriver::wait(
 		else {
 			_task = rtos::Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (rtos::Task::waitNotification(true, Time::fromMiliseconds(waitTime)))
+			if (rtos::Task::waitNotification(true, blockTime))
 				return {ResultU32::ErrorCodes::ok, _rxCount};
 			else {
 				abort();
@@ -138,7 +192,7 @@ ResultU32 SerialDriver::wait(
 		else {
 			_task = rtos::Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (rtos::Task::waitNotification(true, Time::fromMiliseconds(waitTime)))
+			if (rtos::Task::waitNotification(true, blockTime))
 				return {ResultU32::ErrorCodes::ok, _txCount};
 			else {
 				abort();
@@ -155,7 +209,7 @@ ResultU32 SerialDriver::wait(
 /// \brief    Aborta l'operacio en curs.
 /// \return   El resultat de l'operacio.
 ///
-Result SerialDriver::abort() {
+eos::Result eos::SerialDriver::abort() {
 
 	if ((_state == State::transmiting) || (_state == State::receiving)) {
 		if (onAbort()) {
@@ -175,7 +229,7 @@ Result SerialDriver::abort() {
 /// \param    length: Nombre de bytes transmessos.
 /// \param    irq: True si es crida des d'una interrupcio.
 ///
-void SerialDriver::notifyTxCompleted(
+void eos::SerialDriver::notifyTxCompleted(
 	uint32_t length,
 	bool irq) {
 
@@ -197,7 +251,7 @@ void SerialDriver::notifyTxCompleted(
 /// \param    length: Nombre de bytes rebuts
 /// \param    irq: True si es crida des d'una interrupcio.
 ///
-void SerialDriver::notifyRxCompleted(
+void eos::SerialDriver::notifyRxCompleted(
 	uint32_t length,
 	bool irq) {
 

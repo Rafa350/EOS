@@ -1,14 +1,9 @@
 target_sources(${TARGET_NAME} 
-    PUBLIC
-        FILE_SET cxx_modules TYPE CXX_MODULES FILES
-            eosService.cpp
-            eosLedService.cpp
+    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+        eosService.cpp
+        eosLedService.cpp
 )
     
-target_sources(${TARGET_NAME} PUBLIC 
-    eosService.cpp
-)
-
 add_subdirectory("CanOpen")
 add_subdirectory("DigInput")
 add_subdirectory("DigOutput")

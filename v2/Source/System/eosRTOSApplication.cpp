@@ -2,9 +2,9 @@ module;
 
 
 #include "eos.h"
+#include "eosAssert.h"
 #include "RTOS/rtosKernel.h"
 #include "RTOS/rtosTask.h"
-#include "System/Collections/eosIntrusiveForwardList.h"
 
 
 export module Eos.System.Application.RTOS;
@@ -12,6 +12,7 @@ export module Eos.System.Application.RTOS;
 
 import Eos.Services.Service;
 import Eos.System.Application;
+import Eos.System.Collections.IntrusiveForwardList;
 
 
 export namespace eos {

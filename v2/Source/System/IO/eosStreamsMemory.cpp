@@ -2,17 +2,18 @@ module;
 
 
 #include "eos.h"
-#include "System/IO/eosStream.h"
+#include "eosResults.h"
 
 
-export module Eos.IO.MemoryStream;
+export module Eos.System.IO.Streams.Memory;
+
+
+export import Eos.System.IO.Streams;
 
 
 export namespace eos {
 
-	/// \brief Stream en memoria de tamany fix.
-	///
-    class MemoryStream final: public Stream {
+   class MemoryStream final: public Stream {
         private:
             uint8_t * const _begin;
             uint8_t * const _end;
@@ -27,13 +28,12 @@ export namespace eos {
     		ResultU32 write(const uint8_t *buffer, uint32_t length) override;
     		ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
 
-            uint8_t *buffer() const;
-            uint32_t bufferSize() const;
+            uint8_t *buffer() const { return _begin; }
+            uint32_t bufferSize() const { return _end - _begin; }
     };
-
 }
 
-
+    
 /// ----------------------------------------------------------------------
 /// \brief   Construeix l'objecte i l'inicialitza.
 /// \param   buffer: Buffer de dades del stream.
@@ -57,6 +57,7 @@ uint32_t eos::MemoryStream::getPosition() const {
 
 	return _ptr - _begin;
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la posicio de lectura/escriptura.
@@ -112,24 +113,3 @@ eos::ResultU32 eos::MemoryStream::read(
 
 	return {ResultU32::ErrorCodes::ok, bufferSize};
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el punter al buffer intern de dades.
-/// \return   El punter.
-///
-inline uint8_t *eos::MemoryStream::buffer() const {
-
-	return _begin;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el tamany buffer intern de dades en bytes.
-/// \return   El tamany.
-///
-inline uint32_t eos::MemoryStream::bufferSize() const {
-
-	return _end - _begin;
-}
-

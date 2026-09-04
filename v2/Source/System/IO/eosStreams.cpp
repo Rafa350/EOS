@@ -1,10 +1,14 @@
-#pragma once
+module;
+
 
 #include "eos.h"
 #include "eosResults.h"
 
 
-namespace eos {
+export module Eos.System.IO.Streams;
+
+
+export namespace eos {
 
     class Stream {
     	public:

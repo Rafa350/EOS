@@ -1,28 +1,31 @@
-#pragma once
-#ifndef __eosTextStreamWriter__
-#define __eosTextStreamWriter__
+module;
 
 
 #include "eos.h"
-#include "System/IO/eosStream.h"
 
 
-namespace eos {
+export module Eos.System.IO.Formatters.Text;
+
+
+export import Eos.System.IO.Streams;
+
+
+export namespace eos {
 
     /// \brief Objecte per escriure en un stream.
     ///
-    class TextStreamWriter final {
-    	public:
-    		static constexpr const char *newLine = "\r\n";
-    		static constexpr char cr = '\r';
-    		static constexpr char lf = '\n';
-    		static constexpr char tab = '\t';
+    class TextWriter final {
+      	public:
+    	  	static constexpr const char *newLine = "\r\n";
+    		  static constexpr char cr = '\r';
+    		  static constexpr char lf = '\n';
+    		  static constexpr char tab = '\t';
 
-        private:
-    		Stream *_stream;
+      private:
+    		  Stream *_stream;
 
         public:
-            TextStreamWriter(Stream *stream);
+            TextWriter(Stream *stream);
 
             bool writeU8(uint8_t data);
             bool writeU16(uint16_t data);
@@ -37,31 +40,31 @@ namespace eos {
             bool writeString(const char *data);
             bool writeBool(bool data);
 
-            inline TextStreamWriter& operator << (const uint8_t data) {
+            inline TextWriter& operator << (const uint8_t data) {
 
             	writeU8(data);
             	return *this;
             }
 
-            inline TextStreamWriter& operator << (const uint16_t data) {
+            inline TextWriter& operator << (const uint16_t data) {
 
             	writeU16(data);
             	return *this;
             }
 
-            inline TextStreamWriter& operator << (const uint32_t data) {
+            inline TextWriter& operator << (const uint32_t data) {
 
             	writeU32(data);
             	return *this;
             }
 
-            inline TextStreamWriter& operator << (const char data) {
+            inline TextWriter& operator << (const char data) {
 
             	writeChar(data);
             	return *this;
             }
 
-            inline TextStreamWriter& operator << (const char *data) {
+            inline TextWriter& operator << (const char *data) {
 
             	writeString(data);
             	return *this;
@@ -69,6 +72,3 @@ namespace eos {
     };
 
 }
-
-
-#endif // __eosTextStreamWriter__

@@ -1,21 +1,24 @@
-#include "eos.h"
-#include "eosAssert.h"
-#include "System/IO/eosTextStreamWriter.h"
+module;
 
+
+#include "eos.h"
 #include <cstdarg>
 #include <stdio.h>
+
+
+module Eos.System.IO.Formatters.Text;
+
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Construeix l'objecte i l'inicialitza
 /// \param    stream: El stream d'escriptura.
 ///
-eos::TextStreamWriter::TextStreamWriter(
+eos::TextWriter::TextWriter(
 	Stream *stream):
 
 	_stream {stream} {
 
-	eosAssert(stream != nullptr);
 }
 
 
@@ -24,7 +27,8 @@ eos::TextStreamWriter::TextStreamWriter(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeU8(uint8_t data) {
+bool eos::TextWriter::writeU8(
+	uint8_t data) {
 
 	return writeU32(data);
 }
@@ -35,7 +39,8 @@ bool eos::TextStreamWriter::writeU8(uint8_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeU16(uint16_t data) {
+bool eos::TextWriter::writeU16(
+	uint16_t data) {
 
 	return writeU32(data);
 }
@@ -46,9 +51,8 @@ bool eos::TextStreamWriter::writeU16(uint16_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeU32(uint32_t data) {
-
-	eosAssert(_stream != nullptr);
+bool eos::TextWriter::writeU32(
+	uint32_t data) {
 
 	char buffer[16];
 	int len = snprintf(buffer, sizeof(buffer), "%lu", data);
@@ -66,9 +70,8 @@ bool eos::TextStreamWriter::writeU32(uint32_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeU8Hex(uint8_t data) {
-
-	eosAssert(_stream != nullptr);
+bool eos::TextWriter::writeU8Hex(
+	uint8_t data) {
 
 	char buffer[16];
 	int len = snprintf(buffer, sizeof(buffer), "%02X", data);
@@ -86,9 +89,8 @@ bool eos::TextStreamWriter::writeU8Hex(uint8_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeU16Hex(uint16_t data) {
-
-	eosAssert(_stream != nullptr);
+bool eos::TextWriter::writeU16Hex(
+	uint16_t data) {
 
 	char buffer[16];
 	int len = snprintf(buffer, sizeof(buffer), "%04X", data);
@@ -106,9 +108,8 @@ bool eos::TextStreamWriter::writeU16Hex(uint16_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeU32Hex(uint32_t data) {
-
-	eosAssert(_stream != nullptr);
+bool eos::TextWriter::writeU32Hex(
+	uint32_t data) {
 
 	char buffer[16];
 	int len = snprintf(buffer, sizeof(buffer), "%08lX", data);
@@ -126,7 +127,8 @@ bool eos::TextStreamWriter::writeU32Hex(uint32_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeI8(int8_t data) {
+bool eos::TextWriter::writeI8(
+	int8_t data) {
 
 	return writeI32(data);
 }
@@ -137,7 +139,8 @@ bool eos::TextStreamWriter::writeI8(int8_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeI16(int16_t data) {
+bool eos::TextWriter::writeI16(
+	int16_t data) {
 
 	return writeI32(data);
 }
@@ -148,9 +151,8 @@ bool eos::TextStreamWriter::writeI16(int16_t data) {
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeI32(int32_t data) {
-
-	eosAssert(_stream != nullptr);
+bool eos::TextWriter::writeI32(
+	int32_t data) {
 
 	char buffer[16];
 	int len = snprintf(buffer, sizeof(buffer), "%li", data);
@@ -168,10 +170,8 @@ bool eos::TextStreamWriter::writeI32(int32_t data) {
 /// \param    data: El caracter a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeChar(
+bool eos::TextWriter::writeChar(
 	char data) {
-
-	eosAssert(_stream != nullptr);
 
 	constexpr unsigned length = sizeof(data);
 	auto writeResult = _stream->write((const uint8_t*)&data, length);
@@ -184,10 +184,8 @@ bool eos::TextStreamWriter::writeChar(
 /// \param    data: La cadena a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeString(
+bool eos::TextWriter::writeString(
 	const char *data) {
-
-	eosAssert(_stream != nullptr);
 
 	if (data != nullptr) {
 		auto length = strlen(data);
@@ -206,9 +204,8 @@ bool eos::TextStreamWriter::writeString(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextStreamWriter::writeBool(bool data) {
-
-	eosAssert(_stream != nullptr);
+bool eos::TextWriter::writeBool(
+	bool data) {
 
 	return writeString(data == 0 ? "false" : "true");
 }

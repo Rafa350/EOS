@@ -13,6 +13,7 @@ target_sources(${TARGET_NAME}
 
 
 add_subdirectory("Core")
+add_subdirectory("Collections")
 if(EOS_USE_GRAPHICS)
 	add_subdirectory("Graphics")
 endif()

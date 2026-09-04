@@ -1,14 +1,16 @@
+module;
+
+
 #include "eos.h"
-#include "System/IO/eosBinaryStreamWriter.h"
 
 
-using namespace eos;
+module Eos.System.IO.Formatters.Binary;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-BinaryStreamWriter::BinaryStreamWriter(
+eos::BinaryWriter::BinaryWriter(
     uint8_t *buffer,
     unsigned size):
 
@@ -24,7 +26,7 @@ BinaryStreamWriter::BinaryStreamWriter(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamWriter::writeU8(
+bool eos::BinaryWriter::writeU8(
     uint8_t value) {
 
     if (_ptr + sizeof(uint8_t) < _end) {
@@ -41,7 +43,7 @@ bool BinaryStreamWriter::writeU8(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamWriter::writeU16(
+bool eos::BinaryWriter::writeU16(
     uint16_t value) {
 
     if (_ptr + sizeof(uint16_t) < _end) {
@@ -59,7 +61,7 @@ bool BinaryStreamWriter::writeU16(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamWriter::writeU32(
+bool eos::BinaryWriter::writeU32(
     uint32_t value) {
 
     if (_ptr + sizeof(uint32_t) < _end) {
@@ -80,7 +82,7 @@ bool BinaryStreamWriter::writeU32(
 /// \param    size: El nombre de bytes.
 /// \return   True si tot es correcte.
 ///
-bool BinaryStreamWriter::write(
+bool eos::BinaryWriter::write(
     const uint8_t *data,
     unsigned size) {
 
