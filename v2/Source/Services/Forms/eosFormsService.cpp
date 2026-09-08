@@ -1,178 +1,199 @@
+module;
+
+
 #include "eos.h"
-#include "RTOS/rtosCriticalSection.h"
-#include "Services/Forms/eosFormsService.h"
-#include "System/Graphics/eosGraphics.h"
+#include "eosTime.h"
+#include "eosCallbacks.h"
+#include "Controllers/Display/eosDisplayDriver.h"
+#include "RTOS/rtosTask.h"
+#include "System/Core/eosQueue.h"
+#include "System/Graphics/eosColor.h"
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-///
-eos::FormsService::FormsService(
-	DisplayDriver *drvDisplay):
-
-	_drvDisplay {drvDisplay},
-	_activeForm {nullptr},
-	_messageQueue {10} {
-
-}
+export module Eos.Services.Forms;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Afgeig un form
-/// \param 	  form : El form a afeigir.
-///
-void eos::FormsService::addForm(
-	eos::Form *form) {
-
-	_forms.pushFront(form);
-}
+import Eos.Services.Service;
+import Eos.System.Collections.IntrusiveForwardList;
+import Eos.System.Forms.PropertyObserver;
+import Eos.System.Graphics.Canvas;
+import Eos.System.Graphics.Point;
+import Eos.System.Graphics.Rect;
+import Eos.System.Graphics.Size;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Envia un missatge de forma directe.
-/// \param    message: El missatge.
-///
-void eos::FormsService::sendMessage(
-	FormMessage &message) {
+namespace eos {
 
-	if (message.target != nullptr)
-		message.target->message(message);
-}
+    export class Form;
+    export class Visual;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Envia un missatge de forma diferida a traves de la cua
-/// \param    message: El missatge.
-/// \param    blockTime: Temps maxim de bloqueig-
-/// \return   True si tot es correcte, false en cas d'error o timeout.
-///
-bool eos::FormsService::postMessage(
-	FormMessage &message,
-	Time blockTime) {
-
-	return _messageQueue.push(message, blockTime);
-}
+    using VisualList = IntrusiveForwardList<Visual, 0>;
+    using VisualListNode = IntrusiveForwardListNode<Visual, 0>;
 
 
-bool eos::FormsService::postInitializeMessage(
-	Time blockTime) {
+    enum class FormMessageID {
+    	selector,
+		keyboard,
+		activated,
+		deactivated,
+		initialize
+    };
 
-	FormMessage message = {
-		.id { FormMessageID::initialize},
-		.target {nullptr}
-	};
+    enum class SelectorMessageID {
+    	inc,
+		dec,
+		press,
+		release
+    };
 
-	return postMessage(message, blockTime);
-}
+    enum class KeyboardMessageID {
+    	up,
+		down,
+		enter,
+    };
 
+    struct FormSelectorMessage {
+    	SelectorMessageID id;
+    };
 
-bool eos::FormsService::postKeyboardMessage(
-	KeyboardMessageID id,
-	Time blockTime) {
+    struct FormKeyboardMessage {
+    	KeyboardMessageID id;
+    };
 
-	FormMessage message = {
-		.id { FormMessageID::keyboard},
-		.target {_activeForm},
-		.keyboard {
-			.id {id}
-		}
-	};
-
-	return postMessage(message, blockTime);
-}
-
-
-bool eos::FormsService::postSelectorMessage(
-	SelectorMessageID id,
-	Time blockTime) {
-
-	FormMessage message = {
-		.id { FormMessageID::selector},
-		.target {_activeForm},
-		.selector {
-			.id {id}
-		}
-	};
-
-	return postMessage(message, blockTime);
-}
+    struct FormMessage {
+    	FormMessageID id;
+    	Visual *target;
+    	union {
+    		FormSelectorMessage selector;
+    		FormKeyboardMessage keyboard;
+    	};
+    };
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona el form actiu.
-/// \param    form: El form a activat. nullptr si no activa cap.
-///
-void eos::FormsService::setActiveForm(
-	Form *form) {
+    export class FormsService: public Service {
+        private:
+    		constexpr static const char *_serviceName = "Forms";
+    		constexpr static uint32_t _serviceStackDepth = 280;
+    		constexpr static rtos::Task::Priority _servicePriority = rtos::Task::Priority::low;
 
-	// Notifica que es desactivara el form
-	//
-	if (_activeForm != nullptr) {
-		FormMessage message = {
-			.id {FormMessageID::deactivated},
-			.target {_activeForm}
-		};
-		sendMessage(message);
-	}
+        private:
+    		using MessageQueue = Queue<FormMessage>;
 
-	// Selecciona el form actiu
-	//
-	_activeForm = form;
+        private:
+            DisplayDriver * const _drvDisplay;
+            VisualList  _forms;
+            Form *_activeForm;
+            MessageQueue _messageQueue;
 
-	// Notifica que s'ha activat el form
-	//
-	if (_activeForm != nullptr) {
-		FormMessage message = {
-			.id {FormMessageID::activated},
-			.target {_activeForm}
-		};
-		sendMessage(message);
-	}
-}
+        protected:
+			void onExecute() override;
+			void onInitialize(ServiceParams &params) override;
+
+        public:
+            FormsService(DisplayDriver *drvDisplay);
+
+            void addForm(Form *form);
+
+            void sendMessage(FormMessage &message);
+            bool postMessage(FormMessage &message, Time blockTime);
+
+            bool postInitializeMessage(Time blockTime);
+            bool postKeyboardMessage(KeyboardMessageID id, Time blockTime);
+            bool postSelectorMessage(SelectorMessageID id, Time blockTime);
+
+            void setActiveForm(Form *form);
+    };
+
+    
+    export class Visual: public VisualListNode, public PropertyObserver {
+    	private:
+    		Point _position;
+    		Size _size;
+    		Visual *_parent;
+    		VisualList _childs;
+            bool _renderPending;
+
+    	protected:
+            virtual void onMessage(FormMessage &message);
+            virtual void onRender(Graphics *graphics);
+            virtual void onPropertyChanged(void *property);
+
+    	public:
+            Visual(const Point &position, const Size &size);
+
+            inline void setPosition(const Point &value) { setProperty(_position, value); }
+            inline void setSize(const Size &value) { setProperty(_size, value); }
+
+            inline Visual* getParent() const { return _parent; }
+            Visual *getRoot();
+            inline const Point& getPosition() const { return _position; }
+            inline const Size& getSize() const { return _size; }
+
+            bool isRenderPending() const;
+
+    		void addChild(Visual *visual);
+
+            void invalidate();
+            void message(FormMessage &message);
+    		void render(Graphics *graphics);
+    };
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza els parametres del servei.
-/// \params   params: El parametres per inicialitzar.
-///
-void eos::FormsService::onInitialize(
-	ServiceParams &params) {
+    export class Control: public Visual {
+    	public:
+    		struct PropertyChangedEventArgs {
+    			void *ptr;
+    		};
+    		using IPropertyChangedEvent = ICallbackP2<Control*, PropertyChangedEventArgs*>;
+    		template <typename Instance_> using PropertyChangedEvent = CallbackP2<Instance_, Control*, PropertyChangedEventArgs*>;
 
-	params.name = _serviceName;
-	params.priority = _servicePriority;
-	params.stackDepth = _serviceStackDepth;
-}
+        private:
+            Color _backgroundColor;
+            Color _borderColor;
+            IPropertyChangedEvent *_propertyChangedEvent;
 
+        protected:
+            void onPropertyChanged(void *property) override;
+            void onRender(Graphics *graphics) override;
 
-/// ----------------------------------------------------------------------
-/// \brief    Executa les tasques del servei
-///
-void eos::FormsService::onExecute() {
+        public:
+            Control(const Point &position, const Size &size);
+            Control(const Control &) = delete;
+            Control(const Control &&) = delete;
 
-	postInitializeMessage(Times::infinite);
+            inline void setBackgroundColor(Color value) { setProperty(_backgroundColor, value); }
+            inline void setBorderColor(Color value) { setProperty(_borderColor, value); }
 
-    auto graphics = new Graphics(_drvDisplay);
+            inline void setPropertyChangedEvent(IPropertyChangedEvent &event) {
+            	_propertyChangedEvent = &event;
+            }
+            inline void clearPropertyChangedEvent() {
+            	_propertyChangedEvent = nullptr;
+            }
 
-    while (!stopSignal()) {
+            inline Color getBackgroundColor() const { return _backgroundColor; }
+            inline Color getBorderColor() const { return _borderColor; }
+    };
+    
 
-    	FormMessage message;
-    	while (_messageQueue.pop(message, eos::Times::infinite)) {
-    		sendMessage(message);
+    export class Form: public Visual {
+        private:
+            Control *_activeControl;
+            void *_dataContext;
 
-    		// Quant s'ha procesat l'ultim missatge, renderitza el form,
-    		// si cal.
-    		//
-			if ((_messageQueue.getCount() == 0) &&
-				(_activeForm != nullptr) &&
-				_activeForm->isRenderPending()) {
+        protected:
+            void onMessage(FormMessage &message) override;
 
-				_activeForm->render(graphics);
+        public:
+            Form();
+            Form(void *dataContext);
+            Form(const Form &) = delete;
+            Form(const Form &&) = delete;
 
-				rtos::CriticalSection::enter();
-				auto driver = graphics->getDriver();
-				driver->refresh();
-				rtos::CriticalSection::exit();
-			}
-    	}
-    }
+            inline void setDataContext(void *value) { setProperty(_dataContext, value); }
+            inline void setActiveControl(Control *value) { setProperty(_activeControl, value); }
+            inline void *getDataContext() const { return _dataContext; }
+    };
+
 }

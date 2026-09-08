@@ -1,8 +1,7 @@
 target_sources(${TARGET_NAME} 
-    PUBLIC 
-        FILE_SET cxx_modules TYPE CXX_MODULES FILES
-			eosApplication.cpp
-			eosRTOSApplication.cpp	
+    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+		eosApplication.cpp
+		eosRTOSApplication.cpp	
 )
 
 

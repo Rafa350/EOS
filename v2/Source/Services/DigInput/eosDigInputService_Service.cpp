@@ -12,9 +12,6 @@ module;
 module Eos.Services.DigInput;
 
 
-import Eos.Math;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///

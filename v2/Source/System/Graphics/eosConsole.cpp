@@ -1,19 +1,52 @@
+module;
+
+
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
-#include "System/Graphics/eosConsole.h"
-#include "System/Graphics/eosFont.h"
-#include "System/Graphics/eosGraphics.h"
 
 
-using namespace eos;
+export module Eos.System.Graphics.Console;
+
+
+import Eos.System.Graphics.Canvas;
+
+
+export namespace eos {
+
+	class Console {
+		private:
+			Graphics* _graphics;
+			int _x;
+			int _y;
+			int _width;
+			int _height;
+			Color _bkColor;
+			Color _fgColor;
+			int _cx;
+			int _cy;
+			int _state;
+
+		public:
+			Console(Graphics* graphics, int x, int y, int width, int height);
+			void clear();
+			void home();
+			void moveTo(int x, int y);
+			void put(char ch);
+			void put(const char *s, int offset, int length);
+
+			inline int getX() const { return _x; }
+			inline int getY() const { return _y; }
+	};
+}
+
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor de l'objecte.
 /// \param graphics: Objecte 'Graphics' per dibuixar.
 ///
-Console::Console(
+eos::Console::Console(
 	Graphics *graphics,
 	int x,
 	int y,
@@ -36,7 +69,7 @@ Console::Console(
 /// ---------------------------------------------------------------------
 /// \brief Borra la pantalla
 ///
-void Console::clear() {
+void eos::Console::clear() {
 
 	_graphics->clear(_bkColor);
 	home();
@@ -45,7 +78,7 @@ void Console::clear() {
 /// ----------------------------------------------------------------------
 /// \brief Mou el cursor a l'origen.
 ///
-void Console::home() {
+void eos::Console::home() {
 
 	_cx = 0;
 	_cy = 0;
@@ -57,7 +90,7 @@ void Console::home() {
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 ///
-void Console::moveTo(
+void eos::Console::moveTo(
 	int x,
 	int y) {
 
@@ -70,7 +103,7 @@ void Console::moveTo(
 /// \brief Escriu un caracter en emulacio TTY.
 /// \param c: El caracter a escriure.
 ///
-void Console::put(
+void eos::Console::put(
     char c) {
 
 	Font font;
@@ -135,7 +168,7 @@ void Console::put(
 /// \param offset: El primer caracter a escriure.
 /// \param length: Numero de caracters a escriure. -1 si es tot el text.
 ///
-void Console::put(
+void eos::Console::put(
     const char *s,
     int offset,
     int length) {

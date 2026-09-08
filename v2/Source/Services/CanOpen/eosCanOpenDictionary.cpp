@@ -1,6 +1,124 @@
+module;
+
+
 #include "eos.h"
+#include "eosEvents.h"
 #include "RTOS/rtosCriticalSection.h"
-#include "Services/CanOpen/eosCanOpenDictionary.h"
+
+
+export module Eos.Services.CanOpen.Dictionary;
+
+
+export namespace eos {
+
+	enum class CoAccess: uint8_t {
+		roVariable,
+		rwVariable,
+		roEvent,
+		rwEvent,
+		constant
+	};
+
+	enum class CoType: uint8_t {
+		unsigned8,
+		unsigned16,
+		unsigned32,
+		boolean,
+		unknown
+	};
+
+	struct CoDictionaryEntry {
+		uint16_t index;
+		uint8_t subIndex;
+		CoType type;
+		CoAccess access;
+		uint32_t data;
+	};
+
+	class CanOpenDictionary final {
+		public:
+			union DataValue {
+				uint8_t u8;
+				uint16_t u16;
+				uint32_t u32;
+				bool b;
+			};
+
+			enum class AccessMode {
+				read,
+				write
+			};
+			struct AccessEventArgs {
+				AccessMode access;
+				uint16_t index;
+				uint8_t subIndex;
+				DataValue value;
+			};
+			using AccessEventRaiser = eos::EventRaiser<CanOpenDictionary, AccessEventArgs>;
+			using IAccessEvent = AccessEventRaiser::IEvent;
+			template <typename Instance_> using AccessEvent = AccessEventRaiser::Event<Instance_>;
+
+			struct ChangedEventArgs {
+				uint16_t index;
+				uint8_t subIndex;
+				DataValue oldValue;
+				DataValue newValue;
+			};
+			using ChangedEventRaiser = eos::EventRaiser<CanOpenDictionary, ChangedEventArgs>;
+			using IChangedEvent = ChangedEventRaiser::IEvent;
+			template <typename Instance_> using ChangedEvent = ChangedEventRaiser::Event<Instance_>;
+
+		private:
+			const CoDictionaryEntry * const _entries;
+			uint32_t const _numEntries;
+			AccessEventRaiser _accessEventRaiser;
+			ChangedEventRaiser _changedEventRaiser;
+
+		private:
+			void onChangedU8(uint16_t index, uint8_t subIndex, uint8_t oldValue, uint8_t newValue);
+			void onChangedU16(uint16_t index, uint8_t subIndex, uint16_t oldValue, uint16_t newValue);
+			void onChangedU32(uint16_t index, uint8_t subIndex, uint32_t oldValue, uint32_t newValue);
+
+			void raiseWriteU8AccessEvent(uint16_t index, uint8_t subIndex, uint8_t value);
+			void raiseWriteU16AccessEvent(uint16_t index, uint8_t subIndex, uint16_t value);
+     		void raiseWriteU32AccessEvent(uint16_t index, uint8_t subIndex, uint32_t value);
+
+     		void raiseReadU8AccessEvent(uint16_t index, uint8_t subIndex, uint8_t &value);
+			void raiseReadU16AccessEvent(uint16_t index, uint8_t subIndex, uint16_t &value);
+     		void raiseReadU32AccessEvent(uint16_t index, uint8_t subIndex, uint32_t &value);
+
+		public:
+			CanOpenDictionary(const CoDictionaryEntry *entries, uint32_t numEntries);
+
+			uint32_t find(uint16_t index, uint8_t subIndex) const;
+			uint32_t find(const void *ptr) const;
+
+			CoType getType(uint32_t entryId) const;
+
+			bool canWrite(uint32_t entryId) const;
+			bool writeU8(uint32_t entryId, uint8_t value);
+			bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value);
+			bool writeU16(uint32_t entryId, uint16_t value);
+			bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value);
+			bool writeU32(uint32_t entryId, uint32_t value);
+			bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value);
+
+			bool canRead(uint32_t entryId) const;
+			bool readU8(uint32_t entryId, uint8_t &value);
+			bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value);
+			bool readU16(uint32_t entryId, uint16_t &value);
+			bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
+			bool readU32(uint32_t entryId, uint32_t &value);
+			bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
+
+            inline void enableAccessEvent(IAccessEvent &event) {
+            	_accessEventRaiser.enable(event);
+            }
+            inline void enableChangedEvent(IChangedEvent &event) {
+            	_changedEventRaiser.enable(event);
+            }
+	};
+}
 
 
 /// ----------------------------------------------------------------------

@@ -36,10 +36,10 @@ uint32_t eos::DigOutput::getTag() const {
 /// \param    dev: El driver del pin.
 ///
 eos::DigOutputImpl::DigOutputImpl(
-	eos::PinDriver *drv,
+	PinDriver *drv,
 	uint32_t tag):
 
-	eos::DigOutput {tag},
+	DigOutput {tag},
 	_drv {drv},
 	_value {drv->read()},
 	_state{State::idle} {
@@ -106,8 +106,8 @@ void eos::DigOutputImpl::toggle() {
 /// \param    pulse: Durada del puls.
 ///
 void eos::DigOutputImpl::pulse(
-	eos::Time time,
-	eos::Time pulse) {
+	Time time,
+	Time pulse) {
 
 	if (_state == State::idle)
 		write(!_value);
@@ -123,8 +123,8 @@ void eos::DigOutputImpl::pulse(
 /// \param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedSet(
-	eos::Time time,
-	eos::Time delay) {
+	Time time,
+	Time delay) {
 
 	_delayEndTime = time + delay;
 	_state = State::delayedSet;
@@ -137,8 +137,8 @@ void eos::DigOutputImpl::delayedSet(
 /// \param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedClear(
-	eos::Time time,
-	eos::Time delay) {
+	Time time,
+	Time delay) {
 
 	_delayEndTime = time + delay;
 	_state = State::delayedClear;
@@ -151,8 +151,8 @@ void eos::DigOutputImpl::delayedClear(
 /// \param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedToggle(
-	eos::Time time,
-	eos::Time delay) {
+	Time time,
+	Time delay) {
 
 	_delayEndTime = time + delay;
 	_state = State::delayedToggle;
@@ -166,9 +166,9 @@ void eos::DigOutputImpl::delayedToggle(
 /// \param    pulse: Durada del puls.
 ///
 void eos::DigOutputImpl::delayedPulse(
-	eos::Time time,
-	eos::Time delay,
-	eos::Time pulse) {
+	Time time,
+	Time delay,
+	Time pulse) {
 
 	_delayEndTime = time + delay;
 	_pulseEndTime = time + delay + pulse;
@@ -181,7 +181,7 @@ void eos::DigOutputImpl::delayedPulse(
 /// \param    time: El temps actual.
 ///
 void eos::DigOutputImpl::tick(
-	eos::Time time) {
+	Time time) {
 
 	switch (_state) {
 		case State::idle:
@@ -232,8 +232,8 @@ void eos::DigOutputImpl::tick(
 /// \return   True si el temps actual es posterior al temps limit.
 ///
 bool eos::DigOutputImpl::hasExpired(
-	eos::Time time,
-	eos::Time endTime) {
+	Time time,
+	Time endTime) {
 
 	auto delta = endTime - time;
 	return static_cast<int>(delta.toMiliseconds()) <= 0;

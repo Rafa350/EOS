@@ -1,17 +1,63 @@
+module;
+
+
 #include "eos.h"
-#include "Services/Forms/Controls/eosMenuControl.h"
-#include "Services/Forms/eosForm.h"
-#include "System/Graphics/eosBrush.h"
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
-#include "System/Graphics/eosGraphics.h"
-#include "System/Graphics/eosPen.h"
-#include "System/Graphics/eosPoint.h"
-#include "System/Graphics/eosRect.h"
-#include "System/Graphics/eosText.h"
+
+
+export module Eos.Services.Forms.Controls.Menu;
 
 
 import Eos.Math;
+import Eos.Services.Forms;
+import Eos.System.Graphics.Canvas;
+import Eos.System.Graphics.Point;
+import Eos.System.Graphics.Rect;
+
+
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
+
+
+export namespace eos {
+
+	class NumericControl: public Control {
+		private:
+			int32_t _value;
+			int32_t _minValue;
+			int32_t _maxValue;
+			int32_t _delta;
+
+		protected:
+            void onPropertyChanged(void *property) override;
+            void onMessage(FormMessage &message) override;
+            void onRender(Graphics *graphics) override;
+            virtual void onValueChanged();
+
+		public:
+            NumericControl(const Point &position, const Size &size);
+
+			inline void setValue(int32_t value) {
+				setProperty(_value, value);
+			}
+			inline void setMinValue(int32_t value) {
+				setProperty(_minValue, value);
+			}
+			inline void setMaxValue(int32_t value) {
+				setProperty(_maxValue, value);
+			}
+			inline void setDelta(int32_t value) {
+				setProperty(_delta, value);
+			}
+
+			inline int32_t getValue() const {
+				return _value;
+			}
+
+			void increment();
+            void decrement();
+	};
+}
+
 
 
 /// ----------------------------------------------------------------------

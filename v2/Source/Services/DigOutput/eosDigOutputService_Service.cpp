@@ -11,9 +11,6 @@ module;
 module Eos.Services.DigOutput;
 
 
-import Eos.Math;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
@@ -31,7 +28,7 @@ eos::DigOutputService::DigOutputService():
 /// \return   La sortida.
 ///
 eos::DigOutput* eos::DigOutputService::addOutput(
-    eos::PinDriver *drv,
+    PinDriver *drv,
 	uint32_t tag) {
 
     rtos::CriticalSection::enter();
@@ -51,7 +48,7 @@ eos::DigOutput* eos::DigOutputService::addOutput(
 /// \return   True si pertany, false en cas contrari.
 ///
 bool eos::DigOutputService::containsOutput(
-	eos::DigOutput *output) const {
+	DigOutput *output) const {
 
 	bool result = false;
 
@@ -97,7 +94,7 @@ eos::DigOutput *eos::DigOutputService::getOutput(
 /// \param    output: La sortida.
 ///
 void eos::DigOutputService::onOutputChanged(
-	eos::DigOutputImpl *output) {
+	DigOutputImpl *output) {
 
 	if (_outputChangedEventRaiser) {
 
@@ -117,8 +114,8 @@ void eos::DigOutputService::onOutputChanged(
 /// \param    blocTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::set(
-    eos::DigOutput *output,
-	eos::Time blockTime) {
+    DigOutput *output,
+	Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (_outputs.contains(output)) {
@@ -143,8 +140,8 @@ void eos::DigOutputService::set(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::clear(
-    eos::DigOutput *output,
-	eos::Time blockTime) {
+    DigOutput *output,
+	Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -169,8 +166,8 @@ void eos::DigOutputService::clear(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::toggle(
-    eos::DigOutput *output,
-	eos::Time blockTime) {
+    DigOutput *output,
+	Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -196,9 +193,9 @@ void eos::DigOutputService::toggle(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::write(
-    eos::DigOutput *output,
+    DigOutput *output,
     bool state,
-	eos::Time blockTime) {
+	Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -224,9 +221,9 @@ void eos::DigOutputService::write(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::pulse(
-    eos::DigOutput *output,
-    eos::Time width,
-	eos::Time blockTime) {
+    DigOutput *output,
+    Time width,
+	Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -254,10 +251,10 @@ void eos::DigOutputService::pulse(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::delayedPulse(
-    eos::DigOutput *output,
-    eos::Time delay,
-    eos::Time width,
-	eos::Time blockTime) {
+    DigOutput *output,
+    Time delay,
+    Time width,
+	Time blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -284,7 +281,7 @@ void eos::DigOutputService::delayedPulse(
 /// \return   L'estat de la sortida.
 ///
 bool eos::DigOutputService::read(
-	eos::DigOutput *output) {
+	DigOutput *output) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -312,7 +309,7 @@ bool eos::DigOutputService::read(
 /// \param    params: Els parametres.
 ///
 void eos::DigOutputService::onInitialize(
-	eos::Service::ServiceParams &params) {
+	Service::ServiceParams &params) {
 
 	params.name = _serviceName;
 	params.stackDepth = _serviceStackDepth;
@@ -385,7 +382,7 @@ void eos::DigOutputService::processAction(
 /// \param    output: La sortida.
 ///
 void eos::DigOutputService::processClear(
-    eos::DigOutputImpl *output) {
+    DigOutputImpl *output) {
 
 	if (output->getValue()) {
 		output->clear();
@@ -399,7 +396,7 @@ void eos::DigOutputService::processClear(
 /// \param    output: La sortida.
 ///
 void eos::DigOutputService::processSet(
-    eos::DigOutputImpl *output) {
+    DigOutputImpl *output) {
 
 	if (!output->getValue()) {
 		output->set();
@@ -413,7 +410,7 @@ void eos::DigOutputService::processSet(
 /// \param    output: La sortida.
 ///
 void eos::DigOutputService::processToggle(
-    eos::DigOutputImpl *output) {
+    DigOutputImpl *output) {
 
 	output->toggle();
 	onOutputChanged(output);
@@ -426,8 +423,8 @@ void eos::DigOutputService::processToggle(
 /// \param    pulseWidth: L'amplada del puls.
 ///
 void eos::DigOutputService::processPulse(
-    eos::DigOutputImpl *output,
-    eos::Time pulseWidth) {
+    DigOutputImpl *output,
+    Time pulseWidth) {
 
 	bool oldValue = output->getValue();
 	output->pulse(_timeCounter, pulseWidth);
@@ -442,8 +439,8 @@ void eos::DigOutputService::processPulse(
 /// \param    delay: El retard.
 ///
 void eos::DigOutputService::processDelayedSet(
-    eos::DigOutputImpl *output,
-    eos::Time delay) {
+    DigOutputImpl *output,
+    Time delay) {
 
 }
 
@@ -454,8 +451,8 @@ void eos::DigOutputService::processDelayedSet(
 /// \param    delay: El retard.
 ///
 void eos::DigOutputService::processDelayedClear(
-    eos::DigOutputImpl *output,
-    eos::Time delay) {
+    DigOutputImpl *output,
+    Time delay) {
 
 }
 
@@ -466,8 +463,8 @@ void eos::DigOutputService::processDelayedClear(
 /// \param    delay: El retard.
 ///
 void eos::DigOutputService::processDelayedToggle(
-    eos::DigOutputImpl *output,
-    eos::Time delay) {
+    DigOutputImpl *output,
+    Time delay) {
 
 }
 
@@ -479,9 +476,9 @@ void eos::DigOutputService::processDelayedToggle(
 /// \param    pulseWidth: L'amplada del puls.
 ///
 void eos::DigOutputService::processDelayedPulse(
-    eos::DigOutputImpl *output,
-    eos::Time delay,
-    eos::Time pulseWidth) {
+    DigOutputImpl *output,
+    Time delay,
+    Time pulseWidth) {
 
 	output->delayedPulse(_timeCounter, delay, pulseWidth);
 }

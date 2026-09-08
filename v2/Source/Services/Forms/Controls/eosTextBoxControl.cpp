@@ -1,13 +1,42 @@
+module;
+
+
 #include "eos.h"
-#include "Services/Forms/Controls/eosTextBoxControl.h"
-#include "System/Graphics/eosBrush.h"
+
+
+export module Eos.Services.Forms.Controls.TextBox;
+
+
+import Eos.Services.Forms;
+import Eos.System.Graphics;
+import Eos.System.Graphics.Point;
+impirt Eos.System.Graphics.Rect;
+
+
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
-#include "System/Graphics/eosGraphics.h"
-#include "System/Graphics/eosPen.h"
-#include "System/Graphics/eosPoint.h"
-#include "System/Graphics/eosRect.h"
-#include "System/Graphics/eosText.h"
+
+
+export namespace eos {
+
+    class TextBoxControl: public eos::Control {
+        private:
+            const char *_text;
+            Color _textColor;
+
+        protected:
+            void onRender(Graphics *graphics) override;
+
+        public:
+            TextBoxControl(const Point &position, const Size &size, const char *text);
+
+            inline void setText(const char *text) { setProperty(_text, text); };
+            inline void setTextColor(Color color) { setProperty(_textColor, color); }
+
+            inline const char *getText() const { return _text; }
+            inline Color getTextColor() const { return _textColor; }
+    };
+}
 
 
 /// ----------------------------------------------------------------------

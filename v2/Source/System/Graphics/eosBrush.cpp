@@ -1,17 +1,51 @@
+module;
+
+
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
-#include "System/Graphics/eosBrush.h"
 
 
-using namespace eos;
+export module Eos.System.Graphics.Brush;
+
+
+export namespace eos {
+
+	class Brush final {
+		public:
+			enum class Style {
+				null,
+				solid,
+				linearGradient,
+				radialGradient
+			};
+
+		private:
+			Style _style;
+			Color _color;
+
+		public:
+			Brush();
+			Brush(Color color);
+			Brush(const Brush &brush);
+
+			Brush& operator = (const Brush &brush);
+			bool operator == (const Brush &brush) const;
+			inline bool operator != (const Brush &brush) const { return !(*this == brush); }
+
+			inline Color getColor() const { return _color; }
+			inline Style getStyle() const { return _style; }
+
+			inline bool isNull() const { return _style == Style::null; }
+	};
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-Brush::Brush() :
+eos::Brush::Brush() :
 	_style(Style::null),
 	_color(Colors::transparent) {
 }
@@ -21,7 +55,7 @@ Brush::Brush() :
 /// \brief    Constructor.
 /// \param    color: El color.
 ///
-Brush::Brush(
+eos::Brush::Brush(
 	Color color):
 
 	_style(Style::solid),
@@ -33,7 +67,7 @@ Brush::Brush(
 /// \brief    Constructor de copia.
 /// \param    brush: L'objecte a copiar.
 ///
-Brush::Brush(
+eos::Brush::Brush(
 	const Brush &brush) :
 
 	_style(brush._style),
@@ -46,7 +80,7 @@ Brush::Brush(
 /// \param    brush: L'objecte a asignar.
 /// \return   El propi objecte.
 ///
-Brush& Brush::operator = (
+eos::Brush& eos::Brush::operator = (
 	const Brush &brush) {
 
 	_style = brush._style;
@@ -61,7 +95,7 @@ Brush& Brush::operator = (
 /// \param    brush: El operand
 /// \return   True si son iguals.
 ///
-bool Brush::operator == (
+bool eos::Brush::operator == (
 	const Brush &brush) const {
 
 	return

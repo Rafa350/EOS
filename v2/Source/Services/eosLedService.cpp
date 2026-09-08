@@ -11,12 +11,12 @@ module;
 export module Eos.Services.LedService;
 
 
-import Eos.Services.Service;
+export import Eos.Services.Service;
 
 
-export namespace eos {
+namespace eos {
 
-	class LedService: public Service {
+	export class LedService: public Service {
 	    public:
 	        using Pin = htl::gpio::PinDevice;
 

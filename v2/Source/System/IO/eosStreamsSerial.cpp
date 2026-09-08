@@ -11,6 +11,8 @@ export module Eos.System.IO.Streams.Serial;
 
 
 export import Eos.System.IO.Streams;
+
+
 import Eos.Controllers.Serial;
 
 

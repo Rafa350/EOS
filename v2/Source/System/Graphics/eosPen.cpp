@@ -1,17 +1,59 @@
+module;
+
+
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
-#include "System/Graphics/eosPen.h"
 
 
-using namespace eos;
+export module Eos.System.Graphics.Pen;
+
+
+export namespace eos {
+
+	class Pen final {
+		public:
+			enum class Style {
+				null,
+				solid
+			};
+
+			enum class CapStyle {
+
+			};
+
+			enum class JoinStyle {
+
+			};
+
+		private:
+			Style _style;
+			Color _color;
+			int16_t _thickness;
+
+		public:
+			Pen();
+			Pen(Color color, int thickness);
+			Pen(const Pen &pen);
+
+			Pen& operator = (const Pen &pen);
+			bool operator == (const Pen &pen) const;
+			inline bool operator != (const Pen &pen) const { return !(*this == pen); }
+
+			inline Color getColor() const { return _color; }
+			inline int16_t getThickness() const { return _thickness; }
+			inline Style getStyle() const { return _style; }
+
+			inline bool isNull() const { return _style == Style::null; }
+	};
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-Pen::Pen() :
+eos::Pen::Pen() :
 
 	_style(Style::null),
 	_color(Colors::transparent),
@@ -25,7 +67,7 @@ Pen::Pen() :
 /// \param    color: El color de linia.
 /// \param    thickness: Amplada de linia.
 ///
-Pen::Pen(
+eos::Pen::Pen(
 	Color color,
 	int thickness):
 
@@ -41,7 +83,7 @@ Pen::Pen(
 /// \brief    Constructor de copia.
 /// \param    pen: L'objecte a copiar.
 ///
-Pen::Pen(
+eos::Pen::Pen(
 	const Pen &pen):
 
 	_style(pen._style),
@@ -56,7 +98,7 @@ Pen::Pen(
 /// \param    pen L'objecte a asignar.
 /// \return   El propi objecte.
 ///
-Pen& Pen::operator = (
+eos::Pen& eos::Pen::operator = (
 	const Pen &pen) {
 
 	_style = pen._style;
@@ -72,7 +114,7 @@ Pen& Pen::operator = (
 /// \param    pen: L'operand.
 /// \return   True si son iguals.
 ///
-bool Pen::operator == (
+bool eos::Pen::operator == (
 	const Pen &pen) const {
 
 	return

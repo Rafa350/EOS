@@ -42,16 +42,22 @@ import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
 
 
-export namespace eos {
+namespace eos {
 
-    class DigOutput;
+    // Declaracions forward
+    //
+    export class DigOutput;
 
+
+    /// \brief Declaracio de les llistes
+    ///
     using DigOutputList = IntrusiveForwardList<DigOutput, 0>;
     using DigOutputListNode = IntrusiveForwardListNode<DigOutput, 0>;
 
+
     /// \brief Clase que representa una sortida digital individual.
     ///
-    class DigOutput: public DigOutputListNode {
+    export class DigOutput: public DigOutputListNode {
     	private:
     		uint32_t _tag;
 
@@ -68,11 +74,48 @@ export namespace eos {
     	    uint32_t getTag() const;
     };
 
-    class DigOutputImpl;
+
+	class DigOutputImpl final: public DigOutput {
+		public:
+			enum class State {
+				idle,
+				pulse,
+				delayedSet,
+				delayedClear,
+				delayedToggle,
+				delayedPulse,
+			};
+
+		private:
+			PinDriver * const _drv;
+			bool _value;
+			State _state;
+			Time _delayEndTime;
+			Time _pulseEndTime;
+
+		private:
+			static bool hasExpired(Time time, Time endTime);
+
+		public:
+			DigOutputImpl(PinDriver *drv, uint32_t tag);
+
+			bool getValue() const;
+			void set();
+			void clear();
+			void toggle();
+			void pulse(Time time, Time pulse);
+			void delayedSet(Time time, Time delay);
+			void delayedClear(Time time, Time delay);
+			void delayedToggle(Time time, Time delay);
+			void delayedPulse(Time time, Time delay, Time pulse);
+			void write(bool value);
+			void tick(Time time);
+	};
+
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
-    class DigOutputService final: public Service {
+    export class DigOutputService final: public Service {
 		public:
 			struct OutputChangedEventArgs {
      			DigOutput *output;
@@ -171,46 +214,6 @@ export namespace eos {
             void tick(Time blockTime);
             void tickISR();
     };
-}
 
-
-namespace eos {
-
-	class DigOutputImpl final: public DigOutput {
-		public:
-			enum class State {
-				idle,
-				pulse,
-				delayedSet,
-				delayedClear,
-				delayedToggle,
-				delayedPulse,
-			};
-
-		private:
-			PinDriver * const _drv;
-			bool _value;
-			State _state;
-			Time _delayEndTime;
-			Time _pulseEndTime;
-
-		private:
-			static bool hasExpired(Time time, Time endTime);
-
-		public:
-			DigOutputImpl(PinDriver *drv, uint32_t tag);
-
-			bool getValue() const;
-			void set();
-			void clear();
-			void toggle();
-			void pulse(Time time, Time pulse);
-			void delayedSet(Time time, Time delay);
-			void delayedClear(Time time, Time delay);
-			void delayedToggle(Time time, Time delay);
-			void delayedPulse(Time time, Time delay, Time pulse);
-			void write(bool value);
-			void tick(Time time);
-	};
 
 }

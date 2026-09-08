@@ -6,16 +6,18 @@ module;
 #include "rtos/rtosTask.h"
 #include "HTL/STM32/htlCAN.h"
 #include "RTOS/rtosTimer.h"
-#include "Services/CanOpen/eosCanOpenDictionary.h"
-#include "Services/canopen/eosCanOpenProtocol.h"
 #include "System/Core/eosQueue.h"
 
 
 export module Eos.Services.CanOpen;
 
 
+export import Eos.Services.Service;
+
+
 import Eos.Math;
-import Eos.Services.Service;
+import Eos.Services.CanOpen.Dictionary;
+import Eos.Services.CanOpen.Protocol;
 
 
 export namespace eos {
@@ -54,6 +56,7 @@ export namespace eos {
 			static constexpr CobID makeTIME() { return CobID(_baseTIME); }
 			static constexpr CobID makeHeartbeat(NodeID nodeId) { return CobID(_baseHeartbeat, nodeId); }
 	};
+
 
 	class CanOpenService final: public Service {
 		public:

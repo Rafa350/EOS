@@ -1,4 +1,8 @@
-target_sources(${TARGET_NAME} PRIVATE
-    eosMenuControl.cpp
-    eosTextBoxControl.cpp
+target_sources(${TARGET_NAME} 
+    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+        eosBooleanControl.cpp
+        eosMenuControl.cpp
+        eosNumericControl.cpp
+        eosSelectionControl.cpp
+        eosTextBoxControl.cpp
 )

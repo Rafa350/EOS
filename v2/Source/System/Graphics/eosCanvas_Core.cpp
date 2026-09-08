@@ -1,0 +1,133 @@
+module;
+
+
+#include "eos.h"
+#include "eosAssert.h"
+#include "System/eosString.h"
+#include "System/Graphics/eosColorDefinitions.h"
+#include "Controllers/Display/eosDisplayDriver.h"
+
+
+module Eos.System.Graphics.Canvas;
+
+
+import Eos.System.Graphics.Transfmation;
+
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    driver: Driver del display
+///
+eos::Graphics::Graphics(
+    DisplayDriver *driver) :
+
+    _driver(driver) {
+
+	resetClip();
+	resetTransformation();
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief    Destructor.
+///
+eos::Graphics::~Graphics() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la transformacio.
+/// \param    t: La transformacio.
+/// \param    combine: True si cal combinar la transformacio amb l'actual.
+///
+void eos::Graphics::setTransformation(
+	const Transformation &t,
+	bool combine) {
+
+	// Asigna la nova transformacio
+	//
+	_state.ct = t;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza la transformacio.
+///
+void eos::Graphics::resetTransformation() {
+
+	_state.ct.identity();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Salva l'estat.
+///
+void eos::Graphics::push() {
+
+	if (!_stack.full())
+		_stack.push(_state);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Recupera l'estat.
+///
+void eos::Graphics::pop() {
+
+	if (!_stack.empty()) {
+		_state = _stack.peek();
+		_stack.pop();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borrat de la pantalla al color especificat.
+/// \param    color: El color per realitzar el borrat.
+///
+void eos::Graphics::clear(
+    Color color) const {
+
+	int16_t x1 = 0;
+	int16_t y1 = 0;
+	int16_t x2 = _driver->getMaxX();
+	int16_t y2 = _driver->getMaxY();
+
+    if (clipRectangle(x1, y1, x2, y2))
+        _driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa un pixel.
+/// \param    x: Coordinada X del punt.
+/// \param    y: Coordinada Y del punt.
+/// \param    color: Colcor
+///
+void eos::Graphics::drawPoint(
+    int16_t x,
+    int16_t y,
+	Color color) const {
+
+	// Transforma a coordinades fisiques
+	//
+	_state.ct.apply(x, y);
+
+    if (clipPoint(x, y))
+        _driver->setPixel(x, y, color);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Transforma les coordinades d'un punt.
+/// \param    x: Coordinada X del punt.
+/// \param    y: Coordinada Y del punt.
+///
+void eos::Graphics::transform(
+	int16_t &x,
+	int16_t &y) const {
+
+	_state.ct.apply(x, y);
+}

@@ -34,11 +34,18 @@ export namespace eos {
 			static T sqrt(T v);
 
 			static constexpr uint32_t maxU32 = std::numeric_limits<uint32_t>::max();
-			static constexpr uint32_t maxU16 = std::numeric_limits<uint16_t>::max();
-			static constexpr uint32_t maxU8  = std::numeric_limits<uint8_t>::max();
+			static constexpr uint16_t maxU16 = std::numeric_limits<uint16_t>::max();
+			static constexpr uint8_t maxU8  = std::numeric_limits<uint8_t>::max();
 			static constexpr uint32_t minU32 = std::numeric_limits<uint32_t>::min();
-			static constexpr uint32_t minU16 = std::numeric_limits<uint16_t>::min();
-			static constexpr uint32_t minU8  = std::numeric_limits<uint8_t>::min();
+			static constexpr uint16_t minU16 = std::numeric_limits<uint16_t>::min();
+			static constexpr uint8_t minU8  = std::numeric_limits<uint8_t>::min();
+
+			static constexpr uint32_t maxI32 = std::numeric_limits<int32_t>::max();
+			static constexpr uint16_t maxI16 = std::numeric_limits<int16_t>::max();
+			static constexpr uint8_t maxI8  = std::numeric_limits<int8_t>::max();
+			static constexpr uint32_t minI32 = std::numeric_limits<int32_t>::min();
+			static constexpr uint16_t minI16 = std::numeric_limits<int16_t>::min();
+			static constexpr uint8_t minI8  = std::numeric_limits<int8_t>::min();
 	};
 }
 

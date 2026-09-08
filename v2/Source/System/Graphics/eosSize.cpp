@@ -1,18 +1,61 @@
+module;
+
+
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Graphics/eosSize.h"
+
+
+export module Eos.System.Graphics.Size;
 
 
 import Eos.Math;
 
 
-using namespace eos;
+export namespace eos {
+
+	/// \brief Clase que representa un tamany
+    ///
+	class Size {
+		private:
+			int16_t _width;
+			int16_t _height;
+
+		public:
+			static constexpr int16_t absoluteMaxWidth = Math::maxU16;
+            static constexpr int16_t absoluteMaxHeight = Math::maxU16;
+            static constexpr int16_t absoluteMinWidth = 0;
+            static constexpr int16_t absoluteMinHeight = 0;
+
+		public:
+			Size();
+			Size(int16_t width, int16_t height);
+			Size(const Size &s);
+			Size(const Size &&s);
+
+			/// \brief Obte l'amplada.
+			inline int16_t getWidth() const { return _width; }
+
+			/// \brief Obte l'alçada.
+			inline int16_t getHeight() const { return _height; }
+
+			Size inflated(int16_t h, int16_t v) const;
+			Size inflated(int16_t left, int16_t top, int16_t right, int16_t bottom) const;
+			Size constrained(const Size &s) const;
+
+			bool isEmpty() const;
+
+			Size& operator = (const Size &s);
+
+			bool operator == (const Size &s) const;
+            inline bool operator != (const Size &s) const { return !(*this == s); }
+	};
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte. Crea un objecte de tamany zero.
 ///
-Size::Size():
+eos::Size::Size():
 
 	_width(0),
 	_height(0) {
@@ -24,7 +67,7 @@ Size::Size():
 /// \param    width: L'amplada.
 /// \param    height: L'alçada.
 ///
-Size::Size(
+eos::Size::Size(
 	int16_t width,
 	int16_t height):
 
@@ -40,7 +83,7 @@ Size::Size(
 /// \brief    Constructor copy.
 /// \param    s: L'objecte a copiar.
 ///
-Size::Size(
+eos::Size::Size(
 	const Size &s):
 
 	_width(s._width),
@@ -52,7 +95,7 @@ Size::Size(
 /// \brief    Constructor move.
 /// \param    s: L'objecte a copiar.
 ///
-Size::Size(
+eos::Size::Size(
 	const Size &&s):
 
 	_width(s._width),
@@ -67,7 +110,7 @@ Size::Size(
 /// \return   El nou objecte.
 /// \remarks  El increment tant en amplada com en alçada pot ser negatiu.
 ///
-Size Size::inflated(
+eos::Size eos::Size::inflated(
 	int16_t h,
 	int16_t v) const {
 
@@ -84,7 +127,7 @@ Size Size::inflated(
 /// \param    right: Inflat per la dreta.
 /// \param    bottom: Inflat per avall.
 ///
-Size Size::inflated(
+eos::Size eos::Size::inflated(
 	int16_t left,
 	int16_t top,
 	int16_t right,
@@ -100,7 +143,7 @@ Size Size::inflated(
 /// \brief    Retorna un tamany limitat.
 /// \param    s: El tamany limit.
 ///
-Size Size::constrained(
+eos::Size eos::Size::constrained(
 	const Size &s) const {
 
 	return Size(
@@ -113,7 +156,7 @@ Size Size::constrained(
 /// \brief    Comprova si el tamany es zero.
 /// \return   True si es zero.
 ///
-bool Size::isEmpty() const {
+bool eos::Size::isEmpty() const {
 
 	return (_width == 0) && (_height == 0);
 }
@@ -124,7 +167,7 @@ bool Size::isEmpty() const {
 /// \param    s: L'objecte a asignar.
 /// \return   Referencia al propi objecte.
 ///
-Size& Size::operator = (
+eos::Size& eos::Size::operator = (
 	const Size &s) {
 
 	_width = s._width;
@@ -138,7 +181,7 @@ Size& Size::operator = (
 /// \param    s: Objecte a comparar.
 /// \return   True si son iguals.
 ///
-bool Size::operator == (
+bool eos::Size::operator == (
 	const Size &s) const {
 
 	return (_width == s._width) && (_height == s._height);

@@ -1,9 +1,82 @@
+module;
+
+
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Graphics/eosFont.h"
 
 
-using namespace eos;
+export module Eos.System.Graphics.Font;
+
+
+export namespace eos {
+
+    enum class FontStyle {
+        regular,
+        bold,
+        italic,
+        boldItalic
+    };
+
+    struct FontInfo {             // Informacio del font
+        int16_t height;           // -Alçada
+        int16_t ascent;           // -Ascendent
+        int16_t descent;          // -Descendent
+        char firstChar;           // -Primer caracter definit en el font
+        char lastChar;            // -Ultim caracter definit en el font
+    };
+
+    struct CharInfo {             // Informacio del caracter
+        int16_t width;            // -Amplada del bitmap
+        int16_t height;           // -Alçada del bitmap
+        int16_t left;             // -Offset horitzontal del bitmap
+        int16_t top;              // -Offset vertical del bitmap
+        int16_t advance;          // -Offset fins al origen del seguent bitmap
+        const uint8_t *bitmap;    // -Punter al primer byte del caracter
+    };
+
+    class Font final {
+        private:
+            struct FontTableEntry {       // Entrada de la taula de fonts
+                const char *name;         // -Nom del font
+                int16_t height;           // -Alçada
+                FontStyle style;          // -Estil
+                const uint8_t *resource;  // -Taula d'informacio del font
+            };
+
+        private:
+            static const FontTableEntry _fontTable[];
+            const uint8_t * _fontResource;
+
+        private:
+            static const uint8_t* getFontResource(const char *name, int height, FontStyle style);
+
+        public:
+            Font();
+            Font(const char *name, int height, FontStyle style);
+            Font(const Font &font);
+
+            Font& operator = (const Font &font);
+            bool operator == (const Font &font) const;
+            inline bool operator != (const Font &font) const { return !(*this == font); }
+
+            void getFontInfo(FontInfo &fi) const;
+            void getCharInfo(char ch, CharInfo &ci) const;
+            int getFontHeight() const;
+            int getFontAscent() const;
+            int getFontDescent() const;
+            int getCharAdvance(char ch) const;
+    };
+}
+
+namespace eos {
+
+    struct FontTableEntry {       // Entrada de la taula de fonts
+        const char *name;         // -Nom del font
+        int16_t height;           // -Alçada
+        FontStyle style;          // -Estil
+        const uint8_t *resource;  // -Taula d'informacio del font
+    };
+}
 
 
 #define FR_FONT_HEIGHT 1
@@ -22,8 +95,9 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor. Crea el font per defecte.
 ///
-Font::Font() :
-	_fontResource(getFontResource(eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle)) {
+eos::Font::Font() :
+
+	_fontResource {getFontResource(eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle)} {
 }
 
 
@@ -33,12 +107,12 @@ Font::Font() :
 /// \param    height: Alçada de la lletra.
 /// \param    style: Estil.
 ///
-Font::Font(
+eos::Font::Font(
 	const char *name,
 	int height,
 	FontStyle style):
 
-	_fontResource(getFontResource(name, height, style)) {
+	_fontResource {getFontResource(name, height, style)} {
 
 }
 
@@ -47,10 +121,10 @@ Font::Font(
 /// \brief    Constructor copia
 /// \param    font: L'altre objecte per copiar.
 ///
-Font::Font(
+eos::Font::Font(
 	const Font &font):
 
-	_fontResource(font._fontResource) {
+	_fontResource {font._fontResource} {
 
 }
 
@@ -60,7 +134,7 @@ Font::Font(
 /// \param    font: L'objecte a asignar.
 /// \return   El propi objecte.
 ///
-Font& Font::operator = (
+eos::Font& eos::Font::operator = (
 	const Font &font) {
 
 	_fontResource = font._fontResource;
@@ -74,8 +148,8 @@ Font& Font::operator = (
 /// \param    font: L'altre font a comparar.
 /// \return   True si son iguals.
 ///
-bool Font::operator == (
-	const Font& font) const {
+bool eos::Font::operator == (
+	const Font &font) const {
 
 	return _fontResource == font._fontResource;
 }
@@ -85,7 +159,7 @@ bool Font::operator == (
 /// \brief    Obte l'alçada del font.
 /// \return   El resultat.
 ///
-int Font::getFontHeight() const {
+int eos::Font::getFontHeight() const {
 
 	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_HEIGHT];
@@ -96,7 +170,7 @@ int Font::getFontHeight() const {
 /// \brief    Obte l'ascendent del font.
 /// \return   El resultat.
 ///
-int Font::getFontAscent() const {
+int eos::Font::getFontAscent() const {
 
 	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_ASCENT];
@@ -107,7 +181,7 @@ int Font::getFontAscent() const {
 /// \brief    Obte el descendent del font.
 /// \return   El resultat.
 ///
-int Font::getFontDescent() const {
+int eos::Font::getFontDescent() const {
 
 	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_DESCENT];
@@ -118,7 +192,7 @@ int Font::getFontDescent() const {
 /// \brief Obte informacio del font
 /// \param fi: Destinacio de la informacio.
 ///
-void Font::getFontInfo(
+void eos::Font::getFontInfo(
     FontInfo &fi) const {
 
 	const uint8_t *fr = _fontResource;
@@ -136,7 +210,7 @@ void Font::getFontInfo(
 /// \param c: El caracter.
 /// \param ci: Destinacio de la informacio.
 ///
-void Font::getCharInfo(
+void eos::Font::getCharInfo(
     char ch,
     CharInfo &ci) const {
 
@@ -170,7 +244,7 @@ void Font::getCharInfo(
 /// \param ch: El caracter.
 /// \return L'avan� del caracter.
 ///
-int Font::getCharAdvance(
+int eos::Font::getCharAdvance(
     char ch) const {
 
 	const uint8_t *fr = _fontResource;
@@ -191,13 +265,12 @@ int Font::getCharAdvance(
 /// \param height: Alçada del font.
 /// \param style: Estil del font.
 ///
-extern const FontTableEntry *fontResourceTable;
-const uint8_t* Font::getFontResource(
+const uint8_t* eos::Font::getFontResource(
 	const char *name,
 	int height,
 	FontStyle style) {
 
-	const FontTableEntry *pResource = fontResourceTable;
+	const FontTableEntry *pResource = _fontTable;
 
 	for (int i = 0; pResource[i].name != nullptr; i++) {
 		const FontTableEntry *pEntry = &pResource[i];
@@ -211,3 +284,106 @@ const uint8_t* Font::getFontResource(
 
 	return nullptr;
 }
+
+
+#ifdef FONT_USE_Arial14pt
+extern const unsigned char *fontArial14pt;
+#endif
+#ifdef FONT_USE_Arial18pt
+extern const unsigned char *fontArial18pt;
+#endif
+#ifdef FONT_USE_Arial24pt
+extern const unsigned char *fontArial24pt;
+#endif
+#ifdef FONT_USE_Consolas8pt
+extern const unsigned char *fontConsolas8pt;
+#endif
+#ifdef FONT_USE_Consolas10pt
+extern const unsigned char *fontConsolas10pt;
+#endif
+#ifdef FONT_USE_Consolas12pt
+extern const unsigned char *fontConsolas12pt;
+#endif
+#ifdef FONT_USE_Consolas14pt
+extern const unsigned char *fontConsolas14pt;
+#endif
+#ifdef FONT_USE_Consolas18pt
+extern const unsigned char *fontConsolas18pt;
+#endif
+#ifdef FONT_USE_Consolas24pt
+extern const unsigned char *fontConsolas24pt;
+#endif
+#ifdef FONT_USE_Tahoma10pt
+extern const unsigned char *fontTahoma10pt;
+#endif
+#ifdef FONT_USE_Tahoma12pt
+extern const unsigned char *fontTahoma12pt;
+#endif
+#ifdef FONT_USE_5x7practical12pt
+extern const unsigned char *font5x7practical12pt;
+#endif
+#ifdef FONT_USE_MicrosoftSansSerif18pt
+extern const unsigned char *fontMicrosoftSansSerif18pt;
+#endif
+
+
+const eos::Font::FontTableEntry eos::Font::_fontTable[] = {
+
+	// Primer sempre el font per defecte
+	{ eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle, eosGraphics_DefFontResource },
+
+#ifdef FONT_USE_Arial14pt
+    { "Arial", 14, FontStyle::regular, fontArial14pt },
+#endif
+
+#ifdef FONT_USE_Arial18pt
+    { "Arial", 18, FontStyle::regular, fontArial18pt },
+#endif
+
+#ifdef FONT_USE_Arial24pt
+    { "Arial", 24, FontStyle::regular, fontArial24pt },
+#endif
+
+#ifdef FONT_USE_Consolas8pt
+    { "Consolas", 8, FontStyle::regular, fontConsolas8pt },
+#endif
+
+#ifdef FONT_USE_Consolas10pt
+    { "Consolas", 10, FontStyle::regular, fontConsolas10pt },
+#endif
+
+#ifdef FONT_USE_Consolas12pt
+    { "Consolas", 12, FontStyle::regular, fontConsolas12pt },
+#endif
+
+#ifdef FONT_USE_Consolas14pt
+    { "Consolas", 14, FontStyle::regular, fontConsolas14pt },
+#endif
+
+#ifdef FONT_USE_Consolas18pt
+    { "Consolas", 18, FontStyle::regular, fontConsolas18pt },
+#endif
+
+#ifdef FONT_USE_Consolas24pt
+    { "Consolas", 24, FontStyle::regular, fontConsolas24pt },
+#endif
+
+#ifdef FONT_USE_Tahoma10pt
+    { "Tahoma", 10, FontStyle::regular, fontTahoma10pt },
+#endif
+
+#ifdef FONT_USE_Tahoma12pt
+    { "Tahoma", 12, FontStyle::regular, fontTahoma12pt },
+#endif
+
+#ifdef FONT_USE_5x7practical12pt
+    { "5x7practical", 12, eos::FontStyle::regular, font5x7practical12pt },
+#endif
+
+#ifdef FONT_USE_MicrosoftSansSerif18pt
+    { "MicrosoftSansSerif", 18, FontStyle::regular, fontMicrosoftSansSerif18pt },
+#endif
+
+	// Marca de final de taula
+	{ NULL, 0, eos::FontStyle::regular, NULL }
+};

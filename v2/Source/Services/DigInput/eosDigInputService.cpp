@@ -17,26 +17,22 @@ import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
 
 
-export namespace eos {
+namespace eos {
 
-	// Declaracions forward
-	//
-    class DigInputService;
-    class DigInput;
-
-    // Definicio de handlers
+    // Declaracions forward
     //
-    using DigInputHandler = DigInput*;
-    using DigInputServiceHandler = DigInputService*;
+    export class DigInput;
+
 
     // Declaracions per les llistes
     //
     using DigInputList = IntrusiveForwardList<DigInput, 0>;
     using DigInputListNode = IntrusiveForwardListNode<DigInput, 0>;
 
+
     /// \brief Clase que implementa una entrada digital
     ///
-    class DigInput: public DigInputListNode {
+    export class DigInput: public DigInputListNode {
     	private:
     		uint32_t const _tag;
 
@@ -44,7 +40,7 @@ export namespace eos {
     		DigInput(uint32_t tag);
 
     	public:
-    		static constexpr uint32_t nullTag = eos::Math::maxU32;
+    		static constexpr uint32_t nullTag = Math::maxU32;
 
     	public:
     	    DigInput(const DigInput&) = delete;
@@ -56,11 +52,35 @@ export namespace eos {
     	    uint32_t getTag() const;
     };
 
-    class DigInputImpl;
+
+    /// \brief Clase que gestiona una entrada digital
+    //
+	class DigInputImpl final: public DigInput {
+		private:
+			static constexpr uint32_t _patternMask    = 0x000000FF;
+			static constexpr uint32_t _patternPosEdge = 0x0000007F;
+			static constexpr uint32_t _patternNegEdge = 0x00000080;
+			static constexpr uint32_t _patternActive  = 0x000000FF;
+			static constexpr uint32_t _patternIdle    = 0x00000000;
+
+        private:
+			PinDriver * const _drv;
+        	uint32_t _pattern;
+			bool _value;
+			uint32_t _count;
+
+        public:
+        	DigInputImpl(PinDriver *drv, uint32_t tag);
+
+        	bool scan();
+        	bool getValue() const;
+        	uint32_t getCount(bool clear);
+    };
+
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
-    class DigInputService final: public Service {
+    export class DigInputService final: public Service {
     	public:
     		using BeforeScanEventRaiser = EventRaiser<DigInputService, NullEventArgs*>;
 			using IBeforeScanEvent = BeforeScanEventRaiser::IEvent;
@@ -116,33 +136,5 @@ export namespace eos {
             void enableBeforeScanEvent(IBeforeScanEvent &event);
             void disableBeforeScanEvent();
     };
-
-}
-
-
-namespace eos {
-
-    /// \brief Clase que gestiona una entrada digital
-    //
-	class DigInputImpl final: public DigInput {
-		private:
-			static constexpr uint32_t _patternMask    = 0x000000FF;
-			static constexpr uint32_t _patternPosEdge = 0x0000007F;
-			static constexpr uint32_t _patternNegEdge = 0x00000080;
-			static constexpr uint32_t _patternActive  = 0x000000FF;
-			static constexpr uint32_t _patternIdle    = 0x00000000;
-
-        private:
-			PinDriver * const _drv;
-        	uint32_t _pattern;
-			bool _value;
-			uint32_t _count;
-
-        public:
-        	DigInputImpl(PinDriver *drv, uint32_t tag);
-
-        	bool scan();
-        	bool getValue() const;
-        	uint32_t getCount(bool clear);
-    };
+   
 }
