@@ -1,4 +1,4 @@
-target_sources(${TARGET_NAME} 
+target_sources(${TARGET_NAME}
     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
 		eosBrush.cpp
 		eosCanvas.cpp
@@ -10,7 +10,11 @@ target_sources(${TARGET_NAME}
 		eosRect.cpp
 		eosSize.cpp
 		eosTransformation.cpp
+)
+
+target_sources(${TARGET_NAME}
 	PUBLIC
+		eosColor.cpp
 		eosCanvas_Core.cpp
 		eosCanvas_Bitmap.cpp
 		eosCanvas_Clipping.cpp
@@ -24,12 +28,6 @@ target_sources(${TARGET_NAME}
 		eosCanvas_DrawText.cpp
 		eosCanvas_DrawTriangle.cpp
 		eosCanvas_Text.cpp
-)	
-	
-target_sources(${TARGET_NAME} 
-	PUBLIC 
-		eosColor.cpp
-		#eosColorMath.cpp
 )
 
 add_subdirectory("Fonts")

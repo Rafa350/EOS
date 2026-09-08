@@ -17,7 +17,7 @@ import Eos.Controllers.Serial;
 
 
 export namespace eos {
-	
+
 	class SerialStream: public Stream {
 
 		private:
@@ -87,12 +87,12 @@ eos::ResultU32 eos::SerialStream::write(
 		return ResultU32::ErrorCodes::errorState;
 
 	else {
-		if (_drvSerial->transmit(buffer, length).is(Result::ErrorCodes::busy))
+		if (_drvSerial->transmit(buffer, length).is(SerialDriver::ErrorCode::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
 			auto result = _drvSerial->wait(_txTimeout);
 			if (result.isSuccess())
-				return {ResultU32::ErrorCodes::ok, result.value()};
+				return {ResultU32::ErrorCodes::ok, result.getValue()};
 			else {
 				_drvSerial->abort();
 				return ResultU32::ErrorCodes::timeout;
@@ -119,12 +119,12 @@ eos::ResultU32 eos::SerialStream::read(
 		return ResultU32::ErrorCodes::error;
 
 	else {
-		if (_drvSerial->receive(buffer, bufferSize).is(Result::ErrorCodes::busy))
+		if (_drvSerial->receive(buffer, bufferSize).is(SerialDriver::ErrorCode::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
 			auto result = _drvSerial->wait(_rxTimeout);
 			if (result.isSuccess())
-				return {ResultU32::ErrorCodes::ok, result.value()};
+				return {ResultU32::ErrorCodes::ok, result.getValue()};
 			else
 				return ResultU32::ErrorCodes::timeout;
 		}

@@ -1,6 +1,4 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-        eosPinDriver.cpp
+        eosPinDriver_GPIO.cpp
 )
-
-add_subdirectory("GPIO")

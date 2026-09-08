@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "Controllers/Pin/eosPinDriver.h"
 
 
 module Eos.Services.DigInput;

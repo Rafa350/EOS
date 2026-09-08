@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "eosResults.h"
 #include "eosTime.h"
 #include "HTL/htlINT.h"
 #include "RTOS/rtosTask.h"
@@ -13,13 +12,27 @@ module;
 export module Eos.Controllers.Serial;
 
 
+import Eos.Result;
+
+
 export namespace eos {
 
 	/// \brief Driver per comunicacions serie.
 	///
 	class SerialDriver {
 		public:
-            enum class State {
+			enum class ErrorCode {
+				ok,
+				busy,
+				timeout,
+				error,
+				errorParameter,
+				errorState,
+			};
+			using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
+			using ResultU32 = ComplexResultX<uint32_t, ErrorCode, ErrorCode::ok>;
+
+			enum class State {
                 reset,
                 ready,
                 transmiting,
@@ -100,27 +113,27 @@ void eos::SerialDriver::deinitialize() {
 /// \param    length: Nombre de bytes en el buffer.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result eos::SerialDriver::transmit(
+eos::SerialDriver::Result eos::SerialDriver::transmit(
     const uint8_t *buffer,
     uint32_t length) {
 
 	if ((buffer == nullptr) ||
 		(length == 0))
-		return Result::ErrorCodes::errorParameter;
+		return ErrorCode::errorParameter;
 
 	else if (_state == State::ready) {
 		_finished = false;
 		_task = nullptr;
     	if (onTransmit(buffer, length)) {
     		_state = State::transmiting;
-    		return Result::ErrorCodes::ok;
+    		return ErrorCode::ok;
     	}
     	else
-    		return Result::ErrorCodes::error;
+    		return ErrorCode::error;
     }
 
     else
-    	return Result::ErrorCodes::busy;
+    	return ErrorCode::busy;
 }
 
 
@@ -130,27 +143,27 @@ eos::Result eos::SerialDriver::transmit(
 /// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result eos::SerialDriver::receive(
+eos::SerialDriver::Result eos::SerialDriver::receive(
     uint8_t *buffer,
     uint32_t bufferSize) {
 
 	if ((buffer == nullptr) ||
 		(bufferSize == 0))
-		return Result::ErrorCodes::errorParameter;
+		return ErrorCode::errorParameter;
 
 	else if (_state == State::ready) {
 		_finished = false;
 		_task = nullptr;
     	if (onReceive(buffer, bufferSize)) {
     		_state = State::receiving;
-    		return Result::ErrorCodes::ok;
+    		return ErrorCode::ok;
     	}
     	else
-    		return Result::ErrorCodes::error;
+    		return ErrorCode::error;
     }
 
     else
-    	return Result::ErrorCodes::busy;
+    	return ErrorCode::busy;
 }
 
 
@@ -160,7 +173,7 @@ eos::Result eos::SerialDriver::receive(
 /// \return   El nombre de bytes transferits i el resultat.
 /// \notes    En cas de timeout, s'aborta la comunicacio.
 ///
-eos::ResultU32 eos::SerialDriver::wait(
+eos::SerialDriver::ResultU32 eos::SerialDriver::wait(
 	Time blockTime) {
 
 	if (_state == State::receiving) {
@@ -168,16 +181,16 @@ eos::ResultU32 eos::SerialDriver::wait(
 		htl::irq::disableInterrupts();
 		if (_finished) {
 			htl::irq::enableInterrupts();
-			return {ResultU32::ErrorCodes::ok, _rxCount};
+			return {_rxCount};
 		}
 		else {
 			_task = rtos::Task::getExecutingTask();
 			htl::irq::enableInterrupts();
 			if (rtos::Task::waitNotification(true, blockTime))
-				return {ResultU32::ErrorCodes::ok, _rxCount};
+				return {_rxCount};
 			else {
 				abort();
-				return ResultU32::ErrorCodes::timeout;
+				return ErrorCode::timeout;
 			}
 		}
 	}
@@ -187,21 +200,21 @@ eos::ResultU32 eos::SerialDriver::wait(
 		htl::irq::disableInterrupts();
 		if (_finished) {
 			htl::irq::enableInterrupts();
-			return {ResultU32::ErrorCodes::ok, _txCount};
+			return {_txCount};
 		}
 		else {
 			_task = rtos::Task::getExecutingTask();
 			htl::irq::enableInterrupts();
 			if (rtos::Task::waitNotification(true, blockTime))
-				return {ResultU32::ErrorCodes::ok, _txCount};
+				return {_txCount};
 			else {
 				abort();
-				return ResultU32::ErrorCodes::timeout;
+				return ErrorCode::timeout;
 			}
 		}
 	}
 	else
-		return ResultU32::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -209,18 +222,18 @@ eos::ResultU32 eos::SerialDriver::wait(
 /// \brief    Aborta l'operacio en curs.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result eos::SerialDriver::abort() {
+eos::SerialDriver::Result eos::SerialDriver::abort() {
 
 	if ((_state == State::transmiting) || (_state == State::receiving)) {
 		if (onAbort()) {
 			_state = State::ready;
-			return Result::ErrorCodes::ok;
+			return ErrorCode::ok;
 		}
 		else
-			return Result::ErrorCodes::error;
+			return ErrorCode::error;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 

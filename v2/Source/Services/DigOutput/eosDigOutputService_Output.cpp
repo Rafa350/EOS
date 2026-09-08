@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosTime.h"
-#include "Controllers/Pin/eosPinDriver.h"
 
 
 module Eos.Services.DigOutput;

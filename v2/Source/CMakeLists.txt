@@ -1,15 +1,11 @@
 target_sources(${TARGET_NAME}
-    PUBLIC 
-        FILE_SET cxx_modules 
-        TYPE CXX_MODULES 
-        BASE_DIRS
-            ${CMAKE_CURRENT_SOURCE_DIR}
-        FILES
-            eosBits.cpp
-            eosMath.cpp
+    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
+    BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} FILES
+        eosBits.cpp
+        eosMath.cpp
+        eosResult.cpp
 )
-        
-        
+
 add_subdirectory("Controllers")
 add_subdirectory("HTL")
 add_subdirectory("RTOS")

@@ -4,7 +4,6 @@ module;
 #include "eos.h"
 #include "eosEvents.h"
 #include "eosTime.h"
-#include "Controllers/Pin/eosPinDriver.h"
 #include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 
