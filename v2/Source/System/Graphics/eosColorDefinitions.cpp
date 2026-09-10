@@ -1,17 +1,19 @@
-#pragma once
-#ifndef __eosColorDefinitions__
-#define __eosColorDefinitions__
+module;
 
 
-// EOS includes
-//
-#include "eos.h"
-#include "System/Graphics/eosColor.h"
+export module Eos.System.Graphics.ColorDefinitions;
 
 
-// Basic colors
-//
-namespace eos {
+import Eos.System.Graphics.Color;
+
+
+#define ARGB(a, r, g, b)          eos::Color::fromARGB(a, r, g, b)
+#define RGB(r, g, b)              eos::Color::fromRGB(r, g, b)
+#define AL(a, l)                  eos::Color::fromAL(a, l)
+#define PAL(l)                    eos::Color::fromL(l);
+
+
+export namespace eos {
 
 	struct Colors {
 		static constexpr Color transparent            = ARGB(0, 0, 0, 0);
@@ -138,5 +140,3 @@ namespace eos {
 		static constexpr Color palNavy                = PAL(10);
 	};
 }
-
-#endif // __eosColorDefinitions__

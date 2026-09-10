@@ -2,7 +2,7 @@
 
 
 #include "eos.h"
-#include "System/Graphics/eosColor.h"
+//#include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayOrientation.h"
 
 

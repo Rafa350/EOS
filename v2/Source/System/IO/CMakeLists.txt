@@ -1,12 +1,12 @@
 target_sources(${TARGET_NAME}
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-        eosStreams.cpp
-#        eosStreamsFile.cpp
-        eosStreamsSerial.cpp
-        eosStreamsMemory.cpp
-     	eosFormatterText.cpp
-	    eosFormatterBinary.cpp
-    	eosParser.cpp
+    PUBLIC FILE_SET CXX_MODULES
+        FILES
+            eosStreams.cpp
+            eosStreamsSerial.cpp
+            eosStreamsMemory.cpp
+            eosFormatterText.cpp
+            eosFormatterBinary.cpp
+            eosParser.cpp
 )
 
 target_sources(${TARGET_NAME}

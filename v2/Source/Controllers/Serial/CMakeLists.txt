@@ -1,5 +1,5 @@
 target_sources(${TARGET_NAME}
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    PUBLIC FILE_SET CXX_MODULES FILES
         eosSerialDriver.cpp
 )
 

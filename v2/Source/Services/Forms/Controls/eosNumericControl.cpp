@@ -9,9 +9,7 @@ export module Eos.Services.Forms.Controls.Numeric;
 
 import Eos.Math;
 import Eos.Services.Forms;
-import Eos.System.Graphics.Canvas;
-import Eos.System.Graphics.Point;
-impirt Eos.System.Graphics.Size;
+import Eos.System.Graphics;
 
 
 export namespace eos {

@@ -1,13 +1,13 @@
-target_sources(${TARGET_NAME} 
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+target_sources(${TARGET_NAME}
+    PUBLIC FILE_SET CXX_MODULES FILES
 		eosApplication.cpp
-		eosRTOSApplication.cpp	
+		eosRTOSApplication.cpp
 )
 
 
-target_sources(${TARGET_NAME} 
-	PUBLIC 
-		eosDebug.cpp	
+target_sources(${TARGET_NAME}
+	PUBLIC
+		eosDebug.cpp
 )
 
 

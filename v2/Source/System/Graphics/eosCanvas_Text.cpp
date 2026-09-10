@@ -2,13 +2,14 @@ module;
 
 
 #include "eos.h"
-#include "System/Graphics/eosColorDefinitions.h"
 
 
 module Eos.System.Graphics.Canvas;
 
 
 import Eos.Math;
+import Eos.System.Graphics.Color;
+import Eos.System.Graphics.ColorDefinitions;
 
 
 using namespace eos;
@@ -292,4 +293,3 @@ void Text::drawChar(
         }
     }
 }
-

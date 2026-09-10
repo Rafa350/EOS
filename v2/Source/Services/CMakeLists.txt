@@ -1,9 +1,10 @@
-target_sources(${TARGET_NAME} 
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-        eosService.cpp
-        eosLedService.cpp
+target_sources(${TARGET_NAME}
+    PUBLIC FILE_SET CXX_MODULES
+        FILES
+            eosService.cpp
+            eosLedService.cpp
 )
-    
+
 if(EOS_USE_SERVICE_CANOPEN)
     add_subdirectory("CanOpen")
 endif()

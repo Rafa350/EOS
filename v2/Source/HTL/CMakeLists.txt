@@ -1,6 +1,8 @@
-target_sources(${TARGET_NAME} 
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-        htlRegs.cpp)
+target_sources(${TARGET_NAME}
+    PUBLIC FILE_SET CXX_MODULES
+        FILES
+            htlRegs.cpp
+)
 
 
 if(EOS_PLATFORM_NAME MATCHES "^STM32")

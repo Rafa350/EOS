@@ -3,13 +3,13 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Graphics/eosColor.h"
 
 
 module Eos.System.Graphics.Canvas;
 
 
 import Eos.Math;
+import Eos.System.Graphics.Color;
 
 
 using namespace eos;
@@ -313,4 +313,3 @@ void Graphics::drawVLine(
 		_driver->setVPixels(x, y1, y2 - y1 + 1, color);
 	}
 }
-

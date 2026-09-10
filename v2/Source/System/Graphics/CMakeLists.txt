@@ -1,7 +1,9 @@
 target_sources(${TARGET_NAME}
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    PUBLIC FILE_SET CXX_MODULES FILES
 		eosBrush.cpp
 		eosCanvas.cpp
+		eosColor.cpp
+		eosColorDefinitions.cpp
 		eosConsole.cpp
 		eosGraphics.cpp
 		eosFont.cpp
@@ -14,7 +16,6 @@ target_sources(${TARGET_NAME}
 
 target_sources(${TARGET_NAME}
 	PUBLIC
-		eosColor.cpp
 		eosCanvas_Core.cpp
 		eosCanvas_Bitmap.cpp
 		eosCanvas_Clipping.cpp

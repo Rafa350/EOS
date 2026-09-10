@@ -3,14 +3,15 @@ module;
 
 #include "eos.h"
 #include "System/eosString.h"
-#include "System/Graphics/eosColorDefinitions.h"
-#include "Controllers/Display/eosDisplayDriver.h"
+#include "System/Core/eosPoolAllocator.h"
 
 
 export module Eos.System.Graphics.Canvas;
 
 
+import Eos.Controllers.Display;
 import Eos.System.Collections.Stack;
+import Eos.System.Graphics.Color;
 import Eos.System.Graphics.Brush;
 import Eos.System.Graphics.Font;
 import Eos.System.Graphics.Pen;
@@ -20,7 +21,11 @@ import Eos.System.Graphics.Size;
 import Eos.System.Graphics.Transformation;
 
 
+constexpr uint32_t maxBitmaps = 10;
+
+
 export namespace eos {
+
 
     class Bitmap;
     class Text;
@@ -130,7 +135,7 @@ export namespace eos {
             bool clipLine(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2) const;
             bool clipRectangle(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2) const;
             static bool clipTest(int16_t p, int16_t q, int32_t &t1, int32_t &t2);
-            
+
             void transform(int16_t &x, int16_t &y) const;
     };
 
@@ -228,7 +233,7 @@ export namespace eos {
 	};
 
 
-	class Bitmap::Impl: public PoolAllocatable<Bitmap::Impl, eosGraphics_MaxBitmaps> {
+	class Bitmap::Impl: public PoolAllocatable<Bitmap::Impl, maxBitmaps> {
 		public:
 			int width;
 			int height;
@@ -238,4 +243,3 @@ export namespace eos {
 			void *pixels;
 	};
 }
-

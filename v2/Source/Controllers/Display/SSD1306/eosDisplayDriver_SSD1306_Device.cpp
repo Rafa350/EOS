@@ -1,15 +1,16 @@
+module;
+
+
 #include "eos.h"
-#include "eosAssert.h"
-#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
 
 
-using namespace eos;
+module Eos.Controllers.Display.SSD1306;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-Device_SSD1306::Device_SSD1306() {
+eos::DisplayDevice_SSD1306::DisplayDevice_SSD1306() {
 
 }
 
@@ -19,9 +20,9 @@ Device_SSD1306::Device_SSD1306() {
 /// \param    script: EL escript.
 /// \param    scriptSize: El tmany del script.
 ///
-void Device_SSD1306::writeScript(
+void eos::DisplayDevice_SSD1306::writeScript(
     const uint8_t *script,
-    unsigned scriptSize) {
+    size_t scriptSize) {
 
     writeCommand(script, scriptSize);
 }

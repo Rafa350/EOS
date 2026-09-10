@@ -9,6 +9,7 @@ module Eos.System.Graphics.Canvas;
 
 
 import Eos.Math;
+import Eos.System.Graphics.Color;
 
 
 /// ----------------------------------------------------------------------

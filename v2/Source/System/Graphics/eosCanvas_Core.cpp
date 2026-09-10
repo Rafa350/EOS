@@ -4,14 +4,13 @@ module;
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosString.h"
-#include "System/Graphics/eosColorDefinitions.h"
-#include "Controllers/Display/eosDisplayDriver.h"
 
 
 module Eos.System.Graphics.Canvas;
 
 
-import Eos.System.Graphics.Transfmation;
+import Eos.Controllers.Display;
+import Eos.System.Graphics.Transformation;
 
 
 

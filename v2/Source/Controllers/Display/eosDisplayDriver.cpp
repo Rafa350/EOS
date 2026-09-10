@@ -1,18 +1,19 @@
-#pragma once
-#ifndef __eosDisplayDriver__
-#define __eosDisplayDriver__
+module;
 
 
-// EOS includes
-//
 #include "eos.h"
-#include "Controllers/Display/eosDisplayOrientation.h"
-#include "System/Graphics/eosColor.h"
 
 
-namespace eos {
+export module Eos.Controllers.Display;
 
-	/// \brief Interficie del driver del display.
+
+import Eos.System.Graphics.Color;
+import Eos.Controllers.Display.Orientation;
+
+
+export namespace eos {
+
+    /// \brief Interficie del driver del display.
 	///
     class DisplayDriver {
         public:
@@ -74,6 +75,3 @@ namespace eos {
     };
 
 }
-
-
-#endif // __eosDisplayDriver__

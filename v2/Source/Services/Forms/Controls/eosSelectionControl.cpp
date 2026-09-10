@@ -9,8 +9,6 @@ export module Eos.Services.Forms.Controls.Selection;
 
 import Eos.Services.Forms;
 import Eos.System.Graphics;
-import Eos.System.Graphics.Point;
-impirt Eos.System.Graphics.Size;
 
 
 export namespace eos {

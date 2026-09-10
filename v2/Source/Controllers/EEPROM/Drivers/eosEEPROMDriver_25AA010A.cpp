@@ -6,10 +6,10 @@ module;
 #include "HTL/htlSPI.h"
 
 
-export module Eos.Driver.EEPROM_25AA010A;
+export module Eos.Controllers.EEPROM_25AA010A;
 
 
-export import Eos.Driver.EEPROM;
+export import Eos.Controllers.EEPROM;
 
 
 export namespace eos {

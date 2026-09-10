@@ -2,14 +2,15 @@ module;
 
 
 #include "eos.h"
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
 
 
 export module Eos.System.Graphics.Console;
 
 
 import Eos.System.Graphics.Canvas;
+import Eos.System.Graphics.Color;
+import Eos.System.Graphics.ColorDefinitions;
+import Eos.System.Graphics.Font;
 
 
 export namespace eos {

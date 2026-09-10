@@ -1,16 +1,15 @@
-#pragma once
-#ifndef __eosDisplayOrientation__
-#define __eosDisplayOrientation__
+module;
 
 
-// EOS includes
-//
 #include "eos.h"
 
 
-namespace eos {
+export module Eos.Controllers.Display.Orientation;
 
-	/// \brief Orientacio de la pantalla.
+
+export namespace eos {
+
+    /// \brief Orientacio de la pantalla.
 	///
 	enum class DisplayOrientation: uint8_t {
 	    rotate0,             ///< Orientacio 0
@@ -19,9 +18,4 @@ namespace eos {
 		rotate270,           ///< Orientacio 270
 		normal = rotate0,    ///< Orientacio normal
 	};
-    
 }
- 
- 
-#endif // __eosDisplayOrientation__ 
-    

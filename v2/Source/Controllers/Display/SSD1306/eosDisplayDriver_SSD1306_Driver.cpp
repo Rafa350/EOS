@@ -1,20 +1,24 @@
+module;
+
+
 #include "eos.h"
-#include "eosAssert.h"
-#include "HTL/htlTick.h"
-#include "Controllers/Display/eosL1FrameBuffer.h"
-#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
-#include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 
 
-using namespace eos;
-using namespace htl;
+module Eos.Controllers.Display.SSD1306;
+
+
+constexpr uint8_t SSD1306_CMD_DISPLAY_ON =          0xAF;
+constexpr uint8_t SSD1306_CMD_DISPLAY_OFF =         0xAE;
+constexpr uint8_t SSD1306_CMD_SET_ADDRESSING_MODE = 0x20;
+constexpr uint8_t SSD1306_CMD_SET_COLUMN =          0x21;
+constexpr uint8_t SSD1306_CMD_SET_PAGE =            0x22;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 ///
-DisplayDriver_SSD1306::DisplayDriver_SSD1306(
-    Device_SSD1306 *device,
+eos::DisplayDriver_SSD1306::DisplayDriver_SSD1306(
+    DisplayDevice_SSD1306 *device,
 	L1FrameBuffer *frameBuffer):
 
     _device {device},
@@ -25,7 +29,7 @@ DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void DisplayDriver_SSD1306::initialize() {
+void eos::DisplayDriver_SSD1306::initialize() {
 
     enable();
 }
@@ -34,7 +38,7 @@ void DisplayDriver_SSD1306::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el driver.
 ///
-void DisplayDriver_SSD1306::deinitialize() {
+void eos::DisplayDriver_SSD1306::deinitialize() {
 
 	disable();
 }
@@ -43,7 +47,7 @@ void DisplayDriver_SSD1306::deinitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Encen el display
 ///
-void DisplayDriver_SSD1306::enable() {
+void eos::DisplayDriver_SSD1306::enable() {
 
     uint8_t command = SSD1306_CMD_DISPLAY_ON;
 	_device->writeCommand(&command, sizeof(command));
@@ -53,7 +57,7 @@ void DisplayDriver_SSD1306::enable() {
 /// ----------------------------------------------------------------------
 /// \brief    Apaga el display
 ///
-void DisplayDriver_SSD1306::disable() {
+void eos::DisplayDriver_SSD1306::disable() {
 
     uint8_t command = SSD1306_CMD_DISPLAY_OFF;
     _device->writeCommand(&command, sizeof(command));
@@ -64,7 +68,7 @@ void DisplayDriver_SSD1306::disable() {
 /// \brief    Selecciona l'orientacio.
 /// \param    orientation: L'orientacio.
 ///
-void DisplayDriver_SSD1306::setOrientation(
+void eos::DisplayDriver_SSD1306::setOrientation(
     DisplayOrientation orientation) {
 
 	_frameBuffer->setOrientation(orientation);
@@ -75,7 +79,7 @@ void DisplayDriver_SSD1306::setOrientation(
 /// \brief    Borra la pantalla.
 /// \param    color: Color de borrat.
 ///
-void DisplayDriver_SSD1306::clear(
+void eos::DisplayDriver_SSD1306::clear(
     Color color) {
 
 	_frameBuffer->clear(color);
@@ -89,7 +93,7 @@ void DisplayDriver_SSD1306::clear(
 /// \param    color: Color del pixel.
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
-void DisplayDriver_SSD1306::setPixel(
+void eos::DisplayDriver_SSD1306::setPixel(
     int16_t x,
     int16_t y,
     Color color) {
@@ -106,7 +110,7 @@ void DisplayDriver_SSD1306::setPixel(
 /// \param    color: Color dels pixels.
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
-void DisplayDriver_SSD1306::setHPixels(
+void eos::DisplayDriver_SSD1306::setHPixels(
     int16_t x,
     int16_t y,
     int16_t size,
@@ -124,7 +128,7 @@ void DisplayDriver_SSD1306::setHPixels(
 /// \param    color: Color dels pixels.
 /// \remarks  Si esta fora de limits no dibuixa res.
 ///
-void DisplayDriver_SSD1306::setVPixels(
+void eos::DisplayDriver_SSD1306::setVPixels(
     int16_t x,
     int16_t y,
     int16_t size,
@@ -142,7 +146,7 @@ void DisplayDriver_SSD1306::setVPixels(
 /// \param    height: Alçada de la regio.
 /// \param    color: Color.
 ///
-void DisplayDriver_SSD1306::setPixels(
+void eos::DisplayDriver_SSD1306::setPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -162,7 +166,7 @@ void DisplayDriver_SSD1306::setPixels(
 /// \param    color: Punter als colors.
 /// \param    pitch: Pitch dels colors.
 ///
-void DisplayDriver_SSD1306::setPixels(
+void eos::DisplayDriver_SSD1306::setPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -184,7 +188,7 @@ void DisplayDriver_SSD1306::setPixels(
 /// \param    format: Format de color
 /// \param    pitch: Pitch dels colors.
 ///
-void DisplayDriver_SSD1306::setPixels(
+void eos::DisplayDriver_SSD1306::setPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -200,7 +204,7 @@ void DisplayDriver_SSD1306::setPixels(
 /// ----------------------------------------------------------------------
 /// \brief    Transfereix el buffer d'imatge al controlador
 ///
-void DisplayDriver_SSD1306::refresh() {
+void eos::DisplayDriver_SSD1306::refresh() {
 
     auto buffer = _frameBuffer->getBuffer();
     auto width = _frameBuffer->getWidth();

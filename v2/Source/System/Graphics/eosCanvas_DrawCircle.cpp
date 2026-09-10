@@ -7,6 +7,7 @@ module;
 module Eos.System.Graphics.Canvas;
 
 
+import Eos.System.Graphics.Color;
 
 // TODO: Utilitzar acces directe al driver, igual que el·lipse
 

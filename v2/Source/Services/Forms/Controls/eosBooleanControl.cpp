@@ -10,7 +10,7 @@ export module Eos.Services.Forms.Controls.Boolean;
 import Eos.Services.Forms;
 import Eos.System.Graphics.Canvas;
 import Eos.System.Graphics.Point;
-impirt Eos.System.Graphics.Size;
+import Eos.System.Graphics.Size;
 
 
 export namespace eos {

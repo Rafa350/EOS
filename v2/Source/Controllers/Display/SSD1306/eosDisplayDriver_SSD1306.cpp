@@ -1,25 +1,29 @@
-#pragma once
-#ifndef __eosDisplayDriver_SSD1306__
-#define __eosDisplayDriver_SSD1306__
+module;
 
 
 #include "eos.h"
-#include "Controllers/Display/eosDisplayDriver.h"
-#include "Controllers/Display/eosL1FrameBuffer.h"
-#include "System/Graphics/eosColor.h"
 
 
-namespace eos {
+export module Eos.Controllers.Display.SSD1306;
 
-    class Device_SSD1306;
+
+import Eos.Controllers.Display;
+import Eos.Controllers.Display.Orientation;
+import Eos.Controllers.Display.L1FrameBuffer;
+import Eos.System.Graphics.Color;
+
+
+export namespace eos {
+
+    class DisplayDevice_SSD1306;
 
     class DisplayDriver_SSD1306: public DisplayDriver {
     	private:
-            Device_SSD1306 * const _device;
+            DisplayDevice_SSD1306 * const _device;
 			L1FrameBuffer * const _frameBuffer;
 
     	public:
-            DisplayDriver_SSD1306(Device_SSD1306 *device, L1FrameBuffer *frameBuffer);
+            DisplayDriver_SSD1306(DisplayDevice_SSD1306 *device, L1FrameBuffer *frameBuffer);
 
             void initialize() override;
             void deinitialize() override;
@@ -41,8 +45,22 @@ namespace eos {
 
             void refresh() override;
     };
+
+
+    class DisplayDevice_SSD1306 {
+        protected:
+            DisplayDevice_SSD1306();
+
+            void writeScript(const uint8_t *script, size_t scriptSize);
+
+        public:
+            DisplayDevice_SSD1306(const DisplayDevice_SSD1306 &) = delete;
+            virtual ~DisplayDevice_SSD1306() = default;
+
+            virtual void writeCommand(const uint8_t *data, size_t dataSize) = 0;
+            virtual void writeData(const uint8_t *data, size_t dataSize) = 0;
+
+            DisplayDevice_SSD1306 & operator = (const DisplayDevice_SSD1306 &) = delete;
+    };
+
 }
-
-
-#endif // __eosDisplayDriver_SSD1306__
-

@@ -3,11 +3,13 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
 
 
 export module Eos.System.Graphics.Pen;
+
+
+import Eos.System.Graphics.Color;
+import Eos.System.Graphics.ColorDefinitions;
 
 
 export namespace eos {

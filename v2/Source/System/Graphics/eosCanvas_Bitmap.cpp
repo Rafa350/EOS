@@ -9,6 +9,9 @@ module;
 module Eos.System.Graphics.Canvas;
 
 
+import Eos.System.Graphics.Color;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Crea un bitmap des d'un recurs.
 /// \param    bitmapResource: El recurs.
@@ -192,7 +195,7 @@ eos::Bitmap::~Bitmap() {
 /// \brief    Crea l'estructura interna de dades.
 /// \param    Punter a l'estructura.
 ///
-eos::Bitmap::ImplPtr Bitmap::makeImpl() {
+eos::Bitmap::ImplPtr eos::Bitmap::makeImpl() {
 
 	return ImplPtr(new Impl);
 }
@@ -286,4 +289,3 @@ void eos::Bitmap::draw(
 	const Point &position) const {
 
 }
-

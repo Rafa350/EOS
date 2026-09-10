@@ -9,12 +9,10 @@ export module Eos.Services.Forms.Controls.TextBox;
 
 import Eos.Services.Forms;
 import Eos.System.Graphics;
+import Eos.System.Graphics.Color;
+import Eos.System.Graphics.ColorDefinitions;
 import Eos.System.Graphics.Point;
-impirt Eos.System.Graphics.Rect;
-
-
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
+import Eos.System.Graphics.Rect;
 
 
 export namespace eos {

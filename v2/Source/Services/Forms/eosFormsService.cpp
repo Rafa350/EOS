@@ -4,18 +4,18 @@ module;
 #include "eos.h"
 #include "eosTime.h"
 #include "eosCallbacks.h"
-#include "Controllers/Display/eosDisplayDriver.h"
 #include "RTOS/rtosTask.h"
 #include "System/Core/eosQueue.h"
-#include "System/Graphics/eosColor.h"
 
 
 export module Eos.Services.Forms;
 
 
+import Eos.Controllers.Display;
 import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Forms.PropertyObserver;
+import Eos.System.Graphics.Color;
 import Eos.System.Graphics.Canvas;
 import Eos.System.Graphics.Point;
 import Eos.System.Graphics.Rect;
@@ -105,7 +105,7 @@ namespace eos {
             void setActiveForm(Form *form);
     };
 
-    
+
     export class Visual: public VisualListNode, public PropertyObserver {
     	private:
     		Point _position;
@@ -175,7 +175,7 @@ namespace eos {
             inline Color getBackgroundColor() const { return _backgroundColor; }
             inline Color getBorderColor() const { return _borderColor; }
     };
-    
+
 
     export class Form: public Visual {
         private:

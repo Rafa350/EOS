@@ -1,3 +1,9 @@
+module;
+
+
+export module Eos.Controllers.Display;
+
+
 #include "eos.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HTL/STM32/htlDMA2D.h"

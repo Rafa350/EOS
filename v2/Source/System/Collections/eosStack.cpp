@@ -26,7 +26,7 @@ export namespace eos {
 			Pointer _begin;
 			Pointer _end;
 			Pointer _sp;
-			
+
 		private:
 			StackBase(const StackBase &) = delete;
 			StackBase & operator = (const StackBase &) = delete;
@@ -35,11 +35,11 @@ export namespace eos {
 
 			/// \brief Constructor per defecte
 			///
-			StackBase(Pointer container, unsigned capacity):
+			StackBase(Pointer container, size_t capacity):
 				_begin {container},
 				_end {container + capacity},
 				_sp {container} {
-					
+
 				eosAssert(container != nullptr);
 				eosAssert(capacity > 1);
 			}
@@ -98,27 +98,27 @@ export namespace eos {
 			/// \brief Obte el tamany de la pila.
 			/// \return El valor.
 			///
-			inline unsigned size() const {
+			inline size_t size() const {
 				return _sp - _begin;
 			}
 
 			/// \brief Obte capacitat actual de la pila.
 			/// \return El valor.
 			///
-			inline unsigned capacity() const {
+			inline size_t capacity() const {
 				return _end - _begin;
 			}
 	};
-	
-	
-	template <typename T_, unsigned capacity_>
+
+
+	template <typename T_, size_t capacity_>
 	class FixedCapacityStack: public StackBase<T_> {
 		private:
 			T_ _container[capacity_];
-			
+
 		public:
 			FixedCapacityStack() :
-				StackBase<T_>(_container, capacity_) {                            
+				StackBase<T_>(_container, capacity_) {
 				}
 	};
 

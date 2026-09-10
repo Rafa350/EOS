@@ -3,7 +3,7 @@ module;
 #include "eos.h"
 
 
-export module Eos.Driver.EEPROM;
+export module Eos.Controllers.EEPROM;
 
 
 export namespace eos {
@@ -16,4 +16,3 @@ export namespace eos {
 			virtual void write(uint32_t addr, const uint8_t *data, uint32_t dataLength) = 0;
 	};
 }
-

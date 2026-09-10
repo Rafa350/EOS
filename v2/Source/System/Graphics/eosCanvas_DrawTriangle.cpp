@@ -8,6 +8,9 @@ module;
 module Eos.System.Graphics.Canvas;
 
 
+import Eos.System.Graphics.Color;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa un triangle buit.
 /// \param    x1: Coordinada x del primer punt

@@ -7,11 +7,11 @@ module;
 module Eos.Services.Forms;
 
 
+import Eos.System.Graphics.Brush;
 import Eos.System.Graphics.Canvas;
+import Eos.System.Graphics.ColorDefinitions;
+import Eos.System.Graphics.Pen;
 import Eos.System.Graphics.Rect;
-
-
-#include "System/Graphics/eosColorDefinitions.h"
 
 
 /// ----------------------------------------------------------------------

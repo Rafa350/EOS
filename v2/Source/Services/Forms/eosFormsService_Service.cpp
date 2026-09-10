@@ -7,9 +7,11 @@ module;
 module Eos.Services.Forms;
 
 
+import Eos.Controllers.Display;
 import Eos.System.Graphics.Canvas;
+import Eos.System.Graphics.Color;
 
-#include "Controllers/Display/eosDisplayDriver.h"
+
 #include "RTOS/rtosCriticalSection.h"
 #include "System/Core/eosQueue.h"
 

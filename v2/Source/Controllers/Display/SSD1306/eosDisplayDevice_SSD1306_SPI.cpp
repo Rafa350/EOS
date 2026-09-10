@@ -1,24 +1,61 @@
+module;
+
+
 #include "eos.h"
-#include "eosAssert.h"
 #include "eosTime.h"
 #include "RTOS/rtosTask.h"
-#include "Controllers/Display/Drivers/SSD1306/eosDevice_SSD1306.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlSPI.h"
+#include "HTL/htlDMA.h"
 
 
-using namespace eos;
-using namespace htl;
+export module Eos.Controllers.Display.SSD1306.SPI;
+
+
+import Eos.Controllers.Display.SSD1306;
+
+
+export namespace eos {
+
+
+    /// \brief Clase que representa un dispositiu SSD1306 amb
+    //         interficie SPI
+    //
+    class DisplayDevice_SSD1306_SPI: public DisplayDevice_SSD1306 {
+        public:
+            using Pin = htl::gpio::PinDevice;
+            using DevSPI = htl::spi::SPIDevice;
+
+        protected:
+            Pin const * const _pinCS;
+            Pin const * const _pinDC;
+            Pin const * const _pinRST;
+            DevSPI * const _devSPI;
+
+        public:
+            DisplayDevice_SSD1306_SPI(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI);
+            ~DisplayDevice_SSD1306_SPI();
+
+            void initialize(const uint8_t *script, size_t scriptSize);
+            void deinitialize();
+
+            void writeCommand(const uint8_t *data, size_t dataSize) override;
+            void writeData(const uint8_t *data, size_t dataSize) override;
+    };
+}
+
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-Device_SSD1306_SPI::Device_SSD1306_SPI(
+eos::DisplayDevice_SSD1306_SPI::DisplayDevice_SSD1306_SPI(
     Pin *pinCS,
     Pin *pinDC,
     Pin *pinRST,
     DevSPI *devSPI) :
 
-    Device_SSD1306(),
+    DisplayDevice_SSD1306 {},
 
     _pinCS {pinCS},
     _pinDC {pinDC},
@@ -31,7 +68,7 @@ Device_SSD1306_SPI::Device_SSD1306_SPI(
 /// ----------------------------------------------------------------------
 /// \brief    Destructor.
 ///
-Device_SSD1306_SPI::~Device_SSD1306_SPI() {
+eos::DisplayDevice_SSD1306_SPI::~DisplayDevice_SSD1306_SPI() {
 
     deinitialize();
 }
@@ -44,7 +81,7 @@ Device_SSD1306_SPI::~Device_SSD1306_SPI() {
 /// \param    devSPI: El dispositiu SPI
 /// \param    pinRST: El pin RST (Hardware reset)
 ///
-void Device_SSD1306_SPI::initialize(
+void eos::DisplayDevice_SSD1306_SPI::initialize(
     const uint8_t *script,
     unsigned scriptSize) {
 
@@ -63,7 +100,7 @@ void Device_SSD1306_SPI::initialize(
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitzacio.
 ///
-void Device_SSD1306_SPI::deinitialize() {
+void eos::DisplayDevice_SSD1306_SPI::deinitialize() {
 
     _pinCS->set();
 }
@@ -74,7 +111,7 @@ void Device_SSD1306_SPI::deinitialize() {
 /// \brief    data: Les dades.
 /// \param    dataSize: Tamany de les dades en bytes.
 ///
-void Device_SSD1306_SPI::writeCommand(
+void eos::DisplayDevice_SSD1306_SPI::writeCommand(
     const uint8_t *data,
     unsigned dataSize) {
 
@@ -90,7 +127,7 @@ void Device_SSD1306_SPI::writeCommand(
 /// \brief    data: Les dades.
 /// \param    dataSize: Tamany de les dades en bytes.
 ///
-void Device_SSD1306_SPI::writeData(
+void eos::DisplayDevice_SSD1306_SPI::writeData(
     const uint8_t *data,
     unsigned dataSize) {
 

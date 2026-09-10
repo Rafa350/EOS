@@ -74,6 +74,9 @@ export namespace eos {
     class IntrusiveForwardList {
         public:
             using ValueType = T_*;
+			using Pointer = ValueType*;
+			using Reference = ValueType&;
+			using CReference = const ValueType&;
             using NodeType = IntrusiveForwardListNode<T_, tag_>*;
             using Iterator = IntrusiveForwardListIterator<T_, tag_>;
             using CIterator = const IntrusiveForwardListIterator<T_, tag_>;

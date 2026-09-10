@@ -10,12 +10,10 @@ export module Eos.Services.Forms.Controls.Menu;
 import Eos.Math;
 import Eos.Services.Forms;
 import Eos.System.Graphics.Canvas;
+import Eos.System.Graphics.Color;
+import Eos.System.Graphics.ColorDefinitions;
 import Eos.System.Graphics.Point;
 import Eos.System.Graphics.Rect;
-
-
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
 
 
 export namespace eos {
