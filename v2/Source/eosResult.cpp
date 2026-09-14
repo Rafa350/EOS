@@ -12,13 +12,17 @@ namespace eos {
     template <typename T_>
     concept IsEnum = std::is_enum_v<T_>;
 
-    export
-    template <IsEnum ErrorType_, ErrorType_ noError_>
+}
+
+
+export namespace eos {
+
+    template <IsEnum ErrorType_, ErrorType_ okValue_>
     class SimpleResultX {
         private:
             /// @brief El codi d'error pel cas que no hagi error.
             ///
-            static constexpr ErrorType_ _noError = noError_;
+            static constexpr ErrorType_ _okValue = okValue_;
 
         private:
             /// @brief El codi d'error.
@@ -29,14 +33,14 @@ namespace eos {
             /// @brief Contructor.
             /// @param error: El codi d'error
             ///
-            inline SimpleResultX():
-                _error {_noError} {
+            constexpr SimpleResultX():
+                _error {_okValue} {
             }
 
             /// @brief Contructor.
             /// @param error: El codi d'error
             ///
-            inline SimpleResultX(ErrorType_ error):
+            constexpr SimpleResultX(ErrorType_ error):
                 _error {error} {
             }
 
@@ -55,7 +59,7 @@ namespace eos {
             /// @brief Comprova si no hi ha cap error.
             /// @return True si tot es correcte i no hi ha error.
             ///
-            inline bool isSuccess() const { return _error == _noError; }
+            inline bool isSuccess() const { return _error == _okValue; }
 
             /// @brief Comprova si el error es el especificat.
             /// @param error: El codi d'error de referencia.
@@ -65,13 +69,12 @@ namespace eos {
 
             /// @brief Conversio a bool. True si no hi ha error, false en cas contrari.
             ///
-            inline operator bool () const { return _error == _noError; }
+            inline operator bool () const { return _error == _okValue; }
     };
 
 
-    export
-    template <typename ValueType_, IsEnum ErrorType_, ErrorType_ noError_>
-    class ComplexResultX : public SimpleResultX<ErrorType_, noError_> {
+    template <typename ValueType_, IsEnum ErrorType_, ErrorType_ okValue_>
+    class ComplexResultX : public SimpleResultX<ErrorType_, okValue_> {
         private:
             ValueType_ const _value;
 
@@ -80,7 +83,7 @@ namespace eos {
             /// @param value : El valor del resultat.
             ///
             inline ComplexResultX(ValueType_ value):
-                SimpleResultX<ErrorType_, noError_> {noError_},
+                SimpleResultX<ErrorType_, okValue_> {okValue_},
                 _value {value} {
             }
 
@@ -88,7 +91,7 @@ namespace eos {
             /// @param error: El codi d'error.
             ///
             inline ComplexResultX(ErrorType_ error):
-                SimpleResultX<ErrorType_, noError_> {error},
+                SimpleResultX<ErrorType_, okValue_> {error},
                 _value {ValueType_()} {
             }
 
@@ -96,7 +99,7 @@ namespace eos {
             /// @param other: L'altre objecte.
             ///
             inline ComplexResultX(const ComplexResultX &other):
-                SimpleResultX<ErrorType_, noError_> {other},
+                SimpleResultX<ErrorType_, okValue_> {other},
                 _value {other._value} {
             }
 

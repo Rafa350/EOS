@@ -2,18 +2,18 @@ module;
 
 
 #include "eos.h"
+#include "eosTime.h"
 
 
 module Eos.Services.Forms;
 
 
-import Eos.Controllers.Display;
+import Eos.Controllers.Display.Drivers;
+import Eos.System.Core.CriticalSection;
+import Eos.System.Core.Queue;
 import Eos.System.Graphics.Canvas;
 import Eos.System.Graphics.Color;
 
-
-#include "RTOS/rtosCriticalSection.h"
-#include "System/Core/eosQueue.h"
 
 
 /// ----------------------------------------------------------------------
@@ -180,10 +180,10 @@ void eos::FormsService::onExecute() {
 
 				_activeForm->render(graphics);
 
-				rtos::CriticalSection::enter();
+				CriticalSection::enter();
 				auto driver = graphics->getDriver();
 				driver->refresh();
-				rtos::CriticalSection::exit();
+				CriticalSection::exit();
 			}
     	}
     }

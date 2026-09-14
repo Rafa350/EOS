@@ -2,6 +2,7 @@ module;
 
 
 #include "eos.h"
+#include "eosCallbacks.h"
 
 
 export module Eos.Services.Forms.Controls.Menu;
@@ -9,51 +10,109 @@ export module Eos.Services.Forms.Controls.Menu;
 
 import Eos.Math;
 import Eos.Services.Forms;
-import Eos.System.Graphics.Canvas;
+import Eos.System.Graphics;
 import Eos.System.Graphics.Color;
 import Eos.System.Graphics.ColorDefinitions;
-import Eos.System.Graphics.Point;
-import Eos.System.Graphics.Rect;
 
 
 export namespace eos {
 
-	class NumericControl: public Control {
-		private:
-			int32_t _value;
-			int32_t _minValue;
-			int32_t _maxValue;
-			int32_t _delta;
+	 class MenuControl: public Control {
+    	private:
+    		constexpr static uint32_t _dataStackSize = 5;
+    		constexpr static int16_t _menuTitleHeight = 12;
+    		constexpr static int16_t _itemTitleHeight = 12;
 
-		protected:
-            void onPropertyChanged(void *property) override;
+    	private:
+    		struct Data {
+    			uint16_t menuDescriptorIndex;
+    			uint8_t selectedItem;
+    			uint8_t firstVisibleItem;
+    			uint8_t numItems;
+    		};
+
+    	public:
+    		enum class NotifyEventID {
+				itemSelected,
+				requestText
+    		};
+    		struct NotifyEventArgs {
+    			NotifyEventID eventId;
+    			union {
+    				struct {
+    					uint8_t itemId;
+    					const char *text;
+    					uint8_t length;
+    				} requestText;
+    			};
+    		};
+    		using INotifyEvent = eos::ICallbackP2<MenuControl*, NotifyEventArgs*>;
+    		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, MenuControl*, NotifyEventArgs*>;
+
+    		struct CommandEventArgs {
+    			uint8_t command;
+    		};
+    		using ICommandEvent = eos::ICallbackP2<MenuControl*, CommandEventArgs*>;
+    		template <typename Instance_> using CommandEvent = eos::CallbackP2<Instance_, MenuControl*, CommandEventArgs*>;
+
+        private:
+    		Color _textColor;
+            Color _selectedTextColor;
+            Color _selectedBackgroundColor;
+            const uint8_t *_descriptor;
+            Data _dataStack[_dataStackSize];
+            uint8_t _dataLevel;
+            uint8_t _visibleItems;
+            INotifyEvent *_notifyEvent;
+            ICommandEvent *_commandEvent;
+
+        private:
+            const char* getMenuTitle(uint16_t menuDescriptorIndex) const;
+            uint8_t getMenuTitleLength(uint16_t menuDescriptorIndex) const;
+            uint8_t getMenuNumItems(uint16_t menuDescriptorIndex) const;
+            uint16_t getMenuItemDescriptorIndex(uint16_t menuDescriptorIndex, uint8_t item) const;
+
+            const char* getItemTitle(uint16_t itemDescriptorIndex) const;
+            uint8_t getItemTitleLength(uint16_t itemDescriptorIndex) const;
+            uint8_t getItemType(uint16_t itemDescriptorIndex) const;
+            uint16_t getItemSubMenuDescriptorIndex(uint16_t itemDescriptorIndex) const;
+            uint8_t getItemId(uint16_t itemDescriptorIndex) const;
+
+            bool requestText(uint8_t id, const char *&text, uint8_t &length);
+
+        protected:
             void onMessage(FormMessage &message) override;
             void onRender(Graphics *graphics) override;
-            virtual void onValueChanged();
+            void onPropertyChanged(void *ptr) override;
+            virtual void onCommand(uint8_t id);
+            virtual void onItemSelected();
 
-		public:
-            NumericControl(const Point &position, const Size &size);
+        public:
+            MenuControl(const Point &position, const Size &size, const uint8_t *descriptor);
 
-			inline void setValue(int32_t value) {
-				setProperty(_value, value);
-			}
-			inline void setMinValue(int32_t value) {
-				setProperty(_minValue, value);
-			}
-			inline void setMaxValue(int32_t value) {
-				setProperty(_maxValue, value);
-			}
-			inline void setDelta(int32_t value) {
-				setProperty(_delta, value);
-			}
+            inline void setTextColor(Color value) { setProperty(_textColor, value); }
+            inline void setSelectedTextColor(Color value) { setProperty(_selectedTextColor, value); }
+            inline void setSelectedBackgroundColor(Color value) { setProperty(_selectedBackgroundColor, value); }
 
-			inline int32_t getValue() const {
-				return _value;
-			}
+            inline void setNotifyEvent(INotifyEvent &event) {
+            	_notifyEvent = &event;
+            }
+            inline void clearNotifyEvent() {
+            	_notifyEvent = nullptr;
+            }
+            inline void setCommandEvent(ICommandEvent &event) {
+            	_commandEvent = &event;
+            }
+            inline void clearCommandEvent() {
+            	_commandEvent = nullptr;
+            }
 
-			void increment();
-            void decrement();
-	};
+            void next();
+            void prev();
+            void first();
+            void last();
+            void action();
+    };
 }
 
 

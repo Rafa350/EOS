@@ -57,8 +57,7 @@ namespace rtos {
             static void taskFunction(void *params);
 
 		public:
-			Task(uint32_t stackDepth, Priority priority, const char *name,
-				IEvent &event);
+			Task(uint32_t stackDepth, Priority priority, const char *name, IEvent &event);
 			~Task();
 
 		public:

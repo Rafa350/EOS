@@ -4,7 +4,6 @@ module;
 #include "eos.h"
 #include "eosTime.h"
 #include "eosCallbacks.h"
-#include "System/Core/eosQueue.h"
 
 
 export module Eos.Services.MsgDispatcher;
@@ -12,6 +11,7 @@ export module Eos.Services.MsgDispatcher;
 
 import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
+import Eos.System.Core.Queue;
 
 
 export namespace eos {

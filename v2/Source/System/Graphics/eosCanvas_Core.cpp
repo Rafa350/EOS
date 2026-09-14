@@ -3,13 +3,12 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosString.h"
+//#include "System/eosString.h"
 
 
 module Eos.System.Graphics.Canvas;
 
 
-import Eos.Controllers.Display;
 import Eos.System.Graphics.Transformation;
 
 

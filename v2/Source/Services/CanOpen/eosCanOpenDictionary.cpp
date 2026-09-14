@@ -3,10 +3,12 @@ module;
 
 #include "eos.h"
 #include "eosEvents.h"
-#include "RTOS/rtosCriticalSection.h"
 
 
 export module Eos.Services.CanOpen.Dictionary;
+
+
+import Eos.System.Core.CriticalSection;
 
 
 export namespace eos {
@@ -471,10 +473,10 @@ bool eos::CanOpenDictionary::writeU8(
 
 			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-				rtos::CriticalSection::enter();
+				CriticalSection::enter();
 				oldValue = *((uint8_t*)entry->data);
 				*((uint8_t*)entry->data) = value;
-				rtos::CriticalSection::exit();
+				CriticalSection::exit();
 
 				ok = true;
 			}
@@ -531,10 +533,10 @@ bool eos::CanOpenDictionary::writeU16(
 
 			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-				rtos::CriticalSection::enter();
+				CriticalSection::enter();
 				oldValue = *((uint16_t*)entry->data);
 				*((uint16_t*)entry->data) = value;
-				rtos::CriticalSection::exit();
+				CriticalSection::exit();
 
 				ok = true;
 			}
@@ -591,10 +593,10 @@ bool eos::CanOpenDictionary::writeU32(
 
 			if ((entry->access == CoAccess::rwVariable) && (entry->data != 0)) {
 
-				rtos::CriticalSection::enter();
+				CriticalSection::enter();
 				oldValue = *((uint32_t*)entry->data);
 				*((uint32_t*)entry->data) = value;
-				rtos::CriticalSection::exit();
+				CriticalSection::exit();
 
 				ok = true;
 			}

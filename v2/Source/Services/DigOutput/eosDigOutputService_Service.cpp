@@ -3,11 +3,13 @@ module;
 
 #include "eos.h"
 #include "eosTime.h"
-#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 
 
 module Eos.Services.DigOutput;
+
+
+import Eos.System.Core.CriticalSection;
 
 
 /// ----------------------------------------------------------------------
@@ -30,12 +32,12 @@ eos::DigOutput* eos::DigOutputService::addOutput(
     PinDriver *drv,
 	uint32_t tag) {
 
-    rtos::CriticalSection::enter();
+    CriticalSection::enter();
 
     auto output = new DigOutputImpl(drv, tag);
 	_outputs.pushFront(output);
 
-    rtos::CriticalSection::exit();
+    CriticalSection::exit();
 
     return output;
 }
@@ -53,11 +55,11 @@ bool eos::DigOutputService::containsOutput(
 
 	if (output != nullptr) {
 
-		rtos::CriticalSection::enter();
+		CriticalSection::enter();
 
 		result = _outputs.contains(output);
 
-		rtos::CriticalSection::exit();
+		CriticalSection::exit();
 	}
 
 	return result;
@@ -73,7 +75,7 @@ eos::DigOutput *eos::DigOutputService::getOutput(
 
 	DigOutput *result = nullptr;
 
-	rtos::CriticalSection::enter();
+	CriticalSection::enter();
 
 	for (auto output: _outputs)
 		if (output->getTag() == tag) {
@@ -81,7 +83,7 @@ eos::DigOutput *eos::DigOutputService::getOutput(
 			break;
 		}
 
-	rtos::CriticalSection::exit();
+	CriticalSection::exit();
 
 	return result;
 }
@@ -286,12 +288,12 @@ bool eos::DigOutputService::read(
 	if (containsOutput(output)) {
 #endif
 
-		rtos::CriticalSection::enter();
+		CriticalSection::enter();
 
 		auto out = static_cast<DigOutputImpl*>(output);
 		bool value = out->getValue();
 
-		rtos::CriticalSection::exit();
+		CriticalSection::exit();
 
 		return value;
 

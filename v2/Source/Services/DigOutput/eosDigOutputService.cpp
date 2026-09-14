@@ -3,9 +3,7 @@ module;
 
 #include "eosEvents.h"
 #include "eosTime.h"
-#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
-#include "System/Core/eosQueue.h"
 
 
 // Numero maxim d'elements en la cua d'accions
@@ -36,10 +34,14 @@ module;
 export module Eos.Services.DigOutput;
 
 
+export import Eos.Services.Service;
+
+
 import Eos.Math;
 import Eos.Controllers.Pin;
-import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
+import Eos.System.Core.CriticalSection;
+import Eos.System.Core.Queue;
 
 
 namespace eos {

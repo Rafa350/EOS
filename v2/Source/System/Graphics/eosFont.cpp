@@ -242,7 +242,7 @@ void eos::Font::getCharInfo(
 /// ----------------------------------------------------------------------
 /// \brief Obte l'avanç d,un caracter.
 /// \param ch: El caracter.
-/// \return L'avan� del caracter.
+/// \return L'avanç del caracter.
 ///
 int eos::Font::getCharAdvance(
     char ch) const {
@@ -259,71 +259,44 @@ int eos::Font::getCharAdvance(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Crea un font amb els parametres especificats.
-/// \param fontName: Nom del font.
-/// \param height: Alçada del font.
-/// \param style: Estil del font.
-///
-const uint8_t* eos::Font::getFontResource(
-	const char *name,
-	int height,
-	FontStyle style) {
-
-	const FontTableEntry *pResource = _fontTable;
-
-	for (int i = 0; pResource[i].name != nullptr; i++) {
-		const FontTableEntry *pEntry = &pResource[i];
-		if ((strcmp(name, pEntry->name) == 0) &&
-			(pEntry->height == height) &&
-			(pEntry->style == style)) {
-
-			return pEntry->resource;
-		}
-	}
-
-	return nullptr;
-}
-
-
 #ifdef FONT_USE_Arial14pt
-extern const unsigned char *fontArial14pt;
+    const unsigned char *fontArial14pt;
 #endif
 #ifdef FONT_USE_Arial18pt
-extern const unsigned char *fontArial18pt;
+    const unsigned char *fontArial18pt;
 #endif
 #ifdef FONT_USE_Arial24pt
-extern const unsigned char *fontArial24pt;
+    const unsigned char *fontArial24pt;
 #endif
 #ifdef FONT_USE_Consolas8pt
-extern const unsigned char *fontConsolas8pt;
+    const unsigned char *fontConsolas8pt;
 #endif
 #ifdef FONT_USE_Consolas10pt
-extern const unsigned char *fontConsolas10pt;
+    const unsigned char *fontConsolas10pt;
 #endif
 #ifdef FONT_USE_Consolas12pt
-extern const unsigned char *fontConsolas12pt;
+    const unsigned char *fontConsolas12pt;
 #endif
 #ifdef FONT_USE_Consolas14pt
-extern const unsigned char *fontConsolas14pt;
+    const unsigned char *fontConsolas14pt;
 #endif
 #ifdef FONT_USE_Consolas18pt
-extern const unsigned char *fontConsolas18pt;
+    const unsigned char *fontConsolas18pt;
 #endif
 #ifdef FONT_USE_Consolas24pt
-extern const unsigned char *fontConsolas24pt;
+    const unsigned char *fontConsolas24pt;
 #endif
 #ifdef FONT_USE_Tahoma10pt
-extern const unsigned char *fontTahoma10pt;
+    const unsigned char *fontTahoma10pt;
 #endif
 #ifdef FONT_USE_Tahoma12pt
-extern const unsigned char *fontTahoma12pt;
+    const unsigned char *fontTahoma12pt;
 #endif
 #ifdef FONT_USE_5x7practical12pt
-extern const unsigned char *font5x7practical12pt;
+    extern "C++" const unsigned char *font5x7practical12pt;
 #endif
 #ifdef FONT_USE_MicrosoftSansSerif18pt
-extern const unsigned char *fontMicrosoftSansSerif18pt;
+    const unsigned char *fontMicrosoftSansSerif18pt;
 #endif
 
 
@@ -387,3 +360,30 @@ const eos::Font::FontTableEntry eos::Font::_fontTable[] = {
 	// Marca de final de taula
 	{ NULL, 0, eos::FontStyle::regular, NULL }
 };
+
+
+/// ----------------------------------------------------------------------
+/// \brief Crea un font amb els parametres especificats.
+/// \param fontName: Nom del font.
+/// \param height: Alçada del font.
+/// \param style: Estil del font.
+///
+const uint8_t* eos::Font::getFontResource(
+	const char *name,
+	int height,
+	FontStyle style) {
+
+	const FontTableEntry *pResource = _fontTable;
+
+	for (int i = 0; pResource[i].name != nullptr; i++) {
+		const FontTableEntry *pEntry = &pResource[i];
+		if ((strcmp(name, pEntry->name) == 0) &&
+			(pEntry->height == height) &&
+			(pEntry->style == style)) {
+
+			return pEntry->resource;
+		}
+	}
+
+	return nullptr;
+}

@@ -5,15 +5,17 @@ module;
 #include "eosEvents.h"
 #include "eosTime.h"
 #include "RTOS/rtosTask.h"
-#include "System/Core/eosQueue.h"
 
 
 export module Eos.Services.DigInput;
 
 
+export import Eos.Services.Service;
+
+
 import Eos.Math;
 import Eos.Controllers.Pin;
-import Eos.Services.Service;
+import Eos.System.Core.Queue;
 import Eos.System.Collections.IntrusiveForwardList;
 
 

@@ -4,11 +4,13 @@ module;
 #include "eos.h"
 #include "eosEvents.h"
 #include "eosTime.h"
-#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 
 
 module Eos.Services.DigInput;
+
+
+import Eos.System.Core.CriticalSection;
 
 
 /// ----------------------------------------------------------------------
@@ -25,15 +27,14 @@ eos::DigInputService::DigInputService():
 ///
 eos::DigInputService::~DigInputService() {
 
-    rtos::CriticalSection::enter();
-
+    CriticalSection::enter();
 	while (!_inputs.empty()) {
 		auto input = _inputs.front();
 		_inputs.remove(input);
 		delete input;
 	}
 
-	rtos::CriticalSection::exit();
+	CriticalSection::exit();
 }
 
 
@@ -130,9 +131,9 @@ eos::DigInput * eos::DigInputService::addInput(
 
     auto input = new DigInputImpl(drv, tag);
 
-    rtos::CriticalSection::enter();
+    CriticalSection::enter();
 	_inputs.pushFront(input);
-    rtos::CriticalSection::exit();
+    CriticalSection::exit();
 
     return input;
 }
@@ -148,7 +149,7 @@ eos::DigInput *eos::DigInputService::getInput(
 
 	eos::DigInput *result = nullptr;
 
-	rtos::CriticalSection::enter();
+	CriticalSection::enter();
 
 	for (auto input: _inputs)
 		if (input->getTag() == tag) {
@@ -156,7 +157,7 @@ eos::DigInput *eos::DigInputService::getInput(
 			break;
 		}
 
-	rtos::CriticalSection::exit();
+	CriticalSection::exit();
 
 	return result;
 }
@@ -211,12 +212,12 @@ void eos::DigInputService::onExecute() {
 bool eos::DigInputService::read(
     const eos::DigInput *input) const {
 
-    rtos::CriticalSection::enter();
+    CriticalSection::enter();
 
     auto inp = static_cast<const DigInputImpl*>(input);
     auto value = inp->getValue();
 
-    rtos::CriticalSection::exit();
+    CriticalSection::exit();
 
     return value;
 }
@@ -232,12 +233,12 @@ uint32_t eos::DigInputService::getEdges(
 	eos::DigInput *input,
 	bool clear) const {
 
-    rtos::CriticalSection::enter();
+    CriticalSection::enter();
 
     auto inp = static_cast<DigInputImpl*>(input);
     auto edges = inp->getCount(clear);
 
-    rtos::CriticalSection::exit();
+    CriticalSection::exit();
 
     return edges;
 }

@@ -1,3 +1,4 @@
-target_sources(${TARGET_NAME} PRIVATE
-    main.cpp
+target_sources(${TARGET_NAME}
+    PRIVATE
+        main.cpp
 )

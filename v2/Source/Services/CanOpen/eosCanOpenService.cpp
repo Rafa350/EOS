@@ -6,7 +6,6 @@ module;
 #include "rtos/rtosTask.h"
 #include "HTL/STM32/htlCAN.h"
 #include "RTOS/rtosTimer.h"
-#include "System/Core/eosQueue.h"
 
 
 export module Eos.Services.CanOpen;
@@ -19,6 +18,7 @@ import Eos.Math;
 import Eos.Result;
 import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
+import Eos.System.Core.Queue;
 
 
 export namespace eos {

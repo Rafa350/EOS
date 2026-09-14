@@ -1,12 +1,15 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "eosTime.h"
-#include "RTOS/rtosCriticalSection.h"
+//#include "RTOS/rtosCriticalSection.h"
 #include "RTOS/rtosTask.h"
 #include "RTOS/rtosTime.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
+
+
+import Eos.System.Core.CriticalSection;
 
 
 #if configNUM_THREAD_LOCAL_STORAGE_POINTERS < 1
@@ -103,10 +106,10 @@ void rtos::Task::resume() const {
 void rtos::Task::kill() const {
 
 	if (isAlive()) {
-		CriticalSection::enter();
+		eos::CriticalSection::enter();
 		if (isAlive())
 			destroyHandler(_handler);
-		CriticalSection::exit();
+		eos::CriticalSection::exit();
 	}
 }
 

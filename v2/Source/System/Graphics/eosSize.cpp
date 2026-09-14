@@ -57,8 +57,8 @@ export namespace eos {
 ///
 eos::Size::Size():
 
-	_width(0),
-	_height(0) {
+	_width {0},
+	_height {0} {
 }
 
 
@@ -71,8 +71,8 @@ eos::Size::Size(
 	int16_t width,
 	int16_t height):
 
-	_width(width),
-	_height(height) {
+	_width {width},
+	_height {height} {
 
 	eosAssert(width >= 0);
 	eosAssert(height >= 0);
@@ -86,8 +86,8 @@ eos::Size::Size(
 eos::Size::Size(
 	const Size &s):
 
-	_width(s._width),
-	_height(s._height) {
+	_width {s._width},
+	_height {s._height} {
 }
 
 
@@ -98,8 +98,8 @@ eos::Size::Size(
 eos::Size::Size(
 	const Size &&s):
 
-	_width(s._width),
-	_height(s._height) {
+	_width {s._width},
+	_height {s._height} {
 }
 
 

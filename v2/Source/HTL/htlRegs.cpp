@@ -10,52 +10,52 @@ export module Htl.Regs;
 
 export namespace htl {
 
-    template <typename T_, uint32_t addr_>
+    template <typename T_, uintptr_t addr_>
     struct Reg {
         static T_ read();
         static void write(T_ value);
     };
 
-    template <uint32_t addr_>
+    template <uintptr_t addr_>
     using Reg8 = Reg<uint8_t, addr_>;
 
-    template <uint32_t addr_>
+    template <uintptr_t addr_>
     using Reg16 = Reg<uint16_t, addr_>;
 
-    template <uint32_t addr_>
+    template <uintptr_t addr_>
     using Reg32 = Reg<uint32_t, addr_>;
 
 
-    template <typename T_, uint32_t addr_, uint32_t pos_, uint32_t width_>
+    template <typename T_, uintptr_t addr_, uint32_t pos_, uint32_t width_>
     struct RegField {
         static T_ read();
         static void write(T_ value);
     };
 
-    template <uint32_t addr_, uint32_t pos_, uint32_t width_>
+    template <uintptr_t addr_, uint32_t pos_, uint32_t width_>
     using Reg8Field = RegField<uint8_t, addr_, pos_, width_>;
 
-    template <uint32_t addr_, uint32_t pos_, uint32_t width_>
+    template <uintptr_t addr_, uint32_t pos_, uint32_t width_>
     using Reg16Field = RegField<uint16_t, addr_, pos_, width_>;
 
-    template <uint32_t addr_, uint32_t pos_, uint32_t width_>
+    template <uintptr_t addr_, uint32_t pos_, uint32_t width_>
     using Reg32Field = RegField<uint32_t, addr_, pos_, width_>;
 
 
-    template <typename T_, uint32_t addr_, uint32_t pos_>
+    template <typename T_, uintptr_t addr_, uint32_t pos_>
     struct RegFlag {
         static bool isSet();
         static void set();
         static void clear();
     };
 
-    template <uint32_t addr_, uint32_t pos_>
+    template <uintptr_t addr_, uint32_t pos_>
     using Reg8Flag = RegFlag<uint8_t, addr_, pos_>;
 
-    template <uint32_t addr_, uint32_t pos_>
+    template <uintptr_t addr_, uint32_t pos_>
     using Reg16Flag = RegFlag<uint16_t, addr_, pos_>;
 
-    template <uint32_t addr_, uint32_t pos_>
+    template <uintptr_t addr_, uint32_t pos_>
     using Reg32Flag = RegFlag<uint32_t, addr_, pos_>;
 
 }
@@ -67,7 +67,7 @@ export namespace htl {
 /// \tparam   addr_: L'adressda del registre.
 /// \return   El valor del registre.
 ///
-template <typename T_, uint32_t addr_>
+template <typename T_, uintptr_t addr_>
 inline T_ htl::Reg<T_, addr_>::read() {
 
 	static_assert(std::is_integral<T_>::value && !std::is_same<T_, bool>::value);
@@ -83,7 +83,7 @@ inline T_ htl::Reg<T_, addr_>::read() {
 /// \param    value: El valor a escriure.
 /// \return   El valor del registre.
 ///
-template <typename T_, uint32_t addr_>
+template <typename T_, uintptr_t addr_>
 inline void htl::Reg<T_, addr_>::write(
 	T_ value) {
 
@@ -101,7 +101,7 @@ inline void htl::Reg<T_, addr_>::write(
 /// \tparam   width_: Amplada del camp en bits.
 /// \return   El valor del camp.
 ///
-template <typename T_, uint32_t addr_, uint32_t pos_, uint32_t width_>
+template <typename T_, uintptr_t addr_, uint32_t pos_, uint32_t width_>
 inline T_ htl::RegField<T_, addr_, pos_, width_>::read() {
 
 	static_assert(std::is_integral<T_>::value && !std::is_same<T_, bool>::value);
@@ -119,7 +119,7 @@ inline T_ htl::RegField<T_, addr_, pos_, width_>::read() {
 /// \tparam   width_: Amplada del camp en bits.
 /// \param    value: El valor del camp.
 ///
-template <typename T_, uint32_t addr_, uint32_t pos_, uint32_t width_>
+template <typename T_, uintptr_t addr_, uint32_t pos_, uint32_t width_>
 inline void htl::RegField<T_, addr_, pos_, width_>::write(
 	T_ value) {
 
@@ -132,7 +132,7 @@ inline void htl::RegField<T_, addr_, pos_, width_>::write(
 }
 
 
-template <typename T_, uint32_t addr_, uint32_t pos_>
+template <typename T_, uintptr_t addr_, uint32_t pos_>
 inline bool htl::RegFlag<T_, addr_, pos_>::isSet() {
 
 	static_assert(std::is_integral<T_>::value && !std::is_same<T_, bool>::value);
@@ -141,7 +141,7 @@ inline bool htl::RegFlag<T_, addr_, pos_>::isSet() {
 }
 
 
-template <typename T_, uint32_t addr_, uint32_t pos_>
+template <typename T_, uintptr_t addr_, uint32_t pos_>
 inline void htl::RegFlag<T_, addr_, pos_>::set() {
 
 	static_assert(std::is_integral<T_>::value && !std::is_same<T_, bool>::value);
@@ -150,11 +150,10 @@ inline void htl::RegFlag<T_, addr_, pos_>::set() {
 }
 
 
-template <typename T_, uint32_t addr_, uint32_t pos_>
+template <typename T_, uintptr_t addr_, uint32_t pos_>
 inline void htl::RegFlag<T_, addr_, pos_>::clear() {
 
 	static_assert(std::is_integral<T_>::value && !std::is_same<T_, bool>::value);
 
 	*reinterpret_cast<volatile T_*>(addr_) &= ~(1 << pos_);
 }
-

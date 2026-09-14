@@ -3,11 +3,12 @@ module;
 
 #include "eos.h"
 #include "eosTime.h"
-#include "System/Core/eosQueue.h"
 
 
 module Eos.Services.MsgDispatcher;
 
+
+import Eos.System.Core.Queue;
 
 
 /// ----------------------------------------------------------------------

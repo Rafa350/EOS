@@ -3,11 +3,15 @@
 // Ben Kenwright - School of Computer Science - Newcastle University
 
 #include "eos.h"
-#include "RTOS/rtosCriticalSection.h"
-#include "RTOS/rtosHeap.h"
+//#include "RTOS/rtosCriticalSection.h"
+//#include "RTOS/rtosHeap.h"
 #include "RTOS/rtosPool.h"
 
 #include "FreeRTOS.h"
+
+
+import Eos.System.Core.CriticalSection;
+import Eos.System.Core.HeapAllocator;
 
 
 /// ----------------------------------------------------------------------
@@ -36,7 +40,7 @@ rtos::Pool::Pool(
 		blockSize += portBYTE_ALIGNMENT - (blockSize & portBYTE_ALIGNMENT_MASK);
 #endif
 
-    _blocks = static_cast<uint8_t*>(rtos::Heap::allocate(_blockSize * _maxBlocks));
+    _blocks = static_cast<uint8_t*>(eos::HeapAllocator::allocate(_blockSize * _maxBlocks));
     _nextBlock = _blocks;
 }
 
@@ -46,7 +50,7 @@ rtos::Pool::Pool(
 ///
 rtos::Pool::~Pool() {
 
-    rtos::Heap::deallocate(_blocks);
+    eos::HeapAllocator::deallocate(_blocks);
 }
 
 
@@ -58,7 +62,7 @@ void *rtos::Pool::allocate() {
 
     void *ptr = nullptr;
 
-    rtos::CriticalSection::enter();
+    eos::CriticalSection::enter();
 
     if (_initializedBlocks < _maxBlocks) {
         uint32_t *p = reinterpret_cast<uint32_t*>(addrFromIndex(_initializedBlocks));
@@ -75,7 +79,7 @@ void *rtos::Pool::allocate() {
             _nextBlock = nullptr;
     }
 
-    rtos::CriticalSection::exit();
+    eos::CriticalSection::exit();
 
     return ptr;
 }
@@ -88,7 +92,7 @@ void *rtos::Pool::allocate() {
 void rtos::Pool::deallocate(
     void *ptr) {
 
-    rtos::CriticalSection::enter();
+    eos::CriticalSection::enter();
 
     if (_nextBlock != nullptr)
         *(static_cast<uint32_t*>(ptr)) = indexFromAddr(_nextBlock);
@@ -98,7 +102,7 @@ void rtos::Pool::deallocate(
     _nextBlock = static_cast<uint8_t*>(ptr);
     _freeBlocks += 1;
 
-    rtos::CriticalSection::exit();
+    eos::CriticalSection::exit();
 }
 
 

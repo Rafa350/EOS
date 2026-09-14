@@ -11,8 +11,6 @@ import Eos.Services.Forms;
 import Eos.System.Graphics;
 import Eos.System.Graphics.Color;
 import Eos.System.Graphics.ColorDefinitions;
-import Eos.System.Graphics.Point;
-import Eos.System.Graphics.Rect;
 
 
 export namespace eos {

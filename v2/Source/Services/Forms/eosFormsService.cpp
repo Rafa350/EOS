@@ -5,27 +5,26 @@ module;
 #include "eosTime.h"
 #include "eosCallbacks.h"
 #include "RTOS/rtosTask.h"
-#include "System/Core/eosQueue.h"
 
 
 export module Eos.Services.Forms;
 
 
-import Eos.Controllers.Display;
-import Eos.Services.Service;
+export import Eos.Services.Service;
+
+
+import Eos.Controllers.Display.Drivers;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Forms.PropertyObserver;
+import Eos.System.Graphics;
 import Eos.System.Graphics.Color;
-import Eos.System.Graphics.Canvas;
-import Eos.System.Graphics.Point;
-import Eos.System.Graphics.Rect;
-import Eos.System.Graphics.Size;
+import Eos.System.Core.Queue;
 
 
-namespace eos {
+export namespace eos {
 
-    export class Form;
-    export class Visual;
+    class Form;
+    class Visual;
 
 
     using VisualList = IntrusiveForwardList<Visual, 0>;
@@ -71,7 +70,7 @@ namespace eos {
     };
 
 
-    export class FormsService: public Service {
+    class FormsService: public Service {
         private:
     		constexpr static const char *_serviceName = "Forms";
     		constexpr static uint32_t _serviceStackDepth = 280;
@@ -106,7 +105,7 @@ namespace eos {
     };
 
 
-    export class Visual: public VisualListNode, public PropertyObserver {
+    class Visual: public VisualListNode, public PropertyObserver {
     	private:
     		Point _position;
     		Size _size;
@@ -140,7 +139,7 @@ namespace eos {
     };
 
 
-    export class Control: public Visual {
+    class Control: public Visual {
     	public:
     		struct PropertyChangedEventArgs {
     			void *ptr;
@@ -177,7 +176,7 @@ namespace eos {
     };
 
 
-    export class Form: public Visual {
+    class Form: public Visual {
         private:
             Control *_activeControl;
             void *_dataContext;

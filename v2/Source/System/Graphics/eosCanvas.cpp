@@ -2,14 +2,14 @@ module;
 
 
 #include "eos.h"
-#include "System/eosString.h"
+//#include "System/eosString.h"
 #include "System/Core/eosPoolAllocator.h"
 
 
 export module Eos.System.Graphics.Canvas;
 
 
-import Eos.Controllers.Display;
+import Eos.Controllers.Display.Drivers;
 import Eos.System.Collections.Stack;
 import Eos.System.Graphics.Color;
 import Eos.System.Graphics.Brush;

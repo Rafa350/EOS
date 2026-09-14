@@ -26,8 +26,8 @@ export namespace eos {
             static constexpr int16_t absoluteMinY = Math::minI16;
 
         public:
-			Point();
-            Point(int16_t x, int16_t y);
+			constexpr Point(): _x {0}, _y {0} {}
+            constexpr Point(int16_t x, int16_t y): _x {x}, _y {y} {}
             Point(const Point &p);
             Point(const Point &&p);
 
@@ -44,30 +44,6 @@ export namespace eos {
             bool operator == (const Point &p) const;
             inline bool operator != (const Point &p) const { return !(*this == p); }
 	};
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-///
-eos::Point::Point():
-
-	_x(0),
-	_y(0) {
-}
-
-
-/// -----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-/// \param    x: Coordinada X.
-/// \param    y: Coordinada Y.
-///
-eos::Point::Point(
-	int16_t x,
-	int16_t y):
-
-	_x {x},
-	_y {y} {
 }
 
 

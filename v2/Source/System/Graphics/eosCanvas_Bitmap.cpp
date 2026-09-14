@@ -3,13 +3,13 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "RTOS/rtosHeap.h"
 
 
 module Eos.System.Graphics.Canvas;
 
 
 import Eos.System.Graphics.Color;
+import Eos.System.Core.HeapAllocator;
 
 
 /// ----------------------------------------------------------------------
@@ -83,7 +83,7 @@ eos::Bitmap::Bitmap(
 
 	// Reserva memoria pel bitmap
 	//
-	_impl->pixels = rtos::Heap::allocate(numPixels * pixelSize);
+	_impl->pixels = eos::HeapAllocator::allocate(numPixels * pixelSize);
 	eosAssert(_impl->pixels != nullptr);
 
 	// Crea el contingut del bitmap
@@ -187,7 +187,7 @@ eos::Bitmap::Bitmap(
 eos::Bitmap::~Bitmap() {
 
 	if (_impl->allocated && (_impl->pixels != nullptr))
-		rtos::Heap::deallocate(_impl->pixels);
+		eos::HeapAllocator::deallocate(_impl->pixels);
 }
 
 
