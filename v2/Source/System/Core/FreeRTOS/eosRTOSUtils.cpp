@@ -1,8 +1,18 @@
+module;
+
+
 #include "eos.h"
 #include "eosTime.h"
-#include "RTOS/rtosTime.h"
-
 #include "FreeRTOS.h"
+
+
+export module Eos.System.Core.RTOSUtils;
+
+
+export namespace eos {
+
+    uint32_t toTicks(Time time);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -10,10 +20,10 @@
 /// \param    Time: El valor de temps
 /// \return   El resultat de l'operacio.
 ///
-uint32_t rtos::toTicks(
-	eos::Time time) {
+uint32_t eos::toTicks(
+    Time time) {
 
     return time.isInfinite() ?
-    		portMAX_DELAY :
-			time.toMiliseconds() / portTICK_PERIOD_MS;
+            portMAX_DELAY :
+            time.toMiliseconds() / portTICK_PERIOD_MS;
 }

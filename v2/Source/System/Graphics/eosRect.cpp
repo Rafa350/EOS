@@ -50,18 +50,18 @@ export namespace eos {
             inline int16_t getMaxX() const { return _x + _width - 1; }
             inline int16_t getMaxY() const { return _y + _height - 1; }
 
-            Rect translated(int16_t x, int16_t y) const;
-            inline Rect translated(const Point &p) const { return translated(p.getX(), p.getY()); }
-            Rect inflated(int16_t h, int16_t v) const { return inflated(h, v, h, v); }
-            Rect inflated(int16_t left, int16_t top, int16_t right, int16_t bottom) const;
-            Rect intersected(const Rect &r) const;
-            Rect fusioned(const Rect &r) const;
+            [[nodiscard]] Rect translated(int16_t x, int16_t y) const;
+            [[nodiscard]] inline Rect translated(const Point &p) const { return translated(p.getX(), p.getY()); }
+            [[nodiscard]] inline Rect inflated(int16_t h, int16_t v) const { return inflated(h, v, h, v); }
+            [[nodiscard]] Rect inflated(int16_t left, int16_t top, int16_t right, int16_t bottom) const;
+            [[nodiscard]] Rect intersected(const Rect &r) const;
+            [[nodiscard]] Rect fusioned(const Rect &r) const;
 
-            bool contains(int16_t x, int16_t y) const;
-            inline bool contains(const Point &p) const { return contains(p.getX(), p.getY()); }
-            bool contains(const Rect &r) const;
+            [[nodiscard]] bool contains(int16_t x, int16_t y) const;
+            [[nodiscard]] inline bool contains(const Point &p) const { return contains(p.getX(), p.getY()); }
+            [[nodiscard]] bool contains(const Rect &r) const;
 
-            bool isEmpty() const;
+            [[nodiscard]] bool isEmpty() const;
 
             Rect& operator = (const Rect &r);
 

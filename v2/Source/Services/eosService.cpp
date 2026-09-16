@@ -2,13 +2,13 @@ module;
 
 
 #include "eos.h"
-#include "RTOS/rtosTask.h"
 
 
 export module Eos.Services.Service;
 
 
 import Eos.System.Application;
+import Eos.System.Core.Task;
 
 
 export namespace eos {
@@ -23,27 +23,27 @@ export namespace eos {
     	protected:
 			struct ServiceParams {
 				const char *name;
-				rtos::Task::Priority priority;
+				Task::Priority priority;
 				uint32_t stackDepth;
 			};
 
     	private:
 			static constexpr const char *_defaultName = "Service";
 			static constexpr unsigned _defaultStackDepth = 256;
-			static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
+			static constexpr Task::Priority _defaultPriority = Task::Priority::normal;
 
     	private:
-    		rtos::Task::Event<Service> _taskEvent;
-    		rtos::Task *_task;
+    		Task::Event<Service> _taskEvent;
+    		Task *_task;
     		State _state;
     		volatile bool _stopSignal;
 
     	private:
-    		void taskEventHandler(rtos::Task *task, rtos::Task::EventArgs *args);
+    		void taskEventHandler(Task *task, Task::EventArgs *args);
 
         protected:
             Service();
-			
+
             virtual void onStart();
             virtual void onStarted();
             virtual void onStop();
@@ -61,7 +61,7 @@ export namespace eos {
             void start();
             void stop();
 
-            rtos::Task * getTask() const { return _task; }
+            Task * getTask() const { return _task; }
             State getState() const { return _state; }
 
 			Service& operator=(const Service&) = delete;
@@ -108,7 +108,7 @@ void eos::Service::start() {
 		onInitialize(params);
 
 		onStart();
-		_task = new rtos::Task(
+		_task = new Task(
 			params.stackDepth,
 			params.priority,
 			params.name,
@@ -146,8 +146,8 @@ bool eos::Service::stopSignal() const {
 /// \params   args: Parametres.
 ///
 void eos::Service::taskEventHandler(
-	rtos::Task *task,
-	rtos::Task::EventArgs *args) {
+	Task *task,
+	Task::EventArgs *args) {
 
 	_state = State::run; //********* O aqui?
 	onStarted();

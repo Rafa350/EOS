@@ -5,14 +5,13 @@ module;
 #include "eosAssert.h"
 #include "eosTime.h"
 #include "HTL/htlINT.h"
-#include "RTOS/rtosTask.h"
-#include "RTOS/rtosTime.h"
 
 
 export module Eos.Controllers.Serial;
 
 
 import Eos.Result;
+import Eos.System.Core.Task;
 
 
 export namespace eos {
@@ -41,7 +40,7 @@ export namespace eos {
 
         private:
             State _state;
-            rtos::Task *_task;
+            Task *_task;
             volatile bool _finished;
             uint32_t _txCount;
             uint32_t _rxCount;
@@ -184,9 +183,9 @@ eos::SerialDriver::ResultU32 eos::SerialDriver::wait(
 			return {_rxCount};
 		}
 		else {
-			_task = rtos::Task::getExecutingTask();
+			_task = Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (rtos::Task::waitNotification(true, blockTime))
+			if (Task::waitNotification(true, blockTime))
 				return {_rxCount};
 			else {
 				abort();
@@ -203,9 +202,9 @@ eos::SerialDriver::ResultU32 eos::SerialDriver::wait(
 			return {_txCount};
 		}
 		else {
-			_task = rtos::Task::getExecutingTask();
+			_task = Task::getExecutingTask();
 			htl::irq::enableInterrupts();
-			if (rtos::Task::waitNotification(true, blockTime))
+			if (Task::waitNotification(true, blockTime))
 				return {_txCount};
 			else {
 				abort();

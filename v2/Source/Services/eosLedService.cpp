@@ -4,14 +4,15 @@ module;
 #include "eos.h"
 #include "eosTime.h"
 #include "HTL/htlGPIO.h"
-#include "RTOS/rtosTime.h"
-#include "RTOS/rtosTask.h"
 
 
 export module Eos.Services.LedService;
 
 
 export import Eos.Services.Service;
+
+
+import Eos.System.Core.Task;
 
 
 namespace eos {
@@ -35,7 +36,7 @@ namespace eos {
 	    private:
 	        static constexpr const char *_serviceName = "Led";
 	        static constexpr uint32_t _serviceStackDepth = 96;
-	        static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::low;
+	        static constexpr Task::Priority _servicePriority = Task::Priority::low;
 
 	        static constexpr Time _stepInterval  = Time::fromMiliseconds(150);
 	        static constexpr Time _slowBlinkInterval = Time::fromMiliseconds(1000);
@@ -103,12 +104,12 @@ void eos::LedService::onExecute() {
     	switch (_mode) {
     		case LedMode::on:
     			_pinLED->set();
-    			rtos::Task::delayUntil(Time::fromMiliseconds(1000));
+    			Task::delayUntil(Time::fromMiliseconds(1000));
     			break;
 
     		case LedMode::off:
     			_pinLED->clear();
-    			rtos::Task::delayUntil(Time::fromMiliseconds(1000));
+    			Task::delayUntil(Time::fromMiliseconds(1000));
     			break;
 
     		case LedMode::slowBlink:
@@ -125,7 +126,7 @@ void eos::LedService::onExecute() {
     					break;
     			}
     			_pinLED->toggle();
-    			rtos::Task::delayUntil(interval);
+    			Task::delayUntil(interval);
     			break;
     		}
 
@@ -149,7 +150,7 @@ void eos::LedService::onExecute() {
     			}
     			_pinLED->write((pattern & (1 << _step)) != 0);
     			_step = (_step + 1) & 0x0F;
-    			rtos::Task::delayUntil(_stepInterval);
+    			Task::delayUntil(_stepInterval);
     			break;
     		}
     	}

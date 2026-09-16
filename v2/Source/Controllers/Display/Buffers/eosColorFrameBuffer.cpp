@@ -1,15 +1,43 @@
+module;
+
+
 #include "eos.h"
-#include "Controllers/Display/eosColorFrameBuffer.h"
 
 
-using namespace eos;
+export module Eos.Controllers.Display.Buffers.Color;
+
+
+export import Eos.Controllers.Display.Buffers;
+
+
+import Eos.System.Graphics.Color;
+
+
+export namespace eos {
+
+
+	class ColorFrameBuffer: public FrameBuffer {
+		private:
+			Color::Pixel * const _buffer;
+			int16_t const _framePitch;
+
+		protected:
+            void put(int16_t x, int16_t y, Color color) override;
+            void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
+            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) override;
+            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
+
+		public:
+			ColorFrameBuffer(int16_t frameWidth, int16_t frameHeight, int16_t framePitch, Orientation orientation, uint8_t *buffer);
+	};
+}
 
 
 static uint16_t combinePixel(uint16_t b, uint16_t f, uint8_t o);
 
 
-static inline Color::Pixel *getPixelPtr(
-	Color::Pixel *buffer,
+static inline eos::Color::Pixel *getPixelPtr(
+	eos::Color::Pixel *buffer,
 	int bufferPitch,
 	int x,
 	int y) {
@@ -18,11 +46,11 @@ static inline Color::Pixel *getPixelPtr(
 }
 
 
-ColorFrameBuffer::ColorFrameBuffer(
+eos::ColorFrameBuffer::ColorFrameBuffer(
 	int16_t frameWidth,
 	int16_t frameHeight,
 	int16_t framePitch,
-	DisplayOrientation orientation,
+	Orientation orientation,
 	uint8_t *buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
@@ -38,7 +66,7 @@ ColorFrameBuffer::ColorFrameBuffer(
 /// \param color: Color en format de pixel fisic;
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
-void ColorFrameBuffer::put(
+void eos::ColorFrameBuffer::put(
 	int16_t x,
 	int16_t y,
 	const Color color) {
@@ -62,7 +90,7 @@ void ColorFrameBuffer::put(
 /// \param    height: Alçada.
 /// \param    color: Color.-
 ///
-void ColorFrameBuffer::fill(
+void eos::ColorFrameBuffer::fill(
 	int16_t x,
 	int16_t y,
 	int16_t width,

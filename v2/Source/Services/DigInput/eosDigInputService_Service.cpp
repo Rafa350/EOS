@@ -4,7 +4,6 @@ module;
 #include "eos.h"
 #include "eosEvents.h"
 #include "eosTime.h"
-#include "RTOS/rtosTask.h"
 
 
 module Eos.Services.DigInput;
@@ -183,7 +182,7 @@ void eos::DigInputService::onExecute() {
 
     while (!stopSignal()) {
 
-		rtos::Task::delayUntil(_scanPeriod);
+		Task::delayUntil(_scanPeriod);
 
 		// Notifica l'inici de l'escaneig d'entrades
 		//

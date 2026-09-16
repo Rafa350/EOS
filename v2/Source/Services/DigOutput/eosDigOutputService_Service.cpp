@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosTime.h"
-#include "RTOS/rtosTask.h"
 
 
 module Eos.Services.DigOutput;

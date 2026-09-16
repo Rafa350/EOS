@@ -3,7 +3,6 @@ module;
 
 #include "eosEvents.h"
 #include "eosTime.h"
-#include "RTOS/rtosTask.h"
 
 
 // Numero maxim d'elements en la cua d'accions
@@ -42,6 +41,7 @@ import Eos.Controllers.Pin;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Core.CriticalSection;
 import Eos.System.Core.Queue;
+import Eos.System.Core.Task;
 
 
 namespace eos {
@@ -129,7 +129,7 @@ namespace eos {
 
         private:
             static constexpr const char *_serviceName = "DigOutputs";
-            static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::normal;
+            static constexpr Task::Priority _servicePriority = Task::Priority::normal;
             static constexpr uint32_t _serviceStackDepth = 164;
             static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
 

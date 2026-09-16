@@ -38,11 +38,11 @@ export namespace eos {
 			/// \brief Obte l'alçada.
 			inline int16_t getHeight() const { return _height; }
 
-			Size inflated(int16_t h, int16_t v) const;
-			Size inflated(int16_t left, int16_t top, int16_t right, int16_t bottom) const;
-			Size constrained(const Size &s) const;
+			[[nodiscard]] Size inflated(int16_t h, int16_t v) const;
+			[[nodiscard]] Size inflated(int16_t left, int16_t top, int16_t right, int16_t bottom) const;
+			[[nodiscard]] Size constrained(const Size &s) const;
 
-			bool isEmpty() const;
+			[[nodiscard]] bool isEmpty() const;
 
 			Size& operator = (const Size &s);
 

@@ -9,15 +9,27 @@ module;
 export module Eos.System.Core.HeapAllocator;
 
 
+import Eos.Math;
+
+
 export namespace eos {
 
     class HeapAllocator {
         private:
             static uint32_t _allocateCount;
             static uint32_t _deallocateCount;
+#ifdef EOS_DEBUG
+            static size_t _minSize;
+            static size_t _maxSize;
+            static uint32_t _count8Bytes;
+            static uint32_t _count16Bytes;
+            static uint32_t _count32Bytes;
+            static uint32_t _count48Bytes;
+            static uint32_t _count64Bytes;
+#endif
 
         public:
-            static void * allocate(size_t size);
+            [[nodiscard]] static void * allocate(size_t size);
             static bool deallocate(void *ptr);
 
 			inline static uint32_t getAllocateCount() {
@@ -36,10 +48,23 @@ export namespace eos {
 
     uint32_t HeapAllocator::_allocateCount = 0;
     uint32_t HeapAllocator::_deallocateCount = 0;
+#ifdef EOS_DEBUG
+    size_t HeapAllocator::_minSize = Math::maxU32;
+    size_t HeapAllocator::_maxSize = Math::minU32;
+    uint32_t HeapAllocator::_count8Bytes = 0;
+    uint32_t HeapAllocator::_count16Bytes = 0;
+    uint32_t HeapAllocator::_count32Bytes = 0;
+    uint32_t HeapAllocator::_count48Bytes = 0;
+    uint32_t HeapAllocator::_count64Bytes = 0;
+#endif
 }
 
 
-//uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+#if (configAPPLICATION_ALLOCATED_HEAP == 1)
+extern "C" {
+    export uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+}
+#endif
 
 
 /// ---------------------------------------------------------------------------
@@ -53,6 +78,22 @@ void* eos::HeapAllocator::allocate(
 	void *ptr = pvPortMalloc(size);
 	if (ptr != nullptr)
 		_allocateCount++;
+
+#ifdef EOS_DEBUG
+	_minSize = eos::Math::min(_minSize, size);
+	_maxSize = eos::Math::max(_maxSize, size);
+
+    if (size <= 8)
+        _count8Bytes++;
+    else if (size <= 16)
+        _count16Bytes++;
+    else if (size <= 32)
+        _count32Bytes++;
+    else if (size <= 48)
+        _count48Bytes++;
+    else if (size <= 64)
+        _count64Bytes++;
+#endif
 
     return ptr;
 }
@@ -80,7 +121,7 @@ bool eos::HeapAllocator::deallocate(
 ///
 void * eos::HeapAllocator::getStoragePtr() {
 
-	return nullptr; // ucHeap;
+	return ucHeap;
 }
 
 

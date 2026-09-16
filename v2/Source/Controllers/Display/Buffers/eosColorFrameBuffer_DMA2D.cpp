@@ -1,23 +1,52 @@
 module;
 
 
-export module Eos.Controllers.Display;
-
-
 #include "eos.h"
-#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HTL/STM32/htlDMA2D.h"
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorMath.h"
+
+
+export module Eos.Controllers.Display.Buffers.Color_DMA2D;
+
+
+export import Eos.Cotrollers.Display.Buffers;
+
+
+import Eos.System.Graphics.Color;
+
+
+export namespace eos {
+
+	/// \brief Superficie de dibuix basada en memoria ram
+	///
+	class ColorFrameBuffer_DMA2D: public FrameBuffer {
+	    private:
+	        using DevDMA2D = htl::dma2d::DMA2DDevice;
+            static constexpr DevDMA2D *_devDMA2D = DevDMA2D::pInst;
+
+		private:
+			Color::Pixel * const _buffer;
+			int16_t const _framePitch;
+
+		private:
+			inline Color::Pixel *getPixelPtr(int16_t x, int16_t y) const { return &_buffer[(y * _framePitch) + x]; }
+
+		protected:
+			void put(int16_t x, int16_t y, Color color) override;
+            void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
+            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) override;
+            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
+
+		public:
+			ColorFrameBuffer_DMA2D(int16_t width, int16_t height, int16_t pitch, DisplayOrientation orientation, void *buffer);
+            uint8_t *getBuffer() const override;
+	};
+}
 
 
 #ifndef HTL_DMA2D_EXIST
 #error "DMA2D hardware unavailable"
 #endif
 
-
-using namespace eos;
-using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -27,7 +56,7 @@ using namespace htl;
 /// \param    opascity: Opacitat del pixel fg.
 /// \return   El pixel combinat.
 ///
-static Color::Pixel combinePixels(
+static eos::Color::Pixel combinePixels(
 	Color::Pixel fg,
 	Color::Pixel bg,
 	uint8_t opacity) {
@@ -140,7 +169,7 @@ static constexpr dma2d::InputColorMode getInputColorMode(
 /// \param    color: Color inicial.
 /// \param    buffer: Buffer.
 ///
-ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
+eos::ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	int16_t frameWidth,
 	int16_t frameHeight,
 	int16_t framePitch,
@@ -159,7 +188,7 @@ ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 /// \brief    Obter l'adresa del buffer d'imatge.
 /// \return   L'adressa.
 ///
-uint8_t *ColorFrameBuffer_DMA2D::getBuffer() const {
+uint8_t *eos::ColorFrameBuffer_DMA2D::getBuffer() const {
 
 	return (uint8_t*) _buffer;
 }
@@ -172,7 +201,7 @@ uint8_t *ColorFrameBuffer_DMA2D::getBuffer() const {
 /// \param    color: Color.
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
-void ColorFrameBuffer_DMA2D::put(
+void eos::ColorFrameBuffer_DMA2D::put(
 	int16_t x,
 	int16_t y,
 	Color color) {
@@ -213,7 +242,7 @@ void ColorFrameBuffer_DMA2D::put(
 /// \param    height: Alçada de la regio.
 /// \param    color: Color.
 ///
-void ColorFrameBuffer_DMA2D::fill(
+void eos::ColorFrameBuffer_DMA2D::fill(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -274,7 +303,7 @@ void ColorFrameBuffer_DMA2D::fill(
 /// \param    colors: Llista de colors.
 /// \param    colorPitch: Pitch de la llista de colors.
 ///
-void ColorFrameBuffer_DMA2D::copy(
+void eos::ColorFrameBuffer_DMA2D::copy(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -316,7 +345,7 @@ void ColorFrameBuffer_DMA2D::copy(
 /// \param    colorFormat: Format de la llista de colors.
 /// \param    colorPitch: Pitch de la llista de colors.
 ///
-void ColorFrameBuffer_DMA2D::copy(
+void eos::ColorFrameBuffer_DMA2D::copy(
 	int16_t x,
 	int16_t y,
 	int16_t width,

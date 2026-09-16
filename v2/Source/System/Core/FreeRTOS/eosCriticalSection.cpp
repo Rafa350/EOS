@@ -14,6 +14,9 @@ export namespace eos {
 
 	class CriticalSection final {
 		public:
+			CriticalSection() = delete;
+			~CriticalSection() = delete;
+
 			static inline void enter() {
 				taskENTER_CRITICAL();
 			}
@@ -26,6 +29,9 @@ export namespace eos {
 
 	class CriticalSectionLocker {
 		public:
+			CriticalSectionLocker(const CriticalSectionLocker&) = delete;
+			CriticalSectionLocker& operator=(const CriticalSectionLocker&) = delete;
+
 			inline CriticalSectionLocker() {
 				CriticalSection::enter();
 			}

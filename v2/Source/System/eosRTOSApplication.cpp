@@ -4,7 +4,6 @@ module;
 #include "eos.h"
 #include "eosAssert.h"
 #include "RTOS/rtosKernel.h"
-#include "RTOS/rtosTask.h"
 
 
 export module Eos.System.Application.RTOS;
@@ -13,6 +12,7 @@ export module Eos.System.Application.RTOS;
 import Eos.Services.Service;
 import Eos.System.Application;
 import Eos.System.Collections.IntrusiveForwardList;
+import Eos.System.Core.Task;
 
 
 export namespace eos {
@@ -31,18 +31,18 @@ export namespace eos {
         protected:
             struct ApplicationParams {
             	uint32_t stackDepth;
-            	rtos::Task::Priority priority;
+            	Task::Priority priority;
             	const char *name;
             };
 
         private:
             static constexpr const char *_defaultName = "Application";
             static constexpr unsigned _defaultStackDepth = 256;
-            static constexpr rtos::Task::Priority _defaultPriority = rtos::Task::Priority::normal;
+            static constexpr Task::Priority _defaultPriority = Task::Priority::normal;
 
         private:
-            rtos::Task::Event<RTOSApplication> _taskEvent;
-            rtos::Task *_task;
+            Task::Event<RTOSApplication> _taskEvent;
+            Task *_task;
             bool _running;
 
             ServiceInfoList _serviceInfoList;
@@ -51,7 +51,7 @@ export namespace eos {
             RTOSApplication(const RTOSApplication&) = delete;
             RTOSApplication& operator=(const RTOSApplication&) = delete;
 
-            void taskEventHandler(rtos::Task *task, rtos::Task::EventArgs *args);
+            void taskEventHandler(Task *task, Task::EventArgs *args);
             void onRun() override;
 
         protected:
@@ -93,8 +93,8 @@ eos::RTOSApplication::~RTOSApplication(){
 /// \brief    Callback de la tasca de l'aplicacio.
 ///
 void eos::RTOSApplication::taskEventHandler(
-	rtos::Task *task,
-	rtos::Task::EventArgs *args) {
+	Task *task,
+	Task::EventArgs *args) {
 
 	onExecute();
 }
@@ -123,7 +123,7 @@ void eos::RTOSApplication::onRun() {
 
 	onInitialize(params);
 
-	_task = new rtos::Task(
+	_task = new Task(
 		params.stackDepth,
 		params.priority,
 		params.name,

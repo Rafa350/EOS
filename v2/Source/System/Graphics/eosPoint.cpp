@@ -36,8 +36,8 @@ export namespace eos {
 
             Point& translate(int16_t dx, int16_t dy);
             Point& translate(const Point &d);
-            Point translated(int16_t dx, int16_t dy) const;
-            Point translated(const Point &p) const;
+            [[nodiscard]] Point translated(int16_t dx, int16_t dy) const;
+            [[nodiscard]] Point translated(const Point &p) const;
 
             Point& operator = (const Point &p);
 

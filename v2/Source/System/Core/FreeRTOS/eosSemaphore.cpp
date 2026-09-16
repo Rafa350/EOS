@@ -2,7 +2,7 @@ module;
 
 
 #include "eos.h"
-#include "RTOS/rtosTime.h"
+#include "eosTime.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
 
@@ -11,6 +11,9 @@ export module Eos.System.Core.Semaphore;
 
 
 export import Eos.Result;
+
+
+import Eos.System.Core.RTOSUtils;
 
 
 export namespace eos {
@@ -26,17 +29,22 @@ export namespace eos {
 
         private:
 			SemaphoreHandle_t _handler;
+#if (configSUPPORT_STATIC_ALLOCATION == 1)
+			StaticSemaphore_t _data;
+#endif
+        private:
+			[[nodiscard]] SemaphoreHandle_t createHandler();
 
         public:
             Semaphore();
-			Semaphore(const Semaphore&);
-			Semaphore(Semaphore&&);
+			Semaphore(const Semaphore&) = delete;
+			Semaphore(Semaphore&&) = delete;
             ~Semaphore();
 
-			Semaphore& operator = (const Semaphore &other);
-			Semaphore& operator = (Semaphore &&other);
+			Semaphore& operator = (const Semaphore &other) = delete;
+			Semaphore& operator = (Semaphore &&other) = delete;
 
-            Result wait(Time blockTime) const;
+            [[nodiscard]] Result wait(Time blockTime) const;
             void release() const;
             void releaseISR() const;
 	};
@@ -44,86 +52,54 @@ export namespace eos {
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Constructor.
+/// @brief    Constructor.
 ///
 eos::Semaphore::Semaphore():
-	_handler {xSemaphoreCreateBinary()} {
+	_handler {createHandler()} {
 
 }
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Constructor de copia.
-///
-eos::Semaphore::Semaphore(
-	const Semaphore &other):
-
-	_handler {other._handler} {
-
-}
-
-
-/// ---------------------------------------------------------------------------
-/// \brief    Constructor de moviment.
-///
-eos::Semaphore::Semaphore(
-	Semaphore &&other) {
-
-	_handler = other._handler;
-	other._handler = nullptr;
-}
-
-
-/// ---------------------------------------------------------------------------
-/// \brief    Destructor.
+/// @brief    Destructor.
 ///
 eos::Semaphore::~Semaphore() {
 
-	if (_handler != nullptr)
-		vSemaphoreDelete(_handler);
+	vSemaphoreDelete(_handler);
 }
 
 
 /// ---------------------------------------------------------------------------
-/// @brief 
-/// @param other 
-/// @return 
+/// @brief    Crea el handler d'un semaforo.
+/// @return   El handler.
 ///
-eos::Semaphore& eos::Semaphore::operator = (
-	const eos::Semaphore &other) {
+SemaphoreHandle_t eos::Semaphore::createHandler() {
 
-	return *this;
+#if (configSUPPORT_STATIC_ALLOCATION == 1)
+	SemaphoreHandle_t handler = xSemaphoreCreateBinaryStatic(&_data);
+#else
+	SemaphoreHandle_t handler = xSemaphoreCreateBinary();
+#endif
+	return  handler;
 }
 
 
 /// ---------------------------------------------------------------------------
-/// @brief 
-/// @param other 
-/// @return 
-///
-eos::Semaphore& eos::Semaphore::operator = (
-	eos::Semaphore &&other) {
-
-	return *this;
-}
-
-
-/// ---------------------------------------------------------------------------
-/// \brief    Espera el semaforo.
-/// \param    blockTime: Tamps de bloqueig.
-/// \return   True si es correcte. False en cas d'error o timeout.
+/// @brief    Espera el semaforo.
+/// @param    blockTime: Tamps de bloqueig.
+/// @return   True si es correcte. False en cas d'error o timeout.
 ///
 eos::Semaphore::Result eos::Semaphore::wait(
-	eos::Time blockTime) const {
+	Time blockTime) const {
 
-	return xSemaphoreTake(_handler, rtos::toTicks(blockTime)) == pdTRUE ?
+	return xSemaphoreTake(_handler, toTicks(blockTime)) == pdTRUE ?
 		ErrorCode::ok :
 		ErrorCode::timeout;
 }
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Allivera el semaforo.
+/// @brief    Allivera el semaforo.
 ///
 void eos::Semaphore::release() const {
 
@@ -132,7 +108,7 @@ void eos::Semaphore::release() const {
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Allivera el semaforo d'ins d'una funcio ISR.
+/// @brief    Allivera el semaforo d'ins d'una funcio ISR.
 ///
 void eos::Semaphore::releaseISR() const {
 

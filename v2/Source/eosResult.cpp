@@ -20,11 +20,6 @@ export namespace eos {
     template <IsEnum ErrorType_, ErrorType_ okValue_>
     class SimpleResultX {
         private:
-            /// @brief El codi d'error pel cas que no hagi error.
-            ///
-            static constexpr ErrorType_ _okValue = okValue_;
-
-        private:
             /// @brief El codi d'error.
             ///
             ErrorType_ const _error;
@@ -34,7 +29,7 @@ export namespace eos {
             /// @param error: El codi d'error
             ///
             constexpr SimpleResultX():
-                _error {_okValue} {
+                _error {okValue_} {
             }
 
             /// @brief Contructor.
@@ -59,7 +54,7 @@ export namespace eos {
             /// @brief Comprova si no hi ha cap error.
             /// @return True si tot es correcte i no hi ha error.
             ///
-            inline bool isSuccess() const { return _error == _okValue; }
+            inline bool isSuccess() const { return _error == okValue_; }
 
             /// @brief Comprova si el error es el especificat.
             /// @param error: El codi d'error de referencia.
@@ -69,7 +64,7 @@ export namespace eos {
 
             /// @brief Conversio a bool. True si no hi ha error, false en cas contrari.
             ///
-            inline operator bool () const { return _error == _okValue; }
+            inline operator bool () const { return _error == okValue_; }
     };
 
 

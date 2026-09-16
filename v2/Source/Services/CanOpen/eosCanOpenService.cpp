@@ -3,9 +3,7 @@ module;
 
 #include "eos.h"
 #include "eosTime.h"
-#include "rtos/rtosTask.h"
 #include "HTL/STM32/htlCAN.h"
-#include "RTOS/rtosTimer.h"
 
 
 export module Eos.Services.CanOpen;
@@ -19,6 +17,8 @@ import Eos.Result;
 import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
 import Eos.System.Core.Queue;
+import Eos.System.Core.Task;
+import Eos.System.Core.Timer;
 
 
 export namespace eos {
@@ -180,8 +180,8 @@ export namespace eos {
 		private:
 			htl::can::CANDevice * const _devCAN;
 			htl::can::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
-			rtos::Timer::Event<CanOpenService> _timer_notificationEvent;
-			rtos::Timer _timer;
+			Timer::Event<CanOpenService> _timer_notificationEvent;
+			Timer _timer;
         	CanOpenDictionary * const _dictionary;
 			NodeID const _nodeId;
 			NodeState _nodeState;
@@ -194,7 +194,7 @@ export namespace eos {
 
 		private:
             void canDevice_notificationEventHandler(htl::can::CANDevice *sender, htl::can::CANDevice::NotificationEventArgs *args);
-			void timer_notificationEventHandler(rtos::Timer *timer, rtos::Timer::EventArgs *args);
+			void timer_notificationEventHandler(Timer *timer, Timer::EventArgs *args);
 
             void configureCANDevice();
             void configureCANFilters();
@@ -305,11 +305,15 @@ export namespace eos {
 }
 
 
-constexpr const char *serviceName = "CanOpen";
-constexpr rtos::Task::Priority servicePriority = rtos::Task::Priority::normal;
-constexpr uint32_t serviceStackDepth = 256 + 64;
+namespace eos {
 
-constexpr unsigned defTimeout = 25;
+	constexpr const char *serviceName = "CanOpen";
+	constexpr Task::Priority servicePriority = Task::Priority::normal;
+	constexpr uint32_t serviceStackDepth = 256 + 64;
+
+	constexpr unsigned defTimeout = 25;
+
+}
 
 
 /// ----------------------------------------------------------------------
@@ -322,7 +326,7 @@ eos::CanOpenService::CanOpenService(
     _devCAN {params.devCAN},
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_timer_notificationEvent {*this, &CanOpenService::timer_notificationEventHandler},
-	_timer {rtos::Timer::Mode::autoRestart, nullptr, _timer_notificationEvent},
+	_timer {Timer::Mode::autoRestart, nullptr, _timer_notificationEvent},
 	_dictionary {params.dictionary},
 	_nodeId {(uint8_t)(params.nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
@@ -1801,8 +1805,8 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 /// \param    args: Parametres del event.
 ///
 void eos::CanOpenService::timer_notificationEventHandler(
-	rtos::Timer *sender,
-	rtos::Timer::EventArgs *args) {
+	Timer *sender,
+	Timer::EventArgs *args) {
 
 	uint8_t data[1];
 	switch (_nodeState) {

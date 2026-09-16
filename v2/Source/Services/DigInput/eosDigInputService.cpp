@@ -4,7 +4,6 @@ module;
 #include "eos.h"
 #include "eosEvents.h"
 #include "eosTime.h"
-#include "RTOS/rtosTask.h"
 
 
 export module Eos.Services.DigInput;
@@ -16,6 +15,7 @@ export import Eos.Services.Service;
 import Eos.Math;
 import Eos.Controllers.Pin;
 import Eos.System.Core.Queue;
+import Eos.System.Core.Task;
 import Eos.System.Collections.IntrusiveForwardList;
 
 
@@ -98,7 +98,7 @@ namespace eos {
 
         private:
             static constexpr const char *_serviceName = "DigInputs";
-            static constexpr rtos::Task::Priority _servicePriority = rtos::Task::Priority::normal;
+            static constexpr Task::Priority _servicePriority = Task::Priority::normal;
             static constexpr uint32_t _serviceStackDepth = 160;
             static constexpr Time _minScanPeriod = Time::fromMiliseconds(5);
 

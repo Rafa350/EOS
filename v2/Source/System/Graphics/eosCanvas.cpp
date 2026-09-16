@@ -2,8 +2,6 @@ module;
 
 
 #include "eos.h"
-//#include "System/eosString.h"
-#include "System/Core/eosPoolAllocator.h"
 
 
 export module Eos.System.Graphics.Canvas;
@@ -19,6 +17,7 @@ import Eos.System.Graphics.Point;
 import Eos.System.Graphics.Rect;
 import Eos.System.Graphics.Size;
 import Eos.System.Graphics.Transformation;
+import Eos.System.Core.PoolAllocator;
 
 
 constexpr uint32_t maxBitmaps = 10;
