@@ -13,6 +13,7 @@ export module Eos.System.IO.Streams.Serial;
 export import Eos.System.IO.Streams;
 
 
+import Eos.Ticks;
 import Eos.Controllers.Serial;
 
 
@@ -90,7 +91,7 @@ eos::ResultU32 eos::SerialStream::write(
 		if (_drvSerial->transmit(buffer, length).is(SerialDriver::ErrorCode::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(_txTimeout);
+			auto result = _drvSerial->wait(Ticks::fromMiliseconds(_txTimeout.toMiliseconds()));
 			if (result.isSuccess())
 				return {ResultU32::ErrorCodes::ok, result.getValue()};
 			else {
@@ -122,7 +123,7 @@ eos::ResultU32 eos::SerialStream::read(
 		if (_drvSerial->receive(buffer, bufferSize).is(SerialDriver::ErrorCode::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(_rxTimeout);
+			auto result = _drvSerial->wait(Ticks::fromMiliseconds(_rxTimeout.toMiliseconds()));
 			if (result.isSuccess())
 				return {ResultU32::ErrorCodes::ok, result.getValue()};
 			else

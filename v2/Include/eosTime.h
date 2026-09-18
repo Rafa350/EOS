@@ -12,9 +12,6 @@ namespace eos {
 	///
 	class Time final {
 		private:
-			static constexpr uint32_t _f = 1;
-
-		private:
 			uint32_t _value;
 
 		private:
@@ -34,19 +31,19 @@ namespace eos {
 			~Time() = default;
 
 			inline static constexpr Time fromMiliseconds(uint32_t miliseconds) {
-				return Time(miliseconds * _f);
+				return Time(miliseconds);
 			}
 
 			inline static constexpr Time fromSeconds(uint32_t seconds) {
-				return Time(seconds * 1000 * _f);
+				return Time(seconds * 1000);
 			}
 
 			inline uint32_t toMiliseconds() const {
-				return _value / _f;
+				return _value;
 			}
 
 			inline uint32_t toSeconds() const {
-				return _value / (1000 * _f);
+				return _value / (1000);
 			}
 
 			inline bool isZero() const {

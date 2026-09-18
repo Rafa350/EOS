@@ -8,7 +8,6 @@ module;
 export module Eos.Services.CanOpen.CanServer;
 
 
-
 export namespace eos {
 
     class CanServer final {

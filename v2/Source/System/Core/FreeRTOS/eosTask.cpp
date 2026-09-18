@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosCallbacks.h"
-#include "eosTime.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -12,6 +11,7 @@ module;
 export module Eos.System.Core.Task;
 
 
+import Eos.Ticks;
 import Eos.System.Core.CriticalSection;
 import Eos.System.Core.RTOSUtils;
 
@@ -86,10 +86,10 @@ export namespace eos {
 			[[nodiscard]] static Task* getExecutingTask();
 			[[nodiscard]] State getState() const;
 
-            static void delay(Time time);
-            static void delayUntil(Time time);
+            static void delay(Ticks time);
+            static void delayUntil(Ticks time);
 
-            static bool waitNotification(bool clear, Time blockTime);
+            static bool waitNotification(bool clear, Ticks blockTime);
             void raiseNotification();
             void raiseNotificationISR();
 
@@ -197,9 +197,9 @@ void eos::Task::kill() {
 /// \param    time: Temps d'espera en milisegons
 ///
 void eos::Task::delay(
-	Time time) {
+	Ticks time) {
 
-	vTaskDelay(toTicks(time));
+	vTaskDelay(static_cast<TickType_t>(time));
 }
 
 
@@ -209,13 +209,13 @@ void eos::Task::delay(
 /// \param    time: Temps d'espera en milisegons
 ///
 void eos::Task::delayUntil(
-	Time time) {
+	Ticks time) {
 
 	Task *task = Task::getExecutingTask();
 	if (task != nullptr) {
 		if (task->_lastWeakTick == 0)
 	    	task->_lastWeakTick = xTaskGetTickCount();
-		vTaskDelayUntil(&task->_lastWeakTick, toTicks(time));
+		vTaskDelayUntil(&task->_lastWeakTick, static_cast<TickType_t>(time));
 	}
 }
 
@@ -228,9 +228,11 @@ void eos::Task::delayUntil(
 ///
 bool eos::Task::waitNotification(
 	bool clear,
-	Time blockTime) {
+	Ticks blockTime) {
 
-	return ulTaskNotifyTake(clear ? pdTRUE : pdFALSE, toTicks(blockTime));
+	return ulTaskNotifyTake(
+		clear ? pdTRUE : pdFALSE,
+		static_cast<TickType_t>(blockTime));
 }
 
 

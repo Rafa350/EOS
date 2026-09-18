@@ -5,6 +5,7 @@ target_sources(${TARGET_NAME}
         eosBits.cpp
         eosMath.cpp
         eosResult.cpp
+        eosTicks.cpp
 )
 
 add_subdirectory("Controllers")

@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
 
@@ -13,6 +12,7 @@ export module Eos.System.Core.Semaphore;
 export import Eos.Result;
 
 
+import Eos.Ticks;
 import Eos.System.Core.RTOSUtils;
 
 
@@ -44,7 +44,7 @@ export namespace eos {
 			Semaphore& operator = (const Semaphore &other) = delete;
 			Semaphore& operator = (Semaphore &&other) = delete;
 
-            [[nodiscard]] Result wait(Time blockTime) const;
+            [[nodiscard]] Result wait(Ticks blockTime) const;
             void release() const;
             void releaseISR() const;
 	};
@@ -90,9 +90,9 @@ SemaphoreHandle_t eos::Semaphore::createHandler() {
 /// @return   True si es correcte. False en cas d'error o timeout.
 ///
 eos::Semaphore::Result eos::Semaphore::wait(
-	Time blockTime) const {
+	Ticks blockTime) const {
 
-	return xSemaphoreTake(_handler, toTicks(blockTime)) == pdTRUE ?
+	return xSemaphoreTake(_handler, static_cast<TickType_t>(blockTime)) == pdTRUE ?
 		ErrorCode::ok :
 		ErrorCode::timeout;
 }

@@ -115,7 +115,7 @@ void eos::DigOutputService::onOutputChanged(
 ///
 void eos::DigOutputService::set(
     DigOutput *output,
-	Time blockTime) {
+	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (_outputs.contains(output)) {
@@ -141,7 +141,7 @@ void eos::DigOutputService::set(
 ///
 void eos::DigOutputService::clear(
     DigOutput *output,
-	Time blockTime) {
+	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -167,7 +167,7 @@ void eos::DigOutputService::clear(
 ///
 void eos::DigOutputService::toggle(
     DigOutput *output,
-	Time blockTime) {
+	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -195,7 +195,7 @@ void eos::DigOutputService::toggle(
 void eos::DigOutputService::write(
     DigOutput *output,
     bool state,
-	Time blockTime) {
+	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -223,7 +223,7 @@ void eos::DigOutputService::write(
 void eos::DigOutputService::pulse(
     DigOutput *output,
     Time width,
-	Time blockTime) {
+	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -254,7 +254,7 @@ void eos::DigOutputService::delayedPulse(
     DigOutput *output,
     Time delay,
     Time width,
-	Time blockTime) {
+	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
 	if (containsOutput(output)) {
@@ -324,7 +324,7 @@ void eos::DigOutputService::onExecute() {
 
 	while (!stopSignal()) {
 		Action action;
-		while (_actionQueue.pop(action, Times::infinite))
+		while (_actionQueue.pop(action, Ticks::infinite()))
 			processAction(action);
 	}
 }

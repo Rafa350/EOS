@@ -27,8 +27,8 @@ export namespace eos {
 		protected:
             bool onInitialize() override;
             bool onDeinitialize() override;
-            bool onTransmit(const uint8_t *buffer, uint32_t length) override;
-            bool onReceive(uint8_t *buffer, uint32_t bufferSize) override;
+            bool onTransmit(const uint8_t *buffer, size_t length) override;
+            bool onReceive(uint8_t *buffer, size_t bufferSize) override;
             bool onAbort() override;
 
 		public:
@@ -82,7 +82,7 @@ bool eos::SerialDriver_UART::onDeinitialize() {
 ///
 bool eos::SerialDriver_UART::onTransmit(
 	const uint8_t *buffer,
-	uint32_t length) {
+	size_t length) {
 
 	eosAssert(buffer != nullptr);
 	eosAssert(length > 0);
@@ -99,7 +99,7 @@ bool eos::SerialDriver_UART::onTransmit(
 ///
 bool eos::SerialDriver_UART::onReceive(
 	uint8_t *buffer,
-	uint32_t bufferSize) {
+	size_t bufferSize) {
 
 	eosAssert(buffer != nullptr);
 	eosAssert(bufferSize > 0);

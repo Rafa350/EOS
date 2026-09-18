@@ -14,6 +14,7 @@ export import Eos.Services.Service;
 
 import Eos.Math;
 import Eos.Result;
+import Eos.Ticks;
 import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
 import Eos.System.Core.Queue;
@@ -214,7 +215,7 @@ export namespace eos {
             void processMessage_ChangeNodeState(const ChangeNodeState &args);
             void processMessage_TransmitFrame(const TransmitFrame &args);
 
-            Result postMessage_TransmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
+            Result postMessage_TransmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Ticks blockTime);
 
             void processSDO(const uint8_t *data);
 			void processRPDO(CobID cobId, const uint8_t *data, uint32_t dataLen);
@@ -223,13 +224,13 @@ export namespace eos {
 
 			bool isMapped(uint8_t tpdo, uint32_t entryId);
 
-			Result transmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Time blockTime);
+			Result transmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Ticks blockTime);
 
 		protected:
 			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
-			Result emitNMT(uint8_t command, NodeID nodeId, Time blockTime);
+			Result emitNMT(uint8_t command, NodeID nodeId, Ticks blockTime);
 
             void onNodeStateChanged();
 
@@ -247,15 +248,15 @@ export namespace eos {
 			CanOpenService(const CanOpenService &) = delete;
 			CanOpenService(const CanOpenService &&) = delete;
 
-			Result setNodeState(NodeState nodeState, Time blockTime);
+			Result setNodeState(NodeState nodeState, Ticks blockTime);
 			NodeState getNodeState() const;
 			NodeID getNodeId() const;
 
             // Lectura i escriptura en el dicionari local
             //
-            bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask, Time blockTime);
-            bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask, Time blockTime);
-            bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask, Time blockTime);
+            bool writeU8(uint16_t index, uint8_t subIndex, uint8_t value, uint8_t mask, Ticks blockTime);
+            bool writeU16(uint16_t index, uint8_t subIndex, uint16_t value, uint16_t mask, Ticks blockTime);
+            bool writeU32(uint16_t index, uint8_t subIndex, uint32_t value, uint32_t mask, Ticks blockTime);
             bool readU8(uint16_t index, uint8_t subIndex, uint8_t &value);
             bool readU16(uint16_t index, uint8_t subIndex, uint16_t &value);
             bool readU32(uint16_t index, uint8_t subIndex, uint32_t &value);
@@ -271,19 +272,19 @@ export namespace eos {
 
             // Canvia l'estat d'un node remot (Protocol NMT)
             //
-			Result start(NodeID nodeId, Time blockTime);
-			Result stop(NodeID nodeId, Time blockTime);
-			Result enterPreOperational(NodeID nodeId, Time blockTime);
-			Result resetNode(NodeID nodeId, Time blockTime);
-			Result resetCommunication(NodeID nodeId, Time blockTime);
+			Result start(NodeID nodeId, Ticks blockTime);
+			Result stop(NodeID nodeId, Ticks blockTime);
+			Result enterPreOperational(NodeID nodeId, Ticks blockTime);
+			Result resetNode(NodeID nodeId, Ticks blockTime);
+			Result resetCommunication(NodeID nodeId, Ticks blockTime);
 
             // Senyal de sincronitzacio al bus (Protocol SYNC)
             //
-            Result emitSYNC(Time timeout);
+            Result emitSYNC(Ticks timeout);
 
 			// Emet missatges RPDO
 			//
-			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, uint32_t dataLen, Time timeout);
+			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, uint32_t dataLen, Ticks blockTime);
 
 			// Habilita i deshabilita els events
 			//
@@ -370,7 +371,7 @@ void eos::CanOpenService::onExecute() {
 	//
 	Message msg;
 	msg.id = MessageID::initialized;
-	_messageQueue.push(msg, eos::Times::infinite);
+	_messageQueue.push(msg, Ticks::infinite());
 
 	// Repeteix mentre no es canceli la tasca
 	//
@@ -379,7 +380,7 @@ void eos::CanOpenService::onExecute() {
 		// Procesa els missatges de la cua
 		//
 		Message message;
-		while(_messageQueue.pop(message, Time::fromMiliseconds(1000)))
+		while(_messageQueue.pop(message, Ticks::fromMiliseconds(1000)))
 			processMessage(message);
 	}
 
@@ -465,7 +466,7 @@ void eos::CanOpenService::configureHeartbeat() {
 
 		// Activa el temporitzador
 		//
-		_timer.start(Time::fromMiliseconds(interval), Time::fromMiliseconds(100));
+		_timer.start(Time::fromMiliseconds(interval), Ticks::fromMiliseconds(100));
 	}
 }
 
@@ -787,7 +788,7 @@ void eos::CanOpenService::processMessage_Initialized() {
 
 	CobID cobId = CobID::makeHeartbeat(_nodeId);
 
-	transmitFrame(cobId, data, sizeof(data), Time::fromMiliseconds(100));
+	transmitFrame(cobId, data, sizeof(data), Ticks::fromMiliseconds(100));
 
 	// Canvia l'estat a 'preOperational'
 	//
@@ -851,7 +852,7 @@ void eos::CanOpenService::processMessage_TransmitFrame(
 		CobID(args.cobid),
 		args.data,
 		args.dataLen,
-		Time::fromMiliseconds(50));
+		Ticks::fromMiliseconds(50));
 }
 
 
@@ -1151,7 +1152,7 @@ void eos::CanOpenService::processMessage_FrameReceived_SDO(
 	//
 	uint32_t cobidSDOr;
 	if (_dictionary->readU32(0x1200, 0x02, cobidSDOr))
-		transmitFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), Time::fromMiliseconds(defTimeout));
+		transmitFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), Ticks::fromMiliseconds(defTimeout));
 }
 
 
@@ -1284,7 +1285,7 @@ void eos::CanOpenService::processMessage_FrameReceived_RPDO(
 ///
 eos::CanOpenService::Result eos::CanOpenService::setNodeState(
 	NodeState nodeState,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	Message message = {
 		.id {MessageID::changeNodeState},
@@ -1335,7 +1336,7 @@ bool eos::CanOpenService::writeU8(
 	uint8_t subIndex,
 	uint8_t value,
 	uint8_t mask,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	auto ok = false;
 
@@ -1374,7 +1375,7 @@ bool eos::CanOpenService::writeU16(
 	uint8_t subIndex,
 	uint16_t value,
 	uint16_t mask,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	auto ok = false;
 
@@ -1413,7 +1414,7 @@ bool eos::CanOpenService::writeU32(
 	uint8_t subIndex,
 	uint32_t value,
 	uint32_t mask,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	auto ok = false;
 
@@ -1494,7 +1495,7 @@ bool eos::CanOpenService::readU32(
 ///
 eos::CanOpenService::Result eos::CanOpenService::start(
 	NodeID nodeId,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1521,7 +1522,7 @@ eos::CanOpenService::Result eos::CanOpenService::start(
 ///
 eos::CanOpenService::Result eos::CanOpenService::stop(
 	NodeID nodeId,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1549,7 +1550,7 @@ eos::CanOpenService::Result eos::CanOpenService::stop(
 ///
 eos::CanOpenService::Result eos::CanOpenService::enterPreOperational(
 	NodeID nodeId,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1577,7 +1578,7 @@ eos::CanOpenService::Result eos::CanOpenService::enterPreOperational(
 ///
 eos::CanOpenService::Result eos::CanOpenService::resetNode(
 	NodeID nodeId,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1605,7 +1606,7 @@ eos::CanOpenService::Result eos::CanOpenService::resetNode(
 ///
 eos::CanOpenService::Result eos::CanOpenService::resetCommunication(
 	NodeID nodeId,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
@@ -1706,7 +1707,7 @@ void eos::CanOpenService::sendTPDO(
 		if (ok) {
 			uint32_t cobid;
 			if (_dictionary->readU32(0x1800 + tpdo, 0x01, cobid))
-				transmitFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, Time::fromMiliseconds(100));
+				transmitFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, Ticks::fromMiliseconds(100));
 		}
 	}
 }
@@ -1723,11 +1724,11 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 	CobID cobId,
 	const uint8_t *data,
 	uint32_t length,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	// Espera que el buffer no estigui ple
 	//
-	if (!_devCAN->waitTxBufferNotFull(blockTime).isOK())
+	if (!_devCAN->waitTxBufferNotFull(Time::fromMiliseconds((uint32_t)blockTime)).isOK())
 		return ErrorCode::busy;
 
 	// Prepara la trama
@@ -1790,7 +1791,7 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 
 	// Espera que es transmiteixi, i si cal aborta la transmissio
 	//
-	if (!_devCAN->waitTxBufferEmpty(blockTime).isOK()) {
+	if (!_devCAN->waitTxBufferEmpty(Time::fromMiliseconds((uint32_t)blockTime)).isOK()) {
 		_devCAN->abortTxBufferTransmission();
 		return ErrorCode::timeout;
 	}
@@ -1832,7 +1833,7 @@ void eos::CanOpenService::timer_notificationEventHandler(
 
 	CobID cobId = CobID::makeHeartbeat(_nodeId);
 
-	postMessage_TransmitFrame(cobId, data, sizeof(data), Time::fromMiliseconds(100));
+	postMessage_TransmitFrame(cobId, data, sizeof(data), Ticks::fromMiliseconds(100));
 }
 
 
@@ -1886,7 +1887,7 @@ eos::CanOpenService::Result eos::CanOpenService::postMessage_TransmitFrame(
 	CobID cobId,
 	const uint8_t *data,
 	uint32_t length,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	if (length > _canFrameSize)
 		return ErrorCode::errorParameter;
@@ -1909,7 +1910,7 @@ eos::CanOpenService::Result eos::CanOpenService::postMessage_TransmitFrame(
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
 eos::CanOpenService::Result eos::CanOpenService::emitSYNC(
-	Time blockTime) {
+	Ticks blockTime) {
 
 	uint32_t options;
 	if (_dictionary->readU32(0x1005, 0x00, options) &&
@@ -1937,7 +1938,7 @@ eos::CanOpenService::Result eos::CanOpenService::emitRPDO(
 	uint8_t rpdoId,
 	const uint8_t *data,
 	uint32_t dataLen,
-	Time timeout) {
+	Ticks timeout) {
 
 	Message message = {
 		.id {MessageID::transmitFrame},

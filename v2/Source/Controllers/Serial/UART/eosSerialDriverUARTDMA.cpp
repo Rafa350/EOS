@@ -21,8 +21,8 @@ export namespace eos {
 	        htl::dma::DMADevice * const _devDMArx;
 
 	    private:
-            bool onTransmit(const uint8_t *buffer, uint32_t length) override;
-            bool onReceive(uint8_t *buffer, uint32_t bufferSize) override;
+            bool onTransmit(const uint8_t *buffer, size_t length) override;
+            bool onReceive(uint8_t *buffer, size_t bufferSize) override;
 
 	    public:
             SerialDriver_UARTDMA(htl::uart::UARTDevice *devUART, htl::dma::DMADevice *devDMAtx, htl::dma::DMADevice *devDMArx);
@@ -52,7 +52,7 @@ eos::SerialDriver_UARTDMA::SerialDriver_UARTDMA(
 ///
 bool eos::SerialDriver_UARTDMA::onTransmit(
 	const uint8_t *buffer,
-	uint32_t bufferSize) {
+	size_t bufferSize) {
 
     return _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize).isSuccess();
 }
@@ -65,7 +65,7 @@ bool eos::SerialDriver_UARTDMA::onTransmit(
 ///
 bool eos::SerialDriver_UARTDMA::onReceive(
 	uint8_t *buffer,
-	uint32_t bufferSize) {
+	size_t bufferSize) {
 
     return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }

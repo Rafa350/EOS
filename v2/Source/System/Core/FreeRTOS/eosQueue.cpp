@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"
@@ -11,6 +10,7 @@ module;
 export module Eos.System.Core.Queue;
 
 
+import Eos.Ticks;
 import Eos.System.Core.RTOSUtils;
 
 
@@ -34,11 +34,11 @@ export namespace eos {
 
             void clear() const;
 
-            bool push(const T_ &element, Time blockTime) const;
+            bool push(const T_ &element, Ticks blockTime) const;
             bool pushISR(const T_ &element) const;
-            bool pop(T_ &element, Time blockTime) const;
+            bool pop(T_ &element, Ticks blockTime) const;
             bool popISR(T_ &element) const;
-            bool peek(T_ &element, Time blockTime) const;
+            bool peek(T_ &element, Ticks blockTime) const;
             bool peekISR(T_ &element) const;
 
             [[nodiscard]] bool isEmpty() const;
@@ -112,12 +112,12 @@ void eos::Queue<T_>::clear() const {
 template <typename T_>
 bool eos::Queue<T_>::push(
 	const T_ &element,
-	Time blockTime) const {
+	Ticks blockTime) const {
 
     return xQueueSendToBack(
         _handler,
         static_cast<const void*>(&element),
-        toTicks(blockTime)) == pdPASS;
+        static_cast<TickType_t>(blockTime)) == pdPASS;
 }
 
 
@@ -155,12 +155,12 @@ bool eos::Queue<T_>::pushISR(
 template <typename T_>
 bool eos::Queue<T_>::pop(
 	T_ &element,
-	Time blockTime) const {
+	Ticks blockTime) const {
 
     return xQueueReceive(
         _handler,
         static_cast<void*>(&element),
-    	toTicks(blockTime)) == pdPASS;
+    	static_cast<TickType_t>(blockTime)) == pdPASS;
 }
 
 
@@ -198,12 +198,12 @@ bool eos::Queue<T_>::popISR(
 template <typename T_>
 bool eos::Queue<T_>::peek(
 	T_ &element,
-	eos::Time blockTime) const {
+	Ticks blockTime) const {
 
     return xQueuePeek(
         _handler,
         static_cast<void*>(&element),
-    	toTicks(blockTime)) == pdPASS;
+    	static_cast<TickType_t>(blockTime)) == pdPASS;
 }
 
 
@@ -256,7 +256,7 @@ bool eos::Queue<T_>::isEmptyISR() const {
 template <typename T_>
 uint32_t eos::Queue<T_>::getCount() const {
 
-	return uxQueueMessagesWaiting(static_cast<QueueHandle_t>(_handler));
+	return uxQueueMessagesWaiting(_handler);
 }
 
 
@@ -269,6 +269,5 @@ uint32_t eos::Queue<T_>::getCount() const {
 template <typename T_>
 uint32_t eos::Queue<T_>::getCountISR() const {
 
-	return uxQueueMessagesWaitingFromISR(
-			static_cast<QueueHandle_t>(_handler));
+	return uxQueueMessagesWaitingFromISR(_handler);
 }

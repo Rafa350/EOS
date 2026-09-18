@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 #include "HTL/htlGPIO.h"
 
 
@@ -12,6 +11,7 @@ export module Eos.Services.LedService;
 export import Eos.Services.Service;
 
 
+import Eos.Ticks;
 import Eos.System.Core.Task;
 
 
@@ -38,10 +38,10 @@ namespace eos {
 	        static constexpr uint32_t _serviceStackDepth = 96;
 	        static constexpr Task::Priority _servicePriority = Task::Priority::low;
 
-	        static constexpr Time _stepInterval  = Time::fromMiliseconds(150);
-	        static constexpr Time _slowBlinkInterval = Time::fromMiliseconds(1000);
-	        static constexpr Time _mediumBlinkInterval = Time::fromMiliseconds(500);
-	        static constexpr Time _fastBlinkInterval = Time::fromMiliseconds(250);
+	        static constexpr uint32_t _stepInterval        = 150;
+	        static constexpr uint32_t _slowBlinkInterval   = 1000;
+	        static constexpr uint32_t _mediumBlinkInterval = 500;
+	        static constexpr uint32_t _fastBlinkInterval   = 250;
 
 	        static constexpr uint16_t _flash1Pattern    = 0b0000000001001111;
 	        static constexpr uint16_t _flash2Pattern    = 0b0000000101001111;
@@ -104,12 +104,12 @@ void eos::LedService::onExecute() {
     	switch (_mode) {
     		case LedMode::on:
     			_pinLED->set();
-    			Task::delayUntil(Time::fromMiliseconds(1000));
+    			Task::delayUntil(Ticks::fromMiliseconds(1000));
     			break;
 
     		case LedMode::off:
     			_pinLED->clear();
-    			Task::delayUntil(Time::fromMiliseconds(1000));
+    			Task::delayUntil(Ticks::fromMiliseconds(1000));
     			break;
 
     		case LedMode::slowBlink:
@@ -126,7 +126,7 @@ void eos::LedService::onExecute() {
     					break;
     			}
     			_pinLED->toggle();
-    			Task::delayUntil(interval);
+    			Task::delayUntil(Ticks::fromMiliseconds(interval));
     			break;
     		}
 
@@ -150,7 +150,7 @@ void eos::LedService::onExecute() {
     			}
     			_pinLED->write((pattern & (1 << _step)) != 0);
     			_step = (_step + 1) & 0x0F;
-    			Task::delayUntil(_stepInterval);
+    			Task::delayUntil(Ticks::fromMiliseconds(_stepInterval));
     			break;
     		}
     	}

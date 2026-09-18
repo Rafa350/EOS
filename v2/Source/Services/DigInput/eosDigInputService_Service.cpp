@@ -9,6 +9,7 @@ module;
 module Eos.Services.DigInput;
 
 
+import Eos.Ticks;
 import Eos.System.Core.CriticalSection;
 
 
@@ -182,7 +183,7 @@ void eos::DigInputService::onExecute() {
 
     while (!stopSignal()) {
 
-		Task::delayUntil(_scanPeriod);
+		Task::delayUntil(Ticks::fromMiliseconds(_scanPeriod.toMiliseconds()));
 
 		// Notifica l'inici de l'escaneig d'entrades
 		//

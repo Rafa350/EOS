@@ -37,6 +37,7 @@ export import Eos.Services.Service;
 
 
 import Eos.Math;
+import Eos.Ticks;
 import Eos.Controllers.Pin;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Core.CriticalSection;
@@ -202,20 +203,19 @@ namespace eos {
             	_outputChangedEventRaiser.disable();
             }
 
-            void set(DigOutput *output, Time blockTime);
-            void clear(DigOutput *output, Time blockTime);
-            void write(DigOutput *output, bool pinState, Time blockTime);
-            void toggle(DigOutput *output, Time blockTime);
-            void pulse(DigOutput *output, Time width, Time blockTime);
-            void delayedSet(DigOutput *output, Time delay, Time blockTime);
-            void delayedClear(DigOutput *output, Time delay, Time blockTime);
-            void delayedToggle(DigOutput *output, Time delay, Time blockTime);
-            void delayedPulse(DigOutput *output, Time delay, Time pulseWidth, Time blockTime);
+            void set(DigOutput *output, Ticks blockTime);
+            void clear(DigOutput *output, Ticks blockTime);
+            void write(DigOutput *output, bool pinState, Ticks blockTime);
+            void toggle(DigOutput *output, Ticks blockTime);
+            void pulse(DigOutput *output, Time width, Ticks blockTime);
+            void delayedSet(DigOutput *output, Time delay, Ticks blockTime);
+            void delayedClear(DigOutput *output, Time delay, Ticks blockTime);
+            void delayedToggle(DigOutput *output, Time delay, Ticks blockTime);
+            void delayedPulse(DigOutput *output, Time delay, Time pulseWidth, Ticks blockTime);
             bool read(DigOutput *ouput);
 
-            void tick(Time blockTime);
+            void tick(Ticks blockTime);
             void tickISR();
     };
-
 
 }

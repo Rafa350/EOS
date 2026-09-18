@@ -2,8 +2,8 @@ module;
 
 
 #include "eos.h"
-#include "eosCallbacks.h"
 #include "eosTime.h"
+#include "eosCallbacks.h"
 
 #include "FreeRTOS.h"
 #include "timers.h"
@@ -13,6 +13,7 @@ module;
 export module Eos.System.Core.Timer;
 
 
+import Eos.Ticks;
 import Eos.System.Core.RTOSUtils;
 
 
@@ -55,11 +56,11 @@ export namespace eos {
 			Timer& operator=(const Timer&) = delete;
 			Timer& operator=(Timer&&) = delete;
 
-			bool start(Time interval, Time blockTime) const;
+			bool start(Time interval, Ticks blockTime) const;
 			bool startISR(Time interval) const;
 			bool restart(Time blockTime) const;
 			bool restartISR() const;
-			bool stop(Time blockTime) const;
+			bool stop(Ticks blockTime) const;
 			bool stopISR() const;
 
 			[[nodiscard]] bool isActive() const;
@@ -110,12 +111,17 @@ eos::Timer::~Timer() {
 ///
 bool eos::Timer::start(
 	Time interval,
-	Time blockTime) const {
+	Ticks blockTime) const {
 
     if (interval.isZero())
-        return xTimerStart(_handler, toTicks(blockTime)) == pdPASS;
+        return xTimerStart(
+			_handler,
+			static_cast<TickType_t>(blockTime)) == pdPASS;
     else
-        return xTimerChangePeriod(_handler, toTicks(interval), toTicks(blockTime)) == pdPASS;
+        return xTimerChangePeriod(
+			_handler,
+			toTicks(interval),
+			static_cast<TickType_t>(blockTime)) == pdPASS;
 }
 
 
@@ -147,9 +153,11 @@ bool eos::Timer::startISR(
 /// \return   TRue si tot es correcte.
 ///
 bool eos::Timer::stop(
-	Time blockTime) const {
+	Ticks blockTime) const {
 
-	return xTimerStop(_handler, toTicks(blockTime)) == pdPASS;
+	return xTimerStop(
+		_handler,
+		static_cast<TickType_t>(blockTime)) == pdPASS;
 }
 
 

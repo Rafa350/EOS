@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "eosTime.h"
 #include "HTL/htlINT.h"
 
 
@@ -11,6 +10,7 @@ export module Eos.Controllers.Serial;
 
 
 import Eos.Result;
+import Eos.Ticks;
 import Eos.System.Core.Task;
 
 
@@ -54,8 +54,8 @@ export namespace eos {
 
 			virtual bool onInitialize() = 0;
 			virtual bool onDeinitialize() = 0;
-			virtual bool onTransmit(const uint8_t *buffer, uint32_t length) = 0;
-			virtual bool onReceive(uint8_t *buffer, uint32_t bufferSize) = 0;
+			virtual bool onTransmit(const uint8_t *buffer, size_t length) = 0;
+			virtual bool onReceive(uint8_t *buffer, size_t bufferSize) = 0;
 			virtual bool onAbort() = 0;
 
 		public:
@@ -64,9 +64,9 @@ export namespace eos {
 			void initialize();
 			void deinitialize();
 
-			Result transmit(const uint8_t *buffer, uint32_t length);
-            Result receive(uint8_t *buffer, uint32_t bufferSize);
-            ResultU32 wait(Time blockTime);
+			Result transmit(const uint8_t *buffer, size_t length);
+            Result receive(uint8_t *buffer, size_t bufferSize);
+            ResultU32 wait(Ticks blockTime);
             Result abort();
 
 			inline bool isReady() const { return _state == State::ready; }
@@ -114,7 +114,7 @@ void eos::SerialDriver::deinitialize() {
 ///
 eos::SerialDriver::Result eos::SerialDriver::transmit(
     const uint8_t *buffer,
-    uint32_t length) {
+    size_t length) {
 
 	if ((buffer == nullptr) ||
 		(length == 0))
@@ -144,7 +144,7 @@ eos::SerialDriver::Result eos::SerialDriver::transmit(
 ///
 eos::SerialDriver::Result eos::SerialDriver::receive(
     uint8_t *buffer,
-    uint32_t bufferSize) {
+    size_t bufferSize) {
 
 	if ((buffer == nullptr) ||
 		(bufferSize == 0))
@@ -173,7 +173,7 @@ eos::SerialDriver::Result eos::SerialDriver::receive(
 /// \notes    En cas de timeout, s'aborta la comunicacio.
 ///
 eos::SerialDriver::ResultU32 eos::SerialDriver::wait(
-	Time blockTime) {
+	Ticks blockTime) {
 
 	if (_state == State::receiving) {
 
