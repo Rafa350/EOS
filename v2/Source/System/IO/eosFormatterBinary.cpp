@@ -20,7 +20,7 @@ export namespace eos {
             const uint8_t * _ptr;
 
         public:
-            BinaryReader(const uint8_t *buffer, unsigned bufferSize);
+            BinaryReader(const uint8_t *buffer, size_t bufferSize);
 
             inline void reset() { _ptr = _begin; }
 
@@ -32,7 +32,7 @@ export namespace eos {
             bool readI8(int8_t &data);
             bool readI16(int16_t &data);
             bool readI32(int32_t &data);
-            bool read(uint8_t *data, unsigned size);
+            bool read(uint8_t *data, size_t size);
 
             inline bool eof() const { return _ptr == _end; }
 
@@ -47,7 +47,7 @@ export namespace eos {
             uint8_t * _ptr;
 
         public:
-            BinaryWriter(uint8_t *buffer, unsigned bufferSize);
+            BinaryWriter(uint8_t *buffer, size_t bufferSize);
 
             inline void clear() { _ptr = _begin; }
 
@@ -67,7 +67,7 @@ export namespace eos {
             	return writeU32(static_cast<uint32_t>(data));
             }
 
-            bool write(const uint8_t *data, unsigned size);
+            bool write(const uint8_t *data, size_t size);
 
             inline bool write(bool data) {
             	return writeU8(static_cast<uint8_t>(data));

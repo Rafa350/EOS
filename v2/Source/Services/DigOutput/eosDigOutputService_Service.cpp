@@ -15,7 +15,6 @@ import Eos.System.Core.CriticalSection;
 /// \brief    Constructor.
 ///
 eos::DigOutputService::DigOutputService():
-	_timeCounter {Time::fromMiliseconds(0)},
 	_actionQueue {_actionQueueSize} {
 
 }
@@ -123,7 +122,10 @@ void eos::DigOutputService::set(
 
 		Action action = {
 			.id {ActionID::set},
-			.output {static_cast<DigOutputImpl*>(output)}
+			.output {static_cast<DigOutputImpl*>(output)},
+			.timing {
+				.now {Ticks::now()}
+			}
 		};
 
 		_actionQueue.push(action, blockTime);
@@ -149,7 +151,10 @@ void eos::DigOutputService::clear(
 
 		Action action = {
 			.id {ActionID::clear},
-			.output {static_cast<DigOutputImpl*>(output)}
+			.output {static_cast<DigOutputImpl*>(output)},
+			.timing {
+				.now {Ticks::now()}
+			}
 		};
 
 		_actionQueue.push(action, blockTime);
@@ -175,7 +180,10 @@ void eos::DigOutputService::toggle(
 
 		Action action = {
 			.id {ActionID::toggle},
-			.output {static_cast<DigOutputImpl*>(output)}
+			.output {static_cast<DigOutputImpl*>(output)},
+			.timing {
+				.now {Ticks::now()}
+			}
 		};
 
 		_actionQueue.push(action, blockTime);
@@ -203,7 +211,10 @@ void eos::DigOutputService::write(
 
 		Action action = {
 			.id {state ? ActionID::set : ActionID::clear},
-			.output {static_cast<DigOutputImpl*>(output)}
+			.output {static_cast<DigOutputImpl*>(output)},
+			.timing {
+				.now {Ticks::now()}
+			}
 		};
 
 		_actionQueue.push(action, blockTime);
@@ -222,7 +233,7 @@ void eos::DigOutputService::write(
 ///
 void eos::DigOutputService::pulse(
     DigOutput *output,
-    Time width,
+    Ticks pulse,
 	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
@@ -232,7 +243,10 @@ void eos::DigOutputService::pulse(
 		Action action = {
 			.id {ActionID::pulse},
 			.output {static_cast<DigOutputImpl*>(output)},
-			.time1 {eos::Math::max(width, minPulseWidth)}
+			.timing {
+				.now {Ticks::now()},
+				.pulse {Math::max(pulse, minPulseWidth)}
+			}
 		};
 
 		_actionQueue.push(action, blockTime);
@@ -247,13 +261,13 @@ void eos::DigOutputService::pulse(
 /// \brief    Genera un puls de conmutacio retardat.
 /// \param    output: La sortida.
 /// \param    delay: El retard del puls.
-/// \param    width: L'amplada del puls.
+/// \param    pulse: L'amplada del puls.
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::delayedPulse(
     DigOutput *output,
-    Time delay,
-    Time width,
+    Ticks delay,
+    Ticks pulse,
 	Ticks blockTime) {
 
 #if DigOutputService_SafeMode == 1
@@ -263,8 +277,11 @@ void eos::DigOutputService::delayedPulse(
 		Action action = {
 			.id {ActionID::delayedPulse},
 			.output {static_cast<DigOutputImpl*>(output)},
-			.time1 {eos::Math::max(delay, minDelay)},
-			.time2 {eos::Math::max(width, minPulseWidth)}
+			.timing {
+				.now {Ticks::now()},
+				.delay {eos::Math::max(delay, minDelay)},
+				.pulse {eos::Math::max(pulse, minPulseWidth)}
+			}
 		};
 
 		_actionQueue.push(action, blockTime);
@@ -351,23 +368,23 @@ void eos::DigOutputService::processAction(
             break;
 
         case ActionID::pulse:
-            processPulse(action.output, action.time1);
+            processPulse(action.output, action.timing);
             break;
 
         case ActionID::delayedSet:
-            processDelayedSet(action.output, action.time1);
+            processDelayedSet(action.output, action.timing);
             break;
 
         case ActionID::delayedClear:
-            processDelayedClear(action.output, action.time1);
+            processDelayedClear(action.output, action.timing);
             break;
 
         case ActionID::delayedToggle:
-            processDelayedToggle(action.output, action.time1);
+            processDelayedToggle(action.output, action.timing);
             break;
 
         case ActionID::delayedPulse:
-            processDelayedPulse(action.output, action.time1, action.time2);
+            processDelayedPulse(action.output, action.timing);
             break;
 
         case ActionID::tick:
@@ -420,14 +437,14 @@ void eos::DigOutputService::processToggle(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'pulse'.
 /// \param    output: La sortida.
-/// \param    pulseWidth: L'amplada del puls.
+/// \param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processPulse(
     DigOutputImpl *output,
-    Time pulseWidth) {
+	const Timing &timing) {
 
 	bool oldValue = output->getValue();
-	output->pulse(_timeCounter, pulseWidth);
+	output->pulse(timing.now, timing.pulse);
 	if (oldValue != output->getValue())
 		onOutputChanged(output);
 }
@@ -436,11 +453,11 @@ void eos::DigOutputService::processPulse(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'delayedSet'.
 /// \param    output: La sortida.
-/// \param    delay: El retard.
+/// \param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedSet(
     DigOutputImpl *output,
-    Time delay) {
+ 	const Timing &timing) {
 
 }
 
@@ -448,11 +465,11 @@ void eos::DigOutputService::processDelayedSet(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'delayedClear'.
 /// \param    output: La sortida.
-/// \param    delay: El retard.
+/// \param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedClear(
     DigOutputImpl *output,
-    Time delay) {
+	const Timing &timing) {
 
 }
 
@@ -460,11 +477,11 @@ void eos::DigOutputService::processDelayedClear(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'delayedToggle'.
 /// \param    output: La sortida.
-/// \param    delay: El retard.
+/// \param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedToggle(
     DigOutputImpl *output,
-    Time delay) {
+	const Timing &timing) {
 
 }
 
@@ -472,15 +489,13 @@ void eos::DigOutputService::processDelayedToggle(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'delayedPulse'.
 /// \param    output: La sortida.
-/// \param    delay: El retard del puls.
-/// \param    pulseWidth: L'amplada del puls.
+/// \param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedPulse(
     DigOutputImpl *output,
-    Time delay,
-    Time pulseWidth) {
+	const Timing &timing) {
 
-	output->delayedPulse(_timeCounter, delay, pulseWidth);
+	output->delayedPulse(timing.now, timing.delay, timing.pulse);
 }
 
 
@@ -493,7 +508,7 @@ void eos::DigOutputService::processTick() {
     	auto output = static_cast<DigOutputImpl*>(o);
 
     	bool oldValue = output->getValue();
-		output->tick(_timeCounter);
+		output->tick();
 		if (oldValue != output->getValue())
 			onOutputChanged(output);
 	}
@@ -505,10 +520,6 @@ void eos::DigOutputService::processTick() {
 /// \remarks  ATENCIO: Es procesa dins d'una interrupcio.
 ///
 void eos::DigOutputService::tickISR() {
-
-	// Incrementa el contador de temps
-	//
-	_timeCounter += Time::fromMiliseconds(1);
 
     Action action = {
         .id {ActionID::tick}

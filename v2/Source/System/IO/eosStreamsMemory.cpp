@@ -25,15 +25,15 @@ export namespace eos {
             uint32_t getPosition() const;
             void setPosition(uint32_t position);
 
-    		ResultU32 write(const uint8_t *buffer, uint32_t length) override;
-    		ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
+    		ResultU32 write(const uint8_t *buffer, size_t length) override;
+    		ResultU32 read(uint8_t *buffer, size_t bufferSize) override;
 
             uint8_t *buffer() const { return _begin; }
             uint32_t bufferSize() const { return _end - _begin; }
     };
 }
 
-    
+
 /// ----------------------------------------------------------------------
 /// \brief   Construeix l'objecte i l'inicialitza.
 /// \param   buffer: Buffer de dades del stream.
@@ -79,7 +79,7 @@ void eos::MemoryStream::setPosition(
 ///
 eos::ResultU32 eos::MemoryStream::write(
     const uint8_t *buffer,
-    uint32_t length) {
+    size_t length) {
 
     if (_ptr + length >= _end)
         length = _end - _ptr;
@@ -101,7 +101,7 @@ eos::ResultU32 eos::MemoryStream::write(
 ///
 eos::ResultU32 eos::MemoryStream::read(
 	uint8_t *buffer,
-	uint32_t bufferSize) {
+	size_t bufferSize) {
 
     if (_ptr + bufferSize >= _end)
         bufferSize = _end - _ptr;

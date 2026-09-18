@@ -24,19 +24,23 @@ export namespace eos {
             static constexpr uint32_t _infiniteValue = Math::maxU32;
 
         private:
-            uint32_t const _ticks;
+            uint32_t _value;
 
         private:
-            /// @brief  Constructor per defecte.
-            /// @param  ticks
+            /// @brief  Constructor.
+            /// @param  ticks: Valor inicial.
             ///
-            explicit constexpr Ticks(uint32_t ticks): _ticks {ticks} {}
+            explicit constexpr Ticks(uint32_t value): _value {value} {}
 
         public:
+            /// @brief  Contructor per defecte al valor inicial zero.
+            ///
+            Ticks(): _value {0} {};
+
             /// @brief  Constructor copia.
             /// @param  t: L'altre objecte.
             ///
-            Ticks(const Ticks &t) = default;
+            Ticks(const Ticks &ticks) = default;
 
             /// @brief  Construeix un objecte amb valor zero
             /// @return El resultat.
@@ -48,26 +52,40 @@ export namespace eos {
             ///
             static constexpr Ticks infinite() { return Ticks(_infiniteValue); };
 
-            static Ticks fromNow();
-            static Ticks fromNowISR();
-            static Ticks fromFuture(Ticks t);
-            static Ticks fromFutureISR(Ticks t);
+            static Ticks now();
+            static Ticks nowISR();
             static constexpr Ticks fromMiliseconds(uint32_t ms);
 
             /// @brief Comprova si es zero.
             /// @return El resultat de l'operacio.
             //
-            bool isZero() const { return _ticks == _zeroValue; }
+            bool isZero() const { return _value == _zeroValue; }
 
             /// @brief Comprova si es infinit.
             /// @return El resultat de l'operacio.
             /// @remark Util pels timeouts infinits.
             ///
-            bool isInfinite() const { return _ticks == _infiniteValue; }
+            bool isInfinite() const { return _value == _infiniteValue; }
 
             bool hasExpired() const;
+            bool hasExpired(Ticks limit) const;
 
-            explicit operator uint32_t () const { return _ticks; }
+            Ticks& operator = (const Ticks ticks) { _value = ticks._value; return *this; }
+            Ticks& operator += (const Ticks ticks) { _value += ticks._value; return *this; }
+            Ticks& operator += (uint32_t value) { _value += value; return *this; }
+            Ticks& operator -= (const Ticks ticks) { _value -= ticks._value; return *this; }
+            Ticks& operator -= (uint32_t value) { _value -= value; return *this; }
+
+            Ticks operator + (const Ticks &ticks) const { return Ticks(_value + ticks._value); }
+            Ticks operator + (uint32_t value) const { return Ticks(_value + value); }
+            Ticks operator - (const Ticks &ticks) const { return Ticks(_value - ticks._value); }
+            Ticks operator - (uint32_t value) const { return Ticks(_value - value); }
+
+            bool operator == (const Ticks &ticks) const { return _value == ticks._value; }
+            bool operator < (const Ticks &ticks) const { return _value < ticks._value; }
+            bool operator > (const Ticks &ticks) const { return _value > ticks._value; }
+
+            explicit operator uint32_t () const { return _value; }
     };
 }
 
@@ -80,7 +98,7 @@ export namespace eos {
 constexpr eos::Ticks eos::Ticks::fromMiliseconds(
     uint32_t ms) {
 
-    return Ticks(ms / portTICK_PERIOD_MS);
+    return Ticks(pdMS_TO_TICKS(ms));
 }
 
 
@@ -88,7 +106,7 @@ constexpr eos::Ticks eos::Ticks::fromMiliseconds(
 /// @brief    Crea l'objecte a partir del valor de ticks actual.
 /// @return   El resultat.
 ///
-eos::Ticks eos::Ticks::fromNow() {
+eos::Ticks eos::Ticks::now() {
 
     return Ticks(xTaskGetTickCount());
 }
@@ -99,32 +117,9 @@ eos::Ticks eos::Ticks::fromNow() {
 ///           cridar d'ins d'una ISR
 /// @return   El resultat.
 ///
-eos::Ticks eos::Ticks::fromNowISR() {
+eos::Ticks eos::Ticks::nowISR() {
 
     return Ticks(xTaskGetTickCountFromISR());
-}
-
-
-/// ---------------------------------------------------------------------------
-/// @brief    Crea l'objecte a partir del valor de ticks futurs.
-/// @return   El resultat.
-///
-eos::Ticks eos::Ticks::fromFuture(
-    Ticks t) {
-
-    return Ticks(xTaskGetTickCount() + t._ticks);
-}
-
-
-/// ---------------------------------------------------------------------------
-/// @brief    Crea l'objecte a partir del valor de ticks futurs. Per
-///           cridar d'ins d'una ISR
-/// @return   El resultat.
-///
-eos::Ticks eos::Ticks::fromFutureISR(
-    Ticks ticks) {
-
-    return Ticks(xTaskGetTickCountFromISR() + ticks._ticks);
 }
 
 
@@ -141,7 +136,26 @@ bool eos::Ticks::hasExpired() const {
         return false;
 
     else {
-        auto delta = xTaskGetTickCount() - _ticks;
+        auto delta = _value - xTaskGetTickCount();
+	    return static_cast<int>(delta) <= 0;
+    }
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si ha expirat respecte a un limit.
+/// @return   True si ha expirat.
+///
+bool eos::Ticks::hasExpired(Ticks limit) const {
+
+    if (isZero())
+        return true;
+
+    else if (isInfinite())
+        return false;
+
+    else {
+        auto delta = _value - limit._value;
 	    return static_cast<int>(delta) <= 0;
     }
 }

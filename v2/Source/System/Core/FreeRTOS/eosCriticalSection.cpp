@@ -17,11 +17,11 @@ export namespace eos {
 			CriticalSection() = delete;
 			~CriticalSection() = delete;
 
-			static inline void enter() {
+			static void enter() {
 				taskENTER_CRITICAL();
 			}
 
-			static inline void exit() {
+			static void exit() {
 			    taskEXIT_CRITICAL();
 			}
 	};
@@ -32,11 +32,11 @@ export namespace eos {
 			CriticalSectionLocker(const CriticalSectionLocker&) = delete;
 			CriticalSectionLocker& operator=(const CriticalSectionLocker&) = delete;
 
-			inline CriticalSectionLocker() {
+			CriticalSectionLocker() {
 				CriticalSection::enter();
 			}
 
-			inline ~CriticalSectionLocker() {
+			~CriticalSectionLocker() {
 				CriticalSection::exit();
 			}
 	};

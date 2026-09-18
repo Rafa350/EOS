@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 #include "HTL/STM32/htlCAN.h"
 
 
@@ -466,7 +465,7 @@ void eos::CanOpenService::configureHeartbeat() {
 
 		// Activa el temporitzador
 		//
-		_timer.start(Time::fromMiliseconds(interval), Ticks::fromMiliseconds(100));
+		_timer.start(Ticks::fromMiliseconds(interval), Ticks::fromMiliseconds(100));
 	}
 }
 

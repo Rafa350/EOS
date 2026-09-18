@@ -68,11 +68,11 @@ export namespace eos {
 		private:
 			Task(const Task&) = delete;
 			Task(Task&&) = delete;
+
 			Task& operator=(const Task&) = delete;
 			Task& operator=(Task&&) = delete;
 
 			[[nodiscard]] TaskHandle_t createHandler(uint32_t stackDepth, Priority priority, const char *name);
-			void destroyHandler();
 
 			static uint32_t getPriorityValue(Priority priority);
 
@@ -124,7 +124,7 @@ eos::Task::Task(
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Destructor.
+/// @brief    Destructor.
 ///
 eos::Task::~Task() {
 
@@ -133,8 +133,8 @@ eos::Task::~Task() {
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Obte l'estat.
-/// \return   L'estat.
+/// @brief    Obte l'estat.
+/// @return   El resultat.
 ///
 eos::Task::State eos::Task::getState() const {
 
@@ -186,7 +186,7 @@ void eos::Task::kill() {
 	if (isAlive()) {
 		CriticalSection::enter();
 		if (isAlive())
-			destroyHandler();
+			vTaskDelete(_handler);
 		CriticalSection::exit();
 	}
 }
@@ -194,7 +194,7 @@ void eos::Task::kill() {
 
 /// ---------------------------------------------------------------------------
 /// \brief    Retarda la tasca actual.
-/// \param    time: Temps d'espera en milisegons
+/// \param    time: Temps d'espera.
 ///
 void eos::Task::delay(
 	Ticks time) {
@@ -206,7 +206,7 @@ void eos::Task::delay(
 /// ---------------------------------------------------------------------------
 /// \brief    Retarda la tasca actual finst el temps relatiu indicat, desde
 ///           l'ultima activacio de la tasca
-/// \param    time: Temps d'espera en milisegons
+/// \param    time: Temps d'espera.
 ///
 void eos::Task::delayUntil(
 	Ticks time) {
@@ -223,7 +223,7 @@ void eos::Task::delayUntil(
 /// ---------------------------------------------------------------------------
 /// \brief    Espera una notificacio.
 /// \param    clear:
-/// \param    blockTime: Temps maxim de bloqueig en milisegons.
+/// \param    blockTime: Temps maxim de bloqueig.
 /// \return   True si tot es correcte.
 ///
 bool eos::Task::waitNotification(
@@ -297,14 +297,14 @@ void eos::Task::taskFunction(
 			task->_event->execute(task, &args);
 		}
 
-    	task->destroyHandler();
+		vTaskDelete(task->_handler);
 	}
 }
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Obte la tasca que s'esta executant al cridar a aquest metode
-/// \return   La tasca.
+/// \brief    Obte la tasca que s'esta executant al cridar a aquest metode.
+/// \return   El resultat.
 ///
 eos::Task* eos::Task::getExecutingTask() {
 
@@ -320,6 +320,7 @@ eos::Task* eos::Task::getExecutingTask() {
 /// @param    stackDepht: profunditat de la pila.
 /// @param    priority: Prioridat.
 /// @param    name: Nom de la tasca.
+/// @return   El handler de la tasca.
 ///
 TaskHandle_t eos::Task::createHandler(
 	uint32_t stackDepth,
@@ -346,20 +347,10 @@ TaskHandle_t eos::Task::createHandler(
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Destrueix el handler de la tasca.
-///
-void eos::Task::destroyHandler() {
-
-	vTaskSetThreadLocalStoragePointer(_handler, StorageIndex::ptrThis, nullptr);
-	vTaskDelete(_handler);
-}
-
-
-/// ---------------------------------------------------------------------------
-/// \brief    Calcula el valor de prioritat per RTOS.
-/// \param    priority: Prioritat.
-/// \return   Valor numeric de la prioritat.
-/// \notes    Atencio: El valor del enumerador Priority esta definit i no es
+/// @brief    Calcula el valor de prioritat per RTOS.
+/// @param    priority: Prioritat.
+/// @return   Valor numeric de la prioritat.
+/// @notes    Atencio: El valor del enumerador Priority esta definit i no es
 ///           por canviar sense motiu.
 ///
 uint32_t eos::Task::getPriorityValue(

@@ -32,8 +32,8 @@ export namespace eos {
 			void setWriteTimeout(Time timeout);
 			void setReadTimeout(Time timeout);
 
-			ResultU32 write(const uint8_t *buffer, uint32_t length) override;
-			ResultU32 read(uint8_t *buffer, uint32_t bufferSize) override;
+			ResultU32 write(const uint8_t *buffer, size_t length) override;
+			ResultU32 read(uint8_t *buffer, size_t bufferSize) override;
 	};
 }
 
@@ -79,7 +79,7 @@ void eos::SerialStream::setReadTimeout(
 //
 eos::ResultU32 eos::SerialStream::write(
 	const uint8_t *buffer,
-	uint32_t length) {
+	size_t length) {
 
 	if ((buffer == nullptr) || (length == 0))
 		return ResultU32::ErrorCodes::errorParameter;
@@ -111,7 +111,7 @@ eos::ResultU32 eos::SerialStream::write(
 ///
 eos::ResultU32 eos::SerialStream::read(
 	uint8_t *buffer,
-	uint32_t bufferSize) {
+	size_t bufferSize) {
 
 	if ((buffer == nullptr) || (bufferSize == 0))
 		return ResultU32::ErrorCodes::errorParameter;

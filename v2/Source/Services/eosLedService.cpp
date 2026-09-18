@@ -38,10 +38,10 @@ namespace eos {
 	        static constexpr uint32_t _serviceStackDepth = 96;
 	        static constexpr Task::Priority _servicePriority = Task::Priority::low;
 
-	        static constexpr uint32_t _stepInterval        = 150;
-	        static constexpr uint32_t _slowBlinkInterval   = 1000;
-	        static constexpr uint32_t _mediumBlinkInterval = 500;
-	        static constexpr uint32_t _fastBlinkInterval   = 250;
+	        static constexpr Ticks _stepInterval        = Ticks::fromMiliseconds(150);
+	        static constexpr Ticks _slowBlinkInterval   = Ticks::fromMiliseconds(1000);
+	        static constexpr Ticks _mediumBlinkInterval = Ticks::fromMiliseconds(500);
+	        static constexpr Ticks _fastBlinkInterval   = Ticks::fromMiliseconds(250);
 
 	        static constexpr uint16_t _flash1Pattern    = 0b0000000001001111;
 	        static constexpr uint16_t _flash2Pattern    = 0b0000000101001111;
@@ -65,7 +65,7 @@ namespace eos {
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// \brief    Contructor de l'objecte.
 /// \param    pinLED: El pin del LED
 ///
@@ -78,7 +78,7 @@ eos::LedService::LedService(
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// \brief    Inicialitza els parametres del servei.
 ///
 void eos::LedService::onInitialize(
@@ -90,7 +90,7 @@ void eos::LedService::onInitialize(
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// \brief 	  Tasca del servei.
 ///
 void eos::LedService::onExecute() {
@@ -126,7 +126,7 @@ void eos::LedService::onExecute() {
     					break;
     			}
     			_pinLED->toggle();
-    			Task::delayUntil(Ticks::fromMiliseconds(interval));
+    			Task::delayUntil(interval);
     			break;
     		}
 
@@ -150,7 +150,7 @@ void eos::LedService::onExecute() {
     			}
     			_pinLED->write((pattern & (1 << _step)) != 0);
     			_step = (_step + 1) & 0x0F;
-    			Task::delayUntil(Ticks::fromMiliseconds(_stepInterval));
+    			Task::delayUntil(_stepInterval);
     			break;
     		}
     	}
@@ -158,7 +158,7 @@ void eos::LedService::onExecute() {
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// \brief    Asigna el modus d'iluminacio del led.
 /// \param    value: El modus.
 ///

@@ -1,8 +1,8 @@
 module;
 
 
+#include "eos.h"
 #include "eosEvents.h"
-#include "eosTime.h"
 
 
 // Numero maxim d'elements en la cua d'accions
@@ -93,11 +93,8 @@ namespace eos {
 			PinDriver * const _drv;
 			bool _value;
 			State _state;
-			Time _delayEndTime;
-			Time _pulseEndTime;
-
-		private:
-			static bool hasExpired(Time time, Time endTime);
+			Ticks _delayEndTime;
+			Ticks _pulseEndTime;
 
 		public:
 			DigOutputImpl(PinDriver *drv, uint32_t tag);
@@ -106,13 +103,13 @@ namespace eos {
 			void set();
 			void clear();
 			void toggle();
-			void pulse(Time time, Time pulse);
-			void delayedSet(Time time, Time delay);
-			void delayedClear(Time time, Time delay);
-			void delayedToggle(Time time, Time delay);
-			void delayedPulse(Time time, Time delay, Time pulse);
+			void pulse(Ticks now, Ticks pulse);
+			void delayedSet(Ticks now, Ticks delay);
+			void delayedClear(Ticks now, Ticks delay);
+			void delayedToggle(Ticks now, Ticks delay);
+			void delayedPulse(Ticks now, Ticks delay, Ticks pulse);
 			void write(bool value);
-			void tick(Time time);
+			void tick();
 	};
 
 
@@ -135,8 +132,8 @@ namespace eos {
             static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
 
         public:
-            static constexpr Time minPulseWidth = Time::fromMiliseconds(DigOutputService_MinPulseWidth);
-            static constexpr Time minDelay =Time::fromMiliseconds(DigOutputService_MinDelay);
+            static constexpr Ticks minPulseWidth = Ticks::fromMiliseconds(DigOutputService_MinPulseWidth);
+            static constexpr Ticks minDelay = Ticks::fromMiliseconds(DigOutputService_MinDelay);
 
 		private:
             enum class ActionID {
@@ -150,11 +147,15 @@ namespace eos {
                 delayedPulse,
                 tick
             };
+            struct Timing {
+                Ticks now;
+                Ticks delay;
+                Ticks pulse;
+            };
             struct Action {
                 ActionID id;
                 DigOutputImpl *output;
-                Time time1;
-                Time time2;
+                Timing timing;
             };
 
             using ActionQueue = Queue<Action>;
@@ -163,7 +164,6 @@ namespace eos {
             DigOutputList _outputs;
 
             OutputChangedEventRaiser _outputChangedEventRaiser;
-            Time _timeCounter;
             ActionQueue _actionQueue;
 
         private:
@@ -171,11 +171,11 @@ namespace eos {
             void processClear(DigOutputImpl *output);
             void processSet(DigOutputImpl *output);
             void processToggle(DigOutputImpl *output);
-            void processPulse(DigOutputImpl *output, Time width);
-            void processDelayedSet(DigOutputImpl *output, Time delay);
-            void processDelayedClear(DigOutputImpl *output, Time delay);
-            void processDelayedToggle(DigOutputImpl *output, Time delay);
-            void processDelayedPulse(DigOutputImpl *output, Time delay, Time width);
+            void processPulse(DigOutputImpl *output, const Timing &timing);
+            void processDelayedSet(DigOutputImpl *output, const Timing &timing);
+            void processDelayedClear(DigOutputImpl *output, const Timing &timing);
+            void processDelayedToggle(DigOutputImpl *output, const Timing &timing);
+            void processDelayedPulse(DigOutputImpl *output, const Timing &timing);
             void processTick();
 
             void onOutputChanged(DigOutputImpl *output);
@@ -207,11 +207,11 @@ namespace eos {
             void clear(DigOutput *output, Ticks blockTime);
             void write(DigOutput *output, bool pinState, Ticks blockTime);
             void toggle(DigOutput *output, Ticks blockTime);
-            void pulse(DigOutput *output, Time width, Ticks blockTime);
-            void delayedSet(DigOutput *output, Time delay, Ticks blockTime);
-            void delayedClear(DigOutput *output, Time delay, Ticks blockTime);
-            void delayedToggle(DigOutput *output, Time delay, Ticks blockTime);
-            void delayedPulse(DigOutput *output, Time delay, Time pulseWidth, Ticks blockTime);
+            void pulse(DigOutput *output, Ticks pulse, Ticks blockTime);
+            void delayedSet(DigOutput *output, Ticks delay, Ticks blockTime);
+            void delayedClear(DigOutput *output, Ticks delay, Ticks blockTime);
+            void delayedToggle(DigOutput *output, Ticks delay, Ticks blockTime);
+            void delayedPulse(DigOutput *output, Ticks delay, Ticks pulse, Ticks blockTime);
             bool read(DigOutput *ouput);
 
             void tick(Ticks blockTime);

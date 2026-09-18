@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 #include "eosCallbacks.h"
 
 #include "FreeRTOS.h"
@@ -56,9 +55,9 @@ export namespace eos {
 			Timer& operator=(const Timer&) = delete;
 			Timer& operator=(Timer&&) = delete;
 
-			bool start(Time interval, Ticks blockTime) const;
-			bool startISR(Time interval) const;
-			bool restart(Time blockTime) const;
+			bool start(Ticks interval, Ticks blockTime) const;
+			bool startISR(Ticks interval) const;
+			bool restart(Ticks blockTime) const;
 			bool restartISR() const;
 			bool stop(Ticks blockTime) const;
 			bool stopISR() const;
@@ -69,10 +68,10 @@ export namespace eos {
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    mode: Modus de funcionament.
-/// \param    name: Nom del temporitzador.
-/// \param    event: El event 'Timer'.
+/// @brief    Constructor.
+/// @param    mode: Modus de funcionament.
+/// @param    name: Nom del temporitzador.
+/// @param    event: El event 'Timer'.
 ///
 eos::Timer::Timer(
 	Mode mode,
@@ -87,7 +86,7 @@ eos::Timer::Timer(
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Descructor.
+/// @brief    Descructor.
 ///
 eos::Timer::~Timer() {
 
@@ -103,14 +102,13 @@ eos::Timer::~Timer() {
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Inicia el temporitzador.
-/// \param    interval: El temps en milisegons. Si es zero, es mante
-///           el interval actual
-/// \param    blockTime: Temps maxim de bloqueig.
-/// \return   True si tot es correcte.
+/// @brief    Inicia el temporitzador.
+/// @param    interval: El interval. Si es zero, es mante l'actual.
+/// @param    blockTime: Temps maxim de bloqueig.
+/// @return   True si tot es correcte.
 ///
 bool eos::Timer::start(
-	Time interval,
+	Ticks interval,
 	Ticks blockTime) const {
 
     if (interval.isZero())
@@ -120,27 +118,31 @@ bool eos::Timer::start(
     else
         return xTimerChangePeriod(
 			_handler,
-			toTicks(interval),
+			static_cast<TickType_t>(interval),
 			static_cast<TickType_t>(blockTime)) == pdPASS;
 }
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Inicia el temporitzador d'ind d'un ISR
-/// \param    interval: El temps en milisegons. Si es zero, es mante
-///           el interval actual.
-/// \return   Tuue si tot es correcte.
+/// @brief    Inicia el temporitzador dins d'un ISR
+/// @param    interval: El interval. Si es zero, es mante l'actual.
+/// @return   Tuue si tot es correcte.
 ///
 bool eos::Timer::startISR(
-	Time interval) const {
+	Ticks interval) const {
 
 	bool result;
 
     portBASE_TYPE task = pdFALSE;
     if (interval.isZero())
-        result = xTimerStartFromISR(_handler, &task) == pdPASS;
+        result = xTimerStartFromISR(
+			_handler,
+			&task) == pdPASS;
     else
-        result = xTimerChangePeriodFromISR(_handler, toTicks(interval), &task) == pdPASS;
+        result = xTimerChangePeriodFromISR(
+			_handler,
+			static_cast<TickType_t>(interval),
+			&task) == pdPASS;
     portEND_SWITCHING_ISR(task);
 
     return result;
@@ -148,33 +150,33 @@ bool eos::Timer::startISR(
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Para el tempositzador
-/// \param    blockTime: Tampos maxim de bloqueig.
-/// \return   TRue si tot es correcte.
+/// @brief    Para el tempositzador
+/// @param    blockTime: Tamps maxim de bloqueig.
+/// @return   TRue si tot es correcte.
 ///
 bool eos::Timer::stop(
 	Ticks blockTime) const {
 
-	return xTimerStop(
+    return xTimerStop(
 		_handler,
 		static_cast<TickType_t>(blockTime)) == pdPASS;
 }
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Comprova si el temporitzador es actiu.
-/// \return   True si es actiu. False en cas contrari.
+/// @brief    Comprova si el temporitzador es actiu.
+/// @return   True si es actiu. False en cas contrari.
 ///
 bool eos::Timer::isActive() const {
 
-	return xTimerIsTimerActive(_handler) == pdTRUE;
+    return xTimerIsTimerActive(_handler) == pdTRUE;
 }
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Funcio auxiliar per crear el handler del timer.
-/// \param    mode: El modus de treball.
-/// \param    name: El nom del temporitzador.
+/// @brief    Funcio auxiliar per crear el handler del timer.
+/// @param    mode: El modus de treball.
+/// @param    name: El nom del temporitzador.
 ///
 TimerHandle_t eos::Timer::createHandler(
 	Mode mode,
@@ -197,13 +199,13 @@ TimerHandle_t eos::Timer::createHandler(
 		timerFunction);
 #endif
 
-	return  handler;
+    return  handler;
 }
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Funcio callback del temporitzador.
-/// \param    handler: Handler del timer.
+/// @brief    Funcio callback del temporitzador.
+/// @param    handler: Handler del timer.
 ///
 void eos::Timer::timerFunction(
 	TimerHandle_t handler) {

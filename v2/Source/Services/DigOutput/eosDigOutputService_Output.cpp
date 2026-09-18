@@ -105,13 +105,13 @@ void eos::DigOutputImpl::toggle() {
 /// \param    pulse: Durada del puls.
 ///
 void eos::DigOutputImpl::pulse(
-	Time time,
-	Time pulse) {
+	Ticks now,
+	Ticks pulse) {
 
 	if (_state == State::idle)
 		write(!_value);
 
-	_pulseEndTime = time + pulse;
+	_pulseEndTime = now + pulse;
 	_state = State::pulse;
 }
 
@@ -122,10 +122,10 @@ void eos::DigOutputImpl::pulse(
 /// \param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedSet(
-	Time time,
-	Time delay) {
+	Ticks now,
+	Ticks delay) {
 
-	_delayEndTime = time + delay;
+	_delayEndTime = now + delay;
 	_state = State::delayedSet;
 }
 
@@ -136,10 +136,10 @@ void eos::DigOutputImpl::delayedSet(
 /// \param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedClear(
-	Time time,
-	Time delay) {
+	Ticks now,
+	Ticks delay) {
 
-	_delayEndTime = time + delay;
+	_delayEndTime = now + delay;
 	_state = State::delayedClear;
 }
 
@@ -150,10 +150,10 @@ void eos::DigOutputImpl::delayedClear(
 /// \param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedToggle(
-	Time time,
-	Time delay) {
+	Ticks now,
+	Ticks delay) {
 
-	_delayEndTime = time + delay;
+	_delayEndTime = now + delay;
 	_state = State::delayedToggle;
 }
 
@@ -165,75 +165,58 @@ void eos::DigOutputImpl::delayedToggle(
 /// \param    pulse: Durada del puls.
 ///
 void eos::DigOutputImpl::delayedPulse(
-	Time time,
-	Time delay,
-	Time pulse) {
+	Ticks now,
+	Ticks delay,
+	Ticks pulse) {
 
-	_delayEndTime = time + delay;
-	_pulseEndTime = time + delay + pulse;
+	_delayEndTime = now + delay;
+	_pulseEndTime = now + delay + pulse;
 	_state = State::delayedPulse;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa els temps.
-/// \param    time: El temps actual.
 ///
-void eos::DigOutputImpl::tick(
-	Time time) {
+void eos::DigOutputImpl::tick() {
 
 	switch (_state) {
 		case State::idle:
 			break;
 
 		case State::pulse:
-			if (hasExpired(time, _pulseEndTime)) {
+			if (_pulseEndTime.hasExpired()) {
 				write(!_value);
 				_state = State::idle;
 			}
 			break;
 
 		case State::delayedSet:
-			if (hasExpired(time, _delayEndTime)) {
+			if (_delayEndTime.hasExpired()) {
 				write(true);
 				_state = State::idle;
 			}
 			break;
 
 		case State::delayedClear:
-			if (hasExpired(time, _delayEndTime)) {
+			if (_delayEndTime.hasExpired()) {
 				write(false);
 				_state = State::idle;
 			}
 			break;
 
 		case State::delayedToggle:
-			if (hasExpired(time, _delayEndTime)) {
+			if (_delayEndTime.hasExpired()) {
 				write(!_value);
 				_state = State::idle;
 			}
 			break;
 
 		case State::delayedPulse:
-			if (hasExpired(time, _delayEndTime)) {
+			if (_delayEndTime.hasExpired()) {
 				write(!_value);
 				_state = State::pulse;
 			}
 			break;
 	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si el temps ha expirat.
-/// \param    time: Temp actual.
-/// \param    endTime: Temps limit.
-/// \return   True si el temps actual es posterior al temps limit.
-///
-bool eos::DigOutputImpl::hasExpired(
-	Time time,
-	Time endTime) {
-
-	auto delta = endTime - time;
-	return static_cast<int>(delta.toMiliseconds()) <= 0;
 }

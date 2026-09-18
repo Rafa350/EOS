@@ -32,11 +32,11 @@ export namespace eos {
             [[nodiscard]] static void * allocate(size_t size);
             static bool deallocate(void *ptr);
 
-			inline static uint32_t getAllocateCount() {
+			static uint32_t getAllocateCount() {
 				return _allocateCount;
 			}
 
-			inline static uint32_t getDeallocateCount() {
+			static uint32_t getDeallocateCount() {
 				return _deallocateCount;
 			}
 

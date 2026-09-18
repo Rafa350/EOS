@@ -25,26 +25,16 @@ namespace eos {
 
         public:
             Pool(uint32_t blockSize, uint32_t maxBlocks);
+            Pool(const Pool &pool) = delete;
             ~Pool();
 
             [[nodiscard]] void* allocate();
             void deallocate(void* ptr);
 
-            inline void* getStoragePtr() const {
-            	return _blocks;
-            }
-
-            inline uint32_t getStorageSize() const {
-            	return _blockSize * _maxBlocks;
-            }
-
-            uint32_t getAllocatedSize() const {
-	            return (_maxBlocks - _freeBlocks) * _blockSize;
-            }
-
-            uint32_t getAvailableSize() const {
-	            return _freeBlocks * _blockSize;
-            }
+            void* getStoragePtr() const { return _blocks; }
+            inline uint32_t getStorageSize() const { return _blockSize * _maxBlocks; }
+            uint32_t getAllocatedSize() const { return (_maxBlocks - _freeBlocks) * _blockSize; }
+            uint32_t getAvailableSize() const { return _freeBlocks * _blockSize; }
 
         private:
             uint8_t* addrFromIndex(uint32_t idx) const;
@@ -69,6 +59,8 @@ export namespace eos {
     		PoolAllocator():
                 _pool(sizeof(Type_), maxBlocks_) {
             }
+
+            PoolAllocator(const PoolAllocator&) = delete;
 
     		[[nodiscard]] inline Type_* allocate() {
                 return static_cast<Type_*>(_pool.allocate());
