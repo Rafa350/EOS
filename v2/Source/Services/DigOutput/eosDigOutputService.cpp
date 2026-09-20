@@ -54,13 +54,15 @@ namespace eos {
 
     /// \brief Declaracio de les llistes
     ///
-    using DigOutputList = IntrusiveForwardList<DigOutput, 0>;
-    using DigOutputListNode = IntrusiveForwardListNode<DigOutput, 0>;
+    using OutputList = IntrusiveForwardList<DigOutput, 0>;
+    using OutputListNode = IntrusiveForwardListNode<DigOutput, 0>;
 
+    using PendingList = IntrusiveForwardList<DigOutput, 1>;
+    using PendingListNode = IntrusiveForwardListNode<DigOutput, 1>;
 
     /// \brief Clase que representa una sortida digital individual.
     ///
-    export class DigOutput: public DigOutputListNode {
+    export class DigOutput: public OutputListNode {
     	private:
     		uint32_t _tag;
 
@@ -99,8 +101,10 @@ namespace eos {
 		public:
 			DigOutputImpl(PinDriver *drv, uint32_t tag);
 
-			bool getValue() const;
-			void set();
+			[[nodiscard]] bool getValue() const { return _value; }
+            [[nodiscard]] State getState() const { return _state; }
+
+            void set();
 			void clear();
 			void toggle();
 			void pulse(Ticks now, Ticks pulse);
@@ -108,8 +112,7 @@ namespace eos {
 			void delayedClear(Ticks now, Ticks delay);
 			void delayedToggle(Ticks now, Ticks delay);
 			void delayedPulse(Ticks now, Ticks delay, Ticks pulse);
-			void write(bool value);
-			void tick();
+			bool tick();
 	};
 
 
@@ -129,7 +132,8 @@ namespace eos {
             static constexpr const char *_serviceName = "DigOutputs";
             static constexpr Task::Priority _servicePriority = Task::Priority::normal;
             static constexpr uint32_t _serviceStackDepth = 164;
-            static constexpr unsigned _actionQueueSize = DigOutputService_ActionQueueSize;
+            static constexpr uint32_t _actionQueueSize = DigOutputService_ActionQueueSize;
+            static constexpr Ticks _minScanPeriod = Ticks::fromMiliseconds(5);
 
         public:
             static constexpr Ticks minPulseWidth = Ticks::fromMiliseconds(DigOutputService_MinPulseWidth);
@@ -161,10 +165,12 @@ namespace eos {
             using ActionQueue = Queue<Action>;
 
     	private:
-            DigOutputList _outputs;
+            OutputList _outputs;
+            PendingList _pending;
 
             OutputChangedEventRaiser _outputChangedEventRaiser;
             ActionQueue _actionQueue;
+            Ticks _scanPeriod;
 
         private:
             void processAction(const Action &action);
@@ -196,12 +202,14 @@ namespace eos {
             bool containsOutput(DigOutput *output) const;
             DigOutput *getOutput(uint32_t tag) const;
 
-            inline void enableOutputChangedEvent(IOutputChangedEvent &event) {
+            void enableOutputChangedEvent(IOutputChangedEvent &event) {
             	_outputChangedEventRaiser.enable(event);
             }
-            inline void disableOutputChangedEvent() {
+            void disableOutputChangedEvent() {
             	_outputChangedEventRaiser.disable();
             }
+
+            void setScanPeriod(Ticks scanPeriod);
 
             void set(DigOutput *output, Ticks blockTime);
             void clear(DigOutput *output, Ticks blockTime);

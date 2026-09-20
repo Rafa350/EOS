@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosEvents.h"
-#include "eosTime.h"
 
 
 module Eos.Services.DigInput;
@@ -83,7 +82,7 @@ void eos::DigInputService::disableBeforeScanEvent() {
 /// \param    scanPeriod: El period en milisegons.
 ///
 void eos::DigInputService::setScanPeriod(
-    eos::Time scanPeriod) {
+    eos::Ticks scanPeriod) {
 
     _scanPeriod = Math::max(scanPeriod, _minScanPeriod);
 }
@@ -183,7 +182,7 @@ void eos::DigInputService::onExecute() {
 
     while (!stopSignal()) {
 
-		Task::delayUntil(Ticks::fromMiliseconds(_scanPeriod.toMiliseconds()));
+		Task::delayUntil(_scanPeriod);
 
 		// Notifica l'inici de l'escaneig d'entrades
 		//

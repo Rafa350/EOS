@@ -2,15 +2,14 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 
 
 module Eos.Services.DigOutput;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    tag : Etiqueta d'identificadio del pin.
+/// @brief    Constructor.
+/// @param    tag : Etiqueta d'identificadio del pin.
 ///
 eos::DigOutput::DigOutput(
 	uint32_t tag):
@@ -21,7 +20,7 @@ eos::DigOutput::DigOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte l'etiqueta d'identificacio del pin.
+/// @brief    Obte l'etiqueta d'identificacio del pin.
 /// \return   El resultat.
 ///
 uint32_t eos::DigOutput::getTag() const {
@@ -31,8 +30,8 @@ uint32_t eos::DigOutput::getTag() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Contructor
-/// \param    dev: El driver del pin.
+/// @brief    Contructor
+/// @param    dev: El driver del pin.
 ///
 eos::DigOutputImpl::DigOutputImpl(
 	PinDriver *drv,
@@ -46,70 +45,55 @@ eos::DigOutputImpl::DigOutputImpl(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el valor actual de la sortida.
-/// \return   El valor.
-///
-bool eos::DigOutputImpl::getValue() const {
-
-	return _value;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un nou valor en la sortida.
-/// \param    value: El nou valor.
-///
-void eos::DigOutputImpl::write(
-	bool value) {
-
-	if (_value != value) {
-		_value = value;
-		_drv->write(value);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu el valor true en la sortida.
+/// @brief    Escriu el valor true en la sortida.
 ///
 void eos::DigOutputImpl::set() {
 
-	write(true);
+	if (!_value) {
+		_value = true;
+		_drv->write(true);
+	}
 	_state = State::idle;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu el valor false en la sortida.
+/// @brief    Escriu el valor false en la sortida.
 ///
 void eos::DigOutputImpl::clear() {
 
-	write(false);
+	if (_value) {
+		_value = false;
+		_drv->write(false);
+	}
 	_state = State::idle;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inverteix el valor de la sortida.
+/// @brief    Inverteix el valor de la sortida.
 ///
 void eos::DigOutputImpl::toggle() {
 
-	write(!_value);
+	_value = !_value;
+	_drv->write(_value);
 	_state = State::idle;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un puls en la sortida.
-/// \param    time: El temps actual.
-/// \param    pulse: Durada del puls.
+/// @brief    Genera un puls en la sortida.
+/// @param    time: El temps actual.
+/// @param    pulse: Durada del puls.
 ///
 void eos::DigOutputImpl::pulse(
 	Ticks now,
 	Ticks pulse) {
 
-	if (_state == State::idle)
-		write(!_value);
+	if (_state == State::idle) {
+		_value = !_value;
+		_drv->write(_value);
+	}
 
 	_pulseEndTime = now + pulse;
 	_state = State::pulse;
@@ -117,9 +101,9 @@ void eos::DigOutputImpl::pulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa la sortida al valor true despres d'un retard.
-/// \param    time: El temps actual.
-/// \param    delay: Durada del retard.
+/// @brief    Posa la sortida al valor true despres d'un retard.
+/// @param    time: El temps actual.
+/// @param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedSet(
 	Ticks now,
@@ -131,9 +115,9 @@ void eos::DigOutputImpl::delayedSet(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa la sortida al valor false despres d'un retard.
-/// \param    time: El temps actual.
-/// \param    delay: Durada del retard.
+/// @brief    Posa la sortida al valor false despres d'un retard.
+/// @param    time: El temps actual.
+/// @param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedClear(
 	Ticks now,
@@ -145,9 +129,9 @@ void eos::DigOutputImpl::delayedClear(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inverteix el valor despres d'un retard.
-/// \param    time: El temps actual.
-/// \param    delay: Durada del retard.
+/// @brief    Inverteix el valor despres d'un retard.
+/// @param    time: El temps actual.
+/// @param    delay: Durada del retard.
 ///
 void eos::DigOutputImpl::delayedToggle(
 	Ticks now,
@@ -159,10 +143,10 @@ void eos::DigOutputImpl::delayedToggle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un puls retardat en la sortida.
-/// \param    time: El temps actual.
-/// \brief    delay: Durada del retard.
-/// \param    pulse: Durada del puls.
+/// @brief    Genera un puls retardat en la sortida.
+/// @param    time: El temps actual.
+/// @brief    delay: Durada del retard.
+/// @param    pulse: Durada del puls.
 ///
 void eos::DigOutputImpl::delayedPulse(
 	Ticks now,
@@ -176,47 +160,54 @@ void eos::DigOutputImpl::delayedPulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els temps.
+/// @brief    Procesa els temps.
+/// @return   True si el valor ha canviat.
 ///
-void eos::DigOutputImpl::tick() {
+bool eos::DigOutputImpl::tick() {
 
-	switch (_state) {
-		case State::idle:
-			break;
+	bool changed = false;
 
-		case State::pulse:
-			if (_pulseEndTime.hasExpired()) {
-				write(!_value);
-				_state = State::idle;
+	if (_state != State::idle) {
+
+		auto end = _state == State::pulse ? _pulseEndTime : _delayEndTime;
+		if (end.hasExpired()) {
+
+			bool newValue = _value;
+
+			switch (_state) {
+				case State::pulse:
+					newValue = !_value;
+					_state = State::idle;
+					break;
+
+				case State::delayedSet:
+					newValue = true;
+					_state = State::idle;
+					break;
+
+				case State::delayedClear:
+ 					newValue = false;
+					_state = State::idle;
+					break;
+
+				case State::delayedToggle:
+					newValue = !_value;
+					_state = State::idle;
+					break;
+
+				case State::delayedPulse:
+					newValue = !_value;
+					_state = State::pulse;
+					break;
 			}
-			break;
 
-		case State::delayedSet:
-			if (_delayEndTime.hasExpired()) {
-				write(true);
-				_state = State::idle;
+			if (newValue != _value) {
+				_value = newValue;
+				_drv->write(newValue);
+				changed = true;
 			}
-			break;
-
-		case State::delayedClear:
-			if (_delayEndTime.hasExpired()) {
-				write(false);
-				_state = State::idle;
-			}
-			break;
-
-		case State::delayedToggle:
-			if (_delayEndTime.hasExpired()) {
-				write(!_value);
-				_state = State::idle;
-			}
-			break;
-
-		case State::delayedPulse:
-			if (_delayEndTime.hasExpired()) {
-				write(!_value);
-				_state = State::pulse;
-			}
-			break;
+		}
 	}
+
+	return changed;
 }

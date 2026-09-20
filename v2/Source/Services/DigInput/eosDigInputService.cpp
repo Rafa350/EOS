@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosEvents.h"
-#include "eosTime.h"
 
 
 export module Eos.Services.DigInput;
@@ -13,6 +12,7 @@ export import Eos.Services.Service;
 
 
 import Eos.Math;
+import Eos.Ticks;
 import Eos.Controllers.Pin;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
@@ -100,13 +100,13 @@ namespace eos {
             static constexpr const char *_serviceName = "DigInputs";
             static constexpr Task::Priority _servicePriority = Task::Priority::normal;
             static constexpr uint32_t _serviceStackDepth = 160;
-            static constexpr Time _minScanPeriod = Time::fromMiliseconds(5);
+            static constexpr Ticks _minScanPeriod = Ticks::fromMiliseconds(5);
 
         private:
     		DigInputList _inputs;
     		InputChangedEventRaiser _inputChangedEventRaiser;
     		BeforeScanEventRaiser _beforeScanEventRaiser;
-            Time _scanPeriod;
+            Ticks _scanPeriod;
 
         private:
             void onInputChanged(DigInputImpl *input);
@@ -125,7 +125,7 @@ namespace eos {
             DigInputService& operator=(const DigInputService&) = delete;
     	    DigInputService& operator=(const DigInputService&&) = delete;
 
-            void setScanPeriod(Time scanPeriod);
+            void setScanPeriod(Ticks scanPeriod);
 
             DigInput * addInput(PinDriver *drv, uint32_t tag);
             DigInput * getInput(uint32_t tag) const;

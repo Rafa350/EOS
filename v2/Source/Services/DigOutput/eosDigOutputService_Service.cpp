@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 
 
 module Eos.Services.DigOutput;
@@ -11,20 +10,21 @@ module Eos.Services.DigOutput;
 import Eos.System.Core.CriticalSection;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor.
 ///
 eos::DigOutputService::DigOutputService():
-	_actionQueue {_actionQueueSize} {
+	_actionQueue {_actionQueueSize},
+	_scanPeriod {_minScanPeriod} {
 
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Crea i afegeix una sortida.
-/// \param    pinDrv: El driver del pin
-/// \param    tag: Etiqueta opcional
-/// \return   La sortida.
+/// ---------------------------------------------------------------------------
+/// @brief    Crea i afegeix una sortida.
+/// @param    pinDrv: El driver del pin
+/// @param    tag: Etiqueta opcional
+/// @return   La sortida.
 ///
 eos::DigOutput* eos::DigOutputService::addOutput(
     PinDriver *drv,
@@ -41,10 +41,10 @@ eos::DigOutput* eos::DigOutputService::addOutput(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si la sortida pertany al servei.
-/// \param    output: La sortida.
-/// \return   True si pertany, false en cas contrari.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si la sortida pertany al servei.
+/// @param    output: La sortida.
+/// @return   True si pertany, false en cas contrari.
 ///
 bool eos::DigOutputService::containsOutput(
 	DigOutput *output) const {
@@ -63,10 +63,22 @@ bool eos::DigOutputService::containsOutput(
 	return result;
 }
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte la sortida amb el tag especificat.
-/// \param    tag: El tag de l'entrada a buscar.
-/// \return   La sortida, o nullptr si no la troba.
+
+/// ---------------------------------------------------------------------------
+/// @brief    Selecciona el periode s'exploracio.
+/// @param    scanPeriod : El valor.
+///
+void eos::DigOutputService::setScanPeriod(
+	Ticks scanPeriod) {
+
+    _scanPeriod = Math::max(scanPeriod, _minScanPeriod);
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Obte la sortida amb el tag especificat.
+/// @param    tag: El tag de l'entrada a buscar.
+/// @return   La sortida, o nullptr si no la troba.
 ///
 eos::DigOutput *eos::DigOutputService::getOutput(
 	uint32_t tag) const {
@@ -88,9 +100,9 @@ eos::DigOutput *eos::DigOutputService::getOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant la sortida especificada ha canviat el
+/// @brief    Es crida quant la sortida especificada ha canviat el
 ///           seu valor. Genera un event 'OutputChanged'
-/// \param    output: La sortida.
+/// @param    output: La sortida.
 ///
 void eos::DigOutputService::onOutputChanged(
 	DigOutputImpl *output) {
@@ -108,9 +120,9 @@ void eos::DigOutputService::onOutputChanged(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa la sortida en estat ACTIVE.
-/// \param    output: La sortida.
-/// \param    blocTime: Temps maxim de bloqueig.
+/// @brief    Posa la sortida en estat ACTIVE.
+/// @param    output: La sortida.
+/// @param    blocTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::set(
     DigOutput *output,
@@ -137,9 +149,9 @@ void eos::DigOutputService::set(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa la sortida en estat IDLE.
-/// \param    output: La sortida.
-/// \param    blockTime: Temps maxim de bloqueig.
+/// @brief    Posa la sortida en estat IDLE.
+/// @param    output: La sortida.
+/// @param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::clear(
     DigOutput *output,
@@ -166,9 +178,9 @@ void eos::DigOutputService::clear(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inverteix l'estat de la sortida.
-/// \param    output: La sortida.
-/// \param    blockTime: Temps maxim de bloqueig.
+/// @brief    Inverteix l'estat de la sortida.
+/// @param    output: La sortida.
+/// @param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::toggle(
     DigOutput *output,
@@ -195,10 +207,10 @@ void eos::DigOutputService::toggle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna l'estat de la sortida.
-/// \param    output: La sortida.
-/// \param    state: L'estat a asignar.
-/// \param    blockTime: Temps maxim de bloqueig.
+/// @brief    Asigna l'estat de la sortida.
+/// @param    output: La sortida.
+/// @param    state: L'estat a asignar.
+/// @param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::write(
     DigOutput *output,
@@ -226,10 +238,10 @@ void eos::DigOutputService::write(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un puls de conmutacio.
-/// \param    output: La sortida.
-/// \param    width: L'amplada del puls.
-/// \param    blockTime: Temps maxim de bloqueig.
+/// @brief    Genera un puls de conmutacio.
+/// @param    output: La sortida.
+/// @param    width: L'amplada del puls.
+/// @param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::pulse(
     DigOutput *output,
@@ -258,11 +270,11 @@ void eos::DigOutputService::pulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Genera un puls de conmutacio retardat.
-/// \param    output: La sortida.
-/// \param    delay: El retard del puls.
-/// \param    pulse: L'amplada del puls.
-/// \param    blockTime: Temps maxim de bloqueig.
+/// @brief    Genera un puls de conmutacio retardat.
+/// @param    output: La sortida.
+/// @param    delay: El retard del puls.
+/// @param    pulse: L'amplada del puls.
+/// @param    blockTime: Temps maxim de bloqueig.
 ///
 void eos::DigOutputService::delayedPulse(
     DigOutput *output,
@@ -293,9 +305,9 @@ void eos::DigOutputService::delayedPulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix el valor d'una sortida.
-/// \param    output: La sortida.
-/// \return   L'estat de la sortida.
+/// @brief    Llegeix el valor d'una sortida.
+/// @param    output: La sortida.
+/// @return   L'estat de la sortida.
 ///
 bool eos::DigOutputService::read(
 	DigOutput *output) {
@@ -322,8 +334,8 @@ bool eos::DigOutputService::read(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza els parametres del servei.
-/// \param    params: Els parametres.
+/// @brief    Inicialitza els parametres del servei.
+/// @param    params: Els parametres.
 ///
 void eos::DigOutputService::onInitialize(
 	Service::ServiceParams &params) {
@@ -335,7 +347,7 @@ void eos::DigOutputService::onInitialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Tasca del servei.
+/// @brief    Tasca del servei.
 ///
 void eos::DigOutputService::onExecute() {
 
@@ -348,8 +360,8 @@ void eos::DigOutputService::onExecute() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa les accions.
-/// \param    action: L'accio.
+/// @brief    Procesa les accions.
+/// @param    action: L'accio.
 ///
 void eos::DigOutputService::processAction(
 	const Action &action) {
@@ -395,8 +407,8 @@ void eos::DigOutputService::processAction(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'clear'
-/// \param    output: La sortida.
+/// @brief    Procesa la comanda 'clear'
+/// @param    output: La sortida.
 ///
 void eos::DigOutputService::processClear(
     DigOutputImpl *output) {
@@ -409,8 +421,8 @@ void eos::DigOutputService::processClear(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'set'
-/// \param    output: La sortida.
+/// @brief    Procesa la comanda 'set'
+/// @param    output: La sortida.
 ///
 void eos::DigOutputService::processSet(
     DigOutputImpl *output) {
@@ -423,8 +435,8 @@ void eos::DigOutputService::processSet(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'toggle'
-/// \param    output: La sortida.
+/// @brief    Procesa la comanda 'toggle'
+/// @param    output: La sortida.
 ///
 void eos::DigOutputService::processToggle(
     DigOutputImpl *output) {
@@ -435,9 +447,9 @@ void eos::DigOutputService::processToggle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'pulse'.
-/// \param    output: La sortida.
-/// \param    timing: Parametres de temporitzacio.
+/// @brief    Procesa la comanda 'pulse'.
+/// @param    output: La sortida.
+/// @param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processPulse(
     DigOutputImpl *output,
@@ -451,9 +463,9 @@ void eos::DigOutputService::processPulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedSet'.
-/// \param    output: La sortida.
-/// \param    timing: Parametres de temporitzacio.
+/// @brief    Procesa la comanda 'delayedSet'.
+/// @param    output: La sortida.
+/// @param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedSet(
     DigOutputImpl *output,
@@ -463,9 +475,9 @@ void eos::DigOutputService::processDelayedSet(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedClear'.
-/// \param    output: La sortida.
-/// \param    timing: Parametres de temporitzacio.
+/// @brief    Procesa la comanda 'delayedClear'.
+/// @param    output: La sortida.
+/// @param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedClear(
     DigOutputImpl *output,
@@ -475,9 +487,9 @@ void eos::DigOutputService::processDelayedClear(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedToggle'.
-/// \param    output: La sortida.
-/// \param    timing: Parametres de temporitzacio.
+/// @brief    Procesa la comanda 'delayedToggle'.
+/// @param    output: La sortida.
+/// @param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedToggle(
     DigOutputImpl *output,
@@ -487,9 +499,9 @@ void eos::DigOutputService::processDelayedToggle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la comanda 'delayedPulse'.
-/// \param    output: La sortida.
-/// \param    timing: Parametres de temporitzacio.
+/// @brief    Procesa la comanda 'delayedPulse'.
+/// @param    output: La sortida.
+/// @param    timing: Parametres de temporitzacio.
 ///
 void eos::DigOutputService::processDelayedPulse(
     DigOutputImpl *output,
@@ -500,23 +512,25 @@ void eos::DigOutputService::processDelayedPulse(
 
 
 /// ---------------------------------------------------------------------
-/// \brief    Procesa la comanda 'tick'
+/// @brief    Procesa la comanda 'tick'
 ///
 void eos::DigOutputService::processTick() {
 
 	for (auto o: _outputs) {
+
     	auto output = static_cast<DigOutputImpl*>(o);
 
-    	bool oldValue = output->getValue();
-		output->tick();
-		if (oldValue != output->getValue())
-			onOutputChanged(output);
+		if (output->getState() != DigOutputImpl::State::idle) {
+
+			if (output->tick())
+				onOutputChanged(output);
+		}
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio del temportitzador
+/// @brief    Procesa la interrupcio del temportitzador
 /// \remarks  ATENCIO: Es procesa dins d'una interrupcio.
 ///
 void eos::DigOutputService::tickISR() {

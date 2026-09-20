@@ -54,6 +54,7 @@ export namespace eos {
 
             static Ticks now();
             static Ticks nowISR();
+            static constexpr Ticks fromTicks(uint32_t ticks);
             static constexpr Ticks fromMiliseconds(uint32_t ms);
 
             /// @brief Comprova si es zero.
@@ -91,6 +92,18 @@ export namespace eos {
 
 
 /// ---------------------------------------------------------------------------
+/// @brief    Crea l'objecte a partir del valor en ticks.
+/// @param    ms: El valor en ticks.
+/// @return   El resultat.
+///
+constexpr eos::Ticks eos::Ticks::fromTicks(
+    uint32_t ticks) {
+
+    return Ticks(ticks);
+}
+
+
+/// ---------------------------------------------------------------------------
 /// @brief    Crea l'objecte a partir del valor en milisegons.
 /// @param    ms: El valor en milisegons.
 /// @return   El resultat.
@@ -124,7 +137,7 @@ eos::Ticks eos::Ticks::nowISR() {
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Comprova si ha expirat respecte el contador de ticks.
+/// @brief    Comprova si ha arribal al valor del contador de ticks actual.
 /// @return   True si ha expirat.
 ///
 bool eos::Ticks::hasExpired() const {
@@ -143,10 +156,12 @@ bool eos::Ticks::hasExpired() const {
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Comprova si ha expirat respecte a un limit.
+/// @brief    Comprova si ha arribat al valor de ticks especificat.
+/// @param    limit: Valor limit.
 /// @return   True si ha expirat.
 ///
-bool eos::Ticks::hasExpired(Ticks limit) const {
+bool eos::Ticks::hasExpired(
+    Ticks limit) const {
 
     if (isZero())
         return true;
