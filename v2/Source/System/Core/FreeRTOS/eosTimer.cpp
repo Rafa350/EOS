@@ -12,12 +12,13 @@ module;
 export module Eos.System.Core.Timer;
 
 
+import Eos.Types;
 import Eos.System.Core.Ticks;
 
 
 export namespace eos {
 
-    class Timer final {
+    class Timer final: private NonCopyableClass {
     	public:
     		enum class Mode {
     			oneShot,
@@ -47,12 +48,7 @@ export namespace eos {
 
 		public:
 			Timer(Mode mode, const char *name, IEvent &event);
-			Timer(const Timer&) = delete;
-			Timer(Timer&&) = delete;
 			~Timer();
-
-			Timer& operator=(const Timer&) = delete;
-			Timer& operator=(Timer&&) = delete;
 
 			bool start(Ticks interval, Ticks blockTime) const;
 			bool startISR(Ticks interval) const;

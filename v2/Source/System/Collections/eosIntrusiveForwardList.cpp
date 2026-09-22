@@ -2,28 +2,23 @@ module;
 
 
 #include "eos.h"
-#include <concepts>
 
 
 export module Eos.System.Collections.IntrusiveForwardList;
 
 
-namespace local {
+import Eos.Concepts;
 
-    template <typename T_>
-    concept IsClass = std::is_class_v<T_>;
-
-}
 
 namespace eos {
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveForwardList;
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveForwardListIterator;
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveForwardListNode {
         public:
             using NodeType = IntrusiveForwardListNode<T_, tag_>;
@@ -42,7 +37,7 @@ namespace eos {
     };
 
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveForwardListIterator {
         public:
             using ValueType = T_;
@@ -84,7 +79,7 @@ namespace eos {
     };
 
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveForwardList {
         public:
             using ValueType = T_;
@@ -148,17 +143,13 @@ namespace eos {
 }
 
 
-using namespace eos;
-using namespace local;
-
-
 /// ---------------------------------------------------------------------------
 /// @brief    Constructor per defecte.
 /// @tparam   T_: El tipus de l'element.
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 ///
-template <IsClass T_, int tag_>
-IntrusiveForwardList<T_, tag_>::IntrusiveForwardList() :
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveForwardList<T_, tag_>::IntrusiveForwardList() :
     _first {nullptr} {
 }
 
@@ -168,8 +159,8 @@ IntrusiveForwardList<T_, tag_>::IntrusiveForwardList() :
 /// @tparam   T_: El tipus de l'element.
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveForwardList<T_, tag_>::clear() {
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveForwardList<T_, tag_>::clear() {
 
     while (!isEmpty())
         removeFront();
@@ -182,8 +173,8 @@ void IntrusiveForwardList<T_, tag_>::clear() {
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @param    element: L'element a afeigir.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveForwardList<T_, tag_>::addFront(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveForwardList<T_, tag_>::addFront(
     NodePtr element) {
 
     element->_next = _first;
@@ -198,8 +189,8 @@ void IntrusiveForwardList<T_, tag_>::addFront(
 /// @param    afterEElement: L'element s'afegirar despres d'aquest.
 /// @param    element: L'element a afeigir.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveForwardList<T_, tag_>::addAfter(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveForwardList<T_, tag_>::addAfter(
     NodePtr afterElement,
     NodePtr element) {
 
@@ -211,8 +202,8 @@ void IntrusiveForwardList<T_, tag_>::addAfter(
 /// @tparam   T_: El tipus de l'element.
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveForwardList<T_, tag_>::removeFront() {
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveForwardList<T_, tag_>::removeFront() {
 
     if (_first != nullptr) {
         auto e = _first;
@@ -228,8 +219,8 @@ void IntrusiveForwardList<T_, tag_>::removeFront() {
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @param    element: L'element a eliminar.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveForwardList<T_, tag_>::remove(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveForwardList<T_, tag_>::remove(
     NodePtr element) {
 
     NodePtr p = nullptr;
@@ -253,8 +244,9 @@ void IntrusiveForwardList<T_, tag_>::remove(
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @return   El element posterior.
 ///
-template <IsClass T_, int tag_>
-IntrusiveForwardList<T_, tag_>::ValuePtr IntrusiveForwardList<T_, tag_>::getFirst() const {
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveForwardList<T_, tag_>::ValuePtr
+        eos::IntrusiveForwardList<T_, tag_>::getFirst() const {
 
     return static_cast<ValuePtr>(_first);
 }
@@ -267,8 +259,9 @@ IntrusiveForwardList<T_, tag_>::ValuePtr IntrusiveForwardList<T_, tag_>::getFirs
 /// @param    element: L'element
 /// @return   El element posterior.
 ///
-template <IsClass T_, int tag_>
-IntrusiveForwardList<T_, tag_>::ValuePtr IntrusiveForwardList<T_, tag_>::getNext(
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveForwardList<T_, tag_>::ValuePtr
+        eos::IntrusiveForwardList<T_, tag_>::getNext(
     NodePtr element) const {
 
     return static_cast<ValuePtr>(element->_next);
@@ -281,8 +274,8 @@ IntrusiveForwardList<T_, tag_>::ValuePtr IntrusiveForwardList<T_, tag_>::getNext
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @return   Trus si la llista es buida.
 ///
-template <IsClass T_, int tag_>
-bool IntrusiveForwardList<T_, tag_>::isEmpty() const {
+template <eos::IsClass T_, int tag_>
+bool eos::IntrusiveForwardList<T_, tag_>::isEmpty() const {
 
     return _first == nullptr;
 }

@@ -9,12 +9,13 @@ module;
 export module Eos.System.Core.HeapAllocator;
 
 
+import Eos.Types;
 import Eos.Math;
 
 
 export namespace eos {
 
-    class HeapAllocator {
+    class HeapAllocator: private StaticClass<HeapAllocator> {
         private:
             static uint32_t _allocateCount;
             static uint32_t _deallocateCount;

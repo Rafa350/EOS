@@ -11,6 +11,7 @@ module;
 export module Eos.System.Core.Task;
 
 
+import Eos.Types;
 import Eos.System.Core.CriticalSection;
 import Eos.System.Core.Ticks;
 
@@ -30,7 +31,7 @@ namespace eos {
 
 export namespace eos {
 
-	class Task final {
+	class Task final: private NonCopyableClass {
 		public:
 			enum class Priority {
 				idle = 0,
@@ -67,9 +68,6 @@ export namespace eos {
 		private:
 			Task(const Task&) = delete;
 			Task(Task&&) = delete;
-
-			Task& operator=(const Task&) = delete;
-			Task& operator=(Task&&) = delete;
 
 			[[nodiscard]] TaskHandle_t createHandler(uint32_t stackDepth, Priority priority, const char *name);
 

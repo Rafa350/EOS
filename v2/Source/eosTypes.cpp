@@ -9,29 +9,65 @@ export module Eos.Types;
 
 export namespace eos {
 
-    using U8 = uint8_t;
-    using U16 = uint16_t;
-    using U32 = uint32_t;
+    using UInt8 = uint8_t;
+    using UInt16 = uint16_t;
+    using UInt32 = uint32_t;
 
-    using I8 = int8_t;
-    using I16 = int16_t;
-    using I32 = int32_t;
+    using Int8 = int8_t;
+    using Int16 = int16_t;
+    using Int32 = int32_t;
 
     template <typename T_>
-    class ArrayAdapter {
+    class BufferAdapter {
+        public:
+            using DataType = T_;
+            using DataPtr = DataType*;
+
         private:
-            T_* const _data;
-            U32 const _size;
+            DataPtr const _data;
+            UInt32 const _size;
 
         public:
-            ArrayAdapter(T_ *data, U32 size): _data {data}, _size {size} {}
-            ArrayAdapter(const ArrayAdapter &other): _data {other._data}, _size {other._size} {}
+            BufferAdapter(DataPtr data, UInt32 size): _data {data}, _size {size} {}
+            BufferAdapter(const BufferAdapter &other): _data {other._data}, _size {other._size} {}
 
-            T_* getData() const { return _data; }
-            U32 getSize() const { return _size; }
+            DataPtr getData() const { return _data; }
+            UInt32 getSize() const { return _size; }
     };
 
-    using U8Array = ArrayAdapter<U8>;
-    using U16Array = ArrayAdapter<U16>;
-    using U32Array = ArrayAdapter<U32>;
+    using UInt8Buffer = BufferAdapter<UInt8>;
+    using UInt16Buffer = BufferAdapter<UInt16>;
+    using UInt32Buffer = BufferAdapter<UInt32>;
+
+
+    class NonCopyableClass {
+        protected:
+            NonCopyableClass() = default;  // Permet que les classes filles es construeixin
+            ~NonCopyableClass() = default; // Permet que les classes filles es destrueixin
+
+        public:
+            // Eliminem la còpia de forma explícita
+            NonCopyableClass(const NonCopyableClass&) = delete;
+            NonCopyableClass& operator=(const NonCopyableClass&) = delete;
+
+            // Eliminen el moviment de forma explicita
+            NonCopyableClass(NonCopyableClass&&) = delete;
+            NonCopyableClass& operator=(NonCopyableClass&&) = delete;
+    };
+
+
+    template <typename T>
+    class StaticClass {
+        protected:
+            // Evita completament la instanciació de qualsevol forma
+            StaticClass() = delete;
+            ~StaticClass() = delete;
+
+        public:
+            // Elimina explícitament la còpia i el moviment
+            StaticClass(const StaticClass&) = delete;
+            StaticClass& operator=(const StaticClass&) = delete;
+            StaticClass(StaticClass&&) = delete;
+            StaticClass& operator=(StaticClass&&) = delete;
+    };
 }

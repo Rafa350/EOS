@@ -3,6 +3,7 @@ target_sources(${TARGET_NAME}
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
     FILES
         eosBits.cpp
+        eosConcepts.cpp
         eosMath.cpp
         eosResult.cpp
         eosTypes.cpp

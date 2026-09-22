@@ -1,59 +1,60 @@
 module;
 
 
-#include <concepts>
-
-
 export module Eos.Bits;
 
 
-export namespace eos {
+import Eos.Concepts;
+import Eos.Types;
 
-	class Bits {
+
+namespace eos {
+
+	export class Bits final: private StaticClass<Bits> {
 		public:
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void set(volatile T_ &var, T_ mask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void set(T_ &var, T_ mask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void clear(volatile T_ &var, T_ mask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void clear(T_ &var, T_ mask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void toggle(volatile T_ &var, T_ mask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void toggle(T_ &var, T_ mask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void modify(volatile T_ &var, T_ clearMask, T_ setMask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static void modify(T_ &var, T_ clearMask, T_ setMask);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static bool isSet(volatile T_ &var, T_ b);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static bool isSet(T_ &var, T_ b);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static bool isAnySet(volatile T_ &var, T_ b);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static bool isAnySet(T_ &var, T_ b);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static bool isClear(volatile T_ &var, T_ b);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static bool isClear(T_ &var, T_ b);
 
-			template<std::unsigned_integral T_>
+			template<IsUInt T_>
 			static bool isAnyClear(T_ &var, T_ b);
 	};
 }
@@ -64,7 +65,7 @@ export namespace eos {
 /// \param    var: La variable.
 /// \param    mask: La mascara.
 ///
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::set(
 	volatile T_ &var,
 	T_ mask) {
@@ -78,7 +79,7 @@ inline void eos::Bits::set(
 /// \param    var: La variable.
 /// \param    mask: La mascara.
 ///
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::set(
 	T_ &var,
 	T_ mask) {
@@ -87,7 +88,7 @@ inline void eos::Bits::set(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::clear(
 	volatile T_ &var,
 	T_ mask) {
@@ -96,7 +97,7 @@ inline void eos::Bits::clear(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::clear(
 	T_ &var,
 	T_ mask) {
@@ -105,7 +106,7 @@ inline void eos::Bits::clear(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::toggle(
 	volatile T_ &var,
 	T_ mask) {
@@ -114,7 +115,7 @@ inline void eos::Bits::toggle(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::toggle(
 	T_ &var,
 	T_ mask) {
@@ -123,7 +124,7 @@ inline void eos::Bits::toggle(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::modify(
 	volatile T_ &var,
 	T_ clearMask,
@@ -136,7 +137,7 @@ inline void eos::Bits::modify(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline void eos::Bits::modify(
 	T_ &var,
 	T_ clearMask,
@@ -147,7 +148,7 @@ inline void eos::Bits::modify(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline bool eos::Bits::isSet(
 	volatile T_ &var,
 	T_ b) {
@@ -156,7 +157,7 @@ inline bool eos::Bits::isSet(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline bool eos::Bits::isSet(
 	T_ &var,
 	T_ b) {
@@ -165,7 +166,7 @@ inline bool eos::Bits::isSet(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline bool eos::Bits::isAnySet(
 	volatile T_ &var,
 	T_ b) {
@@ -174,7 +175,7 @@ inline bool eos::Bits::isAnySet(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline bool eos::Bits::isAnySet(
 	T_ &var,
 	T_ b) {
@@ -183,7 +184,7 @@ inline bool eos::Bits::isAnySet(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline bool eos::Bits::isClear(
 	volatile T_ &var,
 	T_ b) {
@@ -192,7 +193,7 @@ inline bool eos::Bits::isClear(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline bool eos::Bits::isClear(
 	T_ &var,
 	T_ b) {
@@ -201,7 +202,7 @@ inline bool eos::Bits::isClear(
 }
 
 
-template<std::unsigned_integral T_>
+template<eos::IsUInt T_>
 inline bool eos::Bits::isAnyClear(
 	T_ &var,
 	T_ b) {

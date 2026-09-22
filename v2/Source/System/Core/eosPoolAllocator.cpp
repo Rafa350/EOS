@@ -8,13 +8,14 @@ module;
 export module Eos.System.Core.PoolAllocator;
 
 
+import Eos.Types;
 import Eos.System.Core.CriticalSection;
 import Eos.System.Core.HeapAllocator;
 
 
 namespace eos {
 
-	class Pool final {
+	class Pool final: private NonCopyableClass {
         private:
             uint8_t *_blocks;
             uint8_t *_nextBlock;
@@ -25,7 +26,6 @@ namespace eos {
 
         public:
             Pool(uint32_t blockSize, uint32_t maxBlocks);
-            Pool(const Pool &pool) = delete;
             ~Pool();
 
             [[nodiscard]] void* allocate();

@@ -1,5 +1,6 @@
 module;
 
+
 #include <cstdint>
 #include <cmath>
 
@@ -7,12 +8,14 @@ module;
 export module Eos.Math;
 
 
+import Eos.Types;
+
+
 namespace eos {
 
-	export class Math final {
+	export class Math final: private StaticClass<Math> {
 
 		public:
-
 			/// \brief  Obte el minim de dos valors.
 			/// \param  a: Primer valor.
 			/// \param  b: Segon valor.

@@ -1,12 +1,7 @@
 module;
 
 
-// EOS includes
-//
 #include "eos.h"
-
-// STD includes.
-//
 #include <concepts>
 
 
@@ -17,7 +12,6 @@ namespace eos {
 
     template <typename T_>
     concept IsEnum = std::is_enum_v<T_>;
-
 
     template <IsEnum ErrorType_, ErrorType_ okValue_>
     class Result {

@@ -12,12 +12,13 @@ export module Eos.System.Core.Semaphore;
 export import Eos.Result;
 
 
+import Eos.Types;
 import Eos.System.Core.Ticks;
 
 
 export namespace eos {
 
-	class Semaphore final {
+	class Semaphore final: private NonCopyableClass {
 		public:
 			enum class ErrorCode {
 				ok,
@@ -36,12 +37,7 @@ export namespace eos {
 
         public:
             Semaphore();
-			Semaphore(const Semaphore&) = delete;
-			Semaphore(Semaphore&&) = delete;
             ~Semaphore();
-
-			Semaphore& operator = (const Semaphore &other) = delete;
-			Semaphore& operator = (Semaphore &&other) = delete;
 
             [[nodiscard]] Result wait(Ticks blockTime) const;
             void release() const;

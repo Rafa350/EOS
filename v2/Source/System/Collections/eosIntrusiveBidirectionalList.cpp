@@ -2,26 +2,20 @@ module;
 
 
 #include "eos.h"
-#include <concepts>
 
 
 export module Eos.System.Collections.IntrusiveBidirectionalList;
 
 
-namespace local {
-
-    template <typename T_>
-    concept IsClass = std::is_class_v<T_>;
-
-}
+import Eos.Concepts;
 
 
 namespace eos {
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveBidirectionalList;
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveBidirectionalListNode {
         public:
             using NodeType = IntrusiveBidirectionalListNode<T_, tag_>;
@@ -40,7 +34,7 @@ namespace eos {
         friend IntrusiveBidirectionalList<T_, tag_>;
     };
 
-    export template <local::IsClass T_, int tag_>
+    export template <IsClass T_, int tag_>
     class IntrusiveBidirectionalList {
         public:
             using ValueType = T_;
@@ -80,17 +74,13 @@ namespace eos {
 }
 
 
-using namespace eos;
-using namespace local;
-
-
 /// ---------------------------------------------------------------------------
 /// @brief    Constructor per defecte.
 /// @tparam   T_: El tipus de l'element.
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 ///
-template <IsClass T_, int tag_>
-IntrusiveBidirectionalList<T_, tag_>::IntrusiveBidirectionalList() :
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveBidirectionalList<T_, tag_>::IntrusiveBidirectionalList() :
     _first {nullptr},
     _last {nullptr} {
 
@@ -100,8 +90,8 @@ IntrusiveBidirectionalList<T_, tag_>::IntrusiveBidirectionalList() :
 /// ---------------------------------------------------------------------------
 /// @brief    Buida la llista.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::clear() {
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::clear() {
 
     while (!isEmpty())
         removeFront();
@@ -114,8 +104,8 @@ void IntrusiveBidirectionalList<T_, tag_>::clear() {
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @param    element: L'element a afeigir.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::addFront(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::addFront(
     NodePtr element) {
 
     if (_first == nullptr) {
@@ -139,8 +129,8 @@ void IntrusiveBidirectionalList<T_, tag_>::addFront(
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @param    element: L'element a afeigir.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::addBack(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::addBack(
     NodePtr element) {
 
 }
@@ -154,13 +144,13 @@ void IntrusiveBidirectionalList<T_, tag_>::addBack(
 ///           aleshores s'afegeix al principi de la llista.
 /// @param    element: L'element a afeigir.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::addBefore(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::addBefore(
     NodePtr beforeElement,
     NodePtr element) {
 
-        if (beforeElement == nullptr)
-            addToBegin(element);
+    if (beforeElement == nullptr)
+        addToBegin(element);
 }
 
 
@@ -172,8 +162,8 @@ void IntrusiveBidirectionalList<T_, tag_>::addBefore(
 ///           aleshores s'afegeix al final de la llista.
 /// @param    element: L'element a afeigir.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::addAfter(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::addAfter(
     NodePtr afterElement,
     NodePtr element) {
 
@@ -187,8 +177,8 @@ void IntrusiveBidirectionalList<T_, tag_>::addAfter(
 /// @tparam   T_: El tipus de l'element.
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::removeFront() {
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::removeFront() {
 
     if (_first != nullptr)
         remove(_first);
@@ -200,8 +190,8 @@ void IntrusiveBidirectionalList<T_, tag_>::removeFront() {
 /// @tparam   T_: El tipus de l'element.
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::removeBack() {
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::removeBack() {
 
     if (_last != nullptr)
         remove(_last);
@@ -214,8 +204,8 @@ void IntrusiveBidirectionalList<T_, tag_>::removeBack() {
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @param    element: L'element a eliminar.
 ///
-template <IsClass T_, int tag_>
-void IntrusiveBidirectionalList<T_, tag_>::remove(
+template <eos::IsClass T_, int tag_>
+void eos::IntrusiveBidirectionalList<T_, tag_>::remove(
     NodePtr element) {
 
 }
@@ -227,9 +217,9 @@ void IntrusiveBidirectionalList<T_, tag_>::remove(
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @return   El primer element.
 ///
-template <IsClass T_, int tag_>
-IntrusiveBidirectionalList<T_, tag_>::ValuePtr
-        IntrusiveBidirectionalList<T_, tag_>::getFirst() const {
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveBidirectionalList<T_, tag_>::ValuePtr
+        eos::IntrusiveBidirectionalList<T_, tag_>::getFirst() const {
 
     return static_cast<ValuePtr>(_first);
 }
@@ -241,9 +231,9 @@ IntrusiveBidirectionalList<T_, tag_>::ValuePtr
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @return   L'ultim element.
 ///
-template <IsClass T_, int tag_>
-IntrusiveBidirectionalList<T_, tag_>::ValuePtr
-        IntrusiveBidirectionalList<T_, tag_>::getLast() const {
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveBidirectionalList<T_, tag_>::ValuePtr
+        eos::IntrusiveBidirectionalList<T_, tag_>::getLast() const {
 
     return static_cast<ValuePtr>(_last);
 }
@@ -256,9 +246,9 @@ IntrusiveBidirectionalList<T_, tag_>::ValuePtr
 /// @param    element: L'element
 /// @return   L'element posterior
 ///
-template <IsClass T_, int tag_>
-IntrusiveBidirectionalList<T_, tag_>::ValuePtr
-        IntrusiveBidirectionalList<T_, tag_>::getNext(
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveBidirectionalList<T_, tag_>::ValuePtr
+        eos::IntrusiveBidirectionalList<T_, tag_>::getNext(
     NodePtr element) const {
 
     return static_cast<ValuePtr>(
@@ -273,9 +263,9 @@ IntrusiveBidirectionalList<T_, tag_>::ValuePtr
 /// @param    element: L'element
 /// @return   L'element anterior.
 ///
-template <IsClass T_, int tag_>
-IntrusiveBidirectionalList<T_, tag_>::ValuePtr
-        IntrusiveBidirectionalList<T_, tag_>::getPrev(
+template <eos::IsClass T_, int tag_>
+eos::IntrusiveBidirectionalList<T_, tag_>::ValuePtr
+        eos::IntrusiveBidirectionalList<T_, tag_>::getPrev(
     NodePtr element) const {
 
     return static_cast<ValuePtr>(
@@ -289,8 +279,8 @@ IntrusiveBidirectionalList<T_, tag_>::ValuePtr
 /// @tparam   tag_: Etiqueta per diferenciar tipus.
 /// @return   Trus si la llista es buida.
 ///
-template <IsClass T_, int tag_>
-bool IntrusiveBidirectionalList<T_, tag_>::isEmpty() const {
+template <eos::IsClass T_, int tag_>
+bool eos::IntrusiveBidirectionalList<T_, tag_>::isEmpty() const {
 
     return _first == nullptr;
 }

@@ -10,6 +10,7 @@ module;
 export module Eos.System.Core.Queue;
 
 
+import Eos.Types;
 import Eos.System.Core.Ticks;
 
 
@@ -19,7 +20,7 @@ export namespace eos {
     /// \param T_: Tipus del element en la cua.
 	///
     template <typename T_>
-    class Queue final {
+    class Queue final: private NonCopyableClass {
     	private:
             QueueHandle_t _handler;
 
