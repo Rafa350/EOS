@@ -47,26 +47,26 @@ namespace eos {
 export namespace eos {
 
     /// \brief Pool de memoria per un tipus concret d'objecte
-    /// \param Type_: Tipus d'objecte.
+    /// \param T_: Tipus d'objecte.
 	/// \param numBlocks_: Nombre de blocs disponibles en el pool.
 	///
-    template <typename Type_, uint32_t maxBlocks_>
+    template <typename T_, uint32_t maxBlocks_>
     class PoolAllocator final {
     	private:
     		Pool _pool;
 
     	public:
     		PoolAllocator():
-                _pool(sizeof(Type_), maxBlocks_) {
+                _pool(sizeof(T_), maxBlocks_) {
             }
 
             PoolAllocator(const PoolAllocator&) = delete;
 
-    		[[nodiscard]] inline Type_* allocate() {
-                return static_cast<Type_*>(_pool.allocate());
+    		[[nodiscard]] inline T_* allocate() {
+                return static_cast<T_*>(_pool.allocate());
             }
 
-            inline void deallocate(Type_* ptr) {
+            inline void deallocate(T_* ptr) {
                 _pool.deallocate(ptr);
             }
 
@@ -80,13 +80,13 @@ export namespace eos {
     };
 
     /// \brief Base pels objectes amb pool de memoria
-    /// \param Type_: Tipus d'objecte.
+    /// \param T_: Tipus d'objecte.
 	/// \param numBlocks_: Nombre de blocs disponibles en el pool.
     ///
-    template <typename Type_, uint32_t maxBlocks_>
+    template <typename T_, uint32_t maxBlocks_>
     class PoolAllocatable {
     	private:
-    		static PoolAllocator<Type_, maxBlocks_> _allocator;
+    		static PoolAllocator<T_, maxBlocks_> _allocator;
 
     	public:
     		virtual ~PoolAllocatable() = default;
@@ -96,12 +96,12 @@ export namespace eos {
             }
 
             inline static void operator delete(void *ptr) {
-                _allocator.deallocate(static_cast<Type_*>(ptr));
+                _allocator.deallocate(static_cast<T_*>(ptr));
             }
     };
 
-    template <typename Type_, uint32_t maxBlocks_>
-    PoolAllocator<Type_, maxBlocks_> PoolAllocatable<Type_, maxBlocks_>::_allocator;
+    template <typename T_, uint32_t maxBlocks_>
+    PoolAllocator<T_, maxBlocks_> PoolAllocatable<T_, maxBlocks_>::_allocator;
 }
 
 

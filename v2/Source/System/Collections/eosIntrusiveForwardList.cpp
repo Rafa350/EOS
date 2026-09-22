@@ -38,7 +38,7 @@ namespace eos {
 
 
     export template <IsClass T_, int tag_>
-    class IntrusiveForwardListIterator {
+    class IntrusiveForwardListIterator final {
         public:
             using ValueType = T_;
             using ValuePtr = ValueType*;
@@ -80,7 +80,7 @@ namespace eos {
 
 
     export template <IsClass T_, int tag_>
-    class IntrusiveForwardList {
+    class IntrusiveForwardList final {
         public:
             using ValueType = T_;
             using ValuePtr = ValueType*;

@@ -224,7 +224,7 @@ namespace htl {
                 /// Estats en que es troba el dispositiu.
                 ///
 				enum class State {
-					reset,       ///< Creat, pero sense inicialitzar.
+					reset,       ///< Creat, pero sense inicialitzar. 
 					ready,       ///< Inicialitzat i preparat per operar.
 					transmiting, ///< Transmeten dades.
 					receiving    ///< Rebent dades.

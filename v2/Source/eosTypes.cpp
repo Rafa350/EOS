@@ -56,7 +56,7 @@ export namespace eos {
     };
 
 
-    template <typename T>
+    template <typename T_>
     class StaticClass {
         protected:
             // Evita completament la instanciació de qualsevol forma

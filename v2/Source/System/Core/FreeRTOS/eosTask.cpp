@@ -26,12 +26,8 @@ namespace eos {
 	struct StorageIndex {
 		static constexpr uint32_t ptrThis = 0;
 	};
-}
 
-
-export namespace eos {
-
-	class Task final: private NonCopyableClass {
+	export class Task final: private NonCopyableClass {
 		public:
 			enum class Priority {
 				idle = 0,

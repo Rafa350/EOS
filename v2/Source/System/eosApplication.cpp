@@ -7,11 +7,14 @@ module;
 export module Eos.System.Application;
 
 
+import Eos.Types;
+
+
 export namespace eos {
 
     /// \brief Clase que representa l'aplicacio.
     ///
-    class Application {
+    class Application: private NonCopyableClass {
         protected:
             Application();
 
@@ -22,14 +25,9 @@ export namespace eos {
             virtual void onRun();
 
         public:
-            Application(const Application&) = delete;
-            Application(const Application&&) = delete;
             virtual ~Application() = default;
 
             void run();
-
-            Application& operator=(const Application&) = delete;
-            Application& operator=(const Application&&) = delete;
     };
 }
 

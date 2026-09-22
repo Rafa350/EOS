@@ -17,15 +17,15 @@ export namespace eos {
 	class StackBase {
 		public:
 			using ValueType = T_;
-			using Pointer = ValueType*;
+			using ValuePtr = ValueType*;
 			using CPointer = const ValueType*;
 			using Reference = ValueType&;
 			using CReference = const ValueType&;
 
 		private:
-			Pointer _begin;
-			Pointer _end;
-			Pointer _sp;
+			ValuePtr _begin;
+			ValuePtr _end;
+			ValuePtr _sp;
 
 		private:
 			StackBase(const StackBase &) = delete;
@@ -35,7 +35,7 @@ export namespace eos {
 
 			/// \brief Constructor per defecte
 			///
-			StackBase(Pointer container, size_t capacity):
+			StackBase(ValuePtr container, size_t capacity):
 				_begin {container},
 				_end {container + capacity},
 				_sp {container} {
@@ -47,14 +47,14 @@ export namespace eos {
 			/// \brief Afegeix un element a la pila.
 			/// \param element: L'element a afeigir.
 			//
-			inline void push(CReference element) {
+			void push(CReference element) {
 				eosAssert(!full());
 				*_sp++ = element;
 			}
 
 			/// \brief Elimina un element de la pila.
 			///
-			inline void pop() {
+			void pop() {
 				eosAssert(!empty());
 				_sp--;
 			}
@@ -62,7 +62,7 @@ export namespace eos {
 			/// \brief: Obte el primer element de la pila.
 			/// \return: El primer element.
 			///
-			inline Reference peek() {
+			Reference peek() {
 				eosAssert(!empty());
 				return *(_sp - 1); // Sempre apunta al seguent
 			}
@@ -70,42 +70,42 @@ export namespace eos {
 			/// \brief: Obte el primer element de la pila.
 			/// \return: El primer element.
 			///
-			inline CReference peek() const {
+			CReference peek() const {
 				eosAssert(!empty());
 				return *(_sp - 1);
 			}
 
 			/// \brief Buida la pila.
 			///
-			inline void clear() {
+			void clear() {
 				_sp = _begin;
 			}
 
 			/// \brief: Indica si la pila es buida.
 			/// \return: True si es buida.
 			///
-			inline bool empty() const {
+			bool empty() const {
 				return _sp == _begin;
 			}
 
 			/// \brief: Indica si la pila es plena
 			/// \return: True si es plena.
 			///
-			inline bool full() const {
+			bool full() const {
 				return _sp == _end;
 			}
 
 			/// \brief Obte el tamany de la pila.
 			/// \return El valor.
 			///
-			inline size_t size() const {
+			size_t size() const {
 				return _sp - _begin;
 			}
 
 			/// \brief Obte capacitat actual de la pila.
 			/// \return El valor.
 			///
-			inline size_t capacity() const {
+			size_t capacity() const {
 				return _end - _begin;
 			}
 	};

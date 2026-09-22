@@ -7,13 +7,14 @@ module;
 export module Eos.Services.Service;
 
 
+import Eos.Types;
 import Eos.System.Application;
 import Eos.System.Core.Task;
 
 
 export namespace eos {
 
-    class Service {
+    class Service: private NonCopyableClass {
     	public:
 			enum class State {
 				stop,
@@ -54,8 +55,6 @@ export namespace eos {
             bool stopSignal() const;
 
         public:
-            Service(const Service&) = delete;
-            Service(const Service&&) = delete;
             virtual ~Service();
 
             void start();
@@ -63,9 +62,6 @@ export namespace eos {
 
             Task * getTask() const { return _task; }
             State getState() const { return _state; }
-
-			Service& operator=(const Service&) = delete;
-            Service& operator=(const Service&&) = delete;
     };
 
 }

@@ -2,12 +2,12 @@
 
 ## Features:
 * C++20 with modules.
+* CMake/GCC toolchain.
+* Types and concepts module.
 * Verified targets STM32F0xx, STM32F1xx, STM32F4xx, STM32F7xx, STM32G030xx, STM32G0x1xx, PIC32MX.
 * FreeRTOS scheduler.
 * HTL module.
-  * Independent HTL (HAL Template Library) with minimal overload. C++20
-* RTOS module.
-  * Independent library for RTOS (FreeRTOS)
+  * Independent HTL (HAL Template Library) with minimal overload.
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
   * Color displays: ARGB8888, RGB888, RGB565, L8 (Optional CLUT) color scheme.
@@ -23,6 +23,11 @@
   * FSM service (Finite State Machine). [beta]
   * I2C comunication queue service.
   * CanOpen service. 
+* Based on FreeRTOS scheduler.
+  * Wrapers for kernel objects (Task, Semaphore, Queue, etc)
+* IO module
+  * Streams for memory, and serial devices.
+  * Binary and Text formaters.
 * Controllers
   * Driver USB device (MSC, CDC). [beta]
   * Driver IO (ISO808, CLT0138SQ7, VNI8200XP, CPU-GPIO)

@@ -35,7 +35,7 @@ namespace eos {
     };
 
     export template <IsClass T_, int tag_>
-    class IntrusiveBidirectionalList {
+    class IntrusiveBidirectionalList final {
         public:
             using ValueType = T_;
             using ValuePtr = ValueType*;

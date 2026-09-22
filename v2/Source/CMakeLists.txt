@@ -4,8 +4,11 @@ target_sources(${TARGET_NAME}
     FILES
         eosBits.cpp
         eosConcepts.cpp
+        eosConfiguration.cpp
         eosMath.cpp
+        eosPlatform.cpp
         eosResult.cpp
+        eosToolchain.cpp
         eosTypes.cpp
 )
 

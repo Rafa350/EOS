@@ -96,7 +96,7 @@ namespace eos {
 constexpr eos::Ticks eos::Ticks::fromTicks(
     uint32_t ticks) {
 
-    return Ticks(ticks);
+    return Ticks {ticks};
 }
 
 
@@ -108,7 +108,7 @@ constexpr eos::Ticks eos::Ticks::fromTicks(
 constexpr eos::Ticks eos::Ticks::fromMiliseconds(
     uint32_t ms) {
 
-    return Ticks(ms * Kernel::tickFrequency / 1000);
+    return Ticks {ms * Kernel::tickFrequency / 1000};
 }
 
 
@@ -118,7 +118,7 @@ constexpr eos::Ticks eos::Ticks::fromMiliseconds(
 ///
 eos::Ticks eos::Ticks::now() {
 
-    return Ticks(Kernel::getTickCount());
+    return Ticks {Kernel::getTickCount()};
 }
 
 
@@ -129,7 +129,7 @@ eos::Ticks eos::Ticks::now() {
 ///
 eos::Ticks eos::Ticks::nowISR() {
 
-    return Ticks(Kernel::getTickCountISR());
+    return Ticks {Kernel::getTickCountISR()};
 }
 
 
