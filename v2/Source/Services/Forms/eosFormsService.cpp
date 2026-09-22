@@ -2,9 +2,7 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 #include "eosCallbacks.h"
-#include "RTOS/rtosTask.h"
 
 
 export module Eos.Services.Forms;
@@ -19,6 +17,8 @@ import Eos.System.Forms.PropertyObserver;
 import Eos.System.Graphics;
 import Eos.System.Graphics.Color;
 import Eos.System.Core.Queue;
+import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 
 
 export namespace eos {
@@ -74,7 +74,7 @@ export namespace eos {
         private:
     		constexpr static const char *_serviceName = "Forms";
     		constexpr static uint32_t _serviceStackDepth = 280;
-    		constexpr static rtos::Task::Priority _servicePriority = rtos::Task::Priority::low;
+    		constexpr static Task::Priority _servicePriority = Task::Priority::low;
 
         private:
     		using MessageQueue = Queue<FormMessage>;
@@ -95,11 +95,11 @@ export namespace eos {
             void addForm(Form *form);
 
             void sendMessage(FormMessage &message);
-            bool postMessage(FormMessage &message, Time blockTime);
+            bool postMessage(FormMessage &message, Ticks blockTime);
 
-            bool postInitializeMessage(Time blockTime);
-            bool postKeyboardMessage(KeyboardMessageID id, Time blockTime);
-            bool postSelectorMessage(SelectorMessageID id, Time blockTime);
+            bool postInitializeMessage(Ticks blockTime);
+            bool postKeyboardMessage(KeyboardMessageID id, Ticks blockTime);
+            bool postSelectorMessage(SelectorMessageID id, Ticks blockTime);
 
             void setActiveForm(Form *form);
     };

@@ -2,8 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
-#include "RTOS/rtosTask.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlSPI.h"
 #include "HTL/htlDMA.h"
@@ -13,6 +11,10 @@ export module Eos.Controllers.Display.Drivers.SSD1306.SPI;
 
 
 export import Eos.Controllers.Display.Drivers.SSD1306;
+
+
+import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 
 
 export namespace eos {
@@ -88,9 +90,9 @@ void eos::DisplayDevice_SSD1306_SPI::initialize(
     _pinCS->set();
     if (_pinRST != nullptr) {
         _pinRST->clear();
-        rtos::Task::delay(Time::fromMiliseconds(100));
+        Task::delay(Ticks::fromMiliseconds(100));
         _pinRST->set();
-        rtos::Task::delay(Time::fromMiliseconds(500));
+        Task::delay(Ticks::fromMiliseconds(500));
     }
 
     writeScript(script, scriptSize);

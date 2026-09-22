@@ -49,31 +49,31 @@ export namespace eos {
         public:
             BinaryWriter(uint8_t *buffer, size_t bufferSize);
 
-            inline void clear() { _ptr = _begin; }
+            void clear() { _ptr = _begin; }
 
             bool writeU8(uint8_t data);
             bool writeU16(uint16_t data);
             bool writeU32(uint32_t data);
 
-            inline bool writeI8(int8_t data) {
+            bool writeI8(int8_t data) {
             	return writeU8(static_cast<uint8_t>(data));
             }
 
-            inline bool writI16(int16_t data) {
+            bool writI16(int16_t data) {
             	return writeU16(static_cast<uint16_t>(data));
             }
 
-            inline bool writeI32(int32_t data) {
+            bool writeI32(int32_t data) {
             	return writeU32(static_cast<uint32_t>(data));
             }
 
             bool write(const uint8_t *data, size_t size);
 
-            inline bool write(bool data) {
+            bool write(bool data) {
             	return writeU8(static_cast<uint8_t>(data));
             }
 
-            inline const uint8_t * data() const { return _begin; }
-            inline unsigned length() const { return _ptr - _begin; }
+            const uint8_t * data() const { return _begin; }
+            size_t length() const { return _ptr - _begin; }
     };
 }

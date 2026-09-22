@@ -12,11 +12,11 @@ export import Eos.Services.Service;
 
 
 import Eos.Math;
-import Eos.Ticks;
 import Eos.Controllers.Pin;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
 import Eos.System.Collections.IntrusiveForwardList;
+import Eos.System.Core.Ticks;
 
 
 namespace eos {

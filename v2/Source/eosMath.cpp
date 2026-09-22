@@ -7,15 +7,27 @@ module;
 export module Eos.Math;
 
 
-export namespace eos {
+namespace eos {
 
-	class Math final {
+	export class Math final {
+
 		public:
-			template <typename T>
-			static T min(T a, T b);
 
+			/// \brief  Obte el minim de dos valors.
+			/// \param  a: Primer valor.
+			/// \param  b: Segon valor.
+			/// \return El valor minim.
+			///
 			template <typename T>
-			static T max(T a, T b);
+			static T min(T a, T b) { return std::min(a, b); }
+
+			/// \brief  Obte el maxim de dos valors.
+			/// \param  a: Primer valor.
+			/// \param  b: Segon valor.
+			/// \return El valor maxim.
+			///
+			template <typename T>
+			static T max(T a, T b) { return std::max(a, b); }
 
 			static uint8_t loByte(uint16_t b);
 			static uint8_t hiByte(uint16_t b);
@@ -24,14 +36,26 @@ export namespace eos {
 			static void unPack(uint32_t data, uint8_t &b3, uint8_t &b2, uint8_t &b1, uint8_t &b0);
 			static void unPack(uint32_t data, uint16_t &w1, uint16_t &w0);
 
+			/// \brief  Intercanvia dos valors.
+			/// \param  a: El primer valor.
+			/// \param  b: El segon valor.
+			///
 			template <typename T>
-			static void swap(T &a, T &b);
+			static void swap(T &a, T &b) { return std::swap(a, b); }
 
+			/// \brief  Obte el valor absolut d'un nombre.
+			/// \param  v: El nombre.
+			/// \return El resultat de l'operacio.
+			///
 			template <typename T>
-			static T abs(T v);
+			static T abs(T v) { return std::abs(v); }
 
+			/// \brief  Obte el valor de l'arrel quadrada d'un nombre.
+			/// \param  v: El nombre.
+			/// \return El resultat de l'operacio.
+			///
 			template <typename T>
-			static T sqrt(T v);
+			static T sqrt(T v) { return std::sqrt(v); }
 
 			static constexpr uint32_t maxU32 = std::numeric_limits<uint32_t>::max();
 			static constexpr uint16_t maxU16 = std::numeric_limits<uint16_t>::max();
@@ -47,36 +71,6 @@ export namespace eos {
 			static constexpr uint16_t minI16 = std::numeric_limits<int16_t>::min();
 			static constexpr uint8_t minI8  = std::numeric_limits<int8_t>::min();
 	};
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el minim de dos valors.
-/// \param    a: Primer valor.
-/// \param    b: Segon valor.
-/// \return   El valor minim.
-///
-template <typename T>
-inline T eos::Math::min(
-	T a,
-	T b) {
-
-	return std::min(a, b);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el maxim de dos valors.
-/// \param    a: Primer valor.
-/// \param    b: Segon valor.
-/// \return   El valor maxim.
-///
-template <typename T>
-inline T eos::Math::max(
-	T a,
-	T b) {
-
-	return std::max(a, b);
 }
 
 
@@ -155,44 +149,4 @@ void eos::Math::unPack(
 
 	w1 = (data >> 16) & 0xFFFF;
 	w0 = (data >> 0) & 0xFFFF;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Intervancia dos valors.
-/// \param    a: El primer valor.
-/// \param    b: El segon valor.
-///
-template <typename T>
-inline void eos::Math::swap(
-	T &a,
-	T &b) {
-
-	std::swap(a, b);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el valor absolut d'un nombre.
-/// \param    v: El nombre.
-/// \return   El resultat de l'operacio.
-///
-template <typename T>
-inline T eos::Math::abs(
-	T v) {
-
-	return std::abs(v);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el valor de l'arrel quadrada d'un nombre.
-/// \param    v: El nombre.
-/// \return   El resultat de l'operacio.
-///
-template <typename T>
-inline T eos::Math::sqrt(
-	T v) {
-
-	return std::sqrt(v);
 }

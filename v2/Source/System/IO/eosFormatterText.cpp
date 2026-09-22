@@ -17,12 +17,12 @@ export namespace eos {
     class TextWriter final {
       	public:
     	  	static constexpr const char *newLine = "\r\n";
-    		  static constexpr char cr = '\r';
-    		  static constexpr char lf = '\n';
-    		  static constexpr char tab = '\t';
+    		static constexpr char cr = '\r';
+    		static constexpr char lf = '\n';
+    		static constexpr char tab = '\t';
 
-      private:
-    		  Stream *_stream;
+        private:
+    	    Stream * const _stream;
 
         public:
             TextWriter(Stream *stream);
@@ -40,31 +40,31 @@ export namespace eos {
             bool writeString(const char *data);
             bool writeBool(bool data);
 
-            inline TextWriter& operator << (const uint8_t data) {
+            TextWriter& operator << (const uint8_t data) {
 
             	writeU8(data);
             	return *this;
             }
 
-            inline TextWriter& operator << (const uint16_t data) {
+            TextWriter& operator << (const uint16_t data) {
 
             	writeU16(data);
             	return *this;
             }
 
-            inline TextWriter& operator << (const uint32_t data) {
+            TextWriter& operator << (const uint32_t data) {
 
             	writeU32(data);
             	return *this;
             }
 
-            inline TextWriter& operator << (const char data) {
+            TextWriter& operator << (const char data) {
 
             	writeChar(data);
             	return *this;
             }
 
-            inline TextWriter& operator << (const char *data) {
+            TextWriter& operator << (const char *data) {
 
             	writeString(data);
             	return *this;

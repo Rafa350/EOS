@@ -165,49 +165,47 @@ void eos::DigOutputImpl::delayedPulse(
 ///
 bool eos::DigOutputImpl::tick() {
 
-	bool changed = false;
+	auto result = false;
 
 	if (_state != State::idle) {
 
-		auto end = _state == State::pulse ? _pulseEndTime : _delayEndTime;
-		if (end.hasExpired()) {
+		auto endTime = _state == State::pulse ? _pulseEndTime : _delayEndTime;
+		if (endTime.hasExpiredNow()) {
 
-			bool newValue = _value;
-
+			bool oldValue = _value;
 			switch (_state) {
 				case State::pulse:
-					newValue = !_value;
+					_value = !_value;
 					_state = State::idle;
 					break;
 
 				case State::delayedSet:
-					newValue = true;
+					_value = true;
 					_state = State::idle;
 					break;
 
 				case State::delayedClear:
- 					newValue = false;
+					_value = false;
 					_state = State::idle;
 					break;
 
 				case State::delayedToggle:
-					newValue = !_value;
+					_value = !_value;
 					_state = State::idle;
 					break;
 
 				case State::delayedPulse:
-					newValue = !_value;
+					_value = !_value;
 					_state = State::pulse;
 					break;
 			}
 
-			if (newValue != _value) {
-				_value = newValue;
-				_drv->write(newValue);
-				changed = true;
+			if (oldValue != _value) {
+				_drv->write(_value);
+				result = true;
 			}
 		}
 	}
 
-	return changed;
+	return result;
 }

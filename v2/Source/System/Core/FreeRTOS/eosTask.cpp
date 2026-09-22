@@ -11,9 +11,8 @@ module;
 export module Eos.System.Core.Task;
 
 
-import Eos.Ticks;
 import Eos.System.Core.CriticalSection;
-import Eos.System.Core.RTOSUtils;
+import Eos.System.Core.Ticks;
 
 
 #if configNUM_THREAD_LOCAL_STORAGE_POINTERS < 1

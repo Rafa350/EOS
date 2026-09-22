@@ -11,8 +11,8 @@ export module Eos.Services.LedService;
 export import Eos.Services.Service;
 
 
-import Eos.Ticks;
 import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 
 
 namespace eos {

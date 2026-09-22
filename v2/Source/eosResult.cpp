@@ -1,6 +1,12 @@
 module;
 
 
+// EOS includes
+//
+#include "eos.h"
+
+// STD includes.
+//
 #include <concepts>
 
 
@@ -12,64 +18,65 @@ namespace eos {
     template <typename T_>
     concept IsEnum = std::is_enum_v<T_>;
 
-}
-
-
-export namespace eos {
 
     template <IsEnum ErrorType_, ErrorType_ okValue_>
-    class SimpleResultX {
+    class Result {
         private:
             /// @brief El codi d'error.
             ///
             ErrorType_ const _error;
 
         public:
-            /// @brief Contructor.
-            /// @param error: El codi d'error
+            /// @brief Contructor per defecte.
             ///
-            constexpr SimpleResultX():
+            constexpr Result():
                 _error {okValue_} {
             }
 
             /// @brief Contructor.
             /// @param error: El codi d'error
             ///
-            constexpr SimpleResultX(ErrorType_ error):
+            constexpr Result(ErrorType_ error):
                 _error {error} {
             }
 
             /// @brief Constructor de copia.
             /// @param other: L'altre objecte.
             ///
-            inline SimpleResultX(const SimpleResultX &other):
+            Result(const Result &other):
                 _error {other._error} {
             }
 
             /// @brief Obte el codi d'error.
             /// @return El resultat de l'operacio.
             //
-            inline ErrorType_ getError() const { return _error; }
+            [[nodiscard]] ErrorType_ getError() const { return _error; }
 
             /// @brief Comprova si no hi ha cap error.
             /// @return True si tot es correcte i no hi ha error.
             ///
-            inline bool isSuccess() const { return _error == okValue_; }
+            [[nodiscard]] bool isSuccess() const { return _error == okValue_; }
 
             /// @brief Comprova si el error es el especificat.
             /// @param error: El codi d'error de referencia.
             /// @return True si el error es el de referencia, false en cas contrari.
             ///
-            inline bool is(ErrorType_ error) const { return _error == error; }
+            [[nodiscard]] bool is(ErrorType_ error) const { return _error == error; }
 
             /// @brief Conversio a bool. True si no hi ha error, false en cas contrari.
             ///
-            inline operator bool () const { return _error == okValue_; }
+            operator bool () const { return _error == okValue_; }
+
+            /// @brief Conversio al tipus del codi d'error.
+            ///
+            operator ErrorType_ () const { return _error; }
     };
 
+    export template <IsEnum ErrorType_, ErrorType_ okValue_>
+    using SimpleResultX = Result<ErrorType_, okValue_>;
 
-    template <typename ValueType_, IsEnum ErrorType_, ErrorType_ okValue_>
-    class ComplexResultX : public SimpleResultX<ErrorType_, okValue_> {
+    export template <typename ValueType_, IsEnum ErrorType_, ErrorType_ okValue_>
+    class ComplexResultX final: public Result<ErrorType_, okValue_> {
         private:
             ValueType_ const _value;
 
@@ -77,40 +84,40 @@ export namespace eos {
             /// @brief Constructor
             /// @param value : El valor del resultat.
             ///
-            inline ComplexResultX(ValueType_ value):
-                SimpleResultX<ErrorType_, okValue_> {okValue_},
+            ComplexResultX(ValueType_ value):
+                Result<ErrorType_, okValue_> {okValue_},
                 _value {value} {
             }
 
             /// @brief Constructor.
             /// @param error: El codi d'error.
             ///
-            inline ComplexResultX(ErrorType_ error):
-                SimpleResultX<ErrorType_, okValue_> {error},
-                _value {ValueType_()} {
+            ComplexResultX(ErrorType_ error):
+                Result<ErrorType_, okValue_> {error},
+                _value {ValueType_{}} {
             }
 
             /// @brief Constructor de copia.
             /// @param other: L'altre objecte.
             ///
-            inline ComplexResultX(const ComplexResultX &other):
-                SimpleResultX<ErrorType_, okValue_> {other},
+            ComplexResultX(const ComplexResultX &other):
+                Result<ErrorType_, okValue_> {other},
                 _value {other._value} {
             }
 
             /// @brief Obte el valor.
             /// @return El resultat de l'operacio.
             ///
-            inline ValueType_ getValue() const { return _value; }
+            [[nodiscard]] ValueType_ getValue() const { return _value; }
 
             /// @brief Comprova si el valor es el indicat.
             /// @param value: El valor de referencia.
             /// @return True si el valor coincideix amb el de referencia.
             ///
-            inline bool isValue(ValueType_ value) const { return _value == value; }
+            [[nodiscard]] bool isValueEqualTo(ValueType_ value) const { return _value == value; }
 
             /// @brief Conversio al tipus del valor.
             ///
-            inline operator ValueType_ () const { return _value; }
+            operator ValueType_ () const { return _value; }
     };
 }

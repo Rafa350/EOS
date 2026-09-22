@@ -2,8 +2,8 @@ target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
         eosCriticalSection.cpp
         eosHeapAllocator.cpp
+        eosKernel.cpp
         eosQueue.cpp
-        eosRTOSUtils.cpp
         eosSemaphore.cpp
         eosTask.cpp
         eosTimer.cpp

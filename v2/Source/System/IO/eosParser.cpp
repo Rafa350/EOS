@@ -14,6 +14,9 @@ export namespace eos {
 
 	class Parser final {
 		private:
+			static constexpr char EOT = '\xFF';
+
+		private:
 			Stream * const _stream;
 			char _ungetCh;
 			bool _finished;
@@ -21,6 +24,13 @@ export namespace eos {
 		private:
 			char get();
 			void unget(char ch);
+			static bool isDigit(char ch);
+			static bool isHexDigit(char ch);
+			static bool isSpace(char ch);
+			static bool isAscii(char ch);
+			static bool isTrue(char ch);
+			static bool isFalse(char ch);
+			static bool isEOT(char ch);
 
 		public:
 			Parser(Stream *stream);
@@ -33,26 +43,11 @@ export namespace eos {
 }
 
 
-using namespace eos;
-
-
-constexpr char EOT = '\xFF';
-
-
-static bool isDigit(char ch);
-static bool isHexDigit(char ch);
-static bool isSpace(char ch);
-static bool isAscii(char ch);
-static bool isTrue(char ch);
-static bool isFalse(char ch);
-static bool isEOT(char ch);
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param    stream: Stream d'entrada.
 ///
-Parser::Parser(
+eos::Parser::Parser(
 	Stream * stream) :
 	_stream {stream},
 	_ungetCh {EOT},
@@ -66,7 +61,7 @@ Parser::Parser(
 /// \return   El caracter. 0xFF en cas d'error.
 ///
 ///
-char Parser::get() {
+char eos::Parser::get() {
 
 	char ch = _ungetCh;
 
@@ -85,7 +80,7 @@ char Parser::get() {
 /// \brief    Retorna el caracter al stream.
 /// \param    ch: El caracter.
 ///
-void Parser::unget(
+void eos::Parser::unget(
 	char ch) {
 
 	_ungetCh = ch;
@@ -97,7 +92,7 @@ void Parser::unget(
 /// \param    value: El valor analitzat. Nomes es valid si retorna true.
 /// \return   True si tot es correcte. False en cas contrari.
 
-bool Parser::parseU32(
+bool eos::Parser::parseU32(
 	uint32_t &value) {
 
 	unsigned state = 0;
@@ -147,7 +142,7 @@ bool Parser::parseU32(
 /// \param    value: El valor analitzat. Nomes es valid si retorna true.
 /// \return   True si tot es correcte.
 ///
-bool Parser::parseChar(
+bool eos::Parser::parseChar(
 	char &value) {
 
 	bool done = false;
@@ -184,7 +179,7 @@ bool Parser::parseChar(
 /// \param    value: El valor analitzat. Nomes es valid si retorna true.
 /// \return   True si tot es correcte.
 ///
-bool Parser::parseBool(
+bool eos::Parser::parseBool(
 	bool &value) {
 
 	bool done = false;
@@ -227,7 +222,7 @@ bool Parser::parseBool(
 /// \param    ch: El caracter a verificar.
 /// \return   El resultat de la comprovacio.
 ///
-static bool isDigit(
+bool eos::Parser::isDigit(
 	char ch) {
 
 	return (ch >= '0') && (ch <= '9');
@@ -239,7 +234,7 @@ static bool isDigit(
 /// \param    ch: El caracter a verificar.
 /// \return   El resultat de la comprovacio.
 ///
-static bool isHexDigit(
+bool eos::Parser::isHexDigit(
 	char ch) {
 
 	return ((ch >= '0') && (ch <= '9')) ||
@@ -253,7 +248,7 @@ static bool isHexDigit(
 /// \param    ch: El caracter a verificar.
 /// \return   El resultat de la comprovacio.
 ///
-static bool isSpace(
+bool eos::Parser::isSpace(
 	char ch) {
 
 	return (ch == ' ') || (ch == '\t');
@@ -265,7 +260,7 @@ static bool isSpace(
 /// \param    ch: El caracter a verificar.
 /// \return   El resultat de la comprovacio.
 ///
-static bool isAscii(
+bool eos::Parser::isAscii(
 	char ch) {
 
 	return ch <= 0x7F;
@@ -277,7 +272,7 @@ static bool isAscii(
 /// \param    ch: El caracter a verificar.
 /// \return   El resultat de la comprovacio.
 ///
-static bool isTrue(
+bool eos::Parser::isTrue(
 	char ch) {
 
 	return
@@ -292,7 +287,7 @@ static bool isTrue(
 /// \param    ch: El caracter a verificar.
 /// \return   El resultat de la comprovacio.
 ///
-static bool isFalse(
+bool eos::Parser::isFalse(
 	char ch) {
 
 	return
@@ -307,7 +302,7 @@ static bool isFalse(
 /// \param    ch: El caracter a verificar.
 /// \return   El resultat de la comprovacio.
 ///
-static bool isEOT(
+bool eos::Parser::isEOT(
 	char ch) {
 
 	return ch == EOT;

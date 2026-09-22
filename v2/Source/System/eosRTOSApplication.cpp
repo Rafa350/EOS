@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "RTOS/rtosKernel.h"
 
 
 export module Eos.System.Application.RTOS;
@@ -12,6 +11,7 @@ export module Eos.System.Application.RTOS;
 import Eos.Services.Service;
 import Eos.System.Application;
 import Eos.System.Collections.IntrusiveForwardList;
+import Eos.System.Core.Kernel;
 import Eos.System.Core.Task;
 
 
@@ -138,7 +138,7 @@ void eos::RTOSApplication::onRun() {
     // Inicia el planificador i totes les tasques
     //
     _running = true;
-    rtos::Kernel::startScheduler(); // Ja no retorna mai mes
+    eos::Kernel::startScheduler(); // Ja no retorna mai mes
 
     _running = false;
 }

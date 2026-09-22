@@ -13,8 +13,8 @@ export module Eos.System.IO.Streams.Serial;
 export import Eos.System.IO.Streams;
 
 
-import Eos.Ticks;
 import Eos.Controllers.Serial;
+import Eos.System.Core.Ticks;
 
 
 export namespace eos {

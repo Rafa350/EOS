@@ -5,12 +5,11 @@ target_sources(${TARGET_NAME}
         eosBits.cpp
         eosMath.cpp
         eosResult.cpp
-        eosTicks.cpp
+        eosTypes.cpp
 )
 
 add_subdirectory("Controllers")
 add_subdirectory("HTL")
-add_subdirectory("RTOS")
 add_subdirectory("Services")
 add_subdirectory("StartUp")
 add_subdirectory("System")

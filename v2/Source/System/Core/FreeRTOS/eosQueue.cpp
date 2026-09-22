@@ -10,9 +10,7 @@ module;
 export module Eos.System.Core.Queue;
 
 
-import Eos.Ticks;
-import Eos.System.Core.RTOSUtils;
-
+import Eos.System.Core.Ticks;
 
 
 export namespace eos {

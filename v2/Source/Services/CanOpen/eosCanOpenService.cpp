@@ -13,11 +13,11 @@ export import Eos.Services.Service;
 
 import Eos.Math;
 import Eos.Result;
-import Eos.Ticks;
 import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 import Eos.System.Core.Timer;
 
 

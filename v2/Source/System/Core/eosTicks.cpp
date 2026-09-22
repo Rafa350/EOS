@@ -3,21 +3,19 @@ module;
 
 #include "eos.h"
 
-#include "FreeRTOS.h"
-#include "task.h"
 
-
-export module Eos.Ticks;
+export module Eos.System.Core.Ticks;
 
 
 import Eos.Math;
+import Eos.System.Core.Kernel;
 
 
-export namespace eos {
+namespace eos {
 
     /// @brief Clase que encapsula el temps en ticks del sistema.
     ///
-    class Ticks {
+    export class Ticks final {
 
         private:
             static constexpr uint32_t _zeroValue = 0;
@@ -38,9 +36,9 @@ export namespace eos {
             Ticks(): _value {0} {};
 
             /// @brief  Constructor copia.
-            /// @param  t: L'altre objecte.
+            /// @param  other: L'altre objecte.
             ///
-            Ticks(const Ticks &ticks) = default;
+            Ticks(const Ticks &other) = default;
 
             /// @brief  Construeix un objecte amb valor zero
             /// @return El resultat.
@@ -68,8 +66,7 @@ export namespace eos {
             ///
             bool isInfinite() const { return _value == _infiniteValue; }
 
-            bool hasExpired() const;
-            bool hasExpired(Ticks limit) const;
+            bool hasExpiredNow() const;
 
             Ticks& operator = (const Ticks ticks) { _value = ticks._value; return *this; }
             Ticks& operator += (const Ticks ticks) { _value += ticks._value; return *this; }
@@ -111,7 +108,7 @@ constexpr eos::Ticks eos::Ticks::fromTicks(
 constexpr eos::Ticks eos::Ticks::fromMiliseconds(
     uint32_t ms) {
 
-    return Ticks(pdMS_TO_TICKS(ms));
+    return Ticks(ms * Kernel::tickFrequency / 1000);
 }
 
 
@@ -121,7 +118,7 @@ constexpr eos::Ticks eos::Ticks::fromMiliseconds(
 ///
 eos::Ticks eos::Ticks::now() {
 
-    return Ticks(xTaskGetTickCount());
+    return Ticks(Kernel::getTickCount());
 }
 
 
@@ -132,7 +129,7 @@ eos::Ticks eos::Ticks::now() {
 ///
 eos::Ticks eos::Ticks::nowISR() {
 
-    return Ticks(xTaskGetTickCountFromISR());
+    return Ticks(Kernel::getTickCountISR());
 }
 
 
@@ -140,7 +137,7 @@ eos::Ticks eos::Ticks::nowISR() {
 /// @brief    Comprova si ha arribal al valor del contador de ticks actual.
 /// @return   True si ha expirat.
 ///
-bool eos::Ticks::hasExpired() const {
+bool eos::Ticks::hasExpiredNow() const {
 
     if (isZero())
         return true;
@@ -149,28 +146,7 @@ bool eos::Ticks::hasExpired() const {
         return false;
 
     else {
-        auto delta = _value - xTaskGetTickCount();
-	    return static_cast<int>(delta) <= 0;
-    }
-}
-
-
-/// ---------------------------------------------------------------------------
-/// @brief    Comprova si ha arribat al valor de ticks especificat.
-/// @param    limit: Valor limit.
-/// @return   True si ha expirat.
-///
-bool eos::Ticks::hasExpired(
-    Ticks limit) const {
-
-    if (isZero())
-        return true;
-
-    else if (isInfinite())
-        return false;
-
-    else {
-        auto delta = _value - limit._value;
+        auto delta = _value - Kernel::getTickCount();
 	    return static_cast<int>(delta) <= 0;
     }
 }

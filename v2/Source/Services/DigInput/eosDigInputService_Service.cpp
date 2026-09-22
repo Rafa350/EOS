@@ -8,8 +8,8 @@ module;
 module Eos.Services.DigInput;
 
 
-import Eos.Ticks;
 import Eos.System.Core.CriticalSection;
+import Eos.System.Core.Ticks;
 
 
 /// ----------------------------------------------------------------------
@@ -27,8 +27,9 @@ eos::DigInputService::DigInputService():
 eos::DigInputService::~DigInputService() {
 
     CriticalSection::enter();
-	while (!_inputs.empty()) {
-		auto input = _inputs.front();
+
+	while (!_inputs.isEmpty()) {
+		auto input = _inputs.getFirst();
 		_inputs.remove(input);
 		delete input;
 	}

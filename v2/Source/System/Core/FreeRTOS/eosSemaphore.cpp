@@ -12,8 +12,7 @@ export module Eos.System.Core.Semaphore;
 export import Eos.Result;
 
 
-import Eos.Ticks;
-import Eos.System.Core.RTOSUtils;
+import Eos.System.Core.Ticks;
 
 
 export namespace eos {

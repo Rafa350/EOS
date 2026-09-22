@@ -37,12 +37,12 @@ export import Eos.Services.Service;
 
 
 import Eos.Math;
-import Eos.Ticks;
 import Eos.Controllers.Pin;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Core.CriticalSection;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 
 
 namespace eos {
@@ -62,7 +62,7 @@ namespace eos {
 
     /// \brief Clase que representa una sortida digital individual.
     ///
-    export class DigOutput: public OutputListNode {
+    export class DigOutput: public OutputListNode, PendingListNode {
     	private:
     		uint32_t _tag;
 
@@ -166,7 +166,7 @@ namespace eos {
 
     	private:
             OutputList _outputs;
-            PendingList _pending;
+            //PendingList _pending;
 
             OutputChangedEventRaiser _outputChangedEventRaiser;
             ActionQueue _actionQueue;

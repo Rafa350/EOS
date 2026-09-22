@@ -60,14 +60,14 @@ void eos::FormsService::sendMessage(
 ///
 bool eos::FormsService::postMessage(
 	FormMessage &message,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	return _messageQueue.push(message, blockTime);
 }
 
 
 bool eos::FormsService::postInitializeMessage(
-	Time blockTime) {
+	Ticks blockTime) {
 
 	FormMessage message = {
 		.id { FormMessageID::initialize},
@@ -80,7 +80,7 @@ bool eos::FormsService::postInitializeMessage(
 
 bool eos::FormsService::postKeyboardMessage(
 	KeyboardMessageID id,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	FormMessage message = {
 		.id { FormMessageID::keyboard},
@@ -96,7 +96,7 @@ bool eos::FormsService::postKeyboardMessage(
 
 bool eos::FormsService::postSelectorMessage(
 	SelectorMessageID id,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	FormMessage message = {
 		.id { FormMessageID::selector},
@@ -161,14 +161,14 @@ void eos::FormsService::onInitialize(
 ///
 void eos::FormsService::onExecute() {
 
-	postInitializeMessage(Times::infinite);
+	postInitializeMessage(Ticks::infinite());
 
     auto graphics = new Graphics(_drvDisplay);
 
     while (!stopSignal()) {
 
     	FormMessage message;
-    	while (_messageQueue.pop(message, eos::Times::infinite)) {
+    	while (_messageQueue.pop(message, Ticks::infinite())) {
     		sendMessage(message);
 
     		// Quant s'ha procesat l'ultim missatge, renderitza el form,

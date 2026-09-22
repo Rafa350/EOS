@@ -10,8 +10,8 @@ export module Eos.Controllers.Serial;
 
 
 import Eos.Result;
-import Eos.Ticks;
 import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 
 
 export namespace eos {

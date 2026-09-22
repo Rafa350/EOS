@@ -28,7 +28,7 @@ eos::MsgDispatcherService::MsgDispatcherService():
 ///
 void eos::MsgDispatcherService::addListenerImpl(
 	MsgListener *listener,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	Action action = {
 		.id {ActionID::addListener},
@@ -50,7 +50,7 @@ void eos::MsgDispatcherService::addListenerImpl(
 void eos::MsgDispatcherService::postImpl(
 	uint32_t typeId,
 	Message *message,
-	Time blockTime) {
+	Ticks blockTime) {
 
 	Action action = {
 		.id {ActionID::postMessage},
@@ -90,7 +90,7 @@ void eos::MsgDispatcherService::onExecute() {
 	while (!stopSignal()) {
 
 		Action action;
-		while (_actionQueue.pop(action, Time::fromMiliseconds(1000))) {
+		while (_actionQueue.pop(action, Ticks::fromMiliseconds(1000))) {
 
 			switch (action.id) {
 				case ActionID::postMessage: {

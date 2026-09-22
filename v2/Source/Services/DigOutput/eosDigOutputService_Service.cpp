@@ -519,7 +519,6 @@ void eos::DigOutputService::processTick() {
 	for (auto o: _outputs) {
 
     	auto output = static_cast<DigOutputImpl*>(o);
-
 		if (output->getState() != DigOutputImpl::State::idle) {
 
 			if (output->tick())

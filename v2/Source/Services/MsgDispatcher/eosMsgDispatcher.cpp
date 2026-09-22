@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosTime.h"
 #include "eosCallbacks.h"
 
 
@@ -12,6 +11,7 @@ export module Eos.Services.MsgDispatcher;
 import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Core.Queue;
+import Eos.System.Core.Ticks;
 
 
 export namespace eos {
@@ -114,8 +114,8 @@ export namespace eos {
 			IDispatchFinishedEvent *_dispatchFinishedEvent;
 
 		private:
-			void postImpl(uint32_t typeId, Message *message, Time blockTime);
-			void addListenerImpl(MsgListener *lister, Time blockTime);
+			void postImpl(uint32_t typeId, Message *message, Ticks blockTime);
+			void addListenerImpl(MsgListener *lister, Ticks blockTime);
 
 		protected:
 			void onExecute() override;
@@ -125,12 +125,12 @@ export namespace eos {
 			MsgDispatcherService();
 
 			template <typename Message_>
-			void addListener(MsgListenerX<Message_> *listener, Time blockTime) {
+			void addListener(MsgListenerX<Message_> *listener, Ticks blockTime) {
 				addListenerImpl(listener, blockTime);
 			}
 
 			template <typename Message_>
-			void post(Message_ *message, Time blockTime) {
+			void post(Message_ *message, Ticks blockTime) {
 				postImpl(MessageID<Message_>::typeId, message, blockTime);
 			}
 
