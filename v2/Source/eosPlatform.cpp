@@ -15,47 +15,48 @@ export namespace eos {
     enum class PlatformID {
 
         // PIC32MX4xxxFxxx
-        pic32mx460f512l,
+        idPIC32MX460F512L,
 
         // STM32F0xx
-        stm32f030r8,
+        idSTM32F030R8,
 
         // STM32F429xx
-        stm32f429zi,
+        idST32F429ZI,
 
         // STM32F7446xx
-        stm32f746ng,
+        idSTM32F746NG,
 
         // STM32G031xx
-        stm32g031k8,
+        idSTM32G031K8,
 
         // STM32G071xx
-        stm32g071c8,
-        stm32g071cb,
-        stm32g071k8,
-        stm32g071kb,
-        stm32g071r8,
-        stm32g071rb,
+        idSTM32G071C8,
+        idSTM32G071CB,
+        idSTM32G071K8,
+        idSTM32G071KB,
+        idSTM32G071R8,
+        idSTM32G071RB,
 
         // STM32G0B1xx
-        stm32g0B1re
+        idSTM32G0B1RE
 
     };
 
 #ifdef EOS_PLATFORM_STM32G0B1RE
-    constexpr PlatformID currentPlatform = PlatformID::stm32g0B1re;
+    constexpr PlatformID currentPlatformId = PlatformID::idSTM32G0B1RE;
 #else
     error "Unknown platformm"
 #endif
 
     template <PlatformID id_>
-    struct Platform {
-    };
+    struct PlatformTraits {};
 
     template <>
-    struct Platform<PlatformID::stm32g0B1re> {
-        static constexpr PlatformID id        = PlatformID::stm32g0B1re;
-        static constexpr UInt32     ramSize   = 0;
-        static constexpr UInt32     flashSize = 0;
+    struct PlatformTraits<PlatformID::idSTM32G0B1RE> {
+        static constexpr PlatformID id        = PlatformID::idSTM32G0B1RE;
+        static constexpr UInt32     ramSize   = 128;
+        static constexpr UInt32     flashSize = 512;
     };
+
+    using Platform = PlatformTraits<currentPlatformId>;
 }

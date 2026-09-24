@@ -3,6 +3,7 @@ module;
 
 #include "HTL/htl.h"
 #include "HTL/htlGPIO.h"
+#include <concepts>
 
 
 export module Eos.Hardware.UART.Pins;

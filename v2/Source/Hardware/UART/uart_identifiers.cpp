@@ -7,6 +7,33 @@ module;
 export module Eos.Hardware.UART.Identifiers;
 
 
+import Eos.Configuration.Platform;
+
+
+namespace eos {
+	namespace hardware::uart {
+		namespace internal {
+
+			template<PlatformID platformID_>
+			struct PlatformTraits;
+
+			template<>
+			struct PlatformTraits<PlatformID::idSTM32G031K8> {
+				enum class UARTDeviceID { uart1, uart2 };
+			};
+
+			template<>
+			struct PlatformTraits<PlatformID::idSTM32G0B1RE> {
+				enum class UARTDeviceID { uart1, uart2, uart3, uart4, uart5, uart6 };
+			};
+		}
+
+		export using UARTDeviceID = internal::PlatformTraits<Platform::id>::UARTDeviceID;
+	}
+
+}
+/*
+
 export namespace eos::hardware::uart {
 
 	/// @brief Identificador del dispositiu UART
@@ -37,5 +64,8 @@ export namespace eos::hardware::uart {
 		uart8,
 #endif
 	};
-
 }
+
+
+
+*/
