@@ -1,10 +1,4 @@
 target_sources(${TARGET_NAME}
-    PUBLIC FILE_SET CXX_MODULES FILES
-        htlAtomic.cpp
-)
-
-
-target_sources(${TARGET_NAME}
     PUBLIC
         htl.cpp
         htlClock.cpp
@@ -116,7 +110,7 @@ endif()
 # ------------------------------------------------------------------------
 # Afegeix el modul UART
 #
-if(EOS_USE_HTL_UART)
+if(EOS_USE_HTL_UARTx)
 target_sources(${TARGET_NAME}
     PUBLIC
 	    htlUART.cpp

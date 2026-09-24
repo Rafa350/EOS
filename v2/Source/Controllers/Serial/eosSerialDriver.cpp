@@ -10,6 +10,7 @@ export module Eos.Controllers.Serial;
 
 
 import Eos.Result;
+import Eos.Types;
 import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
 
@@ -29,7 +30,7 @@ export namespace eos {
 				errorState,
 			};
 			using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
-			using ResultU32 = ComplexResultX<uint32_t, ErrorCode, ErrorCode::ok>;
+			using ResultU32 = ComplexResultX<UInt32, ErrorCode, ErrorCode::ok>;
 
 			enum class State {
                 reset,
@@ -42,8 +43,8 @@ export namespace eos {
             State _state;
             Task *_task;
             volatile bool _finished;
-            uint32_t _txCount;
-            uint32_t _rxCount;
+            UInt32 _txCount;
+            UInt32 _rxCount;
 
 		protected:
             SerialDriver();

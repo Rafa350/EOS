@@ -2,8 +2,11 @@ module;
 
 
 #include "eos.h"
-#include "eosAssert.h"
+
+
+#ifndef EOS_NEW_UART
 #include "HTL/htlUART.h"
+#endif
 
 
 export module Eos.Controllers.Serial.UART;
@@ -12,17 +15,29 @@ export module Eos.Controllers.Serial.UART;
 export import Eos.Controllers.Serial;
 
 
+#ifdef EOS_NEW_UART
+import Eos.Hardware.UART;
+#endif
+
+
 export namespace eos {
 
 	class SerialDriver_UART: public SerialDriver {
+		public:
+#ifdef EOS_NEW_UART
+			using UARTDevice = eos::hardware::uart::UARTDevice;
+#else
+			using UARTDevice = htl::uart::UARTDevice;
+#endif
+
 		protected:
-			htl::uart::UARTDevice * const _devUART;
+			UARTDevice * const _devUART;
 
 		private:
-			htl::uart::UARTDevice::NotificationEvent<SerialDriver_UART> _devUART_notificationEvent;
+			UARTDevice::NotificationEvent<SerialDriver_UART> _devUART_notificationEvent;
 
 		private:
-			void devUART_notificationEventHandler(htl::uart::UARTDevice *sender, htl::uart::UARTDevice::NotificationEventArgs *args);
+			void devUART_notificationEventHandler(UARTDevice *sender, UARTDevice::NotificationEventArgs *args);
 
 		protected:
             bool onInitialize() override;
@@ -32,10 +47,9 @@ export namespace eos {
             bool onAbort() override;
 
 		public:
-			SerialDriver_UART(htl::uart::UARTDevice *devUART);
+			SerialDriver_UART(UARTDevice *devUART);
 	};
 }
-
 
 
 /// ----------------------------------------------------------------------
@@ -43,12 +57,10 @@ export namespace eos {
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
 eos::SerialDriver_UART::SerialDriver_UART(
-	htl::uart::UARTDevice *devUART):
+	UARTDevice *devUART):
 
 	_devUART {devUART},
 	_devUART_notificationEvent {*this, &SerialDriver_UART::devUART_notificationEventHandler} {
-
-	eosAssert(devUART != nullptr);
 }
 
 
@@ -59,6 +71,7 @@ eos::SerialDriver_UART::SerialDriver_UART(
 bool eos::SerialDriver_UART::onInitialize() {
 
 	_devUART->enableNotificationEvent(_devUART_notificationEvent);
+
     return true;
 }
 
@@ -70,6 +83,7 @@ bool eos::SerialDriver_UART::onInitialize() {
 bool eos::SerialDriver_UART::onDeinitialize() {
 
 	_devUART->disableNotificationEvent();
+
     return true;
 }
 
@@ -84,9 +98,6 @@ bool eos::SerialDriver_UART::onTransmit(
 	const uint8_t *buffer,
 	size_t length) {
 
-	eosAssert(buffer != nullptr);
-	eosAssert(length > 0);
-
     return _devUART->transmit_IRQ(buffer, length).isSuccess();
 }
 
@@ -100,9 +111,6 @@ bool eos::SerialDriver_UART::onTransmit(
 bool eos::SerialDriver_UART::onReceive(
 	uint8_t *buffer,
 	size_t bufferSize) {
-
-	eosAssert(buffer != nullptr);
-	eosAssert(bufferSize > 0);
 
 	return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }
@@ -133,34 +141,31 @@ bool eos::SerialDriver_UART::onAbort() {
 /// \param    args: Parametres del event.
 ///
 void eos::SerialDriver_UART::devUART_notificationEventHandler(
-	htl::uart::UARTDevice *sender,
-	htl::uart::UARTDevice::NotificationEventArgs *args) {
-
-	eosAssert(args != nullptr);
-	eosAssert(sender == _devUART);
+	UARTDevice *sender,
+	UARTDevice::NotificationEventArgs *args) {
 
 	switch (args->id) {
 
 		// Notificacio del final de la transmissio
 		//
-		case htl::uart::UARTDevice::NotificationID::txCompleted:
+		case UARTDevice::NotificationID::txCompleted:
 		    notifyTxCompleted(args->txCompleted.length, args->irq);
 			break;
 
     	// Notificacio del final de la recepcio
 		//
-		case htl::uart::UARTDevice::NotificationID::rxCompleted:
+		case UARTDevice::NotificationID::rxCompleted:
 		    notifyRxCompleted(args->rxCompleted.length, args->irq);
 			break;
 
     	// Notificacio un error en la comunicacio
 		//
-		case htl::uart::UARTDevice::NotificationID::error:
+		case UARTDevice::NotificationID::error:
 			break;
 
     	// Notificacio nula
 		//
-		case htl::uart::UARTDevice::NotificationID::null:
+		case UARTDevice::NotificationID::null:
 			break;
 	}
 }

@@ -1,8 +1,6 @@
 module;
 
 
-#include "eos.h"
-
 #include "FreeRTOS.h"
 #include "task.h"
 

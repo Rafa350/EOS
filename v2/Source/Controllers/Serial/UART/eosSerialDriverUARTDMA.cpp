@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosAssert.h"
 #include "HTL/htlDMA.h"
 #include "HTL/htlUART.h"
 
@@ -16,16 +15,19 @@ export import Eos.Controllers.Serial.UART;
 export namespace eos {
 
 	class SerialDriver_UARTDMA: public SerialDriver_UART {
+		public:
+			using DMADevice = htl::dma::DMADevice;
+
 	    private:
-	        htl::dma::DMADevice * const _devDMAtx;
-	        htl::dma::DMADevice * const _devDMArx;
+	        DMADevice * const _devDMAtx;
+	        DMADevice * const _devDMArx;
 
 	    private:
             bool onTransmit(const uint8_t *buffer, size_t length) override;
             bool onReceive(uint8_t *buffer, size_t bufferSize) override;
 
 	    public:
-            SerialDriver_UARTDMA(htl::uart::UARTDevice *devUART, htl::dma::DMADevice *devDMAtx, htl::dma::DMADevice *devDMArx);
+            SerialDriver_UARTDMA(UARTDevice *devUART, DMADevice *devDMAtx, DMADevice *devDMArx);
 	};
 }
 
@@ -35,11 +37,11 @@ export namespace eos {
 /// \param    devUART: El dispositiu uart a utilitzar.
 ///
 eos::SerialDriver_UARTDMA::SerialDriver_UARTDMA(
-	htl::uart::UARTDevice *devUART,
-	htl::dma::DMADevice *devDMAtx,
-	htl::dma::DMADevice *devDMArx):
+	UARTDevice *devUART,
+	DMADevice *devDMAtx,
+	DMADevice *devDMArx):
 
-	SerialDriver_UART(devUART),
+	SerialDriver_UART {devUART},
 	_devDMAtx {devDMAtx},
 	_devDMArx {devDMArx} {
 }

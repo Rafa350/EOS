@@ -1,17 +1,10 @@
-module;
-
-
-#include "eos.h"
-#include <concepts>
-
-
 export module Eos.Result;
 
 
-namespace eos {
+import Eos.Concepts;
 
-    template <typename T_>
-    concept IsEnum = std::is_enum_v<T_>;
+
+namespace eos {
 
     template <IsEnum ErrorType_, ErrorType_ okValue_>
     class Result {

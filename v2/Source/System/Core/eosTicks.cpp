@@ -1,13 +1,11 @@
 module;
 
 
-#include "eos.h"
-
-
 export module Eos.System.Core.Ticks;
 
 
 import Eos.Math;
+import Eos.Types;
 import Eos.System.Core.Kernel;
 
 
@@ -18,17 +16,17 @@ namespace eos {
     export class Ticks final {
 
         private:
-            static constexpr uint32_t _zeroValue = 0;
-            static constexpr uint32_t _infiniteValue = Math::maxU32;
+            static constexpr UInt32 _zeroValue = 0;
+            static constexpr UInt32 _infiniteValue = Math::maxU32;
 
         private:
-            uint32_t _value;
+            UInt32 _value;
 
         private:
             /// @brief  Constructor.
             /// @param  ticks: Valor inicial.
             ///
-            explicit constexpr Ticks(uint32_t value): _value {value} {}
+            explicit constexpr Ticks(UInt32 value): _value {value} {}
 
         public:
             /// @brief  Contructor per defecte al valor inicial zero.
@@ -52,8 +50,8 @@ namespace eos {
 
             static Ticks now();
             static Ticks nowISR();
-            static constexpr Ticks fromTicks(uint32_t ticks);
-            static constexpr Ticks fromMiliseconds(uint32_t ms);
+            static constexpr Ticks fromTicks(UInt32 ticks);
+            static constexpr Ticks fromMiliseconds(UInt32 ms);
 
             /// @brief Comprova si es zero.
             /// @return El resultat de l'operacio.
@@ -70,20 +68,20 @@ namespace eos {
 
             Ticks& operator = (const Ticks ticks) { _value = ticks._value; return *this; }
             Ticks& operator += (const Ticks ticks) { _value += ticks._value; return *this; }
-            Ticks& operator += (uint32_t value) { _value += value; return *this; }
+            Ticks& operator += (UInt32 value) { _value += value; return *this; }
             Ticks& operator -= (const Ticks ticks) { _value -= ticks._value; return *this; }
-            Ticks& operator -= (uint32_t value) { _value -= value; return *this; }
+            Ticks& operator -= (UInt32 value) { _value -= value; return *this; }
 
             Ticks operator + (const Ticks &ticks) const { return Ticks(_value + ticks._value); }
-            Ticks operator + (uint32_t value) const { return Ticks(_value + value); }
+            Ticks operator + (UInt32 value) const { return Ticks(_value + value); }
             Ticks operator - (const Ticks &ticks) const { return Ticks(_value - ticks._value); }
-            Ticks operator - (uint32_t value) const { return Ticks(_value - value); }
+            Ticks operator - (UInt32 value) const { return Ticks(_value - value); }
 
             bool operator == (const Ticks &ticks) const { return _value == ticks._value; }
             bool operator < (const Ticks &ticks) const { return _value < ticks._value; }
             bool operator > (const Ticks &ticks) const { return _value > ticks._value; }
 
-            explicit operator uint32_t () const { return _value; }
+            explicit operator UInt32 () const { return _value; }
     };
 }
 
@@ -94,7 +92,7 @@ namespace eos {
 /// @return   El resultat.
 ///
 constexpr eos::Ticks eos::Ticks::fromTicks(
-    uint32_t ticks) {
+    UInt32 ticks) {
 
     return Ticks {ticks};
 }
@@ -106,7 +104,7 @@ constexpr eos::Ticks eos::Ticks::fromTicks(
 /// @return   El resultat.
 ///
 constexpr eos::Ticks eos::Ticks::fromMiliseconds(
-    uint32_t ms) {
+    UInt32 ms) {
 
     return Ticks {ms * Kernel::tickFrequency / 1000};
 }
@@ -147,6 +145,6 @@ bool eos::Ticks::hasExpiredNow() const {
 
     else {
         auto delta = _value - Kernel::getTickCount();
-	    return static_cast<int>(delta) <= 0;
+	    return static_cast<Int32>(delta) <= 0;
     }
 }

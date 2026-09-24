@@ -1,7 +1,6 @@
 module;
 
 
-#include "eos.h"
 #include "FreeRTOS.h"
 
 
@@ -32,7 +31,7 @@ namespace eos {
             void deallocate(void* ptr);
 
             void* getStoragePtr() const { return _blocks; }
-            inline uint32_t getStorageSize() const { return _blockSize * _maxBlocks; }
+            uint32_t getStorageSize() const { return _blockSize * _maxBlocks; }
             uint32_t getAllocatedSize() const { return (_maxBlocks - _freeBlocks) * _blockSize; }
             uint32_t getAvailableSize() const { return _freeBlocks * _blockSize; }
 
@@ -62,19 +61,19 @@ export namespace eos {
 
             PoolAllocator(const PoolAllocator&) = delete;
 
-    		[[nodiscard]] inline T_* allocate() {
+    		[[nodiscard]] T_* allocate() {
                 return static_cast<T_*>(_pool.allocate());
             }
 
-            inline void deallocate(T_* ptr) {
+            void deallocate(T_* ptr) {
                 _pool.deallocate(ptr);
             }
 
-			inline uint32_t getAllocatedSize() const {
+			uint32_t getAllocatedSize() const {
                 return _pool.getAllocatedSize();
             }
 
-            inline uint32_t getAvailableSize() const {
+            uint32_t getAvailableSize() const {
                 return _pool.getAvailableSize();
             }
     };

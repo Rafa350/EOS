@@ -2,7 +2,7 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-import Htl.Atomic;
+import Eos.Hardware.Atomic;
 
 
 struct MODE {
@@ -39,6 +39,7 @@ struct AF {
 };
 
 
+using namespace eos::hardware;
 using namespace htl::gpio;
 
 
@@ -77,7 +78,7 @@ void GPIOUtils::initInput(
 	PinBit bit,
 	PullUpDown pupd) {
 
-	auto a = startAtomic();
+	auto a = Atomic::start();
 
     auto b = (uint8_t) bit;
 
@@ -95,7 +96,7 @@ void GPIOUtils::initInput(
     eos::Bits::set(PUPDR, convert(pupd) << (b * 2));
     gpio->PUPDR = PUPDR;
 
-    endAtomic(a);
+    Atomic::end(a);
 }
 
 
@@ -138,7 +139,7 @@ void GPIOUtils::initOutput(
 	Speed speed,
 	bool state) {
 
-	auto a = startAtomic();
+	auto a = Atomic::start();
 
     auto b = (uint8_t) bit;
 
@@ -174,7 +175,7 @@ void GPIOUtils::initOutput(
     //
     eos::Bits::set(gpio->BSRR, 1UL << (b + (state ? 0 : 16)));
 
-    endAtomic(a);
+    Atomic::end(a);
 }
 
 
@@ -195,7 +196,7 @@ void GPIOUtils::initAlternate(
     Speed speed,
     AlternateFunction af) {
 
-	auto a = startAtomic();
+	auto a = Atomic::start();
 
     auto b = uint8_t(bit);
 
@@ -234,7 +235,7 @@ void GPIOUtils::initAlternate(
     eos::Bits::set(AFR, (((uint32_t)af) & AF::Mask) << ((b & 0x07) * 4));
     gpio->AFR[b >> 3] = AFR;
 
-    endAtomic(a);
+    Atomic::end(a);
 }
 
 
@@ -249,7 +250,7 @@ void GPIOUtils::initAnalogic(
 
     auto b = uint8_t(bit);
 
-    auto a = startAtomic();
+    auto a = Atomic::start();
 
     // Configura el pin com entrada analogica
     //
@@ -258,7 +259,7 @@ void GPIOUtils::initAnalogic(
     eos::Bits::set(MODER, MODE::ANALOGIC << (b * 2));
     gpio->MODER = MODER;
 
-    endAtomic(a);
+    Atomic::end(a);
 }
 
 

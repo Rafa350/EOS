@@ -19,7 +19,11 @@ export namespace eos {
         xc32
     };
 
+#ifdef EOS_TOOLCHAIN_GNU
     constexpr ToolchainID currentToolchain = ToolchainID::gcc;
+#else
+    #error "Undefined toolchain"
+#endif
 
     template <ToolchainID id_>
     struct Toolchain {

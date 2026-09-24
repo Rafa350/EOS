@@ -1,7 +1,6 @@
 module;
 
 
-#include "eos.h"
 #include "eosCallbacks.h"
 
 #include "FreeRTOS.h"
@@ -62,9 +61,6 @@ namespace eos {
 			uint32_t _lastWeakTick;
 
 		private:
-			Task(const Task&) = delete;
-			Task(Task&&) = delete;
-
 			[[nodiscard]] TaskHandle_t createHandler(uint32_t stackDepth, Priority priority, const char *name);
 
 			static uint32_t getPriorityValue(Priority priority);

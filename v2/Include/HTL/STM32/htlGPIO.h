@@ -295,14 +295,14 @@ namespace htl {
 
         	public:
 				static void activate(PinMask mask) {
-					auto pm = __get_PRIMASK();
-					__disable_irq();
+					//auto pm = __get_PRIMASK();
+					//__disable_irq();
 					if (!_usedPins) {
 						eos::Bits::set(*reinterpret_cast<uint32_t*>(_addr), (uint32_t)(1 << _pos));
-						__DSB();
+						//__DSB();
 					}
 					eos::Bits::set(_usedPins, (uint16_t) mask);
-					__set_PRIMASK(pm);
+					//__set_PRIMASK(pm);
 				}
 
 #if HTL_GPIO_OPTION_DEACTIVATE == 1
@@ -433,10 +433,10 @@ namespace htl {
 				}
 
 				static inline void toggle() {
-                    auto pm = __get_PRIMASK();
-                    __disable_irq();
+                    //auto pm = __get_PRIMASK();
+                    //__disable_irq();
                     reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->ODR ^= _mask;
-				    __set_PRIMASK(pm);
+    		        //__set_PRIMASK(pm);
 				}
 
 				static inline void write(bool state) {

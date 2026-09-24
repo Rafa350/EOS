@@ -1,7 +1,7 @@
 module;
 
 
-#include "stdint.h"
+#include <cstdint>
 
 
 export module Eos.Types;
@@ -9,14 +9,15 @@ export module Eos.Types;
 
 export namespace eos {
 
-    using UInt8 = uint8_t;
-    using UInt16 = uint16_t;
-    using UInt32 = uint32_t;
+    using UInt8 = std::uint8_t;
+    using UInt16 = std::uint16_t;
+    using UInt32 = std::uint32_t;
 
-    using Int8 = int8_t;
-    using Int16 = int16_t;
-    using Int32 = int32_t;
+    using Int8 = std::int8_t;
+    using Int16 = std::int16_t;
+    using Int32 = std::int32_t;
 
+    
     template <typename T_>
     class BufferAdapter {
         public:

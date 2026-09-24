@@ -18,4 +18,6 @@ namespace eos {
     export template <typename T_>
     concept IsClass = std::is_class_v<T_>;
 
+    export template <typename T_>
+    concept IsEnum = std::is_enum_v<T_>;
 }

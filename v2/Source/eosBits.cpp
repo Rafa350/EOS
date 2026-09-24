@@ -66,7 +66,7 @@ namespace eos {
 /// \param    mask: La mascara.
 ///
 template<eos::IsUInt T_>
-inline void eos::Bits::set(
+void eos::Bits::set(
 	volatile T_ &var,
 	T_ mask) {
 
@@ -80,7 +80,7 @@ inline void eos::Bits::set(
 /// \param    mask: La mascara.
 ///
 template<eos::IsUInt T_>
-inline void eos::Bits::set(
+void eos::Bits::set(
 	T_ &var,
 	T_ mask) {
 
@@ -89,7 +89,7 @@ inline void eos::Bits::set(
 
 
 template<eos::IsUInt T_>
-inline void eos::Bits::clear(
+void eos::Bits::clear(
 	volatile T_ &var,
 	T_ mask) {
 
@@ -98,7 +98,7 @@ inline void eos::Bits::clear(
 
 
 template<eos::IsUInt T_>
-inline void eos::Bits::clear(
+void eos::Bits::clear(
 	T_ &var,
 	T_ mask) {
 
@@ -107,7 +107,7 @@ inline void eos::Bits::clear(
 
 
 template<eos::IsUInt T_>
-inline void eos::Bits::toggle(
+void eos::Bits::toggle(
 	volatile T_ &var,
 	T_ mask) {
 
@@ -116,7 +116,7 @@ inline void eos::Bits::toggle(
 
 
 template<eos::IsUInt T_>
-inline void eos::Bits::toggle(
+void eos::Bits::toggle(
 	T_ &var,
 	T_ mask) {
 
@@ -125,7 +125,7 @@ inline void eos::Bits::toggle(
 
 
 template<eos::IsUInt T_>
-inline void eos::Bits::modify(
+void eos::Bits::modify(
 	volatile T_ &var,
 	T_ clearMask,
 	T_ setMask) {
@@ -138,7 +138,7 @@ inline void eos::Bits::modify(
 
 
 template<eos::IsUInt T_>
-inline void eos::Bits::modify(
+void eos::Bits::modify(
 	T_ &var,
 	T_ clearMask,
 	T_ setMask) {
@@ -149,7 +149,7 @@ inline void eos::Bits::modify(
 
 
 template<eos::IsUInt T_>
-inline bool eos::Bits::isSet(
+bool eos::Bits::isSet(
 	volatile T_ &var,
 	T_ b) {
 
@@ -158,7 +158,7 @@ inline bool eos::Bits::isSet(
 
 
 template<eos::IsUInt T_>
-inline bool eos::Bits::isSet(
+bool eos::Bits::isSet(
 	T_ &var,
 	T_ b) {
 
@@ -167,7 +167,7 @@ inline bool eos::Bits::isSet(
 
 
 template<eos::IsUInt T_>
-inline bool eos::Bits::isAnySet(
+bool eos::Bits::isAnySet(
 	volatile T_ &var,
 	T_ b) {
 
@@ -176,7 +176,7 @@ inline bool eos::Bits::isAnySet(
 
 
 template<eos::IsUInt T_>
-inline bool eos::Bits::isAnySet(
+bool eos::Bits::isAnySet(
 	T_ &var,
 	T_ b) {
 
@@ -185,7 +185,7 @@ inline bool eos::Bits::isAnySet(
 
 
 template<eos::IsUInt T_>
-inline bool eos::Bits::isClear(
+bool eos::Bits::isClear(
 	volatile T_ &var,
 	T_ b) {
 
@@ -194,7 +194,7 @@ inline bool eos::Bits::isClear(
 
 
 template<eos::IsUInt T_>
-inline bool eos::Bits::isClear(
+bool eos::Bits::isClear(
 	T_ &var,
 	T_ b) {
 
@@ -203,7 +203,7 @@ inline bool eos::Bits::isClear(
 
 
 template<eos::IsUInt T_>
-inline bool eos::Bits::isAnyClear(
+bool eos::Bits::isAnyClear(
 	T_ &var,
 	T_ b) {
 

@@ -1,7 +1,6 @@
 module;
 
 
-#include "eos.h"
 #include "eosCallbacks.h"
 
 #include "FreeRTOS.h"

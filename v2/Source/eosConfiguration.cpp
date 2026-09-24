@@ -10,3 +10,8 @@ export module Eos.Configuration;
 export import Eos.Configuration.Platform;
 export import Eos.Configuration.Toolchain;
 
+
+
+export namespace eos {
+
+}
