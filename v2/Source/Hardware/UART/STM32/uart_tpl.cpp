@@ -4,12 +4,12 @@ module;
 #include "HTL/htl.h"
 #include "HTL/STM32/htlClock.h"
 #include "HTL/htlGPIO.h"
-#include "eosBits.h"
 
 
 export module Eos.Hardware.UART.DeviceX;
 
 
+import Eos.Hardware.Regs;
 import Eos.Hardware.UART.Device;
 import Eos.Hardware.UART.Identifiers;
 import Eos.Hardware.UART.Traits;
@@ -79,6 +79,15 @@ using namespace eos::hardware::uart;
 
 
 /// ---------------------------------------------------------------------------
+/// @brief    Crida a DSB desde aquest modul C++20
+///
+void DSB() {
+
+	__DSB();
+}
+
+
+/// ---------------------------------------------------------------------------
 /// @brief    Constructor
 /// @tparam   deviceID_ : Identicador del dispositiu.
 ///
@@ -96,8 +105,8 @@ UARTDeviceX<deviceID_>::UARTDeviceX() :
 template<UARTDeviceID deviceID_>
 void UARTDeviceX<deviceID_>::activateImpl() const {
 
-	Bits::set(*reinterpret_cast<uint32_t *>(_activateAddr), (uint32_t)(1 << _activatePos));
-	//__DSB();
+	Reg32Flag<_activateAddr, _activatePos>::set();
+	DSB();
 }
 
 
@@ -109,8 +118,8 @@ void UARTDeviceX<deviceID_>::activateImpl() const {
 template<UARTDeviceID deviceID_>
 void UARTDeviceX<deviceID_>::deactivateImpl() const {
 
-	eos::Bits::clear(*reinterpret_cast<uint32_t *>(_activateAddr),  1UL << _activatePos);
-	__DSB();
+	Reg32Flag<_activateAddr, _activatePos>::clear();
+	DSB();
 }
 #endif
 

@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosAssert.h"
 #include "HTL/htlINT.h"
 
 
@@ -55,8 +54,8 @@ export namespace eos {
 
 			virtual bool onInitialize() = 0;
 			virtual bool onDeinitialize() = 0;
-			virtual bool onTransmit(const uint8_t *buffer, size_t length) = 0;
-			virtual bool onReceive(uint8_t *buffer, size_t bufferSize) = 0;
+			virtual bool onTransmit(const UInt8 *buffer, UInt32 length) = 0;
+			virtual bool onReceive(UInt8 *buffer, UInt32 bufferSize) = 0;
 			virtual bool onAbort() = 0;
 
 		public:

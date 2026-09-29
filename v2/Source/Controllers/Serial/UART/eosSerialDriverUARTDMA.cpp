@@ -3,13 +3,15 @@ module;
 
 #include "eos.h"
 #include "HTL/htlDMA.h"
-#include "HTL/htlUART.h"
 
 
 export module Eos.Controllers.Serial.UARTDMA;
 
 
 export import Eos.Controllers.Serial.UART;
+
+
+import Eos.Types;
 
 
 export namespace eos {
@@ -23,8 +25,8 @@ export namespace eos {
 	        DMADevice * const _devDMArx;
 
 	    private:
-            bool onTransmit(const uint8_t *buffer, size_t length) override;
-            bool onReceive(uint8_t *buffer, size_t bufferSize) override;
+            bool onTransmit(const UInt8 *buffer, UInt32 length) override;
+            bool onReceive(UInt8 *buffer, UInt32 bufferSize) override;
 
 	    public:
             SerialDriver_UARTDMA(UARTDevice *devUART, DMADevice *devDMAtx, DMADevice *devDMArx);
@@ -53,8 +55,8 @@ eos::SerialDriver_UARTDMA::SerialDriver_UARTDMA(
 /// \param    bufferSize: Nombre de bytes en el buffer de dades..
 ///
 bool eos::SerialDriver_UARTDMA::onTransmit(
-	const uint8_t *buffer,
-	size_t bufferSize) {
+	const UInt8 *buffer,
+	UInt32 bufferSize) {
 
     return _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize).isSuccess();
 }
@@ -66,8 +68,8 @@ bool eos::SerialDriver_UARTDMA::onTransmit(
 /// \param    bufferSize: El tamany en bytes del buffer de dades.
 ///
 bool eos::SerialDriver_UARTDMA::onReceive(
-	uint8_t *buffer,
-	size_t bufferSize) {
+	UInt8 *buffer,
+	UInt32 bufferSize) {
 
     return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }

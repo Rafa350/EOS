@@ -50,8 +50,8 @@ export namespace eos {
         template <IsUInt T_, std::uintptr_t addr_, UInt32 pos_>
         struct RegFlag final: private StaticClass<RegFlag<T_, addr_, pos_>> {
             static bool isSet();
-            static void set();
-            static void clear();
+            static constexpr void set();
+            static constexpr void clear();
         };
 
         template <std::uintptr_t addr_, UInt32 pos_>
@@ -142,14 +142,14 @@ bool RegFlag<T_, addr_, pos_>::isSet() {
 
 
 template <IsUInt T_, uintptr_t addr_, UInt32 pos_>
-void RegFlag<T_, addr_, pos_>::set() {
+constexpr void RegFlag<T_, addr_, pos_>::set() {
 
 	*reinterpret_cast<volatile T_*>(addr_) |= 1 << pos_;
 }
 
 
 template <IsUInt T_, uintptr_t addr_, UInt32 pos_>
-void RegFlag<T_, addr_, pos_>::clear() {
+constexpr void RegFlag<T_, addr_, pos_>::clear() {
 
 	*reinterpret_cast<volatile T_*>(addr_) &= ~(1 << pos_);
 }

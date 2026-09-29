@@ -4,31 +4,21 @@ module;
 #include "eos.h"
 
 
-#ifndef EOS_NEW_UART
-#include "HTL/htlUART.h"
-#endif
-
-
 export module Eos.Controllers.Serial.UART;
 
 
 export import Eos.Controllers.Serial;
 
 
-#ifdef EOS_NEW_UART
+import Eos.Types;
 import Eos.Hardware.UART;
-#endif
 
 
 export namespace eos {
 
 	class SerialDriver_UART: public SerialDriver {
 		public:
-#ifdef EOS_NEW_UART
 			using UARTDevice = eos::hardware::uart::UARTDevice;
-#else
-			using UARTDevice = htl::uart::UARTDevice;
-#endif
 
 		protected:
 			UARTDevice * const _devUART;
@@ -42,8 +32,8 @@ export namespace eos {
 		protected:
             bool onInitialize() override;
             bool onDeinitialize() override;
-            bool onTransmit(const uint8_t *buffer, size_t length) override;
-            bool onReceive(uint8_t *buffer, size_t bufferSize) override;
+            bool onTransmit(const UInt8 *buffer, UInt32 length) override;
+            bool onReceive(UInt8 *buffer, UInt32 bufferSize) override;
             bool onAbort() override;
 
 		public:
@@ -95,8 +85,8 @@ bool eos::SerialDriver_UART::onDeinitialize() {
 /// \return   True si tot es correcte.
 ///
 bool eos::SerialDriver_UART::onTransmit(
-	const uint8_t *buffer,
-	size_t length) {
+	const UInt8 *buffer,
+	UInt32 length) {
 
     return _devUART->transmit_IRQ(buffer, length).isSuccess();
 }
@@ -109,8 +99,8 @@ bool eos::SerialDriver_UART::onTransmit(
 /// \return   True si tot es correcte.
 ///
 bool eos::SerialDriver_UART::onReceive(
-	uint8_t *buffer,
-	size_t bufferSize) {
+	UInt8 *buffer,
+	UInt32 bufferSize) {
 
 	return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
 }

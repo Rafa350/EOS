@@ -1,16 +1,38 @@
 module;
 
 
-#include "HTL/htl.h"
-
-
 export module Eos.Hardware.TMR.Identifiers;
 
 
-export namespace eos::hardware::tmr {
+import Eos.Configuration.Platform;
 
 
-    enum class TMRDeviceID {
+namespace eos {
+    namespace hardware::tmr {
+        namespace internal {
+
+            template<PlatformID platformID_>
+            struct PlatformTraits;
+
+            template<>
+            struct PlatformTraits<PlatformID::STM32_G031_K8> {
+                enum class DeviceID { };
+            };
+
+            template<>
+            struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
+                enum class DeviceID { tmr1, tmr2, tmr3, tmr4, tmr6, tmr7, tmr14, tmr15, tmr16, tmr17 };
+            };
+        }
+
+        export using TMRDeviceID = internal::PlatformTraits<Platform::id>::DeviceID;
+    }
+
+}
+
+
+#if 0
+enum class TMRDeviceID {
 #ifdef HTL_TMR1_EXIST
         tmr1,
 #endif
@@ -62,5 +84,5 @@ export namespace eos::hardware::tmr {
 #ifdef HTL_TMR17_EXIST
         tmr17,
 #endif
-    };
-}
+};
+#endif

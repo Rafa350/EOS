@@ -4,5 +4,6 @@ target_sources(${TARGET_NAME}
         eosRegs.cpp
 )
 
+add_subdirectory("SPI")
 add_subdirectory("TMR")
 add_subdirectory("UART")

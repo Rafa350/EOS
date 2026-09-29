@@ -1,7 +1,7 @@
 module;
 
 
-export module Eos.Hardware.UART.Identifiers;
+export module Eos.Hardware.SPI.Identifiers;
 
 
 import Eos.Configuration.Platform;
@@ -16,16 +16,16 @@ namespace eos {
 
 			template<>
 			struct PlatformTraits<PlatformID::STM32_G031_K8> {
-				enum class DeviceID { uart1, uart2 };
+				enum class DeviceID { spi1, spi2 };
 			};
 
 			template<>
 			struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
-				enum class DeviceID { uart1, uart2, uart3, uart4, uart5, uart6 };
+				enum class DeviceID { spi1, spi2, spi3 };
 			};
 		}
 
-		export using UARTDeviceID = internal::PlatformTraits<Platform::id>::DeviceID;
+		export using SPIDeviceID = internal::PlatformTraits<Platform::id>::DeviceID;
 	}
 
 }

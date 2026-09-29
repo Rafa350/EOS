@@ -2,7 +2,6 @@ module;
 
 
 #include "HTL/htl.h"
-#include "eosBits.h"
 #include "eosEvents.h"
 #include "eosResults.h"
 
@@ -10,6 +9,7 @@ module;
 export module Eos.Hardware.TMR.Classes;
 
 
+import Eos.Bits;
 import Eos.Types;
 import Eos.Hardware.TMR.Identifiers;
 
@@ -140,6 +140,15 @@ namespace eos {
 
 using namespace eos;
 using namespace eos::hardware::tmr;
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Crida a DSB desde aquest modul C++20
+///
+void DSB() {
+
+	__DSB();
+}
 
 
 /// ----------------------------------------------------------------------
@@ -363,7 +372,7 @@ Result TMRDevice::configurePwmChannel1(
 
 	_tim->CCR1 = compare;
 
-	return eos::Result::ErrorCodes::ok;
+	return Result::ErrorCodes::ok;
 }
 
 
@@ -560,10 +569,10 @@ Result TMRDevice::start() {
 
 		_state = State::busy;
 
-		return eos::Result::ErrorCodes::ok;
+		return Result::ErrorCodes::ok;
 	}
 	else
-		return eos::Result::ErrorCodes::errorState;
+		return Result::ErrorCodes::errorState;
 }
 
 
@@ -654,6 +663,8 @@ void TMRDevice::interruptService() {
 	if ((SR & TIM_SR_CC4IF) && (DIER & TIM_DIER_CC4IE)) {
 		_tim->SR &= ~TIM_SR_CC4IF;
 	}
+
+	DSB();
 }
 
 

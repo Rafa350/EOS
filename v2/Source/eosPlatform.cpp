@@ -10,53 +10,58 @@ export module Eos.Configuration.Platform;
 import Eos.Types;
 
 
-export namespace eos {
+namespace eos {
 
-    enum class PlatformID {
+    export enum class PlatformID {
 
         // PIC32MX4xxxFxxx
-        idPIC32MX460F512L,
+        PIC32MX_460F512L,
 
         // STM32F0xx
-        idSTM32F030R8,
+        STM32_F030_R8,
 
         // STM32F429xx
-        idST32F429ZI,
+        STM32_F429_ZI,
 
         // STM32F7446xx
-        idSTM32F746NG,
+        STM32_F746_NG,
 
         // STM32G031xx
-        idSTM32G031K8,
+        STM32_G031_K8,
 
         // STM32G071xx
-        idSTM32G071C8,
-        idSTM32G071CB,
-        idSTM32G071K8,
-        idSTM32G071KB,
-        idSTM32G071R8,
-        idSTM32G071RB,
+        STM32_G071_C8,
+        STM32_G071_CB,
+        STM32_G071_K8,
+        STM32_G071_KB,
+        STM32_G071_R8,
+        STM32_G071_RB,
 
         // STM32G0B1xx
-        idSTM32G0B1RE
+        STM32_G0B1_RE
 
     };
 
 #ifdef EOS_PLATFORM_STM32G0B1RE
-    constexpr PlatformID currentPlatformId = PlatformID::idSTM32G0B1RE;
+    constexpr PlatformID currentPlatformId = PlatformID::STM32_G0B1_RE;
 #else
     error "Unknown platformm"
 #endif
 
-    template <PlatformID id_>
-    struct PlatformTraits {};
+    namespace internal {
 
-    template <>
-    struct PlatformTraits<PlatformID::idSTM32G0B1RE> {
-        static constexpr PlatformID id        = PlatformID::idSTM32G0B1RE;
-        static constexpr UInt32     ramSize   = 128;
-        static constexpr UInt32     flashSize = 512;
-    };
+        template <PlatformID id_>
+        struct PlatformTraits {};
 
-    using Platform = PlatformTraits<currentPlatformId>;
+        template <>
+        struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
+            static constexpr PlatformID id                 = PlatformID::STM32_G0B1_RE;
+            static constexpr const char *deviceName        = "STM32G0B1RE";
+            static constexpr const char *manufacturerName  = "ST-Microelectronics";
+            static constexpr UInt32     ramSize            = 128;
+            static constexpr UInt32     flashSize          = 512;
+        };
+    }
+
+    export using Platform = internal::PlatformTraits<currentPlatformId>;
 }

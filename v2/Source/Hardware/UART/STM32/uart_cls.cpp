@@ -4,7 +4,6 @@ module;
 #include "HTL/htl.h"
 #include "HTL/STM32/htlClock.h"
 #include "eosBits.h"
-#include "eosResults.h"
 #include "HTL/htlDevice.h"
 #include "HTL/htlDMA.h"
 #include "HTL/htlGPIO.h"
@@ -14,6 +13,7 @@ module;
 export module Eos.Hardware.UART.Device;
 
 
+import Eos.Result;
 import Eos.Hardware.Atomic;
 import Eos.System.Core.Ticks;
 
@@ -40,13 +40,6 @@ export namespace eos::hardware::uart {
 		lse = 3
 	};
 	#endif
-
-		// Mostreig den la recepcio de dades
-		//
-		enum class OverSampling {
-			os8,
-			os16
-		};
 
 		/// Clase que implementa el dispositiu de comunicacio UART.
 		///
@@ -108,6 +101,23 @@ export namespace eos::hardware::uart {
 					none,  ///< Cap protocol.
 					ctsrts ///< Protocol CTS/RTS
 				};
+
+				// Mostreig den la recepcio de dades
+				//
+				enum class OverSampling {
+					os8,
+					os16
+				};
+
+				enum class ErrorCode {
+					ok,
+					busy,
+					timeout,
+					error,
+					errorParam,
+					errorState,
+				};
+				using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
 
 			public:
 				/// Identificador de la notificacio
@@ -241,18 +251,18 @@ export namespace eos::hardware::uart {
 				void rxInterruptService();
 #endif
 			public:
-				eos::Result initialize();
+				Result initialize();
 #if HTL_UART_OPTION_DEACTIVATE == 1
-				eos::Result deinitialize();
+				Result deinitialize();
 #endif
-				eos::Result setProtocol(WordBits wordBits, Parity parity,
+				Result setProtocol(WordBits wordBits, Parity parity,
 						StopBits stopBits, Handsake handlsake) const;
-				eos::Result setTimming(BaudMode baudMode, uint32_t rate, OverSampling oversampling) const;
+				Result setTimming(BaudMode baudMode, uint32_t rate, OverSampling oversampling) const;
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-				eos::Result setClockSource(ClockSource clockSource) const;
+				Result setClockSource(ClockSource clockSource) const;
 #endif
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-				eos::Result setRxTimeout(unsigned timeout) const;
+				Result setRxTimeout(unsigned timeout) const;
 #endif
 
 				void enableNotificationEvent(INotificationEvent &event) {
@@ -262,19 +272,19 @@ export namespace eos::hardware::uart {
 					_notificationEventRaiser.disable();
 				}
 
-				eos::Result transmit(const uint8_t *buffer, uint32_t length, eos::Ticks blockTime);
-				eos::Result receive(uint8_t *buffer, uint32_t bufferSize, eos::Ticks blockTime);
+				Result transmit(const uint8_t *buffer, uint32_t length, eos::Ticks blockTime);
+				Result receive(uint8_t *buffer, uint32_t bufferSize, eos::Ticks blockTime);
 
 #if HTL_UART_OPTION_IRQ == 1
-				eos::Result transmit_IRQ(const uint8_t *buffer, uint32_t length);
-				eos::Result receive_IRQ(uint8_t *buffer, uint32_t bufferSize);
+				Result transmit_IRQ(const uint8_t *buffer, uint32_t length);
+				Result receive_IRQ(uint8_t *buffer, uint32_t bufferSize);
 #endif
 #if HTL_UART_OPTION_DMA == 1
-				eos::Result transmit_DMA(htl::dma::DMADevice *devDMA, const uint8_t *buffer, uint32_t length);
-				eos::Result receive_DMA(htl::dma::DMADevice *devDMA, uint8_t *buffer, uint32_t bufferSize);
+				Result transmit_DMA(htl::dma::DMADevice *devDMA, const uint8_t *buffer, uint32_t length);
+				Result receive_DMA(htl::dma::DMADevice *devDMA, uint8_t *buffer, uint32_t bufferSize);
 #endif
-				eos::Result abortTransmission();
-				eos::Result abortReception();
+				Result abortTransmission();
+				Result abortReception();
 
 				State getState() const { return _state; }
 				inline bool isReady() const { return _state == State::ready; }
@@ -287,6 +297,15 @@ namespace g = htl::gpio;
 using namespace eos;
 using namespace eos::hardware;
 using namespace eos::hardware::uart;
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Creida a __DSB desde aquest modul C++20
+///
+void DSB() {
+
+	__DSB();
+}
 
 
 /// ---------------------------------------------------------------------------
@@ -309,7 +328,7 @@ UARTDevice::UARTDevice(
 /// @brief    Inicialitza el modul UART.
 /// \return   El resultat de l'operacio.
 ///
-eos::Result UARTDevice::initialize() {
+UARTDevice::Result UARTDevice::initialize() {
 
 	if (_state == State::reset) {
 
@@ -346,11 +365,11 @@ eos::Result UARTDevice::initialize() {
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -405,7 +424,7 @@ void  u::UARTDevice::deactivate() const {
 /// @param    handsake: Protocol.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::setProtocol(
+UARTDevice::Result UARTDevice::setProtocol(
 	WordBits wordBits,
 	Parity parity,
 	StopBits stopBits,
@@ -416,10 +435,10 @@ Result UARTDevice::setProtocol(
 		setWordBits(wordBits, parity != Parity::none);
 		setStopBits(stopBits);
 		setHandsake(handsake);
-		return Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -571,11 +590,11 @@ void UARTDevice::setHandsake(
     auto CR3 = _usart->CR3;
     switch (handsake) {
         case Handsake::none:
-        	eos::Bits::clear(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
+        	Bits::clear(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
             break;
 
         case Handsake::ctsrts:
-        	eos::Bits::set(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
+        	Bits::set(CR3, USART_CR3_RTSE | USART_CR3_CTSE);
             break;
     }
     _usart->CR3 = CR3;
@@ -590,7 +609,7 @@ void UARTDevice::setHandsake(
 /// @param    timeout: El temps.
 /// @param    El resultat de l'operacio.
 ///
-eos::Result UARTDevice::setRxTimeout(
+UARTDevice::Result UARTDevice::setRxTimeout(
     unsigned timeout) const {
 
 	if (_state == State::ready) {
@@ -604,10 +623,10 @@ eos::Result UARTDevice::setRxTimeout(
 			}
 		}
 
-		return eos::Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 	else
-		return eos::Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 #endif // defined(EOS_PLATFORM_XXX)
 
@@ -619,7 +638,7 @@ eos::Result UARTDevice::setRxTimeout(
 /// @param    overSampling: Tipus de mostreig
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::setTimming(
+UARTDevice::Result UARTDevice::setTimming(
 	BaudMode baudMode,
 	uint32_t rate,
 	OverSampling overSampling) const {
@@ -683,10 +702,10 @@ Result UARTDevice::setTimming(
 		else
 			_usart->BRR = div;
 
-		return Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -697,16 +716,16 @@ Result UARTDevice::setTimming(
 /// @param    clockSource: La font.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::setClockSource(
+UARTDevice::Result UARTDevice::setClockSource(
 	ClockSource source) const {
 
 	if(_state == State::ready){
 
 		setClockSourceImpl(source);
-		return Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 #endif // defined(EOS_PLATFORM_XXX)
 
@@ -717,7 +736,7 @@ Result UARTDevice::setClockSource(
 /// @param    length: La longitut del bloc en bytes.
 /// @param    blockTime: Temps maxim de bloqueig.
 ///
-Result UARTDevice::transmit(
+UARTDevice::Result UARTDevice::transmit(
 	const uint8_t *buffer,
 	uint32_t length,
 	Ticks blockTime) {
@@ -747,14 +766,14 @@ Result UARTDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? Result::ErrorCodes::timeout : Result::ErrorCodes::ok;
+		return error ? ErrorCode::timeout : ErrorCode::ok;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Result::ErrorCodes::busy;
+		return ErrorCode::busy;
 
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -765,7 +784,7 @@ Result UARTDevice::transmit(
 /// \return   El resultat de l'operacio
 ///
 #if HTL_UART_OPTION_IRQ == 1
-Result UARTDevice::transmit_IRQ(
+UARTDevice::Result UARTDevice::transmit_IRQ(
 	const uint8_t *buffer,
 	uint32_t length) {
 
@@ -780,14 +799,14 @@ Result UARTDevice::transmit_IRQ(
         enable();
         enableTransmissionIRQ();
 
-		return eos::Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return eos::Result::ErrorCodes::busy;
+		return ErrorCode::busy;
 
 	else
-		return eos::Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 #endif // HTL_UART_OPTION_IRQ == 1
 
@@ -800,7 +819,7 @@ Result UARTDevice::transmit_IRQ(
 /// @param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
-Result UARTDevice::transmit_DMA(
+UARTDevice::Result UARTDevice::transmit_DMA(
     htl::dma::DMADevice *devDMA,
     const uint8_t *buffer,
     uint32_t length) {
@@ -821,14 +840,14 @@ Result UARTDevice::transmit_DMA(
         devDMA->enableNotificationEvent(_dmaNotificationEvent);
         devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txMaxCount);
 
-        return Result::ErrorCodes::ok;
+        return ErrorCode::ok;
     }
 
     else if ((_state == State::transmiting) || (_state == State::receiving))
-        return Result::ErrorCodes::busy;
+        return ErrorCode::busy;
 
     else
-        return Result::ErrorCodes::errorState;
+        return ErrorCode::errorState;
 }
 #endif // HTL_UART_OPTION_DMA == 1
 
@@ -836,16 +855,16 @@ Result UARTDevice::transmit_DMA(
 /// ----------------------------------------------------------------------
 /// @brief    Aborta la transmissio.
 ///
-Result UARTDevice::abortTransmission() {
+UARTDevice::Result UARTDevice::abortTransmission() {
 
 	if (_state == State::transmiting) {
 		disableTransmission();
 		disable();
 		_state = State::ready;
-		return Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -856,7 +875,7 @@ Result UARTDevice::abortTransmission() {
 /// @param    blockTime: Temps maxim de bloqueig.
 /// \return   El resultat.
 ///
-Result UARTDevice::receive(
+UARTDevice::Result UARTDevice::receive(
 	uint8_t *buffer,
 	uint32_t bufferSize,
 	Ticks blockTime) {
@@ -884,13 +903,13 @@ Result UARTDevice::receive(
 
 		_state = State::ready;
 
-		return error ? Result::ErrorCodes::timeout : Result::ErrorCodes::ok;
+		return error ? ErrorCode::timeout : ErrorCode::ok;
 	}
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return Result::ErrorCodes::busy;
+		return ErrorCode::busy;
 
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -901,7 +920,7 @@ Result UARTDevice::receive(
 /// @param    bufferSize: Tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::receive_IRQ(
+UARTDevice::Result UARTDevice::receive_IRQ(
 	uint8_t *buffer,
 	uint32_t bufferSize) {
 
@@ -916,14 +935,14 @@ Result UARTDevice::receive_IRQ(
 		enable();
 		enableReceptionIRQ();
 
-		return eos::Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return eos::Result::ErrorCodes::busy;
+		return ErrorCode::busy;
 
 	else
-		return eos::Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 #endif // HTL_UART_OPTION_IRQ == 1
 
@@ -936,12 +955,12 @@ Result UARTDevice::receive_IRQ(
 /// @param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-Result UARTDevice::receive_DMA(
+UARTDevice::Result UARTDevice::receive_DMA(
     htl::dma::DMADevice *devDMA,
     uint8_t *buffer,
     uint32_t bufferSize) {
 
-	return Result::ErrorCodes::error;
+	return ErrorCode::error;
 }
 #endif // HTL_UART_OPTION_DMA == 1
 
@@ -949,16 +968,16 @@ Result UARTDevice::receive_DMA(
 /// ----------------------------------------------------------------------
 /// @brief    Aborta la recepcio.
 ///
-Result UARTDevice::abortReception() {
+UARTDevice::Result UARTDevice::abortReception() {
 
 	if (_state == State::receiving) {
 		disableReception();
 		disable();
 		_state = State::ready;
-		return Result::ErrorCodes::ok;
+		return ErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return ErrorCode::errorState;
 }
 
 
@@ -972,6 +991,10 @@ void UARTDevice::interruptService() {
 		txInterruptService();
 	else if (_state == State::receiving)
 		rxInterruptService();
+
+	// Espera que no hagin escriptures pendents
+	//
+	DSB();
 }
 #endif // HTL_UART_OPTION_IRQ == 1
 
