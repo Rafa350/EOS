@@ -22,7 +22,7 @@ endif()
 # ------------------------------------------------------------------------
 # Afegeix el modul DMA
 #
-if(EOS_USE_HTL_DMA)
+if(EOS_USE_HTL_DMAx)
 target_sources(${TARGET_NAME}
     PUBLIC
         htlDMA.cpp
@@ -88,7 +88,7 @@ endif()
 # ------------------------------------------------------------------------
 # Afegeix el modul SPI
 #
-if(EOS_USE_HTL_SPI)
+if(EOS_USE_HTL_SPIx)
 target_sources(${TARGET_NAME}
     PUBLIC
         htlSPI.cpp

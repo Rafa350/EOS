@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "HTL/htlDMA.h"
 
 
 export module Eos.Controllers.Serial.UARTDMA;
@@ -12,13 +11,14 @@ export import Eos.Controllers.Serial.UART;
 
 
 import Eos.Types;
+import Eos.Hardware.DMA;
 
 
 export namespace eos {
 
 	class SerialDriver_UARTDMA: public SerialDriver_UART {
 		public:
-			using DMADevice = htl::dma::DMADevice;
+			using DMADevice = eos::hardware::dma::DMADevice;
 
 	    private:
 	        DMADevice * const _devDMAtx;

@@ -5,7 +5,6 @@ module;
 #include "HTL/STM32/htlClock.h"
 #include "eosBits.h"
 #include "HTL/htlDevice.h"
-#include "HTL/htlDMA.h"
 #include "HTL/htlGPIO.h"
 #include "eosEvents.h"
 
@@ -13,14 +12,14 @@ module;
 export module Eos.Hardware.UART.Device;
 
 
-import Eos.Result;
 import Eos.Hardware.Atomic;
+import Eos.Hardware.DMA;
 import Eos.System.Core.Ticks;
+import Eos.Result;
+import Eos.Types;
 
 
 export namespace eos::hardware::uart {
-
-    class UARTDevice;
 
 	#if defined(EOS_PLATFORM_STM32G0)
 	/// Origen del rellotge del generador de bauds
@@ -41,261 +40,259 @@ export namespace eos::hardware::uart {
 	};
 	#endif
 
-		/// Clase que implementa el dispositiu de comunicacio UART.
-		///
-		class UARTDevice: htl::Device {
-			public:
-				/// Primer bit a transmetre.
-				///
-				enum class FirstBit {
-					lsb, ///< Primer transmet el bit menys significatiu.
-					msb  ///< Primer transmet el bit mes significatiu.
-				};
+	/// Clase que implementa el dispositiu de comunicacio UART.
+	///
+	class UARTDevice: NonCopyableClass {
+		public:
+			/// Primer bit a transmetre.
+			///
+			enum class FirstBit {
+				lsb, ///< Primer transmet el bit menys significatiu.
+				msb  ///< Primer transmet el bit mes significatiu.
+			};
 
-				/// Paritat.
-				///
-				enum class Parity {
-					none, ///< Sense paritat.
-					even, ///< Parell
-					odd   ///< Senas
-				};
+			/// Paritat.
+			///
+			enum class Parity {
+				none, ///< Sense paritat.
+				even, ///< Parell
+				odd   ///< Senas
+			};
 
-				/// Nombre de bits de paraula (No inclou el bit de paritat).
-				///
-				enum class WordBits {
+			/// Nombre de bits de paraula (No inclou el bit de paritat).
+			///
+			enum class WordBits {
 #if defined(EOS_PLATFORM_STM32G0)
-					wb7,  ///< Paraula de 7 bits
+				wb7,  ///< Paraula de 7 bits
 #endif
-					wb8,  ///< Paraula de 8 bits
-					wb9   ///< Paraula de 9 bits
+				wb8,  ///< Paraula de 8 bits
+				wb9   ///< Paraula de 9 bits
+			};
+
+			/// Nombre de bits de parada.
+			///
+			enum class StopBits {
+				sb0p5, ///< 0.5 bits de parada
+				sb1,   ///< 1 bit de parada
+				sb1p5, ///< 1.5 bits de parada
+				sb2    ///< 2 bits de parada
+			};
+
+			/// Opcions de velocitat de transmissio.
+			///
+			enum class BaudMode {
+				b1200,    ///< 1200 baud.
+				b2400,    ///< 2400 baud.
+				b4800,    ///< 4800 baud.
+				b9600,    ///< 9600 baud.
+				b19200,   ///< 19200 baud.
+				b38400,   ///< 38600 baud.
+				b57600,   ///< 57600 baud.
+				b115200,  ///< 115200 baud.
+				div,      ///< Utilitza el divisor per calcular la velocitat.
+				rate,     ///< Utilitza la velocitat especificada.
+				automatic ///< Deteccio automatica.
+			};
+
+			/// Protocol de comunicacio
+			///
+			enum class Handsake {
+				none,  ///< Cap protocol.
+				ctsrts ///< Protocol CTS/RTS
+			};
+
+			// Mostreig den la recepcio de dades
+			//
+			enum class OverSampling {
+				os8,
+				os16
+			};
+
+			enum class ErrorCode {
+				ok,
+				busy,
+				timeout,
+				error,
+				errorParam,
+				errorState,
+			};
+			using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
+
+		public:
+			/// Identificador de la notificacio
+			///
+			enum class NotificationID {
+				null,
+				rxCompleted, ///< Recepcio complerta.
+				txCompleted, ///< Transmissio complerta.
+				error        ///< Error de comunicacio.
+			};
+
+			/// Parametres del event de notificacio.
+			///
+			struct NotificationEventArgs {
+				NotificationID id;             ///< Identificador de la notificacio
+				bool irq;                      ///< Indica si es notifica desde una interrupcio.
+				union {
+					struct {
+						const UInt8 *buffer; ///< Dades transmeses.
+						UInt32 length;       ///< Nombre de bytes transmessos.
+					} txCompleted;             ///< Parametres de 'TxComplete'
+					struct {
+						const UInt8 *buffer; ///< Dades rebudes.
+						UInt32 length;       ///< Nombre de bytes rebuts.
+					} rxCompleted;             ///< Parametres de 'RxComplete'
 				};
+			};
 
-				/// Nombre de bits de parada.
-				///
-				enum class StopBits {
-					sb0p5, ///< 0.5 bits de parada
-					sb1,   ///< 1 bit de parada
-					sb1p5, ///< 1.5 bits de parada
-					sb2    ///< 2 bits de parada
-				};
+			// Event de notificacio
+			//
+			using NotificationEventRaiser = eos::EventRaiser<UARTDevice, NotificationEventArgs>;
+			using INotificationEvent = NotificationEventRaiser::IEvent;
+			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
-				/// Opcions de velocitat de transmissio.
-				///
-				enum class BaudMode {
-					b1200,    ///< 1200 baud.
-					b2400,    ///< 2400 baud.
-					b4800,    ///< 4800 baud.
-					b9600,    ///< 9600 baud.
-					b19200,   ///< 19200 baud.
-					b38400,   ///< 38600 baud.
-					b57600,   ///< 57600 baud.
-					b115200,  ///< 115200 baud.
-					div,      ///< Utilitza el divisor per calcular la velocitat.
-					rate,     ///< Utilitza la velocitat especificada.
-					automatic ///< Deteccio automatica.
-				};
+		public:
+			/// Estats en que es troba el dispositiu.
+			///
+			enum class State {
+				reset,       ///< Creat, pero sense inicialitzar.
+				ready,       ///< Inicialitzat i preparat per operar.
+				transmiting, ///< Transmeten dades.
+				receiving    ///< Rebent dades.
+			};
 
-				/// Protocol de comunicacio
-				///
-				enum class Handsake {
-					none,  ///< Cap protocol.
-					ctsrts ///< Protocol CTS/RTS
-				};
-
-				// Mostreig den la recepcio de dades
-				//
-				enum class OverSampling {
-					os8,
-					os16
-				};
-
-				enum class ErrorCode {
-					ok,
-					busy,
-					timeout,
-					error,
-					errorParam,
-					errorState,
-				};
-				using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
-
-			public:
-				/// Identificador de la notificacio
-				///
-				enum class NotificationID {
-					null,
-					rxCompleted, ///< Recepcio complerta.
-					txCompleted, ///< Transmissio complerta.
-					error        ///< Error de comunicacio.
-				};
-
-				/// Parametres del event de notificacio.
-				///
-				struct NotificationEventArgs {
-					NotificationID id;             ///< Identificador de la notificacio
-					bool irq;                      ///< Indica si es notifica desde una interrupcio.
-					union {
-						struct {
-							const uint8_t *buffer; ///< Dades transmeses.
-							uint32_t length;       ///< Nombre de bytes transmessos.
-						} txCompleted;             ///< Parametres de 'TxComplete'
-						struct {
-							const uint8_t *buffer; ///< Dades rebudes.
-							uint32_t length;       ///< Nombre de bytes rebuts.
-						} rxCompleted;             ///< Parametres de 'RxComplete'
-					};
-				};
-
-				// Event de notificacio
-				//
-				using NotificationEventRaiser = eos::EventRaiser<UARTDevice, NotificationEventArgs>;
-				using INotificationEvent = NotificationEventRaiser::IEvent;
-				template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
-
-			public:
-				/// Estats en que es troba el dispositiu.
-				///
-				enum class State {
-					reset,       ///< Creat, pero sense inicialitzar.
-					ready,       ///< Inicialitzat i preparat per operar.
-					transmiting, ///< Transmeten dades.
-					receiving    ///< Rebent dades.
-				};
-
-			private:
+		private:
 #if HTL_UART_OPTION_DMA == 1
-				using DMANotificationEvent = htl::dma::DMADevice::NotificationEvent<UARTDevice>;
-				using DMANotificationEventArgs = htl::dma::DMADevice::NotificationEventArgs;
+			using DMANotificationEvent = dma::DMADevice::NotificationEvent<UARTDevice>;
+			using DMANotificationEventArgs = dma::DMADevice::NotificationEventArgs;
 #endif
 
-			private:
-				USART_TypeDef * const _usart;   ///< Instancia del dispositiu.
-				State _state;                   ///< Estat actual.
-				uint8_t *_rxBuffer;             ///< Buffer de recepcio.
-				uint32_t _rxCount;              ///< Contador de bytes rebuts.
-				uint32_t _rxMaxCount;           ///< Maxim del contador de bytes rebuts.
-				const uint8_t *_txBuffer;       ///< Buffer de transmissio.
-				uint32_t _txCount;              ///< Contador de bytes transmesos.
-				uint32_t _txMaxCount;           ///< Maxim del contador de bytes rebuts.
-				NotificationEventRaiser _notificationEventRaiser;   ///< Event de notificacio
+		private:
+			USART_TypeDef * const _usart;   ///< Instancia del dispositiu.
+			State _state;                   ///< Estat actual.
+			UInt8 *_rxBuffer;             ///< Buffer de recepcio.
+			UInt32 _rxCount;              ///< Contador de bytes rebuts.
+			UInt32 _rxMaxCount;           ///< Maxim del contador de bytes rebuts.
+			const UInt8 *_txBuffer;       ///< Buffer de transmissio.
+			UInt32 _txCount;              ///< Contador de bytes transmesos.
+			UInt32 _txMaxCount;           ///< Maxim del contador de bytes rebuts.
+			NotificationEventRaiser _notificationEventRaiser;   ///< Event de notificacio
 #if HTL_UART_OPTION_DMA == 1
-				DMANotificationEvent _dmaNotificationEvent; ///< Event de notificacio del DMA.
+			DMANotificationEvent _dmaNotificationEvent; ///< Event de notificacio del DMA.
 #endif
 
-			private:
-				void setWordBits(WordBits wordBits, bool useParity) const;
-				void setStopBits(StopBits wordBits) const;
-				void setParity(Parity parity) const;
-				void setHandsake(Handsake handsake) const;
+		private:
+			void setWordBits(WordBits wordBits, bool useParity) const;
+			void setStopBits(StopBits wordBits) const;
+			void setParity(Parity parity) const;
+			void setHandsake(Handsake handsake) const;
 
-				void activate() const;
+			void activate() const;
 #if HTL_UART_OPTION_DEACTIVATE == 1
-				void deactivate() const;
+			void deactivate() const;
 #endif
 
-				void enable() const;
-				void disable() const;
+			void enable() const;
+			void disable() const;
 
-				void enableTransmission() const;
-				void disableTransmission() const;
+			void enableTransmission() const;
+			void disableTransmission() const;
 #if HTL_UART_OPTION_IRQ == 1
-				void enableTransmissionIRQ() const;
+			void enableTransmissionIRQ() const;
 #endif
 #if HTL_UART_OPTION_DMA == 1
-				void enableTransmissionDMA() const;
+			void enableTransmissionDMA() const;
 #endif
 
-				void enableReception() const;
-				void disableReception() const;
+			void enableReception() const;
+			void disableReception() const;
 #if HTL_UART_OPTION_IRQ == 1
-				void enableReceptionIRQ() const;
+			void enableReceptionIRQ() const;
 #endif
 #if HTL_UART_OPTION_DMA == 1
-				void enableReceptionDMA() const;
+			void enableReceptionDMA() const;
 #endif
 
-				void writeData(uint8_t data) const;
-				uint8_t readData() const;
-				bool waitTransmissionComplete(eos::Ticks expireTime);
-				bool waitTransmissionBufferEmpty(eos::Ticks expireTime);
-				bool waitReceptionBufferFull(eos::Ticks expireTime);
+			void writeData(UInt8 data) const;
+			UInt8 readData() const;
+			bool waitTransmissionComplete(Ticks expireTime);
+			bool waitTransmissionBufferEmpty(Ticks expireTime);
+			bool waitReceptionBufferFull(Ticks expireTime);
 
 #if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
-				constexpr virtual bool isFIFOAvailable() const = 0;
-				bool isFIFOEnabled() const;
+			constexpr virtual bool isFIFOAvailable() const = 0;
+			bool isFIFOEnabled() const;
 #endif
-				constexpr virtual bool isRTOAvailable() const = 0;
+			constexpr virtual bool isRTOAvailable() const = 0;
 
-				virtual htl::clock::ClockID getUARTClock() const = 0;
+			virtual htl::clock::ClockID getUARTClock() const = 0;
 
-				void raiseTxCompletedNotification(const uint8_t *buffer, uint32_t length, bool irq);
-				void raiseRxCompletedNotification(const uint8_t *buffer, uint32_t length, bool irq);
+			void raiseTxCompletedNotification(const UInt8 *buffer, UInt32 length, bool irq);
+			void raiseRxCompletedNotification(const UInt8 *buffer, UInt32 length, bool irq);
 #if HTL_UART_OPTION_DMA == 1
-				void dmaNotificationEventHandler(htl::dma::DMADevice *devDMA, htl::dma::DMADevice::NotificationEventArgs *args);
+			void dmaNotificationEventHandler(dma::DMADevice *devDMA, dma::DMADevice::NotificationEventArgs *args);
 #endif
 
-			protected:
-				UARTDevice(USART_TypeDef *usart);
+		protected:
+			UARTDevice(USART_TypeDef *usart);
 
-				virtual void activateImpl() const = 0;
+			virtual void activateImpl() const = 0;
 #if HTL_UART_OPTION_DEACTIVATE == 1
-				virtual void deactivateImpl() const = 0;
+			virtual void deactivateImpl() const = 0;
 #endif
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-				virtual void setClockSourceImpl(ClockSource source) const = 0;
+			virtual void setClockSourceImpl(ClockSource source) const = 0;
 #endif
 
 #if HTL_UART_OPTION_IRQ == 1
-				void interruptService();
-				void txInterruptService();
-				void rxInterruptService();
+			void interruptService();
+			void txInterruptService();
+			void rxInterruptService();
 #endif
-			public:
-				Result initialize();
+		public:
+			Result initialize();
 #if HTL_UART_OPTION_DEACTIVATE == 1
-				Result deinitialize();
+			Result deinitialize();
 #endif
-				Result setProtocol(WordBits wordBits, Parity parity,
-						StopBits stopBits, Handsake handlsake) const;
-				Result setTimming(BaudMode baudMode, uint32_t rate, OverSampling oversampling) const;
+			Result setProtocol(WordBits wordBits, Parity parity,
+					StopBits stopBits, Handsake handlsake) const;
+			Result setTimming(BaudMode baudMode, UInt32 rate, OverSampling oversampling) const;
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-				Result setClockSource(ClockSource clockSource) const;
+			Result setClockSource(ClockSource clockSource) const;
 #endif
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-				Result setRxTimeout(unsigned timeout) const;
+			Result setRxTimeout(unsigned timeout) const;
 #endif
 
-				void enableNotificationEvent(INotificationEvent &event) {
-					_notificationEventRaiser.enable(event);
-				}
-				void disableNotificationEvent() {
-					_notificationEventRaiser.disable();
-				}
+			void enableNotificationEvent(INotificationEvent &event) {
+				_notificationEventRaiser.enable(event);
+			}
+			void disableNotificationEvent() {
+				_notificationEventRaiser.disable();
+			}
 
-				Result transmit(const uint8_t *buffer, uint32_t length, eos::Ticks blockTime);
-				Result receive(uint8_t *buffer, uint32_t bufferSize, eos::Ticks blockTime);
+			Result transmit(const UInt8 *buffer, UInt32 length, eos::Ticks blockTime);
+			Result receive(UInt8 *buffer, UInt32 bufferSize, eos::Ticks blockTime);
 
 #if HTL_UART_OPTION_IRQ == 1
-				Result transmit_IRQ(const uint8_t *buffer, uint32_t length);
-				Result receive_IRQ(uint8_t *buffer, uint32_t bufferSize);
+			Result transmit_IRQ(const UInt8 *buffer, UInt32 length);
+			Result receive_IRQ(UInt8 *buffer, UInt32 bufferSize);
 #endif
 #if HTL_UART_OPTION_DMA == 1
-				Result transmit_DMA(htl::dma::DMADevice *devDMA, const uint8_t *buffer, uint32_t length);
-				Result receive_DMA(htl::dma::DMADevice *devDMA, uint8_t *buffer, uint32_t bufferSize);
+			Result transmit_DMA(dma::DMADevice *devDMA, const UInt8 *buffer, UInt32 length);
+			Result receive_DMA(dma::DMADevice *devDMA, UInt8 *buffer, UInt32 bufferSize);
 #endif
-				Result abortTransmission();
-				Result abortReception();
+			Result abortTransmission();
+			Result abortReception();
 
-				State getState() const { return _state; }
-				inline bool isReady() const { return _state == State::ready; }
-				inline bool isBusy() const { return _state != State::ready; }
-		};
+			State getState() const { return _state; }
+			bool isReady() const { return _state == State::ready; }
+			bool isBusy() const { return _state != State::ready; }
+	};
 }
 
 
-namespace g = htl::gpio;
 using namespace eos;
-using namespace eos::hardware;
 using namespace eos::hardware::uart;
 
 
@@ -422,7 +419,7 @@ void  u::UARTDevice::deactivate() const {
 /// @param    parity: Les opcions de paritat.
 /// @param    stopBits: Les opcions de parada.
 /// @param    handsake: Protocol.
-/// \return   El resultat de l'operacio.
+/// @return   El resultat de l'operacio.
 ///
 UARTDevice::Result UARTDevice::setProtocol(
 	WordBits wordBits,
@@ -640,7 +637,7 @@ UARTDevice::Result UARTDevice::setRxTimeout(
 ///
 UARTDevice::Result UARTDevice::setTimming(
 	BaudMode baudMode,
-	uint32_t rate,
+	UInt32 rate,
 	OverSampling overSampling) const {
 
 	if (_state == State::ready) {
@@ -737,8 +734,8 @@ UARTDevice::Result UARTDevice::setClockSource(
 /// @param    blockTime: Temps maxim de bloqueig.
 ///
 UARTDevice::Result UARTDevice::transmit(
-	const uint8_t *buffer,
-	uint32_t length,
+	const UInt8 *buffer,
+	UInt32 length,
 	Ticks blockTime) {
 
 	if (_state == State::ready) {
@@ -785,8 +782,8 @@ UARTDevice::Result UARTDevice::transmit(
 ///
 #if HTL_UART_OPTION_IRQ == 1
 UARTDevice::Result UARTDevice::transmit_IRQ(
-	const uint8_t *buffer,
-	uint32_t length) {
+	const UInt8 *buffer,
+	UInt32 length) {
 
 	if (_state == State::ready) {
 
@@ -820,9 +817,9 @@ UARTDevice::Result UARTDevice::transmit_IRQ(
 /// \return   El resultat de l'operacio
 ///
 UARTDevice::Result UARTDevice::transmit_DMA(
-    htl::dma::DMADevice *devDMA,
-    const uint8_t *buffer,
-    uint32_t length) {
+    dma::DMADevice *devDMA,
+    const UInt8 *buffer,
+    UInt32 length) {
 
     if (_state == State::ready) {
 
@@ -838,7 +835,7 @@ UARTDevice::Result UARTDevice::transmit_DMA(
         // Inicia la transferencia per DMA
         //
         devDMA->enableNotificationEvent(_dmaNotificationEvent);
-        devDMA->start(buffer, (uint8_t*)&(_usart->TDR), _txMaxCount);
+        devDMA->start(buffer, (UInt8*)&(_usart->TDR), _txMaxCount);
 
         return ErrorCode::ok;
     }
@@ -876,8 +873,8 @@ UARTDevice::Result UARTDevice::abortTransmission() {
 /// \return   El resultat.
 ///
 UARTDevice::Result UARTDevice::receive(
-	uint8_t *buffer,
-	uint32_t bufferSize,
+	UInt8 *buffer,
+	UInt32 bufferSize,
 	Ticks blockTime) {
 
 	if (_state == State::ready) {
@@ -921,8 +918,8 @@ UARTDevice::Result UARTDevice::receive(
 /// \return   El resultat de l'operacio.
 ///
 UARTDevice::Result UARTDevice::receive_IRQ(
-	uint8_t *buffer,
-	uint32_t bufferSize) {
+	UInt8 *buffer,
+	UInt32 bufferSize) {
 
 	if (_state == State::ready) {
 
@@ -956,9 +953,9 @@ UARTDevice::Result UARTDevice::receive_IRQ(
 /// \return   El resultat de l'operacio.
 ///
 UARTDevice::Result UARTDevice::receive_DMA(
-    htl::dma::DMADevice *devDMA,
-    uint8_t *buffer,
-    uint32_t bufferSize) {
+    dma::DMADevice *devDMA,
+    UInt8 *buffer,
+    UInt32 bufferSize) {
 
 	return ErrorCode::error;
 }
@@ -1226,14 +1223,14 @@ void UARTDevice::rxInterruptService() {
 /// @param    args: Parametres del event.
 ///
 void UARTDevice::dmaNotificationEventHandler(
-	htl::dma::DMADevice *sender,
-	htl::dma::DMADevice::NotificationEventArgs *args) {
+	dma::DMADevice *sender,
+	dma::DMADevice::NotificationEventArgs *args) {
 
     switch (args->id) {
 
         // Transmissio complerta de tots els bytes.
         //
-        case htl::dma::DMADevice::NotificationID::completed: {
+        case dma::DMADevice::NotificationID::completed: {
             _txCount = _txMaxCount;
             _usart->ICR = USART_ICR_TCCF;
             auto a = Atomic::start();
@@ -1245,7 +1242,7 @@ void UARTDevice::dmaNotificationEventHandler(
 
         // Error en la transmissio DMA.
         //
-        case htl::dma::DMADevice::NotificationID::error:
+        case dma::DMADevice::NotificationID::error:
             break;
 
         default:
@@ -1262,8 +1259,8 @@ void UARTDevice::dmaNotificationEventHandler(
 /// @param    irq: true si ve d'una interrupcio.
 ///
 void UARTDevice::raiseTxCompletedNotification(
-	const uint8_t *buffer,
-	uint32_t length,
+	const UInt8 *buffer,
+	UInt32 length,
 	bool irq) {
 
 	if (_notificationEventRaiser) {
@@ -1289,8 +1286,8 @@ void UARTDevice::raiseTxCompletedNotification(
 /// @param    irq: true si ve d'una interrupcio.
 ///
 void UARTDevice::raiseRxCompletedNotification(
-	const uint8_t *buffer,
-	uint32_t length,
+	const UInt8 *buffer,
+	UInt32 length,
 	bool irq) {
 
 	if (_notificationEventRaiser) {
@@ -1588,7 +1585,7 @@ void UARTDevice::disableReception() const {
 /// @param    data: Les dades a transmetre.
 //
 void UARTDevice::writeData(
-	uint8_t data) const {
+	UInt8 data) const {
 
 #if defined(EOS_PLATFORM_STM32F4)
 	_usart->DR = data;
@@ -1603,7 +1600,7 @@ void UARTDevice::writeData(
 /// @param    usart: Registres de hardware del dispositiu.
 /// \return   Les dades rebudes.
 //
-uint8_t UARTDevice::readData() const {
+UInt8 UARTDevice::readData() const {
 
 #if defined(EOS_PLATFORM_STM32F4)
 	return _usart->DR;

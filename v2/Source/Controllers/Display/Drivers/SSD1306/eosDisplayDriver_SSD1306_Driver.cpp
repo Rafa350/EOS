@@ -7,10 +7,13 @@ module;
 module Eos.Controllers.Display.Drivers.SSD1306;
 
 
+using namespace eos;
+
+
 /// ---------------------------------------------------------------------------
 /// @brief    Constructor
 ///
-eos::DisplayDriver_SSD1306::DisplayDriver_SSD1306(
+DisplayDriver_SSD1306::DisplayDriver_SSD1306(
     DisplayDevice_SSD1306 *device,
 	L1FrameBuffer *frameBuffer):
 
@@ -19,47 +22,47 @@ eos::DisplayDriver_SSD1306::DisplayDriver_SSD1306(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el driver.
+/// ---------------------------------------------------------------------------
+/// @brief    Inicialitza el driver.
 ///
-void eos::DisplayDriver_SSD1306::initialize() {
+void DisplayDriver_SSD1306::initialize() {
 
     enable();
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Desactiva el driver.
+/// ---------------------------------------------------------------------------
+/// @brief    Desactiva el driver.
 ///
-void eos::DisplayDriver_SSD1306::deinitialize() {
+void DisplayDriver_SSD1306::deinitialize() {
 
 	disable();
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Encen el display
+/// ---------------------------------------------------------------------------
+/// @brief    Encen el display
 ///
-void eos::DisplayDriver_SSD1306::enable() {
+void DisplayDriver_SSD1306::enable() {
 
-    uint8_t command = DisplayDevice_SSD1306::Command::DISPLAY_ON;
+    auto command = DisplayDevice_SSD1306::Command::DISPLAY_ON;
 	_device->writeCommand(&command, sizeof(command));
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Apaga el display
+/// ---------------------------------------------------------------------------
+/// @brief    Apaga el display
 ///
-void eos::DisplayDriver_SSD1306::disable() {
+void DisplayDriver_SSD1306::disable() {
 
-    uint8_t command = DisplayDevice_SSD1306::Command::DISPLAY_OFF;
+    auto command = DisplayDevice_SSD1306::Command::DISPLAY_OFF;
     _device->writeCommand(&command, sizeof(command));
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Borra la pantalla.
-/// \param    color: Color de borrat.
+/// ---------------------------------------------------------------------------
+/// @brief    Borra la pantalla.
+/// @param    color: Color de borrat.
 ///
 void eos::DisplayDriver_SSD1306::clear(
     Color color) {
@@ -68,14 +71,14 @@ void eos::DisplayDriver_SSD1306::clear(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa un pixel.
-/// \param    x: Coordinada x.
-/// \param    y: Coordinada x.
-/// \param    color: Color del pixel.
-/// \remarks  Si esta fora de limits no dibuixa res.
+/// ---------------------------------------------------------------------------
+/// @brief    Dibuixa un pixel.
+/// @param    x: Coordinada x.
+/// @param    y: Coordinada x.
+/// @param    color: Color del pixel.
+/// @remarks  Si esta fora de limits no dibuixa res.
 ///
-void eos::DisplayDriver_SSD1306::setPixel(
+void DisplayDriver_SSD1306::setPixel(
     int16_t x,
     int16_t y,
     Color color) {
@@ -84,15 +87,15 @@ void eos::DisplayDriver_SSD1306::setPixel(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa una linia de pixels horitzontals.
-/// \param    x: Coordinada x.
-/// \param    y: Coordinada y.
-/// \param    length: Longitut de la linia.
-/// \param    color: Color dels pixels.
-/// \remarks  Si esta fora de limits no dibuixa res.
+/// ---------------------------------------------------------------------------
+/// @brief    Dibuixa una linia de pixels horitzontals.
+/// @param    x: Coordinada x.
+/// @param    y: Coordinada y.
+/// @param    length: Longitut de la linia.
+/// @param    color: Color dels pixels.
+/// @remarks  Si esta fora de limits no dibuixa res.
 ///
-void eos::DisplayDriver_SSD1306::setHPixels(
+void DisplayDriver_SSD1306::setHPixels(
     int16_t x,
     int16_t y,
     int16_t size,
@@ -102,15 +105,15 @@ void eos::DisplayDriver_SSD1306::setHPixels(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa una linia de pixels en vertical.
-/// \param    x: Coordinada x.
-/// \param    y: Coordinada y.
-/// \param    length: Longitut de la linia.
-/// \param    color: Color dels pixels.
-/// \remarks  Si esta fora de limits no dibuixa res.
+/// ---------------------------------------------------------------------------
+/// @brief    Dibuixa una linia de pixels en vertical.
+/// @param    x: Coordinada x.
+/// @param    y: Coordinada y.
+/// @param    length: Longitut de la linia.
+/// @param    color: Color dels pixels.
+/// @remarks  Si esta fora de limits no dibuixa res.
 ///
-void eos::DisplayDriver_SSD1306::setVPixels(
+void DisplayDriver_SSD1306::setVPixels(
     int16_t x,
     int16_t y,
     int16_t size,
@@ -120,15 +123,15 @@ void eos::DisplayDriver_SSD1306::setVPixels(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa una regio rectangular.
-/// \param    x: Posicio x de la regio.
-/// \param    y: Posicio y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    color: Color.
+/// ---------------------------------------------------------------------------
+/// @brief    Dibuixa una regio rectangular.
+/// @param    x: Posicio x de la regio.
+/// @param    y: Posicio y de la regio.
+/// @param    width: Amplada de la regio.
+/// @param    height: Alçada de la regio.
+/// @param    color: Color.
 ///
-void eos::DisplayDriver_SSD1306::setPixels(
+void DisplayDriver_SSD1306::setPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -139,16 +142,16 @@ void eos::DisplayDriver_SSD1306::setPixels(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa una regio rectangular.
-/// \param    x: Posicio x de la regio.
-/// \param    y: Posicio y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    color: Punter als colors.
-/// \param    pitch: Pitch dels colors.
+/// ---------------------------------------------------------------------------
+/// @brief    Dibuixa una regio rectangular.
+/// @param    x: Posicio x de la regio.
+/// @param    y: Posicio y de la regio.
+/// @param    width: Amplada de la regio.
+/// @param    height: Alçada de la regio.
+/// @param    color: Punter als colors.
+/// @param    pitch: Pitch dels colors.
 ///
-void eos::DisplayDriver_SSD1306::setPixels(
+void DisplayDriver_SSD1306::setPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -160,17 +163,17 @@ void eos::DisplayDriver_SSD1306::setPixels(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa una regio rectangular.
-/// \param    x: Posicio x de la regio.
-/// \param    y: Posicio y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    pixels: Punter als colors.
-/// \param    format: Format de color
-/// \param    pitch: Pitch dels colors.
+/// ---------------------------------------------------------------------------
+/// @brief    Dibuixa una regio rectangular.
+/// @param    x: Posicio x de la regio.
+/// @param    y: Posicio y de la regio.
+/// @param    width: Amplada de la regio.
+/// @param    height: Alçada de la regio.
+/// @param    pixels: Punter als colors.
+/// @param    format: Format de color
+/// @param    pitch: Pitch dels colors.
 ///
-void eos::DisplayDriver_SSD1306::setPixels(
+void DisplayDriver_SSD1306::setPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -183,16 +186,16 @@ void eos::DisplayDriver_SSD1306::setPixels(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Transfereix el buffer d'imatge al controlador
+/// ---------------------------------------------------------------------------
+/// @brief    Transfereix el buffer d'imatge al controlador
 ///
-void eos::DisplayDriver_SSD1306::refresh() {
+void DisplayDriver_SSD1306::refresh() {
 
     auto buffer = _frameBuffer->getBuffer();
     auto width = _frameBuffer->getWidth();
     auto height = _frameBuffer->getHeight();
 
-    uint8_t cmd[6];
+    UInt8 cmd[6];
     cmd[0] = DisplayDevice_SSD1306::Command::SET_COLUMN;
     cmd[1] = 0;
     cmd[2] = width - 1;

@@ -7,9 +7,9 @@ module;
 export module Eos.Hardware.UART;
 
 
-export import Eos.Hardware.UART.Identifiers;
 export import Eos.Hardware.UART.Device;
 export import Eos.Hardware.UART.DeviceX;
+export import Eos.Hardware.UART.Identifiers;
 
 
 export namespace eos::hardware::uart {
@@ -38,4 +38,5 @@ export namespace eos::hardware::uart {
 #ifdef HTL_UART8_EXIST
 	using UARTDevice8 = UARTDeviceX<UARTDeviceID::uart8>;
 #endif
+
 }

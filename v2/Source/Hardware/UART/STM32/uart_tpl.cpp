@@ -16,16 +16,13 @@ import Eos.Hardware.UART.Traits;
 import Eos.Hardware.UART.Pins;
 
 
-namespace g = htl::gpio;
-namespace i = eos::hardware::uart::internal;
-
-
 export namespace eos::hardware::uart {
 
 	template <UARTDeviceID deviceID_>
 	class UARTDeviceX final: public UARTDevice {
 		private:
-			using Traits = i::UARTTraits<deviceID_>;
+			using Traits = internal::UARTTraits<deviceID_>;
+			using ActivateFlag = Reg32Flag<Traits::activateAddr, Traits::activatePos>;
 
 		private:
 			static constexpr auto _usartAddr = Traits::usartAddr;
@@ -74,7 +71,6 @@ export namespace eos::hardware::uart {
 
 
 using namespace eos;
-using namespace eos::hardware;
 using namespace eos::hardware::uart;
 
 
@@ -105,7 +101,7 @@ UARTDeviceX<deviceID_>::UARTDeviceX() :
 template<UARTDeviceID deviceID_>
 void UARTDeviceX<deviceID_>::activateImpl() const {
 
-	Reg32Flag<_activateAddr, _activatePos>::set();
+	ActivateFlag::set();
 	DSB();
 }
 
@@ -118,21 +114,25 @@ void UARTDeviceX<deviceID_>::activateImpl() const {
 template<UARTDeviceID deviceID_>
 void UARTDeviceX<deviceID_>::deactivateImpl() const {
 
-	Reg32Flag<_activateAddr, _activatePos>::clear();
+	ActivateFlag::clear();
 	DSB();
 }
 #endif
 
 
 /// --------------------------------------------------------------------------------
-/// @brief    Configura el pin TX
-/// @tparam   pin_: El pin
+/// @brief    Configura el pin TX.
+/// @tparam   pin_: El pin.
 ///
 template<UARTDeviceID deviceID_>
 template <typename pin_>
 void UARTDeviceX<deviceID_>::initPinTX() {
 
+	namespace g = htl::gpio;
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::tx, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
@@ -142,14 +142,18 @@ void UARTDeviceX<deviceID_>::initPinTX() {
 
 
 /// --------------------------------------------------------------------------------
-/// @brief    Configura el pin RX
-/// @tparam   pin_: El pin
+/// @brief    Configura el pin RX.
+/// @tparam   pin_: El pin.
 ///
 template<UARTDeviceID deviceID_>
 template <typename pin_>
 void UARTDeviceX<deviceID_>::initPinRX() {
 
+	namespace g = htl::gpio;
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::rx, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
@@ -159,14 +163,18 @@ void UARTDeviceX<deviceID_>::initPinRX() {
 
 
 /// --------------------------------------------------------------------------------
-/// @brief    Configura el pin CTS
-/// @tparam   pin_: El pin
+/// @brief    Configura el pin CTS.
+/// @tparam   pin_: El pin.
 ///
 template<UARTDeviceID deviceID_>
 template <typename pin_>
 void UARTDeviceX<deviceID_>::initPinCTS() {
 
+	namespace g = htl::gpio;
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::cts, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
@@ -175,14 +183,18 @@ void UARTDeviceX<deviceID_>::initPinCTS() {
 
 
 /// --------------------------------------------------------------------------------
-/// @brief    Configura el pin RTS
-/// @tparam   pin_: El pin
+/// @brief    Configura el pin RTS.
+/// @tparam   pin_: El pin.
 ///
 template<UARTDeviceID deviceID_>
 template <typename pin_>
 void UARTDeviceX<deviceID_>::initPinRTS() {
 
+	namespace g = htl::gpio;
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::rts, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
@@ -311,6 +323,8 @@ void UARTDeviceX<deviceID_>::setClockSourceImpl(
 	constexpr auto clockSourceAddr = Traits::clockSourceAddr;
 	constexpr auto clockSourceMsk = Traits::clockSourceMsk;
 	constexpr auto clockSourcePos = Traits::clockSourcePos;
+
+	//Reg32Field<clockSourceAddr, clockSourceMsk, clockSourcePos>::write(source);
 
 	auto reg = reinterpret_cast<volatile uint32_t*>(clockSourceAddr);
 	Bits::clear(*reg, clockSourceMsk);

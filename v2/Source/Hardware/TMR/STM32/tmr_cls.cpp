@@ -14,127 +14,122 @@ import Eos.Types;
 import Eos.Hardware.TMR.Identifiers;
 
 
-export
-namespace eos {
-    namespace hardware {
-        namespace tmr {
+export namespace eos::hardware::tmr {
 
-            class TMRDevice: private NonCopyableClass {
-                public:
-                    enum class CountDirection {
-                        up,
-                        down,
-                        bidi
-                    };
+	class TMRDevice: private NonCopyableClass {
+		public:
+			enum class CountDirection {
+				up,
+				down,
+				bidi
+			};
 
-                    enum class CountResolution {
-                        _16,
-                        _32
-                    };
+			enum class CountResolution {
+				_16,
+				_32
+			};
 
-                    /*enum class ClockSource {
-                        pclk1,
-                        pclk2,
-                        pllqclk
-                    };*/
+			/*enum class ClockSource {
+				pclk1,
+				pclk2,
+				pllqclk
+			};*/
 
-                    enum class ClockDivider {
-                        _1,
-                        _2,
-                        _4
-                    };
+			enum class ClockDivider {
+				_1,
+				_2,
+				_4
+			};
 
-                    enum class Channel {
-                        ch1,
-                        ch2,
-                        ch3,
-                        ch4
-                    };
+			enum class Channel {
+				ch1,
+				ch2,
+				ch3,
+				ch4
+			};
 
-                    enum class ChannelPolarity {
-                        activeHigh,
-                        activeLow
-                    };
+			enum class ChannelPolarity {
+				activeHigh,
+				activeLow
+			};
 
-                public:
-                    enum class NotificationID {
-                        null,
-                        trigger,
-                        update,
-                        error
-                    };
-                    struct NotificationEventArgs {
-                        NotificationID id;
-                        bool isr;
-                        union {
-                            struct {
-                            } trigger;
-                            struct {
-                            } update;
-                        };
-                    };
-                    using NotificationEventRaiser = eos::EventRaiser<TMRDevice, NotificationEventArgs>;
-                    using INotificationEvent = NotificationEventRaiser::IEvent;
-                    template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
+		public:
+			enum class NotificationID {
+				null,
+				trigger,
+				update,
+				error
+			};
+			struct NotificationEventArgs {
+				NotificationID id;
+				bool isr;
+				union {
+					struct {
+					} trigger;
+					struct {
+					} update;
+				};
+			};
+			using NotificationEventRaiser = eos::EventRaiser<TMRDevice, NotificationEventArgs>;
+			using INotificationEvent = NotificationEventRaiser::IEvent;
+			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
-                    enum class State {
-                        reset,
-                        ready,
-                        busy,
-                        busyIRQ,
-                        busyDMA
-                    };
+			enum class State {
+				reset,
+				ready,
+				busy,
+				busyIRQ,
+				busyDMA
+			};
 
-                private:
-                    TIM_TypeDef * const _tim;
-                    State _state;
-                    NotificationEventRaiser _notificationEventRaiser;
+		private:
+			TIM_TypeDef * const _tim;
+			State _state;
+			NotificationEventRaiser _notificationEventRaiser;
 
-                private:
-                    void notifyTrigger();
-                    void notifyUpdate();
+		private:
+			void notifyTrigger();
+			void notifyUpdate();
 
-                protected:
-                    TMRDevice(TIM_TypeDef *tim);
-                    virtual void activate() = 0;
-                    virtual void deactivate() = 0;
-                    void interruptService();
-                    State getState() const { return _state; }
+		protected:
+			TMRDevice(TIM_TypeDef *tim);
+			virtual void activate() = 0;
+			virtual void deactivate() = 0;
+			void interruptService();
+			State getState() const { return _state; }
 
-                public:
-                    Result initialize(ClockDivider divider, unsigned prescaler) {
-                        return initialize(divider, prescaler, 0, 0);
-                    }
-                    Result initialize(ClockDivider divider, unsigned prescaler, unsigned reload, unsigned repeat);
-                    Result deinitialize();
+		public:
+			Result initialize(ClockDivider divider, unsigned prescaler) {
+				return initialize(divider, prescaler, 0, 0);
+			}
+			Result initialize(ClockDivider divider, unsigned prescaler, unsigned reload, unsigned repeat);
+			Result deinitialize();
 
-                    Result setPrescaler(UInt32 value);
-                    Result setLimit(UInt32 value);
-                    Result setRepeat(UInt32 value);
-                    Result setCountDirection(CountDirection value);
-                    UInt32 getCounter() const { return _tim->CNT; }
+			Result setPrescaler(UInt32 value);
+			Result setLimit(UInt32 value);
+			Result setRepeat(UInt32 value);
+			Result setCountDirection(CountDirection value);
+			UInt32 getCounter() const { return _tim->CNT; }
 
-                    Result configurePwmChannel(Channel channel, ChannelPolarity, UInt32 compare);
-                    Result configurePwmChannel1(ChannelPolarity polarity, UInt32 compare);
-                    Result configurePwmChannel2(ChannelPolarity polarity, UInt32 compare);
-                    Result configurePwmChannel3(ChannelPolarity polarity, UInt32 compare);
-                    Result configurePwmChannel4(ChannelPolarity polarity, UInt32 compare);
+			Result configurePwmChannel(Channel channel, ChannelPolarity, UInt32 compare);
+			Result configurePwmChannel1(ChannelPolarity polarity, UInt32 compare);
+			Result configurePwmChannel2(ChannelPolarity polarity, UInt32 compare);
+			Result configurePwmChannel3(ChannelPolarity polarity, UInt32 compare);
+			Result configurePwmChannel4(ChannelPolarity polarity, UInt32 compare);
 
-                    void enableChannel(Channel channel);
-                    void disableChannel(Channel channel);
+			void enableChannel(Channel channel);
+			void disableChannel(Channel channel);
 
-                    void enableNotificationEvent(INotificationEvent &event) {
-                        _notificationEventRaiser.enable(event);
-                    }
-                    void disableNotificationEvent() {
-                        _notificationEventRaiser.disable();
-                    }
-                    Result start();
-                    Result start_IRQ();
-                    Result stop();
-            };
-        }
-    }
+			void enableNotificationEvent(INotificationEvent &event) {
+				_notificationEventRaiser.enable(event);
+			}
+			void disableNotificationEvent() {
+				_notificationEventRaiser.disable();
+			}
+			Result start();
+			Result start_IRQ();
+			Result stop();
+	};
 }
 
 

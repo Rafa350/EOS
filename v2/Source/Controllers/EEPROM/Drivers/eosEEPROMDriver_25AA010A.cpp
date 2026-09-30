@@ -1,9 +1,7 @@
 module;
 
 #include "eos.h"
-#include "eosTime.h"
 #include "HTL/htlGPIO.h"
-#include "HTL/htlSPI.h"
 
 
 export module Eos.Controllers.EEPROM_25AA010A;
@@ -12,21 +10,30 @@ export module Eos.Controllers.EEPROM_25AA010A;
 export import Eos.Controllers.EEPROM;
 
 
+import Eos.Types;
+import Eos.Hardware.SPI;
+import Eos.System.Core.Ticks;
+
+
 export namespace eos {
 
 	class EEPROMDriver_25AA010A final: public EEPROMDriver {
-		private:
-            htl::spi::SPIDevice * const _devSPI;
-            htl::gpio::PinDevice * const _pinCS;
+		public:
+			using PinDevice = htl::gpio::PinDevice;
+			using SPIDevice = eos::hardware::spi::SPIDevice;
 
 		private:
-            uint8_t readState();
+            SPIDevice * const _devSPI;
+            PinDevice * const _pinCS;
+
+		private:
+            UInt8 readState();
 
 		public:
-            EEPROMDriver_25AA010A(htl::spi::SPIDevice *spi, htl::gpio::PinDevice *pinCS);
+            EEPROMDriver_25AA010A(SPIDevice *spi, PinDevice *pinCS);
 
-            void read(uint32_t addr, uint8_t *data, uint32_t dataLength) override;
-			void write(uint32_t addr, const uint8_t *data, uint32_t dataLength) override;
+            void read(UInt32 addr, UInt8 *data, UInt32 dataLength) override;
+			void write(UInt32 addr, const UInt8 *data, UInt32 dataLength) override;
 
 			void enableWrite();
             void disableWrite();
@@ -34,7 +41,10 @@ export namespace eos {
 }
 
 
-static constexpr eos::Time __timeout = eos::Time::fromMiliseconds(100);
+
+using namespace eos;
+
+constexpr Ticks __timeout = Ticks::fromMiliseconds(100);
 
 
 /// ----------------------------------------------------------------------
@@ -42,9 +52,9 @@ static constexpr eos::Time __timeout = eos::Time::fromMiliseconds(100);
 /// \param    delSPI: El dispositiu SPI per comunicacio.
 /// \param    pinCD: El pin CS.
 ///
-eos::EEPROMDriver_25AA010A::EEPROMDriver_25AA010A(
-	htl::spi::SPIDevice *devSPI,
-	htl::gpio::PinDevice *pinCS):
+EEPROMDriver_25AA010A::EEPROMDriver_25AA010A(
+	SPIDevice *devSPI,
+	PinDevice *pinCS):
 
 	_devSPI {devSPI},
 	_pinCS {pinCS} {
@@ -55,7 +65,7 @@ eos::EEPROMDriver_25AA010A::EEPROMDriver_25AA010A(
 /// ----------------------------------------------------------------------
 /// \brief    Habilita l'escriptura.
 ///
-void eos::EEPROMDriver_25AA010A::enableWrite() {
+void EEPROMDriver_25AA010A::enableWrite() {
 
 	_pinCS->clear();
 
@@ -69,7 +79,7 @@ void eos::EEPROMDriver_25AA010A::enableWrite() {
 /// ----------------------------------------------------------------------
 /// \brief    Deshabilita l'escriptura.
 ///
-void eos::EEPROMDriver_25AA010A::disableWrite() {
+void EEPROMDriver_25AA010A::disableWrite() {
 
 	_pinCS->clear();
 
@@ -84,11 +94,11 @@ void eos::EEPROMDriver_25AA010A::disableWrite() {
 /// \brief    Llegeix l'estat de la EEPROM.
 /// \return   L'estat.
 ///
-uint8_t eos::EEPROMDriver_25AA010A::readState() {
+UInt8 EEPROMDriver_25AA010A::readState() {
 
 	_pinCS->clear();
 
-	uint8_t data = 0b00000101; // RDSR
+	UInt8 data = 0b00000101; // RDSR
 	_devSPI->transmit(&data, sizeof(data), __timeout);
 	_devSPI->receive(&data, sizeof(data), __timeout);
 
@@ -98,14 +108,14 @@ uint8_t eos::EEPROMDriver_25AA010A::readState() {
 }
 
 
-void eos::EEPROMDriver_25AA010A::read(
-	uint32_t addr,
-	uint8_t *data,
-	uint32_t dataLength) {
+void EEPROMDriver_25AA010A::read(
+	UInt32 addr,
+	UInt8 *data,
+	UInt32 dataLength) {
 
 	_pinCS->clear();
 
-	uint8_t cmd[2];
+	UInt8 cmd[2];
 	cmd[0] = 0b00000011; // READ
 	cmd[1] = (uint8_t)addr;
 	_devSPI->transmit(cmd, sizeof(cmd), __timeout);
@@ -115,14 +125,14 @@ void eos::EEPROMDriver_25AA010A::read(
 }
 
 
-void eos::EEPROMDriver_25AA010A::write(
-	uint32_t addr,
-	const uint8_t *data,
-	uint32_t dataLength) {
+void EEPROMDriver_25AA010A::write(
+	UInt32 addr,
+	const UInt8 *data,
+	UInt32 dataLength) {
 
 	_pinCS->clear();
 
-	uint8_t cmd[2];
+	UInt8 cmd[2];
 	cmd[0] = 0b00000010; // WRITE
 	cmd[1] = (uint8_t)addr;
 	_devSPI->transmit(cmd, sizeof(cmd), __timeout);

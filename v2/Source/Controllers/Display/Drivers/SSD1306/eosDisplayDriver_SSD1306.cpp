@@ -7,10 +7,11 @@ module;
 export module Eos.Controllers.Display.Drivers.SSD1306;
 
 
-export import Eos.Controllers.Display.Drivers;
 export import Eos.Controllers.Display.Buffers.L1;
+export import Eos.Controllers.Display.Drivers;
 
 import Eos.System.Graphics.Color;
+import Eos.Types;
 
 
 export namespace eos {
@@ -49,24 +50,24 @@ export namespace eos {
     class DisplayDevice_SSD1306 {
         public:
             struct Command {
-                static constexpr uint8_t DISPLAY_ON          = 0xAF;
-                static constexpr uint8_t DISPLAY_OFF         = 0xAE;
-                static constexpr uint8_t SET_ADDRESSING_MODE = 0x20;
-                static constexpr uint8_t SET_COLUMN          = 0x21;
-                static constexpr uint8_t SET_PAGE            = 0x22;
+                static constexpr UInt8 DISPLAY_ON          = 0xAF;
+                static constexpr UInt8 DISPLAY_OFF         = 0xAE;
+                static constexpr UInt8 SET_ADDRESSING_MODE = 0x20;
+                static constexpr UInt8 SET_COLUMN          = 0x21;
+                static constexpr UInt8 SET_PAGE            = 0x22;
             };
 
         protected:
             DisplayDevice_SSD1306();
 
-            void writeScript(const uint8_t *script, size_t scriptSize);
+            void writeScript(const UInt8 *script, UInt32 scriptSize);
 
         public:
             DisplayDevice_SSD1306(const DisplayDevice_SSD1306 &) = delete;
             virtual ~DisplayDevice_SSD1306() = default;
 
-            virtual void writeCommand(const uint8_t *data, size_t dataSize) = 0;
-            virtual void writeData(const uint8_t *data, size_t dataSize) = 0;
+            virtual void writeCommand(const UInt8 *data, UInt32 dataSize) = 0;
+            virtual void writeData(const UInt8 *data, UInt32 dataSize) = 0;
 
             DisplayDevice_SSD1306 & operator = (const DisplayDevice_SSD1306 &) = delete;
     };

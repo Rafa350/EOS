@@ -7,25 +7,25 @@ export module Eos.Hardware.SPI.Identifiers;
 import Eos.Configuration.Platform;
 
 
-namespace eos {
-	namespace hardware::uart {
-		namespace internal {
+namespace eos::hardware::spi {
 
-			template<PlatformID platformID_>
-			struct PlatformTraits;
+	namespace internal {
 
-			template<>
-			struct PlatformTraits<PlatformID::STM32_G031_K8> {
-				enum class DeviceID { spi1, spi2 };
-			};
+		template<PlatformID platformID_>
+		struct PlatformTraits;
 
-			template<>
-			struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
-				enum class DeviceID { spi1, spi2, spi3 };
-			};
-		}
+		// STM32G031K8
+		template<>
+		struct PlatformTraits<PlatformID::STM32_G031_K8> {
+			enum class DeviceID { spi1, spi2 };
+		};
 
-		export using SPIDeviceID = internal::PlatformTraits<Platform::id>::DeviceID;
+		// STM32G0B1RE
+		template<>
+		struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
+			enum class DeviceID { spi1, spi2, spi3 };
+		};
 	}
 
+	export using SPIDeviceID = internal::PlatformTraits<Platform::id>::DeviceID;
 }

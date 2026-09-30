@@ -3,8 +3,6 @@ module;
 
 #include "eos.h"
 #include "HTL/htlGPIO.h"
-#include "HTL/htlSPI.h"
-#include "HTL/htlDMA.h"
 
 
 export module Eos.Controllers.Display.Drivers.SSD1306.SPIDMA;
@@ -12,15 +10,19 @@ export module Eos.Controllers.Display.Drivers.SSD1306.SPIDMA;
 
 export import Eos.Controllers.Display.Drivers.SSD1306.SPI;
 
+import Eos.Types;
+import Eos.Hardware.SPI;
+import Eos.Hardware.DMA;
+
 
 export namespace eos {
 
-    /// \brief Clase que representa un dispositiu SSD1306 amb
+    /// @brief Clase que representa un dispositiu SSD1306 amb
     //         interficie SPI-DMA
     //
     class DisplayDevice_SSD1306_SPIDMA: public DisplayDevice_SSD1306_SPI {
         public:
-            using DevDMA = htl::dma::DMADevice;
+            using DevDMA = eos::hardware::dma::DMADevice;
 
         private:
             DevDMA * const _devDMA;
@@ -28,21 +30,23 @@ export namespace eos {
         public:
             DisplayDevice_SSD1306_SPIDMA(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI, DevDMA *devDMA);
 
-            void writeData(const uint8_t *data, size_t dataSize) override;
+            void writeData(const UInt8 *data, UInt32 dataSize) override;
     };
 }
 
 
+using namespace eos;
+
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    pinCS: El pin CS
-/// \param    pinDC: El pin DC
-/// \param    pinRST: El pin RST
-/// \param    devSPI: El dispositiu SPI
-/// \param    devDMA: El dispositiu DMA
+/// @brief    Constructor.
+/// @param    pinCS: El pin CS
+/// @param    pinDC: El pin DC
+/// @param    pinRST: El pin RST
+/// @param    devSPI: El dispositiu SPI
+/// @param    devDMA: El dispositiu DMA
 ///
-eos::DisplayDevice_SSD1306_SPIDMA::DisplayDevice_SSD1306_SPIDMA(
+DisplayDevice_SSD1306_SPIDMA::DisplayDevice_SSD1306_SPIDMA(
     Pin *pinCS,
     Pin *pinDC,
     Pin *pinRST,
@@ -57,13 +61,13 @@ eos::DisplayDevice_SSD1306_SPIDMA::DisplayDevice_SSD1306_SPIDMA(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un bloc de dades en el registre de dades.
-/// \brief    data: Les dades.
-/// \param    dataSize: Tamany de les dades en bytes.
+/// @brief    Escriu un bloc de dades en el registre de dades.
+/// @brief    data: Les dades.
+/// @param    dataSize: Tamany de les dades en bytes.
 ///
-void eos::DisplayDevice_SSD1306_SPIDMA::writeData(
-    const uint8_t *data,
-    size_t dataSize) {
+void DisplayDevice_SSD1306_SPIDMA::writeData(
+    const UInt8 *data,
+    UInt32 dataSize) {
 
     _pinDC->set();
     _pinCS->clear();

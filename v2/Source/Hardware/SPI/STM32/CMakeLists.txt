@@ -5,3 +5,7 @@ target_sources(${TARGET_NAME}
         spi_tpl.cpp
         spi_traits.cpp
 )
+
+if(EOS_PLATFORM_NAME MATCHES "STM32G0")
+    add_subdirectory("G0B1")
+endif()
