@@ -42,7 +42,7 @@ namespace eos {
             /// @brief Comprova si no hi ha cap error.
             /// @return True si tot es correcte i no hi ha error.
             ///
-            [[nodiscard]] bool isSuccess() const { return _error == okValue_; }
+            [[nodiscard]] bool isOk() const { return _error == okValue_; }
 
             /// @brief Comprova si el error es el especificat.
             /// @param error: El codi d'error de referencia.

@@ -71,7 +71,7 @@ using namespace eos;
 using namespace eos::hardware;
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Llegeix el valor d'un registre.
 /// @tparam   T_: El tipus de dades del registre.
 /// @tparam   addr_: L'adressda del registre.
@@ -84,7 +84,7 @@ T_ Reg<T_, addr_>::read() {
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Escriu un valor en un registre.
 /// @tparam   T_: El tipus de dades del registre.
 /// @tparam   addr_: L'adressda del registre.
@@ -99,7 +99,7 @@ void Reg<T_, addr_>::write(
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Llegeix el valor d'un camp d'ins d'un registre
 /// @tparam   T_:El tipus de dades del registre.
 /// @tparam   addr_: L'adressa del registre.
@@ -111,11 +111,12 @@ template <IsUInt T_, uintptr_t addr_, UInt32 pos_, UInt32 width_>
 T_ RegField<T_, addr_, pos_, width_>::read() {
 
 	constexpr T_ mask = (2 ^ width_) - 1;
+
     return ((*reinterpret_cast<volatile T_*>(addr_)) >> pos_) & mask;
 }
 
 
-/// ----------------------------------------------------------------------
+/// --------------------------------------------------------------------------------
 /// @brief    Escriu el valor d'un camp d'ins d'un registre
 /// @tparam   T_:El tipus de dades del registre.
 /// @tparam   addr_: L'adressa del registre.
@@ -134,6 +135,13 @@ void RegField<T_, addr_, pos_, width_>::write(
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si un flag esta esm estat 'set'
+/// @tparam   T_: El tipus de dades del registre
+/// @tparam   addr_: L'adressa delñ registre.
+/// @tparam   pos_: La popsicio.
+/// @return   True si esta 'set'
+///
 template <IsUInt T_, uintptr_t addr_, UInt32 pos_>
 bool RegFlag<T_, addr_, pos_>::isSet() {
 
@@ -141,6 +149,12 @@ bool RegFlag<T_, addr_, pos_>::isSet() {
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Canvia l'estat deu flag a set.
+/// @tparam   T_: El tipus de dades del registre
+/// @tparam   addr_: L'adressa delñ registre.
+/// @tparam   pos_: La popsicio.
+///
 template <IsUInt T_, uintptr_t addr_, UInt32 pos_>
 constexpr void RegFlag<T_, addr_, pos_>::set() {
 
@@ -148,6 +162,12 @@ constexpr void RegFlag<T_, addr_, pos_>::set() {
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Canvia l'estat deu flag a reset.
+/// @tparam   T_: El tipus de dades del registre
+/// @tparam   addr_: L'adressa delñ registre.
+/// @tparam   pos_: La popsicio.
+///
 template <IsUInt T_, uintptr_t addr_, UInt32 pos_>
 constexpr void RegFlag<T_, addr_, pos_>::clear() {
 

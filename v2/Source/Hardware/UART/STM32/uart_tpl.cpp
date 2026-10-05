@@ -2,13 +2,13 @@ module;
 
 
 #include "HTL/htl.h"
-#include "HTL/STM32/htlClock.h"
 #include "HTL/htlGPIO.h"
 
 
 export module Eos.Hardware.UART.DeviceX;
 
 
+import Eos.Hardware.Clock;
 import Eos.Hardware.Regs;
 import Eos.Hardware.UART.Device;
 import Eos.Hardware.UART.Identifiers;
@@ -26,8 +26,6 @@ export namespace eos::hardware::uart {
 
 		private:
 			static constexpr auto _usartAddr = Traits::usartAddr;
-			static constexpr auto _activateAddr = Traits::activateAddr;
-			static constexpr auto _activatePos = Traits::activatePos;
 			static UARTDeviceX _instance;
 
 		public:
@@ -46,7 +44,7 @@ export namespace eos::hardware::uart {
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			void setClockSourceImpl(ClockSource source) const override;
 #endif
-			htl::clock::ClockID getUARTClock() const override;
+			eos::hardware::clock::Clock::ClockID getUARTClock() const override;
 
 #if (HTL_USART_OPTION_FIFO == 1) && defined(EOS_PLATFORM_STM32G0)
 			constexpr bool isFIFOAvailable() const override;
@@ -89,7 +87,7 @@ void DSB() {
 ///
 template <UARTDeviceID deviceID_>
 UARTDeviceX<deviceID_>::UARTDeviceX() :
-	UARTDevice {reinterpret_cast<USART_TypeDef*>(_usartAddr)} {
+	UARTDevice {_usartAddr} {
 
 }
 
@@ -291,7 +289,7 @@ namespace htl::uart {
 #elif defined(EOS_PLATFORM_STM32G0)
 
 template<UARTDeviceID deviceID_>
-htl::clock::ClockID UARTDeviceX<deviceID_>::getUARTClock() const {
+eos::hardware::clock::Clock::ClockID UARTDeviceX<deviceID_>::getUARTClock() const {
 
 	auto addr = reinterpret_cast<uint32_t*>(Traits::clockSourceAddr);
 	auto msk = Traits::clockSourceMsk;
@@ -300,16 +298,16 @@ htl::clock::ClockID UARTDeviceX<deviceID_>::getUARTClock() const {
 	switch ((*addr & msk) >> pos) {
 		default:
 		case 0:
-			return htl::clock::ClockID::pclk;
+			return eos::hardware::clock::Clock::ClockID::pclk;
 
 		case 1:
-			return htl::clock::ClockID::sysclk;
+			return eos::hardware::clock::Clock::ClockID::sysclk;
 
 		case 2:
-			return htl::clock::ClockID::hsi16;
+			return eos::hardware::clock::Clock::ClockID::hsi16;
 
 		case 3:
-			return htl::clock::ClockID::lse;
+			return eos::hardware::clock::Clock::ClockID::lse;
 	}
 }
 #endif

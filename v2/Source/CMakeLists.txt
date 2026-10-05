@@ -2,14 +2,14 @@ target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
     FILES
-        eosBits.cpp
-        eosConcepts.cpp
-        eosConfiguration.cpp
-        eosMath.cpp
-        eosPlatform.cpp
-        eosResult.cpp
+        bits.cpp
+        concepts.cpp
+        configuration.cpp
+        math.cpp
+        platform.cpp
+        result.cpp
         eosToolchain.cpp
-        eosTypes.cpp
+        types.cpp
 )
 
 add_subdirectory("Controllers")

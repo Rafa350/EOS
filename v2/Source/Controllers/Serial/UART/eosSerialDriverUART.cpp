@@ -88,7 +88,7 @@ bool eos::SerialDriver_UART::onTransmit(
 	const UInt8 *buffer,
 	UInt32 length) {
 
-    return _devUART->transmit_IRQ(buffer, length).isSuccess();
+    return _devUART->transmit_IRQ(buffer, length).isOk();
 }
 
 
@@ -102,7 +102,7 @@ bool eos::SerialDriver_UART::onReceive(
 	UInt8 *buffer,
 	UInt32 bufferSize) {
 
-	return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
+	return _devUART->receive_IRQ(buffer, bufferSize).isOk();
 }
 
 
@@ -114,10 +114,10 @@ bool eos::SerialDriver_UART::onAbort() {
 
 	switch (getState()) {
 		case State::receiving:
-			return _devUART->abortReception().isSuccess();
+			return _devUART->abortReception().isOk();
 
 		case State::transmiting:
-			return _devUART->abortTransmission().isSuccess();
+			return _devUART->abortTransmission().isOk();
 
 		default:
 			return false;

@@ -1,8 +1,10 @@
 #include "HTL/htlTick.h"
-#include "HTL/STM32/htlClock.h"
 #include "HTL/STM32/htlTMR.h"
 #include "HTL/STM32/htlINT.h"
 #include "HTL/STM32/htlGPIO.h"
+
+
+import Eos.Hardware.Clock;
 
 
 using namespace htl;
@@ -34,8 +36,8 @@ void TickGenerator::initialize(
     uint32_t frequency,
 	uint32_t divider) {
 
-	auto clk = htl::clock::ClockDevice::pInst;
-	uint32_t prescaler = (clk->getClockFrequency(htl::clock::ClockID::pclk) / frequency) - 1;
+	auto clk = eos::hardware::clock::Clock::pInst;
+	uint32_t prescaler = (clk->getClockFrequency(eos::hardware::clock::Clock::ClockID::pclk) / frequency) - 1;
 
 	_devTMR->initialize(tmr::ClockDivider::_1, prescaler, divider, 0);
 	_devTMR->enableNotificationEvent(_devTMR_NotificationEvent);

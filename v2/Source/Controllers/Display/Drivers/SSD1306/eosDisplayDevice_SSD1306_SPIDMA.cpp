@@ -10,9 +10,9 @@ export module Eos.Controllers.Display.Drivers.SSD1306.SPIDMA;
 
 export import Eos.Controllers.Display.Drivers.SSD1306.SPI;
 
-import Eos.Types;
 import Eos.Hardware.SPI;
 import Eos.Hardware.DMA;
+import Eos.Types;
 
 
 export namespace eos {

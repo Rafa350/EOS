@@ -1,10 +1,24 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
-        eosAtomic.cpp
-        eosRegs.cpp
+        atomic.cpp
+        regs.cpp
 )
 
+add_subdirectory("Clock")
+add_subdirectory("Flash")
+
+if(EOS_USE_HTL_CAN)
+    add_subdirectory("CAN")
+endif()
+
 add_subdirectory("DMA")
-add_subdirectory("SPI")
+
+if(EOS_USE_HTL_SPI)
+    add_subdirectory("SPI")
+endif()
+
 add_subdirectory("TMR")
-add_subdirectory("UART")
+
+if(EOS_USE_HTL_UART)
+    add_subdirectory("UART")
+endif()

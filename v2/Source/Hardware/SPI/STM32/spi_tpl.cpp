@@ -21,10 +21,10 @@ export namespace eos::hardware::spi {
     template <SPIDeviceID deviceID_>
     class SPIDeviceX final: public SPIDevice {
         private:
-            using SPITraits = internal::SPITraits<deviceID_>;
-            static constexpr auto _spiAddr = SPITraits::spiAddr;
-            static constexpr auto _activateAddr = SPITraits::activateAddr;
-            static constexpr auto _activatePos = SPITraits::activatePos;
+            using Traits = internal::SPITraits<deviceID_>;
+			using ActivateFlag = Reg32Flag<Traits::activateAddr, Traits::activatePos>;
+
+            static constexpr auto _spiAddr = Traits::spiAddr;
             static SPIDeviceX _instance;
 
         public:
@@ -85,7 +85,7 @@ SPIDeviceX<deviceID_>::SPIDeviceX() :
 template <SPIDeviceID deviceID_>
 void SPIDeviceX<deviceID_>::activateImpl() const {
 
-    Reg32Flag<_activateAddr, _activatePos>::set();
+    ActivateFlag::set();
     DSB();
 }
 
@@ -98,7 +98,7 @@ void SPIDeviceX<deviceID_>::activateImpl() const {
 template <SPIDeviceID deviceID_>
 void SPIDeviceX<deviceID_>::deactivateImpl() const {
 
-    Reg32Flag<_activateAddr, _activatePos>::clear();
+    ActivateFlag::clear();
     DSB();
 }
 #endif

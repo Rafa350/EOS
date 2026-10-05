@@ -17,7 +17,6 @@ import Eos.Hardware.TMR.Traits;
 
 
 namespace g = htl::gpio;
-namespace i = eos::hardware::tmr::internal;
 
 
 export namespace eos::hardware::tmr {
@@ -25,10 +24,10 @@ export namespace eos::hardware::tmr {
 	template <TMRDeviceID deviceID_>
 	class TMRDeviceX: public TMRDevice {
 		private:
-			using Traits = i::TMRTraits<deviceID_>;
+			using Traits = internal::TMRTraits<deviceID_>;
+			using ActivateFlag = Reg32Flag<Traits::activateAddr, Traits::activatePos>;
+
 			static constexpr uint32_t _timAddr = Traits::timAddr;
-			static constexpr uint32_t _activateAddr = Traits::activateAddr;
-			static constexpr uint32_t _activatePos = Traits::activatePos;
 			static TMRDeviceX _instance;
 
 		public:
@@ -94,7 +93,7 @@ TMRDeviceX<deviceID_>::TMRDeviceX() :
 template <TMRDeviceID deviceID_>
 void TMRDeviceX<deviceID_>::activate() {
 
-	Reg32Flag<_activateAddr, _activatePos>::set();
+	ActivateFlag::set();
 	DSB();
 }
 
@@ -106,7 +105,7 @@ void TMRDeviceX<deviceID_>::activate() {
 template <TMRDeviceID deviceID_>
 void TMRDeviceX<deviceID_>::deactivate() {
 
-	Reg32Flag<_activateAddr, _activatePos>::clear();
+	ActivateFlag::clear();
 	DSB();
 }
 
@@ -125,7 +124,10 @@ void TMRDeviceX<deviceID_>::initPinCH1(
 	g::PullUpDown pupd,
 	g::Speed speed) {
 
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::ch1, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
 
@@ -144,7 +146,10 @@ void TMRDeviceX<deviceID_>::initPinCH2(
 	g::PullUpDown pupd,
 	g::Speed speed) {
 
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::ch2, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternatet(type, pupd, speed, af);
 }
 
@@ -163,7 +168,10 @@ void TMRDeviceX<deviceID_>::initPinCH3(
 	g::PullUpDown pupd,
 	g::Speed speed) {
 
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::ch3, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
 
@@ -182,7 +190,10 @@ void TMRDeviceX<deviceID_>::initPinCH4(
 	g::PullUpDown pupd,
 	g::Speed speed) {
 
+	namespace i = internal;
+
 	auto af = i::PinTraits<deviceID_, i::PinUse::ch4, pin_::portID, pin_::pinID>::value;
+
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
 

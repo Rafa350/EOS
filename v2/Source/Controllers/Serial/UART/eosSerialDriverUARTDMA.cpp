@@ -58,7 +58,7 @@ bool eos::SerialDriver_UARTDMA::onTransmit(
 	const UInt8 *buffer,
 	UInt32 bufferSize) {
 
-    return _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize).isSuccess();
+    return _devUART->transmit_DMA(_devDMAtx, buffer, bufferSize).isOk();
 }
 
 
@@ -71,5 +71,5 @@ bool eos::SerialDriver_UARTDMA::onReceive(
 	UInt8 *buffer,
 	UInt32 bufferSize) {
 
-    return _devUART->receive_IRQ(buffer, bufferSize).isSuccess();
+    return _devUART->receive_IRQ(buffer, bufferSize).isOk();
 }

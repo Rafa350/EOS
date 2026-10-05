@@ -2,10 +2,12 @@ module;
 
 
 #include "eosTime.h"
-#include "HTL/STM32/htlCAN.h"
 
 
 export module Eos.Services.CanOpen.CanServer;
+
+
+import Eos.Hardware.CAN;
 
 
 export namespace eos {

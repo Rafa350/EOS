@@ -1,7 +1,7 @@
 target_sources(${TARGET_NAME}
     PUBLIC
         htl.cpp
-        htlClock.cpp
+#        htlClock.cpp
         htlGPIO.cpp
         htlINT.cpp
         htlTick.cpp
@@ -11,7 +11,7 @@ target_sources(${TARGET_NAME}
 # ------------------------------------------------------------------------
 # Afegeix el modul CAN
 #
-if(EOS_USE_HTL_CAN)
+if(EOS_USE_HTL_CANx)
 target_sources(${TARGET_NAME}
     PUBLIC
         htlCAN.cpp

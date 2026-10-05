@@ -2,7 +2,6 @@ module;
 
 
 #include "HTL/htl.h"
-#include "HTL/STM32/htlClock.h"
 #include "eosBits.h"
 #include "HTL/htlDevice.h"
 #include "HTL/htlGPIO.h"
@@ -13,6 +12,7 @@ export module Eos.Hardware.UART.Device;
 
 
 import Eos.Hardware.Atomic;
+import Eos.Hardware.Clock;
 import Eos.Hardware.DMA;
 import Eos.System.Core.Ticks;
 import Eos.Result;
@@ -225,7 +225,7 @@ export namespace eos::hardware::uart {
 #endif
 			constexpr virtual bool isRTOAvailable() const = 0;
 
-			virtual htl::clock::ClockID getUARTClock() const = 0;
+			virtual clock::Clock::ClockID getUARTClock() const = 0;
 
 			void raiseTxCompletedNotification(const UInt8 *buffer, UInt32 length, bool irq);
 			void raiseRxCompletedNotification(const UInt8 *buffer, UInt32 length, bool irq);
@@ -234,7 +234,7 @@ export namespace eos::hardware::uart {
 #endif
 
 		protected:
-			UARTDevice(USART_TypeDef *usart);
+			UARTDevice(UInt32 usartAddr);
 
 			virtual void activateImpl() const = 0;
 #if HTL_UART_OPTION_DEACTIVATE == 1
@@ -307,12 +307,12 @@ void DSB() {
 
 /// ---------------------------------------------------------------------------
 /// @brief    Constructor.
-/// @param    usart: Registres hardware del modul USART.
+/// @param    usartAddr: Adressa dels registres USART.
 ///
 UARTDevice::UARTDevice(
-	USART_TypeDef *usart):
+	UInt32 usartAddr):
 
-	_usart {usart},
+	_usart {reinterpret_cast<USART_TypeDef*>(usartAddr)},
 	_state {State::reset}
 #if HTL_UART_OPTION_DMA == 1
 	, _dmaNotificationEvent {*this, &UARTDevice::dmaNotificationEventHandler}
@@ -679,9 +679,9 @@ UARTDevice::Result UARTDevice::setTimming(
 				break;
 		}
 
-		unsigned fclk = htl::clock::ClockDevice::pInst->getClockFrequency(getUARTClock());
+		auto fclk = eos::hardware::clock::Clock::pInst->getClockFrequency(getUARTClock());
 
-		unsigned div;
+		UInt32 div;
 		if (baudMode == BaudMode::div)
 			div = rate;
 		else {

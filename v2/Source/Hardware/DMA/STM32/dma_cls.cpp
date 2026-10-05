@@ -9,66 +9,10 @@ export module Eos.Hardware.DMA.Classes;
 
 
 import Eos.Bits;
-import Eos.Result;
-import Eos.Types;
 import Eos.Hardware.DMA.Identifiers;
+import Eos.Result;
 import Eos.System.Core.Ticks;
-
-
-export namespace eos::hardware::dma::internal {
-
-    struct DMADEV_TypeDef {
-        DMA_TypeDef * const dma;
-#if defined(EOS_PLATFORM_STM32G0)
-        DMA_Channel_TypeDef * const dmac;
-        DMAMUX_Channel_TypeDef * const muxc;
-#endif
-        unsigned const flagPos;
-    };
-
-#ifdef HTL_DMA1_CHANNEL1_EXIST
-    constexpr DMADEV_TypeDef const __dmadev11 = {
-        DMA1, DMA1_Channel1, DMAMUX1_Channel0, 0
-    };
-#endif
-
-#ifdef HTL_DMA1_CHANNEL2_EXIST
-    constexpr DMADEV_TypeDef const __dmadev12 = {
-        DMA1, DMA1_Channel2, DMAMUX1_Channel1, 4
-    };
-#endif
-
-#ifdef HTL_DMA1_CHANNEL3_EXIST
-    constexpr DMADEV_TypeDef const __dmadev13 = {
-        DMA1, DMA1_Channel3, DMAMUX1_Channel2, 8
-    };
-#endif
-
-#ifdef HTL_DMA1_CHANNEL4_EXIST
-    constexpr DMADEV_TypeDef const __dmadev14 = {
-        DMA1, DMA1_Channel4, DMAMUX1_Channel3, 12
-    };
-#endif
-
-#ifdef HTL_DMA1_CHANNEL5_EXIST
-    constexpr DMADEV_TypeDef const __dmadev15 = {
-        DMA1, DMA1_Channel5, DMAMUX1_Channel4, 16
-    };
-#endif
-
-#ifdef HTL_DMA1_CHANNEL6_EXIST
-    constexpr DMADEV_TypeDef const __dmadev16 = {
-        DMA1, DMA1_Channel6, DMAMUX1_Channel2, 20
-    };
-#endif
-
-#ifdef HTL_DMA1_CHANNEL7_EXIST
-    constexpr DMADEV_TypeDef const __dmadev17 = {
-        DMA1, DMA1_Channel7, DMAMUX1_Channel2, 24
-    };
-#endif
-
-}
+import Eos.Types;
 
 
 export namespace eos::hardware::dma {
@@ -151,7 +95,12 @@ export namespace eos::hardware::dma {
             using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
 
         private:
-            const internal::DMADEV_TypeDef * const _dmadev;
+            DMA_TypeDef * const _dma;
+            DMA_Channel_TypeDef * const _dmaChannel;
+            DMAMUX_ChannelStatus_TypeDef * const _muxChannelStatus;
+            DMAMUX_Channel_TypeDef * const _muxChannel;
+            UInt32 const _dmaChannelNumber;
+            UInt32 const _muxChannelNumber;
             State _state;
             NotificationEventRaiser _notificationEventRaiser;
 
@@ -159,17 +108,30 @@ export namespace eos::hardware::dma {
             void notifyTransferCompleted(bool irq);
             void notifyHalfTransfer(bool irq);
 
-            void activate() const {
-                activateImpl();
-            }
+            void activate() const;
 #if HTL_DMA_OPTION_DEACTIVATE == 1
-            void deactivate() const {
-                activateImpl();
-            }
+            void deactivate() const;
 #endif
 
+        private:
+            void enable();
+            void disable();
+            void enableTransferCompleteInterrupt();
+            void enableHalfTransferInterrupt();
+            void enableTransferErrorInterrupt();
+            void disableAllInterrupts();
+            bool isTransferCompleteInterruptEnabled();
+            bool isHalfTransferInterruptEnabled();
+            bool isTransferErrorInterruptEnabled();
+            bool isTransferCompleteFlagSet();
+            bool isHalfTransferFlagSet();
+            bool isTransferErrorFlagSet();
+            void clearTransferCompleteFlag();
+            void clearHalfTransferFlag();
+            void clearAllFlags();
+
         protected:
-            DMADevice(const internal::DMADEV_TypeDef *dmadev);
+            DMADevice(UInt32 dmaAddr, UInt32 dmaChannelAddr, UInt32 muxChannelStatusAddr, UInt32 muxChannelAddr);
 
             void interruptService();
 
@@ -197,7 +159,7 @@ export namespace eos::hardware::dma {
                 _notificationEventRaiser.disable();
             }
 
-            Result start(const uint8_t *src, uint8_t *dst, unsigned size);
+            Result start(const UInt8 *src, UInt8 *dst, UInt32 size);
 
             // TODO: temporal
             Result waitForFinish(Ticks blockTime);
@@ -208,45 +170,37 @@ export namespace eos::hardware::dma {
 }
 
 
-namespace i = eos::hardware::dma::internal;
-
+using namespace eos;
 using namespace eos::hardware::dma;
-
-
-bool isTransferCompleteInterruptEnabled(const i::DMADEV_TypeDef *dmadev);
-bool isHalfTransferInterruptEnabled(const i::DMADEV_TypeDef *dmadev);
-bool isTransferErrorInterruptEnabled(const i::DMADEV_TypeDef *dmadev);
-
-void enableTransferCompleteInterrupt(const i::DMADEV_TypeDef *dmadev);
-void enableHalfTransferInterrupt(const i::DMADEV_TypeDef *dmadev);
-void enableTransferErrorInterrupt(const i::DMADEV_TypeDef *dmadev);
-void disableAllInterrupts(const i::DMADEV_TypeDef *dmadev);
-
-bool isTransferCompleteFlagSet(const i::DMADEV_TypeDef *dmadev);
-bool isHalfTransferFlagSet(const i::DMADEV_TypeDef *dmadev);
-bool isTransferErrorFlagSet(const i::DMADEV_TypeDef *dmadev);
-
-void clearTransferCompleteFlag(const i::DMADEV_TypeDef *dmadev);
-void clearHalfTransferFlag(const i::DMADEV_TypeDef *dmadev);
-void clearAllFlags(const i::DMADEV_TypeDef *dmadev);
-
-void enable(const i::DMADEV_TypeDef *dmadev);
-void disable(const i::DMADEV_TypeDef *dmadev);
 
 
 /// ---------------------------------------------------------------------------
 /// @brief    Constructor.
-/// @param    channel: El numero de canal (0..n).
+/// @param    dmaAddr: Adressa dels registres DMA.
+/// @param    dmaChannelAddr: Adressa dels registres del canal DMA.
+/// @param    muxChannelStatusAddr: Adressa dels registres d'estat de canal del DMAMUX
+/// @param    muxChannelAddr: Adressa dels registres de canal del DMAMUX.
 ///
 DMADevice::DMADevice(
-    const i::DMADEV_TypeDef *dmadev):
+    UInt32 dmaAddr,
+    UInt32 dmaChannelAddr,
+    UInt32 muxChannelStatusAddr,
+    UInt32 muxChannelAddr) :
 
-    _dmadev {dmadev},
+    _dma {reinterpret_cast<DMA_TypeDef*>(dmaAddr)},
+    _dmaChannel {reinterpret_cast<DMA_Channel_TypeDef*>(dmaChannelAddr)},
+    _muxChannelStatus {reinterpret_cast<DMAMUX_ChannelStatus_TypeDef*>(muxChannelStatusAddr)},
+    _muxChannel {reinterpret_cast<DMAMUX_Channel_TypeDef*>(muxChannelAddr)},
+    _dmaChannelNumber {((dmaChannelAddr - sizeof(DMA_TypeDef)) & 0x1C) >> 2},
+    _muxChannelNumber {(muxChannelAddr & 0x3C) >> 2},
 	_state {State::reset} {
-
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Inicialitzacio per transferencies de memoria a memoria.
+/// @return   El resultat de l'operacio.
+///
 DMADevice::Result DMADevice::initMemoryToMemory() {
 
 	if (_state == State::reset) {
@@ -254,14 +208,14 @@ DMADevice::Result DMADevice::initMemoryToMemory() {
         // Activa el dispositiu amb el canal desactivat.
         //
         activate();
-        disable(_dmadev);
+        disable();
 
-		auto CCR = _dmadev->dmac->CCR;
+		auto CCR = _dmaChannel->CCR;
 		Bits::clear(CCR, DMA_CCR_PL | DMA_CCR_MSIZE | DMA_CCR_PSIZE | DMA_CCR_MINC |
 				DMA_CCR_PINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_MEM2MEM |
 				DMA_CCR_EN);
 		Bits::set(CCR, DMA_CCR_MEM2MEM);      // Memoria a memoria
-		_dmadev->dmac->CCR = CCR;
+		_dmaChannel->CCR = CCR;
 
 		return ErrorCode::ok;
 	}
@@ -270,7 +224,7 @@ DMADevice::Result DMADevice::initMemoryToMemory() {
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Inicialitzacio en modus transferencia de memoria a periferic.
 /// @param    priority: Prioritat.
 /// @param    srcSize: Tamany de les dades del origen.
@@ -297,9 +251,9 @@ DMADevice::Result DMADevice::initMemoryToPeripheral(
         // Activa el dispositiu amb el canal desactivat.
         //
         activate();
-        disable(_dmadev);
+        disable();
 
-        tmp = _dmadev->dmac->CCR;
+        tmp = _dmaChannel->CCR;
 
         // Transferencia de memoria a periferic
         //
@@ -337,18 +291,18 @@ DMADevice::Result DMADevice::initMemoryToPeripheral(
         //
         tmp &= ~(DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
 
-        _dmadev->dmac->CCR = tmp;
+        _dmaChannel->CCR = tmp;
 
         // Borra els flags d'interrupcio del canal
         //
-        clearAllFlags(_dmadev);
+        clearAllFlags();
 
         // Selecciona el dispositiu de fa la solicitut DMA
         //
-        tmp = _dmadev->muxc->CCR;
+        tmp = _muxChannel->CCR;
         Bits::clear(tmp, DMAMUX_CxCR_DMAREQ_ID);
         Bits::set(tmp, (uint32_t(requestID) << DMAMUX_CxCR_DMAREQ_ID_Pos));
-        _dmadev->muxc->CCR = tmp;
+        _muxChannel->CCR = tmp;
 
         // Canvia l'estat a 'ready'
         //
@@ -362,7 +316,7 @@ DMADevice::Result DMADevice::initMemoryToPeripheral(
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Desinicialitza el dispositiu.
 /// \return   El resultat de l'operacio.
 ///
@@ -376,8 +330,8 @@ DMADevice::Result DMADevice::deinitialize() {
 
         // Deshabilita el canal.
         //
-        disable(_dmadev);
-        disableAllInterrupts(_dmadev);
+        disable();
+        disableAllInterrupts();
 
         // Desactiva el dispositiu.
         //
@@ -396,7 +350,27 @@ DMADevice::Result DMADevice::deinitialize() {
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// @brief    Activa el dispositiu.
+///
+void DMADevice::activate() const {
+
+    activateImpl();
+}
+
+
+#if HTL_DMA_OPTION_DEACTIVATE == 1
+/// ---------------------------------------------------------------------------
+/// @brief    Desactiva el dispositiu.
+///
+void DMADevice::deactivate() const {
+
+    activateImpl();
+}
+#endif
+
+
+/// ---------------------------------------------------------------------------
 /// @brief    Inicia la transferencia.
 /// @param    startAddr: Adressa inicial.
 /// @param    dstAddr: Adressa final;
@@ -404,9 +378,9 @@ DMADevice::Result DMADevice::deinitialize() {
 /// @return   El resultat de l'operacio.
 ///
 DMADevice::Result DMADevice::start(
-    const uint8_t *src,
-    uint8_t *dst,
-    unsigned size) {
+    const UInt8 *src,
+    UInt8 *dst,
+    UInt32 size) {
 
     // Comprova si l'estat es 'ready'
     //
@@ -414,18 +388,18 @@ DMADevice::Result DMADevice::start(
 
         // Comprova si es una transferencua de memoria a periferic
         //
-        if (((_dmadev->dmac->CCR & DMA_CCR_MEM2MEM) == 0) &&
-            ((_dmadev->dmac->CCR & DMA_CCR_DIR) != 0)) {
+        if (((_dmaChannel->CCR & DMA_CCR_MEM2MEM) == 0) &&
+            ((_dmaChannel->CCR & DMA_CCR_DIR) != 0)) {
 
             // Inicialitza els parametres de la transferencia
             //
-            _dmadev->dmac->CMAR = reinterpret_cast<uint32_t>(src);
-            _dmadev->dmac->CPAR = reinterpret_cast<uint32_t>(dst);
-            _dmadev->dmac->CNDTR = size;
+            _dmaChannel->CMAR = reinterpret_cast<UInt32>(src);
+            _dmaChannel->CPAR = reinterpret_cast<UInt32>(dst);
+            _dmaChannel->CNDTR = size;
         }
 
-        enableTransferCompleteInterrupt(_dmadev);
-        enable(_dmadev);
+        enableTransferCompleteInterrupt();
+        enable();
 
         // A partir d'aqui, el DMA esta a l'espera de les solicituts
         // de transferencia.
@@ -441,7 +415,7 @@ DMADevice::Result DMADevice::start(
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Espera que finalitzi la transferencia.
 /// @param    timeout: Limit de temps.
 /// @return   El resultat de l'operacio.
@@ -457,18 +431,19 @@ DMADevice::Result DMADevice::waitForFinish(
         //
         auto expired = false;
         auto expirationTime = Ticks::now() + blockTime;
-        while (((_dmadev->dma->ISR & ((DMA_ISR_TCIF1 | DMA_ISR_TEIF1) << _dmadev->flagPos)) == 0) &&
+        auto mask = (DMA_ISR_TCIF1 | DMA_ISR_TEIF1) << (_dmaChannelNumber * 4);
+        while (((_dma->ISR & mask) == 0) &&
                 !expired) {
             expired = expirationTime.hasExpiredNow();
         }
 
         // Borra els flags d'interrupcio del canal
         //
-        clearAllFlags(_dmadev);
+        clearAllFlags();
 
         // Deshabilita el canal
         //
-        disable(_dmadev);
+        disable();
 
         // Canvia l'estat a 'ready'
         //
@@ -482,18 +457,18 @@ DMADevice::Result DMADevice::waitForFinish(
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Procesa les interrupcions.
 ///
 void DMADevice::interruptService() {
 
     // Comprova si es una interrupcio TC (Transfer Complete)
     //
-    if (isTransferCompleteInterruptEnabled(_dmadev) &&
-        isTransferCompleteFlagSet(_dmadev)) {
+    if (isTransferCompleteInterruptEnabled() &&
+        isTransferCompleteFlagSet()) {
 
-        clearTransferCompleteFlag(_dmadev);
-        disable(_dmadev);
+        clearTransferCompleteFlag();
+        disable();
         notifyTransferCompleted(true);
 
         _state = State::ready;
@@ -501,19 +476,19 @@ void DMADevice::interruptService() {
 
     // Comprova si es una interrupcio HT (Half Transfer)
     //
-    if (isHalfTransferInterruptEnabled(_dmadev) &&
-        isHalfTransferFlagSet(_dmadev)) {
+    if (isHalfTransferInterruptEnabled() &&
+        isHalfTransferFlagSet()) {
 
-        clearHalfTransferFlag(_dmadev);
+        clearHalfTransferFlag();
         notifyHalfTransfer(true);
     }
 
     // Comprova si es una interrupcio TE (Transfer Error)
     //
-    if (isTransferErrorInterruptEnabled(_dmadev) &&
-        isTransferErrorFlagSet(_dmadev)) {
+    if (isTransferErrorInterruptEnabled() &&
+        isTransferErrorFlagSet()) {
 
-        clearAllFlags(_dmadev);
+        clearAllFlags();
     }
 }
 
@@ -558,173 +533,149 @@ void DMADevice::notifyHalfTransfer(
 
 /// ---------------------------------------------------------------------------
 /// @brief    Habilita la interrrupcio TC
-/// @param    channel: El numero de canal.
 ///
-void enableTransferCompleteInterrupt(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::enableTransferCompleteInterrupt() {
 
-	eos::Bits::set(dmadev->dmac->CCR, DMA_CCR_TCIE);
+	Bits::set(_dmaChannel->CCR, DMA_CCR_TCIE);
 }
 
 
 /// ---------------------------------------------------------------------------
 /// @brief    Habilita la interrrupcio HT
-/// @param    channel: El numero de canal.
 ///
-void enableHalfTransferInterrupt(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::enableHalfTransferInterrupt() {
 
-	eos::Bits::set(dmadev->dmac->CCR, DMA_CCR_HTIE);
+	Bits::set(_dmaChannel->CCR, DMA_CCR_HTIE);
 }
 
 
 /// ---------------------------------------------------------------------------
 /// @brief    Habilita la interrrupcio TE
-/// @param    channel: El numero de canal.
 ///
-void enableTransferErrorInterrupt(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::enableTransferErrorInterrupt() {
 
-	eos::Bits::set(dmadev->dmac->CCR, DMA_CCR_TEIE);
+	Bits::set(_dmaChannel->CCR, DMA_CCR_TEIE);
 }
 
 
 /// ---------------------------------------------------------------------------
 /// @brief    Deshabilita totes les interrupcions.
-/// @param    channel: El numero de canal.
 ///
-void disableAllInterrupts(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::disableAllInterrupts() {
 
-	eos::Bits::clear(dmadev->dmac->CCR, DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
+	Bits::clear(_dmaChannel->CCR, DMA_CCR_TCIE | DMA_CCR_HTIE | DMA_CCR_TEIE);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Comprova si la interrupcio TC esta habilitada.
-/// @param    channel: El numero de canal.
 /// @return   True si esta habilitada.
 ///
-bool isTransferCompleteInterruptEnabled(
-    const i::DMADEV_TypeDef *dmadev) {
+bool DMADevice::isTransferCompleteInterruptEnabled() {
 
-    return (dmadev->dmac->CCR & DMA_CCR_TCIE) != 0;
+    return Bits::isSet(_dmaChannel->CCR, DMA_CCR_TCIE);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Comprova si la interrupcio HT esta habilitada.
-/// @param    channel: El numero de canal.
 /// @return   True si esta habilitada.
 ///
-bool isHalfTransferInterruptEnabled(
-    const i::DMADEV_TypeDef *dmadev) {
+bool DMADevice::isHalfTransferInterruptEnabled() {
 
-    return (dmadev->dmac->CCR & DMA_CCR_HTIE) != 0;
+    return Bits::isSet(_dmaChannel->CCR, DMA_CCR_HTIE);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Comprova si la interrupcio TE esta habilitada.
-/// @param    channel: El numero de canal.
 /// @return   True si esta habilitada.
 ///
-bool isTransferErrorInterruptEnabled(
-    const i::DMADEV_TypeDef *dmadev) {
+bool DMADevice::isTransferErrorInterruptEnabled() {
 
-    return (dmadev->dmac->CCR & DMA_CCR_TEIE) != 0;
+    return Bits::isSet(_dmaChannel->CCR, DMA_CCR_TEIE);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Comprova si el flag TC esta actiu.
-/// @param    channel: El numero de canal.
 /// @return   True si esta actiu.
 ///
-bool isTransferCompleteFlagSet(
-    const i::DMADEV_TypeDef *dmadev) {
+bool DMADevice::isTransferCompleteFlagSet() {
 
-    auto flag = DMA_ISR_TCIF1 << dmadev->flagPos;
-    return (dmadev->dma->ISR & ~flag) != 0;
+    auto mask = DMA_ISR_TCIF1 << (_dmaChannelNumber * 4);
+    return Bits::isSet(_dma->ISR, mask);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Comprova si el flag HT esta actiu.
-/// @param    channel: El numero de canal.
 /// @return   True si esta actiu.
 ///
-bool isHalfTransferFlagSet(
-    const i::DMADEV_TypeDef *dmadev) {
+bool DMADevice::isHalfTransferFlagSet() {
 
-    auto flag = DMA_ISR_HTIF1 << dmadev->flagPos;
-    return (dmadev->dma->ISR & ~flag) != 0;
+    auto mask = DMA_ISR_HTIF1 << (_dmaChannelNumber * 4);
+    return Bits::isSet(_dma->ISR, mask);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Comprova si el flag TH esta actiu.
 /// @param    channel: El numero de canal.
 /// @return   True si esta actiu.
 ///
-bool isTransferErrorFlagSet(
-    const i::DMADEV_TypeDef *dmadev) {
+bool DMADevice::isTransferErrorFlagSet() {
 
-    auto flag = DMA_ISR_TEIF1 << dmadev->flagPos;
-    return (dmadev->dma->ISR & ~flag) != 0;
+    auto mask = DMA_ISR_TEIF1 << (_dmaChannelNumber * 4);
+    return Bits::isSet(_dma->ISR, mask);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Borra el flag TC
 /// @param    channel: El numero de canal.
 ///
-void clearTransferCompleteFlag(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::clearTransferCompleteFlag() {
 
-    dmadev->dma->IFCR = DMA_IFCR_CTCIF1 << dmadev->flagPos;
+    _dma->IFCR = DMA_IFCR_CTCIF1 << (_dmaChannelNumber * 4);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Borra el flag HT
 /// @param    channel: El numero de canal.
 ///
-void clearHalfTransferFlag(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::clearHalfTransferFlag() {
 
-    dmadev->dma->IFCR = DMA_IFCR_CHTIF1 << dmadev->flagPos;
+    _dma->IFCR = DMA_IFCR_CHTIF1 << (_dmaChannelNumber * 4);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Borra tots els flags.
 /// @param    channel: El numero de canal.
 ///
-void clearAllFlags(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::clearAllFlags() {
 
-    dmadev->dma->IFCR = DMA_IFCR_CGIF1 << dmadev->flagPos;
+    _dma->IFCR = DMA_IFCR_CGIF1 << (_dmaChannelNumber * 4);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Habilita el canal DMA.
 /// @param    channel: El numero de canal.
 ///
-void enable(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::enable() {
 
-    dmadev->dmac->CCR |= DMA_CCR_EN;
+    Bits::set(_dmaChannel->CCR, DMA_CCR_EN);
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Deshabilita el canal DMA.
 /// @param    channel: El numero de canal.
 ///
-void disable(
-    const i::DMADEV_TypeDef *dmadev) {
+void DMADevice::disable() {
 
-    dmadev->dmac->CCR &= ~DMA_CCR_EN;
+    Bits::clear(_dmaChannel->CCR, DMA_CCR_EN);
 }

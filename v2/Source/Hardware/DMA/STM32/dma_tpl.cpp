@@ -13,17 +13,20 @@ import Eos.Hardware.DMA.Classes;
 import Eos.Hardware.DMA.Traits;
 
 
-export namespace eos::hardware::dma {
+namespace eos::hardware::dma {
 
-    template <DMADeviceID deviceID_>
+    export template <DMADeviceID deviceID_>
     class DMADeviceX final: public DMADevice {
         private:
-            using DMATraits = internal::DMATraits<deviceID_>;
+            using Traits = internal::DMATraits<deviceID_>;
 
         private:
-            static constexpr auto dmadev = DMATraits::dmadev;
-            static constexpr auto _activateAddr = DMATraits::activateAddr;
-            static constexpr auto _activatePos = DMATraits::activatePos;
+            static constexpr auto _dmaAddr = Traits::dmaAddr;
+            static constexpr auto _dmaChannelAddr = Traits::dmaChannelAddr;
+            static constexpr auto _muxChannelStatusAddr = Traits::muxChannelStatusAddr;
+            static constexpr auto _muxChannelAddr = Traits::muxChannelAddr;
+            static constexpr auto _activateAddr = Traits::activateAddr;
+            static constexpr auto _activatePos = Traits::activatePos;
             static DMADeviceX _instance;
 
         private:
@@ -44,7 +47,7 @@ export namespace eos::hardware::dma {
             static void interruptHandler();
     };
 
-    template <DMADeviceID deviceID_>
+    export template <DMADeviceID deviceID_>
     DMADeviceX<deviceID_> DMADeviceX<deviceID_>::_instance;
 }
 
@@ -67,7 +70,7 @@ void DSB() {
 ///
 template <DMADeviceID deviceID_>
 DMADeviceX<deviceID_>::DMADeviceX() :
-    DMADevice(dmadev) {
+    DMADevice {_dmaAddr, _dmaChannelAddr, _muxChannelStatusAddr, _muxChannelAddr} {
 
 }
 

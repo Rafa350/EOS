@@ -3,7 +3,6 @@ module;
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "eosTime.h"
 #include "eosResults.h"
 
 
@@ -23,14 +22,14 @@ export namespace eos {
 
 		private:
 			SerialDriver * const _drvSerial;
-			Time _txTimeout = Times::infinite;
-			Time _rxTimeout = Times::infinite;
+			Ticks _txTimeout;
+			Ticks _rxTimeout;
 
 		public:
 			SerialStream(SerialDriver *drvSerial);
 
-			void setWriteTimeout(Time timeout);
-			void setReadTimeout(Time timeout);
+			void setWriteTimeout(Ticks timeout);
+			void setReadTimeout(Ticks timeout);
 
 			ResultU32 write(const uint8_t *buffer, size_t length) override;
 			ResultU32 read(uint8_t *buffer, size_t bufferSize) override;
@@ -45,7 +44,9 @@ export namespace eos {
 eos::SerialStream::SerialStream(
 	SerialDriver *drvSerial) :
 
-	_drvSerial {drvSerial} {
+	_drvSerial {drvSerial},
+	_txTimeout {Ticks::infinite()},
+	_rxTimeout {Ticks::infinite()} {
 }
 
 
@@ -54,7 +55,7 @@ eos::SerialStream::SerialStream(
 /// \param    timeout: El valor.
 ///
 void eos::SerialStream::setWriteTimeout(
-	Time timeout) {
+	Ticks timeout) {
 
 	_txTimeout = timeout;
 }
@@ -65,7 +66,7 @@ void eos::SerialStream::setWriteTimeout(
 /// \param    timeout: El valor.
 ///
 void eos::SerialStream::setReadTimeout(
-	Time timeout) {
+	Ticks timeout) {
 
 	_rxTimeout = timeout;
 }
@@ -91,8 +92,8 @@ eos::ResultU32 eos::SerialStream::write(
 		if (_drvSerial->transmit(buffer, length).is(SerialDriver::ErrorCode::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(Ticks::fromMiliseconds(_txTimeout.toMiliseconds()));
-			if (result.isSuccess())
+			auto result = _drvSerial->wait(_txTimeout);
+			if (result.isOk())
 				return {ResultU32::ErrorCodes::ok, result.getValue()};
 			else {
 				_drvSerial->abort();
@@ -123,8 +124,8 @@ eos::ResultU32 eos::SerialStream::read(
 		if (_drvSerial->receive(buffer, bufferSize).is(SerialDriver::ErrorCode::busy))
 			return ResultU32::ErrorCodes::busy;
 		else {
-			auto result = _drvSerial->wait(Ticks::fromMiliseconds(_rxTimeout.toMiliseconds()));
-			if (result.isSuccess())
+			auto result = _drvSerial->wait(_rxTimeout);
+			if (result.isOk())
 				return {ResultU32::ErrorCodes::ok, result.getValue()};
 			else
 				return ResultU32::ErrorCodes::timeout;
