@@ -4,10 +4,10 @@ module;
 #include "HTL/htl.h"
 
 
-export module Eos.Hardware.DMA.Traits;
+export module Eos.Hardware.DMA.__DEVICE_TRAITS;
 
 
-import Eos.Hardware.DMA.Classes;
+import Eos.Hardware.DMA.__CLASSES;
 import Eos.Hardware.DMA.Identifiers;
 import Eos.Types;
 

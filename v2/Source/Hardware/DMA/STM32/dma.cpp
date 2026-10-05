@@ -8,8 +8,8 @@ export module Eos.Hardware.DMA;
 
 
 export import Eos.Hardware.DMA.Identifiers;
-export import Eos.Hardware.DMA.Classes;
-export import Eos.Hardware.DMA.Templates;
+export import Eos.Hardware.DMA.__CLASSES;
+export import Eos.Hardware.DMA.__TEMPLATES;
 
 
 export namespace eos::hardware::dma {

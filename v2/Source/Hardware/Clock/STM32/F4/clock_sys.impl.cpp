@@ -4,7 +4,6 @@ module;
 #include "HTL/htl.h"
 
 
-
 module Eos.Hardware.Clock;
 
 

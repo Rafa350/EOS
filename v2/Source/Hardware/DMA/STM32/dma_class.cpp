@@ -5,7 +5,7 @@ module;
 #include "eosEvents.h"
 
 
-export module Eos.Hardware.DMA.Classes;
+export module Eos.Hardware.DMA.__CLASSES;
 
 
 import Eos.Bits;

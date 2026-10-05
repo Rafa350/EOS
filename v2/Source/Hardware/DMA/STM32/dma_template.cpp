@@ -4,13 +4,13 @@ module;
 #include "HTL/htl.h"
 
 
-export module Eos.Hardware.DMA.Templates;
+export module Eos.Hardware.DMA.__TEMPLATES;
 
 
 import Eos.Hardware.Regs;
 import Eos.Hardware.DMA.Identifiers;
-import Eos.Hardware.DMA.Classes;
-import Eos.Hardware.DMA.Traits;
+import Eos.Hardware.DMA.__CLASSES;
+import Eos.Hardware.DMA.__DEVICE_TRAITS;
 
 
 namespace eos::hardware::dma {

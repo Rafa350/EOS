@@ -1,4 +1,4 @@
 target_sources(${TARGET_NAME}
     PUBLIC
-        clock_sys.cpp
+        clock_sys.impl.cpp
 )
