@@ -5,9 +5,9 @@ target_sources(${TARGET_NAME}
 
 target_sources(${TARGET_NAME}
     PUBLIC
-        clock_HSE.cpp
-        clock_LSE.cpp
-        clock_LSI.cpp
+        clock_HSE.impl.cpp
+        clock_LSE.impl.cpp
+        clock_LSI.impl.cpp
 )
 
 
