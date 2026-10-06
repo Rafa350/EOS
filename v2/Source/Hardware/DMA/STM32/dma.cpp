@@ -7,8 +7,8 @@ module;
 export module Eos.Hardware.DMA;
 
 
-export import Eos.Hardware.DMA.Identifiers;
 export import Eos.Hardware.DMA.__CLASSES;
+export import Eos.Hardware.DMA.__PLATFORM_TRAITS;
 export import Eos.Hardware.DMA.__TEMPLATES;
 
 

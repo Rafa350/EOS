@@ -4,4 +4,5 @@ target_sources(${TARGET_NAME}
         dma_class.cpp
         dma_template.cpp
         dma_device_traits.cpp
+        dma_platform_traits.cpp
 )

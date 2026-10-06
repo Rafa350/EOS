@@ -9,7 +9,7 @@ export module Eos.Hardware.DMA.__CLASSES;
 
 
 import Eos.Bits;
-import Eos.Hardware.DMA.Identifiers;
+import Eos.Hardware.DMA.__PLATFORM_TRAITS;
 import Eos.Result;
 import Eos.System.Core.Ticks;
 import Eos.Types;
@@ -109,9 +109,7 @@ export namespace eos::hardware::dma {
             void notifyHalfTransfer(bool irq);
 
             void activate() const;
-#if HTL_DMA_OPTION_DEACTIVATE == 1
             void deactivate() const;
-#endif
 
         private:
             void enable();
@@ -136,9 +134,7 @@ export namespace eos::hardware::dma {
             void interruptService();
 
             virtual void activateImpl() const = 0;
-#if HTL_DMA_OPTION_DEACTIVATE == 1
             virtual void deactivateImpl() const = 0;
-#endif
 
         public:
             Result initMemoryToMemory();
@@ -335,9 +331,7 @@ DMADevice::Result DMADevice::deinitialize() {
 
         // Desactiva el dispositiu.
         //
-#if HTL_DMA_OPTION_DEACTIVATEW == 1
         deactivate();
-#endif
 
         // Canvia l'estat a 'reset'
         //
@@ -359,7 +353,6 @@ void DMADevice::activate() const {
 }
 
 
-#if HTL_DMA_OPTION_DEACTIVATE == 1
 /// ---------------------------------------------------------------------------
 /// @brief    Desactiva el dispositiu.
 ///
@@ -367,7 +360,6 @@ void DMADevice::deactivate() const {
 
     activateImpl();
 }
-#endif
 
 
 /// ---------------------------------------------------------------------------

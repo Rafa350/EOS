@@ -25,7 +25,11 @@ export namespace eos::hardware::can {
             static CANDeviceX _instance;
 
         private:
-            using DeviceTraits = internal::DeviceTraits<deviceId_>;
+            using CANTraits = internal::CANTraits<deviceId_>;
+			template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+                using TxPinTraits = internal::PinTraits<deviceId_, internal::PinFunction::tx, portID_, pinID_>;
+			template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+                using RxPinTraits = internal::PinTraits<deviceId_, internal::PinFunction::rx, portID_, pinID_>;
 
         public:
             static constexpr auto deviceId = deviceId_;
@@ -80,19 +84,19 @@ void DSB() {
 ///
 template <CANDeviceID deviceId_>
 CANDeviceX<deviceId_>::CANDeviceX() :
-    CANDevice {DeviceTraits::canAddr, DeviceTraits::ramAddr} {
+    CANDevice {CANTraits::canAddr, CANTraits::ramAddr} {
 }
 
 
 /// ---------------------------------------------------------------------------
-/// @brief
+/// @brief    Activa el dispositiu.
 /// @tparam   deviceId_: Identificador del dispositiu.
 ///
 template <CANDeviceID deviceId_>
 void CANDeviceX<deviceId_>::activateImpl() {
 
-    constexpr auto activateAddr = DeviceTraits::activateAddr;
-    constexpr auto activatePos = DeviceTraits::activatePos;
+    constexpr auto activateAddr = CANTraits::activateAddr;
+    constexpr auto activatePos = CANTraits::activatePos;
 
     Bits::set(*reinterpret_cast<UInt32*>(activateAddr), 1UL << activatePos);
     DSB();
@@ -100,14 +104,14 @@ void CANDeviceX<deviceId_>::activateImpl() {
 
 
 /// ---------------------------------------------------------------------------
-/// @brief
+/// @brief    Descativa el dispositiu.
 /// @tparam   deviceId_: Identificador del dispositiu.
 ///
 template <CANDeviceID deviceId_>
 void CANDeviceX<deviceId_>::deactivateImpl() {
 
-    constexpr auto activateAddr = DeviceTraits::activateAddr;
-    constexpr auto activatePos = DeviceTraits::activatePos;
+    constexpr auto activateAddr = CANTraits::activateAddr;
+    constexpr auto activatePos = CANTraits::activatePos;
 
     Bits::clear(*reinterpret_cast<UInt32*>(activateAddr), 1UL << activatePos);
     DSB();
@@ -115,7 +119,7 @@ void CANDeviceX<deviceId_>::deactivateImpl() {
 
 
 /// ---------------------------------------------------------------------------
-/// @brief
+/// @brief    Inicialitza el pin TX.
 /// @tparam   deviceId_: Identificador del dispositiu.
 ///
 template <CANDeviceID deviceId_>
@@ -123,9 +127,8 @@ template <typename pin_>
 void CANDeviceX<deviceId_>::initPinTX() {
 
     namespace g = htl::gpio;
-    namespace i = internal;
 
-    auto value = i::PinTraits<deviceId_, i::PinFunction::tx, pin_::portID, pin_::pinID>::value;
+    auto value = TxPinTraits<pin_::portID, pin_::pinID>::value;
 
     g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
         g::OutputType::pushPull,
@@ -136,7 +139,7 @@ void CANDeviceX<deviceId_>::initPinTX() {
 
 
 /// ---------------------------------------------------------------------------
-/// @brief
+/// @brief    Inicialitza el pin RX.
 /// @tparam   deviceId_: Identificador del dispositiu.
 ///
 template <CANDeviceID deviceId_>
@@ -144,9 +147,8 @@ template <typename pin_>
 void CANDeviceX<deviceId_>::initPinRX() {
 
     namespace g = htl::gpio;
-    namespace i = internal;
 
-    auto value = i::PinTraits<deviceId_, i::PinFunction::rx, pin_::portID, pin_::pinID>::value;
+    auto value = RxPinTraits<pin_::portID, pin_::pinID>::value;
 
     g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
         g::OutputType::pushPull,
@@ -164,12 +166,10 @@ void CANDeviceX<deviceId_>::initPinRX() {
 template <CANDeviceID deviceId_>
 void CANDeviceX<deviceId_>::initClockSource(ClockSource clockSource) {
 
-    using DeviceTraits = internal::DeviceTraits<deviceId_>;
+    auto p = reinterpret_cast<UInt32*>(CANTraits::clockSourceAddr);
 
-    auto p = reinterpret_cast<UInt32*>(DeviceTraits::clockSourceAddr);
-
-    *p &= ~DeviceTraits::clockSourceMsk;
-    *p |= ((uint32_t)clockSource << DeviceTraits::clockSourcePos) & DeviceTraits::clockSourceMsk;
+    *p &= ~CANTraits::clockSourceMsk;
+    *p |= ((uint32_t)clockSource << CANTraits::clockSourcePos) & CANTraits::clockSourceMsk;
 }
 
 

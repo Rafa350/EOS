@@ -8,12 +8,14 @@ module;
 #include "eosEvents.h"
 
 
-export module Eos.Hardware.UART.Device;
+export module Eos.Hardware.UART.__CLASSES;
 
 
+import Eos.Configuration;
 import Eos.Hardware.Atomic;
 import Eos.Hardware.Clock;
 import Eos.Hardware.DMA;
+import Eos.Hardware.UART.__PLATFORM_TRAITS;
 import Eos.System.Core.Ticks;
 import Eos.Result;
 import Eos.Types;
@@ -21,28 +23,24 @@ import Eos.Types;
 
 export namespace eos::hardware::uart {
 
-	#if defined(EOS_PLATFORM_STM32G0)
-	/// Origen del rellotge del generador de bauds
-	///
-	enum class ClockSource {
-		pclk = 0,
-		sysclk = 1,
-		hsi16 = 2,
-		lse = 3
-	};
+	namespace internal {
 
-	#elif defined(EOS_PLATFORM_STM32F7)
-	enum class ClockSource {
-		pclk = 0,
-		sysclk = 1,
-		hsi = 2,
-		lse = 3
-	};
-	#endif
+		template<bool use>
+		class IRQInterface {
+		};
+
+		template <>
+		class IRQInterface<true> {
+
+		};
+	}
 
 	/// Clase que implementa el dispositiu de comunicacio UART.
 	///
-	class UARTDevice: NonCopyableClass {
+	class UARTDevice:
+		private NonCopyableClass,
+        public internal::IRQInterface<Configuration::Hardware::Uart::use_IRQ> {
+
 		public:
 			/// Primer bit a transmetre.
 			///

@@ -4,7 +4,7 @@ module;
 #include "HTL/htl.h"
 
 
-export module Eos.Hardware.SPI.Traits;
+export module Eos.Hardware.SPI.__DEVICE_TRAITS;
 
 
 import Eos.Hardware.SPI.Identifiers;

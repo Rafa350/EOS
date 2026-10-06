@@ -5,15 +5,15 @@ module;
 #include "HTL/htlGPIO.h"
 
 
-export module Eos.Hardware.UART.DeviceX;
+export module Eos.Hardware.UART.__TEMPLATES;
 
 
 import Eos.Hardware.Clock;
 import Eos.Hardware.Regs;
-import Eos.Hardware.UART.Device;
-import Eos.Hardware.UART.Identifiers;
-import Eos.Hardware.UART.Traits;
-import Eos.Hardware.UART.Pins;
+import Eos.Hardware.UART.__CLASSES;
+import Eos.Hardware.UART.__DEVICE_TRAITS;
+import Eos.Hardware.UART.__PLATFORM_TRAITS;
+import Eos.Hardware.UART.__PIN_TRAITS;
 
 
 export namespace eos::hardware::uart {

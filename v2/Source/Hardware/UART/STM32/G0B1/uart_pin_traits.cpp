@@ -6,10 +6,10 @@ module;
 #include <concepts>
 
 
-export module Eos.Hardware.UART.Pins;
+export module Eos.Hardware.UART.__PIN_TRAITS;
 
 
-import Eos.Hardware.UART.Identifiers;
+import Eos.Hardware.UART.__PLATFORM_TRAITS;
 
 
 namespace g = htl::gpio;
@@ -26,7 +26,8 @@ export namespace eos::hardware::uart::internal {
     };
 
     template <UARTDeviceID, PinUse, g::PortID, g::PinID>
-    struct PinTraits;
+    struct PinTraits {
+    };
 
     #if defined(HTL_UART1_EXIST)
     template<>

@@ -8,9 +8,9 @@ export module Eos.Hardware.DMA.__TEMPLATES;
 
 
 import Eos.Hardware.Regs;
-import Eos.Hardware.DMA.Identifiers;
 import Eos.Hardware.DMA.__CLASSES;
 import Eos.Hardware.DMA.__DEVICE_TRAITS;
+import Eos.Hardware.DMA.__PLATFORM_TRAITS;
 
 
 namespace eos::hardware::dma {
@@ -18,15 +18,9 @@ namespace eos::hardware::dma {
     export template <DMADeviceID deviceID_>
     class DMADeviceX final: public DMADevice {
         private:
-            using Traits = internal::DMATraits<deviceID_>;
+            using DMATraits = internal::DMATraits<deviceID_>;
 
         private:
-            static constexpr auto _dmaAddr = Traits::dmaAddr;
-            static constexpr auto _dmaChannelAddr = Traits::dmaChannelAddr;
-            static constexpr auto _muxChannelStatusAddr = Traits::muxChannelStatusAddr;
-            static constexpr auto _muxChannelAddr = Traits::muxChannelAddr;
-            static constexpr auto _activateAddr = Traits::activateAddr;
-            static constexpr auto _activatePos = Traits::activatePos;
             static DMADeviceX _instance;
 
         private:
@@ -34,9 +28,7 @@ namespace eos::hardware::dma {
 
         protected:
             void activateImpl() const override;
-#if HTL_DMA_OPTION_DEACTIVATE == 1
             void deactivateImpl() const override;
-#endif
 
         public:
             static constexpr auto deviceID = deviceID_;
@@ -52,7 +44,9 @@ namespace eos::hardware::dma {
 }
 
 
+using namespace eos;
 using namespace eos::hardware::dma;
+using namespace eos::hardware::dma::internal;
 
 
 /// ---------------------------------------------------------------------------
@@ -70,7 +64,8 @@ void DSB() {
 ///
 template <DMADeviceID deviceID_>
 DMADeviceX<deviceID_>::DMADeviceX() :
-    DMADevice {_dmaAddr, _dmaChannelAddr, _muxChannelStatusAddr, _muxChannelAddr} {
+    DMADevice {DMATraits::dmaAddr, DMATraits::dmaChannelAddr,
+        DMATraits::muxChannelStatusAddr, DMATraits::muxChannelAddr} {
 
 }
 
@@ -82,12 +77,11 @@ DMADeviceX<deviceID_>::DMADeviceX() :
 template <DMADeviceID deviceID_>
 void DMADeviceX<deviceID_>::activateImpl() const {
 
-    Reg32Flag<_activateAddr, _activatePos>::set();
+    Reg32Flag<DMATraits::activateAddr, DMATraits::activatePos>::set();
     DSB();
 }
 
 
-#if HTL_DMA_OPTION_DEACTIVATE == 1
 /// ---------------------------------------------------------------------------
 /// @brief    Desactiva el dispositiu.
 /// @tparam   deviceID_: Identificador del dispositiu.
@@ -95,10 +89,9 @@ void DMADeviceX<deviceID_>::activateImpl() const {
 template <DMADeviceID deviceID_>
 void DMADeviceX<deviceID_>::deactivateImpl() const {
 
-    Reg32Flag<_activateAddr, _activatePos>::clear();
+    Reg32Flag<DMATraits::activateAddr, DMATraits::activatePos>::clear();
     DSB();
 }
-#endif
 
 
 /// ---------------------------------------------------------------------------

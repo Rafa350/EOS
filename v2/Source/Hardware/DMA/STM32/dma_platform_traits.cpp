@@ -1,7 +1,4 @@
-module;
-
-
-export module Eos.Hardware.DMA.Identifiers;
+export module Eos.Hardware.DMA.__PLATFORM_TRAITS;
 
 
 import Eos.Configuration.Platform;

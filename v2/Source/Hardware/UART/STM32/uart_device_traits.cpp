@@ -4,17 +4,18 @@ module;
 #include "HTL/htl.h"
 
 
-export module Eos.Hardware.UART.Traits;
+export module Eos.Hardware.UART.__DEVICE_TRAITS;
 
 
-import Eos.Hardware.UART.Identifiers;
+import Eos.Hardware.UART.__PLATFORM_TRAITS;
 import Eos.Types;
 
 
 export namespace eos::hardware::uart::internal {
 
     template <UARTDeviceID>
-    struct UARTTraits;
+    struct UARTTraits {
+    };
 
 #ifdef HTL_UART1_EXIST
     template <>

@@ -1,7 +1,7 @@
 module;
 
 
-export module Eos.Hardware.UART.Identifiers;
+export module Eos.Hardware.UART.__PLATFORM_TRAITS;
 
 
 import Eos.Configuration.Platform;
@@ -15,8 +15,12 @@ namespace eos::hardware::uart {
 		enum class DeviceID_Type2 { uart1, uart2, uart3, uart4 };
 		enum class DeviceID_Type3 { uart1, uart2, uart3, uart4, uart5, uart6 };
 
+		enum class ClockSource_Type1 { pclk, sysclk, hsi16, lse };
+		enum class ClockSource_Type2 { pclk, sysclk1, hsi, lse };
+
 		template<PlatformID>
-		struct PlatformTraits;
+		struct PlatformTraits {
+		};
 
 		// STM32G031K8
 		template<>
@@ -34,8 +38,10 @@ namespace eos::hardware::uart {
 		template<>
 		struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
 			using DeviceID = DeviceID_Type3;
+			using ClockSource = ClockSource_Type1;
 		};
 	}
 
 	export using UARTDeviceID = internal::PlatformTraits<Platform::id>::DeviceID;
+	export using ClockSource = internal::PlatformTraits<Platform::id>::ClockSource;
 }

@@ -11,8 +11,8 @@ export module Eos.Hardware.SPI.Templates;
 import Eos.Hardware.Regs;
 import Eos.Hardware.SPI.Classes;
 import Eos.Hardware.SPI.Identifiers;
-import Eos.Hardware.SPI.Traits;
-import Eos.Hardware.SPI.Pins;
+import Eos.Hardware.SPI.__DEVICE_TRAITS;
+import Eos.Hardware.SPI.__PIN_TRAITS;
 import Eos.Types;
 
 
@@ -56,6 +56,7 @@ export namespace eos::hardware::spi {
 
 using namespace eos;
 using namespace eos::hardware::spi;
+using namespace eos::hardware::spi::internal;
 
 
 /// ---------------------------------------------------------------------------
@@ -113,13 +114,12 @@ template <SPIDeviceID deviceID_>
 template <typename pin_>
 void SPIDeviceX<deviceID_>::initPinSCK() {
 
-    namespace i = internal;
     namespace g = htl::gpio;
 
-    auto af = i::PinTraits<deviceID_, i::PinUse::sck, pin_::portID, pin_::pinID>::value;
+    auto v = PinTraits<deviceID_, PinFunction::sck, pin_::portID, pin_::pinID>::value;
 
     g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, af);
+        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, v);
 }
 
 
@@ -132,13 +132,12 @@ template <SPIDeviceID deviceID_>
 template <typename pin_>
 void SPIDeviceX<deviceID_>::initPinMOSI() {
 
-    namespace i = internal;
     namespace g = htl::gpio;
 
-    auto af = i::PinTraits<deviceID_, i::PinUse::mosi, pin_::portID, pin_::pinID>::value;
+    auto v = PinTraits<deviceID_, PinFunction::mosi, pin_::portID, pin_::pinID>::value;
 
     g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, af);
+        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, v);
 }
 
 
@@ -151,13 +150,12 @@ template <SPIDeviceID deviceID_>
 template <typename pin_>
 void SPIDeviceX<deviceID_>::initPinMISO() {
 
-    namespace i = internal;
     namespace g = htl::gpio;
 
-    auto af = i::PinTraits<deviceID_, i::PinUse::miso, pin_::portID, pin_::pinID>::value;
+    auto v = PinTraits<deviceID_, PinFunction::miso, pin_::portID, pin_::pinID>::value;
 
     g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, af);
+        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, v);
 }
 
 

@@ -28,13 +28,14 @@ namespace eos::hardware::clock {
         enum class SystemClockSource_Type1 { lsi, lse, hse, pllrclk, hsisys };
 
         template <PlatformID platformId_>
-        class PlatformTraits {};
+        class PlatformTraits {
+        };
 
         template <>
         class PlatformTraits<PlatformID::STM32_G0B1_RE> {
             public:
-                static constexpr bool hasHSI16 = true;
-                static constexpr bool hasHSI48 = true;
+                static constexpr bool has_HSI16 = true;
+                static constexpr bool has_HSI48 = true;
 
             public:
                 using ClockID = ClockID_Type1;
@@ -64,8 +65,7 @@ namespace eos::hardware::clock {
         // Interface per HSI48
         //
         template <bool use>
-        class HSI48Interface {
-        };
+        class HSI48Interface;
 
         template <>
         class HSI48Interface<true> {
@@ -82,8 +82,8 @@ namespace eos::hardware::clock {
 
     export class Clock:
         private NonCopyableClass,
-        public internal::HSI16Interface<internal::PlatformTraits<Platform::id>::hasHSI16>,
-        public internal::HSI48Interface<internal::PlatformTraits<Platform::id>::hasHSI48> {
+        public internal::HSI16Interface<internal::PlatformTraits<Platform::id>::has_HSI16>,
+        public internal::HSI48Interface<internal::PlatformTraits<Platform::id>::has_HSI48> {
 
         private:
             using PlatformTraits = internal::PlatformTraits<Platform::id>;
