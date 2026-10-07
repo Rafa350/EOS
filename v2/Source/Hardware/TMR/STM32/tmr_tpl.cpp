@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 #include "HTL/htlGPIO.h"
 
 
@@ -126,7 +126,7 @@ void TMRDeviceX<deviceID_>::initPinCH1(
 
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::ch1, pin_::portID, pin_::pinID>::value;
+	auto af = i::PinTraits<deviceID_, i::PinFunction::ch1, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
@@ -148,7 +148,7 @@ void TMRDeviceX<deviceID_>::initPinCH2(
 
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::ch2, pin_::portID, pin_::pinID>::value;
+	auto af = i::PinTraits<deviceID_, i::PinFunction::ch2, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternatet(type, pupd, speed, af);
 }
@@ -170,7 +170,7 @@ void TMRDeviceX<deviceID_>::initPinCH3(
 
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::ch3, pin_::portID, pin_::pinID>::value;
+	auto af = i::PinTraits<deviceID_, i::PinFunction::ch3, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
@@ -192,7 +192,7 @@ void TMRDeviceX<deviceID_>::initPinCH4(
 
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::ch4, pin_::portID, pin_::pinID>::value;
+	auto af = i::PinTraits<deviceID_, i::PinFunction::ch4, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }

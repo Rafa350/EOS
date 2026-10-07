@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.Atomic;
@@ -10,17 +10,13 @@ export module Eos.Hardware.Atomic;
 import Eos.Types;
 
 
-export namespace eos {
+export namespace eos::hardware {
 
-	namespace hardware {
-
-		class Atomic final: private StaticClass<Atomic> {
-			public:
-				static UInt32 start();
-				static void end(UInt32 pm);
-		};
-
-	}
+	class Atomic final: private StaticClass<Atomic> {
+		public:
+			static UInt32 start();
+			static void end(UInt32 pm);
+	};
 }
 
 

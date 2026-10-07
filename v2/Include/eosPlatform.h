@@ -187,7 +187,7 @@
 	#define EOS_PLATFORM_DETECTED 0
 #endif
 
-
+/*
 #ifdef __cplusplus
 namespace eos {
 	namespace build {
@@ -250,6 +250,6 @@ namespace eos {
 	}
 }
 #endif
-
+*/
 
 #endif // __eosPlatform__

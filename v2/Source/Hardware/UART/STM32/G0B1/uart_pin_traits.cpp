@@ -1,9 +1,8 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 #include "HTL/htlGPIO.h"
-#include <concepts>
 
 
 export module Eos.Hardware.UART.__PIN_TRAITS;
@@ -28,7 +27,7 @@ export namespace eos::hardware::uart::internal {
     struct PinTraits {
     };
 
-    #if defined(HTL_UART1_EXIST)
+#if defined(USART1_BASE)
     template<>
     struct PinTraits<UARTDeviceID::uart1, PinFunction::tx, g::PortID::portA, g::PinID::pin9> {
         static constexpr auto value = g::AlternateFunction::_1;
@@ -61,9 +60,9 @@ export namespace eos::hardware::uart::internal {
     struct PinTraits<UARTDeviceID::uart1, PinFunction::rts, g::PortID::portA, g::PinID::pin3> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
-    #endif
+#endif // USART1_BASE
 
-    #if defined(HTL_UART2_EXIST)
+#if defined(USART2_BASE)
     template<>
     struct PinTraits<UARTDeviceID::uart2, PinFunction::tx, g::PortID::portA, g::PinID::pin2> {
         static constexpr auto value = g::AlternateFunction::_1;
@@ -92,9 +91,9 @@ export namespace eos::hardware::uart::internal {
     struct PinTraits<UARTDeviceID::uart2, PinFunction::rts, g::PortID::portA, g::PinID::pin1> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
-    #endif
+#endif // USART2_BASE
 
-    #if defined(HTL_UART3_EXIST)
+#if defined(USART3_BASE)
     template<>
     struct PinTraits<UARTDeviceID::uart3, PinFunction::tx, g::PortID::portA, g::PinID::pin4> {
         static constexpr auto value = g::AlternateFunction::_4;
@@ -143,5 +142,5 @@ export namespace eos::hardware::uart::internal {
     struct PinTraits<UARTDeviceID::uart3, PinFunction::rts, g::PortID::portB, g::PinID::pin14> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
-    #endif
+#endif // USART3_BASE
 }

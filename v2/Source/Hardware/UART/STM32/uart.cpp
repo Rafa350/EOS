@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.UART;
@@ -16,28 +16,28 @@ export namespace eos::hardware::uart {
 
 	using UARTDeviceID = PlatformTraits::DeviceID;
 
-#ifdef HTL_UART1_EXIST
+#ifdef USART1_BASE
 	using UARTDevice1 = UARTDeviceX<UARTDeviceID::uart1>;
 #endif
-#ifdef HTL_UART2_EXIST
+#ifdef USART2_BASE
 	using UARTDevice2 = UARTDeviceX<UARTDeviceID::uart2>;
 #endif
-#ifdef HTL_UART3_EXIST
+#ifdef USART3_BASE
 	using UARTDevice3 = UARTDeviceX<UARTDeviceID::uart3>;
 #endif
-#ifdef HTL_UART4_EXIST
+#ifdef USART4_BASE
 	using UARTDevice4 = UARTDeviceX<UARTDeviceID::uart4>;
 #endif
-#ifdef HTL_UART5_EXIST
+#ifdef USART5_BASE
 	using UARTDevice5 = UARTDeviceX<UARTDeviceID::uart5>;
 #endif
-#ifdef HTL_UART6_EXIST
+#ifdef USART6_BASE
 	using UARTDevice6 = UARTDeviceX<UARTDeviceID::uart6>;
 #endif
-#ifdef HTL_UART7_EXIST
+#ifdef USART7_BASE
 	using UARTDevice7 = UARTDeviceX<UARTDeviceID::uart7>;
 #endif
-#ifdef HTL_UART8_EXIST
+#ifdef USART8_BASE
 	using UARTDevice8 = UARTDeviceX<UARTDeviceID::uart8>;
 #endif
 

@@ -1,6 +1,3 @@
-module;
-
-
 export module Eos.Hardware.UART.__PLATFORM_TRAITS;
 
 

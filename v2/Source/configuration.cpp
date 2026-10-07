@@ -11,13 +11,12 @@ export import Eos.Configuration.Platform;
 export import Eos.Configuration.Toolchain;
 
 
-namespace eos {
+namespace eos::configuration {
 
-    export struct Configuration {
+    namespace hardware {
 
-        struct Hardware {
-            struct Uart {
-            };
+        export struct UART {
         };
-    };
+        
+    }
 }

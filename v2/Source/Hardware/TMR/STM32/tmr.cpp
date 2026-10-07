@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.TMR;
@@ -14,55 +14,55 @@ export import Eos.Hardware.TMR.Templates;
 
 export namespace eos::hardware::tmr {
 
-#ifdef HTL_TMR1_EXIST
+#ifdef TIM1_BASE
     using TMRDevice1 = TMRDeviceX<TMRDeviceID::tmr1>;
 #endif
-#ifdef HTL_TMR2_EXIST
+#ifdef TIM2_BASE
     using TMRDevice2 = TMRDeviceX<TMRDeviceID::tmr2>;
 #endif
-#ifdef HTL_TMR3_EXIST
+#ifdef TIM3_BASE
     using TMRDevice3 = TMRDeviceX<TMRDeviceID::tmr3>;
 #endif
-#ifdef HTL_TMR4_EXIST
+#ifdef TIM4_BASE
     using TMRDevice4 = TMRDeviceX<TMRDeviceID::tmr4>;
 #endif
-#ifdef HTL_TMR5_EXIST
+#ifdef TIM5_BASE
     using TMRDevice5 = TMRDeviceX<TMRDeviceID::tmr5>;
 #endif
-#ifdef HTL_TMR6_EXIST
+#ifdef TIM6_BASE
     using TMRDevice6 = TMRDeviceX<TMRDeviceID::tmr6>;
 #endif
-#ifdef HTL_TMR7_EXIST
+#ifdef TIM7_BASE
     using TMRDevice7 = TMRDeviceX<TMRDeviceID::tmr7>;
 #endif
-#ifdef HTL_TMR8_EXIST
+#ifdef TIM8_BASE
     using TMRDevice8 = TMRDeviceX<TMRDeviceID::tmr8>;
 #endif
-#ifdef HTL_TMR9_EXIST
+#ifdef TIM9_BASE
     using TMRDevice9 = TMRDeviceX<TMRDeviceID::tmr9>;
 #endif
-#ifdef HTL_TMR10_EXIST
+#ifdef TIM10_BASE
     using TMRDevice10 = TMRDeviceX<TMRDeviceID::tmr10>;
 #endif
-#ifdef HTL_TMR11_EXIST
+#ifdef TIM11_BASE
     using TMRDevice11 = TMRDeviceX<TMRDeviceID::tmr11>;
 #endif
-#ifdef HTL_TMR12_EXIST
+#ifdef TIM12_BASE
     using TMRDevice12 = TMRDeviceX<TMRDeviceID::tmr12>;
 #endif
-#ifdef HTL_TMR13_EXIST
+#ifdef TIM13_BASE
     using TMRDevice13 = TMRDeviceX<TMRDeviceID::tmr13>;
 #endif
-#ifdef HTL_TMR14_EXIST
+#ifdef TIM14_BASE
     using TMRDevice14 = TMRDeviceX<TMRDeviceID::tmr14>;
 #endif
-#ifdef HTL_TMR15_EXIST
+#ifdef TIM15_BASE
     using TMRDevice15 = TMRDeviceX<TMRDeviceID::tmr15>;
 #endif
-#ifdef HTL_TMR16_EXIST
+#ifdef TIM16_BASE
     using TMRDevice16 = TMRDeviceX<TMRDeviceID::tmr16>;
 #endif
-#ifdef HTL_TMR17_EXIST
+#ifdef TIM17_BASE
     using TMRDevice17 = TMRDeviceX<TMRDeviceID::tmr17>;
 #endif
 

@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.CAN.__INTERNAL;

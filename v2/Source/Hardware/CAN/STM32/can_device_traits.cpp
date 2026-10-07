@@ -1,7 +1,8 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
+#include <cstddef>
 
 
 export module Eos.Hardware.CAN.__DEVICE_TRAITS;

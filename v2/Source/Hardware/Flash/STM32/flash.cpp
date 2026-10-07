@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.Flash;
@@ -9,6 +9,7 @@ export module Eos.Hardware.Flash;
 
 import Eos.Bits;
 import Eos.Configuration.Platform;
+import Eos.Hardware.Regs;
 import Eos.Types;
 
 
@@ -52,6 +53,7 @@ namespace eos::hardware::flash {
 
             void setLatency(Latency latency) const;
             [[nodiscard]] inline Latency getLatency() const;
+            [[nodiscard]] UInt32 getKbSize() const;
 
             inline void enablePrefetch() const;
             inline void disablePrefetch() const;
@@ -115,4 +117,15 @@ void Flash::enablePrefetch() const {
 void Flash::disablePrefetch() const {
 
     Bits::clear(FLASH->ACR, FLASH_ACR_PRFTEN);
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Obte el tamany de la flash en Kbytes.
+/// @return   El resultst.
+///
+UInt32 Flash::getKbSize() const {
+
+	return Reg32<FLASHSIZE_BASE + 0>::read();
+
 }

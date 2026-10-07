@@ -3,11 +3,20 @@
 ## Features:
 * C++20 with modules.
 * CMake/GCC toolchain.
-* Types and concepts module.
 * Verified targets STM32F0xx, STM32F1xx, STM32F4xx, STM32F7xx, STM32G030xx, STM32G0x1xx, PIC32MX.
 * FreeRTOS scheduler.
-* HTL module.
-  * Independent HTL (HAL Template Library) with minimal overload.
+* HTL module obsolete
+* Modules for base infrastructure.
+  * Types
+  * Concepts
+* Module Eos.Hardware.XXX (As a C++20 module)
+  * CAN
+  * DMA
+  * SPI
+  * TMR
+  * UART
+  * Processor system clock
+  * Processor system flash
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
   * Color displays: ARGB8888, RGB888, RGB565, L8 (Optional CLUT) color scheme.

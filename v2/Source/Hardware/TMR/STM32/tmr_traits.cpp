@@ -1,7 +1,8 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
+#include <cstddef>
 
 
 export module Eos.Hardware.TMR.Traits;
@@ -15,7 +16,7 @@ export namespace eos::hardware::tmr::internal {
     template <TMRDeviceID>
     struct TMRTraits;
 
-#ifdef HTL_TMR1_EXIST
+#ifdef TIM1_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr1> {
         static constexpr uint32_t timAddr = TIM1_BASE;
@@ -25,7 +26,7 @@ export namespace eos::hardware::tmr::internal {
     };
 #endif
 
-#ifdef HTL_TMR2_EXIST
+#ifdef TIM2_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr2> {
         static constexpr uint32_t timAddr = TIM2_BASE;
@@ -35,7 +36,7 @@ export namespace eos::hardware::tmr::internal {
     };
 #endif
 
-#ifdef HTL_TMR3_EXIST
+#ifdef TIM3_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr3> {
         static constexpr uint32_t timAddr = TIM3_BASE;
@@ -45,21 +46,21 @@ export namespace eos::hardware::tmr::internal {
     };
 #endif
 
-#ifdef HTL_TMR4_EXIST
+#ifdef TIM4_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr4> {
         static constexpr uint32_t timAddr = TIM4_BASE;
     };
     #endif
 
-#ifdef HTL_TMR5_EXIST
+#ifdef TIM5_BASE
     template <>
     struct TMRTraits<DeviceID::tmr5> {
         static constexpr uint32_t timAddr = TIM5_BASE;
     };
 #endif
 
-#ifdef HTL_TMR6_EXIST
+#ifdef TIM6_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr6> {
         static constexpr uint32_t timAddr = TIM6_BASE;
@@ -69,7 +70,7 @@ export namespace eos::hardware::tmr::internal {
     };
 #endif
 
-#ifdef HTL_TMR7_EXIST
+#ifdef TIM7_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr7> {
         static constexpr uint32_t timAddr = TIM7_BASE;
@@ -79,49 +80,49 @@ export namespace eos::hardware::tmr::internal {
     };
 #endif
 
-#ifdef HTL_TMR8_EXIST
+#ifdef TIM8_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr8> {
         static constexpr uint32_t timAddr = TIM8_BASE;
     };
 #endif
 
-#ifdef HTL_TMR9_EXIST
+#ifdef TIM9_BASE
     template <>
     struct TMRTraitsTMRDeviceID::tmr9> {
         static constexpr uint32_t timAddr = TIM9_BASE;
     };
 #endif
 
-#ifdef HTL_TMR10_EXIST
+#ifdef TIM10_BASE
     template <>
     struct TMRTraits<TMRDeviceID::_10> {
         static constexpr uint32_t timAddr = TIM10_BASE;
     };
 #endif
 
-#ifdef HTL_TMR11_EXIST
+#ifdef TIM11_BASE
     template <>
     struct TMRTraits<TMRDeviceID::_11> {
         static constexpr uint32_t timAddr = TIM11_BASE;
     };
 #endif
 
-#ifdef HTL_TMR12_EXIST
+#ifdef TIM12_BASE
     template <>
     struct TMRTraits<TMRDeviceID::_12> {
         static constexpr uint32_t timAddr = TIM12_BASE;
     };
 #endif
 
-#ifdef HTL_TMR13_EXIST
+#ifdef TIM13_BASE
     template <>
     struct TMRTraits<TMRDeviceID::_13> {
         static constexpr uint32_t timAddr = TIM13_BASE;
     };
 #endif
 
-#ifdef HTL_TMR14_EXIST
+#ifdef TIM14_BASE
     template <>
     struct TMRTraits<TMRDeviceID::tmr14> {
         static constexpr uint32_t timAddr = TIM14_BASE;

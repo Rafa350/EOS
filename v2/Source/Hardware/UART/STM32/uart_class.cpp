@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 #include "eosBits.h"
 #include "HTL/htlGPIO.h"
 #include "eosEvents.h"

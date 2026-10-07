@@ -1,6 +1,7 @@
 module;
 
 
+#include "hardware.h"
 #include <cstdint>
 
 
@@ -11,59 +12,56 @@ import Eos.Concepts;
 import Eos.Types;
 
 
-export namespace eos {
+export namespace eos::hardware {
 
-    namespace hardware {
+    template <IsUInt T_, std::uintptr_t addr_>
+    struct Reg final: private StaticClass<Reg<T_, addr_>> {
+        static T_ read();
+        static void write(T_ value);
+    };
 
-        template <IsUInt T_, std::uintptr_t addr_>
-        struct Reg final: private StaticClass<Reg<T_, addr_>> {
-            static T_ read();
-            static void write(T_ value);
-        };
+    template <std::uintptr_t addr_>
+    using Reg8 = Reg<UInt8, addr_>;
 
-        template <std::uintptr_t addr_>
-        using Reg8 = Reg<UInt8, addr_>;
+    template <std::uintptr_t addr_>
+    using Reg16 = Reg<UInt16, addr_>;
 
-        template <std::uintptr_t addr_>
-        using Reg16 = Reg<UInt16, addr_>;
-
-        template <std::uintptr_t addr_>
-        using Reg32 = Reg<UInt32, addr_>;
+    template <std::uintptr_t addr_>
+    using Reg32 = Reg<UInt32, addr_>;
 
 
-        template <IsUInt T_, std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
-        struct RegField final: private StaticClass<RegField<T_, addr_, pos_, width_>> {
-            static T_ read();
-            static void write(T_ value);
-        };
+    template <IsUInt T_, std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
+    struct RegField final: private StaticClass<RegField<T_, addr_, pos_, width_>> {
+        static T_ read();
+        static void write(T_ value);
+    };
 
-        template <std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
-        using Reg8Field = RegField<UInt8, addr_, pos_, width_>;
+    template <std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
+    using Reg8Field = RegField<UInt8, addr_, pos_, width_>;
 
-        template <std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
-        using Reg16Field = RegField<UInt16, addr_, pos_, width_>;
+    template <std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
+    using Reg16Field = RegField<UInt16, addr_, pos_, width_>;
 
-        template <std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
-        using Reg32Field = RegField<UInt32, addr_, pos_, width_>;
+    template <std::uintptr_t addr_, UInt32 pos_, UInt32 width_>
+    using Reg32Field = RegField<UInt32, addr_, pos_, width_>;
 
 
-        template <IsUInt T_, std::uintptr_t addr_, UInt32 pos_>
-        struct RegFlag final: private StaticClass<RegFlag<T_, addr_, pos_>> {
-            static bool isSet();
-            static constexpr void set();
-            static constexpr void clear();
-        };
+    template <IsUInt T_, std::uintptr_t addr_, UInt32 pos_>
+    struct RegFlag final: private StaticClass<RegFlag<T_, addr_, pos_>> {
+        static bool isSet();
+        static constexpr void set();
+        static constexpr void clear();
+    };
 
-        template <std::uintptr_t addr_, UInt32 pos_>
-        using Reg8Flag = RegFlag<UInt8, addr_, pos_>;
+    template <std::uintptr_t addr_, UInt32 pos_>
+    using Reg8Flag = RegFlag<UInt8, addr_, pos_>;
 
-        template <std::uintptr_t addr_, UInt32 pos_>
-        using Reg16Flag = RegFlag<UInt16, addr_, pos_>;
+    template <std::uintptr_t addr_, UInt32 pos_>
+    using Reg16Flag = RegFlag<UInt16, addr_, pos_>;
 
-        template <std::uintptr_t addr_, UInt32 pos_>
-        using Reg32Flag = RegFlag<UInt32, addr_, pos_>;
+    template <std::uintptr_t addr_, UInt32 pos_>
+    using Reg32Flag = RegFlag<UInt32, addr_, pos_>;
 
-    }
 }
 
 

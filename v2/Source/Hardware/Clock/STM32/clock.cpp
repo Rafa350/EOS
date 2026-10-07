@@ -1,7 +1,7 @@
 module;
 
 
-#include "HTL/htl.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.Clock;
@@ -53,7 +53,7 @@ namespace eos::hardware::clock {
         template <>
         class Clock_HSI16<true> {
             public:
-			    static constexpr UInt32 clockHSI16frequency = 16000000;
+			    static constexpr UInt32 clockHSI16frequency = CLOCK_HSI16_FREQUENCY;
 
             public:
                 void enableHSI16(bool kernelMode = false) const;
@@ -70,7 +70,7 @@ namespace eos::hardware::clock {
         template <>
         class Clock_HSI48<true> {
             public:
-                static constexpr UInt32 clockHSI48frequency = 48000000;
+                static constexpr UInt32 clockHSI48frequency = CLOCK_HSI48_FREQUENCY;
 
             public:
                 void enableHSI48() const;
