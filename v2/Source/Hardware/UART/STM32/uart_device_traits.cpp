@@ -11,8 +11,11 @@ import Eos.Hardware.UART.__PLATFORM_TRAITS;
 import Eos.Types;
 
 
-export namespace eos::hardware::uart::internal {
+namespace eos::hardware::uart::internal {
 
+    using UARTDeviceID = PlatformTraits::DeviceID;
+
+    export {
     template <UARTDeviceID>
     struct UARTTraits {
     };
@@ -119,4 +122,5 @@ defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)
         static constexpr bool isRTOAvailable = false;
     };
 #endif
+    }
 }

@@ -16,9 +16,11 @@ import Eos.Hardware.UART.__PLATFORM_TRAITS;
 import Eos.Hardware.UART.__PIN_TRAITS;
 
 
-export namespace eos::hardware::uart {
+namespace eos::hardware::uart {
 
-	template <UARTDeviceID deviceID_>
+	using UARTDeviceID = PlatformTraits::DeviceID;
+
+	export template <UARTDeviceID deviceID_>
 	class UARTDeviceX final: public UARTDevice {
 		private:
 			using Traits = internal::UARTTraits<deviceID_>;
@@ -53,9 +55,7 @@ export namespace eos::hardware::uart {
 			bool isRTOAvailable() const override;
 
 		public:
-#if HTL_UART_OPTION_IRQ == 1
 			static void interruptHandler();
-#endif
 
 			template <typename pin_> void initPinTX();
 			template <typename pin_> void initPinRX();
@@ -129,13 +129,13 @@ void UARTDeviceX<deviceID_>::initPinTX() {
 	namespace g = htl::gpio;
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::tx, pin_::portID, pin_::pinID>::value;
+	auto value = i::PinTraits<deviceID_, i::PinFunction::tx, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
 		g::Speed::fast,
-		af);
+	    value);
 }
 
 
@@ -150,13 +150,13 @@ void UARTDeviceX<deviceID_>::initPinRX() {
 	namespace g = htl::gpio;
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::rx, pin_::portID, pin_::pinID>::value;
+	auto value = i::PinTraits<deviceID_, i::PinFunction::rx, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
 		g::Speed::fast,
-		af);
+	    value);
 }
 
 
@@ -171,12 +171,13 @@ void UARTDeviceX<deviceID_>::initPinCTS() {
 	namespace g = htl::gpio;
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::cts, pin_::portID, pin_::pinID>::value;
+	auto value = i::PinTraits<deviceID_, i::PinFunction::cts, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
-		g::Speed::fast, af);
+		g::Speed::fast,
+		value);
 }
 
 
@@ -191,17 +192,16 @@ void UARTDeviceX<deviceID_>::initPinRTS() {
 	namespace g = htl::gpio;
 	namespace i = internal;
 
-	auto af = i::PinTraits<deviceID_, i::PinUse::rts, pin_::portID, pin_::pinID>::value;
+	auto value = i::PinTraits<deviceID_, i::PinFunction::rts, pin_::portID, pin_::pinID>::value;
 
 	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
 		g::OutputType::pushPull,
 		g::PullUpDown::none,
 		g::Speed::fast,
-		af);
+	    value);
 }
 
 
-#if HTL_UART_OPTION_IRQ == 1
 /// ---------------------------------------------------------------------------
 /// @brief    Handler de la interrupcio.
 /// @tparam   deviceID_: Identificador del dispositiu.
@@ -211,7 +211,6 @@ void UARTDeviceX<deviceID_>::interruptHandler() {
 
 	_instance.interruptService();
 }
-#endif
 
 
 #if defined(EOS_PLATFORM_STM32F0)

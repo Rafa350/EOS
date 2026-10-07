@@ -14,6 +14,8 @@ export import Eos.Hardware.UART.__PLATFORM_TRAITS;
 
 export namespace eos::hardware::uart {
 
+	using UARTDeviceID = PlatformTraits::DeviceID;
+
 #ifdef HTL_UART1_EXIST
 	using UARTDevice1 = UARTDeviceX<UARTDeviceID::uart1>;
 #endif

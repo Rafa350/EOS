@@ -17,9 +17,6 @@ namespace eos {
 
         struct Hardware {
             struct Uart {
-                static constexpr bool use_IRQ = false;
-                static constexpr bool use_DMA = true;
-                static constexpr bool use_Deinitialization = false;
             };
         };
     };

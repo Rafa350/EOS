@@ -15,133 +15,132 @@ import Eos.Hardware.UART.__PLATFORM_TRAITS;
 namespace g = htl::gpio;
 
 
+namespace eos::hardware::uart::internal {
+
+	using UARTDeviceID = PlatformTraits::DeviceID;
+}
+
 export namespace eos::hardware::uart::internal {
 
-    enum class PinUse {
-        tx,
-        rx,
-        cts,
-        rts,
-        de
-    };
+    enum class PinFunction { tx, rx, cts, rts, de };
 
-    template <UARTDeviceID, PinUse, g::PortID, g::PinID>
+    template <UARTDeviceID, PinFunction, g::PortID, g::PinID>
     struct PinTraits {
     };
 
     #if defined(HTL_UART1_EXIST)
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::tx, g::PortID::portA, g::PinID::pin9> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::tx, g::PortID::portA, g::PinID::pin9> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::tx, g::PortID::portB, g::PinID::pin6> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::tx, g::PortID::portB, g::PinID::pin6> {
         static constexpr auto value = g::AlternateFunction::_0;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::rx, g::PortID::portA, g::PinID::pin10> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::rx, g::PortID::portA, g::PinID::pin10> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::rx, g::PortID::portB, g::PinID::pin7> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::rx, g::PortID::portB, g::PinID::pin7> {
         static constexpr auto value = g::AlternateFunction::_0;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::cts, g::PortID::portA, g::PinID::pin11> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::cts, g::PortID::portA, g::PinID::pin11> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::cts, g::PortID::portB, g::PinID::pin4> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::cts, g::PortID::portB, g::PinID::pin4> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::rts, g::PortID::portA, g::PinID::pin12> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::rts, g::PortID::portA, g::PinID::pin12> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart1, PinUse::rts, g::PortID::portA, g::PinID::pin3> {
+    struct PinTraits<UARTDeviceID::uart1, PinFunction::rts, g::PortID::portA, g::PinID::pin3> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     #endif
 
     #if defined(HTL_UART2_EXIST)
     template<>
-    struct PinTraits<UARTDeviceID::uart2, PinUse::tx, g::PortID::portA, g::PinID::pin2> {
+    struct PinTraits<UARTDeviceID::uart2, PinFunction::tx, g::PortID::portA, g::PinID::pin2> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart2, PinUse::tx, g::PortID::portA, g::PinID::pin14> {
+    struct PinTraits<UARTDeviceID::uart2, PinFunction::tx, g::PortID::portA, g::PinID::pin14> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart2, PinUse::rx, g::PortID::portA, g::PinID::pin3> {
+    struct PinTraits<UARTDeviceID::uart2, PinFunction::rx, g::PortID::portA, g::PinID::pin3> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart2, PinUse::rx, g::PortID::portA, g::PinID::pin15> {
+    struct PinTraits<UARTDeviceID::uart2, PinFunction::rx, g::PortID::portA, g::PinID::pin15> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart2, PinUse::cts, g::PortID::portA, g::PinID::pin0> {
+    struct PinTraits<UARTDeviceID::uart2, PinFunction::cts, g::PortID::portA, g::PinID::pin0> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart2, PinUse::cts, g::PortID::portD, g::PinID::pin3> {
+    struct PinTraits<UARTDeviceID::uart2, PinFunction::cts, g::PortID::portD, g::PinID::pin3> {
         static constexpr auto value = g::AlternateFunction::_0;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart2, PinUse::rts, g::PortID::portA, g::PinID::pin1> {
+    struct PinTraits<UARTDeviceID::uart2, PinFunction::rts, g::PortID::portA, g::PinID::pin1> {
         static constexpr auto value = g::AlternateFunction::_1;
     };
     #endif
 
     #if defined(HTL_UART3_EXIST)
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::tx, g::PortID::portA, g::PinID::pin4> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::tx, g::PortID::portA, g::PinID::pin4> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::tx, g::PortID::portB, g::PinID::pin2> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::tx, g::PortID::portB, g::PinID::pin2> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::tx, g::PortID::portB, g::PinID::pin8> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::tx, g::PortID::portB, g::PinID::pin8> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::tx, g::PortID::portB, g::PinID::pin10> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::tx, g::PortID::portB, g::PinID::pin10> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::rx, g::PortID::portB, g::PinID::pin0> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::rx, g::PortID::portB, g::PinID::pin0> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::rx, g::PortID::portB, g::PinID::pin9> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::rx, g::PortID::portB, g::PinID::pin9> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::rx, g::PortID::portB, g::PinID::pin11> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::rx, g::PortID::portB, g::PinID::pin11> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::cts, g::PortID::portA, g::PinID::pin6> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::cts, g::PortID::portA, g::PinID::pin6> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::cts, g::PortID::portB, g::PinID::pin13> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::cts, g::PortID::portB, g::PinID::pin13> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::rts, g::PortID::portA, g::PinID::pin15> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::rts, g::PortID::portA, g::PinID::pin15> {
         static constexpr auto value = g::AlternateFunction::_5;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::rts, g::PortID::portB, g::PinID::pin1> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::rts, g::PortID::portB, g::PinID::pin1> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     template<>
-    struct PinTraits<UARTDeviceID::uart3, PinUse::rts, g::PortID::portB, g::PinID::pin14> {
+    struct PinTraits<UARTDeviceID::uart3, PinFunction::rts, g::PortID::portB, g::PinID::pin14> {
         static constexpr auto value = g::AlternateFunction::_4;
     };
     #endif

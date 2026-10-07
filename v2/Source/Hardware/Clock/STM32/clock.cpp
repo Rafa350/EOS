@@ -47,11 +47,11 @@ namespace eos::hardware::clock {
         // Interface per HSI16
         //
         template <bool use>
-        class HSI16Interface {
+        class Clock_HSI16 {
         };
 
         template <>
-        class HSI16Interface<true> {
+        class Clock_HSI16<true> {
             public:
 			    static constexpr UInt32 clockHSI16frequency = 16000000;
 
@@ -65,10 +65,10 @@ namespace eos::hardware::clock {
         // Interface per HSI48
         //
         template <bool use>
-        class HSI48Interface;
+        class Clock_HSI48;
 
         template <>
-        class HSI48Interface<true> {
+        class Clock_HSI48<true> {
             public:
                 static constexpr UInt32 clockHSI48frequency = 48000000;
 
@@ -82,8 +82,8 @@ namespace eos::hardware::clock {
 
     export class Clock:
         private NonCopyableClass,
-        public internal::HSI16Interface<internal::PlatformTraits<Platform::id>::has_HSI16>,
-        public internal::HSI48Interface<internal::PlatformTraits<Platform::id>::has_HSI48> {
+        public internal::Clock_HSI16<internal::PlatformTraits<Platform::id>::has_HSI16>,
+        public internal::Clock_HSI48<internal::PlatformTraits<Platform::id>::has_HSI48> {
 
         private:
             using PlatformTraits = internal::PlatformTraits<Platform::id>;

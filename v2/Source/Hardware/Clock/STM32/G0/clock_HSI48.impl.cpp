@@ -17,7 +17,7 @@ static_assert(Platform::is_STM32_G0B1);
 /// ---------------------------------------------------------------------------
 /// @brief    Habilita el rellotge HSI48
 ///
-void HSI48Interface<true>::enableHSI48() const {
+void Clock_HSI48<true>::enableHSI48() const {
 
 }
 
@@ -25,7 +25,7 @@ void HSI48Interface<true>::enableHSI48() const {
 /// ---------------------------------------------------------------------------
 /// @brief    Desabilita el rellotge HSI48
 ///
-void HSI48Interface<true>::disableHSI48() const {
+void Clock_HSI48<true>::disableHSI48() const {
 
 }
 
@@ -34,7 +34,7 @@ void HSI48Interface<true>::disableHSI48() const {
 /// @brief    Comprova si el rellotge HSI48 esta habilitat.
 /// @return   True si esta habilitat.
 ///
-bool HSI48Interface<true>::isHSI48Enabled() const {
+bool Clock_HSI48<true>::isHSI48Enabled() const {
 
     return false;
 }
