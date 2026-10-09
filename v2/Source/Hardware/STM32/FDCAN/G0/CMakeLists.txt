@@ -1,7 +1,4 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
-        atomic.cpp
-        regs.cpp
+        fdcan_pin_traits.cpp
 )
-
-add_subdirectory("STM32")

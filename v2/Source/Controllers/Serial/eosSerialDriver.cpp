@@ -2,12 +2,12 @@ module;
 
 
 #include "eos.h"
-#include "HTL/htlINT.h"
 
 
 export module Eos.Controllers.Serial;
 
 
+import Eos.Hardware.Interrupts;
 import Eos.Result;
 import Eos.Types;
 import Eos.System.Core.Task;
@@ -75,10 +75,14 @@ export namespace eos {
 }
 
 
+using namespace eos;
+using namespace eos::hardware::interrupts;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-eos::SerialDriver::SerialDriver() :
+SerialDriver::SerialDriver() :
     _state {State::reset} {
 
 }
@@ -87,7 +91,7 @@ eos::SerialDriver::SerialDriver() :
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void eos::SerialDriver::initialize() {
+void SerialDriver::initialize() {
 
     if (_state == State::reset)
     	if (onInitialize())
@@ -98,7 +102,7 @@ void eos::SerialDriver::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el driver.
 ///
-void eos::SerialDriver::deinitialize() {
+void SerialDriver::deinitialize() {
 
     if (_state == State::ready)
     	if (onDeinitialize())
@@ -112,7 +116,7 @@ void eos::SerialDriver::deinitialize() {
 /// \param    length: Nombre de bytes en el buffer.
 /// \return   El resultat de l'operacio.
 ///
-eos::SerialDriver::Result eos::SerialDriver::transmit(
+SerialDriver::Result SerialDriver::transmit(
     const uint8_t *buffer,
     size_t length) {
 
@@ -142,7 +146,7 @@ eos::SerialDriver::Result eos::SerialDriver::transmit(
 /// \param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-eos::SerialDriver::Result eos::SerialDriver::receive(
+SerialDriver::Result SerialDriver::receive(
     uint8_t *buffer,
     size_t bufferSize) {
 
@@ -172,19 +176,19 @@ eos::SerialDriver::Result eos::SerialDriver::receive(
 /// \return   El nombre de bytes transferits i el resultat.
 /// \notes    En cas de timeout, s'aborta la comunicacio.
 ///
-eos::SerialDriver::ResultU32 eos::SerialDriver::wait(
+SerialDriver::ResultU32 SerialDriver::wait(
 	Ticks blockTime) {
 
 	if (_state == State::receiving) {
 
-		htl::irq::disableInterrupts();
+		Irq::disableInterrupts();
 		if (_finished) {
-			htl::irq::enableInterrupts();
+			Irq::enableInterrupts();
 			return {_rxCount};
 		}
 		else {
 			_task = Task::getExecutingTask();
-			htl::irq::enableInterrupts();
+			Irq::enableInterrupts();
 			if (Task::waitNotification(true, blockTime))
 				return {_rxCount};
 			else {
@@ -196,14 +200,14 @@ eos::SerialDriver::ResultU32 eos::SerialDriver::wait(
 
 	else if (_state == State::transmiting) {
 
-		htl::irq::disableInterrupts();
+		Irq::disableInterrupts();
 		if (_finished) {
-			htl::irq::enableInterrupts();
+			Irq::enableInterrupts();
 			return {_txCount};
 		}
 		else {
 			_task = Task::getExecutingTask();
-			htl::irq::enableInterrupts();
+			Irq::enableInterrupts();
 			if (Task::waitNotification(true, blockTime))
 				return {_txCount};
 			else {
@@ -221,7 +225,7 @@ eos::SerialDriver::ResultU32 eos::SerialDriver::wait(
 /// \brief    Aborta l'operacio en curs.
 /// \return   El resultat de l'operacio.
 ///
-eos::SerialDriver::Result eos::SerialDriver::abort() {
+SerialDriver::Result SerialDriver::abort() {
 
 	if ((_state == State::transmiting) || (_state == State::receiving)) {
 		if (onAbort()) {
@@ -241,7 +245,7 @@ eos::SerialDriver::Result eos::SerialDriver::abort() {
 /// \param    length: Nombre de bytes transmessos.
 /// \param    irq: True si es crida des d'una interrupcio.
 ///
-void eos::SerialDriver::notifyTxCompleted(
+void SerialDriver::notifyTxCompleted(
 	uint32_t length,
 	bool irq) {
 
@@ -263,7 +267,7 @@ void eos::SerialDriver::notifyTxCompleted(
 /// \param    length: Nombre de bytes rebuts
 /// \param    irq: True si es crida des d'una interrupcio.
 ///
-void eos::SerialDriver::notifyRxCompleted(
+void SerialDriver::notifyRxCompleted(
 	uint32_t length,
 	bool irq) {
 

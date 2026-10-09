@@ -1,3 +1,0 @@
-if(EOS_PLATFORM_NAME MATCHES "STM32")
-    add_subdirectory("STM32")
-endif()

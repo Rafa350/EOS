@@ -12,7 +12,7 @@ export import Eos.Services.Service;
 
 
 import Eos.Bits;
-import Eos.Hardware.CAN;
+import Eos.Hardware.FDCAN;
 import Eos.Math;
 import Eos.Result;
 import Eos.Services.CanOpen.Dictionary;
@@ -135,7 +135,7 @@ export namespace eos {
 			template <typename Instance_> using HeartbeatReceivedEvent = HeartbeatReceivedEventRaiser::Event<Instance_>;
 
 			struct InitParams {
-				eos::hardware::can::CANDevice * devCAN;
+				eos::hardware::fdcan::CANDevice * devCAN;
 				NodeID nodeId;
 				CanOpenDictionary *dictionary;
 			};
@@ -180,8 +180,8 @@ export namespace eos {
         	using MessageQueue = Queue<Message>;
 
 		private:
-			eos::hardware::can::CANDevice * const _devCAN;
-			eos::hardware::can::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
+			eos::hardware::fdcan::CANDevice * const _devCAN;
+			eos::hardware::fdcan::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			Timer::Event<CanOpenService> _timer_notificationEvent;
 			Timer _timer;
         	CanOpenDictionary * const _dictionary;
@@ -195,7 +195,7 @@ export namespace eos {
         	HeartbeatReceivedEventRaiser _heartbeatReceivedEventRaiser;
 
 		private:
-            void canDevice_notificationEventHandler(eos::hardware::can::CANDevice *sender, eos::hardware::can::CANDevice::NotificationEventArgs *args);
+            void canDevice_notificationEventHandler(eos::hardware::fdcan::CANDevice *sender, eos::hardware::fdcan::CANDevice::NotificationEventArgs *args);
 			void timer_notificationEventHandler(Timer *timer, Timer::EventArgs *args);
 
             void configureCANDevice();
@@ -477,10 +477,10 @@ void eos::CanOpenService::configureHeartbeat() {
 ///
 void eos::CanOpenService::configureCANDevice() {
 
-    eos::hardware::can::CANDevice::InitParams initParams = {
-    	.clockDivider = hardware::can::ClockDivider::div1,
-		.frameFormat = hardware::can::FrameFormat::classic,
-		.mode = hardware::can::Mode::normal,
+    eos::hardware::fdcan::CANDevice::InitParams initParams = {
+    	.clockDivider = hardware::fdcan::ClockDivider::div1,
+		.frameFormat = hardware::fdcan::FrameFormat::classic,
+		.mode = hardware::fdcan::Mode::normal,
 		.autoRetransmission = true,
 		.transmitPause = true,
 		.protocolException = false,
@@ -494,15 +494,15 @@ void eos::CanOpenService::configureCANDevice() {
 		.dataTimeSeg2 = 4,
 		.stdFiltersNbr = 6, // Nombre de filtres utilitzats
 		.extFiltersNbr = 0,
-		.qfMode = hardware::can::QFMode::fifo
+		.qfMode = hardware::fdcan::QFMode::fifo
     };
     _devCAN->initialize(&initParams);
 
     _devCAN->setGlobalFilter(
-    	hardware::can::NonMatchingFrames::reject,
-		hardware::can::NonMatchingFrames::reject,
-		hardware::can::RejectRemoteFrames::filterRemote,
-		hardware::can::RejectRemoteFrames::filterRemote);
+    	hardware::fdcan::NonMatchingFrames::reject,
+		hardware::fdcan::NonMatchingFrames::reject,
+		hardware::fdcan::RejectRemoteFrames::filterRemote,
+		hardware::fdcan::RejectRemoteFrames::filterRemote);
 }
 
 
@@ -513,10 +513,10 @@ void eos::CanOpenService::configureCANFilters() {
 
 	unsigned filterIndex = 0;
 
-	hardware::can::Filter filter;
-	filter.idType = hardware::can::IdentifierType::standard;
-	filter.type = hardware::can::FilterType::mask;
-	filter.config = hardware::can::FilterConfig::rxFifo0;
+	hardware::fdcan::Filter filter;
+	filter.idType = hardware::fdcan::IdentifierType::standard;
+	filter.type = hardware::fdcan::FilterType::mask;
+	filter.config = hardware::fdcan::FilterConfig::rxFifo0;
 
 	// Accepta els missatges SDO que suporta aquest node
 	// Si existeix l'entrada 1200:1, aleshores hi ha servidor SDO en el node,
@@ -1734,53 +1734,53 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 
 	// Prepara la trama
 	//
-	hardware::can::DataLength len;
+	hardware::fdcan::DataLength len;
 	switch (length) {
 		case 1:
-			len = hardware::can::DataLength::len1;
+			len = hardware::fdcan::DataLength::len1;
 			break;
 
 		case 2:
-			len = hardware::can::DataLength::len2;
+			len = hardware::fdcan::DataLength::len2;
 			break;
 
 		case 3:
-			len = hardware::can::DataLength::len3;
+			len = hardware::fdcan::DataLength::len3;
 			break;
 
 		case 4:
-			len = hardware::can::DataLength::len4;
+			len = hardware::fdcan::DataLength::len4;
 			break;
 
 		case 5:
-			len = hardware::can::DataLength::len5;
+			len = hardware::fdcan::DataLength::len5;
 			break;
 
 		case 6:
-			len = hardware::can::DataLength::len6;
+			len = hardware::fdcan::DataLength::len6;
 			break;
 
 		case 7:
-			len = hardware::can::DataLength::len7;
+			len = hardware::fdcan::DataLength::len7;
 			break;
 
 		case 8:
-			len = hardware::can::DataLength::len8;
+			len = hardware::fdcan::DataLength::len8;
 			break;
 
 		default:
 			return ErrorCode::errorParameter;
 	}
 
-	hardware::can::TxHeader header = {
+	hardware::fdcan::TxHeader header = {
 		.id = (uint16_t)  cobId,
-		.idType = hardware::can::IdentifierType::standard,
+		.idType = hardware::fdcan::IdentifierType::standard,
 		.dataLength = len,
-		.frameType = hardware::can::FrameType::dataFrame,
-		.errorStateFlag = hardware::can::ErrorStateFlag::active,
-		.bitrateSwitching = hardware::can::BitrateSwitching::off,
-		.fdFormat = hardware::can::FDFormat::can,
-		.txEventFifoControl = hardware::can::TxEventFifoControl::noStore,
+		.frameType = hardware::fdcan::FrameType::dataFrame,
+		.errorStateFlag = hardware::fdcan::ErrorStateFlag::active,
+		.bitrateSwitching = hardware::fdcan::BitrateSwitching::off,
+		.fdFormat = hardware::fdcan::FDFormat::can,
+		.txEventFifoControl = hardware::fdcan::TxEventFifoControl::noStore,
 		.messageMarker = 0x00
 	};
 
@@ -1845,18 +1845,18 @@ void eos::CanOpenService::timer_notificationEventHandler(
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
 void eos::CanOpenService::canDevice_notificationEventHandler(
-	hardware::can::CANDevice *sender,
-	hardware::can::CANDevice::NotificationEventArgs *args) {
+	hardware::fdcan::CANDevice *sender,
+	hardware::fdcan::CANDevice::NotificationEventArgs *args) {
 
 	static const uint8_t dataLenTbl[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64
 	};
 
 	switch (args->id) {
-		case hardware::can::CANDevice::NotificationID::rxFifoNotEmpty: {
+		case hardware::fdcan::CANDevice::NotificationID::rxFifoNotEmpty: {
 
 			Message message;
-			hardware::can::RxHeader rxHeader;
+			hardware::fdcan::RxHeader rxHeader;
 
 			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, message.frameReceived.data, sizeof(message.frameReceived));
 			uint8_t dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];

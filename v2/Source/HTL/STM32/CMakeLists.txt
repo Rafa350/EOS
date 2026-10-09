@@ -1,10 +1,10 @@
 target_sources(${TARGET_NAME}
     PUBLIC
-        htl.cpp
+        #htl.cpp
 #        htlClock.cpp
         htlGPIO.cpp
-        htlINT.cpp
-        htlTick.cpp
+#        htlINT.cpp
+#        htlTick.cpp
 )
 
 
