@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosEvents.h"
 
 
 export module Eos.Services.CanOpen;
@@ -12,6 +11,7 @@ export import Eos.Services.Service;
 
 
 import Eos.Bits;
+import Eos.Events;
 import Eos.Hardware.FDCAN;
 import Eos.Math;
 import Eos.Result;
@@ -62,17 +62,6 @@ export namespace eos {
 
 
 	class CanOpenService final: public Service {
-		public:
-			enum class ErrorCode {
-				ok,
-				timeout,
-				busy,
-				error,
-				errorParameter,
-				errorDevice
-			};
-			using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
-
 		public:
         	enum class NodeState {
         		initializing,
@@ -216,7 +205,7 @@ export namespace eos {
             void processMessage_ChangeNodeState(const ChangeNodeState &args);
             void processMessage_TransmitFrame(const TransmitFrame &args);
 
-            Result postMessage_TransmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Ticks blockTime);
+            StdResult postMessage_TransmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Ticks blockTime);
 
             void processSDO(const uint8_t *data);
 			void processRPDO(CobID cobId, const uint8_t *data, uint32_t dataLen);
@@ -225,13 +214,13 @@ export namespace eos {
 
 			bool isMapped(uint8_t tpdo, uint32_t entryId);
 
-			Result transmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Ticks blockTime);
+			StdResult transmitFrame(CobID cobId, const uint8_t *data, uint32_t length, Ticks blockTime);
 
 		protected:
 			void onInitialize(ServiceParams &params) override;
 			void onExecute() override;
 
-			Result emitNMT(uint8_t command, NodeID nodeId, Ticks blockTime);
+			StdResult emitNMT(uint8_t command, NodeID nodeId, Ticks blockTime);
 
             void onNodeStateChanged();
 
@@ -249,7 +238,7 @@ export namespace eos {
 			CanOpenService(const CanOpenService &) = delete;
 			CanOpenService(const CanOpenService &&) = delete;
 
-			Result setNodeState(NodeState nodeState, Ticks blockTime);
+			StdResult setNodeState(NodeState nodeState, Ticks blockTime);
 			NodeState getNodeState() const;
 			NodeID getNodeId() const;
 
@@ -273,19 +262,19 @@ export namespace eos {
 
             // Canvia l'estat d'un node remot (Protocol NMT)
             //
-			Result start(NodeID nodeId, Ticks blockTime);
-			Result stop(NodeID nodeId, Ticks blockTime);
-			Result enterPreOperational(NodeID nodeId, Ticks blockTime);
-			Result resetNode(NodeID nodeId, Ticks blockTime);
-			Result resetCommunication(NodeID nodeId, Ticks blockTime);
+			StdResult start(NodeID nodeId, Ticks blockTime);
+			StdResult stop(NodeID nodeId, Ticks blockTime);
+			StdResult enterPreOperational(NodeID nodeId, Ticks blockTime);
+			StdResult resetNode(NodeID nodeId, Ticks blockTime);
+			StdResult resetCommunication(NodeID nodeId, Ticks blockTime);
 
             // Senyal de sincronitzacio al bus (Protocol SYNC)
             //
-            Result emitSYNC(Ticks timeout);
+            StdResult emitSYNC(Ticks timeout);
 
 			// Emet missatges RPDO
 			//
-			Result emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, uint32_t dataLen, Ticks blockTime);
+			StdResult emitRPDO(NodeID nodeId, uint8_t rpdoId, const uint8_t *data, uint32_t dataLen, Ticks blockTime);
 
 			// Habilita i deshabilita els events
 			//
@@ -316,6 +305,9 @@ namespace eos {
 	constexpr unsigned defTimeout = 25;
 
 }
+
+
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------
@@ -1284,7 +1276,7 @@ void eos::CanOpenService::processMessage_FrameReceived_RPDO(
 /// \param    blockTime: Temps maxim de bloqueig.
 /// \return   El resultat de l'operacio.
 ///
-eos::CanOpenService::Result eos::CanOpenService::setNodeState(
+StdResult eos::CanOpenService::setNodeState(
 	NodeState nodeState,
 	Ticks blockTime) {
 
@@ -1296,9 +1288,9 @@ eos::CanOpenService::Result eos::CanOpenService::setNodeState(
 	};
 
 	if (_messageQueue.push(message, blockTime))
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 
-	return ErrorCode::error;
+	return StdErrorCode::error;
 }
 
 
@@ -1494,14 +1486,14 @@ bool eos::CanOpenService::readU32(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-eos::CanOpenService::Result eos::CanOpenService::start(
+StdResult CanOpenService::start(
 	NodeID nodeId,
 	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return ErrorCode::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	// Emet la comanda NMT Start
 	//
@@ -1521,14 +1513,14 @@ eos::CanOpenService::Result eos::CanOpenService::start(
 /// \param    blockTime: El temps maxim d'espera.
 /// \return   El resultat de l'operacio.
 ///
-eos::CanOpenService::Result eos::CanOpenService::stop(
+StdResult CanOpenService::stop(
 	NodeID nodeId,
 	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return ErrorCode::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	// Emet la comanda NMT Stop
 	//
@@ -1549,14 +1541,14 @@ eos::CanOpenService::Result eos::CanOpenService::stop(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-eos::CanOpenService::Result eos::CanOpenService::enterPreOperational(
+StdResult CanOpenService::enterPreOperational(
 	NodeID nodeId,
 	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return ErrorCode::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	// Emet la comanda NMT Enter Pre-Operational
 	//
@@ -1577,14 +1569,14 @@ eos::CanOpenService::Result eos::CanOpenService::enterPreOperational(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-eos::CanOpenService::Result eos::CanOpenService::resetNode(
+StdResult eos::CanOpenService::resetNode(
 	NodeID nodeId,
 	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return ErrorCode::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	// Emet la comanda NMT Reset Node
 	//
@@ -1605,14 +1597,14 @@ eos::CanOpenService::Result eos::CanOpenService::resetNode(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-eos::CanOpenService::Result eos::CanOpenService::resetCommunication(
+StdResult CanOpenService::resetCommunication(
 	NodeID nodeId,
 	Ticks blockTime) {
 
 	// Comprova que de veritat sigui un node remot
 	//
 	if (nodeId == _nodeId)
-		return ErrorCode::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	// Emet la comanda NMT Rerset Comunication
 	//
@@ -1721,7 +1713,7 @@ void eos::CanOpenService::sendTPDO(
 /// \param    blockTime: Temps maxim d'espera.
 /// \return   True si tot es correcte.
 ///
-eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
+StdResult CanOpenService::transmitFrame(
 	CobID cobId,
 	const uint8_t *data,
 	uint32_t length,
@@ -1730,7 +1722,7 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 	// Espera que el buffer no estigui ple
 	//
 	if (!_devCAN->waitTxBufferNotFull(blockTime).isOk())
-		return ErrorCode::busy;
+		return StdErrorCode::busy;
 
 	// Prepara la trama
 	//
@@ -1769,7 +1761,7 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 			break;
 
 		default:
-			return ErrorCode::errorParameter;
+			return StdErrorCode::errorParameter;
 	}
 
 	hardware::fdcan::TxHeader header = {
@@ -1788,16 +1780,16 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 	//
 	auto result = _devCAN->addTxMessage(&header, data);
 	if (!result.isOk())
-		return ErrorCode::errorDevice;
+		return StdErrorCode::error;
 
 	// Espera que es transmiteixi, i si cal aborta la transmissio
 	//
 	if (!_devCAN->waitTxBufferEmpty(blockTime).isOk()) {
 		_devCAN->abortTxBufferTransmission();
-		return ErrorCode::timeout;
+		return StdErrorCode::timeout;
 	}
 
-	return ErrorCode::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -1806,7 +1798,7 @@ eos::CanOpenService::Result eos::CanOpenService::transmitFrame(
 /// \param    sender: El remitent del missatge.
 /// \param    args: Parametres del event.
 ///
-void eos::CanOpenService::timer_notificationEventHandler(
+void CanOpenService::timer_notificationEventHandler(
 	Timer *sender,
 	Timer::EventArgs *args) {
 
@@ -1844,7 +1836,7 @@ void eos::CanOpenService::timer_notificationEventHandler(
 /// \param    aregs: Els parametres del missatge.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
-void eos::CanOpenService::canDevice_notificationEventHandler(
+void CanOpenService::canDevice_notificationEventHandler(
 	hardware::fdcan::CANDevice *sender,
 	hardware::fdcan::CANDevice::NotificationEventArgs *args) {
 
@@ -1884,14 +1876,14 @@ void eos::CanOpenService::canDevice_notificationEventHandler(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-eos::CanOpenService::Result eos::CanOpenService::postMessage_TransmitFrame(
+StdResult CanOpenService::postMessage_TransmitFrame(
 	CobID cobId,
 	const uint8_t *data,
 	uint32_t length,
 	Ticks blockTime) {
 
 	if (length > _canFrameSize)
-		return ErrorCode::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	Message message;
 	message.id = MessageID::transmitFrame;
@@ -1900,7 +1892,7 @@ eos::CanOpenService::Result eos::CanOpenService::postMessage_TransmitFrame(
 	if ((length > 0) && (data != nullptr))
 		memcpy(message.transmitFrame.data, data, length);
 
-	return _messageQueue.push(message, blockTime) ? ErrorCode::ok : ErrorCode::timeout;
+	return _messageQueue.push(message, blockTime) ? StdErrorCode::ok : StdErrorCode::timeout;
 }
 
 
@@ -1910,7 +1902,7 @@ eos::CanOpenService::Result eos::CanOpenService::postMessage_TransmitFrame(
 /// \return   El resultat de l'operacio.
 /// \remarks  L'ordre es posa en cua per execucio posterior.
 ///
-eos::CanOpenService::Result eos::CanOpenService::emitSYNC(
+StdResult CanOpenService::emitSYNC(
 	Ticks blockTime) {
 
 	uint32_t options;
@@ -1922,7 +1914,7 @@ eos::CanOpenService::Result eos::CanOpenService::emitSYNC(
 		return postMessage_TransmitFrame(cobId, nullptr, 0, blockTime);
 	}
 
-	return ErrorCode::error;
+	return StdErrorCode::error;
 }
 
 
@@ -1934,7 +1926,7 @@ eos::CanOpenService::Result eos::CanOpenService::emitSYNC(
 /// \param    dataLen: La longitut de les dades a transmetre.
 /// \return   El resultat de l'operacio.
 ///
-eos::CanOpenService::Result eos::CanOpenService::emitRPDO(
+StdResult CanOpenService::emitRPDO(
 	NodeID nodeId,
 	uint8_t rpdoId,
 	const uint8_t *data,
@@ -1951,9 +1943,9 @@ eos::CanOpenService::Result eos::CanOpenService::emitRPDO(
 	memcpy(message.transmitFrame.data, data, dataLen);
 
 	if (_messageQueue.push(message, timeout))
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 
-	return ErrorCode::error;
+	return StdErrorCode::error;
 }
 
 
@@ -1963,7 +1955,7 @@ eos::CanOpenService::Result eos::CanOpenService::emitRPDO(
 /// \param    entryId: El identificador de l'entrada.
 /// \return   True si esta mapejada.
 ///
-bool eos::CanOpenService::isMapped(
+bool CanOpenService::isMapped(
 	uint8_t tpdo,
 	uint32_t entryId) {
 

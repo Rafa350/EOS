@@ -60,12 +60,12 @@ namespace eos::hardware::uart::internal {
     defined(EOS_PLATFORM_STM32G0B1) || defined(EOS_PLATFORM_STM32G0C1)
             static constexpr bool isFIFOAvailable = true;
             static constexpr bool isRTOAvailable = true;
-    #else
+#else
             static constexpr bool isFIFOAvailable = false;
             static constexpr bool isRTOAvailable = false;
-    #endif
+#endif
         };
-    #endif
+#endif
 
 #ifdef USART3_BASE
         template <>

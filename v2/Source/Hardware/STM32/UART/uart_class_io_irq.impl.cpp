@@ -9,6 +9,7 @@ module Eos.Hardware.UART.__CLASSES;
 
 import Eos.Bits;
 import Eos.Hardware.Atomic;
+import Eos.Result;
 
 
 using namespace eos;
@@ -21,7 +22,7 @@ using namespace eos::hardware::uart;
 /// @param    length: El nombre de bytes a transmetre.
 /// @return   El resultat de l'operacio
 ///
-UARTDevice::Result UARTDevice::transmit_IRQ(
+StdResult UARTDevice::transmit_IRQ(
 	const UInt8 *buffer,
 	UInt32 length) {
 
@@ -36,14 +37,14 @@ UARTDevice::Result UARTDevice::transmit_IRQ(
         enable();
         enableTransmissionIRQ();
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return ErrorCode::busy;
+		return StdErrorCode::busy;
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -53,7 +54,7 @@ UARTDevice::Result UARTDevice::transmit_IRQ(
 /// @param    bufferSize: Tamany del buffer en bytes.
 /// @return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::receive_IRQ(
+StdResult UARTDevice::receive_IRQ(
 	UInt8 *buffer,
 	UInt32 bufferSize) {
 
@@ -68,14 +69,14 @@ UARTDevice::Result UARTDevice::receive_IRQ(
 		enable();
 		enableReceptionIRQ();
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return ErrorCode::busy;
+		return StdErrorCode::busy;
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 

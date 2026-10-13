@@ -8,6 +8,7 @@ export module Eos.System.IO.Parser;
 
 
 import Eos.System.IO.Streams;
+import Eos.Types;
 
 
 export namespace eos {
@@ -67,7 +68,7 @@ char eos::Parser::get() {
 
 	if (ch == EOT) {
 		auto readResult = _stream->read((uint8_t*)&ch, sizeof(char));
-		ch = (readResult.isSuccess() && (readResult.value() == sizeof(char))) ? ch : EOT;
+		ch = (readResult.isOk() && (readResult.getValue() == sizeof(char))) ? ch : EOT;
 	}
 	else
 		_ungetCh = EOT;

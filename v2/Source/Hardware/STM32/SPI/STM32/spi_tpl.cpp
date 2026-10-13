@@ -2,12 +2,12 @@ module;
 
 
 #include "HTL/htl.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Hardware.SPI.Templates;
 
 
+import Eos.Hardware.GPIO;
 import Eos.Hardware.Regs;
 import Eos.Hardware.SPI.Classes;
 import Eos.Hardware.SPI.Identifiers;
@@ -55,6 +55,7 @@ export namespace eos::hardware::spi {
 
 
 using namespace eos;
+using namespace eos::hardware::gpio;
 using namespace eos::hardware::spi;
 using namespace eos::hardware::spi::internal;
 
@@ -114,12 +115,10 @@ template <SPIDeviceID deviceID_>
 template <typename pin_>
 void SPIDeviceX<deviceID_>::initPinSCK() {
 
-    namespace g = htl::gpio;
-
     auto v = PinTraits<deviceID_, PinFunction::sck, pin_::portID, pin_::pinID>::value;
 
-    g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, v);
+    GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+        OutputType::pushPull, PullUpDown::none, Speed::fast, v);
 }
 
 
@@ -132,12 +131,10 @@ template <SPIDeviceID deviceID_>
 template <typename pin_>
 void SPIDeviceX<deviceID_>::initPinMOSI() {
 
-    namespace g = htl::gpio;
-
     auto v = PinTraits<deviceID_, PinFunction::mosi, pin_::portID, pin_::pinID>::value;
 
-    g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, v);
+    GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+        OutputType::pushPull, PullUpDown::none, Speed::fast, v);
 }
 
 
@@ -150,12 +147,10 @@ template <SPIDeviceID deviceID_>
 template <typename pin_>
 void SPIDeviceX<deviceID_>::initPinMISO() {
 
-    namespace g = htl::gpio;
-
     auto v = PinTraits<deviceID_, PinFunction::miso, pin_::portID, pin_::pinID>::value;
 
-    g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull, g::PullUpDown::none, g::Speed::fast, v);
+    GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+        OutputType::pushPull, PullUpDown::none, Speed::fast, v);
 }
 
 

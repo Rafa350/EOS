@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Services.LedService;
@@ -11,6 +10,7 @@ export module Eos.Services.LedService;
 export import Eos.Services.Service;
 
 
+import Eos.Hardware.GPIO;
 import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
 
@@ -19,7 +19,7 @@ namespace eos {
 
 	export class LedService: public Service {
 	    public:
-	        using Pin = htl::gpio::PinDevice;
+	        using Pin = eos::hardware::gpio::PinDevice;
 
 	        enum class LedMode {
 	        	on,

@@ -1,14 +1,14 @@
 module;
 
 
-#include "HTL/htl.h"
-#include "eosEvents.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.SPI.Classes;
 
 
 import Eos.Bits;
+import Eos.Events;
 import Eos.Hardware.DMA;
 import Eos.Result;
 import Eos.System.Core.Ticks;
@@ -74,16 +74,6 @@ export namespace eos::hardware::spi {
                 transmiting
             };
 
-            enum class ErrorCode {
-                ok,
-                busy,
-                timeout,
-                error,
-                errorState,
-                errorParam
-            };
-            using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
-
         private:
             SPI_TypeDef * const _spi;
             State _state;
@@ -102,7 +92,7 @@ export namespace eos::hardware::spi {
         protected:
             SPIDevice(SPI_TypeDef *spi);
 
-            Result initialize(Mode mode, ClkPolarity clkPolarity,
+            StdResult initialize(Mode mode, ClkPolarity clkPolarity,
                     ClkPhase clkPhase, WordSize size, FirstBit firstBit,
                     ClockDivider clkDivider);
 
@@ -141,7 +131,7 @@ export namespace eos::hardware::spi {
 
         public:
             virtual ~SPIDevice() = default;
-            Result initMaster(ClkPolarity clkPolarity,
+            StdResult initMaster(ClkPolarity clkPolarity,
                     ClkPhase clkPhase, WordSize size, FirstBit firstBit,
                     ClockDivider clkDivider) {
                 return initialize(Mode::master, clkPolarity, clkPhase,
@@ -158,24 +148,24 @@ export namespace eos::hardware::spi {
                 _notificationEventRaiser.disable();
             }
 
-            Result transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
+            StdResult transmit(const uint8_t *txBuffer, uint8_t *rxBuffer,
                     uint32_t bufferSize, Ticks blockTime);
-            Result receive(uint8_t *rxBuffer, uint32_t bufferSize,
+            StdResult receive(uint8_t *rxBuffer, uint32_t bufferSize,
                     Ticks blockTime)  {
                 return transmit(nullptr, rxBuffer, bufferSize, blockTime);
             }
-            Result transmit(const uint8_t *txBuffer, uint32_t bufferSize,
+            StdResult transmit(const uint8_t *txBuffer, uint32_t bufferSize,
                     Ticks blockTime) {
                 return transmit(txBuffer, nullptr, bufferSize, blockTime);
             }
 
 #if HTL_SPI_OPTION_DMA == 1
-            Result transmit_DMA(dma::DMADevice *devTxDMA,
+            StdResult transmit_DMA(dma::DMADevice *devTxDMA,
                     const uint8_t *txBuffer, unsigned bufferSize);
 #endif
-            State getState() const { return _state; }
-            bool isReady() const { return _state == State::ready; }
-            bool isBusy() const { return _state != State::ready; }
+            [[nodiscard]] State getState() const { return _state; }
+            [[nodiscard]] bool isReady() const { return _state == State::ready; }
+            [[nodiscard]] bool isBusy() const { return _state != State::ready; }
     };
 
 }
@@ -230,7 +220,7 @@ SPIDevice::SPIDevice(
 /// \param    clkDivider: Divisor de frequencia.
 /// \return   El resultat de l'operacio.
 ///
-SPIDevice::Result SPIDevice::initialize(
+StdResult SPIDevice::initialize(
 	Mode mode,
 	ClkPolarity clkPolarity,
 	ClkPhase clkPhase,
@@ -252,10 +242,10 @@ SPIDevice::Result SPIDevice::initialize(
 
 		_state = State::ready;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -289,7 +279,7 @@ eos::Result SPIDevice::deinitialize() {
 /// \param    timeout: Temps maxim d'espera en ms.
 /// \return   El resultat de l'operacio.
 ///
-SPIDevice::Result SPIDevice::transmit(
+StdResult SPIDevice::transmit(
 	const uint8_t *txBuffer,
 	uint8_t *rxBuffer,
 	uint32_t bufferSize,
@@ -400,14 +390,14 @@ SPIDevice::Result SPIDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? ErrorCode::error : ErrorCode::ok;
+		return error ? StdErrorCode::error : StdErrorCode::ok;
 	}
 
 	else if (_state == State::transmiting)
-		return ErrorCode::busy;
+		return StdErrorCode::busy;
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 

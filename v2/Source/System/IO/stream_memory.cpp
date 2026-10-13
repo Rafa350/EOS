@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosResults.h"
 
 
 export module Eos.System.IO.Streams.Memory;
@@ -10,28 +9,34 @@ export module Eos.System.IO.Streams.Memory;
 
 export import Eos.System.IO.Streams;
 
+import Eos.Result;
+import Eos.Types;
+
 
 export namespace eos {
 
    class MemoryStream final: public Stream {
         private:
-            uint8_t * const _begin;
-            uint8_t * const _end;
-            uint8_t *_ptr;
+            UInt8 * const _begin;
+            UInt8 * const _end;
+            UInt8 *_ptr;
 
     	public:
-            MemoryStream(uint8_t *buffer, uint32_t bufferSize);
+            MemoryStream(UInt8 *buffer, UInt32 bufferSize);
 
-            uint32_t getPosition() const;
-            void setPosition(uint32_t position);
+            UInt32 getPosition() const;
+            void setPosition(UInt32 position);
 
-    		ResultU32 write(const uint8_t *buffer, size_t length) override;
-    		ResultU32 read(uint8_t *buffer, size_t bufferSize) override;
+    		StdResultU32 write(const UInt8 *buffer, UInt32 length) override;
+    		StdResultU32 read(UInt8 *buffer, UInt32 bufferSize) override;
 
-            uint8_t *buffer() const { return _begin; }
-            uint32_t bufferSize() const { return _end - _begin; }
+            UInt8 *buffer() const { return _begin; }
+            UInt32 bufferSize() const { return _end - _begin; }
     };
 }
+
+
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------
@@ -39,9 +44,9 @@ export namespace eos {
 /// \param   buffer: Buffer de dades del stream.
 /// \param   bufferSize: Tamany del buffer en bytes.
 ///
-eos::MemoryStream::MemoryStream(
-    uint8_t* buffer,
-    uint32_t bufferSize):
+MemoryStream::MemoryStream(
+    UInt8* buffer,
+    UInt32 bufferSize):
 
     _begin {buffer},
     _end {buffer + bufferSize},
@@ -53,7 +58,7 @@ eos::MemoryStream::MemoryStream(
 /// \brief    Obte la posicio actual de lectura/escriptura.
 /// \return   La posicio.
 ///
-uint32_t eos::MemoryStream::getPosition() const {
+UInt32 MemoryStream::getPosition() const {
 
 	return _ptr - _begin;
 }
@@ -63,8 +68,8 @@ uint32_t eos::MemoryStream::getPosition() const {
 /// \brief    Asigna la posicio de lectura/escriptura.
 /// \param    position: La nova posicio. No pot sortir dels limits del buffer.
 ///
-void eos::MemoryStream::setPosition(
-	uint32_t position) {
+void MemoryStream::setPosition(
+	UInt32 position) {
 
 	if ((_begin + position) < _end)
 		_ptr = _begin + position;
@@ -77,9 +82,9 @@ void eos::MemoryStream::setPosition(
 /// \param    length: Longitut de dades en bytes.
 /// \return   El nombre de bytes escrits i el resultat de l'operacio
 ///
-eos::ResultU32 eos::MemoryStream::write(
-    const uint8_t *buffer,
-    size_t length) {
+StdResultU32 MemoryStream::write(
+    const UInt8 *buffer,
+    UInt32 length) {
 
     if (_ptr + length >= _end)
         length = _end - _ptr;
@@ -89,7 +94,7 @@ eos::ResultU32 eos::MemoryStream::write(
         _ptr += length;
     }
 
-	return {ResultU32::ErrorCodes::ok, length};
+	return {length};
 }
 
 
@@ -99,9 +104,9 @@ eos::ResultU32 eos::MemoryStream::write(
 /// \param    bufferSize: Tamany del buffer en bytes.
 /// \return   El nombre de bytes lleigits i el resultat de l'operacio
 ///
-eos::ResultU32 eos::MemoryStream::read(
-	uint8_t *buffer,
-	size_t bufferSize) {
+StdResultU32 MemoryStream::read(
+	UInt8 *buffer,
+	UInt32 bufferSize) {
 
     if (_ptr + bufferSize >= _end)
         bufferSize = _end - _ptr;
@@ -111,5 +116,5 @@ eos::ResultU32 eos::MemoryStream::read(
     	_ptr += bufferSize;
     }
 
-	return {ResultU32::ErrorCodes::ok, bufferSize};
+	return {bufferSize};
 }

@@ -9,12 +9,17 @@ module;
 module Eos.System.IO.Formatters.Text;
 
 
+import Eos.Types;
+
+
+using namespace eos;
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Construeix l'objecte i l'inicialitza
 /// \param    stream: El stream d'escriptura.
 ///
-eos::TextWriter::TextWriter(
+TextWriter::TextWriter(
 	Stream *stream):
 
 	_stream {stream} {
@@ -27,8 +32,8 @@ eos::TextWriter::TextWriter(
 /// \param    data: El valor a escriure.
 /// \return   True si tot es correcte.
 ///
-bool eos::TextWriter::writeU8(
-	uint8_t data) {
+bool TextWriter::writeU8(
+	UInt8 data) {
 
 	return writeU32(data);
 }
@@ -174,8 +179,8 @@ bool eos::TextWriter::writeChar(
 	char data) {
 
 	constexpr unsigned length = sizeof(data);
-	auto writeResult = _stream->write((const uint8_t*)&data, length);
-	return writeResult.isSuccess() && (writeResult.value() == length);
+	auto writeResult = _stream->write((const UInt8*)&data, length);
+	return writeResult.isOk() && (writeResult.getValue() == length);
 }
 
 
@@ -191,7 +196,7 @@ bool eos::TextWriter::writeString(
 		auto length = strlen(data);
 		if (length > 0) {
 			auto writeResult = _stream->write((const uint8_t*)data, length);
-			return writeResult.isSuccess() && (writeResult.value() == length);
+			return writeResult.isOk() && (writeResult.getValue() == length);
 		}
 	}
 

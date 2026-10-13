@@ -2,14 +2,14 @@ module;
 
 
 #include "hardware.h"
-#include "eosEvents.h"
-#include "eosResults.h"
 
 
 export module Eos.Hardware.TMR.Classes;
 
 
 import Eos.Bits;
+import Eos.Events;
+import Eos.Result;
 import Eos.Types;
 import Eos.Hardware.TMR.Identifiers;
 
@@ -99,23 +99,23 @@ export namespace eos::hardware::tmr {
 			State getState() const { return _state; }
 
 		public:
-			Result initialize(ClockDivider divider, unsigned prescaler) {
+			StdResult initialize(ClockDivider divider, unsigned prescaler) {
 				return initialize(divider, prescaler, 0, 0);
 			}
-			Result initialize(ClockDivider divider, unsigned prescaler, unsigned reload, unsigned repeat);
-			Result deinitialize();
+			StdResult initialize(ClockDivider divider, unsigned prescaler, unsigned reload, unsigned repeat);
+			StdResult deinitialize();
 
-			Result setPrescaler(UInt32 value);
-			Result setLimit(UInt32 value);
-			Result setRepeat(UInt32 value);
-			Result setCountDirection(CountDirection value);
+			StdResult setPrescaler(UInt32 value);
+			StdResult setLimit(UInt32 value);
+			StdResult setRepeat(UInt32 value);
+			StdResult setCountDirection(CountDirection value);
 			UInt32 getCounter() const { return _tim->CNT; }
 
-			Result configurePwmChannel(Channel channel, ChannelPolarity, UInt32 compare);
-			Result configurePwmChannel1(ChannelPolarity polarity, UInt32 compare);
-			Result configurePwmChannel2(ChannelPolarity polarity, UInt32 compare);
-			Result configurePwmChannel3(ChannelPolarity polarity, UInt32 compare);
-			Result configurePwmChannel4(ChannelPolarity polarity, UInt32 compare);
+			StdResult configurePwmChannel(Channel channel, ChannelPolarity, UInt32 compare);
+			StdResult configurePwmChannel1(ChannelPolarity polarity, UInt32 compare);
+			StdResult configurePwmChannel2(ChannelPolarity polarity, UInt32 compare);
+			StdResult configurePwmChannel3(ChannelPolarity polarity, UInt32 compare);
+			StdResult configurePwmChannel4(ChannelPolarity polarity, UInt32 compare);
 
 			void enableChannel(Channel channel);
 			void disableChannel(Channel channel);
@@ -126,9 +126,9 @@ export namespace eos::hardware::tmr {
 			void disableNotificationEvent() {
 				_notificationEventRaiser.disable();
 			}
-			Result start();
-			Result start_IRQ();
-			Result stop();
+			StdResult start();
+			StdResult start_IRQ();
+			StdResult stop();
 	};
 }
 
@@ -165,17 +165,17 @@ TMRDevice::TMRDevice(
 /// @param    reload: Valor de recarrega del contador.
 /// @param    repeat: Valor de repeticio.
 ///
-Result TMRDevice::initialize(
+StdResult TMRDevice::initialize(
 	ClockDivider divider,
 	unsigned prescaler,
 	unsigned reload,
 	unsigned repeat) {
 
 	if (!IS_TIM_CLOCK_DIVISION_INSTANCE(_tim) && divider != ClockDivider::_1)
-		return eos::Result::ErrorCodes::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	if (!IS_TIM_REPETITION_COUNTER_INSTANCE(_tim) && repeat != 0)
-		return eos::Result::ErrorCodes::errorParameter;
+		return StdErrorCode::errorParameter;
 
 	if (_state == State::reset) {
 
@@ -214,11 +214,11 @@ Result TMRDevice::initialize(
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return Result::ErrorCodes::error;
+		return StdErrorCode::error;
 }
 
 
@@ -226,10 +226,10 @@ Result TMRDevice::initialize(
 /// @brief    Desinicialitza el timer.
 /// @return   El rtresultat de l'operacio.
 ///
-Result TMRDevice::deinitialize() {
+StdResult TMRDevice::deinitialize() {
 
 	if (_state != State::ready)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	Bits::clear(_tim->CR1, TIM_CR1_CEN);
 	Bits::clear(_tim->DIER, TIM_DIER_UIE | TIM_DIER_TIE | TIM_DIER_COMIE);
@@ -238,7 +238,7 @@ Result TMRDevice::deinitialize() {
 
 	_state = State::reset;
 
-	return Result::ErrorCodes::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -248,15 +248,15 @@ Result TMRDevice::deinitialize() {
 /// @return   El resultat de l'operacio.
 /// @remarks  L'operacio nomes es valida si el dispositiu esta inicialitzat.
 ///
-Result TMRDevice::setPrescaler(
+StdResult TMRDevice::setPrescaler(
 	UInt32 value) {
 
 	if (_state == State::reset)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	_tim->PSC = value;
 
-	return Result::ErrorCodes::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -266,11 +266,11 @@ Result TMRDevice::setPrescaler(
 /// @return   El resultat de l'operacio.
 /// @remarks  L'operacio nomes es valida si el dispositiu esta inicialitzat.
 ///
-Result TMRDevice::setLimit(
+StdResult TMRDevice::setLimit(
 	UInt32 value) {
 
 	if (_state == State::reset)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	else {
 		if (_state == State::ready)
@@ -279,7 +279,7 @@ Result TMRDevice::setLimit(
 			Bits::set(_tim->CR1, TIM_CR1_ARPE);
 		_tim->ARR = value;
 
-		return Result::ErrorCodes::ok;
+		return StdErrorCode::ok;
 	}
 }
 
@@ -290,18 +290,18 @@ Result TMRDevice::setLimit(
 /// @return   El resultat de l'operacio.
 /// @remarks  L'operacio nomes es valida si el dispositiu esta inicialitzat.
 ///
-Result TMRDevice::setRepeat(
+StdResult TMRDevice::setRepeat(
 	UInt32 value) {
 
 	if (!IS_TIM_REPETITION_COUNTER_INSTANCE(_tim))
-		return Result::ErrorCodes::errorUnsupported;
+		return StdErrorCode::errorUnsupported;
 
 	if (_state == State::reset)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	_tim->RCR = value;
 
-	return Result::ErrorCodes::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -312,7 +312,7 @@ Result TMRDevice::setRepeat(
 /// @param    compare: El valor a comparar del contador
 /// @return   El resultat de l'operacio.
 ///
-Result TMRDevice::configurePwmChannel(
+StdResult TMRDevice::configurePwmChannel(
 	Channel channel,
 	ChannelPolarity polarity,
 	UInt32 compare) {
@@ -331,7 +331,7 @@ Result TMRDevice::configurePwmChannel(
 			return configurePwmChannel4(polarity, compare);
 	}
 
-	return Result::ErrorCodes::errorParameter;
+	return StdErrorCode::errorParameter;
 }
 
 
@@ -341,15 +341,15 @@ Result TMRDevice::configurePwmChannel(
 /// @param    compare: El valor a comparar del contador
 /// @return   El resultat de l'operacio.
 ///
-Result TMRDevice::configurePwmChannel1(
+StdResult TMRDevice::configurePwmChannel1(
 	ChannelPolarity polarity,
 	UInt32 compare) {
 
 	if (!IS_TIM_CC1_INSTANCE(_tim))
-		return Result::ErrorCodes::errorUnsupported;
+		return StdErrorCode::errorUnsupported;
 
 	if (_state != State::ready)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	UInt32 CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -367,7 +367,7 @@ Result TMRDevice::configurePwmChannel1(
 
 	_tim->CCR1 = compare;
 
-	return Result::ErrorCodes::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -377,15 +377,15 @@ Result TMRDevice::configurePwmChannel1(
 /// @param    compare: El valor a comparar del contador
 /// @return   El resultat de l'operacio.
 ///
-Result TMRDevice::configurePwmChannel2(
+StdResult TMRDevice::configurePwmChannel2(
 	ChannelPolarity polarity,
 	UInt32 compare) {
 
 	if (!IS_TIM_CC2_INSTANCE(_tim))
-		return Result::ErrorCodes::errorUnsupported;
+		return StdErrorCode::errorUnsupported;
 
 	if (_state != State::ready)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	UInt32 CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -403,7 +403,7 @@ Result TMRDevice::configurePwmChannel2(
 
 	_tim->CCR2 = compare;
 
-	return Result::ErrorCodes::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -413,15 +413,15 @@ Result TMRDevice::configurePwmChannel2(
 /// @param    compare: El valor a comparar del contador
 /// @return   El resultat de l'operacio.
 ///
-eos::Result TMRDevice::configurePwmChannel3(
+StdResult TMRDevice::configurePwmChannel3(
 	ChannelPolarity polarity,
 	UInt32 compare) {
 
 	if (!IS_TIM_CC3_INSTANCE(_tim))
-		return Result::ErrorCodes::errorUnsupported;
+		return StdErrorCode::errorUnsupported;
 
 	if (_state != State::ready)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	unsigned CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -439,7 +439,7 @@ eos::Result TMRDevice::configurePwmChannel3(
 
 	_tim->CCR3 = compare;
 
-	return Result::ErrorCodes::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -449,15 +449,15 @@ eos::Result TMRDevice::configurePwmChannel3(
 /// @param    compare: El valor a comparar del contador
 /// @return   El resultat de l'operacio.
 ///
-eos::Result TMRDevice::configurePwmChannel4(
+StdResult TMRDevice::configurePwmChannel4(
 	ChannelPolarity polarity,
 	UInt32 compare) {
 
 	if (!IS_TIM_CC4_INSTANCE(_tim))
-		return Result::ErrorCodes::errorUnsupported;
+		return StdErrorCode::errorUnsupported;
 
 	if (_state != State::ready)
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 
 	unsigned CCER = _tim->CCER;
 	if (polarity == ChannelPolarity::activeHigh)
@@ -475,7 +475,7 @@ eos::Result TMRDevice::configurePwmChannel4(
 
 	_tim->CCR4 = compare;
 
-	return Result::ErrorCodes::ok;
+	return StdErrorCode::ok;
 }
 
 
@@ -555,7 +555,7 @@ void TMRDevice::disableChannel(
 /// @brief    Inicia el contador en modus polling
 /// @return   El resultat de l'operacio.
 ///
-Result TMRDevice::start() {
+StdResult TMRDevice::start() {
 
 	if (_state == State::ready) {
 
@@ -564,10 +564,10 @@ Result TMRDevice::start() {
 
 		_state = State::busy;
 
-		return Result::ErrorCodes::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -575,7 +575,7 @@ Result TMRDevice::start() {
 /// @brief    Inicia el contador en modus interrupcio
 /// @return   El resultat de l'operacio.
 ///
-Result TMRDevice::start_IRQ() {
+StdResult TMRDevice::start_IRQ() {
 
 	if (_state == State::ready) {
 
@@ -583,10 +583,10 @@ Result TMRDevice::start_IRQ() {
 		_tim->DIER |= TIM_DIER_UIE; // Habilita la interrupcio
 		_tim->CR1 |= TIM_CR1_CEN;   // Comença a contar
 
-		return Result::ErrorCodes::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -594,7 +594,7 @@ Result TMRDevice::start_IRQ() {
 /// @brief    Finalitza el contador en modus polling.
 /// @return   El resultat de l'operacio.
 ///
-Result TMRDevice::stop() {
+StdResult TMRDevice::stop() {
 
 	if ((_state == State::busy) || (_state == State::busyIRQ)) {
 
@@ -606,10 +606,10 @@ Result TMRDevice::stop() {
 
 		_state = State::ready;
 
-		return Result::ErrorCodes::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return Result::ErrorCodes::error;
+		return StdErrorCode::error;
 }
 
 

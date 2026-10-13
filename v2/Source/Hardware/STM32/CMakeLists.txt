@@ -16,4 +16,5 @@ if(EOS_USE_HTL_UART)
     add_subdirectory("UART")
 endif()
 
+add_subdirectory("GPIO")
 add_subdirectory("DMA")

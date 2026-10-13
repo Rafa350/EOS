@@ -1,19 +1,18 @@
 module;
 
 
-#include "HTL/htlGPIO.h"
+#include "hardware.h"
 
 
 export module Eos.Hardware.FDCAN.__TEMPLATES;
 
 
+import Eos.Bits;
 import Eos.Hardware.FDCAN.__CLASSES;
 import Eos.Hardware.FDCAN.__DEVICE_TRAITS;
 import Eos.Hardware.FDCAN.__PIN_TRAITS;
 import Eos.Hardware.FDCAN.__PLATFORM_TRAITS;
-
-
-//import Eos.Bits;
+import Eos.Hardware.GPIO;
 import Eos.Types;
 
 
@@ -26,9 +25,9 @@ export namespace eos::hardware::fdcan {
 
         private:
             using CANTraits = internal::CANTraits<deviceId_>;
-			template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+			template <gpio::PortID portID_, gpio::PinID pinID_>
                 using TxPinTraits = internal::PinTraits<deviceId_, internal::PinFunction::tx, portID_, pinID_>;
-			template <htl::gpio::PortID portID_, htl::gpio::PinID pinID_>
+			template <gpio::PortID portID_, gpio::PinID pinID_>
                 using RxPinTraits = internal::PinTraits<deviceId_, internal::PinFunction::rx, portID_, pinID_>;
 
         public:
@@ -60,6 +59,7 @@ export namespace eos::hardware::fdcan {
 
 
 using namespace eos;
+using namespace eos::hardware::gpio;
 using namespace eos::hardware::fdcan;
 
 
@@ -128,14 +128,12 @@ template <CANDeviceID deviceId_>
 template <typename pin_>
 void CANDeviceX<deviceId_>::initPinTX() {
 
-    namespace g = htl::gpio;
-
     auto value = TxPinTraits<pin_::portID, pin_::pinID>::value;
 
-    g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull,
-        g::PullUpDown::none,
-        g::Speed::fast,
+    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+        gpio::OutputType::pushPull,
+        gpio::PullUpDown::none,
+        gpio::Speed::fast,
         value);
 }
 
@@ -148,14 +146,12 @@ template <CANDeviceID deviceId_>
 template <typename pin_>
 void CANDeviceX<deviceId_>::initPinRX() {
 
-    namespace g = htl::gpio;
-
     auto value = RxPinTraits<pin_::portID, pin_::pinID>::value;
 
-    g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-        g::OutputType::pushPull,
-        g::PullUpDown::none,
-        g::Speed::fast,
+    gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+        gpio::OutputType::pushPull,
+        gpio::PullUpDown::none,
+        gpio::Speed::fast,
      value);
 }
 

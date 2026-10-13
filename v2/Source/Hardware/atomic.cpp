@@ -36,7 +36,7 @@ UInt32 Atomic::start() {
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Finalitza les operacions atimiques.
+/// @brief    Finalitza les operacions atomiques.
 ///
 void Atomic::end(UInt32 pm) {
 

@@ -10,6 +10,7 @@ module Eos.Hardware.UART.__CLASSES;
 import Eos.Bits;
 import Eos.Hardware.Atomic;
 import Eos.Types;
+import Eos.Result;
 import Eos.System.Core.Ticks;
 
 
@@ -23,7 +24,7 @@ using namespace eos::hardware::uart;
 /// @param    length: La longitut del bloc en bytes.
 /// @param    blockTime: Temps maxim de bloqueig.
 ///
-UARTDevice::Result UARTDevice::transmit(
+StdResult UARTDevice::transmit(
 	const UInt8 *buffer,
 	UInt32 length,
 	Ticks blockTime) {
@@ -53,14 +54,14 @@ UARTDevice::Result UARTDevice::transmit(
 
 		_state = State::ready;
 
-		return error ? ErrorCode::timeout : ErrorCode::ok;
+		return error ? StdErrorCode::timeout : StdErrorCode::ok;
 	}
 
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return ErrorCode::busy;
+		return StdErrorCode::busy;
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -71,7 +72,7 @@ UARTDevice::Result UARTDevice::transmit(
 /// @param    blockTime: Temps maxim de bloqueig.
 /// \return   El resultat.
 ///
-UARTDevice::Result UARTDevice::receive(
+StdResult UARTDevice::receive(
 	UInt8 *buffer,
 	UInt32 bufferSize,
 	Ticks blockTime) {
@@ -99,13 +100,13 @@ UARTDevice::Result UARTDevice::receive(
 
 		_state = State::ready;
 
-		return error ? ErrorCode::timeout : ErrorCode::ok;
+		return error ? StdErrorCode::timeout : StdErrorCode::ok;
 	}
 	else if ((_state == State::transmiting) || (_state == State::receiving))
-		return ErrorCode::busy;
+		return StdErrorCode::busy;
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 

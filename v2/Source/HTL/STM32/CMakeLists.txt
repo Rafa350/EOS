@@ -2,7 +2,7 @@ target_sources(${TARGET_NAME}
     PUBLIC
         #htl.cpp
 #        htlClock.cpp
-        htlGPIO.cpp
+        #htlGPIO.cpp
 #        htlINT.cpp
 #        htlTick.cpp
 )
@@ -99,7 +99,7 @@ endif()
 # ------------------------------------------------------------------------
 # Afegeix el modul TMR
 #
-if(EOS_USE_HTL_TMR)
+if(EOS_USE_HTL_TMRx)
 target_sources(${TARGET_NAME}
     PUBLIC
         htlTMR.cpp

@@ -24,7 +24,8 @@ export namespace eos {
 				timeout,
 				error
 			};
-			using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
+
+			using Result = SimpleResult<ErrorCode, ErrorCode::ok>;
 
         private:
 			SemaphoreHandle_t _handler;

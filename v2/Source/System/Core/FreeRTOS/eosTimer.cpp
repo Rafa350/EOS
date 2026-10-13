@@ -1,8 +1,6 @@
 module;
 
 
-#include "eosCallbacks.h"
-
 #include "FreeRTOS.h"
 #include "timers.h"
 #include "atomic.h"
@@ -11,6 +9,7 @@ module;
 export module Eos.System.Core.Timer;
 
 
+import Eos.Callbacks;
 import Eos.Types;
 import Eos.System.Core.Ticks;
 

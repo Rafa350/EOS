@@ -9,6 +9,7 @@ module Eos.Hardware.UART.__CLASSES;
 
 import Eos.Bits;
 import Eos.Hardware.Atomic;
+import Eos.Result;
 
 
 using namespace eos;
@@ -23,7 +24,7 @@ using namespace eos::hardware::dma;
 /// @param    length: El nombre de bytes a transmetre.
 /// \return   El resultat de l'operacio
 ///
-UARTDevice::Result UARTDevice::transmit_DMA(
+StdResult UARTDevice::transmit_DMA(
     DMADevice *devDMA,
     const UInt8 *buffer,
     UInt32 length) {
@@ -44,14 +45,14 @@ UARTDevice::Result UARTDevice::transmit_DMA(
         devDMA->enableNotificationEvent(_dmaNotificationEvent);
         devDMA->start(buffer, (UInt8*)&(_usart->TDR), _txMaxCount);
 
-        return ErrorCode::ok;
+        return StdErrorCode::ok;
     }
 
     else if ((_state == State::transmiting) || (_state == State::receiving))
-        return ErrorCode::busy;
+        return StdErrorCode::busy;
 
     else
-        return ErrorCode::errorState;
+        return StdErrorCode::errorState;
 }
 
 
@@ -62,12 +63,12 @@ UARTDevice::Result UARTDevice::transmit_DMA(
 /// @param    bufferSize: El tamany del buffer en bytes.
 /// \return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::receive_DMA(
+StdResult UARTDevice::receive_DMA(
     DMADevice *devDMA,
     UInt8 *buffer,
     UInt32 bufferSize) {
 
-	return ErrorCode::error;
+	return StdErrorCode::error;
 }
 
 

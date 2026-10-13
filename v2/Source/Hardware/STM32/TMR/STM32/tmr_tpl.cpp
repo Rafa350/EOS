@@ -2,21 +2,18 @@ module;
 
 
 #include "hardware.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Hardware.TMR.Templates;
 
 
 import Eos.Types;
+import Eos.Hardware.GPIO;
 import Eos.Hardware.Regs;
 import Eos.Hardware.TMR.Classes;
 import Eos.Hardware.TMR.Identifiers;
 import Eos.Hardware.TMR.Pins;
 import Eos.Hardware.TMR.Traits;
-
-
-namespace g = htl::gpio;
 
 
 export namespace eos::hardware::tmr {
@@ -46,16 +43,16 @@ export namespace eos::hardware::tmr {
 			static void interruptHandler();
 
 			template <typename pin_>
-			void initPinCH1(g::OutputType type, g::PullUpDown pupd, g::Speed speed);
+			void initPinCH1(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed);
 
 			template <typename pin_>
-			void initPinCH2(g::OutputType type, g::PullUpDown pupd, g::Speed speed);
+			void initPinCH2(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed);
 
 			template <typename pin_>
-			void initPinCH3(g::OutputType type, g::PullUpDown pupd, g::Speed speed);
+			void initPinCH3(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed);
 
 			template <typename pin_>
-			void initPinCH4(g::OutputType type, g::PullUpDown pupd, g::Speed speed);
+			void initPinCH4(gpio::OutputType type, gpio::PullUpDown pupd, gpio::Speed speed);
 	};
 
 	template <TMRDeviceID deviceID_>
@@ -64,6 +61,7 @@ export namespace eos::hardware::tmr {
 
 
 using namespace eos::hardware;
+using namespace eos::hardware::gpio;
 using namespace eos::hardware::tmr;
 
 
@@ -120,15 +118,15 @@ void TMRDeviceX<deviceID_>::deactivate() {
 template <TMRDeviceID deviceID_>
 template <typename pin_>
 void TMRDeviceX<deviceID_>::initPinCH1(
-	g::OutputType type,
-	g::PullUpDown pupd,
-	g::Speed speed) {
+	gpio::OutputType type,
+	gpio::PullUpDown pupd,
+	gpio::Speed speed) {
 
 	namespace i = internal;
 
 	auto af = i::PinTraits<deviceID_, i::PinFunction::ch1, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
 
 
@@ -142,15 +140,15 @@ void TMRDeviceX<deviceID_>::initPinCH1(
 template <TMRDeviceID deviceID_>
 template <typename pin_>
 void TMRDeviceX<deviceID_>::initPinCH2(
-	g::OutputType type,
-	g::PullUpDown pupd,
-	g::Speed speed) {
+	gpio::OutputType type,
+	gpio::PullUpDown pupd,
+	gpio::Speed speed) {
 
 	namespace i = internal;
 
 	auto af = i::PinTraits<deviceID_, i::PinFunction::ch2, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternatet(type, pupd, speed, af);
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternatet(type, pupd, speed, af);
 }
 
 
@@ -164,15 +162,15 @@ void TMRDeviceX<deviceID_>::initPinCH2(
 template <TMRDeviceID deviceID_>
 template <typename pin_>
 void TMRDeviceX<deviceID_>::initPinCH3(
-	g::OutputType type,
-	g::PullUpDown pupd,
-	g::Speed speed) {
+	gpio::OutputType type,
+	gpio::PullUpDown pupd,
+	gpio::Speed speed) {
 
 	namespace i = internal;
 
 	auto af = i::PinTraits<deviceID_, i::PinFunction::ch3, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
 
 
@@ -186,15 +184,15 @@ void TMRDeviceX<deviceID_>::initPinCH3(
 template <TMRDeviceID deviceID_>
 template <typename pin_>
 void TMRDeviceX<deviceID_>::initPinCH4(
-	g::OutputType type,
-	g::PullUpDown pupd,
-	g::Speed speed) {
+	gpio::OutputType type,
+	gpio::PullUpDown pupd,
+	gpio::Speed speed) {
 
 	namespace i = internal;
 
 	auto af = i::PinTraits<deviceID_, i::PinFunction::ch4, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(type, pupd, speed, af);
 }
 
 

@@ -193,7 +193,6 @@ namespace htl {
                 }
         };
 
-
         template <PortID portID_>
         class PortDeviceX final: public PortDevice {
             private:

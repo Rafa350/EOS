@@ -3,8 +3,10 @@ target_sources(${TARGET_NAME}
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
     FILES
         bits.cpp
+        callbacks.cpp
         concepts.cpp
         configuration.cpp
+        events.cpp
         math.cpp
         platform.cpp
         result.cpp

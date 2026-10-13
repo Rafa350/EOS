@@ -2,13 +2,13 @@ module;
 
 
 #include "hardware.h"
-#include "eosEvents.h"
 
 
 export module Eos.Hardware.DMA.__CLASSES;
 
 
 import Eos.Bits;
+import Eos.Events;
 import Eos.Hardware.DMA.__PLATFORM_TRAITS;
 import Eos.Result;
 import Eos.System.Core.Ticks;
@@ -85,15 +85,6 @@ export namespace eos::hardware::dma {
                 transfering
             };
 
-            enum class ErrorCode {
-                ok,
-                timeout,
-                error,
-                errorParam,
-                errorState
-            };
-            using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
-
         private:
             DMA_TypeDef * const _dma;
             DMA_Channel_TypeDef * const _dmaChannel;
@@ -137,16 +128,16 @@ export namespace eos::hardware::dma {
             virtual void deactivateImpl() const = 0;
 
         public:
-            Result initMemoryToMemory();
-            Result initMemoryToPeripheral(Priority priority,
+            StdResult initMemoryToMemory();
+            StdResult initMemoryToPeripheral(Priority priority,
                     DataSize srcSize, DataSize dstSize,
                     AddressIncrement srcInc, AddressIncrement dstInc,
                     TransferMode mode, RequestID requestID);
-            Result initPeripheralToMemory(Priority priority,
+            StdResult initPeripheralToMemory(Priority priority,
                     DataSize srcSize, DataSize dstSize,
                     AddressIncrement srcInc, AddressIncrement dstInc,
                     TransferMode mode, RequestID requestID);
-            Result deinitialize();
+            StdResult deinitialize();
 
             void enableNotificationEvent(INotificationEvent &event) {
                 _notificationEventRaiser.enable(event);
@@ -155,10 +146,10 @@ export namespace eos::hardware::dma {
                 _notificationEventRaiser.disable();
             }
 
-            Result start(const UInt8 *src, UInt8 *dst, UInt32 size);
+            StdResult start(const UInt8 *src, UInt8 *dst, UInt32 size);
 
             // TODO: temporal
-            Result waitForFinish(Ticks blockTime);
+            StdResult waitForFinish(Ticks blockTime);
 
             State getState() const { return _state; }
             bool isReady() const { return _state == State::ready; }
@@ -197,7 +188,7 @@ DMADevice::DMADevice(
 /// @brief    Inicialitzacio per transferencies de memoria a memoria.
 /// @return   El resultat de l'operacio.
 ///
-DMADevice::Result DMADevice::initMemoryToMemory() {
+StdResult DMADevice::initMemoryToMemory() {
 
 	if (_state == State::reset) {
 
@@ -213,10 +204,10 @@ DMADevice::Result DMADevice::initMemoryToMemory() {
 		Bits::set(CCR, DMA_CCR_MEM2MEM);      // Memoria a memoria
 		_dmaChannel->CCR = CCR;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::error;
+		return StdErrorCode::error;
 }
 
 
@@ -231,7 +222,7 @@ DMADevice::Result DMADevice::initMemoryToMemory() {
 /// @param    requestID: Identificador de la solicitut
 /// @return   El resultat de l'operacio.
 ///
-DMADevice::Result DMADevice::initMemoryToPeripheral(
+StdResult DMADevice::initMemoryToPeripheral(
     Priority priority,
     DataSize srcSize,
     DataSize dstSize,
@@ -304,11 +295,11 @@ DMADevice::Result DMADevice::initMemoryToPeripheral(
         //
         _state = State::ready;
 
-        return ErrorCode::ok;
+        return StdErrorCode::ok;
     }
 
     else
-        return ErrorCode::error;
+        return StdErrorCode::error;
 }
 
 
@@ -316,7 +307,7 @@ DMADevice::Result DMADevice::initMemoryToPeripheral(
 /// @brief    Desinicialitza el dispositiu.
 /// \return   El resultat de l'operacio.
 ///
-DMADevice::Result DMADevice::deinitialize() {
+StdResult DMADevice::deinitialize() {
 
     // Comprova si l'estat es 'ready'
     //
@@ -337,10 +328,10 @@ DMADevice::Result DMADevice::deinitialize() {
         //
         _state = State::reset;
 
-        return ErrorCode::ok;
+        return StdErrorCode::ok;
     }
     else
-        return ErrorCode::error;
+        return StdErrorCode::error;
 }
 
 
@@ -369,7 +360,7 @@ void DMADevice::deactivate() const {
 /// @param    size: El nombre de bytes a transfderir.
 /// @return   El resultat de l'operacio.
 ///
-DMADevice::Result DMADevice::start(
+StdResult DMADevice::start(
     const UInt8 *src,
     UInt8 *dst,
     UInt32 size) {
@@ -400,10 +391,10 @@ DMADevice::Result DMADevice::start(
         //
         _state = State::transfering;
 
-        return ErrorCode::ok;
+        return StdErrorCode::ok;
     }
     else
-        return ErrorCode::error;
+        return StdErrorCode::error;
 }
 
 
@@ -412,7 +403,7 @@ DMADevice::Result DMADevice::start(
 /// @param    timeout: Limit de temps.
 /// @return   El resultat de l'operacio.
 ///
-DMADevice::Result DMADevice::waitForFinish(
+StdResult DMADevice::waitForFinish(
     Ticks blockTime) {
 
     // Comprova si l'estat es 'transfering'
@@ -441,11 +432,11 @@ DMADevice::Result DMADevice::waitForFinish(
         //
         _state = State::ready;
 
-        return expired ? ErrorCode::timeout : ErrorCode::ok;
+        return expired ? StdErrorCode::timeout : StdErrorCode::ok;
     }
 
     else
-        return ErrorCode::error;
+        return StdErrorCode::error;
 }
 
 

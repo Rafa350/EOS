@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosEvents.h"
 
 
 // Numero maxim d'elements en la cua d'accions
@@ -36,6 +35,7 @@ export module Eos.Services.DigOutput;
 export import Eos.Services.Service;
 
 
+import Eos.Events;
 import Eos.Math;
 import Eos.Controllers.Pin;
 import Eos.System.Collections.IntrusiveForwardList;

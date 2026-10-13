@@ -49,7 +49,7 @@ namespace eos::hardware::interrupts {
 		    static void enableInterrupt(VectorID vectorId);
 		    static void disableInterrupt(VectorID vectorId);
 
-            static bool getInterruptState();
+            [[nodiscard]] static bool getInterruptState();
             static void enableInterrupts();
             static void disableInterrupts();
             static void restoreInterrupts(bool state);
@@ -61,10 +61,10 @@ using namespace eos;
 using namespace eos::hardware::interrupts;
 
 
-/// --------------------------------------------------------------------------
-/// \brief    Configura la prioritat d'un vector d'interrupcio.
-/// \param    vectorID: El vector.
-/// \param    prioriti: La prioritat.
+/// ---------------------------------------------------------------------------
+/// @brief    Configura la prioritat d'un vector d'interrupcio.
+/// @param    vectorID: El vector.
+/// @param    prioriti: La prioritat.
 ///
 void Irq::setInterruptPriority(
     VectorID vectorId,
@@ -75,10 +75,10 @@ void Irq::setInterruptPriority(
 
 
 /// ---------------------------------------------------------------------------
-/// \brief    Configura la prioritat d'un vector d'interrupcio.
-/// \param    vectorID: El vector.
-/// \param    prioriti: La prioritat.
-/// \param    subPriority: La subprioritat.
+/// @brief    Configura la prioritat d'un vector d'interrupcio.
+/// @param    vectorID: El vector.
+/// @param    prioriti: La prioritat.
+/// @param    subPriority: La subprioritat.
 ///
 void Irq::setInterruptPriority(
     VectorID vectorId,
@@ -96,7 +96,7 @@ void Irq::setInterruptPriority(
 }
 
 
-/// --------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Habilita una interrrupcio.
 /// @param    vectorId : El identificador del vector d'interrupcio.
 ///
@@ -107,7 +107,7 @@ void Irq::enableInterrupt(
 }
 
 
-/// --------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Desabilita una interrrupcio.
 /// @param    vectorId : El identificador del vector d'interrupcio.
 ///

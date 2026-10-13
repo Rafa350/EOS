@@ -28,8 +28,9 @@ export namespace eos {
 				errorParameter,
 				errorState,
 			};
-			using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
-			using ResultU32 = ComplexResultX<UInt32, ErrorCode, ErrorCode::ok>;
+
+			using Result = SimpleResult<ErrorCode, ErrorCode::ok>;
+			using ResultU32 = ComplexResult<UInt32, ErrorCode, ErrorCode::ok>;
 
 			enum class State {
                 reset,

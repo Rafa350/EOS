@@ -2,13 +2,14 @@ module;
 
 
 #include "hardware.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Hardware.UART.__TEMPLATES;
 
 
+import Eos.Bits;
 import Eos.Hardware.Clock;
+import Eos.Hardware.GPIO;
 import Eos.Hardware.Regs;
 import Eos.Hardware.UART.__CLASSES;
 import Eos.Hardware.UART.__DEVICE_TRAITS;
@@ -69,6 +70,7 @@ namespace eos::hardware::uart {
 
 
 using namespace eos;
+using namespace eos::hardware::gpio;
 using namespace eos::hardware::uart;
 
 
@@ -126,15 +128,14 @@ template<UARTDeviceID deviceId_>
 template <typename pin_>
 void UARTDeviceX<deviceId_>::initPinTX() {
 
-	namespace g = htl::gpio;
 	namespace i = internal;
 
 	auto value = i::PinTraits<deviceId_, i::PinFunction::tx, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-		g::OutputType::pushPull,
-		g::PullUpDown::none,
-		g::Speed::fast,
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+		gpio::OutputType::pushPull,
+		gpio::PullUpDown::none,
+		gpio::Speed::fast,
 	    value);
 }
 
@@ -147,15 +148,14 @@ template<UARTDeviceID deviceId_>
 template <typename pin_>
 void UARTDeviceX<deviceId_>::initPinRX() {
 
-	namespace g = htl::gpio;
 	namespace i = internal;
 
 	auto value = i::PinTraits<deviceId_, i::PinFunction::rx, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-		g::OutputType::pushPull,
-		g::PullUpDown::none,
-		g::Speed::fast,
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+		gpio::OutputType::pushPull,
+		gpio::PullUpDown::none,
+		gpio::Speed::fast,
 	    value);
 }
 
@@ -168,15 +168,14 @@ template<UARTDeviceID deviceId_>
 template <typename pin_>
 void UARTDeviceX<deviceId_>::initPinCTS() {
 
-	namespace g = htl::gpio;
 	namespace i = internal;
 
 	auto value = i::PinTraits<deviceId_, i::PinFunction::cts, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-		g::OutputType::pushPull,
-		g::PullUpDown::none,
-		g::Speed::fast,
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+		gpio::OutputType::pushPull,
+		gpio::PullUpDown::none,
+		gpio::Speed::fast,
 		value);
 }
 
@@ -189,15 +188,14 @@ template<UARTDeviceID deviceId_>
 template <typename pin_>
 void UARTDeviceX<deviceId_>::initPinRTS() {
 
-	namespace g = htl::gpio;
 	namespace i = internal;
 
 	auto value = i::PinTraits<deviceId_, i::PinFunction::rts, pin_::portID, pin_::pinID>::value;
 
-	g::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
-		g::OutputType::pushPull,
-		g::PullUpDown::none,
-		g::Speed::fast,
+	gpio::GPIOPin<pin_::portID, pin_::pinID>::initAlternate(
+		gpio::OutputType::pushPull,
+		gpio::PullUpDown::none,
+		gpio::Speed::fast,
 	    value);
 }
 

@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Controllers.Pin.GPIO;
@@ -10,15 +9,17 @@ export module Eos.Controllers.Pin.GPIO;
 
 export import Eos.Controllers.Pin;
 
+import Eos.Hardware.GPIO;
+
 
 export namespace eos {
 
 	class PinDriver_GPIO final: public PinDriver {
         private:
-            htl::gpio::PinDevice * const _pin;
+            eos::hardware::gpio::PinDevice * const _pin;
 
         public:
-            PinDriver_GPIO(htl::gpio::PinDevice *pin);
+            PinDriver_GPIO(eos::hardware::gpio::PinDevice *pin);
 
             void set() override;
             void clear() override;
@@ -55,12 +56,16 @@ export namespace eos {
 }
 
 
+using namespace eos;
+using namespace eos::hardware::gpio;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param    pin: El pin.
 ///
-eos::PinDriver_GPIO::PinDriver_GPIO(
-	htl::gpio::PinDevice *pin):
+PinDriver_GPIO::PinDriver_GPIO(
+	PinDevice *pin):
 
 	_pin {pin} {
 
@@ -70,7 +75,7 @@ eos::PinDriver_GPIO::PinDriver_GPIO(
 /// ----------------------------------------------------------------------
 /// \brief    Posa el pin a estat set.
 ///
-void eos::PinDriver_GPIO::set() {
+void PinDriver_GPIO::set() {
 
 	_pin->set();
 }
@@ -79,7 +84,7 @@ void eos::PinDriver_GPIO::set() {
 /// ----------------------------------------------------------------------
 /// \brief    Posa el pin a estat clear
 ///
-void eos::PinDriver_GPIO::clear() {
+void PinDriver_GPIO::clear() {
 
 	_pin->clear();
 }
@@ -88,7 +93,7 @@ void eos::PinDriver_GPIO::clear() {
 /// ----------------------------------------------------------------------
 /// \brief    Inverteix l'estat del pin
 ///
-void eos::PinDriver_GPIO::toggle() {
+void PinDriver_GPIO::toggle() {
 
 	_pin->toggle();
 }
@@ -97,7 +102,7 @@ void eos::PinDriver_GPIO::toggle() {
 /// ----------------------------------------------------------------------
 /// \brief    Escriu l'estat del pin.
 /// \param    state: L'estat///
-void eos::PinDriver_GPIO::write(
+void PinDriver_GPIO::write(
 	bool pinState) {
 
 	_pin->write(pinState);
@@ -108,7 +113,7 @@ void eos::PinDriver_GPIO::write(
 /// \brief    Llegeix l'eatat del pin.
 /// \return   L'estat
 ///
-bool eos::PinDriver_GPIO::read() {
+bool PinDriver_GPIO::read() {
 
 	return _pin->read();
 }

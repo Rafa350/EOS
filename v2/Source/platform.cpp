@@ -59,10 +59,6 @@ namespace eos {
         template <>
         struct PlatformTraits<PlatformID::STM32_G071_RB> {
             static constexpr PlatformID id                 = PlatformID::STM32_G071_RB;
-            static constexpr bool is_STM32                 = true;
-            static constexpr bool is_STM32_G0              = true;
-            static constexpr bool is_STM32_G071            = true;
-            static constexpr bool is_STM32_G071_RB         = true;
             static constexpr const char *deviceName        = "STM32G071RN";
             static constexpr const char *manufacturerName  = "ST-Microelectronics";
             static constexpr UInt32 ramSize                = 32;
@@ -72,10 +68,6 @@ namespace eos {
         template <>
         struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
             static constexpr PlatformID id                 = PlatformID::STM32_G0B1_RE;
-            static constexpr bool is_STM32                 = true;
-            static constexpr bool is_STM32_G0              = true;
-            static constexpr bool is_STM32_G0B1            = true;
-            static constexpr bool is_STM32_G0B1_RE         = true;
             static constexpr const char *deviceName        = "STM32G0B1RE";
             static constexpr const char *manufacturerName  = "ST-Microelectronics";
             static constexpr UInt32 ramSize                = 128;
@@ -84,4 +76,19 @@ namespace eos {
     }
 
     export using Platform = internal::PlatformTraits<currentPlatformId>;
+
+
+    export consteval bool platformCheck(
+        const char *s) {
+
+        const char *p = Platform::deviceName;
+        while (*p) {
+            if ((*s != 'x') && (*p != *s))
+                return false;
+            p++;
+            s++;
+        }
+
+        return true;
+    }
 }

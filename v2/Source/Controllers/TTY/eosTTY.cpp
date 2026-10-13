@@ -7,6 +7,7 @@ module;
 export module Eos.Controllers.TTY;
 
 
+import Eos.Types;
 import Eos.System.IO.Streams;
 import Eos.System.IO.Formatters.Text;
 
@@ -80,13 +81,16 @@ export namespace eos {
 }
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
 /// \param    stream: El stream.
 /// \param    numRows: Nombre de fileres.
 /// \para     numColumns: Nombre de columnes.
 ///
-eos::TTY::TTY(
+TTY::TTY(
 	Stream *stream,
 	uint8_t numRows,
 	uint8_t numColumns) :
@@ -104,7 +108,7 @@ eos::TTY::TTY(
 /// \brief    Escriu una cadena de text.
 /// \param    s: El text.
 ///
-void eos::TTY::writeText(
+void TTY::writeText(
 	const char *s) {
 
 	_writer.writeString(s);
@@ -115,7 +119,7 @@ void eos::TTY::writeText(
 /// \brief    Escriu una cadena de text formatejat
 /// \param    fmt: La cadena de format.
 ///
-void eos::TTY::writeFormatedText(
+void TTY::writeFormatedText(
 	const char *fmt,
 	...) {
 
@@ -125,7 +129,7 @@ void eos::TTY::writeFormatedText(
 /// ----------------------------------------------------------------------
 /// \brief    Escriu un salt de linia.
 ///
-void eos::TTY::writeNewLine() {
+void TTY::writeNewLine() {
 
 	_writer.writeString("\r\n");
 
@@ -138,7 +142,7 @@ void eos::TTY::writeNewLine() {
 /// \brief    Escriu una caracter
 /// \param    c: El caracter
 ///
-void eos::TTY::writeChar(
+void TTY::writeChar(
 	char c) {
 
 	_writer.writeChar(c);
@@ -150,7 +154,7 @@ void eos::TTY::writeChar(
 /// \param    c: El caracter.
 /// \param    count: El nombre de repeticions.
 ///
-void eos::TTY::writeChar(
+void TTY::writeChar(
 	char c,
 	uint32_t count) {
 
@@ -163,7 +167,7 @@ void eos::TTY::writeChar(
 /// \brief    Escriu un valor numeric de 16 bits en hexadecimal.
 /// \param    value: El valor.
 ///
-void eos::TTY::writeU16Hex(
+void TTY::writeU16Hex(
 	uint16_t value) {
 
 	_writer.writeU16Hex(value);
@@ -174,7 +178,7 @@ void eos::TTY::writeU16Hex(
 /// \brief    Escriu un valor numeric de 32 bits en hexadevimal.
 /// \param    value: El valor.
 ///
-void eos::TTY::writeU32Hex(
+void TTY::writeU32Hex(
 	uint32_t value) {
 
 	_writer.writeU32Hex(value);
@@ -185,17 +189,18 @@ void eos::TTY::writeU32Hex(
 /// \brief    Escriu un valor numeric de 8 bits.
 /// \param    value: El valor.
 ///
-void eos::TTY::writeU8(
+void TTY::writeU8(
 	uint8_t value) {
 
 	_writer.writeU8(value);
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief    Escriu un valor numeric de 18 bits.
 /// \param    value: El valor.
 ///
-void eos::TTY::writeU16(
+void TTY::writeU16(
 	uint16_t value) {
 
 	_writer.writeU16(value);
@@ -206,7 +211,7 @@ void eos::TTY::writeU16(
 /// \brief    Escriu un valor numeric de 32 bits.
 /// \param    value: El valor.
 ///
-void eos::TTY::writeU32(
+void TTY::writeU32(
 	uint32_t value) {
 
 	_writer.writeU32(value);
@@ -223,9 +228,9 @@ uint32_t eos::TTY::read(
 	char *buffer,
 	uint32_t bufferSize) {
 
-	auto readResult = _stream->read((uint8_t *)buffer, bufferSize);
-	if (readResult.isSuccess())
-		return readResult.value();
+	auto readResult = _stream->read((UInt8 *)buffer, bufferSize);
+	if (readResult.isOk())
+		return readResult.getValue();
 	else
 		return 0;
 }
@@ -234,7 +239,7 @@ uint32_t eos::TTY::read(
 /// ----------------------------------------------------------------------
 /// \brief    Mostra el cursor.
 ///
-void eos::TTY::cursorShow() {
+void TTY::cursorShow() {
 
 	_writer.writeString("\x1B[?25h");
 }
@@ -243,7 +248,7 @@ void eos::TTY::cursorShow() {
 /// ----------------------------------------------------------------------
 /// \brief    Oculta el cursor.
 ///
-void eos::TTY::cursorHide() {
+void TTY::cursorHide() {
 
 	_writer.writeString("\x1B[?25l");
 }
@@ -252,7 +257,7 @@ void eos::TTY::cursorHide() {
 /// ----------------------------------------------------------------------
 /// \brief    Avança el cursor a la seguent posicio.
 ///
-void eos::TTY::cursorAdvance() {
+void TTY::cursorAdvance() {
 
 	_column += 1;
 	if (_column == _numColumns) {
@@ -265,7 +270,7 @@ void eos::TTY::cursorAdvance() {
 /// ----------------------------------------------------------------------
 /// \brief    Mou el cursor al origen.
 ///
-void eos::TTY::cursorHome() {
+void TTY::cursorHome() {
 
 	_column = 0;
 	_row = 0;
@@ -279,7 +284,7 @@ void eos::TTY::cursorHome() {
 /// \param    row: La fila.
 /// \param    column: La columna.
 ///
-void eos::TTY::cursorTo(
+void TTY::cursorTo(
 	uint8_t row,
 	uint8_t column) {
 
@@ -302,7 +307,7 @@ void eos::TTY::cursorTo(
 /// \param     columns: El nombre de columnes a moure.
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
-void eos::TTY::cursorLeft(
+void TTY::cursorLeft(
 	uint8_t columns) {
 
 	if ((columns > 0) && (columns < _column)) {
@@ -321,7 +326,7 @@ void eos::TTY::cursorLeft(
 /// \brief     columns: El nombre de columnes a moure.
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
-void eos::TTY::cursorRight(
+void TTY::cursorRight(
 	uint8_t columns) {
 
 	if ((columns > 0) && ((columns + _column) < _numColumns)) {
@@ -340,7 +345,7 @@ void eos::TTY::cursorRight(
 /// \brief     rows: El nombre de fileres
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
-void eos::TTY::cursorUp(
+void TTY::cursorUp(
 	uint8_t rows) {
 
 	if ((rows > 0) && (rows < _row)) {
@@ -359,7 +364,7 @@ void eos::TTY::cursorUp(
 /// \brief     rows: El nombre de fileres
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
-void eos::TTY::cursorDown(
+void TTY::cursorDown(
 	uint8_t rows) {
 
 	if ((rows > 0) && ((rows + _row) < _numRows)) {
@@ -376,7 +381,7 @@ void eos::TTY::cursorDown(
 /// ----------------------------------------------------------------------
 /// \brief    Borra la pantalla complerta.
 ///
-void eos::TTY::clear() {
+void TTY::clear() {
 
 	_column = 0;
 	_row = 0;
@@ -394,7 +399,7 @@ void eos::TTY::clear() {
 /// ----------------------------------------------------------------------
 /// \brief    Borra desde la posicio del cursor fins al final de la linia.
 ///
-void eos::TTY::clearRowEnd() {
+void TTY::clearRowEnd() {
 
 	_writer.writeString("\x1B[K");
 }
@@ -403,7 +408,7 @@ void eos::TTY::clearRowEnd() {
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona els color per defecte
 ///
-void eos::TTY::setDefaultColor() {
+void TTY::setDefaultColor() {
 
 	_writer.writeString("\x1B[0m");
 }
@@ -414,7 +419,7 @@ void eos::TTY::setDefaultColor() {
 /// \param    color: El color.
 /// \param    hi: Indica color d'alta intensitat
 ///
-void eos::TTY::setTextColor(
+void TTY::setTextColor(
 	Color color,
 	bool hi) {
 
@@ -431,7 +436,7 @@ void eos::TTY::setTextColor(
 /// \param    color: El color.
 /// \param    hi: Indica color d'alta intensitat
 ///
-void eos::TTY::setBackgroundColor(
+void TTY::setBackgroundColor(
 	Color color,
 	bool hi) {
 
@@ -446,7 +451,7 @@ void eos::TTY::setBackgroundColor(
 /// ----------------------------------------------------------------------
 /// \brief    Refresca els canvis en el terminal.
 ///
-void eos::TTY::refresh() {
+void TTY::refresh() {
 
 	cursorHide();
 

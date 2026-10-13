@@ -10,6 +10,7 @@ module Eos.Hardware.FDCAN;
 
 import Eos.Bits;
 import Eos.Hardware.FDCAN.__INTERNAL;
+import Eos.Result;
 import Eos.Types;
 
 
@@ -46,7 +47,7 @@ void CANDevice::clearFilters() {
 /// @param    index: Index del filtre.
 /// \return   El resultat de l'operacio.
 ///
-CANDevice::Result CANDevice::setFilter(
+StdResult CANDevice::setFilter(
 	Filter *filter,
 	UInt32 index) {
 
@@ -58,7 +59,7 @@ CANDevice::Result CANDevice::setFilter(
 
 	    	UInt8 maxIndex = (_can->RXGFC & FDCAN_RXGFC_LSS_Msk) >> FDCAN_RXGFC_LSS_Pos;
 	    	if (index >= maxIndex)
-	    		return ErrorCode::error;
+	    		return StdErrorCode::error;
 
 	    	UInt32 SF = 0;
 	    	Bits::set(SF, ((UInt32)filter->type << SF::SFT_Pos) & SF::SFT_Msk);
@@ -76,7 +77,7 @@ CANDevice::Result CANDevice::setFilter(
 
 	    	UInt8 maxIndex = (_can->RXGFC & FDCAN_RXGFC_LSE_Msk) >> FDCAN_RXGFC_LSE_Pos;
 	    	if (index >= maxIndex)
-	    		return ErrorCode::error;
+	    		return StdErrorCode::error;
 
 	    	UInt32 EF0 = 0;
 	    	Bits::set(EF0, ((UInt32) filter->config << EF0::EFEC_Pos) & EF0::EFEC_Msk);
@@ -91,11 +92,11 @@ CANDevice::Result CANDevice::setFilter(
 	    	pFilter->EF1 = EF1;
 	    }
 
-	    return ErrorCode::ok;
+	    return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -107,7 +108,7 @@ CANDevice::Result CANDevice::setFilter(
 /// @param    rejectRemoteExt:
 /// \return   El resultat de l'operacio.
 ///
-CANDevice::Result CANDevice::setGlobalFilter(
+StdResult CANDevice::setGlobalFilter(
 	NonMatchingFrames nonMatchingStd,
 	NonMatchingFrames nonMatchingExt,
 	RejectRemoteFrames rejectRemoteStd,
@@ -124,11 +125,11 @@ CANDevice::Result CANDevice::setGlobalFilter(
 		Bits::set(RXGFC, ((UInt32)rejectRemoteExt << FDCAN_RXGFC_RRFE_Pos) & FDCAN_RXGFC_RRFE_Msk);
 		_can->RXGFC = RXGFC;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 

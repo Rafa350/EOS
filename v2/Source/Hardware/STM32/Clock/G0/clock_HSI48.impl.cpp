@@ -11,7 +11,7 @@ using namespace eos;
 using namespace eos::hardware::clock::internal;
 
 
-static_assert(Platform::is_STM32_G0B1);
+//static_assert(Platform::is_STM32_G0B1);
 
 
 /// ---------------------------------------------------------------------------

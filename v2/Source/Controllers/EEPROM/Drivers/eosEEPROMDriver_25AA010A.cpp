@@ -1,7 +1,6 @@
 module;
 
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Controllers.EEPROM_25AA010A;
@@ -11,6 +10,7 @@ export import Eos.Controllers.EEPROM;
 
 
 import Eos.Types;
+import Eos.Hardware.GPIO;
 import Eos.Hardware.SPI;
 import Eos.System.Core.Ticks;
 
@@ -19,7 +19,7 @@ export namespace eos {
 
 	class EEPROMDriver_25AA010A final: public EEPROMDriver {
 		public:
-			using PinDevice = htl::gpio::PinDevice;
+			using PinDevice = eos::hardware::gpio::PinDevice;
 			using SPIDevice = eos::hardware::spi::SPIDevice;
 
 		private:

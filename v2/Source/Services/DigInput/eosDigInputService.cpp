@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosEvents.h"
 
 
 export module Eos.Services.DigInput;
@@ -11,6 +10,7 @@ export module Eos.Services.DigInput;
 export import Eos.Services.Service;
 
 
+import Eos.Events;
 import Eos.Math;
 import Eos.Controllers.Pin;
 import Eos.System.Core.Queue;

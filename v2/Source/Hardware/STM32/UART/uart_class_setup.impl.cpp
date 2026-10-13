@@ -8,6 +8,7 @@ module Eos.Hardware.UART.__CLASSES;
 
 
 import Eos.Bits;
+import Eos.Result;
 import Eos.Types;
 import Eos.Hardware.Atomic;
 
@@ -20,7 +21,7 @@ using namespace eos::hardware::uart;
 /// @brief    Inicialitza el modul UART.
 /// \return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::initialize() {
+StdResult UARTDevice::initialize() {
 
 	if (_state == State::reset) {
 
@@ -57,11 +58,11 @@ UARTDevice::Result UARTDevice::initialize() {
 
 		_state = State::ready;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -70,7 +71,7 @@ UARTDevice::Result UARTDevice::initialize() {
 /// \return   El resultat de l'operacio.
 ///
 #if HTL_UART_OPTION_DEACTIVATE == 1
-eos::Result htl::uart::UARTDevice::deinitialize() {
+StdResult UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -116,7 +117,7 @@ void  u::UARTDevice::deactivate() const {
 /// @param    handsake: Protocol.
 /// @return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::setProtocol(
+StdResult UARTDevice::setProtocol(
 	WordBits wordBits,
 	Parity parity,
 	StopBits stopBits,
@@ -127,10 +128,10 @@ UARTDevice::Result UARTDevice::setProtocol(
 		setWordBits(wordBits, parity != Parity::none);
 		setStopBits(stopBits);
 		setHandsake(handsake);
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -301,7 +302,7 @@ void UARTDevice::setHandsake(
 /// @param    timeout: El temps.
 /// @param    El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::setRxTimeout(
+StdResult UARTDevice::setRxTimeout(
     unsigned timeout) const {
 
 	if (_state == State::ready) {
@@ -315,10 +316,10 @@ UARTDevice::Result UARTDevice::setRxTimeout(
 			}
 		}
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 #endif // defined(EOS_PLATFORM_XXX)
 
@@ -330,7 +331,7 @@ UARTDevice::Result UARTDevice::setRxTimeout(
 /// @param    overSampling: Tipus de mostreig
 /// @return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::setTimming(
+StdResult UARTDevice::setTimming(
 	BaudMode baudMode,
 	UInt32 rate,
 	OverSampling overSampling) const {
@@ -394,10 +395,10 @@ UARTDevice::Result UARTDevice::setTimming(
 		else
 			_usart->BRR = div;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -408,15 +409,15 @@ UARTDevice::Result UARTDevice::setTimming(
 /// @param    clockSource: La font.
 /// @return   El resultat de l'operacio.
 ///
-UARTDevice::Result UARTDevice::setClockSource(
+StdResult UARTDevice::setClockSource(
 	ClockSource source) const {
 
 	if(_state == State::ready){
 
 		setClockSourceImpl(source);
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 #endif // defined(EOS_PLATFORM_XXX)

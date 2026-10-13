@@ -8,42 +8,44 @@ module Eos.Hardware.UART.__CLASSES;
 
 
 import Eos.Bits;
-import Eos.Hardware.Atomic;
+import Eos.Hardware.Interrupts;
+import Eos.Result;
 
 
 using namespace eos;
+using namespace eos::hardware::interrupts;
 using namespace eos::hardware::uart;
 
 
 /// ----------------------------------------------------------------------
 /// @brief    Aborta la transmissio.
 ///
-UARTDevice::Result UARTDevice::abortTransmission() {
+StdResult UARTDevice::abortTransmission() {
 
 	if (_state == State::transmiting) {
 		disableTransmission();
 		disable();
 		_state = State::ready;
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// @brief    Aborta la recepcio.
 ///
-UARTDevice::Result UARTDevice::abortReception() {
+StdResult UARTDevice::abortReception() {
 
 	if (_state == State::receiving) {
 		disableReception();
 		disable();
 		_state = State::ready;
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 /// ----------------------------------------------------------------------
@@ -51,7 +53,8 @@ UARTDevice::Result UARTDevice::abortReception() {
 ///
 void UARTDevice::disableTransmission() const {
 
-	auto a = Atomic::start();
+	auto i = Irq::getInterruptState();
+	Irq::disableInterrupts();
 
 	Bits::clear(_usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
@@ -70,7 +73,7 @@ void UARTDevice::disableTransmission() const {
 	Bits::clear(_usart->CR1,
 		USART_CR1_TE);            // Desabilita transmissio
 
-	Atomic::end(a);
+	Irq::restoreInterrupts(i);
 }
 
 
@@ -79,7 +82,8 @@ void UARTDevice::disableTransmission() const {
 ///
 void UARTDevice::disableReception() const {
 
-	auto a = Atomic::start();
+	auto i = Irq::getInterruptState();
+	Irq::disableInterrupts();
 
 	Bits::clear(_usart->CR1,
 #if defined(EOS_PLATFORM_STM32G0)
@@ -99,7 +103,7 @@ void UARTDevice::disableReception() const {
 	Bits::clear(_usart->CR1,
 		USART_CR1_RE);             // Deshabilita recepcio
 
-	Atomic::end(a);
+	Irq::restoreInterrupts(i);
 }
 
 

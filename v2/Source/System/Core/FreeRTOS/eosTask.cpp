@@ -1,8 +1,6 @@
 module;
 
 
-#include "eosCallbacks.h"
-
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -10,6 +8,7 @@ module;
 export module Eos.System.Core.Task;
 
 
+import Eos.Callbacks;
 import Eos.Types;
 import Eos.System.Core.CriticalSection;
 import Eos.System.Core.Ticks;

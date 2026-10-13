@@ -2,12 +2,12 @@ module;
 
 
 #include "eos.h"
-#include "eosEvents.h"
 
 
 export module Eos.Controllers.CLI;
 
 
+import Eos.Callbacks;
 import Eos.System.Collections.IntrusiveForwardList;
 
 

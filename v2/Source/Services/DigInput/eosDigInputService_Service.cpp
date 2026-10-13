@@ -2,12 +2,12 @@ module;
 
 
 #include "eos.h"
-#include "eosEvents.h"
 
 
 module Eos.Services.DigInput;
 
 
+import Eos.Events;
 import Eos.System.Core.CriticalSection;
 import Eos.System.Core.Ticks;
 

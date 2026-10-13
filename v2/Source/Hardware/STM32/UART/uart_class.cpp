@@ -2,17 +2,16 @@ module;
 
 
 #include "hardware.h"
-#include "eosBits.h"
-#include "HTL/htlGPIO.h"
-#include "eosEvents.h"
 
 
 export module Eos.Hardware.UART.__CLASSES;
 
 
 import Eos.Configuration;
+import Eos.Events;
 import Eos.Hardware.Clock;
 import Eos.Hardware.DMA;
+import Eos.Hardware.GPIO;
 import Eos.Hardware.UART.__PLATFORM_TRAITS;
 import Eos.System.Core.Ticks;
 import Eos.Result;
@@ -114,7 +113,7 @@ export namespace eos::hardware::uart {
 
 			// Event de notificacio
 			//
-			using NotificationEventRaiser = eos::EventRaiser<UARTDevice, NotificationEventArgs>;
+			using NotificationEventRaiser = EventRaiser<UARTDevice, NotificationEventArgs>;
 			using INotificationEvent = NotificationEventRaiser::IEvent;
 			template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
@@ -127,16 +126,6 @@ export namespace eos::hardware::uart {
 				transmiting, ///< Transmeten dades.
 				receiving    ///< Rebent dades.
 			};
-
-			enum class ErrorCode {
-				ok,
-				busy,
-				timeout,
-				error,
-				errorParam,
-				errorState,
-			};
-			using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
 
 		private:
 			using DMANotificationEvent = dma::DMADevice::NotificationEvent<UARTDevice>;
@@ -212,18 +201,18 @@ export namespace eos::hardware::uart {
 			void rxInterruptService();
 
 		public:
-			Result initialize();
+			StdResult initialize();
 #if HTL_UART_OPTION_DEACTIVATE == 1
 			Result deinitialize();
 #endif
-			Result setProtocol(WordBits wordBits, Parity parity,
+			StdResult setProtocol(WordBits wordBits, Parity parity,
 					StopBits stopBits, Handsake handlsake) const;
-			Result setTimming(BaudMode baudMode, UInt32 rate, OverSampling oversampling) const;
+			StdResult setTimming(BaudMode baudMode, UInt32 rate, OverSampling oversampling) const;
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-			Result setClockSource(ClockSource clockSource) const;
+			StdResult setClockSource(ClockSource clockSource) const;
 #endif
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
-			Result setRxTimeout(unsigned timeout) const;
+			StdResult setRxTimeout(unsigned timeout) const;
 #endif
 
 			void enableNotificationEvent(INotificationEvent &event) {
@@ -233,21 +222,21 @@ export namespace eos::hardware::uart {
 				_notificationEventRaiser.disable();
 			}
 
-			Result transmit(const UInt8 *buffer, UInt32 length, eos::Ticks blockTime);
-			Result receive(UInt8 *buffer, UInt32 bufferSize, eos::Ticks blockTime);
+			StdResult transmit(const UInt8 *buffer, UInt32 length, eos::Ticks blockTime);
+			StdResult receive(UInt8 *buffer, UInt32 bufferSize, eos::Ticks blockTime);
 
-			Result transmit_IRQ(const UInt8 *buffer, UInt32 length);
-			Result receive_IRQ(UInt8 *buffer, UInt32 bufferSize);
+			StdResult transmit_IRQ(const UInt8 *buffer, UInt32 length);
+			StdResult receive_IRQ(UInt8 *buffer, UInt32 bufferSize);
 
-			Result transmit_DMA(dma::DMADevice *devDMA, const UInt8 *buffer, UInt32 length);
-			Result receive_DMA(dma::DMADevice *devDMA, UInt8 *buffer, UInt32 bufferSize);
+			StdResult transmit_DMA(dma::DMADevice *devDMA, const UInt8 *buffer, UInt32 length);
+			StdResult receive_DMA(dma::DMADevice *devDMA, UInt8 *buffer, UInt32 bufferSize);
 
-			Result abortTransmission();
-			Result abortReception();
+			StdResult abortTransmission();
+			StdResult abortReception();
 
-			State getState() const { return _state; }
-			bool isReady() const { return _state == State::ready; }
-			bool isBusy() const { return _state != State::ready; }
+			[[nodiscard]] State getState() const { return _state; }
+			[[nodiscard]] bool isReady() const { return _state == State::ready; }
+			[[nodiscard]] bool isBusy() const { return _state != State::ready; }
 	};
 }
 

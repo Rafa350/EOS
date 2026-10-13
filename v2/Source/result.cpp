@@ -2,9 +2,10 @@ export module Eos.Result;
 
 
 import Eos.Concepts;
+import Eos.Types;
 
 
-namespace eos {
+export namespace eos {
 
     template <IsEnum ErrorType_, ErrorType_ okValue_>
     class Result {
@@ -59,11 +60,11 @@ namespace eos {
             operator ErrorType_ () const { return _error; }
     };
 
-    export template <IsEnum ErrorType_, ErrorType_ okValue_>
-    using SimpleResultX = Result<ErrorType_, okValue_>;
+    template <IsEnum ErrorType_, ErrorType_ okValue_>
+    using SimpleResult = Result<ErrorType_, okValue_>;
 
-    export template <typename ValueType_, IsEnum ErrorType_, ErrorType_ okValue_>
-    class ComplexResultX final: public Result<ErrorType_, okValue_> {
+    template <typename ValueType_, IsEnum ErrorType_, ErrorType_ okValue_>
+    class ComplexResult final: public Result<ErrorType_, okValue_> {
         private:
             ValueType_ const _value;
 
@@ -71,7 +72,7 @@ namespace eos {
             /// @brief Constructor
             /// @param value : El valor del resultat.
             ///
-            ComplexResultX(ValueType_ value):
+            ComplexResult(ValueType_ value):
                 Result<ErrorType_, okValue_> {okValue_},
                 _value {value} {
             }
@@ -79,7 +80,7 @@ namespace eos {
             /// @brief Constructor.
             /// @param error: El codi d'error.
             ///
-            ComplexResultX(ErrorType_ error):
+            ComplexResult(ErrorType_ error):
                 Result<ErrorType_, okValue_> {error},
                 _value {ValueType_{}} {
             }
@@ -87,7 +88,7 @@ namespace eos {
             /// @brief Constructor de copia.
             /// @param other: L'altre objecte.
             ///
-            ComplexResultX(const ComplexResultX &other):
+            ComplexResult(const ComplexResult &other):
                 Result<ErrorType_, okValue_> {other},
                 _value {other._value} {
             }
@@ -107,4 +108,20 @@ namespace eos {
             ///
             operator ValueType_ () const { return _value; }
     };
+
+    enum class StdErrorCode {
+        ok,
+        busy,
+        timeout,
+        error,
+        errorMemory,
+        errorParameter,
+        errorState,
+        errorUnsupported
+    };
+
+    using StdResult = SimpleResult<StdErrorCode, StdErrorCode::ok>;
+    using StdResultU8 = ComplexResult<UInt8, StdErrorCode, StdErrorCode::ok>;
+    using StdResultU16 = ComplexResult<UInt16, StdErrorCode, StdErrorCode::ok>;
+    using StdResultU32 = ComplexResult<UInt32, StdErrorCode, StdErrorCode::ok>;
 }

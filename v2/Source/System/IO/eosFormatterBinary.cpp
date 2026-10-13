@@ -2,7 +2,6 @@ module;
 
 
 #include "eos.h"
-#include "eosResults.h"
 
 
 export module Eos.System.IO.Formatters.Binary;

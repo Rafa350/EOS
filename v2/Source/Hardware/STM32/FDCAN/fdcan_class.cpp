@@ -3,13 +3,13 @@ module;
 
 #include "hardware.h"
 #include <cstddef>
-#include "eosEvents.h"
 
 
 export module Eos.Hardware.FDCAN.__CLASSES;
 
 
 import Eos.Bits;
+import Eos.Events;
 import Eos.Hardware.FDCAN.__INTERNAL;
 import Eos.Math;
 import Eos.Result;
@@ -216,16 +216,6 @@ export namespace eos::hardware::fdcan {
             template <typename Instance_> using NotificationEvent = NotificationEventRaiser::Event<Instance_>;
 
         public:
-            enum class ErrorCode {
-                ok,
-                busy,
-                timeout,
-                error,
-                errorParam,
-                errorState
-            };
-            using Result = SimpleResultX<ErrorCode, ErrorCode::ok>;
-
             enum class State {
                 reset,
                 ready,
@@ -307,25 +297,25 @@ export namespace eos::hardware::fdcan {
         public:
             virtual ~CANDevice() = default;
 
-            Result initialize(InitParams const * const params);
-            Result deinitialize();
+            StdResult initialize(InitParams const * const params);
+            StdResult deinitialize();
 
-            Result start();
-            Result start_IRQ();
-            Result stop();
+            StdResult start();
+            StdResult start_IRQ();
+            StdResult stop();
 
             void clearFilters();
             void setMaxFilters(UInt32 maxStdFilters, UInt32 maxExtFilters);
-            Result setFilter(Filter *filter, UInt32 index);
-            Result setGlobalFilter(NonMatchingFrames nonMatchingStd, NonMatchingFrames nonMatchingExt, RejectRemoteFrames rejectRemoteStd, RejectRemoteFrames rejectRemoteExt);
+            StdResult setFilter(Filter *filter, UInt32 index);
+            StdResult setGlobalFilter(NonMatchingFrames nonMatchingStd, NonMatchingFrames nonMatchingExt, RejectRemoteFrames rejectRemoteStd, RejectRemoteFrames rejectRemoteExt);
 
-            Result addTxMessage(const TxHeader *header, const UInt8 *data);
-            Result getRxMessage(RxFifoSelection fifo, RxHeader *header, UInt8 *data, UInt32 dataSize);
-            Result getTxEvent();
+            StdResult addTxMessage(const TxHeader *header, const UInt8 *data);
+            StdResult getRxMessage(RxFifoSelection fifo, RxHeader *header, UInt8 *data, UInt32 dataSize);
+            StdResult getTxEvent();
 
-            Result abortTxBufferTransmission();
-            Result waitTxBufferNotFull(Ticks timeout);
-            Result waitTxBufferEmpty(Ticks timeout);
+            StdResult abortTxBufferTransmission();
+            StdResult waitTxBufferNotFull(Ticks timeout);
+            StdResult waitTxBufferEmpty(Ticks timeout);
 
             inline bool isRxFifoEmpty(RxFifoSelection fifo) const {
                 return getRxFifoFillLevel(fifo) == 0;
@@ -382,7 +372,7 @@ CANDevice::CANDevice(
 /// @brief    Inicialitza el dispositiu.
 /// @param    params: Parametres d'inicialitzacio.
 ///
-CANDevice::Result CANDevice::initialize(
+StdResult CANDevice::initialize(
 	CANDevice::InitParams const * const params) {
 
 	if (_state == State::reset) {
@@ -514,18 +504,18 @@ CANDevice::Result CANDevice::initialize(
 
 		_state = State::ready;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// @brief    Desinicialitza el dispositiu.
 ///
-CANDevice::Result CANDevice::deinitialize() {
+StdResult CANDevice::deinitialize() {
 
 	if (_state == State::ready) {
 
@@ -534,11 +524,11 @@ CANDevice::Result CANDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -546,7 +536,7 @@ CANDevice::Result CANDevice::deinitialize() {
 /// @brief    Inicia la comunicacio.
 /// \return   El resultat de l'operacio.
 ///
-CANDevice::Result CANDevice::start() {
+StdResult CANDevice::start() {
 
 	if (_state == State::ready) {
 
@@ -558,11 +548,11 @@ CANDevice::Result CANDevice::start() {
 
 		_state = State::running;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -570,7 +560,7 @@ CANDevice::Result CANDevice::start() {
 /// @brief    Inicia la comunicacio per interrupcions.
 /// \return   El resultat de l'operacio.
 ///
-CANDevice::Result CANDevice::start_IRQ() {
+StdResult CANDevice::start_IRQ() {
 
 	if (start().isOk()) {
 
@@ -585,17 +575,17 @@ CANDevice::Result CANDevice::start_IRQ() {
 		Bits::set(_can->ILE,
 			FDCAN_ILE_EINT0);     // Linia INT0 habilitada
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
 /// ----------------------------------------------------------------------
 /// @brief    Finalitza la comunicacio.
 ///
-CANDevice::Result CANDevice::stop() {
+StdResult CANDevice::stop() {
 
 	if (_state == State::running) {
 
@@ -620,11 +610,11 @@ CANDevice::Result CANDevice::stop() {
 		//
 		Bits::set(_can->CCCR, FDCAN_CCCR_CCE);
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -634,7 +624,7 @@ CANDevice::Result CANDevice::stop() {
 /// @param    data: Bloc de dades del missatge.
 /// \\return  El resultat de l'operacio.
 ///
-CANDevice::Result CANDevice::addTxMessage(
+StdResult CANDevice::addTxMessage(
 	const TxHeader *header,
 	const UInt8 *data) {
 
@@ -643,7 +633,7 @@ CANDevice::Result CANDevice::addTxMessage(
 		// Comprova que el fifo no estigui ple
 		//
 		if (isTxBufferFull())
-			return ErrorCode::busy;
+			return StdErrorCode::busy;
 
 		// Obte el index d'insercio del FIFO
 		//
@@ -662,11 +652,11 @@ CANDevice::Result CANDevice::addTxMessage(
 		while (!Bits::isSet(_can->TXBRP, (UInt32)(1 << index)))
 			continue;
 
-		return ErrorCode::ok;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -678,7 +668,7 @@ CANDevice::Result CANDevice::addTxMessage(
 /// @param    dataSize: Tamany del buffer de dades.
 /// \return   El resultat de l'operacio.
 ///
-CANDevice::Result CANDevice::getRxMessage(
+StdResult CANDevice::getRxMessage(
 	RxFifoSelection fifo,
 	RxHeader *header,
 	UInt8 *data,
@@ -697,13 +687,13 @@ CANDevice::Result CANDevice::getRxMessage(
 			else
 				_can->RXF1A = index;
 
-			return ErrorCode::ok;
+			return StdErrorCode::ok;
 		}
 
-		return ErrorCode::error;
+		return StdErrorCode::error;
 	}
 	else
-		return ErrorCode::errorState;
+		return StdErrorCode::errorState;
 }
 
 
@@ -772,7 +762,7 @@ void CANDevice::raiseTxCancelledNotification(
 /// ----------------------------------------------------------------------
 /// @brief    Aborta el missatge que esta en proces de transmissio.
 ///
-CANDevice::Result CANDevice::abortTxBufferTransmission() {
+StdResult CANDevice::abortTxBufferTransmission() {
 
 	// Busca el buffer que esta transmetent
 	//
@@ -790,11 +780,11 @@ CANDevice::Result CANDevice::abortTxBufferTransmission() {
 			while (!eos::Bits::isSet(_can->TXBCF, msk))
 				continue;
 
-			return ErrorCode::ok;
+			return StdErrorCode::ok;
 		}
 	}
 
-	return ErrorCode::error;
+	return StdErrorCode::error;
 }
 
 
@@ -808,29 +798,29 @@ void CANDevice::interruptService() {
 
 		// Missatge rebut en RxFIFO0
 		//
-		if (eos::Bits::isSet(IR, FDCAN_IR_RF0N)) {
-			eos::Bits::set(_can->IR, FDCAN_IR_RF0N);
+		if (Bits::isSet(IR, FDCAN_IR_RF0N)) {
+			Bits::set(_can->IR, FDCAN_IR_RF0N);
 			raiseRxFifoNotEmptyNotification(RxFifoSelection::fifo0, true);
 		}
 
 		// Missatge rebut en RxFIFO1
 		//
-		if (eos::Bits::isSet(IR, FDCAN_IR_RF1N)) {
-			eos::Bits::set(_can->IR, FDCAN_IR_RF1N);
+		if (Bits::isSet(IR, FDCAN_IR_RF1N)) {
+			Bits::set(_can->IR, FDCAN_IR_RF1N);
 			raiseRxFifoNotEmptyNotification(RxFifoSelection::fifo1, true);
 		}
 
 		// Transmissio del missatge en TxBuffer completada
 		//
-		if (eos::Bits::isSet(IR, FDCAN_IR_TC)) {
-			eos::Bits::set(_can->IR, FDCAN_IR_TC);
+		if (Bits::isSet(IR, FDCAN_IR_TC)) {
+			Bits::set(_can->IR, FDCAN_IR_TC);
 			raiseTxCompletedNotification(true);
 		}
 
 		// Transmissio del missatge en TxBuffer cancelada
 		//
-		if (eos::Bits::isSet(IR, FDCAN_IR_TCF)) {
-			eos::Bits::set(_can->IR, FDCAN_IR_TCF);
+		if (Bits::isSet(IR, FDCAN_IR_TCF)) {
+			Bits::set(_can->IR, FDCAN_IR_TCF);
 			raiseTxCancelledNotification(true);
 		}
 	}
@@ -905,7 +895,7 @@ bool CANDevice::isTxBufferEmpty() const {
 /// @param    timeout: Tamps maxim d'espera.
 /// \return   True si es correcte, false en cas de timeout.
 ///
-CANDevice::Result CANDevice::waitTxBufferNotFull(
+StdResult CANDevice::waitTxBufferNotFull(
 	Ticks blockTime) {
 
 	if (blockTime.isInfinite()) {
@@ -916,10 +906,10 @@ CANDevice::Result CANDevice::waitTxBufferNotFull(
 		auto expirationTime = Ticks::now() + blockTime;
 		while (isTxBufferFull()) {
 			if (expirationTime.hasExpiredNow())
-				return ErrorCode::timeout;
+				return StdErrorCode::timeout;
 		}
 	}
-    return ErrorCode::ok;
+    return StdErrorCode::ok;
 }
 
 
@@ -928,7 +918,7 @@ CANDevice::Result CANDevice::waitTxBufferNotFull(
 /// @param    timeout: Tamps maxim d'espera.
 /// \return   True si es correcte, false en cas de timeout.
 ///
-CANDevice::Result CANDevice::waitTxBufferEmpty(
+StdResult CANDevice::waitTxBufferEmpty(
 	Ticks blockTime) {
 
 	if (blockTime.isInfinite()) {
@@ -939,11 +929,11 @@ CANDevice::Result CANDevice::waitTxBufferEmpty(
 		auto expirationTime = Ticks::now() + blockTime;
 		while (!isTxBufferEmpty()) {
 			if (expirationTime.hasExpiredNow())
-				return ErrorCode::timeout;
+				return StdErrorCode::timeout;
 		}
 	}
 
-    return ErrorCode::ok;
+    return StdErrorCode::ok;
 }
 
 

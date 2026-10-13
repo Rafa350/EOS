@@ -2,12 +2,12 @@ module;
 
 
 #include "eos.h"
-#include "eosEvents.h"
 
 
 export module Eos.Services.CanOpen.Dictionary;
 
 
+import Eos.Events;
 import Eos.System.Core.CriticalSection;
 
 
