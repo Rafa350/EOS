@@ -1,0 +1,37 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "baseWindows",
+            "hidden": true,
+            "toolchainFile": "$env{USERPROFILE}/Documents/CMake/Toolchains/gcc-arm-none-eabi.cmake",
+            "generator": "Ninja"
+        },
+        {
+            "name": "base",
+            "inherits":"baseWindows",
+            "hidden": true,
+            "cacheVariables": {
+                "EOS_RTOS_NAME": "FreeRTOS"
+            }
+        },
+        {
+            "name": "Release STM32F4",
+            "inherits": "base",
+            "binaryDir": "${sourceDir}/CMake/Artifacts/Release STM32F4",
+            "cacheVariables":{
+                "EOS_PLATFORM_NAME": "STM32F429ZI",
+                "CMAKE_BUILD_TYPE":"Release"
+            }
+        },
+        {
+            "name": "Debug STM32F4",
+            "inherits": "base",
+            "binaryDir": "${sourceDir}/CMake/Artifacts/Debug STM32F4",
+            "cacheVariables":{
+                "EOS_PLATFORM_NAME": "STM32F429ZI",
+                "CMAKE_BUILD_TYPE":"Debug"
+            }
+        }
+    ]
+}
