@@ -31,6 +31,7 @@
 #define configUSE_NEWLIB_REENTRANT              0
 #define configENABLE_BACKWARD_COMPATIBILITY     0
 #define configNUM_THREAD_LOCAL_STORAGE_POINTERS 1
+#define configAPPLICATION_ALLOCATED_HEAP        1
 
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK                     1
@@ -95,4 +96,3 @@ Only API functions that end in ...FromISR() can be used within interrupts. */
 
 
 #endif /* FREERTOS_CONFIG_H */
-

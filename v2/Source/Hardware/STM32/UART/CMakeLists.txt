@@ -1,14 +1,12 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
         uart.cpp
-        uart_class.cpp
         uart_template.cpp
         uart_device_traits.cpp
         uart_platform_traits.cpp
-)
-
-target_sources(${TARGET_NAME}
-    PUBLIC
+        uart_class.cpp
+        uart_types.cpp
+    PRIVATE
         uart_class.impl.cpp
         uart_class_setup.impl.cpp
         uart_class_io.impl.cpp
@@ -17,6 +15,8 @@ target_sources(${TARGET_NAME}
         uart_class_io_dma.impl.cpp
 )
 
-if(EOS_PLATFORM_NAME MATCHES "STM32G0")
-    add_subdirectory("G0B1")
+if(EOS_PLATFORM_NAME MATCHES "STM32F4")
+    add_subdirectory("F4")
+elseif(EOS_PLATFORM_NAME MATCHES "STM32G0")
+    add_subdirectory("G0")
 endif()

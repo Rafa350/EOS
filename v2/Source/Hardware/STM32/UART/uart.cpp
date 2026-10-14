@@ -7,14 +7,13 @@ module;
 export module Eos.Hardware.UART;
 
 
-export import Eos.Hardware.UART.__CLASSES;
-export import Eos.Hardware.UART.__TEMPLATES;
-export import Eos.Hardware.UART.__PLATFORM_TRAITS;
+export import Eos.Hardware.UART.Classes;
+export import Eos.Hardware.UART.PlatformTraits;
+export import Eos.Hardware.UART.Templates;
+export import Eos.Hardware.UART.Types;
 
 
 export namespace eos::hardware::uart {
-
-	using UARTDeviceID = PlatformTraits::DeviceID;
 
 #ifdef USART1_BASE
 	using UARTDevice1 = UARTDeviceX<UARTDeviceID::uart1>;
@@ -25,19 +24,19 @@ export namespace eos::hardware::uart {
 #ifdef USART3_BASE
 	using UARTDevice3 = UARTDeviceX<UARTDeviceID::uart3>;
 #endif
-#ifdef USART4_BASE
+#if defined(USART4_BASE) || defined(UART4_BASE)
 	using UARTDevice4 = UARTDeviceX<UARTDeviceID::uart4>;
 #endif
-#ifdef USART5_BASE
+#if defined(USART5_BASE) || defined(UART5_BASE)
 	using UARTDevice5 = UARTDeviceX<UARTDeviceID::uart5>;
 #endif
 #ifdef USART6_BASE
 	using UARTDevice6 = UARTDeviceX<UARTDeviceID::uart6>;
 #endif
-#ifdef USART7_BASE
+#if defined(USART7_BASE) || defined(UART8_BASE)
 	using UARTDevice7 = UARTDeviceX<UARTDeviceID::uart7>;
 #endif
-#ifdef USART8_BASE
+#if defined(USART8_BASE) || defined(UART8_BASE)
 	using UARTDevice8 = UARTDeviceX<UARTDeviceID::uart8>;
 #endif
 

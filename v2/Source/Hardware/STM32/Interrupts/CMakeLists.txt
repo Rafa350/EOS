@@ -3,6 +3,8 @@ target_sources(${TARGET_NAME}
         interrupts.cpp
 )
 
-if(EOS_PLATFORM_NAME MATCHES "STM32G0")
+if(EOS_PLATFORM_NAME MATCHES "STM32F4")
+    add_subdirectory("F4")
+elseif(EOS_PLATFORM_NAME MATCHES "STM32G0")
     add_subdirectory("G0")
 endif()

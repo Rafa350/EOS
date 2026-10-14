@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "STM32 Cortex Debug",
+            "type": "cortex-debug",
+            "request": "launch",
+
+            "servertype": "stlink",
+            "serialNumber": "",
+            "serverArgs": [
+            ],
+
+            "cwd": "${workspaceFolder}",
+            "executable": "${command:cmake.launchTargetPath}",
+
+            "device": "STM32F429",
+            "runToEntryPoint": "main",
+            "armToolchainPath": "C:/Program Files/Arm/GNU Toolchain mingw-w64-x86_64-arm-none-eabi/bin",
+            "showDevDebugOutput": "raw",
+            "svdFile": "C:/Program Files/STMicroelectronics/STM32Cube/STM32CubeProgrammer/SVD/STM32F429.svd"
+        }
+    ]
+}

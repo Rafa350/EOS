@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.Interrupts.__VECTORS;
+export module Eos.Hardware.Interrupts.Vectors;
 
 
 export namespace eos::hardware::interrupts::internal {

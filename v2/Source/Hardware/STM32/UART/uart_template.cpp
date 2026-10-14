@@ -4,22 +4,23 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.UART.__TEMPLATES;
+export module Eos.Hardware.UART.Templates;
 
+
+import Eos.Hardware.UART.Classes;
+import Eos.Hardware.UART.DeviceTraits;
+import Eos.Hardware.UART.PlatformTraits;
+import Eos.Hardware.UART.PinTraits;
 
 import Eos.Bits;
 import Eos.Hardware.Clock;
 import Eos.Hardware.GPIO;
 import Eos.Hardware.Regs;
-import Eos.Hardware.UART.__CLASSES;
-import Eos.Hardware.UART.__DEVICE_TRAITS;
-import Eos.Hardware.UART.__PLATFORM_TRAITS;
-import Eos.Hardware.UART.__PIN_TRAITS;
 
 
 namespace eos::hardware::uart {
 
-	using UARTDeviceID = PlatformTraits::DeviceID;
+	using UARTDeviceID = internal::PlatformTraits::DeviceID;
 
 	export template <UARTDeviceID deviceId_>
 	class UARTDeviceX final: public UARTDevice {
@@ -41,9 +42,7 @@ namespace eos::hardware::uart {
 
 		protected:
 			void activateImpl() const override;
-#if HTL_UART_OPTION_DEACTIVATE == 1
-			void deactivateImpl() const override:
-#endif
+			void deactivateImpl() const override;
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			void setClockSourceImpl(ClockSource source) const override;
 #endif
@@ -70,6 +69,7 @@ namespace eos::hardware::uart {
 
 
 using namespace eos;
+using namespace eos::hardware::clock;
 using namespace eos::hardware::gpio;
 using namespace eos::hardware::uart;
 
@@ -106,7 +106,6 @@ void UARTDeviceX<deviceId_>::activateImpl() const {
 }
 
 
-#if HTL_UART_OPTION_DEACTIVATE == 1
 /// ---------------------------------------------------------------------------
 /// @brief     Desctiva el dispositiu fisic.
 /// @tparam    deviceId_: Identificador del dispositiu.
@@ -117,7 +116,6 @@ void UARTDeviceX<deviceId_>::deactivateImpl() const {
 	ActivateFlag::clear();
 	DSB();
 }
-#endif
 
 
 /// --------------------------------------------------------------------------------
@@ -286,7 +284,7 @@ namespace htl::uart {
 #elif defined(EOS_PLATFORM_STM32G0)
 
 template<UARTDeviceID deviceId_>
-eos::hardware::clock::Clock::ClockID UARTDeviceX<deviceId_>::getUARTClock() const {
+Clock::ClockID UARTDeviceX<deviceId_>::getUARTClock() const {
 
 	auto addr = reinterpret_cast<uint32_t*>(UARTTraits::clockSourceAddr);
 	auto msk = UARTTraits::clockSourceMsk;
@@ -295,16 +293,16 @@ eos::hardware::clock::Clock::ClockID UARTDeviceX<deviceId_>::getUARTClock() cons
 	switch ((*addr & msk) >> pos) {
 		default:
 		case 0:
-			return eos::hardware::clock::Clock::ClockID::pclk;
+			return Clock::ClockID::pclk;
 
 		case 1:
-			return eos::hardware::clock::Clock::ClockID::sysclk;
+			return Clock::ClockID::sysclk;
 
 		case 2:
-			return eos::hardware::clock::Clock::ClockID::hsi16;
+			return Clock::ClockID::hsi16;
 
 		case 3:
-			return eos::hardware::clock::Clock::ClockID::lse;
+			return Clock::ClockID::lse;
 	}
 }
 #endif

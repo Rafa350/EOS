@@ -4,15 +4,16 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.UART.__CLASSES;
+export module Eos.Hardware.UART.Classes;
 
+
+import Eos.Hardware.UART.PlatformTraits;
 
 import Eos.Configuration;
 import Eos.Events;
 import Eos.Hardware.Clock;
 import Eos.Hardware.DMA;
 import Eos.Hardware.GPIO;
-import Eos.Hardware.UART.__PLATFORM_TRAITS;
 import Eos.System.Core.Ticks;
 import Eos.Result;
 import Eos.Types;
@@ -24,7 +25,7 @@ export namespace eos::hardware::uart {
 	///
 	class UARTDevice: private NonCopyableClass {
 		public:
-			using ClockSource = PlatformTraits::ClockSource;
+			using ClockSource = internal::PlatformTraits::ClockSource;
 
 			/// Primer bit a transmetre.
 			///
@@ -43,7 +44,7 @@ export namespace eos::hardware::uart {
 
 			/// Nombre de bits de paraula (No inclou el bit de paritat).
 			///
-			using WordBits = PlatformTraits::WordBits;
+			using WordBits = internal::PlatformTraits::WordBits;
 
 			/// Nombre de bits de parada.
 			///
@@ -150,9 +151,7 @@ export namespace eos::hardware::uart {
 			void setHandsake(Handsake handsake) const;
 
 			void activate() const;
-#if HTL_UART_OPTION_DEACTIVATE == 1
 			void deactivate() const;
-#endif
 
 			void enable() const;
 			void disable() const;
@@ -189,9 +188,7 @@ export namespace eos::hardware::uart {
 			UARTDevice(UInt32 usartAddr);
 
 			virtual void activateImpl() const = 0;
-#if HTL_UART_OPTION_DEACTIVATE == 1
 			virtual void deactivateImpl() const = 0;
-#endif
 #if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32G0)
 			virtual void setClockSourceImpl(ClockSource source) const = 0;
 #endif
@@ -202,9 +199,8 @@ export namespace eos::hardware::uart {
 
 		public:
 			StdResult initialize();
-#if HTL_UART_OPTION_DEACTIVATE == 1
-			Result deinitialize();
-#endif
+			StdResult deinitialize();
+
 			StdResult setProtocol(WordBits wordBits, Parity parity,
 					StopBits stopBits, Handsake handlsake) const;
 			StdResult setTimming(BaudMode baudMode, UInt32 rate, OverSampling oversampling) const;

@@ -28,6 +28,11 @@ namespace eos::hardware::flash {
         };
 
         template <>
+        struct PlatformTraits<PlatformID::STM32_F429_ZI> {
+    		using Latency = Latency_Type2;
+        };
+
+        template <>
         struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
     		using Latency = Latency_Type1;
         };

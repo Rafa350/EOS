@@ -7,7 +7,7 @@ module;
 export module Eos.Hardware.Interrupts;
 
 
-export import Eos.Hardware.Interrupts.__VECTORS;
+export import Eos.Hardware.Interrupts.Vectors;
 
 import Eos.Configuration.Platform;
 import Eos.Types;
@@ -25,6 +25,12 @@ namespace eos::hardware::interrupts {
 
         template <PlatformID platformId_>
         struct PlatformTraits {
+        };
+
+        template <>
+        struct PlatformTraits<PlatformID::STM32_F429_ZI> {
+    		using Priority = Priority_Type2;
+            using SubPriority = SubPriority_Type2;
         };
 
         template <>

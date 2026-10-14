@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/Application/Include/**",
+                "${workspaceFolder}/Libraries/EOS/Library/STM32F4/CMSIS_CORE/Include",
+                "${workspaceFolder}/Libraries/EOS/Library/STM32F4/CMSIS_DEVICE/Include",
+                "${workspaceFolder}/Libraries/EOS/Library/STM32F4/HAL/Inc",
+                "${workspaceFolder}/Libraries/EOS/Library/STM32F4/FreeRTOS/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++20",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}

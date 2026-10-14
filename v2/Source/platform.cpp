@@ -46,6 +46,8 @@ namespace eos {
     constexpr PlatformID currentPlatformId = PlatformID::STM32_G071_RB;
 #elif defined(EOS_PLATFORM_STM32G0B1RE)
     constexpr PlatformID currentPlatformId = PlatformID::STM32_G0B1_RE;
+#elif defined(EOS_PLATFORM_STM32F429ZI)
+    constexpr PlatformID currentPlatformId = PlatformID::STM32_F429_ZI;
 #else
     error "Unknown platformm"
 #endif
@@ -54,6 +56,15 @@ namespace eos {
 
         template <PlatformID id_>
         struct PlatformTraits {
+        };
+
+        template <>
+        struct PlatformTraits<PlatformID::STM32_F429_ZI> {
+            static constexpr PlatformID id                 = PlatformID::STM32_F429_ZI;
+            static constexpr const char *deviceName        = "STM32F429ZI";
+            static constexpr const char *manufacturerName  = "ST-Microelectronics";
+            static constexpr UInt32 ramSize                = 256;
+            static constexpr UInt32 flashSize              = 2048;
         };
 
         template <>

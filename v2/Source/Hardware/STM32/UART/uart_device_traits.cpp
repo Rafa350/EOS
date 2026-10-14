@@ -5,10 +5,11 @@ module;
 #include <cstddef>
 
 
-export module Eos.Hardware.UART.__DEVICE_TRAITS;
+export module Eos.Hardware.UART.DeviceTraits;
 
 
-import Eos.Hardware.UART.__PLATFORM_TRAITS;
+import Eos.Hardware.UART.PlatformTraits;
+
 import Eos.Hardware.Interrupts;
 import Eos.Types;
 

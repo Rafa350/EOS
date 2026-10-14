@@ -11,7 +11,13 @@ namespace eos::hardware::tmr {
         template<PlatformID platformID_>
         struct PlatformTraits;
 
-        // STM32G031_K8
+        // STM32F429ZI
+        template<>
+        struct PlatformTraits<PlatformID::STM32_F429_ZI> {
+            enum class DeviceID { tmr1, tmr2, tmr3, tmr4, tmr5, tmr9, tmr10, tmr11};
+        };
+
+        // STM32G031K8
         template<>
         struct PlatformTraits<PlatformID::STM32_G031_K8> {
             enum class DeviceID { };

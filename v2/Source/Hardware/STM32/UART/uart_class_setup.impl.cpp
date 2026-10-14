@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-module Eos.Hardware.UART.__CLASSES;
+module Eos.Hardware.UART.Classes;
 
 
 import Eos.Bits;
@@ -70,7 +70,6 @@ StdResult UARTDevice::initialize() {
 /// @brief    Desinicialitza el modul.
 /// \return   El resultat de l'operacio.
 ///
-#if HTL_UART_OPTION_DEACTIVATE == 1
 StdResult UARTDevice::deinitialize() {
 
 	if (_state == State::ready) {
@@ -80,13 +79,12 @@ StdResult UARTDevice::deinitialize() {
 
 		_state = State::reset;
 
-		return eos::Result::ErrorCodes::success;
+		return StdErrorCode::ok;
 	}
 
 	else
-		return eos::Result::ErrorCodes::errorState;
+		return StdErrorCode::errorState;
 }
-#endif
 
 
 /// ---------------------------------------------------------------------------
@@ -101,12 +99,10 @@ void UARTDevice::activate() const {
 /// ---------------------------------------------------------------------------
 /// @brief    Desactiva el dispositiu fisic.
 ///
-#if HTL_UART_OPTION_DEACTIVATE == 1
-void  u::UARTDevice::deactivate() const {
+void  UARTDevice::deactivate() const {
 
     deactivateImpl();
 }
-#endif
 
 
 /// ----------------------------------------------------------------------

@@ -16,9 +16,15 @@ namespace eos::hardware::gpio::internal {
 
         enum class PortID_Type1 {portA, portB, portC, portD, portF};
         enum class PortID_Type2 {portA, portB, portC, portD, portE, portF};
+        enum class PortID_Type3 {portA, portB, portC, portD, portE, portF, portG, portH, portI, portJ, portK};
 
         template <PlatformID platformId_>
         struct Traits {
+        };
+
+        template <>
+        struct Traits<PlatformID::STM32_F429_ZI> {
+            using PortID = PortID_Type3;
         };
 
         template <>

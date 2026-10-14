@@ -1,13 +1,31 @@
-#include "eos.h"
-#include "Services/eosLedService.h"
-#include "RTOS/rtosTask.h"
+module;
 
-#include "appApplication.h"
-#include "appDisplayService.h"
+
+export module App.Application;
+
+
+import Eos.System.Application.RTOS;
+import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
+
+
+namespace app {
+
+	class MyApplication: public eos::RTOSApplication {
+		protected:
+			void initializeLedService();
+			void initializeDisplayService();
+
+		public :
+			MyApplication();
+
+			void onExecute() override;
+	};
+
+}
 
 
 using namespace eos;
-using namespace htl;
 using namespace app;
 
 
@@ -38,7 +56,7 @@ void MyApplication::onExecute() {
     // Executa els serveis indefinidament
     //
     while (true)
-    	rtos::Task::delay(eos::Time::fromMiliseconds(1000));
+    	Task::delay(Ticks::fromMiliseconds(1000));
 }
 
 

@@ -11,6 +11,12 @@ namespace eos::hardware::dma {
 		template<PlatformID platformID_>
 		struct PlatformTraits;
 
+		// STM32F429ZI
+		template<>
+		struct PlatformTraits<PlatformID::STM32_F429_ZI> {
+			enum class DeviceID { dma11, dma12, dma13, dma14, dma15, dma16, dma17};
+		};
+
 		// STM32G0B1RE
 		template<>
 		struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
