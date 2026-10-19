@@ -1,8 +1,6 @@
 module;
 
-
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Controllers.Display.Drivers.SSD1306.SPIDMA;
@@ -10,6 +8,7 @@ export module Eos.Controllers.Display.Drivers.SSD1306.SPIDMA;
 
 export import Eos.Controllers.Display.Drivers.SSD1306.SPI;
 
+import Eos.Hardware.GPIO;
 import Eos.Hardware.SPI;
 import Eos.Hardware.DMA;
 import Eos.Types;

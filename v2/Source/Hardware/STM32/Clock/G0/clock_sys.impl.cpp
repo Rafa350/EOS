@@ -1,6 +1,5 @@
 module;
 
-
 #include "hardware.h"
 
 
@@ -11,14 +10,17 @@ import Eos.Bits;
 import Eos.Types;
 
 
-namespace f = eos::hardware::flash;
-
 using namespace eos;
 using namespace eos::hardware::clock;
 using namespace eos::hardware::flash;
 
 
-//static_assert(Platform::is_STM32_G0);
+static_assert(platformCheck("STM32Gxxxxx"));
+
+
+extern "C" {
+	extern UInt32 SystemCoreClock;
+}
 
 
 /// ---------------------------------------------------------------------------
@@ -139,23 +141,23 @@ UInt32 Clock::getClockFrequency(
 					break;
 
 				case RCC_CFGR_SWS_HSE:
-					fclk = clockHSEfrequency;
+					fclk = CLOCK_HSE_FREQUENCY;
 					break;
 
 				case RCC_CFGR_SWS_PLLRCLK:
 					fclk = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC_Msk) == (0b10 << RCC_PLLCFGR_PLLSRC_Pos) ?
-						 clockHSI16frequency: clockHSEfrequency;
+						 CLOCK_HSI16_FREQUENCY : CLOCK_HSE_FREQUENCY;
 					fclk /= ((RCC->PLLCFGR & RCC_PLLCFGR_PLLM_Msk) >> RCC_PLLCFGR_PLLM_Pos) + 1;
 					fclk *= (RCC->PLLCFGR & RCC_PLLCFGR_PLLN_Msk) >> RCC_PLLCFGR_PLLN_Pos;
 					fclk /= ((RCC->PLLCFGR & RCC_PLLCFGR_PLLR_Msk) >> RCC_PLLCFGR_PLLR_Pos) + 1;
 					break;
 
 				case RCC_CFGR_SWS_LSI:
-					fclk = clockLSIfrequency;
+					fclk = CLOCK_LSI_FREQUENCY;
 					break;
 
 				case RCC_CFGR_SWS_LSE:
-					fclk = clockLSEfrequency;
+					fclk = CLOCK_LSE_FREQUENCY;
 					break;
 			}
 			break;
@@ -177,34 +179,40 @@ UInt32 Clock::getClockFrequency(
 			break;
 
 		case ClockID::hsisys:
-			fclk = clockHSI16frequency >> ((RCC->CR & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos);
+			fclk = CLOCK_HSI16_FREQUENCY >> ((RCC->CR & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos);
 			break;
 
 		case ClockID::hse:
-			fclk = clockHSEfrequency;
+			fclk = CLOCK_HSE_FREQUENCY;
 			break;
 
 		case ClockID::hsi16:
-			fclk = clockHSI16frequency;
+			fclk = CLOCK_HSI16_FREQUENCY;
 			break;
 
-#if defined(RCC_CR_HSI48ON)
+#ifdef CLOCK_HSI48_FREQUENCY
 		case ClockID::hsi48:
-			fclk = clockHSI48frequency;
+			fclk = CLOCK_HSI48_FREQUENCY;
 			break;
 #endif
 
 		case ClockID::lse:
-			fclk = clockLSEfrequency;
+			fclk = CLOCK_LSE_FREQUENCY;
 			break;
 
 		case ClockID::lsi:
-			fclk = clockLSIfrequency;
-			break;
-
-		default:
+			fclk = CLOCK_LSI_FREQUENCY;
 			break;
 	}
 
 	return fclk;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Actualitza la variable global SystemCoreClock.
+///
+void Clock::updateSystemCoreClock() {
+
+	SystemCoreClock = getClockFrequency(ClockID::hclk);
 }

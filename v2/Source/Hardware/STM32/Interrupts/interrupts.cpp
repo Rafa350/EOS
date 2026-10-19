@@ -1,27 +1,25 @@
 module;
 
-
 #include "hardware.h"
 
 
 export module Eos.Hardware.Interrupts;
 
 
-export import Eos.Hardware.Interrupts.Vectors;
-
-import Eos.Configuration.Platform;
+import Eos.Hardware.Interrupts._Vectors;
+import Eos.Platform;
 import Eos.Types;
 
 
-namespace eos::hardware::interrupts {
+namespace eos::hardware::interrupts::internal  {
 
-    namespace internal  {
+    namespace hidden {
 
-        enum class Priority_Type1 {p0, p1, p2, p3};
-        enum class Priority_Type2 {p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15};
+        enum class Priority_G0xx {p0, p1, p2, p3};
+        enum class Priority_F4xx {p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15};
 
-        enum class SubPriority_Type1 {sp0};
-	    enum class SubPriority_Type2 {sp0, sp1, sp2, sp3};
+        enum class SubPriority_G0xx {sp0};
+	    enum class SubPriority_F4xx {sp0, sp1, sp2, sp3};
 
         template <PlatformID platformId_>
         struct PlatformTraits {
@@ -29,25 +27,29 @@ namespace eos::hardware::interrupts {
 
         template <>
         struct PlatformTraits<PlatformID::STM32_F429_ZI> {
-    		using Priority = Priority_Type2;
-            using SubPriority = SubPriority_Type2;
+    		using Priority = Priority_F4xx;
+            using SubPriority = SubPriority_F4xx;
         };
 
         template <>
         struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
-    		using Priority = Priority_Type1;
-            using SubPriority = SubPriority_Type1;
+    		using Priority = Priority_G0xx;
+            using SubPriority = SubPriority_G0xx;
         };
     }
 
-    export class Irq: private StaticClass<Irq> {
-        private:
-            using PlatformTraits  = internal::PlatformTraits<Platform::id>;
+    using PlatformTraits = hidden::PlatformTraits<Platform::id>;
 
+}
+
+
+export namespace eos::hardware::interrupts {
+
+    class Irq: private StaticClass<Irq> {
         public:
             using VectorID = internal::VectorID;
-            using Priority = PlatformTraits::Priority;
-            using SubPriority = PlatformTraits::SubPriority;
+            using Priority = internal::PlatformTraits::Priority;
+            using SubPriority = internal::PlatformTraits::SubPriority;
 
 		    static inline void setInterruptPriority(VectorID vectorId, Priority priority);
 		    static void setInterruptPriority(VectorID vectorId, Priority priority, SubPriority subPriority);

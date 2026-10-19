@@ -7,7 +7,7 @@ module;
 export module Eos.Hardware.GPIO.__PLATFORM_TRAITS;
 
 
-import Eos.Configuration.Platform;
+import Eos.Platform;
 
 
 namespace eos::hardware::gpio::internal {
@@ -19,25 +19,25 @@ namespace eos::hardware::gpio::internal {
         enum class PortID_Type3 {portA, portB, portC, portD, portE, portF, portG, portH, portI, portJ, portK};
 
         template <PlatformID platformId_>
-        struct Traits {
+        struct PlatformTraits {
         };
 
         template <>
-        struct Traits<PlatformID::STM32_F429_ZI> {
+        struct PlatformTraits<PlatformID::STM32_F429_ZI> {
             using PortID = PortID_Type3;
         };
 
         template <>
-        struct Traits<PlatformID::STM32_G031_K8> {
+        struct PlatformTraits<PlatformID::STM32_G031_K8> {
             using PortID = PortID_Type1;
         };
 
         template <>
-        struct Traits<PlatformID::STM32_G0B1_RE> {
+        struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
             using PortID = PortID_Type2;
         };
 
     }
 
-    export using PlatformTraits = hidden::Traits<Platform::id>;
+    export using PlatformTraits = hidden::PlatformTraits<Platform::id>;
 }

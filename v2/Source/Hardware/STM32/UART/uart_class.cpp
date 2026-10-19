@@ -9,13 +9,13 @@ export module Eos.Hardware.UART.Classes;
 
 import Eos.Hardware.UART.PlatformTraits;
 
-import Eos.Configuration;
 import Eos.Events;
 import Eos.Hardware.Clock;
 import Eos.Hardware.DMA;
 import Eos.Hardware.GPIO;
 import Eos.System.Core.Ticks;
 import Eos.Result;
+import Eos.Platform;
 import Eos.Types;
 
 

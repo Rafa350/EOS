@@ -8,20 +8,20 @@ export module Eos.Hardware.Flash;
 
 
 import Eos.Bits;
-import Eos.Configuration.Platform;
 import Eos.Hardware.Regs;
+import Eos.Platform;
 import Eos.Types;
 
 
-namespace eos::hardware::flash {
+namespace eos::hardware::flash::internal {
 
-    namespace internal {
+    namespace hidden {
 
         // ---------------------------------
         // Traits depenends de la plataforma
         //
-        enum class Latency_Type1 { fl0, fl1, fl2 };
-		enum class Latency_Type2 { fl0, fl1, fl2, fl3, fl4, fl5, fl6, fl7};
+		enum class Latency_F4xx { fl0, fl1, fl2, fl3, fl4, fl5, fl6, fl7};
+        enum class Latency_G0xx { fl0, fl1, fl2 };
 
         template <PlatformID platformId_>
         struct PlatformTraits {
@@ -29,22 +29,24 @@ namespace eos::hardware::flash {
 
         template <>
         struct PlatformTraits<PlatformID::STM32_F429_ZI> {
-    		using Latency = Latency_Type2;
+    		using Latency = Latency_F4xx;
         };
 
         template <>
         struct PlatformTraits<PlatformID::STM32_G0B1_RE> {
-    		using Latency = Latency_Type1;
+    		using Latency = Latency_G0xx;
         };
     }
 
+    using PlatformTraits = hidden::PlatformTraits<Platform::id>;
+}
 
-    export class Flash final: private StaticClass<Flash> {
-        private:
-            using PlatformTraits = internal::PlatformTraits<Platform::id>;
 
+export namespace eos::hardware::flash {
+
+    class Flash final: private StaticClass<Flash> {
         public:
-            using Latency = PlatformTraits::Latency;
+            using Latency = internal::PlatformTraits::Latency;
 
             static void setLatency(Latency latency);
             [[nodiscard]] inline static Latency getLatency();

@@ -2,7 +2,6 @@ target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
         uart.cpp
         uart_template.cpp
-        uart_device_traits.cpp
         uart_platform_traits.cpp
         uart_class.cpp
         uart_types.cpp

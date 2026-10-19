@@ -1,16 +1,16 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-        eosFormsService.cpp
+        Forms.cpp
         eosPropertyObserver.cpp
 )
 
 target_sources(${TARGET_NAME}
     PUBLIC
-        eosFormsService_Control.cpp
-        eosFormsService_Form.cpp
+        Forms_Control.impl.cpp
+        Forms_Form.impl.cpp
         #eosFormsService_Properties.cpp
-        eosFormsService_Service.cpp
-        eosFormsService_Visual.cpp
+        Forms_Service.impl.cpp
+        Forms_Visual.impl.cpp
 )
 
 add_subdirectory("Controls")

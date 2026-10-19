@@ -153,7 +153,7 @@ export namespace eos::hardware::gpio {
                 auto dummy = reinterpret_cast<GPIO_TypeDef*>(_gpioAddr)->LCKR;
             }
     };
-    
+
 
     /// brief Clase que representa un port.
     ///

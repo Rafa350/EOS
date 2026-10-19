@@ -56,17 +56,40 @@
 
 
 // ============================================================================
-// Definicio de les frequencies de rellotje
+// Definicio de les frequencies dels rellotjes interns (Fixes)
 // ============================================================================
 
-#if defined(EOS_PLATFORM_STM32G0)
+#if defined(EOS_PLATFORM_STM32F0)
+	#define CLOCK_HSI_FREQUENCY        8000000
+	#define CLOCK_HSI14_FREQUENCY     14000000
+	#define CLOCK_LSI_FREQUENCY          40000
+
+#elif defined(EOS_PLATFORM_STM32F4)
+	#define CLOCK_HSI_FREQUENCY       16000000
+	#define CLOCK_LSI_FREQUENCY          32000
+
+#elif defined(EOS_PLATFORM_STM32F7)
+	#define CLOCK_HSI_FREQUENCY       16000000
+	#define CLOCK_LSI_FREQUENCY          32000
+
+#elif defined(EOS_PLATFORM_STM32G0)
 	#define CLOCK_HSI16_FREQUENCY     16000000
 	#define CLOCK_HSI48_FREQUENCY     48000000
-	#ifndef CLOCK_HSE_FREQUENCY
-		#define CLOCK_HSE_FREQUENCY    8000000
-	#endif
 	#define CLOCK_LSI_FREQUENCY          32000
-	#ifndef CLOCK_LSE_FREQUENCY
-		#define CLOCK_LSE_FREQUENCY      32768
-	#endif
+
+#else
+	#error "Unknown platform"
+
+#endif
+
+
+// ============================================================================
+// Definicio de les frequencies dels rellotjes externs (Definides per l'usuari)
+// ============================================================================
+
+#ifndef CLOCK_HSE_FREQUENCY
+	#define CLOCK_HSE_FREQUENCY    8000000
+#endif
+#ifndef CLOCK_LSE_FREQUENCY
+	#define CLOCK_LSE_FREQUENCY      32768
 #endif

@@ -1,8 +1,12 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
-        tmr_identifiers.cpp
+        tmr.cpp
+        tmr_types.cpp
+        tmr_class.cpp
+        tmr_template.cpp
+        tmr_device_traits.cpp
 )
 
-if(EOS_PLATFORM_NAME MATCHES "STM32")
-    add_subdirectory("STM32")
+if(EOS_PLATFORM_NAME MATCHES "STM32G0")
+    add_subdirectory("G0")
 endif()

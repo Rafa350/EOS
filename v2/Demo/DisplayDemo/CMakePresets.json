@@ -12,7 +12,9 @@
             "inherits":"baseWindows",
             "hidden": true,
             "cacheVariables": {
-                "EOS_RTOS_NAME": "FreeRTOS"
+                "EOS_RTOS_NAME": "FreeRTOS",
+                "EOS_USE_DEVICE_UART": "ON",
+                "EOS_USE_DEVICE_SPI": "ON"
             }
         },
         {

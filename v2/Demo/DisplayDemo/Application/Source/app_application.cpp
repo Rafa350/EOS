@@ -1,15 +1,25 @@
 module;
 
+#include "eos.h"
+
 
 export module App.Application;
 
 
+import App.Services.Display;
+import Eos.Hardware.GPIO;
+import Eos.Services.LedService;
 import Eos.System.Application.RTOS;
 import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
 
 
 namespace app {
+
+    using PinLED = eos::hardware::gpio::PinG13;
+
+    constexpr auto pinLED = PinLED::pInst;
+
 
 	class MyApplication: public eos::RTOSApplication {
 		protected:
@@ -48,9 +58,7 @@ void MyApplication::onExecute() {
     LED2_Initialize();
     #endif
 
-    #if defined(EXIST_LED1) || defined(EXIST_LED2)
     initializeLedService();
-    #endif
     initializeDisplayService();
 
     // Executa els serveis indefinidament
@@ -63,24 +71,11 @@ void MyApplication::onExecute() {
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el servei de gestio dels leds
 ///
-#if defined(EXIST_LED1) || defined(EXIST_LED2)
 void MyApplication::initializeLedService() {
 
-    #ifdef EXIST_LED1
-    constexpr auto pinLED1 = LED1_Instance;
-    #else
-    constexpr gpio::PinDevice *pinLED1 = nullptr;
-    #endif
-    #ifdef EXIST_LED2
-    constexpr auto pinLED2 = LED2_Instance;
-    #else
-    constexpr gpio::PinDevice *pinLED2 = nullptr;
-    #endif
-
-    auto ledService = new LedService(pinLED1, pinLED2);
+    auto ledService = new LedService(pinLED1);
     addService(ledService);
 }
-#endif
 
 
 /// ----------------------------------------------------------------------

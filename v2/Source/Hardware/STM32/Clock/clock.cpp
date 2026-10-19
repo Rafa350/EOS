@@ -1,98 +1,142 @@
 module;
 
-
 #include "hardware.h"
 
 
 export module Eos.Hardware.Clock;
 
 
-import Eos.Configuration.Platform;
 import Eos.Hardware.Flash;
+import Eos.Platform;
 import Eos.Types;
 
 
-namespace eos::hardware::clock {
+namespace eos::hardware::clock::internal {
 
-    namespace internal {
+    namespace hidden {
 
-        // ---------------------------------
+        // Identificador del Clock
+        //
+		enum class ClockID_F0xx { sysclk, pclk, hclk, hse, hsi, lse, lsi };
+        enum class ClockID_F4xx { sysclk, pclk1, pclk2, tim1clk, tim2clk,
+                                  hclk, hse, hsi, lse, lsi };
+        using ClockID_F7xx = ClockID_F4xx;
+        enum class ClockID_G0xx { sysclk, pclk, timpclk, hclk, hclk8, hse,
+                                  hsi16, lse, lsi, hsisys, pllpclk, pllqclk,
+                                  pllrclk };
+        enum class ClockID_G0Bx { sysclk, pclk, timpclk, hclk, hclk8, hse,
+                                  hsi16, hsi48, lse, lsi, hsisys, pllpclk,
+                                  pllqclk, pllrclk };
+
+        // Font del clock del sistema
+        //
+        enum class SystemClockSource_F0xx { hsi, hse, pll };
+        using SystemClockSource_F4xx = SystemClockSource_F0xx;
+        using SystemClockSource_F7xx = SystemClockSource_F0xx;
+        enum class SystemClockSource_G0xx { lsi, lse, hse, pllrclk, hsisys };
+
+        // Font del PLL
+        //
+        enum class PLLSource_F0xx { hsi, hse };
+        using PLLSource_F4xx = PLLSource_F0xx;
+        using PLLSource_F7xx = PLLSource_F0xx;
+        enum class PLLSource_G0xx { hsi16, hse };
+
         // Traits depenents de la plataforma
         //
-        enum class ClockID_Type1 { sysclk, pclk, timpclk, hclk, hclk8, hse,
-            hsi16, hsi48, lse, lsi, hsisys, pllpclk, pllqclk, pllrclk };
-
-        enum class PLLSource_Type1 { hsi16, hse };
-        enum class PLLSource_Type2 { hsi, hse };
-
-        enum class SystemClockSource_Type1 { lsi, lse, hse, pllrclk, hsisys };
-
         template <PlatformID platformId_>
         class PlatformTraits {
         };
 
         template <>
+        class PlatformTraits<PlatformID::STM32_F429_ZI> {
+            public:
+                static constexpr bool has_HSI   = true;
+                static constexpr bool has_HSI16 = false;
+                static constexpr bool has_HSI48 = false;
+
+            public:
+                using ClockID           = ClockID_F4xx;
+                using SystemClockSource = SystemClockSource_F4xx;
+                using PLLSource         = PLLSource_F4xx;
+        };
+
+        template <>
         class PlatformTraits<PlatformID::STM32_G0B1_RE> {
             public:
+                static constexpr bool has_HSI   = false;
                 static constexpr bool has_HSI16 = true;
                 static constexpr bool has_HSI48 = true;
 
             public:
-                using ClockID = ClockID_Type1;
-    		    using SystemClockSource = SystemClockSource_Type1;
-                using PLLSource = PLLSource_Type1;
+                using ClockID           = ClockID_G0Bx;
+                using SystemClockSource = SystemClockSource_G0xx;
+                using PLLSource         = PLLSource_G0xx;
         };
-
-        // -------------------
-        // Interface per HSI16
-        //
-        template <bool use>
-        class Clock_HSI16: private StaticClass<Clock_HSI16<use>> {
-        };
-
-        template <>
-        class Clock_HSI16<true>: private StaticClass<Clock_HSI16<true>> {
-            public:
-			    static constexpr UInt32 clockHSI16frequency = CLOCK_HSI16_FREQUENCY;
-
-            public:
-                static void enableHSI16(bool kernelMode = false);
-                static void disableHSI16();
-                [[nodiscard]] static bool isHSI16Enabled();
-        };
-
-        // -------------------
-        // Interface per HSI48
-        //
-        template <bool use>
-        class Clock_HSI48: private StaticClass<Clock_HSI48<use>> {
-        };
-
-        template <>
-        class Clock_HSI48<true>: private StaticClass<Clock_HSI48<true>> {
-            public:
-                static constexpr UInt32 clockHSI48frequency = CLOCK_HSI48_FREQUENCY;
-
-            public:
-                static void enableHSI48();
-                static void disableHSI48();
-                [[nodiscard]] static bool isHSI48Enabled();
-        };
-
     }
 
-    export class Clock:
-        private StaticClass<Clock>,
-        public internal::Clock_HSI16<internal::PlatformTraits<Platform::id>::has_HSI16>,
-        public internal::Clock_HSI48<internal::PlatformTraits<Platform::id>::has_HSI48> {
+    using PlatformTraits = hidden::PlatformTraits<Platform::id>;
 
-        private:
-            using PlatformTraits = internal::PlatformTraits<Platform::id>;
+
+    // -------------------
+    // Interface per HSI
+    //
+    template <bool use>
+    class Clock_HSI: private StaticClass<Clock_HSI<use>> {
+    };
+
+    template <>
+    class Clock_HSI<true>: private StaticClass<Clock_HSI<true>> {
+        public:
+            static void enableHSI(bool kernelMode = false);
+            static void disableHSI();
+            [[nodiscard]] static bool isHSIEnabled();
+    };
+
+    // -------------------
+    // Interface per HSI16
+    //
+    template <bool use>
+    class Clock_HSI16: private StaticClass<Clock_HSI16<use>> {
+    };
+
+    template <>
+    class Clock_HSI16<true>: private StaticClass<Clock_HSI16<true>> {
+        public:
+            static void enableHSI16(bool kernelMode = false);
+            static void disableHSI16();
+            [[nodiscard]] static bool isHSI16Enabled();
+    };
+
+    // -------------------
+    // Interface per HSI48
+    //
+    template <bool use>
+    class Clock_HSI48: private StaticClass<Clock_HSI48<use>> {
+    };
+
+    template <>
+    class Clock_HSI48<true>: private StaticClass<Clock_HSI48<true>> {
+        public:
+            static void enableHSI48();
+            static void disableHSI48();
+            [[nodiscard]] static bool isHSI48Enabled();
+    };
+}
+
+
+export namespace eos::hardware::clock {
+
+    class Clock:
+        private StaticClass<Clock>,
+        public internal::Clock_HSI<internal::PlatformTraits::has_HSI>,
+        public internal::Clock_HSI16<internal::PlatformTraits::has_HSI16>,
+        public internal::Clock_HSI48<internal::PlatformTraits::has_HSI48> {
 
         public:
-            using ClockID = PlatformTraits::ClockID;
-            using SystemClockSource = PlatformTraits::SystemClockSource;
-            using PLLsource = PlatformTraits::PLLSource;
+            using ClockID = internal::PlatformTraits::ClockID;
+            using SystemClockSource = internal::PlatformTraits::SystemClockSource;
+            using PLLsource = internal::PlatformTraits::PLLSource;
             using FlashLatency = flash::Flash::Latency;
 
             enum class HSEBypass {
@@ -125,11 +169,6 @@ namespace eos::hardware::clock {
             enum class APBPrescaler {
                 div1, div2, div4, div8, div16
             };
-
-        public:
-            static constexpr UInt32 clockLSIfrequency = CLOCK_LSI_FREQUENCY;
-            static constexpr UInt32 clockLSEfrequency = CLOCK_LSE_FREQUENCY;
-            static constexpr UInt32 clockHSEfrequency = CLOCK_HSE_FREQUENCY;
 
         public:
 
@@ -166,6 +205,7 @@ namespace eos::hardware::clock {
             static void setAPBPrescaler(APBPrescaler prescaler);
 
             [[nodiscard]] static UInt32 getClockFrequency(ClockID clockID);
-    };
 
+            static void updateSystemCoreClock();
+    };
 }

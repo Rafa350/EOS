@@ -21,8 +21,9 @@ set(LIB_DIR ${ROOT_DIR}/Libraries/EOS/Library/STM32F4)
 
 set(CPU_PARAMETERS
     -mthumb
-    -mcpu=cortex-m0plus
-    -mfloat-abi=soft
+    -mcpu=cortex-m4
+    -mfpu=fpv4-sp-d16
+    -mfloat-abi=hard
 )
 
 
@@ -52,6 +53,7 @@ target_compile_options(${TARGET_NAME} PRIVATE
 
 target_compile_definitions(${TARGET_NAME} PRIVATE
     HARDWARE_STM32F429I_DISC1
+    BUILD_ILI9341_SPI
     EOS_NO_INCLUDE_BOARD
     $<$<CONFIG:Debug>:EOS_DEBUG>
     ${EOS_PLATFORM_NAME}

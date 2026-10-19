@@ -1,34 +1,28 @@
-module;
-
-
-#include "eos.h"
-#include "eosCallbacks.h"
-
-
 export module Eos.Services.Forms.Controls.Menu;
 
-
+import Eos.Callbacks;
 import Eos.Math;
 import Eos.Services.Forms;
 import Eos.System.Graphics;
 import Eos.System.Graphics.Color;
 import Eos.System.Graphics.ColorDefinitions;
+import Eos.Types;
 
 
 export namespace eos {
 
 	 class MenuControl: public Control {
     	private:
-    		constexpr static uint32_t _dataStackSize = 5;
-    		constexpr static int16_t _menuTitleHeight = 12;
-    		constexpr static int16_t _itemTitleHeight = 12;
+    		constexpr static UInt32 _dataStackSize = 5;
+    		constexpr static UInt16 _menuTitleHeight = 12;
+    		constexpr static UInt16 _itemTitleHeight = 12;
 
     	private:
     		struct Data {
-    			uint16_t menuDescriptorIndex;
-    			uint8_t selectedItem;
-    			uint8_t firstVisibleItem;
-    			uint8_t numItems;
+    			UInt16 menuDescriptorIndex;
+    			UInt8 selectedItem;
+    			UInt8 firstVisibleItem;
+    			UInt8 numItems;
     		};
 
     	public:
@@ -40,55 +34,55 @@ export namespace eos {
     			NotifyEventID eventId;
     			union {
     				struct {
-    					uint8_t itemId;
+    					UInt8 itemId;
     					const char *text;
-    					uint8_t length;
+    					UInt8 length;
     				} requestText;
     			};
     		};
-    		using INotifyEvent = eos::ICallbackP2<MenuControl*, NotifyEventArgs*>;
+    		using INotifyEvent = ICallbackP2<MenuControl*, NotifyEventArgs*>;
     		template <typename Instance_> using NotifyEvent = eos::CallbackP2<Instance_, MenuControl*, NotifyEventArgs*>;
 
     		struct CommandEventArgs {
-    			uint8_t command;
+    			UInt8 command;
     		};
-    		using ICommandEvent = eos::ICallbackP2<MenuControl*, CommandEventArgs*>;
+    		using ICommandEvent = ICallbackP2<MenuControl*, CommandEventArgs*>;
     		template <typename Instance_> using CommandEvent = eos::CallbackP2<Instance_, MenuControl*, CommandEventArgs*>;
 
         private:
     		Color _textColor;
             Color _selectedTextColor;
             Color _selectedBackgroundColor;
-            const uint8_t *_descriptor;
+            const UInt8 *_descriptor;
             Data _dataStack[_dataStackSize];
-            uint8_t _dataLevel;
-            uint8_t _visibleItems;
+            UInt8 _dataLevel;
+            UInt8 _visibleItems;
             INotifyEvent *_notifyEvent;
             ICommandEvent *_commandEvent;
 
         private:
-            const char* getMenuTitle(uint16_t menuDescriptorIndex) const;
-            uint8_t getMenuTitleLength(uint16_t menuDescriptorIndex) const;
-            uint8_t getMenuNumItems(uint16_t menuDescriptorIndex) const;
-            uint16_t getMenuItemDescriptorIndex(uint16_t menuDescriptorIndex, uint8_t item) const;
+            const char* getMenuTitle(UInt16 menuDescriptorIndex) const;
+            UInt8 getMenuTitleLength(UInt16 menuDescriptorIndex) const;
+            UInt8 getMenuNumItems(UInt16 menuDescriptorIndex) const;
+            UInt16 getMenuItemDescriptorIndex(UInt16 menuDescriptorIndex, UInt8 item) const;
 
-            const char* getItemTitle(uint16_t itemDescriptorIndex) const;
-            uint8_t getItemTitleLength(uint16_t itemDescriptorIndex) const;
-            uint8_t getItemType(uint16_t itemDescriptorIndex) const;
-            uint16_t getItemSubMenuDescriptorIndex(uint16_t itemDescriptorIndex) const;
-            uint8_t getItemId(uint16_t itemDescriptorIndex) const;
+            const char* getItemTitle(UInt16 itemDescriptorIndex) const;
+            UInt8 getItemTitleLength(UInt16 itemDescriptorIndex) const;
+            UInt8 getItemType(UInt16 itemDescriptorIndex) const;
+            UInt16 getItemSubMenuDescriptorIndex(UInt16 itemDescriptorIndex) const;
+            UInt8 getItemId(UInt16 itemDescriptorIndex) const;
 
-            bool requestText(uint8_t id, const char *&text, uint8_t &length);
+            bool requestText(UInt8 id, const char *&text, UInt8 &length);
 
         protected:
             void onMessage(FormMessage &message) override;
             void onRender(Graphics *graphics) override;
             void onPropertyChanged(void *ptr) override;
-            virtual void onCommand(uint8_t id);
+            virtual void onCommand(UInt8 id);
             virtual void onItemSelected();
 
         public:
-            MenuControl(const Point &position, const Size &size, const uint8_t *descriptor);
+            MenuControl(const Point &position, const Size &size, const UInt8 *descriptor);
 
             inline void setTextColor(Color value) { setProperty(_textColor, value); }
             inline void setSelectedTextColor(Color value) { setProperty(_selectedTextColor, value); }
@@ -116,16 +110,18 @@ export namespace eos {
 }
 
 
+using namespace eos;
+
 
 /// ----------------------------------------------------------------------
-/// \brief    Contructor.
-/// \param    position: La posicio.
-/// \param    size: El tamany.
+/// @brief    Contructor.
+/// @param    position: La posicio.
+/// @param    size: El tamany.
 ///
-eos::MenuControl::MenuControl(
+MenuControl::MenuControl(
     const Point &position,
     const Size &size,
-	const uint8_t *descriptor):
+	const UInt8 *descriptor):
 
     Control {position, size},
 
@@ -147,11 +143,11 @@ eos::MenuControl::MenuControl(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant un item ha estat activat.
-/// \brief    id: Identificador del item.
+/// @brief    Es crida quant un item ha estat activat.
+/// @brief    id: Identificador del item.
 ///
-void eos::MenuControl::onCommand(
-	uint8_t id) {
+void MenuControl::onCommand(
+	UInt8 id) {
 
 	invalidate();
 
@@ -165,9 +161,9 @@ void eos::MenuControl::onCommand(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant un item ha estat seleccionat.
+/// @brief    Es crida quant un item ha estat seleccionat.
 ///
-void eos::MenuControl::onItemSelected() {
+void MenuControl::onItemSelected() {
 
 	invalidate();
 
@@ -181,10 +177,10 @@ void eos::MenuControl::onItemSelected() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els missatges
-/// \param    message: El missatge a processar.
+/// @brief    Procesa els missatges
+/// @param    message: El missatge a processar.
 ///
-void eos::MenuControl::onMessage(
+void MenuControl::onMessage(
 	FormMessage &message) {
 
 	switch (message.id) {
@@ -233,10 +229,10 @@ void eos::MenuControl::onMessage(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els canvis en una propietat.
-/// \param    ptr: Punter a la propietat que ha canviat.
+/// @brief    Procesa els canvis en una propietat.
+/// @param    ptr: Punter a la propietat que ha canviat.
 ///
-void eos::MenuControl::onPropertyChanged(
+void MenuControl::onPropertyChanged(
 	void *ptr) {
 
 	Control::onPropertyChanged(ptr);
@@ -244,17 +240,17 @@ void eos::MenuControl::onPropertyChanged(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Renderitza la imatge del control.
-/// \param    graphics: L'objecte per dibuixar.
+/// @brief    Renderitza la imatge del control.
+/// @param    graphics: L'objecte per dibuixar.
 ///
-void eos::MenuControl::onRender(
+void MenuControl::onRender(
     Graphics *graphics) {
 
 	Control::onRender(graphics);
 
 	auto data = &_dataStack[_dataLevel];
 
-	int16_t width = getSize().getWidth();
+	UInt16 width = getSize().getWidth();
 
 	Text text;
 	text.setHorizontalAlign(eos::Text::HorizontalAlign::left);
@@ -272,7 +268,7 @@ void eos::MenuControl::onRender(
 		Point(0, 10),
 		Point(width - 1, 10));
 
-	int16_t y = _menuTitleHeight;
+	UInt16 y = _menuTitleHeight;
 	auto lastVisibleItem = data->firstVisibleItem + Math::min(data->numItems, _visibleItems) - 1;
 	for (auto item = data->firstVisibleItem; item <= lastVisibleItem; item++) {
 
@@ -301,8 +297,8 @@ void eos::MenuControl::onRender(
 
 		if (getItemType(itemDescriptorIndex)) {
 			const char *itemSubTitle;
-			uint8_t itemSubTitleLength = 0;
-            uint8_t itemId = getItemId(itemDescriptorIndex);
+			UInt8 itemSubTitleLength = 0;
+            UInt8 itemId = getItemId(itemDescriptorIndex);
 			if (requestText(itemId, itemSubTitle, itemSubTitleLength)) {
 				text.setText(itemSubTitle, itemSubTitleLength);
 				graphics->paintText(
@@ -317,9 +313,9 @@ void eos::MenuControl::onRender(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el seguent item.
+/// @brief    Selecciona el seguent item.
 ///
-void eos::MenuControl::next() {
+void MenuControl::next() {
 
 	auto data = &_dataStack[_dataLevel];
 
@@ -333,9 +329,9 @@ void eos::MenuControl::next() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Delecciona l'anterior item.
+/// @brief    Delecciona l'anterior item.
 ///
-void eos::MenuControl::prev() {
+void MenuControl::prev() {
 
 	auto data = &_dataStack[_dataLevel];
 
@@ -349,9 +345,9 @@ void eos::MenuControl::prev() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el primer item.
+/// @brief    Selecciona el primer item.
 ///
-void eos::MenuControl::first() {
+void MenuControl::first() {
 
 	auto data = &_dataStack[_dataLevel];
 
@@ -364,9 +360,9 @@ void eos::MenuControl::first() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona l'ultim.
+/// @brief    Selecciona l'ultim.
 ///
-void eos::MenuControl::last() {
+void MenuControl::last() {
 
 	auto data = &_dataStack[_dataLevel];
 
@@ -379,9 +375,9 @@ void eos::MenuControl::last() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el item actual.
+/// @brief    Selecciona el item actual.
 ///
-void eos::MenuControl::action() {
+void MenuControl::action() {
 
     auto data = &_dataStack[_dataLevel];
     auto itemDescriptorIndex = getMenuItemDescriptorIndex(data->menuDescriptorIndex, data->selectedItem);
@@ -418,19 +414,19 @@ void eos::MenuControl::action() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Reclama un text asociat a un item. La solicitut es fa
+/// @brief    Reclama un text asociat a un item. La solicitut es fa
 ///           per mitja de l'event 'requestText'
-/// \param    id: Identificador del item.
-/// \param    text: Punter al text
-/// \param    length: Longitut del text.
-/// \return   True si es correcte.
+/// @param    id: Identificador del item.
+/// @param    text: Punter al text
+/// @param    length: Longitut del text.
+/// @return   True si es correcte.
 /// \remarks  Els valors retornats en 'text' i 'length' nomes son valid en
 ///           el cas que la funcio retorni 'true'.
 ///
-bool eos::MenuControl::requestText(
-	uint8_t id,
+bool MenuControl::requestText(
+	UInt8 id,
 	const char *&text,
-	uint8_t &length) {
+	UInt8 &length) {
 
 	if (_notifyEvent != nullptr) {
 		NotifyEventArgs args = {
@@ -457,52 +453,52 @@ bool eos::MenuControl::requestText(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el titol d'un menu.
-/// \param    menuDescriptorIndex: El index del descriptor del menu.
-/// \return   Punter a la cadena.
+/// @brief    Obte el titol d'un menu.
+/// @param    menuDescriptorIndex: El index del descriptor del menu.
+/// @return   Punter a la cadena.
 ///
-const char* eos::MenuControl::getMenuTitle(
-	uint16_t menuDescriptorIndex) const {
+const char* MenuControl::getMenuTitle(
+	UInt16 menuDescriptorIndex) const {
 
 	return reinterpret_cast<const char*>(&_descriptor[menuDescriptorIndex + 2]);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte la longitut del titol d'un menu.
-/// \param    menuDescriptorIndex: El index del descriptor del menu.
-/// \return   La longitut.
+/// @brief    Obte la longitut del titol d'un menu.
+/// @param    menuDescriptorIndex: El index del descriptor del menu.
+/// @return   La longitut.
 ///
-uint8_t eos::MenuControl::getMenuTitleLength(
-	uint16_t menuDescriptorIndex) const {
+UInt8 MenuControl::getMenuTitleLength(
+	UInt16 menuDescriptorIndex) const {
 
 	return _descriptor[menuDescriptorIndex + 1];
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el nombre d'items.
-/// \param    menuDescriptorIndex: El index del descriptor del menu.
-/// \return   El resultat
+/// @brief    Obte el nombre d'items.
+/// @param    menuDescriptorIndex: El index del descriptor del menu.
+/// @return   El resultat
 ///
-uint8_t eos::MenuControl::getMenuNumItems(
-	uint16_t menuDescriptorIndex) const {
+UInt8 MenuControl::getMenuNumItems(
+	UInt16 menuDescriptorIndex) const {
 
 	return _descriptor[menuDescriptorIndex];
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el index del descriptor d'un item.
-/// \param    menuDescriptorIndex: El index del descriptor del menu.
-/// \param    item: El numero de item.
-/// \return   El resultat
+/// @brief    Obte el index del descriptor d'un item.
+/// @param    menuDescriptorIndex: El index del descriptor del menu.
+/// @param    item: El numero de item.
+/// @return   El resultat
 ///
-uint16_t eos::MenuControl::getMenuItemDescriptorIndex(
-	uint16_t menuDescriptorIndex,
-	uint8_t item) const {
+UInt16 MenuControl::getMenuItemDescriptorIndex(
+	UInt16 menuDescriptorIndex,
+	UInt8 item) const {
 
-    uint16_t idx =
+    UInt16 idx =
    		menuDescriptorIndex +                   // Posicio del menu
 		2 +                                     // Tamany del descriptor
 		_descriptor[menuDescriptorIndex + 1] +  // Longitut del titol
@@ -512,24 +508,24 @@ uint16_t eos::MenuControl::getMenuItemDescriptorIndex(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el titol d'un item.
-/// \param    intemDescriptorIndex: El index del descriptor del item.
-/// \return   Punter a la cadena.
+/// @brief    Obte el titol d'un item.
+/// @param    intemDescriptorIndex: El index del descriptor del item.
+/// @return   Punter a la cadena.
 ///
-const char* eos::MenuControl::getItemTitle(
-	uint16_t itemDescriptorIndex) const {
+const char* MenuControl::getItemTitle(
+	UInt16 itemDescriptorIndex) const {
 
 	return reinterpret_cast<const char*>(&_descriptor[itemDescriptorIndex + 2]);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte la longitut del titol d'un item.
-/// \param    itemDescriptorIndex: El index del descriptor del item.
-/// \return   La longitut.
+/// @brief    Obte la longitut del titol d'un item.
+/// @param    itemDescriptorIndex: El index del descriptor del item.
+/// @return   La longitut.
 ///
-uint8_t eos::MenuControl::getItemTitleLength(
-	uint16_t itemDescriptorIndex) const {
+UInt8 MenuControl::getItemTitleLength(
+	UInt16 itemDescriptorIndex) const {
 
 	return _descriptor[itemDescriptorIndex + 1];
 
@@ -537,24 +533,24 @@ uint8_t eos::MenuControl::getItemTitleLength(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte tipus d'item.
-/// \param    itemOffset: El index del descriptor del item.
-/// \return   El tipus.
+/// @brief    Obte tipus d'item.
+/// @param    itemOffset: El index del descriptor del item.
+/// @return   El tipus.
 ///
-uint8_t eos::MenuControl::getItemType(
-	uint16_t itemDescriptorIndex) const {
+UInt8 MenuControl::getItemType(
+	UInt16 itemDescriptorIndex) const {
 
 	return _descriptor[itemDescriptorIndex] & 0x03;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el offset al submenu d'un item.
-/// \param    itemOffset: El index del descriptor del item.
-/// \return   El offset del submenu.
+/// @brief    Obte el offset al submenu d'un item.
+/// @param    itemOffset: El index del descriptor del item.
+/// @return   El offset del submenu.
 ///
-uint16_t eos::MenuControl::getItemSubMenuDescriptorIndex(
-	uint16_t itemDescriptorIndex) const {
+UInt16 MenuControl::getItemSubMenuDescriptorIndex(
+	UInt16 itemDescriptorIndex) const {
 
     return
     	itemDescriptorIndex +                 // Posicio del item
@@ -564,12 +560,12 @@ uint16_t eos::MenuControl::getItemSubMenuDescriptorIndex(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el ideitificador d'un item.
-/// \param    itemOffset: El offset del item.
-/// \return   El identitifacor.
+/// @brief    Obte el ideitificador d'un item.
+/// @param    itemOffset: El offset del item.
+/// @return   El identitifacor.
 ///
-uint8_t eos::MenuControl::getItemId(
-	uint16_t itemOffset) const {
+UInt8 MenuControl::getItemId(
+	UInt16 itemOffset) const {
 
     return _descriptor[itemOffset + 2 + _descriptor[itemOffset + 1]];
 }

@@ -1,21 +1,14 @@
 module;
 
-
 #include "hardware.h"
 
 
 export module Eos.Hardware.UART.PinTraits;
 
 
-import Eos.Hardware.UART.PlatformTraits;
-
 import Eos.Hardware.GPIO;
+import Eos.Hardware.UART.Types;
 
-
-namespace eos::hardware::uart::internal {
-
-	using UARTDeviceID = PlatformTraits::DeviceID;
-}
 
 export namespace eos::hardware::uart::internal {
 

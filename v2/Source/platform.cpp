@@ -4,7 +4,7 @@ module;
 #include "eos.h"
 
 
-export module Eos.Configuration.Platform;
+export module Eos.Platform;
 
 
 import Eos.Types;

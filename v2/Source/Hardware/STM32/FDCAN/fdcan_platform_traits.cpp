@@ -1,7 +1,7 @@
 export module Eos.Hardware.FDCAN.__PLATFORM_TRAITS;
 
 
-import Eos.Configuration.Platform;
+import Eos.Platform;
 
 
 namespace eos::hardware::fdcan {

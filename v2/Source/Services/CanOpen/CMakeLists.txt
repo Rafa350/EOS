@@ -1,7 +1,11 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
         #eosCanServer.cpp
-        eosCanOpenService.cpp
-        eosCanOpenDictionary.cpp
-        eosCanOpenProtocol.cpp
+        CanOpen.cpp
+        CanOpenDictionary.cpp
+        CanOpenProtocol.cpp
+    PRIVATE
+        CanOpen_IO.impl.cpp
+        CanOpen_LocalDict.impl.cpp
+        CanOpen_RemoteDict.impl.cpp
 )

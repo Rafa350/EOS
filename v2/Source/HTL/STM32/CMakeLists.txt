@@ -44,7 +44,7 @@ endif()
 # ------------------------------------------------------------------------
 # Afegeix el modul EXTI
 #
-if(EOS_USE_HTL_EXTI)
+if(EOS_USE_HTL_EXTIx)
 target_sources(${TARGET_NAME}
     PUBLIC
         htlEXTI.cpp

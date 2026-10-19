@@ -1,8 +1,6 @@
 module;
 
-
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 
 
 export module Eos.Controllers.Display.Drivers.SSD1306.SPI;
@@ -10,6 +8,7 @@ export module Eos.Controllers.Display.Drivers.SSD1306.SPI;
 
 export import Eos.Controllers.Display.Drivers.SSD1306;
 
+import Eos.Hardware.GPIO;
 import Eos.Hardware.SPI;
 import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
@@ -24,7 +23,7 @@ export namespace eos {
     //
     class DisplayDevice_SSD1306_SPI: public DisplayDevice_SSD1306 {
         public:
-            using Pin = htl::gpio::PinDevice;
+            using Pin = eos::hardware::gpio::PinDevice;
             using DevSPI = eos::hardware::spi::SPIDevice;
 
         protected:

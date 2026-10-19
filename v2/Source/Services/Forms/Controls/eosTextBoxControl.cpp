@@ -15,7 +15,7 @@ import Eos.System.Graphics.ColorDefinitions;
 
 export namespace eos {
 
-    class TextBoxControl: public eos::Control {
+    class TextBoxControl: public Control {
         private:
             const char *_text;
             Color _textColor;
@@ -35,13 +35,16 @@ export namespace eos {
 }
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    position: Posicio del control.
 /// \param    size: Tamany del control.
 /// \param    text: Texte a mostrar.
 ///
-eos::TextBoxControl::TextBoxControl(
+TextBoxControl::TextBoxControl(
     const Point &position,
     const Size &size,
     const char *text):
@@ -57,8 +60,8 @@ eos::TextBoxControl::TextBoxControl(
 /// \brief    Renderitza el control.
 /// \param    graphics: L'objecte per dibuixar.
 ///
-void eos::TextBoxControl::onRender(
-    eos::Graphics *graphics) {
+void TextBoxControl::onRender(
+    Graphics *graphics) {
 
 	Control::onRender(graphics);
 

@@ -1,6 +1,5 @@
 module;
 
-
 #include "hardware.h"
 
 
@@ -15,7 +14,7 @@ using namespace eos;
 using namespace eos::hardware::clock;
 
 
-static_assert(Platform::is_STM32_F4);
+static_assert(platformCheck("STM32F4xxxx"));
 
 
 /// ----------------------------------------------------------------------
@@ -25,9 +24,9 @@ static_assert(Platform::is_STM32_F4);
 /// @return   True si tot es correcte, false en cas contrari.
 /// @remarks  El posen els prescalers AHB, APB1 i APB2 a la maxima divisio
 ///
-bool ClockDevice::selectSystemClock(
+bool Clock::selectSystemClock(
 	SystemClockSource source,
-	FlashLatency fl) const {
+	FlashLatency fl) {
 
 	auto ACR = FLASH->ACR;
 	auto CFGR = RCC->CFGR;
@@ -79,4 +78,81 @@ bool ClockDevice::selectSystemClock(
 	}
 
 	return true;
+}
+
+
+UInt32 Clock::getClockFrequency(
+	ClockID clockID) {
+
+	static const uint8_t shiftAHB[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 5, 6, 7, 8};
+	static const uint8_t shiftAPB[8] = { 0, 0, 0, 0, 1, 2, 3, 4};
+
+	unsigned fclk = 0;
+
+	switch (clockID) {
+		case ClockID::sysclk:
+			switch (RCC->CFGR & RCC_CFGR_SWS_Msk) {
+				case RCC_CFGR_SWS_HSE:
+					fclk = CLOCK_HSE_FREQUENCY;
+					break;
+
+				case RCC_CFGR_SWS_HSI:
+					fclk = CLOCK_HSI_FREQUENCY;
+					break;
+
+				case RCC_CFGR_SWS_PLL: {
+					auto pllMul = (RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos;
+					auto pllDiv = (RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos;
+				    auto pllP = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLP) >> RCC_PLLCFGR_PLLP_Pos) + 1 ) * 2;
+					if ((RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC) == RCC_PLLCFGR_PLLSRC_HSI)
+						fclk = CLOCK_HSI_FREQUENCY;
+					else
+						fclk = CLOCK_HSE_FREQUENCY;
+					fclk /= pllDiv;
+					fclk *= pllMul;
+				    fclk /= pllP;
+				    fclk >>= shiftAHB[(RCC->CFGR & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
+					break;
+				}
+			}
+			break;
+
+		case ClockID::hclk:
+			fclk = getClockFrequency(ClockID::sysclk);
+			break;
+
+		case ClockID::pclk1:
+			fclk = getClockFrequency(ClockID::hclk) >> shiftAPB[(RCC->CFGR & RCC_CFGR_PPRE1) >> RCC_CFGR_PPRE1_Pos];
+			break;
+
+		case ClockID::pclk2:
+			fclk = getClockFrequency(ClockID::hclk) >> shiftAPB[(RCC->CFGR & RCC_CFGR_PPRE2) >> RCC_CFGR_PPRE2_Pos];
+			break;
+
+		case ClockID::tim1clk:
+			fclk = getClockFrequency(ClockID::pclk1) << (((RCC->CFGR & ~RCC_CFGR_PPRE1) == 0) ? 0 : 1);
+			break;
+
+		case ClockID::tim2clk:
+			fclk = getClockFrequency(ClockID::pclk2) << (((RCC->CFGR & ~RCC_CFGR_PPRE1) == 0) ? 0 : 1);
+			break;
+
+		case ClockID::hse:
+			fclk = CLOCK_HSE_FREQUENCY;
+			break;
+
+		case ClockID::hsi:
+			fclk = CLOCK_HSI_FREQUENCY;
+			break;
+
+		case ClockID::lse:
+			fclk = CLOCK_LSE_FREQUENCY;
+			break;
+
+		case ClockID::lsi:
+			fclk = CLOCK_LSI_FREQUENCY;
+			break;
+	}
+
+	return fclk;
 }

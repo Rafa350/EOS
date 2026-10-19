@@ -1,6 +1,5 @@
 module;
 
-
 #include "hardware.h"
 
 
@@ -8,14 +7,14 @@ module Eos.Hardware.Clock;
 
 
 import Eos.Bits;
-import Eos.Configuration.Platform;
+import Eos.Platform;
 
 
 using namespace eos;
 using namespace eos::hardware::clock::internal;
 
 
-//static_assert(Platform::is_STM32_G0);
+static_assert(platformCheck("STM32G0B1xx"));
 
 
 

@@ -1,8 +1,7 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES
         FILES
-            eosService.cpp
-            eosLedService.cpp
+            Service.cpp
 )
 
 if(EOS_USE_SERVICE_CANOPEN)
@@ -15,6 +14,10 @@ endif()
 
 if(EOS_USE_SERVICE_DIGOUTPUT)
     add_subdirectory("DigOutput")
+endif()
+
+if(EOS_USE_SERVICE_LED)
+    add_subdirectory("Led")
 endif()
 
 if(EOS_USE_SERVICE_FORMS)

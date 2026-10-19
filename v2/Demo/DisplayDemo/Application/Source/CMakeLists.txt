@@ -10,3 +10,4 @@ target_sources(${TARGET_NAME}
 )
 
 add_subdirectory("STM32F4")
+add_subdirectory("Services")
