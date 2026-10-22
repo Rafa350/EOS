@@ -13,6 +13,7 @@
             "hidden": true,
             "cacheVariables": {
                 "EOS_RTOS_NAME": "FreeRTOS",
+                "EOS_USE_GRAPHICS": "ON",
                 "EOS_USE_DEVICE_UART": "ON",
                 "EOS_USE_DEVICE_SPI": "ON"
             }
@@ -23,6 +24,7 @@
             "binaryDir": "${sourceDir}/CMake/Artifacts/Release STM32F4",
             "cacheVariables":{
                 "EOS_PLATFORM_NAME": "STM32F429ZI",
+                "EOS_PLATFORM_ID": "STM32_F429_ZI",
                 "CMAKE_BUILD_TYPE":"Release"
             }
         },
@@ -32,6 +34,7 @@
             "binaryDir": "${sourceDir}/CMake/Artifacts/Debug STM32F4",
             "cacheVariables":{
                 "EOS_PLATFORM_NAME": "STM32F429ZI",
+                "EOS_PLATFORM_ID": "STM32_F429_ZI",
                 "CMAKE_BUILD_TYPE":"Debug"
             }
         }

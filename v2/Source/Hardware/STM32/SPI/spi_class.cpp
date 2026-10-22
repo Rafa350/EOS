@@ -110,9 +110,9 @@ export namespace eos::hardware::spi {
             void setFirstBit(FirstBit firstBit) const;
 
             void write8(UInt8 data) const;
-            void write16(uint16_t data) const;
+            void write16(UInt16 data) const;
             UInt8 read8() const;
-            uint16_t read16() const;
+            UInt16 read16() const;
 
             bool isTxEmpty() const;
             bool isRxNotEmpty() const;
@@ -324,7 +324,7 @@ StdResult SPIDevice::transmit(
                 if (txBuffer == nullptr)
                     write16(0);
                 else {
-                    uint16_t data = *(const uint16_t*)&txBuffer[count];
+                    UInt16 data = *(const UInt16*)&txBuffer[count];
                     write16(data);
                 }
             }
@@ -344,9 +344,9 @@ StdResult SPIDevice::transmit(
                     rxBuffer[count] = data;
             }
             else {
-                uint16_t data = read16();
+                UInt16 data = read16();
                 if (rxBuffer != nullptr)
-                    *(uint16_t*)(&rxBuffer[count]) = data;
+                    *(UInt16*)(&rxBuffer[count]) = data;
             }
 
             count += len8 ? 1 : 2;
@@ -610,9 +610,9 @@ void SPIDevice::write8(
 /// \param    data: Les dades a transmetre.
 ///
 void SPIDevice::write16(
-	uint16_t data) const {
+	UInt16 data) const {
 
-	*((volatile uint16_t*)&_spi->DR) = data;
+	*((volatile UInt16*)&_spi->DR) = data;
 }
 
 
@@ -630,9 +630,9 @@ UInt8 SPIDevice::read8() const {
 /// \brief    Llegeix una paraula de 16 bits.
 /// \return   El valor de la lectura.
 ///
-uint16_t SPIDevice::read16() const {
+UInt16 SPIDevice::read16() const {
 
-	return *((volatile uint16_t*)&_spi->DR);
+	return *((volatile UInt16*)&_spi->DR);
 }
 
 

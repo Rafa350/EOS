@@ -42,3 +42,17 @@ endif()
 if(EOS_USE_DEVICE_UART)
     add_subdirectory("UART")
 endif()
+
+if(EOS_USE_DEVICE_LTDC)
+    if(EOS_PLATFORM_NAME MATCHES "STM32F429" OR
+       EOS_PLATFORM_NAME MATCHES "STM32F7")
+        add_subdirectory("LTDC")
+    endif()
+endif()
+
+if(EOS_USE_DEVICE_DMA2D)
+    if(EOS_PLATFORM_NAME MATCHES "STM32F429" OR
+       EOS_PLATFORM_NAME MATCHES "STM32F7")
+        add_subdirectory("DMA2D")
+    endif()
+endif()

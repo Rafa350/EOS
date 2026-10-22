@@ -4,10 +4,10 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.UART.Classes;
+export module Eos.Hardware.UART._Classes;
 
 
-import Eos.Hardware.UART.PlatformTraits;
+import Eos.Hardware.UART._PlatformTraits;
 
 import Eos.Events;
 import Eos.Hardware.Clock;

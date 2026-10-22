@@ -42,12 +42,9 @@ namespace eos {
 
     };
 
-#if defined(EOS_PLATFORM_STM32G071RB)
-    constexpr PlatformID currentPlatformId = PlatformID::STM32_G071_RB;
-#elif defined(EOS_PLATFORM_STM32G0B1RE)
-    constexpr PlatformID currentPlatformId = PlatformID::STM32_G0B1_RE;
-#elif defined(EOS_PLATFORM_STM32F429ZI)
-    constexpr PlatformID currentPlatformId = PlatformID::STM32_F429_ZI;
+
+#ifdef EOS_PLATFORM_ID
+    constexpr PlatformID currentPlatformId = PlatformID::EOS_PLATFORM_ID;
 #else
     error "Unknown platformm"
 #endif

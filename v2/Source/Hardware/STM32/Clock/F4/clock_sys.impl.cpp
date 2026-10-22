@@ -81,6 +81,11 @@ bool Clock::selectSystemClock(
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Obte la frequencia d'un rellotge.
+/// @param    clockID: Idenfificador del rellotge.
+/// @return   El valor en hertz. Zero en cas d'error.
+///
 UInt32 Clock::getClockFrequency(
 	ClockID clockID) {
 

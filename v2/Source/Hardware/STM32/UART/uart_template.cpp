@@ -4,13 +4,13 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.UART.Templates;
+export module Eos.Hardware.UART._Templates;
 
 
-import Eos.Hardware.UART.Classes;
-import Eos.Hardware.UART.DeviceTraits;
-import Eos.Hardware.UART.PlatformTraits;
-import Eos.Hardware.UART.PinTraits;
+import Eos.Hardware.UART._Classes;
+import Eos.Hardware.UART._DeviceTraits;
+import Eos.Hardware.UART._PlatformTraits;
+import Eos.Hardware.UART._PinTraits;
 
 import Eos.Bits;
 import Eos.Hardware.Clock;
@@ -241,20 +241,17 @@ inline clock::ClockID UARTDeviceX<DeviceID::uart2>::getUARTClock() const {
 
 #elif defined(EOS_PLATFORM_STM32F4)
 
-namespace htl::uart {
+template<UARTDeviceID deviceId_>
+Clock::ClockID UARTDeviceX<deviceId_>::getUARTClock() const {
 
-	template<DeviceID deviceId_>
-	clock::ClockID htl::uart::UARTDeviceX<deviceId_>::getUARTClock() const {
-
-		return Traits::pclkX;
-	}
+	return UARTTraits::pclkX;
 }
 
 #elif defined(EOS_PLATFORM_STM32F7)
 
 namespace htl::uart {
 
-	template<DeviceID deviceId_>
+	template<UARTDeviceID deviceId_>
 	clock::ClockID htl::uart::UARTDeviceX<deviceId_>::getUARTClock() const {
 
 		auto addr = reinterpret_cast<uint32_t*>(Traits::clockSourceAddr);

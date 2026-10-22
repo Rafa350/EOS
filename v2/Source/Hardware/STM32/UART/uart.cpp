@@ -7,10 +7,10 @@ module;
 export module Eos.Hardware.UART;
 
 
-export import Eos.Hardware.UART.Classes;
-export import Eos.Hardware.UART.PlatformTraits;
-export import Eos.Hardware.UART.Templates;
-export import Eos.Hardware.UART.Types;
+export import Eos.Hardware.UART._Classes;
+export import Eos.Hardware.UART._PlatformTraits;
+export import Eos.Hardware.UART._Templates;
+export import Eos.Hardware.UART._Types;
 
 
 export namespace eos::hardware::uart {

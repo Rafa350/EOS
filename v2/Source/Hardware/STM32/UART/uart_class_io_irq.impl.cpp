@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-module Eos.Hardware.UART.Classes;
+module Eos.Hardware.UART._Classes;
 
 
 import Eos.Bits;
@@ -84,13 +84,14 @@ StdResult UARTDevice::receive_IRQ(
 /// @brief    Habilita la transmissio de dades en modus IRQ
 ///
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-void htl::uart::UARTDevice::enableTransmissionIRQ() const {
+void UARTDevice::enableTransmissionIRQ() const {
 
 	auto a = startAtomic();
 
-	set(_usart->CR1,
+	Bits::set(_usart->CR1,
 		USART_CR1_TXEIE |          // Habilita interrupcio TXE
 		USART_CR1_TE);             // Habilita la transmissio
+
 	endAtomic(a);
 }
 #elif defined(EOS_PLATFORM_STM32G0)
@@ -136,7 +137,7 @@ void UARTDevice::enableReceptionIRQ() const {
 	// Notes:  Si RTO no esta suportat RTOEN sempre estara a zero per hardware
 	//
 #if defined(EOS_PLATFORM_STM32F4)
-	set(_usart->CR1, USART_CR1_IDLEIE);       // Habilita interrupcio IDLE
+	Bits::set(_usart->CR1, USART_CR1_IDLEIE);       // Habilita interrupcio IDLE
 #else
 	if (_usart->CR2 & USART_CR2_RTOEN)
 		Bits::set(_usart->CR1, USART_CR1_RTOIE);    // Habilita interrupcio RTO
@@ -176,13 +177,13 @@ void UARTDevice::txInterruptService() {
 
 	// Interrupcio 'TXE'
 	//
-	if (isSet(CR1, USART_CR1_TXEIE) && isSet(SR, USART_SR_TXE)) {
+	if (Bits::isSet(CR1, USART_CR1_TXEIE) && isSet(SR, USART_SR_TXE)) {
 		if (_txCount < _txMaxCount) {
 			_usart->DR = _txBuffer[_txCount++];
 			if (_txCount == _txMaxCount) {
 				auto a = startAtomic();
-				clear(_usart->CR1, USART_CR1_TXEIE); // Deshabilita interrupcio TXE
-				set(_usart->CR1, USART_CR1_TCIE);    // Habilita interrupcio TC
+				Bits::clear(_usart->CR1, USART_CR1_TXEIE); // Deshabilita interrupcio TXE
+				Bits::set(_usart->CR1, USART_CR1_TCIE);    // Habilita interrupcio TC
 				endAtomic(a);
 			}
 		}
@@ -272,7 +273,7 @@ void UARTDevice::rxInterruptService() {
 
 	/// Interrupcio 'RXNE'
 	//
-	if (isSet(CR1, USART_CR1_RXNEIE) && isSet(SR, USART_SR_RXNE)) {
+	if (Bits::isSet(CR1, USART_CR1_RXNEIE) && isSet(SR, USART_SR_RXNE)) {
 		if (_rxCount < _rxMaxCount) {
 			_rxBuffer[_rxCount++] = _usart->DR;
 			if (_rxCount == _rxMaxCount) {
@@ -285,7 +286,7 @@ void UARTDevice::rxInterruptService() {
 
 	// Interrupcio 'IDLE'
 	//
-	if (isSet(CR1, USART_CR1_IDLEIE) && isSet(SR, USART_SR_IDLE)) {
+	if (Bits::isSet(CR1, USART_CR1_IDLEIE) && isSet(SR, USART_SR_IDLE)) {
 		if (_rxCount > 0) {
 			disableReception();
 			notifyRxCompleted(_rxBuffer, _rxCount, true);

@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.UART.PlatformTraits;
+export module Eos.Hardware.UART._PlatformTraits;
 
 
 import Eos.Platform;
@@ -22,7 +22,7 @@ namespace eos::hardware::uart::internal {
 		enum class ClockSource_Type2 { pclk, sysclk1, hsi, lse };
 
 		enum class WordBits_Type1 {wb7, wb8, wb9};
-		enum class WordBits_Type2 {w8, w9};
+		enum class WordBits_Type2 {wb8, wb9};
 
 		template<PlatformID>
 		struct PlatformTraits {

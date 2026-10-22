@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-module Eos.Hardware.UART.Classes;
+module Eos.Hardware.UART._Classes;
 
 
 import Eos.Bits;
@@ -43,7 +43,11 @@ StdResult UARTDevice::transmit_DMA(
         // Inicia la transferencia per DMA
         //
         devDMA->enableNotificationEvent(_dmaNotificationEvent);
+#if defined(STM32F4)
+        devDMA->start(buffer, (UInt8*)&(_usart->DR), _txMaxCount);
+#else
         devDMA->start(buffer, (UInt8*)&(_usart->TDR), _txMaxCount);
+#endif
 
         return StdErrorCode::ok;
     }

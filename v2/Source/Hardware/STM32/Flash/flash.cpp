@@ -1,6 +1,5 @@
 module;
 
-
 #include "hardware.h"
 
 
@@ -24,8 +23,7 @@ namespace eos::hardware::flash::internal {
         enum class Latency_G0xx { fl0, fl1, fl2 };
 
         template <PlatformID platformId_>
-        struct PlatformTraits {
-        };
+        struct PlatformTraits;
 
         template <>
         struct PlatformTraits<PlatformID::STM32_F429_ZI> {

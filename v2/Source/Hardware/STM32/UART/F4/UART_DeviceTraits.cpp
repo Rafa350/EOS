@@ -5,11 +5,11 @@ module;
 #include <cstddef>
 
 
-export module Eos.Hardware.UART.DeviceTraits;
+export module Eos.Hardware.UART._DeviceTraits;
 
 
 import Eos.Hardware.Clock;
-import Eos.Hardware.UART.Types;
+import Eos.Hardware.UART._Types;
 import Eos.Hardware.Interrupts;
 import Eos.Types;
 
@@ -19,8 +19,7 @@ namespace eos::hardware::uart::internal {
     export {
 
         template <UARTDeviceID>
-        struct UARTTraits {
-        };
+        struct UARTTraits;
 
 #ifdef USART1_BASE
         template <>

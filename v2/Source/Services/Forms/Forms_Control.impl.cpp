@@ -7,20 +7,21 @@ import Eos.System.Graphics.Pen;
 import Eos.System.Graphics.Rect;
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
 /// \param    point: La posicio.
 /// \param    size: El tamany.
 ///
-eos::Control::Control(
+Control::Control(
     const Point &position,
     const Size &size):
 
 	Visual {position, size},
 	_backgroundColor {Colors::black},
-	_borderColor {Colors::white},
-	_propertyChangedEvent {nullptr} {
-
+	_borderColor {Colors::white} {
 }
 
 
@@ -28,7 +29,7 @@ eos::Control::Control(
 /// \brief    Renderitza el control.
 /// \param    graphics : L'objecte per dibuixar.
 ///
-void eos::Control::onRender(
+void Control::onRender(
 	Graphics *graphics) {
 
     graphics->paintRectangle(
@@ -42,21 +43,15 @@ void eos::Control::onRender(
 
 
 /// ---------------------------------------------------------------------
-/// \brief    Metode que es crida quent canvia el valor d'una propietat.
+/// \brief    Metode que es crida quant canvia el valor d'una propietat.
 /// \param    property : La propietat que ha canviat.
 ///
-void eos::Control::onPropertyChanged(
+void Control::onPropertyChanged(
     void *property) {
-
-	if (_propertyChangedEvent != nullptr) {
-		PropertyChangedEventArgs args = {
-			.ptr {property}
-		};
-		_propertyChangedEvent->execute(this, &args);
-	}
 
 	if ((property == &_backgroundColor) || (property == &_borderColor))
 		invalidate();
 
-	Visual::onPropertyChanged(property);
+	else
+		Visual::onPropertyChanged(property);
 }

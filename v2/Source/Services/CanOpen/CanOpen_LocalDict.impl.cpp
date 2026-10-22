@@ -5,11 +5,37 @@ using namespace eos;
 
 
 /// ---------------------------------------------------------------------------
+/// @brief    Modifica el contingut d'una entrada del diccionari local
+/// @param 	  index: El index.
+/// @param    subIndex: El subindex.
+/// @param    clearValue: La mascara pel clear.
+/// @param    setValue: La mascara pel set.
+/// @param    blockTime: Temps maxim de bloqueig.
+/// @return   True si tot es correcte.
+///
+bool CanOpenService::modifyU8(
+	UInt16 index,
+	UInt8 subIndex,
+	UInt8 clearValue,
+	UInt8 setValue,
+	Ticks blockTime) {
+
+	UInt8 value;
+
+	if (readU8(index, subIndex, value)) {
+		Bits::modify(value, clearValue, setValue);
+		return writeU8(index, subIndex, value, blockTime);
+	}
+	else
+		return false;
+}
+
+
+/// ---------------------------------------------------------------------------
 /// @brief    Escriu un valor UInt8 al diccionari local
 /// @param    index: L'index.
 /// @param    subIndex: El subindex.
 /// @param    value: El valor.
-/// @param    mask: La mascara de bits del valor.
 /// @param    blockTime: Temps maxim de bloqueig.
 /// @return   True si tot es correcte.
 /// \remarks  La notificacio 'EntryChanged' es posa en cua.
@@ -18,7 +44,6 @@ bool CanOpenService::writeU8(
 	UInt16 index,
 	UInt8 subIndex,
 	UInt8 value,
-	UInt8 mask,
 	Ticks blockTime) {
 
 	auto ok = false;
@@ -26,18 +51,16 @@ bool CanOpenService::writeU8(
 	auto entryId = _dictionary->find(index, subIndex);
 	if (entryId != (typeof(entryId)) -1)
 		if (_dictionary->canWrite(entryId)) {
-			UInt8 oldValue;
-			if (_dictionary->readU8(entryId, oldValue))
-				if (_dictionary->writeU8(entryId, (oldValue & ~mask) | (value & mask))) {
-					Message message = {
-						.id {MessageID::entryChanged},
-						.entryChanged {
-							.entryId {entryId}
-						}
-					};
-					ok = _messageQueue.push(message, blockTime);
-				}
+			if (_dictionary->writeU8(entryId, value)) {
+				Message message = {
+					.id {MessageID::entryChanged},
+					.entryChanged {
+						.entryId {entryId}
+					}
+				};
+				ok = _messageQueue.push(message, blockTime);
 			}
+		}
 
 	return ok;
 }
@@ -48,7 +71,6 @@ bool CanOpenService::writeU8(
 /// @param    index: L'index.
 /// @param    subIndex: El subindex.
 /// @param    value: El valor.
-/// @param    mask: La mascara de bits del valor.
 /// @param    blockTime: Temps maxim de bloqueig.
 /// @return   True si tot es correcte.
 /// \remarks  La notificacio 'EntryChanged' es posa en cua.
@@ -57,7 +79,6 @@ bool CanOpenService::writeU16(
 	UInt16 index,
 	UInt8 subIndex,
 	UInt16 value,
-	UInt16 mask,
 	Ticks blockTime) {
 
 	auto ok = false;
@@ -65,18 +86,16 @@ bool CanOpenService::writeU16(
 	auto entryId = _dictionary->find(index, subIndex);
 	if (entryId != (unsigned) -1)
 		if (_dictionary->canWrite(entryId)) {
-			UInt16 oldValue;
-			if (_dictionary->readU16(entryId, oldValue))
-				if (_dictionary->writeU16(entryId, (oldValue & ~mask) | (value & mask))) {
-					Message message = {
-						.id {MessageID::entryChanged},
-						.entryChanged {
-							.entryId {entryId}
-						}
-					};
-					ok = _messageQueue.push(message, blockTime);
-				}
+			if (_dictionary->writeU16(entryId, value)) {
+				Message message = {
+					.id {MessageID::entryChanged},
+					.entryChanged {
+						.entryId {entryId}
+					}
+				};
+				ok = _messageQueue.push(message, blockTime);
 			}
+		}
 
 	return ok;
 }
@@ -87,7 +106,6 @@ bool CanOpenService::writeU16(
 /// @param    index: L'index.
 /// @param    subIndex: El subindex.
 /// @param    value: El valor.
-/// @param    mask: La mascara de bits del valor.
 /// @param    blockTime: Temps maxim de bloqueig.
 /// @return   True si tot es correcte.
 /// \remarks  La notificacio 'EntryChanged' es posa en cua.
@@ -96,7 +114,6 @@ bool eos::CanOpenService::writeU32(
 	UInt16 index,
 	UInt8 subIndex,
 	UInt32 value,
-	UInt32 mask,
 	Ticks blockTime) {
 
 	auto ok = false;
@@ -104,18 +121,16 @@ bool eos::CanOpenService::writeU32(
 	auto entryId = _dictionary->find(index, subIndex);
 	if (entryId != (typeof(entryId)) -1)
 		if (_dictionary->canWrite(entryId)) {
-			UInt32 oldValue;
-			if (_dictionary->readU32(entryId, oldValue))
-				if (_dictionary->writeU32(entryId, (oldValue & ~mask) | (value & mask))) {
-					Message message = {
-						.id {MessageID::entryChanged},
-						.entryChanged {
-							.entryId {entryId}
-						}
-					};
-					ok = _messageQueue.push(message, blockTime);
-				}
+			if (_dictionary->writeU32(entryId, value)) {
+				Message message = {
+					.id {MessageID::entryChanged},
+					.entryChanged {
+						.entryId {entryId}
+					}
+				};
+				ok = _messageQueue.push(message, blockTime);
 			}
+		}
 
 	return ok;
 }

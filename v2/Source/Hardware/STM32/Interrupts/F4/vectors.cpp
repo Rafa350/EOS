@@ -7,6 +7,12 @@ module;
 export module Eos.Hardware.Interrupts._Vectors;
 
 
+import Eos.Platform;
+
+
+static_assert(eos::platformCheck("STM32F4xxxx"));
+
+
 export namespace eos::hardware::interrupts::internal {
 
     enum class VectorID {

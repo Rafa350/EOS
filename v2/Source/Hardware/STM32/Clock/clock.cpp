@@ -20,7 +20,7 @@ namespace eos::hardware::clock::internal {
 		enum class ClockID_F0xx { sysclk, pclk, hclk, hse, hsi, lse, lsi };
         enum class ClockID_F4xx { sysclk, pclk1, pclk2, tim1clk, tim2clk,
                                   hclk, hse, hsi, lse, lsi };
-        using ClockID_F7xx = ClockID_F4xx;
+        using      ClockID_F7xx = ClockID_F4xx;
         enum class ClockID_G0xx { sysclk, pclk, timpclk, hclk, hclk8, hse,
                                   hsi16, lse, lsi, hsisys, pllpclk, pllqclk,
                                   pllrclk };
@@ -31,22 +31,21 @@ namespace eos::hardware::clock::internal {
         // Font del clock del sistema
         //
         enum class SystemClockSource_F0xx { hsi, hse, pll };
-        using SystemClockSource_F4xx = SystemClockSource_F0xx;
-        using SystemClockSource_F7xx = SystemClockSource_F0xx;
+        using      SystemClockSource_F4xx = SystemClockSource_F0xx;
+        using      SystemClockSource_F7xx = SystemClockSource_F0xx;
         enum class SystemClockSource_G0xx { lsi, lse, hse, pllrclk, hsisys };
 
         // Font del PLL
         //
         enum class PLLSource_F0xx { hsi, hse };
-        using PLLSource_F4xx = PLLSource_F0xx;
-        using PLLSource_F7xx = PLLSource_F0xx;
+        using      PLLSource_F4xx = PLLSource_F0xx;
+        using      PLLSource_F7xx = PLLSource_F0xx;
         enum class PLLSource_G0xx { hsi16, hse };
 
         // Traits depenents de la plataforma
         //
         template <PlatformID platformId_>
-        class PlatformTraits {
-        };
+        class PlatformTraits;
 
         template <>
         class PlatformTraits<PlatformID::STM32_F429_ZI> {
@@ -83,6 +82,7 @@ namespace eos::hardware::clock::internal {
     //
     template <bool use>
     class Clock_HSI: private StaticClass<Clock_HSI<use>> {
+        // Buida per defecte
     };
 
     template <>
@@ -98,6 +98,7 @@ namespace eos::hardware::clock::internal {
     //
     template <bool use>
     class Clock_HSI16: private StaticClass<Clock_HSI16<use>> {
+        // Buida per defecte
     };
 
     template <>
@@ -113,6 +114,7 @@ namespace eos::hardware::clock::internal {
     //
     template <bool use>
     class Clock_HSI48: private StaticClass<Clock_HSI48<use>> {
+        // Buida per defecte
     };
 
     template <>

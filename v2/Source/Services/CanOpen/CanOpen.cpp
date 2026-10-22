@@ -8,6 +8,7 @@ export module Eos.Services.CanOpen;
 
 
 import Eos.Bits;
+import Eos.Concepts;
 import Eos.Events;
 import Eos.Hardware.FDCAN;
 import Eos.Math;
@@ -20,6 +21,10 @@ import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
 import Eos.System.Core.Timer;
 import Eos.Types;
+
+
+using namespace eos;
+using namespace eos::hardware::fdcan;
 
 
 export namespace eos {
@@ -61,6 +66,9 @@ export namespace eos {
 
 
 	class CanOpenService final: public Service {
+		private:
+			using DevCAN = CANDevice;
+
 		public:
         	enum class NodeState {
         		initializing,
@@ -122,12 +130,6 @@ export namespace eos {
 			using IHeartbeatReceivedEvent = HeartbeatReceivedEventRaiser::IEvent;
 			template <typename Instance_> using HeartbeatReceivedEvent = HeartbeatReceivedEventRaiser::Event<Instance_>;
 
-			struct InitParams {
-				eos::hardware::fdcan::CANDevice * devCAN;
-				NodeID nodeId;
-				CanOpenDictionary *dictionary;
-			};
-
 		private:
 			static constexpr UInt32 _messageQueueSize = 15;
 			static constexpr UInt32 _canFrameSize = 8;
@@ -168,8 +170,8 @@ export namespace eos {
         	using MessageQueue = Queue<Message>;
 
 		private:
-			eos::hardware::fdcan::CANDevice * const _devCAN;
-			eos::hardware::fdcan::CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
+			DevCAN * const _devCAN;
+			DevCAN::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			Timer::Event<CanOpenService> _timer_notificationEvent;
 			Timer _timer;
         	CanOpenDictionary * const _dictionary;
@@ -183,7 +185,7 @@ export namespace eos {
         	HeartbeatReceivedEventRaiser _heartbeatReceivedEventRaiser;
 
 		private:
-            void canDevice_notificationEventHandler(eos::hardware::fdcan::CANDevice *sender, eos::hardware::fdcan::CANDevice::NotificationEventArgs *args);
+            void canDevice_notificationEventHandler(DevCAN *sender, DevCAN::NotificationEventArgs *args);
 			void timer_notificationEventHandler(Timer *timer, Timer::EventArgs *args);
 
             void configureCANDevice();
@@ -233,26 +235,29 @@ export namespace eos {
             void changeNodeState(NodeState newNodeState);
 
 		public:
-			CanOpenService(InitParams const &params);
+			CanOpenService(DevCAN *devCAN, NodeID nodeId, CanOpenDictionary *dictionary);
 
 			StdResult setNodeState(NodeState nodeState, Ticks blockTime);
 			NodeState getNodeState() const;
 			NodeID getNodeId() const;
 
-            // Lectura i escriptura en el dicionari local
+            // Lectura, escriptura i modificacio en el dicionari local
             //
-            bool writeU8(UInt16 index, UInt8 subIndex, UInt8 value, UInt8 mask, Ticks blockTime);
-            bool writeU16(UInt16 index, UInt8 subIndex, UInt16 value, UInt16 mask, Ticks blockTime);
-            bool writeU32(UInt16 index, UInt8 subIndex, UInt32 value, UInt32 mask, Ticks blockTime);
+			bool modifyU8(UInt16 index, UInt8 subIndex, UInt8 clearValue, UInt8 setValue, Ticks blockTime);
+			bool modifyU16(UInt16 index, UInt8 subIndex, UInt16 clearValue, UInt16 setValue, Ticks blockTime);
+			bool modifyU32(UInt16 index, UInt8 subIndex, UInt32 clearValue, UInt32 setValue, Ticks blockTime);
+            bool writeU8(UInt16 index, UInt8 subIndex, UInt8 value, Ticks blockTime);
+            bool writeU16(UInt16 index, UInt8 subIndex, UInt16 value, Ticks blockTime);
+            bool writeU32(UInt16 index, UInt8 subIndex, UInt32 value, Ticks blockTime);
             bool readU8(UInt16 index, UInt8 subIndex, UInt8 &value);
             bool readU16(UInt16 index, UInt8 subIndex, UInt16 &value);
             bool readU32(UInt16 index, UInt8 subIndex, UInt32 &value);
 
             // Lectura i escriptura en el dicionari remot (Protocol SDO)
             //
-            bool writeU8(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt8 value, UInt8 mask);
-            bool writeU16(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt16 value, UInt16 mask);
-            bool writeU32(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt32 value, UInt32 mask);
+            bool writeU8(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt8 value, Ticks blockTime);
+            bool writeU16(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt16 value, Ticks blockTime);
+            bool writeU32(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt32 value, Ticks blockTime);
             bool readU8(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt8 &value);
             bool readU16(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt16 &value);
             bool readU32(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt32 &value);
@@ -304,22 +309,23 @@ namespace eos {
 }
 
 
-using namespace eos;
-
-
 /// ----------------------------------------------------------------------
 /// @brief    Constructor del objecte.
-/// @param    params: Els parametres d'inicialitzacio
+/// @param    devCAN: El dispositiu CAN.
+/// @param    nideId: El identificador del node.
+/// @param    dictionary: El diccionari.
 ///
 CanOpenService::CanOpenService(
-	InitParams const &params) :
+	DevCAN *devCAN,
+	NodeID nodeId,
+	CanOpenDictionary *dictionary) :
 
-    _devCAN {params.devCAN},
+    _devCAN {devCAN},
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_timer_notificationEvent {*this, &CanOpenService::timer_notificationEventHandler},
 	_timer {Timer::Mode::autoRestart, nullptr, _timer_notificationEvent},
-	_dictionary {params.dictionary},
-	_nodeId {(UInt8)(params.nodeId & 0x7F)},
+	_dictionary {dictionary},
+	_nodeId {(UInt8)(nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
 	_messageQueue {_messageQueueSize} {
 }
@@ -1219,146 +1225,6 @@ CanOpenService::NodeState CanOpenService::getNodeState() const {
 NodeID CanOpenService::getNodeId() const {
 
 	return _nodeId;
-}
-
-
-
-/// ----------------------------------------------------------------------
-/// @brief    Posa un node en estat 'operational'.
-/// @param    nodeId: Node destinatari.
-/// @param    blockTime: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-StdResult CanOpenService::start(
-	NodeID nodeId,
-	Ticks blockTime) {
-
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return StdErrorCode::errorParameter;
-
-	// Emet la comanda NMT Start
-	//
-	UInt8 data[2];
-	data[0] = 0x01;
-	data[1] = nodeId;
-
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
-}
-
-
-/// ----------------------------------------------------------------------
-/// @brief    Posar un node en estat 'stoped'
-/// @param    nodeId: Node destinatati
-/// @param    blockTime: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-///
-StdResult CanOpenService::stop(
-	NodeID nodeId,
-	Ticks blockTime) {
-
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return StdErrorCode::errorParameter;
-
-	// Emet la comanda NMT Stop
-	//
-	UInt8 data[2];
-	data[0] = 0x02;
-	data[1] = nodeId;
-
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
-}
-
-
-/// ----------------------------------------------------------------------
-/// @brief    Posar un node en estat 'pre-operational'.
-/// @param    nodeId: Node destinatati
-/// @param    blockTime: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-StdResult CanOpenService::enterPreOperational(
-	NodeID nodeId,
-	Ticks blockTime) {
-
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return StdErrorCode::errorParameter;
-
-	// Emet la comanda NMT Enter Pre-Operational
-	//
-	UInt8 data[2];
-	data[0] = 0x80;
-	data[1] = nodeId;
-
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
-}
-
-
-/// ----------------------------------------------------------------------
-/// @brief    Reseteja un node..
-/// @param    nodeId: Node destinatati
-/// @param    blockTime: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-StdResult eos::CanOpenService::resetNode(
-	NodeID nodeId,
-	Ticks blockTime) {
-
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return StdErrorCode::errorParameter;
-
-	// Emet la comanda NMT Reset Node
-	//
-	UInt8 data[2];
-	data[0] = 0x81;
-	data[1] = nodeId;
-
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
-}
-
-
-/// ----------------------------------------------------------------------
-/// @brief    Reseteja les comunicacions d'un node.
-/// @param    nodeId: Node destinatati
-/// @param    blockTime: El temps maxim d'espera.
-/// \return   El resultat de l'operacio.
-/// \remarks  L'ordre es posa en cua per execucio posterior.
-///
-StdResult CanOpenService::resetCommunication(
-	NodeID nodeId,
-	Ticks blockTime) {
-
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return StdErrorCode::errorParameter;
-
-	// Emet la comanda NMT Rerset Comunication
-	//
-	UInt8 data[2];
-	data[0] = 0x82;
-	data[1] = nodeId;
-
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
 }
 
 

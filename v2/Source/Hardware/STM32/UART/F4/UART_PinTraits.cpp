@@ -3,11 +3,11 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.UART.PinTraits;
+export module Eos.Hardware.UART._PinTraits;
 
 
 import Eos.Hardware.GPIO;
-import Eos.Hardware.UART.Types;
+import Eos.Hardware.UART._Types;
 
 
 export namespace eos::hardware::uart::internal {
@@ -15,8 +15,7 @@ export namespace eos::hardware::uart::internal {
     enum class PinFunction { tx, rx, cts, rts, de };
 
     template <UARTDeviceID, PinFunction, gpio::PortID, gpio::PinID>
-    struct PinTraits {
-    };
+    struct PinTraits;
 
     #if defined(USART1_BASE)
     template<>

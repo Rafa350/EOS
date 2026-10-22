@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-module Eos.Hardware.UART.Classes;
+module Eos.Hardware.UART._Classes;
 
 
 import Eos.Bits;
@@ -170,7 +170,7 @@ bool UARTDevice::waitTransmissionComplete(
 	Ticks expireTime) {
 
 #if defined(EOS_PLATFORM_STM32F4)
-	while (!isSet(_usart->SR, USART_SR_TC)) {
+	while (!Bits::isSet(_usart->SR, USART_SR_TC)) {
 #else
 	while (!Bits::isSet(_usart->ISR, USART_ISR_TC)) {
 #endif
@@ -195,9 +195,9 @@ bool UARTDevice::waitTransmissionBufferEmpty(
 #if defined(EOS_PLATFORM_STM32G0)
 	while (!Bits::isSet(_usart->ISR, USART_ISR_TXE_TXFNF)) {
 #elif defined(EOS_PLATFORM_STM32F4)
-	while (!isSet(_usart->SR, USART_SR_TXE)) {
+	while (!Bits::isSet(_usart->SR, USART_SR_TXE)) {
 #else
-	while (!isSet(_usart->ISR, USART_ISR_TXE)) {
+	while (!Bits::isSet(_usart->ISR, USART_ISR_TXE)) {
 #endif
 		if (expireTime.hasExpiredNow())
 			return false;

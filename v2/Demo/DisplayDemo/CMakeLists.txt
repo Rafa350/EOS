@@ -57,6 +57,7 @@ target_compile_definitions(${TARGET_NAME} PRIVATE
     EOS_NO_INCLUDE_BOARD
     $<$<CONFIG:Debug>:EOS_DEBUG>
     ${EOS_PLATFORM_NAME}
+    EOS_PLATFORM_ID=${EOS_PLATFORM_ID}
 )
 
 target_link_options(${TARGET_NAME} PRIVATE

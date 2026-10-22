@@ -4,8 +4,9 @@ target_sources(${TARGET_NAME}
         CanOpen.cpp
         CanOpenDictionary.cpp
         CanOpenProtocol.cpp
-    PRIVATE
+    PUBLIC
         CanOpen_IO.impl.cpp
         CanOpen_LocalDict.impl.cpp
         CanOpen_RemoteDict.impl.cpp
+        CanOpen_NodeCtrl.impl.cpp
 )

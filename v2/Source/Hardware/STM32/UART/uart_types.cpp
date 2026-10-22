@@ -4,10 +4,10 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.UART.Types;
+export module Eos.Hardware.UART._Types;
 
 
-import Eos.Hardware.UART.PlatformTraits;
+import Eos.Hardware.UART._PlatformTraits;
 
 
 export namespace eos::hardware::uart {

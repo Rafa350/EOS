@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-module Eos.Hardware.UART.Classes;
+module Eos.Hardware.UART._Classes;
 
 
 import Eos.Bits;
@@ -194,7 +194,7 @@ void UARTDevice::setStopBits(
 /// \params   useParity: True si utilitza bit de paritat
 ///
 #if defined(EOS_PLATFORM_STM32F0) || defined(EOS_PLATFORM_STM32F4) || defined(EOS_PLATFORM_STM32F7)
-void htl::uart::UARTDevice::setWordBits(
+void UARTDevice::setWordBits(
     WordBits wordBits,
     bool useParity) const {
 
@@ -209,14 +209,14 @@ void htl::uart::UARTDevice::setWordBits(
 			break;
 	}
 
-	auto a = startAtomic();
+	auto a = Atomic::start();
 	auto CR1 = _usart->CR1;
 	if (numBits == 8)
-		clear(CR1, USART_CR1_M);
+		Bits::clear(CR1, USART_CR1_M);
 	else
-		set(CR1, USART_CR1_M);
+		Bits::set(CR1, USART_CR1_M);
 	_usart->CR1 = CR1;
-	endAtomic(a);
+	Atomic::end(a);
 }
 
 #elif defined(EOS_PLATFORM_STM32G0)

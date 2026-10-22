@@ -4,7 +4,7 @@ module;
 #include "hardware.h"
 
 
-module Eos.Hardware.UART.Classes;
+module Eos.Hardware.UART._Classes;
 
 
 import Eos.Bits;

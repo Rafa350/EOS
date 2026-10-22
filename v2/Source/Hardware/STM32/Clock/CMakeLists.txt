@@ -1,15 +1,11 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
         Clock.cpp
-)
-
-target_sources(${TARGET_NAME}
     PUBLIC
         Clock_HSE.impl.cpp
         Clock_LSE.impl.cpp
         Clock_LSI.impl.cpp
 )
-
 
 if(EOS_PLATFORM_NAME MATCHES "STM32F4")
 	add_subdirectory("F4")
