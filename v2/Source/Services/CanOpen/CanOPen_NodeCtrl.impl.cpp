@@ -26,9 +26,11 @@ StdResult CanOpenService::start(
 	data[0] = 0x01;
 	data[1] = nodeId;
 
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
+	return postMessage_TransmitFrame(
+		CobID::makeNMT(),
+		data,
+		sizeof(data),
+		blockTime);
 }
 
 
@@ -53,9 +55,11 @@ StdResult CanOpenService::stop(
 	data[0] = 0x02;
 	data[1] = nodeId;
 
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
+	return postMessage_TransmitFrame(
+		CobID::makeNMT(),
+		data,
+		sizeof(data),
+		blockTime);
 }
 
 
@@ -81,9 +85,11 @@ StdResult CanOpenService::enterPreOperational(
 	data[0] = 0x80;
 	data[1] = nodeId;
 
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
+	return postMessage_TransmitFrame(
+		CobID::makeNMT(),
+		data,
+		sizeof(data),
+		blockTime);
 }
 
 
@@ -109,9 +115,11 @@ StdResult eos::CanOpenService::resetNode(
 	data[0] = 0x81;
 	data[1] = nodeId;
 
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
+	return postMessage_TransmitFrame(
+		CobID::makeNMT(),
+		data,
+		sizeof(data),
+		blockTime);
 }
 
 
@@ -137,7 +145,9 @@ StdResult CanOpenService::resetCommunication(
 	data[0] = 0x82;
 	data[1] = nodeId;
 
-	CobID cobId = CobID::makeNMT();
-
-	return postMessage_TransmitFrame(cobId, data, sizeof(data), blockTime);
+	return postMessage_TransmitFrame(
+		CobID::makeNMT(),
+		data,
+		sizeof(data),
+		blockTime);
 }

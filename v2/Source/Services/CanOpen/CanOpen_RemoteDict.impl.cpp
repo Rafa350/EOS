@@ -5,7 +5,7 @@ using namespace eos;
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Ordena l'escriptura d'un valor en el diccionari remot.
+/// @brief    Ordena l'escriptura d'un valor UInt8, en el diccionari remot.
 /// @tparam   T_: Tipus del valor.
 /// @param    nodeId: Identificador del node remot.
 /// @param    index: Index de l'entrada del diccionari
@@ -45,13 +45,24 @@ bool CanOpenService::writeU8(
     // Posa en cua l'ordre de transmissio del paquet SDO
     //
 	return postMessage_TransmitFrame(
-        CobID(COBID::SDO, nodeId),
+        CobID::makeSDO(nodeId),
         data,
         sizeof(data),
         blockTime);
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Ordena l'escriptura d'un valor UInt16, en el diccionari remot.
+/// @tparam   T_: Tipus del valor.
+/// @param    nodeId: Identificador del node remot.
+/// @param    index: Index de l'entrada del diccionari
+/// @param    subIndex: Subindex de l'entrada del diccionari
+/// @param    value: Valor a escriure.
+/// @param    blockTime: Temps maxim de bloqueig.
+/// @return   True si tot es correcte.
+/// @remarks  L'ordre es posa en la cua pel seu proces posterior.
+///
 bool CanOpenService::writeU16(
     NodeID nodeId,
     UInt16 index,
@@ -82,13 +93,24 @@ bool CanOpenService::writeU16(
     // Posa en cua l'ordre de transmissio del paquet SDO
     //
 	return postMessage_TransmitFrame(
-        CobID(COBID::SDO, nodeId),
+        CobID::makeSDO(nodeId),
         data,
         sizeof(data),
         blockTime);
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Ordena l'escriptura d'un valor UInt32, en el diccionari remot.
+/// @tparam   T_: Tipus del valor.
+/// @param    nodeId: Identificador del node remot.
+/// @param    index: Index de l'entrada del diccionari
+/// @param    subIndex: Subindex de l'entrada del diccionari
+/// @param    value: Valor a escriure.
+/// @param    blockTime: Temps maxim de bloqueig.
+/// @return   True si tot es correcte.
+/// @remarks  L'ordre es posa en la cua pel seu proces posterior.
+///
 bool CanOpenService::writeU32(
     NodeID nodeId,
     UInt16 index,
@@ -119,7 +141,7 @@ bool CanOpenService::writeU32(
     // Posa en cua l'ordre de transmissio del paquet SDO
     //
 	return postMessage_TransmitFrame(
-        CobID(COBID::SDO, nodeId),
+        CobID::makeSDO(nodeId),
         data,
         sizeof(data),
         blockTime);

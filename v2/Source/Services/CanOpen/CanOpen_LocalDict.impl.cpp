@@ -5,7 +5,7 @@ using namespace eos;
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Modifica el contingut d'una entrada del diccionari local
+/// @brief    Modifica un valor UInt8 a nivell de bits en el diccionari local
 /// @param 	  index: El index.
 /// @param    subIndex: El subindex.
 /// @param    clearValue: La mascara pel clear.
@@ -25,6 +25,60 @@ bool CanOpenService::modifyU8(
 	if (readU8(index, subIndex, value)) {
 		Bits::modify(value, clearValue, setValue);
 		return writeU8(index, subIndex, value, blockTime);
+	}
+	else
+		return false;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Modifica un valor UInt16 a nivell de bits en el diccionari local
+/// @param 	  index: El index.
+/// @param    subIndex: El subindex.
+/// @param    clearValue: La mascara pel clear.
+/// @param    setValue: La mascara pel set.
+/// @param    blockTime: Temps maxim de bloqueig.
+/// @return   True si tot es correcte.
+///
+bool CanOpenService::modifyU16(
+	UInt16 index,
+	UInt8 subIndex,
+	UInt16 clearValue,
+	UInt16 setValue,
+	Ticks blockTime) {
+
+	UInt16 value;
+
+	if (readU16(index, subIndex, value)) {
+		Bits::modify(value, clearValue, setValue);
+		return writeU16(index, subIndex, value, blockTime);
+	}
+	else
+		return false;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Modifica un valor UInt32 a nivell de bits en el diccionari local
+/// @param 	  index: El index.
+/// @param    subIndex: El subindex.
+/// @param    clearValue: La mascara pel clear.
+/// @param    setValue: La mascara pel set.
+/// @param    blockTime: Temps maxim de bloqueig.
+/// @return   True si tot es correcte.
+///
+bool CanOpenService::modifyU32(
+	UInt16 index,
+	UInt8 subIndex,
+	UInt32 clearValue,
+	UInt32 setValue,
+	Ticks blockTime) {
+
+	UInt32 value;
+
+	if (readU32(index, subIndex, value)) {
+		Bits::modify(value, clearValue, setValue);
+		return writeU32(index, subIndex, value, blockTime);
 	}
 	else
 		return false;

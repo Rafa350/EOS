@@ -1,11 +1,11 @@
 module;
 
-
 #include <cstring>
 
 
 export module Eos.Services.CanOpen;
 
+export import Eos.Services.CanOpen._Types;
 
 import Eos.Bits;
 import Eos.Concepts;
@@ -28,42 +28,6 @@ using namespace eos::hardware::fdcan;
 
 
 export namespace eos {
-
-	using NodeID = UInt8;
-
-	class CobID {
-		private:
-			static constexpr UInt16 _baseNMT = COBID::NMT;
-			static constexpr UInt16 _baseSYNC = COBID::SYNC;
-			static constexpr UInt16 _baseTIME = COBID::TIME;
-			static constexpr UInt16 _baseHeartbeat = COBID::Heartbeat;
-
-		private:
-			UInt16 _value;
-
-		public:
-			constexpr explicit CobID(UInt16 value): _value {value & 0x7FF} {}
-			constexpr explicit CobID(UInt16 base, NodeID nodeId): _value {(base & 0x780) | (nodeId & 0x7F)} {}
-
-			inline operator UInt16() const { return value(); }
-			inline bool operator == (CobID other) const { return _value == other._value; }
-			inline bool operator != (CobID other) const { return _value != other._value; }
-
-			inline UInt16 value() const { return _value; }
-			inline UInt16 base() const { return _value & 0x780; }
-			inline NodeID nodeId() const { return _value & 0x7F; }
-
-			inline bool isNMT() const { return _value == _baseNMT; }
-			inline bool isSYNC() const { return _value == _baseSYNC; }
-			inline bool isTIME() const { return _value == _baseTIME; }
-			inline bool isHeartbeat() const { return (_value & 0x780) == _baseHeartbeat; }
-
-			static constexpr CobID makeNMT() { return CobID(_baseNMT); }
-			static constexpr CobID makeSYNC() { return CobID(_baseSYNC); }
-			static constexpr CobID makeTIME() { return CobID(_baseTIME); }
-			static constexpr CobID makeHeartbeat(NodeID nodeId) { return CobID(_baseHeartbeat, nodeId); }
-	};
-
 
 	class CanOpenService final: public Service {
 		private:
@@ -756,7 +720,7 @@ void CanOpenService::processMessage_TransmitFrame(
 	const TransmitFrame &args) {
 
 	transmitFrame(
-		CobID(args.cobid),
+		CobID::make(args.cobid),
 		args.data,
 		args.dataLen,
 		Ticks::fromMiliseconds(50));
@@ -770,7 +734,7 @@ void CanOpenService::processMessage_TransmitFrame(
 void CanOpenService::processMessage_FrameReceived(
 	const FrameReceived &args) {
 
-	CobID cobId(args.cobid);
+	auto cobId = CobID::make(args.cobid);
 
 	if (cobId.isNMT())
 		processMessage_FrameReceived_NMT(args);
@@ -784,19 +748,19 @@ void CanOpenService::processMessage_FrameReceived(
 	else if (cobId.isHeartbeat())
 		processMessage_FrameReceived_Heartbeat(args);
 
-	else if (cobId.base() == COBID::SDO)
+	else if (cobId.isSDO())
 		processMessage_FrameReceived_SDO(args);
 
-	else if ((cobId.base() == COBID::RPDO1) ||
-		     (cobId.base() == COBID::RPDO2) ||
-		     (cobId.base() == COBID::RPDO3) ||
-		     (cobId.base() == COBID::RPDO4))
+	else if ((cobId.base() == CobID::baseRPDO1) ||
+		     (cobId.base() == CobID::baseRPDO2) ||
+		     (cobId.base() == CobID::baseRPDO3) ||
+		     (cobId.base() == CobID::baseRPDO4))
 		processMessage_FrameReceived_RPDO(args);
 
-	else if ((cobId.base() == COBID::TPDO1) ||
-		     (cobId.base() == COBID::TPDO2) ||
-		     (cobId.base() == COBID::TPDO3) ||
-		     (cobId.base() == COBID::TPDO4))
+	else if ((cobId.base() == CobID::baseTPDO1) ||
+		     (cobId.base() == CobID::baseTPDO2) ||
+		     (cobId.base() == CobID::baseTPDO3) ||
+		     (cobId.base() == CobID::baseTPDO4))
 	    processMessage_FrameReceived_TPDO(args);
 }
 
@@ -809,7 +773,7 @@ void CanOpenService::processMessage_FrameReceived_Heartbeat(
 	const FrameReceived &args) {
 
 	auto state = args.data[0];
-	auto nodeId = CobID(args.cobid).nodeId();
+	auto nodeId = CobID::getNodeID(args.cobid);
 
 	if ((_nodeState == NodeState::preOperational) ||
 		(_nodeState == NodeState::operational)) {
@@ -1059,11 +1023,12 @@ void CanOpenService::processMessage_FrameReceived_SDO(
 	//
 	UInt32 cobidSDOr;
 	if (_dictionary->readU32(0x1200, 0x02, cobidSDOr))
-		transmitFrame(CobID(cobidSDOr & 0x7FF, _nodeId), response, sizeof(response), Ticks::fromMiliseconds(defTimeout));
+		transmitFrame(CobID::make(cobidSDOr & 0x7FF, _nodeId),
+			response, sizeof(response), Ticks::fromMiliseconds(defTimeout));
 }
 
 
-/// ----------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
 /// @brief    Procesa el missatge 'FrameReceived' TIME
 /// @param    args: Parametres del missatge
 ///
@@ -1116,7 +1081,7 @@ void CanOpenService::processMessage_FrameReceived_TPDO(
 		// Notifica a l'aplicacio que hi ha un TPDO per procesar provinent d'un
 		// node remot
 		//
-		onTPDOReceived(CobID(args.cobid), args.data, args.dataLen);
+		onTPDOReceived(CobID::make(args.cobid), args.data, args.dataLen);
 	}
 }
 
@@ -1128,7 +1093,7 @@ void CanOpenService::processMessage_FrameReceived_TPDO(
 void CanOpenService::processMessage_FrameReceived_RPDO(
 	const FrameReceived &args) {
 
-	auto cobId = CobID(args.cobid);
+	auto cobId = CobID::make(args.cobid);
 
 	UInt32 rpdoCOBID;
 	if (_dictionary->readU32(0x1400, 0x01, rpdoCOBID) && (rpdoCOBID == cobId.base())) {
@@ -1310,7 +1275,7 @@ void eos::CanOpenService::sendTPDO(
 		if (ok) {
 			UInt32 cobid;
 			if (_dictionary->readU32(0x1800 + tpdo, 0x01, cobid))
-				transmitFrame(CobID(cobid & 0x7FF, _nodeId), data, dataLen, Ticks::fromMiliseconds(100));
+				transmitFrame(CobID::make(cobid & 0x7FF, _nodeId), data, dataLen, Ticks::fromMiliseconds(100));
 		}
 	}
 }
@@ -1395,7 +1360,7 @@ StdResult CanOpenService::emitSYNC(
 	if (_dictionary->readU32(0x1005, 0x00, options) &&
 		Bits::isSet(options, (UInt32)(1 << 30))) {
 
-		CobID cobId = CobID(options & 0x007F);
+		auto cobId = CobID::make(options & 0x007F);
 
 		return postMessage_TransmitFrame(cobId, nullptr, 0, blockTime);
 	}
@@ -1422,7 +1387,7 @@ StdResult CanOpenService::emitRPDO(
 	Message message = {
 		.id {MessageID::transmitFrame},
 		.transmitFrame {
-			.cobid {CobID(COBID::RPDO1, ((UInt16)rpdoId << 8) | ((UInt16)nodeId & 0x007F))},
+			.cobid {CobID::make(CobID::baseRPDO1, ((UInt16)rpdoId << 8) | ((UInt16)nodeId & 0x007F))},
 			.dataLen {(UInt8)dataLen}
 		}
 	};

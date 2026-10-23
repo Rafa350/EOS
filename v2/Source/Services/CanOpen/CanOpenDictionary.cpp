@@ -50,7 +50,7 @@ export namespace eos {
 				UInt8 subIndex;
 				DataValue value;
 			};
-			using AccessEventRaiser = eos::EventRaiser<CanOpenDictionary, AccessEventArgs>;
+			using AccessEventRaiser = EventRaiser<CanOpenDictionary, AccessEventArgs>;
 			using IAccessEvent = AccessEventRaiser::IEvent;
 			template <typename Instance_> using AccessEvent = AccessEventRaiser::Event<Instance_>;
 
@@ -60,7 +60,7 @@ export namespace eos {
 				DataValue oldValue;
 				DataValue newValue;
 			};
-			using ChangedEventRaiser = eos::EventRaiser<CanOpenDictionary, ChangedEventArgs>;
+			using ChangedEventRaiser = EventRaiser<CanOpenDictionary, ChangedEventArgs>;
 			using IChangedEvent = ChangedEventRaiser::IEvent;
 			template <typename Instance_> using ChangedEvent = ChangedEventRaiser::Event<Instance_>;
 

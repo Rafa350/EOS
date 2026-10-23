@@ -1,9 +1,3 @@
-module;
-
-
-#include "eos.h"
-
-
 export module Eos.System.IO.Parser;
 
 
@@ -25,6 +19,10 @@ export namespace eos {
 		private:
 			char get();
 			void unget(char ch);
+
+			static UInt8 DecValue(char ch);
+			static UInt8 HexValue(char ch);
+
 			static bool isDigit(char ch);
 			static bool isHexDigit(char ch);
 			static bool isSpace(char ch);
@@ -36,7 +34,9 @@ export namespace eos {
 		public:
 			Parser(Stream *stream);
 
-			bool parseU32(uint32_t &value);
+			bool parseU8(UInt8 &value, bool hex = false);
+			bool parseU16(UInt16 &value, bool hex = false);
+			bool parseU32(UInt32 &value, bool hex = false);
 			bool parseBool(bool &value);
 			bool parseChar(char &value);
 			bool isFinished() const { return _finished; }
@@ -44,11 +44,14 @@ export namespace eos {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor
-/// \param    stream: Stream d'entrada.
+using namespace eos;
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor
+/// @param    stream: Stream d'entrada.
 ///
-eos::Parser::Parser(
+Parser::Parser(
 	Stream * stream) :
 	_stream {stream},
 	_ungetCh {EOT},
@@ -57,17 +60,17 @@ eos::Parser::Parser(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte el seguent caracter del stream.
-/// \return   El caracter. 0xFF en cas d'error.
+/// ---------------------------------------------------------------------------
+/// @brief    Obte el seguent caracter del stream.
+/// @return   El caracter. 0xFF en cas d'error.
 ///
 ///
-char eos::Parser::get() {
+char Parser::get() {
 
 	char ch = _ungetCh;
 
 	if (ch == EOT) {
-		auto readResult = _stream->read((uint8_t*)&ch, sizeof(char));
+		auto readResult = _stream->read((UInt8*)&ch, sizeof(char));
 		ch = (readResult.isOk() && (readResult.getValue() == sizeof(char))) ? ch : EOT;
 	}
 	else
@@ -77,24 +80,69 @@ char eos::Parser::get() {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Retorna el caracter al stream.
-/// \param    ch: El caracter.
+/// ---------------------------------------------------------------------------
+/// @brief    Retorna el caracter al stream.
+/// @param    ch: El caracter.
 ///
-void eos::Parser::unget(
+void Parser::unget(
 	char ch) {
 
 	_ungetCh = ch;
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Analitza i retorna un uint32_t
-/// \param    value: El valor analitzat. Nomes es valid si retorna true.
-/// \return   True si tot es correcte. False en cas contrari.
+/// ---------------------------------------------------------------------------
+/// @brief    Analitza el text i retorna un valor UInt8
+/// @param 	  value : El valor retornat. Nomes es valid si la funcio
+///           retorna true
+/// @param    hex: True si es vol en hexadecimal.
+/// @return   True si tot es correcte.
+///
+bool Parser::parseU8(
+	UInt8 &value,
+	bool hex) {
 
-bool eos::Parser::parseU32(
-	uint32_t &value) {
+	UInt32 v;
+	if (parseU32(v, hex) && (v <= 0xFF)) {
+		value = v;
+		return true;
+	}
+
+	return false;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Analitza el text i retorna un valor UInt16
+/// @param 	  value : El valor retornat. Nomes es valid si la funcio
+///           retorna true
+/// @param    hex: True si es vol en hexadecimal.
+/// @return   True si tot es correcte.
+///
+bool Parser::parseU16(
+	UInt16 &value,
+	bool hex) {
+
+	UInt32 v;
+	if (parseU32(v, hex) && (v <= 0xFFFF)) {
+		value = v;
+		return true;
+	}
+
+	return false;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Analitza el text i retorna un valor UInt32
+/// @param 	  value : El valor retornat. Nomes es valid si la funcio
+///           retorna true
+/// @param    hex: True si es vol en hexadecimal.
+/// @return   True si tot es correcte.
+///
+bool Parser::parseU32(
+	UInt32 &value,
+    bool hex) {
 
 	unsigned state = 0;
 	bool done = false;
@@ -110,8 +158,12 @@ bool eos::Parser::parseU32(
 					_finished = true;
 					done = true;
 				}
-				else if (isDigit(ch)) {
-					value = ch - 0x30;
+				else if (hex && isHexDigit(ch)) {
+					value = HexValue(ch);
+					state = 1;
+				}
+				else if (!hex && isDigit(ch)) {
+					value = DecValue(ch);
 					state = 1;
 				}
 				else if (!isSpace(ch)) {
@@ -121,8 +173,10 @@ bool eos::Parser::parseU32(
 				break;
 
 			case 1:
-				if (isDigit(ch))
-					value = (value * 10) + (ch - 0x30);
+				if (hex && isHexDigit(ch))
+					value = (value * 16) + HexValue(ch);
+				else if (!hex && isDigit(ch))
+					value = (value * 10) + DecValue(ch);
 				else {
 					if (isEOT(ch))
 						_finished = true;
@@ -138,12 +192,12 @@ bool eos::Parser::parseU32(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Analitza i obte un char.
-/// \param    value: El valor analitzat. Nomes es valid si retorna true.
-/// \return   True si tot es correcte.
+/// ---------------------------------------------------------------------------
+/// @brief    Analitza i obte un char.
+/// @param    value: El valor analitzat. Nomes es valid si retorna true.
+/// @return   True si tot es correcte.
 ///
-bool eos::Parser::parseChar(
+bool Parser::parseChar(
 	char &value) {
 
 	bool done = false;
@@ -160,6 +214,7 @@ bool eos::Parser::parseChar(
 
 		else if (isAscii(ch)) {
 			value = ch;
+			result = true;
 			done = true;
 		}
 
@@ -175,12 +230,12 @@ bool eos::Parser::parseChar(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Analitza i obte un bool.
-/// \param    value: El valor analitzat. Nomes es valid si retorna true.
-/// \return   True si tot es correcte.
+/// ---------------------------------------------------------------------------
+/// @brief    Analitza i obte un bool.
+/// @param    value: El valor analitzat. Nomes es valid si retorna true.
+/// @return   True si tot es correcte.
 ///
-bool eos::Parser::parseBool(
+bool Parser::parseBool(
 	bool &value) {
 
 	bool done = false;
@@ -218,24 +273,24 @@ bool eos::Parser::parseBool(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si es un digit decimal.
-/// \param    ch: El caracter a verificar.
-/// \return   El resultat de la comprovacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si es un digit decimal.
+/// @param    ch: El caracter a verificar.
+/// @return   El resultat de la comprovacio.
 ///
-bool eos::Parser::isDigit(
+bool Parser::isDigit(
 	char ch) {
 
 	return (ch >= '0') && (ch <= '9');
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si es un digit hexadecimal.
-/// \param    ch: El caracter a verificar.
-/// \return   El resultat de la comprovacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si es un digit hexadecimal.
+/// @param    ch: El caracter a verificar.
+/// @return   El resultat de la comprovacio.
 ///
-bool eos::Parser::isHexDigit(
+bool Parser::isHexDigit(
 	char ch) {
 
 	return ((ch >= '0') && (ch <= '9')) ||
@@ -244,36 +299,36 @@ bool eos::Parser::isHexDigit(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si es un espai.
-/// \param    ch: El caracter a verificar.
-/// \return   El resultat de la comprovacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si es un espai.
+/// @param    ch: El caracter a verificar.
+/// @return   El resultat de la comprovacio.
 ///
-bool eos::Parser::isSpace(
+bool Parser::isSpace(
 	char ch) {
 
 	return (ch == ' ') || (ch == '\t');
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si es un caracter ascii
-/// \param    ch: El caracter a verificar.
-/// \return   El resultat de la comprovacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si es un caracter ascii
+/// @param    ch: El caracter a verificar.
+/// @return   El resultat de la comprovacio.
 ///
-bool eos::Parser::isAscii(
+bool Parser::isAscii(
 	char ch) {
 
 	return ch <= 0x7F;
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si es un carascter TRUE
-/// \param    ch: El caracter a verificar.
-/// \return   El resultat de la comprovacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si es un carascter TRUE
+/// @param    ch: El caracter a verificar.
+/// @return   El resultat de la comprovacio.
 ///
-bool eos::Parser::isTrue(
+bool Parser::isTrue(
 	char ch) {
 
 	return
@@ -283,12 +338,12 @@ bool eos::Parser::isTrue(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si es un caracter FALSE
-/// \param    ch: El caracter a verificar.
-/// \return   El resultat de la comprovacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si es un caracter FALSE
+/// @param    ch: El caracter a verificar.
+/// @return   El resultat de la comprovacio.
 ///
-bool eos::Parser::isFalse(
+bool Parser::isFalse(
 	char ch) {
 
 	return
@@ -298,13 +353,39 @@ bool eos::Parser::isFalse(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si es un indicador de fi de text.
-/// \param    ch: El caracter a verificar.
-/// \return   El resultat de la comprovacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si es un indicador de fi de text.
+/// @param    ch: El caracter a verificar.
+/// @return   El resultat de la comprovacio.
 ///
-bool eos::Parser::isEOT(
+bool Parser::isEOT(
 	char ch) {
 
 	return ch == EOT;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Obte el valor decimal d'un caracter.
+/// @param    ch: El caracter.
+/// @return   El seu valor decimal.
+/// @remark   El caracter ha de ser un caracter decimal valid.
+///
+UInt8 Parser::DecValue(
+	char ch) {
+
+	return ch - 0x30;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Obte el valor hexadecimal d'un caracter.
+/// @param    ch: El caracter.
+/// @return   El seu valor decimal.
+/// @remark   El caracter ha de ser un caracter hexadecimal valid.
+///
+UInt8 Parser::HexValue(
+	char ch) {
+
+	return (ch < 0x39) ? ch - 0x30 : (ch & 0x20) - 0x37;
 }

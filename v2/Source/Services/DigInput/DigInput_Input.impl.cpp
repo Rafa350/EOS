@@ -51,7 +51,7 @@ DigInputImpl::DigInputImpl(
 ///
 bool DigInputImpl::scan() {
 
-	UInt32 oldCount = _count;
+	auto oldCount = _count;
 
 	// Actualitza el patro de lectura
 	//
@@ -95,7 +95,7 @@ bool DigInputImpl::getValue() const {
 UInt32 eos::DigInputImpl::getCount(
 	bool clear) {
 
-	UInt32 count = _count;
+	auto count = _count;
 	if (clear)
 		_count = 0;
 	return count;

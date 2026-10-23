@@ -65,7 +65,7 @@ export namespace eos {
 		static constexpr UInt8 SIZE_4       = 0 << SIZE_Pos;
 	};
 
-	struct COBID {
+	/*struct COBID {
 		static constexpr UInt16 Msk       = 0x7FF;
 		static constexpr UInt16 NMT       = 0x000;
 		static constexpr UInt16 SDO       = 0x600;
@@ -81,7 +81,7 @@ export namespace eos {
 		static constexpr UInt16 RPDO4     = 0x500;
 		static constexpr UInt16 SYNC      = 0x080;
 		static constexpr UInt16 TIME      = 0x100;
-	};
+	};*/
 
 	struct NMT0 {
 		static constexpr UInt8 CS_Pos    = 0;

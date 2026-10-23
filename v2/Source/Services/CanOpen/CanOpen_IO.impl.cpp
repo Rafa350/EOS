@@ -64,31 +64,31 @@ void CanOpenService::configureCANFilters() {
 
 	// Accepta els missatges NMT
 	//
-	filter.id1 = COBID::NMT;
+	filter.id1 = CobID::baseNMT;
 	filter.id2 = 0x7FFu;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges Headbead, sense importar el nodeId
 	//
-	filter.id1 = COBID::Heartbeat,
+	filter.id1 = CobID::baseHeartbeat,
 	filter.id2 = 0x780u;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges SYNC
 	//
-	filter.id1 = COBID::SYNC,
+	filter.id1 = CobID::baseSYNC,
 	filter.id2 = 0x7FFu;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges TPDO, sense importar el nodeId
 	//
-	filter.id1 = COBID::TPDO1,
+	filter.id1 = CobID::baseTPDO1,
 	filter.id2 = 0x780u;
 	_devCAN->setFilter(&filter, filterIndex++);
 
 	// Accepta els missatges RPDO suportats per aquest node
 	//
-	filter.id1 = COBID::RPDO1 | _nodeId,
+	filter.id1 = CobID::baseRPDO1 | _nodeId,
 	filter.id2 = 0x780u;
 	_devCAN->setFilter(&filter, filterIndex++);
 }
@@ -153,8 +153,8 @@ StdResult CanOpenService::transmitFrame(
 	}
 
 	TxHeader header = {
-		.id = (UInt16)  cobId,
-		.idType = hardware::fdcan::IdentifierType::standard,
+		.id = cobId.value(),
+		.idType = IdentifierType::standard,
 		.dataLength = len,
 		.frameType = FrameType::dataFrame,
 		.errorStateFlag = ErrorStateFlag::active,
@@ -202,11 +202,10 @@ void CanOpenService::canDevice_notificationEventHandler(
 			RxHeader rxHeader;
 
 			_devCAN->getRxMessage(args->rxFifoNotEmpty.fifo, &rxHeader, message.frameReceived.data, sizeof(message.frameReceived));
-			UInt8 dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
 
 			message.id = MessageID::frameReceived;
 			message.frameReceived.cobid = rxHeader.id;
-			message.frameReceived.dataLen = dataLen;
+			message.frameReceived.dataLen = dataLenTbl[(unsigned)rxHeader.dataLength];
 			_messageQueue.pushISR(message);
 
 			break;
