@@ -1,6 +1,5 @@
 export module Eos.System.Forms.PropertyObserver;
 
-
 import Eos.Callbacks;
 
 
@@ -22,7 +21,7 @@ export namespace eos {
 
         protected:
             template <typename ValueType_>
-                bool setProperty(ValueType_ &property, const ValueType_ &value);
+            bool setProperty(ValueType_ &property, const ValueType_ value);
 
             virtual void onPropertyChanged(void *property);
 
@@ -62,7 +61,7 @@ PropertyObserver::PropertyObserver():
 template <typename ValueType_>
 bool PropertyObserver::setProperty(
     ValueType_ &property,
-    const ValueType_ &value) {
+    const ValueType_ value) {
 
     if (property == value)
         return false;

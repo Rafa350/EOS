@@ -37,6 +37,9 @@ export namespace eos {
 			bool parseU8(UInt8 &value, bool hex = false);
 			bool parseU16(UInt16 &value, bool hex = false);
 			bool parseU32(UInt32 &value, bool hex = false);
+			bool parseU8Hex(UInt8 &value) { return parseU8(value, true); }
+			bool parseU16Hex(UInt16 &value) { return parseU16(value, true); }
+			bool parseU32Hex(UInt32 &value) { return parseU32(value, true); }
 			bool parseBool(bool &value);
 			bool parseChar(char &value);
 			bool isFinished() const { return _finished; }

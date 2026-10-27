@@ -1,6 +1,5 @@
 export module Eos.Callbacks;
 
-
 export namespace eos {
 
 	class ICallbackP0 {
@@ -9,7 +8,7 @@ export namespace eos {
 			}
 
 			virtual void execute() const = 0;
-            
+
 			inline void operator()() const {
 			    execute();
 			}

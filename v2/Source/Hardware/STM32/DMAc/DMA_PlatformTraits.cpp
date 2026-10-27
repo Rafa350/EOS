@@ -1,11 +1,9 @@
 module;
 
-
 #include "hardware.h"
 
 
 export module Eos.Hardware.DMA:PlatformTraits;
-
 
 import Eos.Platform;
 

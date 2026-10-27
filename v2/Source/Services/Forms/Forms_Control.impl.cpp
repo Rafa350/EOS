@@ -21,7 +21,8 @@ Control::Control(
 
 	Visual {position, size},
 	_backgroundColor {Colors::black},
-	_borderColor {Colors::white} {
+	_borderColor {Colors::white},
+	_borderThickness {1} {
 }
 
 
@@ -33,7 +34,7 @@ void Control::onRender(
 	Graphics *graphics) {
 
     graphics->paintRectangle(
-   		Pen(_borderColor, 1),
+   		_borderThickness == 0 ? Pen() : Pen(_borderColor, _borderThickness),
    		Brush(_backgroundColor),
    		Rect(getPosition(), getSize())
 	);

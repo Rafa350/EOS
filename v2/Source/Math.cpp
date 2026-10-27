@@ -1,116 +1,117 @@
 module;
 
-
 #include <cstdint>
 #include <cmath>
 
 
 export module Eos.Math;
 
-
 import Eos.Types;
 
 
-namespace eos {
+export namespace eos {
 
-	export class Math final: private StaticClass<Math> {
+	class Math final: private StaticClass<Math> {
 
 		public:
-			/// \brief  Obte el minim de dos valors.
-			/// \param  a: Primer valor.
-			/// \param  b: Segon valor.
-			/// \return El valor minim.
+			/// @brief  Obte el minim de dos valors.
+			/// @param  a: Primer valor.
+			/// @param  b: Segon valor.
+			/// @return El valor minim.
 			///
 			template <typename T>
 			static T min(T a, T b) { return std::min(a, b); }
 
-			/// \brief  Obte el maxim de dos valors.
-			/// \param  a: Primer valor.
-			/// \param  b: Segon valor.
-			/// \return El valor maxim.
+			/// @brief  Obte el maxim de dos valors.
+			/// @param  a: Primer valor.
+			/// @param  b: Segon valor.
+			/// @return El valor maxim.
 			///
 			template <typename T>
 			static T max(T a, T b) { return std::max(a, b); }
 
-			static uint8_t loByte(uint16_t b);
-			static uint8_t hiByte(uint16_t b);
+			static inline UInt8 loByte(UInt16 b);
+			static inline UInt8 hiByte(UInt16 b);
 
-			static void unPack(uint16_t data, uint8_t &b1, uint8_t &b0);
-			static void unPack(uint32_t data, uint8_t &b3, uint8_t &b2, uint8_t &b1, uint8_t &b0);
-			static void unPack(uint32_t data, uint16_t &w1, uint16_t &w0);
+			static void unPack(UInt16 data, UInt8 &b1, UInt8 &b0);
+			static void unPack(UInt32 data, UInt8 &b3, UInt8 &b2, UInt8 &b1, UInt8 &b0);
+			static void unPack(UInt32 data, UInt16 &w1, UInt16 &w0);
 
-			/// \brief  Intercanvia dos valors.
-			/// \param  a: El primer valor.
-			/// \param  b: El segon valor.
+			/// @brief  Intercanvia dos valors.
+			/// @param  a: El primer valor.
+			/// @param  b: El segon valor.
 			///
 			template <typename T>
 			static void swap(T &a, T &b) { return std::swap(a, b); }
 
-			/// \brief  Obte el valor absolut d'un nombre.
-			/// \param  v: El nombre.
-			/// \return El resultat de l'operacio.
+			/// @brief  Obte el valor absolut d'un nombre.
+			/// @param  v: El nombre.
+			/// @return El resultat de l'operacio.
 			///
 			template <typename T>
 			static T abs(T v) { return std::abs(v); }
 
-			/// \brief  Obte el valor de l'arrel quadrada d'un nombre.
-			/// \param  v: El nombre.
-			/// \return El resultat de l'operacio.
+			/// @brief  Obte el valor de l'arrel quadrada d'un nombre.
+			/// @param  v: El nombre.
+			/// @return El resultat de l'operacio.
 			///
 			template <typename T>
 			static T sqrt(T v) { return std::sqrt(v); }
 
-			static constexpr uint32_t maxU32 = std::numeric_limits<uint32_t>::max();
-			static constexpr uint16_t maxU16 = std::numeric_limits<uint16_t>::max();
-			static constexpr uint8_t maxU8  = std::numeric_limits<uint8_t>::max();
-			static constexpr uint32_t minU32 = std::numeric_limits<uint32_t>::min();
-			static constexpr uint16_t minU16 = std::numeric_limits<uint16_t>::min();
-			static constexpr uint8_t minU8  = std::numeric_limits<uint8_t>::min();
+			static constexpr auto maxU32 = std::numeric_limits<UInt32>::max();
+			static constexpr auto maxU16 = std::numeric_limits<UInt16>::max();
+			static constexpr auto maxU8  = std::numeric_limits<UInt8>::max();
+			static constexpr auto minU32 = std::numeric_limits<UInt32>::min();
+			static constexpr auto minU16 = std::numeric_limits<UInt16>::min();
+			static constexpr auto minU8  = std::numeric_limits<UInt8>::min();
 
-			static constexpr uint32_t maxI32 = std::numeric_limits<int32_t>::max();
-			static constexpr uint16_t maxI16 = std::numeric_limits<int16_t>::max();
-			static constexpr uint8_t maxI8  = std::numeric_limits<int8_t>::max();
-			static constexpr uint32_t minI32 = std::numeric_limits<int32_t>::min();
-			static constexpr uint16_t minI16 = std::numeric_limits<int16_t>::min();
-			static constexpr uint8_t minI8  = std::numeric_limits<int8_t>::min();
+			static constexpr auto maxI32 = std::numeric_limits<Int32>::max();
+			static constexpr auto maxI16 = std::numeric_limits<Int16>::max();
+			static constexpr auto maxI8  = std::numeric_limits<Int8>::max();
+			static constexpr auto minI32 = std::numeric_limits<Int32>::min();
+			static constexpr auto minI16 = std::numeric_limits<Int16>::min();
+			static constexpr auto minI8  = std::numeric_limits<Int8>::min();
 	};
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte els 8 bits LSB d'un valor de 16 bits.
-/// \param    v: El valor de 16 bits
-/// \return   Els 8 bits LSB
-///
-inline uint8_t eos::Math::loByte(
-	uint16_t v) {
+using namespace eos;
 
-	return (uint8_t) v;
+
+/// ----------------------------------------------------------------------
+/// @brief    Obte els 8 bits LSB d'un valor de 16 bits.
+/// @param    v: El valor de 16 bits
+/// @return   Els 8 bits LSB
+///
+UInt8 Math::loByte(
+	UInt16 v) {
+
+	return (UInt8) v;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte els 8 bits MSB d'un valor de 16 bits.
-/// \param    v: El valor de 16 bits.
-/// \return   Els 8 bits MSB.
+/// @brief    Obte els 8 bits MSB d'un valor de 16 bits.
+/// @param    v: El valor de 16 bits.
+/// @return   Els 8 bits MSB.
 ///
-inline uint8_t eos::Math::hiByte(
-	uint16_t b) {
+UInt8 Math::hiByte(
+	UInt16 b) {
 
-	return (uint8_t) (b >> 8);
+	return (UInt8) (b >> 8);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Separa un uint16_t en dos uint8_t
-/// \param    data: El valor d'entrada.
-/// \param    b1: Els bits b15 a b8.
-/// \param    b0: Els bits b7 a b0.
+/// @brief    Separa un UInt16 en dos UInt8
+/// @param    data: El valor d'entrada.
+/// @param    b1: Els bits b15 a b8.
+/// @param    b0: Els bits b7 a b0.
 ///
-void eos::Math::unPack(
-	uint16_t data,
-	uint8_t &b1,
-	uint8_t &b0) {
+void Math::unPack(
+	UInt16 data,
+	UInt8 &b1,
+	UInt8 &b0) {
 
 	b1 = (data >> 8) & 0x0F;
 	b0 = (data >> 0) & 0x0F;
@@ -118,19 +119,19 @@ void eos::Math::unPack(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Separa un uint32_t en quatre uint8_t
-/// \param    data: El valor d'entrada.
-/// \param    b3: Els bits b31 a b24.
-/// \param    b2: Els bits b23 a b16.
-/// \param    b1: Els bits b15 a b8.
-/// \param    b0: Els bits b7 a b0.
+/// @brief    Separa un UInt32 en quatre UInt8
+/// @param    data: El valor d'entrada.
+/// @param    b3: Els bits b31 a b24.
+/// @param    b2: Els bits b23 a b16.
+/// @param    b1: Els bits b15 a b8.
+/// @param    b0: Els bits b7 a b0.
 ///
-void eos::Math::unPack(
-	uint32_t data,
-	uint8_t &b3,
-	uint8_t &b2,
-	uint8_t &b1,
-	uint8_t &b0) {
+void Math::unPack(
+	UInt32 data,
+	UInt8 &b3,
+	UInt8 &b2,
+	UInt8 &b1,
+	UInt8 &b0) {
 
 	b3 = (data >> 24) & 0xFF;
 	b2 = (data >> 16) & 0xFF;
@@ -140,15 +141,15 @@ void eos::Math::unPack(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Separa un uint32_t en dos uint16_t
-/// \param    data: El valor d'entrada.
-/// \param    w1: Els bits b31 a b16.
-/// \param    w0: Els bits b15 a b0.
+/// @brief    Separa un UInt32 en dos UInt16
+/// @param    data: El valor d'entrada.
+/// @param    w1: Els bits b31 a b16.
+/// @param    w0: Els bits b15 a b0.
 ///
-void eos::Math::unPack(
-	uint32_t data,
-	uint16_t &w1,
-	uint16_t &w0) {
+void Math::unPack(
+	UInt32 data,
+	UInt16 &w1,
+	UInt16 &w0) {
 
 	w1 = (data >> 16) & 0xFFFF;
 	w0 = (data >> 0) & 0xFFFF;

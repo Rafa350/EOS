@@ -17,31 +17,38 @@ namespace eos::hardware::clock::internal {
 
         // Identificador del Clock
         //
-		enum class ClockID_F0xx { sysclk, pclk, hclk, hse, hsi, lse, lsi };
-        enum class ClockID_F4xx { sysclk, pclk1, pclk2, tim1clk, tim2clk,
-                                  hclk, hse, hsi, lse, lsi };
-        using      ClockID_F7xx = ClockID_F4xx;
-        enum class ClockID_G0xx { sysclk, pclk, timpclk, hclk, hclk8, hse,
-                                  hsi16, lse, lsi, hsisys, pllpclk, pllqclk,
-                                  pllrclk };
-        enum class ClockID_G0Bx { sysclk, pclk, timpclk, hclk, hclk8, hse,
-                                  hsi16, hsi48, lse, lsi, hsisys, pllpclk,
-                                  pllqclk, pllrclk };
+        enum class ClockID_Type1 { sysclk, pclk, timpclk, hclk, hclk8, hse,
+                                   hsi16, lse, lsi, hsisys, pllpclk, pllqclk,
+                                   pllrclk };
+        enum class ClockID_Type2 { sysclk, pclk, timpclk, hclk, hclk8, hse,
+                                   hsi16, hsi48, lse, lsi, hsisys, pllpclk,
+                                   pllqclk, pllrclk };
+        enum class ClockID_Type3 { sysclk, pclk1, pclk2, tim1clk, tim2clk,
+                                   hclk, hse, hsi, lse, lsi };
+        using ClockID_G0xx = ClockID_Type1;
+        using ClockID_G0Bx = ClockID_Type2;
+        using ClockID_F4xx = ClockID_Type3;
+        using ClockID_F7xx = ClockID_Type3;
 
-        // Font del clock del sistema
+
+        // Origen del clock del sistema
         //
-        enum class SystemClockSource_F0xx { hsi, hse, pll };
-        using      SystemClockSource_F4xx = SystemClockSource_F0xx;
-        using      SystemClockSource_F7xx = SystemClockSource_F0xx;
-        enum class SystemClockSource_G0xx { lsi, lse, hse, pllrclk, hsisys };
+        enum class SystemClockSource_Type1 { lsi, lse, hse, pllrclk, hsisys };
+        enum class SystemClockSource_Type2 { hsi, hse, pll };
+        using SystemClockSource_G0xx = SystemClockSource_Type1;
+        using SystemClockSource_F4xx = SystemClockSource_Type2;
+        using SystemClockSource_F7xx = SystemClockSource_Type2;
 
-        // Font del PLL
+
+        // Origen del PLL
         //
-        enum class PLLSource_F0xx { hsi, hse };
-        using      PLLSource_F4xx = PLLSource_F0xx;
-        using      PLLSource_F7xx = PLLSource_F0xx;
-        enum class PLLSource_G0xx { hsi16, hse };
+        enum class PLLSource_Type1 { hsi16, hse };
+        enum class PLLSource_Type2 { hsi, hse };
+        using PLLSource_G0xx = PLLSource_Type1;
+        using PLLSource_F4xx = PLLSource_Type2;
+        using PLLSource_F7xx = PLLSource_Type2;
 
+        
         // Traits depenents de la plataforma
         //
         template <PlatformID platformId_>

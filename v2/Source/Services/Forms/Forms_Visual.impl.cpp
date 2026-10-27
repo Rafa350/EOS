@@ -35,6 +35,7 @@ void Visual::addChild(
 	if (child->_parent == nullptr) {
 		child->_parent = this;
 		_childs.pushFront(child);
+		onAddChild(child);
 	}
 }
 
@@ -84,8 +85,17 @@ void Visual::onPropertyChanged(
 	if ((property == &_position) || (property == &_size))
 		invalidate();
 
-	else
-		PropertyObserver::onPropertyChanged(property);
+	PropertyObserver::onPropertyChanged(property);
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Es crida quant s'afegeix un fill.
+/// @param    child: el fill.
+///
+void Visual::onAddChild(
+	Visual *child) {
+
 }
 
 

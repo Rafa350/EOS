@@ -1,11 +1,9 @@
 module;
 
-
 #include "eos.h"
 
 
 export module Eos.Services.Forms.Controls.Boolean;
-
 
 import Eos.Services.Forms;
 import Eos.System.Graphics;
@@ -35,7 +33,11 @@ export namespace eos {
 	};
 }
 
-eos::BooleanControl::BooleanControl(
+
+using namespace eos;
+
+
+BooleanControl::BooleanControl(
 	const Point &position,
 	const Size &size):
 

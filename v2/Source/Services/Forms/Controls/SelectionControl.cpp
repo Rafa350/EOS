@@ -40,7 +40,10 @@ export namespace eos {
 }
 
 
-eos::SelectionControl::SelectionControl(
+using namespace eos;
+
+
+SelectionControl::SelectionControl(
 	const Point &position,
 	const Size &size):
 

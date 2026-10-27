@@ -5,7 +5,6 @@ module;
 
 export module Eos.Hardware.Interrupts;
 
-
 import Eos.Hardware.Interrupts._Vectors;
 import Eos.Platform;
 import Eos.Types;
@@ -15,11 +14,22 @@ namespace eos::hardware::interrupts::internal  {
 
     namespace hidden {
 
-        enum class Priority_G0xx {p0, p1, p2, p3};
-        enum class Priority_F4xx {p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15};
+        // Prioritat de la interrupcio
+        //
+        enum class Priority_Type1 {p0, p1, p2, p3};
+        enum class Priority_Type2 {p0, p1, p2, p3, p4, p5, p6, p7, p8,
+                                   p9, p10, p11, p12, p13, p14, p15};
+        using Priority_G0xx = Priority_Type1;
+        using Priority_F4xx = Priority_Type2;
 
-        enum class SubPriority_G0xx {sp0};
-	    enum class SubPriority_F4xx {sp0, sp1, sp2, sp3};
+
+        // Sub prioritat de la interrrupcio
+        //
+        enum class SubPriority_Type1 {sp0};
+	    enum class SubPriority_Type2 {sp0, sp1, sp2, sp3};
+        using SubPriority_G0xx = SubPriority_Type1;
+        using SubPriority_F4xx = SubPriority_Type2;
+
 
         template <PlatformID platformId_>
         struct PlatformTraits {

@@ -1,69 +1,71 @@
 export module Eos.Bits;
 
-
 import Eos.Concepts;
 import Eos.Types;
 
 
-namespace eos {
+export namespace eos {
 
-	export class Bits final: private StaticClass<Bits> {
+	class Bits final: private StaticClass<Bits> {
 		public:
 			template<IsUInt T_>
-			static void set(volatile T_ &var, T_ mask);
+			static inline void set(volatile T_ &var, T_ mask);
 
 			template<IsUInt T_>
-			static void set(T_ &var, T_ mask);
+			static inline void set(T_ &var, T_ mask);
 
 			template<IsUInt T_>
-			static void clear(volatile T_ &var, T_ mask);
+			static inline void clear(volatile T_ &var, T_ mask);
 
 			template<IsUInt T_>
-			static void clear(T_ &var, T_ mask);
+			static inline void clear(T_ &var, T_ mask);
 
 			template<IsUInt T_>
-			static void toggle(volatile T_ &var, T_ mask);
+			static inline void toggle(volatile T_ &var, T_ mask);
 
 			template<IsUInt T_>
-			static void toggle(T_ &var, T_ mask);
+			static inline void toggle(T_ &var, T_ mask);
 
 			template<IsUInt T_>
-			static void modify(volatile T_ &var, T_ clearMask, T_ setMask);
+			static inline void modify(volatile T_ &var, T_ clearMask, T_ setMask);
 
 			template<IsUInt T_>
-			static void modify(T_ &var, T_ clearMask, T_ setMask);
+			static inline void modify(T_ &var, T_ clearMask, T_ setMask);
 
 			template<IsUInt T_>
-			static bool isSet(volatile T_ &var, T_ b);
+			static inline bool isSet(volatile T_ &var, T_ b);
 
 			template<IsUInt T_>
-			static bool isSet(T_ &var, T_ b);
+			static inline bool isSet(T_ &var, T_ b);
 
 			template<IsUInt T_>
-			static bool isAnySet(volatile T_ &var, T_ b);
+			static inline bool isAnySet(volatile T_ &var, T_ b);
 
 			template<IsUInt T_>
-			static bool isAnySet(T_ &var, T_ b);
+			static inline bool isAnySet(T_ &var, T_ b);
 
 			template<IsUInt T_>
-			static bool isClear(volatile T_ &var, T_ b);
+			static inline bool isClear(volatile T_ &var, T_ b);
 
 			template<IsUInt T_>
-			static bool isClear(T_ &var, T_ b);
+			static inline bool isClear(T_ &var, T_ b);
 
 			template<IsUInt T_>
-			static bool isAnyClear(T_ &var, T_ b);
+			static inline bool isAnyClear(T_ &var, T_ b);
 	};
 }
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Activa els bits especificats en la mascara.
 /// \param    var: La variable.
 /// \param    mask: La mascara.
 ///
-template<eos::IsUInt T_>
-void eos::Bits::set(
+template<IsUInt T_>
+void Bits::set(
 	volatile T_ &var,
 	T_ mask) {
 
@@ -76,8 +78,8 @@ void eos::Bits::set(
 /// \param    var: La variable.
 /// \param    mask: La mascara.
 ///
-template<eos::IsUInt T_>
-void eos::Bits::set(
+template<IsUInt T_>
+void Bits::set(
 	T_ &var,
 	T_ mask) {
 
@@ -85,8 +87,8 @@ void eos::Bits::set(
 }
 
 
-template<eos::IsUInt T_>
-void eos::Bits::clear(
+template<IsUInt T_>
+void Bits::clear(
 	volatile T_ &var,
 	T_ mask) {
 
@@ -94,8 +96,8 @@ void eos::Bits::clear(
 }
 
 
-template<eos::IsUInt T_>
-void eos::Bits::clear(
+template<IsUInt T_>
+void Bits::clear(
 	T_ &var,
 	T_ mask) {
 
@@ -103,8 +105,8 @@ void eos::Bits::clear(
 }
 
 
-template<eos::IsUInt T_>
-void eos::Bits::toggle(
+template<IsUInt T_>
+void Bits::toggle(
 	volatile T_ &var,
 	T_ mask) {
 
@@ -112,8 +114,8 @@ void eos::Bits::toggle(
 }
 
 
-template<eos::IsUInt T_>
-void eos::Bits::toggle(
+template<IsUInt T_>
+void Bits::toggle(
 	T_ &var,
 	T_ mask) {
 
@@ -121,8 +123,8 @@ void eos::Bits::toggle(
 }
 
 
-template<eos::IsUInt T_>
-void eos::Bits::modify(
+template<IsUInt T_>
+void Bits::modify(
 	volatile T_ &var,
 	T_ clearMask,
 	T_ setMask) {
@@ -134,8 +136,8 @@ void eos::Bits::modify(
 }
 
 
-template<eos::IsUInt T_>
-void eos::Bits::modify(
+template<IsUInt T_>
+void Bits::modify(
 	T_ &var,
 	T_ clearMask,
 	T_ setMask) {
@@ -145,8 +147,8 @@ void eos::Bits::modify(
 }
 
 
-template<eos::IsUInt T_>
-bool eos::Bits::isSet(
+template<IsUInt T_>
+bool Bits::isSet(
 	volatile T_ &var,
 	T_ b) {
 
@@ -154,8 +156,8 @@ bool eos::Bits::isSet(
 }
 
 
-template<eos::IsUInt T_>
-bool eos::Bits::isSet(
+template<IsUInt T_>
+bool Bits::isSet(
 	T_ &var,
 	T_ b) {
 
@@ -163,8 +165,8 @@ bool eos::Bits::isSet(
 }
 
 
-template<eos::IsUInt T_>
-bool eos::Bits::isAnySet(
+template<IsUInt T_>
+bool Bits::isAnySet(
 	volatile T_ &var,
 	T_ b) {
 
@@ -172,8 +174,8 @@ bool eos::Bits::isAnySet(
 }
 
 
-template<eos::IsUInt T_>
-bool eos::Bits::isAnySet(
+template<IsUInt T_>
+bool Bits::isAnySet(
 	T_ &var,
 	T_ b) {
 
@@ -181,8 +183,8 @@ bool eos::Bits::isAnySet(
 }
 
 
-template<eos::IsUInt T_>
-bool eos::Bits::isClear(
+template<IsUInt T_>
+bool Bits::isClear(
 	volatile T_ &var,
 	T_ b) {
 
@@ -190,8 +192,8 @@ bool eos::Bits::isClear(
 }
 
 
-template<eos::IsUInt T_>
-bool eos::Bits::isClear(
+template<IsUInt T_>
+bool Bits::isClear(
 	T_ &var,
 	T_ b) {
 
@@ -199,8 +201,8 @@ bool eos::Bits::isClear(
 }
 
 
-template<eos::IsUInt T_>
-bool eos::Bits::isAnyClear(
+template<IsUInt T_>
+bool Bits::isAnyClear(
 	T_ &var,
 	T_ b) {
 

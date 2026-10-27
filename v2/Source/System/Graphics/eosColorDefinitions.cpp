@@ -1,8 +1,4 @@
-module;
-
-
 export module Eos.System.Graphics.ColorDefinitions;
-
 
 import Eos.System.Graphics.Color;
 

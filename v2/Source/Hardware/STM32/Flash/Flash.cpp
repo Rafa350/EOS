@@ -19,8 +19,11 @@ namespace eos::hardware::flash::internal {
         // ---------------------------------
         // Traits depenends de la plataforma
         //
-		enum class Latency_F4xx { fl0, fl1, fl2, fl3, fl4, fl5, fl6, fl7};
-        enum class Latency_G0xx { fl0, fl1, fl2 };
+        enum class Latency_Type1 { fl0, fl1, fl2 };
+		enum class Latency_Type2 { fl0, fl1, fl2, fl3, fl4, fl5, fl6, fl7};
+        using Latency_G0xx = Latency_Type1;
+        using Latency_F4xx = Latency_Type2;
+
 
         template <PlatformID platformId_>
         struct PlatformTraits;
@@ -76,7 +79,7 @@ void Flash::setLatency(
 		Bits::set(ACR, (value << FLASH_ACR_LATENCY_Pos) & FLASH_ACR_LATENCY_Msk);
 		FLASH->ACR = ACR;
 
-        // Espera qwue el canvi sigui efectiu
+        // Espera que el canvi sigui efectiu
         //
 		while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (value << FLASH_ACR_LATENCY_Pos))
 			continue;

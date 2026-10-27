@@ -106,6 +106,7 @@ export namespace eos {
             bool _renderPending;
 
     	protected:
+            virtual void onAddChild(Visual *child);
             virtual void onMessage(FormMessage &message);
             virtual void onRender(Graphics *graphics);
             virtual void onPropertyChanged(void *property);
@@ -135,6 +136,7 @@ export namespace eos {
         private:
             Color _backgroundColor;
             Color _borderColor;
+            Int16 _borderThickness;
 
         protected:
             void onPropertyChanged(void *property) override;
@@ -147,18 +149,29 @@ export namespace eos {
 
             inline void setBackgroundColor(Color value) { setProperty(_backgroundColor, value); }
             inline void setBorderColor(Color value) { setProperty(_borderColor, value); }
+            inline void setBorderThickness(Int16 value) { setProperty(_borderThickness, value); }
 
             inline Color getBackgroundColor() const { return _backgroundColor; }
             inline Color getBorderColor() const { return _borderColor; }
+            inline Int16 getBorderThickness() const { return _borderThickness; }
     };
 
 
     class Form: public Visual {
         private:
+            using ChildPropertyChangedEvent = PropertyObserver::PropertyChangedEvent<Form>;
+
+        private:
             Control *_activeControl;
+            ChildPropertyChangedEvent _childPropertyChangedEvent;
             void *_dataContext;
 
+        private:
+            void childPropertyChangedEventHandler(PropertyObserver *sender, PropertyObserver::PropertyChangedEventArgs *args);
+
         protected:
+            void onAddChild(Visual *child) override;
+            virtual void onChildPropertyChanged(Visual *child, void *property);
             void onMessage(FormMessage &message) override;
 
         public:

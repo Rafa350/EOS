@@ -1,32 +1,28 @@
-module;
-
-
-#include "eos.h"
-#include "eosAssert.h"
-
-
 module Eos.System.Graphics.Canvas;
-
 
 import Eos.System.Graphics.Color;
 import Eos.System.Core.HeapAllocator;
+import Eos.Types;
+
+
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Crea un bitmap des d'un recurs.
 /// \param    bitmapResource: El recurs.
 ///
-eos::Bitmap::Bitmap(
+Bitmap::Bitmap(
 	const void *bitmapResource):
 
 	_impl(makeImpl()) {
 
-	uint8_t *r = (uint8_t*) bitmapResource;
+	auto r = (UInt8*) bitmapResource;
 
 	_impl->allocated = false;
 	_impl->readonly = true;
-	_impl->width = (int) (r[0] | (r[1] << 8));
-	_impl->height = (int) (r[2] | (r[3] << 8));
+	_impl->width = (Int16) (r[0] | (r[1] << 8));
+	_impl->height = (Int16) (r[2] | (r[3] << 8));
 	_impl->format = ColorFormat::rgb565; // TODO: Corregir aixo
 	_impl->pixels = (void*) &r[6];
 }
@@ -38,9 +34,9 @@ eos::Bitmap::Bitmap(
 /// \param    height: Alçada en pixels.
 /// \param    color: Color inicial
 ///
-eos::Bitmap::Bitmap(
-	int width,
-	int height,
+Bitmap::Bitmap(
+	Int16 width,
+	Int16 height,
 	ColorFormat format,
 	Color color):
 
@@ -55,12 +51,11 @@ eos::Bitmap::Bitmap(
 
 	// Calcula el numero de pixels
 	//
-	int numPixels = width * height;
-	eosAssert(numPixels > 0);
+	Int32 numPixels = width * height; // Warning!!!!
 
 	// Calcula el tamany de cada pixel
 	//
-	int pixelSize = 0;
+	Int16 pixelSize = 0;
 	switch (format) {
 		case ColorFormat::rgb565:
 			pixelSize = ColorTrait<ColorFormat::rgb565>::bytes;
@@ -79,26 +74,24 @@ eos::Bitmap::Bitmap(
 			pixelSize = ColorTrait<ColorFormat::l8>::bytes;
 			break;
 	}
-	eosAssert(pixelSize != 0);
 
 	// Reserva memoria pel bitmap
 	//
 	_impl->pixels = eos::HeapAllocator::allocate(numPixels * pixelSize);
-	eosAssert(_impl->pixels != nullptr);
 
 	// Crea el contingut del bitmap
 	//
 /*	switch (format) {
 		case ColorFormat::rgb888: {
 			ColorInfo<ColorFormat::rgb888>::color_t c = color.convertTo<ColorFormat::rgb888>();
-			for (int i = 0; i < numPixels; i++)
+			for (Int16 i = 0; i < numPixels; i++)
 				((ColorInfo<ColorFormat::rgb888>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
 
 		case ColorFormat::rgb565: {
 			ColorInfo<ColorFormat::rgb565>::color_t c = color.convertTo<ColorFormat::rgb565>();
-			for (int i = 0; i < numPixels; i++)
+			for (Int16 i = 0; i < numPixels; i++)
 				((ColorInfo<ColorFormat::rgb565>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
@@ -106,14 +99,14 @@ eos::Bitmap::Bitmap(
 		default:
 		case ColorFormat::argb8888: {
 			ColorInfo<ColorFormat::argb8888>::color_t c = color.convertTo<ColorFormat::argb8888>();
-			for (int i = 0; i < numPixels; i++)
+			for (Int16 i = 0; i < numPixels; i++)
 				((ColorInfo<ColorFormat::argb8888>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
 
 		case ColorFormat::l8: {
 			ColorInfo<ColorFormat::l8>::color_t c = color.convertTo<ColorFormat::l8>();
-			for (int i = 0; i < numPixels; i++)
+			for (Int16 i = 0; i < numPixels; i++)
 				((ColorInfo<ColorFormat::l8>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
@@ -130,8 +123,8 @@ eos::Bitmap::Bitmap(
 /// \param    pixels: Llista de pixels
 ///
 eos::Bitmap::Bitmap(
-	int width,
-	int height,
+	Int16 width,
+	Int16 height,
 	ColorFormat format,
 	void *pixels):
 
@@ -154,8 +147,8 @@ eos::Bitmap::Bitmap(
 /// \param    pixels: Llista de pixels nomes de lectura.
 ///
 eos::Bitmap::Bitmap(
-	int width,
-	int height,
+	Int16 width,
+	Int16 height,
 	ColorFormat format,
 	const void *pixels):
 
@@ -225,13 +218,13 @@ eos::ColorFormat eos::Bitmap::getFormat() const {
 }
 
 
-int eos::Bitmap::getWidth() const {
+Int16 eos::Bitmap::getWidth() const {
 
 	return _impl->width;
 }
 
 
-int eos::Bitmap::getHeight() const {
+Int16 eos::Bitmap::getHeight() const {
 
 	return _impl->height;
 }
@@ -247,7 +240,7 @@ void* eos::Bitmap::getPixels() const {
 /// \brief    Obte el numero de bytes per pixel.
 /// \return   El valor.
 ///
-int eos::Bitmap::getBytesPerPixel() const {
+Int16 eos::Bitmap::getBytesPerPixel() const {
 
 	switch (_impl->format) {
 		default:
@@ -273,7 +266,7 @@ int eos::Bitmap::getBytesPerPixel() const {
 /// \brief    Obte el numero de bytes per linia.
 /// \return   El valor.
 ///
-int eos::Bitmap::getBytesPerLine() const {
+Int16 eos::Bitmap::getBytesPerLine() const {
 
 	return ((_impl->width * getBytesPerPixel()) + 3) & ~0b11;
 }

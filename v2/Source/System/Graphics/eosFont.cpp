@@ -1,6 +1,5 @@
 module;
 
-
 #include "eos.h"
 #include "eosAssert.h"
 
@@ -92,22 +91,25 @@ namespace eos {
 #define FR_CHAR_ADVANCE 4
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor. Crea el font per defecte.
+using namespace eos;
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor. Crea el font per defecte.
 ///
-eos::Font::Font() :
+Font::Font() :
 
 	_fontResource {getFontResource(eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle)} {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    name: Nom del font
-/// \param    height: Alçada de la lletra.
-/// \param    style: Estil.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor.
+/// @param    name: Nom del font
+/// @param    height: Alçada de la lletra.
+/// @param    style: Estil.
 ///
-eos::Font::Font(
+Font::Font(
 	const char *name,
 	int height,
 	FontStyle style):
@@ -117,11 +119,11 @@ eos::Font::Font(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor copia
-/// \param    font: L'altre objecte per copiar.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor copia
+/// @param    font: L'altre objecte per copiar.
 ///
-eos::Font::Font(
+Font::Font(
 	const Font &font):
 
 	_fontResource {font._fontResource} {
@@ -129,12 +131,12 @@ eos::Font::Font(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Operador d'assignacio.
-/// \param    font: L'objecte a asignar.
-/// \return   El propi objecte.
+/// ---------------------------------------------------------------------------
+/// @brief    Operador d'assignacio.
+/// @param    font: L'objecte a asignar.
+/// @return   El propi objecte.
 ///
-eos::Font& eos::Font::operator = (
+Font& eos::Font::operator = (
 	const Font &font) {
 
 	_fontResource = font._fontResource;
@@ -143,56 +145,56 @@ eos::Font& eos::Font::operator = (
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Operador ==.
-/// \param    font: L'altre font a comparar.
-/// \return   True si son iguals.
+/// ---------------------------------------------------------------------------
+/// @brief    Operador ==.
+/// @param    font: L'altre font a comparar.
+/// @return   True si son iguals.
 ///
-bool eos::Font::operator == (
+bool Font::operator == (
 	const Font &font) const {
 
 	return _fontResource == font._fontResource;
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'alçada del font.
-/// \return   El resultat.
+/// ---------------------------------------------------------------------------
+/// @brief    Obte l'alçada del font.
+/// @return   El resultat.
 ///
-int eos::Font::getFontHeight() const {
+int Font::getFontHeight() const {
 
 	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_HEIGHT];
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'ascendent del font.
-/// \return   El resultat.
+/// ---------------------------------------------------------------------------
+/// @brief    Obte l'ascendent del font.
+/// @return   El resultat.
 ///
-int eos::Font::getFontAscent() const {
+int Font::getFontAscent() const {
 
 	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_ASCENT];
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte el descendent del font.
-/// \return   El resultat.
+/// ---------------------------------------------------------------------------
+/// @brief    Obte el descendent del font.
+/// @return   El resultat.
 ///
-int eos::Font::getFontDescent() const {
+int Font::getFontDescent() const {
 
 	const uint8_t* fr = _fontResource;
 	return fr[FR_FONT_DESCENT];
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Obte informacio del font
-/// \param fi: Destinacio de la informacio.
+/// ---------------------------------------------------------------------------
+/// @brief Obte informacio del font
+/// @param fi: Destinacio de la informacio.
 ///
-void eos::Font::getFontInfo(
+void Font::getFontInfo(
     FontInfo &fi) const {
 
 	const uint8_t *fr = _fontResource;
@@ -205,12 +207,12 @@ void eos::Font::getFontInfo(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Obte informacio d'un caracter del font.
-/// \param c: El caracter.
-/// \param ci: Destinacio de la informacio.
+/// ---------------------------------------------------------------------------
+/// @brief Obte informacio d'un caracter del font.
+/// @param c: El caracter.
+/// @param ci: Destinacio de la informacio.
 ///
-void eos::Font::getCharInfo(
+void Font::getCharInfo(
     char ch,
     CharInfo &ci) const {
 
@@ -239,12 +241,12 @@ void eos::Font::getCharInfo(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Obte l'avanç d,un caracter.
-/// \param ch: El caracter.
-/// \return L'avanç del caracter.
+/// ---------------------------------------------------------------------------
+/// @brief Obte l'avanç d,un caracter.
+/// @param ch: El caracter.
+/// @return L'avanç del caracter.
 ///
-int eos::Font::getCharAdvance(
+int Font::getCharAdvance(
     char ch) const {
 
 	const uint8_t *fr = _fontResource;
@@ -363,10 +365,10 @@ const eos::Font::FontTableEntry eos::Font::_fontTable[] = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Crea un font amb els parametres especificats.
-/// \param fontName: Nom del font.
-/// \param height: Alçada del font.
-/// \param style: Estil del font.
+/// @brief Crea un font amb els parametres especificats.
+/// @param fontName: Nom del font.
+/// @param height: Alçada del font.
+/// @param style: Estil del font.
 ///
 const uint8_t* eos::Font::getFontResource(
 	const char *name,

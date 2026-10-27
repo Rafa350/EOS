@@ -1,12 +1,10 @@
 module;
 
-
 #include "hardware.h"
 #include <cstddef>
 
 
 export module Eos.Hardware.DMA:DeviceTraits;
-
 
 import :Types;
 

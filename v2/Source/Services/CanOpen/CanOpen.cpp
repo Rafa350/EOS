@@ -205,6 +205,8 @@ export namespace eos {
 			NodeState getNodeState() const;
 			NodeID getNodeId() const;
 
+			CanOpenDictionary* getDictionary() const { return _dictionary; }
+
             // Lectura, escriptura i modificacio en el dicionari local
             //
 			bool modifyU8(UInt16 index, UInt8 subIndex, UInt8 clearValue, UInt8 setValue, Ticks blockTime);

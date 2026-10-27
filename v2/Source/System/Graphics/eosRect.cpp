@@ -1,63 +1,57 @@
-module;
-
-
-#include "eos.h"
-#include "eosAssert.h"
-
-
 export module Eos.System.Graphics.Rect;
-
 
 import Eos.Math;
 import Eos.System.Graphics.Point;
 import Eos.System.Graphics.Size;
+import Eos.Types;
 
 
 export namespace eos {
 
-    /// \brief Clase que representa un rectangle aliniat amb els eixos.
+    /// @brief Clase que representa un rectangle aliniat amb els eixos.
     ///
 	class Rect {
 		private:
-			int16_t _x;
-			int16_t _y;
-			int16_t _width;
-			int16_t _height;
+			Int16 _x;
+			Int16 _y;
+			Int16 _width;
+			Int16 _height;
 
 		public:
-			static constexpr int16_t absoluteMaxWidth = Math::maxI16;
-            static constexpr int16_t absoluteMaxHeight = Math::maxI16;
-            static constexpr int16_t absoluteMinWidth = 0;
-            static constexpr int16_t absoluteMinHeight = 0;
+			static constexpr Int16 absoluteMaxWidth = Math::maxI16;
+            static constexpr Int16 absoluteMaxHeight = Math::maxI16;
+            static constexpr Int16 absoluteMinWidth = 0;
+            static constexpr Int16 absoluteMinHeight = 0;
 
         public:
 			Rect();
-            Rect(int16_t x, int16_t y, int16_t width, int16_t height);
+            Rect(Int16 x, Int16 y, Int16 width, Int16 height);
             Rect(const Point &p1, const Point &p2);
             Rect(const Point &p, const Size &s);
             Rect(const Size &s);
             Rect(const Rect &r);
             Rect(const Rect &&r);
 
-            inline int16_t getX() const { return _x; }
-            inline int16_t getY() const { return _y; }
+            inline Int16 getX() const { return _x; }
+            inline Int16 getY() const { return _y; }
             inline Point getPosition() const { return Point(_x, _y); }
-            inline int16_t getWidth() const { return _width; }
-            inline int16_t getHeight() const { return _height; }
+            inline Int16 getWidth() const { return _width; }
+            inline Int16 getHeight() const { return _height; }
             inline Size getSize() const { return Size(_width, _height); }
-            inline int16_t getMinX() const { return _x; };
-            inline int16_t getMinY() const { return _y; }
-            inline int16_t getMaxX() const { return _x + _width - 1; }
-            inline int16_t getMaxY() const { return _y + _height - 1; }
+            inline Int16 getMinX() const { return _x; };
+            inline Int16 getMinY() const { return _y; }
+            inline Int16 getMaxX() const { return _x + _width - 1; }
+            inline Int16 getMaxY() const { return _y + _height - 1; }
 
-            [[nodiscard]] Rect translated(int16_t x, int16_t y) const;
+            [[nodiscard]] Rect translated(Int16 x, Int16 y) const;
             [[nodiscard]] inline Rect translated(const Point &p) const { return translated(p.getX(), p.getY()); }
-            [[nodiscard]] inline Rect inflated(int16_t h, int16_t v) const { return inflated(h, v, h, v); }
-            [[nodiscard]] Rect inflated(int16_t left, int16_t top, int16_t right, int16_t bottom) const;
+            [[nodiscard]] inline Rect inflated(Int16 i) const { return inflated(i, i, i, i); }
+            [[nodiscard]] inline Rect inflated(Int16 h, Int16 v) const { return inflated(h, v, h, v); }
+            [[nodiscard]] Rect inflated(Int16 left, Int16 top, Int16 right, Int16 bottom) const;
             [[nodiscard]] Rect intersected(const Rect &r) const;
             [[nodiscard]] Rect fusioned(const Rect &r) const;
 
-            [[nodiscard]] bool contains(int16_t x, int16_t y) const;
+            [[nodiscard]] bool contains(Int16 x, Int16 y) const;
             [[nodiscard]] inline bool contains(const Point &p) const { return contains(p.getX(), p.getY()); }
             [[nodiscard]] bool contains(const Rect &r) const;
 
@@ -71,10 +65,13 @@ export namespace eos {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor de l'objecte. Crea un rectangle buit
+using namespace eos;
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor de l'objecte. Crea un rectangle buit
 ///
-eos::Rect::Rect():
+Rect::Rect():
 	_x {0},
 	_y {0},
 	_width {0},
@@ -82,35 +79,32 @@ eos::Rect::Rect():
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor de l'objecte.
-/// \param    x: Posicio X.
-/// \param    y: Posicio Y.
-/// \param    width: Amplada.
-/// \param    height: Alçada.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor de l'objecte.
+/// @param    x: Posicio X.
+/// @param    y: Posicio Y.
+/// @param    width: Amplada.
+/// @param    height: Alçada.
 ///
-eos::Rect::Rect(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height):
+Rect::Rect(
+	Int16 x,
+	Int16 y,
+	Int16 width,
+	Int16 height):
 
 	_x {x},
 	_y {y},
 	_width {width},
 	_height {height} {
-
-	eosAssert(width >= 0);
-	eosAssert(height >= 0);
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor de l'objecte.
-/// \param    p: Posicio.
-/// \param    s: Tamany.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor de l'objecte.
+/// @param    p: Posicio.
+/// @param    s: Tamany.
 ///
-eos::Rect::Rect(
+Rect::Rect(
 	const Point &p,
 	const Size &s):
 
@@ -121,12 +115,12 @@ eos::Rect::Rect(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-/// \param    s: Tamany.
-/// \remarks  La posicio es x=0, y=0.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor del objecte.
+/// @param    s: Tamany.
+/// @remarks  La posicio es x=0, y=0.
 ///
-eos::Rect::Rect(
+Rect::Rect(
 	const Size &s):
 
 	_x {0},
@@ -137,14 +131,14 @@ eos::Rect::Rect(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-/// \param    p1: Primer punt.
-/// \param    p2: Segon punt.
-/// \remarks  El rectangle creat, SEMPRE estata normalitzat, independentment
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor del objecte.
+/// @param    p1: Primer punt.
+/// @param    p2: Segon punt.
+/// @remarks  El rectangle creat, SEMPRE estata normalitzat, independentment
 ///           dels punt inicials
 ///
-eos::Rect::Rect(
+Rect::Rect(
 	const Point &p1,
 	const Point &p2):
 
@@ -152,17 +146,14 @@ eos::Rect::Rect(
 	_y(Math::min(p1.getY(), p2.getY())),
 	_width(Math::abs(p2.getX() - p1.getX()) + 1),
 	_height(Math::abs(p2.getY() - p1.getY()) + 1) {
-
-	eosAssert(_width >= 0);
-	eosAssert(_height >= 0);
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor copy
-/// \param    r: L'objecte a copiar.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor copy
+/// @param    r: L'objecte a copiar.
 ///
-eos::Rect::Rect(
+Rect::Rect(
 	const Rect &r):
 
 	_x(r._x),
@@ -172,11 +163,11 @@ eos::Rect::Rect(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor move
-/// \param    r: L'objecte a moure.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor move
+/// @param    r: L'objecte a moure.
 ///
-eos::Rect::Rect(
+Rect::Rect(
 	const Rect &&r) :
 
 	_x(r._x),
@@ -187,19 +178,19 @@ eos::Rect::Rect(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Infla un rectangle.
-/// \param    left: Inflat per l'esquerra.
-/// \param    top: Inflat per dalt.
-/// \param    right: Inflat per la dreta.
-/// \param    bottom: Inflat per avall.
-/// \return   El resultat.
+/// ---------------------------------------------------------------------------
+/// @brief    Infla un rectangle.
+/// @param    left: Inflat per l'esquerra.
+/// @param    top: Inflat per dalt.
+/// @param    right: Inflat per la dreta.
+/// @param    bottom: Inflat per avall.
+/// @return   El resultat.
 ///
-eos::Rect eos::Rect::inflated(
-	int16_t left,
-	int16_t top,
-	int16_t right,
-	int16_t bottom) const {
+Rect Rect::inflated(
+	Int16 left,
+	Int16 top,
+	Int16 right,
+	Int16 bottom) const {
 
 	return Rect(
 		_x - left,
@@ -209,26 +200,27 @@ eos::Rect eos::Rect::inflated(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte un rectangle desplaçat.
-/// \param    x: Desplaçament X.
-/// \param    y: Desplaçament Y.
-/// \return   El rectangle resultant de l'operacio.
+/// ---------------------------------------------------------------------------
+/// @brief    Obte un rectangle desplaçat.
+/// @param    x: Desplaçament X.
+/// @param    y: Desplaçament Y.
+/// @return   El rectangle resultant de l'operacio.
 ///
-eos::Rect eos::Rect::translated(
-	int16_t x,
-	int16_t y) const {
+Rect Rect::translated(
+	Int16 x,
+	Int16 y) const {
 
 	return Rect(_x + x, _y + y, _width, _height);
 }
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte un rectangle que es la interseccio d'aquest amb un altre.
-/// \param    r: Rectangle per realitzar la interseccio.
-/// \return   El resultat de la interseccio.
-/// \remarks  El resultat SEMPRE sera un rectangle normalitzat.
+
+/// ---------------------------------------------------------------------------
+/// @brief    Obte un rectangle que es la interseccio d'aquest amb un altre.
+/// @param    r: Rectangle per realitzar la interseccio.
+/// @return   El resultat de la interseccio.
+/// @remarks  El resultat SEMPRE sera un rectangle normalitzat.
 ///
-eos::Rect eos::Rect::intersected(
+Rect Rect::intersected(
 	const Rect &r) const {
 
 	int x1 = Math::max(_x, r._x);
@@ -248,15 +240,15 @@ eos::Rect eos::Rect::intersected(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si el rectangle conte el punt especificat.
-/// \param    x: Coordinada X del punt.
-/// \param    y: Coordinada Y del punt.
-/// \return   True si conte el punt.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si el rectangle conte el punt especificat.
+/// @param    x: Coordinada X del punt.
+/// @param    y: Coordinada Y del punt.
+/// @return   True si conte el punt.
 ///
-bool eos::Rect::contains(
-	int16_t x,
-	int16_t y) const {
+bool Rect::contains(
+	Int16 x,
+	Int16 y) const {
 
 	return
 		(x >= _x) && (y >= _y) &&
@@ -264,22 +256,22 @@ bool eos::Rect::contains(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Indica si es rectangle es buit.
-/// \return   True si es buit.
+/// ---------------------------------------------------------------------------
+/// @brief    Indica si es rectangle es buit.
+/// @return   True si es buit.
 ///
-bool eos::Rect::isEmpty() const {
+bool Rect::isEmpty() const {
 
 	return (_width == 0) && (_height == 0);
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Operador =
-/// \param    r: L'objecte a asignar.
-/// \return   Referencia al propi objecte.
+/// ---------------------------------------------------------------------------
+/// @brief    Operador =
+/// @param    r: L'objecte a asignar.
+/// @return   Referencia al propi objecte.
 ///
-eos::Rect& eos::Rect::operator = (
+Rect& Rect::operator = (
 	const Rect &r) {
 
 	_x = r._x;
@@ -291,12 +283,12 @@ eos::Rect& eos::Rect::operator = (
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Operador ==
-/// \param    r: L'objecte a comparar.
-/// \return   True si son ifguals, false en cas contrari.
+/// ---------------------------------------------------------------------------
+/// @brief    Operador ==
+/// @param    r: L'objecte a comparar.
+/// @return   True si son ifguals, false en cas contrari.
 ///
-bool eos::Rect::operator == (
+bool Rect::operator == (
 	const Rect &r) const {
 
 	return

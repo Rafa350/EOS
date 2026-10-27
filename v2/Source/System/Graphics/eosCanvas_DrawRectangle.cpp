@@ -7,9 +7,12 @@ module;
 
 module Eos.System.Graphics.Canvas;
 
-
+import Eos.Types;
 import Eos.Math;
 import Eos.System.Graphics.Color;
+
+
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------

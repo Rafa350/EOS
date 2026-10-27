@@ -1,15 +1,8 @@
-module;
-
-
-#include "eos.h"
-
-
 export module Eos.Controllers.TTY;
 
-
-import Eos.Types;
 import Eos.System.IO.Streams;
 import Eos.System.IO.Formatters.Text;
+import Eos.Types;
 
 
 export namespace eos {
@@ -30,43 +23,45 @@ export namespace eos {
 		private:
 			Stream * const _stream;
 			TextWriter _writer;
-			uint8_t const _numRows;
-			uint8_t const _numColumns;
-			uint8_t _row;
-			uint8_t _column;
-			// uint16_t _buffer[]
-			// uint16_t *_localBuffer;
-			// uint16_t *_remoteBuffer;
+			UInt8 const _numRows;
+			UInt8 const _numColumns;
+			UInt8 _row;
+			UInt8 _column;
+			// UInt16 _buffer[]
+			// UInt16 *_localBuffer;
+			// UInt16 *_remoteBuffer;
 
 		public:
-			TTY(Stream *stream, uint8_t numRows, uint8_t nulColumns);
+			TTY(Stream *stream, UInt8 numRows, UInt8 nulColumns);
 
 			void writeText(const char *s);
+			void writeText(Color color, const char *s);
 			void writeFormatedText(const char *fmt, ...);
+			void writeFormatedText(Color color, const char *fmt, ...);
 			void writeChar(char c);
-			void writeChar(char c, uint32_t count);
+			void writeChar(char c, UInt32 count);
 			void writeNewLine();
-			void writeU8(uint8_t value);
-			void writeU16(uint16_t value);
-			void writeU32(uint32_t value);
-			void writeU8Hex(uint8_t value);
-			void writeU16Hex(uint16_t value);
-			void writeU32Hex(uint32_t value);
-			void writeI8(int8_t value);
-			void writeI16(int16_t value);
-			void writeI32(int32_t value);
+			void writeU8(UInt8 value);
+			void writeU16(UInt16 value);
+			void writeU32(UInt32 value);
+			void writeU8Hex(UInt8 value);
+			void writeU16Hex(UInt16 value);
+			void writeU32Hex(UInt32 value);
+			void writeI8(Int8 value);
+			void writeI16(Int16 value);
+			void writeI32(Int32 value);
 
-			uint32_t read(char *buffer, uint32_t bufferSize);
+			UInt32 read(char *buffer, UInt32 bufferSize);
 
 			void cursorShow();
 			void cursorHide();
 			void cursorAdvance();
 			void cursorHome();
-     		void cursorTo(uint8_t row, uint8_t column);
-			void cursorLeft(uint8_t columns = 1);
-			void cursorRight(uint8_t columns = 1);
-			void cursorUp(uint8_t rows = 1);
-			void cursorDown(uint8_t rows = 1);
+     		void cursorTo(UInt8 row, UInt8 column);
+			void cursorLeft(UInt8 columns = 1);
+			void cursorRight(UInt8 columns = 1);
+			void cursorUp(UInt8 rows = 1);
+			void cursorDown(UInt8 rows = 1);
 
 			void clear();
 			void clearRow();
@@ -74,7 +69,7 @@ export namespace eos {
 
 			void refresh();
 
-			void setDefaultColor();
+			void resetTextColor();
 			void setTextColor(Color color, bool hi = false);
 			void setBackgroundColor(Color color, bool hi = false);
 	};
@@ -85,15 +80,15 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Contructor.
-/// \param    stream: El stream.
-/// \param    numRows: Nombre de fileres.
-/// \para     numColumns: Nombre de columnes.
+/// @brief    Contructor.
+/// @param    stream: El stream.
+/// @param    numRows: Nombre de fileres.
+/// @param    numColumns: Nombre de columnes.
 ///
 TTY::TTY(
 	Stream *stream,
-	uint8_t numRows,
-	uint8_t numColumns) :
+	UInt8 numRows,
+	UInt8 numColumns) :
 
 	_stream {stream},
 	_writer {stream},
@@ -105,8 +100,8 @@ TTY::TTY(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu una cadena de text.
-/// \param    s: El text.
+/// @brief    Escriu una cadena de text.
+/// @param    s: El text.
 ///
 void TTY::writeText(
 	const char *s) {
@@ -116,8 +111,23 @@ void TTY::writeText(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu una cadena de text formatejat
-/// \param    fmt: La cadena de format.
+/// @brief    Escriu una cadena de text.
+/// @param    color: Color del text.
+/// @param    s: El text.
+///
+void TTY::writeText(
+	Color color,
+	const char *s) {
+
+	setTextColor(color);
+	_writer.writeString(s);
+	resetTextColor();
+}
+
+
+/// ----------------------------------------------------------------------
+/// @brief    Escriu una cadena de text formatejat
+/// @param    fmt: La cadena de format.
 ///
 void TTY::writeFormatedText(
 	const char *fmt,
@@ -127,7 +137,7 @@ void TTY::writeFormatedText(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un salt de linia.
+/// @brief    Escriu un salt de linia.
 ///
 void TTY::writeNewLine() {
 
@@ -139,8 +149,8 @@ void TTY::writeNewLine() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu una caracter
-/// \param    c: El caracter
+/// @brief    Escriu una caracter
+/// @param    c: El caracter
 ///
 void TTY::writeChar(
 	char c) {
@@ -150,13 +160,13 @@ void TTY::writeChar(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu una caracter
-/// \param    c: El caracter.
-/// \param    count: El nombre de repeticions.
+/// @brief    Escriu una caracter
+/// @param    c: El caracter.
+/// @param    count: El nombre de repeticions.
 ///
 void TTY::writeChar(
 	char c,
-	uint32_t count) {
+	UInt32 count) {
 
 	while (count--)
 		_writer.writeChar(c);
@@ -164,69 +174,80 @@ void TTY::writeChar(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor numeric de 16 bits en hexadecimal.
-/// \param    value: El valor.
+/// @brief    Escriu un valor numeric de 8 bits en hexadecimal.
+/// @param    value: El valor.
+///
+void TTY::writeU8Hex(
+	UInt8 value) {
+
+	_writer.writeU8Hex(value);
+}
+
+
+/// ----------------------------------------------------------------------
+/// @brief    Escriu un valor numeric de 16 bits en hexadecimal.
+/// @param    value: El valor.
 ///
 void TTY::writeU16Hex(
-	uint16_t value) {
+	UInt16 value) {
 
 	_writer.writeU16Hex(value);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor numeric de 32 bits en hexadevimal.
-/// \param    value: El valor.
+/// @brief    Escriu un valor numeric de 32 bits en hexadevimal.
+/// @param    value: El valor.
 ///
 void TTY::writeU32Hex(
-	uint32_t value) {
+	UInt32 value) {
 
 	_writer.writeU32Hex(value);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor numeric de 8 bits.
-/// \param    value: El valor.
+/// @brief    Escriu un valor numeric de 8 bits.
+/// @param    value: El valor.
 ///
 void TTY::writeU8(
-	uint8_t value) {
+	UInt8 value) {
 
 	_writer.writeU8(value);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor numeric de 18 bits.
-/// \param    value: El valor.
+/// @brief    Escriu un valor numeric de 18 bits.
+/// @param    value: El valor.
 ///
 void TTY::writeU16(
-	uint16_t value) {
+	UInt16 value) {
 
 	_writer.writeU16(value);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un valor numeric de 32 bits.
-/// \param    value: El valor.
+/// @brief    Escriu un valor numeric de 32 bits.
+/// @param    value: El valor.
 ///
 void TTY::writeU32(
-	uint32_t value) {
+	UInt32 value) {
 
 	_writer.writeU32(value);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Llegeix la entrada del terminal.
-/// \param    buffer: El buffer de recepcio.
-/// \param    bufferSize: El tamany del buffer en bytes.
-/// \return   El nombre de bytes lleigits.
+/// @brief    Llegeix la entrada del terminal.
+/// @param    buffer: El buffer de recepcio.
+/// @param    bufferSize: El tamany del buffer en bytes.
+/// @return   El nombre de bytes lleigits.
 ///
-uint32_t eos::TTY::read(
+UInt32 eos::TTY::read(
 	char *buffer,
-	uint32_t bufferSize) {
+	UInt32 bufferSize) {
 
 	auto readResult = _stream->read((UInt8 *)buffer, bufferSize);
 	if (readResult.isOk())
@@ -237,7 +258,7 @@ uint32_t eos::TTY::read(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Mostra el cursor.
+/// @brief    Mostra el cursor.
 ///
 void TTY::cursorShow() {
 
@@ -246,7 +267,7 @@ void TTY::cursorShow() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Oculta el cursor.
+/// @brief    Oculta el cursor.
 ///
 void TTY::cursorHide() {
 
@@ -255,7 +276,7 @@ void TTY::cursorHide() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Avança el cursor a la seguent posicio.
+/// @brief    Avança el cursor a la seguent posicio.
 ///
 void TTY::cursorAdvance() {
 
@@ -268,7 +289,7 @@ void TTY::cursorAdvance() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Mou el cursor al origen.
+/// @brief    Mou el cursor al origen.
 ///
 void TTY::cursorHome() {
 
@@ -280,13 +301,13 @@ void TTY::cursorHome() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Mou el cursor a la posicio especificada.
-/// \param    row: La fila.
-/// \param    column: La columna.
+/// @brief    Mou el cursor a la posicio especificada.
+/// @param    row: La fila.
+/// @param    column: La columna.
 ///
 void TTY::cursorTo(
-	uint8_t row,
-	uint8_t column) {
+	UInt8 row,
+	UInt8 column) {
 
 	if ((row < _numRows) && (column < _numColumns)) {
 
@@ -303,12 +324,12 @@ void TTY::cursorTo(
 
 
 /// ----------------------------------------------------------------------
-/// \brief     Mou el cursor cap a l'esquerra
-/// \param     columns: El nombre de columnes a moure.
+/// @brief     Mou el cursor cap a l'esquerra
+/// @param     columns: El nombre de columnes a moure.
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
 void TTY::cursorLeft(
-	uint8_t columns) {
+	UInt8 columns) {
 
 	if ((columns > 0) && (columns < _column)) {
 
@@ -322,12 +343,12 @@ void TTY::cursorLeft(
 
 
 /// ----------------------------------------------------------------------
-/// \brief     Mou el cursor cap a la dreta
-/// \brief     columns: El nombre de columnes a moure.
+/// @brief     Mou el cursor cap a la dreta
+/// @brief     columns: El nombre de columnes a moure.
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
 void TTY::cursorRight(
-	uint8_t columns) {
+	UInt8 columns) {
 
 	if ((columns > 0) && ((columns + _column) < _numColumns)) {
 
@@ -341,12 +362,12 @@ void TTY::cursorRight(
 
 
 /// ----------------------------------------------------------------------
-/// \brief     Mou el cursor cap a munt
-/// \brief     rows: El nombre de fileres
+/// @brief     Mou el cursor cap a munt
+/// @brief     rows: El nombre de fileres
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
 void TTY::cursorUp(
-	uint8_t rows) {
+	UInt8 rows) {
 
 	if ((rows > 0) && (rows < _row)) {
 
@@ -360,12 +381,12 @@ void TTY::cursorUp(
 
 
 /// ----------------------------------------------------------------------
-/// \brief     Mou el cursor cap a vall.
-/// \brief     rows: El nombre de fileres
+/// @brief     Mou el cursor cap a vall.
+/// @brief     rows: El nombre de fileres
 /// \remarks   Si no hi ha espai per moures, no fa res.
 ///
 void TTY::cursorDown(
-	uint8_t rows) {
+	UInt8 rows) {
 
 	if ((rows > 0) && ((rows + _row) < _numRows)) {
 
@@ -379,7 +400,7 @@ void TTY::cursorDown(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Borra la pantalla complerta.
+/// @brief    Borra la pantalla complerta.
 ///
 void TTY::clear() {
 
@@ -397,7 +418,7 @@ void TTY::clear() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Borra desde la posicio del cursor fins al final de la linia.
+/// @brief    Borra desde la posicio del cursor fins al final de la linia.
 ///
 void TTY::clearRowEnd() {
 
@@ -406,18 +427,18 @@ void TTY::clearRowEnd() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona els color per defecte
+/// @brief    Selecciona els color per defecte del text.
 ///
-void TTY::setDefaultColor() {
+void TTY::resetTextColor() {
 
 	_writer.writeString("\x1B[0m");
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona els color del text
-/// \param    color: El color.
-/// \param    hi: Indica color d'alta intensitat
+/// @brief    Selecciona els color del text
+/// @param    color: El color.
+/// @param    hi: Indica color d'alta intensitat
 ///
 void TTY::setTextColor(
 	Color color,
@@ -426,15 +447,15 @@ void TTY::setTextColor(
 	_writer.writeString("\x1B[");
 	if (hi)
 		_writer.writeString("1;");
-	_writer.writeU8(30 + ((uint8_t) color));
+	_writer.writeU8(30 + ((UInt8) color));
 	_writer.writeChar('m');
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona els color del fons.
-/// \param    color: El color.
-/// \param    hi: Indica color d'alta intensitat
+/// @brief    Selecciona els color del fons.
+/// @param    color: El color.
+/// @param    hi: Indica color d'alta intensitat
 ///
 void TTY::setBackgroundColor(
 	Color color,
@@ -443,13 +464,13 @@ void TTY::setBackgroundColor(
 	_writer.writeString("\x1B[");
 	if (hi)
 		_writer.writeString("1;");
-	_writer.writeU8(40 + ((uint8_t) color));
+	_writer.writeU8(40 + ((UInt8) color));
 	_writer.writeChar('m');
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Refresca els canvis en el terminal.
+/// @brief    Refresca els canvis en el terminal.
 ///
 void TTY::refresh() {
 

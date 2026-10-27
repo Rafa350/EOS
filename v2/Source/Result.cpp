@@ -1,6 +1,5 @@
 export module Eos.Result;
 
-
 import Eos.Concepts;
 import Eos.Types;
 

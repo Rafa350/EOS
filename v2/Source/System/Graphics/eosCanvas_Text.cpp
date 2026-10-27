@@ -1,15 +1,14 @@
 module;
 
-
-#include "eos.h"
+#include <string.h>
 
 
 module Eos.System.Graphics.Canvas;
 
-
 import Eos.Math;
 import Eos.System.Graphics.Color;
 import Eos.System.Graphics.ColorDefinitions;
+import Eos.Types;
 
 
 using namespace eos;
@@ -19,12 +18,12 @@ static constexpr Color defaultBackground = Colors::transparent;
 static constexpr Color defaultForeground = Colors::black;
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte amb els valors per defecte.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor del objecte amb els valors per defecte.
 ///
-eos::Text::Text():
+Text::Text():
 
-	_text {""},
+	_text {nullptr},
 	_textLength {0},
 	_font {Font()},
 	//_background(defaultBackground)),
@@ -36,16 +35,16 @@ eos::Text::Text():
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-/// \param    font: El font.
-/// \param    align: L'aliniacio del text.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor del objecte.
+/// @param    font: El font.
+/// @param    align: L'aliniacio del text.
 ///
-eos::Text::Text(
+Text::Text(
 	const Font &font,
 	HorizontalAlign align):
 
-	_text {""},
+	_text {nullptr},
 	_textLength {0},
 	_font {font},
 	//_background(Brush(defaultBackground)),
@@ -58,20 +57,20 @@ eos::Text::Text(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-/// \param    font: El font.
-/// \param    align: L'aliniacio del text.
-/// \param    text: El text.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor del objecte.
+/// @param    font: El font.
+/// @param    align: L'aliniacio del text.
+/// @param    text: El text.
 ///
-eos::Text::Text(
+Text::Text(
 	const Font &font,
 	HorizontalAlign align,
 	const char *text,
-	uint32_t textLength):
+	UInt32 textLength):
 
 	_text {text},
-	_textLength {(textLength == eos::Math::maxU32) ? strlen(text) : textLength},
+	_textLength {(textLength == Math::maxU32) ? strlen(text) : textLength},
 	_font {font},
 	//_background {Brush(defaultBackground)},
 	_foreground {Brush(defaultForeground)},
@@ -82,14 +81,14 @@ eos::Text::Text(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el text a formatejar.
-/// \param    text: El text.
-/// \param    textLength: La longitut del text.
+/// ---------------------------------------------------------------------------
+/// @brief    Asigna el text a formatejar.
+/// @param    text: El text.
+/// @param    textLength: La longitut del text.
 ///
-void eos::Text::setText(
+void Text::setText(
 	const char *text,
-	uint32_t textLength) {
+	UInt32 textLength) {
 
 	if (_text != text) {
 		_text = text;
@@ -100,21 +99,21 @@ void eos::Text::setText(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el text a formatejar.
-/// \param    text: El text.
+/// @brief    Asigna el text a formatejar.
+/// @param    text: El text.
 ///
-void eos::Text::setText(
+void Text::setText(
 	const char *text) {
 
-	setText(text, eos::Math::maxU32);
+	setText(text, Math::maxU32);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el font.
-/// \param    font: El font.
+/// @brief    Asigna el font.
+/// @param    font: El font.
 ///
-void eos::Text::setFont(
+void Text::setFont(
 	const Font &font) {
 
 	if (_font != font) {
@@ -125,10 +124,10 @@ void eos::Text::setFont(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna l'aliniacio.
-/// \param    align: L'aliniacio.
+/// @brief    Asigna l'aliniacio.
+/// @param    align: L'aliniacio.
 ///
-void eos::Text::setHorizontalAlign(
+void Text::setHorizontalAlign(
 	HorizontalAlign align) {
 
 	_horizontalAlign = align;
@@ -136,8 +135,8 @@ void eos::Text::setHorizontalAlign(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna l'aliniacio vertical.
-/// \param    align: L'aliniacio.
+/// @brief    Asigna l'aliniacio vertical.
+/// @param    align: L'aliniacio.
 ///
 void Text::setVerticalAlign(
 	VerticalAlign align) {
@@ -146,8 +145,8 @@ void Text::setVerticalAlign(
 }
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la brotxa per pinter el fons
-/// \param    brush: La brotxa.
+/// @brief    Asigna la brotxa per pinter el fons
+/// @param    brush: La brotxa.
 ///
 void Text::setBackground(
 	const Brush &brush) {
@@ -157,8 +156,8 @@ void Text::setBackground(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la brotxa per pinter els caracters
-/// \param    brush: La brotxa.
+/// @brief    Asigna la brotxa per pinter els caracters
+/// @param    brush: La brotxa.
 ///
 void Text::setForeground(
 	const Brush &brush) {
@@ -168,7 +167,7 @@ void Text::setForeground(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Recalcula el tamany de l'envolvent.
+/// @brief    Recalcula el tamany de l'envolvent.
 ///
 void Text::recalcBounds() {
 
@@ -177,7 +176,7 @@ void Text::recalcBounds() {
 
 	const char *p = _text;
 	if (p != nullptr) {
-		int i = _textLength;
+		auto i = _textLength;
 		while(i > 1) {
 			_width += _font.getCharAdvance(*p++);
 			i--;
@@ -195,21 +194,21 @@ void Text::recalcBounds() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa el text.
-/// \param    graphics: L'objecte grafics on dibuixar.
-/// \param    position: La Posicio.
+/// @brief    Dibuixa el text.
+/// @param    graphics: L'objecte grafics on dibuixar.
+/// @param    position: La Posicio.
 ///
 void Text::draw(
 	const Graphics *graphics,
 	const Point &position) const {
 
 	const char* p = _text;
-	unsigned l = _textLength;
+	auto l = _textLength;
 
 	if (l > 0) {
 
-		int16_t x = position.getX();
-		int16_t y = position.getY();
+		Int16 x = position.getX();
+		Int16 y = position.getY();
 
 		if (!_background.isNull()) {
 			Color bkColor = _background.getColor();
@@ -232,16 +231,16 @@ void Text::draw(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa el text.
-/// \param    graphics: L'objecte grafic on dibuixar.
-/// \param    box: La caixa on dibuixar.
+/// @brief    Dibuixa el text.
+/// @param    graphics: L'objecte grafic on dibuixar.
+/// @param    box: La caixa on dibuixar.
 ///
 void Text::draw(
 	const Graphics *graphics,
 	const Rect &box) const {
 
-	int16_t x;
-	int16_t y;
+	Int16 x;
+	Int16 y;
 
 	switch (_horizontalAlign) {
 		default:
@@ -267,8 +266,8 @@ void Text::draw(
 
 void Text::drawChar(
 	const Graphics *graphics,
-	int x,
-	int y,
+	Int16 x,
+	Int16 y,
 	Color color,
 	char ch) const {
 
@@ -281,13 +280,13 @@ void Text::drawChar(
         _font.getCharInfo(ch, ci);
 
         if (ci.bitmap != nullptr) {
-            int cw = (ci.width + 7) / 8;
+            Int16 cw = (ci.width + 7) / 8;
             x += ci.left;
             y -= ci.top;
-            for (int cy = 0; cy < ci.height; cy++) {
-                int d = cy * cw;
-                for (int cx = 0; cx < ci.width; cx++)
-                    if (ci.bitmap[d + (cx / 8)] & (((uint8_t)0x80) >> (cx % 8)))
+            for (Int16 cy = 0; cy < ci.height; cy++) {
+                Int16 d = cy * cw;
+                for (Int16 cx = 0; cx < ci.width; cx++)
+                    if (ci.bitmap[d + (cx / 8)] & (((UInt8)0x80) >> (cx % 8)))
                         graphics->drawPoint(x + cx, y + cy, color);
             }
         }

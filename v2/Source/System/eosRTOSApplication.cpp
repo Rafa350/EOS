@@ -1,18 +1,11 @@
-module;
-
-
-#include "eos.h"
-#include "eosAssert.h"
-
-
 export module Eos.System.Application.RTOS;
-
 
 import Eos.Services.Service;
 import Eos.System.Application;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Core.Kernel;
 import Eos.System.Core.Task;
+import Eos.Types;
 
 
 export namespace eos {
@@ -30,7 +23,7 @@ export namespace eos {
 
         protected:
             struct ApplicationParams {
-            	uint32_t stackDepth;
+            	UInt32 stackDepth;
             	Task::Priority priority;
             	const char *name;
             };
@@ -69,10 +62,13 @@ export namespace eos {
 }
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-eos::RTOSApplication::RTOSApplication() :
+RTOSApplication::RTOSApplication() :
 	_taskEvent (*this, &RTOSApplication::taskEventHandler),
 	_task {nullptr},
 	_running {false} {
@@ -82,7 +78,7 @@ eos::RTOSApplication::RTOSApplication() :
 /// ----------------------------------------------------------------------
 /// \brief    Descrutor.
 ///
-eos::RTOSApplication::~RTOSApplication(){
+RTOSApplication::~RTOSApplication(){
 
 	if (_task != nullptr)
 		delete _task;
@@ -92,7 +88,7 @@ eos::RTOSApplication::~RTOSApplication(){
 /// ----------------------------------------------------------------------
 /// \brief    Callback de la tasca de l'aplicacio.
 ///
-void eos::RTOSApplication::taskEventHandler(
+void RTOSApplication::taskEventHandler(
 	Task *task,
 	Task::EventArgs *args) {
 
@@ -104,7 +100,7 @@ void eos::RTOSApplication::taskEventHandler(
 /// \brief    Inicialitza els parametres de l'aplicacio.
 /// \param    params: Els parametres.
 ///
-void eos::RTOSApplication::onInitialize(
+void RTOSApplication::onInitialize(
 	ApplicationParams &params) {
 
 }
@@ -113,7 +109,7 @@ void eos::RTOSApplication::onInitialize(
 /// ----------------------------------------------------------------------
 /// \brief    Posa l'aplicacio i els serveix en en execucio.
 ///
-void eos::RTOSApplication::onRun() {
+void RTOSApplication::onRun() {
 
 	ApplicationParams params = {
 		.stackDepth = _defaultStackDepth,
@@ -138,7 +134,7 @@ void eos::RTOSApplication::onRun() {
     // Inicia el planificador i totes les tasques
     //
     _running = true;
-    eos::Kernel::startScheduler(); // Ja no retorna mai mes
+    Kernel::startScheduler(); // Ja no retorna mai mes
 
     _running = false;
 }
@@ -148,12 +144,10 @@ void eos::RTOSApplication::onRun() {
 /// \brief    Afegeix un servei a l'aplicacio.
 /// \param    service: EL servei.
 ///
-void eos::RTOSApplication::addService(
+void RTOSApplication::addService(
 	Service *service) {
 
 	auto si = new ServiceInfo;
-	eosAssert(si != nullptr);
-
 	si->service = service;
 
 	_serviceInfoList.pushFront(si);
@@ -166,7 +160,7 @@ void eos::RTOSApplication::addService(
 /// \brief    Elimina un servei de l'aplicacio
 /// \param    service: El servei a eliminar.
 ///
-void eos::RTOSApplication::removeService(
+void RTOSApplication::removeService(
     Service *service) {
 
     /*for (auto si: _serviceInfoList) {
@@ -181,7 +175,7 @@ void eos::RTOSApplication::removeService(
 /// ----------------------------------------------------------------------
 /// \brief    Elimina tots els serveis de l'aplicacio.
 ///
-void eos::RTOSApplication::removeServices() {
+void RTOSApplication::removeServices() {
 
 	//_serviceInfoList.clear();
 }

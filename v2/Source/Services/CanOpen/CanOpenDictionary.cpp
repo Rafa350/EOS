@@ -1,5 +1,6 @@
 export module Eos.Services.CanOpen.Dictionary;
 
+import Eos.Math;
 import Eos.Events;
 import Eos.System.Core.CriticalSection;
 import Eos.Types;
@@ -63,6 +64,9 @@ export namespace eos {
 			using ChangedEventRaiser = EventRaiser<CanOpenDictionary, ChangedEventArgs>;
 			using IChangedEvent = ChangedEventRaiser::IEvent;
 			template <typename Instance_> using ChangedEvent = ChangedEventRaiser::Event<Instance_>;
+
+		public:
+			static constexpr UInt32 invalidEntryId = Math::maxU32;
 
 		private:
 			const CoDictionaryEntry * const _entries;
