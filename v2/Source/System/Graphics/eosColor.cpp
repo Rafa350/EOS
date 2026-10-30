@@ -1,17 +1,6 @@
-module;
-
-
-#include "eos.h"
-
-
 export module Eos.System.Graphics.Color;
 
-
-// Defineix el color del sistema
-//
-#ifndef EOS_COLOR_FORMAT
-#define EOS_COLOR_FORMAT ColorFormat::argb8888
-#endif
+import Eos.Types;
 
 
 export namespace eos {
@@ -44,254 +33,221 @@ export namespace eos {
 	/// \brief Informacio sobre els formats de color
 	///
 	template <ColorFormat format_>
-	struct ColorTrait {
+	struct ColorTraits {
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::argb8888> {
-		using Pixel = uint32_t;
+	struct ColorTraits<ColorFormat::argb8888> {
+		using Pixel = UInt32;
 		static constexpr ColorFormat format = ColorFormat::argb8888;
 		static constexpr ColorType type = ColorType::rgb;
-		static constexpr size_t bits = 32;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 32;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = true;
-		static constexpr unsigned maskA = 0xFF000000;
-		static constexpr unsigned maskR = 0x00FF0000;
-		static constexpr unsigned maskG = 0x0000FF00;
-		static constexpr unsigned maskB = 0x000000FF;
-		static constexpr unsigned maskL = 0x00000000;
-		static constexpr unsigned shiftA = 24;
-		static constexpr unsigned shiftR = 16;
-		static constexpr unsigned shiftG = 8;
-		static constexpr unsigned shiftB = 0;
-		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
-		static constexpr unsigned adjL = 0;
+		static constexpr UInt32 maskA = 0xFF000000;
+		static constexpr UInt32 maskR = 0x00FF0000;
+		static constexpr UInt32 maskG = 0x0000FF00;
+		static constexpr UInt32 maskB = 0x000000FF;
+		static constexpr UInt32 maskL = 0x00000000;
+		static constexpr UInt32 shiftA = 24;
+		static constexpr UInt32 shiftR = 16;
+		static constexpr UInt32 shiftG = 8;
+		static constexpr UInt32 shiftB = 0;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjA = 0;
+		static constexpr UInt32 adjR = 0;
+		static constexpr UInt32 adjG = 0;
+		static constexpr UInt32 adjB = 0;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::argb4444> {
-		using Pixel = uint16_t;
+	struct ColorTraits<ColorFormat::argb4444> {
+		using Pixel = UInt16;
 		static constexpr ColorFormat format = ColorFormat::argb4444;
 		static constexpr ColorType type = ColorType::rgb;
-		static constexpr size_t bits = 16;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 16;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = true;
-		static constexpr unsigned maskA = 0xF000;
-		static constexpr unsigned maskR = 0x0F00;
-		static constexpr unsigned maskG = 0x00F0;
-		static constexpr unsigned maskB = 0x000F;
-		static constexpr unsigned shiftA = 12;
-		static constexpr unsigned shiftR = 8;
-		static constexpr unsigned shiftG = 4;
-		static constexpr unsigned shiftB = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
+		static constexpr UInt32 maskA = 0xF000;
+		static constexpr UInt32 maskR = 0x0F00;
+		static constexpr UInt32 maskG = 0x00F0;
+		static constexpr UInt32 maskB = 0x000F;
+		static constexpr UInt32 shiftA = 12;
+		static constexpr UInt32 shiftR = 8;
+		static constexpr UInt32 shiftG = 4;
+		static constexpr UInt32 shiftB = 0;
+		static constexpr UInt32 adjA = 0;
+		static constexpr UInt32 adjR = 0;
+		static constexpr UInt32 adjG = 0;
+		static constexpr UInt32 adjB = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::argb1555> {
-		using Pixel = uint16_t;
+	struct ColorTraits<ColorFormat::argb1555> {
+		using Pixel = UInt16;
 		static constexpr ColorFormat format = ColorFormat::argb1555;
-		static constexpr size_t bits = 16;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 16;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = true;
-		static constexpr unsigned maskA = 0x8000;
-		static constexpr unsigned maskR = 0x7C00;
-		static constexpr unsigned maskG = 0x03E0;
-		static constexpr unsigned maskB = 0x001F;
-		static constexpr unsigned shiftA = 15;
-		static constexpr unsigned shiftR = 10;
-		static constexpr unsigned shiftG = 5;
-		static constexpr unsigned shiftB = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
+		static constexpr UInt32 maskA = 0x8000;
+		static constexpr UInt32 maskR = 0x7C00;
+		static constexpr UInt32 maskG = 0x03E0;
+		static constexpr UInt32 maskB = 0x001F;
+		static constexpr UInt32 shiftA = 15;
+		static constexpr UInt32 shiftR = 10;
+		static constexpr UInt32 shiftG = 5;
+		static constexpr UInt32 shiftB = 0;
+		static constexpr UInt32 adjA = 0;
+		static constexpr UInt32 adjR = 0;
+		static constexpr UInt32 adjG = 0;
+		static constexpr UInt32 adjB = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::rgb888> {
-		using Pixel = uint32_t;
+	struct ColorTraits<ColorFormat::rgb888> {
+		using Pixel = UInt32;
 		static constexpr ColorFormat format = ColorFormat::rgb888;
 		static constexpr ColorType type = ColorType::rgb;
-		static constexpr size_t bits = 24;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 24;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = false;
-		static constexpr unsigned maskA = 0x000000;
-		static constexpr unsigned maskR = 0xFF0000;
-		static constexpr unsigned maskG = 0x00FF00;
-		static constexpr unsigned maskB = 0x0000FF;
-		static constexpr unsigned maskL = 0x000000;
-		static constexpr unsigned shiftA = 0;
-		static constexpr unsigned shiftR = 16;
-		static constexpr unsigned shiftG = 8;
-		static constexpr unsigned shiftB = 0;
-		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
-		static constexpr unsigned adjL = 0;
+		static constexpr UInt32 maskA = 0x000000;
+		static constexpr UInt32 maskR = 0xFF0000;
+		static constexpr UInt32 maskG = 0x00FF00;
+		static constexpr UInt32 maskB = 0x0000FF;
+		static constexpr UInt32 maskL = 0x000000;
+		static constexpr UInt32 shiftA = 0;
+		static constexpr UInt32 shiftR = 16;
+		static constexpr UInt32 shiftG = 8;
+		static constexpr UInt32 shiftB = 0;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjA = 0;
+		static constexpr UInt32 adjR = 0;
+		static constexpr UInt32 adjG = 0;
+		static constexpr UInt32 adjB = 0;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::rgb565> {
-		using Pixel = uint16_t;
+	struct ColorTraits<ColorFormat::rgb565> {
+		using Pixel = UInt16;
 		static constexpr ColorFormat format = ColorFormat::rgb565;
 		static constexpr ColorType type = ColorType::rgb;
-		static constexpr size_t bits = 16;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 16;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = false;
-		static constexpr unsigned maskA = 0x0000;
-		static constexpr unsigned maskR = 0xF800;
-		static constexpr unsigned maskG = 0x07E0;
-		static constexpr unsigned maskB = 0x001F;
-		static constexpr unsigned maskL = 0x0000;
-		static constexpr unsigned shiftA = 0;
-		static constexpr unsigned shiftR = 11;
-		static constexpr unsigned shiftG = 5;
-		static constexpr unsigned shiftB = 0;
-		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 3;
-		static constexpr unsigned adjG = 2;
-		static constexpr unsigned adjB = 3;
-		static constexpr unsigned adjL = 0;
+		static constexpr UInt16 maskA = 0x0000;
+		static constexpr UInt16 maskR = 0xF800;
+		static constexpr UInt16 maskG = 0x07E0;
+		static constexpr UInt16 maskB = 0x001F;
+		static constexpr UInt16 maskL = 0x0000;
+		static constexpr UInt32 shiftA = 0;
+		static constexpr UInt32 shiftR = 11;
+		static constexpr UInt32 shiftG = 5;
+		static constexpr UInt32 shiftB = 0;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjA = 0;
+		static constexpr UInt32 adjR = 3;
+		static constexpr UInt32 adjG = 2;
+		static constexpr UInt32 adjB = 3;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::al88> {
-		using Pixel = uint16_t;
+	struct ColorTraits<ColorFormat::al88> {
+		using Pixel = UInt16;
 		static constexpr ColorFormat format = ColorFormat::al88;
 		static constexpr ColorType type = ColorType::grayscale;
-		static constexpr size_t bits = 16;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 16;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = true;
-		static constexpr unsigned maskA = 0xFF00;
-		static constexpr unsigned maskR = 0x0000;
-		static constexpr unsigned maskG = 0x0000;
-		static constexpr unsigned maskB = 0x0000;
-		static constexpr unsigned maskL = 0x00FF;
-		static constexpr unsigned shiftA = 8;
-		static constexpr unsigned shiftR = 0;
-		static constexpr unsigned shiftG = 0;
-		static constexpr unsigned shiftB = 0;
-		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjA = 0;
-		static constexpr unsigned adjR = 0;
-		static constexpr unsigned adjG = 0;
-		static constexpr unsigned adjB = 0;
-		static constexpr unsigned adjL = 0;
+		static constexpr UInt16 maskA = 0xFF00;
+		static constexpr UInt16 maskR = 0x0000;
+		static constexpr UInt16 maskG = 0x0000;
+		static constexpr UInt16 maskB = 0x0000;
+		static constexpr UInt16 maskL = 0x00FF;
+		static constexpr UInt32 shiftA = 8;
+		static constexpr UInt32 shiftR = 0;
+		static constexpr UInt32 shiftG = 0;
+		static constexpr UInt32 shiftB = 0;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjA = 0;
+		static constexpr UInt32 adjR = 0;
+		static constexpr UInt32 adjG = 0;
+		static constexpr UInt32 adjB = 0;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::al44> {
-		using Pixel = uint8_t;
+	struct ColorTraits<ColorFormat::al44> {
+		using Pixel = UInt8;
 		static constexpr ColorFormat format = ColorFormat::al44;
 		static constexpr ColorType type = ColorType::grayscale;
-		static constexpr size_t bits = 8;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 8;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = true;
-		static constexpr unsigned maskA = 0xF0;
-		//static constexpr unsigned maskR = 0x00;
-		//static constexpr unsigned maskG = 0x00;
-		//static constexpr unsigned maskB = 0x00;
-		static constexpr unsigned maskL = 0x0F;
-		static constexpr unsigned shiftA = 4;
-		//static constexpr unsigned shiftR = 0;
-		//static constexpr unsigned shiftG = 0;
-		//static constexpr unsigned shiftB = 0;
-		static constexpr unsigned shiftL = 0;
-		static constexpr unsigned adjA = 0;
-		//static constexpr unsigned adjR = 0;
-		//static constexpr unsigned adjG = 0;
-		//static constexpr unsigned adjB = 0;
-		static constexpr unsigned adjL = 0;
+		static constexpr UInt8 maskA = 0xF0;
+		static constexpr UInt8 maskL = 0x0F;
+		static constexpr UInt32 shiftA = 4;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjA = 0;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::l8> {
-		using Pixel = uint8_t;
+	struct ColorTraits<ColorFormat::l8> {
+		using Pixel = UInt8;
 		static constexpr ColorFormat format = ColorFormat::l8;
 		static constexpr ColorType type = ColorType::grayscale;
-		static constexpr size_t bits = 8;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 8;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = false;
-		//static constexpr uint32_t maskA = 0x00;
-		//static constexpr uint32_t maskR = 0x00;
-		//static constexpr uint32_t maskG = 0x00;
-		//static constexpr uint32_t maskB = 0x00;
-		static constexpr uint32_t maskL = 0xFF;
-		//static constexpr uint32_t shiftA = 0;
-		//static constexpr uint32_t shiftR = 0;
-		//static constexpr uint32_t shiftG = 0;
-		//static constexpr uint32_t shiftB = 0;
-		static constexpr uint32_t shiftL = 0;
-		//static constexpr uint32_t adjA = 0;
-		//static constexpr uint32_t adjR = 0;
-		//static constexpr uint32_t adjG = 0;
-		//static constexpr uint32_t adjB = 0;
-		static constexpr uint32_t adjL = 0;
+		static constexpr UInt8 maskL = 0xFF;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::l4> {
-		using Pixel = uint8_t;
+	struct ColorTraits<ColorFormat::l4> {
+		using Pixel = UInt8;
 		static constexpr ColorFormat format = ColorFormat::l4;
 		static constexpr ColorType type = ColorType::grayscale;
-		static constexpr size_t bits = 4;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 4;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = false;
-		//static constexpr unsigned maskA = 0x00;
-		//static constexpr unsigned maskR = 0x00;
-		//static constexpr unsigned maskG = 0x00;
-		//static constexpr unsigned maskB = 0x00;
-		static constexpr unsigned maskL = 0x0F;
-		//static constexpr unsigned shiftA = 0;
-		//static constexpr unsigned shiftR = 0;
-		//static constexpr unsigned shiftG = 0;
-		//static constexpr unsigned shiftB = 0;
-		static constexpr unsigned shiftL = 0;
-		//static constexpr unsigned adjA = 0;
-		//static constexpr unsigned adjR = 0;
-		//static constexpr unsigned adjG = 0;
-		//static constexpr unsigned adjB = 0;
-		static constexpr unsigned adjL = 0;
+		static constexpr UInt8 maskL = 0x0F;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <>
-	struct ColorTrait<ColorFormat::l1> {
-		using Pixel = uint8_t;
+	struct ColorTraits<ColorFormat::l1> {
+		using Pixel = UInt8;
 		static constexpr ColorFormat format = ColorFormat::l1;
 		static constexpr ColorType type = ColorType::grayscale;
-		static constexpr size_t bits = 1;
-		static constexpr size_t bytes = (bits + 7) / 8;
+		static constexpr UInt32 bits = 1;
+		static constexpr UInt32 bytes = (bits + 7) / 8;
 		static constexpr bool hasAlpha = false;
-		static constexpr uint32_t maskL = 0x01;
-		static constexpr uint32_t shiftL = 0;
-		static constexpr uint32_t adjL = 0;
+		static constexpr UInt8 maskL = 0x01;
+		static constexpr UInt32 shiftL = 0;
+		static constexpr UInt32 adjL = 0;
 	};
 
 	template <ColorFormat format_>
 	class Color_x {
 		private:
-			using CT = ColorTrait<format_>;
+			using Traits = ColorTraits<format_>;
 
 		public:
-			using Pixel = typename CT::Pixel;
+			using Pixel = typename Traits::Pixel;
 
 			static constexpr ColorFormat format = format_;
-			static constexpr ColorType type = CT::type;
-			static constexpr auto bits = CT::bits;
-			static constexpr auto bytes = CT::bytes;
-			static constexpr int colors = CT::colors;
-			static constexpr bool hasAlpha = CT::hasAlpha;
+			static constexpr ColorType type = Traits::type;
+			static constexpr auto bits = Traits::bits;
+			static constexpr auto bytes = Traits::bytes;
+			static constexpr int colors = Traits::colors;
+			static constexpr bool hasAlpha = Traits::hasAlpha;
 
 		private:
 			Pixel _pixel;
@@ -305,38 +261,38 @@ export namespace eos {
 			/// \return El color.
 			///
 			static constexpr Color_x fromARGB(
-				uint8_t a,
-				uint8_t r,
-				uint8_t g,
-				uint8_t b) {
+				UInt8 a,
+				UInt8 r,
+				UInt8 g,
+				UInt8 b) {
 
 				if constexpr (type == ColorType::rgb) {
 					if constexpr (hasAlpha)
 						return Color_x<format_>(
-							((Pixel)a >> CT::adjA << CT::shiftA) |
-							((Pixel)r >> CT::adjR << CT::shiftR) |
-							((Pixel)g >> CT::adjG << CT::shiftG) |
-							((Pixel)b >> CT::adjB << CT::shiftB));
+							((Pixel)a >> Traits::adjA << Traits::shiftA) |
+							((Pixel)r >> Traits::adjR << Traits::shiftR) |
+							((Pixel)g >> Traits::adjG << Traits::shiftG) |
+							((Pixel)b >> Traits::adjB << Traits::shiftB));
 					else
 						return Color_x<format_>(
-							((Pixel)r >> CT::adjR << CT::shiftR) |
-							((Pixel)g >> CT::adjG << CT::shiftG) |
-							((Pixel)b >> CT::adjB << CT::shiftB));
+							((Pixel)r >> Traits::adjR << Traits::shiftR) |
+							((Pixel)g >> Traits::adjG << Traits::shiftG) |
+							((Pixel)b >> Traits::adjB << Traits::shiftB));
 				}
 				else {
-					uint32_t rr = (uint32_t)r * 612;   // 0.299 * 2048
-					uint32_t gg = (uint32_t)g * 1202;  // 0.587 * 2048
-					uint32_t bb = (uint32_t)b * 294;   // 0.144 * 2048
-					uint32_t l = (rr + gg + bb) >> 11;  // Divideix per 2048
+					UInt32 rr = (UInt32)r * 612;   // 0.299 * 2048
+					UInt32 gg = (UInt32)g * 1202;  // 0.587 * 2048
+					UInt32 bb = (UInt32)b * 294;   // 0.144 * 2048
+					UInt32 l = (rr + gg + bb) >> 11;  // Divideix per 2048
 					if (l > 0x00FF)
 						l = 255;
 					if constexpr (hasAlpha)
 						return Color_x<format_>(
-							((Pixel)a >> CT::adjA << CT::shiftA) |
-							((Pixel)l >> CT::adjL << CT::shiftL));
+							((Pixel)a >> Traits::adjA << Traits::shiftA) |
+							((Pixel)l >> Traits::adjL << Traits::shiftL));
 					else
 						return Color_x<format_>(
-							(Pixel)l >> CT::adjL << CT::shiftL);
+							(Pixel)l >> Traits::adjL << Traits::shiftL);
 				}
 			}
 
@@ -347,9 +303,9 @@ export namespace eos {
 			/// \return El color.
 			///
 			static constexpr Color_x<format_> fromRGB(
-				uint8_t r,
-				uint8_t g,
-				uint8_t b) {
+				UInt8 r,
+				UInt8 g,
+				UInt8 b) {
 
 				return fromARGB(0xFF, r, g, b);
 			}
@@ -360,32 +316,32 @@ export namespace eos {
 			/// \return El color.
 			///
 			static constexpr Color_x<format_> fromAL(
-				uint8_t a,
-				uint8_t l) {
+				UInt8 a,
+				UInt8 l) {
 
 				if constexpr (type == ColorType::rgb) {
-					uint32_t x = l / 3;
+					UInt32 x = l / 3;
 					if constexpr (hasAlpha)
 						return Color_x<format_>(
-							((Pixel)a >> CT::adjA << CT::shiftA) |
-							((Pixel)x >> CT::adjR << CT::shiftR) |
-							((Pixel)x >> CT::adjG << CT::shiftG) |
-							((Pixel)x >> CT::adjB << CT::shiftB));
+							((Pixel)a >> Traits::adjA << Traits::shiftA) |
+							((Pixel)x >> Traits::adjR << Traits::shiftR) |
+							((Pixel)x >> Traits::adjG << Traits::shiftG) |
+							((Pixel)x >> Traits::adjB << Traits::shiftB));
 					else
 						return Color_x<format_>(
-							((Pixel)x >> CT::adjR << CT::shiftR) |
-							((Pixel)x >> CT::adjG << CT::shiftG) |
-							((Pixel)x >> CT::adjB << CT::shiftB));
+							((Pixel)x >> Traits::adjR << Traits::shiftR) |
+							((Pixel)x >> Traits::adjG << Traits::shiftG) |
+							((Pixel)x >> Traits::adjB << Traits::shiftB));
 				}
 
 				else {
 					if constexpr (hasAlpha)
 						return Color_x<format_>(
-							((Pixel)a >> CT::adjA << CT::shiftA) |
-							((Pixel)l >> CT::adjL << CT::shiftL));
+							((Pixel)a >> Traits::adjA << Traits::shiftA) |
+							((Pixel)l >> Traits::adjL << Traits::shiftL));
 					else
 						return Color_x<format_>(
-							(Pixel)l >> CT::adjL << CT::shiftL);
+							(Pixel)l >> Traits::adjL << Traits::shiftL);
 				}
 			};
 
@@ -394,7 +350,7 @@ export namespace eos {
 			/// \return El color.
 			///
 			static constexpr Color_x<format_> fromL(
-				uint8_t l) {
+				UInt8 l) {
 
 				return fromAL(0xFF, l);
 			}
@@ -406,7 +362,7 @@ export namespace eos {
 		    template <ColorFormat newFormat_>
 		    constexpr Color_x<newFormat_> convert() {
 
-		    	using NewCT = ColorTrait<newFormat_>;
+		    	using NewCT = ColorTraits<newFormat_>;
 
 		    	if constexpr (NewCT::type == ColorType::rgb) {
 		    		if constexpr (NewCT::hasAlpha)
@@ -486,10 +442,10 @@ export namespace eos {
             /// \brief Obte el valor del canal ALPHA
             /// \return El valor.
             ///
-            inline uint8_t getA() const {
+            inline UInt8 getA() const {
 
             	if constexpr (hasAlpha)
-            		return (_pixel & CT::maskA) >> CT::shiftA << CT::adjA;
+            		return (_pixel & Traits::maskA) >> Traits::shiftA << Traits::adjA;
             	else
             		return 0xFF;
             }
@@ -497,47 +453,47 @@ export namespace eos {
             /// \brief Obte el valor del canal L.
             /// \return El valor.
             ///
-            inline uint8_t getL() const {
+            inline UInt8 getL() const {
 
             	static_assert(type == ColorType::grayscale, "Invalid.");
 
-           		return (_pixel & CT::maskL) >> CT::shiftL << CT::adjL;
+           		return (_pixel & Traits::maskL) >> Traits::shiftL << Traits::adjL;
             }
 
             /// \brief Obte el valor del canal R
             /// \return El valor.
             ///
-            inline uint8_t getR() const {
+            inline UInt8 getR() const {
 
             	static_assert(type == ColorType::rgb, "Invalid.");
 
-      			return (_pixel & CT::maskR) >> CT::shiftR << CT::adjR;
+      			return (_pixel & Traits::maskR) >> Traits::shiftR << Traits::adjR;
             }
 
             /// \brief Obte el valor del canal G
             /// \return El valor.
             ///
-            inline uint8_t getG() const {
+            inline UInt8 getG() const {
 
             	static_assert(type == ColorType::rgb, "Invalid.");
 
-           		return (_pixel & CT::maskG) >> CT::shiftG << CT::adjG;
+           		return (_pixel & Traits::maskG) >> Traits::shiftG << Traits::adjG;
             }
 
             /// \brief Obte el valor del canal B
             /// \return El valor.
             ///
-            inline uint8_t getB() const {
+            inline UInt8 getB() const {
 
             	static_assert(type == ColorType::rgb, "Invalid.");
 
-           		return (_pixel & CT::maskB) >> CT::shiftB << CT::adjB;
+           		return (_pixel & Traits::maskB) >> Traits::shiftB << Traits::adjB;
             }
 
             /// \brief Obte el valor de la opacitat.
             /// \return El valor.
             ///
-            inline uint8_t getOpacity() const {
+            inline UInt8 getOpacity() const {
 
             	return getA();
             }
@@ -565,7 +521,14 @@ export namespace eos {
 	using ColorL8 = Color_x<ColorFormat::l8>;
 	using ColorL4 = Color_x<ColorFormat::l4>;
 	using ColorL1 = Color_x<ColorFormat::l1>;
-	using Color = Color_x<EOS_COLOR_FORMAT>;
+
+	#ifdef EOS_COLOR_FORMAT
+	constexpr ColorFormat currentColorFormat = ColorFormat::EOS_COLOR_FORMAT;
+	#else
+	#error "Undefined color format"
+	#endif
+
+	using Color = Color_x<currentColorFormat>;
 
 	/// \brief Clase que representa la paleta de colors.
     ///
@@ -576,7 +539,7 @@ export namespace eos {
         public:
             ColorPalette();
 
-            inline Color getColor(uint8_t index) const {
+            inline Color getColor(UInt8 index) const {
             	return colorTable[index];
             }
 
@@ -584,8 +547,9 @@ export namespace eos {
             	return colorTable;
             }
 
-            void setColor(uint8_t index, Color color);
+            void setColor(UInt8 index, Color color);
     };
+
 }
 
 
@@ -598,9 +562,9 @@ ColorBuffer::ColorBuffer(
     int size) {
 
 #if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
-    buffer = new uint32_t[size];
+    buffer = new UInt32[size];
 #elif defined(DISPLAY_COLOR_565)
-    buffer = new uint16_t[size];
+    buffer = new UInt16[size];
 #endif
 }
 
@@ -639,7 +603,7 @@ ColorPalette::ColorPalette() {
 /// \param color: El color a asignar.
 ///
 void ColorPalette::setColor(
-    uint8_t index,
+    UInt8 index,
     Color color) {
 
     if ((index >= 20) & (index <= 255))

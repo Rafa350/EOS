@@ -12,30 +12,40 @@
             "inherits":"baseWindows",
             "hidden": true,
             "cacheVariables": {
-                "EOS_RTOS_NAME": "FreeRTOS",
+                "EOS_RTOS_NAME": "FreeRTOS"
+            }
+        },
+        {
+            "name": "F4base",
+            "inherits":"base",
+            "hidden": true,
+            "cacheVariables": {
+                "EOS_PLATFORM_NAME": "STM32F429ZI",
+                "EOS_PLATFORM_ID": "STM32_F429_ZI",
                 "EOS_USE_GRAPHICS": "ON",
+                "EOS_COLOR_FORMAT": "rgb565",
+                "EOS_USE_DRIVER_ILI9341LTDC": "ON",
+                "EOS_USE_BUFFER_RGBLTDC": "ON",
+                "EOS_USE_DEVICE_GPIO": "ON",
                 "EOS_USE_DEVICE_UART": "ON",
-                "EOS_USE_DEVICE_SPI": "ON"
+                "EOS_USE_DEVICE_SPI": "ON",
+                "EOS_USE_DEVICE_LTDC": "ON"
             }
         },
         {
             "name": "Release STM32F4",
-            "inherits": "base",
+            "inherits": "F4base",
             "binaryDir": "${sourceDir}/CMake/Artifacts/Release STM32F4",
             "cacheVariables":{
-                "EOS_PLATFORM_NAME": "STM32F429ZI",
-                "EOS_PLATFORM_ID": "STM32_F429_ZI",
-                "CMAKE_BUILD_TYPE":"Release"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
             "name": "Debug STM32F4",
-            "inherits": "base",
+            "inherits": "F4base",
             "binaryDir": "${sourceDir}/CMake/Artifacts/Debug STM32F4",
             "cacheVariables":{
-                "EOS_PLATFORM_NAME": "STM32F429ZI",
-                "EOS_PLATFORM_ID": "STM32_F429_ZI",
-                "CMAKE_BUILD_TYPE":"Debug"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         }
     ]

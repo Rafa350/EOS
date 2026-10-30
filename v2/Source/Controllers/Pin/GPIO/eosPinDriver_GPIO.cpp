@@ -1,25 +1,20 @@
-module;
-
-
-#include "eos.h"
-
-
 export module Eos.Controllers.Pin.GPIO;
 
-
-export import Eos.Controllers.Pin;
-
+import Eos.Controllers.Pin;
 import Eos.Hardware.GPIO;
+
+
+using namespace eos::hardware::gpio;
 
 
 export namespace eos {
 
 	class PinDriver_GPIO final: public PinDriver {
         private:
-            eos::hardware::gpio::PinDevice * const _pin;
+            PinDevice * const _pin;
 
         public:
-            PinDriver_GPIO(eos::hardware::gpio::PinDevice *pin);
+            PinDriver_GPIO(PinDevice *pin);
 
             void set() override;
             void clear() override;
@@ -57,7 +52,6 @@ export namespace eos {
 
 
 using namespace eos;
-using namespace eos::hardware::gpio;
 
 
 /// ----------------------------------------------------------------------

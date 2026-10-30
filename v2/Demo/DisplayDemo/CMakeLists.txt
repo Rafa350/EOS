@@ -58,6 +58,7 @@ target_compile_definitions(${TARGET_NAME} PRIVATE
     $<$<CONFIG:Debug>:EOS_DEBUG>
     ${EOS_PLATFORM_NAME}
     EOS_PLATFORM_ID=${EOS_PLATFORM_ID}
+    EOS_COLOR_FORMAT=${EOS_COLOR_FORMAT}
 )
 
 target_link_options(${TARGET_NAME} PRIVATE

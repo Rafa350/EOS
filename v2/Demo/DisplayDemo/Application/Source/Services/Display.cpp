@@ -1,26 +1,32 @@
-module;
-
-#include "eos.h"
-
-
 export module App.Services.Display;
 
-
+import Eos.Controllers.Display.Drivers.ILI9341LTDC;
 import Eos.Hardware.SPI;
+import Eos.Services.Service;
+import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 import Eos.System.Graphics;
+import Eos.System.Graphics.Color;
+import Eos.System.Graphics.ColorDefinitions;
+import Eos.Types;
+
+
+#define DISPLAY_DRV_ILI9341LTDC
+
+using namespace eos;
 
 
 export namespace app {
 
-	class DisplayService: public eos::Service {
+	class DisplayService: public Service {
 	    private:
-			static constexpr uint32_t _displayWidth = DISPLAY_WIDTH;
-			static constexpr uint32_t _displayHeight = DISPLAY_HEIGHT;
-			static constexpr uint32_t _displayBuffer = DISPLAY_BUFFER;
+			static constexpr UInt32 _displayWidth = 240;
+			static constexpr UInt32 _displayHeight = 320;
+			static constexpr UInt32 _displayBuffer = 0xD0000000;
 
-			eos::DisplayDriver *_driver;
-	        eos::Graphics *_graphics;
-	        eos::Text _text;
+			DisplayDriver *_driver;
+	        Graphics *_graphics;
+	        Text _text;
 	        int _maxX;
 	        int _maxY;
 	        int _orientation;
@@ -78,46 +84,12 @@ using namespace eos::hardware::spi;
 
 static int seed = 537;
 
-#if defined(EOS_PLATFORM_STM32F7) || defined(EOS_PLATFORM_STM32F4)
-static uint64_t rnd = 0L;
-
-static void __srand(uint32_t r) {
-
-	rnd = r;
-}
-
-static uint32_t __rand(void) {
-
-	const uint64_t a = 1664523;
-	const uint64_t c = 1013904223;
-
-	rnd = (a * (rnd >> 11)) + c;
-	return (uint32_t) rnd;
-
-}
-#elif defined(EOS_PLATFORM_PIC32)
-#define __srand(a)  srand(a)
-#define __rand()    rand()
-#endif
-
-
-static void delayMS(
-	uint32_t ms) {
-
-	rtos::Task::delay(eos::Time::fromMiliseconds(ms));
-}
-
-static uint32_t getTickCount() {
-
-	return htl::getTick();
-}
-
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 
 // Parametres d'inicialitzacio per interficie LTDC
 //
-static const uint8_t initCommands[] = {
+static const UInt8 initCommands[] = {
 
 	// Reset
 	__SOFTWARE_RESET,
@@ -165,7 +137,7 @@ static const uint8_t initCommands[] = {
 
 // Parametres d'inicialitzacio per interficie SPI
 //
-static const uint8_t initCommands[] = {
+static const UInt8 initCommands[] = {
 
 	__SOFTWARE_RESET,
 	OP_DELAY, 250,
@@ -198,7 +170,7 @@ static const uint8_t initCommands[] = {
 
 static inline Color __getRandomColor() {
 
-	uint32_t c = __rand();
+	UInt32 c = __rand();
 	return RGB((c & 0x00FF0000) >> 16, (c & 0x0000FF00) >> 8, c & 0x000000FF);
 }
 
@@ -362,7 +334,7 @@ void DisplayService::onExecute() {
 	devLTDCLayer->setDefaultColor(0x000000);
 
 	if (Color::format == ColorFormat::l8) {
-		static uint32_t clut[256];
+		static UInt32 clut[256];
 		for (unsigned i = 0; i < (sizeof(clut) / sizeof(clut[0])); i++)
 			clut[i] = i << 8;
 		devLTDCLayer->setCLUTTable(clut);
@@ -548,7 +520,7 @@ void DisplayService::testOpacity() {
 	drawBackground("Opacity");
 	delayMS(250);
 
-	uint8_t opacity = 128;
+	UInt8 opacity = 128;
 
 	Color colors[3];
 	colors[0] = ARGB(opacity, 255, 0, 0);
@@ -844,7 +816,7 @@ extern "C" const unsigned char bitmap1[];
 void DisplayService::testBitmaps() {
 
 	int ticks;
-	const uint8_t *data = bitmap1;
+	const UInt8 *data = bitmap1;
 
 	int width = (int) (data[0] | (data[1] << 8));
 	int height = (int) (data[2] | (data[3] << 8));

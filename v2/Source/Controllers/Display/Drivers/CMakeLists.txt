@@ -1,11 +1,13 @@
-target_sources(${TARGET_NAME}
-    PUBLIC FILE_SET CXX_MODULES FILES
-        eosDisplayDriver.cpp
-)
-
-#add_subdirectory("ILI9341")
+if(EOS_USE_DRIVER_ILI9341)
+    add_subdirectory("ILI9341")
+endif()
+if(EOS_USE_DRIVER_ILI9341LTDC)
+    add_subdirectory("ILI9341LTDC")
+endif()
 #add_subdirectory("KS0108")
-#add_subdirectory("RGB")
+if(EOS_USE_DRIVER_RGBLTDC)
+    add_subdirectory("RGBLTDC")
+endif()
 if(EOS_USE_DRIVER_SSD1306)
     add_subdirectory("SSD1306")
 endif()

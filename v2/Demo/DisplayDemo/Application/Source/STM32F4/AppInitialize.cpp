@@ -3,13 +3,13 @@ import Eos.Hardware.Clock;
 
 
 using namespace eos;
-using namespace htl;
+using namespace eos::hardware::clock;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el rellotge del sistema.
 ///
-static void initializeCLK() {
+static void initializeClk() {
 
 	auto clk = clock::ClockDevice::pInst;
 
@@ -92,7 +92,7 @@ void appInitialize() {
 
 	HAL_Init();
 
-	initializeCLK();
+	initializeClk();
 	initializeSDRAM();
 
 #ifdef EOS_DEBUG

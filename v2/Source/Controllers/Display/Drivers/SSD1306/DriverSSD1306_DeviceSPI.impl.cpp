@@ -1,61 +1,22 @@
-module;
+module Eos.Controllers.Display.Drivers.SSD1306;
 
-#include "eos.h"
-
-
-export module Eos.Controllers.Display.Drivers.SSD1306.SPI;
-
-
-export import Eos.Controllers.Display.Drivers.SSD1306;
-
-import Eos.Hardware.GPIO;
-import Eos.Hardware.SPI;
 import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
-import Eos.Types;
-
-
-export namespace eos {
-
-
-    /// @brief Clase que representa un dispositiu SSD1306 amb
-    //         interficie SPI
-    //
-    class DisplayDevice_SSD1306_SPI: public DisplayDevice_SSD1306 {
-        public:
-            using Pin = eos::hardware::gpio::PinDevice;
-            using DevSPI = eos::hardware::spi::SPIDevice;
-
-        protected:
-            Pin const * const _pinCS;
-            Pin const * const _pinDC;
-            Pin const * const _pinRST;
-            DevSPI * const _devSPI;
-
-        public:
-            DisplayDevice_SSD1306_SPI(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI);
-            ~DisplayDevice_SSD1306_SPI();
-
-            void initialize(const UInt8 *script, UInt32 scriptSize);
-            void deinitialize();
-
-            void writeCommand(const UInt8 *data, UInt32 dataSize) override;
-            void writeData(const UInt8 *data, UInt32 dataSize) override;
-    };
-}
 
 
 using namespace eos;
+using namespace eos::hardware::gpio;
+using namespace eos::hardware::spi;
 
 
 /// ----------------------------------------------------------------------
 /// @brief    Constructor.
 ///
 DisplayDevice_SSD1306_SPI::DisplayDevice_SSD1306_SPI(
-    Pin *pinCS,
-    Pin *pinDC,
-    Pin *pinRST,
-    DevSPI *devSPI) :
+    PinDevice *pinCS,
+    PinDevice *pinDC,
+    PinDevice *pinRST,
+    SPIDevice *devSPI) :
 
     DisplayDevice_SSD1306 {},
 

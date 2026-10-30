@@ -1,40 +1,10 @@
-module;
-
-#include "eos.h"
-
-
-export module Eos.Controllers.Display.Drivers.SSD1306.SPIDMA;
-
-
-export import Eos.Controllers.Display.Drivers.SSD1306.SPI;
-
-import Eos.Hardware.GPIO;
-import Eos.Hardware.SPI;
-import Eos.Hardware.DMA;
-import Eos.Types;
-
-
-export namespace eos {
-
-    /// @brief Clase que representa un dispositiu SSD1306 amb
-    //         interficie SPI-DMA
-    //
-    class DisplayDevice_SSD1306_SPIDMA: public DisplayDevice_SSD1306_SPI {
-        public:
-            using DevDMA = eos::hardware::dma::DMADevice;
-
-        private:
-            DevDMA * const _devDMA;
-
-        public:
-            DisplayDevice_SSD1306_SPIDMA(Pin *pinCS, Pin *pinDC, Pin *pinRST, DevSPI *devSPI, DevDMA *devDMA);
-
-            void writeData(const UInt8 *data, UInt32 dataSize) override;
-    };
-}
+module Eos.Controllers.Display.Drivers.SSD1306;
 
 
 using namespace eos;
+using namespace eos::hardware::dma;
+using namespace eos::hardware::gpio;
+using namespace eos::hardware::spi;
 
 
 /// ----------------------------------------------------------------------
@@ -46,11 +16,11 @@ using namespace eos;
 /// @param    devDMA: El dispositiu DMA
 ///
 DisplayDevice_SSD1306_SPIDMA::DisplayDevice_SSD1306_SPIDMA(
-    Pin *pinCS,
-    Pin *pinDC,
-    Pin *pinRST,
-    DevSPI *devSPI,
-    DevDMA *devDMA) :
+    PinDevice *pinCS,
+    PinDevice *pinDC,
+    PinDevice *pinRST,
+    SPIDevice *devSPI,
+    DMADevice *devDMA) :
 
     DisplayDevice_SSD1306_SPI {pinCS, pinDC, pinRST, devSPI},
 

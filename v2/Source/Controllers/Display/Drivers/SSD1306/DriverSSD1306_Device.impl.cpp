@@ -1,9 +1,3 @@
-module;
-
-
-#include "eos.h"
-
-
 module Eos.Controllers.Display.Drivers.SSD1306;
 
 

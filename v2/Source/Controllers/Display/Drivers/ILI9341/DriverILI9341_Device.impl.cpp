@@ -1,7 +1,7 @@
-#include "eos.h"
-#include "eosAssert.h"
-#include "Controllers/Display/Drivers/ILI9341/eosDevice_ILI9341.h"
-#include "RTOS\rtosTask.h"
+module Eos.Controllers.Display.Drivers.ILI9341;
+
+import Eos.System.Core.Task;
+import Eos.System.Core.Ticks;
 
 
 using namespace eos;
@@ -21,19 +21,16 @@ Device_ILI9341::Device_ILI9341() {
 /// \param    scriptSize: El tamany del script en bytes.
 ///
 void Device_ILI9341::writeScript(
-    const uint8_t *script,
-    unsigned scriptSize) {
+    const UInt8 *script,
+    UInt32 scriptSize) {
 
-    eosAssert(script != nullptr);
-    eosAssert(scriptSize > 0);
+    UInt8 c;
+    const UInt8 *p = script;
 
-    uint8_t c;
-    const uint8_t *p = script;
-
-    while ((c = *p++) != OP_END) {
+    while ((c = *p++) != OpCode::OP_END) {
         switch (c) {
-            case OP_DELAY:
-                rtos::Task::delay(eos::Time::fromMiliseconds(*p++));
+            case OpCode::OP_DELAY:
+                Task::delay(Ticks::fromMiliseconds(*p++));
                 break;
 
             default:
@@ -44,4 +41,3 @@ void Device_ILI9341::writeScript(
         }
     }
 }
-

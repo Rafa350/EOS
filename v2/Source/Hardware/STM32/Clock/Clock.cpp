@@ -48,7 +48,7 @@ namespace eos::hardware::clock::internal {
         using PLLSource_F4xx = PLLSource_Type2;
         using PLLSource_F7xx = PLLSource_Type2;
 
-        
+
         // Traits depenents de la plataforma
         //
         template <PlatformID platformId_>
@@ -95,7 +95,7 @@ namespace eos::hardware::clock::internal {
     template <>
     class Clock_HSI<true>: private StaticClass<Clock_HSI<true>> {
         public:
-            static void enableHSI(bool kernelMode = false);
+            static void enableHSI();
             static void disableHSI();
             [[nodiscard]] static bool isHSIEnabled();
     };

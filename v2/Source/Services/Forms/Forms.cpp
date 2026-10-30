@@ -1,7 +1,7 @@
 export module Eos.Services.Forms;
 
 import Eos.Callbacks;
-import Eos.Controllers.Display.Drivers;
+import Eos.Controllers.Display;
 import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
 import Eos.System.Forms.PropertyObserver;

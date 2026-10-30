@@ -9,14 +9,18 @@ import Eos.Math;
 import Eos.Services.Forms;
 import Eos.Services.Forms.Controls.TextBox;
 import Eos.System.Graphics;
-import Eos.System.Graphics.Color;
-import Eos.System.Graphics.ColorDefinitions;
 import Eos.Types;
 
 
 export namespace eos {
 
 	class NumericControl: public TextBoxControl {
+		private:
+			static constexpr Int32 _defMinValue = -1000;
+			static constexpr Int32 _defMaxValue = 1000;
+			static constexpr Int32 _defValue = 0;
+			static constexpr Int32 _defDelta = 1;
+
 		private:
 			Int32 _value;
 			Int32 _minValue;
@@ -58,10 +62,10 @@ NumericControl::NumericControl(
 	const Size &size):
 
 	TextBoxControl {position, size, nullptr},
-	_value {0},
-	_minValue {-1000},
-	_maxValue {1000},
-	_delta {1} {
+	_value {_defValue},
+	_minValue {_defMinValue},
+	_maxValue {_defMaxValue},
+	_delta {_defDelta} {
 }
 
 
@@ -70,13 +74,13 @@ void NumericControl::onPropertyChanged(
 
 	// Comprova si ha canviar la propietat 'MinValue'
 	//
-	if (property == &_minValue) {
+	if (property == &_minValue)
 		setValue(Math::max(_value, _minValue));
 
 	// Comprova si ha canviar la propietat 'MaxValue'
 	//
-	else if (property == &_maxValue) {
-		setValue(Math::min(_value, _maxValue))
+	else if (property == &_maxValue)
+		setValue(Math::min(_value, _maxValue));
 
 	// Comprova si ha canviar la propietat 'Value'
 	//
@@ -101,13 +105,19 @@ void NumericControl::setText(
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Es crida quant canvia el valor.
+///
 void NumericControl::onValueChanged() {
 
-	TextBoxControl::setText("12345");
-	//setText(_value);
+	setText(_value);
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Es crida quant arriva un missatge.
+/// @param    message: El missatge.
+///
 void NumericControl::onMessage(
 	FormMessage &message) {
 
@@ -133,6 +143,9 @@ void NumericControl::onMessage(
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Incrementa el valor.
+///
 void NumericControl::increment() {
 
 	if ((_value + _delta)< _maxValue) {
@@ -142,6 +155,9 @@ void NumericControl::increment() {
 }
 
 
+/// ---------------------------------------------------------------------------
+/// @brief    Decrementa el valor.
+///
 void NumericControl::decrement() {
 
 	if ((_value - _delta) > _minValue) {

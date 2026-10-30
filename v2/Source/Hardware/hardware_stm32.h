@@ -19,6 +19,7 @@
         #define STM32F429xx
     #endif
     #include "stm32f4xx.h"
+	#undef LTDC
 
 #elif defined(EOS_PLATFORM_STM32F7)
 	#if !defined(STM32F7)
@@ -31,6 +32,7 @@
         #define STM32F746xx
     #endif
 	#include "stm32f7xx.h"
+	#undef LTDC
 
 #elif defined(EOS_PLATFORM_STM32G0)
 	#if !defined(STM32G0)

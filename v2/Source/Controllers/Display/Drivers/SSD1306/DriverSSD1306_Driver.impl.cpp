@@ -1,9 +1,3 @@
-module;
-
-
-#include "eos.h"
-
-
 module Eos.Controllers.Display.Drivers.SSD1306;
 
 
@@ -15,7 +9,7 @@ using namespace eos;
 ///
 DisplayDriver_SSD1306::DisplayDriver_SSD1306(
     DisplayDevice_SSD1306 *device,
-	L1FrameBuffer *frameBuffer):
+	DisplayBuffer_L1 *frameBuffer):
 
     _device {device},
 	_frameBuffer {frameBuffer} {
@@ -79,8 +73,8 @@ void eos::DisplayDriver_SSD1306::clear(
 /// @remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_SSD1306::setPixel(
-    int16_t x,
-    int16_t y,
+    Int16 x,
+    Int16 y,
     Color color) {
 
 	_frameBuffer->setPixel(x, y, color);
@@ -96,9 +90,9 @@ void DisplayDriver_SSD1306::setPixel(
 /// @remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_SSD1306::setHPixels(
-    int16_t x,
-    int16_t y,
-    int16_t size,
+    Int16 x,
+    Int16 y,
+    Int16 size,
     Color color) {
 
 	_frameBuffer->setPixels(x, y, size, 1, color);
@@ -114,9 +108,9 @@ void DisplayDriver_SSD1306::setHPixels(
 /// @remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_SSD1306::setVPixels(
-    int16_t x,
-    int16_t y,
-    int16_t size,
+    Int16 x,
+    Int16 y,
+    Int16 size,
     Color color) {
 
 	_frameBuffer->setPixels(x, y, 1, size, color);
@@ -132,10 +126,10 @@ void DisplayDriver_SSD1306::setVPixels(
 /// @param    color: Color.
 ///
 void DisplayDriver_SSD1306::setPixels(
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height,
+    Int16 x,
+    Int16 y,
+    Int16 width,
+    Int16 height,
     Color color) {
 
 	_frameBuffer->setPixels(x, y, width, height, color);
@@ -152,12 +146,12 @@ void DisplayDriver_SSD1306::setPixels(
 /// @param    pitch: Pitch dels colors.
 ///
 void DisplayDriver_SSD1306::setPixels(
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height,
+    Int16 x,
+    Int16 y,
+    Int16 width,
+    Int16 height,
     const Color *color,
-	int16_t pitch) {
+	Int16 pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, color, pitch);
 }
@@ -174,13 +168,13 @@ void DisplayDriver_SSD1306::setPixels(
 /// @param    pitch: Pitch dels colors.
 ///
 void DisplayDriver_SSD1306::setPixels(
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height,
+    Int16 x,
+    Int16 y,
+    Int16 width,
+    Int16 height,
     const void *pixels,
     ColorFormat format,
-    int16_t pitch) {
+    Int16 pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
 }

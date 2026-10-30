@@ -18,7 +18,7 @@ export namespace eos {
 
 	/// \brief Superficie de dibuix basada en memoria ram
 	///
-	class ColorFrameBuffer_DMA2D: public FrameBuffer {
+	class ColorFrameBuffer_DMA2D: public DisplayBuffer {
 	    private:
 	        using DevDMA2D = htl::dma2d::DMA2DDevice;
             static constexpr DevDMA2D *_devDMA2D = DevDMA2D::pInst;
@@ -176,7 +176,7 @@ eos::ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	DisplayOrientation orientation,
 	void *buffer):
 
-	FrameBuffer(frameWidth, frameHeight, orientation),
+	DisplayBuffer(frameWidth, frameHeight, orientation),
 	_buffer {reinterpret_cast<Color::Pixel*>(buffer)},
 	_framePitch {framePitch} {
 

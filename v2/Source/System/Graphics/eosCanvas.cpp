@@ -1,13 +1,6 @@
-module;
-
-
-#include "eos.h"
-
-
 export module Eos.System.Graphics.Canvas;
 
-
-import Eos.Controllers.Display.Drivers;
+import Eos.Controllers.Display;
 import Eos.System.Collections.Stack;
 import Eos.System.Graphics.Color;
 import Eos.System.Graphics.Brush;
@@ -137,7 +130,7 @@ export namespace eos {
             bool clipVLine(Int16 x, Int16 &y1, Int16 &y2) const;
             bool clipLine(Int16 &x1, Int16 &y1, Int16 &x2, Int16 &y2) const;
             bool clipRectangle(Int16 &x1, Int16 &y1, Int16 &x2, Int16 &y2) const;
-            static bool clipTest(Int16 p, Int16 q, int32_t &t1, int32_t &t2);
+            static bool clipTest(Int16 p, Int16 q, Int32 &t1, Int32 &t2);
 
             void transform(Int16 &x, Int16 &y) const;
     };

@@ -1,6 +1,5 @@
 module;
 
-
 #include <cstdint>
 
 
@@ -17,7 +16,7 @@ export namespace eos {
     using Int16 = std::int16_t;
     using Int32 = std::int32_t;
 
-    
+
     template <typename T_>
     class BufferAdapter {
         public:

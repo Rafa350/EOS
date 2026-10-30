@@ -15,14 +15,14 @@
         //#define DISPLAY_ER_TFT028_4
         #define DISPLAY_DRV_ILI9341
 	    #define DISPLAY_INTERFACE_SPI
-        #define EOS_COLOR_FORMAT ColorFormat::rgb565
+        //#define EOS_COLOR_FORMAT ColorFormat::rgb565
 
     #elif defined(BUILD_ILI9341_LTDC)
 
         //#define DISPLAY_ER_TFT028_4
         #define DISPLAY_DRV_ILI9341LTDC
 	    #define DISPLAY_INTERFACE_RGB
-        #define EOS_COLOR_FORMAT ColorFormat::rgb565
+        //#define EOS_COLOR_FORMAT ColorFormat::rgb565
 
     #endif
 

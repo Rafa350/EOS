@@ -1,59 +1,53 @@
-module;
-
-
-#include "eos.h"
-
-
 export module Eos.Controllers.Display.Buffers.Color;
 
-
-export import Eos.Controllers.Display.Buffers;
-
-
+import Eos.Controllers.Display;
 import Eos.System.Graphics.Color;
+import Eos.Types;
 
 
 export namespace eos {
 
-
-	class ColorFrameBuffer: public FrameBuffer {
+	class DisplayBuffer_Color: public DisplayBuffer {
 		private:
 			Color::Pixel * const _buffer;
-			int16_t const _framePitch;
+			Int16 const _framePitch;
 
 		protected:
-            void put(int16_t x, int16_t y, Color color) override;
-            void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
-            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) override;
-            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
+            void put(Int16 x, Int16 y, Color color) override;
+            void fill(Int16 x, Int16 y, Int16 width, Int16 height, Color color) override;
+            void copy(Int16 x, Int16 y, Int16 width, Int16 height, const Color *colors, Int16 colorPitch) override;
+            void copy(Int16 x, Int16 y, Int16 width, Int16 height, const void *colors, ColorFormat colorFormat, Int16 colorPitch) override;
 
 		public:
-			ColorFrameBuffer(int16_t frameWidth, int16_t frameHeight, int16_t framePitch, Orientation orientation, uint8_t *buffer);
+			DisplayBuffer_Color(Int16 frameWidth, Int16 frameHeight, Int16 framePitch, Orientation orientation, UInt8 *buffer);
 	};
 }
 
 
-static uint16_t combinePixel(uint16_t b, uint16_t f, uint8_t o);
+using namespace eos;
 
 
-static inline eos::Color::Pixel *getPixelPtr(
-	eos::Color::Pixel *buffer,
-	int bufferPitch,
-	int x,
-	int y) {
+static UInt16 combinePixel(UInt16 b, UInt16 f, UInt8 o);
+
+
+static inline Color::Pixel *getPixelPtr(
+	Color::Pixel *buffer,
+	Int16 bufferPitch,
+	Int16 x,
+	Int16 y) {
 
 	return &buffer[(y * bufferPitch) + x];
 }
 
 
-eos::ColorFrameBuffer::ColorFrameBuffer(
-	int16_t frameWidth,
-	int16_t frameHeight,
-	int16_t framePitch,
+DisplayBuffer_Color::DisplayBuffer_Color(
+	Int16 frameWidth,
+	Int16 frameHeight,
+	Int16 framePitch,
 	Orientation orientation,
-	uint8_t *buffer):
+	UInt8 *buffer):
 
-	FrameBuffer(frameWidth, frameHeight, orientation),
+	DisplayBuffer(frameWidth, frameHeight, orientation),
 	_buffer(reinterpret_cast<Color::Pixel*>(buffer)),
 	_framePitch(framePitch) {
 }
@@ -66,12 +60,12 @@ eos::ColorFrameBuffer::ColorFrameBuffer(
 /// \param color: Color en format de pixel fisic;
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
-void eos::ColorFrameBuffer::put(
-	int16_t x,
-	int16_t y,
+void DisplayBuffer_Color::put(
+	Int16 x,
+	Int16 y,
 	const Color color) {
 
-	uint8_t opacity = color.getOpacity();
+	UInt8 opacity = color.getOpacity();
 	if (opacity != 0) {
 
 		Color::Pixel c = color;
@@ -90,22 +84,22 @@ void eos::ColorFrameBuffer::put(
 /// \param    height: Alçada.
 /// \param    color: Color.-
 ///
-void eos::ColorFrameBuffer::fill(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+void DisplayBuffer_Color::fill(
+	Int16 x,
+	Int16 y,
+	Int16 width,
+	Int16 height,
 	Color color) {
 
 	Color::Pixel c = color;
-	uint8_t opacity = color.getOpacity();
+	UInt8 opacity = color.getOpacity();
 
 	if (opacity != 0) {
 
 		if (opacity == 0xFF) {
-			for (int yy = y; yy < height + y; yy++) {
+			for (Int16 yy = y; yy < height + y; yy++) {
 				Color::Pixel *ptr = getPixelPtr(_buffer, _framePitch, x, yy);
-				for (int xx = x; xx < width + x; xx++) {
+				for (Int16 xx = x; xx < width + x; xx++) {
 					*ptr = c; // opacity == 0xFF ? c : combinePixels(c, *ptr, opacity);
 					ptr++;
 				}
@@ -125,20 +119,20 @@ void eos::ColorFrameBuffer::fill(
 /// \return El valor del pixel combinat.
 ///
 /*
-static uint16_t combinePixel(
-	uint16_t b,
-	uint16_t f,
-	uint8_t o) {
+static UInt16 combinePixel(
+	UInt16 b,
+	UInt16 f,
+	UInt8 o) {
 
-	uint8_t br = (b & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
-	uint8_t bg = (b & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
-	uint8_t bb = (b & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
+	UInt8 br = (b & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
+	UInt8 bg = (b & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
+	UInt8 bb = (b & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
 
-	uint8_t fr = (f & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
-	uint8_t fg = (f & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
-	uint8_t fb = (f & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
+	UInt8 fr = (f & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
+	UInt8 fg = (f & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
+	UInt8 fb = (f & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
 
-	return (uint16_t)
+	return (UInt16)
 		((((fr * o) + (br * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_R) |
 		((((fg * o) + (bg * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_G) |
 		((((fb * o) + (bb * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_B);

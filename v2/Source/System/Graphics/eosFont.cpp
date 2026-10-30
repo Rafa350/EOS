@@ -1,15 +1,16 @@
 module;
 
-#include "eos.h"
-#include "eosAssert.h"
+#include <string.h>
 
 
 export module Eos.System.Graphics.Font;
 
+import Eos.Types;
+
 
 export namespace eos {
 
-    enum class FontStyle {
+    enum class FontStyle: UInt8 {
         regular,
         bold,
         italic,
@@ -17,53 +18,53 @@ export namespace eos {
     };
 
     struct FontInfo {             // Informacio del font
-        int16_t height;           // -Alçada
-        int16_t ascent;           // -Ascendent
-        int16_t descent;          // -Descendent
+        Int16 height;             // -Alçada
+        Int16 ascent;             // -Ascendent
+        Int16 descent;            // -Descendent
         char firstChar;           // -Primer caracter definit en el font
         char lastChar;            // -Ultim caracter definit en el font
     };
 
     struct CharInfo {             // Informacio del caracter
-        int16_t width;            // -Amplada del bitmap
-        int16_t height;           // -Alçada del bitmap
-        int16_t left;             // -Offset horitzontal del bitmap
-        int16_t top;              // -Offset vertical del bitmap
-        int16_t advance;          // -Offset fins al origen del seguent bitmap
-        const uint8_t *bitmap;    // -Punter al primer byte del caracter
+        Int16 width;              // -Amplada del bitmap
+        Int16 height;             // -Alçada del bitmap
+        Int16 left;               // -Offset horitzontal del bitmap
+        Int16 top;                // -Offset vertical del bitmap
+        Int16 advance;            // -Offset fins al origen del seguent bitmap
+        const UInt8 *bitmap;      // -Punter al primer byte del caracter
     };
 
     class Font final {
         private:
             struct FontTableEntry {       // Entrada de la taula de fonts
                 const char *name;         // -Nom del font
-                int16_t height;           // -Alçada
+                Int16 height;           // -Alçada
                 FontStyle style;          // -Estil
-                const uint8_t *resource;  // -Taula d'informacio del font
+                const UInt8 *resource;  // -Taula d'informacio del font
             };
 
         private:
             static const FontTableEntry _fontTable[];
-            const uint8_t * _fontResource;
+            const UInt8 * _fontResource;
 
         private:
-            static const uint8_t* getFontResource(const char *name, int height, FontStyle style);
+            static const UInt8* getFontResource(const char *name, Int16 height, FontStyle style);
 
         public:
             Font();
-            Font(const char *name, int height, FontStyle style);
+            Font(const char *name, Int16 height, FontStyle style);
             Font(const Font &font);
 
             Font& operator = (const Font &font);
+
             bool operator == (const Font &font) const;
-            inline bool operator != (const Font &font) const { return !(*this == font); }
 
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci) const;
-            int getFontHeight() const;
-            int getFontAscent() const;
-            int getFontDescent() const;
-            int getCharAdvance(char ch) const;
+            Int16 getFontHeight() const;
+            Int16 getFontAscent() const;
+            Int16 getFontDescent() const;
+            Int16 getCharAdvance(char ch) const;
     };
 }
 
@@ -71,12 +72,17 @@ namespace eos {
 
     struct FontTableEntry {       // Entrada de la taula de fonts
         const char *name;         // -Nom del font
-        int16_t height;           // -Alçada
+        Int16 height;             // -Alçada
         FontStyle style;          // -Estil
-        const uint8_t *resource;  // -Taula d'informacio del font
+        const UInt8 *resource;    // -Taula d'informacio del font
     };
 }
 
+#define FONT_USE_5x7practical12pt
+#define eosGraphics_DefFontName "5x7practical12pt"
+#define eosGraphics_DefFontHeight 12
+#define eosGraphics_DefFontStyle FontStyle::regular
+#define eosGraphics_DefFontResource font5x7practical12pt
 
 #define FR_FONT_HEIGHT 1
 #define FR_FONT_ASCENT 2
@@ -111,7 +117,7 @@ Font::Font() :
 ///
 Font::Font(
 	const char *name,
-	int height,
+	Int16 height,
 	FontStyle style):
 
 	_fontResource {getFontResource(name, height, style)} {
@@ -161,9 +167,9 @@ bool Font::operator == (
 /// @brief    Obte l'alçada del font.
 /// @return   El resultat.
 ///
-int Font::getFontHeight() const {
+Int16 Font::getFontHeight() const {
 
-	const uint8_t* fr = _fontResource;
+	const UInt8* fr = _fontResource;
 	return fr[FR_FONT_HEIGHT];
 }
 
@@ -172,9 +178,9 @@ int Font::getFontHeight() const {
 /// @brief    Obte l'ascendent del font.
 /// @return   El resultat.
 ///
-int Font::getFontAscent() const {
+Int16 Font::getFontAscent() const {
 
-	const uint8_t* fr = _fontResource;
+	const UInt8* fr = _fontResource;
 	return fr[FR_FONT_ASCENT];
 }
 
@@ -183,9 +189,9 @@ int Font::getFontAscent() const {
 /// @brief    Obte el descendent del font.
 /// @return   El resultat.
 ///
-int Font::getFontDescent() const {
+Int16 Font::getFontDescent() const {
 
-	const uint8_t* fr = _fontResource;
+	const UInt8* fr = _fontResource;
 	return fr[FR_FONT_DESCENT];
 }
 
@@ -197,7 +203,7 @@ int Font::getFontDescent() const {
 void Font::getFontInfo(
     FontInfo &fi) const {
 
-	const uint8_t *fr = _fontResource;
+	const UInt8 *fr = _fontResource;
 
 	fi.height = fr[FR_FONT_HEIGHT];
     fi.ascent = fr[FR_FONT_ASCENT];
@@ -216,12 +222,12 @@ void Font::getCharInfo(
     char ch,
     CharInfo &ci) const {
 
-    const uint8_t *fr = _fontResource;
+    const UInt8 *fr = _fontResource;
 
     if ((ch >= fr[FR_FONT_FIRST]) && (ch <= fr[FR_FONT_LAST])) {
-        int offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
-        int charInfoOffset = fr[offset] + fr[offset + 1] * 256;
-        int charBitsOffset = fr[charInfoOffset + 5] + fr[charInfoOffset + 6] * 256;
+        Int16 offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
+        Int16 charInfoOffset = fr[offset] + fr[offset + 1] * 256;
+        Int16 charBitsOffset = fr[charInfoOffset + 5] + fr[charInfoOffset + 6] * 256;
 
         ci.width = fr[charInfoOffset + FR_CHAR_WIDTH];
         ci.height = fr[charInfoOffset + FR_CHAR_HEIGHT];
@@ -246,14 +252,14 @@ void Font::getCharInfo(
 /// @param ch: El caracter.
 /// @return L'avanç del caracter.
 ///
-int Font::getCharAdvance(
+Int16 Font::getCharAdvance(
     char ch) const {
 
-	const uint8_t *fr = _fontResource;
+	const UInt8 *fr = _fontResource;
 
     if ((ch >= fr[FR_FONT_FIRST]) && (ch <= fr[FR_FONT_LAST])) {
-		int offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
-		int charInfoOffset = fr[offset] + fr[offset + 1] * 256;
+		Int16 offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
+		Int16 charInfoOffset = fr[offset] + fr[offset + 1] * 256;
 		return fr[charInfoOffset + FR_CHAR_ADVANCE];
     }
     else
@@ -302,7 +308,7 @@ int Font::getCharAdvance(
 #endif
 
 
-const eos::Font::FontTableEntry eos::Font::_fontTable[] = {
+const Font::FontTableEntry Font::_fontTable[] = {
 
 	// Primer sempre el font per defecte
 	{ eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle, eosGraphics_DefFontResource },
@@ -352,7 +358,7 @@ const eos::Font::FontTableEntry eos::Font::_fontTable[] = {
 #endif
 
 #ifdef FONT_USE_5x7practical12pt
-    { "5x7practical", 12, eos::FontStyle::regular, font5x7practical12pt },
+    { "5x7practical", 12, FontStyle::regular, font5x7practical12pt },
 #endif
 
 #ifdef FONT_USE_MicrosoftSansSerif18pt
@@ -360,7 +366,7 @@ const eos::Font::FontTableEntry eos::Font::_fontTable[] = {
 #endif
 
 	// Marca de final de taula
-	{ NULL, 0, eos::FontStyle::regular, NULL }
+	{ nullptr, 0, FontStyle::regular, nullptr }
 };
 
 
@@ -370,14 +376,14 @@ const eos::Font::FontTableEntry eos::Font::_fontTable[] = {
 /// @param height: Alçada del font.
 /// @param style: Estil del font.
 ///
-const uint8_t* eos::Font::getFontResource(
+const UInt8* Font::getFontResource(
 	const char *name,
-	int height,
+	Int16 height,
 	FontStyle style) {
 
 	const FontTableEntry *pResource = _fontTable;
 
-	for (int i = 0; pResource[i].name != nullptr; i++) {
+	for (Int16 i = 0; pResource[i].name != nullptr; i++) {
 		const FontTableEntry *pEntry = &pResource[i];
 		if ((strcmp(name, pEntry->name) == 0) &&
 			(pEntry->height == height) &&

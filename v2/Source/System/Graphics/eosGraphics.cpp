@@ -1,6 +1,6 @@
 export module Eos.System.Graphics;
 
-
+export import Eos.Controllers.Display;
 export import Eos.System.Graphics.Brush;
 export import Eos.System.Graphics.Canvas;
 export import Eos.System.Graphics.Font;

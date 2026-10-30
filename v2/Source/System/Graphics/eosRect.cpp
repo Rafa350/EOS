@@ -223,10 +223,10 @@ Rect Rect::translated(
 Rect Rect::intersected(
 	const Rect &r) const {
 
-	int x1 = Math::max(_x, r._x);
-	int y1 = Math::max(_y, r._y);
-	int x2 = Math::min(getMaxX(), r.getMaxX());
-	int y2 = Math::min(getMaxY(), r.getMaxY());
+	auto x1 = Math::max(_x, r._x);
+	auto y1 = Math::max(_y, r._y);
+	auto x2 = Math::min(getMaxX(), r.getMaxX());
+	auto y2 = Math::min(getMaxY(), r.getMaxY());
 
 	if (x1 > x2)
 		Math::swap(x1, x2);
