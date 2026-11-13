@@ -20,6 +20,8 @@
     #endif
     #include "stm32f4xx.h"
 	#undef LTDC
+	#undef DMA2D
+	#undef EXTI
 
 #elif defined(EOS_PLATFORM_STM32F7)
 	#if !defined(STM32F7)
@@ -33,6 +35,8 @@
     #endif
 	#include "stm32f7xx.h"
 	#undef LTDC
+	#undef DMA2D;
+	#undef EXTI
 
 #elif defined(EOS_PLATFORM_STM32G0)
 	#if !defined(STM32G0)
@@ -51,6 +55,7 @@
 		#define STM32G0B1xx
 	#endif
 	#include "stm32g0xx.h"
+	#undef EXTI
 
 #else
 	#error "Unknown platform"

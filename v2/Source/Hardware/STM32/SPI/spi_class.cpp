@@ -5,7 +5,6 @@ module;
 
 export module Eos.Hardware.SPI._Classes;
 
-
 import Eos.Bits;
 import Eos.Events;
 import Eos.Hardware.DMA;

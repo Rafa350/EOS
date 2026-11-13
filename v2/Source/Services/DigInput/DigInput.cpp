@@ -76,7 +76,7 @@ namespace eos {
     //
     export class DigInputService final: public Service {
     	public:
-    		using BeforeScanEventRaiser = EventRaiser<DigInputService, NullEventArgs*>;
+    		using BeforeScanEventRaiser = EventRaiser<DigInputService, NullEventArgs>;
 			using IBeforeScanEvent = BeforeScanEventRaiser::IEvent;
 			template <typename Instance_> using BeforeScanEvent = BeforeScanEventRaiser::Event<Instance_>;
 

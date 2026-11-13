@@ -17,7 +17,7 @@ if(EOS_USE_SERVICE_DIGOUTPUT)
 endif()
 
 if(EOS_USE_SERVICE_LED)
-    add_subdirectory("Led")
+    add_subdirectory("LedBlinker")
 endif()
 
 if(EOS_USE_SERVICE_FORMS)

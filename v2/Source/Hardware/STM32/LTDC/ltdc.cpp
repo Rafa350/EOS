@@ -41,15 +41,16 @@ export namespace eos::hardware::ltdc {
         _16 = 3
     };
 
-    /// @brief Control signals pin polarity.
-    //
-    enum class PinPolarity {
-        activeLow,
-        activeHigh,
-        noChange
-    };
-
     class LTDCDevice final: private NonCopyableClass {
+        public:
+            /// @brief Control signals pin polarity.
+            //
+            enum class PinPolarity {
+                activeLow,
+                activeHigh,
+                noChange
+            };
+
         private:
             template <internal::PinFunction pinFunction_, PortID portID_, PinID pinID_> using PinTraits = internal::PinTraits<LTDCDeviceID::ltdc, pinFunction_, portID_, pinID_>;
 
@@ -164,8 +165,8 @@ export namespace eos::hardware::ltdc {
     template <LTDCLayerID layerID_>
     LTDCLayerDeviceX<layerID_> LTDCLayerDeviceX<layerID_>::_instance;
 
-    typedef LTDCLayerDeviceX<LTDCLayerID::layer1> LTDCLayerDevice1;
-    typedef LTDCLayerDeviceX<LTDCLayerID::layer2> LTDCLayerDevice2;
+    using LTDCLayerDevice1 = LTDCLayerDeviceX<LTDCLayerID::layer1>;
+    using LTDCLayerDevice2 = LTDCLayerDeviceX<LTDCLayerID::layer2>;
 }
 
 
@@ -190,7 +191,7 @@ LTDCDevice::LTDCDevice():
 /// @tparam   pin_: El pin.
 /// @tparam   polarity_: La polaritat.
 ///
-template <typename pin_, PinPolarity polarity_>
+template <typename pin_, LTDCDevice::PinPolarity polarity_>
 void LTDCDevice::initPinHSYNC() {
 
     auto value = PinTraits<internal::PinFunction::hsync, pin_::portID, pin_::pinID>::value;
@@ -208,7 +209,7 @@ void LTDCDevice::initPinHSYNC() {
 /// @tparam   pin_: El pin.
 /// @tparam   polarity_: La polaritat.
 ///
-template <typename pin_, PinPolarity polarity_>
+template <typename pin_, LTDCDevice::PinPolarity polarity_>
 void LTDCDevice::initPinVSYNC() {
 
     auto value = PinTraits<internal::PinFunction::vsync, pin_::portID, pin_::pinID>::value;
@@ -226,7 +227,7 @@ void LTDCDevice::initPinVSYNC() {
 /// @tparam   pin_: El pin.
 /// @tparam   polarity_: La polaritat.
 ///
-template <typename pin_, PinPolarity polarity_>
+template <typename pin_, LTDCDevice::PinPolarity polarity_>
 void LTDCDevice::initPinPC() {
 
     auto value = PinTraits<internal::PinFunction::pc, pin_::portID, pin_::pinID>::value;
@@ -244,7 +245,7 @@ void LTDCDevice::initPinPC() {
 /// @tparam   pin_: El pin.
 /// @tparam   polarity_: La polaritat.
 ///
-template <typename pin_, PinPolarity polarity_>
+template <typename pin_, LTDCDevice::PinPolarity polarity_>
 void LTDCDevice::initPinDE() {
 
     auto value = PinTraits<internal::PinFunction::de, pin_::portID, pin_::pinID>::value;

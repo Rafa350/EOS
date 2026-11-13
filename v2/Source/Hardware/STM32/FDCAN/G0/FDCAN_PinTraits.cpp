@@ -3,10 +3,10 @@ module;
 #include "hardware.h"
 
 
-export module Eos.Hardware.FDCAN.__PIN_TRAITS;
+export module Eos.Hardware.FDCAN._PinTraits;
 
 import Eos.Hardware.GPIO;
-import Eos.Hardware.FDCAN.__PLATFORM_TRAITS;
+import Eos.Hardware.FDCAN._Types;
 
 
 export namespace eos::hardware::fdcan::internal {

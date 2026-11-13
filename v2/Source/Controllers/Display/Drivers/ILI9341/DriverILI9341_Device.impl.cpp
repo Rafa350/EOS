@@ -27,9 +27,9 @@ void Device_ILI9341::writeScript(
     UInt8 c;
     const UInt8 *p = script;
 
-    while ((c = *p++) != OpCode::OP_END) {
+    while ((c = *p++) != OpCode::END) {
         switch (c) {
-            case OpCode::OP_DELAY:
+            case OpCode::DELAY:
                 Task::delay(Ticks::fromMiliseconds(*p++));
                 break;
 

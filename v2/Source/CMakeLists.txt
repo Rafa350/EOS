@@ -14,7 +14,6 @@ target_sources(${TARGET_NAME}
 )
 
 add_subdirectory("Controllers")
-add_subdirectory("HTL")
 add_subdirectory("Hardware")
 add_subdirectory("Services")
 add_subdirectory("StartUp")

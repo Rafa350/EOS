@@ -87,7 +87,7 @@ void DisplayDriver_ILI9341::setOrientation(
     }
 
     if (data) {
-		_devILI9341->writeCommand(CMD_MEMORY_ACCESS_CONTROL);
+		_devILI9341->writeCommand(MEMORY_ACCESS_CONTROL);
 		_devILI9341->writeData(data);
     }
 }
@@ -231,9 +231,9 @@ void DisplayDriver_ILI9341::refresh() {
 ///
 void DisplayDriver_ILI9341::enable() {
 
-    _devILI9341->writeCommand(Device_ILI9341::Command::CMD_SLEEP_OUT);
+    _devILI9341->writeCommand(Device_ILI9341::Command::SLEEP_OUT);
 	Task::delay(Ticks::fromMiliseconds(120));
-	_devILI9341->writeCommand(Device_ILI9341::Command::CMD_DISPLAY_ON);
+	_devILI9341->writeCommand(Device_ILI9341::Command::DISPLAY_ON);
 }
 
 
@@ -242,8 +242,8 @@ void DisplayDriver_ILI9341::enable() {
 ///
 void DisplayDriver_ILI9341::disable() {
 
-    _devILI9341->writeCommand(Device_ILI9341::Command::CMD_DISPLAY_OFF);
-    _devILI9341->writeCommand(Device_ILI9341::Command::CMD_ENTER_SLEEP_MODE);
+    _devILI9341->writeCommand(Device_ILI9341::Command::DISPLAY_OFF);
+    _devILI9341->writeCommand(Device_ILI9341::Command::ENTER_SLEEP_MODE);
     Task::delay(Ticks::fromMiliseconds(120));
 }
 
@@ -268,14 +268,14 @@ void DisplayDriver_ILI9341::selectRegion(
     buffer[1] = x1;
     buffer[2] = x2 >> 8;
     buffer[3] = x2;
-    _devILI9341->writeCommand(Device_ILI9341::Command::CMD_COLUMN_ADDRESS_SET);
+    _devILI9341->writeCommand(Device_ILI9341::Command::COLUMN_ADDRESS_SET);
     _devILI9341->writeData(buffer, sizeof(buffer));
 
 	buffer[0] = y1 >> 8;
     buffer[1] = y1;
     buffer[2] = y2 >> 8;
     buffer[3] = y2;
-    _devILI9341->writeCommand(Device_ILI9341::Command::CMD_PAGE_ADDRESS_SET);
+    _devILI9341->writeCommand(Device_ILI9341::Command::PAGE_ADDRESS_SET);
     _devILI9341->writeData(buffer, sizeof(buffer));
 }
 
@@ -290,7 +290,7 @@ void DisplayDriver_ILI9341::writeRegion(
 
 	Color::Pixel c = color;
 
-	_devILI9341->writeCommand(Device_ILI9341::Command::CMD_MEMORY_WRITE);
+	_devILI9341->writeCommand(Device_ILI9341::Command::MEMORY_WRITE);
 
 	if constexpr (Color::format == ColorFormat::rgb565) {
 
@@ -330,7 +330,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		data[0] = c >> 8;
 		data[1] = c;
 
-		_devILI9341->writeCommand(Device_ILI9341::Command::CMD_MEMORY_WRITE);
+		_devILI9341->writeCommand(Device_ILI9341::Command::MEMORY_WRITE);
 		while (count--)
 			_devILI9341->writeData(data, sizeof(data));
 	}
@@ -343,7 +343,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		data[1] = (c >> 8) & 0xFC;
 		data[2] = c & 0xFC;
 
-		_device->writeCommand(CMD_MEMORY_WRITE);
+		_device->writeCommand(MEMORY_WRITE);
 		while (count--)
 			_device->writeData(data, sizeof(data));
 	}*/
@@ -373,7 +373,7 @@ void DisplayDriver_ILI9341::readRegion(
     Color *colors,
     UInt32 count) {
 #if 0
-    _device->writeCommand(CMD_MEMORY_READ);
+    _device->writeCommand(MEMORY_READ);
     _device->ReadData();               // Dummy read
     _device->ReadData();               // Dummy read
     while (count--) {

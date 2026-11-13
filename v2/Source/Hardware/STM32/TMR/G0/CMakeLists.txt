@@ -1,5 +1,5 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES
     FILES
-        tmr_pin_traits.cpp
+        TMR_PinTraits.cpp
 )

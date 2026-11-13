@@ -77,7 +77,7 @@ export namespace eos {
         protected:
             void onMessage(FormMessage &message) override;
             void onRender(Graphics *graphics) override;
-            void onPropertyChanged(void *ptr) override;
+            void onPropertyChanged(void *property) override;
             virtual void onCommand(UInt8 id);
             virtual void onItemSelected();
 

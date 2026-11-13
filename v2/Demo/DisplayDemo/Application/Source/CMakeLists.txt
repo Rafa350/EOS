@@ -1,6 +1,7 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
         AppApplication.cpp
+        AppHardware.cpp
 )
 
 target_sources(${TARGET_NAME}

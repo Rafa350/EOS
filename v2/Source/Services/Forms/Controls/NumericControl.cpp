@@ -28,7 +28,7 @@ export namespace eos {
 			Int32 _delta;
 
 		protected:
-			void setText(Int32 value);
+			void setTextValue(Int32 value);
             void onPropertyChanged(void *property) override;
             void onMessage(FormMessage &message) override;
             virtual void onValueChanged();
@@ -94,14 +94,20 @@ void NumericControl::onPropertyChanged(
 }
 
 
-void NumericControl::setText(
+/// ---------------------------------------------------------------------------
+/// @brief    Asigna el text que representa el valor numeric
+/// @param    value: El valor numeric.
+///
+void NumericControl::setTextValue(
 	Int32 value) {
 
-	static char buffer[10];
+	static char buffer[25];
 
 	auto r = std::to_chars(buffer, buffer + sizeof(buffer), value, 10);
-	if (r.ec != std::errc())
-		TextBoxControl::setText(buffer);
+	if (r.ec == std::errc())
+		setText(buffer);
+	else
+		setText("**ERROR**");
 }
 
 
@@ -110,7 +116,7 @@ void NumericControl::setText(
 ///
 void NumericControl::onValueChanged() {
 
-	setText(_value);
+	setTextValue(_value);
 }
 
 

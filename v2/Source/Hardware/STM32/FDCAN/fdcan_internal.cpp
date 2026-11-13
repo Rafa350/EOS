@@ -1,11 +1,9 @@
 module;
 
-
 #include "hardware.h"
 
 
 export module Eos.Hardware.FDCAN.__INTERNAL;
-
 
 import Eos.Types;
 

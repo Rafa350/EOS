@@ -1,12 +1,10 @@
 module;
 
-
 #include "FreeRTOS.h"
 #include "queue.h"
 
 
 export module Eos.System.Core.Queue;
-
 
 import Eos.Types;
 import Eos.System.Core.Ticks;
@@ -23,10 +21,10 @@ export namespace eos {
             QueueHandle_t _handler;
 
         private:
-            QueueHandle_t createHandle(uint32_t capacity);
+            QueueHandle_t createHandle(UInt32 capacity);
 
         public:
-            Queue(uint32_t capacity);
+            Queue(UInt32 capacity);
             ~Queue();
 
             void clear() const;
@@ -41,12 +39,14 @@ export namespace eos {
             [[nodiscard]] bool isEmpty() const;
             [[nodiscard]] bool isEmptyISR() const;
 
-            [[nodiscard]] uint32_t getCount() const;
-            [[nodiscard]] uint32_t getCountISR() const;
+            [[nodiscard]] UInt32 getCount() const;
+            [[nodiscard]] UInt32 getCountISR() const;
     };
 
 }
 
+
+using namespace eos;
 
 
 /// ---------------------------------------------------------------------------
@@ -55,8 +55,8 @@ export namespace eos {
 /// @param    capacity: El nombre d'elements que caben en la cua.
 ///
 template <typename T_>
-eos::Queue<T_>::Queue(
-	uint32_t capacity):
+Queue<T_>::Queue(
+	UInt32 capacity):
 
 	_handler {createHandle(capacity)} {
 
@@ -68,7 +68,7 @@ eos::Queue<T_>::Queue(
 /// @tparam   T_: El tipus del element de la cua.
 ///
 template <typename T_>
-eos::Queue<T_>::~Queue() {
+Queue<T_>::~Queue() {
 
 	vQueueDelete(_handler);
 }
@@ -82,7 +82,7 @@ eos::Queue<T_>::~Queue() {
 ///
 template <typename T_>
 QueueHandle_t eos::Queue<T_>::createHandle(
-    uint32_t capacity) {
+    UInt32 capacity) {
 
 	return xQueueCreate(capacity, sizeof(T_));
 }
@@ -93,7 +93,7 @@ QueueHandle_t eos::Queue<T_>::createHandle(
 /// @tparam   T_: El tipus del element de la cua.
 ///
 template <typename T_>
-void eos::Queue<T_>::clear() const {
+void Queue<T_>::clear() const {
 
 	xQueueReset(_handler);
 }
@@ -107,7 +107,7 @@ void eos::Queue<T_>::clear() const {
 /// @return   True si tot es correcte.
 ///
 template <typename T_>
-bool eos::Queue<T_>::push(
+bool Queue<T_>::push(
 	const T_ &element,
 	Ticks blockTime) const {
 
@@ -125,7 +125,7 @@ bool eos::Queue<T_>::push(
 /// @return   True si tot es correcte.
 ///
 template <typename T_>
-bool eos::Queue<T_>::pushISR(
+bool Queue<T_>::pushISR(
 	const T_ &element) const {
 
     BaseType_t taskWoken = pdFALSE;
@@ -150,7 +150,7 @@ bool eos::Queue<T_>::pushISR(
 /// @return   TYrue si tot es correcte.
 ///
 template <typename T_>
-bool eos::Queue<T_>::pop(
+bool Queue<T_>::pop(
 	T_ &element,
 	Ticks blockTime) const {
 
@@ -168,7 +168,7 @@ bool eos::Queue<T_>::pop(
 /// @return   TYrue si tot es correcte.
 ///
 template <typename T_>
-bool eos::Queue<T_>::popISR(
+bool Queue<T_>::popISR(
 	T_ &element) const {
 
     BaseType_t taskWoken = pdFALSE;
@@ -193,7 +193,7 @@ bool eos::Queue<T_>::popISR(
 /// @return   True si tot es correcte.
 ///
 template <typename T_>
-bool eos::Queue<T_>::peek(
+bool Queue<T_>::peek(
 	T_ &element,
 	Ticks blockTime) const {
 
@@ -212,7 +212,7 @@ bool eos::Queue<T_>::peek(
 /// @return   True si tot es correcte.
 ///
 template <typename T_>
-bool eos::Queue<T_>::peekISR(
+bool Queue<T_>::peekISR(
 	T_ &element) const {
 
     return xQueuePeekFromISR(
@@ -227,7 +227,7 @@ bool eos::Queue<T_>::peekISR(
 /// @return   True si es buida.
 ///
 template <typename T_>
-bool eos::Queue<T_>::isEmpty() const {
+bool Queue<T_>::isEmpty() const {
 
 	return getCount() == 0;
 }
@@ -239,7 +239,7 @@ bool eos::Queue<T_>::isEmpty() const {
 /// @return   True si es buida.
 ///
 template <typename T_>
-bool eos::Queue<T_>::isEmptyISR() const {
+bool Queue<T_>::isEmptyISR() const {
 
 	return getCountISR() == 0;
 }
@@ -251,7 +251,7 @@ bool eos::Queue<T_>::isEmptyISR() const {
 /// @return   El nombre d'elements.
 ///
 template <typename T_>
-uint32_t eos::Queue<T_>::getCount() const {
+UInt32 Queue<T_>::getCount() const {
 
 	return uxQueueMessagesWaiting(_handler);
 }
@@ -264,7 +264,7 @@ uint32_t eos::Queue<T_>::getCount() const {
 /// @return   El nombre d'elements.
 ///
 template <typename T_>
-uint32_t eos::Queue<T_>::getCountISR() const {
+UInt32 Queue<T_>::getCountISR() const {
 
 	return uxQueueMessagesWaitingFromISR(_handler);
 }

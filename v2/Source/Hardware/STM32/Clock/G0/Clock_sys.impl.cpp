@@ -5,7 +5,6 @@ module;
 
 module Eos.Hardware.Clock;
 
-
 import Eos.Bits;
 import Eos.Types;
 

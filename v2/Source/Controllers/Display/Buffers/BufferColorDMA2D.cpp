@@ -1,75 +1,63 @@
-module;
+export module Eos.Controllers.Display.Buffers.ColorDMA2D;
 
 
-#include "eos.h"
-#include "HTL/STM32/htlDMA2D.h"
-
-
-export module Eos.Controllers.Display.Buffers.Color_DMA2D;
-
-
-export import Eos.Cotrollers.Display.Buffers;
-
-
+import Eos.Controllers.Display;
+import Eos.Hardware.DMA2D;
 import Eos.System.Graphics.Color;
+import Eos.Types;
+
+
+using namespace eos;
+using namespace eos::hardware::dma2d;
 
 
 export namespace eos {
 
-	/// \brief Superficie de dibuix basada en memoria ram
+	/// @brief Superficie de dibuix basada en memoria ram
 	///
-	class ColorFrameBuffer_DMA2D: public DisplayBuffer {
+	class DisplayBuffer_ColorDMA2D final: public DisplayBuffer {
 	    private:
-	        using DevDMA2D = htl::dma2d::DMA2DDevice;
-            static constexpr DevDMA2D *_devDMA2D = DevDMA2D::pInst;
-
-		private:
+			DMA2DDevice * const _devDMA2D;
 			Color::Pixel * const _buffer;
-			int16_t const _framePitch;
+			Int16 const _framePitch;
 
 		private:
-			inline Color::Pixel *getPixelPtr(int16_t x, int16_t y) const { return &_buffer[(y * _framePitch) + x]; }
+			inline Color::Pixel *getPixelPtr(Int16 x, Int16 y) const { return &_buffer[(y * _framePitch) + x]; }
 
 		protected:
-			void put(int16_t x, int16_t y, Color color) override;
-            void fill(int16_t x, int16_t y, int16_t width, int16_t height, Color color) override;
-            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors, int16_t colorPitch) override;
-            void copy(int16_t x, int16_t y, int16_t width, int16_t height, const void *colors, ColorFormat colorFormat, int16_t colorPitch) override;
+			void put(Int16 x, Int16 y, Color color) override;
+            void fill(Int16 x, Int16 y, Int16 width, Int16 height, Color color) override;
+            void copy(Int16 x, Int16 y, Int16 width, Int16 height, const Color *colors, Int16 colorPitch) override;
+            void copy(Int16 x, Int16 y, Int16 width, Int16 height, const void *colors, ColorFormat colorFormat, Int16 colorPitch) override;
 
 		public:
-			ColorFrameBuffer_DMA2D(int16_t width, int16_t height, int16_t pitch, DisplayOrientation orientation, void *buffer);
-            uint8_t *getBuffer() const override;
+			DisplayBuffer_ColorDMA2D(Int16 width, Int16 height, Int16 pitch, Orientation orientation, void *buffer);
+            UInt8 *getBuffer() const override;
 	};
 }
 
 
-#ifndef HTL_DMA2D_EXIST
-#error "DMA2D hardware unavailable"
-#endif
-
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Combina dos pixels amb opacitat.
-/// \param    fg: El pixel a combinar.
-/// \param    bg: El pixel de fons.
-/// \param    opascity: Opacitat del pixel fg.
-/// \return   El pixel combinat.
+/// --------------------------------------------------------------------------------
+/// @brief    Combina dos pixels amb opacitat.
+/// @param    fg: El pixel a combinar.
+/// @param    bg: El pixel de fons.
+/// @param    opascity: Opacitat del pixel fg.
+/// @return   El pixel combinat.
 ///
-static eos::Color::Pixel combinePixels(
+static Color::Pixel combinePixels(
 	Color::Pixel fg,
 	Color::Pixel bg,
-	uint8_t opacity) {
+	UInt8 opacity) {
 
-	using CT = ColorTrait<Color::format>;
+	using CT = ColorTraits<Color::format>;
 
-	uint32_t fgR = (fg & CT::maskR) >> CT::shiftR;
-	uint32_t fgG = (fg & CT::maskG) >> CT::shiftG;
-	uint32_t fgB = (fg & CT::maskB) >> CT::shiftB;
+	UInt32 fgR = (fg & CT::maskR) >> CT::shiftR;
+	UInt32 fgG = (fg & CT::maskG) >> CT::shiftG;
+	UInt32 fgB = (fg & CT::maskB) >> CT::shiftB;
 
-	uint32_t bgR = (bg & CT::maskR) >> CT::shiftR;
-	uint32_t bgG = (bg & CT::maskG) >> CT::shiftG;
-	uint32_t bgB = (bg & CT::maskB) >> CT::shiftB;
+	UInt32 bgR = (bg & CT::maskR) >> CT::shiftR;
+	UInt32 bgG = (bg & CT::maskG) >> CT::shiftG;
+	UInt32 bgB = (bg & CT::maskB) >> CT::shiftB;
 
 	Color::Pixel c =
 		((((fgR * opacity) + (bgR * (255 - opacity))) >> 8) << CT::shiftR) |
@@ -83,10 +71,10 @@ static eos::Color::Pixel combinePixels(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si el format de color es suportat pel DMA2D
-/// \param    format: El format de color.
-/// \return   True si esta suportat.
+/// ---------------------------------------------------------------------------
+/// @brief    Comprova si el format de color es suportat pel DMA2D
+/// @param    format: El format de color.
+/// @return   True si esta suportat.
 ///
 static constexpr bool isOutputColorSupported(
 	ColorFormat format) {
@@ -100,110 +88,111 @@ static constexpr bool isOutputColorSupported(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte l modus de color de sortida pel DMA2D.
-/// \param    format: El format de color.
-/// \return   El modus de color.
+/// ---------------------------------------------------------------------------
+/// @brief    Obte l modus de color de sortida pel DMA2D.
+/// @param    format: El format de color.
+/// @return   El modus de color.
 ///
-static constexpr dma2d::OutputColorMode getOutputColorMode(
+static constexpr DMA2DDevice::OutputColorMode getOutputColorMode(
 	ColorFormat format) {
 
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
-			return dma2d::OutputColorMode::argb8888;
+			return DMA2DDevice::OutputColorMode::argb8888;
 
 		case ColorFormat::argb4444:
-			return dma2d::OutputColorMode::argb4444;
+			return DMA2DDevice::OutputColorMode::argb4444;
 
 		case ColorFormat::argb1555:
-			return dma2d::OutputColorMode::argb1555;
+			return DMA2DDevice::OutputColorMode::argb1555;
 
 		case ColorFormat::rgb888:
-			return dma2d::OutputColorMode::rgb888;
+			return DMA2DDevice::OutputColorMode::rgb888;
 
 		case ColorFormat::rgb565:
-			return dma2d::OutputColorMode::rgb565;
+			return DMA2DDevice::OutputColorMode::rgb565;
 	}
 }
 
 
-static constexpr dma2d::InputColorMode getInputColorMode(
+static constexpr DMA2DDevice::InputColorMode getInputColorMode(
 	ColorFormat format) {
 
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
-			return dma2d::InputColorMode::argb8888;
+			return DMA2DDevice::InputColorMode::argb8888;
 
 		case ColorFormat::argb4444:
-			return dma2d::InputColorMode::argb4444;
+			return DMA2DDevice::InputColorMode::argb4444;
 
 		case ColorFormat::argb1555:
-			return dma2d::InputColorMode::argb1555;
+			return DMA2DDevice::InputColorMode::argb1555;
 
 		case ColorFormat::rgb888:
-			return dma2d::InputColorMode::rgb888;
+			return DMA2DDevice::InputColorMode::rgb888;
 
 		case ColorFormat::rgb565:
-			return dma2d::InputColorMode::rgb565;
+			return DMA2DDevice::InputColorMode::rgb565;
 
 		case ColorFormat::al88:
-			return dma2d::InputColorMode::al88;
+			return DMA2DDevice::InputColorMode::al88;
 
 		case ColorFormat::al44:
-			return dma2d::InputColorMode::al44;
+			return DMA2DDevice::InputColorMode::al44;
 
 		case ColorFormat::l8:
-			return dma2d::InputColorMode::l8;
+			return DMA2DDevice::InputColorMode::l8;
 	}
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-/// \param    frameWidth: Amplada.
-/// \param    frameHeight: Alçada.
-/// \param    framePitch: Pitch.
-/// \param    orientation: Orientacio.
-/// \param    color: Color inicial.
-/// \param    buffer: Buffer.
+/// ---------------------------------------------------------------------------
+/// @brief    Constructor del objecte.
+/// @param    frameWidth: Amplada.
+/// @param    frameHeight: Alçada.
+/// @param    framePitch: Pitch.
+/// @param    orientation: Orientacio.
+/// @param    color: Color inicial.
+/// @param    buffer: Buffer.
 ///
-eos::ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
-	int16_t frameWidth,
-	int16_t frameHeight,
-	int16_t framePitch,
-	DisplayOrientation orientation,
+DisplayBuffer_ColorDMA2D::DisplayBuffer_ColorDMA2D(
+	Int16 frameWidth,
+	Int16 frameHeight,
+	Int16 framePitch,
+	Orientation orientation,
 	void *buffer):
 
 	DisplayBuffer(frameWidth, frameHeight, orientation),
+	_devDMA2D {DMA2DDevice::pInst},
 	_buffer {reinterpret_cast<Color::Pixel*>(buffer)},
 	_framePitch {framePitch} {
 
-    htl::dma2d::DMA2DDevice::pInst->initialize();
+    _devDMA2D->initialize();
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Obter l'adresa del buffer d'imatge.
-/// \return   L'adressa.
+/// ---------------------------------------------------------------------------
+/// @brief    Obter l'adresa del buffer d'imatge.
+/// @return   L'adressa.
 ///
-uint8_t *eos::ColorFrameBuffer_DMA2D::getBuffer() const {
+UInt8 *DisplayBuffer_ColorDMA2D::getBuffer() const {
 
-	return (uint8_t*) _buffer;
+	return (UInt8*) _buffer;
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Asigna un color a un pixel de la pantalla.
-/// \param    x: Coordinada x del pixel.
-/// \param    y: Coordinada y del pixel.
-/// \param    color: Color.
-/// \remarks  No es fa cap tipus de verificacio dels parametres.
+/// ---------------------------------------------------------------------------
+/// @brief    Asigna un color a un pixel de la pantalla.
+/// @param    x: Coordinada x del pixel.
+/// @param    y: Coordinada y del pixel.
+/// @param    color: Color.
+/// @remarks  No es fa cap tipus de verificacio dels parametres.
 ///
-void eos::ColorFrameBuffer_DMA2D::put(
-	int16_t x,
-	int16_t y,
+void DisplayBuffer_ColorDMA2D::put(
+	Int16 x,
+	Int16 y,
 	Color color) {
 
 	// Color amb opacitat (Canal alpha)
@@ -212,7 +201,7 @@ void eos::ColorFrameBuffer_DMA2D::put(
 
 		// Nomes el pinta si no es transparent
 		//
-		uint8_t opacity = color.getOpacity();
+		UInt8 opacity = color.getOpacity();
 		if (opacity != 0) {
 
 			Color::Pixel c = color;
@@ -234,22 +223,22 @@ void eos::ColorFrameBuffer_DMA2D::put(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Ompla amb un color, una regio de la pantalla.
-/// \param    x: Coordinada x de la regio.
-/// \param    y: Coordinada y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    color: Color.
+/// ---------------------------------------------------------------------------
+/// @brief    Ompla amb un color, una regio de la pantalla.
+/// @param    x: Coordinada x de la regio.
+/// @param    y: Coordinada y de la regio.
+/// @param    width: Amplada de la regio.
+/// @param    height: Alçada de la regio.
+/// @param    color: Color.
 ///
-void eos::ColorFrameBuffer_DMA2D::fill(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+void DisplayBuffer_ColorDMA2D::fill(
+	Int16 x,
+	Int16 y,
+	Int16 width,
+	Int16 height,
 	Color color) {
 
-	uint8_t opacity = color.getOpacity();
+	UInt8 opacity = color.getOpacity();
 
 	// Comprova si es un color solid
 	//
@@ -259,7 +248,7 @@ void eos::ColorFrameBuffer_DMA2D::fill(
 		//
 		if constexpr (isOutputColorSupported(Color::format)) {
 			Color::Pixel *ptr = getPixelPtr(x, y);
-			dma2d::OutputColorMode dstColorMode = getOutputColorMode(Color::format);
+			auto dstColorMode = getOutputColorMode(Color::format);
 			Color::Pixel c = color;
 			_devDMA2D->startFill(ptr, width, height, _framePitch, dstColorMode, c);
 			_devDMA2D->waitForFinish();
@@ -269,9 +258,9 @@ void eos::ColorFrameBuffer_DMA2D::fill(
 		//
 		else {
 			Color::Pixel c = color;
-			for (int16_t yy = y; yy < height + y; yy++) {
+			for (Int16 yy = y; yy < height + y; yy++) {
 				Color::Pixel *ptr = getPixelPtr(x, yy);
-				for (int16_t xx = x; xx < width + x; xx++)
+				for (Int16 xx = x; xx < width + x; xx++)
 					*ptr++ = c;
 			}
 		}
@@ -283,9 +272,9 @@ void eos::ColorFrameBuffer_DMA2D::fill(
 
 		Color::Pixel c = color;
 
-		for (int16_t yy = y; yy < height + y; yy++) {
+		for (Int16 yy = y; yy < height + y; yy++) {
 			Color::Pixel *ptr = getPixelPtr(x, yy);
-			for (int16_t xx = x; xx < width + x; xx++) {
+			for (Int16 xx = x; xx < width + x; xx++) {
 				*ptr = combinePixels(c, *ptr, opacity);
 				ptr++;
 			}
@@ -294,22 +283,22 @@ void eos::ColorFrameBuffer_DMA2D::fill(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Copia una llista de colors a una regio de la pantalla.
-/// \param    x: Coordinada x de la regio.
-/// \param    y: Coordinada y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    colors: Llista de colors.
-/// \param    colorPitch: Pitch de la llista de colors.
+/// ---------------------------------------------------------------------------
+/// @brief    Copia una llista de colors a una regio de la pantalla.
+/// @param    x: Coordinada x de la regio.
+/// @param    y: Coordinada y de la regio.
+/// @param    width: Amplada de la regio.
+/// @param    height: Alçada de la regio.
+/// @param    colors: Llista de colors.
+/// @param    colorPitch: Pitch de la llista de colors.
 ///
-void eos::ColorFrameBuffer_DMA2D::copy(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+void DisplayBuffer_ColorDMA2D::copy(
+	Int16 x,
+	Int16 y,
+	Int16 width,
+	Int16 height,
 	const Color *colors,
-	int16_t colorPitch) {
+	Int16 colorPitch) {
 
 	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
 	// per hardware.
@@ -335,24 +324,24 @@ void eos::ColorFrameBuffer_DMA2D::copy(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Copia una llista de colors a una regio de la pantalla.
-/// \param    x: Coordinada x de la regio.
-/// \param    y: Coordinada y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    colors: Llista de colors.
-/// \param    colorFormat: Format de la llista de colors.
-/// \param    colorPitch: Pitch de la llista de colors.
+/// ---------------------------------------------------------------------------
+/// @brief    Copia una llista de colors a una regio de la pantalla.
+/// @param    x: Coordinada x de la regio.
+/// @param    y: Coordinada y de la regio.
+/// @param    width: Amplada de la regio.
+/// @param    height: Alçada de la regio.
+/// @param    colors: Llista de colors.
+/// @param    colorFormat: Format de la llista de colors.
+/// @param    colorPitch: Pitch de la llista de colors.
 ///
-void eos::ColorFrameBuffer_DMA2D::copy(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+void DisplayBuffer_ColorDMA2D::copy(
+	Int16 x,
+	Int16 y,
+	Int16 width,
+	Int16 height,
 	const void *colors,
 	ColorFormat colorFormat,
-	int16_t colorPitch) {
+	Int16 colorPitch) {
 
 	// Si es un color solid i suportat pel modul DMA2D, realitza la transferencia
 	// per hardware.

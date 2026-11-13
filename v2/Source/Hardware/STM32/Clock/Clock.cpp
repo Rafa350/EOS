@@ -5,7 +5,6 @@ module;
 
 export module Eos.Hardware.Clock;
 
-
 import Eos.Hardware.Flash;
 import Eos.Platform;
 import Eos.Types;
@@ -158,17 +157,20 @@ export namespace eos::hardware::clock {
                 div10, div11, div12, div13, div14, div15, div16, div17, div18, div19,
                 div20, div21, div22, div23, div24, div25, div26, div27, div28, div29,
                 div30, div31, div32,
-                disabled
+                disabled,
+                div1 = disabled
             };
 
             enum class PLLQdivider {
                 div2, div3, div4, div5, div6, div7, div8,
-                disabled
+                disabled,
+                div1 = disabled
             };
 
             enum class PLLRdivider {
                 div2, div3, div4, div5, div6, div7, div8,
-                disabled
+                disabled,
+                div1 = disabled
             };
 
             enum class AHBPrescaler {

@@ -1,7 +1,11 @@
 export module App.Services.Display;
 
+import App.Hardware;
 import Eos.Controllers.Display.Drivers.ILI9341LTDC;
+import Eos.Controllers.Display.Buffers.ColorDMA2D;
+import Eos.Hardware.GPIO;
 import Eos.Hardware.SPI;
+import Eos.Hardware.LTDC;
 import Eos.Services.Service;
 import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
@@ -32,17 +36,17 @@ export namespace app {
 	        int _orientation;
 	        int _loopCount;
 
-	        int _pointsTicks;
-	        int _horizontalLinesTicks;
-	        int _verticalLinesTicks;
-	        int _linesTicks;
-	        int _rectanglesTicks;
-	        int _filledRectanglesTicks;
-	        int _ellipsesTicks;
-	        int _filledEllipsesTicks;
-	        int _polygonsTicks;
-	        int _filledPolygonsTicks;
-	        int _bitmapTicks;
+	        Ticks _pointsTicks;
+	        Ticks _horizontalLinesTicks;
+	        Ticks _verticalLinesTicks;
+	        Ticks _linesTicks;
+	        Ticks _rectanglesTicks;
+	        Ticks _filledRectanglesTicks;
+	        Ticks _ellipsesTicks;
+	        Ticks _filledEllipsesTicks;
+	        Ticks _polygonsTicks;
+	        Ticks _filledPolygonsTicks;
+	        Ticks _bitmapTicks;
 
 	    public:
 	        DisplayService();
@@ -67,6 +71,8 @@ export namespace app {
 
 using namespace app;
 using namespace eos;
+using namespace eos::hardware::gpio;
+using namespace eos::hardware::ltdc;
 using namespace eos::hardware::spi;
 
 
@@ -192,67 +198,49 @@ DisplayService::DisplayService():
 ///
 void DisplayService::onExecute() {
 
-	// Inicialitza el generador de nombres aleatoris.
-	//
-#if defined(EOS_PLATFORM_STM32F7)
-	//halRNGInitialize();
-#endif
-
-#if defined(DISPLAY_DRV_ILI9341LTDC) || defined(DISPLAY_DRV_ILI9341)
-
     // Inicialitza el pin CS
     //
-    auto pinCS = DISPLAY_CS_Pin::pInst;
-    pinCS->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, true);
+    pinCS->initOutput(OutputType::pushPull, PullUpDown::none, Speed::fast, true);
 
     // Inicialitza el pin RS
     //
-    auto pinRS = DISPLAY_RS_Pin::pInst;
-    pinRS->initOutput(gpio::OutputType::pushPull, gpio::PullUpDown::none, gpio::Speed::fast, false);
+    pinRS->initOutput(OutputType::pushPull, PullUpDown::none, Speed::fast, false);
 
     // Inicialitza el dispositiu SPI
     //
-    auto devSPI = DISPLAY_SPI_Device::pInst;
     devSPI->initPinSCK<DISPLAY_SCK_Pin>();
     devSPI->initPinMOSI<DISPLAY_MOSI_Pin>();
     devSPI->initMaster(spi::ClkPolarity::high, spi::ClkPhase::edge1, spi::WordSize::ws8, spi::FirstBit::msb, spi::ClockDivider::div8);
 
 	// Inicialitza el dispositiu ILI9341
 	//
-    auto devILI9341 = new eos::Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
-    devILI9341->initialize(initCommands, sizeof(initCommands)/sizeof(initCommands[0]));
-
-	#endif
-
-
-    #if defined(DISPLAY_DRV_ILI9341LTDC)
+    auto devILI9341 = new Device_ILI9341_SPI(pinCS, pinRS, nullptr, devSPI);
+    devILI9341->initialize(initCommands, sizeof(initCommands) / sizeof(initCommands[0]));
 
 	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
 	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
 
     // Inicialitza el buffer del display
     //
-	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
+	auto *frameBuffer = new DisplayBuffer_ColorDMA2D(
 		_displayWidth,
 		_displayHeight,
 		frameBufferPitch,
-		DisplayOrientation::normal,
+		DisplayBuffer::Orientation::normal,
 		reinterpret_cast<void*>(_displayBuffer));
 
     // Inicialitza el dispositiu LTDC
     //
-    auto devLTDC = ltdc::LTDCDevice::pInst;
-    devLTDC->initPinDE<DISPLAY_DE_Pin, DISPLAY_DE_POL>();
-    devLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, DISPLAY_HSYNC_POL>();
-    devLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, DISPLAY_VSYNC_POL>();
-    devLTDC->initPinPC<DISPLAY_PC_Pin, DISPLAY_PC_POL>();
-    devLTDC->initPinRX<DISPLAY_R2_Pin, DISPLAY_R3_Pin, DISPLAY_R4_Pin, DISPLAY_R5_Pin, DISPLAY_R6_Pin, DISPLAY_R7_Pin>();
-    devLTDC->initPinGX<DISPLAY_G2_Pin, DISPLAY_G3_Pin, DISPLAY_G4_Pin, DISPLAY_G5_Pin, DISPLAY_G6_Pin, DISPLAY_G7_Pin>();
-    devLTDC->initPinBX<DISPLAY_B2_Pin, DISPLAY_B3_Pin, DISPLAY_B4_Pin, DISPLAY_B5_Pin, DISPLAY_B6_Pin, DISPLAY_B7_Pin>();
+    devLTDC->initPinDE<PinDE, pinDEPolarity>();
+    devLTDC->initPinHSYNC<PinHSYNC, pinHSYNCPolartity>();
+    devLTDC->initPinVSYNC<PinVSYNC, pinVSYNCPolarity>();
+    devLTDC->initPinPC<pinDC, pinDCPolarity>();
+    devLTDC->initPinRX<PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+    devLTDC->initPinGX<PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+    devLTDC->initPinBX<PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
     devLTDC->initialize(_displayWidth, _displayHeight, DISPLAY_HSYNC, DISPLAY_VSYNC, DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
     devLTDC->setBackgroundColor(RGB(0, 0, 255));
 
-    auto devLTDCLayer = ltdc::LTDCLayerDevice1::pInst;
 	constexpr ltdc::PixelFormat pixelFormat =
 		Color::format == ColorFormat::argb8888 ? ltdc::PixelFormat::argb8888 :
 		Color::format == ColorFormat::argb4444 ? ltdc::PixelFormat::argb4444 :
@@ -276,98 +264,26 @@ void DisplayService::onExecute() {
     // Inicialitza el driver de pantalla
     //
 	_driver = new DisplayDriver_ILI9341LTDC(devILI9341, devLTDC, devLTDCLayer, frameBuffer);
-
-    #elif defined(DISPLAY_DRV_ILI9341)
-
-    // Inicialitza el driver de pantalla
-    //
-	_driver = new DisplayDriver_ILI9341(devILI9341, _displayWidth, _displayHeight);
-
-    #elif defined(DISPLAY_DRV_RGBLTDC)
-
-	constexpr int frameBufferLineBytes = (_displayWidth * Color::bytes + 63) & 0xFFFFFFC0;
-	constexpr int frameBufferPitch = frameBufferLineBytes / Color::bytes;
-
-	// Inicialitza el buffer del display
-	//
-	FrameBuffer *frameBuffer = new ColorFrameBuffer_DMA2D(
-		_displayWidth,
-		_displayHeight,
-		frameBufferPitch,
-		DisplayOrientation::normal,
-		reinterpret_cast<void*>(_displayBuffer));
-
-	// Inicialitza el dispositiu LTDC
-	//
-    auto devLTDC = ltdc::LTDCDevice::pInst;
-	devLTDC->initPinPC<DISPLAY_PC_Pin, DISPLAY_PC_POL>();
-	devLTDC->initPinHSYNC<DISPLAY_HSYNC_Pin, DISPLAY_HSYNC_POL>();
-	devLTDC->initPinVSYNC<DISPLAY_VSYNC_Pin, DISPLAY_VSYNC_POL>();
-	devLTDC->initPinDE<DISPLAY_DE_Pin, DISPLAY_DE_POL>();
-    devLTDC->initPinRX<DISPLAY_R0_Pin, DISPLAY_R1_Pin, DISPLAY_R2_Pin, DISPLAY_R3_Pin, DISPLAY_R4_Pin, DISPLAY_R5_Pin, DISPLAY_R6_Pin, DISPLAY_R7_Pin>();
-    devLTDC->initPinGX<DISPLAY_G0_Pin, DISPLAY_G1_Pin, DISPLAY_G2_Pin, DISPLAY_G3_Pin, DISPLAY_G4_Pin, DISPLAY_G5_Pin, DISPLAY_G6_Pin, DISPLAY_G7_Pin>();
-    devLTDC->initPinBX<DISPLAY_B0_Pin, DISPLAY_B1_Pin, DISPLAY_B2_Pin, DISPLAY_B3_Pin, DISPLAY_B4_Pin, DISPLAY_B5_Pin, DISPLAY_B6_Pin, DISPLAY_B7_Pin>();
-	devLTDC->initialize(_displayWidth, _displayHeight, DISPLAY_HSYNC, DISPLAY_VSYNC, DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
-	devLTDC->setBackgroundColor(0x0000FF);
-
-	// Inicialitza la capa 1
-	// La capa ocupa tota la superficie de la pantalla
-	//
-	constexpr ltdc::PixelFormat pixelFormat =
-		Color::format == ColorFormat::argb8888 ? ltdc::PixelFormat::argb8888 :
-		Color::format == ColorFormat::argb4444 ? ltdc::PixelFormat::argb4444 :
-		Color::format == ColorFormat::argb1555 ? ltdc::PixelFormat::argb1555 :
-		Color::format == ColorFormat::rgb888 ? ltdc::PixelFormat::rgb888 :
-		Color::format == ColorFormat::al88 ? ltdc::PixelFormat::al88 :
-		Color::format == ColorFormat::al44 ? ltdc::PixelFormat::al44 :
-		Color::format == ColorFormat::l8 ? ltdc::PixelFormat::l8 :
-				ltdc::PixelFormat::rgb565;
-
-	auto devLTDCLayer = ltdc::LTDCLayerDevice1::pInst;
-	devLTDCLayer->setWindow(0, 0, _displayWidth, _displayHeight);
-	devLTDCLayer->setFrameFormat(
-		pixelFormat,
-		_displayWidth * Color::bytes,
-		((_displayWidth * Color::bytes) + 63) & 0xFFFFFFC0,
-		_displayHeight);
-	devLTDCLayer->setConstantAlpha(255);
-	devLTDCLayer->setDefaultColor(0x000000);
-
-	if (Color::format == ColorFormat::l8) {
-		static UInt32 clut[256];
-		for (unsigned i = 0; i < (sizeof(clut) / sizeof(clut[0])); i++)
-			clut[i] = i << 8;
-		devLTDCLayer->setCLUTTable(clut);
-	}
-
-	// Inicialitza el driver de pantalla
-	//
-	_driver = new DisplayDriver_RGBLTDC(devLTDC, devLTDCLayer, frameBuffer, nullptr);
-
-    #else
-        #error No se especifico DISPLAY_DRV_XXXX
-    #endif
-
 	_driver->initialize();
 	_driver->enable();
 
     // Inicialitza el controlador de grafics
     //
-    _graphics = new eos::Graphics(_driver);
+    _graphics = new Graphics(_driver);
 
-    _pointsTicks = 0;
-    _horizontalLinesTicks = 0;
-    _verticalLinesTicks = 0;
-    _linesTicks = 0;
-    _rectanglesTicks = 0;
-    _filledRectanglesTicks = 0;
-    _ellipsesTicks = 0;
-    _filledEllipsesTicks = 0;
+    _pointsTicks = Ticks::zero();
+    _horizontalLinesTicks = Ticks::zero();
+    _verticalLinesTicks = Ticks::zero();
+    _linesTicks = Ticks::zero();
+    _rectanglesTicks = Ticks::zero();
+    _filledRectanglesTicks = Ticks::zero();
+    _ellipsesTicks = Ticks::zero();
+    _filledEllipsesTicks = Ticks::zero();
 
     while (!stopSignal()) {
 
 		#ifdef TEST_ORIENTATION
-		_driver->setOrientation(DisplayOrientation((_orientation++) & 0b11));
+		_frameBuffer->setOrientation(DisplayBuffer::Orientation((_orientation++) & 0b11));
 		#endif
 	    _maxX = _graphics->getMaxX();
 	    _maxY = _graphics->getMaxY();
@@ -404,7 +320,7 @@ void DisplayService::onExecute() {
 		// Show results
 		//
 		drawBackground("Results");
-		rtos::Task::delay(eos::Time::fromMiliseconds(250));
+		Task::delay(Ticks::fromMiliseconds(250));
 
 		char lineBuffer[30];
 		int y = 35;
@@ -441,7 +357,7 @@ void DisplayService::onExecute() {
 		_text.setText(lineBuffer);
 		_graphics->paintText(Point(10, y), _text); y += 20;
 
-		rtos::Task::delay(eos::Time::fromMiliseconds(5000));
+		Task::delay(Ticks::fromMiliseconds(5000));
 		#endif
     }
 }
@@ -549,15 +465,15 @@ void DisplayService::testOpacity() {
 ///
 void DisplayService::testPoints() {
 
-	int ticks;
+	Ticks ticks;
 
 	drawBackground("Random points");
-	delayMS(250);
+	Task::delay(Ticks::fromMiliseconds(250));
 
     _graphics->setClip(8, 28, _maxX - 11, _maxY - 11);
 
     __srand(seed);
-    ticks = getTickCount();
+    ticks = Ticks::now();
     for (int i = 0; i < 50000; i++) {
         int x = __rand() % _maxX;
         int y = __rand() % _maxY;
@@ -565,8 +481,8 @@ void DisplayService::testPoints() {
         Color c = __getRandomColor();
         _graphics->drawPoint(x, y, c);
     }
-    _pointsTicks = getTickCount() - ticks;
-    delayMS(250);
+    _pointsTicks = Ticks::now() - ticks;
+    Task::delay(Ticks::fromMiliseconds(250));
 
     __srand(seed);
     for (int i = 0; i < 50000; i++) {
@@ -578,9 +494,7 @@ void DisplayService::testPoints() {
         _graphics->drawPoint(x, y, Colors::black);
     }
 
-    delayMS(250);
-
-    ticks = getTickCount();
+    Task::delay(Ticks::fromMiliseconds(250));
 }
 
 

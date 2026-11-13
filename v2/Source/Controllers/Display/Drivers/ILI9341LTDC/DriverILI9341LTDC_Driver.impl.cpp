@@ -47,9 +47,9 @@ void DisplayDriver_ILI9341LTDC::deinitialize() {
 void DisplayDriver_ILI9341LTDC::enable() {
 
 	_devLTDC->enable();
-	_devILI9341->writeCommand(Device_ILI9341::Command::CMD_SLEEP_OUT);
+	_devILI9341->writeCommand(Device_ILI9341::Command::SLEEP_OUT);
 	Task::delay(Ticks::fromMiliseconds(120));
-	_devILI9341->writeCommand(Device_ILI9341::Command::CMD_DISPLAY_ON);
+	_devILI9341->writeCommand(Device_ILI9341::Command::DISPLAY_ON);
 }
 
 
@@ -58,8 +58,8 @@ void DisplayDriver_ILI9341LTDC::enable() {
 ///
 void DisplayDriver_ILI9341LTDC::disable() {
 
-	_devILI9341->writeCommand(Device_ILI9341::Command::CMD_DISPLAY_OFF);
-	_devILI9341->writeCommand(Device_ILI9341::Command::CMD_ENTER_SLEEP_MODE);
+	_devILI9341->writeCommand(Device_ILI9341::Command::DISPLAY_OFF);
+	_devILI9341->writeCommand(Device_ILI9341::Command::ENTER_SLEEP_MODE);
 	Task::delay(Ticks::fromMiliseconds(120));
 	_devLTDC->disable();
 }

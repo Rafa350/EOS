@@ -1,5 +1,9 @@
 add_subdirectory("CLI")
-add_subdirectory("Display")
+
+if(EOS_USE_GRAPHICS)
+    add_subdirectory("Display")
+endif()
+
 add_subdirectory("EEPROM")
 add_subdirectory("Pin")
 add_subdirectory("Serial")

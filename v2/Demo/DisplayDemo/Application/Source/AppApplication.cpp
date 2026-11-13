@@ -6,20 +6,18 @@ module;
 export module App.Application;
 
 
+import App.Hardware;
 import App.Services.Display;
-import Eos.Hardware.GPIO;
 import Eos.Services.LedService;
 import Eos.System.Application.RTOS;
 import Eos.System.Core.Task;
 import Eos.System.Core.Ticks;
 
 
+using namespace eos;
+
+
 namespace app {
-
-    using PinLED = eos::hardware::gpio::PinG13;
-
-    constexpr auto pinLED = PinLED::pInst;
-
 
 	class MyApplication: public eos::RTOSApplication {
 		protected:
@@ -51,13 +49,6 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onExecute() {
 
-    #ifdef EXIST_LED1
-    LED1_Initialize();
-    #endif
-    #ifdef EXIST_LED2
-    LED2_Initialize();
-    #endif
-
     initializeLedService();
     initializeDisplayService();
 
@@ -73,7 +64,9 @@ void MyApplication::onExecute() {
 ///
 void MyApplication::initializeLedService() {
 
-    auto ledService = new LedService(pinLED1);
+    pinLed->initializeOutput();
+
+    auto ledService = new LedService(pinLED);
     addService(ledService);
 }
 

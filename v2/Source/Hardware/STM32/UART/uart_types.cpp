@@ -1,11 +1,4 @@
-module;
-
-
-#include "hardware.h"
-
-
 export module Eos.Hardware.UART._Types;
-
 
 import Eos.Hardware.UART._PlatformTraits;
 

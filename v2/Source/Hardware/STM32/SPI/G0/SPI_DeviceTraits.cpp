@@ -6,7 +6,6 @@ module;
 
 export module Eos.Hardware.SPI._DeviceTraits;
 
-
 import Eos.Hardware.SPI._Types;
 import Eos.Platform;
 import Eos.Types;

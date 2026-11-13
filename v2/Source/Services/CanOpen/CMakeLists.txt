@@ -4,6 +4,7 @@ target_sources(${TARGET_NAME}
         CanOpenDictionary.cpp
         CanOpenProtocol.cpp
         CanOpen_SDOServer.cpp
+        CanOpen_SDOClient.cpp
         CanOpen_Types.cpp
     PUBLIC
         CanOpen_IO.impl.cpp

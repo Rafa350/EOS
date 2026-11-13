@@ -82,7 +82,8 @@ void Visual::onRender(
 void Visual::onPropertyChanged(
 	void *property) {
 
-	if ((property == &_position) || (property == &_size))
+	if ((property == &_position) ||
+	    (property == &_size))
 		invalidate();
 
 	PropertyObserver::onPropertyChanged(property);

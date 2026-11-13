@@ -55,6 +55,8 @@ export namespace eos {
 		// Toggle flag
 		static constexpr UInt8 T_Pos        = 1;
 		static constexpr UInt8 T_Msk        = 0b1;
+		static constexpr UInt8 T_ZERO       = 0 << T_Pos;
+		static constexpr UInt8 T_ONE        = 1 << T_Pos;
 
 		// Size
 		static constexpr UInt8 SIZE_Pos     = 2;

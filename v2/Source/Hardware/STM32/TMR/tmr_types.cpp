@@ -1,6 +1,5 @@
 export module Eos.Hardware.TMR._Types;
 
-
 import Eos.Platform;
 
 

@@ -5,7 +5,6 @@ module;
 
 export module Eos.Hardware.Flash;
 
-
 import Eos.Bits;
 import Eos.Hardware.Regs;
 import Eos.Platform;

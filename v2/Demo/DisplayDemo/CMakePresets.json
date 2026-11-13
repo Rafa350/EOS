@@ -29,7 +29,8 @@
                 "EOS_USE_DEVICE_GPIO": "ON",
                 "EOS_USE_DEVICE_UART": "ON",
                 "EOS_USE_DEVICE_SPI": "ON",
-                "EOS_USE_DEVICE_LTDC": "ON"
+                "EOS_USE_DEVICE_LTDC": "ON",
+                "EOS_USE_DEVICE_DMA2D": "ON"
             }
         },
         {

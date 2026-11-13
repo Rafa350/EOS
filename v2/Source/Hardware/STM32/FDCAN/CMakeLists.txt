@@ -1,16 +1,14 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
-        fdcan.cpp
-        fdcan_class.cpp
-        fdcan_template.cpp
-        fdcan_device_traits.cpp
-        fdcan_platform_traits.cpp
-        fdcan_internal.cpp
-)
-
-target_sources(${TARGET_NAME}
+        FDCAN.cpp
+        FDCAN_Device.cpp
+        FDCAN_DeviceX.cpp
+        FDCAN_DeviceTraits.cpp
+        FDCAN_PlatformTraits.cpp
+        FDCAN_Types.cpp
+        FDCAN_Internal.cpp
     PUBLIC
-        fdcan_class_filter.impl.cpp
+        FDCAN_Device_Filter.impl.cpp
 )
 
 if(EOS_PLATFORM_NAME MATCHES "STM32G0")

@@ -1,10 +1,10 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
-        spi_types.cpp
-        spi.cpp
+        SPI.cpp
+        SPI_Types.cpp
         spi_class.cpp
         spi_template.cpp
-        spi_platform_traits.cpp
+        SPI_PlatformTraits.cpp
 )
 
 if(EOS_PLATFORM_NAME MATCHES "STM32F4")

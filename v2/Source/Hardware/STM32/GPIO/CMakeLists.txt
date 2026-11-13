@@ -7,9 +7,6 @@ target_sources(${TARGET_NAME}
         gpio_utils.cpp
         gpio_platform_traits.cpp
         gpio_pin_traits.cpp
-)
-
-target_sources(${TARGET_NAME}
     PUBLIC
         gpio.impl.cpp
 )

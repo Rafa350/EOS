@@ -4,3 +4,4 @@ target_sources(${TARGET_NAME}
 )
 
 add_subdirectory("GPIO")
+add_subdirectory("ISO808")

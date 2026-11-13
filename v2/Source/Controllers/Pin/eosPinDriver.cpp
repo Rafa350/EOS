@@ -1,9 +1,11 @@
 export module Eos.Controllers.Pin;
 
+import Eos.Types;
+
 
 export namespace eos {
 
-    class PinDriver {
+    class PinDriver: private NonCopyableClass {
         public:
             virtual ~PinDriver() = default;
 

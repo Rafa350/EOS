@@ -5,7 +5,6 @@ module;
 
 export module Eos.Hardware.SPI._PinTraits;
 
-
 import Eos.Hardware.GPIO;
 import Eos.Hardware.SPI._Types;
 import Eos.Platform;

@@ -1,11 +1,4 @@
-module;
-
-
-#include "eos.h"
-
-
 export module Eos.Services.Service;
-
 
 import Eos.Types;
 import Eos.System.Application;
@@ -25,7 +18,7 @@ export namespace eos {
 			struct ServiceParams {
 				const char *name;
 				Task::Priority priority;
-				uint32_t stackDepth;
+				UInt32 stackDepth;
 			};
 
     	private:

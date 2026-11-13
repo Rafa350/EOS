@@ -1,17 +1,17 @@
 target_sources(${TARGET_NAME}
     PUBLIC FILE_SET CXX_MODULES FILES
-        uart.cpp
-        uart_template.cpp
-        uart_platform_traits.cpp
-        uart_class.cpp
-        uart_types.cpp
+        UART.cpp
+        UART_Types.cpp
+        UART_PlatformTraits.cpp
+        UART_DeviceX.cpp
+        UART_Device.cpp
     PRIVATE
-        uart_class.impl.cpp
-        uart_class_setup.impl.cpp
-        uart_class_io.impl.cpp
-        uart_class_io_pol.impl.cpp
-        uart_class_io_irq.impl.cpp
-        uart_class_io_dma.impl.cpp
+        UART_Device.impl.cpp
+        UART_Device_Setup.impl.cpp
+        UART_Device_IO.impl.cpp
+        UART_Device_IO_Polling.impl.cpp
+        UART_Device_IO_IRQ.impl.cpp
+        UART_Device_IO_DMA.impl.cpp
 )
 
 if(EOS_PLATFORM_NAME MATCHES "STM32F4")

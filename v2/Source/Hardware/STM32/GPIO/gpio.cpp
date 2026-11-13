@@ -490,7 +490,7 @@ export namespace eos::hardware::gpio {
     typedef PinDeviceX<PortID::portC, PinID::pin12> PinC12;
     typedef PinDeviceX<PortID::portC, PinID::pin13> PinC13;
     typedef PinDeviceX<PortID::portC, PinID::pin14> PinC14;
-    typedef PinDeviceX<PortID::portC, PinID::pin15> PinC15;
+    using PinC15 = PinDeviceX<PortID::portC, PinID::pin15>;
 #endif
 #ifdef GPIOD_BASE
     typedef PinDeviceX<PortID::portD, PinID::pin0> PinD0;

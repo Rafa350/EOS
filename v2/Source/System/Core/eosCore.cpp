@@ -1,6 +1,5 @@
 export module Eos.System.Core;
 
-
 export import Eos.System.Core.HeapAllocator;
 export import Eos.System.Core.PoolAllocator;
 export import Eos.System.Core.Kernel;

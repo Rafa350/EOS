@@ -1,19 +1,15 @@
-module;
-
-
 export module Eos.System.Core.Ticks;
-
 
 import Eos.Math;
 import Eos.Types;
 import Eos.System.Core.Kernel;
 
 
-namespace eos {
+export namespace eos {
 
     /// @brief Clase que encapsula el temps en ticks del sistema.
     ///
-    export class Ticks final {
+    class Ticks final {
 
         private:
             static constexpr UInt32 _zeroValue = 0;
@@ -86,12 +82,15 @@ namespace eos {
 }
 
 
+using namespace eos;
+
+
 /// ---------------------------------------------------------------------------
 /// @brief    Crea l'objecte a partir del valor en ticks.
 /// @param    ms: El valor en ticks.
 /// @return   El resultat.
 ///
-constexpr eos::Ticks eos::Ticks::fromTicks(
+constexpr Ticks eos::Ticks::fromTicks(
     UInt32 ticks) {
 
     return Ticks {ticks};
@@ -103,7 +102,7 @@ constexpr eos::Ticks eos::Ticks::fromTicks(
 /// @param    ms: El valor en milisegons.
 /// @return   El resultat.
 ///
-constexpr eos::Ticks eos::Ticks::fromMiliseconds(
+constexpr Ticks eos::Ticks::fromMiliseconds(
     UInt32 ms) {
 
     return Ticks {ms * Kernel::tickFrequency / 1000};
@@ -114,7 +113,7 @@ constexpr eos::Ticks eos::Ticks::fromMiliseconds(
 /// @brief    Crea l'objecte a partir del valor de ticks actual.
 /// @return   El resultat.
 ///
-eos::Ticks eos::Ticks::now() {
+Ticks Ticks::now() {
 
     return Ticks {Kernel::getTickCount()};
 }
@@ -125,7 +124,7 @@ eos::Ticks eos::Ticks::now() {
 ///           cridar d'ins d'una ISR
 /// @return   El resultat.
 ///
-eos::Ticks eos::Ticks::nowISR() {
+Ticks Ticks::nowISR() {
 
     return Ticks {Kernel::getTickCountISR()};
 }
@@ -135,7 +134,7 @@ eos::Ticks eos::Ticks::nowISR() {
 /// @brief    Comprova si ha arribal al valor del contador de ticks actual.
 /// @return   True si ha expirat.
 ///
-bool eos::Ticks::hasExpiredNow() const {
+bool Ticks::hasExpiredNow() const {
 
     if (isZero())
         return true;

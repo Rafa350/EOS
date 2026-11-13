@@ -32,10 +32,13 @@ export namespace eos {
 }
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-eos::Application::Application() {
+Application::Application() {
 }
 
 
@@ -43,7 +46,7 @@ eos::Application::Application() {
 /// ----------------------------------------------------------------------
 /// \brief    Executa l'aplicacio.
 ///
-void eos::Application::run() {
+void Application::run() {
 
     onInitialize();
     onStart();
@@ -56,21 +59,21 @@ void eos::Application::run() {
 /// ----------------------------------------------------------------------
 /// \brief    Notificacio de la initcialitzacio de l'aplicacio.
 ///
-void eos::Application::onInitialize() {
+void Application::onInitialize() {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notificacio la finalitzacio de l'aplicacio.
 ///
-void eos::Application::onTerminate() {
+void Application::onTerminate() {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notifica l'inici de l'execucio de l'aplicacio
 ///
-void eos::Application::onStart() {
+void Application::onStart() {
 
 }
 
@@ -78,11 +81,11 @@ void eos::Application::onStart() {
 /// ----------------------------------------------------------------------
 /// \brief    Notifica el final de l'execucio de l'aplicacio.
 ///
-void eos::Application::onStop() {
+void Application::onStop() {
 
 }
 
 
-void eos::Application::onRun() {
+void Application::onRun() {
 
 }

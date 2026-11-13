@@ -45,7 +45,7 @@ DisplayBuffer_L4::DisplayBuffer_L4(
     UInt8 *buffer,
     Int16 bufferPitch):
 
-    FrameBuffer(frameWidth, frameHeight, orientation),
+    DisplayBuffer(frameWidth, frameHeight, orientation),
     _buffer {buffer},
     _bufferPitch {bufferPitch} {
 }

@@ -1,11 +1,9 @@
 module;
 
-
 #include "hardware.h"
 
 
 export module Eos.Hardware.DMA;
-
 
 export import :Types;
 export import :Templates;

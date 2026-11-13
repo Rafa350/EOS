@@ -15,6 +15,7 @@ import Eos.Math;
 import Eos.Result;
 import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
+import Eos.Services.CanOpen._SDOClient;
 import Eos.Services.Service;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
@@ -136,8 +137,10 @@ export namespace eos {
 		private:
 			DevCAN * const _devCAN;
 			DevCAN::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
+			SDOClient::TransmitFrameEvent<CanOpenService> _sdoClient_transmitFrameEvent;
 			Timer::Event<CanOpenService> _timer_notificationEvent;
 			Timer _timer;
+			SDOClient _sdoClient;
         	CanOpenDictionary * const _dictionary;
 			NodeID const _nodeId;
 			NodeState _nodeState;
@@ -150,6 +153,7 @@ export namespace eos {
 
 		private:
             void canDevice_notificationEventHandler(DevCAN *sender, DevCAN::NotificationEventArgs *args);
+			void sdoClient_transmitFrameEventHandler(SDOClient *sender, SDOClient::TransmitFrameEventArgs *args);
 			void timer_notificationEventHandler(Timer *timer, Timer::EventArgs *args);
 
             void configureCANDevice();
@@ -288,8 +292,10 @@ CanOpenService::CanOpenService(
 
     _devCAN {devCAN},
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
+	_sdoClient_transmitFrameEvent {*this, &CanOpenService::sdoClient_transmitFrameEventHandler},
 	_timer_notificationEvent {*this, &CanOpenService::timer_notificationEventHandler},
 	_timer {Timer::Mode::autoRestart, nullptr, _timer_notificationEvent},
+	_sdoClient {_sdoClient_transmitFrameEvent},
 	_dictionary {dictionary},
 	_nodeId {(UInt8)(nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
@@ -1428,4 +1434,16 @@ bool CanOpenService::isMapped(
 	}
 
 	return false;
+}
+
+
+void CanOpenService::sdoClient_transmitFrameEventHandler(
+	SDOClient *sender,
+	SDOClient::TransmitFrameEventArgs *args) {
+
+	postMessage_TransmitFrame(
+		args->cobId,
+        args->frame,
+        args->frameSize,
+        Ticks::fromMiliseconds(100));
 }

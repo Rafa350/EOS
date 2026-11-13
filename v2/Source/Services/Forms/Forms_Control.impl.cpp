@@ -50,7 +50,8 @@ void Control::onRender(
 void Control::onPropertyChanged(
     void *property) {
 
-	if ((property == &_backgroundColor) || (property == &_borderColor))
+	if ((property == &_backgroundColor) ||
+	    (property == &_borderColor))
 		invalidate();
 
 	else

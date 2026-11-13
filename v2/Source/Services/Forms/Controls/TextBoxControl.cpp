@@ -62,7 +62,9 @@ TextBoxControl::TextBoxControl(
 void TextBoxControl::onPropertyChanged(
 	void *property) {
 
-	if ((property == &_text))
+	if ((property == &_text) ||
+        (property == &_textColor) ||
+        (property == &_horizontalAlign))
 		invalidate();
 
     else

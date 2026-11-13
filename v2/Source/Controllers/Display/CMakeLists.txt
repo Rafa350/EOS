@@ -5,9 +5,5 @@ target_sources(${TARGET_NAME}
         Display_Buffer.impl.cpp
 )
 
-
-if(EOS_USE_DRIVER_SSD1306 OR
-   EOS_USE_DRIVER_RGBLTDC)
-    add_subdirectory("Drivers")
-    add_subdirectory("Buffers")
-endif()
+add_subdirectory("Drivers")
+add_subdirectory("Buffers")
