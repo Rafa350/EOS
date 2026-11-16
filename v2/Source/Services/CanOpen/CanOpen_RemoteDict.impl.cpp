@@ -22,33 +22,9 @@ bool CanOpenService::writeU8(
     UInt8 value,
     Ticks blockTime) {
 
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return false;
-
-    // Prepara el paquet SDO
-    //
-	UInt8 data[8];
-    data[0] = SDO0::CCS_DN |
-              SDO0::S_SIZE |
-              SDO0::E_EXP |
-              (((4 - sizeof(UInt8)) << SDO0::S_Pos) & SDO0::S_Msk);
-    data[1] = index & 0xFF;
-    data[2] = index >> 8;
-    data[3] = subIndex;
-    data[4] = value;
-    data[5] = 0;
-    data[6] = 0;
-    data[7] = 0;
-
-    // Posa en cua l'ordre de transmissio del paquet SDO
-    //
-	return postMessage_TransmitFrame(
-        CobID::makeSDO(nodeId),
-        data,
-        sizeof(data),
-        blockTime);
+    return
+        (nodeId != _nodeId) &&
+        (_sdoClient.download(nodeId, index, subIndex, &value, sizeof(value)) == StdErrorCode::ok);
 }
 
 
@@ -70,33 +46,10 @@ bool CanOpenService::writeU16(
     UInt16 value,
     Ticks blockTime) {
 
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return false;
-
-    // Prepara el paquet SDO
-    //
-	UInt8 data[8];
-    data[0] = SDO0::CCS_DN |
-              SDO0::S_SIZE |
-              SDO0::E_EXP |
-              (((4 - sizeof(UInt16)) << SDO0::S_Pos) & SDO0::S_Msk);
-    data[1] = index & 0xFF;
-    data[2] = index >> 8;
-    data[3] = subIndex;
-    data[4] = value;
-    data[5] = value >> 8;
-    data[6] = 0;
-    data[7] = 0;
-
-    // Posa en cua l'ordre de transmissio del paquet SDO
-    //
-	return postMessage_TransmitFrame(
-        CobID::makeSDO(nodeId),
-        data,
-        sizeof(data),
-        blockTime);
+    return
+        (nodeId != _nodeId) &&
+        (_sdoClient.download(nodeId, index, subIndex,
+            reinterpret_cast<const UInt8*>( &value), sizeof(value)) == StdErrorCode::ok);
 }
 
 
@@ -118,33 +71,10 @@ bool CanOpenService::writeU32(
     UInt32 value,
     Ticks blockTime) {
 
-	// Comprova que de veritat sigui un node remot
-	//
-	if (nodeId == _nodeId)
-		return false;
-
-    // Prepara el paquet SDO
-    //
-	UInt8 data[8];
-    data[0] = SDO0::CCS_DN |
-              SDO0::S_SIZE |
-              SDO0::E_EXP |
-              (((4 - sizeof(UInt32)) << SDO0::S_Pos) & SDO0::S_Msk);
-    data[1] = index & 0xFF;
-    data[2] = index >> 8;
-    data[3] = subIndex;
-    data[4] = value;
-    data[5] = value >> 8;
-    data[6] = value >> 16;
-    data[7] = value >> 24;
-
-    // Posa en cua l'ordre de transmissio del paquet SDO
-    //
-	return postMessage_TransmitFrame(
-        CobID::makeSDO(nodeId),
-        data,
-        sizeof(data),
-        blockTime);
+    return
+        (nodeId != _nodeId) &&
+        (_sdoClient.download(nodeId, index, subIndex,
+            reinterpret_cast<const UInt8*>(&value), sizeof(value)) == StdErrorCode::ok);
 }
 
 

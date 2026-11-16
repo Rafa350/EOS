@@ -29,10 +29,10 @@ export namespace eos {
 		// Response
 		static constexpr UInt8 SCS_Pos      = 5;
 		static constexpr UInt8 SCS_Msk      = 0b111 << SCS_Pos;
-		static constexpr UInt8 SCS_ULSEG    = 0 << SCS_Pos;
-		static constexpr UInt8 SCS_DLSEG    = 1 << SCS_Pos;
-		static constexpr UInt8 SCS_UL       = 2 << SCS_Pos;
-		static constexpr UInt8 SCS_DL       = 3 << SCS_Pos;
+		static constexpr UInt8 SCS_UPSEG    = 0 << SCS_Pos;
+		static constexpr UInt8 SCS_DNSEG    = 1 << SCS_Pos;
+		static constexpr UInt8 SCS_UP       = 2 << SCS_Pos;
+		static constexpr UInt8 SCS_DN       = 3 << SCS_Pos;
 
 		// Expedited flag
 		static constexpr UInt8 E_Pos        = 1;

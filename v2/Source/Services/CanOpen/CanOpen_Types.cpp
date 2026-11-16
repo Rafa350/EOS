@@ -47,6 +47,7 @@ export namespace eos {
 
 			inline bool isNMT() const { return _value == baseNMT; }
 			inline bool isSDO() const { return (_value & _cobIdMask) == baseSDO; }
+			inline bool isSDOr() const { return (_value & _cobIdMask) == baseSDOr; }
 			inline bool isSYNC() const { return _value == baseSYNC; }
 			inline bool isTIME() const { return _value == baseTIME; }
 			inline bool isHeartbeat() const { return (_value & _cobIdMask) == baseHeartbeat; }
@@ -56,6 +57,7 @@ export namespace eos {
 
 			static constexpr CobID makeNMT() { return CobID(baseNMT); }
 			static constexpr CobID makeSDO(NodeID nodeId) { return CobID(baseSDO, nodeId); }
+			static constexpr CobID makeSDOr(NodeID nodeId) { return CobID(baseSDOr, nodeId); }
 			static constexpr CobID makeSYNC() { return CobID(baseSYNC); }
 			static constexpr CobID makeTIME() { return CobID(baseTIME); }
 			static constexpr CobID makeHeartbeat(NodeID nodeId) { return CobID(baseHeartbeat, nodeId); }

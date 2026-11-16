@@ -16,6 +16,8 @@ import Eos.Result;
 import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
 import Eos.Services.CanOpen._SDOClient;
+import Eos.Services.CanOpen._SDOServer;
+import Eos.Services.CanOpen._NMTMaster;
 import Eos.Services.Service;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
@@ -31,9 +33,6 @@ using namespace eos::hardware::fdcan;
 export namespace eos {
 
 	class CanOpenService final: public Service {
-		private:
-			using DevCAN = CANDevice;
-
 		public:
         	enum class NodeState {
         		initializing,
@@ -98,6 +97,7 @@ export namespace eos {
 		private:
 			static constexpr UInt32 _messageQueueSize = 15;
 			static constexpr UInt32 _canFrameSize = 8;
+			static constexpr Ticks _messageQueueBlockTime = Ticks::fromMiliseconds(100);
 
 		private:
 			enum class MessageID {
@@ -135,12 +135,15 @@ export namespace eos {
         	using MessageQueue = Queue<Message>;
 
 		private:
-			DevCAN * const _devCAN;
-			DevCAN::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
+			CANDevice * const _devCAN;
+			CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			SDOClient::TransmitFrameEvent<CanOpenService> _sdoClient_transmitFrameEvent;
+			SDOServer::TransmitFrameEvent<CanOpenService> _sdoServer_transmitFrameEvent;
+			NMTMaster::TransmitFrameEvent<CanOpenService> _nmtMaster_transmitFrameEvent;
 			Timer::Event<CanOpenService> _timer_notificationEvent;
 			Timer _timer;
 			SDOClient _sdoClient;
+			NMTMaster _nmtMaster;
         	CanOpenDictionary * const _dictionary;
 			NodeID const _nodeId;
 			NodeState _nodeState;
@@ -152,8 +155,10 @@ export namespace eos {
         	HeartbeatReceivedEventRaiser _heartbeatReceivedEventRaiser;
 
 		private:
-            void canDevice_notificationEventHandler(DevCAN *sender, DevCAN::NotificationEventArgs *args);
+            void canDevice_notificationEventHandler(CANDevice *sender, CANDevice::NotificationEventArgs *args);
 			void sdoClient_transmitFrameEventHandler(SDOClient *sender, SDOClient::TransmitFrameEventArgs *args);
+			void sdoServer_transmitFrameEventHandler(SDOServer *sender, SDOServer::TransmitFrameEventArgs *args);
+			void nmtMaster_transmitFrameEventHandler(NMTMaster *sender, NMTMaster::TransmitFrameEventArgs *args);
 			void timer_notificationEventHandler(Timer *timer, Timer::EventArgs *args);
 
             void configureCANDevice();
@@ -203,7 +208,7 @@ export namespace eos {
             void changeNodeState(NodeState newNodeState);
 
 		public:
-			CanOpenService(DevCAN *devCAN, NodeID nodeId, CanOpenDictionary *dictionary);
+			CanOpenService(CANDevice *devCAN, NodeID nodeId, CanOpenDictionary *dictionary);
 
 			StdResult setNodeState(NodeState nodeState, Ticks blockTime);
 			NodeState getNodeState() const;
@@ -286,16 +291,19 @@ namespace eos {
 /// @param    dictionary: El diccionari.
 ///
 CanOpenService::CanOpenService(
-	DevCAN *devCAN,
+	CANDevice *devCAN,
 	NodeID nodeId,
 	CanOpenDictionary *dictionary) :
 
     _devCAN {devCAN},
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_sdoClient_transmitFrameEvent {*this, &CanOpenService::sdoClient_transmitFrameEventHandler},
+	_sdoServer_transmitFrameEvent {*this, &CanOpenService::sdoServer_transmitFrameEventHandler},
+	_nmtMaster_transmitFrameEvent {*this, &CanOpenService::nmtMaster_transmitFrameEventHandler},
 	_timer_notificationEvent {*this, &CanOpenService::timer_notificationEventHandler},
 	_timer {Timer::Mode::autoRestart, nullptr, _timer_notificationEvent},
 	_sdoClient {_sdoClient_transmitFrameEvent},
+	_nmtMaster {_nmtMaster_transmitFrameEvent},
 	_dictionary {dictionary},
 	_nodeId {(UInt8)(nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
@@ -744,32 +752,51 @@ void CanOpenService::processMessage_FrameReceived(
 
 	auto cobId = CobID::make(args.cobid);
 
-	if (cobId.isNMT())
+	if (cobId.isNMT()) {
 		processMessage_FrameReceived_NMT(args);
+		return;
+	}
 
-	else if (cobId.isSYNC())
+	if (cobId.isSYNC()) {
 		processMessage_FrameReceived_SYNC(args);
+		return;
+	}
 
-	else if (cobId.isTIME())
+	if (cobId.isTIME()) {
 		processMessage_FrameReceived_TIME(args);
+		return;
+	}
 
-	else if (cobId.isHeartbeat())
+	if (cobId.isHeartbeat()) {
 		processMessage_FrameReceived_Heartbeat(args);
+		return;
+	}
 
-	else if (cobId.isSDO())
-		processMessage_FrameReceived_SDO(args);
-
-	else if ((cobId.base() == CobID::baseRPDO1) ||
-		     (cobId.base() == CobID::baseRPDO2) ||
-		     (cobId.base() == CobID::baseRPDO3) ||
-		     (cobId.base() == CobID::baseRPDO4))
+	if ((cobId.base() == CobID::baseRPDO1) ||
+	    (cobId.base() == CobID::baseRPDO2) ||
+	    (cobId.base() == CobID::baseRPDO3) ||
+	    (cobId.base() == CobID::baseRPDO4)) {
 		processMessage_FrameReceived_RPDO(args);
+		return;
+	}
 
-	else if ((cobId.base() == CobID::baseTPDO1) ||
-		     (cobId.base() == CobID::baseTPDO2) ||
-		     (cobId.base() == CobID::baseTPDO3) ||
-		     (cobId.base() == CobID::baseTPDO4))
+	if ((cobId.base() == CobID::baseTPDO1) ||
+	    (cobId.base() == CobID::baseTPDO2) ||
+	    (cobId.base() == CobID::baseTPDO3) ||
+	    (cobId.base() == CobID::baseTPDO4)) {
 	    processMessage_FrameReceived_TPDO(args);
+		return;
+	}
+
+	if (cobId.isSDO()) {
+		processMessage_FrameReceived_SDO(args);
+		return;
+	}
+
+	if (cobId.isSDOr()) {
+		_sdoClient.processServerResponse(args.data, sizeof(args.data));
+		return;
+	}
 }
 
 
@@ -911,7 +938,7 @@ void CanOpenService::processMessage_FrameReceived_SDO(
 		}
 
 		if (errorCode == SdoError::none) {
-			response[0] = SDO0::SCS_DL;
+			response[0] = SDO0::SCS_DN;
 			response[4] = 0;
 			response[5] = 0;
 			response[6] = 0;
@@ -988,13 +1015,13 @@ void CanOpenService::processMessage_FrameReceived_SDO(
 
 				// Expedited
 				//
-				response[0] = SDO0::SCS_UL | SDO0::E_EXP | SDO0::S_SIZE | (((4 - length) << SDO0::SIZE_Pos) & SDO0::SIZE_Msk);
+				response[0] = SDO0::SCS_UP | SDO0::E_EXP | SDO0::S_SIZE | (((4 - length) << SDO0::SIZE_Pos) & SDO0::SIZE_Msk);
 			}
 			else {
 
 				// Segmented
 				//
-				response[0] = SDO0::SCS_UL | SDO0::E_SEG | SDO0::S_SIZE;
+				response[0] = SDO0::SCS_UP | SDO0::E_SEG | SDO0::S_SIZE;
 				response[4] = length & 0xFF;
 				response[5] = (length >> 8) & 0xFF;
 				response[6] = (length >> 16) & 0xFF;
@@ -1441,9 +1468,21 @@ void CanOpenService::sdoClient_transmitFrameEventHandler(
 	SDOClient *sender,
 	SDOClient::TransmitFrameEventArgs *args) {
 
-	postMessage_TransmitFrame(
-		args->cobId,
-        args->frame,
-        args->frameSize,
-        Ticks::fromMiliseconds(100));
+	postMessage_TransmitFrame(args->cobId, args->frame, args->frameSize, _messageQueueBlockTime);
+}
+
+
+void CanOpenService::sdoServer_transmitFrameEventHandler(
+	SDOServer *sender,
+	SDOServer::TransmitFrameEventArgs *args) {
+
+	postMessage_TransmitFrame(args->cobId, args->frame, args->frameSize, _messageQueueBlockTime);
+}
+
+
+void CanOpenService::nmtMaster_transmitFrameEventHandler(
+	NMTMaster *sender,
+	NMTMaster::TransmitFrameEventArgs *args) {
+
+	postMessage_TransmitFrame(args->cobId, args->frame, args->frameSize, _messageQueueBlockTime);
 }

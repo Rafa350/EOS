@@ -1,6 +1,5 @@
 module Eos.Services.MsgDispatcher;
 
-
 import Eos.System.Core.Queue;
 import Eos.System.Core.Ticks;
 import Eos.Types;

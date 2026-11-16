@@ -62,6 +62,14 @@ void CanOpenService::configureCANFilters() {
 		_devCAN->setFilter(&filter, filterIndex++);
 	}
 
+	// Accepta els missatges SDO que suporta aquest node
+	// Si existeix l'entrada 1280:1, aleshores hi ha client SDO en el node,
+	// en cas contrari no cal definir els filtres.
+	//
+	filter.id1 = CobID::baseSDOr;
+	filter.id2 = 0x780u;
+	_devCAN->setFilter(&filter, filterIndex++);
+
 	// Accepta els missatges NMT
 	//
 	filter.id1 = CobID::baseNMT;

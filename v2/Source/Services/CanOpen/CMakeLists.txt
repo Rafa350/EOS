@@ -5,6 +5,8 @@ target_sources(${TARGET_NAME}
         CanOpenProtocol.cpp
         CanOpen_SDOServer.cpp
         CanOpen_SDOClient.cpp
+        CanOpen_NMTMaster.cpp
+        CanOpen_HBProducer.cpp
         CanOpen_Types.cpp
     PUBLIC
         CanOpen_IO.impl.cpp

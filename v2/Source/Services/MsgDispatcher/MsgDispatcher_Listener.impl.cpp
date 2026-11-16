@@ -1,6 +1,5 @@
 module Eos.Services.MsgDispatcher;
 
-
 import Eos.Types;
 
 

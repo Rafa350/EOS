@@ -1,6 +1,5 @@
 export module Eos.Services.MsgDispatcher;
 
-
 import Eos.Callbacks;
 import Eos.Services.Service;
 import Eos.System.Collections.IntrusiveForwardList;
