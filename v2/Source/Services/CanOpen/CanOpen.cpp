@@ -795,7 +795,7 @@ void CanOpenService::processMessage_FrameReceived(
 	}
 
 	if (cobId.isSDOr()) {
-		_sdoClient.processServerResponse(args.data, sizeof(args.data));
+		_sdoClient.processServerResponse(reinterpret_cast<const SdoFrame*>(&args.data));
 		return;
 	}
 }

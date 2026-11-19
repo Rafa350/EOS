@@ -37,6 +37,8 @@ export namespace eos {
 			constexpr explicit CobID(UInt16 base, NodeID nodeId): _value {(UInt16)((base & _cobIdMask) | (nodeId & _nodeIdMask))} {}
 
 		public:
+            CobID(): _value {0} {};
+
 			inline operator UInt16() const { return value(); }
 			inline bool operator == (CobID other) const { return _value == other._value; }
 			inline bool operator != (CobID other) const { return _value != other._value; }

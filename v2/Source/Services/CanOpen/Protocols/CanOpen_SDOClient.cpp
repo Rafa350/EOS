@@ -19,7 +19,9 @@ export namespace eos {
     enum class SDOClientErrorCode {
         ok,
         error,
-        errorParameter
+        errorSDO,
+        errorParameter,
+        errorState
     };
     using SDOClientResult = ComplexResult<SdoError, SDOClientErrorCode, SDOClientErrorCode::ok>;
 
@@ -46,36 +48,40 @@ export namespace eos {
                 downloadBlock
             };
 
+            struct TxContext {
+                CobID cobId;
+                UInt16 index;
+                UInt8 subIndex;
+                bool toggle;
+                const UInt8 *ptr;
+                const UInt8 *ptrEnd;
+            };
+
         private:
             State _state;
             TransmitFrameEventRaiser _transmitFrameEventRaiser;
-
-            NodeID _serverId;
-            bool _toggle;
-            const UInt8 *_ptr;
-            const UInt8 *_ptrEnd;
+            TxContext _txContext;
 
         private:
-            void transmitFrame(CobID cobId, const UInt8 *frame, UInt32 frameSize);
+            void transmitFrame(CobID cobId, const SdoFrame *frame);
 
-            SDOClientResult downloadExpeditedResponse(const SdoDownloadInitiateResponse *frame);
-            void downloadNextSegmentResponse();
-            void downloadNextBlockResponse();
-            void uploadExpeditedResponse();
-            void uploadNextSegmentResponse();
-            void uploadNextBlockResponse();
+            SDOClientResult downloadExpeditedResponse(const SdoDownloadInitiateResponse *response);
+            SDOClientResult downloadSegmentResponse(const SdoDownloadSegmentResponse *response);
+
+            //void uploadExpeditedResponse(const SdoUploadInitiateResponse *response);
+            //void uploadSegmentResponse(const SdoUploadSegmentResponse *response);
 
         public:
             SDOClient(ITransmitFrameEvent &event);
 
             template <typename T_>
             requires (sizeof(T_) >= 1 && sizeof(T_) <= 4)
-                StdResult download(NodeID serverId, UInt16 index, UInt8 subIndex, T_ data);
-            StdResult download(NodeID serverId, UInt16 index, UInt8 subIndex, const UInt8 *data, UInt32 dataLength);
-            StdResult upload(NodeID serverId, UInt16 index, UInt8 subIndex, const UInt8 *data, UInt32 dataLength);
+                StdResult download(CobID cobId, UInt16 index, UInt8 subIndex, T_ data);
+            StdResult download(CobID cobId, UInt16 index, UInt8 subIndex, const UInt8 *data, UInt32 dataLength);
+            StdResult upload(CobID cobId, UInt16 index, UInt8 subIndex, const UInt8 *data, UInt32 dataLength);
             StdResult abort(SdoError errorCode);
 
-            SDOClientResult processServerResponse(const UInt8 *frame, UInt32 frameSize);
+            SDOClientResult processServerResponse(const SdoFrame *response);
     };
 }
 
@@ -101,7 +107,7 @@ SDOClient::SDOClient(
 ///           Aquesta versio genera una trasmisio expeditiva i serveis per
 ///           tot tipus de valors enters.
 /// @tparam   T_: Tipus de dades (Entre 1 i 4 bytes de longitut suportada)
-/// @param    serverId: Id del servidor SDO
+/// @param    cobId: El COBID del servidor SDO
 /// @param    index: L'index de l'entrada del disccionari
 /// @param    subIndex: El subindex
 /// @param    data: Les dades a transmetre.
@@ -110,7 +116,7 @@ SDOClient::SDOClient(
 template <typename T_>
 requires (sizeof(T_) >= 1 && sizeof(T_) <= 4)
 StdResult SDOClient::download(
-    NodeID serverId,
+    CobID cobId,
     UInt16 index,
     UInt8 subIndex,
     T_ data) {
@@ -118,19 +124,19 @@ StdResult SDOClient::download(
     if (_state != State::idle)
         return StdErrorCode::busy;
 
-    SdoDownloadInitiateRequest frame;
-    frame.ccs         = SdoCCS::initiateDownload;
-    frame.withSize    = true;
-    frame.expedited   = true;
-    frame.unusedBytes = 4 - sizeof(T_);
-    frame.index       = index;
-    frame.subIndex    = subIndex;
-    std::memcpy(frame.data, &data, sizeof(data));
+    SdoDownloadInitiateRequest request;
+    std::memset(&request, 0, sizeof(request));
+    request.ccs         = SdoCCS::initiateDownload;
+    request.withSize    = true;
+    request.expedited   = true;
+    request.unusedBytes = 4 - sizeof(T_);
+    request.index       = index;
+    request.subIndex    = subIndex;
+    std::memcpy(request.data, &data, sizeof(data));
 
     transmitFrame(
-        CobID::makeSDO(serverId),
-        reinterpret_cast<const UInt8*>(&frame),
-        sizeof(frame));
+        cobId,
+        reinterpret_cast<const SdoFrame*>(&request));
 
     _state = State::downloadExpedited;
 
@@ -140,7 +146,7 @@ StdResult SDOClient::download(
 
 /// ---------------------------------------------------------------------------
 /// @brief    Transmissio de dades cap al servidor SDO.
-/// @param    serverId: El identificador del node del servvidor.
+/// @param    cobId: El COBID del servidos SDO.
 /// @param    index: Index de la entrada del diccionari.
 /// @param    subIndex: Subindex de l'entrada del diccionari.
 /// @param    data: Dades a transmetre.
@@ -148,7 +154,7 @@ StdResult SDOClient::download(
 /// @return   El resultat de l'operacio.
 ///
 StdResult SDOClient::download(
-    NodeID serverId,
+    CobID cobId,
     UInt16 index,
     UInt8 subIndex,
     const UInt8 *data,
@@ -160,27 +166,24 @@ StdResult SDOClient::download(
     if ((data == nullptr) || (dataSize == 0))
         return StdErrorCode::errorParameter;
 
-    _serverId = serverId;
-    _ptr = data;
-    _ptrEnd = data + (dataSize * sizeof(UInt8));
+    _txContext.cobId = cobId;
+    _txContext.ptr = data;
+    _txContext.ptrEnd = data + (dataSize * sizeof(UInt8));
 
     // Si la longitut esta entre 0 i 4, utilitza la transmissio expeditiva
     //
     if (dataSize <= 4) {
 
-        SdoDownloadInitiateRequest frame;
-        std::memset(&frame, 0, sizeof(frame));
-        frame.withSize    = true;
-        frame.expedited   = true;
-        frame.unusedBytes = 4 - dataSize;
-        frame.index       = index;
-        frame.subIndex    = subIndex;
-        std::memcpy(frame.data, data, dataSize);
+        SdoDownloadInitiateRequest request;
+        std::memset(&request, 0, sizeof(request));
+        request.withSize    = true;
+        request.expedited   = true;
+        request.unusedBytes = 4 - dataSize;
+        request.index       = index;
+        request.subIndex    = subIndex;
+        std::memcpy(request.data, data, dataSize);
 
-        transmitFrame(
-            CobID::makeSDO(serverId),
-            reinterpret_cast<const UInt8*>(&frame),
-            sizeof(frame));
+        transmitFrame(cobId, reinterpret_cast<const SdoFrame*>(&request));
 
         _state = State::downloadExpedited;
     }
@@ -188,40 +191,37 @@ StdResult SDOClient::download(
     // En cas contrari utilitza la transmissio segmentada
     //
     else {
-        SdoDownloadInitiateRequest frame;
-        std::memset(&frame, 0, sizeof(frame));
-        frame.withSize    = true;
-        frame.expedited   = false;
-        frame.unusedBytes = 0;
-        frame.index       = index;
-        frame.subIndex    = subIndex;
-        std::memcpy(frame.data, &dataSize, sizeof(frame.data));
+        SdoDownloadInitiateRequest request;
+        std::memset(&request, 0, sizeof(request));
+        request.withSize    = true;
+        request.expedited   = false;
+        request.unusedBytes = 0;
+        request.index       = index;
+        request.subIndex    = subIndex;
+        std::memcpy(request.data, &dataSize, sizeof(request.data));
 
-        transmitFrame(
-            CobID::makeSDO(serverId),
-            reinterpret_cast<const UInt8*>(&frame),
-            sizeof(frame));
+        transmitFrame(cobId, reinterpret_cast<const SdoFrame*>(&request));
 
         /*
-        UInt8 frame[8];
-        frame[0] =
+        UInt8 request[8];
+        request[0] =
             SDO0::CCS_DN |
             SDO0::S_SIZE |
             SDO0::E_SEG;
 
-        frame[1] = index & 0xFF;
-        frame[2] = index >> 8;
-        frame[3] = subIndex;
+        request[1] = index & 0xFF;
+        request[2] = index >> 8;
+        request[3] = subIndex;
 
-        frame[4] = (dataSize >> 0) & 0xFF;
-        frame[5] = (dataSize >> 8) & 0xFF;
-        frame[6] = (dataSize >> 16) & 0xFF;
-        frame[7] = (dataSize >> 24) & 0xFF;
+        request[4] = (dataSize >> 0) & 0xFF;
+        request[5] = (dataSize >> 8) & 0xFF;
+        request[6] = (dataSize >> 16) & 0xFF;
+        request[7] = (dataSize >> 24) & 0xFF;
 
-        transmitFrame(CobID::makeSDO(serverId), frame, sizeof(frame));
+        transmitFrame(CobID::makeSDO(serverId), request, sizeof(request));
         */
 
-        _toggle = false;
+        _txContext.toggle = false;
         _state = State::downloadSegment;
     }
 
@@ -240,17 +240,14 @@ StdResult SDOClient::abort(
     if (_state == State::idle)
         return StdErrorCode::errorState;
 
-    SdoAbort frame;
-    std::memset(&frame, 0, sizeof(frame));
-    frame.cs        = SdoCS::abort;
-    frame.index     = _index;
-    frame.subIndex  = _subIndex
-    frame.errorCode = errorCode;
+    SdoAbortRequest request;
+    std::memset(&request, 0, sizeof(request));
+    request.cs        = SdoCS::abort;
+    request.index     = _txContext.index;
+    request.subIndex  = _txContext.subIndex;
+    request.errorCode = errorCode;
 
-    transmitFrame(
-        CobID::makeSDO(serverId),
-        reinterpret_cast<const UInt8*>(&frame),
-        sizeof(frame));
+    transmitFrame(_txContext.cobId, reinterpret_cast<const SdoFrame*>(&request));
 
     _state = State::idle;
 
@@ -260,135 +257,128 @@ StdResult SDOClient::abort(
 
 /// ---------------------------------------------------------------------------
 /// @brief    Procesa les respostes del servidor SDO
-/// @param    frame: La resposta.
-/// @param    frameSize: Tamany de lka resposta en bytes;
+/// @param    response: La resposta.
 /// @return   El resultat de l'operacio.
 ///
 SDOClientResult SDOClient::processServerResponse(
-    const UInt8 *frame,
-    UInt32 frameSize) {
-
-    if (frameSize != sizeof(SdoFrame))
-        return SDOClientErrorCode::errorParameter;
+    const SdoFrame *response) {
 
     switch (_state) {
         case State::downloadExpedited:
-            return downloadExpeditedResponse(reinterpret_cast<const SdoDownloadInitiateResponse*>(frame));
+            return downloadExpeditedResponse(reinterpret_cast<const SdoDownloadInitiateResponse*>(response));
 
         case State::downloadSegment:
-            downloadNextSegmentResponse();
-            break;
-
+            return downloadSegmentResponse(reinterpret_cast<const SdoDownloadSegmentResponse*>(response));
+/*
         case State::downloadBlock:
             downloadNextBlockResponse();
-            break;
+            return SDOClientErrorCode::error;
 
         case State::uploadExpedited:
             uploadExpeditedResponse();
-            break;
+            return SDOClientErrorCode::error;
 
         case State::uploadSegment:
-            uploadNextSegmentResponse();
-            break;
+            uploadSegmentResponse();
+            return SDOClientErrorCode::error;
 
         case State::uploadBlock:
-            uploadNextBlockResponse();
-            break;
+            uploadBlockResponse();
+            return SDOClientErrorCode::error;
+*/
+        default:
+            return SDOClientErrorCode::errorState;
     }
-
-    return SDOClientErrorCode::error;
 }
 
 
 /// ---------------------------------------------------------------------------
 /// @brief    Procesa la resposta
-/// @param    frame: La trama de la resposta.
+/// @param    request: La trama de la resposta.
 /// @return   El resultat de l'operacio.
 ///
 SDOClientResult SDOClient::downloadExpeditedResponse(
-    const SdoDownloadInitiateResponse *frame) {
+    const SdoDownloadInitiateResponse *request) {
 
-    _state = State::idle;
-
-    switch (frame->scs) {
-        case SdoSCS::initiateDownload:
+    switch (request->scs) {
+        case SdoSCS::initiateDownload: {
+            _state = State::idle;
             return SDOClientErrorCode::ok;
+        }
 
-        case SdoSCS::abort:
-            return {SDOClientErrorCode::error, (SdoError) *((UInt32*)&frame->reserved)};
+        case SdoSCS::abort: {
+            _state = State::idle;
+            return {SDOClientErrorCode::errorSDO, (SdoError) *((UInt32*)&request->reserved)};
+        }
+
+        default: {
+            _state = State::idle;
+            return {SDOClientErrorCode::errorSDO, SdoError::commandSpecifierNotValid};
+        }
     }
-
-    return {SDOClientErrorCode::error, SdoError::commandSpecifierNotValid};
 }
 
 
 /// ---------------------------------------------------------------------------
 /// @brief    Transmet el seguewnt segment.
 ///
-void SDOClient::downloadNextSegmentResponse() {
+SDOClientResult SDOClient::downloadSegmentResponse(
+    const SdoDownloadSegmentResponse *response) {
 
-    UInt32 dataSize = _ptrEnd - _ptr;
+    UInt32 dataSize = _txContext.ptrEnd - _txContext.ptr;
     if (dataSize > 0) {
 
-        UInt8 frame[8];
-        frame[0] =
+        UInt8 request[8];
+        request[0] =
             SDO0::CCS_DNSEG |
-            (_toggle ? SDO0::T_ONE : SDO0::T_ZERO);
+            (_txContext.toggle ? SDO0::T_ONE : SDO0::T_ZERO);
 
-        frame[1] = _ptr != _ptrEnd ? *_ptr++ : 0;
-        frame[2] = _ptr != _ptrEnd ? *_ptr++ : 0;
-        frame[3] = _ptr != _ptrEnd ? *_ptr++ : 0;
-        frame[4] = _ptr != _ptrEnd ? *_ptr++ : 0;
-        frame[5] = _ptr != _ptrEnd ? *_ptr++ : 0;
-        frame[6] = _ptr != _ptrEnd ? *_ptr++ : 0;
-        frame[7] = _ptr != _ptrEnd ? *_ptr++ : 0;
+        request[1] = _txContext.ptr != _txContext.ptrEnd ? *_txContext.ptr++ : 0;
+        request[2] = _txContext.ptr != _txContext.ptrEnd ? *_txContext.ptr++ : 0;
+        request[3] = _txContext.ptr != _txContext.ptrEnd ? *_txContext.ptr++ : 0;
+        request[4] = _txContext.ptr != _txContext.ptrEnd ? *_txContext.ptr++ : 0;
+        request[5] = _txContext.ptr != _txContext.ptrEnd ? *_txContext.ptr++ : 0;
+        request[6] = _txContext.ptr != _txContext.ptrEnd ? *_txContext.ptr++ : 0;
+        request[7] = _txContext.ptr != _txContext.ptrEnd ? *_txContext.ptr++ : 0;
 
-        _toggle = !_toggle;
+        _txContext.toggle = !_txContext.toggle;
 
-        transmitFrame(CobID::makeSDO(_serverId), frame, sizeof(frame));
+        transmitFrame(_txContext.cobId, reinterpret_cast<const SdoFrame*>(&request));
 
         if (dataSize < 8)
             _state = State::idle;
     }
+
+    return SDOClientErrorCode::error;
 }
 
 
-void SDOClient::uploadExpeditedResponse() {
+/*void SDOClient::uploadExpeditedResponse() {
 
     _state = State::idle;
 }
 
 
-void SDOClient::downloadNextBlockResponse() {
+
+void SDOClient::uploadSegmentResponse() {
 
 }
-
-
-void SDOClient::uploadNextSegmentResponse() {
-
-}
-
-
-void SDOClient::uploadNextBlockResponse() {
-
-}
+*/
 
 
 /// ---------------------------------------------------------------------------
 /// @brief    Transmet una trama.
 /// @param    cobId: El COBID.
-/// @param    frame: Les dades.
-/// @param    frameSize: El tamany de les dades en bytes.
+/// @param    frame: Les trama a transmetre.
 ///
 void SDOClient::transmitFrame(
     CobID cobId,
-    const UInt8 *frame,
-    UInt32 frameSize) {
+    const SdoFrame* frame) {
 
     TransmitFrameEventArgs args = {
         .cobId {cobId},
-        .frame {frame},
-        .frameSize {frameSize}
+        .frame {reinterpret_cast<const UInt8*>(frame)},
+        .frameSize {sizeof(SdoFrame)}
     };
     _transmitFrameEventRaiser(this, &args);
 }

@@ -15,7 +15,7 @@ export namespace eos {
 		dataTypeDoesNotMatch           = 0x0607010
 	};
 
-	enum class SdoCCS: UInt8 {
+	enum class SdoCCS: UInt8 { // Client command specification
 		downloadSegment  = 0,
 		initiateDownload = 1,
 		initiateUpload   = 2,
@@ -23,7 +23,7 @@ export namespace eos {
 		abort            = 4
 	};
 
-	enum class SdoSCS: UInt8 {
+	enum class SdoSCS: UInt8 { // Server command specitifacion
 		uploadSegment    = 0,
 		downloadSegment  = 1,
 		initiateUpload   = 2,
@@ -31,11 +31,11 @@ export namespace eos {
 		abort            = 4
 	};
 
-	enum class SdoCS: UInt8 {
+	enum class SdoCS: UInt8 { // Client/Server command specification
 		abort = 4
 	};
 
-	// Client -> Server: Peticio d'escriptura (Download Request)
+	// Client --> Server: Peticio 'SDO Download Initiate'
 	//
 	struct  __attribute__((packed)) SdoDownloadInitiateRequest {
 		bool   withSize    : 1; // True si incorpora el tamany
@@ -48,7 +48,7 @@ export namespace eos {
 		UInt8  data[4];         // Dades
 	};
 
-	// Server -> Client: Confirmació d'escriptura (Download Response)
+	// Server --> Client: Resposta 'SDO Download initiate'.
 	//
 	struct __attribute__((packed)) SdoDownloadInitiateResponse {
 		UInt8  x   : 5;     // Reservats (Sempre 0)
@@ -58,9 +58,21 @@ export namespace eos {
 		UInt8  reserved[4]; // Reservats (sempre 0)
 	};
 
-	// Abort
+	// Client --> Server: Peticio 'SDO Download Segment'
 	//
-	struct __attribute__((packed)) SdoAbort {
+	struct __attribute__((packed)) SdoDownloadSegmentRequest {
+
+	};
+
+	// Server --> Client: Resposta 'SDO Download Segment'
+	//
+	struct __attribute__((packed)) SdoDownloadSegmentResponse {
+
+	};
+
+	// Server/Client --> Client/Server: 'Abort'
+	//
+	struct __attribute__((packed)) SdoAbortRequest {
 		UInt8    x  : 5;    // Reservats (Sempre 0)
 		SdoCS    cs : 3;    // SdoCS::Abort (4)
 		UInt16   index;     // Index
@@ -68,11 +80,31 @@ export namespace eos {
 		SdoError errorCode; // Codi d'error
 	};
 
+	// Client -> Server: Capcelera de solicitut
+	//
+	struct __attribute__((packed)) SdoRequestHeader {
+		UInt8  x   : 5;      // Reservats (Sempre 0)
+		SdoCCS ccs : 3;      // Client command specifier
+		UInt8  reserverd[7];
+	};
+
+	// Server -> Client: Capcelera de resposta
+	//
+	struct __attribute__((packed)) SdoResponseHeader {
+		UInt8  x   : 5;      // Reservats (Sempre 0)
+		SdoSCS scs : 3;      // Server command specifier
+		UInt8  reserverd[7];
+	};
+
 	union SdoFrame {
 		UInt8 raw[8];
-		SdoDownloadInitiateRequest downloadRequest;
-		SdoDownloadInitiateResponse downloadResponse;
-		SdoAbort abort;
+		SdoRequestHeader requestHeader;
+		SdoResponseHeader responseHeader;
+		SdoDownloadInitiateRequest downloadInitiateRequest;
+		SdoDownloadInitiateResponse downloadInitiatResponse;
+		SdoDownloadSegmentRequest downloadSegmentRequest;
+		SdoDownloadSegmentResponse downloadSegmentResponse;
+		SdoAbortRequest abortRequest;
 	};
 
 	static_assert(sizeof(SdoFrame) == 8, "La trama SDO ha de fer 8 bytes");

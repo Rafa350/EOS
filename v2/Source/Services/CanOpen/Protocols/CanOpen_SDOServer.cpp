@@ -53,9 +53,8 @@ export namespace eos {
             void transmitFrame(CobID cobId, const UInt8 *frame, UInt32 frameSize);
             void writeRequest(UInt16 index, UInt8 subIndex, UInt32 offset, const UInt8 *data, UInt32 dataSize);
 
-            bool downloadExpedited(const UInt8 *frame, UInt32 frameSize);
-            bool downloadInitiate(const UInt8 *frame, UInt32 frameSize);
-            bool downloadSegment(const UInt8 *frame, UInt32 frameSize);
+            bool downloadInitiate(const SdoDownloadInitiateRequest *request);
+            bool downloadSegment(const SdoDownloadSegmentRequest *request);
 
         public:
             SDOServer(CanOpenDictionary *dictionary, ITransmitFrameEvent &transmitFrameEvent, IWriteRequestEvent &writeRequestEvent);
@@ -63,7 +62,7 @@ export namespace eos {
             bool start();
             bool stop();
 
-            bool processClientRequest(const UInt8 *frame, UInt32 frameSize);
+            bool processClientRequest(const SdoFrame *frame);
     };
 }
 
@@ -122,19 +121,15 @@ bool SDOServer::stop() {
 /// @return   True si tot es correcte.
 ///
 bool SDOServer::processClientRequest(
-    const UInt8 *frame,
-    UInt32 frameSize) {
+    const SdoFrame *frame) {
 
     if (_state != State::stop) {
-        switch (frame[0] & SDO0::CCS_Msk) {
-            case SDO0::CCS_DN:
-                if ((frame[0] & SDO0::E_Msk) == SDO0::E_EXP)
-                    return downloadExpedited(frame, frameSize);
-                else
-                    return downloadInitiate(frame, frameSize);
+        switch (frame->requestHeader.ccs) {
+            case SdoCCS::initiateDownload:
+                return downloadInitiate(&frame->downloadInitiateRequest);
 
-            case SDO0::CCS_DNSEG:
-                return downloadSegment(frame, frameSize);
+            case SdoCCS::downloadSegment:
+                return downloadSegment(&frame->downloadSegmentRequest);
         }
     }
 
@@ -142,63 +137,64 @@ bool SDOServer::processClientRequest(
 }
 
 
-bool SDOServer::downloadExpedited(
-    const UInt8 *frame,
-    UInt32 frameSize) {
+bool SDOServer::downloadInitiate(
+    const SdoDownloadInitiateRequest *request) {
 
-    SdoError errorCode;
+    auto errorCode = SdoError::none;
 
-    UInt16 index = frame[1] | (frame[2] << 8);
-    UInt8 subIndex = frame[3];
-    UInt8 dataSize = 4 - ((frame[0] & SDO0::SIZE_Msk) >> SDO0::SIZE_Pos);
+    // Expedited download.
+    //
+    if (request->expedited) {
 
-    writeRequest(index, subIndex, 0, &frame[4], dataSize);
+        writeRequest(
+            request->index,
+            request->subIndex,
+            0,
+            request->data,
+            4 - request->unusedBytes);
 
-    UInt8 response[8];
-    response[1] = frame[1];
-    response[2] = frame[2];
-    response[3] = frame[3];
+    }
+
+    // Segmented download.
+    //
+    else {
+
+    }
+
+    SdoDownloadInitiateResponse response;
+    response.index = request->index;
+    response.subIndex = request->subIndex;
     if (errorCode == SdoError::none) {
-        response[0] = SDO0::SCS_DN;
-        response[4] = 0;
-        response[5] = 0;
-        response[6] = 0;
-        response[7] = 0;
+        response.scs = SdoSCS::initiateDownload;
+        response.reserved[0] = 0;
+        response.reserved[1] = 0;
+        response.reserved[2] = 0;
+        response.reserved[3] = 0;
     }
     else {
         auto ec = (UInt32) errorCode;
-		response[0] = SDO0::CCS_ABORT;
-		response[4] = ec& 0xFF;
-		response[5] = (ec >> 8) & 0xFF;
-		response[6] = (ec >> 16) & 0xFF;
-		response[7] = (ec >> 24) & 0xFF;
+        response.scs = SdoSCS::abort;
+        response.reserved[4] = ec& 0xFF;
+        response.reserved[5] = (ec >> 8) & 0xFF;
+        response.reserved[6] = (ec >> 16) & 0xFF;
+        response.reserved[7] = (ec >> 24) & 0xFF;
     }
 
-	UInt32 nodeId;
-	if (!_dictionary->readU32(0x1200, 0x02, nodeId))
+    UInt32 nodeId;
+    if (!_dictionary->readU32(0x1200, 0x02, nodeId))
         return false;
 
-    transmitFrame(CobID::makeSDOr(nodeId), response, sizeof(response));
-
-    return true;
-}
-
-
-bool SDOServer::downloadInitiate(
-    const UInt8 *frame,
-    UInt32 frameSize) {
-
-    if ((frame[0] & SDO0::E_Msk) == SDO0::E_EXP) {
-
-    }
+    transmitFrame(
+        CobID::makeSDOr(nodeId),
+        reinterpret_cast<const UInt8*>(&response),
+        sizeof(response));
 
     return true;
 }
 
 
 bool SDOServer::downloadSegment(
-    const UInt8 *frame,
-    UInt32 frameSize) {
+    const SdoDownloadSegmentRequest *request) {
 
     return true;
 }

@@ -21,7 +21,7 @@ bool CanOpenService::writeU8(
 
     return
         (nodeId != _nodeId) &&
-        (_sdoClient.download(nodeId, index, subIndex, value) == StdErrorCode::ok);
+        (_sdoClient.download(CobID::makeSDO(nodeId), index, subIndex, value) == StdErrorCode::ok);
 }
 
 
@@ -42,7 +42,7 @@ bool CanOpenService::writeU16(
 
     return
         (nodeId != _nodeId) &&
-        (_sdoClient.download(nodeId, index, subIndex, value) == StdErrorCode::ok);
+        (_sdoClient.download(CobID::makeSDO(nodeId), index, subIndex, value) == StdErrorCode::ok);
 }
 
 
@@ -63,7 +63,7 @@ bool CanOpenService::writeU32(
 
     return
         (nodeId != _nodeId) &&
-        (_sdoClient.download(nodeId, index, subIndex, value) == StdErrorCode::ok);
+        (_sdoClient.download(CobID::makeSDO(nodeId), index, subIndex, value) == StdErrorCode::ok);
 }
 
 
