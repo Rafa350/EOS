@@ -84,6 +84,15 @@ export namespace eos {
                 _value {ValueType_{}} {
             }
 
+            /// @brief Constructor.
+            /// @param error: El codi d'error.
+            /// @param value: El valor del resultat
+            ///
+            ComplexResult(ErrorType_ error, ValueType_ value):
+                Result<ErrorType_, okValue_> {error},
+                _value {value} {
+            }
+
             /// @brief Constructor de copia.
             /// @param other: L'altre objecte.
             ///

@@ -1,8 +1,10 @@
-export module Eos.Services.CanOpen._SDOServer;
+export module Eos.Services.CanOpen.SDOServer;
 
 import Eos.Events;
 import Eos.Services.CanOpen._Types;
+import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
+import Eos.Services.CanOpen.SDOCommon;
 import Eos.Result;
 import Eos.Types;
 
@@ -20,6 +22,17 @@ export namespace eos {
 			using ITransmitFrameEvent = TransmitFrameEventRaiser::IEvent;
 			template <typename Instance_> using TransmitFrameEvent = TransmitFrameEventRaiser::Event<Instance_>;
 
+            struct WriteRequestEventArgs {
+                UInt16 index;
+                UInt8 subIndex;
+                UInt32 offset;
+                const UInt8 *data;
+                UInt32 dataSize;
+            };
+    		using WriteRequestEventRaiser = EventRaiser<SDOServer, WriteRequestEventArgs>;
+			using IWriteRequestEvent = WriteRequestEventRaiser::IEvent;
+			template <typename Instance_> using WriteRequestEvent = WriteRequestEventRaiser::Event<Instance_>;
+
         private:
             enum class State {
                 stop,
@@ -32,17 +45,20 @@ export namespace eos {
 
         private:
             State _state;
+            CanOpenDictionary * const _dictionary;
             TransmitFrameEventRaiser _transmitFrameEventRaiser;
+            WriteRequestEventRaiser _writeRequestEventRaiser;
 
         private:
             void transmitFrame(CobID cobId, const UInt8 *frame, UInt32 frameSize);
+            void writeRequest(UInt16 index, UInt8 subIndex, UInt32 offset, const UInt8 *data, UInt32 dataSize);
 
             bool downloadExpedited(const UInt8 *frame, UInt32 frameSize);
             bool downloadInitiate(const UInt8 *frame, UInt32 frameSize);
             bool downloadSegment(const UInt8 *frame, UInt32 frameSize);
 
         public:
-            SDOServer(ITransmitFrameEvent &event);
+            SDOServer(CanOpenDictionary *dictionary, ITransmitFrameEvent &transmitFrameEvent, IWriteRequestEvent &writeRequestEvent);
 
             bool start();
             bool stop();
@@ -57,14 +73,19 @@ using namespace eos;
 
 /// ---------------------------------------------------------------------------
 /// @brief    Constructor
-/// @param    event : Event 'TransmitFrame'
+/// @param    transmitFrameEvent: transmitFrameEvent 'TransmitFrame'
+/// @param    writeRequestEvent: writeRequestEvent 'WriteRequest'
 ///
 SDOServer::SDOServer(
-    ITransmitFrameEvent &event):
+    CanOpenDictionary *dictionary,
+    ITransmitFrameEvent &transmitFrameEvent,
+    IWriteRequestEvent &writeRequestEvent):
 
-    _state {State::stop} {
+    _state {State::stop},
+    _dictionary {dictionary} {
 
-    _transmitFrameEventRaiser.enable(event);
+    _transmitFrameEventRaiser.enable(transmitFrameEvent);
+    _writeRequestEventRaiser.enable(writeRequestEvent);
 }
 
 
@@ -125,7 +146,41 @@ bool SDOServer::downloadExpedited(
     const UInt8 *frame,
     UInt32 frameSize) {
 
-    return false;
+    SdoError errorCode;
+
+    UInt16 index = frame[1] | (frame[2] << 8);
+    UInt8 subIndex = frame[3];
+    UInt8 dataSize = 4 - ((frame[0] & SDO0::SIZE_Msk) >> SDO0::SIZE_Pos);
+
+    writeRequest(index, subIndex, 0, &frame[4], dataSize);
+
+    UInt8 response[8];
+    response[1] = frame[1];
+    response[2] = frame[2];
+    response[3] = frame[3];
+    if (errorCode == SdoError::none) {
+        response[0] = SDO0::SCS_DN;
+        response[4] = 0;
+        response[5] = 0;
+        response[6] = 0;
+        response[7] = 0;
+    }
+    else {
+        auto ec = (UInt32) errorCode;
+		response[0] = SDO0::CCS_ABORT;
+		response[4] = ec& 0xFF;
+		response[5] = (ec >> 8) & 0xFF;
+		response[6] = (ec >> 16) & 0xFF;
+		response[7] = (ec >> 24) & 0xFF;
+    }
+
+	UInt32 nodeId;
+	if (!_dictionary->readU32(0x1200, 0x02, nodeId))
+        return false;
+
+    transmitFrame(CobID::makeSDOr(nodeId), response, sizeof(response));
+
+    return true;
 }
 
 
@@ -146,6 +201,33 @@ bool SDOServer::downloadSegment(
     UInt32 frameSize) {
 
     return true;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Solicita l'escriptura en el diccionari
+/// @param    index: L'index de l'entrada.
+/// @param    subIndex: El subindex.
+/// @param    offset: Offset
+/// @param    data: Les dades.
+/// @param    dataSize: Tamany de les dades en bytes.
+///
+void SDOServer::writeRequest(
+    UInt16 index,
+    UInt8 subIndex,
+    UInt32 offset,
+    const UInt8 *data,
+    UInt32 dataSize) {
+
+    WriteRequestEventArgs args = {
+        .index {index},
+        .subIndex {subIndex},
+        .offset {offset},
+        .data {data},
+        .dataSize {dataSize}
+    };
+
+    _writeRequestEventRaiser(this, &args);
 }
 
 

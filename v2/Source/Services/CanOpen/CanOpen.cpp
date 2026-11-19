@@ -15,9 +15,10 @@ import Eos.Math;
 import Eos.Result;
 import Eos.Services.CanOpen.Dictionary;
 import Eos.Services.CanOpen.Protocol;
-import Eos.Services.CanOpen._SDOClient;
-import Eos.Services.CanOpen._SDOServer;
-import Eos.Services.CanOpen._NMTMaster;
+import Eos.Services.CanOpen.NMTMaster;
+import Eos.Services.CanOpen.SDOCommon;
+import Eos.Services.CanOpen.SDOClient;
+import Eos.Services.CanOpen.SDOServer;
 import Eos.Services.Service;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
@@ -230,20 +231,20 @@ export namespace eos {
 
             // Lectura i escriptura en el dicionari remot (Protocol SDO)
             //
-            bool writeU8(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt8 value, Ticks blockTime);
-            bool writeU16(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt16 value, Ticks blockTime);
-            bool writeU32(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt32 value, Ticks blockTime);
+            bool writeU8(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt8 value);
+            bool writeU16(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt16 value);
+            bool writeU32(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt32 value);
             bool readU8(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt8 &value);
             bool readU16(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt16 &value);
             bool readU32(NodeID nodeId, UInt16 index, UInt8 subIndex, UInt32 &value);
 
             // Canvia l'estat d'un node remot (Protocol NMT)
             //
-			StdResult start(NodeID nodeId, Ticks blockTime);
-			StdResult stop(NodeID nodeId, Ticks blockTime);
-			StdResult enterPreOperational(NodeID nodeId, Ticks blockTime);
-			StdResult resetNode(NodeID nodeId, Ticks blockTime);
-			StdResult resetCommunication(NodeID nodeId, Ticks blockTime);
+			void start(NodeID nodeId) { _nmtMaster.start(nodeId); }
+			void stop(NodeID nodeId) { _nmtMaster.stop(nodeId); }
+			void enterPreOperational(NodeID nodeId) { _nmtMaster.enterPreOperational(nodeId); }
+			void resetNode(NodeID nodeId) { _nmtMaster.resetNode(nodeId); }
+			void resetCommunication(NodeID nodeId) { _nmtMaster.resetCommunication(nodeId); }
 
             // Senyal de sincronitzacio al bus (Protocol SYNC)
             //
@@ -884,7 +885,7 @@ void CanOpenService::processMessage_FrameReceived_SDO(
 	const FrameReceived &args) {
 
 	UInt8 response[8];
-	UInt32 errorCode = SdoError::none;
+	auto errorCode = SdoError::none;
 
 	// Comprova l'estat del node
 	//
@@ -1047,11 +1048,12 @@ void CanOpenService::processMessage_FrameReceived_SDO(
 	response[2] = args.data[2];
 	response[3] = args.data[3];
 	if (errorCode != SdoError::none) {
+		auto ec = (UInt32)errorCode;
 		response[0] = SDO0::CCS_ABORT;
-		response[4] = errorCode & 0xFF;
-		response[5] = (errorCode >> 8) & 0xFF;
-		response[6] = (errorCode >> 16) & 0xFF;
-		response[7] = (errorCode >> 24) & 0xFF;
+		response[4] = ec & 0xFF;
+		response[5] = (ec >> 8) & 0xFF;
+		response[6] = (ec >> 16) & 0xFF;
+		response[7] = (ec >> 24) & 0xFF;
 	}
 
 	// Envia la resposta

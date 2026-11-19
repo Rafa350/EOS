@@ -5,16 +5,6 @@ import Eos.Types;
 
 export namespace eos {
 
-	struct SdoError {
-		static constexpr UInt32 none                           = 0;
-		static constexpr UInt32 commandSpecifierNotValid       = 0x0504001;
-		static constexpr UInt32 unsupportedAccesssToObject     = 0x0601000;
-		static constexpr UInt32 attemptToReadWriteOnlyObject   = 0x0601001;
-		static constexpr UInt32 attemptToWriteReadOnlyObject   = 0x0601001;
-		static constexpr UInt32 objectDoesNotExistInDictionary = 0x0602000;
-		static constexpr UInt32 dataTypeDoesNotMatch           = 0x0607010;
-	};
-
 	struct SDO0 {
 
 		// Command
@@ -34,29 +24,17 @@ export namespace eos {
 		static constexpr UInt8 SCS_UP       = 2 << SCS_Pos;
 		static constexpr UInt8 SCS_DN       = 3 << SCS_Pos;
 
+		// Unused size flag
+		static constexpr UInt8 S_Pos        = 0;
+		static constexpr UInt8 S_Msk        = 0b1 << S_Pos;
+		static constexpr UInt8 S_NO         = 0 << S_Pos;
+		static constexpr UInt8 S_SIZE       = 1 << S_Pos;
+
 		// Expedited flag
 		static constexpr UInt8 E_Pos        = 1;
 		static constexpr UInt8 E_Msk        = 0b1 << E_Pos;
 		static constexpr UInt8 E_SEG        = 0 << E_Pos;
 		static constexpr UInt8 E_EXP        = 1 << E_Pos;
-
-		// Continue flag
-		static constexpr UInt8 C_Pos        = 1;
-		static constexpr UInt8 C_Msk        = 0b1 << C_Pos;
-		static constexpr UInt8 C_PARTIAL    = 0 << C_Pos;
-		static constexpr UInt8 C_LAST       = 1 << C_Pos;
-
-		// Size flag
-		static constexpr UInt8 S_Pos        = 0;
-		static constexpr UInt8 S_Msk        = 0b1;
-		static constexpr UInt8 S_NO         = 0 << S_Pos;
-		static constexpr UInt8 S_SIZE       = 1 << S_Pos;
-
-		// Toggle flag
-		static constexpr UInt8 T_Pos        = 1;
-		static constexpr UInt8 T_Msk        = 0b1;
-		static constexpr UInt8 T_ZERO       = 0 << T_Pos;
-		static constexpr UInt8 T_ONE        = 1 << T_Pos;
 
 		// Size
 		static constexpr UInt8 SIZE_Pos     = 2;
@@ -65,6 +43,18 @@ export namespace eos {
 		static constexpr UInt8 SIZE_2       = 2 << SIZE_Pos;
 		static constexpr UInt8 SIZE_3       = 1 << SIZE_Pos;
 		static constexpr UInt8 SIZE_4       = 0 << SIZE_Pos;
+
+		// Continue flag
+		static constexpr UInt8 C_Pos        = 1;
+		static constexpr UInt8 C_Msk        = 0b1 << C_Pos;
+		static constexpr UInt8 C_PARTIAL    = 0 << C_Pos;
+		static constexpr UInt8 C_LAST       = 1 << C_Pos;
+
+		// Toggle flag
+		static constexpr UInt8 T_Pos        = 1;
+		static constexpr UInt8 T_Msk        = 0b1;
+		static constexpr UInt8 T_ZERO       = 0 << T_Pos;
+		static constexpr UInt8 T_ONE        = 1 << T_Pos;
 	};
 
 	/*struct COBID {

@@ -1,4 +1,4 @@
-export module Eos.Services.CanOpen._HBProducer;
+export module Eos.Services.CanOpen.HBProducer;
 
 import Eos.Types;
 

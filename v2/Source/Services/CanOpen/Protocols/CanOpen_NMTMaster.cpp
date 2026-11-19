@@ -1,9 +1,7 @@
-export module Eos.Services.CanOpen._NMTMaster;
+export module Eos.Services.CanOpen.NMTMaster;
 
 import Eos.Events;
 import Eos.Services.CanOpen._Types;
-import Eos.Services.CanOpen.Protocol;
-import Eos.Result;
 import Eos.Types;
 
 
