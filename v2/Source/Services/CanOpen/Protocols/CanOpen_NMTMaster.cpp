@@ -25,7 +25,11 @@ export namespace eos {
             void transmitFrame(CobID cobId, const UInt8 *frame, UInt32 frameSize);
 
         public:
-            NMTMaster(ITransmitFrameEvent &event);
+            NMTMaster();
+
+			void enableTransmitFrameEvent(ITransmitFrameEvent &event) {
+				_transmitFrameEventRaiser.enable(event);
+			}
 
 			void start(NodeID remoteId);
 			void stop(NodeID remoteId);
@@ -43,10 +47,7 @@ using namespace eos;
 /// @brief    Contructor.
 /// @param    event: L'event 'TransmitFrame'.
 ///
-NMTMaster::NMTMaster(
-    ITransmitFrameEvent &event) {
-
-    _transmitFrameEventRaiser.enable(event);
+NMTMaster::NMTMaster() {
 }
 
 
@@ -146,11 +147,12 @@ void NMTMaster::transmitFrame(
     const UInt8 *frame,
     UInt32 frameSize) {
 
-    TransmitFrameEventArgs args = {
-        .cobId {cobId},
-        .frame {frame},
-        .frameSize {frameSize}
-    };
-
-    _transmitFrameEventRaiser(this, &args);
+	if (_transmitFrameEventRaiser) {
+		TransmitFrameEventArgs args = {
+			.cobId {cobId},
+			.frame {frame},
+			.frameSize {frameSize}
+		};
+		_transmitFrameEventRaiser(this, &args);
+	}
 }

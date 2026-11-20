@@ -12,7 +12,8 @@ export namespace eos {
 		attemptToReadWriteOnlyObject   = 0x0601001,
 		attemptToWriteReadOnlyObject   = 0x0601001,
 		objectDoesNotExistInDictionary = 0x0602000,
-		dataTypeDoesNotMatch           = 0x0607010
+		dataTypeDoesNotMatch           = 0x0607010,
+		generalError                   = 0x0800000
 	};
 
 	enum class SdoCCS: UInt8 { // Client command specification
@@ -106,6 +107,5 @@ export namespace eos {
 		SdoDownloadSegmentResponse downloadSegmentResponse;
 		SdoAbortRequest abortRequest;
 	};
-
 	static_assert(sizeof(SdoFrame) == 8, "La trama SDO ha de fer 8 bytes");
 }

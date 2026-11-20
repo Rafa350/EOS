@@ -72,13 +72,22 @@ export namespace eos {
             //void uploadSegmentResponse(const SdoUploadSegmentResponse *response);
 
         public:
-            SDOClient(ITransmitFrameEvent &event);
+            SDOClient();
+
+            void enableTransmitFrameEvent(ITransmitFrameEvent &event) {
+                _transmitFrameEventRaiser.enable(event);
+            }
 
             template <typename T_>
-            requires (sizeof(T_) >= 1 && sizeof(T_) <= 4)
+                requires (sizeof(T_) >= 1 && sizeof(T_) <= 4)
                 StdResult download(CobID cobId, UInt16 index, UInt8 subIndex, T_ data);
             StdResult download(CobID cobId, UInt16 index, UInt8 subIndex, const UInt8 *data, UInt32 dataLength);
+
+            template <typename T_>
+                requires (sizeof(T_) >= 1 && sizeof(T_) <= 4)
+                StdResult upload(CobID cobId, UInt16 index, UInt8 subIndex, T_ &data);
             StdResult upload(CobID cobId, UInt16 index, UInt8 subIndex, const UInt8 *data, UInt32 dataLength);
+
             StdResult abort(SdoError errorCode);
 
             SDOClientResult processServerResponse(const SdoFrame *response);
@@ -91,14 +100,9 @@ using namespace eos;
 
 /// ---------------------------------------------------------------------------
 /// @brief    Contructor.
-/// @param    event: L'event 'TransmitFrame'.
 ///
-SDOClient::SDOClient(
-    ITransmitFrameEvent &event) :
-
+SDOClient::SDOClient() :
     _state {State::idle} {
-
-    _transmitFrameEventRaiser.enable(event);
 }
 
 
@@ -202,28 +206,46 @@ StdResult SDOClient::download(
 
         transmitFrame(cobId, reinterpret_cast<const SdoFrame*>(&request));
 
-        /*
-        UInt8 request[8];
-        request[0] =
-            SDO0::CCS_DN |
-            SDO0::S_SIZE |
-            SDO0::E_SEG;
-
-        request[1] = index & 0xFF;
-        request[2] = index >> 8;
-        request[3] = subIndex;
-
-        request[4] = (dataSize >> 0) & 0xFF;
-        request[5] = (dataSize >> 8) & 0xFF;
-        request[6] = (dataSize >> 16) & 0xFF;
-        request[7] = (dataSize >> 24) & 0xFF;
-
-        transmitFrame(CobID::makeSDO(serverId), request, sizeof(request));
-        */
-
         _txContext.toggle = false;
         _state = State::downloadSegment;
     }
+
+    return StdErrorCode::ok;
+}
+
+
+/// ---------------------------------------------------------------------------
+/// @brief    Recepcio de dades des del servidor SDO.
+/// @param    cobId: El COBID del servidos SDO.
+/// @param    index: Index de la entrada del diccionari.
+/// @param    subIndex: Subindex de l'entrada del diccionari.
+/// @param    data: Dades a rebre.
+/// @return   El resultat de l'operacio.
+///
+template <typename T_>
+requires (sizeof(T_) >= 1 && sizeof(T_) <= 4)
+StdResult SDOClient::upload(
+    CobID cobId,
+    UInt16 index,
+    UInt8 subIndex,
+    T_ &data) {
+
+    if (_state != State::idle)
+        return StdErrorCode::busy;
+
+    return StdErrorCode::ok;
+}
+
+
+StdResult SDOClient::upload(
+    CobID cobId,
+    UInt16 index,
+    UInt8 subIndex,
+    const UInt8 *data,
+    UInt32 dataLength) {
+
+    if (_state != State::idle)
+        return StdErrorCode::busy;
 
     return StdErrorCode::ok;
 }
@@ -293,7 +315,7 @@ SDOClientResult SDOClient::processServerResponse(
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Procesa la resposta
+/// @brief    Procesa la resposta a 'DownloadExpeditive'
 /// @param    request: La trama de la resposta.
 /// @return   El resultat de l'operacio.
 ///
@@ -320,7 +342,7 @@ SDOClientResult SDOClient::downloadExpeditedResponse(
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Transmet el seguewnt segment.
+/// @brief    Procesa la resposta a 'DownloadSegment'
 ///
 SDOClientResult SDOClient::downloadSegmentResponse(
     const SdoDownloadSegmentResponse *response) {
@@ -367,7 +389,7 @@ void SDOClient::uploadSegmentResponse() {
 
 
 /// ---------------------------------------------------------------------------
-/// @brief    Transmet una trama.
+/// @brief    Transmet una trama SDO.
 /// @param    cobId: El COBID.
 /// @param    frame: Les trama a transmetre.
 ///
@@ -375,10 +397,12 @@ void SDOClient::transmitFrame(
     CobID cobId,
     const SdoFrame* frame) {
 
-    TransmitFrameEventArgs args = {
-        .cobId {cobId},
-        .frame {reinterpret_cast<const UInt8*>(frame)},
-        .frameSize {sizeof(SdoFrame)}
-    };
-    _transmitFrameEventRaiser(this, &args);
+    if (_transmitFrameEventRaiser) {
+        TransmitFrameEventArgs args = {
+            .cobId {cobId},
+            .frame {reinterpret_cast<const UInt8*>(frame)},
+            .frameSize {sizeof(SdoFrame)}
+        };
+        _transmitFrameEventRaiser(this, &args);
+    }
 }

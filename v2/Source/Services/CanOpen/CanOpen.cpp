@@ -19,6 +19,7 @@ import Eos.Services.CanOpen.NMTMaster;
 import Eos.Services.CanOpen.SDOCommon;
 import Eos.Services.CanOpen.SDOClient;
 import Eos.Services.CanOpen.SDOServer;
+import Eos.Services.CanOPen.PDOProducer;
 import Eos.Services.Service;
 import Eos.System.Core.Queue;
 import Eos.System.Core.Task;
@@ -140,12 +141,16 @@ export namespace eos {
 			CANDevice::NotificationEvent<CanOpenService> _canDevice_notificationEvent;
 			SDOClient::TransmitFrameEvent<CanOpenService> _sdoClient_transmitFrameEvent;
 			SDOServer::TransmitFrameEvent<CanOpenService> _sdoServer_transmitFrameEvent;
+			SDOServer::WriteRequestEvent<CanOpenService> _sdoServer_writeRequestEvent;
 			NMTMaster::TransmitFrameEvent<CanOpenService> _nmtMaster_transmitFrameEvent;
+			PDOProducer::TransmitFrameEvent<CanOpenService> _pdoProducer_transmitFrameEvent;
 			Timer::Event<CanOpenService> _timer_notificationEvent;
 			Timer _timer;
-			SDOClient _sdoClient;
-			NMTMaster _nmtMaster;
         	CanOpenDictionary * const _dictionary;
+			SDOClient _sdoClient;
+			SDOServer _sdoServer;
+			NMTMaster _nmtMaster;
+			PDOProducer _pdoProducer;
 			NodeID const _nodeId;
 			NodeState _nodeState;
 			MessageQueue _messageQueue;
@@ -159,7 +164,9 @@ export namespace eos {
             void canDevice_notificationEventHandler(CANDevice *sender, CANDevice::NotificationEventArgs *args);
 			void sdoClient_transmitFrameEventHandler(SDOClient *sender, SDOClient::TransmitFrameEventArgs *args);
 			void sdoServer_transmitFrameEventHandler(SDOServer *sender, SDOServer::TransmitFrameEventArgs *args);
+			void sdoServer_writeRequestEventHandler(SDOServer *sender, SDOServer::WriteRequestEventArgs *args);
 			void nmtMaster_transmitFrameEventHandler(NMTMaster *sender, NMTMaster::TransmitFrameEventArgs *args);
+			void pdoProducer_transmitFrameEventHandler(PDOProducer *sender, PDOProducer::TransmitFrameEventArgs *args);
 			void timer_notificationEventHandler(Timer *timer, Timer::EventArgs *args);
 
             void configureCANDevice();
@@ -174,7 +181,7 @@ export namespace eos {
 			void processMessage_FrameReceived_TPDO(const FrameReceived &args);
 			void processMessage_FrameReceived_SYNC(const FrameReceived &args);
 			void processMessage_FrameReceived_TIME(const FrameReceived &args);
-            void processMessage_FrameReceived_SDO(const FrameReceived &args);
+            //void processMessage_FrameReceived_SDO(const FrameReceived &args);
 			void processMessage_FrameReceived_RPDO(const FrameReceived &args);
             void processMessage_EntryChanged(const EntryChanged &args);
             void processMessage_ChangeNodeState(const ChangeNodeState &args);
@@ -185,7 +192,7 @@ export namespace eos {
             void processSDO(const UInt8 *data);
 			void processRPDO(CobID cobId, const UInt8 *data, UInt32 dataLen);
 
-			void sendTPDO(UInt8 tpdo);
+			//void sendTPDO(UInt8 tpdo);
 
 			bool isMapped(UInt8 tpdo, UInt32 entryId);
 
@@ -300,12 +307,16 @@ CanOpenService::CanOpenService(
 	_canDevice_notificationEvent {*this, &CanOpenService::canDevice_notificationEventHandler},
 	_sdoClient_transmitFrameEvent {*this, &CanOpenService::sdoClient_transmitFrameEventHandler},
 	_sdoServer_transmitFrameEvent {*this, &CanOpenService::sdoServer_transmitFrameEventHandler},
+	_sdoServer_writeRequestEvent {*this, &CanOpenService::sdoServer_writeRequestEventHandler},
 	_nmtMaster_transmitFrameEvent {*this, &CanOpenService::nmtMaster_transmitFrameEventHandler},
+	_pdoProducer_transmitFrameEvent {*this, &CanOpenService::pdoProducer_transmitFrameEventHandler},
 	_timer_notificationEvent {*this, &CanOpenService::timer_notificationEventHandler},
 	_timer {Timer::Mode::autoRestart, nullptr, _timer_notificationEvent},
-	_sdoClient {_sdoClient_transmitFrameEvent},
-	_nmtMaster {_nmtMaster_transmitFrameEvent},
 	_dictionary {dictionary},
+	_sdoClient {},
+	_sdoServer {_dictionary},
+	_nmtMaster {},
+	_pdoProducer {dictionary},
 	_nodeId {(UInt8)(nodeId & 0x7F)},
 	_nodeState {NodeState::initializing},
 	_messageQueue {_messageQueueSize} {
@@ -343,6 +354,33 @@ void CanOpenService::onExecute() {
 	//
 	_devCAN->enableNotificationEvent(_canDevice_notificationEvent);
 	_devCAN->start_IRQ();
+
+	// Inicia el servidor SDO
+	//
+	UInt32 sdoRxCobId;
+	if (!_dictionary->readU32(0x1200, 0x01, sdoRxCobId))
+		sdoRxCobId = CobID::baseSDO + _nodeId;
+
+	UInt32 sdoTxCobId;
+	if (!_dictionary->readU32(0x1200, 0x02, sdoTxCobId))
+		sdoTxCobId = CobID::baseSDOr + _nodeId;
+
+	_sdoServer.enableTransmitFrameEvent(_sdoServer_transmitFrameEvent);
+	_sdoServer.enableWriteRequestEvent(_sdoServer_writeRequestEvent);
+	_sdoServer.start(CobID::make(sdoRxCobId), CobID::make(sdoTxCobId));
+
+	// Inicia el client SDO.
+	//
+	_sdoClient.enableTransmitFrameEvent(_sdoClient_transmitFrameEvent);
+
+	// Inicialitza el productor PDO
+	//
+	_pdoProducer.enableTransmitFrameEvent(_pdoProducer_transmitFrameEvent);
+	_pdoProducer.start();
+
+	// Inicialitza el master NMT.
+	//
+	_nmtMaster.enableTransmitFrameEvent(_nmtMaster_transmitFrameEvent);
 
 	// Genera el missatge 'initialized' i el porta a la cua
 	//
@@ -695,6 +733,8 @@ void CanOpenService::processMessage_EntryChanged(
 	//
 	if (_nodeState == NodeState::operational) {
 
+		_pdoProducer.processChange(args.entryId);
+		/*
 		// Comprova les entrades 0x1800 per si hi ha TPDO asincrones
 		//
 		UInt8 tpdoMax = 4;
@@ -714,6 +754,7 @@ void CanOpenService::processMessage_EntryChanged(
 				}
 			}
 		}
+		*/
 	}
 }
 
@@ -790,11 +831,13 @@ void CanOpenService::processMessage_FrameReceived(
 	}
 
 	if (cobId.isSDO()) {
-		processMessage_FrameReceived_SDO(args);
+		if (_sdoServer.canProcessClientRequest(cobId))
+			_sdoServer.processClientRequest(reinterpret_cast<const SdoFrame*>(&args.data));
 		return;
 	}
 
 	if (cobId.isSDOr()) {
+		// if (_sdoClient.canProcessServerResponse(cobId))
 		_sdoClient.processServerResponse(reinterpret_cast<const SdoFrame*>(&args.data));
 		return;
 	}
@@ -877,194 +920,6 @@ void CanOpenService::processMessage_FrameReceived_NMT(
 }
 
 
-/// ----------------------------------------------------------------------
-/// @brief    Procesa el missatge 'FrameReceived' SDO
-/// @param    args: Parametres del missatge
-///
-void CanOpenService::processMessage_FrameReceived_SDO(
-	const FrameReceived &args) {
-
-	UInt8 response[8];
-	auto errorCode = SdoError::none;
-
-	// Comprova l'estat del node
-	//
-	if ((_nodeState != NodeState::preOperational) &&
-		(_nodeState != NodeState::operational))
-		errorCode = SdoError::unsupportedAccesssToObject;
-
-	// Initiate SDO download (Expedited)
-	//
-	else if ((args.data[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_EXP)) {
-
-		UInt16 index = args.data[1] | (args.data[2] << 8);
-		UInt8 subIndex = args.data[3];
-
-		auto entryId = _dictionary->find(index, subIndex);
-		if (entryId == (typeof(entryId)) -1)
-			errorCode = SdoError::objectDoesNotExistInDictionary;
-
-		else {
-			if (!_dictionary->canWrite(entryId))
-				errorCode = SdoError::attemptToWriteReadOnlyObject;
-
-			else {
-				UInt8 size = 4 - ((args.data[0] & SDO0::SIZE_Msk) >> SDO0::SIZE_Pos);
-				CoType type = _dictionary->getType(entryId);
-				switch (type) {
-					case CoType::unsigned8: {
-						UInt8 value = args.data[4];
-						onWriteU8Request(index, subIndex, value);
-						break;
-					}
-
-					case CoType::unsigned16: {
-						UInt16 value = (args.data[4] << 8) | (args.data[5] << 16);
-						onWriteU16Request(index, subIndex, value);
-						break;
-					}
-
-					case CoType::unsigned32: {
-						UInt32 value = args.data[4] | (args.data[5] << 8) | (args.data[6] << 16) |
-								(args.data[7] << 24);
-						onWriteU32Request(index, subIndex, value);
-						break;
-					}
-
-					default:
-						errorCode = SdoError::dataTypeDoesNotMatch;
-						break;
-				}
-			}
-		}
-
-		if (errorCode == SdoError::none) {
-			response[0] = SDO0::SCS_DN;
-			response[4] = 0;
-			response[5] = 0;
-			response[6] = 0;
-			response[7] = 0;
-		}
-	}
-
-	// Initiate SDO download (Normal)
-	//
-	else if ((args.data[0] & (SDO0::CCS_Msk | SDO0::S_Msk | SDO0::E_Msk)) == (SDO0::CCS_DN | SDO0::S_SIZE | SDO0::E_SEG)) {
-		//onInitiateDownloadNormal(query, response);
-	}
-
-	// Download segment
-	//
-	else if ((args.data[0] & SDO0::CCS_Msk) == SDO0::CCS_DNSEG) {
-		//onDownloadSegment(query, response);
-	}
-
-	// Initiate SDO upload
-	//
-	else if ((args.data[0] & SDO0::CCS_Msk) == SDO0::CCS_UP) {
-
-		UInt16 index = args.data[1] | (args.data[2] << 8);
-		UInt8 subIndex = args.data[3];
-		unsigned length = 0;
-
-		auto entryId = _dictionary->find(index, subIndex);
-		if (entryId == (unsigned) -1)
-			errorCode = SdoError::objectDoesNotExistInDictionary;
-		else {
-			if (!_dictionary->canRead(entryId))
-				errorCode = SdoError::attemptToWriteReadOnlyObject;
-			else {
-				CoType type = _dictionary->getType(entryId);
-				switch (type) {
-					case CoType::unsigned8: {
-						UInt8 value;
-						_dictionary->readU8(entryId, value);
-						response[4] = value;
-						break;
-					}
-
-					case CoType::unsigned16: {
-						UInt16 value;
-						_dictionary->readU16(entryId, value);
-						response[4] = value & 0xFF;
-						response[5] = (value >> 8) & 0xFF;
-						break;
-					}
-
-					case CoType::unsigned32: {
-						UInt32 value;
-						_dictionary->readU32(entryId, value);
-						response[4] = value & 0xFF;
-						response[5] = (value >> 8) & 0xFF;
-						response[6] = (value >> 16) & 0xFF;
-						response[7] = (value >> 24) & 0xFF;
-						break;
-					}
-
-					default:
-						errorCode = SdoError::dataTypeDoesNotMatch;
-						break;
-				}
-			}
-		}
-
-		if (errorCode == SdoError::none) {
-
-			// Comprova la longitut per seleccionar el tipus de transmissio
-			//
-			if (length <= 4) {
-
-				// Expedited
-				//
-				response[0] = SDO0::SCS_UP | SDO0::E_EXP | SDO0::S_SIZE | (((4 - length) << SDO0::SIZE_Pos) & SDO0::SIZE_Msk);
-			}
-			else {
-
-				// Segmented
-				//
-				response[0] = SDO0::SCS_UP | SDO0::E_SEG | SDO0::S_SIZE;
-				response[4] = length & 0xFF;
-				response[5] = (length >> 8) & 0xFF;
-				response[6] = (length >> 16) & 0xFF;
-				response[7] = (length >> 24) & 0xFF;
-			}
-		}
-	}
-
-	// Upload segment
-	//
-	else if ((args.data[0] & SDO0::CCS_Msk) == SDO0::CCS_UPSEG) {
-		//onUploadSegment(query, response);
-	}
-
-	// Error SDO
-	//
-	else
-		errorCode = SdoError::commandSpecifierNotValid;
-
-	// Prepara la resposta
-	//
-	response[1] = args.data[1];
-	response[2] = args.data[2];
-	response[3] = args.data[3];
-	if (errorCode != SdoError::none) {
-		auto ec = (UInt32)errorCode;
-		response[0] = SDO0::CCS_ABORT;
-		response[4] = ec & 0xFF;
-		response[5] = (ec >> 8) & 0xFF;
-		response[6] = (ec >> 16) & 0xFF;
-		response[7] = (ec >> 24) & 0xFF;
-	}
-
-	// Envia la resposta
-	//
-	UInt32 cobidSDOr;
-	if (_dictionary->readU32(0x1200, 0x02, cobidSDOr))
-		transmitFrame(CobID::make(cobidSDOr & 0x7FF, _nodeId),
-			response, sizeof(response), Ticks::fromMiliseconds(defTimeout));
-}
-
-
 /// ---------------------------------------------------------------------------
 /// @brief    Procesa el missatge 'FrameReceived' TIME
 /// @param    args: Parametres del missatge
@@ -1083,25 +938,8 @@ void CanOpenService::processMessage_FrameReceived_SYNC(
 	const FrameReceived &args) {
 
 	if (_nodeState == NodeState::operational) {
-
 		onSYNCReceived();
-
-		// Comprova les  entrades 0x1800 per si hi han TPDOs sincrons
-		// per enviar
-		//
-		UInt8 tpdoMax = 4;
-		for (UInt8 tpdo = 0; tpdo < tpdoMax; tpdo++) {
-
-			UInt32 flags;
-			UInt8 transmissionType;
-
-			if (_dictionary->readU32(0x1800 + tpdo, 0x01, flags) &&
-				_dictionary->readU8(0x1800 + tpdo, 0x02, transmissionType)) {
-
-				if ((transmissionType <= 240) && ((flags & (1 << 31)) == 0))
-					sendTPDO(tpdo);
-			}
-		}
+		_pdoProducer.processSync();
 	}
 }
 
@@ -1149,7 +987,7 @@ void CanOpenService::processMessage_FrameReceived_RPDO(
 
 				CoType type = _dictionary->getType(entryId);
 				switch (type) {
-					case CoType::unsigned8:
+					case CoType::u8:
 						if (size == sizeof(UInt8)) {
 							UInt8 value = 0;
 							value |= *pData++;
@@ -1157,7 +995,7 @@ void CanOpenService::processMessage_FrameReceived_RPDO(
 						}
 						break;
 
-					case CoType::unsigned16:
+					case CoType::u16:
 						if (size == sizeof(UInt16)) {
 							UInt16 value = 0;
 							value |= *pData++;
@@ -1166,7 +1004,7 @@ void CanOpenService::processMessage_FrameReceived_RPDO(
 						}
 						break;
 
-					case CoType::unsigned32:
+					case CoType::u32:
 						if (size == sizeof(UInt32)) {
 							UInt32 value = 0;
 							value |= *pData++;
@@ -1227,94 +1065,6 @@ CanOpenService::NodeState CanOpenService::getNodeState() const {
 NodeID CanOpenService::getNodeId() const {
 
 	return _nodeId;
-}
-
-
-/// ----------------------------------------------------------------------
-/// @brief    Envia un TPDOx al bus
-/// @param    tpdo: El identificador del TPDOx
-///
-void eos::CanOpenService::sendTPDO(
-	UInt8 tpdo) {
-
-	UInt8 maxCount;
-	if (_dictionary->readU8(0x1A00 | tpdo, 0x00, maxCount) && maxCount > 0) {
-
-		UInt8 data[8];
-		UInt8 *pData = data;
-		UInt8 dataLen = 0;
-
-		// Mapeja els elements un a un
-		//
-		bool ok = true;
-		for (auto count = 0; (count < maxCount) && ok; count++) {
-
-			UInt32 mapInfo;
-			ok = _dictionary->readU32(0x1A00 | tpdo, count + 1, mapInfo);
-			if (ok) {
-
-				UInt16 mapIndex = (mapInfo >> 16) & 0xFFFF;
-				UInt8 mapSubIndex = (mapInfo >> 8) & 0xFF;
-				unsigned mapLength = (mapInfo & 0xFF) / 8;
-
-				auto entryId = _dictionary->find(mapIndex, mapSubIndex);
-				ok = entryId != (unsigned) -1;
-				if (ok) {
-					switch (mapLength) {
-						case 1:
-							ok = (dataLen + sizeof(UInt8)) < sizeof(data);
-							if (ok) {
-								UInt8 value;
-								ok = _dictionary->readU8(entryId, value);
-								if (ok) {
-									*(pData++) = value;
-									dataLen += sizeof(UInt8);
-								}
-							}
-							break;
-
-						case 2:
-							ok = (dataLen + sizeof(UInt16)) < sizeof(data);
-							if (ok) {
-								UInt16 value;
-								ok = _dictionary->readU16(entryId, value);
-								if (ok) {
-									*(pData++) = value & 0xFF;
-									*(pData++) = (value >> 8) & 0xFF;
-									dataLen += sizeof(UInt16);
-								}
-							}
-							break;
-
-						case 4:
-							ok = (dataLen + sizeof(UInt32)) < sizeof(data);
-							if (ok) {
-								UInt32 value;
-								ok = _dictionary->readU32(entryId, value);
-								if (ok) {
-									*(pData++) = value & 0xFF;
-									*(pData++) = (value >> 8) & 0xFF;
-									*(pData++) = (value >> 16) & 0xFF;
-									*(pData++) = (value >> 24) & 0xFF;
-									dataLen += sizeof(UInt32);
-								}
-							}
-							break;
-
-						default:
-							ok = false;
-							break;
-					}
-				}
-			}
-		}
-
-		if (ok) {
-			UInt32 cobid;
-			if (_dictionary->readU32(0x1800 + tpdo, 0x01, cobid))
-				transmitFrame(CobID::make(cobid & 0x7FF, _nodeId), data, dataLen, Ticks::fromMiliseconds(100));
-		}
-	}
 }
 
 
@@ -1477,6 +1227,34 @@ void CanOpenService::sdoClient_transmitFrameEventHandler(
 void CanOpenService::sdoServer_transmitFrameEventHandler(
 	SDOServer *sender,
 	SDOServer::TransmitFrameEventArgs *args) {
+
+	postMessage_TransmitFrame(args->cobId, args->frame, args->frameSize, _messageQueueBlockTime);
+}
+
+
+void CanOpenService::sdoServer_writeRequestEventHandler(
+	SDOServer *sender,
+	SDOServer::WriteRequestEventArgs *args) {
+
+	switch (args->dataSize) {
+		case sizeof(UInt8):
+			onWriteU8Request(args->index, args->subIndex, args->data[0]);
+			break;
+
+		case sizeof(UInt16):
+			onWriteU16Request(args->index, args->subIndex, args->data[0] | (args->data[1] << 8));
+			break;
+
+		case sizeof(UInt32):
+			onWriteU32Request(args->index, args->subIndex, args->data[0] | (args->data[1] << 8) | (args->data[1] << 16) | (args->data[1] << 24));
+			break;
+	}
+}
+
+
+void CanOpenService::pdoProducer_transmitFrameEventHandler(
+	PDOProducer *sender,
+	PDOProducer::TransmitFrameEventArgs *args) {
 
 	postMessage_TransmitFrame(args->cobId, args->frame, args->frameSize, _messageQueueBlockTime);
 }

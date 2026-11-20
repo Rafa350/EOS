@@ -17,10 +17,10 @@ export namespace eos {
 	};
 
 	enum class CoType: UInt8 {
-		unsigned8,
-		unsigned16,
-		unsigned32,
-		boolean,
+		u8,
+		u16,
+		u32,
+		b,
 		unknown
 	};
 
@@ -158,7 +158,7 @@ UInt32 CanOpenDictionary::find(
 			return entryId;
 	}
 
-	return (UInt32) -1;
+	return invalidEntryId;
 }
 
 
@@ -180,7 +180,7 @@ UInt32 CanOpenDictionary::find(
 			return entryId;
 	}
 
-	return (UInt32) -1;
+	return invalidEntryId;
 }
 
 
@@ -468,7 +468,7 @@ bool CanOpenDictionary::writeU8(
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned8) {
+		if (entry->type == CoType::u8) {
 
 			UInt8 oldValue;
 
@@ -528,7 +528,7 @@ bool CanOpenDictionary::writeU16(
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned16) {
+		if (entry->type == CoType::u16) {
 
 			UInt16 oldValue;
 
@@ -588,7 +588,7 @@ bool CanOpenDictionary::writeU32(
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned32) {
+		if (entry->type == CoType::u32) {
 
 			UInt32 oldValue;
 
@@ -648,7 +648,7 @@ bool CanOpenDictionary::readU8(
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned8) {
+		if (entry->type == CoType::u8) {
 
 			switch (entry->access) {
 				case CoAccess::constant:
@@ -707,7 +707,7 @@ bool CanOpenDictionary::readU16(
 
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
-		if (entry->type == CoType::unsigned16) {
+		if (entry->type == CoType::u16) {
 			if (entry->access == CoAccess::constant)
 				value = entry->data;
 			else
@@ -752,7 +752,7 @@ bool CanOpenDictionary::readU32(
 	if (entryId < _numEntries) {
 		auto entry = &_entries[entryId];
 
-		if (entry->type == CoType::unsigned32) {
+		if (entry->type == CoType::u32) {
 			if (entry->access == CoAccess::constant)
 				value = entry->data;
 			else
